@@ -1,0 +1,337 @@
+###########################################################################################
+# This is a YML file. Be careful when editing. Check your edits in a YAML checker like    #
+# the one at http://yaml-online-parser.appspot.com                                        #
+# If this file is deleted, then it will be recreate at the next reload.                   #
+###########################################################################################
+
+################
+#General Errors#
+################
+error:
+   #"Error: Invalid Player (check spelling)"
+   unknownPlayer: "That player is unknown."
+   #"You can't access that command!"
+   #"/acid is a command for mods and ops only"
+   noPermission: "You don't have permission to use that command!"
+   noIsland: "You do not have an island!"
+   noIslandOther: "That player does not have an island!"
+   #notOnIsland: "You must be on your island to use this command."
+   commandNotReady: "You can't use that command right now."
+   offlinePlayer: "That player is offline or doesn't exist."
+   unknownCommand: "Unknown command."
+   noTeam: "Player is not in a team."
+
+#AcidEffect
+changingObsidiantoLava: "Changing obsidian back into lava. Be careful!"
+
+#AcidInventory
+# The warning that goes on the acid bottles or buckets. Lines are split by \n
+acidLore: "Do\nnot fall!\nBeware!\n"
+acidBucket: "Acid Bucket"
+acidBottle: "Acid Bottle"
+drankAcidAndDied: "just drank acid and died."
+drankAcid: "drank acid."
+
+#IslandGuard
+islandProtected: "Island protected."
+
+#LavaCheck
+lavaTip: "Tip: If obsidian was not intended, it can be scooped back up again with a bucket."
+
+#WarpSigns
+warps:
+   #This is the first line of the sign that determines if the sign is a warp sign or not
+   #If you change it, make sure it makes sense. It is case insensitive. Change the tip too.
+   welcomeLine: "[WELCOME]"
+   warpTip: "Create a warp by placing a sign with [WELCOME] at the top."
+   success: "Welcome sign placed successfully!"
+   removed: "Welcome sign removed!"
+   signRemoved: "Your welcome sign was removed!"
+   deactivate: "Deactivating old sign!"
+   errorNoRemove: "You can only remove your own Welcome Sign!"
+   errorNoPerm: "You do not have permission to place Welcome Signs yet!"
+   errorNoPlace: "You must be on your island to place a Welcome Sign!"
+   errorDuplicate: "Sorry! There is a sign already in that location!"
+   errorDoesNotExist: "That warp doesn't exist!"
+   errorNotReadyYet: "That warp is not ready yet. Try again later."
+   errorNotSafe: "That warp is not safe right now. Try again later."
+   #/island warp help
+   warpToPlayersSign: "Warp to <player>'s welcome sign."
+   errorNoWarpsYet: "There are no warps available yet!"
+   warpsAvailable: "The following warps are available"
+
+#AcidIsland
+topTen:
+   header: "These are the Top 10 islands:"
+   errorNotReady: "Top ten list not generated yet!"
+level:
+   islandLevel: "Island level"
+   errornotYourIsland: "Only the leader can do that."
+   
+sethome:
+   homeSet: "Your island home has been set to your current location."
+   errorNotOnIsland: "You must be within your island boundaries to set home!"
+   errorNoIsland: "You are not part of an island. Returning you the spawn area!"
+
+
+#Challenges
+challenges:
+   youHaveCompleted: "You have completed the [challenge] challenge!"
+   nameHasCompleted: "[name] has completed the [challenge] challenge!"
+   youRepeated: "You repeated the [challenge] challenge!"
+   toComplete: "Complete [challengesToDo] more [thisLevel] challenges to unlock this level!"
+   help1: "Use /c <name> to view information about a challenge."
+   help2: "Use /c complete <name> to attempt to complete that challenge."
+   colors: "Challenges will have different colors depending on if they are:"
+   complete: "Complete"
+   incomplete: "Incomplete"
+   completeNotRepeatable: "Completed(not repeatable)"
+   completeRepeatable: "Completed(repeatable)"
+   name: "Challenge Name"
+   level: "Level"
+   itemTakeWarning: "All required items are taken when you complete this challenge!"
+   notRepeatable: "This Challenge is not repeatable!"
+   firstTimeRewards: "First time reward(s)"
+   repeatRewards: "Repeat reward(s)"
+   expReward: "Exp reward"
+   moneyReward: "Money reward"
+   toCompleteUse: "To complete this challenge, use"
+   invalidChallengeName: "Invalid challenge name! Use /c help for more information"
+   rewards: "Reward(s)"
+   youHaveNotUnlocked: "You have not unlocked this challenge yet!"
+   unknownChallenge: "Unknown challenge name (check spelling)!"
+   errorNotEnoughItems: "You do not have enough required item(s)"
+   errorNotOnIsland: "You must be on your island to do that!"
+   errorNotCloseEnough: "You must be standing within 10 blocks of all required items."
+   errorItemsNotThere: "All required items must be close to you on your island!"
+   errorIslandLevel: "Your island must be level [level] to complete this challenge!"
+   guititle: "Challenges"
+   erroryouaremissing: "You are missing"
+#/island
+island:
+   teleport: "Teleporting you to your island. (/island help for more info)"
+   new: "Creating a new island for you..."
+   errorCouldNotCreateIsland: "Could not create your Island. Please contact a server moderator."
+   errorYouDoNotHavePermission: "You do not have permission to use that command!"
+   #/island reset
+   resetOnlyOwner: "Only the owner may restart this island. Leave this island in order to start your own (/island leave)."
+   resetMustRemovePlayers: "You must remove all players from your island before you can restart it (/island kick <player>). See a list of players currently part of your island using /island team."
+   resetPleaseWait: "Please wait, generating new island"
+   #Cool down warning - [time] is number of seconds left
+   resetWait: "You have to wait [time] seconds before you can do that again."
+   #Confirm
+   resetConfirm: "Type /island confirm within 10 seconds to delete your island and restart!"
+   resetYouHave: "You have [number] resets left."
+   resetNoMore: "No more resets are allowed for your island!"
+   resetTo: "Cleared reset limit"
+
+   #/island help
+   #/island
+   helpIsland: "start an island, or teleport to your island."
+   helpIslandSpawn: "go to AcidIsland spawn."
+   helpContolPanel: "open the island GUI."
+   #/island restart
+   helpRestart: "restart your island and remove the old one."
+   islandDeletedLifeboats: "Island deleted! Head to the lifeboats!"
+   #/island sethome
+   helpSetHome: "set your teleport point for /island."
+   #/island level
+   helpLevel: "calculate your island level"
+   #/island level <player>
+   helpLevelPlayer: "see another player's island level."
+   #/island top:
+   helpTop: "see the top ranked islands."
+   #/island warps:
+   helpWarps: "Lists all available welcome-sign warps."
+   #/island warp <player>
+   helpWarp: "Warp to <player>'s welcome sign."
+   #/island team
+   helpTeam: "view your team information."
+   #/island invite <player>:
+   helpInvite: "invite a player to join your island."
+   #/island leave:
+   helpLeave: "leave another player's island."
+   #/island kick <player>
+   helpKick: "remove a player from your island."
+   #/island <accept/reject>
+   helpAcceptReject: "accept or reject an invitation."
+   #/island makeleader <player>
+   helpMakeLeader: "transfer the island to <player>."
+   #Level
+   errorLevelNotReady: "Can't use that command right now! Try again in a few seconds."
+   errorInvalidPlayer: "That player is invalid or does not have an island!"
+   islandLevelis: "Island level is"
+
+
+###################
+#/island commands #
+###################
+
+#invite
+invite:
+   help: "Use [/island invite <playername>] to invite a player to your island."
+   youCanInvite: "You can invite [number] more players."
+   youCannotInvite: "You can't invite any more players."
+   onlyIslandOwnerCanInvite: "Only the leader can invite!"
+   youHaveJoinedAnIsland: "You have joined an island! Use /island team to see the other members."
+   hasJoinedYourIsland: "[name] has joined your island!"
+   errorCantJoinIsland: "You couldn't join the island, maybe it's full."
+   errorYouMustHaveIslandToInvite: "You must have an island in order to invite people to it!"
+   errorYouCannotInviteYourself: "You can not invite yourself!"
+   removingInvite: "Removing your previous invite."
+   inviteSentTo: "Invite sent to [name]"
+   nameHasInvitedYou: "[name] has invited you to join their island!"
+   toAcceptOrReject: "to accept or reject the invite."
+   warningYouWillLoseIsland: "WARNING: You will lose your current island if you accept!"
+   errorYourIslandIsFull: "Your island is full, you can't invite anyone else."
+   #"That player is already with a group on an island."
+   errorThatPlayerIsAlreadyInATeam: "That player is already in a team."
+
+#reject
+reject:
+   youHaveRejectedInvitation: "You have rejected the invitation to join an island."
+   nameHasRejectedInvite: "[name] has rejected your island invite!"
+   youHaveNotBeenInvited: "You had not been invited to join a team."
+
+#leave
+leave:
+  errorYouAreTheLeader: "You cannot leave because you are the leader, use /island makeleader <player> to transfer the island first."
+  youHaveLeftTheIsland: "You have left the island and returned to the player spawn."
+  nameHasLeftYourIsland: "[name] has left your island!"
+  errorYouCannotLeaveIsland: "You can't leave your island if you are the only person. Try using /island restart if you want a new one!"
+  errorYouMustBeInWorld: "You must be in the AcidIsland world to leave your team!"
+  errorLeadersCannotLeave: "Leaders cannot leave an island. Make someone else the leader fist using /island makeleader <player>"
+
+#team
+team:
+   listingMembers: "Listing your island members"
+
+
+#kick / remove
+kick:
+  errorPlayerNotInTeam: "That player is not in your team!"
+  nameRemovedYou: "[name] has removed you from their island!"
+  nameRemoved: "[name] has been removed from the island."
+  errorNotPartOfTeam: "That player is not part of your island team!"
+  errorOnlyLeaderCan: "Only the leader can kick people off the island!"
+  errorNoTeam: "You do not have a team!"
+
+#makeleader
+makeleader:
+   errorPlayerMustBeOnline: "That player must be online to transfer the island."
+   errorYouMustBeInTeam: "You must be in a team to transfer your island."
+   errorRemoveAllPlayersFirst: "Remove all players from your team other than the player you are transferring to."
+   youAreNowTheOwner: "You are now the owner of your island."
+   nameIsNowTheOwner: "[name] is now the owner of your island!"
+   errorThatPlayerIsNotInTeam: "That player is not part of your island team!"
+   errorNotYourIsland: "This isn't your island, so you can't give it away!"
+   errorGeneralError: "Could not change leaders."
+
+#minishop
+minishop:
+   title: "&EMiniShop"
+   islandhelpMiniShop: "Opens the MiniShop"
+   buy: "Buy"
+   sell: "Sell"
+
+################################
+#Admin commands that use /acid #
+################################
+
+#Help
+adminHelp:
+   help: "Acid Admin Commands:"
+   #/acid reload:
+   reload: "reload configuration from file."
+   #/acid top ten:
+   topTen: "manually update the top 10 list"
+   #/acid register <player>:
+   register: "set a player's island to your location"
+   #/acid delete <player>:
+   delete: "delete an island (removes blocks)."
+   #/acid completechallenge <challengename> <player>
+   completeChallenge: "marks a challenge as complete"
+   #/acid resetchallenge <challengename> <player>
+   resetChallenge: "marks a challenge as incomplete"
+   #/acid resetallchallenges <player>:
+   resetAllChallenges: "resets all of the player's challenges"
+   #/acid purge [TimeInDays]:
+   purge: "delete inactive islands older than [TimeInDays]."
+   #/acid info <player>:
+   info: "info for the given player."
+   #/acid info
+   infoisland: "provide info on the nearest island."
+   #/acid clear reset
+   clearreset: "resets the island reset limit for player."
+
+#acid reload
+reload:
+   configReloaded: "Configuration reloaded from file."
+#topten
+adminTopTen:
+   generating: "Generating the Top Ten list"
+   finished: "Finished generation of the Top Ten list"
+
+#purge
+purge:
+   #"A purge is already running, please wait for it to finish!"
+   alreadyRunning: "Purge is already running, please wait for it to finish!"
+   usage: "Usage: /acid purge [TimeInDays]"
+   calculating: "Calculating which islands have been inactive for more than [time] days."
+   noneFound: "No inactive islands to remove."
+   thisWillRemove: "This will remove [number] inactive islands!"
+   warning: "DANGER! Do not run this with players on the server! MAKE BACKUP OF WORLD!"
+   typeConfirm: "Type /acid confirm to proceed within 10 seconds"
+   purgeCancelled: "Purge cancelled."
+   finished: "Finished purging of inactive islands."
+   removingName: "Purge: Removing [name]'s island"
+
+#confirm
+confirm:
+   errorTimeLimitExpired: "Time limit expired! Issue command again."
+
+#delete
+delete:
+   removing: "Removing [name]'s island."
+
+#register
+register:
+   settingIsland: "Set [name]'s island to the bedrock nearest you."
+   errorBedrockNotFound: "Bedrock not found: unable to set the island!"
+
+#info
+adminInfo:
+   islandLocation: "Island Location"
+   errorNotPartOfTeam: "That player is not a member of an island team."
+   errorNullTeamLeader: "Team leader should be null!"
+   errorTeamMembersExist: "Player has team members, but shouldn't!"
+
+#resetallchallenges
+resetallchallenges:
+   success: "[name] has had all challenges reset."
+
+#checkteam
+checkteam:
+   checkingTeam: "Checking Team of [name]"
+
+#completechallenge
+completechallenge:
+   errorChallengeDoesNotExist: "Challenge doesn't exist or is already completed"
+   challangeCompleted: "Challange: [challengename] has been completed for [name]"
+
+#resetchallenge
+resetchallenge:
+   errorChallengeDoesNotExist: "Challenge doesn't exist or isn't yet completed"
+   challengeReset: "Challange: [challengename] has been reset for [name]"
+
+#AcidIsland news
+news:
+   headline: "[AcidIsland News] While you were offline..."
+
+#Nether
+nether:
+   spawnisprotected: "The Nether spawn area is protected."
+
+# Ultra safe boats
+boats:
+   warning: "It's unsafe to exit the boat right now..."

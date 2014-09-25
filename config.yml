@@ -1,0 +1,219 @@
+# Config for AcidIsland
+general:
+   # Sea level height (don't changes this mid-game unless you delete the world)
+   # Minimum is 0, which means you are playing sky block!
+   # If you really want to make it sky block, use a sky block schematic and set
+   # acid damage to zero. This mode is NOT supported.
+   # Another interesting sea-level is 38 or so. <40 means slimes can spawn on islands
+   # easily.
+   sealevel: 0
+
+   # Island level - the height of the island.
+   # Height should not be lower than sea level, but can be if you have an
+   # island schematic that supports it
+   # Lowest level is 5
+   islandlevel: 120
+
+   # Name of the AcidIsland world - if it does not exist then it will be generated
+   worldName: ASkyBlock
+
+   #How long a player must wait before they can reset their island again
+   resetwait: 300
+   #How many resets a player is allowed (override with /acid clearreset <player>
+   #Value of -1 means unlimited, 0 means hardcore - no resets.
+   #Example, 2 resets means they get 2 resets or 3 islands lifetime
+   resetlimit: 2
+
+   # Ops receive damage from acid (Set to true if you want Ops to play properly)
+   damageops: false
+
+   # Acid damage to player per second by being in acid if they have no armor on.
+   # A fully health player has 20 health points. Players will regen some health
+   # so the default will give players about 3 seconds to get out the acid
+   # 0 = no damage, 10 = default damage, 20 = instant death
+   aciddamage: 0
+   # Damage that monsters will experience.
+   mobaciddamage: 10
+   # Damage that rain does
+   raindamage: 0
+
+   # Damage type to apply in addition to acid damage
+   # Types can be : SLOW, SLOW_DIGGING, CONFUSION,BLINDNESS, HUNGER, WEAKNESS and POISON
+   # If you just want these to act, then make the acid damage 0 above
+   # Note - these are potion effects and so can be cured by milk
+   damagetype:
+
+   # Removing mobs - this kills all monsters in the vicinity. Benefit is that it helps
+   # players return to their island if the island has been overrun by monsters
+   # Con is that it kills any mob grinders 
+   # Remove mobs when logging in
+   loginremovemobs: true
+
+   # Remove mobs when /island
+   islandremovemobs: false
+
+   # Sets the limit for number of monsters that can spawn in a chunk in this world. 
+   # Note: If set to a negative number the world will use the server-wide spawn limit instead.
+   # Max is 100
+   monsterspawnlimit: 70
+
+   #[integer] Sets the limit for number of animals that can spawn in a chunk in this world. 
+   # Note: If set to a negative number the world will use the server-wide spawn limit instead.
+   # Max is 100
+   animalspawnlimit: 15
+
+   #[integer] Sets the limit for number of water animals [squid] that can spawn in a chunk in this world. 
+   # Note: If set to a negative number the world will use the server-wide spawn limit instead.
+   # Max is 100
+   wateranimalspawnlimit: 15
+
+   #[integer] Island below this level will be removed if they are abandoned and admins issue the purge command
+   abandonedislandlevel: 10
+
+   # Reset Money - if this is true, AcidIsland will reset the player's money to
+   # the starting money (see below) when they start an island or reset
+   resetmoney: true
+
+   # Starting money - this is how much money new players will have as their balance at the start of an island. (Default is zero)
+   startingmoney: 10.00
+
+   # Reset Challenges - if this is true, player's challenges will reset when they
+   # reset an island
+   resetchallenges: true
+
+   # Nether spawn protection radius - this is the distance around the AcidIsland_nether spawn point that will be protected from player interaction (breaking blocks, pouring lava etc.). Minimum is 0 (not recommended), maximum is 100. Default is 25.
+   netherspawnradius: 25
+
+sponge:
+   # Sponge Saturation [true or false]
+   # Add more realism to sponges by making them only
+   # absorb water from an area without blocking
+   # water's flow afterwards.
+   spongeSaturation: false
+
+   # Water Replacement
+   #	Can a player place water near a sponge
+   #	while it is still there?
+   canPlaceWater: false
+
+   # Lava
+   #	Should lava be affected also? Lava will be treated
+   #	exactly like water as chosen in the other settings.
+   absorbLava: false
+
+   # Debug Messages
+   #	This tends to spam your console, so you'd be best
+   #	served leaving this off unless you know what
+   #	you're doing.
+   debug: false
+
+   # Fire
+   #	Should fire be affected too??? It'll get treated
+   #	just like the liquids.
+   absorbFire: false
+
+   # Fire Extinguisher
+   #	This option only works when absorbFire is true.
+   #	With this enabled, sponges will go out of their way
+   #	to put out fires that try to burn any blocks within
+   #	their effective area, adequately preventing the
+   #	eternal burning bush effect.
+   attackFire: false
+
+   # Affected Radius
+   #	Here you can choose how large the area the sponge affects
+   #	will be. It is based on the numbers of blocks away from
+   #	the sponge. For example, setting this to 2 will give you a
+   #	5x5x5 block area. It's recommended that you do not set
+   #	this value to high as the plugin must check every block
+   #	in the set radius.
+   spongeRadius: 2
+
+   # Water Restoration
+   #	After sponges are removed, they can leave ugly cascades
+   #	of water. With this option turned on, sponges will
+   #	expel their water when they are removed, thus allowing
+   #	the water to be restored.
+   restoreWater: true
+
+   # Water Flowtime Multiplier
+   #	This relates to the Water Restoration feature.
+   #	It multiplies by the spongeRadius in order to calculate
+   #	the amount of time water should be given to flow back.
+   #	Radius * Multiplier :FlowTime (in Milliseconds)
+   #	Ex: 2 x 600 :1200 milliseconds for water to restore itself.
+   #	You only need to change it if your server is really slow.
+   flowTimeMult: 600
+
+   # Piston Effect
+   #	Can pistons move sponges?
+   pistonMove: true
+
+island:
+   # Space between islands in blocks
+   distance: 110
+
+   # The size of the protective region for each island. Must be less than distance
+   protectionRange: 100
+
+   # Max team size
+   maxteamsize: 4
+   # VIP team size - set by permission askyblock.team.vip
+   vipteamsize: 8
+   # VIP2 team size - set by permission askyblock.team.vip2
+   vip2teamsize: 12
+
+   # Items that will be in the chest when the player starts an island
+   # Must be in Bukkit Materials format. Format is <Material>:<Qty>
+   # or <Material>:<Damage>:<Qty>
+   # Use <Damage> to set the durability of a item or to select sub-items/colors.
+   # Format for POTION is POTION:<effect>:<qty> or POTION:<effect>:<type>:<qty>
+   # <type> is EXTENDED, SPLASH or EXTENDEDSPLASH. Not all potions can be extended.
+   # Check console for errors and guidance after typing /acid reload
+   chestItems: 'ICE:2 MELON:1 TORCH:2 BONE:1 LAVA_BUCKET:1 PUMPKIN_SEEDS:1 SUGAR_CANE:1 RED_MUSHROOM:1 BROWN_MUSHROOM:1 CACTUS:1 BREAD:1 WHEAT:1 LEATHER_BOOTS:1 LEATHER_HELMET:1 LEATHER_CHESTPLATE:1 LEATHER_LEGGINGS:1'
+   # Island Protection Settings
+   #PVP is allowed or denied. (Values = allow or deny)
+   allowPvP: deny
+   # Other players can break blocks or not or generally damage things
+   allowbreakblocks: false
+   # Other players can place blocks
+   allowplaceblocks: false
+   # Allow players to be able to sleep in beds not on their island
+   allowbeduse: false
+   # Allow players to use buckets, either fill or dump them
+   allowbucketuse: false
+   # Allow players to shear sheep
+   allowshearing: false
+   # Allow players to throw enderpearls and teleport
+   allowenderpearls: false
+   # Allow players to use doors or trapdoors. If a door is operated by a button or redstone, this does not count
+   allowdooruse: false
+   # Allow players to use levers or buttons
+   allowleverbuttonuse: false
+   # Allow players to trample crops
+   allowcroptrample: false
+   # Allow players to access chests of any kind, droppers, dispensers and hoppers
+   allowchestaccess: false
+   # Allow players to access furnaces
+   allowfurnaceuse: false
+   # Allow players to adjust diodes or comparators
+   allowredstone: false
+   # Allow players to use jukeboxes, eject discs and hit note blocks
+   allowmusic: false
+   # Allow players to use crafting benches
+   allowcrafting: true
+   # Allow players to use cauldrons and brewing stands
+   allowbrewing: false
+   # Allow gates to be used
+   allowgateuse: false
+   # Allow friendly mobs to be hurt (cows etc.)
+   allowhurtmobs: true
+   # Allow Enderman Griefing (default is to allow, see next setting)
+   allowendermangriefing: true
+   # Make enderman drop the block he is holding if he dies (recommended)
+   endermandeathdrop: true
+   # Allow creeper explosion damage to block (explosion still hurts)
+   allowcreeperdamage: true
+   # Allow TNT damage to blocks (stops players using TNT to destroy other's islands)
+   allowtntdamage: false
+   

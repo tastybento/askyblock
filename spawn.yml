@@ -1,0 +1,13 @@
+# This file controls what is an is not allowed at spawn
+spawn:
+  allowdooruse: true
+  allowleverbuttonuse: true
+  allowchestaccess: true
+  allowfurnaceuse: true
+  allowredstone: false
+  allowmusic: true
+  allowcrafting: true
+  allowbrewing: true
+  allowgateuse: true
+  allowmobspawn: false
+  allowspawnnoacidwater: false
