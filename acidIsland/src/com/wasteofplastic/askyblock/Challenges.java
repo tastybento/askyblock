@@ -838,7 +838,7 @@ public class Challenges implements CommandExecutor {
 		    String description = ChatColor.GREEN
 			    + plugin.getChallengeConfig().getString("challenges.challengeList." + challengeName + ".friendlyname",
 				    challengeName.substring(0, 1).toUpperCase() + challengeName.substring(1));
-		    CPItem item = new CPItem(icon, description, "aichallenge c " + challengeName, null);
+		    CPItem item = new CPItem(icon, description, "asc c " + challengeName, null);
 		    List<String> lore = challengeDescription(challengeName, player);
 		    item.setLore(lore);
 		    cp.add(item);
