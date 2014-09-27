@@ -282,7 +282,7 @@ public class ASkyBlock extends JavaPlugin {
      * @return Location of a safe teleport spot
      */
     public Location getSafeHomeLocation(final UUID p) {
-	getLogger().info("DEBUG: getSafeHomeLocation called for " + p.toString());
+	//getLogger().info("DEBUG: getSafeHomeLocation called for " + p.toString());
 	// Try home location first
 	Location l = players.getHomeLocation(p);
 	//getLogger().info("DEBUG: Home location " + l.toString());
@@ -291,7 +291,7 @@ public class ASkyBlock extends JavaPlugin {
 		return l;
 	    }    
 	} 
-	getLogger().info("DEBUG: Home location either isn't safe, or does not exist so try the island");
+	//getLogger().info("DEBUG: Home location either isn't safe, or does not exist so try the island");
 	// Home location either isn't safe, or does not exist so try the island
 	// location
 	if (players.inTeam(p)) {
@@ -317,7 +317,7 @@ public class ASkyBlock extends JavaPlugin {
 	    getLogger().warning(players.getName(p) + " player has no island!");
 	    return null;
 	}
-	getLogger().info("DEBUG: If these island locations are not safe, then we need to get creative");
+	//getLogger().info("DEBUG: If these island locations are not safe, then we need to get creative");
 	// If these island locations are not safe, then we need to get creative
 	// Try the default location
 	Location dl = new Location(l.getWorld(), l.getX() + 0.5D, l.getY() + 5D, l.getZ() + 2.5D, 0F, 30F);
@@ -511,7 +511,7 @@ public class ASkyBlock extends JavaPlugin {
     }
 
     /**
-     * Loads a YAML file
+     * Loads a YAML file and if it does not exist it is looked for in the JAR
      * 
      * @param file
      * @return
@@ -959,6 +959,40 @@ public class ASkyBlock extends JavaPlugin {
 	    Settings.waiverAmount = 0;
 	}
 
+	// Levels
+	// Get the blockvalues.yml file
+	YamlConfiguration blockValuesConfig = ASkyBlock.loadYamlFile("blockvalues.yml");
+	Settings.blockLimits = new HashMap<Material,Integer>();
+	if (blockValuesConfig.isSet("limits")) {
+	    for (String material : blockValuesConfig.getConfigurationSection("limits").getKeys(false)) {
+		try {
+		    Material mat = Material.valueOf(material);
+		    Settings.blockLimits.put(mat, blockValuesConfig.getInt("limits." + material,0));
+		    if (debug) {
+			getLogger().info("Maximum number of " + mat.toString() + " will be " + Settings.blockLimits.get(mat));
+		    }
+		} catch (Exception e) {
+		    getLogger().warning("Unknown material ("+material +") in blockvalues.yml Limits section. Skipping...");
+		}
+	    }
+	}
+	Settings.blockValues = new HashMap<Material,Integer>();
+	if (blockValuesConfig.isSet("blocks")) {
+	    for (String material : blockValuesConfig.getConfigurationSection("blocks").getKeys(false)) {
+		try {
+		    Material mat = Material.valueOf(material);
+		    Settings.blockValues.put(mat, blockValuesConfig.getInt("blocks." + material,0));
+		    if (debug) {
+			getLogger().info(mat.toString() + " value is " + Settings.blockValues.get(mat));
+		    }
+		} catch (Exception e) {
+		    //e.printStackTrace();
+		    getLogger().warning("Unknown material ("+ material + ") in blockvalues.yml blocks section. Skipping...");
+		}
+	    }
+	} else {
+	    getLogger().severe("No block values in blockvalues.yml! All island levels will be zero!");
+	}
 
 
 	// Localization

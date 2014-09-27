@@ -45,6 +45,7 @@ import org.bukkit.block.Sign;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -457,6 +458,7 @@ public class IslandCmd implements CommandExecutor {
 	    busyFlag = true;
 	    return false;
 	}
+
 	plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
 	    public void run() {
 		plugin.getLogger().info("Calculating island level");
@@ -469,8 +471,13 @@ public class IslandCmd implements CommandExecutor {
 			l = plugin.getPlayers().getIslandLocation(targetPlayer);
 		    }
 		    int blockcount = 0;
+		    // Copy the limits hashmap
+		    HashMap<Material,Integer> limitCount = new HashMap<Material, Integer>();
+		    for (Material m : Settings.blockLimits.keySet()) {
+			limitCount.put(m, Settings.blockLimits.get(m));
+			//plugin.getLogger().info("DEBUG:" + m.toString() + " x " + Settings.blockLimits.get(m));
+		    }
 		    if (asker.getUniqueId().equals(targetPlayer) || asker.isOp()) {
-			int cobblecount = 0;
 			final int px = l.getBlockX();
 			final int py = l.getBlockY();
 			final int pz = l.getBlockZ();
@@ -479,153 +486,18 @@ public class IslandCmd implements CommandExecutor {
 				for (int z = -(Settings.island_protectionRange / 2); z <= (Settings.island_protectionRange / 2); z++) {
 				    final Block b = new Location(l.getWorld(), px + x, py + y, pz + z).getBlock();
 				    final Material blockType = b.getType();
-				    switch (blockType) {
-				    // Cobblestone
-				    case COBBLESTONE:
-					cobblecount++;
-					if (cobblecount < 10000) {
-					    blockcount++;
+				    // Total up the values
+				    if (Settings.blockValues.containsKey(blockType)) {
+					if (limitCount.containsKey(blockType)) {
+					    int count = limitCount.get(blockType);
+					    //plugin.getLogger().info("DEBUG: Count for " + blockType + " is " + count);
+					    if (count > 0) {
+						limitCount.put(blockType, --count);
+						blockcount += Settings.blockValues.get(blockType);
+					    } 
+					} else {
+					    blockcount += Settings.blockValues.get(blockType);
 					}
-					// 1 value
-				    case ACACIA_STAIRS:
-				    case BIRCH_WOOD_STAIRS:
-				    case BED_BLOCK:
-				    case WOOL:
-				    case CARPET:
-				    case COBBLESTONE_STAIRS:
-				    case COBBLE_WALL:
-				    case DARK_OAK_STAIRS:
-				    case DOUBLE_STEP:
-				    case FENCE:
-				    case FENCE_GATE:
-				    case GLOWSTONE:
-				    case GRAVEL:
-				    case HUGE_MUSHROOM_1:
-				    case HUGE_MUSHROOM_2:
-				    case JACK_O_LANTERN:
-				    case JUNGLE_WOOD_STAIRS:
-				    case LADDER:
-				    case LEVER:
-				    case LOG:
-				    case LOG_2:
-				    case NETHERRACK:
-				    case QUARTZ_BLOCK:
-				    case QUARTZ_STAIRS:
-				    case RAILS:
-				    case SAND:
-				    case SANDSTONE:
-				    case SANDSTONE_STAIRS:
-				    case SIGN_POST:
-				    case STAINED_GLASS_PANE:
-				    case SPRUCE_WOOD_STAIRS:
-				    case STEP:
-				    case STONE:
-				    case STONE_BUTTON:
-				    case THIN_GLASS:
-				    case WALL_SIGN:
-				    case WOOD:
-				    case WOODEN_DOOR:
-				    case WOOD_BUTTON:
-				    case WOOD_DOUBLE_STEP:
-				    case WOOD_PLATE:
-				    case WOOD_STAIRS:
-				    case WOOD_STEP:
-				    case WORKBENCH:
-					blockcount++;
-					break;
-					// 2 Value
-				    case BOAT:
-				    case CHEST:
-				    case CLAY:
-				    case DIRT:
-				    case ENDER_STONE:
-				    case GLASS:
-				    case HARD_CLAY:
-				    case HAY_BLOCK:
-				    case ITEM_FRAME:
-				    case MOSSY_COBBLESTONE:
-				    case NETHER_BRICK:
-				    case NETHER_BRICK_STAIRS:
-				    case NETHER_FENCE:
-				    case PAINTING:
-				    case PISTON_BASE:
-				    case PISTON_STICKY_BASE:
-				    case SMOOTH_BRICK:
-				    case SMOOTH_STAIRS:
-				    case SOIL:
-				    case SOUL_SAND:
-				    case STAINED_CLAY:
-				    case STAINED_GLASS:
-				    case STONE_PLATE:
-					blockcount += 2;
-					// 5 Value
-				    case BOOKSHELF:
-				    case BRICK_STAIRS:
-				    case BRICK:
-				    case DIODE:
-				    case DIODE_BLOCK_OFF:
-				    case DIODE_BLOCK_ON:
-				    case DISPENSER:
-				    case DROPPER:
-				    case FLOWER_POT:
-				    case GRASS:
-				    case ICE:
-				    case IRON_DOOR_BLOCK:
-				    case IRON_FENCE:
-				    case IRON_PLATE:
-				    case MYCEL:
-				    case PACKED_ICE:
-				    case TNT:
-				    case TRAP_DOOR:
-					blockcount += 5;
-					break;
-					// 10 value
-				    case BURNING_FURNACE:
-				    case ACTIVATOR_RAIL:
-				    case ANVIL:
-				    case CAULDRON:
-				    case DAYLIGHT_DETECTOR:
-				    case DETECTOR_RAIL:
-				    case EXPLOSIVE_MINECART:
-				    case FURNACE:
-				    case HOPPER:
-				    case IRON_BLOCK:
-				    case JUKEBOX:
-				    case LAPIS_BLOCK:
-				    case MINECART:
-				    case NOTE_BLOCK:
-				    case OBSIDIAN:
-				    case POWERED_MINECART:
-				    case POWERED_RAIL:
-				    case REDSTONE_BLOCK:
-				    case SPONGE:
-				    case STORAGE_MINECART:
-				    case TRAPPED_CHEST:
-					blockcount += 10;
-					break;
-					// 20 value
-				    case BREWING_STAND:
-				    case HOPPER_MINECART:
-					blockcount += 20;
-					break;
-					// 100 value
-				    case BEACON:
-					blockcount += 100;
-					break;
-					// 150 value
-				    case DRAGON_EGG:
-				    case EMERALD_BLOCK:
-				    case ENDER_CHEST:
-				    case GOLD_BLOCK:
-				    case ENCHANTMENT_TABLE:
-					blockcount += 150;
-					break;
-					// 300 value
-				    case DIAMOND_BLOCK:
-					blockcount += 300;
-					break;
-				    default:
-					break;
 				    }
 				}
 			    }
@@ -942,8 +814,8 @@ public class IslandCmd implements CommandExecutor {
 		return true;
 	    } else if (split[0].equalsIgnoreCase("spawn") && plugin.getSpawn().getSpawnLoc() != null) {
 		// go to spawn
-		plugin.getLogger().info("Debug: getSpawn" + plugin.getSpawn().toString() );
-		plugin.getLogger().info("Debug: getSpawn loc" + plugin.getSpawn().getSpawnLoc().toString() );
+		//plugin.getLogger().info("Debug: getSpawn" + plugin.getSpawn().toString() );
+		//plugin.getLogger().info("Debug: getSpawn loc" + plugin.getSpawn().getSpawnLoc().toString() );
 		player.teleport(plugin.getSpawn().getSpawnLoc());
 		return true;
 	    } else if (split[0].equalsIgnoreCase("top")) {
