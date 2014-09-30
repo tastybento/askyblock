@@ -739,6 +739,22 @@ public class ASkyBlock extends JavaPlugin {
 	    Settings.islandDistance = 50;
 	    getLogger().info("Setting minimum island distance to 50");
 	}
+	Settings.islandXOffset = getConfig().getInt("island.xoffset", 0);
+	if (Settings.islandXOffset < 0) {
+	    Settings.islandXOffset = 0;
+	    getLogger().info("Setting minimum island X Offset to 0");
+	} else if (Settings.islandXOffset > Settings.islandDistance) {
+	    Settings.islandXOffset = Settings.islandDistance;
+	    getLogger().info("Setting maximum island X Offset to " + Settings.islandDistance);	    
+	}
+	Settings.islandZOffset = getConfig().getInt("island.zoffset", 0);
+	if (Settings.islandZOffset < 0) {
+	    Settings.islandZOffset = 0;
+	    getLogger().info("Setting minimum island Z Offset to 0");
+	} else if (Settings.islandZOffset > Settings.islandDistance) {
+	    Settings.islandZOffset = Settings.islandDistance;
+	    getLogger().info("Setting maximum island Z Offset to " + Settings.islandDistance);	    
+	}
 	Settings.acidDamage = getConfig().getDouble("general.aciddamage", 5D);
 	if (Settings.acidDamage > 100D) {
 	    Settings.acidDamage = 100D;

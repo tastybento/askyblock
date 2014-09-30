@@ -163,7 +163,7 @@ public class IslandCmd implements CommandExecutor {
 	//final Players p = plugin.getPlayers().get(player.getName());
 	// Island building is done in tasks
 	// Get the location of the last island generated
-	final Location last = new Location(ASkyBlock.getIslandWorld(), 0D, Settings.island_level, 0D);
+	final Location last = new Location(ASkyBlock.getIslandWorld(), Settings.islandXOffset, Settings.island_level, Settings.islandZOffset);
 	// Find the next free spot
 	Location next;
 	next = nextGridLocation(last);

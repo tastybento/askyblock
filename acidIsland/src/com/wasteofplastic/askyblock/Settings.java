@@ -67,6 +67,8 @@ public class Settings {
     
     public static ItemStack[] chestItems;
     public static int islandDistance;
+    public static int islandXOffset;
+    public static int islandZOffset;
     public static int sea_level;
     public static int island_protectionRange;
     public static int abandonedIslandLevel;

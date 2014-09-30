@@ -156,6 +156,12 @@ island:
    # The size of the protective region for each island. Must be less than distance
    protectionRange: 100
 
+   # Coordinate offset - never change this mid-game and there is no
+   # need to set this. It is for compatibility with IslandWorld maps and set by
+   # BlockConverter.
+   xoffset: 0
+   zoffset: 0
+
    # Max team size
    maxteamsize: 4
    # VIP team size - set by permission askyblock.team.vip
