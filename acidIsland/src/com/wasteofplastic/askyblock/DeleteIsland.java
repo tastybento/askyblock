@@ -75,7 +75,11 @@ public class DeleteIsland extends BukkitRunnable {
     private int checkVersion() throws ClassNotFoundException, IllegalArgumentException,
     SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException,
     NoSuchMethodException {
-	int slice = 255;
+	// Calculate how many slices we should take without killing the server
+	int slice = (int)Math.floor(255D * ((double)10000/(Settings.islandDistance*Settings.islandDistance)));
+	if (slice < 10) {
+	    slice = 10;
+	}
 	String serverPackageName = plugin.getServer().getClass().getPackage().getName();
 	String pluginPackageName = plugin.getClass().getPackage().getName();
 	String version = serverPackageName.substring(serverPackageName.lastIndexOf('.') + 1);
@@ -86,10 +90,14 @@ public class DeleteIsland extends BukkitRunnable {
 	} catch (Exception e) {
 	    plugin.getLogger().info("No NMS Handler found, falling back to slow island delete.");
 	    clazz = Class.forName(pluginPackageName + ".fallback.NMSHandler");
-	    slice = 51;
+	    slice = (int)Math.floor(51D * ((double)10000/(Settings.islandDistance*Settings.islandDistance)));
+	    if (slice < 10) {
+		slice = 10;
+	    }
 	}
-	//plugin.getLogger().info(serverPackageName);
-	//plugin.getLogger().info(pluginPackageName);
+	//plugin.getLogger().info("Slice is = " + slice);
+	plugin.getLogger().info(serverPackageName);
+	plugin.getLogger().info(pluginPackageName);
 	// Check if we have a NMSAbstraction implementing class at that location.
 	if (NMSAbstraction.class.isAssignableFrom(clazz)) {
 	    nms = (NMSAbstraction) clazz.getConstructor().newInstance();
@@ -142,6 +150,11 @@ public class DeleteIsland extends BukkitRunnable {
 			chunks.add(chunkCoords);
 		    }
 		    final Material bt = b.getType();
+		    Material setTo = Material.AIR;
+		    // Split depending on below or above water line
+		    if (y < Settings.sea_level) {
+			setTo = Material.STATIONARY_WATER;
+		    }
 		    // Grab anything out of containers (do that it is
 		    // destroyed)
 		    switch (bt) {
@@ -152,46 +165,44 @@ public class DeleteIsland extends BukkitRunnable {
 			final Chest c = (Chest) b.getState();
 			final ItemStack[] items = new ItemStack[c.getInventory().getContents().length];
 			c.getInventory().setContents(items);
-			b.setType(Material.AIR);
+			b.setType(setTo);
 			break;
 		    case FURNACE:
 			final Furnace f = (Furnace) b.getState();
 			final ItemStack[] i2 = new ItemStack[f.getInventory().getContents().length];
 			f.getInventory().setContents(i2);
-			b.setType(Material.AIR);
+			b.setType(setTo);
 			break;
 		    case DISPENSER:
 			final Dispenser d = (Dispenser) b.getState();
 			final ItemStack[] i3 = new ItemStack[d.getInventory().getContents().length];
 			d.getInventory().setContents(i3);
-			b.setType(Material.AIR);
+			b.setType(setTo);
 			break;
 		    case HOPPER:
 			final Hopper h = (Hopper) b.getState();
 			final ItemStack[] i4 = new ItemStack[h.getInventory().getContents().length];
 			h.getInventory().setContents(i4);
-			b.setType(Material.AIR);
+			b.setType(setTo);
 			break;
 		    case SIGN_POST:
 		    case WALL_SIGN:
 		    case SIGN:
 			//getLogger().info("DEBUG: Sign");
-			b.setType(Material.AIR);
+			b.setType(setTo);
 			break;
+		    case AIR:	
+			if (setTo.equals(Material.STATIONARY_WATER)) {
+			    nms.setBlockSuperFast(b, setTo);
+			}
+		    case STATIONARY_WATER:
+			if (setTo.equals(Material.AIR)) {
+			    nms.setBlockSuperFast(b, setTo);
+			}
 		    default:
+			nms.setBlockSuperFast(b, setTo);
 			break;
 		    }
-		    // Split depending on below or above water line
-		    if (y < Settings.sea_level) {
-			if (!bt.equals(Material.STATIONARY_WATER))
-			    nms.setBlockSuperFast(b, Material.STATIONARY_WATER);
-			//b.setType(Material.STATIONARY_WATER);
-		    } else {
-			if (!bt.equals(Material.AIR))
-			    nms.setBlockSuperFast(b, Material.AIR);
-			//b.setType(Material.AIR);
-		    }
-
 		}
 	    }
 	}	    

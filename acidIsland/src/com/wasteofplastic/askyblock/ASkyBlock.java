@@ -322,8 +322,16 @@ public class ASkyBlock extends JavaPlugin {
 	// Try the default location
 	Location dl = new Location(l.getWorld(), l.getX() + 0.5D, l.getY() + 5D, l.getZ() + 2.5D, 0F, 30F);
 	if (isSafeLocation(dl)) {
+	    players.setHomeLocation(p, dl);
 	    return dl;
 	}
+	// Try just above the bedrock
+	dl = new Location(l.getWorld(), l.getX(), l.getY() + 5D, l.getZ(), 0F, 30F);
+	if (isSafeLocation(dl)) {
+	    players.setHomeLocation(p, dl);
+	    return dl;
+	}
+
 	// Try higher up - 25 blocks high and then move down
 	for (int y = l.getBlockY() + 25; y > 0; y--) {
 	    final Location n = new Location(l.getWorld(), l.getBlockX(), y, l.getBlockZ());
@@ -336,6 +344,21 @@ public class ASkyBlock extends JavaPlugin {
 	    final Location n = new Location(l.getWorld(), l.getBlockX(), y, l.getBlockZ());
 	    if (isSafeLocation(n)) {
 		return n;
+	    }
+	}
+	// Try anywhere in the island area
+	// Start from up above and work down
+	for (int y = l.getWorld().getMaxHeight(); y>0; y--) {
+	    for (int x = l.getBlockX() - Settings.islandDistance/2; x < l.getBlockX() + Settings.islandDistance/2; x++) {
+		for (int z = l.getBlockZ() - Settings.islandDistance/2; z < l.getBlockZ() + Settings.islandDistance/2; z++) {
+		    Location ultimate = new Location(l.getWorld(),x,y,z);
+		    if (!ultimate.getBlock().equals(Material.AIR)) {
+			if (isSafeLocation(ultimate)) {
+			    players.setHomeLocation(p, ultimate);
+			    return ultimate;
+			}
+		    }
+		}
 	    }
 	}
 	// Nothing worked

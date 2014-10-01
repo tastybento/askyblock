@@ -18,7 +18,6 @@ package com.wasteofplastic.askyblock;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Calendar;
@@ -45,7 +44,6 @@ import org.bukkit.block.Sign;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -755,6 +753,7 @@ public class IslandCmd implements CommandExecutor {
 		    plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable () {
 			@Override
 			public void run() {
+			    //plugin.homeTeleport(player);
 			    player.getWorld().spawnEntity(cowSpot, EntityType.COW);
 
 			}
@@ -765,7 +764,7 @@ public class IslandCmd implements CommandExecutor {
 		    if (oldIsland != null) {
 			plugin.removeIsland(oldIsland);
 			DeleteIsland deleteIsland = new DeleteIsland(plugin,oldIsland);
-			deleteIsland.runTaskTimer(plugin, 40L, 40L);
+			deleteIsland.runTaskTimer(plugin, 80L, 40L);
 		    }
 		    plugin.restartEvents();
 		} else {

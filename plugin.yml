@@ -14,7 +14,7 @@ commands:
     asadmin:
         description: Admin commands
         usage:  |
-            /acid
+            /asadmin
     asc:
         description: Game challenges
         aliases: [c, challenge, aschallenge]
