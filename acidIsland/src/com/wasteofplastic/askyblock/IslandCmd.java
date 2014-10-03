@@ -689,7 +689,7 @@ public class IslandCmd implements CommandExecutor {
 		// Check this player has an island
 		if (!plugin.getPlayers().hasIsland(playerUUID)) {
 		    // No so just start and island
-		    player.performCommand("ai");
+		    player.performCommand("as");
 		    return true;
 		}
 		if (plugin.getPlayers().inTeam(playerUUID)) {
