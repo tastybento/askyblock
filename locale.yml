@@ -340,3 +340,13 @@ nether:
 # Ultra safe boats
 boats:
    warning: "It's unsafe to exit the boat right now..."
+
+#Starter sign
+# [player] is replaced with the player's name
+# ChatColors can be used with &
+sign:
+   line1: "&1[A Skyblock]"
+   line2: "[player]"
+   line3: "Do not fall!"
+   line4: "Beware!"
+

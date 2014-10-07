@@ -1260,6 +1260,10 @@ public class ASkyBlock extends JavaPlugin {
 	Locale.resetYouHave = locale.getString("island.resetYouHave","You have [number] resets left.");
 	Locale.islandResetNoMore = locale.getString("island.resetNoMore", "No more resets are allowed for your island!");
 	Locale.clearedResetLimit = locale.getString("resetTo", "Cleared reset limit");
+	Locale.signLine1 = locale.getString("sign.line1", "&1[A Skyblock]");
+	Locale.signLine2 = locale.getString("sign.line2", "[player]");
+	Locale.signLine3 = locale.getString("sign.line3", "Do not fall!");
+	Locale.signLine4 = locale.getString("sign.line4", "Beware!");
     }
 
     /*
