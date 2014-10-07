@@ -1,6 +1,6 @@
 name: ASkyBlock
 main: com.wasteofplastic.askyblock.ASkyBlock
-version: 1.7
+version: 1.8
 description: A Sky Block Plugin
 author: Tastybento
 depend: [Vault]
@@ -111,6 +111,6 @@ permissions:
           askyblock.admin.noburn:
             description: Gives admin immunity to acid
             default: false
-          askyblock.admin.spawn:
+          askyblock.admin.setspawn:
             description: Allows use of spawn tools
             default: op

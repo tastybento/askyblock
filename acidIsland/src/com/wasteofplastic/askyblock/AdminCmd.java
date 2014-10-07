@@ -123,7 +123,7 @@ public class AdminCmd implements CommandExecutor {
 		// Admin : reload, register, delete and purge
 		if (split[0].equalsIgnoreCase("reload") || split[0].equalsIgnoreCase("register")
 			|| split[0].equalsIgnoreCase("delete") || split[0].equalsIgnoreCase("purge")
-			|| split[0].equalsIgnoreCase("confirm")) {
+			|| split[0].equalsIgnoreCase("confirm") || split[0].equalsIgnoreCase("setspawn")) {
 		    if (!checkAdminPerms(player, split)) {
 			player.sendMessage(ChatColor.RED + Locale.errorNoPermission);
 			return true;
@@ -172,6 +172,9 @@ public class AdminCmd implements CommandExecutor {
 			}
 		    }
 		}
+		
+		// TODO: find closest island locus and check file syste,
+		
 		if (closestBedRock == null) {
 		    sender.sendMessage(ChatColor.RED + "Sorry, could not find an island. Move closer?");
 		    return true;
@@ -526,6 +529,11 @@ public class AdminCmd implements CommandExecutor {
 	}
     }
 
+    /**
+     * TODO: check file system
+     * @param location
+     * @return
+     */
     private Location getClosestIsland(Location location) {
 	Location closestBedRock = null;
 	double distance = 0;
@@ -640,6 +648,7 @@ public class AdminCmd implements CommandExecutor {
      * @return - true if successful, false if not
      */
     public boolean adminSetPlayerIsland(final CommandSender sender, final Location l, final UUID player) {
+	// TODO switch to file system
 	// If the player is not online
 	final int px = l.getBlockX();
 	final int py = l.getBlockY();
