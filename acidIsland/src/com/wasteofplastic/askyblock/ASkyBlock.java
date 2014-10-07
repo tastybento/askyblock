@@ -102,7 +102,7 @@ public class ASkyBlock extends JavaPlugin {
     private Listener lavaListener;
     // Spawn object
     Spawn spawn;
-    
+
     /**
      * A database of where the sponges are stored a serialized location and
      * integer
@@ -1250,6 +1250,11 @@ public class ASkyBlock extends JavaPlugin {
 	Locale.islandMiniShopTitle = locale.getString("minishop.title","MiniShop" );
 	Locale.minishopBuy = locale.getString("minishop.buy","Buy");
 	Locale.minishopSell = locale.getString("minishop.sell","Sell");
+	Locale.minishopYouBought = locale.getString("minishop.youbought", "You bought [number] [description] for [price]");
+	Locale.minishopSellProblem = locale.getString("minishop.sellproblem", "You do not have enough of that item to sell it.");
+	Locale.minishopYouSold = locale.getString("minishop.yousold","You sold [number] [description] for [price]");
+	Locale.minishopBuyProblem  = locale.getString("minishop.buyproblem", "There was a problem purchasing that item");
+	Locale.minishopYouCannotAfford = locale.getString("minishop.youcannotafford", "You cannot afford that item!");
 	Locale.boatWarningItIsUnsafe = locale.getString("boats.warning", "It's unsafe to exit the boat right now...");
 	Locale.adminHelpclearReset = locale.getString("general.clearreset", "resets the island reset limit for player.");
 	Locale.resetYouHave = locale.getString("island.resetYouHave","You have [number] resets left.");

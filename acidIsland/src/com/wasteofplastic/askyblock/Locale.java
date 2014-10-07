@@ -310,6 +310,12 @@ public class Locale {
     public static String boatWarningItIsUnsafe;
     public static String clearedResetLimit;
     
+    public static String minishopYouBought;
+    public static String minishopSellProblem;
+    public static String minishopYouSold;
+    public static String minishopBuyProblem;
+    public static String minishopYouCannotAfford;
+    
 
     
 

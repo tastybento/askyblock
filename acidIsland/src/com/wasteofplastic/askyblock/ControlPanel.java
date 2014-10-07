@@ -259,14 +259,19 @@ public class ControlPanel implements Listener {
 		    if (event.getClick().equals(ClickType.LEFT)) {
 			// Check they can afford it
 			if (!VaultHelper.econ.has(player, player.getWorld().getName(), item.getPrice())) {
-			    message = "You cannot afford that item!";
+			    //message = "You cannot afford that item!";
+			    message = Locale.minishopYouCannotAfford;
 			} else {
 			    EconomyResponse r = VaultHelper.econ.withdrawPlayer(player, player.getWorld().getName(), item.getPrice());
 			    if (r.transactionSuccess()) {
-				message = "You bought " + item.getQuantity() + " " + item.getDescription() + " for " + VaultHelper.econ.format(item.getPrice());			
+				//message = "You bought " + item.getQuantity() + " " + item.getDescription() + " for " + VaultHelper.econ.format(item.getPrice());			
+				message = Locale.minishopYouBought.replace("[number]", Integer.toString(item.getQuantity()));
+				message = message.replace("[description]", item.getDescription());
+				message = message.replace("[price]", VaultHelper.econ.format(item.getPrice()));
 				player.getInventory().addItem(item.getItemClean());
 			    } else {
-				message = "There was a problem puchasing that item: " + r.errorMessage;
+				//message = "There was a problem puchasing that item: " + r.errorMessage;
+				message = Locale.minishopBuyProblem;
 			    }
 			}
 		    } else if (event.getClick().equals(ClickType.RIGHT) && allowSelling && item.getSellPrice()>0D) {
@@ -274,9 +279,13 @@ public class ControlPanel implements Listener {
 			if (player.getInventory().containsAtLeast(item.getItemClean(),item.getQuantity())) {
 			    player.getInventory().removeItem(item.getItemClean());
 			    VaultHelper.econ.depositPlayer(player, item.getSellPrice());
-			    message = "You sold " + item.getQuantity() + " " + item.getDescription() + " for " + VaultHelper.econ.format(item.getSellPrice());			
+			    //message = "You sold " + item.getQuantity() + " " + item.getDescription() + " for " + VaultHelper.econ.format(item.getSellPrice());
+			    message = Locale.minishopYouSold.replace("[number]", Integer.toString(item.getQuantity()));
+			    message = message.replace("[description]", item.getDescription());
+			    message = message.replace("[price]", VaultHelper.econ.format(item.getSellPrice()));
 			} else {
-			    message = "You do not have enough of that item to sell it.";
+			    //message = "You do not have enough of that item to sell it.";
+			    message = Locale.minishopSellProblem;
 			}
 		    }
 		    player.closeInventory(); // Closes the inventory
@@ -290,6 +299,6 @@ public class ControlPanel implements Listener {
      * @return the defaultPanelName
      */
     public static String getDefaultPanelName() {
-        return defaultPanelName;
+	return defaultPanelName;
     }
 }

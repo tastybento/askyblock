@@ -233,6 +233,11 @@ minishop:
    islandhelpMiniShop: "Opens the MiniShop"
    buy: "Buy"
    sell: "Sell"
+   youcannotafford: "You cannot afford that item!"
+   youbought: "You bought [number] [description] for [price]"
+   yousold: "You sold [number] [description] for [price]"
+   buyproblem: "There was a problem purchasing that item"
+   sellproblem: "You do not have enough of that item to sell it."
 
 ################################
 #Admin commands that use /acid #
