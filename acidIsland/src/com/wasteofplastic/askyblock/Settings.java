@@ -112,6 +112,9 @@ public class Settings {
     // Levels
     public static HashMap<Material,Integer> blockLimits;
     public static HashMap<Material,Integer> blockValues;
+    
+    // New island queue size
+    public static int freeIslandQueueSize;
 
     
    

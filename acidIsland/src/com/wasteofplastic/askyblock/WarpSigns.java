@@ -20,17 +20,13 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.SignChangeEvent;
-import org.bukkit.material.Attachable;
-import org.bukkit.material.MaterialData;
 
 /**
  * Handles warping in ASkyBlock Players can add one sign
@@ -44,16 +40,19 @@ public class WarpSigns implements Listener {
     public WarpSigns(ASkyBlock aSkyBlock) {
 	plugin = aSkyBlock;
     }
-
+    /*
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
     public void onSignPopped(BlockPhysicsEvent e) {
-	// Block b = e.getBlock().getRelative(BlockFace.UP);
 	Block b = e.getBlock();
-	if (!(b.getState() instanceof Sign)) {
-	    return;
-	}
 	if (!(b.getWorld()).getName().equals(Settings.worldName)) {
 	    // Wrong world
+	    return;
+	}
+	if (!plugin.checkWarp(b.getLocation())) {
+	    return;
+	}
+	// Block b = e.getBlock().getRelative(BlockFace.UP);	
+	if (!(b.getState() instanceof Sign)) {
 	    return;
 	}
 	if (!plugin.checkWarp(b.getLocation())) {
@@ -72,19 +71,12 @@ public class WarpSigns implements Listener {
 	if (b.getRelative(face).getType().isSolid()) {
 	    //plugin.getLogger().info("Attached to some solid block");
 	} else {
-	    /*
-	     * } MaterialData m = b.getState().getData(); BlockFace face
-	     * = BlockFace.DOWN; if (m instanceof Attachable) { face =
-	     * ((Attachable) m).getAttachedFace(); }
-	     */
-	    // b.getRelative(face);
-	    //plugin.getLogger().info("Not attached!");
 	    plugin.removeWarp(b.getLocation());
 	    //plugin.getLogger().info("Warp removed");
 	}
 	//}
 
-    }
+    }*/
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
     public void onSignBreak(BlockBreakEvent e) {

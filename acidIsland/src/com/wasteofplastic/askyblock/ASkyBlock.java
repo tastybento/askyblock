@@ -102,6 +102,7 @@ public class ASkyBlock extends JavaPlugin {
     private Listener lavaListener;
     // Spawn object
     Spawn spawn;
+    
     /**
      * A database of where the sponges are stored a serialized location and
      * integer
@@ -411,7 +412,8 @@ public class ASkyBlock extends JavaPlugin {
 	    player.sendMessage(ChatColor.RED + Locale.warpserrorNotSafe);
 	    return true;
 	}
-	player.teleport(home);
+	//home.getWorld().refreshChunk(home.getChunk().getX(), home.getChunk().getZ());
+	player.teleport(home);	
 	player.sendMessage(ChatColor.GREEN + Locale.islandteleport);
 	return true;
     }
@@ -434,6 +436,12 @@ public class ASkyBlock extends JavaPlugin {
 	}
 	// Near spawn?
 	if ((getSpawn().getSpawnLoc() != null && loc.distanceSquared(getSpawn().getSpawnLoc()) < (double)((double)Settings.islandDistance) * Settings.islandDistance)) {
+	    return true;
+	}
+	// Check the file system
+	String checkName = loc.getBlockX() + "," + loc.getBlockZ() + ".yml";
+	final File islandFile = new File(plugin.getDataFolder() + File.separator + "islands" + File.separator + checkName);
+	if (islandFile.exists()) {
 	    return true;
 	}
 	// Look around
@@ -750,6 +758,14 @@ public class ASkyBlock extends JavaPlugin {
 	// Get the localization strings
 	getLocale();
 	// Assign settings
+	Settings.freeIslandQueueSize = getConfig().getInt("general.freeislandqueuesize",10);
+	if (Settings.freeIslandQueueSize < 0) {
+	    getLogger().warning("Setting freeislandqueuesize to 0");
+	    Settings.freeIslandQueueSize = 0;
+	} else if (Settings.freeIslandQueueSize > 100) {
+	    getLogger().warning("Setting freeislandqueuesize to 100");
+	    Settings.freeIslandQueueSize = 100;
+	}
 	// Max team size
 	Settings.maxTeamSize = getConfig().getInt("island.maxteamsize",4);
 	Settings.maxTeamSizeVIP = getConfig().getInt("island.maxteamsizeVIP",8);

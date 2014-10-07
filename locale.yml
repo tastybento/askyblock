@@ -128,7 +128,7 @@ island:
    #/island help
    #/island
    helpIsland: "start an island, or teleport to your island."
-   helpIslandSpawn: "go to AcidIsland spawn."
+   helpIslandSpawn: "go to spawn."
    helpContolPanel: "open the island GUI."
    #/island restart
    helpRestart: "restart your island and remove the old one."

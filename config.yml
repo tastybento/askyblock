@@ -82,6 +82,15 @@ general:
    # Nether spawn protection radius - this is the distance around the nether spawn point that will be protected from player interaction (breaking blocks, pouring lava etc.). Minimum is 0 (not recommended), maximum is 100. Default is 25.
    netherspawnradius: 25
 
+   # Free island queue size is used to optimize new island location finding
+   # The plugin will look for free island spots and fill the queue. When a player
+   # starts a new island, it will take from this queue immediately. The size is
+   # determined by how often this happens. The default is 10. If the server is very
+   # busy with many resets or new players, increase this. If the queue runs empty
+   # console warnings will be issued and new island creation may take longer
+   # Minimum is 0, maximum is 100.
+   freeislandqueuesize: 10
+
 sponge:
    # Sponge Saturation [true or false]
    # Add more realism to sponges by making them only
