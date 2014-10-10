@@ -306,6 +306,11 @@ public class IslandCmd implements CommandExecutor {
 	Location cowSpot = null;
 	Location islandLoc = new Location(world,x,Settings.island_level,z);
 	cowSpot = Schematic.pasteSchematic(world, islandLoc, island, player);
+	if (cowSpot == null) {
+	    islandLoc.getBlock().setType(Material.BEDROCK);
+	    player.sendMessage(ChatColor.RED + "There was a massive problem pasting the new island. Please tell an admin!");
+	    return islandLoc;
+	}
 	return cowSpot;
     }
 

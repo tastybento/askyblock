@@ -6,7 +6,7 @@ author: Tastybento
 depend: [Vault]
 loadbefore: [Multiverse-Core]
 commands:
-    as:
+    island:
         description: Main player command
         aliases: [is, island, as]
         usage:  |

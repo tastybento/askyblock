@@ -2,7 +2,7 @@
 # Only 9 items allowed per panel
 # For colors in panel name use &. Note client must restart if changes made as it caches inventory.
 default:
-  panelname: '&1AcidIsland Commands'
+  panelname: '&1Commands'
   buttons:
     0:
       material: GRASS
@@ -41,6 +41,6 @@ default:
       nextsection:
     7:
       material: BEDROCK
-      description: Go to AcidIsland spawn
+      description: Go to world spawn
       command: 'as spawn'
       nextsection:

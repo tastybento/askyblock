@@ -60,7 +60,6 @@ warps:
    errorNoWarpsYet: "There are no warps available yet!"
    warpsAvailable: "The following warps are available"
 
-#AcidIsland
 topTen:
    header: "These are the Top 10 islands:"
    errorNotReady: "Top ten list not generated yet!"
@@ -199,7 +198,7 @@ leave:
   youHaveLeftTheIsland: "You have left the island and returned to the player spawn."
   nameHasLeftYourIsland: "[name] has left your island!"
   errorYouCannotLeaveIsland: "You can't leave your island if you are the only person. Try using /island restart if you want a new one!"
-  errorYouMustBeInWorld: "You must be in the AcidIsland world to leave your team!"
+  errorYouMustBeInWorld: "You must be in the A Skyblock world to leave your team!"
   errorLeadersCannotLeave: "Leaders cannot leave an island. Make someone else the leader fist using /island makeleader <player>"
 
 #team
@@ -322,16 +321,16 @@ checkteam:
 #completechallenge
 completechallenge:
    errorChallengeDoesNotExist: "Challenge doesn't exist or is already completed"
-   challangeCompleted: "Challange: [challengename] has been completed for [name]"
+   challangeCompleted: "Challenge: [challengename] has been completed for [name]"
 
 #resetchallenge
 resetchallenge:
    errorChallengeDoesNotExist: "Challenge doesn't exist or isn't yet completed"
-   challengeReset: "Challange: [challengename] has been reset for [name]"
+   challengeReset: "Challenge: [challengename] has been reset for [name]"
 
 #AcidIsland news
 news:
-   headline: "[AcidIsland News] While you were offline..."
+   headline: "[A Skyblock News] While you were offline..."
 
 #Nether
 nether:

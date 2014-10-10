@@ -11,8 +11,8 @@ error:
    #"Error: Invalid Player (check spelling)"
    unknownPlayer: "Dieser Spieler ist nicht bekannt."
    #"Du hast keinen Zugriff auf diesen Befehl!!"
-   #"/acid ist nur für Mods und OPs"
-   noPermission: "Du hast keine Berechtigung für diesen Befehl!"
+   #"/acid ist nur f��r Mods und OPs"
+   noPermission: "Du hast keine Berechtigung f��r diesen Befehl!"
    noIsland: "Du hast keine Insel!"
    noIslandOther: "Dieser Spieler hat keine Insel!"
    #notOnIsland: "Du musst auf deiner Insel sein, um diesen Befehl zu benutzen."
@@ -22,21 +22,21 @@ error:
    noTeam: "Spieler ist in keinem Team."
 
 #AcidEffect
-changingObsidiantoLava: "Verändere Obsidian zurück in Lava. Vorsicht!"
+changingObsidiantoLava: "Ver��ndere Obsidian zur��ck in Lava. Vorsicht!"
 
 #AcidInventory
 # The warning that goes on the acid bottles or buckets. Lines are split by \n
 acidLore: "Poison!\nBeware!\nDo not drink!"
-acidBucket: "Säure Eimer"
-acidBottle: "Säure Flasche"
-drankAcidAndDied: "trank Säure und starb."
-drankAcid: "trank Säure."
+acidBucket: "S��ure Eimer"
+acidBottle: "S��ure Flasche"
+drankAcidAndDied: "trank S��ure und starb."
+drankAcid: "trank S��ure."
 
 #IslandGuard
-islandProtected: "Insel geschützt."
+islandProtected: "Insel gesch��tzt."
 
 #LavaCheck
-lavaTip: "Tip: Wenn du kein Obsidian wolltest, kannst du es mit einem Eimer zurück ändern."
+lavaTip: "Tip: Wenn du kein Obsidian wolltest, kannst du es mit einem Eimer zur��ck ��ndern."
 
 #WarpSigns
 warps:
@@ -53,12 +53,12 @@ warps:
    errorNoPlace: "Du musst auf deiner Insel sein um ein Willkommens-Schild zu erstellen!"
    errorDuplicate: "Sorry! Es gibt dort schon ein Schild!"
    errorDoesNotExist: "Dieser Warp existiert nicht!"
-   errorNotReadyYet: "Dieser Warp ist noch nicht bereit. Versuch es später.."
-   errorNotSafe: "Warp-Punkt nicht sicher. Versuch es später."
+   errorNotReadyYet: "Dieser Warp ist noch nicht bereit. Versuch es sp��ter.."
+   errorNotSafe: "Warp-Punkt nicht sicher. Versuch es sp��ter."
    #/island warp help
    warpToPlayersSign: "Warpe zu <player>'s Willkommens-Schild."
-   errorNoWarpsYet: "Es gibt noch keine verfügbaren Warps!"
-   warpsAvailable: "Folgende Warps sind verfügbar"
+   errorNoWarpsYet: "Es gibt noch keine verf��gbaren Warps!"
+   warpsAvailable: "Folgende Warps sind verf��gbar"
 
 #AcidIsland
 topTen:
@@ -71,7 +71,7 @@ level:
 sethome:
    homeSet: "Dein Insel-Home wurde zum jetzigen Standort gesetzt."
    errorNotOnIsland: "Du musst innerhalb deiner Insel-Grenzen sein, um ein Home zu setzen!"
-   errorNoIsland: "Du gehörst zu keiner Insel. Kehre zum Spawn-Bereich zurück!"
+   errorNoIsland: "Du geh��rst zu keiner Insel. Kehre zum Spawn-Bereich zur��ck!"
 
 
 #Challenges
@@ -80,7 +80,7 @@ challenges:
    nameHasCompleted: "[name] hat die Challenge [challenge] bestanden!"
    youRepeated: "Du hast die Challenge [challenge] wiederholt!"
    toComplete: "Bestehe [challengesToDo] mehr [thisLevel] Challenges um dieses Level frei zu schalten!"
-   help1: "Benutze /c <name> um Infos über eine Challenge zu sehen."
+   help1: "Benutze /c <name> um Infos ��ber eine Challenge zu sehen."
    help2: "Benutze /c complete <name> um zu versuchen diese Challenge abzuschliessen."
    colors: "Challenges werden verschiedene Farben haben, je nachdem ob sie:"
    complete: "Fertig"
@@ -89,28 +89,28 @@ challenges:
    completeRepeatable: "Fertig(wiederholbar)"
    name: "Challenge Name"
    level: "Level"
-   itemTakeWarning: "Alle benötigten Items werden genommen, wenn du die Challenge abschliesst!"
+   itemTakeWarning: "Alle ben��tigten Items werden genommen, wenn du die Challenge abschliesst!"
    notRepeatable: "Diese Challenge ist nicht wiederholbar!"
    firstTimeRewards: "Erste Belohnung(en)"
    repeatRewards: "Wiederholte Belohnung(en)"
    expReward: "Exp Belohnung"
    moneyReward: "Geld Belohnung"
    toCompleteUse: "Um diese Challenge abzuschliessen, benutze"
-   invalidChallengeName: "Ungültiger Challenge-Name! Benutze /c help für mehr Infos"
+   invalidChallengeName: "Ung��ltiger Challenge-Name! Benutze /c help f��r mehr Infos"
    rewards: "Belohnung(en)"
    youHaveNotUnlocked: "Du hast diese Challenge noch nicht freigeschaltet!"
    unknownChallenge: "Unbekannter Challenge-Name (Schreibweise beachten)!"
-   errorNotEnoughItems: "Du hast nicht genug von den benötigten Items"
+   errorNotEnoughItems: "Du hast nicht genug von den ben��tigten Items"
    errorNotOnIsland: "Du musst auf deiner Insel sein, um das zu tun."
-   errorNotCloseEnough: "Du musst innerhalb von 10 Blöcken von den benötigten Items stehen."
-   errorItemsNotThere: "Alle benötigten Items müssen bei deiner Insel sein!"
+   errorNotCloseEnough: "Du musst innerhalb von 10 Bl��cken von den ben��tigten Items stehen."
+   errorItemsNotThere: "Alle ben��tigten Items m��ssen bei deiner Insel sein!"
    errorIslandLevel: "Deine Insel muss auf Level [level] sein, um diese Challenge abzuschliessen!"
    guititle: "Challenges"
 
 #/island
 island:
-   teleport: "Teleportiere zu deiner Insel. (/island help für mehr infos)"
-   new: "Erstelle neue Insel für dich..."
+   teleport: "Teleportiere zu deiner Insel. (/island help f��r mehr infos)"
+   new: "Erstelle neue Insel f��r dich..."
    errorCouldNotCreateIsland: "Konnte Insel nicht erstellen. Melde dich bei einem Moderator."
    errorYouDoNotHavePermission: "Du hast keine Berechtigung, um diesen Befehl zu benutzen!"
    #/island reset
@@ -120,16 +120,16 @@ island:
    #Cool down warning - [time] is number of seconds left
    resetWait: "Du musst [time] Sekunden warten bevor du das wieder machen kannst."
    #Confirm
-   resetConfirm: "Schreibe /island confirm innerhalb von 10 Sekunden, um deine Insel zu löschen und neu zu starten!"
+   resetConfirm: "Schreibe /island confirm innerhalb von 10 Sekunden, um deine Insel zu l��schen und neu zu starten!"
    #/island help
    #/island
    helpIsland: "Starte eine Insel, oder teleportiere zu deiner Insel."
-   helpContolPanel: "öffne das Insel-Menü."
+   helpContolPanel: "��ffne das Insel-Men��."
    #/island restart
-   helpRestart: "Starte Insel neu und lösche die alte."
-   islandDeletedLifeboats: "Insel gelöscht! In die Rettungsboote!"
+   helpRestart: "Starte Insel neu und l��sche die alte."
+   islandDeletedLifeboats: "Insel gel��scht! In die Rettungsboote!"
    #/island sethome
-   helpSetHome: "setze deinen Home-Punk für /island."
+   helpSetHome: "setze deinen Home-Punk f��r /island."
    #/island level
    helpLevel: "Berechne dein Insel-Level"
    #/island level <player>
@@ -137,7 +137,7 @@ island:
    #/island top:
    helpTop: "siehe die besten Inseln."
    #/island warps:
-   helpWarps: "Liste aller verfügbaren Willkommens-Schild-Warps."
+   helpWarps: "Liste aller verf��gbaren Willkommens-Schild-Warps."
    #/island warp <player>
    helpWarp: "Warpe zu <player>'s Willkommens-Schild."
    #/island team
@@ -151,10 +151,10 @@ island:
    #/island <accept/reject>
    helpAcceptReject: "Einladung annehmen oder ablehnen."
    #/island makeleader <player>
-   helpMakeLeader: "Übergebe die Insel an <player>."
+   helpMakeLeader: "��bergebe die Insel an <player>."
    #Level
    errorLevelNotReady: "Du kannst diesen Befehl gerade nicht nutzen! Versuch es in einigen Sekunden."
-   errorInvalidPlayer: "Dieser Spieler ist ungültig oder hat keine Insel!"
+   errorInvalidPlayer: "Dieser Spieler ist ung��ltig oder hat keine Insel!"
    islandLevelis: "Insel-Level ist"
 
 
@@ -171,7 +171,7 @@ invite:
    youHaveJoinedAnIsland: "Du bist einer Insel beigetreten! Benutze /island team um die Mitglieder zu sehen."
    hasJoinedYourIsland: "[name] ist deiner Insel beigetreten!"
    errorCantJoinIsland: "Du konntest der Insel nicht beitreten. Vielleicht ist sie voll."
-   errorYouMustHaveIslandToInvite: "Du musst eine Insel haben, um andere einladen zu können!"
+   errorYouMustHaveIslandToInvite: "Du musst eine Insel haben, um andere einladen zu k��nnen!"
    errorYouCannotInviteYourself: "Du kannst nicht dich selbst einladen!"
    removingInvite: "Entferne deine vorherige Einladung"
    inviteSentTo: "Einladung verschickt an [name]"
@@ -191,11 +191,11 @@ reject:
 #leave
 leave:
   errorYouAreTheLeader: "Du bist der Leiter, benutze stattdessen /island remove <player>."
-  youHaveLeftTheIsland: "Du hast die Insel verlassen und bist zum Spawn zurückgekehrt."
+  youHaveLeftTheIsland: "Du hast die Insel verlassen und bist zum Spawn zur��ckgekehrt."
   nameHasLeftYourIsland: "[name] hat deine Insel verlassen!"
   errorYouCannotLeaveIsland: "Du kannst deine Insel nicht verlassen, wenn du die einzige Person bist. Versuche /island restart wenn du eine neue willst!"
-  errorYouMustBeInWorld: "Du musst in der AcidIsland-Welt sein, um dein Team zu verlassen!"
-  errorLeadersCannotLeave: "Leiter können eine Insel nicht verlassen. Mache jemand anderen zum Leiter mit /island makeleader <player>"
+  errorYouMustBeInWorld: "Du musst in der Askyblock-Welt sein, um dein Team zu verlassen!"
+  errorLeadersCannotLeave: "Leiter k��nnen eine Insel nicht verlassen. Mache jemand anderen zum Leiter mit /island makeleader <player>"
 
 #team
 team:
@@ -213,19 +213,19 @@ kick:
 
 #makeleader
 makeleader:
-   errorPlayerMustBeOnline: "Der Spieler muss online sein, um die Insel zu übernehmen."
+   errorPlayerMustBeOnline: "Der Spieler muss online sein, um die Insel zu ��bernehmen."
    errorYouMustBeInTeam: "Du musst in einem Team sein, um deine Insel abzugeben."
-   errorRemoveAllPlayersFirst: "Entferne alle Mitglieder ausser die Person, der du die Insel übergeben willst."
+   errorRemoveAllPlayersFirst: "Entferne alle Mitglieder ausser die Person, der du die Insel ��bergeben willst."
    youAreNowTheOwner: "Du bist jetzt der Besitzer deiner Insel."
    nameIsNowTheOwner: "[name] ist jetzt der Besitzer deiner Insel!"
    errorThatPlayerIsNotInTeam: "Dieser Spieler ist nicht in deinem Insel-Team!"
    errorNotYourIsland: "Das ist nicht deine Insel. Du kannst sie niemandem geben!"
-   errorGeneralError: "Konnte Leiter nicht ändern."
+   errorGeneralError: "Konnte Leiter nicht ��ndern."
 
 #minishop
 minishop:
    title: "MiniShop"
-   islandhelpMiniShop: "Öffnet den MiniShop"
+   islandhelpMiniShop: "��ffnet den MiniShop"
 
 ################################
 #Admin commands that use /acid #
@@ -235,21 +235,21 @@ minishop:
 adminHelp:
    help: "Acid Admin Commands:"
    #/acid reload:
-   reload: "lädt die Konfiguration neu."
+   reload: "l��dt die Konfiguration neu."
    #/acid top ten:
    topTen: "aktualisiert die Top-Liste manuell"
    #/acid register <player>:
    register: "setzt die Insel eines Spielers an deinen Standpunktt"
    #/acid delete <player>:
-   delete: "Löscht eine Insel (entfernt Blöcke)."
+   delete: "L��scht eine Insel (entfernt Bl��cke)."
    #/acid completechallenge <challengename> <player>
    completeChallenge: "Markiert eine Challenge als abgeschlossen"
    #/acid resetchallenge <challengename> <player>
    resetChallenge: "Markiert eine Challenge als nicht abgeschlossen"
    #/acid resetallchallenges <player>:
-   resetAllChallenges: "Setzt alle Challenges des Spielers zurück"
+   resetAllChallenges: "Setzt alle Challenges des Spielers zur��ck"
    #/acid purge [TimeInDays]:
-   purge: "Löscht inaktive Inseln älter als [TimeInDays]."
+   purge: "L��scht inaktive Inseln ��lter als [TimeInDays]."
    #/acid info <player>:
    info: "Zeigt die Team-Infos eines Spielers."
 
@@ -264,16 +264,16 @@ adminTopTen:
 #purge
 purge:
    #"A purge is already running, please wait for it to finish!"
-   alreadyRunning: "Löschung läuft bereits! Bitte warten!"
+   alreadyRunning: "L��schung l��uft bereits! Bitte warten!"
    usage: "Benutze: /acid purge [TimeInDays]"
-   calculating: "Berechne welche Inseln inaktiv waren für mehr als [time] Tage."
-   noneFound: "Keine inaktiven Inseln zu löschen."
-   thisWillRemove: "Dies wird [number] inaktive Inseln löschen!"
+   calculating: "Berechne welche Inseln inaktiv waren f��r mehr als [time] Tage."
+   noneFound: "Keine inaktiven Inseln zu l��schen."
+   thisWillRemove: "Dies wird [number] inaktive Inseln l��schen!"
    warning: "GEFAHR! Nicht benutzen, wenn Spieler auf dem Server sind! MACHE BACKUPS DER WELT!"
-   typeConfirm: "Schreibe /acid confirm während 10 Sekunden um fortzufahren"
-   purgeCancelled: "Löschen abgebrochen."
-   finished: "Löschen von inaktiven Inseln abgeschlossen."
-   removingName: "Löschung: Entferne [name]'s Insel"
+   typeConfirm: "Schreibe /acid confirm w��hrend 10 Sekunden um fortzufahren"
+   purgeCancelled: "L��schen abgebrochen."
+   finished: "L��schen von inaktiven Inseln abgeschlossen."
+   removingName: "L��schung: Entferne [name]'s Insel"
 
 #confirm
 confirm:
@@ -285,7 +285,7 @@ delete:
 
 #register
 register:
-   settingIsland: "Setze [name]'s Insel zu dem nächsten Grundstein."
+   settingIsland: "Setze [name]'s Insel zu dem n��chsten Grundstein."
    errorBedrockNotFound: "Grundstein nicht gefunden: Insel kann nicht gesetzt werden!"
 
 #info
@@ -297,30 +297,30 @@ adminInfo:
 
 #resetallchallenges
 resetallchallenges:
-   success: "[name]’s Challenges wurden alle zurückgesetzt."
+   success: "[name]���s Challenges wurden alle zur��ckgesetzt."
 
 #checkteam
 checkteam:
-   checkingTeam: "Prüfe Team von [name]"
+   checkingTeam: "Pr��fe Team von [name]"
 
 #completechallenge
 completechallenge:
    errorChallengeDoesNotExist: "Challenge existiert nicht oder wurde schon abgeschlossen"
-   challangeCompleted: "Challenge: [challengename] wurde abgeschlossen für [name]"
+   challangeCompleted: "Challenge: [challengename] wurde abgeschlossen f��r [name]"
 
 #resetchallenge
 resetchallenge:
    errorChallengeDoesNotExist: "Challenge existiert nicht oder ist noch nicht abgeschlossen."
-   challengeReset: "Challenge: [challengename] wurde zurückgesetzt für [name]"
+   challengeReset: "Challenge: [challengename] wurde zur��ckgesetzt f��r [name]"
 
 #AcidIsland news
 news:
-   headline: "[AcidIsland News] Während du offline warst..."
+   headline: "[A Skyblock News] W��hrend du offline warst..."
 
 #Nether
 nether:
-   spawnisprotected: "Der Netherspawn-Bereich ist geschützt."
+   spawnisprotected: "Der Netherspawn-Bereich ist gesch��tzt."
 
 # Ultra safe boats
 boats:
-   warning: "Es ist gefährlich, das Boot jetzt zu verlassen..."
+   warning: "Es ist gef��hrlich, das Boot jetzt zu verlassen..."
