@@ -92,7 +92,7 @@ public class IslandGuard implements Listener {
 	    e.setCancelled(true);
 	}
     }
-    
+
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled=true)
     public void onExplosion(final EntityExplodeEvent e) {
 	// Find out what is exploding
@@ -193,6 +193,10 @@ public class IslandGuard implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled=true)
     public void onBlockBreak(final BlockBreakEvent e) {
 	if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	    // This permission bypasses protection
+	    if (VaultHelper.checkPerm(e.getPlayer(), "askyblock.mod.bypassprotect")) {
+		return;
+	    }
 	    if (!Settings.allowBreakBlocks) {
 		if (!plugin.playerIsOnIsland(e.getPlayer()) && !e.getPlayer().isOp()) {
 		    e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
@@ -212,10 +216,14 @@ public class IslandGuard implements Listener {
 	if (!Settings.worldName.equalsIgnoreCase(e.getEntity().getWorld().getName())) {
 	    return;
 	}
-
+	//plugin.getLogger().info(e.getEventName());
 	// Ops can do anything
 	if (e.getDamager() instanceof Player) {
 	    if (((Player)e.getDamager()).isOp()) {
+		return;
+	    }
+	    // This permission bypasses protection
+	    if (VaultHelper.checkPerm((Player)e.getDamager(), "askyblock.mod.bypassprotect")) {
 		return;
 	    }
 	}
@@ -368,6 +376,10 @@ public class IslandGuard implements Listener {
     public void onPlayerBlockPlace(final BlockPlaceEvent e) {
 	//plugin.getLogger().info(e.getEventName());
 	if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	    // This permission bypasses protection
+	    if (VaultHelper.checkPerm(e.getPlayer(), "askyblock.mod.bypassprotect")) {
+		return;
+	    }
 	    if (!Settings.allowPlaceBlocks) {
 		if (!plugin.playerIsOnIsland(e.getPlayer()) && !e.getPlayer().isOp()) {
 		    e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
@@ -381,6 +393,10 @@ public class IslandGuard implements Listener {
     public void onPlayerBlockPlace(final HangingPlaceEvent e) {
 	//plugin.getLogger().info(e.getEventName());
 	if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	    // This permission bypasses protection
+	    if (VaultHelper.checkPerm(e.getPlayer(), "askyblock.mod.bypassprotect")) {
+		return;
+	    }
 	    if (!Settings.allowPlaceBlocks) {
 		if (!plugin.playerIsOnIsland(e.getPlayer()) && !e.getPlayer().isOp()) {
 		    e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
@@ -389,12 +405,16 @@ public class IslandGuard implements Listener {
 	    }
 	}
     }
- 
+
     // Prevent sleeping in other beds
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerBedEnter(final PlayerBedEnterEvent e) {
 	// Check world
 	if (Settings.worldName.equalsIgnoreCase(e.getPlayer().getWorld().getName())) {
+	    // This permission bypasses protection
+	    if (VaultHelper.checkPerm(e.getPlayer(), "askyblock.mod.bypassprotect")) {
+		return;
+	    }
 	    if (!Settings.allowBedUse) {
 		if (!plugin.playerIsOnIsland(e.getPlayer()) && !e.getPlayer().isOp()) {
 		    e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
@@ -414,6 +434,10 @@ public class IslandGuard implements Listener {
 	    if (!Settings.allowBreakBlocks) {
 		if (e.getRemover() instanceof Player) {
 		    Player p = (Player)e.getRemover();
+		    // This permission bypasses protection
+		    if (VaultHelper.checkPerm(p, "askyblock.mod.bypassprotect")) {
+			return;
+		    }
 		    if (!plugin.playerIsOnIsland(p) && !p.isOp()) {
 			p.sendMessage(ChatColor.RED + Locale.islandProtected);
 			e.setCancelled(true);
@@ -426,6 +450,10 @@ public class IslandGuard implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onBucketEmpty(final PlayerBucketEmptyEvent e) {
 	if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	    // This permission bypasses protection
+	    if (VaultHelper.checkPerm(e.getPlayer(), "askyblock.mod.bypassprotect")) {
+		return;
+	    }
 	    if (!Settings.allowBucketUse) {
 		if (!plugin.playerIsOnIsland(e.getPlayer()) && !e.getPlayer().isOp()) {
 		    e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
@@ -437,6 +465,10 @@ public class IslandGuard implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onBucketFill(final PlayerBucketFillEvent e) {
 	if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	    // This permission bypasses protection
+	    if (VaultHelper.checkPerm(e.getPlayer(), "askyblock.mod.bypassprotect")) {
+		return;
+	    }
 	    if (!Settings.allowBucketUse) {
 		if (!plugin.playerIsOnIsland(e.getPlayer()) && !e.getPlayer().isOp()) {
 		    e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
@@ -450,6 +482,10 @@ public class IslandGuard implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onShear(final PlayerShearEntityEvent e) {
 	if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	    // This permission bypasses protection
+	    if (VaultHelper.checkPerm(e.getPlayer(), "askyblock.mod.bypassprotect")) {
+		return;
+	    }
 	    if (!Settings.allowShearing) {	
 		if (!plugin.playerIsOnIsland(e.getPlayer()) && !e.getPlayer().isOp()) {
 		    e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
@@ -459,8 +495,6 @@ public class IslandGuard implements Listener {
 	}
     }
 
-    // Stop interactions - messy refactor
-    // TODO: Refactor!
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerInteract(final PlayerInteractEvent e) {
 	if (!e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
@@ -468,6 +502,10 @@ public class IslandGuard implements Listener {
 	}
 	if (plugin.playerIsOnIsland(e.getPlayer()) || e.getPlayer().isOp()) {
 	    // You can do anything on your island or if you are Op
+	    return;
+	}
+	// This permission bypasses protection
+	if (VaultHelper.checkPerm(e.getPlayer(), "askyblock.mod.bypassprotect")) {
 	    return;
 	}
 	// Player is off island
