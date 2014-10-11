@@ -82,6 +82,8 @@ general:
    # Nether spawn protection radius - this is the distance around the nether spawn point that will be protected from player interaction (breaking blocks, pouring lava etc.). Minimum is 0 (not recommended), maximum is 100. Default is 25.
    netherspawnradius: 25
 
+   # Broadcast 1st time challenge completion messages to all players
+   broadcastmessages: true
 
 sponge:
    # Sponge Saturation [true or false]

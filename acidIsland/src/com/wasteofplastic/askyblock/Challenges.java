@@ -191,7 +191,9 @@ public class Challenges implements CommandExecutor {
 	if (!players.checkChallenge(player.getUniqueId(),challenge)) {
 	    // First time
 	    player.sendMessage(ChatColor.GREEN + Locale.challengesyouHaveCompleted.replace("[challenge]", challengeName));
-	    plugin.getServer().broadcastMessage(ChatColor.GOLD + Locale.challengesnameHasCompleted.replace("[name]", player.getName()).replace("[challenge]", challengeName ));
+	    if (Settings.broadcastMessages) {
+		plugin.getServer().broadcastMessage(ChatColor.GOLD + Locale.challengesnameHasCompleted.replace("[name]", player.getName()).replace("[challenge]", challengeName ));
+	    }
 	    plugin.tellOfflineTeam(player.getUniqueId(), ChatColor.GOLD + Locale.challengesnameHasCompleted.replace("[name]", player.getName()).replace("[challenge]", challengeName ));
 	    itemRewards = plugin.getChallengeConfig().getString("challenges.challengeList." + challenge.toLowerCase() + ".itemReward", "").split(" ");
 	    moneyReward = plugin.getChallengeConfig().getInt("challenges.challengeList." + challenge.toLowerCase() + ".moneyReward", 0);

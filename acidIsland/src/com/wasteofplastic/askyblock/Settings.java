@@ -115,6 +115,9 @@ public class Settings {
     
     // New island queue size
     public static int freeIslandQueueSize;
+    
+    // Challenge completion broadcast
+    public static boolean broadcastMessages;
 
     
    

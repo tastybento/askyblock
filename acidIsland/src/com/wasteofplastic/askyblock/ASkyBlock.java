@@ -1013,6 +1013,8 @@ public class ASkyBlock extends JavaPlugin {
 	if (Settings.waiverAmount < 0) {
 	    Settings.waiverAmount = 0;
 	}
+	// Challenge completion
+	Settings.broadcastMessages = getConfig().getBoolean("general.broadcastmessages",true);
 
 	// Levels
 	// Get the blockvalues.yml file
@@ -1048,8 +1050,6 @@ public class ASkyBlock extends JavaPlugin {
 	} else {
 	    getLogger().severe("No block values in blockvalues.yml! All island levels will be zero!");
 	}
-
-
 	// Localization
 	Locale.changingObsidiantoLava = locale.getString("changingObsidiantoLava", "Changing obsidian back into lava. Be careful!");
 	Locale.acidLore = locale.getString("acidLore","Poison!\nBeware!\nDo not drink!");
