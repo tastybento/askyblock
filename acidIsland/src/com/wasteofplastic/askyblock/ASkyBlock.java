@@ -1320,7 +1320,7 @@ public class ASkyBlock extends JavaPlugin {
 	}
 	// Set up commands for this plugin
 
-	getCommand("as").setExecutor(new IslandCmd(this));
+	getCommand("island").setExecutor(new IslandCmd(this));
 	getCommand("asc").setExecutor(getChallenges());
 	getCommand("asadmin").setExecutor(new AdminCmd(this));
 	// Register events that this plugin uses

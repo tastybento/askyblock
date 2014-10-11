@@ -17,7 +17,7 @@ commands:
             /asadmin
     asc:
         description: Game challenges
-        aliases: [c, challenge, aschallenge]
+        aliases: [c, challenge, aschallenge, challenges]
         usage:  |  
             /challenge
 permissions:    
