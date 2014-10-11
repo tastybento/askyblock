@@ -101,7 +101,7 @@ public class AdminCmd implements CommandExecutor {
 	    if (VaultHelper.checkPerm(player, "askyblock.mod.clearreset") || player.isOp()) {
 		player.sendMessage(ChatColor.YELLOW + "/asadmin clearreset <player>:" + ChatColor.WHITE + " " + Locale.adminHelpclearReset);
 	    }	    
-	    if (VaultHelper.checkPerm(player, "askyblock.admin.spawn") || player.isOp()) {
+	    if (VaultHelper.checkPerm(player, "askyblock.admin.setspawn") || player.isOp()) {
 		player.sendMessage(ChatColor.YELLOW + "/asadmin setspawn:" + ChatColor.WHITE + " " + Locale.adminHelpSetSpawn);
 	    }
 	    if (VaultHelper.checkPerm(player, "acidisland.mod.tp") || player.isOp()) {
