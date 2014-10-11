@@ -99,6 +99,9 @@ public class ControlPanel implements Listener {
 		    String extra = items.getString(item + ".extra", "");
 		    double price = items.getDouble(item + ".price",-1D);
 		    double sellPrice = items.getDouble(item + ".sellprice",-1D);
+		    if (!allowSelling) {
+			sellPrice = -1;
+		    }
 		    String description = items.getString(item + ".description");
 		    MiniShopItem shopItem = new MiniShopItem(material,extra,slot,description,quantity,price,sellPrice);
 		    store.put(slot, shopItem);
