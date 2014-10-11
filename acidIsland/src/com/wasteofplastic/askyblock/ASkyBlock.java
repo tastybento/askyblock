@@ -880,6 +880,7 @@ public class ASkyBlock extends JavaPlugin {
 	}
 	Settings.resetChallenges = getConfig().getBoolean("general.resetchallenges", true);
 	Settings.resetMoney = getConfig().getBoolean("general.resetmoney", true);
+	Settings.clearInventory = getConfig().getBoolean("general.resetinventory", true);
 
 	Settings.startingMoney = getConfig().getDouble("general.startingmoney", 0D);
 	// Nether spawn protection radius
@@ -1563,30 +1564,31 @@ public class ASkyBlock extends JavaPlugin {
 		    .iterator();
 	    while (ents.hasNext()) {
 		final Entity tempent = ents.next();
-		// Remove anything except for a player of player in a boat
-		if (!(tempent instanceof Player)) {
-		    if (tempent instanceof Boat) {
-			if (((Boat)tempent).isEmpty()) {
-			    tempent.remove();
-			} 
-		    } else {
-			//getLogger().info("Removed entity type " + tempent.getType().toString() + " when removing island at location " + loc.toString());
-			tempent.remove();
-		    }
-		} else {
+		// Remove anything except for a players
+		if (tempent instanceof Player) {
 		    // Player
 		    Player pl = (Player)tempent;
-		    if (!pl.isFlying() && !pl.isInsideVehicle()) {
-			// Try to put them into a boat
-			try {
-			    Entity boat = pl.getWorld().spawnEntity(pl.getLocation(), EntityType.BOAT);
-			    boat.setPassenger(pl);
-			    pl.sendMessage(ChatColor.RED + Locale.islandDeletedLifeboats);
-			} catch (Exception e) {
-			    getLogger().warning("In deleting an island, could not put a nearby player in a boat");
-			    e.printStackTrace();
-			}
+		    if (pl.isInsideVehicle()) {
+			pl.leaveVehicle();
 		    }
+		    if (!pl.isFlying()) {
+			// Move player to spawn
+			if (plugin.getSpawn().getSpawnLoc() != null) {
+			    // go to aSkyblock spawn
+			    pl.teleport(plugin.getSpawn().getSpawnLoc());
+			    getLogger().warning("During island deletion player " + pl.getName() + " sent to spawn.");
+			} else {
+			    if (!pl.performCommand("spawn")) {
+				getLogger().warning("During island deletion player " + pl.getName() + " could not be sent to spawn so was dropped, sorry.");	
+			    } else {
+				getLogger().warning("During island deletion player " + pl.getName() + " sent to spawn using /spawn.");
+			    }
+			}
+		    } else {
+			getLogger().warning("Not moving player " + pl.getName() + " because they are flying");
+		    }
+		} else {
+		    tempent.remove();
 		}
 	    }
 	    /*
@@ -2282,14 +2284,16 @@ public class ASkyBlock extends JavaPlugin {
      * @param player
      */
     public void resetPlayer(Player player) {
-	// Clear their inventory and equipment and set them as survival
-	player.getInventory().clear(); // Javadocs are wrong - this does not
-	// clear armor slots! So...
-	player.getInventory().setHelmet(null);
-	player.getInventory().setChestplate(null);
-	player.getInventory().setLeggings(null);
-	player.getInventory().setBoots(null);
-	player.getEquipment().clear();
+	if (Settings.clearInventory) {
+	    // Clear their inventory and equipment and set them as survival
+	    player.getInventory().clear(); // Javadocs are wrong - this does not
+	    // clear armor slots! So...
+	    player.getInventory().setHelmet(null);
+	    player.getInventory().setChestplate(null);
+	    player.getInventory().setLeggings(null);
+	    player.getInventory().setBoots(null);
+	    player.getEquipment().clear();
+	}
 	player.setGameMode(GameMode.SURVIVAL);
 	if (Settings.resetChallenges) {
 	    // Reset the player's challenge status

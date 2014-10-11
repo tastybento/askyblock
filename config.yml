@@ -87,6 +87,12 @@ general:
    # reset an island
    resetchallenges: true
 
+   # Reset inventory - if true, the player's inventory will be cleared when they start
+   # or restart and island. Default is true.
+   # Note: if you have MultiInv running or a similar inventory control plugin, that
+   # plugin may still reset the inventory when the world changes.
+   resetinventory: true
+
    # Nether spawn protection radius - this is the distance around the nether spawn point that will be protected from player interaction (breaking blocks, pouring lava etc.). Minimum is 0 (not recommended), maximum is 100. Default is 25.
    netherspawnradius: 25
 

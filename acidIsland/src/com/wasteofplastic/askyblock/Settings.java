@@ -120,6 +120,7 @@ public class Settings {
     public static boolean broadcastMessages;
     // Nether world
     public static boolean createNether;
+    public static boolean clearInventory;
 
     
    
