@@ -310,6 +310,8 @@ public class Locale {
     public static String challengesguiTitle;
     public static String minishopBuy;
     public static String minishopSell;
+    public static String minishopOutOfStock;
+    
     // Ultra safe boats
     public static String boatWarningItIsUnsafe;
     public static String clearedResetLimit;
@@ -325,6 +327,7 @@ public class Locale {
     public static String signLine2;
     public static String signLine3;
     public static String signLine4;
+    
 
     
 

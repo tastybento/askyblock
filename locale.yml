@@ -230,13 +230,14 @@ makeleader:
 minishop:
    title: "&EMiniShop"
    islandhelpMiniShop: "Opens the MiniShop"
-   buy: "Buy"
-   sell: "Sell"
-   youcannotafford: "You cannot afford that item!"
+   buy: "Buy(Left click)"
+   sell: "Sell(Right click)"
+   youcannotafford: "You cannot afford [description]!"
    youbought: "You bought [number] [description] for [price]"
    yousold: "You sold [number] [description] for [price]"
-   buyproblem: "There was a problem purchasing that item"
-   sellproblem: "You do not have enough of that item to sell it."
+   buyproblem: "There was a problem purchasing [description]"
+   sellproblem: "You do not have enough [description] to sell."
+   outofstock: "Out Of Stock"
 
 ################################
 #Admin commands that use /acid #
