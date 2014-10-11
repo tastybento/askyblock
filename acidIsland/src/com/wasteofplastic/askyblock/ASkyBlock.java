@@ -1364,21 +1364,23 @@ public class ASkyBlock extends JavaPlugin {
 
 	// This part will kill monsters if they fall into the water because it
 	// is acid
-	getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
-	    @Override
-	    public void run() {
-		List<Entity> entList = acidWorld.getEntities();
-		for (Entity current : entList) {
-		    if (current instanceof Monster) {
-			if ((current.getLocation().getBlock().getType() == Material.WATER)
-				|| (current.getLocation().getBlock().getType() == Material.STATIONARY_WATER)) {
-			    ((Monster) current).damage(Settings.mobAcidDamage);
-			    //getLogger().info("Killing monster");
+	if (Settings.mobAcidDamage > 0D) {
+	    getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
+		@Override
+		public void run() {
+		    List<Entity> entList = acidWorld.getEntities();
+		    for (Entity current : entList) {
+			if (current instanceof Monster) {
+			    if ((current.getLocation().getBlock().getType() == Material.WATER)
+				    || (current.getLocation().getBlock().getType() == Material.STATIONARY_WATER)) {
+				((Monster) current).damage(Settings.mobAcidDamage);
+				//getLogger().info("Killing monster");
+			    }
 			}
 		    }
 		}
-	    }
-	}, 0L, 20L);
+	    }, 0L, 20L);
+	}
     }
 
 
