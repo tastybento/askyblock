@@ -15,6 +15,8 @@
  *     along with ASkyBlock.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
 package com.wasteofplastic.askyblock;
+
+
 /**
  * @author ben
  * All the text strings in the game sent to players
@@ -242,6 +244,8 @@ public class Locale {
     ///acid info <player>;
     public static String adminHelpinfo;
     public static String adminHelpclearReset;
+    
+    public static String adminHelptp;
 
     //acid reload
     public static String reloadconfigReloaded;
@@ -321,6 +325,7 @@ public class Locale {
     public static String signLine2;
     public static String signLine3;
     public static String signLine4;
+
     
 
     

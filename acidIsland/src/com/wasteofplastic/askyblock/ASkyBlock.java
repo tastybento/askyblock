@@ -1204,6 +1204,7 @@ public class ASkyBlock extends JavaPlugin {
 	Locale.adminHelpinfo = locale.getString("adminHelp.info","check information on the given player.");
 	Locale.adminHelpSetSpawn = locale.getString("adminHelp.setspawn","opens the spawn GUI for ASkyBlock world.");
 	Locale.adminHelpinfoIsland = locale.getString("adminHelp.infoisland","provide info on the nearest island.");
+	Locale.adminHelptp = locale.getString("adminHelp.tp", "Teleport to a player's island.");
 	Locale.reloadconfigReloaded = locale.getString("reload.configReloaded","Configuration reloaded from file.");
 	Locale.adminTopTengenerating = locale.getString("adminTopTen.generating","Generating the Top Ten list");
 	Locale.adminTopTenfinished = locale.getString("adminTopTen.finished","Finished generation of the Top Ten list");

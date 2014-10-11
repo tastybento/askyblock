@@ -94,6 +94,9 @@ permissions:
           askyblock.mod.clearreset:
             description: Allow clearing of island reset limit
             default: false
+          askyblock.mod.tp:
+            description: Allows teleport to an island
+            default: op
       askyblock.admin.*:
         children:
           askyblock.admin.reload:

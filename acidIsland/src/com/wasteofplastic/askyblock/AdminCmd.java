@@ -104,6 +104,9 @@ public class AdminCmd implements CommandExecutor {
 	    if (VaultHelper.checkPerm(player, "askyblock.admin.spawn") || player.isOp()) {
 		player.sendMessage(ChatColor.YELLOW + "/asadmin setspawn:" + ChatColor.WHITE + " " + Locale.adminHelpSetSpawn);
 	    }
+	    if (VaultHelper.checkPerm(player, "acidisland.mod.tp") || player.isOp()) {
+		player.sendMessage(ChatColor.YELLOW + "/asadmin tp <player>:" + ChatColor.WHITE + " " + Locale.adminHelptp);
+	    }
 	}
     }
 
@@ -426,6 +429,24 @@ public class AdminCmd implements CommandExecutor {
 		} else {
 		    plugin.getPlayers().setResetsLeft(playerUUID, Settings.resetLimit);
 		    sender.sendMessage(ChatColor.YELLOW + Locale.clearedResetLimit + " [" + Settings.resetLimit + "]");
+		    return true;
+		}
+	    } else if (split[0].equalsIgnoreCase("tp")) {
+		if (!(sender instanceof Player)) {
+		    sender.sendMessage(ChatColor.RED + Locale.errorUnknownCommand);
+		    return true;
+		}
+		// Convert name to a UUID
+		final UUID playerUUID = plugin.getPlayers().getUUID(split[1]);
+		if (!plugin.getPlayers().isAKnownPlayer(playerUUID)) {
+		    sender.sendMessage(ChatColor.RED + Locale.errorUnknownPlayer);
+		    return true;
+		} else {
+		    if (plugin.getPlayers().getIslandLocation(playerUUID) != null) {
+			((Player)sender).teleport(plugin.getSafeHomeLocation(playerUUID));
+			return true;
+		    }
+		    sender.sendMessage(Locale.errorNoIslandOther);
 		    return true;
 		}
 	    } else if (split[0].equalsIgnoreCase("delete")) {
