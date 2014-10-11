@@ -118,6 +118,8 @@ public class Settings {
     
     // Challenge completion broadcast
     public static boolean broadcastMessages;
+    // Nether world
+    public static boolean createNether;
 
     
    

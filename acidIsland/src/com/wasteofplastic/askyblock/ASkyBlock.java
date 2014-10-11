@@ -171,9 +171,12 @@ public class ASkyBlock extends JavaPlugin {
 	    acidWorld = WorldCreator.name(Settings.worldName).type(WorldType.FLAT).environment(World.Environment.NORMAL)
 		    .generator(new AcidChunkGenerator()).createWorld();
 	    // Make the nether if it does not exist
-	    if (plugin.getServer().getWorld(Settings.worldName + "_nether") == null) {
-		Bukkit.getLogger().info("Creating ASkyBlock's nether...");
-		WorldCreator.name(Settings.worldName + "_nether").type(WorldType.NORMAL).environment(World.Environment.NETHER).createWorld();
+	    // Make the nether if it does not exist
+	    if (Settings.createNether) {
+		if (plugin.getServer().getWorld(Settings.worldName + "_nether") == null) {
+		    Bukkit.getLogger().info("Creating ASkyBlock's nether...");
+		    WorldCreator.name(Settings.worldName + "_nether").type(WorldType.NORMAL).environment(World.Environment.NETHER).createWorld();
+		}
 	    }
 	}
 	// Set world settings
@@ -772,6 +775,10 @@ public class ASkyBlock extends JavaPlugin {
 	Settings.maxTeamSizeVIP2 = getConfig().getInt("island.maxteamsizeVIP2",12);
 	// Settings from config.yml
 	Settings.worldName = getConfig().getString("general.worldName");
+	Settings.createNether = getConfig().getBoolean("general.createnether", true);
+	if (!Settings.createNether) {
+	    getLogger().info("The Nether is disabled");
+	}
 
 	Settings.islandDistance = getConfig().getInt("island.distance", 110);
 	if (Settings.islandDistance < 50) {
