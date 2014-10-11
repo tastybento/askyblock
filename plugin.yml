@@ -52,6 +52,9 @@ permissions:
           askyblock.island.controlpanel:
             description: Allows usage of the island GUI
             default: true
+          askyblock.mod.bypassprotect:
+            description: Bypasses island protection
+            default: false
       askyblock.team.*:
         children:
           askyblock.team.create:
