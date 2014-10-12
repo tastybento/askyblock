@@ -282,10 +282,10 @@ public class IslandGuard implements Listener {
 		// PVP
 		// If PVP is okay then return
 		if (Settings.allowPvP.equalsIgnoreCase("allow")) {
-		    plugin.getLogger().info("PVP allowed");
+		    //plugin.getLogger().info("PVP allowed");
 		    return;
 		}
-		plugin.getLogger().info("PVP not allowed");
+		//plugin.getLogger().info("PVP not allowed");
 
 	    }
 	}

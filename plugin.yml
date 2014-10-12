@@ -1,6 +1,6 @@
 name: ASkyBlock
 main: com.wasteofplastic.askyblock.ASkyBlock
-version: 2.0
+version: 2.1
 description: A SkyBlock Plugin
 author: Tastybento
 depend: [Vault]
@@ -100,6 +100,9 @@ permissions:
           askyblock.mod.tp:
             description: Allows teleport to an island
             default: op
+          askyblock.mod.bypassprotect:
+            description: Allow moderator to bypass island protection
+            default: false
       askyblock.admin.*:
         children:
           askyblock.admin.reload:

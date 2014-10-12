@@ -46,7 +46,7 @@ public class NetherPortals implements Listener {
 	    return;
 	}
 	if (event.isCancelled()) {
-	    plugin.getLogger().info("PlayerPortalEvent was cancelled! ASkyBlock NOT teleporting!");
+	    //plugin.getLogger().info("PlayerPortalEvent was cancelled! ASkyBlock NOT teleporting!");
 	    return;
 	}
 	Location currentLocation = event.getFrom().clone();
