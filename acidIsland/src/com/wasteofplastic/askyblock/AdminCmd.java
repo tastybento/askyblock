@@ -656,9 +656,7 @@ public class AdminCmd implements CommandExecutor {
 
     /**
      * Searches for bedrock around a location (20x20x20) and then assigns the
-     * player to that island and applies a WorldGuard protection TODO: Does not
-     * remove the player from any islands they already own. This should probably
-     * be done because you can only have one island per player
+     * player to that island 
      * 
      * @param sender
      *            - the player requesting the assignment

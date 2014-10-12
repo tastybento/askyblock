@@ -247,7 +247,8 @@ public class ControlPanel implements Listener {
 		    //plugin.getLogger().info("performing  /" + item.getCommand());
 		    if (item.getCommand() != null) {
 			player.performCommand(item.getCommand());
-			//player.closeInventory();
+			player.closeInventory();
+			player.openInventory(plugin.getChallenges().challengePanel(player));
 		    }
 		}
 	    }

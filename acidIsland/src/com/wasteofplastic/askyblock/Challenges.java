@@ -72,27 +72,16 @@ public class Challenges implements CommandExecutor {
 	if (!player.getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    return true;
 	}
+	// Check permissions
+	if (!VaultHelper.checkPerm(player, "askyblock.island.challenges")) {
+	    player.sendMessage(ChatColor.RED + Locale.errorNoPermission);
+	    return true;
+	}
 	switch (cmd.length) {
 	case 0:
 	    // User typed /c or /challenge
 	    // Display panel
 	    player.openInventory(challengePanel(player));
-	    /*
-	    int levelDone = 0;
-	    sender.sendMessage(ChatColor.GOLD + Settings.challengeLevels.get(0) + ": " + getChallengesByLevel(player, Settings.challengeLevels.get(0)));
-	    for (int i = 1; i < Settings.challengeLevels.size(); i++) {
-		levelDone = checkLevelCompletion(player, Settings.challengeLevels.get(i-1));
-		if (levelDone <= 0) {
-		    sender.sendMessage(ChatColor.GOLD + Settings.challengeLevels.get(i) + ": "
-			    + getChallengesByLevel(player, Settings.challengeLevels.get(i)));
-		} else {
-		    sender.sendMessage(ChatColor.GOLD + Settings.challengeLevels.get(i) + ChatColor.GRAY + ": "
-			    + Locale.challengestoComplete.replace("[challengesToDo]", String.valueOf(levelDone)).replace("[thisLevel]",Settings.challengeLevels.get(i-1)));
-		}
-	    }
-	    sender.sendMessage(ChatColor.GOLD + Locale.challengeshelp1);
-	    sender.sendMessage(ChatColor.GOLD + Locale.challengeshelp2);
-	     */
 	    return true;
 	case 1:
 	    if (cmd[0].equalsIgnoreCase("help") || cmd[0].equalsIgnoreCase("complete") || cmd[0].equalsIgnoreCase("c")) {
@@ -775,9 +764,7 @@ public class Challenges implements CommandExecutor {
 	// New panel map
 	List<CPItem> cp = new ArrayList<CPItem>();
 	int levelDone = 0;
-	// sender.sendMessage(ChatColor.GOLD + Settings.challengeLevels.get(0) +
-	// ": " + getChallengesByLevel(player,
-	// Settings.challengeLevels.get(0)));
+	/*
 	// Loop through challenges for this player for first level
 	for (String challengeName : challengeList.get(Settings.challengeLevels.get(0))) {
 	    // Get the icon
@@ -811,10 +798,14 @@ public class Challenges implements CommandExecutor {
 	    item.setLore(lore);
 	    cp.add(item);
 	}
-
+	 */
 	// Loop through other levels
-	for (int i = 1; i < Settings.challengeLevels.size(); i++) {
-	    levelDone = checkLevelCompletion(player, Settings.challengeLevels.get(i - 1));
+	for (int i = 0; i < Settings.challengeLevels.size(); i++) {
+	    if (i == 0) {
+		levelDone = 0;
+	    } else {
+		levelDone = checkLevelCompletion(player, Settings.challengeLevels.get(i - 1));
+	    }
 	    if (levelDone <= 0) {
 		// Loop through challenges for this player
 		for (String challengeName : challengeList.get(Settings.challengeLevels.get(i))) {
