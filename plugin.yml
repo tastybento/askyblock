@@ -1,6 +1,6 @@
 name: ASkyBlock
 main: com.wasteofplastic.askyblock.ASkyBlock
-version: 2.1
+version: 2.2
 description: A SkyBlock Plugin
 author: Tastybento
 depend: [Vault]
@@ -52,9 +52,6 @@ permissions:
           askyblock.island.controlpanel:
             description: Allows usage of the island GUI
             default: true
-          askyblock.mod.bypassprotect:
-            description: Bypasses island protection
-            default: false
       askyblock.team.*:
         children:
           askyblock.team.create:

@@ -958,7 +958,7 @@ public class IslandCmd implements CommandExecutor {
 				return true;
 			    }
 			    // Find out which direction the warp is facing
-			    Block b = player.getWorld().getBlockAt(warpSpot);
+			    Block b = warpSpot.getBlock();
 			    if (b.getType().equals(Material.SIGN_POST)) {
 				Sign sign = (Sign) b.getState();
 				org.bukkit.material.Sign s = (org.bukkit.material.Sign)sign.getData();
