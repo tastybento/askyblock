@@ -15,6 +15,11 @@ general:
    # Name of the world - if it does not exist then it will be generated
    worldName: ASkyBlock
 
+   # Use the control panel as the default display for /island
+   # /island will always create an island if one does not exist
+   # If the control panel is not used, then /island will teleport the player home
+   usecontrolpanel: false
+
    # Create Nether - if this is false, the nether world will not be made and access to
    # AcidIsland control of the nether will not occur. Other plugins may still enable
    # portal usage.
@@ -25,6 +30,7 @@ general:
 
    #How long a player must wait before they can reset their island again
    resetwait: 300
+
    #How many resets a player is allowed (override with /asadmin clearreset <player>
    #Value of -1 means unlimited, 0 means hardcore - no resets.
    #Example, 2 resets means they get 2 resets or 3 islands lifetime

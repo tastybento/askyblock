@@ -16,6 +16,8 @@
  *******************************************************************************/
 package com.wasteofplastic.askyblock;
 
+import org.bukkit.ChatColor;
+
 
 /**
  * @author ben
@@ -160,6 +162,8 @@ public class Locale {
     public static String islandislandLevelis;
     // Spawn
     public static String islandhelpSpawn;
+    // Teleport go
+    public static String islandhelpTeleport;
 
     //////////////////////////////////////
     ///island commands //
@@ -328,12 +332,5 @@ public class Locale {
     public static String signLine3;
     public static String signLine4;
     
-
-    
-
-    
-    
-    
-    
-    
+   
 }

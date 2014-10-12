@@ -113,14 +113,13 @@ public class Settings {
     public static HashMap<Material,Integer> blockLimits;
     public static HashMap<Material,Integer> blockValues;
     
-    // New island queue size
-    public static int freeIslandQueueSize;
-    
-    // Challenge completion broadcast
+   // Challenge completion broadcast
     public static boolean broadcastMessages;
     // Nether world
     public static boolean createNether;
     public static boolean clearInventory;
+    // Use control panel for /island
+    public static boolean useControlPanel;
 
     
    

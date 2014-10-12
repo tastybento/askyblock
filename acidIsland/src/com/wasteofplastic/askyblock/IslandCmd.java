@@ -517,15 +517,26 @@ public class IslandCmd implements CommandExecutor {
 		setResetWaitTime(player);
 		return true;
 	    } else {
+		if (Settings.useControlPanel) {
+		    player.performCommand("island cp");
+		} else {
+		    // Teleport home
+		    plugin.homeTeleport(player);
+		    if (Settings.islandRemoveMobs) {
+			plugin.removeMobs(player.getLocation());
+		    }
+		}
+		return true;
+	    }
+	case 1:
+	    if (split[0].equalsIgnoreCase("go")) {
 		// Teleport home
 		plugin.homeTeleport(player);
 		if (Settings.islandRemoveMobs) {
 		    plugin.removeMobs(player.getLocation());
 		}
 		return true;
-	    }
-	case 1:
-	    if (split[0].equalsIgnoreCase("about")) {
+	    } else if (split[0].equalsIgnoreCase("about")) {
 		player.sendMessage(ChatColor.GOLD + "ASkyBlock (c) 2014 by TastyBento");
 		//Spawn enderman
 		//Enderman enderman = (Enderman) player.getWorld().spawnEntity(player.getLocation().add(new Vector(5,0,5)), EntityType.ENDERMAN);
@@ -600,8 +611,8 @@ public class IslandCmd implements CommandExecutor {
 	    } else if (split[0].equalsIgnoreCase("restart") || split[0].equalsIgnoreCase("reset")) {
 		// Check this player has an island
 		if (!plugin.getPlayers().hasIsland(playerUUID)) {
-		    // No so just start and island
-		    player.performCommand("as");
+		    // No so just start an island
+		    player.performCommand("island");
 		    return true;
 		}
 		if (plugin.getPlayers().inTeam(playerUUID)) {
@@ -690,8 +701,12 @@ public class IslandCmd implements CommandExecutor {
 		return false;
 	    } else if (split[0].equalsIgnoreCase("help")) { 
 		player.sendMessage(ChatColor.GREEN + "ASkyBlock " + plugin.getDescription().getVersion() + " help:");
-
-		player.sendMessage(ChatColor.YELLOW + "/" + label + ": " + ChatColor.WHITE + Locale.islandhelpIsland);
+		if (Settings.useControlPanel) {
+		    player.sendMessage(ChatColor.YELLOW + "/" + label + ": " + ChatColor.WHITE + Locale.islandhelpControlPanel);
+		} else {
+		    player.sendMessage(ChatColor.YELLOW + "/" + label + ": " + ChatColor.WHITE + Locale.islandhelpIsland);
+		}
+		player.sendMessage(ChatColor.YELLOW + "/" + label + " go: " + ChatColor.WHITE + Locale.islandhelpTeleport);
 		if (plugin.getSpawn().getSpawnLoc() != null) {
 		    player.sendMessage(ChatColor.YELLOW + "/" + label + " spawn: " + ChatColor.WHITE + Locale.islandhelpSpawn);
 		}

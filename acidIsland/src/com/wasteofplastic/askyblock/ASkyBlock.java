@@ -761,14 +761,7 @@ public class ASkyBlock extends JavaPlugin {
 	// Get the localization strings
 	getLocale();
 	// Assign settings
-	Settings.freeIslandQueueSize = getConfig().getInt("general.freeislandqueuesize",10);
-	if (Settings.freeIslandQueueSize < 0) {
-	    getLogger().warning("Setting freeislandqueuesize to 0");
-	    Settings.freeIslandQueueSize = 0;
-	} else if (Settings.freeIslandQueueSize > 100) {
-	    getLogger().warning("Setting freeislandqueuesize to 100");
-	    Settings.freeIslandQueueSize = 100;
-	}
+	Settings.useControlPanel = getConfig().getBoolean("general.usecontrolpanel", false);
 	// Max team size
 	Settings.maxTeamSize = getConfig().getInt("island.maxteamsize",4);
 	Settings.maxTeamSizeVIP = getConfig().getInt("island.maxteamsizeVIP",8);
@@ -1140,6 +1133,7 @@ public class ASkyBlock extends JavaPlugin {
 	Locale.islandresetWait = locale.getString("island.resetWait","You have to wait [time] seconds before you can do that again.");
 	Locale.islandresetConfirm = locale.getString("island.resetConfirm", "Type /island confirm within 10 seconds to delete your island and restart!");
 	Locale.islandhelpIsland = locale.getString("island.helpIsland","start an island, or teleport to your island.");
+	Locale.islandhelpTeleport = locale.getString("island.helpTeleport", "teleport to your island.");
 	Locale.islandhelpSpawn = locale.getString("island.helpIslandSpawn","go to ASkyBlock spawn.");
 	Locale.islandhelpControlPanel = locale.getString("island.helpControlPanel","open the island GUI.");
 	Locale.islandhelpRestart = locale.getString("island.helpRestart","restart your island and remove the old one.");
