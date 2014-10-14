@@ -137,7 +137,7 @@ public class ControlPanel implements Listener {
 	}	
 	// Go through the yml file and create inventories and panel maps
 	for (String panel : controlPanels.getKeys(false)) {
-	    //plugin.getLogger().info("DEBUG: Panel " + panel);
+	    plugin.getLogger().info("DEBUG: Panel " + panel);
 	    ConfigurationSection panelConf = cpFile.getConfigurationSection(panel);
 	    // New panel map
 	    HashMap<Integer,CPItem> cp = new HashMap<Integer,CPItem>();
@@ -145,7 +145,7 @@ public class ControlPanel implements Listener {
 	    if (panel.equalsIgnoreCase("default")) {
 		defaultPanelName = panelName;
 	    }
-	    //plugin.getLogger().info("DEBUG: Panel section " + panelName);
+	    plugin.getLogger().info("DEBUG: Panel section " + panelName);
 	    // New inventory
 	    Inventory newPanel = Bukkit.createInventory(null, 9, panelName);
 	    if (newPanel == null) {
@@ -153,6 +153,7 @@ public class ControlPanel implements Listener {
 	    }
 	    // Add inventory to map of inventories
 	    controlPanel.put(newPanel.getName(),newPanel);
+	    plugin.getLogger().info("DEBUG: putting panel " + newPanel.getName());
 	    ConfigurationSection buttons = cpFile.getConfigurationSection(panel + ".buttons");
 	    if (buttons != null) {
 		// Run through buttons
@@ -164,7 +165,7 @@ public class ControlPanel implements Listener {
 			Material material = Material.matchMaterial(m);
 			String description = buttons.getString(item + ".description","");
 			String command = buttons.getString(item + ".command","");
-			String nextSection = buttons.getString(item + ".nextSection","");
+			String nextSection = buttons.getString(item + ".nextsection","");
 			CPItem cpItem = new CPItem(material,description,command,nextSection);
 			cp.put(slot, cpItem);
 			newPanel.setItem(slot, cpItem.getItem());
@@ -191,7 +192,7 @@ public class ControlPanel implements Listener {
 	ItemStack clicked = event.getCurrentItem(); // The item that was clicked
 	Inventory inventory = event.getInventory(); // The inventory that was clicked in
 	//ASkyBlock plugin = ASkyBlock.getPlugin();
-	int slot = event.getSlot();
+	int slot = event.getRawSlot();
 	// Check control panels
 	for (String panelName : controlPanel.keySet()) {
 	    if (inventory.getName().equals(panelName)) {
@@ -204,21 +205,24 @@ public class ControlPanel implements Listener {
 		}
 		HashMap<Integer, CPItem> thisPanel = panels.get(panelName);
 		if (slot >= 0 && slot < thisPanel.size()) {
-		    //plugin.getLogger().info("DEBUG: slot is " + slot);
+		    plugin.getLogger().info("DEBUG: slot is " + slot);
 		    // Do something
 		    String command = thisPanel.get(slot).getCommand();
-		    String nextSection = thisPanel.get(slot).getNextSection();
+		    String nextSection = ChatColor.translateAlternateColorCodes('&',thisPanel.get(slot).getNextSection());
 		    if (!command.isEmpty()) {
 			player.closeInventory(); // Closes the inventory
 			event.setCancelled(true);
-			//plugin.getLogger().info("DEBUG: performing command " + command);
+			plugin.getLogger().info("DEBUG: performing command " + command);
 			player.performCommand(command);
 			return;
 		    }
 		    if (!nextSection.isEmpty()) {
 			player.closeInventory(); // Closes the inventory
 			Inventory next = controlPanel.get(nextSection);
-			//plugin.getLogger().info("DEBUG: opening next cp "+nextSection);
+			if (next == null) {
+			    plugin.getLogger().info("DEBUG: next panel is null");
+			}
+			plugin.getLogger().info("DEBUG: opening next cp "+nextSection);
 			player.openInventory(next);
 			event.setCancelled(true);
 			return;

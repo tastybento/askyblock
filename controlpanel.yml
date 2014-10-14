@@ -44,3 +44,57 @@ default:
       description: Go to world spawn
       command: 'island spawn'
       nextsection:
+    8:
+      material: SAPLING
+      description: Change biome
+      nextsection: '&1Choose a Biome'
+
+# The biome panel lists the choices of biomes. There could be more if you like
+# The biomes allowed must be in the biomes.yml file
+biomes:
+  panelname: '&1Choose a Biome'
+  buttons:
+    0:
+      material: GRASS
+      description: Plains Biome
+      command: 'island biome plains'
+      nextsection: ''
+    1:
+      material: SNOW_BLOCK
+      description: Cold Taiga Biome
+      command: 'island biome cold_taiga'
+      nextsection: ''
+    2:
+      material: RED_ROSE
+      description: Flower Forest
+      command: 'island biome flower_forest'
+      nextsection:
+    3:
+      material: VINE
+      description: Jungle Biome
+      command: 'island biome jungle'
+      nextsection:
+    4:
+      material: RED_MUSHROOM
+      description: Mushroom Island Biome
+      command: 'island biome mushroom_island'
+      nextsection:
+    5:
+      material: STATIONARY_WATER
+      description: Ocean Biome
+      command: 'island biome ocean'
+      nextsection:
+    6:
+      material: LEAVES
+      description: Savanna Biome
+      command: 'island biome savanna'
+      nextsection:
+    7:
+      material: DOUBLE_PLANT
+      description: Sunflower Plains Biome
+      command: 'island biome sunflower_plains'
+      nextsection:
+    8:
+      material: WATER_LILY
+      description: Swampland Biome
+      command: 'island biome swampland'
