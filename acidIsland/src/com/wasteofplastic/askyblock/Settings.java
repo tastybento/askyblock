@@ -120,6 +120,8 @@ public class Settings {
     public static boolean clearInventory;
     // Use control panel for /island
     public static boolean useControlPanel;
+    // Prevent /island when falling
+    public static boolean allowTeleportWhenFalling;
 
     
    

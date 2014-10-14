@@ -102,6 +102,8 @@ public class ASkyBlock extends JavaPlugin {
     private Listener lavaListener;
     // Spawn object
     Spawn spawn;
+    // A set of falling players
+    HashSet<UUID> fallingPlayers = new HashSet<UUID>();
 
     /**
      * A database of where the sponges are stored a serialized location and
@@ -496,9 +498,17 @@ public class ASkyBlock extends JavaPlugin {
 	if (ground.getType().equals(Material.AIR)) {
 	    return false;
 	}
-	// In Acid Island, any type of liquid is no good
+	// In aSkyblock, liquid maybe unsafe
 	if (ground.isLiquid() || space1.isLiquid() || space2.isLiquid()) {
-	    return false;
+	    // Check if acid has no damage
+	    if (Settings.acidDamage > 0D) {
+		return false;
+	    } else if (ground.getType().equals(Material.STATIONARY_LAVA) || ground.getType().equals(Material.LAVA)
+		    || space1.getType().equals(Material.STATIONARY_LAVA) || space1.getType().equals(Material.LAVA)
+		    || space2.getType().equals(Material.STATIONARY_LAVA) || space2.getType().equals(Material.LAVA)) {
+		// Lava check only
+		return false;
+	    }
 	}
 	if (ground.getType().equals(Material.CACTUS)) {
 	    return false;
@@ -762,6 +772,8 @@ public class ASkyBlock extends JavaPlugin {
 	getLocale();
 	// Assign settings
 	Settings.useControlPanel = getConfig().getBoolean("general.usecontrolpanel", false);
+	// Check if /island command is allowed when falling
+	Settings.allowTeleportWhenFalling = getConfig().getBoolean("general.allowfallingteleport", true);
 	// Max team size
 	Settings.maxTeamSize = getConfig().getInt("island.maxteamsize",4);
 	Settings.maxTeamSizeVIP = getConfig().getInt("island.maxteamsizeVIP",8);
@@ -2332,6 +2344,18 @@ public class ASkyBlock extends JavaPlugin {
 	    }
 	}
 	return "a player";
+    }
+
+    public void setFalling(UUID uniqueId) {
+	this.fallingPlayers.add(uniqueId);
+    }
+
+    public void unsetFalling(UUID uniqueId) {
+	this.fallingPlayers.remove(uniqueId);
+    }
+
+    public boolean isFalling(UUID uniqueId) {
+	return this.fallingPlayers.contains(uniqueId);
     }
 
 }

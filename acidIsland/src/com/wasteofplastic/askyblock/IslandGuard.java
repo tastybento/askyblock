@@ -18,7 +18,9 @@ package com.wasteofplastic.askyblock;
 
 
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
@@ -47,7 +49,9 @@ import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerShearEntityEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.material.MaterialData;
 import org.bukkit.potion.Potion;
 
@@ -64,6 +68,58 @@ public class IslandGuard implements Listener {
 
     }
 
+    /*
+     * Prevent typing /island if falling - hard core
+     * Checked if player teleports
+     * 
+     */
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled=true)
+    public void onPlayerFall(final PlayerMoveEvent e) {
+	if (!e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	    return;
+	}
+	if (Settings.allowTeleportWhenFalling) {
+	    return;
+	}
+	if (!e.getPlayer().getGameMode().equals(GameMode.SURVIVAL) || e.getPlayer().isOp()) {
+	    return;
+	}
+	// Check if air below player
+	if (e.getPlayer().getLocation().getBlock().getRelative(BlockFace.DOWN).getType().equals(Material.AIR)) {
+	    plugin.setFalling(e.getPlayer().getUniqueId());
+	} else {
+	    plugin.unsetFalling(e.getPlayer().getUniqueId());
+	}
+    }
+    
+    /**
+     * Prevents teleporting when falling based on setting
+     * @param e
+     */
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled=true)
+    public void onPlayerTeleport(final PlayerTeleportEvent e) {
+	if (Settings.allowTeleportWhenFalling) {
+	    return;
+	}
+	if (!e.getFrom().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	    return;
+	}
+	if (!e.getPlayer().getGameMode().equals(GameMode.SURVIVAL) || e.getPlayer().isOp()) {
+	    return;
+	}
+	if (plugin.isFalling(e.getPlayer().getUniqueId())) {
+	    // Sorry you are going to die
+	    e.getPlayer().sendMessage(Locale.errorCommandNotReady);
+	    e.setCancelled(true);
+	    // Check if the player is in the void and kill them just in case
+	    if (e.getPlayer().getLocation().getBlockY() < 0) {
+		e.getPlayer().setHealth(0D);
+		plugin.unsetFalling(e.getPlayer().getUniqueId());
+	    }
+	}
+    }
+    
+    
     /**
      * Prevents mobs spawning at spawn
      * @param e
