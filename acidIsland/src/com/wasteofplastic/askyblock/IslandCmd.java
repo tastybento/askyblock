@@ -750,7 +750,7 @@ public class IslandCmd implements CommandExecutor {
 		if (VaultHelper.checkPerm(player, "askyblock.island.biomes")) {
 		    // Only the team leader can do this
 		    if (teamLeader != null && !teamLeader.equals(playerUUID)) {
-			player.sendMessage(ChatColor.RED + Locale.errorNoPermission);
+			player.sendMessage(ChatColor.RED + Locale.levelerrornotYourIsland);
 			return true;
 		    }
 		    //player.sendMessage(ChatColor.YELLOW + "[Biomes]");
