@@ -122,6 +122,8 @@ public class Settings {
     public static boolean useControlPanel;
     // Prevent /island when falling
     public static boolean allowTeleportWhenFalling;
+    // Biomes
+    public static double biomeCost;
 
     
    

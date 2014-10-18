@@ -873,7 +873,7 @@ public class Challenges implements CommandExecutor {
 	return playerChallengeGUI.get(player.getUniqueId());
     }
 
-    private List<String> chop(ChatColor color, String longLine, int length) {
+    public static List<String> chop(ChatColor color, String longLine, int length) {
 	List<String> result = new ArrayList<String>();
 	// int multiples = longLine.length() / length;
 	int i = 0;

@@ -351,3 +351,10 @@ sign:
    line3: "Do not fall!"
    line4: "Beware!"
 
+biome:
+   set: "Island biome set to [biome]!"
+   help: "open the biomes GUI."
+   unknown: "Unknown biome!"
+   youbought: "Purchased for [cost]!"
+   paneltitle: "Select A Biome"
+   

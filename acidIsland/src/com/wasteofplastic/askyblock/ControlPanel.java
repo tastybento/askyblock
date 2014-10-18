@@ -205,14 +205,14 @@ public class ControlPanel implements Listener {
 		}
 		HashMap<Integer, CPItem> thisPanel = panels.get(panelName);
 		if (slot >= 0 && slot < thisPanel.size()) {
-		    plugin.getLogger().info("DEBUG: slot is " + slot);
+		    //plugin.getLogger().info("DEBUG: slot is " + slot);
 		    // Do something
 		    String command = thisPanel.get(slot).getCommand();
 		    String nextSection = ChatColor.translateAlternateColorCodes('&',thisPanel.get(slot).getNextSection());
 		    if (!command.isEmpty()) {
 			player.closeInventory(); // Closes the inventory
 			event.setCancelled(true);
-			plugin.getLogger().info("DEBUG: performing command " + command);
+			//plugin.getLogger().info("DEBUG: performing command " + command);
 			player.performCommand(command);
 			return;
 		    }
@@ -220,9 +220,9 @@ public class ControlPanel implements Listener {
 			player.closeInventory(); // Closes the inventory
 			Inventory next = controlPanel.get(nextSection);
 			if (next == null) {
-			    plugin.getLogger().info("DEBUG: next panel is null");
+			    //plugin.getLogger().info("DEBUG: next panel is null");
 			}
-			plugin.getLogger().info("DEBUG: opening next cp "+nextSection);
+			//plugin.getLogger().info("DEBUG: opening next cp "+nextSection);
 			player.openInventory(next);
 			event.setCancelled(true);
 			return;

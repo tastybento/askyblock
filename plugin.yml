@@ -52,6 +52,9 @@ permissions:
           askyblock.island.controlpanel:
             description: Allows usage of the island GUI
             default: true
+          askyblock.island.biomes:
+            description: Allows biome changing
+            default: true
       askyblock.team.*:
         children:
           askyblock.team.create:

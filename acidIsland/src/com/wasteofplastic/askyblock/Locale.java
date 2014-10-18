@@ -18,6 +18,7 @@ package com.wasteofplastic.askyblock;
 
 
 
+
 /**
  * @author ben
  * All the text strings in the game sent to players
@@ -330,6 +331,13 @@ public class Locale {
     public static String signLine2;
     public static String signLine3;
     public static String signLine4;
+    
+    // Biomes
+    public static String islandhelpBiome;
+    public static String biomeSet;
+    public static String biomeUnknown;
+    public static String biomeYouBought;
+    public static String biomePanelTitle;
     
    
 }

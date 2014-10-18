@@ -127,7 +127,7 @@ public class DeleteIsland extends BukkitRunnable {
 	}
     }
 
-    static class Pair {
+    public static class Pair {
 	private final int left;
 	private final int right;
 	public Pair(int left, int right) {
