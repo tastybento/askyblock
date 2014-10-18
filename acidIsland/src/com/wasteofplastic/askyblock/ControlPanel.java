@@ -137,7 +137,7 @@ public class ControlPanel implements Listener {
 	}	
 	// Go through the yml file and create inventories and panel maps
 	for (String panel : controlPanels.getKeys(false)) {
-	    plugin.getLogger().info("DEBUG: Panel " + panel);
+	    //plugin.getLogger().info("DEBUG: Panel " + panel);
 	    ConfigurationSection panelConf = cpFile.getConfigurationSection(panel);
 	    // New panel map
 	    HashMap<Integer,CPItem> cp = new HashMap<Integer,CPItem>();
@@ -145,15 +145,15 @@ public class ControlPanel implements Listener {
 	    if (panel.equalsIgnoreCase("default")) {
 		defaultPanelName = panelName;
 	    }
-	    plugin.getLogger().info("DEBUG: Panel section " + panelName);
+	    //plugin.getLogger().info("DEBUG: Panel section " + panelName);
 	    // New inventory
 	    Inventory newPanel = Bukkit.createInventory(null, 9, panelName);
 	    if (newPanel == null) {
-		plugin.getLogger().info("DEBUG: new panel is null!");
+		//plugin.getLogger().info("DEBUG: new panel is null!");
 	    }
 	    // Add inventory to map of inventories
 	    controlPanel.put(newPanel.getName(),newPanel);
-	    plugin.getLogger().info("DEBUG: putting panel " + newPanel.getName());
+	    //plugin.getLogger().info("DEBUG: putting panel " + newPanel.getName());
 	    ConfigurationSection buttons = cpFile.getConfigurationSection(panel + ".buttons");
 	    if (buttons != null) {
 		// Run through buttons

@@ -74,6 +74,18 @@ public class BiomeItem {
     public String getName() {
         return name;
     }
+    /**
+     * @return the price
+     */
+    public double getPrice() {
+        return price;
+    }
+    /**
+     * @param biome the biome to set
+     */
+    public void setBiome(Biome biome) {
+        this.biome = biome;
+    }
 
 
 }

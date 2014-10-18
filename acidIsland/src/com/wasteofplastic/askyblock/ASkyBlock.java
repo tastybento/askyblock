@@ -2007,15 +2007,13 @@ public class ASkyBlock extends JavaPlugin {
      * @param islandLoc
      * @param biomeType
      */
-    public boolean setIslandBiome(Location islandLoc, String biome) {
+    public boolean setIslandBiome(Location islandLoc, Biome biomeType) {
 	final int islandX = islandLoc.getBlockX();
 	final int islandZ = islandLoc.getBlockZ();
 	final World world = islandLoc.getWorld();
 	final int range = (int)Math.round((double)Settings.island_protectionRange / 2);
-	final Biome biomeType;
 	List<Pair> chunks = new ArrayList<Pair>();
 	try {
-	    biomeType = Biome.valueOf(biome.toUpperCase());
 	    // Biomes only work in 2D, so there's no need to set every block in the island area
 	    // However, we need to collect the chunks and push them out again
 	    //getLogger().info("DEBUG: Protection range is = " + Settings.island_protectionRange);

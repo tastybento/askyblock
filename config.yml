@@ -193,90 +193,40 @@ biomesettings:
 # Cost - cost in currency to change to that biome
 # permission - the permission required to use that biome
 # If the biome is not listed, it is not available
+# icon = icon used in control panel
+# friendlyname = A friendly name for the biome. If it does not exist, the official
+# biome name will be used with pretty formatting. Mostly this is just used to convert
+# Hell to Nether
+# description = a description of the biome and what it gives the player
+# remove ice/water/snow - will be done once when the biome is made
+
 biomes:
   COLD_TAIGA:
     icon: SAPLING
-    description: Snow and wolves.
-    plants:
-      LONG_GRASS: 10:GRASS:1
-    mobs:
-      WOLF: 5:SNOW
+    description: Snowy and cold. Brrr.
   DESERT:
     icon: DEAD_BUSH
-    description: Dry, water evaporates, no ice or snow. Cactus and other desert plants spawn.
-    confirm: true
-    removewater: true
-    removeice: true
-    removesnow: true
-    plants:
-      DEAD_BUSH: 10:SAND
-      CACTUS: 10:SAND
-    conversions: DIRT:0:30:SAND:0
+    description: A dry desert. Warning - Ice and snow will disappear.
   FLOWER_FOREST:
     icon: RED_ROSE
     description: The place for flowers!
-    plants:
-      RED_ROSE: 2:GRASS:8
-      DOUBLE_PLANT: 4:GRASS:5
-      LONG_GRASS: 20:GRASS:1
   HELL:
     icon: STATIONARY_LAVA
-    confirm: true
     cost: 1000
     permission: askyblock.biomes.hell
     friendlyname: Nether
-    description: All water, snow and ice will be removed in this unusual biome.
-    removewater: true
-    removeice: true
-    removesnow: true
-    mobs:
-      PIG_ZOMBIE: 10:NETHERRACK
+    description: Warning - all water, snow and ice will be removed.
   JUNGLE:
     icon: VINE
-    description: Lush environment, fun plants spawn. No ice or snow.
-    removeice: true
-    removesnow: true
-    plants:
-      YELLOW_FLOWER: 20:GRASS
-      MELON_BLOCK: 10:GRASS
-      RED_ROSE: 20:GRASS
-      DOUBLE_PLANT: 20:GRASS:3
-      LONG_GRASS: 20:GRASS:2
+    description: Lush jungle. Warning - Ice or snow have to go.
   MUSHROOM_ISLAND:
     icon: RED_MUSHROOM
     permission: askyblock.biomes.mushoom_island
     description: Mushroom island
-    plants:
-      BROWN_MUSHROOM: 10:MYCEL
-      RED_MUSHROOM: 10:MYCEL
-    mobs:
-      MUSHROOM_COW: 10:MYCEL
-  OCEAN:
-    icon: STATIONARY_WATER
-    description: Where squids may spawn.
-    cost: 500
-    mobs:
-      SQUID: 10:STATIONARY_WATER
   PLAINS:
     icon: GRASS
-    description: Wild horses may roam here.
+    description: Plain plains!
     cost: 0
-    plants:
-      LONG_GRASS: 10:GRASS:1
-    mobs:
-      HORSE: 10:GRASS
-  SUNFLOWER_PLAINS:
-    icon: DOUBLE_PLANT
-    description: Home of the sunflower!
-    plants:
-      DOUBLE_PLANT: 20:GRASS:0
-      LONG_GRASS: 20:GRASS:1
   SWAMPLAND:
     icon: WATER_LILY
-    description: When the moon is full, you-know-what may spawn...
-    plants:
-      RED_MUSHROOM: 20:GRASS
-      BROWN_MUSHROOM: 20:GRASS
-      WATER_LILY: 5:STATIONARY_WATER
-    mobs:
-      SLIME: 5:STATIONARY_WATER
+    description: Swampy

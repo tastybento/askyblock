@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -490,7 +491,10 @@ public class IslandCmd implements CommandExecutor {
 	 */
 	final UUID playerUUID = player.getUniqueId();
 	final UUID teamLeader = plugin.getPlayers().getTeamLeader(playerUUID);
-	final List<UUID> teamMembers = plugin.getPlayers().getMembers(playerUUID);
+	List<UUID> teamMembers = new ArrayList<UUID>();
+	if (teamLeader != null) {
+	    teamMembers = plugin.getPlayers().getMembers(teamLeader);
+	}
 	// The target player's UUID
 	UUID targetPlayer = null;
 	// Check if a player has an island or is in a team
@@ -744,14 +748,21 @@ public class IslandCmd implements CommandExecutor {
 		return true;
 	    } else if (split[0].equalsIgnoreCase("biomes")) {
 		if (VaultHelper.checkPerm(player, "askyblock.island.biomes")) {
+		    // Only the team leader can do this
+		    if (teamLeader != null && !teamLeader.equals(playerUUID)) {
+			player.sendMessage(ChatColor.RED + Locale.errorNoPermission);
+			return true;
+		    }
 		    //player.sendMessage(ChatColor.YELLOW + "[Biomes]");
 		    Inventory inv = plugin.biomes.getBiomePanel(player);
 		    if (inv != null) {
 			player.openInventory(inv);
 		    }
 		    return true;
+		} else {
+		    player.sendMessage(ChatColor.RED + Locale.errorNoPermission);
+		    return true;
 		}
-		return false;
 	    } else if (split[0].equalsIgnoreCase("spawn") && plugin.getSpawn().getSpawnLoc() != null) {
 		// go to spawn
 		//plugin.getLogger().info("Debug: getSpawn" + plugin.getSpawn().toString() );
@@ -889,7 +900,7 @@ public class IslandCmd implements CommandExecutor {
 			    }
 			    // Check if the size of the team is now 1
 			    //teamMembers.remove(playerUUID);
-			    if (teamMembers.size() < 3) {
+			    if (teamMembers.size() < 2) {
 				plugin.getLogger().info("Party is less than 2 - removing leader from team");
 				removePlayerFromTeam(teamLeader, teamLeader);
 			    }
@@ -1008,42 +1019,6 @@ public class IslandCmd implements CommandExecutor {
 			    }
 			}
 		    }
-		} else {
-		    player.sendMessage(ChatColor.RED + Locale.errorNoPermission);
-		    return false;
-		}
-	    } else if (split[0].equalsIgnoreCase("biome")) {
-		// island level command
-		if (VaultHelper.checkPerm(player, "askyblock.island.biomes")) {
-		    // Check the biome is available and affordable
-		    if (!plugin.getConfig().getConfigurationSection("biomes").getKeys(false).contains(split[1].toUpperCase())) {
-			player.sendMessage(ChatColor.RED + Locale.biomeUnknown);
-			return true;
-		    } else {
-			// Check permission
-			String permission = plugin.getConfig().getString("biomes." + split[1].toUpperCase() + ".permission", "");
-			if (!permission.isEmpty()) {
-			    if (!VaultHelper.permission.has(player, permission)) {
-				player.sendMessage(ChatColor.RED + Locale.errorNoPermission + " [" + permission + "]");
-				return true;
-			    }
-			}
-			// get cost
-			double cost = plugin.getConfig().getDouble("biomes." + split[1].toUpperCase() + ".cost", Settings.biomeCost);
-			if (cost > 0D) {
-			    if (!VaultHelper.econ.has(player, cost)) {
-				player.sendMessage(ChatColor.RED + Locale.minishopYouCannotAfford.replace("[description]", VaultHelper.econ.format(cost)));
-				return true;
-			    } else {
-				VaultHelper.econ.withdrawPlayer(player, cost);
-				player.sendMessage(ChatColor.GREEN + Locale.biomeYouBought.replace("[cost]", VaultHelper.econ.format(cost)));
-			    }
-			}
-		    }
-		    if (!plugin.setIslandBiome(plugin.getPlayers().getIslandLocation(playerUUID), split[1])) {
-			player.sendMessage(ChatColor.RED + Locale.errorUnknownCommand);
-		    } 
-		    return true;
 		} else {
 		    player.sendMessage(ChatColor.RED + Locale.errorNoPermission);
 		    return false;

@@ -20,6 +20,8 @@ package com.wasteofplastic.askyblock;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.block.Biome;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Enderman;
@@ -36,6 +38,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
@@ -91,7 +94,7 @@ public class IslandGuard implements Listener {
 	    plugin.unsetFalling(e.getPlayer().getUniqueId());
 	}
     }
-    
+
     /**
      * Prevents teleporting when falling based on setting
      * @param e
@@ -118,8 +121,8 @@ public class IslandGuard implements Listener {
 	    }
 	}
     }
-    
-    
+
+
     /**
      * Prevents mobs spawning at spawn
      * @param e
@@ -516,8 +519,36 @@ public class IslandGuard implements Listener {
 		    e.setCancelled(true);
 		}
 	    }
+	    // Check if biome is Nether and then stop water placement
+	    if (e.getBlockClicked() != null && e.getBlockClicked().getBiome().equals(Biome.HELL) &&
+		    e.getPlayer().getItemInHand().getType().equals(Material.WATER_BUCKET)) {
+		e.setCancelled(true);
+		e.getPlayer().getItemInHand().setType(Material.BUCKET);
+		e.getPlayer().playSound(e.getPlayer().getLocation(), Sound.FIZZ, 1F, 2F);
+		e.getPlayer().sendMessage(ChatColor.RED + Locale.biomeSet.replace("[biome]", "Nether"));
+	    }
 	}
     }
+    
+    /**
+     * Prevents water from being dispensed in hell biomes
+     * @param e
+     */
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onNetherDispenser(final BlockDispenseEvent e) {
+	if (!e.getBlock().getWorld().getName().equalsIgnoreCase(Settings.worldName) ||
+		!e.getBlock().getBiome().equals(Biome.HELL)) {
+	    return;
+	}
+	//plugin.getLogger().info("DEBUG: Item being dispensed is " + e.getItem().getType().toString());
+	if (e.getItem().getType().equals(Material.WATER_BUCKET)) {
+	    e.setCancelled(true);
+	    e.getBlock().getWorld().playSound(e.getBlock().getLocation(), Sound.FIZZ, 1F, 2F);
+	}
+    }
+   
+    
+    
     @EventHandler(priority = EventPriority.NORMAL)
     public void onBucketFill(final PlayerBucketFillEvent e) {
 	if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {

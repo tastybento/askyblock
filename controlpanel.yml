@@ -47,5 +47,5 @@ default:
     8:
       material: SAPLING
       description: Change biome
-      command: 'island biome'
+      command: 'island biomes'
       nextsection: ''

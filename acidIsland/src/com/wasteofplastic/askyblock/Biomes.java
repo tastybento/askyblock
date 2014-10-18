@@ -68,7 +68,7 @@ public class Biomes implements Listener {
 		    // Get confirmation or not
 		    boolean confirm = plugin.getConfig().getBoolean("biomes." + biomeName + ".confirm", false);
 		    // Add item to list
-		    plugin.getLogger().info("DEBUG: " + description +  name +  confirm);
+		    //plugin.getLogger().info("DEBUG: " + description +  name +  confirm);
 		    BiomeItem item = new BiomeItem(material, slot++, cost, description, name, confirm, biome);
 		    // Add to item list
 		    items.add(item);
@@ -97,38 +97,55 @@ public class Biomes implements Listener {
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
 	Player player = (Player) event.getWhoClicked(); // The player that clicked the item
+	UUID playerUUID = player.getUniqueId();
 	Inventory inventory = event.getInventory(); // The inventory that was clicked in
 	int slot = event.getRawSlot();
 	// Check this is the right panel
-	if (inventory.getName().equals(Locale.biomePanelTitle)) {
-	    if (slot == -999) {
-		player.closeInventory();
-		event.setCancelled(true);
-		return;
-	    }
-	    // Get the list of items for this player
-	    List<BiomeItem> thisPanel = biomeItems.get(player.getUniqueId());
-	    if (thisPanel == null) {
-		player.closeInventory();
-		event.setCancelled(true);
-		return;		
-	    }
-	    if (slot >= 0 && slot < thisPanel.size()) {
-		//plugin.getLogger().info("DEBUG: slot is " + slot);
-		// Do something
-		Biome biome = thisPanel.get(slot).getBiome();
-		if (biome != null) {
-		    player.closeInventory(); // Closes the inventory
-		    event.setCancelled(true);
-		    //plugin.getLogger().info("DEBUG: performing command " + biome.toString());
-		    player.performCommand("island biome " + biome.toString());
-		    player.sendMessage(ChatColor.GREEN + Locale.biomeSet.replace("[biome]", thisPanel.get(slot).getName()));
-		    return;
-		}
-		player.closeInventory(); // Closes the inventory
-		event.setCancelled(true);
-		return;
-	    }
+	if (!inventory.getName().equals(Locale.biomePanelTitle)) {
+	    return;
 	}
+	if (slot == -999) {
+	    player.closeInventory();
+	    event.setCancelled(true);
+	    return;
+	}
+	// Get the list of items for this player
+	List<BiomeItem> thisPanel = biomeItems.get(player.getUniqueId());
+	if (thisPanel == null) {
+	    player.closeInventory();
+	    event.setCancelled(true);
+	    return;		
+	}
+	if (slot >= 0 && slot < thisPanel.size()) {
+	    event.setCancelled(true);
+	    //plugin.getLogger().info("DEBUG: slot is " + slot);
+	    // Do something
+	    Biome biome = thisPanel.get(slot).getBiome();
+	    if (biome != null) {
+		event.setCancelled(true);
+		// Check cost
+		double cost = thisPanel.get(slot).getPrice();
+		if (cost > 0D) {
+		    if (!VaultHelper.econ.has(player, cost)) {
+			player.sendMessage(ChatColor.RED + Locale.minishopYouCannotAfford.replace("[description]", VaultHelper.econ.format(cost)));
+			return;
+		    } else {
+			VaultHelper.econ.withdrawPlayer(player, cost);
+			player.sendMessage(ChatColor.GREEN + Locale.biomeYouBought.replace("[cost]", VaultHelper.econ.format(cost)));
+		    }
+		}
+	    }
+	    player.closeInventory(); // Closes the inventory
+	    // Actually set the biome
+	    if (plugin.getPlayers().inTeam(playerUUID) && plugin.getPlayers().getTeamIslandLocation(playerUUID) != null) {
+		plugin.setIslandBiome(plugin.getPlayers().getTeamIslandLocation(playerUUID),biome);
+	    } else {
+		plugin.setIslandBiome(plugin.getPlayers().getIslandLocation(player.getUniqueId()), biome);
+	    }
+	    player.sendMessage(ChatColor.GREEN + Locale.biomeSet.replace("[biome]", thisPanel.get(slot).getName()));
+	} 
+	return;
     }
+
 }
+
