@@ -535,6 +535,11 @@ public class IslandCmd implements CommandExecutor {
 	    }
 	case 1:
 	    if (split[0].equalsIgnoreCase("go")) {
+		if (!plugin.getPlayers().hasIsland(playerUUID) && !plugin.getPlayers().inTeam(playerUUID)) {
+		    // Player has no island
+		    player.sendMessage(ChatColor.RED + Locale.errorNoIsland);
+		    return true;
+		}
 		// Teleport home
 		plugin.homeTeleport(player);
 		if (Settings.islandRemoveMobs) {
@@ -751,6 +756,11 @@ public class IslandCmd implements CommandExecutor {
 		    // Only the team leader can do this
 		    if (teamLeader != null && !teamLeader.equals(playerUUID)) {
 			player.sendMessage(ChatColor.RED + Locale.levelerrornotYourIsland);
+			return true;
+		    }
+		    if (!plugin.getPlayers().hasIsland(playerUUID)) {
+			// Player has no island
+			player.sendMessage(ChatColor.RED + Locale.errorNoIsland);
 			return true;
 		    }
 		    //player.sendMessage(ChatColor.YELLOW + "[Biomes]");
