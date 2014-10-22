@@ -153,13 +153,15 @@ public class AcidInventory implements Listener {
 	    BrewerInventory inv = e.getContents();
 	    int i=0;
 	    for (ItemStack item : inv.getContents()) {
-		// Remove lore
-		ItemMeta meta = item.getItemMeta();
-		//plugin.getLogger().info("DEBUG: " + meta.getDisplayName());
-		meta.setDisplayName(null);
-		meta.setLore(null);
-		item.setItemMeta(null);
-		inv.setItem(i, item);
+		if (item != null) {
+		    // Remove lore
+		    ItemMeta meta = item.getItemMeta();
+		    //plugin.getLogger().info("DEBUG: " + meta.getDisplayName());
+		    meta.setDisplayName(null);
+		    meta.setLore(null);
+		    item.setItemMeta(null);
+		    inv.setItem(i, item);
+		}
 		i++;
 	    }
 	}
