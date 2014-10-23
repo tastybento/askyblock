@@ -720,14 +720,19 @@ public class IslandGuard implements Listener {
 		e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
 		e.setCancelled(true);
 		return;
-	    }
-	    if (e.getMaterial().equals(Material.ENDER_PEARL)) {
+	    } else if (e.getMaterial().equals(Material.ENDER_PEARL)) {
 		if (!Settings.allowEnderPearls) {
 		    e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
 		    e.setCancelled(true);
 		}
 		return;
-	    } else if (e.getMaterial().equals(Material.POTION) && e.getItem().getDurability() != 0) {
+	    } else if (e.getMaterial().equals(Material.MONSTER_EGG)) {
+		if (!Settings.allowSpawnEggs) {
+		    e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
+		    e.setCancelled(true);
+		}
+		return;
+	    }  else if (e.getMaterial().equals(Material.POTION) && e.getItem().getDurability() != 0) {
 		// Potion
 		//plugin.getLogger().info("DEBUG: potion");
 		try {

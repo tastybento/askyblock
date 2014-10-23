@@ -182,6 +182,8 @@ island:
    allowcreeperdamage: true
    # Allow TNT damage to blocks (stops players using TNT to destroy other's islands)
    allowtntdamage: false
+   # Allow spawn egg use
+   allowspawneggs: false
 
 # This section contains the biomes that can be bought or used
 biomesettings:

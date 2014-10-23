@@ -980,7 +980,8 @@ public class ASkyBlock extends JavaPlugin {
 	Settings.allowEndermanGriefing = getConfig().getBoolean("island.allowendermangriefing", true);
 	Settings.allowCreeperDamage = getConfig().getBoolean("island.allowcreeperdamage", true);
 	Settings.allowTNTDamage = getConfig().getBoolean("island.allowtntdamage", false);
-
+	Settings.allowSpawnEggs = getConfig().getBoolean("island.allowspawneggs", false);
+	
 	Settings.absorbLava = getConfig().getBoolean("sponge.absorbLava", false);
 	Settings.absorbFire = getConfig().getBoolean("sponge.absorbFire", false);
 	Settings.restoreWater = getConfig().getBoolean("sponge.restoreWater", true);
