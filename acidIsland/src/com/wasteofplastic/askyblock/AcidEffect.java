@@ -99,7 +99,7 @@ public class AcidEffect implements Listener {
 	    //plugin.getLogger().info("Rain damage = " + Settings.rainDamage);
 	    boolean hitByRain = true;
 	    // Check if all air above player
-	    for (int y = playerLoc.getBlockY() + 1; y<playerLoc.getWorld().getMaxHeight(); y++) {
+	    for (int y = playerLoc.getBlockY() + 2; y<playerLoc.getWorld().getMaxHeight(); y++) {
 		if (!playerLoc.getWorld().getBlockAt(playerLoc.getBlockX(), y, playerLoc.getBlockZ()).getType().equals(Material.AIR)) {
 		    hitByRain = false;
 		    break;
@@ -161,7 +161,7 @@ public class AcidEffect implements Listener {
 				    }
 				    // Check if they are still in rain
 				    // Check if all air above player
-				    for (int y = player.getLocation().getBlockY() + 1; y<player.getLocation().getWorld().getMaxHeight(); y++) {
+				    for (int y = player.getLocation().getBlockY() + 2; y<player.getLocation().getWorld().getMaxHeight(); y++) {
 					if (!player.getLocation().getWorld().getBlockAt(player.getLocation().getBlockX(), y, player.getLocation().getBlockZ()).getType().equals(Material.AIR)) {
 					 // Safe!
 					    wetPlayers.remove(player);
