@@ -39,7 +39,7 @@ general:
    #Commands to run when the player resets their island (uncomment and customize)
    # [player] is the player name of who is reseting
    #resetcommands:
-   #  - kit [player] startertools
+   #  - kit tools [player]
    #  - some other command
 
    # Ops receive damage from acid (Set to true if you want Ops to play properly)
