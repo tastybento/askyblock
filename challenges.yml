@@ -1,15 +1,33 @@
-##################################################################################################
-# Challenges                                                                                     #
-# Rewards and required items have to be described using Bukkit Materials and be exactly correct  #
-# Do not use Type Id's - they will not work                                                      #
-# Challenges can be one of three types - inventory, island or level.                             #
-# inventory - means the player must have the items on them                                       #
-# island - means the items have to be on the island and within 10 blocks of the player           #
-#          entities are also supported, e.g., COW.                                               #
-# level - means the island level has to be equal or over this amount                             #
-# Challenges can be repeatable only if they are inventory challenges                             #
-# permissions can be given as a reward                                                           #
-##################################################################################################
+##########################################################################################
+# Challenges
+# Rewards and required items have to be described using Bukkit Materials
+# and be exactly correct
+# Do not use Type Id's - they will not work
+# Challenges can be one of three types - inventory, island or level.
+# inventory - means the player must have the items on them
+# island - means the items have to be on the island and within 10 blocks of the player
+#          entities are also supported, e.g., COW.
+# level - means the island level has to be equal or over this amount
+# Challenges can be repeatable only if they are inventory challenges
+# permissions can be given as a reward
+#
+# Reward Commands - commands can be run when a challenge is completed and repeated
+# Commands are:
+#    rewardcommands:
+#      - command1
+#      - command2
+#    repeatrewardcommands:
+#      - command1
+#      - command2      
+# The commands are listed and run in order. Do not put a / in front of the command.
+# The token [player] will be replaced with the player's name.
+# Example:
+#    rewardcommands:
+#      - pex promote [player]
+#      - heal [player]
+#      - warp winner_circle [player]
+# If a command fails, it will be noted in the console.
+##########################################################################################
 
 challenges:
   # Challenge levels - list as many as you like
@@ -29,6 +47,7 @@ challenges:
       takeItems: true
       itemReward: 'ICE:1'
       rewardText: '1 block of ice'
+      #rewardcommands:
       moneyReward: 10
       expReward: 30
       permissionReward: ''
@@ -37,6 +56,7 @@ challenges:
       repeatRewardText: '1 block of ice'
       repeatMoneyReward: 5
       repeatExpReward: 10
+      #repeatrewardcommands:
     breadmaker:
       friendlyname: 'Bread Maker'
       description: 'Bake 21 loaves of bread'

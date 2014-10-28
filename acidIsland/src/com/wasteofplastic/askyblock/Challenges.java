@@ -270,6 +270,43 @@ public class Challenges implements CommandExecutor {
 		}
 	    }
 	}
+	// Run reward commands
+	if (!players.checkChallenge(player.getUniqueId(),challenge)) {
+	    // First time
+	    List<String> commands = plugin.getChallengeConfig().getStringList("challenges.challengeList." + challenge.toLowerCase() + ".rewardcommands");
+	    for (String cmd : commands) {
+		// Substitute in any references to player
+		try {
+		    if (!plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(),cmd.replace("[player]", player.getName()))) {
+			plugin.getLogger().severe("Problem executing challenge reward commands - skipping!");
+			plugin.getLogger().severe("Command was : " + cmd);
+		    }
+		} catch (Exception e) {
+		    plugin.getLogger().severe("Problem executing challenge reward commands - skipping!");
+		    plugin.getLogger().severe("Command was : " + cmd);
+		    plugin.getLogger().severe("Error was: " + e.getMessage());
+		    e.printStackTrace();
+		}
+	    }
+	} else {
+	    // Repeat challenge
+	    List<String> commands = plugin.getChallengeConfig().getStringList("challenges.challengeList." + challenge.toLowerCase() + ".repeatrewardcommands");
+	    for (String cmd : commands) {
+		// Substitute in any references to player
+		try {
+		    if (!plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(),cmd.replace("[player]", player.getName()))) {
+			plugin.getLogger().severe("Problem executing challenge repeat reward commands - skipping!");
+			plugin.getLogger().severe("Command was : " + cmd);
+		    }
+		} catch (Exception e) {
+		    plugin.getLogger().severe("Problem executing challenge repeat reward commands - skipping!");
+		    plugin.getLogger().severe("Command was : " + cmd);
+		    plugin.getLogger().severe("Error was: " + e.getMessage());
+		    e.printStackTrace();
+		}
+	    }
+	}	
+
 	// Mark the challenge as complete
 	if (!players.checkChallenge(player.getUniqueId(),challenge)) {
 	    players.completeChallenge(player.getUniqueId(),challenge);
