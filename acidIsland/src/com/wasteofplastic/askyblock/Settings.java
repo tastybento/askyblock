@@ -126,6 +126,9 @@ public class Settings {
     public static boolean allowTeleportWhenFalling;
     // Biomes
     public static double biomeCost;
+    
+    // Island reset commands
+    public static List<String> resetCommands = new ArrayList<String>();
 
 
     

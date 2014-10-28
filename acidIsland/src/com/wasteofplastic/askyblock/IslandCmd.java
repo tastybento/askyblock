@@ -700,6 +700,22 @@ public class IslandCmd implements CommandExecutor {
 			deleteIsland.runTaskTimer(plugin, 80L, 40L);
 		    }
 		    //plugin.restartEvents();
+		    // Run any reset commands
+		    for (String cmd : Settings.resetCommands) {
+			// Substitute in any references to player
+			try {
+			    if (!plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(),cmd.replace("[player]", player.getName()))) {
+				plugin.getLogger().severe("Problem executing island reset commands - skipping!");
+				plugin.getLogger().severe("Command was : " + cmd);
+			    }
+			} catch (Exception e) {
+			    plugin.getLogger().severe("Problem executing island reset commands - skipping!");
+			    plugin.getLogger().severe("Command was : " + cmd);
+			    plugin.getLogger().severe("Error was: " + e.getMessage());
+			    e.printStackTrace();
+			}
+		    }
+
 		} else {
 		    player.sendMessage(ChatColor.YELLOW + "/island restart: " + ChatColor.WHITE + Locale.islandhelpRestart);
 		}

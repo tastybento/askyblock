@@ -36,6 +36,12 @@ general:
    #Example, 2 resets means they get 2 resets or 3 islands lifetime
    resetlimit: 2
 
+   #Commands to run when the player resets their island (uncomment and customize)
+   # [player] is the player name of who is reseting
+   #resetcommands:
+   #  - kit [player] startertools
+   #  - some other command
+
    # Ops receive damage from acid (Set to true if you want Ops to play properly)
    damageops: false
 
