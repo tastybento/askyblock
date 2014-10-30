@@ -197,6 +197,10 @@ biomesettings:
   # Default is 100 if this is not set. Cannot be <0.
   defaultcost: 100
 
+  # Default biome - what every player will start with. Default is PLAINS. See below
+  # for other options
+  defaultbiome: PLAINS
+
 # List of biomes and their settings.
 # Cost - cost in currency to change to that biome
 # permission - the permission required to use that biome

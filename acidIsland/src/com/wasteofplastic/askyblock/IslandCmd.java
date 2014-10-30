@@ -676,19 +676,19 @@ public class IslandCmd implements CommandExecutor {
 		    final Location oldIsland = plugin.getPlayers().getIslandLocation(playerUUID);
 		    //plugin.unregisterEvents();		
 		    final Location cowSpot = newIsland(sender);
-		    plugin.getPlayers().setHomeLocation(player.getUniqueId(), null);
+		    plugin.getPlayers().setHomeLocation(playerUUID, null);
 		    plugin.homeTeleport(player);
 		    plugin.resetPlayer(player);
 		    if (Settings.resetMoney) {
 			resetMoney(player);
 		    }
-
+		    plugin.setIslandBiome(plugin.getPlayers().getIslandLocation(playerUUID), Settings.defaultBiome);
 		    plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable () {
 			@Override
 			public void run() {
 			    //plugin.homeTeleport(player);
 			    player.getWorld().spawnEntity(cowSpot, EntityType.COW);
-
+			    
 			}
 		    }, 40L);		    
 		    //player.getWorld().spawnEntity(cowSpot, EntityType.COW);

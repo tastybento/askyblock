@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.bukkit.Material;
+import org.bukkit.block.Biome;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 
@@ -126,9 +127,11 @@ public class Settings {
     public static boolean allowTeleportWhenFalling;
     // Biomes
     public static double biomeCost;
+    public static Biome defaultBiome;
     
     // Island reset commands
     public static List<String> resetCommands = new ArrayList<String>();
+    
 
 
     

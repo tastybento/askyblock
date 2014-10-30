@@ -104,7 +104,7 @@ challenges:
    errorNotCloseEnough: "You must be standing within 10 blocks of all required items."
    errorItemsNotThere: "All required items must be close to you on your island!"
    errorIslandLevel: "Your island must be level [level] to complete this challenge!"
-   guititle: "Challenges"
+   guititle: "aSkyBlock Challenges"
    erroryouaremissing: "You are missing"
 #/island
 island:

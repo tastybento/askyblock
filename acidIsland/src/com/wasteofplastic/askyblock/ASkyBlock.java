@@ -1048,8 +1048,13 @@ public class ASkyBlock extends JavaPlugin {
 	    Settings.biomeCost = 0D;
 	    getLogger().warning("Biome default cost is < $0, so set to zero.");
 	}
-
-
+	String defaultBiome = getConfig().getString("biomesettings.defaultbiome", "PLAINS");
+	try {
+	    Settings.defaultBiome = Biome.valueOf(defaultBiome);
+	} catch (Exception e) {
+	    getLogger().severe("Could not parse biome " + defaultBiome + " using PLAINS instead.");
+	    Settings.defaultBiome = Biome.PLAINS;
+	}
 	// Localization Locale Setting
 	Locale.changingObsidiantoLava = locale.getString("changingObsidiantoLava", "Changing obsidian back into lava. Be careful!");
 	Locale.acidLore = locale.getString("acidLore","Poison!\nBeware!\nDo not drink!");
