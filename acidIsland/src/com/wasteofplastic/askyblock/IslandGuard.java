@@ -23,6 +23,7 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Biome;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Animals;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
@@ -51,6 +52,7 @@ import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerShearEntityEvent;
@@ -529,7 +531,7 @@ public class IslandGuard implements Listener {
 	    }
 	}
     }
-    
+
     /**
      * Prevents water from being dispensed in hell biomes
      * @param e
@@ -546,9 +548,9 @@ public class IslandGuard implements Listener {
 	    e.getBlock().getWorld().playSound(e.getBlock().getLocation(), Sound.FIZZ, 1F, 2F);
 	}
     }
-   
-    
-    
+
+
+
     @EventHandler(priority = EventPriority.NORMAL)
     public void onBucketFill(final PlayerBucketFillEvent e) {
 	if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
@@ -732,7 +734,7 @@ public class IslandGuard implements Listener {
 		    e.setCancelled(true);
 		}
 		return;
-	    }  else if (e.getMaterial().equals(Material.POTION) && e.getItem().getDurability() != 0) {
+	    } else if (e.getMaterial().equals(Material.POTION) && e.getItem().getDurability() != 0) {
 		// Potion
 		//plugin.getLogger().info("DEBUG: potion");
 		try {
@@ -790,6 +792,35 @@ public class IslandGuard implements Listener {
 	    }
 	}
     }
+
+    /**
+     * This prevents breeding of animals off-island
+     * @param e
+     */
+    @EventHandler(priority = EventPriority.LOWEST)
+    void PlayerInteractEntityEvent(PlayerInteractEntityEvent e){
+	//plugin.getLogger().info(e.getEventName());
+	if (!e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	    return;
+	}
+	if (plugin.playerIsOnIsland(e.getPlayer()) || e.getPlayer().isOp()) {
+	    // You can do anything on your island or if you are Op
+	    return;
+	}
+	// This permission bypasses protection
+	if (VaultHelper.checkPerm(e.getPlayer(), "askyblock.mod.bypassprotect")) {
+	    return;
+	}
+	if (!Settings.allowBreeding) {
+	    // Player is off island
+	    if (e.getRightClicked() instanceof Animals) {
+		//plugin.getLogger().info("You right clicked on an animal");
+		e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
+		e.setCancelled(true); 
+	    }
+	}
+    }
+
 }
 
 

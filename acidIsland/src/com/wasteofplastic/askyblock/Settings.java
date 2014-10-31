@@ -94,6 +94,7 @@ public class Settings {
     public static boolean allowCreeperDamage;
     public static boolean allowTNTDamage;
     public static boolean allowSpawnEggs;
+    public static boolean allowBreeding;
     
     //public static boolean ultraSafeBoats;
     public static boolean logInRemoveMobs;
@@ -112,6 +113,7 @@ public class Settings {
     public static boolean allowSpawnGateUse;
     public static boolean allowSpawnMobSpawn;
     public static boolean allowSpawnNoAcidWater;
+    
     // Levels
     public static HashMap<Material,Integer> blockLimits;
     public static HashMap<Material,Integer> blockValues;
@@ -131,6 +133,7 @@ public class Settings {
     
     // Island reset commands
     public static List<String> resetCommands = new ArrayList<String>();
+    
     
 
 
