@@ -22,6 +22,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Biome;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Arrow;
@@ -178,7 +179,22 @@ public class IslandGuard implements Listener {
 	case CREEPER:
 	    if (!Settings.allowCreeperDamage) {
 		//plugin.getLogger().info("Creeper block damage prevented");
-		e.blockList().clear();
+		    e.blockList().clear();
+	    } else {
+		if (!Settings.allowChestDamage) {
+		    for (Block b : e.blockList()) {
+			switch (b.getType()) {
+			case CHEST:
+			case ENDER_CHEST:
+			case STORAGE_MINECART:
+			case TRAPPED_CHEST:
+			    e.blockList().remove(b);
+			    break;
+			default:
+			    break;
+			}
+		    }
+		}
 	    }
 	    break;
 	case PRIMED_TNT:
@@ -186,7 +202,22 @@ public class IslandGuard implements Listener {
 	    if (!Settings.allowTNTDamage) {
 		//plugin.getLogger().info("TNT block damage prevented");
 		e.blockList().clear();
-	    }	    
+	    } else {
+		if (!Settings.allowChestDamage) {
+		    for (Block b : e.blockList()) {
+			switch (b.getType()) {
+			case CHEST:
+			case ENDER_CHEST:
+			case STORAGE_MINECART:
+			case TRAPPED_CHEST:
+			    e.blockList().remove(b);
+			    break;
+			default:
+			    break;
+			}
+		    }
+		}
+	    }
 	    break;
 	default:
 	    break;

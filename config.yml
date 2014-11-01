@@ -194,6 +194,8 @@ island:
    allowbreeding: false
    # Allow use of Flint & Steel by visitors
    allowfire: false
+   # Allow chests to be blown up by creepers or TNT
+   allowchestdamage: false
 
 # This section contains the biomes that can be bought or used
 biomesettings:
