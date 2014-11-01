@@ -728,6 +728,12 @@ public class IslandGuard implements Listener {
 		    e.setCancelled(true);
 		}
 		return;
+	    } else if (e.getMaterial().equals(Material.FLINT_AND_STEEL)) {
+		if (!Settings.allowFire) {
+		    e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
+		    e.setCancelled(true);
+		}
+		return;
 	    } else if (e.getMaterial().equals(Material.MONSTER_EGG)) {
 		if (!Settings.allowSpawnEggs) {
 		    e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);

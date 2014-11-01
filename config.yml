@@ -192,6 +192,8 @@ island:
    allowspawneggs: false
    # Allow animal breeding by visitors
    allowbreeding: false
+   # Allow use of Flint & Steel by visitors
+   allowfire: false
 
 # This section contains the biomes that can be bought or used
 biomesettings:
