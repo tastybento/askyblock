@@ -189,10 +189,6 @@ public class ControlPanel implements Listener {
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
 	Player player = (Player) event.getWhoClicked(); // The player that clicked the item
-	// Check world
-	if (!player.getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
-	    return;
-	}
 	ItemStack clicked = event.getCurrentItem(); // The item that was clicked
 	Inventory inventory = event.getInventory(); // The inventory that was clicked in
 	//ASkyBlock plugin = ASkyBlock.getPlugin();

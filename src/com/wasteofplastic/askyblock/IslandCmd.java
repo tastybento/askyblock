@@ -594,7 +594,7 @@ public class IslandCmd implements CommandExecutor {
 		    Set<UUID> warpList = plugin.listWarps();
 		    if (warpList.isEmpty()) {
 			player.sendMessage(ChatColor.YELLOW + Locale.warpserrorNoWarpsYet);
-			if (VaultHelper.checkPerm(player, "askyblock.island.addwarp")) {
+			if (VaultHelper.checkPerm(player, "askyblock.island.addwarp") && plugin.playerIsOnIsland(player)) {
 			    player.sendMessage(ChatColor.YELLOW + Locale.warpswarpTip);
 			}
 			return true;
@@ -778,6 +778,10 @@ public class IslandCmd implements CommandExecutor {
 		    if (!plugin.getPlayers().hasIsland(playerUUID)) {
 			// Player has no island
 			player.sendMessage(ChatColor.RED + Locale.errorNoIsland);
+			return true;
+		    }
+		    if (!plugin.playerIsOnIsland(player)) {
+			player.sendMessage(ChatColor.RED + Locale.challengeserrorNotOnIsland);
 			return true;
 		    }
 		    //player.sendMessage(ChatColor.YELLOW + "[Biomes]");
