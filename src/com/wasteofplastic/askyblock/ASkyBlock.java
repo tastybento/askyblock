@@ -1367,7 +1367,7 @@ public class ASkyBlock extends JavaPlugin {
 		    getLogger().info("Trying to register generator with Multiverse ");
 		    try {
 			getServer().dispatchCommand(getServer().getConsoleSender(), "mv modify set generator ASkyBlock " + Settings.worldName);
-			getServer().dispatchCommand(getServer().getConsoleSender(), "mv modify set generator ASkyBlock " + Settings.worldName + "_nether");
+			//getServer().dispatchCommand(getServer().getConsoleSender(), "mv modify set generator ASkyBlock " + Settings.worldName + "_nether");
 		    } catch (Exception e) {
 			getLogger().info("Not successfull! Disabling ASkyBlock!");
 			e.printStackTrace();
