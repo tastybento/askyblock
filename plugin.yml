@@ -1,8 +1,9 @@
 name: ASkyBlock
 main: com.wasteofplastic.askyblock.ASkyBlock
-version: 2.3
+version: 2.4
 description: A SkyBlock Plugin
 author: Tastybento
+load: startup
 depend: [Vault]
 loadbefore: [Multiverse-Core]
 commands:

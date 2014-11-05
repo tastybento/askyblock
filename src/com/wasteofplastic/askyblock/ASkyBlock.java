@@ -146,14 +146,18 @@ public class ASkyBlock extends JavaPlugin {
      */
     public static World getIslandWorld() {
 	if (acidWorld == null) {
+	    //Bukkit.getLogger().info("DEBUG worldName = " + Settings.worldName);
 	    acidWorld = WorldCreator.name(Settings.worldName).type(WorldType.FLAT).environment(World.Environment.NORMAL)
-		    .generator(new AcidChunkGenerator()).createWorld();
+		    .generator(new ChunkGeneratorWorld()).createWorld();
 	    // Make the nether if it does not exist
 	    // Make the nether if it does not exist
 	    if (Settings.createNether) {
 		if (plugin.getServer().getWorld(Settings.worldName + "_nether") == null) {
 		    Bukkit.getLogger().info("Creating ASkyBlock's nether...");
-		    WorldCreator.name(Settings.worldName + "_nether").type(WorldType.NORMAL).environment(World.Environment.NETHER).createWorld();
+		    World netherWorld = WorldCreator.name(Settings.worldName + "_nether").type(WorldType.FLAT).environment(World.Environment.NETHER).createWorld();
+		    //World netherWorld = WorldCreator.name(Settings.worldName + "_nether").type(WorldType.FLAT).generator(new ChunkGeneratorNether()).environment(World.Environment.NETHER).createWorld();
+		    //netherWorld.setMonsterSpawnLimit(Settings.monsterSpawnLimit);
+		   // netherWorld.setAnimalSpawnLimit(Settings.animalSpawnLimit);
 		}
 	    }
 	}
@@ -161,6 +165,7 @@ public class ASkyBlock extends JavaPlugin {
 	acidWorld.setWaterAnimalSpawnLimit(Settings.waterAnimalSpawnLimit);
 	acidWorld.setMonsterSpawnLimit(Settings.monsterSpawnLimit);
 	acidWorld.setAnimalSpawnLimit(Settings.animalSpawnLimit);
+	
 	return acidWorld;
     }
 
@@ -219,7 +224,7 @@ public class ASkyBlock extends JavaPlugin {
 
     @Override
     public ChunkGenerator getDefaultWorldGenerator(final String worldName, final String id) {
-	return new AcidChunkGenerator();
+	return new ChunkGeneratorWorld();
     }
 
     /**
@@ -1321,7 +1326,7 @@ public class ASkyBlock extends JavaPlugin {
 	    getServer().getPluginManager().disablePlugin(this);
 	} 
 	loadPluginConfig();
-	getIslandWorld();
+	//getIslandWorld();
 
 	// Set and make the player's directory if it does not exist and then load players into memory
 	playersFolder = new File(getDataFolder() + File.separator + "players");
@@ -1353,6 +1358,7 @@ public class ASkyBlock extends JavaPlugin {
 	getServer().getScheduler().runTask(this, new Runnable() {
 	    @Override
 	    public void run() {
+		getIslandWorld();
 		// update the list
 		//updateTopTen();
 		// Minishop - must wait for economy to load before we can use econ 
@@ -1361,6 +1367,7 @@ public class ASkyBlock extends JavaPlugin {
 		    getLogger().info("Trying to register generator with Multiverse ");
 		    try {
 			getServer().dispatchCommand(getServer().getConsoleSender(), "mv modify set generator ASkyBlock " + Settings.worldName);
+			getServer().dispatchCommand(getServer().getConsoleSender(), "mv modify set generator ASkyBlock " + Settings.worldName + "_nether");
 		    } catch (Exception e) {
 			getLogger().info("Not successfull! Disabling ASkyBlock!");
 			e.printStackTrace();

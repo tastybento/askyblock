@@ -56,7 +56,7 @@ public class IslandCmd implements CommandExecutor {
     // The island reset confirmation
     private HashMap<UUID,Boolean> confirm = new HashMap<UUID,Boolean>();
     // Last island
-    Location last = new Location(ASkyBlock.getIslandWorld(), Settings.islandXOffset, Settings.island_level, Settings.islandZOffset);
+    Location last = null;
     /**
      * Invite list - invited player name string (key), inviter name string (value)
      */
@@ -75,8 +75,8 @@ public class IslandCmd implements CommandExecutor {
 	// Plugin instance
 	this.plugin = aSkyBlock;
 	// Get the next island spot
-	Location loc = getNextIsland();
-	plugin.getLogger().info("Next free island spot is at " + loc.getBlockX() + "," + loc.getBlockZ());
+	//Location loc = getNextIsland();
+	//plugin.getLogger().info("Next free island spot is at " + loc.getBlockX() + "," + loc.getBlockZ());
 	// Check if there is a schematic
 	File schematicFile = new File(plugin.getDataFolder(), "island.schematic");
 	if (!schematicFile.exists()) {
@@ -234,6 +234,9 @@ public class IslandCmd implements CommandExecutor {
      */
     private Location getNextIsland() {
 	// Find the next free spot
+	if (last == null) {
+	    last = new Location(ASkyBlock.getIslandWorld(), Settings.islandXOffset, Settings.island_level, Settings.islandZOffset);
+	}
 	Location next = last.clone();
 	while (plugin.islandAtLocation(next)) {
 	    next = nextGridLocation(next);

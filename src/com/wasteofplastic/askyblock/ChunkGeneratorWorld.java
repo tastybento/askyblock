@@ -1,5 +1,5 @@
 /*******************************************************************************
- * This file is part of ASkyBlock.
+getServer().dispatchCommand(getServer().getConsoleSender(), "mv modify set generator ASkyBlock " + Settings.worldName); * This file is part of ASkyBlock.
  *
  *     ASkyBlock is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ import org.bukkit.generator.ChunkGenerator;
  * @author ben
  * Creates the world
  */
-public class AcidChunkGenerator extends ChunkGenerator {
+public class ChunkGeneratorWorld extends ChunkGenerator {
     //@SuppressWarnings("deprecation")
     public byte[][] generateBlockSections(World world, Random random, int chunkX, int chunkZ, BiomeGrid biomeGrid)
     {
