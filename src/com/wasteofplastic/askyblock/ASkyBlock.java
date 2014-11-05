@@ -154,7 +154,7 @@ public class ASkyBlock extends JavaPlugin {
 	    if (Settings.createNether) {
 		if (plugin.getServer().getWorld(Settings.worldName + "_nether") == null) {
 		    Bukkit.getLogger().info("Creating ASkyBlock's nether...");
-		    World netherWorld = WorldCreator.name(Settings.worldName + "_nether").type(WorldType.FLAT).environment(World.Environment.NETHER).createWorld();
+		    World netherWorld = WorldCreator.name(Settings.worldName + "_nether").type(WorldType.NORMAL).environment(World.Environment.NETHER).createWorld();
 		    //World netherWorld = WorldCreator.name(Settings.worldName + "_nether").type(WorldType.FLAT).generator(new ChunkGeneratorNether()).environment(World.Environment.NETHER).createWorld();
 		    //netherWorld.setMonsterSpawnLimit(Settings.monsterSpawnLimit);
 		   // netherWorld.setAnimalSpawnLimit(Settings.animalSpawnLimit);
