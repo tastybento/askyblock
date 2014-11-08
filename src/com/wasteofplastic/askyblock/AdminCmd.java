@@ -217,14 +217,15 @@ public class AdminCmd implements CommandExecutor {
 		    sender.sendMessage(ChatColor.RED + "This command must be used in-game.");
 		    return true;
 		}
-		Location closestBedRock = getClosestIsland(((Player)sender).getLocation());
-		if (closestBedRock == null) {
+		Location closestIsland = getClosestIsland(((Player)sender).getLocation());
+		if (closestIsland == null) {
 		    sender.sendMessage(ChatColor.RED + "Sorry, could not find an island. Move closer?");
 		    return true;
 		}
+		plugin.getLogger().info("DEBUG: location = " + closestIsland.toString());
 		// Find out whose island this is
 		//plugin.getLogger().info("DEBUG: closest bedrock: " + closestBedRock.toString());
-		UUID target = plugin.getPlayers().getPlayerFromIslandLocation(closestBedRock);
+		UUID target = plugin.getPlayers().getPlayerFromIslandLocation(closestIsland);
 		if (target == null) {
 		    sender.sendMessage(ChatColor.RED + "This island is not owned by anyone right now.");
 		    return true;
@@ -551,13 +552,16 @@ public class AdminCmd implements CommandExecutor {
     }
 
     /**
-     * TODO: check file system
+     * This returns the coodinate of where an island should be on the grid.
      * @param location
      * @return
      */
     private Location getClosestIsland(Location location) {
-	Location closestBedRock = null;
-	double distance = 0;
+	int x = (location.getBlockX() / Settings.islandDistance) * Settings.islandDistance + Settings.islandXOffset;
+	int z = (location.getBlockZ() / Settings.islandDistance) * Settings.islandDistance + Settings.islandZOffset;
+	int y = Settings.island_level;
+	return new Location(location.getWorld(),x,y,z);
+	/*
 	for (int x = -Settings.islandDistance; x< Settings.islandDistance; x++) {
 	    for (int z = -Settings.islandDistance; z< Settings.islandDistance; z++) {
 		Location blockLoc = new Location(location.getWorld(),x + location.getBlockX(),Settings.island_level,z + location.getBlockZ());
@@ -578,11 +582,11 @@ public class AdminCmd implements CommandExecutor {
 	    }
 	}
 	// TODO Auto-generated method stub
-	return closestBedRock;
+	return closestBedRock;*/
     }
 
     private void showInfo(UUID playerUUID, CommandSender sender) {
-	sender.sendMessage(ChatColor.GREEN + plugin.getPlayers().getName(playerUUID));
+	sender.sendMessage("Owner:" + ChatColor.GREEN + plugin.getPlayers().getName(playerUUID));
 	sender.sendMessage(ChatColor.WHITE + "UUID: " + playerUUID.toString());
 	// Display island level
 	sender.sendMessage(ChatColor.GREEN + Locale.levelislandLevel + ": " + plugin.getPlayers().getIslandLevel(playerUUID));
