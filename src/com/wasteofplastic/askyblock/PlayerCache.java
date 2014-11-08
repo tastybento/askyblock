@@ -83,12 +83,10 @@ public class PlayerCache {
      * Removes all players on the server now from cache and saves their info
      */
     public void removeAllPlayers() {
-	for (Player onlinePlayer : plugin.getServer().getOnlinePlayers()) {
-	    if (playerCache.containsKey(onlinePlayer.getUniqueId())) {
-		playerCache.get(onlinePlayer.getUniqueId()).save();
-		playerCache.remove(onlinePlayer.getUniqueId());
-	    }
+	for (UUID pl : playerCache.keySet()) {
+	    playerCache.get(pl).save();
 	}
+	playerCache.clear();
     }
 
     /*
