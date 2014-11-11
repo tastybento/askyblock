@@ -17,8 +17,12 @@
 package com.wasteofplastic.askyblock;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Biome;
@@ -47,6 +51,7 @@ import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.PlayerLeashEntityEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
@@ -58,6 +63,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerShearEntityEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.PlayerUnleashEntityEvent;
 import org.bukkit.material.MaterialData;
 import org.bukkit.potion.Potion;
 
@@ -79,7 +85,7 @@ public class IslandGuard implements Listener {
      * Checked if player teleports
      * 
      */
-    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled=true)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onPlayerFall(final PlayerMoveEvent e) {
 	if (!e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    return;
@@ -102,7 +108,7 @@ public class IslandGuard implements Listener {
      * Prevents teleporting when falling based on setting
      * @param e
      */
-    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled=true)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onPlayerTeleport(final PlayerTeleportEvent e) {
 	if (Settings.allowTeleportWhenFalling) {
 	    return;
@@ -130,7 +136,7 @@ public class IslandGuard implements Listener {
      * Prevents mobs spawning at spawn
      * @param e
      */
-    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled=true)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onMobSpawn(final CreatureSpawnEvent e) {
 	if (!e.getEntity().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    return;
@@ -155,7 +161,7 @@ public class IslandGuard implements Listener {
 	}
     }
 
-    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled=true)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onExplosion(final EntityExplodeEvent e) {
 	// Find out what is exploding
 	Entity expl = e.getEntity();
@@ -179,20 +185,26 @@ public class IslandGuard implements Listener {
 	case CREEPER:
 	    if (!Settings.allowCreeperDamage) {
 		//plugin.getLogger().info("Creeper block damage prevented");
-		    e.blockList().clear();
+		e.blockList().clear();
 	    } else {
 		if (!Settings.allowChestDamage) {
+		    List<Block> toberemoved = new ArrayList<Block>();
+		    // Save the chest blocks in a list
 		    for (Block b : e.blockList()) {
 			switch (b.getType()) {
 			case CHEST:
 			case ENDER_CHEST:
 			case STORAGE_MINECART:
 			case TRAPPED_CHEST:
-			    e.blockList().remove(b);
+			    toberemoved.add(b);
 			    break;
 			default:
 			    break;
 			}
+		    }
+		    // Now delete them
+		    for (Block b : toberemoved) {
+			e.blockList().remove(b);
 		    }
 		}
 	    }
@@ -204,17 +216,23 @@ public class IslandGuard implements Listener {
 		e.blockList().clear();
 	    } else {
 		if (!Settings.allowChestDamage) {
+		    List<Block> toberemoved = new ArrayList<Block>();
+		    // Save the chest blocks in a list
 		    for (Block b : e.blockList()) {
 			switch (b.getType()) {
 			case CHEST:
 			case ENDER_CHEST:
 			case STORAGE_MINECART:
 			case TRAPPED_CHEST:
-			    e.blockList().remove(b);
+			    toberemoved.add(b);
 			    break;
 			default:
 			    break;
 			}
+		    }
+		    // Now delete them
+		    for (Block b : toberemoved) {
+			e.blockList().remove(b);
 		    }
 		}
 	    }
@@ -230,7 +248,7 @@ public class IslandGuard implements Listener {
     /**
      * Allows or prevents enderman griefing
      */
-    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled=true)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onEndermanGrief(final EntityChangeBlockEvent e) {
 	if (!e.getEntity().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    return;
@@ -256,7 +274,7 @@ public class IslandGuard implements Listener {
      * Drops the Enderman's block when he dies if he has one
      * @param e
      */
-    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled=true)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onEndermanDeath(final EntityDeathEvent e) {
 	if (!Settings.endermanDeathDrop)
 	    return;
@@ -282,7 +300,7 @@ public class IslandGuard implements Listener {
      * Prevents blocks from being broken
      * @param e
      */
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled=true)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onBlockBreak(final BlockBreakEvent e) {
 	if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    // This permission bypasses protection
@@ -499,7 +517,7 @@ public class IslandGuard implements Listener {
     }
 
     // Prevent sleeping in other beds
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.LOW)
     public void onPlayerBedEnter(final PlayerBedEnterEvent e) {
 	// Check world
 	if (Settings.worldName.equalsIgnoreCase(e.getPlayer().getWorld().getName())) {
@@ -519,7 +537,7 @@ public class IslandGuard implements Listener {
      * Prevents the breakage of hanging items
      * @param e
      */
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.LOW)
     public void onBreakHanging(final HangingBreakByEntityEvent e) {
 	//plugin.getLogger().info(e.getEventName());
 	if (e.getEntity().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
@@ -539,7 +557,55 @@ public class IslandGuard implements Listener {
 	}
     }
 
-    @EventHandler(priority = EventPriority.NORMAL)
+    /**
+     * Prevents the leash use
+     * @param e
+     */
+    @EventHandler(priority = EventPriority.LOW)
+    public void onLeashUse(final PlayerLeashEntityEvent e) {
+	//plugin.getLogger().info(e.getEventName());
+	if (e.getEntity().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	    if (!Settings.allowLeashUse) {
+		if (e.getPlayer() != null) {
+		    Player p = e.getPlayer();
+		    // This permission bypasses protection
+		    if (VaultHelper.checkPerm(p, "askyblock.mod.bypassprotect")) {
+			return;
+		    }
+		    if (!plugin.playerIsOnIsland(p) && !p.isOp()) {
+			p.sendMessage(ChatColor.RED + Locale.islandProtected);
+			e.setCancelled(true);
+		    }
+		}
+	    }
+	}
+    }
+
+    /**
+     * Prevents the leash use
+     * @param e
+     */
+    @EventHandler(priority = EventPriority.LOW)
+    public void onLeashUse(final PlayerUnleashEntityEvent e) {
+	//plugin.getLogger().info(e.getEventName());
+	if (e.getEntity().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	    if (!Settings.allowLeashUse) {
+		if (e.getPlayer() != null) {
+		    Player p = e.getPlayer();
+		    // This permission bypasses protection
+		    if (VaultHelper.checkPerm(p, "askyblock.mod.bypassprotect")) {
+			return;
+		    }
+		    if (!plugin.playerIsOnIsland(p) && !p.isOp()) {
+			p.sendMessage(ChatColor.RED + Locale.islandProtected);
+			e.setCancelled(true);
+		    }
+		}
+	    }
+	}
+    }
+
+    @EventHandler(priority = EventPriority.LOW)
     public void onBucketEmpty(final PlayerBucketEmptyEvent e) {
 	if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    // This permission bypasses protection
@@ -567,7 +633,7 @@ public class IslandGuard implements Listener {
      * Prevents water from being dispensed in hell biomes
      * @param e
      */
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.LOW)
     public void onNetherDispenser(final BlockDispenseEvent e) {
 	if (!e.getBlock().getWorld().getName().equalsIgnoreCase(Settings.worldName) ||
 		!e.getBlock().getBiome().equals(Biome.HELL)) {
@@ -582,7 +648,7 @@ public class IslandGuard implements Listener {
 
 
 
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.LOW)
     public void onBucketFill(final PlayerBucketFillEvent e) {
 	if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    // This permission bypasses protection
@@ -599,7 +665,7 @@ public class IslandGuard implements Listener {
     }
 
     // Protect sheep
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.LOW)
     public void onShear(final PlayerShearEntityEvent e) {
 	if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    // This permission bypasses protection
@@ -615,7 +681,7 @@ public class IslandGuard implements Listener {
 	}
     }
 
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.LOW)
     public void onPlayerInteract(final PlayerInteractEvent e) {
 	if (!e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    return;
@@ -798,7 +864,7 @@ public class IslandGuard implements Listener {
      * Prevents crafting of EnderChest unless the player has permission
      * @param event
      */
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.LOW)
     public void onCraft(CraftItemEvent event) {
 	Player player = (Player) event.getWhoClicked();
 	if (player.getWorld().getName().equalsIgnoreCase(Settings.worldName) || 
@@ -832,28 +898,54 @@ public class IslandGuard implements Listener {
 
     /**
      * This prevents breeding of animals off-island
+     * Adds a limit to how many animals can be bred by a player
      * @param e
      */
     @EventHandler(priority = EventPriority.LOWEST)
     void PlayerInteractEntityEvent(PlayerInteractEntityEvent e){
+	Player p = e.getPlayer();
 	//plugin.getLogger().info(e.getEventName());
-	if (!e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	if (!p.getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    return;
 	}
-	if (plugin.playerIsOnIsland(e.getPlayer()) || e.getPlayer().isOp()) {
-	    // You can do anything on your island or if you are Op
+	if (p.isOp()) {
+	    // You can do anything if you are Op
 	    return;
 	}
-	// This permission bypasses protection
-	if (VaultHelper.checkPerm(e.getPlayer(), "askyblock.mod.bypassprotect")) {
-	    return;
-	}
-	if (!Settings.allowBreeding) {
-	    // Player is off island
-	    if (e.getRightClicked() instanceof Animals) {
-		//plugin.getLogger().info("You right clicked on an animal");
-		e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
-		e.setCancelled(true); 
+	// Check limit of animals on island
+	if (plugin.playerIsOnIsland(e.getPlayer())) {
+	    // Get the animal spawn limit
+	    int limit = Settings.island_protectionRange /16 * Settings.island_protectionRange / 16 * plugin.getServer().getAnimalSpawnLimit();
+	    plugin.getLogger().info("DEBUG: Limit is " + limit);
+	    // Check if this player is at the limit of mobs
+	    // Spawn snowball in island
+	    Location islandLoc = plugin.getPlayers().getIslandLocation(p.getUniqueId());
+	    Entity snowball = p.getWorld().spawnEntity(new Location(p.getWorld(),islandLoc.getBlockX(),128,islandLoc.getBlockZ()), EntityType.SNOWBALL);
+	    if (snowball == null)
+		return;
+	    int animals = 0;
+	    for (Entity entity : snowball.getNearbyEntities(Settings.island_protectionRange/2, 128, Settings.island_protectionRange/2)) {
+		if (entity instanceof Animals) {
+		    animals++;
+		    if (animals > limit) {
+			p.sendMessage(ChatColor.RED + "Island animal limit of " + limit + " reached!");
+			plugin.getLogger().warning(p.getName() + " hit the island animal breeding limit of " + limit);
+			e.setCancelled(true);
+			snowball.remove();
+			return;
+		    }
+		}
+	    }
+	    snowball.remove();
+	    //plugin.getLogger().info("DEBUG: Animal count is " + animals);
+	} else {
+	    if (!Settings.allowBreeding) {
+		// Player is off island
+		if (e.getRightClicked() instanceof Animals) {
+		    //plugin.getLogger().info("You right clicked on an animal");
+		    e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
+		    e.setCancelled(true); 
+		}
 	    }
 	}
     }

@@ -90,6 +90,9 @@ public class Biomes implements Listener {
 		newPanel.addItem(i.getItem());
 	    }
 	    return newPanel;
+	} else {
+	    player.sendMessage(ChatColor.RED + Locale.errorCommandNotReady);
+	    plugin.getLogger().warning("There are no biomes in config.yml so /island biomes will not work!");
 	}
 	return null;
     }

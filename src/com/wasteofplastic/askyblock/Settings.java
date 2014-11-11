@@ -73,17 +73,6 @@ public class Settings {
     public static int sea_level;
     public static int island_protectionRange;
     public static int abandonedIslandLevel;
-    public static boolean absorbLava;
-    public static boolean absorbFire;
-    public static boolean restoreWater;
-    public static boolean canPlaceWater;
-    public static int spongeRadius;
-    public static boolean threadedSpongeSave;
-    public static int flowTimeMult;
-    public static boolean attackFire;
-    public static Object excludedWorlds;
-    public static boolean pistonMove;
-    public static boolean spongeSaturation;
     public static Double startingMoney;
     public static double netherSpawnRadius;
     public static List<PotionEffectType> acidDamageType = new ArrayList<PotionEffectType>();
@@ -97,6 +86,7 @@ public class Settings {
     public static boolean allowBreeding;
     public static boolean allowFire;
     public static boolean allowChestDamage;
+    public static boolean allowLeashUse;
     
     //public static boolean ultraSafeBoats;
     public static boolean logInRemoveMobs;
@@ -135,6 +125,5 @@ public class Settings {
     
     // Island reset commands
     public static List<String> resetCommands = new ArrayList<String>();
-    
-   
+  
 }

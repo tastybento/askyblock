@@ -38,6 +38,17 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BlockIterator;
 
+/*
+ * New commands:
+ * 
+ * teamkick <player> - removes a player from any team they are on. Does not throw stuff or teleport them.
+ * teamadd <player> <leader> - adds the player to the leader's team. If leader does not have a team, one is made.
+ * teamdelete <leader> - removes the leader's team completely
+ * 
+ */
+
+
+
 /**
  * This class handles the /asadmin command for admins
  * 
@@ -68,6 +79,11 @@ public class AdminCmd implements CommandExecutor {
 	    sender.sendMessage(ChatColor.YELLOW + "/asadmin info <player>:" + ChatColor.WHITE + " " + Locale.adminHelpinfo);
 	    sender.sendMessage(ChatColor.YELLOW + "/asadmin info:" + ChatColor.WHITE + " " + Locale.adminHelpinfoIsland);
 	    sender.sendMessage(ChatColor.YELLOW + "/asadmin clearreset <player>:" + ChatColor.WHITE + " " + Locale.adminHelpclearReset);
+	    sender.sendMessage(ChatColor.GREEN + "== Team Editing Commands ==");
+	    sender.sendMessage(ChatColor.YELLOW + "/asadmin team kick <player>:" + ChatColor.WHITE + " Removes player from any team.");
+	    sender.sendMessage(ChatColor.YELLOW + "/asadmin team add <player> <leader>:" + ChatColor.WHITE + " Adds player to leader's team.");
+	    sender.sendMessage(ChatColor.YELLOW + "/asadmin team delete <leader>:" + ChatColor.WHITE + " Removes the leader's team compeletely.");
+
 	} else {
 	    // Only give help if the player has permissions
 	    // Permissions are split into admin permissions and mod permissions
@@ -106,6 +122,12 @@ public class AdminCmd implements CommandExecutor {
 	    }
 	    if (VaultHelper.checkPerm(player, "askyblock.mod.tp") || player.isOp()) {
 		player.sendMessage(ChatColor.YELLOW + "/asadmin tp <player>:" + ChatColor.WHITE + " " + Locale.adminHelptp);
+	    }
+	    if (VaultHelper.checkPerm(player, "askyblock.mod.team") || player.isOp()) {
+		sender.sendMessage(ChatColor.GREEN + "== Team Editing Commands ==");
+		sender.sendMessage(ChatColor.YELLOW + "/asadmin team kick <player>:" + ChatColor.WHITE + " Removes player from any team.");
+		sender.sendMessage(ChatColor.YELLOW + "/asadmin team add <player> <leader>:" + ChatColor.WHITE + " Adds player to leader's team.");
+		//sender.sendMessage(ChatColor.YELLOW + "/asadmin team delete <leader>:" + ChatColor.WHITE + " Removes the leader's team compeletely.");
 	    }
 	}
     }
@@ -175,9 +197,9 @@ public class AdminCmd implements CommandExecutor {
 			}
 		    }
 		}
-		
+
 		// TODO: find closest island locus and check file syste,
-		
+
 		if (closestBedRock == null) {
 		    sender.sendMessage(ChatColor.RED + "Sorry, could not find an island. Move closer?");
 		    return true;
@@ -514,7 +536,52 @@ public class AdminCmd implements CommandExecutor {
 		return false;
 	    }
 	case 3:
-	    if (split[0].equalsIgnoreCase("completechallenge")) {
+	    // team kick <player> and team delete <leader>
+	    if (split[0].equalsIgnoreCase("team")) {
+		// Convert name to a UUID
+		final UUID playerUUID = plugin.getPlayers().getUUID(split[2]);
+		if (!plugin.getPlayers().isAKnownPlayer(playerUUID)) {
+		    sender.sendMessage(ChatColor.RED + Locale.errorUnknownPlayer);
+		    return true;
+		}
+		if (split[1].equalsIgnoreCase("kick")) {
+		    // Remove player from team
+		    if (!plugin.getPlayers().inTeam(playerUUID)) {
+			sender.sendMessage(ChatColor.RED + Locale.kickerrorNoTeam);
+			return true;
+		    }
+		    UUID teamLeader= plugin.getPlayers().getTeamLeader(playerUUID);
+		    // Payer is not a team leader
+		    if (!teamLeader.equals(playerUUID)) {
+			// Clear the player of all team-related items
+			plugin.getPlayers().setLeaveTeam(playerUUID);
+			plugin.getPlayers().setHomeLocation(playerUUID, null);
+			plugin.getPlayers().setIslandLocation(playerUUID, null);
+			//Clear the leader of this player and if they now have no team, remove the team 
+			plugin.getPlayers().removeMember(teamLeader, playerUUID);
+			if (plugin.getPlayers().getMembers(teamLeader).size() < 2) {
+			    plugin.getPlayers().setLeaveTeam(teamLeader);
+			}				
+			// Remove any warps
+			plugin.removeWarp(playerUUID);
+			sender.sendMessage(ChatColor.RED + Locale.kicknameRemoved.replace("[name]", split[2]));
+			// If target is online
+			Player target = plugin.getServer().getPlayer(playerUUID);
+			if (target != null) {
+			    target.sendMessage(ChatColor.RED + Locale.kicknameRemovedYou.replace("[name]", sender.getName()));
+			} else {
+			    plugin.setMessage(playerUUID,ChatColor.RED + Locale.kicknameRemovedYou.replace("[name]", sender.getName()));
+			}
+			return true;
+		    } else {
+			sender.sendMessage(ChatColor.RED + "That player is a team leader. Use team delete to remove the team completely.");
+			return true;
+		    }		    
+		} else {
+		    sender.sendMessage(ChatColor.RED + Locale.errorUnknownCommand);
+		    return false;
+		}
+	    }  else if (split[0].equalsIgnoreCase("completechallenge")) {
 		// Convert name to a UUID
 		final UUID playerUUID = plugin.getPlayers().getUUID(split[2]);
 		if (!plugin.getPlayers().isAKnownPlayer(playerUUID)) {
@@ -546,13 +613,74 @@ public class AdminCmd implements CommandExecutor {
 	    } else {
 		return false;
 	    }
+	case 4:
+	    // Team add <player> <leader>
+	    if (split[0].equalsIgnoreCase("team") && split[1].equalsIgnoreCase("add")) {
+		// Convert names to UUIDs
+		final UUID playerUUID = plugin.getPlayers().getUUID(split[2]);
+		final UUID teamLeader = plugin.getPlayers().getUUID(split[3]); 
+		if (!plugin.getPlayers().isAKnownPlayer(playerUUID) || !plugin.getPlayers().isAKnownPlayer(teamLeader)) {
+		    sender.sendMessage(ChatColor.RED + Locale.errorUnknownPlayer);
+		    return true;
+		}
+		// Check to see if this player is already in a team
+		if (!plugin.getPlayers().inTeam(playerUUID)) {
+		    sender.sendMessage(ChatColor.RED + Locale.inviteerrorThatPlayerIsAlreadyInATeam);
+		    return true;
+		}
+		// This is a hack to clear any pending invitations
+		Player targetPlayer = plugin.getServer().getPlayer(playerUUID);
+		if (targetPlayer != null) {
+		    targetPlayer.performCommand("island decline");
+		}
+		// If the invitee has an island of their own
+		if (plugin.getPlayers().hasIsland(playerUUID)) {
+		    Location islandLoc = plugin.getPlayers().getIslandLocation(playerUUID);
+		    if (islandLoc != null) {
+		    sender.sendMessage(ChatColor.RED + plugin.getPlayers().getName(playerUUID) + " had an island at " + islandLoc.getBlockX() + " " + islandLoc.getBlockZ() 
+			    + " that will become unowned now. You may want to delete it manually.");
+		    }
+		}
+		// Remove their old island affiliation - do not delete the island just in case
+		plugin.getPlayers().setIslandLocation(playerUUID, null);
+		plugin.getPlayers().setHasIsland(playerUUID, false);
+		// Join the team and set the team island location and leader
+		plugin.getPlayers().setJoinTeam(playerUUID, teamLeader, plugin.getPlayers().getIslandLocation(teamLeader));
+		// Configure the best home location for this player
+		if (!playerUUID.equals(teamLeader)) {
+		    if (plugin.getPlayers().getHomeLocation(teamLeader) != null) {
+			plugin.getPlayers().setHomeLocation(playerUUID,plugin.getPlayers().getHomeLocation(teamLeader));
+			sender.sendMessage(ChatColor.GREEN + "Setting player's home to the leader's home location");		
+		    } else {
+			plugin.getPlayers().setHomeLocation(playerUUID, plugin.getPlayers().getIslandLocation(teamLeader));
+			sender.sendMessage(ChatColor.GREEN + "Setting player's home to the leader's island location");
+		    }
+		    // If the leader's member list does not contain player then add it
+		    if (!plugin.getPlayers().getMembers(teamLeader).contains(playerUUID)) {
+			plugin.getPlayers().addTeamMember(teamLeader,playerUUID);
+			sender.sendMessage(ChatColor.GREEN + "Adding player to team.");
+		    } else {
+			sender.sendMessage(ChatColor.GOLD + "Player was already on this team!");
+		    }
+		    // If the leader's member list does not contain their own name then
+		    // add it
+		    if (!plugin.getPlayers().getMembers(teamLeader).contains(teamLeader)) {
+			plugin.getPlayers().addTeamMember(teamLeader, teamLeader);
+			sender.sendMessage(ChatColor.GOLD + "Added the leader to this team!");
+		    }
+		}
+		return true;
+	    } else {
+		sender.sendMessage(ChatColor.RED + Locale.errorUnknownCommand);
+		return false;
+	    }
 	default:
 	    return false;
 	}
     }
 
     /**
-     * This returns the coodinate of where an island should be on the grid.
+     * This returns the coordinate of where an island should be on the grid.
      * @param location
      * @return
      */
@@ -673,6 +801,15 @@ public class AdminCmd implements CommandExecutor {
     public boolean adminSetPlayerIsland(final CommandSender sender, final Location l, final UUID player) {
 	// TODO switch to file system
 	// If the player is not online
+	Location island = getClosestIsland(l);
+	if (island != null) {
+	    plugin.getPlayers().setHomeLocation(player, island);
+	    plugin.getPlayers().setHasIsland(player,true);
+	    plugin.getPlayers().setIslandLocation(player, island);
+	    return true;
+	}
+	return false;
+	/*
 	final int px = l.getBlockX();
 	final int py = l.getBlockY();
 	final int pz = l.getBlockZ();
@@ -690,5 +827,6 @@ public class AdminCmd implements CommandExecutor {
 	    }
 	}
 	return false;
+	 */
     }
 }

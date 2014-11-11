@@ -259,7 +259,7 @@ public class PlayerCache {
     }
     /**
      * Called when a player leaves a team Resets inTeam, teamLeader,
-     * islandLevel, teamIslandLocation, homeLocation, islandLocation and members array
+     * islandLevel, teamIslandLocation, islandLocation and members array
      */
     public void setLeaveTeam(UUID playerUUID) {
 	addPlayer(playerUUID);

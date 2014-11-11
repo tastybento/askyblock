@@ -840,7 +840,7 @@ public class ASkyBlock extends JavaPlugin {
 	} else if (Settings.animalSpawnLimit < -1) {
 	    Settings.animalSpawnLimit = -1;
 	}
-
+	
 	Settings.monsterSpawnLimit = getConfig().getInt("general.monsterspawnlimit", 70);
 	if (Settings.monsterSpawnLimit > 100) {
 	    Settings.monsterSpawnLimit = 100;
@@ -991,18 +991,7 @@ public class ASkyBlock extends JavaPlugin {
 	Settings.allowBreeding = getConfig().getBoolean("island.allowbreeding", false);
 	Settings.allowFire = getConfig().getBoolean("island.allowfire", false);
 	Settings.allowChestDamage = getConfig().getBoolean("island.allowchestdamage", false);
-	Settings.absorbLava = getConfig().getBoolean("sponge.absorbLava", false);
-	Settings.absorbFire = getConfig().getBoolean("sponge.absorbFire", false);
-	Settings.restoreWater = getConfig().getBoolean("sponge.restoreWater", true);
-	Settings.canPlaceWater = getConfig().getBoolean("sponge.canPlaceWater", false);
-	Settings.spongeRadius = getConfig().getInt("sponge.spongeRadius", 2);
-	Settings.threadedSpongeSave = getConfig().getBoolean("sponge.threadedSpongeSave", true);
-	Settings.flowTimeMult = getConfig().getInt("sponge.flowTimeMult", 600);
-	Settings.attackFire = getConfig().getBoolean("sponge.attackFire", false);
-	Settings.pistonMove = getConfig().getBoolean("sponge.pistonMove", true);
-	Settings.spongeSaturation = getConfig().getBoolean("sponge.spongeSaturation", false);
-	// SPONGE DEBUG
-	debug = getConfig().getBoolean("sponge.debug", false);
+	Settings.allowLeashUse = getConfig().getBoolean("island.allowleashuse", false);
 
 	// Challenges
 	final Set<String> challengeList = getChallengeConfig().getConfigurationSection("challenges.challengeList").getKeys(false);

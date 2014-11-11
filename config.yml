@@ -179,7 +179,7 @@ island:
    # Allow gates to be used
    allowgateuse: false
    # Allow friendly mobs to be hurt (cows etc.)
-   allowhurtmobs: true
+   allowhurtmobs: false
    # Allow Enderman Griefing (default is to allow, see next setting)
    allowendermangriefing: true
    # Make enderman drop the block he is holding if he dies (recommended)
@@ -196,6 +196,8 @@ island:
    allowfire: false
    # Allow chests to be blown up by creepers or TNT
    allowchestdamage: false
+   # Allow leash use
+   allowleashuse: false
 
 # This section contains the biomes that can be bought or used
 biomesettings:
