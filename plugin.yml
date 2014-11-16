@@ -1,12 +1,12 @@
 name: ASkyBlock
 main: com.wasteofplastic.askyblock.ASkyBlock
-version: 1.7
-description: A Sky Block Plugin
+version: 2.3
+description: A SkyBlock Plugin
 author: Tastybento
 depend: [Vault]
 loadbefore: [Multiverse-Core]
 commands:
-    as:
+    island:
         description: Main player command
         aliases: [is, island, as]
         usage:  |
@@ -17,7 +17,7 @@ commands:
             /asadmin
     asc:
         description: Game challenges
-        aliases: [c, challenge, aschallenge]
+        aliases: [c, challenge, aschallenge, challenges]
         usage:  |  
             /challenge
 permissions:    
@@ -51,6 +51,9 @@ permissions:
             default: true
           askyblock.island.controlpanel:
             description: Allows usage of the island GUI
+            default: true
+          askyblock.island.biomes:
+            description: Allows biome changing
             default: true
       askyblock.team.*:
         children:
@@ -94,6 +97,12 @@ permissions:
           askyblock.mod.clearreset:
             description: Allow clearing of island reset limit
             default: false
+          askyblock.mod.tp:
+            description: Allows teleport to an island
+            default: op
+          askyblock.mod.bypassprotect:
+            description: Allow moderator to bypass island protection
+            default: false
       askyblock.admin.*:
         children:
           askyblock.admin.reload:
@@ -111,6 +120,6 @@ permissions:
           askyblock.admin.noburn:
             description: Gives admin immunity to acid
             default: false
-          askyblock.admin.spawn:
+          askyblock.admin.setspawn:
             description: Allows use of spawn tools
             default: op

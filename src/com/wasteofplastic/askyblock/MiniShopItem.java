@@ -61,11 +61,15 @@ public class MiniShopItem {
 	    ItemMeta meta = item.getItemMeta();
 	    meta.setDisplayName(description);
 	    ArrayList<String> Lore = new ArrayList<String>();
+	    // Create prices for buying and selling
+	    if (price > 0D) {
+		Lore.add(Locale.minishopBuy + " " + quantity + " @ " + VaultHelper.econ.format(price));
+	    }
 	    if (sellPrice > 0D) {
-		Lore.add(Locale.minishopBuy + " " + quantity + " : " + VaultHelper.econ.format(price));
-		Lore.add(Locale.minishopSell + " " + quantity + " : " + VaultHelper.econ.format(sellPrice));
-	    } else {
-		Lore.add(quantity + " : " + VaultHelper.econ.format(price));
+		Lore.add(Locale.minishopSell + " " + quantity + " @ " + VaultHelper.econ.format(sellPrice));
+	    }
+	    if (price < 0D && sellPrice < 0D) {
+		Lore.add(Locale.minishopOutOfStock);
 	    }
 	    meta.setLore(Lore);
 	    item.setItemMeta(meta);

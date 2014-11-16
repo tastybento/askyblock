@@ -21,12 +21,15 @@ import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.block.BlockFromToEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 
 /**
@@ -51,28 +54,45 @@ public class LavaCheck implements Listener {
 	if (!e.getBlock().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    return;
 	}
+	// Do nothing if a new island is being created
 	if (plugin.isNewIsland())
 	    return;
 	Material from = e.getBlock().getType();
 	final Block to = e.getToBlock();
 	// plugin.getLogger().info("From material is " + from.toString());
 	// plugin.getLogger().info("To material is " + to.getType().toString());
-	if (from.equals(Material.STATIONARY_WATER) && to.getType().equals(Material.STONE)) {
-	    // plugin.getLogger().info("from sw to st cancelled");
-	    // to.setType(Material.FIRE);
-	    to.setType(Material.WATER);
-	    e.getBlock().getWorld().playSound(e.getBlock().getLocation(), Sound.FIZZ, 1F, 1F);
-	    e.setCancelled(true);
+	if (Settings.acidDamage > 0) {
+	    if (from.equals(Material.STATIONARY_WATER) && to.getType().equals(Material.STONE)) {
+		// plugin.getLogger().info("from sw to st cancelled");
+		// to.setType(Material.FIRE);
+		to.setType(Material.WATER);
+		e.getBlock().getWorld().playSound(e.getBlock().getLocation(), Sound.FIZZ, 1F, 1F);
+		e.setCancelled(true);
+	    }
 	}
 	// Do a check to see if Obsidian is being made
+	//plugin.getLogger().info("DEBUG: Checking of Obi");
 	if (to.getType().equals(Material.OBSIDIAN)) {
+	    // Look around to see if this is a lone obsidian block
+	    for (BlockFace face: BlockFace.values()) {
+		if (!face.equals(BlockFace.SELF) && to.getRelative(face).getType().equals(Material.OBSIDIAN)) {
+		    //plugin.getLogger().info("DEBUG: Obsidian is " + face.toString());
+		    // There is, so get outta here
+		    return;
+		}
+	    }
 	    // Check if there is a player nearby
 	    Chunk chunk = to.getLocation().getChunk();
 	    for (Entity entity : chunk.getEntities()) {
 		if (entity instanceof Player) {
-		    ((Player) entity).sendMessage(ChatColor.RED + Locale.lavaTip);
+		    //plugin.getLogger().info("DEBUG: Player found!");
+		    ItemStack inHand = ((Player)entity).getItemInHand();
+		    if (inHand != null ) {
+			//plugin.getLogger().info("DEBUG: in hand = " + inHand.toString());
+			((Player) entity).sendMessage(ChatColor.RED + Locale.lavaTip);
+		    }
 		}
 	    }	    
 	}
-    }
+    }  
 }

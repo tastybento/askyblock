@@ -101,8 +101,11 @@ public class AdminCmd implements CommandExecutor {
 	    if (VaultHelper.checkPerm(player, "askyblock.mod.clearreset") || player.isOp()) {
 		player.sendMessage(ChatColor.YELLOW + "/asadmin clearreset <player>:" + ChatColor.WHITE + " " + Locale.adminHelpclearReset);
 	    }	    
-	    if (VaultHelper.checkPerm(player, "askyblock.admin.spawn") || player.isOp()) {
+	    if (VaultHelper.checkPerm(player, "askyblock.admin.setspawn") || player.isOp()) {
 		player.sendMessage(ChatColor.YELLOW + "/asadmin setspawn:" + ChatColor.WHITE + " " + Locale.adminHelpSetSpawn);
+	    }
+	    if (VaultHelper.checkPerm(player, "askyblock.mod.tp") || player.isOp()) {
+		player.sendMessage(ChatColor.YELLOW + "/asadmin tp <player>:" + ChatColor.WHITE + " " + Locale.adminHelptp);
 	    }
 	}
     }
@@ -123,7 +126,7 @@ public class AdminCmd implements CommandExecutor {
 		// Admin : reload, register, delete and purge
 		if (split[0].equalsIgnoreCase("reload") || split[0].equalsIgnoreCase("register")
 			|| split[0].equalsIgnoreCase("delete") || split[0].equalsIgnoreCase("purge")
-			|| split[0].equalsIgnoreCase("confirm")) {
+			|| split[0].equalsIgnoreCase("confirm") || split[0].equalsIgnoreCase("setspawn")) {
 		    if (!checkAdminPerms(player, split)) {
 			player.sendMessage(ChatColor.RED + Locale.errorNoPermission);
 			return true;
@@ -172,6 +175,9 @@ public class AdminCmd implements CommandExecutor {
 			}
 		    }
 		}
+		
+		// TODO: find closest island locus and check file syste,
+		
 		if (closestBedRock == null) {
 		    sender.sendMessage(ChatColor.RED + "Sorry, could not find an island. Move closer?");
 		    return true;
@@ -425,6 +431,24 @@ public class AdminCmd implements CommandExecutor {
 		    sender.sendMessage(ChatColor.YELLOW + Locale.clearedResetLimit + " [" + Settings.resetLimit + "]");
 		    return true;
 		}
+	    } else if (split[0].equalsIgnoreCase("tp")) {
+		if (!(sender instanceof Player)) {
+		    sender.sendMessage(ChatColor.RED + Locale.errorUnknownCommand);
+		    return true;
+		}
+		// Convert name to a UUID
+		final UUID playerUUID = plugin.getPlayers().getUUID(split[1]);
+		if (!plugin.getPlayers().isAKnownPlayer(playerUUID)) {
+		    sender.sendMessage(ChatColor.RED + Locale.errorUnknownPlayer);
+		    return true;
+		} else {
+		    if (plugin.getPlayers().getIslandLocation(playerUUID) != null) {
+			((Player)sender).teleport(plugin.getSafeHomeLocation(playerUUID));
+			return true;
+		    }
+		    sender.sendMessage(Locale.errorNoIslandOther);
+		    return true;
+		}
 	    } else if (split[0].equalsIgnoreCase("delete")) {
 		// Convert name to a UUID
 		final UUID playerUUID = plugin.getPlayers().getUUID(split[1]);
@@ -526,6 +550,11 @@ public class AdminCmd implements CommandExecutor {
 	}
     }
 
+    /**
+     * TODO: check file system
+     * @param location
+     * @return
+     */
     private Location getClosestIsland(Location location) {
 	Location closestBedRock = null;
 	double distance = 0;
@@ -627,9 +656,7 @@ public class AdminCmd implements CommandExecutor {
 
     /**
      * Searches for bedrock around a location (20x20x20) and then assigns the
-     * player to that island and applies a WorldGuard protection TODO: Does not
-     * remove the player from any islands they already own. This should probably
-     * be done because you can only have one island per player
+     * player to that island 
      * 
      * @param sender
      *            - the player requesting the assignment
@@ -640,6 +667,7 @@ public class AdminCmd implements CommandExecutor {
      * @return - true if successful, false if not
      */
     public boolean adminSetPlayerIsland(final CommandSender sender, final Location l, final UUID player) {
+	// TODO switch to file system
 	// If the player is not online
 	final int px = l.getBlockX();
 	final int py = l.getBlockY();

@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.bukkit.Material;
+import org.bukkit.block.Biome;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 
@@ -92,6 +93,11 @@ public class Settings {
     public static boolean allowEndermanGriefing;
     public static boolean allowCreeperDamage;
     public static boolean allowTNTDamage;
+    public static boolean allowSpawnEggs;
+    public static boolean allowBreeding;
+    public static boolean allowFire;
+    public static boolean allowChestDamage;
+    
     //public static boolean ultraSafeBoats;
     public static boolean logInRemoveMobs;
     public static boolean islandRemoveMobs;
@@ -109,10 +115,26 @@ public class Settings {
     public static boolean allowSpawnGateUse;
     public static boolean allowSpawnMobSpawn;
     public static boolean allowSpawnNoAcidWater;
+    
     // Levels
     public static HashMap<Material,Integer> blockLimits;
     public static HashMap<Material,Integer> blockValues;
-
+    
+   // Challenge completion broadcast
+    public static boolean broadcastMessages;
+    // Nether world
+    public static boolean createNether;
+    public static boolean clearInventory;
+    // Use control panel for /island
+    public static boolean useControlPanel;
+    // Prevent /island when falling
+    public static boolean allowTeleportWhenFalling;
+    // Biomes
+    public static double biomeCost;
+    public static Biome defaultBiome;
+    
+    // Island reset commands
+    public static List<String> resetCommands = new ArrayList<String>();
     
    
 }

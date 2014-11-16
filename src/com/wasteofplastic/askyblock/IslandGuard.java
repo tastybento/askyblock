@@ -18,7 +18,13 @@ package com.wasteofplastic.askyblock;
 
 
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.block.Biome;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Animals;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
@@ -34,6 +40,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
@@ -46,8 +53,11 @@ import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerShearEntityEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.material.MaterialData;
 import org.bukkit.potion.Potion;
 
@@ -63,6 +73,58 @@ public class IslandGuard implements Listener {
 	this.plugin = plugin;
 
     }
+
+    /*
+     * Prevent typing /island if falling - hard core
+     * Checked if player teleports
+     * 
+     */
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled=true)
+    public void onPlayerFall(final PlayerMoveEvent e) {
+	if (!e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	    return;
+	}
+	if (Settings.allowTeleportWhenFalling) {
+	    return;
+	}
+	if (!e.getPlayer().getGameMode().equals(GameMode.SURVIVAL) || e.getPlayer().isOp()) {
+	    return;
+	}
+	// Check if air below player
+	if (e.getPlayer().getLocation().getBlock().getRelative(BlockFace.DOWN).getType().equals(Material.AIR)) {
+	    plugin.setFalling(e.getPlayer().getUniqueId());
+	} else {
+	    plugin.unsetFalling(e.getPlayer().getUniqueId());
+	}
+    }
+
+    /**
+     * Prevents teleporting when falling based on setting
+     * @param e
+     */
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled=true)
+    public void onPlayerTeleport(final PlayerTeleportEvent e) {
+	if (Settings.allowTeleportWhenFalling) {
+	    return;
+	}
+	if (!e.getFrom().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	    return;
+	}
+	if (!e.getPlayer().getGameMode().equals(GameMode.SURVIVAL) || e.getPlayer().isOp()) {
+	    return;
+	}
+	if (plugin.isFalling(e.getPlayer().getUniqueId())) {
+	    // Sorry you are going to die
+	    e.getPlayer().sendMessage(Locale.errorCommandNotReady);
+	    e.setCancelled(true);
+	    // Check if the player is in the void and kill them just in case
+	    if (e.getPlayer().getLocation().getBlockY() < 0) {
+		e.getPlayer().setHealth(0D);
+		plugin.unsetFalling(e.getPlayer().getUniqueId());
+	    }
+	}
+    }
+
 
     /**
      * Prevents mobs spawning at spawn
@@ -92,7 +154,7 @@ public class IslandGuard implements Listener {
 	    e.setCancelled(true);
 	}
     }
-    
+
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled=true)
     public void onExplosion(final EntityExplodeEvent e) {
 	// Find out what is exploding
@@ -117,7 +179,22 @@ public class IslandGuard implements Listener {
 	case CREEPER:
 	    if (!Settings.allowCreeperDamage) {
 		//plugin.getLogger().info("Creeper block damage prevented");
-		e.blockList().clear();
+		    e.blockList().clear();
+	    } else {
+		if (!Settings.allowChestDamage) {
+		    for (Block b : e.blockList()) {
+			switch (b.getType()) {
+			case CHEST:
+			case ENDER_CHEST:
+			case STORAGE_MINECART:
+			case TRAPPED_CHEST:
+			    e.blockList().remove(b);
+			    break;
+			default:
+			    break;
+			}
+		    }
+		}
 	    }
 	    break;
 	case PRIMED_TNT:
@@ -125,7 +202,22 @@ public class IslandGuard implements Listener {
 	    if (!Settings.allowTNTDamage) {
 		//plugin.getLogger().info("TNT block damage prevented");
 		e.blockList().clear();
-	    }	    
+	    } else {
+		if (!Settings.allowChestDamage) {
+		    for (Block b : e.blockList()) {
+			switch (b.getType()) {
+			case CHEST:
+			case ENDER_CHEST:
+			case STORAGE_MINECART:
+			case TRAPPED_CHEST:
+			    e.blockList().remove(b);
+			    break;
+			default:
+			    break;
+			}
+		    }
+		}
+	    }
 	    break;
 	default:
 	    break;
@@ -193,6 +285,10 @@ public class IslandGuard implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled=true)
     public void onBlockBreak(final BlockBreakEvent e) {
 	if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	    // This permission bypasses protection
+	    if (VaultHelper.checkPerm(e.getPlayer(), "askyblock.mod.bypassprotect")) {
+		return;
+	    }
 	    if (!Settings.allowBreakBlocks) {
 		if (!plugin.playerIsOnIsland(e.getPlayer()) && !e.getPlayer().isOp()) {
 		    e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
@@ -212,10 +308,14 @@ public class IslandGuard implements Listener {
 	if (!Settings.worldName.equalsIgnoreCase(e.getEntity().getWorld().getName())) {
 	    return;
 	}
-	plugin.getLogger().info(e.getEventName());
+	//plugin.getLogger().info(e.getEventName());
 	// Ops can do anything
 	if (e.getDamager() instanceof Player) {
 	    if (((Player)e.getDamager()).isOp()) {
+		return;
+	    }
+	    // This permission bypasses protection
+	    if (VaultHelper.checkPerm((Player)e.getDamager(), "askyblock.mod.bypassprotect")) {
 		return;
 	    }
 	}
@@ -274,10 +374,10 @@ public class IslandGuard implements Listener {
 		// PVP
 		// If PVP is okay then return
 		if (Settings.allowPvP.equalsIgnoreCase("allow")) {
-		    plugin.getLogger().info("PVP allowed");
+		    //plugin.getLogger().info("PVP allowed");
 		    return;
 		}
-		plugin.getLogger().info("PVP not allowed");
+		//plugin.getLogger().info("PVP not allowed");
 
 	    }
 	}
@@ -368,6 +468,10 @@ public class IslandGuard implements Listener {
     public void onPlayerBlockPlace(final BlockPlaceEvent e) {
 	//plugin.getLogger().info(e.getEventName());
 	if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	    // This permission bypasses protection
+	    if (VaultHelper.checkPerm(e.getPlayer(), "askyblock.mod.bypassprotect")) {
+		return;
+	    }
 	    if (!Settings.allowPlaceBlocks) {
 		if (!plugin.playerIsOnIsland(e.getPlayer()) && !e.getPlayer().isOp()) {
 		    e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
@@ -381,6 +485,10 @@ public class IslandGuard implements Listener {
     public void onPlayerBlockPlace(final HangingPlaceEvent e) {
 	//plugin.getLogger().info(e.getEventName());
 	if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	    // This permission bypasses protection
+	    if (VaultHelper.checkPerm(e.getPlayer(), "askyblock.mod.bypassprotect")) {
+		return;
+	    }
 	    if (!Settings.allowPlaceBlocks) {
 		if (!plugin.playerIsOnIsland(e.getPlayer()) && !e.getPlayer().isOp()) {
 		    e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
@@ -389,12 +497,16 @@ public class IslandGuard implements Listener {
 	    }
 	}
     }
- 
+
     // Prevent sleeping in other beds
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerBedEnter(final PlayerBedEnterEvent e) {
 	// Check world
 	if (Settings.worldName.equalsIgnoreCase(e.getPlayer().getWorld().getName())) {
+	    // This permission bypasses protection
+	    if (VaultHelper.checkPerm(e.getPlayer(), "askyblock.mod.bypassprotect")) {
+		return;
+	    }
 	    if (!Settings.allowBedUse) {
 		if (!plugin.playerIsOnIsland(e.getPlayer()) && !e.getPlayer().isOp()) {
 		    e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
@@ -414,6 +526,10 @@ public class IslandGuard implements Listener {
 	    if (!Settings.allowBreakBlocks) {
 		if (e.getRemover() instanceof Player) {
 		    Player p = (Player)e.getRemover();
+		    // This permission bypasses protection
+		    if (VaultHelper.checkPerm(p, "askyblock.mod.bypassprotect")) {
+			return;
+		    }
 		    if (!plugin.playerIsOnIsland(p) && !p.isOp()) {
 			p.sendMessage(ChatColor.RED + Locale.islandProtected);
 			e.setCancelled(true);
@@ -426,17 +542,53 @@ public class IslandGuard implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onBucketEmpty(final PlayerBucketEmptyEvent e) {
 	if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	    // This permission bypasses protection
+	    if (VaultHelper.checkPerm(e.getPlayer(), "askyblock.mod.bypassprotect")) {
+		return;
+	    }
 	    if (!Settings.allowBucketUse) {
 		if (!plugin.playerIsOnIsland(e.getPlayer()) && !e.getPlayer().isOp()) {
 		    e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
 		    e.setCancelled(true);
 		}
 	    }
+	    // Check if biome is Nether and then stop water placement
+	    if (e.getBlockClicked() != null && e.getBlockClicked().getBiome().equals(Biome.HELL) &&
+		    e.getPlayer().getItemInHand().getType().equals(Material.WATER_BUCKET)) {
+		e.setCancelled(true);
+		e.getPlayer().getItemInHand().setType(Material.BUCKET);
+		e.getPlayer().playSound(e.getPlayer().getLocation(), Sound.FIZZ, 1F, 2F);
+		e.getPlayer().sendMessage(ChatColor.RED + Locale.biomeSet.replace("[biome]", "Nether"));
+	    }
 	}
     }
+
+    /**
+     * Prevents water from being dispensed in hell biomes
+     * @param e
+     */
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onNetherDispenser(final BlockDispenseEvent e) {
+	if (!e.getBlock().getWorld().getName().equalsIgnoreCase(Settings.worldName) ||
+		!e.getBlock().getBiome().equals(Biome.HELL)) {
+	    return;
+	}
+	//plugin.getLogger().info("DEBUG: Item being dispensed is " + e.getItem().getType().toString());
+	if (e.getItem().getType().equals(Material.WATER_BUCKET)) {
+	    e.setCancelled(true);
+	    e.getBlock().getWorld().playSound(e.getBlock().getLocation(), Sound.FIZZ, 1F, 2F);
+	}
+    }
+
+
+
     @EventHandler(priority = EventPriority.NORMAL)
     public void onBucketFill(final PlayerBucketFillEvent e) {
 	if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	    // This permission bypasses protection
+	    if (VaultHelper.checkPerm(e.getPlayer(), "askyblock.mod.bypassprotect")) {
+		return;
+	    }
 	    if (!Settings.allowBucketUse) {
 		if (!plugin.playerIsOnIsland(e.getPlayer()) && !e.getPlayer().isOp()) {
 		    e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
@@ -450,6 +602,10 @@ public class IslandGuard implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onShear(final PlayerShearEntityEvent e) {
 	if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	    // This permission bypasses protection
+	    if (VaultHelper.checkPerm(e.getPlayer(), "askyblock.mod.bypassprotect")) {
+		return;
+	    }
 	    if (!Settings.allowShearing) {	
 		if (!plugin.playerIsOnIsland(e.getPlayer()) && !e.getPlayer().isOp()) {
 		    e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
@@ -459,8 +615,6 @@ public class IslandGuard implements Listener {
 	}
     }
 
-    // Stop interactions - messy refactor
-    // TODO: Refactor!
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerInteract(final PlayerInteractEvent e) {
 	if (!e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
@@ -468,6 +622,10 @@ public class IslandGuard implements Listener {
 	}
 	if (plugin.playerIsOnIsland(e.getPlayer()) || e.getPlayer().isOp()) {
 	    // You can do anything on your island or if you are Op
+	    return;
+	}
+	// This permission bypasses protection
+	if (VaultHelper.checkPerm(e.getPlayer(), "askyblock.mod.bypassprotect")) {
 	    return;
 	}
 	// Player is off island
@@ -595,9 +753,20 @@ public class IslandGuard implements Listener {
 		e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
 		e.setCancelled(true);
 		return;
-	    }
-	    if (e.getMaterial().equals(Material.ENDER_PEARL)) {
+	    } else if (e.getMaterial().equals(Material.ENDER_PEARL)) {
 		if (!Settings.allowEnderPearls) {
+		    e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
+		    e.setCancelled(true);
+		}
+		return;
+	    } else if (e.getMaterial().equals(Material.FLINT_AND_STEEL)) {
+		if (!Settings.allowFire) {
+		    e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
+		    e.setCancelled(true);
+		}
+		return;
+	    } else if (e.getMaterial().equals(Material.MONSTER_EGG)) {
+		if (!Settings.allowSpawnEggs) {
 		    e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
 		    e.setCancelled(true);
 		}
@@ -660,6 +829,35 @@ public class IslandGuard implements Listener {
 	    }
 	}
     }
+
+    /**
+     * This prevents breeding of animals off-island
+     * @param e
+     */
+    @EventHandler(priority = EventPriority.LOWEST)
+    void PlayerInteractEntityEvent(PlayerInteractEntityEvent e){
+	//plugin.getLogger().info(e.getEventName());
+	if (!e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	    return;
+	}
+	if (plugin.playerIsOnIsland(e.getPlayer()) || e.getPlayer().isOp()) {
+	    // You can do anything on your island or if you are Op
+	    return;
+	}
+	// This permission bypasses protection
+	if (VaultHelper.checkPerm(e.getPlayer(), "askyblock.mod.bypassprotect")) {
+	    return;
+	}
+	if (!Settings.allowBreeding) {
+	    // Player is off island
+	    if (e.getRightClicked() instanceof Animals) {
+		//plugin.getLogger().info("You right clicked on an animal");
+		e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
+		e.setCancelled(true); 
+	    }
+	}
+    }
+
 }
 
 

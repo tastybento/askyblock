@@ -16,6 +16,7 @@
  *******************************************************************************/
 package com.wasteofplastic.askyblock;
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -96,8 +97,8 @@ public class DeleteIsland extends BukkitRunnable {
 	    }
 	}
 	//plugin.getLogger().info("Slice is = " + slice);
-	plugin.getLogger().info(serverPackageName);
-	plugin.getLogger().info(pluginPackageName);
+	//plugin.getLogger().info(serverPackageName);
+	//plugin.getLogger().info(pluginPackageName);
 	// Check if we have a NMSAbstraction implementing class at that location.
 	if (NMSAbstraction.class.isAssignableFrom(clazz)) {
 	    nms = (NMSAbstraction) clazz.getConstructor().newInstance();
@@ -112,11 +113,21 @@ public class DeleteIsland extends BukkitRunnable {
 	//plugin.getLogger().info("DEBUG: removeIsland at location " + l.toString());
 	removeSlice(counter, (counter-slice));
 	counter = counter - slice;
-	if (counter <=0)
+	if (counter <=0) {
+	    // Remove file from file system if it exists
+	    final File islandFolder = new File(plugin.getDataFolder() + File.separator + "islands");
+	    if (islandFolder.exists()) {
+		String islandName = l.getBlockX() + "," + l.getBlockZ() + ".yml";
+		final File islandFile = new File(plugin.getDataFolder() + File.separator + "islands" + File.separator + islandName);
+		if (!islandFile.delete()) {
+		    plugin.getLogger().severe("Problem deleting " + islandName + " from filesystem.");
+		}
+	    }
 	    this.cancel();
+	}
     }
 
-    static class Pair {
+    public static class Pair {
 	private final int left;
 	private final int right;
 	public Pair(int left, int right) {
@@ -139,7 +150,7 @@ public class DeleteIsland extends BukkitRunnable {
 	List<Pair> chunks = new ArrayList<Pair>();	
 	if (bottom <0)
 	    bottom = 0;
-	plugin.unregisterEvents();
+	//plugin.unregisterEvents();
 	// Cut island in slices
 	for (int y = top; y >= bottom; y--) {
 	    for (int x = Settings.island_protectionRange / 2 * -1; x <= Settings.island_protectionRange / 2; x++) {
@@ -207,7 +218,7 @@ public class DeleteIsland extends BukkitRunnable {
 	    }
 	}	    
 	//l.getWorld().refreshChunk(l.getChunk().getX(), l.getChunk().getZ());
-	plugin.restartEvents();
+	//plugin.restartEvents();
 	// Refresh chunks that have been affected
 	//plugin.getLogger().info("DEBUG: " + chunks.size() + " chunks need refreshing!");
 	for (Pair p: chunks) {

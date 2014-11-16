@@ -60,7 +60,6 @@ warps:
    errorNoWarpsYet: "There are no warps available yet!"
    warpsAvailable: "The following warps are available"
 
-#AcidIsland
 topTen:
    header: "These are the Top 10 islands:"
    errorNotReady: "Top ten list not generated yet!"
@@ -105,7 +104,7 @@ challenges:
    errorNotCloseEnough: "You must be standing within 10 blocks of all required items."
    errorItemsNotThere: "All required items must be close to you on your island!"
    errorIslandLevel: "Your island must be level [level] to complete this challenge!"
-   guititle: "Challenges"
+   guititle: "aSkyBlock Challenges"
    erroryouaremissing: "You are missing"
 #/island
 island:
@@ -128,7 +127,8 @@ island:
    #/island help
    #/island
    helpIsland: "start an island, or teleport to your island."
-   helpIslandSpawn: "go to AcidIsland spawn."
+   helpTeleport: "teleport to your island."
+   helpIslandSpawn: "go to spawn."
    helpContolPanel: "open the island GUI."
    #/island restart
    helpRestart: "restart your island and remove the old one."
@@ -199,7 +199,7 @@ leave:
   youHaveLeftTheIsland: "You have left the island and returned to the player spawn."
   nameHasLeftYourIsland: "[name] has left your island!"
   errorYouCannotLeaveIsland: "You can't leave your island if you are the only person. Try using /island restart if you want a new one!"
-  errorYouMustBeInWorld: "You must be in the AcidIsland world to leave your team!"
+  errorYouMustBeInWorld: "You must be in the A Skyblock world to leave your team!"
   errorLeadersCannotLeave: "Leaders cannot leave an island. Make someone else the leader fist using /island makeleader <player>"
 
 #team
@@ -231,8 +231,14 @@ makeleader:
 minishop:
    title: "&EMiniShop"
    islandhelpMiniShop: "Opens the MiniShop"
-   buy: "Buy"
-   sell: "Sell"
+   buy: "Buy(Left click)"
+   sell: "Sell(Right click)"
+   youcannotafford: "You cannot afford [description]!"
+   youbought: "You bought [number] [description] for [price]"
+   yousold: "You sold [number] [description] for [price]"
+   buyproblem: "There was a problem purchasing [description]"
+   sellproblem: "You do not have enough [description] to sell."
+   outofstock: "Out Of Stock"
 
 ################################
 #Admin commands that use /acid #
@@ -317,16 +323,16 @@ checkteam:
 #completechallenge
 completechallenge:
    errorChallengeDoesNotExist: "Challenge doesn't exist or is already completed"
-   challangeCompleted: "Challange: [challengename] has been completed for [name]"
+   challangeCompleted: "Challenge: [challengename] has been completed for [name]"
 
 #resetchallenge
 resetchallenge:
    errorChallengeDoesNotExist: "Challenge doesn't exist or isn't yet completed"
-   challengeReset: "Challange: [challengename] has been reset for [name]"
+   challengeReset: "Challenge: [challengename] has been reset for [name]"
 
 #AcidIsland news
 news:
-   headline: "[AcidIsland News] While you were offline..."
+   headline: "[A Skyblock News] While you were offline..."
 
 #Nether
 nether:
@@ -335,3 +341,20 @@ nether:
 # Ultra safe boats
 boats:
    warning: "It's unsafe to exit the boat right now..."
+
+#Starter sign
+# [player] is replaced with the player's name
+# ChatColors can be used with &
+sign:
+   line1: "&1[A Skyblock]"
+   line2: "[player]"
+   line3: "Do not fall!"
+   line4: "Beware!"
+
+biome:
+   set: "Island biome set to [biome]!"
+   help: "open the biomes GUI."
+   unknown: "Unknown biome!"
+   youbought: "Purchased for [cost]!"
+   paneltitle: "Select A Biome"
+   

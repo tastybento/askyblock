@@ -42,7 +42,6 @@ items:
       #extra: WATER_BREATHING:SPLASH
       #extra: WATER_BREATHING:EXTENDEDSPLASH
       price: 50
-      description: AcidProof Potion
    # Potions can be Extended, Splash or ExtendedSplash. Not all potions can be modified
    item7:
       material: MONSTER_EGG

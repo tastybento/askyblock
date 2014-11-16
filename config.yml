@@ -15,12 +15,32 @@ general:
    # Name of the world - if it does not exist then it will be generated
    worldName: ASkyBlock
 
+   # Use the control panel as the default display for /island
+   # /island will always create an island if one does not exist
+   # If the control panel is not used, then /island will teleport the player home
+   usecontrolpanel: false
+
+   # Create Nether - if this is false, the nether world will not be made and access to
+   # AcidIsland control of the nether will not occur. Other plugins may still enable
+   # portal usage.
+   # Note: Some challenges will not be possible if there is no nether.
+   # Note that in AcidIsland, all players arrive at the same portal and entering a
+   # portal will return them back to their islands.
+   createnether: true
+
    #How long a player must wait before they can reset their island again
    resetwait: 300
+
    #How many resets a player is allowed (override with /asadmin clearreset <player>
    #Value of -1 means unlimited, 0 means hardcore - no resets.
    #Example, 2 resets means they get 2 resets or 3 islands lifetime
    resetlimit: 2
+
+   #Commands to run when the player resets their island (uncomment and customize)
+   # [player] is the player name of who is reseting
+   #resetcommands:
+   #  - kit tools [player]
+   #  - some other command
 
    # Ops receive damage from acid (Set to true if you want Ops to play properly)
    damageops: false
@@ -31,7 +51,7 @@ general:
    # 0 = no damage, 10 = default damage, 20 = instant death
    aciddamage: 0
    # Damage that monsters will experience.
-   mobaciddamage: 10
+   mobaciddamage: 0
    # Damage that rain does.
    raindamage: 0
 
@@ -79,73 +99,21 @@ general:
    # reset an island
    resetchallenges: true
 
+   # Reset inventory - if true, the player's inventory will be cleared when they start
+   # or restart and island. Default is true.
+   # Note: if you have MultiInv running or a similar inventory control plugin, that
+   # plugin may still reset the inventory when the world changes.
+   resetinventory: true
+
    # Nether spawn protection radius - this is the distance around the nether spawn point that will be protected from player interaction (breaking blocks, pouring lava etc.). Minimum is 0 (not recommended), maximum is 100. Default is 25.
    netherspawnradius: 25
 
-sponge:
-   # Sponge Saturation [true or false]
-   # Add more realism to sponges by making them only
-   # absorb water from an area without blocking
-   # water's flow afterwards.
-   spongeSaturation: false
+   # Broadcast 1st time challenge completion messages to all players
+   broadcastmessages: true
 
-   # Water Replacement
-   #	Can a player place water near a sponge
-   #	while it is still there?
-   canPlaceWater: false
-
-   # Lava
-   #	Should lava be affected also? Lava will be treated
-   #	exactly like water as chosen in the other settings.
-   absorbLava: false
-
-   # Debug Messages
-   #	This tends to spam your console, so you'd be best
-   #	served leaving this off unless you know what
-   #	you're doing.
-   debug: false
-
-   # Fire
-   #	Should fire be affected too??? It'll get treated
-   #	just like the liquids.
-   absorbFire: false
-
-   # Fire Extinguisher
-   #	This option only works when absorbFire is true.
-   #	With this enabled, sponges will go out of their way
-   #	to put out fires that try to burn any blocks within
-   #	their effective area, adequately preventing the
-   #	eternal burning bush effect.
-   attackFire: false
-
-   # Affected Radius
-   #	Here you can choose how large the area the sponge affects
-   #	will be. It is based on the numbers of blocks away from
-   #	the sponge. For example, setting this to 2 will give you a
-   #	5x5x5 block area. It's recommended that you do not set
-   #	this value to high as the plugin must check every block
-   #	in the set radius.
-   spongeRadius: 2
-
-   # Water Restoration
-   #	After sponges are removed, they can leave ugly cascades
-   #	of water. With this option turned on, sponges will
-   #	expel their water when they are removed, thus allowing
-   #	the water to be restored.
-   restoreWater: true
-
-   # Water Flowtime Multiplier
-   #	This relates to the Water Restoration feature.
-   #	It multiplies by the spongeRadius in order to calculate
-   #	the amount of time water should be given to flow back.
-   #	Radius * Multiplier :FlowTime (in Milliseconds)
-   #	Ex: 2 x 600 :1200 milliseconds for water to restore itself.
-   #	You only need to change it if your server is really slow.
-   flowTimeMult: 600
-
-   # Piston Effect
-   #	Can pistons move sponges?
-   pistonMove: true
+   # Allow /island teleport when falling. If set to false, all teleporting is
+   # disabled until death from the void...
+   allowfallingteleport: true
 
 island:
    # Space between islands in blocks
@@ -220,4 +188,63 @@ island:
    allowcreeperdamage: true
    # Allow TNT damage to blocks (stops players using TNT to destroy other's islands)
    allowtntdamage: false
-   
+   # Allow spawn egg use
+   allowspawneggs: false
+   # Allow animal breeding by visitors
+   allowbreeding: false
+   # Allow use of Flint & Steel by visitors
+   allowfire: false
+   # Allow chests to be blown up by creepers or TNT
+   allowchestdamage: false
+
+# This section contains the biomes that can be bought or used
+biomesettings:
+  # The default cost for changing biome. Can be over-ridden by the Biome settings
+  # Default is 100 if this is not set. Cannot be <0.
+  defaultcost: 100
+
+  # Default biome - what every player will start with. Default is PLAINS. See below
+  # for other options
+  defaultbiome: PLAINS
+
+# List of biomes and their settings.
+# Cost - cost in currency to change to that biome
+# permission - the permission required to use that biome
+# If the biome is not listed, it is not available
+# icon = icon used in control panel
+# friendlyname = A friendly name for the biome. If it does not exist, the official
+# biome name will be used with pretty formatting. Mostly this is just used to convert
+# Hell to Nether
+# description = a description of the biome and what it gives the player
+# remove ice/water/snow - will be done once when the biome is made
+
+biomes:
+  COLD_TAIGA:
+    icon: SAPLING
+    description: Snowy and cold. Brrr.
+  DESERT:
+    icon: DEAD_BUSH
+    description: A dry desert. Warning - Ice and snow will disappear.
+  FLOWER_FOREST:
+    icon: RED_ROSE
+    description: The place for flowers!
+  HELL:
+    icon: STATIONARY_LAVA
+    cost: 1000
+    permission: askyblock.biomes.hell
+    friendlyname: Nether
+    description: Warning - all water, snow and ice will be removed.
+  JUNGLE:
+    icon: VINE
+    description: Lush jungle. Warning - Ice or snow have to go.
+  MUSHROOM_ISLAND:
+    icon: RED_MUSHROOM
+    permission: askyblock.biomes.mushoom_island
+    description: Mushroom island
+  PLAINS:
+    icon: GRASS
+    description: Plain plains!
+    cost: 0
+  SWAMPLAND:
+    icon: WATER_LILY
+    description: Swampy

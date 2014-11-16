@@ -18,23 +18,17 @@
 package com.wasteofplastic.askyblock;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -45,6 +39,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.WorldType;
+import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
@@ -65,6 +60,8 @@ import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
+
+import com.wasteofplastic.askyblock.DeleteIsland.Pair;
 
 /**
  * @author ben
@@ -97,32 +94,14 @@ public class ASkyBlock extends JavaPlugin {
     // Acid Damage Potion
     PotionEffectType acidPotion;
     // Listeners
-    private Listener spongeListener;
     private Listener warpSignsListener;
     private Listener lavaListener;
     // Spawn object
     Spawn spawn;
-    /**
-     * A database of where the sponges are stored a serialized location and
-     * integer
-     */
-    public ConcurrentHashMap<String, Integer> spongeAreas = new ConcurrentHashMap<String, Integer>();
-    // File locations
-    String pluginMainDir = getDataFolder().toString();
-    String spongeDbLocation = pluginMainDir + "/spongeAreas.dat";
-
-    // Water return flow timers
-    public LinkedList<SpongeFlowTimer> flowTimers = new LinkedList<SpongeFlowTimer>();
-
-    // Sponge area size limits
-    public int spongeAreaUpLimit;
-    public int spongeAreaDownLimit;
-
-    // List of transparent blocks
-    public HashSet<Byte> transparentBlocks = new HashSet<Byte>();
-
-    // Worker threads
-    public Executor workerThreads = Executors.newCachedThreadPool();
+    // A set of falling players
+    HashSet<UUID> fallingPlayers = new HashSet<UUID>();
+    // Biome chooser object
+    Biomes biomes;
 
     public boolean debug = false;
     public boolean flag = false;
@@ -170,9 +149,12 @@ public class ASkyBlock extends JavaPlugin {
 	    acidWorld = WorldCreator.name(Settings.worldName).type(WorldType.FLAT).environment(World.Environment.NORMAL)
 		    .generator(new AcidChunkGenerator()).createWorld();
 	    // Make the nether if it does not exist
-	    if (plugin.getServer().getWorld(Settings.worldName + "_nether") == null) {
-		Bukkit.getLogger().info("Creating ASkyBlock's nether...");
-		WorldCreator.name(Settings.worldName + "_nether").type(WorldType.NORMAL).environment(World.Environment.NETHER).createWorld();
+	    // Make the nether if it does not exist
+	    if (Settings.createNether) {
+		if (plugin.getServer().getWorld(Settings.worldName + "_nether") == null) {
+		    Bukkit.getLogger().info("Creating ASkyBlock's nether...");
+		    WorldCreator.name(Settings.worldName + "_nether").type(WorldType.NORMAL).environment(World.Environment.NETHER).createWorld();
+		}
 	    }
 	}
 	// Set world settings
@@ -411,7 +393,8 @@ public class ASkyBlock extends JavaPlugin {
 	    player.sendMessage(ChatColor.RED + Locale.warpserrorNotSafe);
 	    return true;
 	}
-	player.teleport(home);
+	//home.getWorld().refreshChunk(home.getChunk().getX(), home.getChunk().getZ());
+	player.teleport(home);	
 	player.sendMessage(ChatColor.GREEN + Locale.islandteleport);
 	return true;
     }
@@ -434,6 +417,12 @@ public class ASkyBlock extends JavaPlugin {
 	}
 	// Near spawn?
 	if ((getSpawn().getSpawnLoc() != null && loc.distanceSquared(getSpawn().getSpawnLoc()) < (double)((double)Settings.islandDistance) * Settings.islandDistance)) {
+	    return true;
+	}
+	// Check the file system
+	String checkName = loc.getBlockX() + "," + loc.getBlockZ() + ".yml";
+	final File islandFile = new File(plugin.getDataFolder() + File.separator + "islands" + File.separator + checkName);
+	if (islandFile.exists()) {
 	    return true;
 	}
 	// Look around
@@ -485,9 +474,17 @@ public class ASkyBlock extends JavaPlugin {
 	if (ground.getType().equals(Material.AIR)) {
 	    return false;
 	}
-	// In Acid Island, any type of liquid is no good
+	// In aSkyblock, liquid maybe unsafe
 	if (ground.isLiquid() || space1.isLiquid() || space2.isLiquid()) {
-	    return false;
+	    // Check if acid has no damage
+	    if (Settings.acidDamage > 0D) {
+		return false;
+	    } else if (ground.getType().equals(Material.STATIONARY_LAVA) || ground.getType().equals(Material.LAVA)
+		    || space1.getType().equals(Material.STATIONARY_LAVA) || space1.getType().equals(Material.LAVA)
+		    || space2.getType().equals(Material.STATIONARY_LAVA) || space2.getType().equals(Material.LAVA)) {
+		// Lava check only
+		return false;
+	    }
 	}
 	if (ground.getType().equals(Material.CACTUS)) {
 	    return false;
@@ -750,12 +747,21 @@ public class ASkyBlock extends JavaPlugin {
 	// Get the localization strings
 	getLocale();
 	// Assign settings
+	// Island reset commands
+	Settings.resetCommands = getConfig().getStringList("general.resetcommands");
+	Settings.useControlPanel = getConfig().getBoolean("general.usecontrolpanel", false);
+	// Check if /island command is allowed when falling
+	Settings.allowTeleportWhenFalling = getConfig().getBoolean("general.allowfallingteleport", true);
 	// Max team size
 	Settings.maxTeamSize = getConfig().getInt("island.maxteamsize",4);
 	Settings.maxTeamSizeVIP = getConfig().getInt("island.maxteamsizeVIP",8);
 	Settings.maxTeamSizeVIP2 = getConfig().getInt("island.maxteamsizeVIP2",12);
 	// Settings from config.yml
 	Settings.worldName = getConfig().getString("general.worldName");
+	Settings.createNether = getConfig().getBoolean("general.createnether", true);
+	if (!Settings.createNether) {
+	    getLogger().info("The Nether is disabled");
+	}
 
 	Settings.islandDistance = getConfig().getInt("island.distance", 110);
 	if (Settings.islandDistance < 50) {
@@ -857,6 +863,7 @@ public class ASkyBlock extends JavaPlugin {
 	}
 	Settings.resetChallenges = getConfig().getBoolean("general.resetchallenges", true);
 	Settings.resetMoney = getConfig().getBoolean("general.resetmoney", true);
+	Settings.clearInventory = getConfig().getBoolean("general.resetinventory", true);
 
 	Settings.startingMoney = getConfig().getDouble("general.startingmoney", 0D);
 	// Nether spawn protection radius
@@ -975,7 +982,10 @@ public class ASkyBlock extends JavaPlugin {
 	Settings.allowEndermanGriefing = getConfig().getBoolean("island.allowendermangriefing", true);
 	Settings.allowCreeperDamage = getConfig().getBoolean("island.allowcreeperdamage", true);
 	Settings.allowTNTDamage = getConfig().getBoolean("island.allowtntdamage", false);
-
+	Settings.allowSpawnEggs = getConfig().getBoolean("island.allowspawneggs", false);
+	Settings.allowBreeding = getConfig().getBoolean("island.allowbreeding", false);
+	Settings.allowFire = getConfig().getBoolean("island.allowfire", false);
+	Settings.allowChestDamage = getConfig().getBoolean("island.allowchestdamage", false);
 	Settings.absorbLava = getConfig().getBoolean("sponge.absorbLava", false);
 	Settings.absorbFire = getConfig().getBoolean("sponge.absorbFire", false);
 	Settings.restoreWater = getConfig().getBoolean("sponge.restoreWater", true);
@@ -997,6 +1007,8 @@ public class ASkyBlock extends JavaPlugin {
 	if (Settings.waiverAmount < 0) {
 	    Settings.waiverAmount = 0;
 	}
+	// Challenge completion
+	Settings.broadcastMessages = getConfig().getBoolean("general.broadcastmessages",true);
 
 	// Levels
 	// Get the blockvalues.yml file
@@ -1032,9 +1044,20 @@ public class ASkyBlock extends JavaPlugin {
 	} else {
 	    getLogger().severe("No block values in blockvalues.yml! All island levels will be zero!");
 	}
-
-
-	// Localization
+	// Biome Settings
+	Settings.biomeCost = getConfig().getDouble("biomesettings.defaultcost", 100D);
+	if (Settings.biomeCost < 0D) {
+	    Settings.biomeCost = 0D;
+	    getLogger().warning("Biome default cost is < $0, so set to zero.");
+	}
+	String defaultBiome = getConfig().getString("biomesettings.defaultbiome", "PLAINS");
+	try {
+	    Settings.defaultBiome = Biome.valueOf(defaultBiome);
+	} catch (Exception e) {
+	    getLogger().severe("Could not parse biome " + defaultBiome + " using PLAINS instead.");
+	    Settings.defaultBiome = Biome.PLAINS;
+	}
+	// Localization Locale Setting
 	Locale.changingObsidiantoLava = locale.getString("changingObsidiantoLava", "Changing obsidian back into lava. Be careful!");
 	Locale.acidLore = locale.getString("acidLore","Poison!\nBeware!\nDo not drink!");
 	Locale.acidBucket = locale.getString("acidBucket", "Acid Bucket");
@@ -1116,6 +1139,7 @@ public class ASkyBlock extends JavaPlugin {
 	Locale.islandresetWait = locale.getString("island.resetWait","You have to wait [time] seconds before you can do that again.");
 	Locale.islandresetConfirm = locale.getString("island.resetConfirm", "Type /island confirm within 10 seconds to delete your island and restart!");
 	Locale.islandhelpIsland = locale.getString("island.helpIsland","start an island, or teleport to your island.");
+	Locale.islandhelpTeleport = locale.getString("island.helpTeleport", "teleport to your island.");
 	Locale.islandhelpSpawn = locale.getString("island.helpIslandSpawn","go to ASkyBlock spawn.");
 	Locale.islandhelpControlPanel = locale.getString("island.helpControlPanel","open the island GUI.");
 	Locale.islandhelpRestart = locale.getString("island.helpRestart","restart your island and remove the old one.");
@@ -1188,6 +1212,7 @@ public class ASkyBlock extends JavaPlugin {
 	Locale.adminHelpinfo = locale.getString("adminHelp.info","check information on the given player.");
 	Locale.adminHelpSetSpawn = locale.getString("adminHelp.setspawn","opens the spawn GUI for ASkyBlock world.");
 	Locale.adminHelpinfoIsland = locale.getString("adminHelp.infoisland","provide info on the nearest island.");
+	Locale.adminHelptp = locale.getString("adminHelp.tp", "Teleport to a player's island.");
 	Locale.reloadconfigReloaded = locale.getString("reload.configReloaded","Configuration reloaded from file.");
 	Locale.adminTopTengenerating = locale.getString("adminTopTen.generating","Generating the Top Ten list");
 	Locale.adminTopTenfinished = locale.getString("adminTopTen.finished","Finished generation of the Top Ten list");
@@ -1232,13 +1257,28 @@ public class ASkyBlock extends JavaPlugin {
 	Locale.netherSpawnIsProtected = locale.getString("nether.spawnisprotected", "The Nether spawn area is protected.");
 	Locale.islandhelpMiniShop = locale.getString("minishop.islandhelpMiniShop","Opens the MiniShop" );
 	Locale.islandMiniShopTitle = locale.getString("minishop.title","MiniShop" );
-	Locale.minishopBuy = locale.getString("minishop.buy","Buy");
-	Locale.minishopSell = locale.getString("minishop.sell","Sell");
+	Locale.minishopBuy = locale.getString("minishop.buy","Buy(Left Click)");
+	Locale.minishopSell = locale.getString("minishop.sell","Sell(Right Click)");
+	Locale.minishopYouBought = locale.getString("minishop.youbought", "You bought [number] [description] for [price]");
+	Locale.minishopSellProblem = locale.getString("minishop.sellproblem", "You do not have enough [description] to sell.");
+	Locale.minishopYouSold = locale.getString("minishop.yousold","You sold [number] [description] for [price]");
+	Locale.minishopBuyProblem  = locale.getString("minishop.buyproblem", "There was a problem purchasing [description]");
+	Locale.minishopYouCannotAfford = locale.getString("minishop.youcannotafford", "You cannot afford [description]!");
+	Locale.minishopOutOfStock = locale.getString("minishop.outofstock", "Out Of Stock");
 	Locale.boatWarningItIsUnsafe = locale.getString("boats.warning", "It's unsafe to exit the boat right now...");
 	Locale.adminHelpclearReset = locale.getString("general.clearreset", "resets the island reset limit for player.");
 	Locale.resetYouHave = locale.getString("island.resetYouHave","You have [number] resets left.");
 	Locale.islandResetNoMore = locale.getString("island.resetNoMore", "No more resets are allowed for your island!");
 	Locale.clearedResetLimit = locale.getString("resetTo", "Cleared reset limit");
+	Locale.signLine1 = locale.getString("sign.line1", "&1[A Skyblock]");
+	Locale.signLine2 = locale.getString("sign.line2", "[player]");
+	Locale.signLine3 = locale.getString("sign.line3", "Do not fall!");
+	Locale.signLine4 = locale.getString("sign.line4", "Beware!");
+	Locale.islandhelpBiome = locale.getString("biome.help","open the biome GUI.");
+	Locale.biomeSet = locale.getString("biome.set","Island biome set to [biome]!");
+	Locale.biomeUnknown = locale.getString("biome.unknown","Unknown biome!");
+	Locale.biomeYouBought = locale.getString("biome.youbought","Purchased for [cost]!");
+	Locale.biomePanelTitle = locale.getString("biome.paneltitle", "Select A Biome");
     }
 
     /*
@@ -1282,11 +1322,6 @@ public class ASkyBlock extends JavaPlugin {
 	} 
 	loadPluginConfig();
 	getIslandWorld();
-	// SPONGE
-	spongeAreas = loadSpongeData();
-	// Set the limits
-	spongeAreaUpLimit = Settings.spongeRadius + 1;
-	spongeAreaDownLimit = Settings.spongeRadius * -1;
 
 	// Set and make the player's directory if it does not exist and then load players into memory
 	playersFolder = new File(getDataFolder() + File.separator + "players");
@@ -1295,7 +1330,7 @@ public class ASkyBlock extends JavaPlugin {
 	}
 	// Set up commands for this plugin
 
-	getCommand("as").setExecutor(new IslandCmd(this));
+	getCommand("island").setExecutor(new IslandCmd(this));
 	getCommand("asc").setExecutor(getChallenges());
 	getCommand("asadmin").setExecutor(new AdminCmd(this));
 	// Register events that this plugin uses
@@ -1337,68 +1372,24 @@ public class ASkyBlock extends JavaPlugin {
 
 	// This part will kill monsters if they fall into the water because it
 	// is acid
-	getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
-	    @Override
-	    public void run() {
-		List<Entity> entList = acidWorld.getEntities();
-		for (Entity current : entList) {
-		    if (current instanceof Monster) {
-			if ((current.getLocation().getBlock().getType() == Material.WATER)
-				|| (current.getLocation().getBlock().getType() == Material.STATIONARY_WATER)) {
-			    ((Monster) current).damage(Settings.mobAcidDamage);
-			    //getLogger().info("Killing monster");
+	if (Settings.mobAcidDamage > 0D) {
+	    getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
+		@Override
+		public void run() {
+		    List<Entity> entList = acidWorld.getEntities();
+		    for (Entity current : entList) {
+			if (current instanceof Monster) {
+			    if ((current.getLocation().getBlock().getType() == Material.WATER)
+				    || (current.getLocation().getBlock().getType() == Material.STATIONARY_WATER)) {
+				((Monster) current).damage(Settings.mobAcidDamage);
+				//getLogger().info("Killing monster");
+			    }
 			}
 		    }
 		}
-	    }
-	}, 0L, 20L);
-    }
-
-
-    @SuppressWarnings("unchecked")
-    private ConcurrentHashMap<String, Integer> loadSpongeData() {
-	if (!(new File(spongeDbLocation)).exists()) {
-	    // Create the directory and database files!
-	    boolean success = (new File(pluginMainDir)).mkdir();
-	    if (success) {
-		getLogger().info("Sponge DB created!");
-	    }
-	    saveSpongeData(false);
-	}
-
-	ObjectInputStream ois = null;
-	try {
-	    ois = new ObjectInputStream(new FileInputStream(spongeDbLocation));
-	    Object result = ois.readObject();
-	    if (result instanceof ConcurrentHashMap) {
-		return (ConcurrentHashMap<String, Integer>) result;
-	    } else if (result instanceof HashMap) {
-		getLogger().info("Updated sponge database to ConcurrentHashMap.");
-		return new ConcurrentHashMap<String, Integer>((Map<String, Integer>) result);
-	    }
-	} catch (Exception e) {
-	    e.printStackTrace();
-	} finally {
-	    if (ois != null) {
-		try {
-		    ois.close();
-		} catch (IOException e) {
-		    e.printStackTrace();
-		}
-	    }
-	}
-	return spongeAreas;
-    }
-
-    public void saveSpongeData(boolean threaded) {
-	SpongeSaveTask spongeSaver = new SpongeSaveTask(this);
-	if (threaded) {
-	    workerThreads.execute(spongeSaver);
-	} else {
-	    spongeSaver.run();
+	    }, 0L, 20L);
 	}
     }
-
 
     /**
      * Checks if an online player is on their island or on a team island
@@ -1443,27 +1434,23 @@ public class ASkyBlock extends JavaPlugin {
 	// Ensures that water is acid
 	manager.registerEvents(new AcidEffect(this), this);
 	// Ensures that boats are safe in ASkyBlock
-	manager.registerEvents(new SafeBoat(this), this);
+	if (Settings.acidDamage > 0D) {
+	    manager.registerEvents(new SafeBoat(this), this);
+	}
 	// Enables warp signs in ASkyBlock
 	warpSignsListener = new WarpSigns(this);
 	manager.registerEvents(warpSignsListener, this);
 	// Control panel - for future use
 	//manager.registerEvents(new ControlPanel(), this);
-	// Handle sponges
-	manager.registerEvents(new SpongeBaseListener(this), this);
-	if (Settings.spongeSaturation) {
-	    spongeListener = new SpongeSaturatedSpongeListener(this);
-	    manager.registerEvents(spongeListener, this);
-	} else {
-	    spongeListener = new SpongeSuperSpongeListener(this);
-	    manager.registerEvents(spongeListener, this);
-	}
 	// Change names of inventory items
 	manager.registerEvents(new AcidInventory(this), this);
+	// Biomes
+	// Load Biomes
+	biomes = new Biomes(this);
+	manager.registerEvents(biomes, this);
     }
 
     public void unregisterEvents() {
-	HandlerList.unregisterAll(spongeListener);
 	HandlerList.unregisterAll(warpSignsListener);
 	HandlerList.unregisterAll(lavaListener);	
     }
@@ -1475,15 +1462,6 @@ public class ASkyBlock extends JavaPlugin {
 	// Enables warp signs in ASkyBlock
 	warpSignsListener = new WarpSigns(this);
 	manager.registerEvents(warpSignsListener, this);
-	// Handle sponges
-	manager.registerEvents(new SpongeBaseListener(this), this);
-	if (Settings.spongeSaturation) {
-	    spongeListener = new SpongeSaturatedSpongeListener(this);
-	    manager.registerEvents(spongeListener, this);
-	} else {
-	    spongeListener = new SpongeSuperSpongeListener(this);
-	    manager.registerEvents(spongeListener, this);
-	}	
     }
 
     /**
@@ -1527,30 +1505,31 @@ public class ASkyBlock extends JavaPlugin {
 		    .iterator();
 	    while (ents.hasNext()) {
 		final Entity tempent = ents.next();
-		// Remove anything except for a player of player in a boat
-		if (!(tempent instanceof Player)) {
-		    if (tempent instanceof Boat) {
-			if (((Boat)tempent).isEmpty()) {
-			    tempent.remove();
-			} 
-		    } else {
-			//getLogger().info("Removed entity type " + tempent.getType().toString() + " when removing island at location " + loc.toString());
-			tempent.remove();
-		    }
-		} else {
+		// Remove anything except for a players
+		if (tempent instanceof Player) {
 		    // Player
 		    Player pl = (Player)tempent;
-		    if (!pl.isFlying() && !pl.isInsideVehicle()) {
-			// Try to put them into a boat
-			try {
-			    Entity boat = pl.getWorld().spawnEntity(pl.getLocation(), EntityType.BOAT);
-			    boat.setPassenger(pl);
-			    pl.sendMessage(ChatColor.RED + Locale.islandDeletedLifeboats);
-			} catch (Exception e) {
-			    getLogger().warning("In deleting an island, could not put a nearby player in a boat");
-			    e.printStackTrace();
-			}
+		    if (pl.isInsideVehicle()) {
+			pl.leaveVehicle();
 		    }
+		    if (!pl.isFlying()) {
+			// Move player to spawn
+			if (plugin.getSpawn().getSpawnLoc() != null) {
+			    // go to aSkyblock spawn
+			    pl.teleport(plugin.getSpawn().getSpawnLoc());
+			    getLogger().warning("During island deletion player " + pl.getName() + " sent to spawn.");
+			} else {
+			    if (!pl.performCommand("spawn")) {
+				getLogger().warning("During island deletion player " + pl.getName() + " could not be sent to spawn so was dropped, sorry.");	
+			    } else {
+				getLogger().warning("During island deletion player " + pl.getName() + " sent to spawn using /spawn.");
+			    }
+			}
+		    } else {
+			getLogger().warning("Not moving player " + pl.getName() + " because they are flying");
+		    }
+		} else {
+		    tempent.remove();
 		}
 	    }
 	    /*
@@ -1667,303 +1646,6 @@ public class ASkyBlock extends JavaPlugin {
 	topTenList = top;
     }
 
-    // SPONGE FUNCTIONS
-    // Non-Static Functions
-    public void enableSponge(Block spongeBlock) {
-	// Check for water or Lava
-	// if the block is at y=0 or y=255, then we should not look into negative space
-	// The up/down limits are determined by the sponge radius
-	int ymin = spongeAreaDownLimit;
-	int ymax = spongeAreaUpLimit;
-	int blockheight = spongeBlock.getLocation().getBlockY();
-	if ((blockheight + ymin) < 0) {
-	    ymin = -blockheight;
-	}
-	if ((blockheight + ymax) > 255) {
-	    ymax = 255-blockheight;
-	}
-	for (int x = spongeAreaDownLimit; x < spongeAreaUpLimit; x++) {
-	    for (int y = ymin; y < ymax; y++) {
-		for (int z = spongeAreaDownLimit; z < spongeAreaUpLimit; z++) {
-		    if (debug) {
-			getLogger().info("DEBUG Checking: " + x + ", " + y + ", " + z);
-		    }
-		    Block currentBlock = spongeBlock.getRelative(x, y, z);
-		    addToSpongeAreas(getBlockCoords(currentBlock));
-		    if (blockIsAffected(currentBlock)) {
-			currentBlock.setType(Material.AIR);
-			if (debug) {
-			    getLogger().info("The sponge absorbed " + currentBlock.getType());
-			}
-		    }
-		}
-	    }
-	}
-    }
-
-    /**
-     * Supposed to remove the sponge from the database and allow water to flow
-     * back if able
-     * 
-     * @param theSponge
-     * @return
-     */
-    public LinkedList<Block> disableSponge(Block theSponge) {
-	flag = true;
-	// Mark blocks
-	LinkedList<Block> markedBlocks = new LinkedList<Block>();
-	// Loop around the sponge block
-	// if the block is at y=0 or y=255, then we should not look into negative space
-	// The up/down limits are determined by the sponge radius
-	int ymin = spongeAreaDownLimit;
-	int ymax = spongeAreaUpLimit;
-	int blockheight = theSponge.getLocation().getBlockY();
-	if ((blockheight + ymin) < 0) {
-	    ymin = -blockheight;
-	}
-	if ((blockheight + ymax) > 255) {
-	    ymax = 255-blockheight;
-	}
-	for (int x = spongeAreaDownLimit; x < spongeAreaUpLimit; x++) {
-	    for (int y = ymin; y < ymax; y++) {
-		for (int z = spongeAreaDownLimit; z < spongeAreaUpLimit; z++) {
-		    final Block currentBlock = theSponge.getRelative(x, y, z);
-		    removeFromSpongeAreas(getBlockCoords(currentBlock));
-
-		    if (Settings.restoreWater) {
-			if (debug) {
-			    getLogger().info("restore water = true");
-			}
-			// If the database does not have a record of this block
-			// location then mark it as removed
-			if (!spongeAreas.containsKey(getBlockCoords(currentBlock))) {
-			    markAsRemoved(getBlockCoords(currentBlock));
-			    markedBlocks.add(currentBlock);
-			}
-		    }
-
-		    if (debug) {
-			getLogger().info("AirSearching: " + x + ", " + y + ", " + z);
-		    }
-		    if (isAir(currentBlock)) {
-			// currentBlock.setType(Material.PISTON_MOVING_PIECE);
-			// // Technical clear block
-			currentBlock.setType(Material.PISTON_MOVING_PIECE);
-			currentBlock.setType(Material.AIR); // Turn air into
-			// air.
-		    }
-		}
-	    }
-	}
-	flag = false;
-	return markedBlocks;
-    }
-
-    public boolean blockIsAffected(Block theBlock) {
-	if (isWater(theBlock)) {
-	    return true;
-	} else if (isLava(theBlock)) {
-	    if (Settings.absorbLava) {
-		return true;
-	    }
-	} else if (isFire(theBlock)) {
-	    if (Settings.absorbFire) {
-		return true;
-	    }
-	}
-	return false;
-    }
-
-    public void addToSpongeAreas(String coords) {
-	if (spongeAreas.containsKey(coords)) {
-	    spongeAreas.put(coords, spongeAreas.get(coords) + 1);
-	} else {
-	    spongeAreas.put(coords, 1);
-	}
-    }
-
-    /**
-     * Decrements the coordinate if it is in the database and removes it if it
-     * is zero
-     * 
-     * @param coords
-     */
-    public void removeFromSpongeAreas(String coords) {
-	if (spongeAreas.containsKey(coords)) {
-	    spongeAreas.put(coords, spongeAreas.get(coords) - 1);
-	    if (spongeAreas.get(coords) == 0) {
-		spongeAreas.remove(coords);
-	    }
-	}
-    }
-
-    public int completeRemoveBlocksFromAreas(LinkedList<Block> blawks) {
-	int output = 0;
-	for (Block blawk : blawks) {
-	    String coords = getBlockCoords(blawk);
-	    if (spongeAreas.containsKey(coords)) {
-		spongeAreas.remove(getBlockCoords(blawk));
-		output++;
-	    }
-	}
-	return output;
-    }
-
-    /**
-     * Marks a location as removed
-     * 
-     * @param coords
-     */
-    public void markAsRemoved(String coords) {
-	String removedCoord = coords + ".removed";
-	// If it has been removed before, then the database is incremented by
-	// one
-	if (spongeAreas.containsKey(removedCoord)) {
-	    spongeAreas.put(removedCoord, spongeAreas.get(removedCoord) + 1);
-	} else {
-	    spongeAreas.put(removedCoord, 1);
-	}
-    }
-
-    public Boolean isNextToSpongeArea(Block theBlock) {
-	if (spongeAreas.containsKey(getBlockCoords(theBlock.getRelative(BlockFace.NORTH)))) {
-	    if (debug) {
-		getLogger().info("Fire wont spread north!");
-	    }
-	    return true;
-	}
-	if (spongeAreas.containsKey(getBlockCoords(theBlock.getRelative(BlockFace.EAST)))) {
-	    if (debug) {
-		getLogger().info("Fire wont spread east!");
-	    }
-	    return true;
-	}
-	if (spongeAreas.containsKey(getBlockCoords(theBlock.getRelative(BlockFace.SOUTH)))) {
-	    if (debug) {
-		getLogger().info("Fire wont spread south!");
-	    }
-	    return true;
-	}
-	if (spongeAreas.containsKey(getBlockCoords(theBlock.getRelative(BlockFace.WEST)))) {
-	    if (debug) {
-		getLogger().info("Fire wont spread west!");
-	    }
-	    return true;
-	}
-	if (spongeAreas.containsKey(getBlockCoords(theBlock.getRelative(BlockFace.UP)))) {
-	    if (debug) {
-		getLogger().info("Fire wont spread up!");
-	    }
-	    return true;
-	}
-	if (spongeAreas.containsKey(getBlockCoords(theBlock.getRelative(BlockFace.DOWN)))) {
-	    if (debug) {
-		getLogger().info("Fire wont spread down!");
-	    }
-	    return true;
-	}
-	return false;
-    }
-
-    public void killSurroundingFire(Block fireMan) {
-	if (isFire(fireMan.getRelative(BlockFace.NORTH))) {
-	    fireMan.getRelative(BlockFace.NORTH).setType(Material.AIR);
-	}
-	if (isFire(fireMan.getRelative(BlockFace.EAST))) {
-	    fireMan.getRelative(BlockFace.EAST).setType(Material.AIR);
-	}
-	if (isFire(fireMan.getRelative(BlockFace.SOUTH))) {
-	    fireMan.getRelative(BlockFace.SOUTH).setType(Material.AIR);
-	}
-	if (isFire(fireMan.getRelative(BlockFace.WEST))) {
-	    fireMan.getRelative(BlockFace.WEST).setType(Material.AIR);
-	}
-	if (isFire(fireMan.getRelative(BlockFace.UP))) {
-	    fireMan.getRelative(BlockFace.UP).setType(Material.AIR);
-	}
-	if (isFire(fireMan.getRelative(BlockFace.DOWN))) {
-	    fireMan.getRelative(BlockFace.DOWN).setType(Material.AIR);
-	}
-    }
-
-    public int convertAreaSponges(Player thePlayer, int radius, boolean enable) {
-	Block theOrigin = thePlayer.getLocation().getBlock();
-	int checkAreaUpLimit = radius + 1;
-	int checkAreaDownLimit = radius * -1;
-	int spongesConverted = 0;
-	for (int x = checkAreaDownLimit; x < checkAreaUpLimit; x++) {
-	    for (int y = checkAreaDownLimit; y < checkAreaUpLimit; y++) {
-		for (int z = checkAreaDownLimit; z < checkAreaUpLimit; z++) {
-		    Block currentBlock = theOrigin.getRelative(x, y, z);
-		    if (isSponge(currentBlock)) {
-			if (debug) {
-			    getLogger().info("Sponge found at: " + getBlockCoords(currentBlock));
-			}
-			if (enable) {
-			    enableSponge(currentBlock);
-			} else {
-			    disableSponge(currentBlock);
-			}
-			spongesConverted++;
-		    }
-		}
-	    }
-	}
-	return spongesConverted;
-    }
-
-    // Universal Functions
-    public String getBlockCoords(Block theBlock) {
-	return theBlock.getWorld().getName() + "." + theBlock.getX() + "." + theBlock.getY() + "." + theBlock.getZ();
-    }
-
-    public String getDeletedBlockCoords(Block theBlock) {
-	return theBlock.getWorld().getName() + "." + theBlock.getX() + "." + theBlock.getY() + "." + theBlock.getZ() + ".removed";
-    }
-
-    public boolean isSponge(Block theBlock) {
-	return (theBlock.getType() == Material.SPONGE);
-    }
-
-    public boolean isWater(Block theBlock) {
-	return (theBlock.getType() == Material.WATER || theBlock.getType() == Material.STATIONARY_WATER);
-    }
-
-    public boolean isLava(Block theBlock) {
-	return (theBlock.getType() == Material.LAVA || theBlock.getType() == Material.STATIONARY_LAVA);
-    }
-
-    public boolean isFire(Block theBlock) {
-	return (theBlock.getType() == Material.FIRE);
-    }
-
-    public boolean isAir(Block theBlock) {
-	return (theBlock.getType() == Material.AIR);
-    }
-
-    public boolean isIce(Block theBlock) {
-	return (theBlock.getType() == Material.ICE);
-    }
-
-    public boolean hasSponges(List<Block> blocks) {
-	for (Block blawk : blocks) {
-	    if (isSponge(blawk)) {
-		return true;
-	    }
-	}
-	return false;
-    }
-
-    public LinkedList<Block> getSponges(List<Block> blocks) {
-	LinkedList<Block> output = new LinkedList<Block>();
-	for (Block blawk : blocks) {
-	    if (isSponge(blawk)) {
-		output.add(blawk);
-	    }
-	}
-	return output;
-    }
-    // End Sponges
     /**
      * Saves the challenge.yml file if it does not exist
      */
@@ -2246,14 +1928,16 @@ public class ASkyBlock extends JavaPlugin {
      * @param player
      */
     public void resetPlayer(Player player) {
-	// Clear their inventory and equipment and set them as survival
-	player.getInventory().clear(); // Javadocs are wrong - this does not
-	// clear armor slots! So...
-	player.getInventory().setHelmet(null);
-	player.getInventory().setChestplate(null);
-	player.getInventory().setLeggings(null);
-	player.getInventory().setBoots(null);
-	player.getEquipment().clear();
+	if (Settings.clearInventory) {
+	    // Clear their inventory and equipment and set them as survival
+	    player.getInventory().clear(); // Javadocs are wrong - this does not
+	    // clear armor slots! So...
+	    player.getInventory().setHelmet(null);
+	    player.getInventory().setChestplate(null);
+	    player.getInventory().setLeggings(null);
+	    player.getInventory().setBoots(null);
+	    player.getEquipment().clear();
+	}
 	player.setGameMode(GameMode.SURVIVAL);
 	if (Settings.resetChallenges) {
 	    // Reset the player's challenge status
@@ -2300,4 +1984,126 @@ public class ASkyBlock extends JavaPlugin {
 	return "a player";
     }
 
+
+    /**
+     * Used to prevent teleporting when falling
+     * @param uniqueId
+     */
+    public void setFalling(UUID uniqueId) {
+	this.fallingPlayers.add(uniqueId);
+    }
+
+    /**
+     * Used to prevent teleporting when falling
+     * @param uniqueId
+     */
+    public void unsetFalling(UUID uniqueId) {
+	this.fallingPlayers.remove(uniqueId);
+    }
+
+    /**
+     * Used to prevent teleporting when falling
+     * @param uniqueId
+     * @return true or false
+     */
+    public boolean isFalling(UUID uniqueId) {
+	return this.fallingPlayers.contains(uniqueId);
+    }
+
+    /**
+     * Sets all blocks in an island to a specified biome type
+     * @param islandLoc
+     * @param biomeType
+     */
+    public boolean setIslandBiome(Location islandLoc, Biome biomeType) {
+	final int islandX = islandLoc.getBlockX();
+	final int islandZ = islandLoc.getBlockZ();
+	final World world = islandLoc.getWorld();
+	final int range = (int)Math.round((double)Settings.island_protectionRange / 2);
+	List<Pair> chunks = new ArrayList<Pair>();
+	try {
+	    // Biomes only work in 2D, so there's no need to set every block in the island area
+	    // However, we need to collect the chunks and push them out again
+	    //getLogger().info("DEBUG: Protection range is = " + Settings.island_protectionRange);
+	    for (int x = -range; x <= range; x++) {
+		for (int z = -range; z <= range; z++) {
+		    Location l = new Location(world,(islandX + x), 0, (islandZ + z));
+		    final Pair chunkCoords = new Pair(l.getChunk().getX(),l.getChunk().getZ());
+		    if (!chunks.contains(chunkCoords)) {
+			chunks.add(chunkCoords);
+		    }
+		    //getLogger().info("DEBUG: Block   " + l.getBlockX() + "," + l.getBlockZ());
+		    /*
+		    // Weird stuff going on here. Sometimes the location does not get created.
+		    if (l.getBlockX() != (islandX +x)) {
+			getLogger().info("DEBUG: Setting " + (islandX + x) + "," + (islandZ + z));
+			getLogger().info("DEBUG: disparity in x");
+		    }
+		    if (l.getBlockZ() != (islandZ +z)) {
+			getLogger().info("DEBUG: Setting " + (islandX + x) + "," + (islandZ + z));
+			getLogger().info("DEBUG: disparity in z");
+		    }*/
+		    l.getBlock().setBiome(biomeType);
+		}
+	    }
+	} catch (Exception noBiome) {
+	    return false;
+	}
+	// Now do some adjustments based on the Biome
+	switch (biomeType) {
+	case DESERT:
+	case JUNGLE:
+	case SAVANNA:
+	case SWAMPLAND:
+	    // No ice or snow allowed
+	    for (int y = islandLoc.getWorld().getMaxHeight(); y >= 0; y--) {
+		for (int x = islandX-range; x <= islandX + range; x++) {
+		    for (int z = islandZ-range; z <= islandZ+range; z++) {
+			switch(world.getBlockAt(x, y, z).getType()) {
+			case ICE:
+			case SNOW:
+			    world.getBlockAt(x, y, z).setType(Material.AIR);
+			    break;
+			default:
+			}
+		    }
+		}
+	    }
+	    break;
+	case HELL:
+	    // No water or ice allowed
+	    for (int y = islandLoc.getWorld().getMaxHeight(); y >= 0; y--) {
+		for (int x = islandX-range; x <= islandX + range; x++) {
+		    for (int z = islandZ-range; z <= islandZ+range; z++) {
+			switch(world.getBlockAt(x, y, z).getType()) {
+			case ICE:
+			case WATER:
+			case STATIONARY_WATER:
+			case SNOW:
+			    world.getBlockAt(x, y, z).setType(Material.AIR);
+			    break;
+			default:
+			}
+		    }
+		}
+	    }
+	    break;
+	default:
+	    break;
+
+	}
+	// Update chunks
+	for (Pair p: chunks) {
+	    islandLoc.getWorld().refreshChunk(p.getLeft(), p.getRight());
+	    //plugin.getLogger().info("DEBUG: refreshing " + p.getLeft() + "," + p.getRight());
+	}
+	return true;
+    }
+
+    /**
+     * @return the biomes
+     */
+    public Biomes getBiomes() {
+	return biomes;
+    }
 }

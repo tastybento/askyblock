@@ -72,27 +72,16 @@ public class Challenges implements CommandExecutor {
 	if (!player.getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    return true;
 	}
+	// Check permissions
+	if (!VaultHelper.checkPerm(player, "askyblock.island.challenges")) {
+	    player.sendMessage(ChatColor.RED + Locale.errorNoPermission);
+	    return true;
+	}
 	switch (cmd.length) {
 	case 0:
 	    // User typed /c or /challenge
 	    // Display panel
 	    player.openInventory(challengePanel(player));
-	    /*
-	    int levelDone = 0;
-	    sender.sendMessage(ChatColor.GOLD + Settings.challengeLevels.get(0) + ": " + getChallengesByLevel(player, Settings.challengeLevels.get(0)));
-	    for (int i = 1; i < Settings.challengeLevels.size(); i++) {
-		levelDone = checkLevelCompletion(player, Settings.challengeLevels.get(i-1));
-		if (levelDone <= 0) {
-		    sender.sendMessage(ChatColor.GOLD + Settings.challengeLevels.get(i) + ": "
-			    + getChallengesByLevel(player, Settings.challengeLevels.get(i)));
-		} else {
-		    sender.sendMessage(ChatColor.GOLD + Settings.challengeLevels.get(i) + ChatColor.GRAY + ": "
-			    + Locale.challengestoComplete.replace("[challengesToDo]", String.valueOf(levelDone)).replace("[thisLevel]",Settings.challengeLevels.get(i-1)));
-		}
-	    }
-	    sender.sendMessage(ChatColor.GOLD + Locale.challengeshelp1);
-	    sender.sendMessage(ChatColor.GOLD + Locale.challengeshelp2);
-	     */
 	    return true;
 	case 1:
 	    if (cmd[0].equalsIgnoreCase("help") || cmd[0].equalsIgnoreCase("complete") || cmd[0].equalsIgnoreCase("c")) {
@@ -182,21 +171,26 @@ public class Challenges implements CommandExecutor {
 	int moneyReward = 0;
 	int expReward = 0;
 	String rewardText = "";
+	// If the friendly name is available use it
+	String challengeName = ChatColor.GREEN + plugin.getChallengeConfig().getString("challenges.challengeList." + challenge + ".friendlyname",
+		challenge.substring(0, 1).toUpperCase() + challenge.substring(1));
 
 	// Gather the rewards due
 	// If player has done a challenge already, the rewards are different
 	if (!players.checkChallenge(player.getUniqueId(),challenge)) {
 	    // First time
-	    player.sendMessage(ChatColor.GREEN + Locale.challengesyouHaveCompleted.replace("[challenge]", challenge));
-	    plugin.getServer().broadcastMessage(ChatColor.GOLD + Locale.challengesnameHasCompleted.replace("[name]", player.getName()).replace("[challenge]", challenge ));
-	    plugin.tellOfflineTeam(player.getUniqueId(), ChatColor.GOLD + Locale.challengesnameHasCompleted.replace("[name]", player.getName()).replace("[challenge]", challenge ));
+	    player.sendMessage(ChatColor.GREEN + Locale.challengesyouHaveCompleted.replace("[challenge]", challengeName));
+	    if (Settings.broadcastMessages) {
+		plugin.getServer().broadcastMessage(ChatColor.GOLD + Locale.challengesnameHasCompleted.replace("[name]", player.getName()).replace("[challenge]", challengeName ));
+	    }
+	    plugin.tellOfflineTeam(player.getUniqueId(), ChatColor.GOLD + Locale.challengesnameHasCompleted.replace("[name]", player.getName()).replace("[challenge]", challengeName ));
 	    itemRewards = plugin.getChallengeConfig().getString("challenges.challengeList." + challenge.toLowerCase() + ".itemReward", "").split(" ");
 	    moneyReward = plugin.getChallengeConfig().getInt("challenges.challengeList." + challenge.toLowerCase() + ".moneyReward", 0);
 	    rewardText = plugin.getChallengeConfig().getString("challenges.challengeList." + challenge.toLowerCase() + ".rewardText", "Goodies!").replace('&', '§');
 	    expReward = plugin.getChallengeConfig().getInt("challenges.challengeList." + challenge + ".expReward", 0);
 	} else {
 	    // Repeat challenge
-	    player.sendMessage(ChatColor.GREEN + Locale.challengesyouRepeated.replace("[challenge]", challenge));
+	    player.sendMessage(ChatColor.GREEN + Locale.challengesyouRepeated.replace("[challenge]", challengeName));
 	    itemRewards = plugin.getChallengeConfig().getString("challenges.challengeList." + challenge.toLowerCase() + ".repeatItemReward", "").split(" ");
 	    moneyReward = plugin.getChallengeConfig().getInt("challenges.challengeList." + challenge.toLowerCase() + ".repeatMoneyReward", 0);
 	    rewardText = plugin.getChallengeConfig().getString("challenges.challengeList." + challenge.toLowerCase() + ".repeatRewardText", "Goodies!").replace('&', '§');
@@ -276,6 +270,43 @@ public class Challenges implements CommandExecutor {
 		}
 	    }
 	}
+	// Run reward commands
+	if (!players.checkChallenge(player.getUniqueId(),challenge)) {
+	    // First time
+	    List<String> commands = plugin.getChallengeConfig().getStringList("challenges.challengeList." + challenge.toLowerCase() + ".rewardcommands");
+	    for (String cmd : commands) {
+		// Substitute in any references to player
+		try {
+		    if (!plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(),cmd.replace("[player]", player.getName()))) {
+			plugin.getLogger().severe("Problem executing challenge reward commands - skipping!");
+			plugin.getLogger().severe("Command was : " + cmd);
+		    }
+		} catch (Exception e) {
+		    plugin.getLogger().severe("Problem executing challenge reward commands - skipping!");
+		    plugin.getLogger().severe("Command was : " + cmd);
+		    plugin.getLogger().severe("Error was: " + e.getMessage());
+		    e.printStackTrace();
+		}
+	    }
+	} else {
+	    // Repeat challenge
+	    List<String> commands = plugin.getChallengeConfig().getStringList("challenges.challengeList." + challenge.toLowerCase() + ".repeatrewardcommands");
+	    for (String cmd : commands) {
+		// Substitute in any references to player
+		try {
+		    if (!plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(),cmd.replace("[player]", player.getName()))) {
+			plugin.getLogger().severe("Problem executing challenge repeat reward commands - skipping!");
+			plugin.getLogger().severe("Command was : " + cmd);
+		    }
+		} catch (Exception e) {
+		    plugin.getLogger().severe("Problem executing challenge repeat reward commands - skipping!");
+		    plugin.getLogger().severe("Command was : " + cmd);
+		    plugin.getLogger().severe("Error was: " + e.getMessage());
+		    e.printStackTrace();
+		}
+	    }
+	}	
+
 	// Mark the challenge as complete
 	if (!players.checkChallenge(player.getUniqueId(),challenge)) {
 	    players.completeChallenge(player.getUniqueId(),challenge);
@@ -770,9 +801,7 @@ public class Challenges implements CommandExecutor {
 	// New panel map
 	List<CPItem> cp = new ArrayList<CPItem>();
 	int levelDone = 0;
-	// sender.sendMessage(ChatColor.GOLD + Settings.challengeLevels.get(0) +
-	// ": " + getChallengesByLevel(player,
-	// Settings.challengeLevels.get(0)));
+	/*
 	// Loop through challenges for this player for first level
 	for (String challengeName : challengeList.get(Settings.challengeLevels.get(0))) {
 	    // Get the icon
@@ -806,10 +835,14 @@ public class Challenges implements CommandExecutor {
 	    item.setLore(lore);
 	    cp.add(item);
 	}
-
+	 */
 	// Loop through other levels
-	for (int i = 1; i < Settings.challengeLevels.size(); i++) {
-	    levelDone = checkLevelCompletion(player, Settings.challengeLevels.get(i - 1));
+	for (int i = 0; i < Settings.challengeLevels.size(); i++) {
+	    if (i == 0) {
+		levelDone = 0;
+	    } else {
+		levelDone = checkLevelCompletion(player, Settings.challengeLevels.get(i - 1));
+	    }
 	    if (levelDone <= 0) {
 		// Loop through challenges for this player
 		for (String challengeName : challengeList.get(Settings.challengeLevels.get(i))) {
@@ -877,7 +910,7 @@ public class Challenges implements CommandExecutor {
 	return playerChallengeGUI.get(player.getUniqueId());
     }
 
-    private List<String> chop(ChatColor color, String longLine, int length) {
+    public static List<String> chop(ChatColor color, String longLine, int length) {
 	List<String> result = new ArrayList<String>();
 	// int multiples = longLine.length() / length;
 	int i = 0;
