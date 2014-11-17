@@ -2085,9 +2085,14 @@ public class ASkyBlock extends JavaPlugin {
 	}
 	// Now do some adjustments based on the Biome
 	switch (biomeType) {
+	case MESA:
+	case MESA_BRYCE:
 	case DESERT:
 	case JUNGLE:
 	case SAVANNA:
+	case SAVANNA_MOUNTAINS:
+	case SAVANNA_PLATEAU:
+	case SAVANNA_PLATEAU_MOUNTAINS:
 	case SWAMPLAND:
 	    // No ice or snow allowed
 	    for (int y = islandLoc.getWorld().getMaxHeight(); y >= 0; y--) {
@@ -2122,9 +2127,110 @@ public class ASkyBlock extends JavaPlugin {
 		}
 	    }
 	    break;
+	case BEACH:
+	    break;
+	case BIRCH_FOREST:
+	    break;
+	case BIRCH_FOREST_HILLS:
+	    break;
+	case BIRCH_FOREST_HILLS_MOUNTAINS:
+	    break;
+	case BIRCH_FOREST_MOUNTAINS:
+	    break;
+	case COLD_BEACH:
+	    break;
+	case COLD_TAIGA:
+	    break;
+	case COLD_TAIGA_HILLS:
+	    break;
+	case COLD_TAIGA_MOUNTAINS:
+	    break;
+	case DEEP_OCEAN:
+	    break;
+	case DESERT_HILLS:
+	    break;
+	case DESERT_MOUNTAINS:
+	    break;
+	case EXTREME_HILLS:
+	    break;
+	case EXTREME_HILLS_MOUNTAINS:
+	    break;
+	case EXTREME_HILLS_PLUS:
+	    break;
+	case EXTREME_HILLS_PLUS_MOUNTAINS:
+	    break;
+	case FLOWER_FOREST:
+	    break;
+	case FOREST:
+	    break;
+	case FOREST_HILLS:
+	    break;
+	case FROZEN_OCEAN:
+	    break;
+	case FROZEN_RIVER:
+	    break;
+	case ICE_MOUNTAINS:
+	    break;
+	case ICE_PLAINS:
+	    break;
+	case ICE_PLAINS_SPIKES:
+	    break;
+	case JUNGLE_EDGE:
+	    break;
+	case JUNGLE_EDGE_MOUNTAINS:
+	    break;
+	case JUNGLE_HILLS:
+	    break;
+	case JUNGLE_MOUNTAINS:
+	    break;
+	case MEGA_SPRUCE_TAIGA:
+	    break;
+	case MEGA_SPRUCE_TAIGA_HILLS:
+	    break;
+	case MEGA_TAIGA:
+	    break;
+	case MEGA_TAIGA_HILLS:
+	    break;
+	case MUSHROOM_ISLAND:
+	    break;
+	case MUSHROOM_SHORE:
+	    break;
+	case OCEAN:
+	    break;
+	case PLAINS:
+	    break;
+	case RIVER:
+	    break;
+	case ROOFED_FOREST:
+	    break;
+	case ROOFED_FOREST_MOUNTAINS:
+	    break;
+	case SKY:
+	    break;
+	case SMALL_MOUNTAINS:
+	    break;
+	case STONE_BEACH:
+	    break;
+	case SUNFLOWER_PLAINS:
+	    break;
+	case SWAMPLAND_MOUNTAINS:
+	    break;
+	case TAIGA:
+	    break;
+	case TAIGA_HILLS:
+	    break;
+	case TAIGA_MOUNTAINS:
+	    break;
+	case MESA_PLATEAU:
+	    break;
+	case MESA_PLATEAU_FOREST:
+	    break;
+	case MESA_PLATEAU_FOREST_MOUNTAINS:
+	    break;
+	case MESA_PLATEAU_MOUNTAINS:
+	    break;
 	default:
 	    break;
-
 	}
 	// Update chunks
 	for (Pair p: chunks) {

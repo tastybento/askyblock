@@ -260,3 +260,13 @@ biomes:
   SWAMPLAND:
     icon: WATER_LILY
     description: Swampy
+  MESA:
+    icon: HARD_CLAY
+    description: Rare dry, desert biome
+    cost: 500
+  SAVANNA:
+    icon: LONG_GRASS
+    description: Flat and dry, no rain.
+  ROOFED_FOREST:
+    icon: LOG
+    description: Black forest

@@ -104,6 +104,9 @@ permissions:
           askyblock.mod.bypassprotect:
             description: Allow moderator to bypass island protection
             default: false
+          askyblock.mod.setbiome:
+            description: Allows setting player island biomes
+            default: false
       askyblock.admin.*:
         children:
           askyblock.admin.reload:
