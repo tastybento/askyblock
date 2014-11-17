@@ -330,7 +330,7 @@ resetchallenge:
    errorChallengeDoesNotExist: "Challenge doesn't exist or isn't yet completed"
    challengeReset: "Challenge: [challengename] has been reset for [name]"
 
-#AcidIsland news
+#News
 news:
    headline: "[A Skyblock News] While you were offline..."
 

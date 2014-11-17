@@ -64,6 +64,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerShearEntityEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerUnleashEntityEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 import org.bukkit.potion.Potion;
 
@@ -914,6 +915,14 @@ public class IslandGuard implements Listener {
 	}
 	// Check limit of animals on island
 	if (plugin.playerIsOnIsland(e.getPlayer())) {
+	    // Check if they are holding food
+	    ItemStack inHand = e.getPlayer().getItemInHand();
+	    if (inHand == null || !(inHand.getType().equals(Material.WHEAT) || inHand.getType().equals(Material.CARROT))
+		    || inHand.getType().equals(Material.SEEDS)) {
+		plugin.getLogger().info("DEBUG: no food in hand");
+		return;
+	    }
+	    // Approach # 1 - try the whole island
 	    // Get the animal spawn limit
 	    int limit = Settings.island_protectionRange /16 * Settings.island_protectionRange / 16 * plugin.getServer().getAnimalSpawnLimit();
 	    plugin.getLogger().info("DEBUG: Limit is " + limit);
@@ -938,6 +947,44 @@ public class IslandGuard implements Listener {
 	    }
 	    snowball.remove();
 	    //plugin.getLogger().info("DEBUG: Animal count is " + animals);
+	     /* 
+	    // Approach 2 - just check around player for concentrations - not accurate enough
+	    int limit = 100;
+	    int animals = 0;
+	    for (Entity entity : p.getNearbyEntities(16, 128, 16)) {
+		if (entity instanceof Animals) {
+		    animals++;
+		    if (animals > limit) {
+			p.sendMessage(ChatColor.RED + "Island animal limit of " + limit + " reached!");
+			plugin.getLogger().warning(p.getName() + " hit the island animal breeding limit of " + limit);
+			e.setCancelled(true);
+			return;
+		    }
+		}
+	    }
+	    // Approach 3 - check everywhere, but include all mobs
+	    // Get the animal spawn limit
+	    int limit = 100;
+	    plugin.getLogger().info("DEBUG: Limit is " + limit);
+	    // Check if this player is at the limit of mobs
+	    // Spawn snowball in island
+	    Location islandLoc = plugin.getPlayers().getIslandLocation(p.getUniqueId());
+	    Entity snowball = p.getWorld().spawnEntity(new Location(p.getWorld(),islandLoc.getBlockX(),128,islandLoc.getBlockZ()), EntityType.SNOWBALL);
+	    if (snowball == null) {
+		plugin.getLogger().info("DEBUG: could not spawn snowball!");
+		return;
+	    }
+	    int animals = snowball.getNearbyEntities(Settings.island_protectionRange/2, 128, Settings.island_protectionRange/2).size();
+	    plugin.getLogger().info("DEBUG: Animal count is " + animals);
+	    if (animals > limit) {
+		p.sendMessage(ChatColor.RED + "Island animal limit of " + limit + " reached!");
+		plugin.getLogger().warning(p.getName() + " hit the island animal breeding limit of " + limit);
+		e.setCancelled(true);
+		snowball.remove();
+		return;
+	    }
+	    snowball.remove();
+	    */
 	} else {
 	    if (!Settings.allowBreeding) {
 		// Player is off island

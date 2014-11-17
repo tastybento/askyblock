@@ -399,6 +399,7 @@ public class ASkyBlock extends JavaPlugin {
 	    return true;
 	}
 	//home.getWorld().refreshChunk(home.getChunk().getX(), home.getChunk().getZ());
+	home.getWorld().loadChunk(home.getChunk());
 	player.teleport(home);	
 	player.sendMessage(ChatColor.GREEN + Locale.islandteleport);
 	return true;
