@@ -364,3 +364,6 @@ expel:
    success: "You expelled [name]!"
    expelled: "You were expelled from that island!"
    fail: "[name] cannot be expelled!"
+
+moblimits:
+   error: "Island breeding limit of [number] reached!"

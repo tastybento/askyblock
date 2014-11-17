@@ -1052,6 +1052,7 @@ public class ASkyBlock extends JavaPlugin {
 	    getLogger().severe("Could not parse biome " + defaultBiome + " using PLAINS instead.");
 	    Settings.defaultBiome = Biome.PLAINS;
 	}
+	Settings.breedingLimit = getConfig().getInt("general.breedinglimit", 0);
 	// Localization Locale Setting
 	Locale.changingObsidiantoLava = locale.getString("changingObsidiantoLava", "Changing obsidian back into lava. Be careful!");
 	Locale.acidLore = locale.getString("acidLore","Poison!\nBeware!\nDo not drink!");
@@ -1279,6 +1280,7 @@ public class ASkyBlock extends JavaPlugin {
 	Locale.expelSuccess = locale.getString("expel.success", "You expelled [name]!");
 	Locale.expelExpelled = locale.getString("expel.expelled", "You were expelled from that island!");
 	Locale.expelFail = locale.getString("expel.fail", "[name] cannot be expelled!");
+	Locale.moblimitsError = locale.getString("moblimits.error", "Island breeding limit of [number] reached!");
     }
 
     /*

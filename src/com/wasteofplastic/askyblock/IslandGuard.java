@@ -942,39 +942,42 @@ public class IslandGuard implements Listener {
 	}
 	// Check limit of animals on island
 	if (plugin.playerIsOnIsland(e.getPlayer())) {
-	    // Check if they are holding food
-	    ItemStack inHand = e.getPlayer().getItemInHand();
-	    if (inHand == null || !(inHand.getType().equals(Material.WHEAT) || inHand.getType().equals(Material.CARROT))
-		    || inHand.getType().equals(Material.SEEDS)) {
-		//plugin.getLogger().info("DEBUG: no food in hand");
-		return;
-	    }
-	    // Approach # 1 - try the whole island
-	    // Get the animal spawn limit
-	    int limit = Settings.island_protectionRange /16 * Settings.island_protectionRange / 16 * plugin.getServer().getAnimalSpawnLimit();
-	    //plugin.getLogger().info("DEBUG: Limit is " + limit);
-	    // Check if this player is at the limit of mobs
-	    // Spawn snowball in island
-	    Location islandLoc = plugin.getPlayers().getIslandLocation(p.getUniqueId());
-	    Entity snowball = p.getWorld().spawnEntity(new Location(p.getWorld(),islandLoc.getBlockX(),128,islandLoc.getBlockZ()), EntityType.SNOWBALL);
-	    if (snowball == null)
-		return;
-	    int animals = 0;
-	    for (Entity entity : snowball.getNearbyEntities(Settings.island_protectionRange/2, 128, Settings.island_protectionRange/2)) {
-		if (entity instanceof Animals) {
-		    animals++;
-		    if (animals > limit) {
-			p.sendMessage(ChatColor.RED + "Island animal limit of " + limit + " reached!");
-			plugin.getLogger().warning(p.getName() + " hit the island animal breeding limit of " + limit);
-			e.setCancelled(true);
-			snowball.remove();
-			return;
+	    if (Settings.breedingLimit > 0) {
+		// Check if they are holding food
+		ItemStack inHand = e.getPlayer().getItemInHand();
+		//if (inHand != null)
+		//    plugin.getLogger().info("DEBUG: in hand = " + inHand.getType().toString());
+		if (inHand == null || !(inHand.getType().equals(Material.WHEAT) || inHand.getType().equals(Material.CARROT)
+			|| inHand.getType().equals(Material.SEEDS))) {
+		    //plugin.getLogger().info("DEBUG: no food in hand");
+		    return;
+		}
+		// Approach # 1 - try the whole island
+		// Get the animal spawn limit
+		//int limit = Settings.island_protectionRange /16 * Settings.island_protectionRange / 16 * plugin.getServer().getAnimalSpawnLimit();
+		//plugin.getLogger().info("DEBUG: Limit is " + Settings.breedingLimit);
+		// Check if this player is at the limit of mobs
+		// Spawn snowball in island
+		Location islandLoc = plugin.getPlayers().getIslandLocation(p.getUniqueId());
+		Entity snowball = p.getWorld().spawnEntity(new Location(p.getWorld(),islandLoc.getBlockX(),128,islandLoc.getBlockZ()), EntityType.SNOWBALL);
+		if (snowball == null)
+		    return;
+		int animals = 0;
+		for (Entity entity : snowball.getNearbyEntities(Settings.island_protectionRange/2, 128, Settings.island_protectionRange/2)) {
+		    if (entity instanceof Animals) {
+			animals++;
+			if (animals > Settings.breedingLimit) {
+			    p.sendMessage(ChatColor.RED + Locale.moblimitsError.replace("[number]",String.valueOf(Settings.breedingLimit)));
+			    //plugin.getLogger().warning(p.getName() + " hit the island animal breeding limit of " + Settings.breedingLimit);
+			    e.setCancelled(true);
+			    snowball.remove();
+			    return;
+			}
 		    }
 		}
-	    }
-	    snowball.remove();
-	    //plugin.getLogger().info("DEBUG: Animal count is " + animals);
-	    /* 
+		snowball.remove();
+		//plugin.getLogger().info("DEBUG: Animal count is " + animals);
+		/* 
 	    // Approach 2 - just check around player for concentrations - not accurate enough
 	    int limit = 100;
 	    int animals = 0;
@@ -1011,7 +1014,8 @@ public class IslandGuard implements Listener {
 		return;
 	    }
 	    snowball.remove();
-	     */
+		 */
+	    }
 	} else {
 	    if (!Settings.allowBreeding) {
 		// Player is off island

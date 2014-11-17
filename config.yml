@@ -80,6 +80,13 @@ general:
    # Max is 100
    animalspawnlimit: 15
 
+   # Breeding limits - if this is set to more than 0, then players will not be able
+   # to breed more animals than that number on their island. A value of zero means no
+   # limit. Note that animals will not be killed or reduced to this limit.
+   # This will not affect mobspawn blocks or monster egg use. Note that hearts will
+   # still appear, but breeding will not happen.
+   breedinglimit: 0
+
    #[integer] Sets the limit for number of water animals [squid] that can spawn in a chunk in this world. 
    # Note: If set to a negative number the world will use the server-wide spawn limit instead.
    # Max is 100

@@ -130,6 +130,8 @@ public class Settings {
     
     // Island reset commands
     public static List<String> resetCommands = new ArrayList<String>();
+    // Mob limits
+    public static int breedingLimit;
 
     
   
