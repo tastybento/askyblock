@@ -963,10 +963,7 @@ public class ASkyBlock extends JavaPlugin {
 	    }
 	}
 	Settings.chestItems = tempChest;
-	Settings.allowPvP = getConfig().getString("island.allowPvP");
-	if (!Settings.allowPvP.equalsIgnoreCase("allow")) {
-	    Settings.allowPvP = "deny";
-	}
+	Settings.allowPvP = getConfig().getBoolean("island.allowPvP",false);
 	Settings.allowBreakBlocks = getConfig().getBoolean("island.allowbreakblocks", false);
 	Settings.allowPlaceBlocks= getConfig().getBoolean("island.allowplaceblocks", false);
 	Settings.allowBedUse= getConfig().getBoolean("island.allowbeduse", false);
@@ -1151,7 +1148,8 @@ public class ASkyBlock extends JavaPlugin {
 	Locale.islandhelpTeam = locale.getString("island.helpTeam","view your team information.");
 	Locale.islandhelpInvite = locale.getString("island.helpInvite","invite a player to join your island.");
 	Locale.islandhelpLeave = locale.getString("island.helpLeave","leave another player's island.");
-	Locale.islandhelpKick = locale.getString("island.helpKick","remove a player from your island.");
+	Locale.islandhelpKick = locale.getString("island.helpKick","remove a team member from your island.");
+	Locale.islandhelpExpel = locale.getString("island.helpExpel","force a player from your island.");
 	Locale.adminHelpHelp = locale.getString("adminHelp.help","Acid Admin Commands:");
 	Locale.islandhelpAcceptReject = locale.getString("island.helpAcceptReject","accept or reject an invitation.");
 	Locale.islandhelpMakeLeader = locale.getString("island.helpMakeLeader","transfer the island to <player>.");
@@ -1277,6 +1275,10 @@ public class ASkyBlock extends JavaPlugin {
 	Locale.biomeUnknown = locale.getString("biome.unknown","Unknown biome!");
 	Locale.biomeYouBought = locale.getString("biome.youbought","Purchased for [cost]!");
 	Locale.biomePanelTitle = locale.getString("biome.paneltitle", "Select A Biome");
+	Locale.expelNotOnIsland = locale.getString("expel.notonisland", "Player is not trespassing on your island!");
+	Locale.expelSuccess = locale.getString("expel.success", "You expelled [name]!");
+	Locale.expelExpelled = locale.getString("expel.expelled", "You were expelled from that island!");
+	Locale.expelFail = locale.getString("expel.fail", "[name] cannot be expelled!");
     }
 
     /*
@@ -1416,7 +1418,39 @@ public class ASkyBlock extends JavaPlugin {
 	}
 	return false;
     }
-
+    /**
+     * Checks to see if a player is trespassing on another player's island
+     * Both players must be online.
+     * @param owner - owner or team member of an island
+     * @param target
+     * @return true if they are on the island otherwise false.
+     */
+    public boolean isOnIsland(final Player owner, final Player target) {
+	// Get the island location of owner
+	Location islandTestLocation = null;
+	if (players.inTeam(owner.getUniqueId())) {
+	    // Is the target in the owner's team?
+	    if (players.getMembers(players.getTeamLeader(owner.getUniqueId())).contains(target.getUniqueId())) {
+		// Yes, so this is not a trespass for sure
+		return false;
+	    }
+	    // No, so check where the target is now
+	    islandTestLocation = players.getTeamIslandLocation(owner.getUniqueId());
+	} else {
+	    islandTestLocation = players.getIslandLocation(owner.getUniqueId());
+	}
+	// Check position of target
+	if (islandTestLocation == null) {
+	    return false;
+	}
+	if (target.getLocation().getX() > islandTestLocation.getX() - Settings.island_protectionRange / 2
+		&& target.getLocation().getX() < islandTestLocation.getX() + Settings.island_protectionRange / 2
+		&& target.getLocation().getZ() > islandTestLocation.getZ() - Settings.island_protectionRange / 2
+		&& target.getLocation().getZ() < islandTestLocation.getZ() + Settings.island_protectionRange / 2) {
+	    return true;
+	}
+	return false;	
+    }
     /**
      * Registers events
      */
@@ -2106,4 +2140,7 @@ public class ASkyBlock extends JavaPlugin {
     public Biomes getBiomes() {
 	return biomes;
     }
+    
+
+     
 }

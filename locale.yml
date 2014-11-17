@@ -152,7 +152,7 @@ island:
    #/island leave:
    helpLeave: "leave another player's island."
    #/island kick <player>
-   helpKick: "remove a player from your island."
+   helpKick: "remove a team player from your island."
    #/island <accept/reject>
    helpAcceptReject: "accept or reject an invitation."
    #/island makeleader <player>
@@ -161,7 +161,8 @@ island:
    errorLevelNotReady: "Can't use that command right now! Try again in a few seconds."
    errorInvalidPlayer: "That player is invalid or does not have an island!"
    islandLevelis: "Island level is"
-
+   #/island expel <player>
+   helpExpel: "force a player from your island."
 
 ###################
 #/island commands #
@@ -358,3 +359,8 @@ biome:
    youbought: "Purchased for [cost]!"
    paneltitle: "Select A Biome"
    
+expel:
+   notonisland: "Player is not trespassing on your island!"
+   success: "You expelled [name]!"
+   expelled: "You were expelled from that island!"
+   fail: "[name] cannot be expelled!"

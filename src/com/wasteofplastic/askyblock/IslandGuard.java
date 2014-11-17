@@ -321,7 +321,7 @@ public class IslandGuard implements Listener {
      * This method protects players from PVP if it is not allowed and from arrows fired by other players
      * @param e
      */
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onEntityDamage(final EntityDamageByEntityEvent e) {
 	// Check world
 	if (!Settings.worldName.equalsIgnoreCase(e.getEntity().getWorld().getName())) {
@@ -399,7 +399,7 @@ public class IslandGuard implements Listener {
 	    } else {
 		// PVP
 		// If PVP is okay then return
-		if (Settings.allowPvP.equalsIgnoreCase("allow")) {
+		if (Settings.allowPvP) {
 		    //plugin.getLogger().info("PVP allowed");
 		    return;
 		}
@@ -421,7 +421,7 @@ public class IslandGuard implements Listener {
 		if (e.getEntity() instanceof Player) {
 		    //plugin.getLogger().info("Player vs Player!");
 		    // Arrow shot by a player at another player
-		    if (!Settings.allowPvP.equalsIgnoreCase("allow")) {
+		    if (!Settings.allowPvP) {
 			//plugin.getLogger().info("Target player is in a no-PVP area!");
 			((Player)arrow.getShooter()).sendMessage("Target is in a no-PVP area!");
 			e.setCancelled(true);
@@ -452,7 +452,7 @@ public class IslandGuard implements Listener {
 	} else if (e.getDamager() instanceof Player){
 	    //plugin.getLogger().info("Player attack");
 	    // Just a player attack
-	    if (!Settings.allowPvP.equalsIgnoreCase("allow")) {
+	    if (!Settings.allowPvP) {
 		((Player)e.getDamager()).sendMessage("Target is in a no-PVP area!");
 		e.setCancelled(true);
 		return;
@@ -875,7 +875,7 @@ public class IslandGuard implements Listener {
 			return;
 		    } else {
 			// Splash potions are allowed only if PVP is allowed
-			if (!Settings.allowPvP.equalsIgnoreCase("allow")) {
+			if (!Settings.allowPvP) {
 			    e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
 			    e.setCancelled(true);
 			}
@@ -946,13 +946,13 @@ public class IslandGuard implements Listener {
 	    ItemStack inHand = e.getPlayer().getItemInHand();
 	    if (inHand == null || !(inHand.getType().equals(Material.WHEAT) || inHand.getType().equals(Material.CARROT))
 		    || inHand.getType().equals(Material.SEEDS)) {
-		plugin.getLogger().info("DEBUG: no food in hand");
+		//plugin.getLogger().info("DEBUG: no food in hand");
 		return;
 	    }
 	    // Approach # 1 - try the whole island
 	    // Get the animal spawn limit
 	    int limit = Settings.island_protectionRange /16 * Settings.island_protectionRange / 16 * plugin.getServer().getAnimalSpawnLimit();
-	    plugin.getLogger().info("DEBUG: Limit is " + limit);
+	    //plugin.getLogger().info("DEBUG: Limit is " + limit);
 	    // Check if this player is at the limit of mobs
 	    // Spawn snowball in island
 	    Location islandLoc = plugin.getPlayers().getIslandLocation(p.getUniqueId());

@@ -144,8 +144,10 @@ island:
    # Check console for errors and guidance after typing /acid reload
    chestItems: 'ICE:2 MELON:1 TORCH:2 BONE:1 LAVA_BUCKET:1 PUMPKIN_SEEDS:1 SUGAR_CANE:1 RED_MUSHROOM:1 BROWN_MUSHROOM:1 CACTUS:1 BREAD:1 WHEAT:1 LEATHER_BOOTS:1 LEATHER_HELMET:1 LEATHER_CHESTPLATE:1 LEATHER_LEGGINGS:1'
    # Island Protection Settings
-   #PVP is allowed or denied. (Values = allow or deny)
-   allowPvP: deny
+   # PVP is allowed or not.
+   # If PVP is denied, then players can expel other players from islands
+   # otherwise players have to kill each other
+   allowPvP: false
    # Other players can break blocks or not or generally damage things
    allowbreakblocks: false
    # Other players can place blocks

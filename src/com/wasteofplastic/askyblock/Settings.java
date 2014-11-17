@@ -47,7 +47,7 @@ public class Settings {
     public static int animalSpawnLimit;
     public static int waterAnimalSpawnLimit;
     // IslandGuard settings
-    public static String allowPvP;
+    public static boolean allowPvP;
     public static boolean allowBreakBlocks;
     public static boolean allowPlaceBlocks;
     public static boolean allowBedUse;

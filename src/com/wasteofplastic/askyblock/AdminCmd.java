@@ -248,7 +248,7 @@ public class AdminCmd implements CommandExecutor {
 		    sender.sendMessage(ChatColor.RED + "Sorry, could not find an island. Move closer?");
 		    return true;
 		}
-		plugin.getLogger().info("DEBUG: location = " + closestIsland.toString());
+		//plugin.getLogger().info("DEBUG: location = " + closestIsland.toString());
 		// Find out whose island this is
 		//plugin.getLogger().info("DEBUG: closest bedrock: " + closestBedRock.toString());
 		UUID target = plugin.getPlayers().getPlayerFromIslandLocation(closestIsland);
