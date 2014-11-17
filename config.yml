@@ -180,6 +180,10 @@ island:
    allowgateuse: false
    # Allow friendly mobs to be hurt (cows etc.)
    allowhurtmobs: false
+   # Allow monsters to be hurt (creepers,slimes, etc.)
+   # Don't change this to false unless you accept that island visitors will not be
+   # able to defend themselves!
+   allowhurtmonsters: true
    # Allow Enderman Griefing (default is to allow, see next setting)
    allowendermangriefing: true
    # Make enderman drop the block he is holding if he dies (recommended)
@@ -198,6 +202,10 @@ island:
    allowchestdamage: false
    # Allow leash use
    allowleashuse: false
+   # Allow use of enchanting tables
+   allowenchanting: true
+   # Allow anvil use by visitors
+   allowanviluse: true
 
 # This section contains the biomes that can be bought or used
 biomesettings:

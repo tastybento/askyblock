@@ -373,6 +373,13 @@ public class IslandGuard implements Listener {
 	    if (!(e.getEntity() instanceof Player)) {
 		if (e.getEntity() instanceof Monster || e.getEntity() instanceof Slime || e.getEntity() instanceof Squid) {
 		    //plugin.getLogger().info("Entity is a monster - ok to hurt"); 
+		    if (!Settings.allowHurtMonsters) {
+			if (!plugin.playerIsOnIsland((Player)e.getDamager())) {
+			    ((Player)e.getDamager()).sendMessage(ChatColor.RED + Locale.islandProtected);
+			    e.setCancelled(true);
+			    return;
+			}
+		    }
 		    return;
 		} else {
 		    //plugin.getLogger().info("Entity is a non-monster - check if ok to hurt"); 
@@ -431,6 +438,14 @@ public class IslandGuard implements Listener {
 			    }
 			}
 			return;
+		    } else {
+			if (!Settings.allowHurtMonsters) {
+			    if (!plugin.playerIsOnIsland((Player)e.getDamager())) {
+				((Player)e.getDamager()).sendMessage(ChatColor.RED + Locale.islandProtected);
+				e.setCancelled(true);
+				return;
+			    }
+			}
 		    }
 		}
 	    }
@@ -768,6 +783,11 @@ public class IslandGuard implements Listener {
 		}
 		break;
 	    case ENCHANTMENT_TABLE:
+		if (!Settings.allowEnchanting && !(playerAtSpawn && Settings.allowSpawnEnchanting)) {
+		    e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
+		    e.setCancelled(true);
+		    return; 
+		}		
 		break;
 	    case FURNACE:
 	    case BURNING_FURNACE:
@@ -804,6 +824,13 @@ public class IslandGuard implements Listener {
 		break;
 	    case WORKBENCH:
 		if (!Settings.allowCrafting && !(playerAtSpawn && Settings.allowSpawnCrafting)) {
+		    e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
+		    e.setCancelled(true);
+		    return; 
+		}
+		break;
+	    case ANVIL:
+		if (!Settings.allowAnvilUse && !(playerAtSpawn && Settings.allowSpawnAnvilUse)) {
 		    e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
 		    e.setCancelled(true);
 		    return; 
@@ -947,7 +974,7 @@ public class IslandGuard implements Listener {
 	    }
 	    snowball.remove();
 	    //plugin.getLogger().info("DEBUG: Animal count is " + animals);
-	     /* 
+	    /* 
 	    // Approach 2 - just check around player for concentrations - not accurate enough
 	    int limit = 100;
 	    int animals = 0;
@@ -984,7 +1011,7 @@ public class IslandGuard implements Listener {
 		return;
 	    }
 	    snowball.remove();
-	    */
+	     */
 	} else {
 	    if (!Settings.allowBreeding) {
 		// Player is off island

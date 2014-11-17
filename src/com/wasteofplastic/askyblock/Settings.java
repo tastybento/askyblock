@@ -87,6 +87,9 @@ public class Settings {
     public static boolean allowFire;
     public static boolean allowChestDamage;
     public static boolean allowLeashUse;
+    public static boolean allowHurtMonsters;
+    public static boolean allowEnchanting;
+    public static boolean allowAnvilUse;
     
     //public static boolean ultraSafeBoats;
     public static boolean logInRemoveMobs;
@@ -105,6 +108,8 @@ public class Settings {
     public static boolean allowSpawnGateUse;
     public static boolean allowSpawnMobSpawn;
     public static boolean allowSpawnNoAcidWater;
+    public static boolean allowSpawnEnchanting;
+    public static boolean allowSpawnAnvilUse;
     
     // Levels
     public static HashMap<Material,Integer> blockLimits;
@@ -125,5 +130,7 @@ public class Settings {
     
     // Island reset commands
     public static List<String> resetCommands = new ArrayList<String>();
+
+    
   
 }

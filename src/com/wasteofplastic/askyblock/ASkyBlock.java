@@ -993,6 +993,9 @@ public class ASkyBlock extends JavaPlugin {
 	Settings.allowFire = getConfig().getBoolean("island.allowfire", false);
 	Settings.allowChestDamage = getConfig().getBoolean("island.allowchestdamage", false);
 	Settings.allowLeashUse = getConfig().getBoolean("island.allowleashuse", false);
+	Settings.allowHurtMonsters = getConfig().getBoolean("island.allowhurtmonsters", true);
+	Settings.allowEnchanting = getConfig().getBoolean("island.allowenchanting", true);
+	Settings.allowAnvilUse = getConfig().getBoolean("island.allowanviluse", true);
 
 	// Challenges
 	final Set<String> challengeList = getChallengeConfig().getConfigurationSection("challenges.challengeList").getKeys(false);
