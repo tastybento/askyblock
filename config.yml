@@ -243,7 +243,7 @@ biomes:
     description: Snowy and cold. Brrr.
   DESERT:
     icon: DEAD_BUSH
-    description: A dry desert. Warning - Ice and snow will disappear.
+    description: A dry desert. Warning - Ice or snow have to go.
   FLOWER_FOREST:
     icon: RED_ROSE
     description: The place for flowers!
@@ -266,14 +266,14 @@ biomes:
     cost: 0
   SWAMPLAND:
     icon: WATER_LILY
-    description: Swampy
+    description: Swampy. Warning - Ice or snow have to go.
   MESA:
     icon: HARD_CLAY
-    description: Rare dry, desert biome
+    description: Rare dry, desert biome. Warning - Ice or snow have to go.
     cost: 500
   SAVANNA:
     icon: LONG_GRASS
-    description: Flat and dry, no rain.
+    description: Flat and dry, no rain. Warning - Ice or snow have to go.
   ROOFED_FOREST:
     icon: LOG
     description: Black forest
