@@ -89,7 +89,7 @@ challenges:
       expReward: 30
       permissionReward: ''
       repeatable: true
-      repeatItemReward: 'SAPLING:0:1 SAPLING:1:1 SAPLING:2:1 SAPLING:3:1'
+      repeatItemReward: 'SAPLING:0:1 SAPLING:1:1 SAPLING:2:1 SAPLING:3:1 SAPLING:4:1 SAPLING:5:1'
       repeatRewardText: '1 of each kind of sapling'
       repeatMoneyReward: 5
       repeatExpReward: 10
