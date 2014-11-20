@@ -413,10 +413,12 @@ public class ASkyBlock extends JavaPlugin {
      * @return
      */
     public boolean islandAtLocation(final Location loc) {
-	//getLogger().info("DEBUG checking islandAtLocation");
+	//getLogger().info("DEBUG checking islandAtLocation for location " + loc.toString());
 	if (loc == null) {
 	    return true;
 	}
+	// Load the chunk before we check it just in case
+	loc.getWorld().loadChunk(loc.getChunk());
 	// Immediate check
 	if (loc.getBlock().getType().equals(Material.BEDROCK)) {
 	    return true;

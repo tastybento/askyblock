@@ -31,6 +31,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 public class NetherPortals implements Listener {
     private final ASkyBlock plugin;
@@ -54,7 +55,8 @@ public class NetherPortals implements Listener {
 	if (!currentWorld.equalsIgnoreCase(Settings.worldName) && !currentWorld.equalsIgnoreCase(Settings.worldName + "_nether")) {
 	    return;
 	}
-	//this.plugin.getLogger().info("Get from is " + currentLocation.toString());
+	//plugin.getLogger().info(event.getCause().toString());
+	//plugin.getLogger().info("Get from is " + currentLocation.toString());
 	// Check that we know this player (they could have come from another world)
 	Location destination = plugin.getSafeHomeLocation(event.getPlayer().getUniqueId());
 	if (destination == null) {
@@ -63,6 +65,17 @@ public class NetherPortals implements Listener {
 	    return;
 	}
 	if (currentWorld.equalsIgnoreCase(Settings.worldName)) {
+	    // Going to the end
+	    /*
+	     // TODO Need safe teleport and protection around the end spawn point
+	    if (event.getCause().equals(TeleportCause.END_PORTAL)) {
+		//plugin.getLogger().info("PlayerPortalEvent End Portal!");
+		//event.useTravelAgent(true);
+		event.setCancelled(true);
+		event.getPlayer().teleport(plugin.getServer().getWorld(Settings.worldName + "_the_end").getSpawnLocation());
+		return;
+	    }
+	    */
 	    // Going to the nether
 	    event.setTo(plugin.getServer().getWorld(Settings.worldName + "_nether").getSpawnLocation());
 	    event.useTravelAgent(true);
