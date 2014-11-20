@@ -40,7 +40,7 @@ public class NetherPortals implements Listener {
 	this.plugin = plugin;
     }
 
-    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = false)
     public void onPlayerPortal(PlayerPortalEvent event) {
 	// If the nether is disabled then quit immediately
 	if (!Settings.createNether) {
@@ -52,7 +52,8 @@ public class NetherPortals implements Listener {
 	}
 	Location currentLocation = event.getFrom().clone();
 	String currentWorld = currentLocation.getWorld().getName();
-	if (!currentWorld.equalsIgnoreCase(Settings.worldName) && !currentWorld.equalsIgnoreCase(Settings.worldName + "_nether")) {
+	if (!currentWorld.equalsIgnoreCase(Settings.worldName) && !currentWorld.equalsIgnoreCase(Settings.worldName + "_nether")
+		&& !currentWorld.equalsIgnoreCase(Settings.worldName + "_the_end")) {
 	    return;
 	}
 	//plugin.getLogger().info(event.getCause().toString());
@@ -66,16 +67,24 @@ public class NetherPortals implements Listener {
 	}
 	if (currentWorld.equalsIgnoreCase(Settings.worldName)) {
 	    // Going to the end
-	    /*
-	     // TODO Need safe teleport and protection around the end spawn point
-	    if (event.getCause().equals(TeleportCause.END_PORTAL)) {
-		//plugin.getLogger().info("PlayerPortalEvent End Portal!");
-		//event.useTravelAgent(true);
-		event.setCancelled(true);
-		event.getPlayer().teleport(plugin.getServer().getWorld(Settings.worldName + "_the_end").getSpawnLocation());
-		return;
+	    // TODO Need safe teleport and protection around the end spawn point
+	    if (plugin.getServer().getWorld(Settings.worldName + "_the_end") != null) {
+		//plugin.getLogger().info("End world exists");
+		if (event.getCause().equals(TeleportCause.END_PORTAL)) {
+		    //plugin.getLogger().info("PlayerPortalEvent End Portal!");
+		    //event.useTravelAgent(true);
+		    event.setCancelled(true);
+		    Location end_place = plugin.getServer().getWorld(Settings.worldName + "_the_end").getSpawnLocation();
+		    if (ASkyBlock.isSafeLocation(end_place)) {
+			event.getPlayer().teleport(end_place);
+		    	return;
+		    } else {
+			event.getPlayer().sendMessage(ChatColor.RED + Locale.warpserrorNotSafe);
+			plugin.homeTeleport(event.getPlayer());
+			return;
+		    }
+		}
 	    }
-	    */
 	    // Going to the nether
 	    event.setTo(plugin.getServer().getWorld(Settings.worldName + "_nether").getSpawnLocation());
 	    event.useTravelAgent(true);
@@ -103,13 +112,13 @@ public class NetherPortals implements Listener {
      * Prevents blocks from being broken
      * @param e
      */
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.LOW)
     public void onBlockBreak(final BlockBreakEvent e) {
 	//plugin.getLogger().info("Block break");
-	if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_nether")) {
+	if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_nether")
+		|| e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_the_end")) {
 	    //plugin.getLogger().info("Block break in acid island nether");
 	    if (!awayFromSpawn(e.getPlayer()) && !e.getPlayer().isOp()) {
-
 		e.setCancelled(true);
 	    }
 	}
@@ -120,9 +129,10 @@ public class NetherPortals implements Listener {
      * Prevents placing of blocks
      * @param e
      */
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.LOW)
     public void onPlayerBlockPlace(final BlockPlaceEvent e) {
-	if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_nether")) {
+	if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_nether")
+		|| e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_the_end")) {
 	    if (!awayFromSpawn(e.getPlayer()) && !e.getPlayer().isOp()) {		   
 		e.setCancelled(true);
 	    }
@@ -130,9 +140,10 @@ public class NetherPortals implements Listener {
 
     }
 
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.LOW)
     public void onBucketEmpty(final PlayerBucketEmptyEvent e) {
-	if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_nether")) {
+	if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_nether")
+		|| e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_the_end")) {
 	    if (!awayFromSpawn(e.getPlayer()) && !e.getPlayer().isOp()) {
 		e.setCancelled(true);
 	    }
@@ -144,10 +155,11 @@ public class NetherPortals implements Listener {
      * This method protects players from PVP if it is not allowed and from arrows fired by other players
      * @param e
      */
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.LOW)
     public void onEntityDamage(final EntityDamageByEntityEvent e) {
 	// Check world
-	if (!e.getEntity().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_nether")) {
+	if (!e.getEntity().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_nether")
+		|| e.getEntity().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_the_end")) {
 	    return;
 	}
 	// If the target is not a player return
@@ -185,7 +197,7 @@ public class NetherPortals implements Listener {
      * Prevent the Nether spawn from being blown up
      * @param e
      */
-    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled=true)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onExplosion(final EntityExplodeEvent e) {
 	// Find out what is exploding
 	Entity expl = e.getEntity();
@@ -193,7 +205,8 @@ public class NetherPortals implements Listener {
 	    return;
 	}
 	// Check world
-	if (!e.getEntity().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_nether")) {
+	if (!e.getEntity().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_nether")
+		|| e.getEntity().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_the_end")) {
 	    return;
 	}
 	Location spawn = e.getLocation().getWorld().getSpawnLocation();
