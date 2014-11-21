@@ -56,7 +56,7 @@ public class IslandCmd implements CommandExecutor {
     // The island reset confirmation
     private HashMap<UUID,Boolean> confirm = new HashMap<UUID,Boolean>();
     // Last island
-    Location last = new Location(ASkyBlock.getIslandWorld(), Settings.islandXOffset, Settings.island_level, Settings.islandZOffset);
+    Location last = null;
     /**
      * Invite list - invited player name string (key), inviter name string (value)
      */
@@ -75,8 +75,8 @@ public class IslandCmd implements CommandExecutor {
 	// Plugin instance
 	this.plugin = aSkyBlock;
 	// Get the next island spot
-	Location loc = getNextIsland();
-	plugin.getLogger().info("Next free island spot is at " + loc.getBlockX() + "," + loc.getBlockZ());
+	//Location loc = getNextIsland();
+	//plugin.getLogger().info("Next free island spot is at " + loc.getBlockX() + "," + loc.getBlockZ());
 	// Check if there is a schematic
 	File schematicFile = new File(plugin.getDataFolder(), "island.schematic");
 	if (!schematicFile.exists()) {
@@ -234,6 +234,9 @@ public class IslandCmd implements CommandExecutor {
      */
     private Location getNextIsland() {
 	// Find the next free spot
+	if (last == null) {
+	    last = new Location(ASkyBlock.getIslandWorld(), Settings.islandXOffset, Settings.island_level, Settings.islandZOffset);
+	}
 	Location next = last.clone();
 	while (plugin.islandAtLocation(next)) {
 	    next = nextGridLocation(next);
@@ -473,7 +476,6 @@ public class IslandCmd implements CommandExecutor {
      * org.bukkit.command.CommandExecutor#onCommand(org.bukkit.command.CommandSender
      * , org.bukkit.command.Command, java.lang.String, java.lang.String[])
      */
-    @SuppressWarnings("deprecation")
     @Override
     public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] split) {
 	if (!(sender instanceof Player)) {
@@ -688,7 +690,7 @@ public class IslandCmd implements CommandExecutor {
 			public void run() {
 			    //plugin.homeTeleport(player);
 			    player.getWorld().spawnEntity(cowSpot, EntityType.COW);
-			    
+
 			}
 		    }, 40L);		    
 		    //player.getWorld().spawnEntity(cowSpot, EntityType.COW);
@@ -766,6 +768,9 @@ public class IslandCmd implements CommandExecutor {
 		}
 		if (VaultHelper.checkPerm(player, "askyblock.island.biomes")) {
 		    player.sendMessage(ChatColor.YELLOW + "/" + label + " biomes: " + ChatColor.WHITE + Locale.islandhelpBiome);
+		}
+		if (!Settings.allowPvP) {
+		    player.sendMessage(ChatColor.YELLOW + "/" + label + " expel <player>: " + ChatColor.WHITE + Locale.islandhelpExpel);
 		}
 		return true;
 	    } else if (split[0].equalsIgnoreCase("biomes")) {
@@ -1168,6 +1173,43 @@ public class IslandCmd implements CommandExecutor {
 		    player.sendMessage(ChatColor.RED + Locale.errorNoPermission);
 		    return false;
 		}
+	    } else if (split[0].equalsIgnoreCase("expel")) {
+		if (Settings.allowPvP) {
+		    player.sendMessage(ChatColor.RED + Locale.errorUnknownCommand);
+		    return false;
+		}
+		// Find out who they want to expel
+		final UUID targetPlayerUUID = plugin.getPlayers().getUUID(split[1]);
+		// Player must be known
+		if (targetPlayerUUID == null) {
+		    player.sendMessage(ChatColor.RED + Locale.errorUnknownPlayer);
+		    return true;
+		}
+		// Player must be online
+		Player target = plugin.getServer().getPlayer(targetPlayerUUID);
+		if (target == null) {
+		    player.sendMessage(ChatColor.RED + Locale.errorOfflinePlayer);
+		    return true;
+		}
+		// Target cannot be op
+		if (target.isOp()) {
+		    player.sendMessage(ChatColor.RED + Locale.expelFail.replace("[name]", target.getDisplayName()));
+		    return true;
+		}
+		// See if target is on this player's island
+		if (plugin.isOnIsland(player, target)) {
+		    plugin.homeTeleport(target);
+		    target.sendMessage(ChatColor.RED + Locale.expelExpelled);
+		    plugin.getLogger().info(player.getName() + " expelled " + target.getName() + " from their island.");
+		    // Yes they are
+		    player.sendMessage(ChatColor.GREEN + Locale.expelSuccess.replace("[name]", target.getDisplayName()));
+		    return true;
+		} else {
+		    // No they're not
+		    player.sendMessage(ChatColor.RED + Locale.expelNotOnIsland);
+		    return true;
+		}
+
 	    } else if (split[0].equalsIgnoreCase("kick") || split[0].equalsIgnoreCase("remove")) {
 		// Island remove command with a player name, or island kick command
 		if (VaultHelper.checkPerm(player, "askyblock.team.kick")) {

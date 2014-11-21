@@ -146,14 +146,18 @@ public class ASkyBlock extends JavaPlugin {
      */
     public static World getIslandWorld() {
 	if (acidWorld == null) {
+	    //Bukkit.getLogger().info("DEBUG worldName = " + Settings.worldName);
 	    acidWorld = WorldCreator.name(Settings.worldName).type(WorldType.FLAT).environment(World.Environment.NORMAL)
-		    .generator(new AcidChunkGenerator()).createWorld();
+		    .generator(new ChunkGeneratorWorld()).createWorld();
 	    // Make the nether if it does not exist
 	    // Make the nether if it does not exist
 	    if (Settings.createNether) {
 		if (plugin.getServer().getWorld(Settings.worldName + "_nether") == null) {
 		    Bukkit.getLogger().info("Creating ASkyBlock's nether...");
-		    WorldCreator.name(Settings.worldName + "_nether").type(WorldType.NORMAL).environment(World.Environment.NETHER).createWorld();
+		    World netherWorld = WorldCreator.name(Settings.worldName + "_nether").type(WorldType.NORMAL).environment(World.Environment.NETHER).createWorld();
+		    //World netherWorld = WorldCreator.name(Settings.worldName + "_nether").type(WorldType.FLAT).generator(new ChunkGeneratorNether()).environment(World.Environment.NETHER).createWorld();
+		    //netherWorld.setMonsterSpawnLimit(Settings.monsterSpawnLimit);
+		   // netherWorld.setAnimalSpawnLimit(Settings.animalSpawnLimit);
 		}
 	    }
 	}
@@ -161,6 +165,7 @@ public class ASkyBlock extends JavaPlugin {
 	acidWorld.setWaterAnimalSpawnLimit(Settings.waterAnimalSpawnLimit);
 	acidWorld.setMonsterSpawnLimit(Settings.monsterSpawnLimit);
 	acidWorld.setAnimalSpawnLimit(Settings.animalSpawnLimit);
+	
 	return acidWorld;
     }
 
@@ -219,7 +224,7 @@ public class ASkyBlock extends JavaPlugin {
 
     @Override
     public ChunkGenerator getDefaultWorldGenerator(final String worldName, final String id) {
-	return new AcidChunkGenerator();
+	return new ChunkGeneratorWorld();
     }
 
     /**
@@ -394,6 +399,7 @@ public class ASkyBlock extends JavaPlugin {
 	    return true;
 	}
 	//home.getWorld().refreshChunk(home.getChunk().getX(), home.getChunk().getZ());
+	home.getWorld().loadChunk(home.getChunk());
 	player.teleport(home);	
 	player.sendMessage(ChatColor.GREEN + Locale.islandteleport);
 	return true;
@@ -835,7 +841,7 @@ public class ASkyBlock extends JavaPlugin {
 	} else if (Settings.animalSpawnLimit < -1) {
 	    Settings.animalSpawnLimit = -1;
 	}
-
+	
 	Settings.monsterSpawnLimit = getConfig().getInt("general.monsterspawnlimit", 70);
 	if (Settings.monsterSpawnLimit > 100) {
 	    Settings.monsterSpawnLimit = 100;
@@ -957,10 +963,7 @@ public class ASkyBlock extends JavaPlugin {
 	    }
 	}
 	Settings.chestItems = tempChest;
-	Settings.allowPvP = getConfig().getString("island.allowPvP");
-	if (!Settings.allowPvP.equalsIgnoreCase("allow")) {
-	    Settings.allowPvP = "deny";
-	}
+	Settings.allowPvP = getConfig().getBoolean("island.allowPvP",false);
 	Settings.allowBreakBlocks = getConfig().getBoolean("island.allowbreakblocks", false);
 	Settings.allowPlaceBlocks= getConfig().getBoolean("island.allowplaceblocks", false);
 	Settings.allowBedUse= getConfig().getBoolean("island.allowbeduse", false);
@@ -986,18 +989,10 @@ public class ASkyBlock extends JavaPlugin {
 	Settings.allowBreeding = getConfig().getBoolean("island.allowbreeding", false);
 	Settings.allowFire = getConfig().getBoolean("island.allowfire", false);
 	Settings.allowChestDamage = getConfig().getBoolean("island.allowchestdamage", false);
-	Settings.absorbLava = getConfig().getBoolean("sponge.absorbLava", false);
-	Settings.absorbFire = getConfig().getBoolean("sponge.absorbFire", false);
-	Settings.restoreWater = getConfig().getBoolean("sponge.restoreWater", true);
-	Settings.canPlaceWater = getConfig().getBoolean("sponge.canPlaceWater", false);
-	Settings.spongeRadius = getConfig().getInt("sponge.spongeRadius", 2);
-	Settings.threadedSpongeSave = getConfig().getBoolean("sponge.threadedSpongeSave", true);
-	Settings.flowTimeMult = getConfig().getInt("sponge.flowTimeMult", 600);
-	Settings.attackFire = getConfig().getBoolean("sponge.attackFire", false);
-	Settings.pistonMove = getConfig().getBoolean("sponge.pistonMove", true);
-	Settings.spongeSaturation = getConfig().getBoolean("sponge.spongeSaturation", false);
-	// SPONGE DEBUG
-	debug = getConfig().getBoolean("sponge.debug", false);
+	Settings.allowLeashUse = getConfig().getBoolean("island.allowleashuse", false);
+	Settings.allowHurtMonsters = getConfig().getBoolean("island.allowhurtmonsters", true);
+	Settings.allowEnchanting = getConfig().getBoolean("island.allowenchanting", true);
+	Settings.allowAnvilUse = getConfig().getBoolean("island.allowanviluse", true);
 
 	// Challenges
 	final Set<String> challengeList = getChallengeConfig().getConfigurationSection("challenges.challengeList").getKeys(false);
@@ -1057,6 +1052,7 @@ public class ASkyBlock extends JavaPlugin {
 	    getLogger().severe("Could not parse biome " + defaultBiome + " using PLAINS instead.");
 	    Settings.defaultBiome = Biome.PLAINS;
 	}
+	Settings.breedingLimit = getConfig().getInt("general.breedinglimit", 0);
 	// Localization Locale Setting
 	Locale.changingObsidiantoLava = locale.getString("changingObsidiantoLava", "Changing obsidian back into lava. Be careful!");
 	Locale.acidLore = locale.getString("acidLore","Poison!\nBeware!\nDo not drink!");
@@ -1153,7 +1149,8 @@ public class ASkyBlock extends JavaPlugin {
 	Locale.islandhelpTeam = locale.getString("island.helpTeam","view your team information.");
 	Locale.islandhelpInvite = locale.getString("island.helpInvite","invite a player to join your island.");
 	Locale.islandhelpLeave = locale.getString("island.helpLeave","leave another player's island.");
-	Locale.islandhelpKick = locale.getString("island.helpKick","remove a player from your island.");
+	Locale.islandhelpKick = locale.getString("island.helpKick","remove a team member from your island.");
+	Locale.islandhelpExpel = locale.getString("island.helpExpel","force a player from your island.");
 	Locale.adminHelpHelp = locale.getString("adminHelp.help","Acid Admin Commands:");
 	Locale.islandhelpAcceptReject = locale.getString("island.helpAcceptReject","accept or reject an invitation.");
 	Locale.islandhelpMakeLeader = locale.getString("island.helpMakeLeader","transfer the island to <player>.");
@@ -1279,6 +1276,11 @@ public class ASkyBlock extends JavaPlugin {
 	Locale.biomeUnknown = locale.getString("biome.unknown","Unknown biome!");
 	Locale.biomeYouBought = locale.getString("biome.youbought","Purchased for [cost]!");
 	Locale.biomePanelTitle = locale.getString("biome.paneltitle", "Select A Biome");
+	Locale.expelNotOnIsland = locale.getString("expel.notonisland", "Player is not trespassing on your island!");
+	Locale.expelSuccess = locale.getString("expel.success", "You expelled [name]!");
+	Locale.expelExpelled = locale.getString("expel.expelled", "You were expelled from that island!");
+	Locale.expelFail = locale.getString("expel.fail", "[name] cannot be expelled!");
+	Locale.moblimitsError = locale.getString("moblimits.error", "Island breeding limit of [number] reached!");
     }
 
     /*
@@ -1321,7 +1323,7 @@ public class ASkyBlock extends JavaPlugin {
 	    getServer().getPluginManager().disablePlugin(this);
 	} 
 	loadPluginConfig();
-	getIslandWorld();
+	//getIslandWorld();
 
 	// Set and make the player's directory if it does not exist and then load players into memory
 	playersFolder = new File(getDataFolder() + File.separator + "players");
@@ -1353,6 +1355,7 @@ public class ASkyBlock extends JavaPlugin {
 	getServer().getScheduler().runTask(this, new Runnable() {
 	    @Override
 	    public void run() {
+		getIslandWorld();
 		// update the list
 		//updateTopTen();
 		// Minishop - must wait for economy to load before we can use econ 
@@ -1361,6 +1364,7 @@ public class ASkyBlock extends JavaPlugin {
 		    getLogger().info("Trying to register generator with Multiverse ");
 		    try {
 			getServer().dispatchCommand(getServer().getConsoleSender(), "mv modify set generator ASkyBlock " + Settings.worldName);
+			//getServer().dispatchCommand(getServer().getConsoleSender(), "mv modify set generator ASkyBlock " + Settings.worldName + "_nether");
 		    } catch (Exception e) {
 			getLogger().info("Not successfull! Disabling ASkyBlock!");
 			e.printStackTrace();
@@ -1416,7 +1420,39 @@ public class ASkyBlock extends JavaPlugin {
 	}
 	return false;
     }
-
+    /**
+     * Checks to see if a player is trespassing on another player's island
+     * Both players must be online.
+     * @param owner - owner or team member of an island
+     * @param target
+     * @return true if they are on the island otherwise false.
+     */
+    public boolean isOnIsland(final Player owner, final Player target) {
+	// Get the island location of owner
+	Location islandTestLocation = null;
+	if (players.inTeam(owner.getUniqueId())) {
+	    // Is the target in the owner's team?
+	    if (players.getMembers(players.getTeamLeader(owner.getUniqueId())).contains(target.getUniqueId())) {
+		// Yes, so this is not a trespass for sure
+		return false;
+	    }
+	    // No, so check where the target is now
+	    islandTestLocation = players.getTeamIslandLocation(owner.getUniqueId());
+	} else {
+	    islandTestLocation = players.getIslandLocation(owner.getUniqueId());
+	}
+	// Check position of target
+	if (islandTestLocation == null) {
+	    return false;
+	}
+	if (target.getLocation().getX() > islandTestLocation.getX() - Settings.island_protectionRange / 2
+		&& target.getLocation().getX() < islandTestLocation.getX() + Settings.island_protectionRange / 2
+		&& target.getLocation().getZ() > islandTestLocation.getZ() - Settings.island_protectionRange / 2
+		&& target.getLocation().getZ() < islandTestLocation.getZ() + Settings.island_protectionRange / 2) {
+	    return true;
+	}
+	return false;	
+    }
     /**
      * Registers events
      */
@@ -2051,9 +2087,14 @@ public class ASkyBlock extends JavaPlugin {
 	}
 	// Now do some adjustments based on the Biome
 	switch (biomeType) {
+	case MESA:
+	case MESA_BRYCE:
 	case DESERT:
 	case JUNGLE:
 	case SAVANNA:
+	case SAVANNA_MOUNTAINS:
+	case SAVANNA_PLATEAU:
+	case SAVANNA_PLATEAU_MOUNTAINS:
 	case SWAMPLAND:
 	    // No ice or snow allowed
 	    for (int y = islandLoc.getWorld().getMaxHeight(); y >= 0; y--) {
@@ -2088,9 +2129,110 @@ public class ASkyBlock extends JavaPlugin {
 		}
 	    }
 	    break;
+	case BEACH:
+	    break;
+	case BIRCH_FOREST:
+	    break;
+	case BIRCH_FOREST_HILLS:
+	    break;
+	case BIRCH_FOREST_HILLS_MOUNTAINS:
+	    break;
+	case BIRCH_FOREST_MOUNTAINS:
+	    break;
+	case COLD_BEACH:
+	    break;
+	case COLD_TAIGA:
+	    break;
+	case COLD_TAIGA_HILLS:
+	    break;
+	case COLD_TAIGA_MOUNTAINS:
+	    break;
+	case DEEP_OCEAN:
+	    break;
+	case DESERT_HILLS:
+	    break;
+	case DESERT_MOUNTAINS:
+	    break;
+	case EXTREME_HILLS:
+	    break;
+	case EXTREME_HILLS_MOUNTAINS:
+	    break;
+	case EXTREME_HILLS_PLUS:
+	    break;
+	case EXTREME_HILLS_PLUS_MOUNTAINS:
+	    break;
+	case FLOWER_FOREST:
+	    break;
+	case FOREST:
+	    break;
+	case FOREST_HILLS:
+	    break;
+	case FROZEN_OCEAN:
+	    break;
+	case FROZEN_RIVER:
+	    break;
+	case ICE_MOUNTAINS:
+	    break;
+	case ICE_PLAINS:
+	    break;
+	case ICE_PLAINS_SPIKES:
+	    break;
+	case JUNGLE_EDGE:
+	    break;
+	case JUNGLE_EDGE_MOUNTAINS:
+	    break;
+	case JUNGLE_HILLS:
+	    break;
+	case JUNGLE_MOUNTAINS:
+	    break;
+	case MEGA_SPRUCE_TAIGA:
+	    break;
+	case MEGA_SPRUCE_TAIGA_HILLS:
+	    break;
+	case MEGA_TAIGA:
+	    break;
+	case MEGA_TAIGA_HILLS:
+	    break;
+	case MUSHROOM_ISLAND:
+	    break;
+	case MUSHROOM_SHORE:
+	    break;
+	case OCEAN:
+	    break;
+	case PLAINS:
+	    break;
+	case RIVER:
+	    break;
+	case ROOFED_FOREST:
+	    break;
+	case ROOFED_FOREST_MOUNTAINS:
+	    break;
+	case SKY:
+	    break;
+	case SMALL_MOUNTAINS:
+	    break;
+	case STONE_BEACH:
+	    break;
+	case SUNFLOWER_PLAINS:
+	    break;
+	case SWAMPLAND_MOUNTAINS:
+	    break;
+	case TAIGA:
+	    break;
+	case TAIGA_HILLS:
+	    break;
+	case TAIGA_MOUNTAINS:
+	    break;
+	case MESA_PLATEAU:
+	    break;
+	case MESA_PLATEAU_FOREST:
+	    break;
+	case MESA_PLATEAU_FOREST_MOUNTAINS:
+	    break;
+	case MESA_PLATEAU_MOUNTAINS:
+	    break;
 	default:
 	    break;
-
 	}
 	// Update chunks
 	for (Pair p: chunks) {
@@ -2106,4 +2248,7 @@ public class ASkyBlock extends JavaPlugin {
     public Biomes getBiomes() {
 	return biomes;
     }
+    
+
+     
 }

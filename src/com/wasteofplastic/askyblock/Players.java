@@ -309,7 +309,7 @@ public class Players {
 	if (teamIslandLocation.isEmpty()) {
 	    return null;
 	}
-	Location l = getLocationString(teamIslandLocation).add(new Vector(0.5D,0D,0.5D));
+	Location l = getLocationString(teamIslandLocation);
 	return l;
     }
 

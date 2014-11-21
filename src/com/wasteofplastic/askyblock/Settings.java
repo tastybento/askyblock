@@ -47,7 +47,7 @@ public class Settings {
     public static int animalSpawnLimit;
     public static int waterAnimalSpawnLimit;
     // IslandGuard settings
-    public static String allowPvP;
+    public static boolean allowPvP;
     public static boolean allowBreakBlocks;
     public static boolean allowPlaceBlocks;
     public static boolean allowBedUse;
@@ -73,17 +73,6 @@ public class Settings {
     public static int sea_level;
     public static int island_protectionRange;
     public static int abandonedIslandLevel;
-    public static boolean absorbLava;
-    public static boolean absorbFire;
-    public static boolean restoreWater;
-    public static boolean canPlaceWater;
-    public static int spongeRadius;
-    public static boolean threadedSpongeSave;
-    public static int flowTimeMult;
-    public static boolean attackFire;
-    public static Object excludedWorlds;
-    public static boolean pistonMove;
-    public static boolean spongeSaturation;
     public static Double startingMoney;
     public static double netherSpawnRadius;
     public static List<PotionEffectType> acidDamageType = new ArrayList<PotionEffectType>();
@@ -97,6 +86,10 @@ public class Settings {
     public static boolean allowBreeding;
     public static boolean allowFire;
     public static boolean allowChestDamage;
+    public static boolean allowLeashUse;
+    public static boolean allowHurtMonsters;
+    public static boolean allowEnchanting;
+    public static boolean allowAnvilUse;
     
     //public static boolean ultraSafeBoats;
     public static boolean logInRemoveMobs;
@@ -115,6 +108,8 @@ public class Settings {
     public static boolean allowSpawnGateUse;
     public static boolean allowSpawnMobSpawn;
     public static boolean allowSpawnNoAcidWater;
+    public static boolean allowSpawnEnchanting;
+    public static boolean allowSpawnAnvilUse;
     
     // Levels
     public static HashMap<Material,Integer> blockLimits;
@@ -135,6 +130,9 @@ public class Settings {
     
     // Island reset commands
     public static List<String> resetCommands = new ArrayList<String>();
+    // Mob limits
+    public static int breedingLimit;
+
     
-   
+  
 }

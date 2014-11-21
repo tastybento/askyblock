@@ -142,7 +142,7 @@ public class NetherPortals implements Listener {
 	    return;
 	}
 	// If PVP is okay then return
-	if (Settings.allowPvP.equalsIgnoreCase("allow")) {
+	if (Settings.allowPvP) {
 	    return;
 	}
 	// If the attacker is non-human and not an arrow then everything is okay
@@ -157,7 +157,7 @@ public class NetherPortals implements Listener {
 	    // It really is an Arrow
 	    if (arrow.getShooter() instanceof Player) {
 		// Arrow shot by a player at another player
-		if (Settings.allowPvP.equalsIgnoreCase("allow")) {
+		if (Settings.allowPvP) {
 		    return;
 		} else {
 		    e.setCancelled(true);

@@ -80,6 +80,13 @@ general:
    # Max is 100
    animalspawnlimit: 15
 
+   # Breeding limits - if this is set to more than 0, then players will not be able
+   # to breed more animals than that number on their island. A value of zero means no
+   # limit. Note that animals will not be killed or reduced to this limit.
+   # This will not affect mobspawn blocks or monster egg use. Note that hearts will
+   # still appear, but breeding will not happen.
+   breedinglimit: 0
+
    #[integer] Sets the limit for number of water animals [squid] that can spawn in a chunk in this world. 
    # Note: If set to a negative number the world will use the server-wide spawn limit instead.
    # Max is 100
@@ -144,8 +151,10 @@ island:
    # Check console for errors and guidance after typing /acid reload
    chestItems: 'ICE:2 MELON:1 TORCH:2 BONE:1 LAVA_BUCKET:1 PUMPKIN_SEEDS:1 SUGAR_CANE:1 RED_MUSHROOM:1 BROWN_MUSHROOM:1 CACTUS:1 BREAD:1 WHEAT:1 LEATHER_BOOTS:1 LEATHER_HELMET:1 LEATHER_CHESTPLATE:1 LEATHER_LEGGINGS:1'
    # Island Protection Settings
-   #PVP is allowed or denied. (Values = allow or deny)
-   allowPvP: deny
+   # PVP is allowed or not.
+   # If PVP is denied, then players can expel other players from islands
+   # otherwise players have to kill each other
+   allowPvP: false
    # Other players can break blocks or not or generally damage things
    allowbreakblocks: false
    # Other players can place blocks
@@ -179,7 +188,11 @@ island:
    # Allow gates to be used
    allowgateuse: false
    # Allow friendly mobs to be hurt (cows etc.)
-   allowhurtmobs: true
+   allowhurtmobs: false
+   # Allow monsters to be hurt (creepers,slimes, etc.)
+   # Don't change this to false unless you accept that island visitors will not be
+   # able to defend themselves!
+   allowhurtmonsters: true
    # Allow Enderman Griefing (default is to allow, see next setting)
    allowendermangriefing: true
    # Make enderman drop the block he is holding if he dies (recommended)
@@ -196,6 +209,12 @@ island:
    allowfire: false
    # Allow chests to be blown up by creepers or TNT
    allowchestdamage: false
+   # Allow leash use
+   allowleashuse: false
+   # Allow use of enchanting tables
+   allowenchanting: true
+   # Allow anvil use by visitors
+   allowanviluse: true
 
 # This section contains the biomes that can be bought or used
 biomesettings:
@@ -224,7 +243,7 @@ biomes:
     description: Snowy and cold. Brrr.
   DESERT:
     icon: DEAD_BUSH
-    description: A dry desert. Warning - Ice and snow will disappear.
+    description: A dry desert. Warning - Ice or snow have to go.
   FLOWER_FOREST:
     icon: RED_ROSE
     description: The place for flowers!
@@ -247,4 +266,14 @@ biomes:
     cost: 0
   SWAMPLAND:
     icon: WATER_LILY
-    description: Swampy
+    description: Swampy. Warning - Ice or snow have to go.
+  MESA:
+    icon: HARD_CLAY
+    description: Rare dry, desert biome. Warning - Ice or snow have to go.
+    cost: 500
+  SAVANNA:
+    icon: LONG_GRASS
+    description: Flat and dry, no rain. Warning - Ice or snow have to go.
+  ROOFED_FOREST:
+    icon: LOG
+    description: Black forest

@@ -29,6 +29,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.command.Command;
@@ -37,6 +38,17 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BlockIterator;
+
+/*
+ * New commands:
+ * 
+ * teamkick <player> - removes a player from any team they are on. Does not throw stuff or teleport them.
+ * teamadd <player> <leader> - adds the player to the leader's team. If leader does not have a team, one is made.
+ * teamdelete <leader> - removes the leader's team completely
+ * 
+ */
+
+
 
 /**
  * This class handles the /asadmin command for admins
@@ -68,6 +80,10 @@ public class AdminCmd implements CommandExecutor {
 	    sender.sendMessage(ChatColor.YELLOW + "/asadmin info <player>:" + ChatColor.WHITE + " " + Locale.adminHelpinfo);
 	    sender.sendMessage(ChatColor.YELLOW + "/asadmin info:" + ChatColor.WHITE + " " + Locale.adminHelpinfoIsland);
 	    sender.sendMessage(ChatColor.YELLOW + "/asadmin clearreset <player>:" + ChatColor.WHITE + " " + Locale.adminHelpclearReset);
+	    sender.sendMessage(ChatColor.YELLOW + "/asadmin setbiome <leader> <biome>:" + ChatColor.WHITE + " Sets leader's island biome.");
+	    sender.sendMessage(ChatColor.GREEN + "== Team Editing Commands ==");
+	    sender.sendMessage(ChatColor.YELLOW + "/asadmin team kick <player>:" + ChatColor.WHITE + " Removes player from any team.");
+	    sender.sendMessage(ChatColor.YELLOW + "/asadmin team add <player> <leader>:" + ChatColor.WHITE + " Adds player to leader's team.");	    
 	} else {
 	    // Only give help if the player has permissions
 	    // Permissions are split into admin permissions and mod permissions
@@ -107,6 +123,16 @@ public class AdminCmd implements CommandExecutor {
 	    if (VaultHelper.checkPerm(player, "askyblock.mod.tp") || player.isOp()) {
 		player.sendMessage(ChatColor.YELLOW + "/asadmin tp <player>:" + ChatColor.WHITE + " " + Locale.adminHelptp);
 	    }
+	    if (VaultHelper.checkPerm(player, "askyblock.mod.setbiome") || player.isOp()) {
+		sender.sendMessage(ChatColor.YELLOW + "/asadmin setbiome <leader> <biome>:" + ChatColor.WHITE + " Sets leader's island biome.");
+	    }
+	    if (VaultHelper.checkPerm(player, "askyblock.mod.team") || player.isOp()) {
+		sender.sendMessage(ChatColor.GREEN + "== Team Editing Commands ==");
+		sender.sendMessage(ChatColor.YELLOW + "/asadmin team kick <player>:" + ChatColor.WHITE + " Removes player from any team.");
+		sender.sendMessage(ChatColor.YELLOW + "/asadmin team add <player> <leader>:" + ChatColor.WHITE + " Adds player to leader's team.");
+		//sender.sendMessage(ChatColor.YELLOW + "/asadmin team delete <leader>:" + ChatColor.WHITE + " Removes the leader's team compeletely.");
+	    }
+
 	}
     }
 
@@ -175,9 +201,9 @@ public class AdminCmd implements CommandExecutor {
 			}
 		    }
 		}
-		
+
 		// TODO: find closest island locus and check file syste,
-		
+
 		if (closestBedRock == null) {
 		    sender.sendMessage(ChatColor.RED + "Sorry, could not find an island. Move closer?");
 		    return true;
@@ -217,14 +243,15 @@ public class AdminCmd implements CommandExecutor {
 		    sender.sendMessage(ChatColor.RED + "This command must be used in-game.");
 		    return true;
 		}
-		Location closestBedRock = getClosestIsland(((Player)sender).getLocation());
-		if (closestBedRock == null) {
+		Location closestIsland = getClosestIsland(((Player)sender).getLocation());
+		if (closestIsland == null) {
 		    sender.sendMessage(ChatColor.RED + "Sorry, could not find an island. Move closer?");
 		    return true;
 		}
+		//plugin.getLogger().info("DEBUG: location = " + closestIsland.toString());
 		// Find out whose island this is
 		//plugin.getLogger().info("DEBUG: closest bedrock: " + closestBedRock.toString());
-		UUID target = plugin.getPlayers().getPlayerFromIslandLocation(closestBedRock);
+		UUID target = plugin.getPlayers().getPlayerFromIslandLocation(closestIsland);
 		if (target == null) {
 		    sender.sendMessage(ChatColor.RED + "This island is not owned by anyone right now.");
 		    return true;
@@ -513,36 +540,218 @@ public class AdminCmd implements CommandExecutor {
 		return false;
 	    }
 	case 3:
-	    if (split[0].equalsIgnoreCase("completechallenge")) {
+	    // Change biomes
+	    if (split[0].equalsIgnoreCase("setbiome")) {
 		// Convert name to a UUID
-		final UUID playerUUID = plugin.getPlayers().getUUID(split[2]);
+		final UUID playerUUID = plugin.getPlayers().getUUID(split[1]);
+		// Check if player exists
 		if (!plugin.getPlayers().isAKnownPlayer(playerUUID)) {
 		    sender.sendMessage(ChatColor.RED + Locale.errorUnknownPlayer);
 		    return true;
 		}
-		if (plugin.getPlayers().checkChallenge(playerUUID,split[1].toLowerCase()) || !plugin.getPlayers().get(playerUUID).challengeExists(split[1].toLowerCase())) {
-		    sender.sendMessage(ChatColor.RED + Locale.completeChallengeerrorChallengeDoesNotExist);
+		// Check if the target is in a team and if so, the leader
+		if (plugin.getPlayers().inTeam(playerUUID)) {
+		    if (!plugin.getPlayers().getTeamLeader(playerUUID).equals(playerUUID)) {
+			sender.sendMessage(ChatColor.RED + "That player is not the leader of the team. Leader is "
+				+ plugin.getPlayers().getName(plugin.getPlayers().getTeamLeader(playerUUID)));
+		    }
 		    return true;
 		}
-		plugin.getPlayers().get(playerUUID).completeChallenge(split[1].toLowerCase());
-		sender.sendMessage(ChatColor.YELLOW + Locale.completeChallengechallangeCompleted.replace("[challengename]", split[1].toLowerCase()).replace("[name]", split[2]));
+		// Check if biome is valid
+		Biome biome = null;
+		String biomeName = split[2].toUpperCase();
+		try {
+		    biome = Biome.valueOf(biomeName);
+		    biomeName = biome.name();
+		    if (!plugin.getConfig().contains("biomes."+biomeName)) {
+			sender.sendMessage(ChatColor.RED + Locale.biomeUnknown);
+			// Doing it this way ensures that only valid biomes are shown
+			for (Biome b: Biome.values()) {
+			    if (plugin.getConfig().contains("biomes."+b.name())) {
+				sender.sendMessage(b.name());
+			    }
+			}
+			return true;
+		    }
+		    // Get friendly name
+		    biomeName = plugin.getConfig().getString("biomes." + biomeName + ".friendlyname", ASkyBlock.prettifyText(biomeName));
+
+		} catch (Exception e) {
+		    sender.sendMessage(ChatColor.RED + Locale.biomeUnknown);
+		    for (Biome b: Biome.values()) {
+			if (plugin.getConfig().contains("biomes."+b.name())) {
+			    sender.sendMessage(b.name());
+			}
+		    }
+		    return true;
+		}
+		// Okay clear to set biome
+		// Actually set the biome
+		if (plugin.getPlayers().inTeam(playerUUID) && plugin.getPlayers().getTeamIslandLocation(playerUUID) != null) {
+		    plugin.setIslandBiome(plugin.getPlayers().getTeamIslandLocation(playerUUID),biome);
+		} else {
+		    plugin.setIslandBiome(plugin.getPlayers().getIslandLocation(playerUUID), biome);
+		}
+		sender.sendMessage(ChatColor.GREEN + Locale.biomeSet.replace("[biome]", biomeName));
+		Player targetPlayer = plugin.getServer().getPlayer(playerUUID);
+		if (targetPlayer != null) {
+		    // Online
+		    targetPlayer.sendMessage("[Admin] " + ChatColor.GREEN + Locale.biomeSet.replace("[biome]", biomeName));
+		} else {
+		    plugin.setMessage(playerUUID, "[Admin] " + ChatColor.GREEN + Locale.biomeSet.replace("[biome]", biomeName));
+		}
 		return true;
-	    } else if (split[0].equalsIgnoreCase("resetchallenge")) {
-		// Convert name to a UUID
+	    } else 
+		// team kick <player> and team delete <leader>
+		if (split[0].equalsIgnoreCase("team")) {
+		    // Convert name to a UUID
+		    final UUID playerUUID = plugin.getPlayers().getUUID(split[2]);
+		    if (!plugin.getPlayers().isAKnownPlayer(playerUUID)) {
+			sender.sendMessage(ChatColor.RED + Locale.errorUnknownPlayer);
+			return true;
+		    }
+		    if (split[1].equalsIgnoreCase("kick")) {
+			// Remove player from team
+			if (!plugin.getPlayers().inTeam(playerUUID)) {
+			    sender.sendMessage(ChatColor.RED + Locale.errorNoTeam);
+			    return true;
+			}
+			UUID teamLeader= plugin.getPlayers().getTeamLeader(playerUUID);
+			// Payer is not a team leader
+			if (!teamLeader.equals(playerUUID)) {
+			    // Clear the player of all team-related items
+			    plugin.getPlayers().setLeaveTeam(playerUUID);
+			    plugin.getPlayers().setHomeLocation(playerUUID, null);
+			    plugin.getPlayers().setIslandLocation(playerUUID, null);
+			    //Clear the leader of this player and if they now have no team, remove the team 
+			    plugin.getPlayers().removeMember(teamLeader, playerUUID);
+			    if (plugin.getPlayers().getMembers(teamLeader).size() < 2) {
+				plugin.getPlayers().setLeaveTeam(teamLeader);
+			    }				
+			    // Remove any warps
+			    plugin.removeWarp(playerUUID);
+			    sender.sendMessage(ChatColor.RED + Locale.kicknameRemoved.replace("[name]", split[2]));
+			    // If target is online -- do not tell target
+			    /*
+			    Player target = plugin.getServer().getPlayer(playerUUID);
+			    if (target != null) {
+				target.sendMessage(ChatColor.RED + Locale.kicknameRemovedYou.replace("[name]", sender.getName()));
+			    } else {
+				plugin.setMessage(playerUUID,ChatColor.RED + Locale.kicknameRemovedYou.replace("[name]", sender.getName()));
+			    }*/
+			    return true;
+			} else {
+			    sender.sendMessage(ChatColor.RED + "That player is a team leader. Remove team members first. Use '/asadmin info " + split[2] + "' to find team members.");
+			    return true;
+			}		    
+		    } else {
+			sender.sendMessage(ChatColor.RED + Locale.errorUnknownCommand);
+			return false;
+		    }
+		}  else if (split[0].equalsIgnoreCase("completechallenge")) {
+		    // Convert name to a UUID
+		    final UUID playerUUID = plugin.getPlayers().getUUID(split[2]);
+		    if (!plugin.getPlayers().isAKnownPlayer(playerUUID)) {
+			sender.sendMessage(ChatColor.RED + Locale.errorUnknownPlayer);
+			return true;
+		    }
+		    if (plugin.getPlayers().checkChallenge(playerUUID,split[1].toLowerCase()) || !plugin.getPlayers().get(playerUUID).challengeExists(split[1].toLowerCase())) {
+			sender.sendMessage(ChatColor.RED + Locale.completeChallengeerrorChallengeDoesNotExist);
+			return true;
+		    }
+		    plugin.getPlayers().get(playerUUID).completeChallenge(split[1].toLowerCase());
+		    sender.sendMessage(ChatColor.YELLOW + Locale.completeChallengechallangeCompleted.replace("[challengename]", split[1].toLowerCase()).replace("[name]", split[2]));
+		    return true;
+		} else if (split[0].equalsIgnoreCase("resetchallenge")) {
+		    // Convert name to a UUID
+		    final UUID playerUUID = plugin.getPlayers().getUUID(split[2]);
+		    if (!plugin.getPlayers().isAKnownPlayer(playerUUID)) {
+			sender.sendMessage(ChatColor.RED + Locale.errorUnknownPlayer);
+			return true;
+		    }
+		    if (!plugin.getPlayers().checkChallenge(playerUUID,split[1].toLowerCase())
+			    || !plugin.getPlayers().get(playerUUID).challengeExists(split[1].toLowerCase())) {
+			sender.sendMessage(ChatColor.RED + Locale.resetChallengeerrorChallengeDoesNotExist);
+			return true;
+		    }
+		    plugin.getPlayers().resetChallenge(playerUUID,split[1].toLowerCase());
+		    sender.sendMessage(ChatColor.YELLOW +  Locale.resetChallengechallengeReset.replace("[challengename]", split[1].toLowerCase()).replace("[name]",split[2]));
+		    return true;
+		} else {
+		    return false;
+		}
+	case 4:
+	    // Team add <player> <leader>
+	    if (split[0].equalsIgnoreCase("team") && split[1].equalsIgnoreCase("add")) {
+		// Convert names to UUIDs
 		final UUID playerUUID = plugin.getPlayers().getUUID(split[2]);
-		if (!plugin.getPlayers().isAKnownPlayer(playerUUID)) {
+		final Player targetPlayer = plugin.getServer().getPlayer(playerUUID);
+		final UUID teamLeader = plugin.getPlayers().getUUID(split[3]); 
+		if (!plugin.getPlayers().isAKnownPlayer(playerUUID) || !plugin.getPlayers().isAKnownPlayer(teamLeader)) {
 		    sender.sendMessage(ChatColor.RED + Locale.errorUnknownPlayer);
 		    return true;
 		}
-		if (!plugin.getPlayers().checkChallenge(playerUUID,split[1].toLowerCase())
-			|| !plugin.getPlayers().get(playerUUID).challengeExists(split[1].toLowerCase())) {
-		    sender.sendMessage(ChatColor.RED + Locale.resetChallengeerrorChallengeDoesNotExist);
+		if (playerUUID.equals(teamLeader)) {
+		    sender.sendMessage(ChatColor.RED + "Cannot add a leader to their own team.");
+		    return true;  
+		}
+		// See if leader has an island
+		if (!plugin.getPlayers().hasIsland(teamLeader)) {
+		    sender.sendMessage(ChatColor.RED + "Team leader does not have their own island so cannot have a team!");
 		    return true;
 		}
-		plugin.getPlayers().resetChallenge(playerUUID,split[1].toLowerCase());
-		sender.sendMessage(ChatColor.YELLOW +  Locale.resetChallengechallengeReset.replace("[challengename]", split[1].toLowerCase()).replace("[name]",split[2]));
+		// Check to see if this player is already in a team
+		if (plugin.getPlayers().inTeam(playerUUID)) {
+		    sender.sendMessage(ChatColor.RED + Locale.inviteerrorThatPlayerIsAlreadyInATeam);
+		    return true;
+		}
+		// If the leader's member list does not contain their own name then
+		// add it
+		if (!plugin.getPlayers().getMembers(teamLeader).contains(teamLeader)) {
+		    // Set up the team leader
+		    plugin.getPlayers().setJoinTeam(teamLeader, teamLeader, plugin.getPlayers().getIslandLocation(teamLeader));
+		    plugin.getPlayers().addTeamMember(teamLeader, teamLeader);
+		    sender.sendMessage(ChatColor.GOLD + "Added the leader to this team!");
+		}
+		// This is a hack to clear any pending invitations
+		if (targetPlayer != null) {
+		    targetPlayer.performCommand("island decline");
+		}
+		// If the invitee has an island of their own
+		if (plugin.getPlayers().hasIsland(playerUUID)) {
+		    Location islandLoc = plugin.getPlayers().getIslandLocation(playerUUID);
+		    if (islandLoc != null) {
+			sender.sendMessage(ChatColor.RED + plugin.getPlayers().getName(playerUUID) + " had an island at " + islandLoc.getBlockX() + " " + islandLoc.getBlockZ() 
+				+ " that will become unowned now. You may want to delete it manually.");
+		    }
+		}
+		// Remove their old island affiliation - do not delete the island just in case
+		plugin.getPlayers().setIslandLocation(playerUUID, null);
+		plugin.getPlayers().setHasIsland(playerUUID, false);
+		// Join the team and set the team island location and leader
+		plugin.getPlayers().setJoinTeam(playerUUID, teamLeader, plugin.getPlayers().getIslandLocation(teamLeader));
+		// Configure the best home location for this player
+		if (plugin.getPlayers().getHomeLocation(teamLeader) != null) {
+		    plugin.getPlayers().setHomeLocation(playerUUID,plugin.getPlayers().getHomeLocation(teamLeader));
+		    sender.sendMessage(ChatColor.GREEN + "Setting player's home to the leader's home location");		
+		} else {
+		    plugin.getPlayers().setHomeLocation(playerUUID, plugin.getPlayers().getIslandLocation(teamLeader));
+		    sender.sendMessage(ChatColor.GREEN + "Setting player's home to the leader's island location");
+		}
+		// If the leader's member list does not contain player then add it
+		if (!plugin.getPlayers().getMembers(teamLeader).contains(playerUUID)) {
+		    plugin.getPlayers().addTeamMember(teamLeader,playerUUID);
+		    sender.sendMessage(ChatColor.GREEN + "Adding player to team.");
+		} else {
+		    sender.sendMessage(ChatColor.GOLD + "Player was already on this team!");
+		}
+		// Teleport the player if they are online
+		if (targetPlayer != null) {
+		    plugin.homeTeleport(targetPlayer);
+		} 
 		return true;
 	    } else {
+		sender.sendMessage(ChatColor.RED + Locale.errorUnknownCommand);
 		return false;
 	    }
 	default:
@@ -551,13 +760,16 @@ public class AdminCmd implements CommandExecutor {
     }
 
     /**
-     * TODO: check file system
+     * This returns the coordinate of where an island should be on the grid.
      * @param location
      * @return
      */
     private Location getClosestIsland(Location location) {
-	Location closestBedRock = null;
-	double distance = 0;
+	int x = (location.getBlockX() / Settings.islandDistance) * Settings.islandDistance + Settings.islandXOffset;
+	int z = (location.getBlockZ() / Settings.islandDistance) * Settings.islandDistance + Settings.islandZOffset;
+	int y = Settings.island_level;
+	return new Location(location.getWorld(),x,y,z);
+	/*
 	for (int x = -Settings.islandDistance; x< Settings.islandDistance; x++) {
 	    for (int z = -Settings.islandDistance; z< Settings.islandDistance; z++) {
 		Location blockLoc = new Location(location.getWorld(),x + location.getBlockX(),Settings.island_level,z + location.getBlockZ());
@@ -578,11 +790,11 @@ public class AdminCmd implements CommandExecutor {
 	    }
 	}
 	// TODO Auto-generated method stub
-	return closestBedRock;
+	return closestBedRock;*/
     }
 
     private void showInfo(UUID playerUUID, CommandSender sender) {
-	sender.sendMessage(ChatColor.GREEN + plugin.getPlayers().getName(playerUUID));
+	sender.sendMessage("Owner:" + ChatColor.GREEN + plugin.getPlayers().getName(playerUUID));
 	sender.sendMessage(ChatColor.WHITE + "UUID: " + playerUUID.toString());
 	// Display island level
 	sender.sendMessage(ChatColor.GREEN + Locale.levelislandLevel + ": " + plugin.getPlayers().getIslandLevel(playerUUID));
@@ -669,6 +881,15 @@ public class AdminCmd implements CommandExecutor {
     public boolean adminSetPlayerIsland(final CommandSender sender, final Location l, final UUID player) {
 	// TODO switch to file system
 	// If the player is not online
+	Location island = getClosestIsland(l);
+	if (island != null) {
+	    plugin.getPlayers().setHomeLocation(player, island);
+	    plugin.getPlayers().setHasIsland(player,true);
+	    plugin.getPlayers().setIslandLocation(player, island);
+	    return true;
+	}
+	return false;
+	/*
 	final int px = l.getBlockX();
 	final int py = l.getBlockY();
 	final int pz = l.getBlockZ();
@@ -686,5 +907,6 @@ public class AdminCmd implements CommandExecutor {
 	    }
 	}
 	return false;
+	 */
     }
 }

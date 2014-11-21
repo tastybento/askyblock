@@ -1,8 +1,9 @@
 name: ASkyBlock
 main: com.wasteofplastic.askyblock.ASkyBlock
-version: 2.3
+version: 2.5
 description: A SkyBlock Plugin
 author: Tastybento
+load: startup
 depend: [Vault]
 loadbefore: [Multiverse-Core]
 commands:
@@ -102,6 +103,9 @@ permissions:
             default: op
           askyblock.mod.bypassprotect:
             description: Allow moderator to bypass island protection
+            default: false
+          askyblock.mod.setbiome:
+            description: Allows setting player island biomes
             default: false
       askyblock.admin.*:
         children:

@@ -19,6 +19,9 @@ package com.wasteofplastic.askyblock;
 
 
 
+
+
+
 /**
  * @author ben
  * All the text strings in the game sent to players
@@ -164,6 +167,8 @@ public class Locale {
     public static String islandhelpSpawn;
     // Teleport go
     public static String islandhelpTeleport;
+    // Expel
+    public static String islandhelpExpel;
 
     //////////////////////////////////////
     ///island commands //
@@ -338,6 +343,15 @@ public class Locale {
     public static String biomeUnknown;
     public static String biomeYouBought;
     public static String biomePanelTitle;
+    
+    // Expel
+    public static String expelSuccess;
+    public static String expelNotOnIsland;
+    public static String expelExpelled;
+    public static String expelFail;
+    
+    // Mob limits
+    public static String moblimitsError;
     
    
 }
