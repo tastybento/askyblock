@@ -554,8 +554,8 @@ public class AdminCmd implements CommandExecutor {
 		    if (!plugin.getPlayers().getTeamLeader(playerUUID).equals(playerUUID)) {
 			sender.sendMessage(ChatColor.RED + "That player is not the leader of the team. Leader is "
 				+ plugin.getPlayers().getName(plugin.getPlayers().getTeamLeader(playerUUID)));
+			return true;
 		    }
-		    return true;
 		}
 		// Check if biome is valid
 		Biome biome = null;

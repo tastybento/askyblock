@@ -1319,10 +1319,12 @@ public class ASkyBlock extends JavaPlugin {
 	if (!VaultHelper.setupEconomy()) {
 	    getLogger().severe("Could not set up economy!");
 	    getServer().getPluginManager().disablePlugin(this);
+	    return;
 	}
 	if (!VaultHelper.setupPermissions()) {
 	    getLogger().severe("Cannot link with Vault for permissions! Disabling plugin!");
 	    getServer().getPluginManager().disablePlugin(this);
+	    return;
 	} 
 	loadPluginConfig();
 	//getIslandWorld();
