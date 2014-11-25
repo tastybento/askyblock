@@ -157,7 +157,7 @@ public class ASkyBlock extends JavaPlugin {
 		    World netherWorld = WorldCreator.name(Settings.worldName + "_nether").type(WorldType.NORMAL).environment(World.Environment.NETHER).createWorld();
 		    //World netherWorld = WorldCreator.name(Settings.worldName + "_nether").type(WorldType.FLAT).generator(new ChunkGeneratorNether()).environment(World.Environment.NETHER).createWorld();
 		    //netherWorld.setMonsterSpawnLimit(Settings.monsterSpawnLimit);
-		   // netherWorld.setAnimalSpawnLimit(Settings.animalSpawnLimit);
+		    // netherWorld.setAnimalSpawnLimit(Settings.animalSpawnLimit);
 		}
 	    }
 	}
@@ -165,7 +165,7 @@ public class ASkyBlock extends JavaPlugin {
 	acidWorld.setWaterAnimalSpawnLimit(Settings.waterAnimalSpawnLimit);
 	acidWorld.setMonsterSpawnLimit(Settings.monsterSpawnLimit);
 	acidWorld.setAnimalSpawnLimit(Settings.animalSpawnLimit);
-	
+
 	return acidWorld;
     }
 
@@ -843,7 +843,7 @@ public class ASkyBlock extends JavaPlugin {
 	} else if (Settings.animalSpawnLimit < -1) {
 	    Settings.animalSpawnLimit = -1;
 	}
-	
+
 	Settings.monsterSpawnLimit = getConfig().getInt("general.monsterspawnlimit", 70);
 	if (Settings.monsterSpawnLimit > 100) {
 	    Settings.monsterSpawnLimit = 100;
@@ -1055,6 +1055,10 @@ public class ASkyBlock extends JavaPlugin {
 	    Settings.defaultBiome = Biome.PLAINS;
 	}
 	Settings.breedingLimit = getConfig().getInt("general.breedinglimit", 0);
+	
+	Settings.removeCompleteOntimeChallenges = getConfig().getBoolean("general.removecompleteonetimechallenges",false);
+	Settings.addCompletedGlow = getConfig().getBoolean("general.addcompletedglow", true);
+	
 	// Localization Locale Setting
 	Locale.changingObsidiantoLava = locale.getString("changingObsidiantoLava", "Changing obsidian back into lava. Be careful!");
 	Locale.acidLore = locale.getString("acidLore","Poison!\nBeware!\nDo not drink!");
@@ -1367,6 +1371,7 @@ public class ASkyBlock extends JavaPlugin {
 		if (getServer().getPluginManager().isPluginEnabled("Multiverse-Core")) {
 		    getLogger().info("Trying to register generator with Multiverse ");
 		    try {
+			getServer().dispatchCommand(getServer().getConsoleSender(), "mv import " + Settings.worldName + " normal -g ASkyBlock");
 			getServer().dispatchCommand(getServer().getConsoleSender(), "mv modify set generator ASkyBlock " + Settings.worldName);
 			//getServer().dispatchCommand(getServer().getConsoleSender(), "mv modify set generator ASkyBlock " + Settings.worldName + "_nether");
 		    } catch (Exception e) {
@@ -1377,7 +1382,6 @@ public class ASkyBlock extends JavaPlugin {
 		}
 	    }
 	});
-
 	// This part will kill monsters if they fall into the water because it
 	// is acid
 	if (Settings.mobAcidDamage > 0D) {
@@ -2252,7 +2256,7 @@ public class ASkyBlock extends JavaPlugin {
     public Biomes getBiomes() {
 	return biomes;
     }
-    
 
-     
+
+
 }

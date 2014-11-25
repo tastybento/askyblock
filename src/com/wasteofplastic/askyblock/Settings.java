@@ -132,6 +132,10 @@ public class Settings {
     public static List<String> resetCommands = new ArrayList<String>();
     // Mob limits
     public static int breedingLimit;
+    
+    // Challenges - show or remove completed on-time challenges
+    public static boolean removeCompleteOntimeChallenges;
+    public static boolean addCompletedGlow;
 
     
   

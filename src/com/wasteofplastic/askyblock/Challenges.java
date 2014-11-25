@@ -840,7 +840,7 @@ public class Challenges implements CommandExecutor {
 
 		    // Check if completed or not
 		    boolean complete = false;
-		    if (players.checkChallenge(player.getUniqueId(),challengeName)) {
+		    if (Settings.addCompletedGlow && players.checkChallenge(player.getUniqueId(),challengeName)) {
 			// Complete! Make the icon glow
 			ItemMeta im = icon.getItemMeta();
 			im.addEnchant(Enchantment.ARROW_DAMAGE, 0, true);
@@ -853,8 +853,8 @@ public class Challenges implements CommandExecutor {
 			// Repeatable
 			repeatable = true;
 		    }
-		    // Only show this challenge if it is not done or repeatable
-		    if (!complete || (complete && repeatable)) {
+		    // Only show this challenge if it is not done or repeatable if the setting Settings.removeCompleteOntimeChallenges
+		    if (!complete || ((complete && repeatable) || !Settings.removeCompleteOntimeChallenges)) {
 			// Store the challenge panel item and the command that will be called if it is activated.
 			CPItem item = new CPItem(icon, description, "asc c " + challengeName, null);
 			// Get the challenge description, that changes depending on whether the challenge is complete or not.

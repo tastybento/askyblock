@@ -122,6 +122,11 @@ general:
    # disabled until death from the void...
    allowfallingteleport: true
 
+   # Remove non-repeatable challenges from the challenge GUI when complete
+   removecompleteonetimechallenges: false
+   # Add enchanted glow to completed challenges (does not work with all clients)
+   addcompletedglow: true
+
 island:
    # Space between islands in blocks
    distance: 110
