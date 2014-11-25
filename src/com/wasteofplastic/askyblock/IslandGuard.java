@@ -34,6 +34,7 @@ import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -58,9 +59,12 @@ import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
+import org.bukkit.event.player.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerShearEntityEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerUnleashEntityEvent;
@@ -1027,6 +1031,70 @@ public class IslandGuard implements Listener {
 	    }
 	}
     }
+
+   /**
+   * Prevent dropping inventory on death
+   * @param e
+   */
+   @EventHandler(priority = EventPriority.LOW)
+   public void onIslandDeath(final PlayerDeathEvent e) {
+      // http://jd.bukkit.org/rb/doxygen/df/d12/classorg_1_1bukkit_1_1event_1_1entity_1_1PlayerDeathEvent.html
+      if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+         // This permission bypasses protection
+         if (VaultHelper.checkPerm(e.getPlayer(), "askyblock.mod.bypassprotect")) {
+         return;
+         }
+         if (!Settings.allowVisitorKeepInvenoryOnDeath) {
+            if (!plugin.playerIsOnIsland(e.getPlayer()) && !e.getPlayer().isOp()) {
+               e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
+               e.setKeepInventory(true);
+            }
+         }
+      }
+   }
+
+   /**
+   * Prevent dropping items
+   * @param e
+   */
+   @EventHandler(priority = EventPriority.LOW)
+   public void onItemDrop(final PlayerDropItemEvent e) {
+      // http://jd.bukkit.org/rb/doxygen/dd/d60/classorg_1_1bukkit_1_1event_1_1player_1_1PlayerDropItemEvent.html
+      if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+         // This permission bypasses protection
+         if (VaultHelper.checkPerm(e.getPlayer(), "askyblock.mod.bypassprotect")) {
+         return;
+         }
+         if (!Settings.allowVisitorItemPickup) {
+            if (!plugin.playerIsOnIsland(e.getPlayer()) && !e.getPlayer().isOp()) {
+               e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
+               e.setCancelled(true);
+            }
+         }
+      }
+   }
+
+   /**
+   * Prevent Item Pickup
+   * @param e
+   */
+   @EventHandler(priority = EventPriority.LOW)
+   public void onItemPickup(final PlayerPickupItemEvent e) {
+      // http://jd.bukkit.org/rb/doxygen/da/d18/classorg_1_1bukkit_1_1event_1_1player_1_1PlayerPickupItemEvent.html
+      if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+         // This permission bypasses protection
+         if (VaultHelper.checkPerm(e.getPlayer(), "askyblock.mod.bypassprotect")) {
+         return;
+         }
+         if (!Settings.allowVisitorItemDrop) {
+            if (!plugin.playerIsOnIsland(e.getPlayer()) && !e.getPlayer().isOp()) {
+               // Sending a message for every pickup event will most likely spam the player?
+               //e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
+               e.setCancelled(true);
+            }
+         }
+      }
+   }
 
 }
 
