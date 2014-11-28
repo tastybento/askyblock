@@ -1192,7 +1192,7 @@ public class IslandCmd implements CommandExecutor {
 		    return true;
 		}
 		// Target cannot be op
-		if (target.isOp()) {
+		if (target.isOp() || VaultHelper.checkPerm(target, "askyblock.mod.bypassprotect")) {
 		    player.sendMessage(ChatColor.RED + Locale.expelFail.replace("[name]", target.getDisplayName()));
 		    return true;
 		}
