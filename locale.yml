@@ -288,7 +288,7 @@ purge:
    noneFound: "No inactive islands to remove."
    thisWillRemove: "This will remove [number] inactive islands!"
    warning: "DANGER! Do not run this with players on the server! MAKE BACKUP OF WORLD!"
-   typeConfirm: "Type /acid confirm to proceed within 10 seconds"
+   typeConfirm: "Type /asadmin confirm to proceed within 10 seconds"
    purgeCancelled: "Purge cancelled."
    finished: "Finished purging of inactive islands."
    removingName: "Purge: Removing [name]'s island"
