@@ -220,6 +220,12 @@ island:
    allowenchanting: true
    # Allow anvil use by visitors
    allowanviluse: true
+   # Allow item drop by visitors
+   allowvisitoritemdrop: true
+   # Allow item pickup by visitors
+   allowvisitoritempickup: true
+   # Allow visitors to keep their items if they die
+   allowvisitorkeepinvondeath: false
 
 # This section contains the biomes that can be bought or used
 biomesettings:

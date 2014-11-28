@@ -995,6 +995,9 @@ public class ASkyBlock extends JavaPlugin {
 	Settings.allowHurtMonsters = getConfig().getBoolean("island.allowhurtmonsters", true);
 	Settings.allowEnchanting = getConfig().getBoolean("island.allowenchanting", true);
 	Settings.allowAnvilUse = getConfig().getBoolean("island.allowanviluse", true);
+	Settings.allowVisitorKeepInvOnDeath = getConfig().getBoolean("island.allowvisitorkeepinvondeath", false);
+	Settings.allowVisitorItemDrop = getConfig().getBoolean("island.allowvisitoritemdrop", true);
+	Settings.allowVisitorItemPickup = getConfig().getBoolean("island.allowvisitoritempickup", true);
 
 	// Challenges
 	final Set<String> challengeList = getChallengeConfig().getConfigurationSection("challenges.challengeList").getKeys(false);
@@ -1058,7 +1061,7 @@ public class ASkyBlock extends JavaPlugin {
 	
 	Settings.removeCompleteOntimeChallenges = getConfig().getBoolean("general.removecompleteonetimechallenges",false);
 	Settings.addCompletedGlow = getConfig().getBoolean("general.addcompletedglow", true);
-	
+		
 	// Localization Locale Setting
 	Locale.changingObsidiantoLava = locale.getString("changingObsidiantoLava", "Changing obsidian back into lava. Be careful!");
 	Locale.acidLore = locale.getString("acidLore","Poison!\nBeware!\nDo not drink!");

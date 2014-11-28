@@ -90,6 +90,9 @@ public class Settings {
     public static boolean allowHurtMonsters;
     public static boolean allowEnchanting;
     public static boolean allowAnvilUse;
+    public static boolean allowVisitorKeepInvOnDeath;
+    public static boolean allowVisitorItemPickup;
+    public static boolean allowVisitorItemDrop;
     
     //public static boolean ultraSafeBoats;
     public static boolean logInRemoveMobs;
@@ -136,6 +139,8 @@ public class Settings {
     // Challenges - show or remove completed on-time challenges
     public static boolean removeCompleteOntimeChallenges;
     public static boolean addCompletedGlow;
+    
+    
 
     
   

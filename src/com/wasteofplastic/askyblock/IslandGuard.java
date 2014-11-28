@@ -51,6 +51,7 @@ import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.PlayerLeashEntityEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
@@ -58,9 +59,12 @@ import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerShearEntityEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerUnleashEntityEvent;
@@ -81,6 +85,66 @@ public class IslandGuard implements Listener {
 
     }
 
+    /*
+     * Prevent dropping items if player dies on another island
+     * This option helps reduce the down side of dying due to traps, etc.
+     */
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
+    public void onVistorDeath(final PlayerDeathEvent e) {
+	if (!e.getEntity().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	    return;
+	}
+	// If the player is on their island then they die and lose everything - sorry :-(
+	if (plugin.playerIsOnIsland(e.getEntity())) {
+	    return;
+	}
+	// If visitors will keep items and their level on death 
+	// This will override any global settings
+	if (Settings.allowVisitorKeepInvOnDeath) {
+	    InventorySave.getInstance().savePlayerInventory(e.getEntity());
+	    e.setKeepLevel(true);
+	    e.setDroppedExp(0);
+	}
+    }
+  
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
+    public void onVistorSpawn(final PlayerRespawnEvent e) {
+	// This will override any global settings
+	if (Settings.allowVisitorKeepInvOnDeath) {
+	    InventorySave.getInstance().loadPlayerInventory(e.getPlayer());
+	}
+    }
+    /*
+     * Prevent item pickup by visitors
+     */
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
+    public void onVisitorPickup(final PlayerPickupItemEvent e) {
+	if (!e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	    return;
+	}
+	if (Settings.allowVisitorItemPickup || e.getPlayer().isOp()
+		|| VaultHelper.checkPerm(e.getPlayer(), "askyblock.mod.bypassprotect") || plugin.playerIsOnIsland(e.getPlayer())) {
+	    return;
+	}
+	e.setCancelled(true);
+    }
+ 
+    /*
+     * Prevent item drop by visitors
+     */
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
+    public void onVisitorDrop(final PlayerDropItemEvent e) {
+	if (!e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	    return;
+	}
+	if (Settings.allowVisitorItemPickup || e.getPlayer().isOp()
+		|| VaultHelper.checkPerm(e.getPlayer(), "askyblock.mod.bypassprotect") || plugin.playerIsOnIsland(e.getPlayer())) {
+	    return;
+	}
+	e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
+	e.setCancelled(true);
+    }
+    
     /*
      * Prevent typing /island if falling - hard core
      * Checked if player teleports
