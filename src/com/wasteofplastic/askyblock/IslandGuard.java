@@ -219,8 +219,7 @@ public class IslandGuard implements Listener {
 	} else {
 	    plugin.getLogger().info("DEBUG: spawn loc does not exist");
 	}*/
-	if (plugin.getSpawn().getBedrock() != null && 
-		(e.getLocation().distanceSquared(plugin.getSpawn().getBedrock()) < (double)((double)plugin.getSpawn().getRange()*plugin.getSpawn().getRange()))) {
+	if (plugin.getSpawn().getBedrock() != null && plugin.getSpawn().isAtSpawn(e.getLocation())) {
 	    //plugin.getLogger().info("DEBUG: prevented mob spawn at spawn");
 	    e.setCancelled(true);
 	}
@@ -237,8 +236,7 @@ public class IslandGuard implements Listener {
 	    return;
 	}
 	// prevent at spawn
-	if (plugin.getSpawn().getBedrock() != null && 
-		(e.getLocation().distanceSquared(plugin.getSpawn().getBedrock()) < plugin.getSpawn().getRange()*plugin.getSpawn().getRange())) {
+	if (plugin.getSpawn().getBedrock() != null && plugin.getSpawn().isAtSpawn(e.getLocation())) {
 	    e.setCancelled(true);
 	}
 	// Find out what is exploding
@@ -319,8 +317,7 @@ public class IslandGuard implements Listener {
 	    return;
 	}
 	// prevent at spawn
-	if (plugin.getSpawn().getBedrock() != null && 
-		(e.getEntity().getLocation().distanceSquared(plugin.getSpawn().getBedrock()) < plugin.getSpawn().getRange()*plugin.getSpawn().getRange())) {
+	if (plugin.getSpawn().getBedrock() != null && plugin.getSpawn().isAtSpawn(e.getEntity().getLocation())) {
 	    e.setCancelled(true);
 	}
 	if (Settings.allowEndermanGriefing)
@@ -778,8 +775,7 @@ public class IslandGuard implements Listener {
 	// Check if player is at spawn
 	// prevent at spawn
 	boolean playerAtSpawn = false;
-	if (plugin.getSpawn().getBedrock() != null && 
-		(e.getPlayer().getLocation().distanceSquared(plugin.getSpawn().getBedrock()) < plugin.getSpawn().getRange()*plugin.getSpawn().getRange())) {
+	if (plugin.getSpawn().getBedrock() != null && plugin.getSpawn().isAtSpawn(e.getPlayer().getLocation())) {
 	    playerAtSpawn = true;
 	}
 

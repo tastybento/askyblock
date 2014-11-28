@@ -19,6 +19,7 @@ package com.wasteofplastic.askyblock;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.util.Vector;
 
 public class Spawn {
     private ASkyBlock plugin;
@@ -54,8 +55,8 @@ public class Spawn {
 	Settings.allowSpawnNoAcidWater = spawn.getBoolean("allowspawnnoacidwater", false);
 	Settings.allowSpawnEnchanting = spawn.getBoolean("allowenchanting",true);
 	Settings.allowSpawnAnvilUse = spawn.getBoolean("allowanviluse",true);
-	
-	
+
+
 	this.spawnLoc = ASkyBlock.getLocationString(spawn.getString("location",""));
 	this.bedrock = ASkyBlock.getLocationString(spawn.getString("bedrock",""));
 	this.range = spawn.getInt("range",100);
@@ -103,7 +104,7 @@ public class Spawn {
      * @return the bedrock
      */
     public Location getBedrock() {
-        return bedrock;
+	return bedrock;
     }
 
     /**
@@ -115,9 +116,17 @@ public class Spawn {
 	//plugin.getLogger().info("DEBUG: location is " + loc.toString());
 	//plugin.getLogger().info("DEBUG spawnLoc is " + spawnLoc.toString());
 	//plugin.getLogger().info("DEBUG: range = " + range);
-	if (loc.distanceSquared(spawnLoc) < range * range) {
-	    //plugin.getLogger().info("DEBUG: within range");
-	    return true;
+	// Only check x and z directions
+	if (loc.getWorld().equals(spawnLoc.getWorld())) {
+	    Vector v = loc.toVector().multiply(new Vector(1,0,1));
+	    Vector l = spawnLoc.toVector().multiply(new Vector(1,0,1));
+	    //plugin.getLogger().info("DEBUG: v is " + v.toString());
+		//plugin.getLogger().info("DEBUG l is " + l.toString());
+		//plugin.getLogger().info("DEBUG: dist sq = " + v.distanceSquared(l));
+	    if (v.distanceSquared(l) < range * range) {
+		//plugin.getLogger().info("DEBUG: within range");
+		return true;
+	    }
 	}
 	return false;
     }
