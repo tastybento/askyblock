@@ -1359,8 +1359,6 @@ public class ASkyBlock extends JavaPlugin {
 	getCommand("asadmin").setExecutor(new AdminCmd(this));
 	// Register events that this plugin uses
 	//registerEvents();
-	// Load warps
-	loadWarpList();
 	// Load messages
 	loadMessages();
 	// Register events
@@ -1378,6 +1376,8 @@ public class ASkyBlock extends JavaPlugin {
 	    @Override
 	    public void run() {
 		getIslandWorld();
+		// Load warps
+		loadWarpList();
 		// update the list
 		//updateTopTen();
 		// Minishop - must wait for economy to load before we can use econ 
