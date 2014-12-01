@@ -306,7 +306,7 @@ public class Players {
 
     public Location getTeamIslandLocation() {
 	// return teamIslandLoc.getLocation();
-	if (teamIslandLocation.isEmpty()) {
+	if (teamIslandLocation == null || teamIslandLocation.isEmpty()) {
 	    return null;
 	}
 	Location l = getLocationString(teamIslandLocation);

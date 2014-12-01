@@ -483,17 +483,14 @@ public class AdminCmd implements CommandExecutor {
 		    sender.sendMessage(ChatColor.RED + Locale.errorUnknownPlayer);
 		    return true;
 		} else {
-		    if (plugin.getPlayers().getIslandLocation(playerUUID) != null) {
-			sender.sendMessage(ChatColor.YELLOW + Locale.deleteremoving.replace("[name]", split[1]));
-			plugin.deletePlayerIsland(playerUUID);
-			// If they are online and in ASkyBlock then delete their stuff too
-			Player target = plugin.getServer().getPlayer(playerUUID);
-			if (target != null) {
-			    plugin.resetPlayer(target);
-			}
-			return true;
+		    // This now deletes the player and cleans them up even if they don't have an island
+		    sender.sendMessage(ChatColor.YELLOW + Locale.deleteremoving.replace("[name]", split[1]));
+		    plugin.deletePlayerIsland(playerUUID);
+		    // If they are online and in ASkyBlock then delete their stuff too
+		    Player target = plugin.getServer().getPlayer(playerUUID);
+		    if (target != null) {
+			plugin.resetPlayer(target);
 		    }
-		    sender.sendMessage(Locale.errorNoIslandOther);
 		    return true;
 		}
 	    } else if (split[0].equalsIgnoreCase("register")) {

@@ -176,7 +176,7 @@ public class IslandCmd implements CommandExecutor {
 	// Player who is issuing the command
 	final Player player = (Player) sender;
 	final UUID playerUUID = player.getUniqueId();
-	//final Players p = plugin.getPlayers().get(player.getName());
+	//final Players p = plugin.getPlayers().get(player.getName()); 
 	Location next = getNextIsland();
 	//plugin.getLogger().info("DEBUG: next location is " + next.toString());
 	plugin.setNewIsland(true);
@@ -235,8 +235,9 @@ public class IslandCmd implements CommandExecutor {
     private Location getNextIsland() {
 	// Find the next free spot
 	if (last == null) {
-	    last = new Location(ASkyBlock.getIslandWorld(), Settings.islandXOffset, Settings.island_level, Settings.islandZOffset);
+	    last = new Location(plugin.getServer().getWorld(Settings.worldName), Settings.islandXOffset, Settings.island_level, Settings.islandZOffset);
 	}
+	//plugin.getLogger().info("next island starting point " + last.toString());
 	Location next = last.clone();
 	while (plugin.islandAtLocation(next)) {
 	    next = nextGridLocation(next);
@@ -688,18 +689,24 @@ public class IslandCmd implements CommandExecutor {
 		    plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable () {
 			@Override
 			public void run() {
-			    //plugin.homeTeleport(player);
 			    player.getWorld().spawnEntity(cowSpot, EntityType.COW);
 
 			}
 		    }, 40L);		    
-		    //player.getWorld().spawnEntity(cowSpot, EntityType.COW);
 		    setResetWaitTime(player);
 		    plugin.removeWarp(playerUUID);
 		    if (oldIsland != null) {
-			plugin.removeIsland(oldIsland);
+			// Remove any coops
+			CoopPlay.getInstance().clearAllIslandCoops(oldIsland);
+			//I'm going to leave out reseting the biome to provide variety
+			//plugin.setIslandBiome(oldIsland, Settings.defaultBiome);
+			// TODO: Remove players
+			new DeleteIslandChunk(plugin,oldIsland);
+			/*
+			plugin.removeMobsFromIsland(oldIsland);
 			DeleteIsland deleteIsland = new DeleteIsland(plugin,oldIsland);
 			deleteIsland.runTaskTimer(plugin, 80L, 40L);
+			 */
 		    }
 		    //plugin.restartEvents();
 		    // Run any reset commands
@@ -862,14 +869,8 @@ public class IslandCmd implements CommandExecutor {
 			// If the invitee has an island of their own
 			if (plugin.getPlayers().hasIsland(playerUUID)) {
 			    plugin.getLogger().info(player.getName() + "'s island will be deleted because they joined a party.");
-			    // Delete the island next tick
-			    plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
-				@Override
-				public void run() {
-				    plugin.deletePlayerIsland(playerUUID);
-				    plugin.getLogger().info("Island deleted.");
-				}
-			    });
+			    plugin.deletePlayerIsland(playerUUID);
+			    plugin.getLogger().info("Island deleted.");
 			}
 			// Add the player to the team
 			addPlayertoTeam(playerUUID, inviteList.get(playerUUID));
@@ -1173,6 +1174,44 @@ public class IslandCmd implements CommandExecutor {
 		    player.sendMessage(ChatColor.RED + Locale.errorNoPermission);
 		    return false;
 		}
+	    } else if (split[0].equalsIgnoreCase("coop")) {
+		// Give a player coop privileges
+		if (VaultHelper.checkPerm(player, "askyblock.team.create")) {
+		    // May return null if not known
+		    final UUID invitedPlayerUUID = plugin.getPlayers().getUUID(split[1]);
+		    // Invited player must be known
+		    if (invitedPlayerUUID == null) {
+			player.sendMessage(ChatColor.RED + Locale.errorUnknownPlayer);
+			return true;
+		    }
+		    // Player must be online
+		    Player newPlayer = plugin.getServer().getPlayer(invitedPlayerUUID);
+		    if (newPlayer == null) {
+			player.sendMessage(ChatColor.RED + Locale.errorOfflinePlayer);
+			return true;
+		    }
+		    // Player issuing the command must have an island
+		    if (!plugin.getPlayers().hasIsland(playerUUID) && !plugin.getPlayers().inTeam(playerUUID)) {
+			player.sendMessage(ChatColor.RED + Locale.inviteerrorYouMustHaveIslandToInvite);
+			return true;
+		    }
+		    // Player cannot invite themselves
+		    if (player.getName().equalsIgnoreCase(split[1])) {
+			player.sendMessage(ChatColor.RED + Locale.inviteerrorYouCannotInviteYourself);
+			return true;
+		    }
+		    // If target player is already on the team ignore
+		    if (plugin.getPlayers().getMembers(playerUUID).contains(invitedPlayerUUID)) {
+			player.sendMessage(ChatColor.RED + Locale.coopOnYourTeam);
+			return true;
+		    }
+		    // Add target to coop list
+		    CoopPlay.getInstance().addCoopPlayer(player, newPlayer);
+		    // Tell everyone what happened
+		    player.sendMessage(ChatColor.GREEN + Locale.coopSuccess.replace("[name]", newPlayer.getDisplayName())); 
+		    newPlayer.sendMessage(ChatColor.GREEN + Locale.coopMadeYouCoop.replace("[name]", player.getDisplayName()));
+		    return true;
+		} 
 	    } else if (split[0].equalsIgnoreCase("expel")) {
 		if (Settings.allowPvP) {
 		    player.sendMessage(ChatColor.RED + Locale.errorUnknownCommand);
@@ -1196,6 +1235,12 @@ public class IslandCmd implements CommandExecutor {
 		    player.sendMessage(ChatColor.RED + Locale.expelFail.replace("[name]", target.getDisplayName()));
 		    return true;
 		}
+		// Remove them from the coop list
+		boolean coop = CoopPlay.getInstance().removeCoopPlayer(player, target); 
+		if (coop) {
+		    target.sendMessage(ChatColor.RED + Locale.coopRemoved.replace("[name]", player.getDisplayName()));
+		    player.sendMessage(ChatColor.GREEN + Locale.coopRemoveSuccess.replace("[name]", target.getDisplayName()));
+		}
 		// See if target is on this player's island
 		if (plugin.isOnIsland(player, target)) {
 		    plugin.homeTeleport(target);
@@ -1203,13 +1248,11 @@ public class IslandCmd implements CommandExecutor {
 		    plugin.getLogger().info(player.getName() + " expelled " + target.getName() + " from their island.");
 		    // Yes they are
 		    player.sendMessage(ChatColor.GREEN + Locale.expelSuccess.replace("[name]", target.getDisplayName()));
-		    return true;
-		} else {
+		} else if (!coop){
 		    // No they're not
 		    player.sendMessage(ChatColor.RED + Locale.expelNotOnIsland);
-		    return true;
 		}
-
+		return true;
 	    } else if (split[0].equalsIgnoreCase("kick") || split[0].equalsIgnoreCase("remove")) {
 		// Island remove command with a player name, or island kick command
 		if (VaultHelper.checkPerm(player, "askyblock.team.kick")) {

@@ -165,8 +165,31 @@ public class PlayerCache {
 	return playerCache.get(playerUUID).inTeam();
     }
 
-    public void removeIsland(UUID playerUUID) {
+    /**
+     * Removes any island associated with this player and generally cleans up the player
+     * @param playerUUID
+     */
+    public void zeroPlayerData(UUID playerUUID) {
 	addPlayer(playerUUID);
+	// Remove and clean up any team players (if the asadmin delete command was called this is needed)
+	if (playerCache.get(playerUUID).inTeam()) {
+	    UUID leader = playerCache.get(playerUUID).getTeamLeader();
+	    // If they are the leader, dissolve the team
+	    if (leader != null) {
+		if (leader.equals(playerUUID)) {
+		    for (UUID member : playerCache.get(leader).getMembers()) {
+			addPlayer(member);
+			playerCache.get(member).setLeaveTeam();
+		    }
+		} else  {
+		    // Just remove them from the team
+		    addPlayer(leader);
+		    playerCache.get(leader).removeMember(playerUUID);
+		    playerCache.get(leader).save();
+		}
+	    }
+	}
+	playerCache.get(playerUUID).setLeaveTeam();
 	playerCache.get(playerUUID).setHasIsland(false);
 	playerCache.get(playerUUID).setHomeLocation(null);
 	playerCache.get(playerUUID).setIslandLocation(null);
@@ -267,12 +290,18 @@ public class PlayerCache {
     }
 
     /**
-     * Returns a list of team member UUID's 
+     * Returns a list of team member UUID's. If the player is not the leader, then the leader's list is used
      * @param playerUUID
      * @return
      */
     public List<UUID> getMembers(UUID playerUUID) {
 	addPlayer(playerUUID);
+	UUID leader = getTeamLeader(playerUUID);
+	if (leader != null && !leader.equals(playerUUID)) {
+	    addPlayer(leader);
+	    return playerCache.get(leader).getMembers();
+	}
+	// I am not the leader, so return the leader's list
 	return playerCache.get(playerUUID).getMembers();
     }
 
@@ -414,7 +443,7 @@ public class PlayerCache {
 	addPlayer(playerUUID);
 	return playerCache.get(playerUUID).getResetsLeft();
     }
-    
+
     /**
      * Sets how many resets the player has left
      * @param playerUUID

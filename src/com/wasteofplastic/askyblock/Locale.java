@@ -16,6 +16,8 @@
  *******************************************************************************/
 package com.wasteofplastic.askyblock;
 
+import org.bukkit.ChatColor;
+
 
 
 
@@ -352,6 +354,13 @@ public class Locale {
     
     // Mob limits
     public static String moblimitsError;
+    
+    // Coop
+    public static String coopRemoved;
+    public static String coopSuccess;
+    public static String coopRemoveSuccess;
+    public static String coopMadeYouCoop;
+    public static String coopOnYourTeam;
     
    
 }

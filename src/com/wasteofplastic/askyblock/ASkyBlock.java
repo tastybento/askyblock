@@ -177,11 +177,14 @@ public class ASkyBlock extends JavaPlugin {
      */
     public void deletePlayerIsland(final UUID player) {
 	// Removes the island
+	CoopPlay.getInstance().clearAllIslandCoops(player);
 	removeWarp(player);
-	removeIsland(players.getIslandLocation(player));
-	DeleteIsland deleteIsland = new DeleteIsland(plugin,players.getIslandLocation(player));
-	deleteIsland.runTaskTimer(plugin, 40L, 40L);
-	players.removeIsland(player);
+	removeMobsFromIsland(players.getIslandLocation(player));
+	// TODO TEST ONLY
+	//DeleteIsland deleteIsland = new DeleteIsland(this,players.getIslandLocation(player));
+	//deleteIsland.runTaskTimer(this, 40L, 40L);
+	new DeleteIslandChunk(this,players.getIslandLocation(player));
+	players.zeroPlayerData(player);
     }
 
     /**
@@ -412,34 +415,36 @@ public class ASkyBlock extends JavaPlugin {
      * @param loc
      * @return
      */
-    public boolean islandAtLocation(final Location loc) {
-	//getLogger().info("DEBUG checking islandAtLocation for location " + loc.toString());
+    public boolean islandAtLocation(final Location loc) {	
 	if (loc == null) {
 	    return true;
 	}
-	// Load the chunk before we check it just in case
-	loc.getWorld().loadChunk(loc.getChunk());
+	//getLogger().info("DEBUG checking islandAtLocation for location " + loc.toString());
 	// Immediate check
 	if (loc.getBlock().getType().equals(Material.BEDROCK)) {
+	    //getLogger().info("DEBUG found bedrock at island height");
 	    return true;
 	}
 	// Near spawn?
 	if ((getSpawn().getSpawnLoc() != null && loc.distanceSquared(getSpawn().getSpawnLoc()) < (double)((double)Settings.islandDistance) * Settings.islandDistance)) {
+	    //plugin.getLogger().info("Too near spawn");
 	    return true;
 	}
 	// Check the file system
 	String checkName = loc.getBlockX() + "," + loc.getBlockZ() + ".yml";
 	final File islandFile = new File(plugin.getDataFolder() + File.separator + "islands" + File.separator + checkName);
 	if (islandFile.exists()) {
+	    //plugin.getLogger().info("File exists");
 	    return true;
 	}
 	// Look around
 	final int px = loc.getBlockX();
 	final int pz = loc.getBlockZ();
 	for (int x = -5; x <= 5; x++) {
-	    for (int y = 0; y <= 255; y++) {
+	    for (int y = 10; y <= 255; y++) {
 		for (int z = -5; z <= 5; z++) {
 		    if (loc.getWorld().getBlockAt(x + px, y, z + pz).getType().equals(Material.BEDROCK)) {
+			//plugin.getLogger().info("Bedrock found during long search");
 			return true;
 		    }
 		}
@@ -863,9 +868,10 @@ public class ASkyBlock extends JavaPlugin {
 	    Settings.abandonedIslandLevel = 0;
 	}
 
-	Settings.island_protectionRange = getConfig().getInt("island.protectionRange", 100);
-	if (Settings.island_protectionRange > Settings.islandDistance) {
-	    Settings.island_protectionRange = Settings.islandDistance;
+	Settings.island_protectionRange = getConfig().getInt("island.protectionRange", 94);
+	if (Settings.island_protectionRange > (Settings.islandDistance-16)) {
+	    Settings.island_protectionRange = Settings.islandDistance - 16;
+	    getLogger().warning("*** Island protection range must be " + (Settings.islandDistance-16) + " or less, (island range -16). Setting to: " + Settings.island_protectionRange);
 	} else if (Settings.island_protectionRange < 0) {
 	    Settings.island_protectionRange = 0;
 	}
@@ -1058,10 +1064,10 @@ public class ASkyBlock extends JavaPlugin {
 	    Settings.defaultBiome = Biome.PLAINS;
 	}
 	Settings.breedingLimit = getConfig().getInt("general.breedinglimit", 0);
-	
+
 	Settings.removeCompleteOntimeChallenges = getConfig().getBoolean("general.removecompleteonetimechallenges",false);
 	Settings.addCompletedGlow = getConfig().getBoolean("general.addcompletedglow", true);
-		
+
 	// Localization Locale Setting
 	Locale.changingObsidiantoLava = locale.getString("changingObsidiantoLava", "Changing obsidian back into lava. Be careful!");
 	Locale.acidLore = locale.getString("acidLore","Poison!\nBeware!\nDo not drink!");
@@ -1290,6 +1296,11 @@ public class ASkyBlock extends JavaPlugin {
 	Locale.expelExpelled = locale.getString("expel.expelled", "You were expelled from that island!");
 	Locale.expelFail = locale.getString("expel.fail", "[name] cannot be expelled!");
 	Locale.moblimitsError = locale.getString("moblimits.error", "Island breeding limit of [number] reached!");
+	Locale.coopRemoved = locale.getString("coop.removed", "[name] remove your coop status!");
+	Locale.coopRemoveSuccess = locale.getString("coop.removesuccess", "[name] is no longer a coop player.");
+	Locale.coopSuccess = locale.getString("coop.success", "[name] is now a coop player until they log out or you expel them.");
+	Locale.coopMadeYouCoop = locale.getString("coop.madeyoucoopy", "[name] made you a coop player until you log out or they expel you.");
+	Locale.coopOnYourTeam = locale.getString("coop.onyourteam", "Player is already on your team!");
     }
 
     /*
@@ -1383,6 +1394,16 @@ public class ASkyBlock extends JavaPlugin {
 			getServer().getPluginManager().disablePlugin(plugin);
 		    }
 		}
+		if (getServer().getWorld(Settings.worldName).getGenerator() == null) {
+		 // Check if the world generator is registered correctly
+		    getLogger().severe("********* The Generator for ASkyBlock is not registered so the plugin cannot start ********");
+		    getLogger().severe("Make sure you have the following in bukkit.yml (case sensitive):");
+		    getLogger().severe("worlds:");
+		    getLogger().severe("  # The next line must be the name of you skyblock world:");
+		    getLogger().severe("  ASkyBlock:");
+		    getLogger().severe("    generator: ASkyBlock");
+		    getServer().getPluginManager().disablePlugin(plugin);
+		}
 	    }
 	});
 	// This part will kill monsters if they fall into the water because it
@@ -1407,27 +1428,33 @@ public class ASkyBlock extends JavaPlugin {
     }
 
     /**
-     * Checks if an online player is on their island or on a team island
+     * Checks if an online player is on their island, on a team island or on a coop island
      * 
      * @param player
      *            - the player who is being checked
      * @return - true if they are on their island, otherwise false
      */
     public boolean playerIsOnIsland(final Player player) {
-	Location islandTestLocation = null;
+	// Make a list of test locations and test them
+	Set<Location> islandTestLocations = new HashSet<Location>();
 	if (players.hasIsland(player.getUniqueId())) {
-	    islandTestLocation = players.getIslandLocation(player.getUniqueId());
+	    islandTestLocations.add(players.getIslandLocation(player.getUniqueId()));
 	} else if (players.inTeam(player.getUniqueId())) {
-	    islandTestLocation = players.get(player.getUniqueId()).getTeamIslandLocation();
+	    islandTestLocations.add(players.get(player.getUniqueId()).getTeamIslandLocation());
 	}
-	if (islandTestLocation == null) {
+	// Check coop locations
+	islandTestLocations.addAll(CoopPlay.getInstance().getCoopIslands(player));
+	if (islandTestLocations.isEmpty()) {
 	    return false;
 	}
-	if (player.getLocation().getX() > islandTestLocation.getX() - Settings.island_protectionRange / 2
-		&& player.getLocation().getX() < islandTestLocation.getX() + Settings.island_protectionRange / 2
-		&& player.getLocation().getZ() > islandTestLocation.getZ() - Settings.island_protectionRange / 2
-		&& player.getLocation().getZ() < islandTestLocation.getZ() + Settings.island_protectionRange / 2) {
-	    return true;
+	// Run through all the locations
+	for (Location islandTestLocation : islandTestLocations) {
+	    if (player.getLocation().getX() > islandTestLocation.getX() - Settings.island_protectionRange / 2
+		    && player.getLocation().getX() < islandTestLocation.getX() + Settings.island_protectionRange / 2
+		    && player.getLocation().getZ() > islandTestLocation.getZ() - Settings.island_protectionRange / 2
+		    && player.getLocation().getZ() < islandTestLocation.getZ() + Settings.island_protectionRange / 2) {
+		return true;
+	    }
 	}
 	return false;
     }
@@ -1464,6 +1491,38 @@ public class ASkyBlock extends JavaPlugin {
 	}
 	return false;	
     }
+    
+    /**
+     * Checks if a specific location is within the protected range of an island owned by the player
+     * @param player
+     * @param loc
+     * @return
+     */
+    public boolean locationIsOnIsland(final Player player, final Location loc) {
+	// Make a list of test locations and test them
+	Set<Location> islandTestLocations = new HashSet<Location>();
+	if (players.hasIsland(player.getUniqueId())) {
+	    islandTestLocations.add(players.getIslandLocation(player.getUniqueId()));
+	} else if (players.inTeam(player.getUniqueId())) {
+	    islandTestLocations.add(players.get(player.getUniqueId()).getTeamIslandLocation());
+	}
+	// Check any coop locations
+	islandTestLocations.addAll(CoopPlay.getInstance().getCoopIslands(player));
+	if (islandTestLocations.isEmpty()) {
+	    return false;
+	}
+	// Run through all the locations
+	for (Location islandTestLocation : islandTestLocations) {
+	    if (loc.getX() > islandTestLocation.getX() - Settings.island_protectionRange / 2
+		    && loc.getX() < islandTestLocation.getX() + Settings.island_protectionRange / 2
+		    && loc.getZ() > islandTestLocation.getZ() - Settings.island_protectionRange / 2
+		    && loc.getZ() < islandTestLocation.getZ() + Settings.island_protectionRange / 2) {
+		return true;
+	    }
+	}
+	return false;
+    }
+    
     /**
      * Registers events
      */
@@ -1539,7 +1598,7 @@ public class ASkyBlock extends JavaPlugin {
      * @param loc
      *            - a Location
      */
-    public void removeIsland(final Location loc) {
+    public void removeMobsFromIsland(final Location loc) {
 	//getLogger().info("DEBUG: removeIsland");
 	if (loc != null) {
 	    // Place a temporary entity
@@ -1579,59 +1638,6 @@ public class ASkyBlock extends JavaPlugin {
 		    tempent.remove();
 		}
 	    }
-	    /*
-	    for (int x = Settings.island_protectionRange / 2 * -1; x <= Settings.island_protectionRange / 2; x++) {
-		for (int y = 255; y >= 0; y--) {
-		    for (int z = Settings.island_protectionRange / 2 * -1; z <= Settings.island_protectionRange / 2; z++) {
-
-			final Block b = new Location(l.getWorld(), px + x, y, pz + z).getBlock();
-			final Material bt = new Location(l.getWorld(), px + x, y, pz + z).getBlock().getType();
-			// Grab anything out of containers (do that it is
-			// destroyed)
-			switch (bt) {
-			case CHEST:
-			    //getLogger().info("DEBUG: Chest");
-			case TRAPPED_CHEST:
-			    //getLogger().info("DEBUG: Trapped Chest");
-			    final Chest c = (Chest) b.getState();
-			    final ItemStack[] items = new ItemStack[c.getInventory().getContents().length];
-			    c.getInventory().setContents(items);
-			    break;
-			case FURNACE:
-			    final Furnace f = (Furnace) b.getState();
-			    final ItemStack[] i2 = new ItemStack[f.getInventory().getContents().length];
-			    f.getInventory().setContents(i2);
-			    break;
-			case DISPENSER:
-			    final Dispenser d = (Dispenser) b.getState();
-			    final ItemStack[] i3 = new ItemStack[d.getInventory().getContents().length];
-			    d.getInventory().setContents(i3);
-			    break;
-			case HOPPER:
-			    final Hopper h = (Hopper) b.getState();
-			    final ItemStack[] i4 = new ItemStack[h.getInventory().getContents().length];
-			    h.getInventory().setContents(i4);
-			    break;
-			case SIGN_POST:
-			case WALL_SIGN:
-			case SIGN:
-			    //getLogger().info("DEBUG: Sign");
-			    b.setType(Material.AIR);
-			    break;
-			default:
-			    break;
-			}
-			// Split depending on below or above water line
-			if (y < Settings.sea_level + 5) {
-			    if (!b.getType().equals(Material.STATIONARY_WATER))
-				b.setType(Material.STATIONARY_WATER);
-			} else {
-			    if (!b.getType().equals(Material.AIR))
-				b.setType(Material.AIR);
-			}
-		    }
-		}
-	    }*/
 	}
     }
 

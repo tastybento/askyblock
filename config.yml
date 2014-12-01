@@ -131,8 +131,10 @@ island:
    # Space between islands in blocks
    distance: 110
 
-   # The size of the protective region for each island. Must be less than distance
-   protectionRange: 100
+   # The size of the protective region for each island. Must be at least 16 blocks
+   # less than the island distance. Island deletion is done on a chunk basis and
+   # may delete just over this range, so a buffer is required!
+   protectionRange: 94
 
    # Coordinate offset - never change this mid-game and there is no
    # need to set this. It is for compatibility with IslandWorld maps and set by

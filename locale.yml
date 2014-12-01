@@ -367,3 +367,12 @@ expel:
 
 moblimits:
    error: "Island breeding limit of [number] reached!"
+
+coop:
+   removed: "[name] remove your coop status!"
+   removesuccess: "[name] is no longer a coop player."
+   success: "[name] is now a coop player until they log out or you expel them."
+   madeyoucoopy: "[name] made you a coop player until you log out or they expel you."
+   onyourteam: "Player is already on your team!"
+
+ 
