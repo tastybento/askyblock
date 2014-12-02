@@ -149,7 +149,19 @@ public class ASkyBlock extends JavaPlugin {
 	    //Bukkit.getLogger().info("DEBUG worldName = " + Settings.worldName);
 	    acidWorld = WorldCreator.name(Settings.worldName).type(WorldType.FLAT).environment(World.Environment.NORMAL)
 		    .generator(new ChunkGeneratorWorld()).createWorld();
-	    // Make the nether if it does not exist
+	    // Multiverse configuration
+	    if (Bukkit.getServer().getPluginManager().isPluginEnabled("Multiverse-Core")) {
+		Bukkit.getLogger().info("Trying to register generator with Multiverse ");
+		try {
+		    Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv import " + Settings.worldName + " normal -g ASkyBlock");
+		    Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv modify set generator ASkyBlock " + Settings.worldName);
+		    //getServer().dispatchCommand(getServer().getConsoleSender(), "mv modify set generator ASkyBlock " + Settings.worldName + "_nether");
+		} catch (Exception e) {
+		    Bukkit.getLogger().info("Not successfull! Disabling ASkyBlock!");
+		    e.printStackTrace();
+		    Bukkit.getServer().getPluginManager().disablePlugin(plugin);
+		}
+	    }
 	    // Make the nether if it does not exist
 	    if (Settings.createNether) {
 		if (plugin.getServer().getWorld(Settings.worldName + "_nether") == null) {
@@ -1345,6 +1357,8 @@ public class ASkyBlock extends JavaPlugin {
 	    return;
 	} 
 	loadPluginConfig();
+	// This can no longer be run in onEnable because the plugin is loaded at startup and so key variables are
+	// not known to the server. Instead it is run one tick after startup.
 	//getIslandWorld();
 
 	// Set and make the player's directory if it does not exist and then load players into memory
@@ -1375,6 +1389,7 @@ public class ASkyBlock extends JavaPlugin {
 	getServer().getScheduler().runTask(this, new Runnable() {
 	    @Override
 	    public void run() {
+		// Create the world if it does not exist. This is run after the server starts.
 		getIslandWorld();
 		// Load warps
 		loadWarpList();
@@ -1382,20 +1397,8 @@ public class ASkyBlock extends JavaPlugin {
 		//updateTopTen();
 		// Minishop - must wait for economy to load before we can use econ 
 		getServer().getPluginManager().registerEvents(new ControlPanel(plugin), plugin);
-		if (getServer().getPluginManager().isPluginEnabled("Multiverse-Core")) {
-		    getLogger().info("Trying to register generator with Multiverse ");
-		    try {
-			getServer().dispatchCommand(getServer().getConsoleSender(), "mv import " + Settings.worldName + " normal -g ASkyBlock");
-			getServer().dispatchCommand(getServer().getConsoleSender(), "mv modify set generator ASkyBlock " + Settings.worldName);
-			//getServer().dispatchCommand(getServer().getConsoleSender(), "mv modify set generator ASkyBlock " + Settings.worldName + "_nether");
-		    } catch (Exception e) {
-			getLogger().info("Not successfull! Disabling ASkyBlock!");
-			e.printStackTrace();
-			getServer().getPluginManager().disablePlugin(plugin);
-		    }
-		}
 		if (getServer().getWorld(Settings.worldName).getGenerator() == null) {
-		 // Check if the world generator is registered correctly
+		    // Check if the world generator is registered correctly
 		    getLogger().severe("********* The Generator for ASkyBlock is not registered so the plugin cannot start ********");
 		    getLogger().severe("Make sure you have the following in bukkit.yml (case sensitive):");
 		    getLogger().severe("worlds:");
@@ -1491,7 +1494,7 @@ public class ASkyBlock extends JavaPlugin {
 	}
 	return false;	
     }
-    
+
     /**
      * Checks if a specific location is within the protected range of an island owned by the player
      * @param player
@@ -1522,7 +1525,7 @@ public class ASkyBlock extends JavaPlugin {
 	}
 	return false;
     }
-    
+
     /**
      * Registers events
      */

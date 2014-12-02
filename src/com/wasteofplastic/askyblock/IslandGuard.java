@@ -123,7 +123,7 @@ public class IslandGuard implements Listener {
 	    return;
 	}
 	if (Settings.allowVisitorItemPickup || e.getPlayer().isOp()
-		|| VaultHelper.checkPerm(e.getPlayer(), "askyblock.mod.bypassprotect") || plugin.playerIsOnIsland(e.getPlayer())) {
+		|| VaultHelper.checkPerm(e.getPlayer(), "askyblock.mod.bypassprotect") || plugin.locationIsOnIsland(e.getPlayer(), e.getItem().getLocation())) {
 	    return;
 	}
 	e.setCancelled(true);
@@ -138,7 +138,7 @@ public class IslandGuard implements Listener {
 	    return;
 	}
 	if (Settings.allowVisitorItemPickup || e.getPlayer().isOp()
-		|| VaultHelper.checkPerm(e.getPlayer(), "askyblock.mod.bypassprotect") || plugin.playerIsOnIsland(e.getPlayer())) {
+		|| VaultHelper.checkPerm(e.getPlayer(), "askyblock.mod.bypassprotect") || plugin.locationIsOnIsland(e.getPlayer(),e.getItemDrop().getLocation())) {
 	    return;
 	}
 	e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
@@ -434,8 +434,9 @@ public class IslandGuard implements Listener {
 	    if (!(e.getEntity() instanceof Player)) {
 		if (e.getEntity() instanceof Monster || e.getEntity() instanceof Slime || e.getEntity() instanceof Squid) {
 		    //plugin.getLogger().info("Entity is a monster - ok to hurt"); 
+		    // Monster has to be on player's island.
 		    if (!Settings.allowHurtMonsters) {
-			if (!plugin.playerIsOnIsland((Player)e.getDamager())) {
+			if (!plugin.locationIsOnIsland((Player)e.getDamager(),e.getEntity().getLocation())) {
 			    ((Player)e.getDamager()).sendMessage(ChatColor.RED + Locale.islandProtected);
 			    e.setCancelled(true);
 			    return;
@@ -449,7 +450,8 @@ public class IslandGuard implements Listener {
 		    //plugin.getLogger().info("player ID is null");
 		    //}
 		    if (!Settings.allowHurtMobs) {
-			if (!plugin.playerIsOnIsland((Player)e.getDamager())) {
+			// Mob has to be on damager's island
+			if (!plugin.locationIsOnIsland((Player)e.getDamager(),e.getEntity().getLocation())) {
 			    ((Player)e.getDamager()).sendMessage(ChatColor.RED + Locale.islandProtected);
 			    e.setCancelled(true);
 			    return;
@@ -492,7 +494,7 @@ public class IslandGuard implements Listener {
 		    if (!(e.getEntity() instanceof Monster) && !(e.getEntity() instanceof Slime) && !(e.getEntity() instanceof Squid)) {
 			//plugin.getLogger().info("Entity is a non-monster - check if ok to hurt"); 
 			if (!Settings.allowHurtMobs) {
-			    if (!plugin.playerIsOnIsland((Player)arrow.getShooter())) {
+			    if (!plugin.locationIsOnIsland((Player)arrow.getShooter(),e.getEntity().getLocation())) {
 				shooter.sendMessage(ChatColor.RED + Locale.islandProtected);
 				e.setCancelled(true);
 				return;
@@ -501,7 +503,7 @@ public class IslandGuard implements Listener {
 			return;
 		    } else {
 			if (!Settings.allowHurtMonsters) {
-			    if (!plugin.playerIsOnIsland((Player)e.getDamager())) {
+			    if (!plugin.locationIsOnIsland((Player)e.getDamager(),e.getEntity().getLocation())) {
 				((Player)e.getDamager()).sendMessage(ChatColor.RED + Locale.islandProtected);
 				e.setCancelled(true);
 				return;
@@ -520,38 +522,6 @@ public class IslandGuard implements Listener {
 	    } 
 	}
 	return;
-	/*
-	// If the attacker is non-human and not an arrow then everything is okay
-	if (!(e.getDamager() instanceof Player) && !(e.getDamager() instanceof Projectile)) {
-	    return;
-	}
-
-	// If the target is not a player return
-	if (!(e.getEntity() instanceof Player)) {
-	    return;
-	}
-	// If PVP is okay then return
-	if (Settings.allowPvP.equalsIgnoreCase("allow")) {
-	    return;
-	}
-	// Only damagers who are players or arrows are left
-	// If the projectile is anything else than an arrow don't worry about it in this listener
-	// Handle splash potions separately.
-	if (e.getDamager() instanceof Arrow) {
-	    Arrow arrow = (Arrow)e.getDamager();
-	    // It really is an Arrow
-	    if (arrow.getShooter() instanceof Player) {
-		// Arrow shot by a player at another player
-		if (Settings.allowPvP.equalsIgnoreCase("allow")) {
-		    return;
-		} else {
-		    e.setCancelled(true);
-		    return;
-		}
-	    }
-	}
-	return;
-	 */
     }
 
 
@@ -644,13 +614,13 @@ public class IslandGuard implements Listener {
 	if (e.getEntity().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    if (!Settings.allowLeashUse) {
 		if (e.getPlayer() != null) {
-		    Player p = e.getPlayer();
+		    Player player = e.getPlayer();
 		    // This permission bypasses protection
-		    if (VaultHelper.checkPerm(p, "askyblock.mod.bypassprotect")) {
+		    if (VaultHelper.checkPerm(player, "askyblock.mod.bypassprotect")) {
 			return;
 		    }
-		    if (!plugin.playerIsOnIsland(p) && !p.isOp()) {
-			p.sendMessage(ChatColor.RED + Locale.islandProtected);
+		    if (!plugin.locationIsOnIsland(player,e.getEntity().getLocation()) && !player.isOp()) {
+			player.sendMessage(ChatColor.RED + Locale.islandProtected);
 			e.setCancelled(true);
 		    }
 		}
@@ -668,13 +638,13 @@ public class IslandGuard implements Listener {
 	if (e.getEntity().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    if (!Settings.allowLeashUse) {
 		if (e.getPlayer() != null) {
-		    Player p = e.getPlayer();
+		    Player player = e.getPlayer();
 		    // This permission bypasses protection
-		    if (VaultHelper.checkPerm(p, "askyblock.mod.bypassprotect")) {
+		    if (VaultHelper.checkPerm(player, "askyblock.mod.bypassprotect")) {
 			return;
 		    }
-		    if (!plugin.playerIsOnIsland(p) && !p.isOp()) {
-			p.sendMessage(ChatColor.RED + Locale.islandProtected);
+		    if (!plugin.locationIsOnIsland(player,e.getEntity().getLocation()) && !player.isOp()) {
+			player.sendMessage(ChatColor.RED + Locale.islandProtected);
 			e.setCancelled(true);
 		    }
 		}
@@ -773,6 +743,7 @@ public class IslandGuard implements Listener {
 	    // You can do anything on your island or if you are Op
 	    return;
 	}
+	// Player is not clicking a block, they are clicking a material so this is driven by where the player is
 	if (e.getClickedBlock() == null && (e.getMaterial() != null && plugin.playerIsOnIsland(e.getPlayer()))) {
 	    return;
 	}
