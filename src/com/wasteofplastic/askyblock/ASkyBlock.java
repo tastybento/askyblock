@@ -407,7 +407,7 @@ public class ASkyBlock extends JavaPlugin {
 	}
 	if (home == null) {
 	    // The home is not safe
-	    if (!player.performCommand("spawn")) {
+	    if (!player.performCommand(Settings.SPAWNCOMMAND)) {
 		player.teleport(player.getWorld().getSpawnLocation());
 	    }
 	    player.sendMessage(ChatColor.RED + Locale.warpserrorNotSafe);
@@ -1628,7 +1628,7 @@ public class ASkyBlock extends JavaPlugin {
 			    pl.teleport(plugin.getSpawn().getSpawnLoc());
 			    getLogger().warning("During island deletion player " + pl.getName() + " sent to spawn.");
 			} else {
-			    if (!pl.performCommand("spawn")) {
+			    if (!pl.performCommand(Settings.SPAWNCOMMAND)) {
 				getLogger().warning("During island deletion player " + pl.getName() + " could not be sent to spawn so was dropped, sorry.");	
 			    } else {
 				getLogger().warning("During island deletion player " + pl.getName() + " sent to spawn using /spawn.");

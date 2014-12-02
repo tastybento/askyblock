@@ -123,7 +123,7 @@ public class IslandGuard implements Listener {
 	    return;
 	}
 	if (Settings.allowVisitorItemPickup || e.getPlayer().isOp()
-		|| VaultHelper.checkPerm(e.getPlayer(), "askyblock.mod.bypassprotect") || plugin.locationIsOnIsland(e.getPlayer(), e.getItem().getLocation())) {
+		|| VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect") || plugin.locationIsOnIsland(e.getPlayer(), e.getItem().getLocation())) {
 	    return;
 	}
 	e.setCancelled(true);
@@ -138,7 +138,7 @@ public class IslandGuard implements Listener {
 	    return;
 	}
 	if (Settings.allowVisitorItemPickup || e.getPlayer().isOp()
-		|| VaultHelper.checkPerm(e.getPlayer(), "askyblock.mod.bypassprotect") || plugin.locationIsOnIsland(e.getPlayer(),e.getItemDrop().getLocation())) {
+		|| VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect") || plugin.locationIsOnIsland(e.getPlayer(),e.getItemDrop().getLocation())) {
 	    return;
 	}
 	e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
@@ -366,7 +366,7 @@ public class IslandGuard implements Listener {
     public void onBlockBreak(final BlockBreakEvent e) {
 	if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    // This permission bypasses protection
-	    if (VaultHelper.checkPerm(e.getPlayer(), "askyblock.mod.bypassprotect")) {
+	    if (VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
 		return;
 	    }
 	    if (!Settings.allowBreakBlocks) {
@@ -395,7 +395,7 @@ public class IslandGuard implements Listener {
 		return;
 	    }
 	    // This permission bypasses protection
-	    if (VaultHelper.checkPerm((Player)e.getDamager(), "askyblock.mod.bypassprotect")) {
+	    if (VaultHelper.checkPerm((Player)e.getDamager(), Settings.PERMPREFIX + "mod.bypassprotect")) {
 		return;
 	    }
 	}
@@ -534,7 +534,7 @@ public class IslandGuard implements Listener {
 	//plugin.getLogger().info(e.getEventName());
 	if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    // This permission bypasses protection
-	    if (VaultHelper.checkPerm(e.getPlayer(), "askyblock.mod.bypassprotect")) {
+	    if (VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
 		return;
 	    }
 	    if (!Settings.allowPlaceBlocks) {
@@ -551,7 +551,7 @@ public class IslandGuard implements Listener {
 	//plugin.getLogger().info(e.getEventName());
 	if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    // This permission bypasses protection
-	    if (VaultHelper.checkPerm(e.getPlayer(), "askyblock.mod.bypassprotect")) {
+	    if (VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
 		return;
 	    }
 	    if (!Settings.allowPlaceBlocks) {
@@ -569,7 +569,7 @@ public class IslandGuard implements Listener {
 	// Check world
 	if (Settings.worldName.equalsIgnoreCase(e.getPlayer().getWorld().getName())) {
 	    // This permission bypasses protection
-	    if (VaultHelper.checkPerm(e.getPlayer(), "askyblock.mod.bypassprotect")) {
+	    if (VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
 		return;
 	    }
 	    if (!Settings.allowBedUse) {
@@ -592,7 +592,7 @@ public class IslandGuard implements Listener {
 		if (e.getRemover() instanceof Player) {
 		    Player p = (Player)e.getRemover();
 		    // This permission bypasses protection
-		    if (VaultHelper.checkPerm(p, "askyblock.mod.bypassprotect")) {
+		    if (VaultHelper.checkPerm(p, Settings.PERMPREFIX + "mod.bypassprotect")) {
 			return;
 		    }
 		    if (!plugin.locationIsOnIsland(p,e.getEntity().getLocation()) && !p.isOp()) {
@@ -616,7 +616,7 @@ public class IslandGuard implements Listener {
 		if (e.getPlayer() != null) {
 		    Player player = e.getPlayer();
 		    // This permission bypasses protection
-		    if (VaultHelper.checkPerm(player, "askyblock.mod.bypassprotect")) {
+		    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.bypassprotect")) {
 			return;
 		    }
 		    if (!plugin.locationIsOnIsland(player,e.getEntity().getLocation()) && !player.isOp()) {
@@ -640,7 +640,7 @@ public class IslandGuard implements Listener {
 		if (e.getPlayer() != null) {
 		    Player player = e.getPlayer();
 		    // This permission bypasses protection
-		    if (VaultHelper.checkPerm(player, "askyblock.mod.bypassprotect")) {
+		    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.bypassprotect")) {
 			return;
 		    }
 		    if (!plugin.locationIsOnIsland(player,e.getEntity().getLocation()) && !player.isOp()) {
@@ -656,7 +656,7 @@ public class IslandGuard implements Listener {
     public void onBucketEmpty(final PlayerBucketEmptyEvent e) {
 	if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    // This permission bypasses protection
-	    if (VaultHelper.checkPerm(e.getPlayer(), "askyblock.mod.bypassprotect")) {
+	    if (VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
 		return;
 	    }
 	    if (!Settings.allowBucketUse) {
@@ -702,7 +702,7 @@ public class IslandGuard implements Listener {
     public void onBucketFill(final PlayerBucketFillEvent e) {
 	if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    // This permission bypasses protection
-	    if (VaultHelper.checkPerm(e.getPlayer(), "askyblock.mod.bypassprotect")) {
+	    if (VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
 		return;
 	    }
 	    if (!Settings.allowBucketUse) {
@@ -719,7 +719,7 @@ public class IslandGuard implements Listener {
     public void onShear(final PlayerShearEntityEvent e) {
 	if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    // This permission bypasses protection
-	    if (VaultHelper.checkPerm(e.getPlayer(), "askyblock.mod.bypassprotect")) {
+	    if (VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
 		return;
 	    }
 	    if (!Settings.allowShearing) {	
@@ -748,7 +748,7 @@ public class IslandGuard implements Listener {
 	    return;
 	}
 	// This permission bypasses protection
-	if (VaultHelper.checkPerm(e.getPlayer(), "askyblock.mod.bypassprotect")) {
+	if (VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
 	    return;
 	}
 	// Player is off island
@@ -938,7 +938,7 @@ public class IslandGuard implements Listener {
 	if (player.getWorld().getName().equalsIgnoreCase(Settings.worldName) || 
 		player.getWorld().getName().equalsIgnoreCase(Settings.worldName + "_nether")) {
 	    if(event.getRecipe().getResult().getType() == Material.ENDER_CHEST) {
-		if(!(player.hasPermission("askyblock.craft.enderchest"))) {
+		if(!(player.hasPermission(Settings.PERMPREFIX + "craft.enderchest"))) {
 		    event.setCancelled(true);
 		}
 	    }
@@ -956,7 +956,7 @@ public class IslandGuard implements Listener {
 		player.getWorld().getName().equalsIgnoreCase(Settings.worldName + "_nether")) {
 	    if (event.getAction() == Action.RIGHT_CLICK_BLOCK ){
 		if (event.getClickedBlock().getType() == Material.ENDER_CHEST){
-		    if(!(event.getPlayer().hasPermission("askyblock.craft.enderchest"))) {
+		    if(!(event.getPlayer().hasPermission(Settings.PERMPREFIX + "craft.enderchest"))) {
 			event.setCancelled(true);
 		    }
 		}

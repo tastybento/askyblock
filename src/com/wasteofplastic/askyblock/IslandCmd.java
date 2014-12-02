@@ -484,7 +484,7 @@ public class IslandCmd implements CommandExecutor {
 	}
 	final Player player = (Player) sender;
 	// Basic permissions check to even use /island
-	if (!VaultHelper.checkPerm(player, "askyblock.island.create")) {
+	if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.create")) {
 	    player.sendMessage(ChatColor.RED + Locale.islanderrorYouDoNotHavePermission);
 	    return true;
 	}
@@ -526,7 +526,7 @@ public class IslandCmd implements CommandExecutor {
 		return true;
 	    } else {
 		if (Settings.useControlPanel) {
-		    player.performCommand("island cp");
+		    player.performCommand(Settings.ISLANDCOMMAND + " cp");
 		} else {
 		    // Teleport home
 		    plugin.homeTeleport(player);
@@ -570,7 +570,7 @@ public class IslandCmd implements CommandExecutor {
 
 	    if (split[0].equalsIgnoreCase("controlpanel") || split[0].equalsIgnoreCase("cp")) {
 		//if (player.getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
-		if (VaultHelper.checkPerm(player, "askyblock.island.controlpanel")) {
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.controlpanel")) {
 		    player.openInventory(ControlPanel.controlPanel.get(ControlPanel.getDefaultPanelName()));
 		    return true;
 		}
@@ -579,7 +579,7 @@ public class IslandCmd implements CommandExecutor {
 
 	    if (split[0].equalsIgnoreCase("minishop") || split[0].equalsIgnoreCase("ms")) {
 		if (player.getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
-		    if (VaultHelper.checkPerm(player, "askyblock.island.minishop")) {
+		    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.minishop")) {
 			player.openInventory(ControlPanel.miniShop);
 			return true;
 		    }
@@ -587,17 +587,17 @@ public class IslandCmd implements CommandExecutor {
 	    }
 	    // /island <command>
 	    if (split[0].equalsIgnoreCase("warp")) {
-		if (VaultHelper.checkPerm(player, "askyblock.island.warp")) {
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.warp")) {
 		    player.sendMessage(ChatColor.YELLOW + "/island warp <player>: " + ChatColor.WHITE + Locale.islandhelpWarp);
 		    return true;
 		}
 	    } else if (split[0].equalsIgnoreCase("warps")) {
-		if (VaultHelper.checkPerm(player, "askyblock.island.warp")) {
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.warp")) {
 		    // Step through warp table
 		    Set<UUID> warpList = plugin.listWarps();
 		    if (warpList.isEmpty()) {
 			player.sendMessage(ChatColor.YELLOW + Locale.warpserrorNoWarpsYet);
-			if (VaultHelper.checkPerm(player, "askyblock.island.addwarp") && plugin.playerIsOnIsland(player)) {
+			if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.addwarp") && plugin.playerIsOnIsland(player)) {
 			    player.sendMessage(ChatColor.YELLOW + Locale.warpswarpTip);
 			}
 			return true;
@@ -615,7 +615,7 @@ public class IslandCmd implements CommandExecutor {
 			    }
 			}
 			player.sendMessage(ChatColor.YELLOW + Locale.warpswarpsAvailable + ": " + ChatColor.WHITE + wlist);
-			if (!hasWarp && (VaultHelper.checkPerm(player, "askyblock.island.addwarp"))) {
+			if (!hasWarp && (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.addwarp"))) {
 			    player.sendMessage(ChatColor.YELLOW + Locale.warpswarpTip);
 			}
 			return true;
@@ -625,7 +625,7 @@ public class IslandCmd implements CommandExecutor {
 		// Check this player has an island
 		if (!plugin.getPlayers().hasIsland(playerUUID)) {
 		    // No so just start an island
-		    player.performCommand("island");
+		    player.performCommand(Settings.ISLANDCOMMAND);
 		    return true;
 		}
 		if (plugin.getPlayers().inTeam(playerUUID)) {
@@ -730,7 +730,7 @@ public class IslandCmd implements CommandExecutor {
 		    return true;
 		}
 	    } else if (split[0].equalsIgnoreCase("sethome")) {
-		if (VaultHelper.checkPerm(player, "askyblock.island.sethome")) {
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.sethome")) {
 		    plugin.homeSet(player);
 		    return true;
 		}
@@ -752,28 +752,28 @@ public class IslandCmd implements CommandExecutor {
 		player.sendMessage(ChatColor.YELLOW + "/" + label + " level: " + ChatColor.WHITE + Locale.islandhelpLevel);
 		player.sendMessage(ChatColor.YELLOW + "/" + label + " level <player>: " + ChatColor.WHITE + Locale.islandhelpLevelPlayer);
 		player.sendMessage(ChatColor.YELLOW + "/" + label + " top: " + ChatColor.WHITE + Locale.islandhelpTop);
-		if (VaultHelper.checkPerm(player, "askyblock.island.minishop")) {
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.minishop")) {
 		    player.sendMessage(ChatColor.YELLOW + "/" + label + " minishop or ms: " + ChatColor.WHITE + Locale.islandhelpMiniShop);		    
 		}
-		if (VaultHelper.checkPerm(player, "askyblock.island.warp")) {
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.warp")) {
 		    player.sendMessage(ChatColor.YELLOW + "/" + label + " warps: " + ChatColor.WHITE + Locale.islandhelpWarps);
 		    player.sendMessage(ChatColor.YELLOW + "/" + label + " warp <player>: " + ChatColor.WHITE + Locale.islandhelpWarp);
 		}
-		if (VaultHelper.checkPerm(player, "askyblock.team.create")) {
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.create")) {
 		    player.sendMessage(ChatColor.YELLOW + "/" + label + " team: " + ChatColor.WHITE + Locale.islandhelpTeam);
 		    player.sendMessage(ChatColor.YELLOW + "/" + label + " invite <player>: " + ChatColor.WHITE + Locale.islandhelpInvite);
 		    player.sendMessage(ChatColor.YELLOW + "/" + label + " leave: " + ChatColor.WHITE + Locale.islandhelpLeave);
 		}
-		if (VaultHelper.checkPerm(player, "askyblock.team.kick")) {
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.kick")) {
 		    player.sendMessage(ChatColor.YELLOW + "/" + label + " kick <player>: " + ChatColor.WHITE + Locale.islandhelpKick);
 		}
-		if (VaultHelper.checkPerm(player, "askyblock.team.join")) {
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.join")) {
 		    player.sendMessage(ChatColor.YELLOW + "/" + label + " <accept/reject>: " + ChatColor.WHITE + Locale.islandhelpAcceptReject);
 		}
-		if (VaultHelper.checkPerm(player, "askyblock.team.makeleader")) {
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.makeleader")) {
 		    player.sendMessage(ChatColor.YELLOW + "/" + label + " makeleader <player>: " + ChatColor.WHITE + Locale.islandhelpMakeLeader);
 		}
-		if (VaultHelper.checkPerm(player, "askyblock.island.biomes")) {
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.biomes")) {
 		    player.sendMessage(ChatColor.YELLOW + "/" + label + " biomes: " + ChatColor.WHITE + Locale.islandhelpBiome);
 		}
 		if (!Settings.allowPvP) {
@@ -781,7 +781,7 @@ public class IslandCmd implements CommandExecutor {
 		}
 		return true;
 	    } else if (split[0].equalsIgnoreCase("biomes")) {
-		if (VaultHelper.checkPerm(player, "askyblock.island.biomes")) {
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.biomes")) {
 		    // Only the team leader can do this
 		    if (teamLeader != null && !teamLeader.equals(playerUUID)) {
 			player.sendMessage(ChatColor.RED + Locale.levelerrornotYourIsland);
@@ -813,7 +813,7 @@ public class IslandCmd implements CommandExecutor {
 		player.teleport(plugin.getSpawn().getSpawnLoc());
 		return true;
 	    } else if (split[0].equalsIgnoreCase("top")) {
-		if (VaultHelper.checkPerm(player, "askyblock.island.topten")) {
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.topten")) {
 		    plugin.showTopTen(player);
 		    return true;
 		}
@@ -831,7 +831,7 @@ public class IslandCmd implements CommandExecutor {
 		return true;
 	    } else if (split[0].equalsIgnoreCase("invite")) {
 		// Invite label with no name, i.e., /island invite - tells the player how many more people they can invite
-		if (VaultHelper.checkPerm(player, "askyblock.team.create")) {
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.create")) {
 		    player.sendMessage(ChatColor.YELLOW + "Use" + ChatColor.WHITE + " /" + label + " invite <playername> " + ChatColor.YELLOW
 			    + Locale.islandhelpInvite);
 		    // If the player who is doing the inviting has a team
@@ -840,10 +840,10 @@ public class IslandCmd implements CommandExecutor {
 			if (teamLeader.equals(playerUUID)) {
 			    // Check to see if the team is already full
 			    int maxSize = Settings.maxTeamSize;
-			    if (VaultHelper.checkPerm(player, "askyblock.team.vip")) {
+			    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.vip")) {
 				maxSize = Settings.maxTeamSizeVIP;
 			    }
-			    if (VaultHelper.checkPerm(player, "askyblock.team.vip2")) {
+			    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.vip2")) {
 				maxSize = Settings.maxTeamSizeVIP2;
 			    }
 			    if (teamMembers.size() < maxSize) {
@@ -863,7 +863,7 @@ public class IslandCmd implements CommandExecutor {
 		return false;
 	    } else if (split[0].equalsIgnoreCase("accept")) {
 		// Accept an invite command
-		if (VaultHelper.checkPerm(player, "askyblock.team.join")) {
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.join")) {
 		    // If player is not in a team but has been invited to join one
 		    if (!plugin.getPlayers().inTeam(playerUUID) && inviteList.containsKey(playerUUID)) {
 			// If the invitee has an island of their own
@@ -913,7 +913,7 @@ public class IslandCmd implements CommandExecutor {
 		return true;
 	    } else if (split[0].equalsIgnoreCase("leave")) {
 		// Leave team command
-		if (VaultHelper.checkPerm(player, "askyblock.team.join")) {
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.join")) {
 		    if (player.getWorld().getName().equalsIgnoreCase(ASkyBlock.getIslandWorld().getName())) {
 			if (plugin.getPlayers().inTeam(playerUUID)) {
 			    if (plugin.getPlayers().getTeamLeader(playerUUID).equals(playerUUID)) {
@@ -921,7 +921,7 @@ public class IslandCmd implements CommandExecutor {
 				return true;
 			    }
 			    plugin.resetPlayer(player);
-			    if (!player.performCommand("spawn")) {
+			    if (!player.performCommand(Settings.SPAWNCOMMAND)) {
 				player.teleport(player.getWorld().getSpawnLocation());
 			    }
 			    removePlayerFromTeam(playerUUID, teamLeader);
@@ -956,10 +956,10 @@ public class IslandCmd implements CommandExecutor {
 		if (plugin.getPlayers().inTeam(playerUUID)) {
 		    if (teamLeader.equals(playerUUID)) {
 			int maxSize = Settings.maxTeamSize;
-			if (VaultHelper.checkPerm(player, "askyblock.team.vip")) {
+			if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.vip")) {
 			    maxSize = Settings.maxTeamSizeVIP;
 			}
-			if (VaultHelper.checkPerm(player, "askyblock.team.vip2")) {
+			if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.vip2")) {
 			    maxSize = Settings.maxTeamSizeVIP2;
 			}
 			if (teamMembers.size() < maxSize) {
@@ -992,11 +992,11 @@ public class IslandCmd implements CommandExecutor {
 	case 2:
 	    if (split[0].equalsIgnoreCase("warp")) {
 		// Warp somewhere command
-		if (VaultHelper.checkPerm(player, "askyblock.island.warp")) {
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.warp")) {
 		    final Set<UUID> warpList = plugin.listWarps();
 		    if (warpList.isEmpty()) {
 			player.sendMessage(ChatColor.YELLOW + Locale.warpserrorNoWarpsYet);
-			if (VaultHelper.checkPerm(player, "askyblock.island.addwarp")) {
+			if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.addwarp")) {
 			    player.sendMessage(ChatColor.YELLOW + Locale.warpswarpTip);
 			}
 			return true;
@@ -1062,7 +1062,7 @@ public class IslandCmd implements CommandExecutor {
 		}
 	    }    else if (split[0].equalsIgnoreCase("level")) {
 		// island level command
-		if (VaultHelper.checkPerm(player, "askyblock.island.info")) {
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.info")) {
 		    if (!plugin.getPlayers().inTeam(playerUUID) && !plugin.getPlayers().hasIsland(playerUUID)) {
 			player.sendMessage(ChatColor.RED + Locale.errorNoIsland);
 		    } else {
@@ -1082,7 +1082,7 @@ public class IslandCmd implements CommandExecutor {
 		return false;
 	    } else if (split[0].equalsIgnoreCase("invite")) {
 		// Team invite a player command
-		if (VaultHelper.checkPerm(player, "askyblock.team.create")) {
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.create")) {
 		    // May return null if not known
 		    final UUID invitedPlayerUUID = plugin.getPlayers().getUUID(split[1]);
 		    // Invited player must be known
@@ -1114,10 +1114,10 @@ public class IslandCmd implements CommandExecutor {
 			    if (!plugin.getPlayers().inTeam(invitedPlayerUUID)) {
 				// Player has space in their team
 				int maxSize = Settings.maxTeamSize;
-				if (VaultHelper.checkPerm(player, "askyblock.team.vip")) {
+				if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.vip")) {
 				    maxSize = Settings.maxTeamSizeVIP;
 				}
-				if (VaultHelper.checkPerm(player, "askyblock.team.vip2")) {
+				if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.vip2")) {
 				    maxSize = Settings.maxTeamSizeVIP2;
 				}
 				if (teamMembers.size() < maxSize) {
@@ -1176,7 +1176,7 @@ public class IslandCmd implements CommandExecutor {
 		}
 	    } else if (split[0].equalsIgnoreCase("coop")) {
 		// Give a player coop privileges
-		if (VaultHelper.checkPerm(player, "askyblock.team.create")) {
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.create")) {
 		    // May return null if not known
 		    final UUID invitedPlayerUUID = plugin.getPlayers().getUUID(split[1]);
 		    // Invited player must be known
@@ -1231,7 +1231,7 @@ public class IslandCmd implements CommandExecutor {
 		    return true;
 		}
 		// Target cannot be op
-		if (target.isOp() || VaultHelper.checkPerm(target, "askyblock.mod.bypassprotect")) {
+		if (target.isOp() || VaultHelper.checkPerm(target, Settings.PERMPREFIX + "mod.bypassprotect")) {
 		    player.sendMessage(ChatColor.RED + Locale.expelFail.replace("[name]", target.getDisplayName()));
 		    return true;
 		}
@@ -1255,7 +1255,7 @@ public class IslandCmd implements CommandExecutor {
 		return true;
 	    } else if (split[0].equalsIgnoreCase("kick") || split[0].equalsIgnoreCase("remove")) {
 		// Island remove command with a player name, or island kick command
-		if (VaultHelper.checkPerm(player, "askyblock.team.kick")) {
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.kick")) {
 		    if (!plugin.getPlayers().inTeam(playerUUID)) {
 			player.sendMessage(ChatColor.RED + Locale.kickerrorNoTeam);
 			return true;
@@ -1306,7 +1306,7 @@ public class IslandCmd implements CommandExecutor {
 				}
 				plugin.resetPlayer(target);
 			    }
-			    if (!target.performCommand("spawn")) {
+			    if (!target.performCommand(Settings.SPAWNCOMMAND)) {
 				target.teleport(ASkyBlock.getIslandWorld().getSpawnLocation());
 			    } 
 			} else {
@@ -1333,7 +1333,7 @@ public class IslandCmd implements CommandExecutor {
 		    return false;
 		}
 	    } else if (split[0].equalsIgnoreCase("makeleader")) {
-		if (VaultHelper.checkPerm(player, "askyblock.team.makeleader")) {
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.makeleader")) {
 		    targetPlayer = plugin.getPlayers().getUUID(split[1]);
 		    if (targetPlayer == null) {
 			player.sendMessage(ChatColor.RED + Locale.errorUnknownPlayer);

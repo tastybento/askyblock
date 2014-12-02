@@ -89,44 +89,44 @@ public class AdminCmd implements CommandExecutor {
 	    // Permissions are split into admin permissions and mod permissions
 	    Player player = (Player)sender;
 	    player.sendMessage(Locale.adminHelpHelp);
-	    if (VaultHelper.checkPerm(player, "askyblock.admin.reload") || player.isOp()) {
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.reload") || player.isOp()) {
 		player.sendMessage(ChatColor.YELLOW + "/asadmin reload:" + ChatColor.WHITE + " " + Locale.adminHelpreload);
 	    }
-	    if (VaultHelper.checkPerm(player, "askyblock.admin.register") || player.isOp()) {
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.register") || player.isOp()) {
 		player.sendMessage(ChatColor.YELLOW + "/asadmin register <player>:" + ChatColor.WHITE + " " + Locale.adminHelpregister);
 	    }
-	    if (VaultHelper.checkPerm(player, "askyblock.admin.delete") || player.isOp()) {
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.delete") || player.isOp()) {
 		player.sendMessage(ChatColor.YELLOW + "/asadmin delete <player>:" + ChatColor.WHITE + " " + Locale.adminHelpdelete);
 	    }
-	    if (VaultHelper.checkPerm(player, "askyblock.admin.purge") || player.isOp()) {
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.purge") || player.isOp()) {
 		player.sendMessage(ChatColor.YELLOW + "/asadmin purge [TimeInDays]:" + ChatColor.WHITE + " " + Locale.adminHelppurge);
 	    }
-	    if (VaultHelper.checkPerm(player, "askyblock.mod.topten") || player.isOp()) {
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.topten") || player.isOp()) {
 		player.sendMessage(ChatColor.YELLOW + "/asadmin topten:" + ChatColor.WHITE + " " + Locale.adminHelptopTen);
 	    }
-	    if (VaultHelper.checkPerm(player, "askyblock.mod.challenges") || player.isOp()) {
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.challenges") || player.isOp()) {
 		player.sendMessage(ChatColor.YELLOW + "/asadmin completechallenge <challengename> <player>:" + ChatColor.WHITE
 			+ " " + Locale.adminHelpcompleteChallenge);
 		player.sendMessage(ChatColor.YELLOW + "/asadmin resetchallenge <challengename> <player>:" + ChatColor.WHITE
 			+ " " + Locale.adminHelpresetChallenge);
 		player.sendMessage(ChatColor.YELLOW + "/asadmin resetallchallenges <player>:" + ChatColor.WHITE + " " + Locale.adminHelpresetAllChallenges);
 	    }
-	    if (VaultHelper.checkPerm(player, "askyblock.mod.info") || player.isOp()) {
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.info") || player.isOp()) {
 		player.sendMessage(ChatColor.YELLOW + "/asadmin info <player>:" + ChatColor.WHITE + " " + Locale.adminHelpinfo);
 	    }
-	    if (VaultHelper.checkPerm(player, "askyblock.mod.clearreset") || player.isOp()) {
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.clearreset") || player.isOp()) {
 		player.sendMessage(ChatColor.YELLOW + "/asadmin clearreset <player>:" + ChatColor.WHITE + " " + Locale.adminHelpclearReset);
 	    }	    
-	    if (VaultHelper.checkPerm(player, "askyblock.admin.setspawn") || player.isOp()) {
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.setspawn") || player.isOp()) {
 		player.sendMessage(ChatColor.YELLOW + "/asadmin setspawn:" + ChatColor.WHITE + " " + Locale.adminHelpSetSpawn);
 	    }
-	    if (VaultHelper.checkPerm(player, "askyblock.mod.tp") || player.isOp()) {
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.tp") || player.isOp()) {
 		player.sendMessage(ChatColor.YELLOW + "/asadmin tp <player>:" + ChatColor.WHITE + " " + Locale.adminHelptp);
 	    }
-	    if (VaultHelper.checkPerm(player, "askyblock.mod.setbiome") || player.isOp()) {
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.setbiome") || player.isOp()) {
 		sender.sendMessage(ChatColor.YELLOW + "/asadmin setbiome <leader> <biome>:" + ChatColor.WHITE + " Sets leader's island biome.");
 	    }
-	    if (VaultHelper.checkPerm(player, "askyblock.mod.team") || player.isOp()) {
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.team") || player.isOp()) {
 		sender.sendMessage(ChatColor.GREEN + "== Team Editing Commands ==");
 		sender.sendMessage(ChatColor.YELLOW + "/asadmin team kick <player>:" + ChatColor.WHITE + " Removes player from any team.");
 		sender.sendMessage(ChatColor.YELLOW + "/asadmin team add <player> <leader>:" + ChatColor.WHITE + " Adds player to leader's team.");
@@ -712,7 +712,7 @@ public class AdminCmd implements CommandExecutor {
 		}
 		// This is a hack to clear any pending invitations
 		if (targetPlayer != null) {
-		    targetPlayer.performCommand("island decline");
+		    targetPlayer.performCommand(Settings.ISLANDCOMMAND + " decline");
 		}
 		// If the invitee has an island of their own
 		if (plugin.getPlayers().hasIsland(playerUUID)) {
@@ -841,7 +841,7 @@ public class AdminCmd implements CommandExecutor {
 	String check = split[0];
 	if (check.equalsIgnoreCase("confirm"))
 	    check = "purge";
-	if (VaultHelper.checkPerm(player2, "askyblock.admin." + split[0].toLowerCase())) {
+	if (VaultHelper.checkPerm(player2, Settings.PERMPREFIX + "admin." + split[0].toLowerCase())) {
 	    return true;
 	}
 	return false;
@@ -856,7 +856,7 @@ public class AdminCmd implements CommandExecutor {
 	if (check.contains("challenge".toLowerCase())) {
 	    check = "challenges";
 	}
-	if (VaultHelper.checkPerm(player2, "askyblock.mod." + split[0].toLowerCase())) {
+	if (VaultHelper.checkPerm(player2, Settings.PERMPREFIX + "mod." + split[0].toLowerCase())) {
 	    return true;
 	}
 	return false;

@@ -75,7 +75,7 @@ public class Challenges implements CommandExecutor {
 	    return true;
 	}
 	// Check permissions
-	if (!VaultHelper.checkPerm(player, "askyblock.island.challenges")) {
+	if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.challenges")) {
 	    player.sendMessage(ChatColor.RED + Locale.errorNoPermission);
 	    return true;
 	}

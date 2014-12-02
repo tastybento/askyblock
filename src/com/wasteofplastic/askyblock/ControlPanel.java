@@ -164,7 +164,7 @@ public class ControlPanel implements Listener {
 			//plugin.getLogger().info("Material = " + m);
 			Material material = Material.matchMaterial(m);
 			String description = buttons.getString(item + ".description","");
-			String command = buttons.getString(item + ".command","");
+			String command = buttons.getString(item + ".command","").replace("[island]", Settings.ISLANDCOMMAND);
 			String nextSection = buttons.getString(item + ".nextsection","");
 			CPItem cpItem = new CPItem(material,description,command,nextSection);
 			cp.put(slot, cpItem);

@@ -81,7 +81,7 @@ public class AcidEffect implements Listener {
 	    return;
 	}
 	// Check no burn permissions
-	if (VaultHelper.checkPerm(player, "askyblock.mod.noburn") || VaultHelper.checkPerm(player, "askyblock.admin.noburn")) {
+	if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.noburn") || VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.noburn")) {
 	    return;
 	}
 
