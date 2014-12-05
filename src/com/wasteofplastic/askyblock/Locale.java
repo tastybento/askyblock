@@ -23,6 +23,7 @@ package com.wasteofplastic.askyblock;
 
 
 
+
 /**
  * @author ben
  * All the text strings in the game sent to players
@@ -360,6 +361,7 @@ public class Locale {
     public static String coopRemoveSuccess;
     public static String coopMadeYouCoop;
     public static String coopOnYourTeam;
+    public static String islandhelpCoop;
     
    
 }

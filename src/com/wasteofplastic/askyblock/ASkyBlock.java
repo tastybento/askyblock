@@ -61,8 +61,6 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 
-import com.wasteofplastic.askyblock.DeleteIsland.Pair;
-
 /**
  * @author ben
  * Main ASkyBlock class - provides an island minigame in a sea of acid
@@ -1313,6 +1311,7 @@ public class ASkyBlock extends JavaPlugin {
 	Locale.coopSuccess = locale.getString("coop.success", "[name] is now a coop player until they log out or you expel them.");
 	Locale.coopMadeYouCoop = locale.getString("coop.madeyoucoopy", "[name] made you a coop player until you log out or they expel you.");
 	Locale.coopOnYourTeam = locale.getString("coop.onyourteam", "Player is already on your team!");
+	Locale.islandhelpCoop = locale.getString("coop.help", "temporarily give a player full access to your island");
     }
 
     /*
@@ -1367,10 +1366,15 @@ public class ASkyBlock extends JavaPlugin {
 	    playersFolder.mkdir();
 	}
 	// Set up commands for this plugin
-
+	//if (Settings.GAMETYPE.equalsIgnoreCase("ASKYBLOCK")) {
 	getCommand("island").setExecutor(new IslandCmd(this));
 	getCommand("asc").setExecutor(getChallenges());
 	getCommand("asadmin").setExecutor(new AdminCmd(this));
+	/*} else {
+	    getCommand("ai").setExecutor(new IslandCmd(this));
+	    getCommand("aic").setExecutor(getChallenges());
+	    getCommand("acid").setExecutor(new AdminCmd(this));
+	}*/
 	// Register events that this plugin uses
 	//registerEvents();
 	// Load messages
@@ -1486,11 +1490,13 @@ public class ASkyBlock extends JavaPlugin {
 	if (islandTestLocation == null) {
 	    return false;
 	}
-	if (target.getLocation().getX() > islandTestLocation.getX() - Settings.island_protectionRange / 2
-		&& target.getLocation().getX() < islandTestLocation.getX() + Settings.island_protectionRange / 2
-		&& target.getLocation().getZ() > islandTestLocation.getZ() - Settings.island_protectionRange / 2
-		&& target.getLocation().getZ() < islandTestLocation.getZ() + Settings.island_protectionRange / 2) {
-	    return true;
+	if (target.getWorld().equals(islandTestLocation.getWorld())) {
+	    if (target.getLocation().getX() > islandTestLocation.getX() - Settings.island_protectionRange / 2
+		    && target.getLocation().getX() < islandTestLocation.getX() + Settings.island_protectionRange / 2
+		    && target.getLocation().getZ() > islandTestLocation.getZ() - Settings.island_protectionRange / 2
+		    && target.getLocation().getZ() < islandTestLocation.getZ() + Settings.island_protectionRange / 2) {
+		return true;
+	    }
 	}
 	return false;	
     }
@@ -1516,14 +1522,37 @@ public class ASkyBlock extends JavaPlugin {
 	}
 	// Run through all the locations
 	for (Location islandTestLocation : islandTestLocations) {
-	    if (loc.getX() > islandTestLocation.getX() - Settings.island_protectionRange / 2
-		    && loc.getX() < islandTestLocation.getX() + Settings.island_protectionRange / 2
-		    && loc.getZ() > islandTestLocation.getZ() - Settings.island_protectionRange / 2
-		    && loc.getZ() < islandTestLocation.getZ() + Settings.island_protectionRange / 2) {
-		return true;
+	    if (loc.getWorld().equals(islandTestLocation.getWorld())) {
+		if (loc.getX() > islandTestLocation.getX() - Settings.island_protectionRange / 2
+			&& loc.getX() < islandTestLocation.getX() + Settings.island_protectionRange / 2
+			&& loc.getZ() > islandTestLocation.getZ() - Settings.island_protectionRange / 2
+			&& loc.getZ() < islandTestLocation.getZ() + Settings.island_protectionRange / 2) {
+		    return true;
+		}
 	    }
 	}
 	return false;
+    }
+
+    /**
+     * Finds out if location is within a set of island locations and returns the one that is there or null if not
+     * @param islandTestLocations
+     * @param loc
+     * @return
+     */
+    public Location locationIsOnIsland(final Set<Location> islandTestLocations, final Location loc) {
+	// Run through all the locations
+	for (Location islandTestLocation : islandTestLocations) {
+	    if (loc.getWorld().equals(islandTestLocation.getWorld())) {
+		if (loc.getX() > islandTestLocation.getX() - Settings.island_protectionRange / 2
+			&& loc.getX() < islandTestLocation.getX() + Settings.island_protectionRange / 2
+			&& loc.getZ() > islandTestLocation.getZ() - Settings.island_protectionRange / 2
+			&& loc.getZ() < islandTestLocation.getZ() + Settings.island_protectionRange / 2) {
+		    return islandTestLocation;
+		}
+	    }
+	}
+	return null;
     }
 
     /**
@@ -1984,10 +2013,12 @@ public class ASkyBlock extends JavaPlugin {
      * @param player
      */
     public void resetPlayer(Player player) {
-	if (Settings.clearInventory) {
+	if (Settings.clearInventory && (player.getWorld().getName().equalsIgnoreCase(Settings.worldName)
+		|| player.getWorld().getName().equalsIgnoreCase(Settings.worldName + "_nether"))) {
 	    // Clear their inventory and equipment and set them as survival
 	    player.getInventory().clear(); // Javadocs are wrong - this does not
 	    // clear armor slots! So...
+	    player.getInventory().setArmorContents(null);
 	    player.getInventory().setHelmet(null);
 	    player.getInventory().setChestplate(null);
 	    player.getInventory().setLeggings(null);

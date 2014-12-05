@@ -36,9 +36,11 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.TreeType;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.Chest;
 import org.bukkit.block.Sign;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -310,14 +312,149 @@ public class IslandCmd implements CommandExecutor {
      */
     private Location generateIslandBlocks(final int x, final int z, final Player player, final World world) {
 	Location cowSpot = null;
-	Location islandLoc = new Location(world,x,Settings.island_level,z);
-	cowSpot = Schematic.pasteSchematic(world, islandLoc, island, player);
-	if (cowSpot == null) {
-	    islandLoc.getBlock().setType(Material.BEDROCK);
-	    player.sendMessage(ChatColor.RED + "There was a massive problem pasting the new island. Please tell an admin!");
-	    return islandLoc;
+	// What happens next depends on whether this is AcidIsland or ASkyBlock
+	if (Settings.GAMETYPE.equalsIgnoreCase("ASKYBLOCK")) {    
+	    Location islandLoc = new Location(world,x,Settings.island_level,z);
+	    cowSpot = Schematic.pasteSchematic(world, islandLoc, island, player);
+	    if (cowSpot == null) {
+		islandLoc.getBlock().setType(Material.BEDROCK);
+		player.sendMessage(ChatColor.RED + "There was a massive problem pasting the new island. Please tell an admin!");
+		return islandLoc;
+	    }
+	    return cowSpot;   
+	} else {
+	    // AcidIsland
+	    // Check if there is a schematic
+	    File schematicFile = new File(plugin.getDataFolder(), "island.schematic");
+	    if (schematicFile.exists()) {    
+		plugin.getLogger().info("Trying to load island schematic...");
+		Schematic island = null;
+
+		try {
+		    island = Schematic.loadSchematic(schematicFile);
+		    Location islandLoc = new Location(world,x,Settings.island_level,z);
+		    cowSpot = Schematic.pasteSchematic(world, islandLoc, island, player);
+		} catch (IOException e) {
+		    // TODO Auto-generated catch block
+		    plugin.getLogger().severe("Could not load island schematic! Error in file.");
+		    e.printStackTrace();
+		}
+		return cowSpot;
+	    }
+	    // Build island layer by layer
+	    // Start from the base
+	    // half sandstone; half sand
+	    int y = 0;
+	    for (int x_space = x - 4; x_space <= x + 4; x_space++) {
+		for (int z_space = z - 4; z_space <= z + 4; z_space++) {
+		    final Block b = world.getBlockAt(x_space, y, z_space);
+		    b.setType(Material.BEDROCK);
+		}
+	    }
+	    for (y = 1; y < Settings.island_level + 5; y++) {
+		for (int x_space = x - 4; x_space <= x + 4; x_space++) {
+		    for (int z_space = z - 4; z_space <= z + 4; z_space++) {
+			final Block b = world.getBlockAt(x_space, y, z_space);
+			if (y < (Settings.island_level / 2)) {
+			    b.setType(Material.SANDSTONE);
+			} else {
+			    b.setType(Material.SAND);
+			    b.setData((byte)0);
+			}
+		    }
+		}
+	    }
+	    // Then cut off the corners to make it round-ish
+	    for (y = 0; y < Settings.island_level + 5; y++) {
+		for (int x_space = x - 4; x_space <= x + 4; x_space += 8) {
+		    for (int z_space = z - 4; z_space <= z + 4; z_space += 8) {
+			final Block b = world.getBlockAt(x_space, y, z_space);
+			b.setType(Material.STATIONARY_WATER);
+		    }
+		}
+	    }
+	    // Add some grass
+	    for (y = Settings.island_level + 4; y < Settings.island_level + 5; y++) {
+		for (int x_space = x - 2; x_space <= x + 2; x_space++) {
+		    for (int z_space = z - 2; z_space <= z + 2; z_space++) {
+			final Block blockToChange = world.getBlockAt(x_space, y, z_space);
+			blockToChange.setType(Material.GRASS);
+		    }
+		}
+	    }
+	    // Place bedrock - MUST be there (ensures island are not overwritten
+	    Block b = world.getBlockAt(x, Settings.island_level, z);
+	    b.setType(Material.BEDROCK);
+	    // Then add some more dirt in the classic shape
+	    y = Settings.island_level + 3;
+	    for (int x_space = x - 2; x_space <= x + 2; x_space++) {
+		for (int z_space = z - 2; z_space <= z + 2; z_space++) {
+		    b = world.getBlockAt(x_space, y, z_space);
+		    b.setType(Material.DIRT);
+		}
+	    }
+	    b = world.getBlockAt(x - 3, y, z);
+	    b.setType(Material.DIRT);
+	    b = world.getBlockAt(x + 3, y, z);
+	    b.setType(Material.DIRT);
+	    b = world.getBlockAt(x, y, z - 3);
+	    b.setType(Material.DIRT);
+	    b = world.getBlockAt(x, y, z + 3);
+	    b.setType(Material.DIRT);
+	    y = Settings.island_level + 2;
+	    for (int x_space = x - 1; x_space <= x + 1; x_space++) {
+		for (int z_space = z - 1; z_space <= z + 1; z_space++) {
+		    b = world.getBlockAt(x_space, y, z_space);
+		    b.setType(Material.DIRT);
+		}
+	    }
+	    b = world.getBlockAt(x - 2, y, z);
+	    b.setType(Material.DIRT);
+	    b = world.getBlockAt(x + 2, y, z);
+	    b.setType(Material.DIRT);
+	    b = world.getBlockAt(x, y, z - 2);
+	    b.setType(Material.DIRT);
+	    b = world.getBlockAt(x, y, z + 2);
+	    b.setType(Material.DIRT);
+	    y = Settings.island_level + 1;
+	    b = world.getBlockAt(x - 1, y, z);
+	    b.setType(Material.DIRT);
+	    b = world.getBlockAt(x + 1, y, z);
+	    b.setType(Material.DIRT);
+	    b = world.getBlockAt(x, y, z - 1);
+	    b.setType(Material.DIRT);
+	    b = world.getBlockAt(x, y, z + 1);
+	    b.setType(Material.DIRT);
+
+	    // Add island items
+	    y = Settings.island_level;
+	    // Add tree (natural)
+	    final Location treeLoc = new Location(world,x,y + 5D, z);
+	    world.generateTree(treeLoc, TreeType.ACACIA);
+	    // Place the cow
+	    cowSpot = new Location(world, x, (Settings.island_level+5), z-2);
+
+	    // Place a helpful sign in front of player
+	    Block blockToChange = world.getBlockAt(x, Settings.island_level + 5, z + 3);
+	    blockToChange.setType(Material.SIGN_POST);
+	    Sign sign = (Sign) blockToChange.getState();
+	    sign.setLine(0, ChatColor.translateAlternateColorCodes('&', Locale.signLine1.replace("[player]", player.getName())));
+	    sign.setLine(1, ChatColor.translateAlternateColorCodes('&', Locale.signLine2.replace("[player]", player.getName())));
+	    sign.setLine(2, ChatColor.translateAlternateColorCodes('&', Locale.signLine3.replace("[player]", player.getName())));
+	    sign.setLine(3, ChatColor.translateAlternateColorCodes('&', Locale.signLine4.replace("[player]", player.getName())));
+	    ((org.bukkit.material.Sign) sign.getData()).setFacingDirection(BlockFace.NORTH);
+	    sign.update();
+	    // Place the chest - no need to use the safe spawn function because we
+	    // know what this island looks like
+	    blockToChange = world.getBlockAt(x, Settings.island_level + 5, z + 1);
+	    blockToChange.setType(Material.CHEST);
+	    // Fill the chest
+	    final Chest chest = (Chest) blockToChange.getState();
+	    final Inventory inventory = chest.getInventory();
+	    inventory.clear();
+	    inventory.setContents(Settings.chestItems);
+	    return cowSpot;
 	}
-	return cowSpot;
     }
 
     /**
@@ -675,6 +812,10 @@ public class IslandCmd implements CommandExecutor {
 		    if (plugin.getPlayers().getResetsLeft(playerUUID) > 0) {
 			player.sendMessage(ChatColor.YELLOW + Locale.resetYouHave.replace("[number]", String.valueOf(plugin.getPlayers().getResetsLeft(playerUUID))));
 		    }
+		    // Clear any coop inventories
+		    CoopPlay.getInstance().returnAllInventories(player);
+		    // Remove any coop invitees and grab their stuff
+		    CoopPlay.getInstance().clearMyCoops(player);
 		    //plugin.getLogger().info("DEBUG Reset command issued!");
 		    final Location oldIsland = plugin.getPlayers().getIslandLocation(playerUUID);
 		    //plugin.unregisterEvents();		
@@ -778,6 +919,9 @@ public class IslandCmd implements CommandExecutor {
 		}
 		if (!Settings.allowPvP) {
 		    player.sendMessage(ChatColor.YELLOW + "/" + label + " expel <player>: " + ChatColor.WHITE + Locale.islandhelpExpel);
+		}
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.create")) {
+		    player.sendMessage(ChatColor.YELLOW + "/" + label + " coop: " + ChatColor.WHITE + Locale.islandhelpCoop);
 		}
 		return true;
 	    } else if (split[0].equalsIgnoreCase("biomes")) {
@@ -920,6 +1064,11 @@ public class IslandCmd implements CommandExecutor {
 				player.sendMessage(ChatColor.YELLOW + Locale.leaveerrorYouAreTheLeader);
 				return true;
 			    }
+			    // Clear any coop inventories
+			    CoopPlay.getInstance().returnAllInventories(player);
+			    // Remove any of the target's coop invitees and grab their stuff
+			    CoopPlay.getInstance().clearMyCoops(player);
+			    
 			    plugin.resetPlayer(player);
 			    if (!player.performCommand(Settings.SPAWNCOMMAND)) {
 				player.teleport(player.getWorld().getSpawnLocation());
@@ -1205,6 +1354,13 @@ public class IslandCmd implements CommandExecutor {
 			player.sendMessage(ChatColor.RED + Locale.coopOnYourTeam);
 			return true;
 		    }
+		    // Target has to have an island
+		    if (!plugin.getPlayers().inTeam(invitedPlayerUUID)) {
+			if (!plugin.getPlayers().hasIsland(invitedPlayerUUID)) {
+			    player.sendMessage(ChatColor.RED + Locale.errorNoIslandOther);
+			    return true;
+			}
+		    }
 		    // Add target to coop list
 		    CoopPlay.getInstance().addCoopPlayer(player, newPlayer);
 		    // Tell everyone what happened
@@ -1224,7 +1380,7 @@ public class IslandCmd implements CommandExecutor {
 		    player.sendMessage(ChatColor.RED + Locale.errorUnknownPlayer);
 		    return true;
 		}
-		// Player must be online
+		// Target must be online
 		Player target = plugin.getServer().getPlayer(targetPlayerUUID);
 		if (target == null) {
 		    player.sendMessage(ChatColor.RED + Locale.errorOfflinePlayer);
@@ -1235,6 +1391,28 @@ public class IslandCmd implements CommandExecutor {
 		    player.sendMessage(ChatColor.RED + Locale.expelFail.replace("[name]", target.getDisplayName()));
 		    return true;
 		}
+		// Find out if the target is in a coop area
+		Location coopLocation = plugin.locationIsOnIsland(CoopPlay.getInstance().getCoopIslands(target),target.getLocation());
+		// Get the expeller's island
+		Location expellersIsland = null;
+		if (plugin.getPlayers().inTeam(player.getUniqueId())) {
+		    expellersIsland = plugin.getPlayers().getTeamIslandLocation(player.getUniqueId());
+		} else {
+		    expellersIsland = plugin.getPlayers().getIslandLocation(player.getUniqueId());
+		}
+		// Return this island inventory to the owner
+		CoopPlay.getInstance().returnInventory(target, expellersIsland);
+		// Mark them as no longer on a coop island
+		CoopPlay.getInstance().setOnCoopIsland(targetPlayerUUID, null);
+		// Find out if this location the same as this player's island
+		if (coopLocation != null && coopLocation.equals(expellersIsland)) {
+		    // They were on the island so return their home inventory
+		    if (plugin.getPlayers().inTeam(targetPlayerUUID)) {
+			InventorySave.getInstance().loadPlayerInventory(player, plugin.getPlayers().getTeamIslandLocation(targetPlayerUUID));
+		    } else {
+			InventorySave.getInstance().loadPlayerInventory(player, plugin.getPlayers().getIslandLocation(targetPlayerUUID));
+		    }
+		}
 		// Remove them from the coop list
 		boolean coop = CoopPlay.getInstance().removeCoopPlayer(player, target); 
 		if (coop) {
@@ -1242,7 +1420,7 @@ public class IslandCmd implements CommandExecutor {
 		    player.sendMessage(ChatColor.GREEN + Locale.coopRemoveSuccess.replace("[name]", target.getDisplayName()));
 		}
 		// See if target is on this player's island
-		if (plugin.isOnIsland(player, target)) {
+		if (plugin.isOnIsland(player, target)) {   
 		    plugin.homeTeleport(target);
 		    target.sendMessage(ChatColor.RED + Locale.expelExpelled);
 		    plugin.getLogger().info(player.getName() + " expelled " + target.getName() + " from their island.");
@@ -1286,14 +1464,16 @@ public class IslandCmd implements CommandExecutor {
 			Player target = plugin.getServer().getPlayer(targetPlayer);
 			if (target != null) {
 			    target.sendMessage(ChatColor.RED + Locale.kicknameRemovedYou.replace("[name]", player.getName()));
-
+			    // Clear any coop inventories
+			    CoopPlay.getInstance().returnAllInventories(target);
+			    // Remove any of the target's coop invitees and grab their stuff
+			    CoopPlay.getInstance().clearMyCoops(target);
 			    // Clear the player out and throw their stuff at the leader
 			    if (target.getWorld().getName().equalsIgnoreCase(ASkyBlock.getIslandWorld().getName())) {
 				for (ItemStack i : target.getInventory().getContents()) {
 				    if (i != null) {
 					try {
 					    player.getWorld().dropItemNaturally(player.getLocation(), i);
-					    target.getInventory().remove(i);
 					} catch (Exception e) {}
 				    }
 				}

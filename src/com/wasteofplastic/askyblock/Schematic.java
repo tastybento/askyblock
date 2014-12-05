@@ -154,7 +154,7 @@ public class Schematic {
 			    grass = new Location(world,x,y,z);
 			    //Bukkit.getLogger().info("DEBUG more Z found:" + grass.toString());
 			}
-			
+
 		    }
 		}
 	    }
@@ -167,10 +167,12 @@ public class Schematic {
 	    Bukkit.getLogger().severe("ASkyBlock: Schematic must have at least one chest in it!");
 	    return null;
 	}
+	/*
+	 * These are now optional
 	if (welcomeSign == null) {
 	    Bukkit.getLogger().severe("ASkyBlock: Schematic must have at least one sign post in it!");
 	    return null;
-	}
+	}*/
 	if (grass == null) {
 	    Bukkit.getLogger().severe("ASkyBlock: Schematic must have at least one grass block in it!");
 	    return null;
@@ -213,24 +215,27 @@ public class Schematic {
 	while (!ASkyBlock.isSafeLocation(grass) && grass.getY() < 250) {
 	    grass.setY(grass.getY() + 1.1D);
 	}
+	Block blockToChange = null;
 	//Bukkit.getLogger().info("DEBUG cow location " + grass.toString());
 	//world.spawnEntity(grass, EntityType.COW);
 	// Place a helpful sign in front of player
-	//Bukkit.getLogger().info("DEBUG welcome sign schematic relative is:" + welcomeSign.toString());
-	welcomeSign.subtract(bedrock);
-	//Bukkit.getLogger().info("DEBUG welcome sign relative to bedrock is:" + welcomeSign.toString());	
-	welcomeSign.add(loc);
-	//Bukkit.getLogger().info("DEBUG welcome sign actual position is:" + welcomeSign.toString());	
-	Block blockToChange = welcomeSign.getBlock();
-	blockToChange.setType(Material.SIGN_POST);
-	Sign sign = (Sign) blockToChange.getState();
-	sign.setLine(0, ChatColor.translateAlternateColorCodes('&', Locale.signLine1.replace("[player]", player.getName())));
-	sign.setLine(1, ChatColor.translateAlternateColorCodes('&', Locale.signLine2.replace("[player]", player.getName())));
-	sign.setLine(2, ChatColor.translateAlternateColorCodes('&', Locale.signLine3.replace("[player]", player.getName())));
-	sign.setLine(3, ChatColor.translateAlternateColorCodes('&', Locale.signLine4.replace("[player]", player.getName())));
-	//BlockFace direction = ((org.bukkit.material.Sign) sign.getData()).getFacing();
-	//((org.bukkit.material.Sign) sign.getData()).setFacingDirection(BlockFace.NORTH);
-	sign.update();
+	if (welcomeSign != null) {
+	    //Bukkit.getLogger().info("DEBUG welcome sign schematic relative is:" + welcomeSign.toString());
+	    welcomeSign.subtract(bedrock);
+	    //Bukkit.getLogger().info("DEBUG welcome sign relative to bedrock is:" + welcomeSign.toString());	
+	    welcomeSign.add(loc);
+	    //Bukkit.getLogger().info("DEBUG welcome sign actual position is:" + welcomeSign.toString());	
+	    blockToChange = welcomeSign.getBlock();
+	    blockToChange.setType(Material.SIGN_POST);
+	    Sign sign = (Sign) blockToChange.getState();
+	    sign.setLine(0, ChatColor.translateAlternateColorCodes('&', Locale.signLine1.replace("[player]", player.getName())));
+	    sign.setLine(1, ChatColor.translateAlternateColorCodes('&', Locale.signLine2.replace("[player]", player.getName())));
+	    sign.setLine(2, ChatColor.translateAlternateColorCodes('&', Locale.signLine3.replace("[player]", player.getName())));
+	    sign.setLine(3, ChatColor.translateAlternateColorCodes('&', Locale.signLine4.replace("[player]", player.getName())));
+	    //BlockFace direction = ((org.bukkit.material.Sign) sign.getData()).getFacing();
+	    //((org.bukkit.material.Sign) sign.getData()).setFacingDirection(BlockFace.NORTH);
+	    sign.update();
+	}
 	chest.subtract(bedrock);
 	chest.add(loc);
 	// Place the chest - no need to use the safe spawn function because we

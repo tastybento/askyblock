@@ -142,7 +142,7 @@ public class Settings {
     
     // Constants
     // Game Type ASKYBLOCK or ACIDISLAND
-    public final static String GAMETYPE = "ASKYBLOCK";
+    public final static String GAMETYPE = "ACIDISLAND";
     // Permission prefix
     public final static String PERMPREFIX = "askyblock.";
     // The island command

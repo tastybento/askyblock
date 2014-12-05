@@ -19,6 +19,8 @@ package com.wasteofplastic.askyblock;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -85,11 +87,123 @@ public class IslandGuard implements Listener {
 
     }
 
+
+    /**
+     * Handles coop inventory switching
+     * @param e
+     */
+    @EventHandler(priority = EventPriority.LOW)
+    public void onPlayerMove(PlayerMoveEvent e) {
+	Player player = e.getPlayer();
+	UUID playerUUID = player.getUniqueId();
+	if (!player.getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	    return;
+	}
+	// Find out if the player has any coop islands
+	Set<Location> coopIslands = CoopPlay.getInstance().getCoopIslands(player);
+	if (coopIslands.isEmpty()) {
+	    return;
+	}
+	// Options are:
+	// 1. Player entered a coop island
+	// 2. Player left a coop island
+	// 3. Player entered a coop island from another coop island (rare - more likely via teleport)
+	Location from = plugin.locationIsOnIsland(coopIslands, e.getFrom());
+	Location to = plugin.locationIsOnIsland(coopIslands, e.getTo());	
+	if (from == null && to != null) {
+	    // Entering a coop island area
+	    player.sendMessage(ChatColor.GREEN + "Entering coop island. Switching inventory.");
+	    // Save and clear the visitor's inventory
+	    // Save and clear the visitor's inventory
+	    if (plugin.getPlayers().inTeam(playerUUID)) {
+		InventorySave.getInstance().switchPlayerInventory(player, plugin.getPlayers().getTeamIslandLocation(playerUUID), to);
+	    } else {
+		InventorySave.getInstance().switchPlayerInventory(player, plugin.getPlayers().getIslandLocation(playerUUID), to);
+	    }
+	} else if (from != null && to == null) {
+	    // Leaving a coop island area
+	    e.getPlayer().sendMessage(ChatColor.GREEN + "Leaving coop island. Returning inventory.");
+	    // Return the inventory to the island owners and swap in home inventory
+	    if (plugin.getPlayers().inTeam(playerUUID)) {
+		InventorySave.getInstance().switchPlayerInventory(player, from, plugin.getPlayers().getTeamIslandLocation(playerUUID));
+	    } else {
+		InventorySave.getInstance().switchPlayerInventory(player, from, plugin.getPlayers().getIslandLocation(playerUUID));
+	    }
+	} else if (from != null && to != null && !from.equals(to)) {
+	    // Moving from one coop to another that is immediately adjacent (very unlikely)
+	    e.getPlayer().sendMessage(ChatColor.GREEN + "Switching coop island. Switching inventory.");
+	    InventorySave.getInstance().switchPlayerInventory(player, from, to);
+	    CoopPlay.getInstance().saveAndClearInventory(e.getPlayer());
+	}
+	// Set the flag of whether they are on a coop island or not
+	// This flag is used to clean up the inventory situation should the player teleport or die
+	CoopPlay.getInstance().setOnCoopIsland(e.getPlayer().getUniqueId(), to);
+    }
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void onCoopTeleport(PlayerTeleportEvent e) {
+	// If both from and to are not in the island world return
+	if (!e.getFrom().getWorld().getName().equalsIgnoreCase(Settings.worldName) && !e.getTo().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	    return;
+	}
+	Player player = e.getPlayer();
+	UUID playerUUID = player.getUniqueId();
+	// Find out if the player is entering a coop area
+	Location to = plugin.locationIsOnIsland(CoopPlay.getInstance().getCoopIslands(player),e.getTo());
+	// Check they were not in a coop area
+	Location from = CoopPlay.getInstance().getOnCoopIsland(playerUUID);
+	// If this is nothing to do with coop return quickly
+	if (to == null && from == null) {
+	    return;
+	}
+	// If this is a teleport within the same island space then return
+	if (to != null && from != null && to.equals(from)) {
+	    return;
+	}
+	plugin.getLogger().info("DEBUG coop teleport to coop island " + to);
+	plugin.getLogger().info("DEBUG coop teleport last coop island location = " + from);
+	if (to != null) {
+	    plugin.getLogger().info("DEBUG coop is not null");
+	    // Entering a coop area
+	    if (from == null) {
+		plugin.getLogger().info("DEBUG lastcoop is null - entering island");
+		player.sendMessage(ChatColor.GREEN + "Entering coop island. Switching inventory.");
+		// Save and clear the visitor's inventory
+		if (plugin.getPlayers().inTeam(playerUUID)) {
+		    InventorySave.getInstance().switchPlayerInventory(player, plugin.getPlayers().getTeamIslandLocation(playerUUID), to);
+		} else {
+		    InventorySave.getInstance().switchPlayerInventory(player, plugin.getPlayers().getIslandLocation(playerUUID),to);
+		}
+		CoopPlay.getInstance().setOnCoopIsland(e.getPlayer().getUniqueId(), to);
+	    } else {
+		plugin.getLogger().info("DEBUG lastcoop is not null - switched to new coop island");
+		// Player has teleported from one coop area to another
+		player.sendMessage(ChatColor.GREEN + "Switched to new coop island. Switching inventory.");
+		InventorySave.getInstance().switchPlayerInventory(player, from, to);
+		CoopPlay.getInstance().setOnCoopIsland(e.getPlayer().getUniqueId(), to);
+	    }
+	} else {
+	    plugin.getLogger().info("DEBUG coop is null");
+	    // Check they were already in a coop area
+	    if (from != null) {	
+		plugin.getLogger().info("DEBUG lastcoop is not null - leaving island");
+		player.sendMessage(ChatColor.GREEN + "Leaving coop island. Switching inventory.");
+		if (plugin.getPlayers().inTeam(playerUUID)) {
+		    InventorySave.getInstance().switchPlayerInventory(player, from, plugin.getPlayers().getTeamIslandLocation(playerUUID));
+		} else {
+		    InventorySave.getInstance().switchPlayerInventory(player, from, plugin.getPlayers().getIslandLocation(playerUUID));
+		}
+	    }
+	    CoopPlay.getInstance().setOnCoopIsland(e.getPlayer().getUniqueId(), null);
+	    // Nothing to do, they were not in a coop area and teleported to another non-coop area
+	}
+    }
+
     /*
      * Prevent dropping items if player dies on another island
      * This option helps reduce the down side of dying due to traps, etc.
      */
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled=false)
     public void onVistorDeath(final PlayerDeathEvent e) {
 	if (!e.getEntity().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    return;
@@ -102,6 +216,7 @@ public class IslandGuard implements Listener {
 	// This will override any global settings
 	if (Settings.allowVisitorKeepInvOnDeath) {
 	    InventorySave.getInstance().savePlayerInventory(e.getEntity());
+	    e.getDrops().clear();
 	    e.setKeepLevel(true);
 	    e.setDroppedExp(0);
 	}
