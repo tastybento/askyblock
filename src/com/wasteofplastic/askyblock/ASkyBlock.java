@@ -1079,6 +1079,24 @@ public class ASkyBlock extends JavaPlugin {
 	Settings.addCompletedGlow = getConfig().getBoolean("general.addcompletedglow", true);
 
 	// Localization Locale Setting
+	if (Settings.GAMETYPE.equalsIgnoreCase("ASKYBLOCK")) {
+	    Locale.signLine1 = locale.getString("sign.line1", "&1[A Skyblock]");
+	    Locale.signLine2 = locale.getString("sign.line2", "[player]");
+	    Locale.signLine3 = locale.getString("sign.line3", "Do not fall!");
+	    Locale.signLine4 = locale.getString("sign.line4", "Beware!");
+	    Locale.islandhelpSpawn = locale.getString("island.helpIslandSpawn","go to ASkyBlock spawn.");
+	    Locale.newsHeadline = locale.getString("news.headline","[ASkyBlock News] While you were offline...");
+
+	} else {
+	    // AcidIsland
+	    Locale.signLine1 = locale.getString("sign.line1", "&1[Acid Island]");
+	    Locale.signLine2 = locale.getString("sign.line2", "[player]");
+	    Locale.signLine3 = locale.getString("sign.line3", "Water is acid!");
+	    Locale.signLine4 = locale.getString("sign.line4", "Beware!");
+	    Locale.islandhelpSpawn = locale.getString("island.helpIslandSpawn","go to AcidIsland spawn.");
+	    Locale.newsHeadline = locale.getString("news.headline","[AcidIsland News] While you were offline...");
+
+	}
 	Locale.changingObsidiantoLava = locale.getString("changingObsidiantoLava", "Changing obsidian back into lava. Be careful!");
 	Locale.acidLore = locale.getString("acidLore","Poison!\nBeware!\nDo not drink!");
 	Locale.acidBucket = locale.getString("acidBucket", "Acid Bucket");
@@ -1161,7 +1179,6 @@ public class ASkyBlock extends JavaPlugin {
 	Locale.islandresetConfirm = locale.getString("island.resetConfirm", "Type /island confirm within 10 seconds to delete your island and restart!");
 	Locale.islandhelpIsland = locale.getString("island.helpIsland","start an island, or teleport to your island.");
 	Locale.islandhelpTeleport = locale.getString("island.helpTeleport", "teleport to your island.");
-	Locale.islandhelpSpawn = locale.getString("island.helpIslandSpawn","go to ASkyBlock spawn.");
 	Locale.islandhelpControlPanel = locale.getString("island.helpControlPanel","open the island GUI.");
 	Locale.islandhelpRestart = locale.getString("island.helpRestart","restart your island and remove the old one.");
 	Locale.islandDeletedLifeboats = locale.getString("island.islandDeletedLifeboats","Island deleted! Head to the lifeboats!");
@@ -1205,7 +1222,7 @@ public class ASkyBlock extends JavaPlugin {
 	Locale.leaveyouHaveLeftTheIsland = locale.getString("leave.youHaveLeftTheIsland","You have left the island and returned to the player spawn.");
 	Locale.leavenameHasLeftYourIsland = locale.getString("leave.nameHasLeftYourIsland","[name] has left your island!");
 	Locale.leaveerrorYouCannotLeaveIsland = locale.getString("leave.errorYouCannotLeaveIsland","You can't leave your island if you are the only person. Try using /island restart if you want a new one!");
-	Locale.leaveerrorYouMustBeInWorld = locale.getString("leave.errorYouMustBeInWorld","You must be in the ASkyBlock world to leave your team!");
+	Locale.leaveerrorYouMustBeInWorld = locale.getString("leave.errorYouMustBeInWorld","You must be in the island world to leave your team!");
 	Locale.leaveerrorLeadersCannotLeave = locale.getString("leave.errorLeadersCannotLeave","Leaders cannot leave an island. Make someone else the leader fist using /island makeleader <player>");
 	Locale.teamlistingMembers = locale.getString("team.listingMembers","Listing your island members");
 	Locale.kickerrorPlayerNotInTeam = locale.getString("kick.errorPlayerNotInTeam","That player is not in your team!");
@@ -1221,7 +1238,7 @@ public class ASkyBlock extends JavaPlugin {
 	Locale.makeLeadernameIsNowTheOwner = locale.getString("makeleader.nameIsNowTheOwner","[name] is now the owner of your island!");
 	Locale.makeLeadererrorThatPlayerIsNotInTeam = locale.getString("makeleader.errorThatPlayerIsNotInTeam","That player is not part of your island team!");
 	Locale.makeLeadererrorNotYourIsland = locale.getString("makeleader.errorNotYourIsland","This isn't your island, so you can't give it away!");
-	Locale.makeLeadererrorGeneralError = locale.getString("makeleader.errorGeneralError","Acid Admin Commands:");
+	Locale.makeLeadererrorGeneralError = locale.getString("makeleader.errorGeneralError","Could not make leader!");
 	Locale.adminHelpHelp = locale.getString("adminHelp.help","Could not change leaders.");
 	Locale.adminHelpreload = locale.getString("adminHelp.reload","reload configuration from file.");
 	Locale.adminHelptopTen = locale.getString("adminHelp.topTen","manually update the top 10 list");
@@ -1232,34 +1249,34 @@ public class ASkyBlock extends JavaPlugin {
 	Locale.adminHelpresetAllChallenges = locale.getString("adminHelp.resetAllChallenges","resets all of the player's challenges");
 	Locale.adminHelppurge = locale.getString("adminHelp.purge","delete inactive islands older than [TimeInDays].");
 	Locale.adminHelpinfo = locale.getString("adminHelp.info","check information on the given player.");
-	Locale.adminHelpSetSpawn = locale.getString("adminHelp.setspawn","opens the spawn GUI for ASkyBlock world.");
+	Locale.adminHelpSetSpawn = locale.getString("adminHelp.setspawn","opens the spawn GUI for the island world.");
 	Locale.adminHelpinfoIsland = locale.getString("adminHelp.infoisland","provide info on the nearest island.");
 	Locale.adminHelptp = locale.getString("adminHelp.tp", "Teleport to a player's island.");
 	Locale.reloadconfigReloaded = locale.getString("reload.configReloaded","Configuration reloaded from file.");
 	Locale.adminTopTengenerating = locale.getString("adminTopTen.generating","Generating the Top Ten list");
 	Locale.adminTopTenfinished = locale.getString("adminTopTen.finished","Finished generation of the Top Ten list");
 	Locale.purgealreadyRunning = locale.getString("purge.alreadyRunning","Purge is already running, please wait for it to finish!");
-	Locale.purgeusage = locale.getString("purge.usage","Calculating which islands have been inactive for more than [time] days.");
-	Locale.purgecalculating = locale.getString("purge.calculating","No inactive islands to remove.");
-	Locale.purgenoneFound = locale.getString("purge.noneFound","This will remove [number] inactive islands!");
-	Locale.purgethisWillRemove = locale.getString("purge.thisWillRemove","DANGER! Do not run this with players on the server! MAKE BACKUP OF WORLD!");
-	Locale.purgewarning = locale.getString("purge.warning","Type /acid confirm to proceed within 10 seconds");
-	Locale.purgetypeConfirm = locale.getString("purge.typeConfirm","Purge cancelled.");
-	Locale.purgepurgeCancelled = locale.getString("purge.purgeCancelled","Finished purging of inactive islands.");
-	Locale.purgefinished = locale.getString("purge.finished","Purge: Removing [name]'s island");
-	Locale.purgeremovingName = locale.getString("purge.removingName","Time limit expired! Issue command again.");
-	Locale.confirmerrorTimeLimitExpired = locale.getString("confirm.errorTimeLimitExpired","Removing [name]'s island.");
-	Locale.deleteremoving = locale.getString("delete.removing","Set [name]'s island to the bedrock nearest you.");
-	Locale.registersettingIsland = locale.getString("register.settingIsland","Error: unable to set the island!");
-	Locale.registererrorBedrockNotFound = locale.getString("register.errorBedrockNotFound","Island Location");
-	Locale.adminInfoislandLocation = locale.getString("adminInfo.islandLocation","That player is not a member of an island team.");
-	Locale.adminInfoerrorNotPartOfTeam = locale.getString("adminInfo.errorNotPartOfTeam","Team leader should be null!");
-	Locale.adminInfoerrorNullTeamLeader = locale.getString("adminInfo.errorNullTeamLeader","Player has team members, but shouldn't!");
-	Locale.adminInfoerrorTeamMembersExist = locale.getString("adminInfo.errorTeamMembersExist","[name] has had all challenges reset.");
-	Locale.resetChallengessuccess = locale.getString("resetallchallenges.success","Checking Team of [name]");
-	Locale.checkTeamcheckingTeam = locale.getString("checkTeam.checkingTeam","Challenge doesn't exist or is already completed");
-	Locale.completeChallengeerrorChallengeDoesNotExist = locale.getString("completechallenge.errorChallengeDoesNotExist","[challengename] has been completed for [name]");
-	Locale.completeChallengechallangeCompleted = locale.getString("completechallenge.challangeCompleted","Challenge doesn't exist or isn't yet completed");
+	Locale.purgeusage = locale.getString("purge.usage","Usage: /[label] purge [TimeInDays]");
+	Locale.purgecalculating = locale.getString("purge.calculating","Calculating which islands have been inactive for more than [time] days.");
+	Locale.purgenoneFound = locale.getString("purge.noneFound","No inactive islands to remove.");
+	Locale.purgethisWillRemove = locale.getString("purge.thisWillRemove","This will remove [number] inactive islands!");
+	Locale.purgewarning = locale.getString("purge.warning","DANGER! Do not run this with players on the server! MAKE BACKUP OF WORLD!");
+	Locale.purgetypeConfirm = locale.getString("purge.typeConfirm","Type [label] confirm to proceed within 10 seconds");
+	Locale.purgepurgeCancelled = locale.getString("purge.purgeCancelled","Purge cancelled.");
+	Locale.purgefinished = locale.getString("purge.finished","Finished purging of inactive islands.");
+	Locale.purgeremovingName = locale.getString("purge.removingName","Purge: Removing [name]'s island");
+	Locale.confirmerrorTimeLimitExpired = locale.getString("confirm.errorTimeLimitExpired","Time limit expired! Issue command again.");
+	Locale.deleteremoving = locale.getString("delete.removing","Removing [name]'s island.");
+	Locale.registersettingIsland = locale.getString("register.settingIsland","Set [name]'s island to the bedrock nearest you.");
+	Locale.registererrorBedrockNotFound = locale.getString("register.errorBedrockNotFound","Error: unable to set the island!");
+	Locale.adminInfoislandLocation = locale.getString("adminInfo.islandLocation","Island Location");
+	Locale.adminInfoerrorNotPartOfTeam = locale.getString("adminInfo.errorNotPartOfTeam","That player is not a member of an island team.");
+	Locale.adminInfoerrorNullTeamLeader = locale.getString("adminInfo.errorNullTeamLeader","Team leader should be null!");
+	Locale.adminInfoerrorTeamMembersExist = locale.getString("adminInfo.errorTeamMembersExist","Player has team members, but shouldn't!");
+	Locale.resetChallengessuccess = locale.getString("resetallchallenges.success","[name] has had all challenges reset.");
+	Locale.checkTeamcheckingTeam = locale.getString("checkTeam.checkingTeam","Checking Team of [name]");
+	Locale.completeChallengeerrorChallengeDoesNotExist = locale.getString("completechallenge.errorChallengeDoesNotExist","Challenge doesn't exist or is already completed");
+	Locale.completeChallengechallangeCompleted = locale.getString("completechallenge.challangeCompleted","[challengename] has been completed for [name]");
 	Locale.resetChallengeerrorChallengeDoesNotExist = locale.getString("resetchallenge.errorChallengeDoesNotExist","[challengename] has been reset for [name]");
 	Locale.confirmerrorTimeLimitExpired = locale.getString("confirm.errorTimeLimitExpired","Time limit expired! Issue command again.");
 	Locale.deleteremoving = locale.getString("delete.removing","Removing [name]'s island.");
@@ -1275,7 +1292,6 @@ public class ASkyBlock extends JavaPlugin {
 	Locale.completeChallengechallangeCompleted = locale.getString("completechallenge.challangeCompleted","[challengename] has been completed for [name]");
 	Locale.resetChallengeerrorChallengeDoesNotExist = locale.getString("resetchallenge.errorChallengeDoesNotExist","Challenge doesn't exist or isn't yet completed");
 	Locale.resetChallengechallengeReset = locale.getString("resetchallenge.challengeReset","[challengename] has been reset for [name]");
-	Locale.newsHeadline = locale.getString("news.headline","[ASkyBlock News] While you were offline...");
 	Locale.netherSpawnIsProtected = locale.getString("nether.spawnisprotected", "The Nether spawn area is protected.");
 	Locale.islandhelpMiniShop = locale.getString("minishop.islandhelpMiniShop","Opens the MiniShop" );
 	Locale.islandMiniShopTitle = locale.getString("minishop.title","MiniShop" );
@@ -1292,10 +1308,7 @@ public class ASkyBlock extends JavaPlugin {
 	Locale.resetYouHave = locale.getString("island.resetYouHave","You have [number] resets left.");
 	Locale.islandResetNoMore = locale.getString("island.resetNoMore", "No more resets are allowed for your island!");
 	Locale.clearedResetLimit = locale.getString("resetTo", "Cleared reset limit");
-	Locale.signLine1 = locale.getString("sign.line1", "&1[A Skyblock]");
-	Locale.signLine2 = locale.getString("sign.line2", "[player]");
-	Locale.signLine3 = locale.getString("sign.line3", "Do not fall!");
-	Locale.signLine4 = locale.getString("sign.line4", "Beware!");
+
 	Locale.islandhelpBiome = locale.getString("biome.help","open the biome GUI.");
 	Locale.biomeSet = locale.getString("biome.set","Island biome set to [biome]!");
 	Locale.biomeUnknown = locale.getString("biome.unknown","Unknown biome!");
@@ -1408,7 +1421,7 @@ public class ASkyBlock extends JavaPlugin {
 		    getLogger().severe("********* The Generator for " + plugin.getName() + " is not registered so the plugin cannot start ********");
 		    getLogger().severe("Make sure you have the following in bukkit.yml (case sensitive):");
 		    getLogger().severe("worlds:");
-		    getLogger().severe("  # The next line must be the name of you skyblock world:");
+		    getLogger().severe("  # The next line must be the name of your world:");
 		    getLogger().severe("  " + Settings.worldName + ":");
 		    getLogger().severe("    generator: " + plugin.getName());
 		    getServer().getPluginManager().disablePlugin(plugin);
