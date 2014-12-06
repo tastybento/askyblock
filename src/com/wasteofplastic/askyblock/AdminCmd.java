@@ -380,15 +380,25 @@ public class AdminCmd implements CommandExecutor {
 				    // Calculate the number of hours the player has
 				    // been offline
 				    offlineTime = (System.currentTimeMillis() - offlineTime) / 3600000L;
+				    //plugin.getLogger().info(plugin.getPlayers().getName(playerUUID) + " has been offline " + offlineTime + " hours. Required = " + time);
 				    if (offlineTime > time) {
+					//plugin.getLogger().info(plugin.getPlayers().getName(playerUUID) + " has not logged on recently enough");
 					if (plugin.getPlayers().hasIsland(playerUUID)) {
 					    // If the player is in a team then ignore
 					    if (!plugin.getPlayers().inTeam(playerUUID)) {
+						//plugin.getLogger().info("and is a lone player");
 						if (plugin.getPlayers().getIslandLevel(playerUUID) < Settings.abandonedIslandLevel) {
+						    //plugin.getLogger().info("and their island will be removed!");
 						    //player.sendMessage("Island level for " + plugin.getPlayers().getName(playerUUID) + " is " + plugin.getPlayers().getIslandLevel(playerUUID));
 						    removeList.add(playerUUID);
+						} else {
+						    //plugin.getLogger().info("but thei island level is > " + Settings.abandonedIslandLevel + " so not deleting");
 						}
+					    } else {
+						//plugin.getLogger().info("but is in a team");
 					    }
+					} else {
+					    //plugin.getLogger().info("but does not have an island.");
 					}
 				    }
 				}
@@ -421,6 +431,7 @@ public class AdminCmd implements CommandExecutor {
 				} else if (confirmOK) {
 				    // Set up a repeating task to run every 5 seconds to remove
 				    // islands one by one and then cancel when done
+				    final int total = removeList.size();
 				    new BukkitRunnable() {
 					@Override
 					public void run() {
@@ -432,18 +443,19 @@ public class AdminCmd implements CommandExecutor {
 
 					    if (removeList.size() > 0 && purgeFlag) {
 						plugin.deletePlayerIsland(removeList.get(0));
-						sender.sendMessage(ChatColor.YELLOW + Locale.purgeremovingName.replace("[name]", plugin.getPlayers().getName(removeList.get(0))));
+						sender.sendMessage(ChatColor.YELLOW + "[" + removeList.size() + "/" + total + "] " 
+						+ Locale.purgeremovingName.replace("[name]", plugin.getPlayers().getName(removeList.get(0))));
 						removeList.remove(0);
 					    }
-
+					    sender.sendMessage("Now waiting...");
 					}
-				    }.runTaskTimer(plugin, 0L, 100L);
+				    }.runTaskTimer(plugin, 0L, 20L);
 				    confirmReq = false;
 				    confirmOK = false;
 				    this.cancel();
 				}
 			    }
-			}.runTaskTimer(plugin, 0L,20L);
+			}.runTaskTimer(plugin, 0L,40L);
 		    }
 		});
 		return true;
