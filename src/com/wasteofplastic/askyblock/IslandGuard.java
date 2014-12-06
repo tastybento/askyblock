@@ -96,7 +96,7 @@ public class IslandGuard implements Listener {
     public void onPlayerMove(PlayerMoveEvent e) {
 	Player player = e.getPlayer();
 	UUID playerUUID = player.getUniqueId();
-	if (!player.getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	if (!e.getFrom().getWorld().getName().equalsIgnoreCase(Settings.worldName) || !e.getTo().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    return;
 	}
 	// Find out if the player has any coop islands
@@ -109,7 +109,7 @@ public class IslandGuard implements Listener {
 	// 2. Player left a coop island
 	// 3. Player entered a coop island from another coop island (rare - more likely via teleport)
 	Location from = plugin.locationIsOnIsland(coopIslands, e.getFrom());
-	Location to = plugin.locationIsOnIsland(coopIslands, e.getTo());	
+	Location to = plugin.locationIsOnIsland(coopIslands, e.getTo());
 	if (from == null && to != null) {
 	    // Entering a coop island area
 	    player.sendMessage(ChatColor.GREEN + "Entering coop island. Switching inventory.");
@@ -142,12 +142,23 @@ public class IslandGuard implements Listener {
 
     @EventHandler(priority = EventPriority.LOW)
     public void onCoopTeleport(PlayerTeleportEvent e) {
+	plugin.getLogger().info("DEBUG coop teleport to " + e.getTo());
+	plugin.getLogger().info("DEBUG coop teleport from " + e.getFrom());
 	// If both from and to are not in the island world return
-	if (!e.getFrom().getWorld().getName().equalsIgnoreCase(Settings.worldName) && !e.getTo().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	if (!e.getFrom().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	    plugin.getLogger().info("DEBUG return - not in right world");
 	    return;
 	}
+
 	Player player = e.getPlayer();
 	UUID playerUUID = player.getUniqueId();
+	// If to world is no island world then quit all coops
+	if (!e.getTo().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	    // Clear any coop inventories
+	    CoopPlay.getInstance().returnAllInventories(player);
+	    // Remove any of the target's coop invitees and grab their stuff
+	    CoopPlay.getInstance().clearMyCoops(player);
+	}
 	// Find out if the player is entering a coop area
 	Location to = plugin.locationIsOnIsland(CoopPlay.getInstance().getCoopIslands(player),e.getTo());
 	// Check they were not in a coop area
@@ -160,13 +171,13 @@ public class IslandGuard implements Listener {
 	if (to != null && from != null && to.equals(from)) {
 	    return;
 	}
-	plugin.getLogger().info("DEBUG coop teleport to coop island " + to);
-	plugin.getLogger().info("DEBUG coop teleport last coop island location = " + from);
+	//plugin.getLogger().info("DEBUG coop teleport to coop island " + to);
+	//plugin.getLogger().info("DEBUG coop teleport last coop island location = " + from);
 	if (to != null) {
-	    plugin.getLogger().info("DEBUG coop is not null");
+	    //plugin.getLogger().info("DEBUG coop is not null");
 	    // Entering a coop area
 	    if (from == null) {
-		plugin.getLogger().info("DEBUG lastcoop is null - entering island");
+		//plugin.getLogger().info("DEBUG lastcoop is null - entering island");
 		player.sendMessage(ChatColor.GREEN + "Entering coop island. Switching inventory.");
 		// Save and clear the visitor's inventory
 		if (plugin.getPlayers().inTeam(playerUUID)) {
@@ -176,17 +187,17 @@ public class IslandGuard implements Listener {
 		}
 		CoopPlay.getInstance().setOnCoopIsland(e.getPlayer().getUniqueId(), to);
 	    } else {
-		plugin.getLogger().info("DEBUG lastcoop is not null - switched to new coop island");
+		//plugin.getLogger().info("DEBUG lastcoop is not null - switched to new coop island");
 		// Player has teleported from one coop area to another
 		player.sendMessage(ChatColor.GREEN + "Switched to new coop island. Switching inventory.");
 		InventorySave.getInstance().switchPlayerInventory(player, from, to);
 		CoopPlay.getInstance().setOnCoopIsland(e.getPlayer().getUniqueId(), to);
 	    }
 	} else {
-	    plugin.getLogger().info("DEBUG coop is null");
+	    //plugin.getLogger().info("DEBUG coop is null");
 	    // Check they were already in a coop area
 	    if (from != null) {	
-		plugin.getLogger().info("DEBUG lastcoop is not null - leaving island");
+		//plugin.getLogger().info("DEBUG lastcoop is not null - leaving island");
 		player.sendMessage(ChatColor.GREEN + "Leaving coop island. Switching inventory.");
 		if (plugin.getPlayers().inTeam(playerUUID)) {
 		    InventorySave.getInstance().switchPlayerInventory(player, from, plugin.getPlayers().getTeamIslandLocation(playerUUID));

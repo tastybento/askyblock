@@ -123,13 +123,13 @@ public class Challenges implements CommandExecutor {
 		if (!players.checkChallenge(player.getUniqueId(),challenge)) {
 		    // First time
 		    moneyReward = plugin.getChallengeConfig().getInt("challenges.challengeList." + challenge.toLowerCase() + ".moneyReward", 0);
-		    rewardText = plugin.getChallengeConfig().getString("challenges.challengeList." + challenge.toLowerCase() + ".rewardText", "Goodies!").replace('&', '§');
+		    rewardText = ChatColor.translateAlternateColorCodes('&', plugin.getChallengeConfig().getString("challenges.challengeList." + challenge.toLowerCase() + ".rewardText", "Goodies!"));
 		    expReward = plugin.getChallengeConfig().getInt("challenges.challengeList." + challenge + ".xpReward", 0);
 		    sender.sendMessage(ChatColor.GOLD + Locale.challengesfirstTimeRewards);
 		} else {
 		    // Repeat challenge
 		    moneyReward = plugin.getChallengeConfig().getInt("challenges.challengeList." + challenge.toLowerCase() + ".repeatMoneyReward", 0);
-		    rewardText = plugin.getChallengeConfig().getString("challenges.challengeList." + challenge.toLowerCase() + ".repeatRewardText", "Goodies!").replace('&', '§');
+		    rewardText = ChatColor.translateAlternateColorCodes('&',plugin.getChallengeConfig().getString("challenges.challengeList." + challenge.toLowerCase() + ".repeatRewardText", "Goodies!"));
 		    expReward = plugin.getChallengeConfig().getInt("challenges.challengeList." + challenge + ".repeatExpReward", 0);
 		    sender.sendMessage(ChatColor.GOLD + Locale.challengesrepeatRewards);
 
@@ -188,14 +188,14 @@ public class Challenges implements CommandExecutor {
 	    plugin.tellOfflineTeam(player.getUniqueId(), ChatColor.GOLD + Locale.challengesnameHasCompleted.replace("[name]", player.getName()).replace("[challenge]", challengeName ));
 	    itemRewards = plugin.getChallengeConfig().getString("challenges.challengeList." + challenge.toLowerCase() + ".itemReward", "").split(" ");
 	    moneyReward = plugin.getChallengeConfig().getInt("challenges.challengeList." + challenge.toLowerCase() + ".moneyReward", 0);
-	    rewardText = plugin.getChallengeConfig().getString("challenges.challengeList." + challenge.toLowerCase() + ".rewardText", "Goodies!").replace('&', '§');
+	    rewardText = ChatColor.translateAlternateColorCodes('&',plugin.getChallengeConfig().getString("challenges.challengeList." + challenge.toLowerCase() + ".rewardText", "Goodies!"));
 	    expReward = plugin.getChallengeConfig().getInt("challenges.challengeList." + challenge + ".expReward", 0);
 	} else {
 	    // Repeat challenge
 	    player.sendMessage(ChatColor.GREEN + Locale.challengesyouRepeated.replace("[challenge]", challengeName));
 	    itemRewards = plugin.getChallengeConfig().getString("challenges.challengeList." + challenge.toLowerCase() + ".repeatItemReward", "").split(" ");
 	    moneyReward = plugin.getChallengeConfig().getInt("challenges.challengeList." + challenge.toLowerCase() + ".repeatMoneyReward", 0);
-	    rewardText = plugin.getChallengeConfig().getString("challenges.challengeList." + challenge.toLowerCase() + ".repeatRewardText", "Goodies!").replace('&', '§');
+	    rewardText = ChatColor.translateAlternateColorCodes('&',plugin.getChallengeConfig().getString("challenges.challengeList." + challenge.toLowerCase() + ".repeatRewardText", "Goodies!"));
 	    expReward = plugin.getChallengeConfig().getInt("challenges.challengeList." + challenge + ".repeatExpReward", 0);	    
 	}	
 	// Report the rewards and give out exp, money and permissions if appropriate
@@ -856,7 +856,7 @@ public class Challenges implements CommandExecutor {
 		    // Only show this challenge if it is not done or repeatable if the setting Settings.removeCompleteOntimeChallenges
 		    if (!complete || ((complete && repeatable) || !Settings.removeCompleteOntimeChallenges)) {
 			// Store the challenge panel item and the command that will be called if it is activated.
-			CPItem item = new CPItem(icon, description, "asc c " + challengeName, null);
+			CPItem item = new CPItem(icon, description, Settings.CHALLENGECOMMAND + " c " + challengeName, null);
 			// Get the challenge description, that changes depending on whether the challenge is complete or not.
 			List<String> lore = challengeDescription(challengeName, player);
 			item.setLore(lore);
@@ -976,13 +976,13 @@ public class Challenges implements CommandExecutor {
 	if (!players.checkChallenge(player.getUniqueId(),challenge)) {
 	    // First time
 	    moneyReward = plugin.getChallengeConfig().getInt("challenges.challengeList." + challenge.toLowerCase() + ".moneyReward", 0);
-	    rewardText = plugin.getChallengeConfig().getString("challenges.challengeList." + challenge.toLowerCase() + ".rewardText", "Goodies!").replace('&', '§');
+	    rewardText = ChatColor.translateAlternateColorCodes('&',plugin.getChallengeConfig().getString("challenges.challengeList." + challenge.toLowerCase() + ".rewardText", "Goodies!"));
 	    expReward = plugin.getChallengeConfig().getInt("challenges.challengeList." + challenge + ".xpReward", 0);
 	    result.addAll(chop(ChatColor.GOLD, Locale.challengesfirstTimeRewards,length));
 	} else {
 	    // Repeat challenge
 	    moneyReward = plugin.getChallengeConfig().getInt("challenges.challengeList." + challenge.toLowerCase() + ".repeatMoneyReward", 0);
-	    rewardText = plugin.getChallengeConfig().getString("challenges.challengeList." + challenge.toLowerCase() + ".repeatRewardText", "Goodies!").replace('&', '§');
+	    rewardText = ChatColor.translateAlternateColorCodes('&',plugin.getChallengeConfig().getString("challenges.challengeList." + challenge.toLowerCase() + ".repeatRewardText", "Goodies!"));
 	    expReward = plugin.getChallengeConfig().getInt("challenges.challengeList." + challenge + ".repeatExpReward", 0);
 	    result.addAll(chop(ChatColor.GOLD,  Locale.challengesrepeatRewards,length));
 

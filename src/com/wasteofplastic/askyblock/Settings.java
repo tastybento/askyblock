@@ -147,8 +147,11 @@ public class Settings {
     public final static String PERMPREFIX = "askyblock.";
     // The island command
     public final static String ISLANDCOMMAND = "island";
+    // The challenge command
+    public static final String CHALLENGECOMMAND = "asc";
     // The spawn command (Essentials spawn for example)
     public final static String SPAWNCOMMAND = "spawn";
+
  
 
     

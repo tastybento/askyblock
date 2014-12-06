@@ -82,8 +82,11 @@ public class IslandCmd implements CommandExecutor {
 	// Check if there is a schematic
 	File schematicFile = new File(plugin.getDataFolder(), "island.schematic");
 	if (!schematicFile.exists()) {
-	    plugin.saveResource("island.schematic", false);
-	    schematicFile = new File(plugin.getDataFolder(), "island.schematic");
+	    // Load in the ASkyBlock one if required
+	    if (Settings.GAMETYPE.equalsIgnoreCase("ASKYBLOCK")) {
+		plugin.saveResource("island.schematic", false);
+		schematicFile = new File(plugin.getDataFolder(), "island.schematic");
+	    }
 	}
 	if (schematicFile.exists()) {    
 	    plugin.getLogger().info("Trying to load island schematic...");
@@ -1068,7 +1071,7 @@ public class IslandCmd implements CommandExecutor {
 			    CoopPlay.getInstance().returnAllInventories(player);
 			    // Remove any of the target's coop invitees and grab their stuff
 			    CoopPlay.getInstance().clearMyCoops(player);
-			    
+
 			    plugin.resetPlayer(player);
 			    if (!player.performCommand(Settings.SPAWNCOMMAND)) {
 				player.teleport(player.getWorld().getSpawnLocation());
