@@ -816,8 +816,9 @@ public class IslandCmd implements CommandExecutor {
 			player.sendMessage(ChatColor.YELLOW + Locale.resetYouHave.replace("[number]", String.valueOf(plugin.getPlayers().getResetsLeft(playerUUID))));
 		    }
 		    // Clear any coop inventories
-		    CoopPlay.getInstance().returnAllInventories(player);
+		    //CoopPlay.getInstance().returnAllInventories(player);
 		    // Remove any coop invitees and grab their stuff
+		    CoopPlay.getInstance().clearMyInvitedCoops(player);
 		    CoopPlay.getInstance().clearMyCoops(player);
 		    //plugin.getLogger().info("DEBUG Reset command issued!");
 		    final Location oldIsland = plugin.getPlayers().getIslandLocation(playerUUID);
@@ -923,7 +924,7 @@ public class IslandCmd implements CommandExecutor {
 		if (!Settings.allowPvP) {
 		    player.sendMessage(ChatColor.YELLOW + "/" + label + " expel <player>: " + ChatColor.WHITE + Locale.islandhelpExpel);
 		}
-		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.create")) {
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "coop")) {
 		    player.sendMessage(ChatColor.YELLOW + "/" + label + " coop: " + ChatColor.WHITE + Locale.islandhelpCoop);
 		}
 		return true;
@@ -1068,10 +1069,10 @@ public class IslandCmd implements CommandExecutor {
 				return true;
 			    }
 			    // Clear any coop inventories
-			    CoopPlay.getInstance().returnAllInventories(player);
+			    //CoopPlay.getInstance().returnAllInventories(player);
 			    // Remove any of the target's coop invitees and grab their stuff
+			    CoopPlay.getInstance().clearMyInvitedCoops(player);
 			    CoopPlay.getInstance().clearMyCoops(player);
-
 			    plugin.resetPlayer(player);
 			    if (!player.performCommand(Settings.SPAWNCOMMAND)) {
 				player.teleport(player.getWorld().getSpawnLocation());
@@ -1328,7 +1329,7 @@ public class IslandCmd implements CommandExecutor {
 		}
 	    } else if (split[0].equalsIgnoreCase("coop")) {
 		// Give a player coop privileges
-		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.create")) {
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "coop")) {
 		    // May return null if not known
 		    final UUID invitedPlayerUUID = plugin.getPlayers().getUUID(split[1]);
 		    // Invited player must be known
@@ -1370,7 +1371,8 @@ public class IslandCmd implements CommandExecutor {
 		    player.sendMessage(ChatColor.GREEN + Locale.coopSuccess.replace("[name]", newPlayer.getDisplayName())); 
 		    newPlayer.sendMessage(ChatColor.GREEN + Locale.coopMadeYouCoop.replace("[name]", player.getDisplayName()));
 		    return true;
-		} 
+		    
+		}
 	    } else if (split[0].equalsIgnoreCase("expel")) {
 		if (Settings.allowPvP) {
 		    player.sendMessage(ChatColor.RED + Locale.errorUnknownCommand);
@@ -1394,6 +1396,7 @@ public class IslandCmd implements CommandExecutor {
 		    player.sendMessage(ChatColor.RED + Locale.expelFail.replace("[name]", target.getDisplayName()));
 		    return true;
 		}
+		/*
 		// Find out if the target is in a coop area
 		Location coopLocation = plugin.locationIsOnIsland(CoopPlay.getInstance().getCoopIslands(target),target.getLocation());
 		// Get the expeller's island
@@ -1415,7 +1418,7 @@ public class IslandCmd implements CommandExecutor {
 		    } else {
 			InventorySave.getInstance().loadPlayerInventory(player, plugin.getPlayers().getIslandLocation(targetPlayerUUID));
 		    }
-		}
+		}*/
 		// Remove them from the coop list
 		boolean coop = CoopPlay.getInstance().removeCoopPlayer(player, target); 
 		if (coop) {
@@ -1468,8 +1471,9 @@ public class IslandCmd implements CommandExecutor {
 			if (target != null) {
 			    target.sendMessage(ChatColor.RED + Locale.kicknameRemovedYou.replace("[name]", player.getName()));
 			    // Clear any coop inventories
-			    CoopPlay.getInstance().returnAllInventories(target);
-			    // Remove any of the target's coop invitees and grab their stuff
+			   // CoopPlay.getInstance().returnAllInventories(target);
+			    // Remove any of the target's coop invitees and anyone they invited
+			    CoopPlay.getInstance().clearMyInvitedCoops(target);
 			    CoopPlay.getInstance().clearMyCoops(target);
 			    // Clear the player out and throw their stuff at the leader
 			    if (target.getWorld().getName().equalsIgnoreCase(ASkyBlock.getIslandWorld().getName())) {

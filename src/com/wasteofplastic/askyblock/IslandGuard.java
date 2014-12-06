@@ -19,8 +19,6 @@ package com.wasteofplastic.askyblock;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -92,6 +90,7 @@ public class IslandGuard implements Listener {
      * Handles coop inventory switching
      * @param e
      */
+    /*
     @EventHandler(priority = EventPriority.LOW)
     public void onPlayerMove(PlayerMoveEvent e) {
 	Player player = e.getPlayer();
@@ -138,9 +137,10 @@ public class IslandGuard implements Listener {
 	// Set the flag of whether they are on a coop island or not
 	// This flag is used to clean up the inventory situation should the player teleport or die
 	CoopPlay.getInstance().setOnCoopIsland(e.getPlayer().getUniqueId(), to);
-    }
+    }*/
 
-    @EventHandler(priority = EventPriority.LOW)
+    /*
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onCoopTeleport(PlayerTeleportEvent e) {
 	plugin.getLogger().info("DEBUG coop teleport to " + e.getTo());
 	plugin.getLogger().info("DEBUG coop teleport from " + e.getFrom());
@@ -208,7 +208,7 @@ public class IslandGuard implements Listener {
 	    CoopPlay.getInstance().setOnCoopIsland(e.getPlayer().getUniqueId(), null);
 	    // Nothing to do, they were not in a coop area and teleported to another non-coop area
 	}
-    }
+    }*/
 
     /*
      * Prevent dropping items if player dies on another island

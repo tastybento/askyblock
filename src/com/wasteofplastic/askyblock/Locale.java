@@ -362,6 +362,8 @@ public class Locale {
     public static String coopMadeYouCoop;
     public static String coopOnYourTeam;
     public static String islandhelpCoop;
+    public static String coopInvited;
+    public static String coopUseExpel;
     
    
 }

@@ -1,9 +1,6 @@
 package com.wasteofplastic.askyblock;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Location;
@@ -43,7 +40,7 @@ public class InventorySave {
      * @param loc
      */
     public void loadPlayerInventory(Player player, Location loc) {
-	plugin.getLogger().info("DEBUG: Loading inventory");
+	//plugin.getLogger().info("DEBUG: Loading inventory");
 	// Get the info for this player
 	if (inventories.containsKey(player.getUniqueId())) {
 	    plugin.getLogger().info("DEBUG: player is known");
@@ -52,14 +49,14 @@ public class InventorySave {
 	    //plugin.getLogger().info("DEBUG: loc = " + loc);
 	    // Check if the location exists
 	    if (inv.containsKey(loc)) {
-		plugin.getLogger().info("DEBUG: Location is known");
+		//plugin.getLogger().info("DEBUG: Location is known");
 		player.getInventory().setContents(inv.get(loc).getInventory());
 		player.getInventory().setArmorContents(inv.get(loc).getArmor());
 		inv.remove(loc);
 		return;
 	    } 
 	}
-	plugin.getLogger().info("DEBUG: name or location not known, clearing inventory - nothing to load");
+	//plugin.getLogger().info("DEBUG: name or location not known, clearing inventory - nothing to load");
 	// Else Clear
 	player.getInventory().clear();
 	player.getInventory().setBoots(null);
@@ -80,12 +77,13 @@ public class InventorySave {
      * @param player
      * @param to
      */
+    /*
     public void switchPlayerInventory(Player player, Location from, Location to) {
-	plugin.getLogger().info("DEBUG: from " + from + " to " + to);
+	//plugin.getLogger().info("DEBUG: from " + from + " to " + to);
 	savePlayerInventory(player, from);
 	loadPlayerInventory(player, to);
     } 
-
+*/
     public static InventorySave getInstance() {
 	return instance;
     }

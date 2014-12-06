@@ -75,7 +75,9 @@ public class JoinLeaveEvents implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerQuit(final PlayerQuitEvent event) {
 	// Remove from coop list
-	CoopPlay.getInstance().returnAllInventories(event.getPlayer());
+	CoopPlay.getInstance().clearMyCoops(event.getPlayer());
+	CoopPlay.getInstance().clearMyInvitedCoops(event.getPlayer());
+	//CoopPlay.getInstance().returnAllInventories(event.getPlayer());
 	//plugin.setMessage(event.getPlayer().getUniqueId(), "Hello! This is a test. You logged out");
 	players.removeOnlinePlayer(event.getPlayer().getUniqueId());
     }

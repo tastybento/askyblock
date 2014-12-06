@@ -1312,6 +1312,8 @@ public class ASkyBlock extends JavaPlugin {
 	Locale.coopMadeYouCoop = locale.getString("coop.madeyoucoopy", "[name] made you a coop player until you log out or they expel you.");
 	Locale.coopOnYourTeam = locale.getString("coop.onyourteam", "Player is already on your team!");
 	Locale.islandhelpCoop = locale.getString("coop.help", "temporarily give a player full access to your island");
+	Locale.coopInvited = locale.getString("coop.invited", "[name] made [player] a coop player!");
+	Locale.coopUseExpel = locale.getString("coop.useexpel", "Use expel to remove.");
     }
 
     /*

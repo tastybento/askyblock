@@ -489,8 +489,9 @@ public class AdminCmd implements CommandExecutor {
 		    Player target = plugin.getServer().getPlayer(playerUUID);
 		    if (target != null) {
 			// Clear any coop inventories
-			CoopPlay.getInstance().returnAllInventories(target);
+			//CoopPlay.getInstance().returnAllInventories(target);
 			// Remove any of the target's coop invitees and grab their stuff
+			CoopPlay.getInstance().clearMyInvitedCoops(target);
 			CoopPlay.getInstance().clearMyCoops(target);
 			plugin.resetPlayer(target);
 		    }
