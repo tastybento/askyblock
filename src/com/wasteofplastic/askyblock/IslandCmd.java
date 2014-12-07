@@ -49,6 +49,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.DirectionalContainer;
 
 public class IslandCmd implements CommandExecutor {
     public boolean busyFlag = true;
@@ -83,7 +84,7 @@ public class IslandCmd implements CommandExecutor {
 	File schematicFile = new File(plugin.getDataFolder(), "island.schematic");
 	if (!schematicFile.exists()) {
 	    // Load in the ASkyBlock one if required
-	    if (Settings.GAMETYPE.equalsIgnoreCase("ASKYBLOCK")) {
+	    if (Settings.GAMETYPE.equals(Settings.GameType.ASKYBLOCK)) {
 		plugin.saveResource("island.schematic", false);
 		schematicFile = new File(plugin.getDataFolder(), "island.schematic");
 	    }
@@ -316,7 +317,7 @@ public class IslandCmd implements CommandExecutor {
     private Location generateIslandBlocks(final int x, final int z, final Player player, final World world) {
 	Location cowSpot = null;
 	// What happens next depends on whether this is AcidIsland or ASkyBlock
-	if (Settings.GAMETYPE.equalsIgnoreCase("ASKYBLOCK")) {    
+	if (Settings.GAMETYPE.equals(Settings.GameType.ASKYBLOCK)) {    
 	    Location islandLoc = new Location(world,x,Settings.island_level,z);
 	    cowSpot = Schematic.pasteSchematic(world, islandLoc, island, player);
 	    if (cowSpot == null) {
@@ -451,11 +452,18 @@ public class IslandCmd implements CommandExecutor {
 	    // know what this island looks like
 	    blockToChange = world.getBlockAt(x, Settings.island_level + 5, z + 1);
 	    blockToChange.setType(Material.CHEST);
-	    // Fill the chest
-	    final Chest chest = (Chest) blockToChange.getState();
-	    final Inventory inventory = chest.getInventory();
-	    inventory.clear();
-	    inventory.setContents(Settings.chestItems);
+	    // Only set if the config has items in it
+	    if (Settings.chestItems.length > 0) {
+		final Chest chest = (Chest) blockToChange.getState();
+		final Inventory inventory = chest.getInventory();
+		inventory.clear();
+		inventory.setContents(Settings.chestItems);
+		chest.update();
+	    }
+	    // Fill the chest and orient it correctly (1.8 faces it north!
+	    DirectionalContainer dc = (DirectionalContainer) blockToChange.getState().getData();
+	    dc.setFacingDirection(BlockFace.SOUTH);
+	    blockToChange.setData(dc.getData(), true);
 	    return cowSpot;
 	}
     }
@@ -1371,7 +1379,7 @@ public class IslandCmd implements CommandExecutor {
 		    player.sendMessage(ChatColor.GREEN + Locale.coopSuccess.replace("[name]", newPlayer.getDisplayName())); 
 		    newPlayer.sendMessage(ChatColor.GREEN + Locale.coopMadeYouCoop.replace("[name]", player.getDisplayName()));
 		    return true;
-		    
+
 		}
 	    } else if (split[0].equalsIgnoreCase("expel")) {
 		if (Settings.allowPvP) {
@@ -1471,7 +1479,7 @@ public class IslandCmd implements CommandExecutor {
 			if (target != null) {
 			    target.sendMessage(ChatColor.RED + Locale.kicknameRemovedYou.replace("[name]", player.getName()));
 			    // Clear any coop inventories
-			   // CoopPlay.getInstance().returnAllInventories(target);
+			    // CoopPlay.getInstance().returnAllInventories(target);
 			    // Remove any of the target's coop invitees and anyone they invited
 			    CoopPlay.getInstance().clearMyInvitedCoops(target);
 			    CoopPlay.getInstance().clearMyCoops(target);

@@ -31,6 +31,31 @@ import org.bukkit.potion.PotionEffectType;
  * Where all the settings are
  */
 public class Settings {
+    // Constants
+    // Game Type ASKYBLOCK or ACIDISLAND
+    public enum GameType {
+	ASKYBLOCK, ACIDISLAND
+	}
+    public final static GameType GAMETYPE = GameType.ASKYBLOCK;
+    // Permission prefix
+    public final static String PERMPREFIX = "askyblock.";
+    // The island command
+    public final static String ISLANDCOMMAND = "island";
+    // The challenge command
+    public static final String CHALLENGECOMMAND = "asc";
+    // The spawn command (Essentials spawn for example)
+    public final static String SPAWNCOMMAND = "spawn";    
+
+    /* Acid Island
+     *
+    // Permission prefix
+    public final static String PERMPREFIX = "acidisland.";
+    // The island command
+    public final static String ISLANDCOMMAND = "ai";
+    // The challenge command
+    public static final String CHALLENGECOMMAND = "aic";
+     */
+  
     public static Set<String> challengeList;
     public static int waiverAmount;
     public static List<String> challengeLevels;
@@ -140,20 +165,6 @@ public class Settings {
     public static boolean removeCompleteOntimeChallenges;
     public static boolean addCompletedGlow;
     
-    // Constants
-    // Game Type ASKYBLOCK or ACIDISLAND
-    public final static String GAMETYPE = "ASKYBLOCK";
-    // Permission prefix
-    public final static String PERMPREFIX = "askyblock.";
-    // The island command
-    public final static String ISLANDCOMMAND = "island";
-    // The challenge command
-    public static final String CHALLENGECOMMAND = "asc";
-    // The spawn command (Essentials spawn for example)
-    public final static String SPAWNCOMMAND = "spawn";
 
- 
-
-    
   
 }

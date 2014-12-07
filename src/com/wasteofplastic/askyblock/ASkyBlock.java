@@ -807,23 +807,45 @@ public class ASkyBlock extends JavaPlugin {
 	    Settings.islandZOffset = Settings.islandDistance;
 	    getLogger().info("Setting maximum island Z Offset to " + Settings.islandDistance);	    
 	}
-	Settings.acidDamage = getConfig().getDouble("general.aciddamage", 5D);
-	if (Settings.acidDamage > 100D) {
-	    Settings.acidDamage = 100D;
-	} else if (Settings.acidDamage < 0D) {
-	    Settings.acidDamage = 0D;
-	}
-	Settings.mobAcidDamage = getConfig().getDouble("general.mobaciddamage", 10D);
-	if (Settings.acidDamage > 100D) {
-	    Settings.acidDamage = 100D;
-	} else if (Settings.acidDamage < 0D) {
-	    Settings.acidDamage = 0D;
-	}
-	Settings.rainDamage = getConfig().getDouble("general.raindamage", 0.5D);
-	if (Settings.rainDamage > 100D) {
-	    Settings.rainDamage = 100D;
-	} else if (Settings.rainDamage < 0D) {
-	    Settings.rainDamage = 0D;
+	// ASkyBlock and AcidIsland difference
+	if (Settings.GAMETYPE.equals(Settings.GameType.ACIDISLAND)) {
+	    Settings.acidDamage = getConfig().getDouble("general.aciddamage", 5D);
+	    if (Settings.acidDamage > 100D) {
+		Settings.acidDamage = 100D;
+	    } else if (Settings.acidDamage < 0D) {
+		Settings.acidDamage = 0D;
+	    }
+	    Settings.mobAcidDamage = getConfig().getDouble("general.mobaciddamage", 10D);
+	    if (Settings.acidDamage > 100D) {
+		Settings.acidDamage = 100D;
+	    } else if (Settings.acidDamage < 0D) {
+		Settings.acidDamage = 0D;
+	    }
+	    Settings.rainDamage = getConfig().getDouble("general.raindamage", 0.5D);
+	    if (Settings.rainDamage > 100D) {
+		Settings.rainDamage = 100D;
+	    } else if (Settings.rainDamage < 0D) {
+		Settings.rainDamage = 0D;
+	    }
+	} else {
+	    Settings.acidDamage = getConfig().getDouble("general.aciddamage", 0D);
+	    if (Settings.acidDamage > 100D) {
+		Settings.acidDamage = 100D;
+	    } else if (Settings.acidDamage < 0D) {
+		Settings.acidDamage = 0D;
+	    }
+	    Settings.mobAcidDamage = getConfig().getDouble("general.mobaciddamage", 0D);
+	    if (Settings.acidDamage > 100D) {
+		Settings.acidDamage = 100D;
+	    } else if (Settings.acidDamage < 0D) {
+		Settings.acidDamage = 0D;
+	    }
+	    Settings.rainDamage = getConfig().getDouble("general.raindamage", 0D);
+	    if (Settings.rainDamage > 100D) {
+		Settings.rainDamage = 100D;
+	    } else if (Settings.rainDamage < 0D) {
+		Settings.rainDamage = 0D;
+	    }	    
 	}
 	// Damage Type
 	List<String> acidDamageType = getConfig().getStringList("general.damagetype");
@@ -1079,7 +1101,7 @@ public class ASkyBlock extends JavaPlugin {
 	Settings.addCompletedGlow = getConfig().getBoolean("general.addcompletedglow", true);
 
 	// Localization Locale Setting
-	if (Settings.GAMETYPE.equalsIgnoreCase("ASKYBLOCK")) {
+	if (Settings.GAMETYPE.equals(Settings.GameType.ASKYBLOCK)) {
 	    Locale.signLine1 = locale.getString("sign.line1", "&1[A Skyblock]");
 	    Locale.signLine2 = locale.getString("sign.line2", "[player]");
 	    Locale.signLine3 = locale.getString("sign.line3", "Do not fall!");
@@ -1381,7 +1403,7 @@ public class ASkyBlock extends JavaPlugin {
 	    playersFolder.mkdir();
 	}
 	// Set up commands for this plugin
-	if (Settings.GAMETYPE.equalsIgnoreCase("ASKYBLOCK")) {
+	if (Settings.GAMETYPE.equals(Settings.GameType.ASKYBLOCK)) {
 	    getCommand("island").setExecutor(new IslandCmd(this));
 	    getCommand("asc").setExecutor(getChallenges());
 	    getCommand("asadmin").setExecutor(new AdminCmd(this));
