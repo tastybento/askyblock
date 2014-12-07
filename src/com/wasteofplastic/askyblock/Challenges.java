@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.UUID;
 
 import net.milkbowl.vault.economy.EconomyResponse;
@@ -498,7 +499,11 @@ public class Challenges implements CommandExecutor {
 			    int amount = 0;
 			    // Go through all the inventory and try to find
 			    // enough required items
-			    for (ItemStack i : player.getInventory().all(reqItem).values()) {
+			    for (Entry<Integer, ? extends ItemStack> en : player.getInventory().all(reqItem).entrySet()) {
+				ItemStack i = en.getValue();
+				// Clear any naming, or lore etc.
+				i.setItemMeta(null);
+				player.getInventory().setItem(en.getKey(), i);
 				// #1 item stack qty + amount is less than
 				// required items - take all i
 				// #2 item stack qty + amount = required item -
@@ -625,14 +630,22 @@ public class Challenges implements CommandExecutor {
 	    }
 	    // Build up the items in the inventory and remove them if they are
 	    // all there.
+
 	    if (plugin.getChallengeConfig().getBoolean("challenges.challengeList." + challenge + ".takeItems")) {
 		// checkChallengeItems(player, challenge);
 		// int qty = 0;
+
 		for (ItemStack i : toBeRemoved) {
 		    // qty += i.getAmount();
-		    // plugin.getLogger().info("DEBUG: Remove " + i.toString() +
-		    // ":" + i.getDurability() + " x " + i.getAmount());
-		    player.getInventory().removeItem(i);
+		    //plugin.getLogger().info("DEBUG: Remove " + i.toString() + ":" + i.getDurability() + " x " + i.getAmount());
+		    HashMap<Integer,ItemStack> leftOver = player.getInventory().removeItem(i);
+		    if (!leftOver.isEmpty()) {
+			plugin.getLogger().warning("Exploit? Could not remove the following in challenge "+challenge+" for player " + player.getName() + ":");
+			for (ItemStack left: leftOver.values()) {
+			    plugin.getLogger().info(left.toString());
+			}
+			return false;
+		    }
 		}
 		// plugin.getLogger().info("DEBUG: total = " + qty);
 	    }
