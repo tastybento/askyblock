@@ -121,7 +121,7 @@ public class Players {
      * Saves the player info to the file system
      */
     public void save() {
-	plugin.getLogger().info("Saving player..." + playerName);
+	//plugin.getLogger().info("Saving player..." + playerName);
 	// Save the variables
 	playerInfo.set("playerName", playerName);
 	playerInfo.set("hasIsland", hasIsland);

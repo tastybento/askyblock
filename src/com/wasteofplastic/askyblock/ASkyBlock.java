@@ -944,6 +944,7 @@ public class ASkyBlock extends JavaPlugin {
 	//getLogger().info("DEBUG: island level is " + Settings.island_level);
 	// Get chest items
 	final String[] chestItemString = getConfig().getString("island.chestItems").split(" ");
+	//getLogger().info("DEBUG: chest items = " + chestItemString);
 	final ItemStack[] tempChest = new ItemStack[chestItemString.length];
 	for (int i = 0; i < tempChest.length; i++) {
 	    try {

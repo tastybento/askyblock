@@ -155,8 +155,10 @@ island:
    # Use <Damage> to set the durability of a item or to select sub-items/colors.
    # Format for POTION is POTION:<effect>:<qty> or POTION:<effect>:<type>:<qty>
    # <type> is EXTENDED, SPLASH or EXTENDEDSPLASH. Not all potions can be extended.
-   # Check console for errors and guidance after typing /acid reload
+   # Check console for errors and guidance after reloading configuration
+   # Set to '' if items are included in the schematic
    chestItems: 'ICE:2 MELON:1 TORCH:2 BONE:1 LAVA_BUCKET:1 PUMPKIN_SEEDS:1 SUGAR_CANE:1 RED_MUSHROOM:1 BROWN_MUSHROOM:1 CACTUS:1 BREAD:1 WHEAT:1 LEATHER_BOOTS:1 LEATHER_HELMET:1 LEATHER_CHESTPLATE:1 LEATHER_LEGGINGS:1'
+
    # Island Protection Settings
    # PVP is allowed or not.
    # If PVP is denied, then players can expel other players from islands
