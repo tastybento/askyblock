@@ -29,6 +29,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
@@ -40,6 +41,37 @@ public class NetherPortals implements Listener {
 	this.plugin = plugin;
     }
 
+    /**
+     * This handles non-player portal use
+     * Currently disables portal use by entities
+     * @param event
+     */
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
+    public void onEntityPortal(EntityPortalEvent event) {
+	Location currentLocation = event.getFrom().clone();
+	String currentWorld = currentLocation.getWorld().getName();
+	// Only operate if this is Island territory
+	if (!currentWorld.equalsIgnoreCase(Settings.worldName) && !currentWorld.equalsIgnoreCase(Settings.worldName + "_nether")
+		&& !currentWorld.equalsIgnoreCase(Settings.worldName + "_the_end")) {
+	    return;
+	}
+	// If the nether is disabled then quit immediately
+	if (!Settings.createNether) {
+	    return;
+	}	
+
+	if (event.getEntityType() != null) {
+	    //plugin.getLogger().info("DEBUG : Entity going through portal " + event.getEntityType());
+	    //plugin.getLogger().info("DEBUG: From : " + event.getFrom());
+	    //plugin.getLogger().info("DEBUG: To : " + event.getTo());
+	    if (!(event.getEntity() instanceof Player)) {
+		// This event should never be called as a player, but just in case
+		// Cancel the event because entities cannot go through portals
+		event.setCancelled(true);
+	    }
+	}
+    }
+    
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = false)
     public void onPlayerPortal(PlayerPortalEvent event) {
 	// If the nether is disabled then quit immediately
