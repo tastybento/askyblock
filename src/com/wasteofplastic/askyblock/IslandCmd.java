@@ -543,12 +543,12 @@ public class IslandCmd implements CommandExecutor {
 		    }
 		    if (asker.getUniqueId().equals(targetPlayer) || asker.isOp()) {
 			final int px = l.getBlockX();
-			final int py = l.getBlockY();
+			//final int py = l.getBlockY();
 			final int pz = l.getBlockZ();
 			for (int x = -(Settings.island_protectionRange / 2); x <= (Settings.island_protectionRange / 2); x++) {
 			    for (int y = 0; y <= 255; y++) {
 				for (int z = -(Settings.island_protectionRange / 2); z <= (Settings.island_protectionRange / 2); z++) {
-				    final Block b = new Location(l.getWorld(), px + x, py + y, pz + z).getBlock();
+				    final Block b = new Location(l.getWorld(), px + x, y, pz + z).getBlock();
 				    final Material blockType = b.getType();
 				    // Total up the values
 				    if (Settings.blockValues.containsKey(blockType)) {
