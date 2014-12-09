@@ -263,7 +263,7 @@ biomes:
     icon: RED_ROSE
     description: The place for flowers!
   HELL:
-    icon: STATIONARY_LAVA
+    icon: LAVA_BUCKET
     cost: 1000
     permission: askyblock.biomes.hell
     friendlyname: Nether
