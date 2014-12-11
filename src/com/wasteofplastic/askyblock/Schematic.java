@@ -176,11 +176,11 @@ public class Schematic {
 	    }
 	}
 	if (bedrock == null) {
-	    Bukkit.getLogger().severe("ASkyBlock: Schematic must have at least one bedrock in it!");
+	    Bukkit.getLogger().severe("Schematic must have at least one bedrock in it!");
 	    return null;
 	}
 	if (chest == null) {
-	    Bukkit.getLogger().severe("ASkyBlock: Schematic must have at least one chest in it!");
+	    Bukkit.getLogger().severe("Schematic must have at least one chest in it!");
 	    return null;
 	}
 	/*
@@ -190,7 +190,7 @@ public class Schematic {
 	    return null;
 	}*/
 	if (grass == null) {
-	    Bukkit.getLogger().severe("ASkyBlock: Schematic must have at least one grass block in it!");
+	    Bukkit.getLogger().severe("Schematic must have at least one grass block in it!");
 	    return null;
 	}
 	// Center on the last bedrock location
@@ -254,15 +254,14 @@ public class Schematic {
 							byte itemSlot = (Byte) ((CompoundTag)item).getValue().get("Slot").getValue();
 							ItemStack chestItem = new ItemStack(itemMaterial, itemAmount, itemDamage);
 							chestBlock.getInventory().setItem(itemSlot, chestItem);
-							Bukkit.getLogger().info("Adding " + chestItem.toString() + " to chest");
+							//Bukkit.getLogger().info("Adding " + chestItem.toString() + " to chest");
 						    }
 						} catch (Exception exx){
-						    Bukkit.getLogger().info(item.toString());
-						    Bukkit.getLogger().info(((CompoundTag)item).getValue().get("id").getName());
-						    Bukkit.getLogger().severe("Could not parse schematic file item, skipping!");
-						    Bukkit.getLogger().info("Material is " + itemType.substring(10).toUpperCase());
-						    Bukkit.getLogger().severe(item.toString());
-						    exx.printStackTrace();
+						    //Bukkit.getLogger().info(item.toString());
+						    //Bukkit.getLogger().info(((CompoundTag)item).getValue().get("id").getName());
+						    Bukkit.getLogger().severe("Could not parse item ["+ itemType.substring(10).toUpperCase() + "] in schematic - skipping!");
+						    //Bukkit.getLogger().severe(item.toString());
+						    //exx.printStackTrace();
 						}
 
 					    }
@@ -273,7 +272,7 @@ public class Schematic {
 				}
 			    } catch (Exception e) {
 				Bukkit.getLogger().severe("Could not parse schematic file item, skipping!");
-				e.printStackTrace();
+				//e.printStackTrace();
 			    }
 			}
 		    }
