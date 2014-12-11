@@ -54,6 +54,10 @@ general:
    mobaciddamage: 0
    # Damage that rain does.
    raindamage: 0
+   # Damage that animals will experience in acid.
+   animaldamage: 0
+   # Damage chickens in acid - true or false - chickens tend to go swimming...
+   damagechickens: false
 
    # Damage type to apply in addition to acid damage
    # Types can be : SLOW, SLOW_DIGGING, CONFUSION,BLINDNESS, HUNGER, WEAKNESS and POISON

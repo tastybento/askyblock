@@ -168,6 +168,10 @@ public class Settings {
     // New nether
     public static boolean newNether;
     
+    // Animal Damage
+    protected static double animalAcidDamage;
+    protected static boolean damageChickens;
+    
 
   
 }
