@@ -78,6 +78,7 @@ public class AdminCmd implements CommandExecutor {
 	    sender.sendMessage(ChatColor.YELLOW + "/" + label + " resetallchallenges <player>:" + ChatColor.WHITE + " " + Locale.adminHelpresetAllChallenges);
 	    sender.sendMessage(ChatColor.YELLOW + "/" + label + " purge [TimeInDays]:" + ChatColor.WHITE + " " + Locale.adminHelppurge);
 	    sender.sendMessage(ChatColor.YELLOW + "/" + label + " info <player>:" + ChatColor.WHITE + " " + Locale.adminHelpinfo);
+	    sender.sendMessage(ChatColor.YELLOW + "/" + label + " info challenges <player>:" + ChatColor.WHITE + " " + Locale.adminHelpinfo);
 	    sender.sendMessage(ChatColor.YELLOW + "/" + label + " info:" + ChatColor.WHITE + " " + Locale.adminHelpinfoIsland);
 	    sender.sendMessage(ChatColor.YELLOW + "/" + label + " clearreset <player>:" + ChatColor.WHITE + " " + Locale.adminHelpclearReset);
 	    sender.sendMessage(ChatColor.YELLOW + "/" + label + " setbiome <leader> <biome>:" + ChatColor.WHITE + " Sets leader's island biome.");
@@ -112,7 +113,10 @@ public class AdminCmd implements CommandExecutor {
 		player.sendMessage(ChatColor.YELLOW + "/" + label + " resetallchallenges <player>:" + ChatColor.WHITE + " " + Locale.adminHelpresetAllChallenges);
 	    }
 	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.info") || player.isOp()) {
+		player.sendMessage(ChatColor.YELLOW + "/" + label + " info:" + ChatColor.WHITE + " Info on nearest island.");
 		player.sendMessage(ChatColor.YELLOW + "/" + label + " info <player>:" + ChatColor.WHITE + " " + Locale.adminHelpinfo);
+		player.sendMessage(ChatColor.YELLOW + "/" + label + " info challenges <player>:" + ChatColor.WHITE + " " + Locale.adminHelpinfo);
+
 	    }
 	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.clearreset") || player.isOp()) {
 		player.sendMessage(ChatColor.YELLOW + "/" + label + " clearreset <player>:" + ChatColor.WHITE + " " + Locale.adminHelpclearReset);
@@ -444,7 +448,7 @@ public class AdminCmd implements CommandExecutor {
 					    if (removeList.size() > 0 && purgeFlag) {
 						plugin.deletePlayerIsland(removeList.get(0));
 						sender.sendMessage(ChatColor.YELLOW + "[" + removeList.size() + "/" + total + "] " 
-						+ Locale.purgeremovingName.replace("[name]", plugin.getPlayers().getName(removeList.get(0))));
+							+ Locale.purgeremovingName.replace("[name]", plugin.getPlayers().getName(removeList.get(0))));
 						removeList.remove(0);
 					    }
 					    sender.sendMessage("Now waiting...");
@@ -691,9 +695,19 @@ public class AdminCmd implements CommandExecutor {
 		    plugin.getPlayers().resetChallenge(playerUUID,split[1].toLowerCase());
 		    sender.sendMessage(ChatColor.YELLOW +  Locale.resetChallengechallengeReset.replace("[challengename]", split[1].toLowerCase()).replace("[name]",split[2]));
 		    return true;
-		} else {
-		    return false;
+		} else if (split[0].equalsIgnoreCase("info") && split[1].equalsIgnoreCase("challenges")) {
+		    // Convert name to a UUID
+		    final UUID playerUUID = plugin.getPlayers().getUUID(split[2]);
+		    //plugin.getLogger().info("DEBUG: console player info UUID = " + playerUUID);
+		    if (!plugin.getPlayers().isAKnownPlayer(playerUUID)) {
+			sender.sendMessage(ChatColor.RED + Locale.errorUnknownPlayer);
+			return true;
+		    } else {
+			showInfoChallenges(playerUUID, sender);
+			return true;
+		    }
 		}
+	    return false;
 	case 4:
 	    // Team add <player> <leader>
 	    if (split[0].equalsIgnoreCase("team") && split[1].equalsIgnoreCase("add")) {
@@ -807,6 +821,11 @@ public class AdminCmd implements CommandExecutor {
 	return closestBedRock;*/
     }
 
+    /**
+     * Shows info on a player
+     * @param playerUUID
+     * @param sender
+     */
     private void showInfo(UUID playerUUID, CommandSender sender) {
 	sender.sendMessage("Owner:" + ChatColor.GREEN + plugin.getPlayers().getName(playerUUID));
 	sender.sendMessage(ChatColor.WHITE + "UUID: " + playerUUID.toString());
@@ -818,12 +837,6 @@ public class AdminCmd implements CommandExecutor {
 	    sender.sendMessage(ChatColor.GOLD + "Last login: " + d.toString());
 	} catch (Exception e) {}
 
-	// Completed challenges
-	sender.sendMessage(ChatColor.WHITE + "Challenges:");
-	HashMap<String,Boolean> challenges = plugin.getPlayers().getChallengeStatus(playerUUID);
-	for (String c: challenges.keySet()) {
-	    sender.sendMessage(c + ": " + ((challenges.get(c)) ? ChatColor.GREEN + Locale.challengescomplete :ChatColor.AQUA + Locale.challengesincomplete));
-	}
 	// Teams
 	if (plugin.getPlayers().inTeam(playerUUID)) {
 	    final UUID leader = plugin.getPlayers().getTeamLeader(playerUUID);
@@ -850,6 +863,22 @@ public class AdminCmd implements CommandExecutor {
 
     }
 
+    /**
+     * Shows info on the challenge situation for player
+     * @param playerUUID
+     * @param sender
+     */
+    private void showInfoChallenges(UUID playerUUID, CommandSender sender) {
+	sender.sendMessage("Name:" + ChatColor.GREEN + plugin.getPlayers().getName(playerUUID));
+	sender.sendMessage(ChatColor.WHITE + "UUID: " + playerUUID.toString());
+	// Completed challenges
+	sender.sendMessage(ChatColor.WHITE + "Challenges:");
+	HashMap<String,Boolean> challenges = plugin.getPlayers().getChallengeStatus(playerUUID);
+	for (String c: challenges.keySet()) {
+	    sender.sendMessage(c + ": " + ((challenges.get(c)) ? ChatColor.GREEN + Locale.challengescomplete :ChatColor.AQUA + Locale.challengesincomplete));
+	}
+    }
+    
     private boolean checkAdminPerms(Player player2, String[] split) {
 	// Check perms quickly for this command
 	if (player2.isOp()) {

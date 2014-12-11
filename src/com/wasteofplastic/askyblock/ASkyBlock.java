@@ -2213,7 +2213,7 @@ public class ASkyBlock extends JavaPlugin {
 	case SAVANNA_PLATEAU_MOUNTAINS:
 	case SWAMPLAND:
 	    // No ice or snow allowed
-	    for (int y = islandLoc.getWorld().getMaxHeight(); y >= 0; y--) {
+	    for (int y = islandLoc.getWorld().getMaxHeight(); y >= Settings.sea_level; y--) {
 		for (int x = islandX-range; x <= islandX + range; x++) {
 		    for (int z = islandZ-range; z <= islandZ+range; z++) {
 			switch(world.getBlockAt(x, y, z).getType()) {
@@ -2229,7 +2229,7 @@ public class ASkyBlock extends JavaPlugin {
 	    break;
 	case HELL:
 	    // No water or ice allowed
-	    for (int y = islandLoc.getWorld().getMaxHeight(); y >= 0; y--) {
+	    for (int y = islandLoc.getWorld().getMaxHeight(); y >= Settings.sea_level; y--) {
 		for (int x = islandX-range; x <= islandX + range; x++) {
 		    for (int z = islandZ-range; z <= islandZ+range; z++) {
 			switch(world.getBlockAt(x, y, z).getType()) {

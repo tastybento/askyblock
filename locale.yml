@@ -303,7 +303,7 @@ delete:
 
 #register
 register:
-   settingIsland: "Set [name]'s island to the bedrock nearest you."
+   settingIsland: "Set [name]'s island to the nearest island."
    errorBedrockNotFound: "Bedrock not found: unable to set the island!"
 
 #info
