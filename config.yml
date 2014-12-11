@@ -136,10 +136,9 @@ island:
    distance: 110
 
    # The size of the protective region for each island. Must be at least 16 blocks
-   # less than the island distance. Island deletion is done on a chunk basis and
-   # may delete just over this range, so a buffer is required!
-   # If you want to override this and take the chance that adjacent islands may
-   # have a few blocks sliced off if a neighbor resets, change overridelimit to true.
+   # less than the island distance.
+   # If you want to override this change overridelimit to true. This may result in
+   # incomplete island deletion (~15% of the time if the island goes to edges)
    protectionRange: 94
    overridelimit: false
 
