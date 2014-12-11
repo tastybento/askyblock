@@ -165,6 +165,9 @@ public class Settings {
     public static boolean removeCompleteOntimeChallenges;
     public static boolean addCompletedGlow;
     
+    // New nether
+    public static boolean newNether;
+    
 
   
 }

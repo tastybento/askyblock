@@ -36,6 +36,7 @@ import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.util.Vector;
 
 public class NetherPortals implements Listener {
     private final ASkyBlock plugin;
@@ -74,7 +75,7 @@ public class NetherPortals implements Listener {
 	    }
 	}
     }
-    
+
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = false)
     public void onPlayerPortal(PlayerPortalEvent event) {
 	// If the nether is disabled then quit immediately
@@ -112,7 +113,7 @@ public class NetherPortals implements Listener {
 		    Location end_place = plugin.getServer().getWorld(Settings.worldName + "_the_end").getSpawnLocation();
 		    if (ASkyBlock.isSafeLocation(end_place)) {
 			event.getPlayer().teleport(end_place);
-		    	return;
+			return;
 		    } else {
 			event.getPlayer().sendMessage(ChatColor.RED + Locale.warpserrorNotSafe);
 			plugin.homeTeleport(event.getPlayer());
@@ -124,17 +125,22 @@ public class NetherPortals implements Listener {
 	    //event.setTo(plugin.getServer().getWorld(Settings.worldName + "_nether").getSpawnLocation());
 	    UUID playerUUID = event.getPlayer().getUniqueId();
 	    World world = plugin.getServer().getWorld(Settings.worldName + "_nether");
-	    Location netherHome = null;
-	    if (plugin.getPlayers().inTeam(playerUUID)) {
-		netherHome = plugin.getPlayers().getTeamIslandLocation(playerUUID).toVector().toLocation(world);
+	    if (Settings.newNether) {
+		Location netherHome = null;
+		if (plugin.getPlayers().inTeam(playerUUID)) {
+		    netherHome = plugin.getPlayers().getTeamIslandLocation(playerUUID).toVector().toLocation(world);
+		} else {
+		    netherHome = plugin.getPlayers().getIslandLocation(playerUUID).toVector().toLocation(world);
+		}
+		if (netherHome == null) {
+		    event.setCancelled(true);
+		    return;
+		}
+		event.setTo(netherHome);
 	    } else {
-		netherHome = plugin.getPlayers().getIslandLocation(playerUUID).toVector().toLocation(world);
-	    }
-	    if (netherHome == null) {
-		event.setCancelled(true);
-		return;
-	    }
-	    event.setTo(netherHome);
+		//plugin.getLogger().info("DEBUG: transporting to nether spawn : " + plugin.getServer().getWorld(Settings.worldName + "_nether").getSpawnLocation().toString());
+		event.setTo(plugin.getServer().getWorld(Settings.worldName + "_nether").getSpawnLocation());
+	    }  
 	    event.useTravelAgent(true);
 	} else {
 	    // Returning to island
@@ -147,9 +153,9 @@ public class NetherPortals implements Listener {
 
     // Function to check proximity to nether spawn location
     private boolean awayFromSpawn(Player player) {
-	Location spawn = player.getWorld().getSpawnLocation();
-	Location loc = player.getLocation();
-	if (spawn.distance(loc) < Settings.netherSpawnRadius) {
+	Vector p = player.getLocation().toVector().multiply(new Vector(1,0,1));
+	Vector spawn = player.getWorld().getSpawnLocation().toVector().multiply(new Vector(1,0,1));
+	if (spawn.distanceSquared(p) < (Settings.netherSpawnRadius * Settings.netherSpawnRadius)) {
 	    player.sendMessage(Locale.netherSpawnIsProtected);
 	    return false;
 	} else {

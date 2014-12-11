@@ -164,9 +164,12 @@ public class ASkyBlock extends JavaPlugin {
 	    if (Settings.createNether) {
 		if (plugin.getServer().getWorld(Settings.worldName + "_nether") == null) {
 		    Bukkit.getLogger().info("Creating " + plugin.getName() + "'s Nether...");
-		    //World netherWorld = WorldCreator.name(Settings.worldName + "_nether").type(WorldType.NORMAL).environment(World.Environment.NETHER).createWorld();
-		    World netherWorld = WorldCreator.name(Settings.worldName + "_nether").type(WorldType.FLAT).generator(new ChunkGeneratorNether()).environment(World.Environment.NETHER).createWorld();
-		    //netherWorld.setMonsterSpawnLimit(Settings.monsterSpawnLimit);
+		    if (!Settings.newNether) {
+			World netherWorld = WorldCreator.name(Settings.worldName + "_nether").type(WorldType.NORMAL).environment(World.Environment.NETHER).createWorld();
+		    } else {
+			World netherWorld = WorldCreator.name(Settings.worldName + "_nether").type(WorldType.FLAT).generator(new ChunkGeneratorNether()).environment(World.Environment.NETHER).createWorld();
+		    }
+			//netherWorld.setMonsterSpawnLimit(Settings.monsterSpawnLimit);
 		    // netherWorld.setAnimalSpawnLimit(Settings.animalSpawnLimit);
 		}
 	    }
@@ -915,6 +918,8 @@ public class ASkyBlock extends JavaPlugin {
 	Settings.clearInventory = getConfig().getBoolean("general.resetinventory", true);
 
 	Settings.startingMoney = getConfig().getDouble("general.startingmoney", 0D);
+	
+	Settings.newNether = getConfig().getBoolean("general.newnether", false);
 	// Nether spawn protection radius
 	Settings.netherSpawnRadius = getConfig().getInt("general.netherspawnradius",25);
 	if (Settings.netherSpawnRadius < 0) {
