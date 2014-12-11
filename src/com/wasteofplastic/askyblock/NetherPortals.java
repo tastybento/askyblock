@@ -16,8 +16,11 @@
  *******************************************************************************/
 package com.wasteofplastic.askyblock;
 
+import java.util.UUID;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -93,7 +96,7 @@ public class NetherPortals implements Listener {
 	// Check that we know this player (they could have come from another world)
 	Location destination = plugin.getSafeHomeLocation(event.getPlayer().getUniqueId());
 	if (destination == null) {
-	    event.getPlayer().sendMessage(ChatColor.YELLOW + "Type /island to start an island.");
+	    event.getPlayer().sendMessage(ChatColor.YELLOW + "Type /" + Settings.ISLANDCOMMAND + " to start an island.");
 	    event.setCancelled(true);
 	    return;
 	}
@@ -118,7 +121,20 @@ public class NetherPortals implements Listener {
 		}
 	    }
 	    // Going to the nether
-	    event.setTo(plugin.getServer().getWorld(Settings.worldName + "_nether").getSpawnLocation());
+	    //event.setTo(plugin.getServer().getWorld(Settings.worldName + "_nether").getSpawnLocation());
+	    UUID playerUUID = event.getPlayer().getUniqueId();
+	    World world = plugin.getServer().getWorld(Settings.worldName + "_nether");
+	    Location netherHome = null;
+	    if (plugin.getPlayers().inTeam(playerUUID)) {
+		netherHome = plugin.getPlayers().getTeamIslandLocation(playerUUID).toVector().toLocation(world);
+	    } else {
+		netherHome = plugin.getPlayers().getIslandLocation(playerUUID).toVector().toLocation(world);
+	    }
+	    if (netherHome == null) {
+		event.setCancelled(true);
+		return;
+	    }
+	    event.setTo(netherHome);
 	    event.useTravelAgent(true);
 	} else {
 	    // Returning to island

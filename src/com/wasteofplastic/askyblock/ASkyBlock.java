@@ -164,8 +164,8 @@ public class ASkyBlock extends JavaPlugin {
 	    if (Settings.createNether) {
 		if (plugin.getServer().getWorld(Settings.worldName + "_nether") == null) {
 		    Bukkit.getLogger().info("Creating " + plugin.getName() + "'s Nether...");
-		    World netherWorld = WorldCreator.name(Settings.worldName + "_nether").type(WorldType.NORMAL).environment(World.Environment.NETHER).createWorld();
-		    //World netherWorld = WorldCreator.name(Settings.worldName + "_nether").type(WorldType.FLAT).generator(new ChunkGeneratorNether()).environment(World.Environment.NETHER).createWorld();
+		    //World netherWorld = WorldCreator.name(Settings.worldName + "_nether").type(WorldType.NORMAL).environment(World.Environment.NETHER).createWorld();
+		    World netherWorld = WorldCreator.name(Settings.worldName + "_nether").type(WorldType.FLAT).generator(new ChunkGeneratorNether()).environment(World.Environment.NETHER).createWorld();
 		    //netherWorld.setMonsterSpawnLimit(Settings.monsterSpawnLimit);
 		    // netherWorld.setAnimalSpawnLimit(Settings.animalSpawnLimit);
 		}
@@ -901,10 +901,13 @@ public class ASkyBlock extends JavaPlugin {
 	}
 
 	Settings.island_protectionRange = getConfig().getInt("island.protectionRange", 94);
-	if (Settings.island_protectionRange > (Settings.islandDistance-16)) {
-	    Settings.island_protectionRange = Settings.islandDistance - 16;
-	    getLogger().warning("*** Island protection range must be " + (Settings.islandDistance-16) + " or less, (island range -16). Setting to: " + Settings.island_protectionRange);
-	} else if (Settings.island_protectionRange < 0) {
+	if (!getConfig().getBoolean("island.overridelimit", false)) {
+	    if (Settings.island_protectionRange > (Settings.islandDistance-16)) {
+		Settings.island_protectionRange = Settings.islandDistance - 16;
+		getLogger().warning("*** Island protection range must be " + (Settings.islandDistance-16) + " or less, (island range -16). Setting to: " + Settings.island_protectionRange);
+	    }
+	}
+	if (Settings.island_protectionRange < 0) {
 	    Settings.island_protectionRange = 0;
 	}
 	Settings.resetChallenges = getConfig().getBoolean("general.resetchallenges", true);
@@ -1448,28 +1451,29 @@ public class ASkyBlock extends JavaPlugin {
 		    getLogger().severe("  " + Settings.worldName + ":");
 		    getLogger().severe("    generator: " + plugin.getName());
 		    getServer().getPluginManager().disablePlugin(plugin);
+		    return;
+		}
+		// This part will kill monsters if they fall into the water because it
+		// is acid
+		if (Settings.mobAcidDamage > 0D) {
+		    getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
+			@Override
+			public void run() {
+			    List<Entity> entList = acidWorld.getEntities();
+			    for (Entity current : entList) {
+				if (current instanceof Monster) {
+				    if ((current.getLocation().getBlock().getType() == Material.WATER)
+					    || (current.getLocation().getBlock().getType() == Material.STATIONARY_WATER)) {
+					((Monster) current).damage(Settings.mobAcidDamage);
+					//getLogger().info("Killing monster");
+				    }
+				}
+			    }
+			}
+		    }, 0L, 20L);
 		}
 	    }
 	});
-	// This part will kill monsters if they fall into the water because it
-	// is acid
-	if (Settings.mobAcidDamage > 0D) {
-	    getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
-		@Override
-		public void run() {
-		    List<Entity> entList = acidWorld.getEntities();
-		    for (Entity current : entList) {
-			if (current instanceof Monster) {
-			    if ((current.getLocation().getBlock().getType() == Material.WATER)
-				    || (current.getLocation().getBlock().getType() == Material.STATIONARY_WATER)) {
-				((Monster) current).damage(Settings.mobAcidDamage);
-				//getLogger().info("Killing monster");
-			    }
-			}
-		    }
-		}
-	    }, 0L, 20L);
-	}
     }
 
     /**

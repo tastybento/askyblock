@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -234,17 +233,46 @@ public class Schematic {
 					// Count = the number of items
 					// Slot = the slot in the chest inventory
 					if (item instanceof CompoundTag) {
-					    short itemType = (Short) ((CompoundTag)item).getValue().get("id").getValue();
-					    short itemDamage = (Short) ((CompoundTag)item).getValue().get("Damage").getValue();
-					    byte itemAmount = (Byte) ((CompoundTag)item).getValue().get("Count").getValue();
-					    byte itemSlot = (Byte) ((CompoundTag)item).getValue().get("Slot").getValue();
-					    ItemStack chestItem = new ItemStack(itemType, itemAmount, itemDamage);
-					    chestBlock.getInventory().setItem(itemSlot, chestItem);
+					    try {
+						// Id is a number
+						short itemType = (Short) ((CompoundTag)item).getValue().get("id").getValue();
+						short itemDamage = (Short) ((CompoundTag)item).getValue().get("Damage").getValue();
+						byte itemAmount = (Byte) ((CompoundTag)item).getValue().get("Count").getValue();
+						byte itemSlot = (Byte) ((CompoundTag)item).getValue().get("Slot").getValue();
+						ItemStack chestItem = new ItemStack(itemType, itemAmount, itemDamage);
+						chestBlock.getInventory().setItem(itemSlot, chestItem);
+					    } catch (ClassCastException ex) {
+						// Id is a material
+						String itemType = (String) ((CompoundTag)item).getValue().get("id").getValue();
+						try {
+						    // Get the material
+						    if (itemType.startsWith("minecraft:")) {
+							String material = itemType.substring(10).toUpperCase();
+							Material itemMaterial = Material.valueOf(material);
+							short itemDamage = (Short) ((CompoundTag)item).getValue().get("Damage").getValue();
+							byte itemAmount = (Byte) ((CompoundTag)item).getValue().get("Count").getValue();
+							byte itemSlot = (Byte) ((CompoundTag)item).getValue().get("Slot").getValue();
+							ItemStack chestItem = new ItemStack(itemMaterial, itemAmount, itemDamage);
+							chestBlock.getInventory().setItem(itemSlot, chestItem);
+							Bukkit.getLogger().info("Adding " + chestItem.toString() + " to chest");
+						    }
+						} catch (Exception exx){
+						    Bukkit.getLogger().info(item.toString());
+						    Bukkit.getLogger().info(((CompoundTag)item).getValue().get("id").getName());
+						    Bukkit.getLogger().severe("Could not parse schematic file item, skipping!");
+						    Bukkit.getLogger().info("Material is " + itemType.substring(10).toUpperCase());
+						    Bukkit.getLogger().severe(item.toString());
+						    exx.printStackTrace();
+						}
+
+					    }
+
 					    //Bukkit.getLogger().info("Set chest inventory slot " + itemSlot + " to " + chestItem.toString());
 					}
 				    }
 				}
 			    } catch (Exception e) {
+				Bukkit.getLogger().severe("Could not parse schematic file item, skipping!");
 				e.printStackTrace();
 			    }
 			}
