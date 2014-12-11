@@ -1588,9 +1588,9 @@ public class ASkyBlock extends JavaPlugin {
 	// Run through all the locations
 	for (Location islandTestLocation : islandTestLocations) {
 	    if (loc.getWorld().equals(islandTestLocation.getWorld())) {
-		if (loc.getX() > islandTestLocation.getX() - Settings.island_protectionRange / 2
+		if (loc.getX() >= islandTestLocation.getX() - Settings.island_protectionRange / 2
 			&& loc.getX() < islandTestLocation.getX() + Settings.island_protectionRange / 2
-			&& loc.getZ() > islandTestLocation.getZ() - Settings.island_protectionRange / 2
+			&& loc.getZ() >= islandTestLocation.getZ() - Settings.island_protectionRange / 2
 			&& loc.getZ() < islandTestLocation.getZ() + Settings.island_protectionRange / 2) {
 		    return true;
 		}
