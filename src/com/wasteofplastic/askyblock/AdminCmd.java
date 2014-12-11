@@ -779,9 +779,9 @@ public class AdminCmd implements CommandExecutor {
      * @return
      */
     private Location getClosestIsland(Location location) {
-	int x = (location.getBlockX() / Settings.islandDistance) * Settings.islandDistance + Settings.islandXOffset;
-	int z = (location.getBlockZ() / Settings.islandDistance) * Settings.islandDistance + Settings.islandZOffset;
-	int y = Settings.island_level;
+	long x = Math.round((double)location.getBlockX() / Settings.islandDistance) * Settings.islandDistance + Settings.islandXOffset;
+	long z = Math.round((double)location.getBlockZ() / Settings.islandDistance) * Settings.islandDistance + Settings.islandZOffset;
+	long y = Settings.island_level;
 	return new Location(location.getWorld(),x,y,z);
 	/*
 	for (int x = -Settings.islandDistance; x< Settings.islandDistance; x++) {
