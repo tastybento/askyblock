@@ -1404,9 +1404,8 @@ public class ASkyBlock extends JavaPlugin {
 	saveDefaultLocale();
 	loadPluginConfig();
 	if (Settings.useEconomy && !VaultHelper.setupEconomy()) {
-	    getLogger().severe("Could not set up economy!");
-	    getServer().getPluginManager().disablePlugin(this);
-	    return;
+	    getLogger().warning("Could not set up economy! - Running without an economy.");
+	    Settings.useEconomy = false;
 	}
 	if (!VaultHelper.setupPermissions()) {
 	    getLogger().severe("Cannot link with Vault for permissions! Disabling plugin!");
