@@ -73,6 +73,36 @@ public class ChunkGeneratorNether extends ChunkGenerator {
 		// Layer 8 may be glowstone
 		double r = gen.noise(x, world.getMaxHeight() - 8, z,random.nextFloat(),random.nextFloat());
 		if (r > 0.5D) {
+		    // Have blobs of glowstone
+		    switch (random.nextInt(4)) {
+		    case 1:
+			// Single block
+			setBlock(result,x,(world.getMaxHeight()-8),z, (byte)Material.GLOWSTONE.getId());
+			if (x<14 && z<14) {
+			    setBlock(result,x+1,(world.getMaxHeight()-8),z+1, (byte)Material.GLOWSTONE.getId());
+			    setBlock(result,x+2,(world.getMaxHeight()-8),z+2, (byte)Material.GLOWSTONE.getId());
+			    setBlock(result,x+1,(world.getMaxHeight()-8),z+2, (byte)Material.GLOWSTONE.getId());
+			    setBlock(result,x+1,(world.getMaxHeight()-8),z+2, (byte)Material.GLOWSTONE.getId());
+			}
+			break;
+		    case 2:
+			// Stalatite
+			for (int i =0;i<random.nextInt(10); i++) {
+			    setBlock(result,x,(world.getMaxHeight()-8-i),z, (byte)Material.GLOWSTONE.getId());
+			}
+		    case 3:
+			setBlock(result,x,(world.getMaxHeight()-8),z, (byte)Material.GLOWSTONE.getId());
+			if (x>3 && z>3) {
+			    for (int xx=0;xx<3;xx++) {
+				for (int zz=0;zz<3;zz++) {
+				    setBlock(result,x-xx,(world.getMaxHeight()-8-random.nextInt(2)),z-xx, (byte)Material.GLOWSTONE.getId()); 
+				}
+			    }
+			}
+			break;
+		    default:
+			setBlock(result,x,(world.getMaxHeight()-8),z, (byte)Material.GLOWSTONE.getId());    
+		    }
 		    setBlock(result,x,(world.getMaxHeight()-8),z, (byte)Material.GLOWSTONE.getId());
 		} else {
 		    setBlock(result,x,(world.getMaxHeight()-8),z, (byte)Material.AIR.getId());
