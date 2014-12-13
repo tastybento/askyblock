@@ -139,7 +139,7 @@ public class Challenges implements CommandExecutor {
 		if (expReward > 0) {
 		    sender.sendMessage(ChatColor.GOLD + Locale.challengesexpReward + ": " + ChatColor.WHITE + expReward);
 		}
-		if (moneyReward > 0) { 
+		if (Settings.useEconomy && moneyReward > 0) { 
 		    sender.sendMessage(ChatColor.GOLD + Locale.challengesmoneyReward + ": " + ChatColor.WHITE + VaultHelper.econ.format(moneyReward));
 		}
 		sender.sendMessage(ChatColor.GOLD + Locale.challengestoCompleteUse + ChatColor.WHITE + " /" + label + " c " + challenge);
@@ -205,7 +205,7 @@ public class Challenges implements CommandExecutor {
 	    player.sendMessage(ChatColor.GOLD + Locale.challengesexpReward + ": " + ChatColor.WHITE + expReward);
 	    player.giveExp(expReward);
 	}
-	if (moneyReward > 0 && (VaultHelper.econ != null)) {
+	if (Settings.useEconomy && moneyReward > 0 && (VaultHelper.econ != null)) {
 	    EconomyResponse e = VaultHelper.econ.depositPlayer(player, Settings.worldName, moneyReward);
 	    if (e.transactionSuccess()) {
 		player.sendMessage(ChatColor.GOLD + Locale.challengesmoneyReward + ": " + ChatColor.WHITE + VaultHelper.econ.format(moneyReward));
@@ -1219,7 +1219,7 @@ public class Challenges implements CommandExecutor {
 	if (expReward > 0) {
 	    result.addAll(chop(ChatColor.GOLD, Locale.challengesexpReward + ": " + ChatColor.WHITE + expReward,length));
 	}
-	if (moneyReward > 0) { 
+	if (Settings.useEconomy && moneyReward > 0) { 
 	    result.addAll(chop(ChatColor.GOLD, Locale.challengesmoneyReward + ": " + ChatColor.WHITE + VaultHelper.econ.format(moneyReward),length));
 	}
 	return result;	

@@ -254,6 +254,9 @@ public class IslandCmd implements CommandExecutor {
     }
 
     private void resetMoney(Player player) {
+	if (!Settings.useEconomy) {
+	    return;
+	}
 	// Set player's balance in acid island to the starting balance
 	try {
 	    // plugin.getLogger().info("DEBUG: " + player.getName() + " " +
@@ -726,7 +729,7 @@ public class IslandCmd implements CommandExecutor {
 	    }
 
 	    if (split[0].equalsIgnoreCase("minishop") || split[0].equalsIgnoreCase("ms")) {
-		if (player.getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+		if (Settings.useEconomy && player.getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 		    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.minishop")) {
 			player.openInventory(ControlPanel.miniShop);
 			return true;
@@ -889,7 +892,7 @@ public class IslandCmd implements CommandExecutor {
 		}
 		return false;
 	    } else if (split[0].equalsIgnoreCase("help")) { 
-		player.sendMessage(ChatColor.GREEN + "ASkyBlock " + plugin.getDescription().getVersion() + " help:");
+		player.sendMessage(ChatColor.GREEN + plugin.getName() + " " + plugin.getDescription().getVersion() + " help:");
 		if (Settings.useControlPanel) {
 		    player.sendMessage(ChatColor.YELLOW + "/" + label + ": " + ChatColor.WHITE + Locale.islandhelpControlPanel);
 		} else {
@@ -905,7 +908,7 @@ public class IslandCmd implements CommandExecutor {
 		player.sendMessage(ChatColor.YELLOW + "/" + label + " level: " + ChatColor.WHITE + Locale.islandhelpLevel);
 		player.sendMessage(ChatColor.YELLOW + "/" + label + " level <player>: " + ChatColor.WHITE + Locale.islandhelpLevelPlayer);
 		player.sendMessage(ChatColor.YELLOW + "/" + label + " top: " + ChatColor.WHITE + Locale.islandhelpTop);
-		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.minishop")) {
+		if (Settings.useEconomy && VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.minishop")) {
 		    player.sendMessage(ChatColor.YELLOW + "/" + label + " minishop or ms: " + ChatColor.WHITE + Locale.islandhelpMiniShop);		    
 		}
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.warp")) {

@@ -322,7 +322,9 @@ public class AdminCmd implements CommandExecutor {
 		plugin.reloadConfig();
 		plugin.loadPluginConfig();
 		plugin.reloadChallengeConfig();
-		ControlPanel.loadShop();
+		if (Settings.useEconomy) {
+		    ControlPanel.loadShop();
+		}
 		ControlPanel.loadControlPanel();
 		plugin.getSpawn().reload();
 		sender.sendMessage(ChatColor.YELLOW + Locale.reloadconfigReloaded);
@@ -878,7 +880,7 @@ public class AdminCmd implements CommandExecutor {
 	    sender.sendMessage(c + ": " + ((challenges.get(c)) ? ChatColor.GREEN + Locale.challengescomplete :ChatColor.AQUA + Locale.challengesincomplete));
 	}
     }
-    
+
     private boolean checkAdminPerms(Player player2, String[] split) {
 	// Check perms quickly for this command
 	if (player2.isOp()) {

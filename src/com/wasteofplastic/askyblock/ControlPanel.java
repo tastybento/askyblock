@@ -53,7 +53,9 @@ public class ControlPanel implements Listener {
      */
     public ControlPanel(ASkyBlock plugin) {
 	this.plugin = plugin;
-	loadShop();
+	if (Settings.useEconomy) {
+	    loadShop();
+	}
 	loadControlPanel();
     }
 
@@ -268,7 +270,7 @@ public class ControlPanel implements Listener {
 	    String message = "";
 	    //plugin.getLogger().info("You clicked on slot " + slot);
 	    event.setCancelled(true); // Don't let them pick it up
-	    if (slot == -999) {
+	    if (!Settings.useEconomy || slot == -999) {
 		player.closeInventory();
 		return;
 	    }

@@ -126,15 +126,17 @@ public class Biomes implements Listener {
 	    Biome biome = thisPanel.get(slot).getBiome();
 	    if (biome != null) {
 		event.setCancelled(true);
-		// Check cost
-		double cost = thisPanel.get(slot).getPrice();
-		if (cost > 0D) {
-		    if (!VaultHelper.econ.has(player, cost)) {
-			player.sendMessage(ChatColor.RED + Locale.minishopYouCannotAfford.replace("[description]", VaultHelper.econ.format(cost)));
-			return;
-		    } else {
-			VaultHelper.econ.withdrawPlayer(player, cost);
-			player.sendMessage(ChatColor.GREEN + Locale.biomeYouBought.replace("[cost]", VaultHelper.econ.format(cost)));
+		if (Settings.useEconomy) {
+		    // Check cost
+		    double cost = thisPanel.get(slot).getPrice();
+		    if (cost > 0D) {
+			if (!VaultHelper.econ.has(player, cost)) {
+			    player.sendMessage(ChatColor.RED + Locale.minishopYouCannotAfford.replace("[description]", VaultHelper.econ.format(cost)));
+			    return;
+			} else {
+			    VaultHelper.econ.withdrawPlayer(player, cost);
+			    player.sendMessage(ChatColor.GREEN + Locale.biomeYouBought.replace("[cost]", VaultHelper.econ.format(cost)));
+			}
 		    }
 		}
 	    }

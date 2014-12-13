@@ -2,7 +2,6 @@ package com.wasteofplastic.askyblock;
 
 import java.util.Random;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.World;

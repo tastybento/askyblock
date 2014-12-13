@@ -172,6 +172,9 @@ public class Settings {
     protected static double animalAcidDamage;
     protected static boolean damageChickens;
     
+    // Use Economy
+    public static boolean useEconomy;
+    
 
   
 }

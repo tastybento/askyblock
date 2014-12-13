@@ -774,6 +774,9 @@ public class ASkyBlock extends JavaPlugin {
 	// Get the localization strings
 	getLocale();
 	// Assign settings
+	// Use economy or not
+	// In future expand to include internal economy
+	Settings.useEconomy = getConfig().getBoolean("general.useeconomy",true);
 	// Island reset commands
 	Settings.resetCommands = getConfig().getStringList("general.resetcommands");
 	Settings.useControlPanel = getConfig().getBoolean("general.usecontrolpanel", false);
@@ -1399,7 +1402,8 @@ public class ASkyBlock extends JavaPlugin {
 	saveDefaultConfig();
 	saveDefaultChallengeConfig();
 	saveDefaultLocale();
-	if (!VaultHelper.setupEconomy()) {
+	loadPluginConfig();
+	if (Settings.useEconomy && !VaultHelper.setupEconomy()) {
 	    getLogger().severe("Could not set up economy!");
 	    getServer().getPluginManager().disablePlugin(this);
 	    return;
@@ -1409,7 +1413,7 @@ public class ASkyBlock extends JavaPlugin {
 	    getServer().getPluginManager().disablePlugin(this);
 	    return;
 	} 
-	loadPluginConfig();
+	
 	// This can no longer be run in onEnable because the plugin is loaded at startup and so key variables are
 	// not known to the server. Instead it is run one tick after startup.
 	//getIslandWorld();
