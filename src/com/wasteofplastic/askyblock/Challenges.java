@@ -932,76 +932,78 @@ public class Challenges implements CommandExecutor {
 	// New panel map
 	List<CPItem> cp = new ArrayList<CPItem>();
 	// Do the free challenges (available any time and do not count towards levels)
-	for (String challengeName : challengeList.get("")) {
-	    // Get the icon
-	    ItemStack icon = null;
-	    String iconName = plugin.getChallengeConfig().getString("challenges.challengeList." + challengeName + ".icon", "");
-	    if (!iconName.isEmpty()) {
-		try {
-		    // Split if required
-		    String[] split = iconName.split(":");
-		    if (split.length == 1) {
-			// Some material does not show in the inventory
-			if (iconName.equalsIgnoreCase("potato")) {
-			    iconName = "POTATO_ITEM";
-			} else if (iconName.equalsIgnoreCase("brewing_stand")) {
-			    iconName = "BREWING_STAND_ITEM";
-			} else if (iconName.equalsIgnoreCase("carrot")) {
-			    iconName = "CARROT_ITEM";
-			} else if (iconName.equalsIgnoreCase("cauldron")) {
-			    iconName = "CAULDRON_ITEM";
-			} else if (iconName.equalsIgnoreCase("lava") || iconName.equalsIgnoreCase("stationary_lava")) {
-			    iconName = "LAVA_BUCKET";
-			} else if (iconName.equalsIgnoreCase("water") || iconName.equalsIgnoreCase("stationary_water")) {
-			    iconName = "WATER_BUCKET";
-			} else if (iconName.equalsIgnoreCase("portal")) {
-			    iconName = "OBSIDIAN";
-			} else if (iconName.equalsIgnoreCase("PUMPKIN_STEM")) {
-			    iconName = "PUMPKIN";
-			} else if (iconName.equalsIgnoreCase("skull")) {
-			    iconName = "SKULL_ITEM";
+	if (challengeList.containsKey("")) {
+	    for (String challengeName : challengeList.get("")) {
+		// Get the icon
+		ItemStack icon = null;
+		String iconName = plugin.getChallengeConfig().getString("challenges.challengeList." + challengeName + ".icon", "");
+		if (!iconName.isEmpty()) {
+		    try {
+			// Split if required
+			String[] split = iconName.split(":");
+			if (split.length == 1) {
+			    // Some material does not show in the inventory
+			    if (iconName.equalsIgnoreCase("potato")) {
+				iconName = "POTATO_ITEM";
+			    } else if (iconName.equalsIgnoreCase("brewing_stand")) {
+				iconName = "BREWING_STAND_ITEM";
+			    } else if (iconName.equalsIgnoreCase("carrot")) {
+				iconName = "CARROT_ITEM";
+			    } else if (iconName.equalsIgnoreCase("cauldron")) {
+				iconName = "CAULDRON_ITEM";
+			    } else if (iconName.equalsIgnoreCase("lava") || iconName.equalsIgnoreCase("stationary_lava")) {
+				iconName = "LAVA_BUCKET";
+			    } else if (iconName.equalsIgnoreCase("water") || iconName.equalsIgnoreCase("stationary_water")) {
+				iconName = "WATER_BUCKET";
+			    } else if (iconName.equalsIgnoreCase("portal")) {
+				iconName = "OBSIDIAN";
+			    } else if (iconName.equalsIgnoreCase("PUMPKIN_STEM")) {
+				iconName = "PUMPKIN";
+			    } else if (iconName.equalsIgnoreCase("skull")) {
+				iconName = "SKULL_ITEM";
+			    }
+			    icon = new ItemStack(Material.valueOf(iconName));
+			} else if (split.length == 2) {
+			    icon = new ItemStack(Material.valueOf(split[0]));
+			    icon.setDurability(Integer.valueOf(split[1]).shortValue());
 			}
-			icon = new ItemStack(Material.valueOf(iconName));
-		    } else if (split.length == 2) {
-			icon = new ItemStack(Material.valueOf(split[0]));
-			icon.setDurability(Integer.valueOf(split[1]).shortValue());
+		    } catch (Exception e) {
+			// Icon was not well formatted
+			plugin.getLogger().warning("Error in challenges.yml - icon format is incorrect for " + challengeName + ":" + iconName);
+			plugin.getLogger().warning("Format should be 'icon: MaterialType:Damage' where Damage is optional");
 		    }
-		} catch (Exception e) {
-		    // Icon was not well formatted
-		    plugin.getLogger().warning("Error in challenges.yml - icon format is incorrect for " + challengeName + ":" + iconName);
-		    plugin.getLogger().warning("Format should be 'icon: MaterialType:Damage' where Damage is optional");
 		}
-	    }
-	    if (icon == null) {
-		icon = new ItemStack(Material.PAPER);
-	    }
-	    String description = ChatColor.GREEN
-		    + plugin.getChallengeConfig().getString("challenges.challengeList." + challengeName + ".friendlyname",
-			    challengeName.substring(0, 1).toUpperCase() + challengeName.substring(1));
+		if (icon == null) {
+		    icon = new ItemStack(Material.PAPER);
+		}
+		String description = ChatColor.GREEN
+			+ plugin.getChallengeConfig().getString("challenges.challengeList." + challengeName + ".friendlyname",
+				challengeName.substring(0, 1).toUpperCase() + challengeName.substring(1));
 
-	    // Check if completed or not
-	    boolean complete = false;
-	    if (Settings.addCompletedGlow && players.checkChallenge(player.getUniqueId(),challengeName)) {
-		// Complete! Make the icon glow
-		ItemMeta im = icon.getItemMeta();
-		im.addEnchant(Enchantment.ARROW_DAMAGE, 0, true);
-		icon.setItemMeta(im);
-		icon.removeEnchantment(Enchantment.ARROW_DAMAGE);
-		complete = true;
-	    }
-	    boolean repeatable = false;
-	    if (plugin.getChallengeConfig().getBoolean("challenges.challengeList." + challengeName + ".repeatable", false)) {
-		// Repeatable
-		repeatable = true;
-	    }
-	    // Only show this challenge if it is not done or repeatable if the setting Settings.removeCompleteOntimeChallenges
-	    if (!complete || ((complete && repeatable) || !Settings.removeCompleteOntimeChallenges)) {
-		// Store the challenge panel item and the command that will be called if it is activated.
-		CPItem item = new CPItem(icon, description, Settings.CHALLENGECOMMAND + " c " + challengeName, null);
-		// Get the challenge description, that changes depending on whether the challenge is complete or not.
-		List<String> lore = challengeDescription(challengeName, player);
-		item.setLore(lore);
-		cp.add(item);
+		// Check if completed or not
+		boolean complete = false;
+		if (Settings.addCompletedGlow && players.checkChallenge(player.getUniqueId(),challengeName)) {
+		    // Complete! Make the icon glow
+		    ItemMeta im = icon.getItemMeta();
+		    im.addEnchant(Enchantment.ARROW_DAMAGE, 0, true);
+		    icon.setItemMeta(im);
+		    icon.removeEnchantment(Enchantment.ARROW_DAMAGE);
+		    complete = true;
+		}
+		boolean repeatable = false;
+		if (plugin.getChallengeConfig().getBoolean("challenges.challengeList." + challengeName + ".repeatable", false)) {
+		    // Repeatable
+		    repeatable = true;
+		}
+		// Only show this challenge if it is not done or repeatable if the setting Settings.removeCompleteOntimeChallenges
+		if (!complete || ((complete && repeatable) || !Settings.removeCompleteOntimeChallenges)) {
+		    // Store the challenge panel item and the command that will be called if it is activated.
+		    CPItem item = new CPItem(icon, description, Settings.CHALLENGECOMMAND + " c " + challengeName, null);
+		    // Get the challenge description, that changes depending on whether the challenge is complete or not.
+		    List<String> lore = challengeDescription(challengeName, player);
+		    item.setLore(lore);
+		    cp.add(item);
+		}
 	    }
 	}
 	// Do the level-based challenges

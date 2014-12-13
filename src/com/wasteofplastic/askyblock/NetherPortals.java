@@ -150,13 +150,16 @@ public class NetherPortals implements Listener {
     }
 
     // Nether portal spawn protection
-
-    // Function to check proximity to nether spawn location
+ 
+    /**
+     * Function to check proximity to nether spawn location
+     * @param player
+     * @return
+     */
     private boolean awayFromSpawn(Player player) {
 	Vector p = player.getLocation().toVector().multiply(new Vector(1,0,1));
 	Vector spawn = player.getWorld().getSpawnLocation().toVector().multiply(new Vector(1,0,1));
 	if (spawn.distanceSquared(p) < (Settings.netherSpawnRadius * Settings.netherSpawnRadius)) {
-	    player.sendMessage(Locale.netherSpawnIsProtected);
 	    return false;
 	} else {
 	    return true;
@@ -169,10 +172,11 @@ public class NetherPortals implements Listener {
     @EventHandler(priority = EventPriority.LOW)
     public void onBlockBreak(final BlockBreakEvent e) {
 	//plugin.getLogger().info("Block break");
-	if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_nether")
+	if ((e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_nether") && !Settings.newNether) 
 		|| e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_the_end")) {
 	    //plugin.getLogger().info("Block break in acid island nether");
 	    if (!awayFromSpawn(e.getPlayer()) && !e.getPlayer().isOp()) {
+		e.getPlayer().sendMessage(Locale.netherSpawnIsProtected);
 		e.setCancelled(true);
 	    }
 	}

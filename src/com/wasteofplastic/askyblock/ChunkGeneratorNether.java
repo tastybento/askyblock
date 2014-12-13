@@ -38,7 +38,7 @@ public class ChunkGeneratorNether extends ChunkGenerator {
     //@SuppressWarnings("deprecation")
     public byte[][] generateBlockSections(World world, Random random, int chunkX, int chunkZ, BiomeGrid biomeGrid)
     {
-	
+
 	rand.setSeed(world.getSeed());
 	gen = new PerlinOctaveGenerator((long) (random.nextLong() * random.nextGaussian()), 8);
 	byte[][] result = new byte[world.getMaxHeight() / 16][];
@@ -117,8 +117,10 @@ public class ChunkGeneratorNether extends ChunkGenerator {
 				}
 			    } else {
 				// Fill the inside of the island randomly with blocks
-				if (r > 0D) {
-				    setBlock(result,x,y,z, (byte)Material.QUARTZ_ORE.getId());
+				if (r > 0.25D) {
+				    setBlock(result,x,y,z, (byte)Material.AIR.getId());
+				} else if (r > 0D) {
+				    setBlock(result,x,y,z, (byte)Material.STONE.getId());
 				} else if(r > -0.4D) {
 				    setBlock(result,x,y,z, (byte)Material.NETHERRACK.getId());
 				    // Put lava in the holes if it is below the lava level
@@ -143,44 +145,58 @@ public class ChunkGeneratorNether extends ChunkGenerator {
 		}
 	    }*/
 	    // Make the towers
-	    for (int x = 5; x < 11; x++) {
-		for (int z = 5; z < 11; z++) {
+	    for (int x = 0; x < 11; x++) {
+		for (int z = 0; z < 11; z++) {
 		    int island_height = Settings.island_level+25;
 		    for (int y = Settings.island_level-20; y < island_height; y++) {
 			double r = gen.noise(x, y, z,0.5,0.5);
 			// Fence around the top
 			if (y == (island_height-1)) {
-			    if (x == 5 || z == 5 || x == 10 || z == 10) {
+			    if (x == 0 || z == 0 || x == 10 || z == 10) {
 				setBlock(result,x,y,z, (byte)Material.NETHER_FENCE.getId());
 			    } else {
 				// Place random spawners. The type is set in the block populator
-				if (r > 0.1D) {
+				if (random.nextInt(10) > 8) {
+				    setBlock(result,x,y,z, (byte)Material.OBSIDIAN.getId());
+				} else if (random.nextInt(10) > 8) {
 				    setBlock(result,x,y,z, (byte)Material.MOB_SPAWNER.getId());
-				}
+				} 
 			    }
 			    // Fence sits on nether brick
 			} else if (y == (island_height-2)) {	    
 			    setBlock(result,x,y,z, (byte)Material.NETHER_BRICK.getId());
 			} else {
-			    if (x == 5 || z == 5 || x == 10 || z == 10) {
+			    if (x == 0 || z == 0 || x == 10 || z == 10) {
 				// Wall around the island with occasional holes
-				if(r > -0.5D)
-				{
+				if(r > -0.5D) {
 				    setBlock(result,x,y,z, (byte)Material.NETHER_BRICK.getId());
 				} else {
-				    setBlock(result,x,y,z, (byte)Material.LAVA.getId());
-				}
+				    if (random.nextInt(2) == 1) {
+					setBlock(result,x,y,z, (byte)Material.LAVA.getId());
+				    } else {
+					setBlock(result,x,y,z, (byte)Material.AIR.getId());
+				    }
+				} 
+
 			    } else {
 				// Fill with random blocks
 				if (r > 0.8D){
 				    setBlock(result,x,y,z, (byte) Material.LAVA.getId()); 
-				} else if (r > 0.45D) {
-				    setBlock(result,x,y,z, (byte)Material.QUARTZ_ORE.getId());
-				} else if (r > 0.20D) {
+				} else if (r > 0.5D) {
+				    setBlock(result,x,y,z, (byte)Material.AIR.getId());
+				} else if (r > 0.4D) {
+				    setBlock(result,x,y,z, (byte)Material.STONE.getId());
+				} else if (r > 0.2D) {
 				    setBlock(result,x,y,z, (byte)Material.SOUL_SAND.getId());
 				} else if(r > -0.5D) {
 				    setBlock(result,x,y,z, (byte)Material.NETHERRACK.getId());
 				} 
+			    }
+			    // Fray the bottom
+			    if (y < Settings.island_level-15) {
+				if (r > 0D) {
+				    setBlock(result,x,y,z, (byte)Material.AIR.getId());
+				}
 			    }
 			} 
 		    }
