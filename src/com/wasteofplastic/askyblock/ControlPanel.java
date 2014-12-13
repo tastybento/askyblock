@@ -248,8 +248,9 @@ public class ControlPanel implements Listener {
 		CPItem item = challenges.get(slot);
 		//plugin.getLogger().info("DEBUG: CP Item is " + item.getItem().toString());
 		//plugin.getLogger().info("DEBUG: Clicked is " + clicked.toString());
-		// Check that it is the top items that are bing clicked on
-		if (clicked.getType().equals(item.getItem().getType())) {
+		// Check that it is the top items that are being clicked on
+		// These two should be identical because it is made before
+		if (clicked.equals(item.getItem())) {
 		    //plugin.getLogger().info("DEBUG: You clicked on a challenge item");
 		    //plugin.getLogger().info("DEBUG: performing  /" + item.getCommand());
 		    if (item.getCommand() != null) {
