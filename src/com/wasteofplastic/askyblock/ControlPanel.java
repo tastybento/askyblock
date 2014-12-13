@@ -241,14 +241,17 @@ public class ControlPanel implements Listener {
 	    }
 
 	    // Get the list of items in this inventory
-	    //plugin.getLogger().info("You clicked on slot " + slot);
+	    //plugin.getLogger().info("DEBUG: You clicked on slot " + slot);
 	    List<CPItem> challenges = plugin.getChallenges().getCP(player);
+	    //plugin.getLogger().info("DEBUG: Challenges size = " + challenges.size());
 	    if (slot >=0 && slot < challenges.size()) {
 		CPItem item = challenges.get(slot);
+		//plugin.getLogger().info("DEBUG: CP Item is " + item.getItem().toString());
+		//plugin.getLogger().info("DEBUG: Clicked is " + clicked.toString());
 		// Check that it is the top items that are bing clicked on
-		if (clicked.equals(item.getItem())) {
-		    //plugin.getLogger().info("You clicked on a challenge item");
-		    //plugin.getLogger().info("performing  /" + item.getCommand());
+		if (clicked.getType().equals(item.getItem().getType())) {
+		    //plugin.getLogger().info("DEBUG: You clicked on a challenge item");
+		    //plugin.getLogger().info("DEBUG: performing  /" + item.getCommand());
 		    if (item.getCommand() != null) {
 			player.performCommand(item.getCommand());
 			player.closeInventory();
