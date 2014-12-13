@@ -3,7 +3,7 @@
 # If selling is allowed, right click will sell the item to the shop
 config:
    allowselling: false
-# Maximum number of items in the minishop is 9 - that's why it's mini!
+# Add items in the same format to sell or buy more
 items:
    item1:
       material: LAVA_BUCKET
@@ -53,7 +53,7 @@ items:
    item8:
       material: SAPLING
       quantity: 4
-      # Extras is durability/damage
+      # Extra is durability/damage
       extra: 5
       price: 150
    item9:

@@ -71,7 +71,7 @@ public class ControlPanel implements Listener {
      */
     public static HashMap<String,Inventory> controlPanel = new HashMap<String,Inventory>();
 
-    public static final Inventory miniShop = Bukkit.createInventory(null, 9, ChatColor.translateAlternateColorCodes('&',Locale.islandMiniShopTitle));
+    public static Inventory miniShop;
     // The first parameter, is the inventory owner. I make it null to let everyone use it.
     //The second parameter, is the slots in a inventory. Must be a multiple of 9. Can be up to 54.
     //The third parameter, is the inventory name. This will accept chat colors.
@@ -90,6 +90,11 @@ public class ControlPanel implements Listener {
 	ASkyBlock plugin = ASkyBlock.getPlugin();
 	//plugin.getLogger().info("DEBUG: loading the shop. items = " + items.toString());
 	if (items != null) {
+	    // Create the store
+	    // Get how many the store should be
+	    int size = items.getKeys(false).size() + 8;
+	    size -= (size % 9);
+	    miniShop = Bukkit.createInventory(null, size, ChatColor.translateAlternateColorCodes('&',Locale.islandMiniShopTitle));
 	    // Run through items
 	    int slot = 0;
 	    for (String item : items.getKeys(false)) {
@@ -109,9 +114,6 @@ public class ControlPanel implements Listener {
 		    store.put(slot, shopItem);
 		    miniShop.setItem(slot, shopItem.getItem());
 		    slot++;
-		    if (slot > 8) {
-			break;
-		    }
 		} catch (Exception e) {
 		    plugin.getLogger().warning("Problem loading minishop item #" + slot);
 		    plugin.getLogger().warning(e.getMessage());
