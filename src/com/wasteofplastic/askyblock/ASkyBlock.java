@@ -776,14 +776,16 @@ public class ASkyBlock extends JavaPlugin {
 	getLocale();
 	// Assign settings
 	// Load schematics
-	for(String key : getConfig().getConfigurationSection("general.schematics").getKeys(true)) {
-	    //getLogger().info(key);
-	    // Check the file exists
-	    String filename = getConfig().getString("general.schematics." + key);
-	    File schematicFile = new File(plugin.getDataFolder(), filename);
-	    if (schematicFile.exists()) {
-		Settings.schematics.put(key, filename);
-		getLogger().info("Found " + filename + " for perm " + key);
+	if (getConfig().contains("general.schematics")) {
+	    for(String key : getConfig().getConfigurationSection("general.schematics").getKeys(true)) {
+		//getLogger().info(key);
+		// Check the file exists
+		String filename = getConfig().getString("general.schematics." + key);
+		File schematicFile = new File(plugin.getDataFolder(), filename);
+		if (schematicFile.exists()) {
+		    Settings.schematics.put(key, filename);
+		    getLogger().info("Found " + filename + " for perm " + key);
+		}
 	    }
 	}
 	// Use economy or not

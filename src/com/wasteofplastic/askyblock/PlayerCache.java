@@ -17,6 +17,7 @@
 package com.wasteofplastic.askyblock;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -37,7 +38,7 @@ public class PlayerCache {
 
     public PlayerCache(ASkyBlock plugin) {
 	this.plugin = plugin;
-	final Player[] serverPlayers = Bukkit.getServer().getOnlinePlayers();
+	final Collection<? extends Player> serverPlayers = Bukkit.getServer().getOnlinePlayers();
 	for (Player p : serverPlayers) {
 	    if (p.isOnline()) {
 		final Players playerInf = new Players(plugin, p.getUniqueId());

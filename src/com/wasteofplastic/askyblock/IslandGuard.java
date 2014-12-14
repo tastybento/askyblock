@@ -887,11 +887,16 @@ public class IslandGuard implements Listener {
 
 	// Check for disallowed clicked blocks
 	if (e.getClickedBlock() != null) {
-	    //plugin.getLogger().info("DEBUG: clicked block " + e.getClickedBlock());
-	    //plugin.getLogger().info("DEBUG: Material " + e.getMaterial());
+	    plugin.getLogger().info("DEBUG: clicked block " + e.getClickedBlock());
+	    plugin.getLogger().info("DEBUG: Material " + e.getMaterial());
 
 	    switch (e.getClickedBlock().getType()) {
 	    case WOODEN_DOOR:
+	    case SPRUCE_DOOR:
+	    case ACACIA_DOOR:
+	    case DARK_OAK_DOOR:
+	    case BIRCH_DOOR:
+	    case JUNGLE_DOOR:
 	    case TRAP_DOOR:
 		if (!Settings.allowDoorUse && !(playerAtSpawn && Settings.allowSpawnDoorUse)) {
 		    e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
@@ -900,6 +905,11 @@ public class IslandGuard implements Listener {
 		}
 		break;
 	    case FENCE_GATE:
+	    case SPRUCE_FENCE_GATE:
+	    case ACACIA_FENCE_GATE:
+	    case DARK_OAK_FENCE_GATE:
+	    case BIRCH_FENCE_GATE:
+	    case JUNGLE_FENCE_GATE:
 		if (!Settings.allowGateUse && !(playerAtSpawn && Settings.allowSpawnGateUse)) {
 		    e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
 		    e.setCancelled(true);

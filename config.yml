@@ -33,10 +33,11 @@ general:
    # To give players other schematics, list a permission and the filename
    # then give the player that permission (it can be anything)
    # If the file does not exist, it will not load.
+   # Uncomment the lines after this one after you change them...
    schematics:
-     schematic.vip: vipisland.schematic
-     schematic.vip2: vip2island.schematic
-     schematic.jail: jail.schematic 
+   #  schematic.vip: vipisland.schematic
+   #  schematic.vip2: vip2island.schematic
+   #  schematic.jail: jail.schematic 
 
    #How long a player must wait before they can reset their island again
    resetwait: 300
