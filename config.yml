@@ -28,6 +28,16 @@ general:
    # portal will return them back to their islands.
    createnether: true
 
+   # Schematics
+   # The default schematic file (if used) for all players is island.schematic.
+   # To give players other schematics, list a permission and the filename
+   # then give the player that permission (it can be anything)
+   # If the file does not exist, it will not load.
+   schematics:
+     schematic.vip: vipisland.schematic
+     schematic.vip2: vip2island.schematic
+     schematic.jail: jail.schematic 
+
    #How long a player must wait before they can reset their island again
    resetwait: 300
 

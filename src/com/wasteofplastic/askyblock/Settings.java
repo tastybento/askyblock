@@ -175,6 +175,9 @@ public class Settings {
     // Use Economy
     public static boolean useEconomy;
     
+    // Schematic list (permission, filename)
+    public static HashMap<String,String> schematics = new HashMap<String,String>();
+    
 
   
 }

@@ -170,7 +170,7 @@ public class ASkyBlock extends JavaPlugin {
 		    } else {
 			World netherWorld = WorldCreator.name(Settings.worldName + "_nether").type(WorldType.FLAT).generator(new ChunkGeneratorNether()).environment(World.Environment.NETHER).createWorld();
 		    }
-			//netherWorld.setMonsterSpawnLimit(Settings.monsterSpawnLimit);
+		    //netherWorld.setMonsterSpawnLimit(Settings.monsterSpawnLimit);
 		    // netherWorld.setAnimalSpawnLimit(Settings.animalSpawnLimit);
 		}
 	    }
@@ -764,6 +764,7 @@ public class ASkyBlock extends JavaPlugin {
      * Loads the various settings from the config.yml file into the plugin
      */
     public void loadPluginConfig() {
+	//getLogger().info("*********************************************");
 	try {
 	    getConfig();
 	} catch (final Exception e) {
@@ -774,6 +775,17 @@ public class ASkyBlock extends JavaPlugin {
 	// Get the localization strings
 	getLocale();
 	// Assign settings
+	// Load schematics
+	for(String key : getConfig().getConfigurationSection("general.schematics").getKeys(true)) {
+	    //getLogger().info(key);
+	    // Check the file exists
+	    String filename = getConfig().getString("general.schematics." + key);
+	    File schematicFile = new File(plugin.getDataFolder(), filename);
+	    if (schematicFile.exists()) {
+		Settings.schematics.put(key, filename);
+		getLogger().info("Found " + filename + " for perm " + key);
+	    }
+	}
 	// Use economy or not
 	// In future expand to include internal economy
 	Settings.useEconomy = getConfig().getBoolean("general.useeconomy",true);
@@ -929,7 +941,7 @@ public class ASkyBlock extends JavaPlugin {
 	Settings.clearInventory = getConfig().getBoolean("general.resetinventory", true);
 
 	Settings.startingMoney = getConfig().getDouble("general.startingmoney", 0D);
-	
+
 	Settings.newNether = getConfig().getBoolean("general.newnether", false);
 	// Nether spawn protection radius
 	Settings.netherSpawnRadius = getConfig().getInt("general.netherspawnradius",25);
@@ -1412,7 +1424,7 @@ public class ASkyBlock extends JavaPlugin {
 	    getServer().getPluginManager().disablePlugin(this);
 	    return;
 	} 
-	
+
 	// This can no longer be run in onEnable because the plugin is loaded at startup and so key variables are
 	// not known to the server. Instead it is run one tick after startup.
 	//getIslandWorld();
