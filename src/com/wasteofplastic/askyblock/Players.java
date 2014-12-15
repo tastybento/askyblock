@@ -241,7 +241,7 @@ public class Players {
 
     public boolean hasIsland() {
 	// Check if the player really has an island
-	if (islandLocation.isEmpty()) {
+	if (hasIsland && islandLocation.isEmpty()) {
 	    hasIsland = false;
 	    plugin.getLogger().warning(playerName + " apparently had an island, but the location is unknown.");
 	}

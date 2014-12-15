@@ -154,7 +154,9 @@ public class ASkyBlock extends JavaPlugin {
 		try {
 		    Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv import " + Settings.worldName + " normal -g " + plugin.getName());
 		    Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv modify set generator " + plugin.getName() + " " + Settings.worldName);
-		    //getServer().dispatchCommand(getServer().getConsoleSender(), "mv modify set generator ASkyBlock " + Settings.worldName + "_nether");
+		    if (Settings.newNether) {
+			Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv modify set generator " + plugin.getName() + " " + Settings.worldName + "_nether");
+		    }
 		} catch (Exception e) {
 		    Bukkit.getLogger().info("Not successfull! Disabling " + plugin.getName() + "!");
 		    e.printStackTrace();
@@ -168,7 +170,7 @@ public class ASkyBlock extends JavaPlugin {
 		    if (!Settings.newNether) {
 			World netherWorld = WorldCreator.name(Settings.worldName + "_nether").type(WorldType.NORMAL).environment(World.Environment.NETHER).createWorld();
 		    } else {
-			World netherWorld = WorldCreator.name(Settings.worldName + "_nether").type(WorldType.FLAT).generator(new ChunkGeneratorNether()).environment(World.Environment.NETHER).createWorld();
+			World netherWorld = WorldCreator.name(Settings.worldName + "_nether").type(WorldType.FLAT).generator(new ChunkGeneratorWorld()).environment(World.Environment.NETHER).createWorld();
 		    }
 		    //netherWorld.setMonsterSpawnLimit(Settings.monsterSpawnLimit);
 		    // netherWorld.setAnimalSpawnLimit(Settings.animalSpawnLimit);

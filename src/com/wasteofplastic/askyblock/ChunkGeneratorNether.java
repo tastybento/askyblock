@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
@@ -38,7 +39,7 @@ public class ChunkGeneratorNether extends ChunkGenerator {
     //@SuppressWarnings("deprecation")
     public byte[][] generateBlockSections(World world, Random random, int chunkX, int chunkZ, BiomeGrid biomeGrid)
     {
-
+	Bukkit.getLogger().info("DEBUG: world environment(nether) = " + world.getEnvironment().toString());
 	rand.setSeed(world.getSeed());
 	gen = new PerlinOctaveGenerator((long) (random.nextLong() * random.nextGaussian()), 8);
 	byte[][] result = new byte[world.getMaxHeight() / 16][];
@@ -138,6 +139,10 @@ public class ChunkGeneratorNether extends ChunkGenerator {
 				    setBlock(result,x,y,z, (byte)Material.FIRE.getId());
 				}
 			    }
+			    // Player the nether-tree dirt block
+			    if (x == 2 && z == 2) {
+				setBlock(result,x,y,z, (byte)Material.DIRT.getId());
+			    }
 			} else {
 			    // Make a wall around the island with a few windows (okay holes)
 			    if (x == 0 || z == 0 || x == 15 || z == 15) {
@@ -149,8 +154,10 @@ public class ChunkGeneratorNether extends ChunkGenerator {
 				// Fill the inside of the island randomly with blocks
 				if (r > 0.25D) {
 				    setBlock(result,x,y,z, (byte)Material.AIR.getId());
-				} else if (r > 0D) {
+				} else if (r > 0.15D) {
 				    setBlock(result,x,y,z, (byte)Material.STONE.getId());
+				} else if (r > 0D) {
+				    setBlock(result,x,y,z, (byte)Material.SOUL_SAND.getId());
 				} else if(r > -0.4D) {
 				    setBlock(result,x,y,z, (byte)Material.NETHERRACK.getId());
 				    // Put lava in the holes if it is below the lava level
@@ -187,6 +194,7 @@ public class ChunkGeneratorNether extends ChunkGenerator {
 			    } else {
 				// Place random spawners. The type is set in the block populator
 				if (random.nextInt(10) > 8) {
+				    // TODO: Check around so there are no chests next to each other
 				    setBlock(result,x,y,z, (byte)Material.OBSIDIAN.getId());
 				} else if (random.nextInt(10) > 8) {
 				    setBlock(result,x,y,z, (byte)Material.MOB_SPAWNER.getId());
@@ -216,6 +224,8 @@ public class ChunkGeneratorNether extends ChunkGenerator {
 				    setBlock(result,x,y,z, (byte)Material.AIR.getId());
 				} else if (r > 0.4D) {
 				    setBlock(result,x,y,z, (byte)Material.STONE.getId());
+				} else if (r > 0.3D) {
+				    setBlock(result,x,y,z, (byte)Material.GRAVEL.getId());
 				} else if (r > 0.2D) {
 				    setBlock(result,x,y,z, (byte)Material.SOUL_SAND.getId());
 				} else if(r > -0.5D) {
@@ -256,6 +266,10 @@ public class ChunkGeneratorNether extends ChunkGenerator {
 	result[y >> 4][((y & 0xF) << 8) | (z << 4) | x] = blkid;
     }
 
+    byte getBlock(byte[][] result, int x, int y, int z) {
+	return result[y >> 4][((y & 0xF) << 8) | (z << 4) | x];
+     }
+    
     // This needs to be set to return true to override minecraft's default
     // behavior
     @Override

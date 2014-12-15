@@ -2,12 +2,17 @@ package com.wasteofplastic.askyblock;
 
 import java.util.Random;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.TreeType;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
 import org.bukkit.block.CreatureSpawner;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.generator.BlockPopulator;
 import org.bukkit.inventory.Inventory;
@@ -106,7 +111,17 @@ public class NetherPopulator extends BlockPopulator {
 			
 		    } else if (b.getType().equals(Material.STONE)){
 			b.setType(Material.QUARTZ_ORE);
+		    } else if (b.getType().equals(Material.DIRT)){
+			world.generateTree(source.getBlock(x, y+1, z).getLocation(), TreeType.BROWN_MUSHROOM);
+			b.setType(Material.SOUL_SAND);
 		    }
+		    // Mob spawn
+		    /*
+		    if (y == Settings.island_level && b.getType().equals(Material.NETHERRACK)) {
+			Entity e = world.spawnEntity(b.getRelative(BlockFace.UP,1).getLocation(), EntityType.PIG_ZOMBIE);
+			Bukkit.getLogger().info(e.toString());
+			//}
+		    }*/
 		}
 	    }
 	}
