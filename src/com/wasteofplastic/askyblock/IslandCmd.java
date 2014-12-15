@@ -33,6 +33,7 @@ import net.milkbowl.vault.economy.EconomyResponse;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -50,6 +51,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.DirectionalContainer;
+import org.bukkit.potion.PotionEffect;
 
 public class IslandCmd implements CommandExecutor {
     public boolean busyFlag = true;
@@ -105,13 +107,13 @@ public class IslandCmd implements CommandExecutor {
 	    for (String perm : Settings.schematics.keySet()) {
 		schematicFile = new File(plugin.getDataFolder(), Settings.schematics.get(perm));
 		if (schematicFile.exists()) {
-		try {
-		    schematics.put(perm, Schematic.loadSchematic(schematicFile));
-		    //island = Schematic.loadSchematic(schematicFile);
-		} catch (IOException e) {
-		    plugin.getLogger().severe("Could not load island schematic! Error in file.");
-		    e.printStackTrace();
-		}
+		    try {
+			schematics.put(perm, Schematic.loadSchematic(schematicFile));
+			//island = Schematic.loadSchematic(schematicFile);
+		    } catch (IOException e) {
+			plugin.getLogger().severe("Could not load island schematic! Error in file.");
+			e.printStackTrace();
+		    }
 		} else {
 		    plugin.getLogger().severe("Schematic file '" + Settings.schematics.get(perm) +"' does not exist!");
 		}
@@ -1521,7 +1523,26 @@ public class IslandCmd implements CommandExecutor {
 					} catch (Exception e) {}
 				    }
 				}
-				plugin.resetPlayer(target);
+				//plugin.resetPlayer(target); <- no good if reset inventory is false
+				// Clear their inventory and equipment and set them as survival
+				player.getInventory().clear(); // Javadocs are wrong - this does not
+				// clear armor slots! So...
+				player.getInventory().setArmorContents(null);
+				player.getInventory().setHelmet(null);
+				player.getInventory().setChestplate(null);
+				player.getInventory().setLeggings(null);
+				player.getInventory().setBoots(null);
+				player.getEquipment().clear();
+				if (Settings.resetChallenges) {
+				    // Reset the player's challenge status
+				    plugin.getPlayers().resetAllChallenges(player.getUniqueId());
+				}
+				// Reset the island level
+				plugin.getPlayers().setIslandLevel(player.getUniqueId(), 0);
+				plugin.getPlayers().save(player.getUniqueId());
+				plugin.updateTopTen();
+				// Update the inventory
+				player.updateInventory();
 			    }
 			    if (!target.performCommand(Settings.SPAWNCOMMAND)) {
 				target.teleport(ASkyBlock.getIslandWorld().getSpawnLocation());
