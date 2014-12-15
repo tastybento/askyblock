@@ -118,6 +118,7 @@ public class Settings {
     public static boolean allowVisitorKeepInvOnDeath;
     public static boolean allowVisitorItemPickup;
     public static boolean allowVisitorItemDrop;
+    public static boolean allowArmorStandUse;
     
     //public static boolean ultraSafeBoats;
     public static boolean logInRemoveMobs;

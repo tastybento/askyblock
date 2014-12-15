@@ -59,7 +59,7 @@ public class SafeBoat implements Listener {
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onClick(VehicleDamageEvent e) {
-	// plugin.getLogger().info("Damage event " + e.getDamage());
+	//plugin.getLogger().info("Damage event " + e.getDamage());
 	// Find out what block is being clicked
 	Vehicle boat = e.getVehicle();
 	if (!(boat instanceof Boat)) {

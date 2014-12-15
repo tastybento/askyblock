@@ -264,6 +264,8 @@ island:
    allowvisitoritempickup: true
    # Allow visitors to keep their items if they die
    allowvisitorkeepinvondeath: false
+   # Allow armor stand use by visitors
+   allowarmorstanduse: false
 
 # This section contains the biomes that can be bought or used
 biomesettings:

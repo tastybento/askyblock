@@ -34,6 +34,7 @@ import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -60,6 +61,7 @@ import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -79,12 +81,105 @@ import org.bukkit.potion.Potion;
  */
 public class IslandGuard implements Listener {
     private final ASkyBlock plugin;
+    private final boolean debug = false;
 
     public IslandGuard(final ASkyBlock plugin) {
 	this.plugin = plugin;
 
     }
 
+    // Armor stand events
+    @EventHandler(priority = EventPriority.LOW)
+    public void onEntityDeath(EntityDeathEvent e) {
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
+    }
+    
+    @EventHandler(priority = EventPriority.LOWEST)
+    void placeArmorStandEvent(PlayerInteractEvent e){
+	Player p = e.getPlayer();
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
+	if (!p.getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	    return;
+	}
+	if (p.isOp()) {
+	    // You can do anything if you are Op
+	    return;
+	}
+	// Check if on island
+	if (plugin.playerIsOnIsland(e.getPlayer())) {
+	    return;
+	}
+	// Check if they are holding armor stand
+	ItemStack inHand = e.getPlayer().getItemInHand();
+	if (inHand != null && inHand.getType().equals(Material.ARMOR_STAND)) {
+	    plugin.getLogger().info("DEBUG: stand place cancelled");
+	    e.setCancelled(true);
+	    e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
+	}
+	
+    }
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void ArmorStandDestroy(EntityDamageByEntityEvent e){
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
+	if (!(e.getEntity() instanceof LivingEntity)) {
+	    return;
+	}
+	if (!e.getEntity().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	    return;
+	}
+	final LivingEntity livingEntity = (LivingEntity)e.getEntity();
+	if(!livingEntity.getType().equals(EntityType.ARMOR_STAND)){
+	    return;
+	}
+	if(e.getDamager() instanceof Player){
+	    Player p = (Player) e.getDamager();
+	    if (p.isOp()) {
+		return;
+	    }
+	    // This permission bypasses protection
+	    if (VaultHelper.checkPerm(p, Settings.PERMPREFIX + "mod.bypassprotect")) {
+		return;
+	    }
+	    p.sendMessage(ChatColor.RED + Locale.islandProtected);
+	    e.setCancelled(true);
+	}
+    }
+
+    /**
+     * Handle interaction with armor stands V1.8
+     * @param e
+     */
+    @EventHandler(priority = EventPriority.LOW)
+    public void onPlayerInteract(final PlayerInteractAtEntityEvent e) {
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
+	if (!e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	    return;
+	}
+	if (e.getPlayer().isOp()) {
+	    return;
+	}
+	// This permission bypasses protection
+	if (VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
+	    return;
+	}
+	if (e.getRightClicked() != null && e.getRightClicked().getType().equals(EntityType.ARMOR_STAND)
+		&& !plugin.locationIsOnIsland(e.getPlayer(),e.getRightClicked().getLocation())) {
+	    plugin.getLogger().info("DEBUG: Armor stand clicked off island");
+	    if (!Settings.allowArmorStandUse) {
+		e.setCancelled(true);
+		e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
+	    }
+	}
+    }
 
     /**
      * Handles coop inventory switching
@@ -216,6 +311,9 @@ public class IslandGuard implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=false)
     public void onVistorDeath(final PlayerDeathEvent e) {
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
 	if (!e.getEntity().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    return;
 	}
@@ -235,6 +333,9 @@ public class IslandGuard implements Listener {
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onVistorSpawn(final PlayerRespawnEvent e) {
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
 	// This will override any global settings
 	if (Settings.allowVisitorKeepInvOnDeath) {
 	    InventorySave.getInstance().loadPlayerInventory(e.getPlayer());
@@ -245,6 +346,9 @@ public class IslandGuard implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onVisitorPickup(final PlayerPickupItemEvent e) {
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
 	if (!e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    return;
 	}
@@ -260,6 +364,9 @@ public class IslandGuard implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onVisitorDrop(final PlayerDropItemEvent e) {
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
 	if (!e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    return;
 	}
@@ -278,6 +385,10 @@ public class IslandGuard implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onPlayerFall(final PlayerMoveEvent e) {
+	/* too spammy
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}*/
 	if (!e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    return;
 	}
@@ -301,6 +412,9 @@ public class IslandGuard implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onPlayerTeleport(final PlayerTeleportEvent e) {
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
 	if (Settings.allowTeleportWhenFalling) {
 	    return;
 	}
@@ -329,6 +443,9 @@ public class IslandGuard implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onMobSpawn(final CreatureSpawnEvent e) {
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
 	if (!e.getEntity().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    return;
 	}
@@ -353,6 +470,9 @@ public class IslandGuard implements Listener {
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onExplosion(final EntityExplodeEvent e) {
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
 	// Find out what is exploding
 	Entity expl = e.getEntity();
 	if (expl == null) {
@@ -439,6 +559,9 @@ public class IslandGuard implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onEndermanGrief(final EntityChangeBlockEvent e) {
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
 	if (!e.getEntity().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    return;
 	}
@@ -464,6 +587,9 @@ public class IslandGuard implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onEndermanDeath(final EntityDeathEvent e) {
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
 	if (!Settings.endermanDeathDrop)
 	    return;
 	if (!e.getEntity().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
@@ -490,6 +616,9 @@ public class IslandGuard implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onBlockBreak(final BlockBreakEvent e) {
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
 	if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    // This permission bypasses protection
 	    if (VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
@@ -510,6 +639,9 @@ public class IslandGuard implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onEntityDamage(final EntityDamageByEntityEvent e) {
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
 	// Check world
 	if (!Settings.worldName.equalsIgnoreCase(e.getEntity().getWorld().getName())) {
 	    return;
@@ -657,6 +789,9 @@ public class IslandGuard implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerBlockPlace(final BlockPlaceEvent e) {
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
 	//plugin.getLogger().info(e.getEventName());
 	if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    // This permission bypasses protection
@@ -674,6 +809,9 @@ public class IslandGuard implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerBlockPlace(final HangingPlaceEvent e) {
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
 	//plugin.getLogger().info(e.getEventName());
 	if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    // This permission bypasses protection
@@ -692,6 +830,9 @@ public class IslandGuard implements Listener {
     // Prevent sleeping in other beds
     @EventHandler(priority = EventPriority.LOW)
     public void onPlayerBedEnter(final PlayerBedEnterEvent e) {
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
 	// Check world
 	if (Settings.worldName.equalsIgnoreCase(e.getPlayer().getWorld().getName())) {
 	    // This permission bypasses protection
@@ -712,7 +853,9 @@ public class IslandGuard implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW)
     public void onBreakHanging(final HangingBreakByEntityEvent e) {
-	//plugin.getLogger().info(e.getEventName());
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
 	if (e.getEntity().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    if (!Settings.allowBreakBlocks) {
 		if (e.getRemover() instanceof Player) {
@@ -736,7 +879,12 @@ public class IslandGuard implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW)
     public void onLeashUse(final PlayerLeashEntityEvent e) {
-	//plugin.getLogger().info(e.getEventName());
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
 	if (e.getEntity().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    if (!Settings.allowLeashUse) {
 		if (e.getPlayer() != null) {
@@ -760,6 +908,9 @@ public class IslandGuard implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW)
     public void onLeashUse(final PlayerUnleashEntityEvent e) {
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
 	//plugin.getLogger().info(e.getEventName());
 	if (e.getEntity().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    if (!Settings.allowLeashUse) {
@@ -780,6 +931,9 @@ public class IslandGuard implements Listener {
 
     @EventHandler(priority = EventPriority.LOW)
     public void onBucketEmpty(final PlayerBucketEmptyEvent e) {
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
 	if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    // This permission bypasses protection
 	    if (VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
@@ -811,6 +965,9 @@ public class IslandGuard implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW)
     public void onNetherDispenser(final BlockDispenseEvent e) {
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
 	if (!e.getBlock().getWorld().getName().equalsIgnoreCase(Settings.worldName) ||
 		!e.getBlock().getBiome().equals(Biome.HELL)) {
 	    return;
@@ -826,6 +983,9 @@ public class IslandGuard implements Listener {
 
     @EventHandler(priority = EventPriority.LOW)
     public void onBucketFill(final PlayerBucketFillEvent e) {
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
 	if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    // This permission bypasses protection
 	    if (VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
@@ -843,6 +1003,9 @@ public class IslandGuard implements Listener {
     // Protect sheep
     @EventHandler(priority = EventPriority.LOW)
     public void onShear(final PlayerShearEntityEvent e) {
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
 	if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    // This permission bypasses protection
 	    if (VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
@@ -857,8 +1020,17 @@ public class IslandGuard implements Listener {
 	}
     }
 
+
+
+    /**
+     * Handles interaction with objects
+     * @param e
+     */
     @EventHandler(priority = EventPriority.LOW)
     public void onPlayerInteract(final PlayerInteractEvent e) {
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
 	if (!e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    return;
 	}
@@ -887,8 +1059,8 @@ public class IslandGuard implements Listener {
 
 	// Check for disallowed clicked blocks
 	if (e.getClickedBlock() != null) {
-	    plugin.getLogger().info("DEBUG: clicked block " + e.getClickedBlock());
-	    plugin.getLogger().info("DEBUG: Material " + e.getMaterial());
+	    //plugin.getLogger().info("DEBUG: clicked block " + e.getClickedBlock());
+	    //plugin.getLogger().info("DEBUG: Material " + e.getMaterial());
 
 	    switch (e.getClickedBlock().getType()) {
 	    case WOODEN_DOOR:
@@ -1070,6 +1242,9 @@ public class IslandGuard implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW)
     public void onCraft(CraftItemEvent event) {
+	if (debug) {
+	    plugin.getLogger().info(event.getEventName());
+	}
 	Player player = (Player) event.getWhoClicked();
 	if (player.getWorld().getName().equalsIgnoreCase(Settings.worldName) || 
 		player.getWorld().getName().equalsIgnoreCase(Settings.worldName + "_nether")) {
@@ -1087,6 +1262,9 @@ public class IslandGuard implements Listener {
      */
     @EventHandler(priority = EventPriority.LOWEST)
     void PlayerInteractEvent(PlayerInteractEvent event){
+	if (debug) {
+	    plugin.getLogger().info(event.getEventName());
+	}
 	Player player = (Player) event.getPlayer();
 	if (player.getWorld().getName().equalsIgnoreCase(Settings.worldName) || 
 		player.getWorld().getName().equalsIgnoreCase(Settings.worldName + "_nether")) {
@@ -1108,7 +1286,9 @@ public class IslandGuard implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     void PlayerInteractEntityEvent(PlayerInteractEntityEvent e){
 	Player p = e.getPlayer();
-	//plugin.getLogger().info(e.getEventName());
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
 	if (!p.getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    return;
 	}

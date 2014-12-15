@@ -1070,6 +1070,7 @@ public class ASkyBlock extends JavaPlugin {
 	Settings.allowVisitorKeepInvOnDeath = getConfig().getBoolean("island.allowvisitorkeepinvondeath", false);
 	Settings.allowVisitorItemDrop = getConfig().getBoolean("island.allowvisitoritemdrop", true);
 	Settings.allowVisitorItemPickup = getConfig().getBoolean("island.allowvisitoritempickup", true);
+	Settings.allowArmorStandUse = getConfig().getBoolean("island.allowarmorstanduse", false);
 
 	// Challenges
 	final Set<String> challengeList = getChallengeConfig().getConfigurationSection("challenges.challengeList").getKeys(false);
@@ -1538,11 +1539,13 @@ public class ASkyBlock extends JavaPlugin {
 	}
 	// Run through all the locations
 	for (Location islandTestLocation : islandTestLocations) {
-	    if (player.getLocation().getX() > islandTestLocation.getX() - Settings.island_protectionRange / 2
-		    && player.getLocation().getX() < islandTestLocation.getX() + Settings.island_protectionRange / 2
-		    && player.getLocation().getZ() > islandTestLocation.getZ() - Settings.island_protectionRange / 2
-		    && player.getLocation().getZ() < islandTestLocation.getZ() + Settings.island_protectionRange / 2) {
-		return true;
+	    if (islandTestLocation != null) {
+		if (player.getLocation().getX() > islandTestLocation.getX() - Settings.island_protectionRange / 2
+			&& player.getLocation().getX() < islandTestLocation.getX() + Settings.island_protectionRange / 2
+			&& player.getLocation().getZ() > islandTestLocation.getZ() - Settings.island_protectionRange / 2
+			&& player.getLocation().getZ() < islandTestLocation.getZ() + Settings.island_protectionRange / 2) {
+		    return true;
+		}
 	    }
 	}
 	return false;

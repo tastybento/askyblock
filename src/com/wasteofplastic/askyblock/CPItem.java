@@ -56,7 +56,7 @@ public class CPItem {
 	this.item = itemStack;
 	ItemMeta meta = item.getItemMeta();
 	meta.setDisplayName(name);
-	meta.setLore(null);
+	//meta.setLore(null);
 	item.setItemMeta(meta);
     }
 

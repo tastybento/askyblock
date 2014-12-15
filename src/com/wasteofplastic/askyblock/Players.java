@@ -220,7 +220,7 @@ public class Players {
 	}
 	return false;
     }
-    
+
     public HashMap<String,Boolean> getChallengeStatus() {
 	return challengeList;
     }
@@ -240,6 +240,11 @@ public class Players {
     }
 
     public boolean hasIsland() {
+	// Check if the player really has an island
+	if (islandLocation.isEmpty()) {
+	    hasIsland = false;
+	    plugin.getLogger().warning(playerName + " apparently had an island, but the location is unknown.");
+	}
 	return hasIsland;
     }
 
@@ -248,6 +253,29 @@ public class Players {
      * @return boolean - true if player is in a team
      */
     public boolean inTeam() {
+	// Check if this player really has a team island
+	if (inTeam && teamIslandLocation.isEmpty()) {
+	    // Something odd is going on
+	    // See if the player has a team leader
+	    if (teamLeader == null) {
+		// No, so just clear everything
+		inTeam = false;
+		plugin.getLogger().warning(playerName + " was listed as in a team, but has no team island or team leader. Removing from team.");
+	    } else {
+		// See if the team leader thinks this player is on their team
+		if (plugin.getPlayers().getMembers(teamLeader).contains(uuid)) {
+		    // Try and get the team leader's island
+		    if (plugin.getPlayers().getTeamIslandLocation(teamLeader) != null) {
+			teamIslandLocation = getStringLocation(plugin.getPlayers().getTeamIslandLocation(teamLeader));
+			plugin.getLogger().warning(playerName + " was listed as in a team, but has no team island. Fixed.");
+		    }  
+		} else {
+		    inTeam = false;
+		    teamLeader = null;
+		    plugin.getLogger().warning(playerName + " was listed as in a team, but the team leader does not have them on the team. Removing from team.");
+		}
+	    }
+	}
 	if (members == null) {
 	    members = new ArrayList<UUID>();
 	}
@@ -352,14 +380,14 @@ public class Players {
      * @return the resetsLeft
      */
     public int getResetsLeft() {
-        return resetsLeft;
+	return resetsLeft;
     }
 
     /**
      * @param resetsLeft the resetsLeft to set
      */
     public void setResetsLeft(int resetsLeft) {
-        this.resetsLeft = resetsLeft;
+	this.resetsLeft = resetsLeft;
     }
 
     /**
