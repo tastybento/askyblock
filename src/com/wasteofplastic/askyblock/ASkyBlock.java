@@ -1651,6 +1651,17 @@ public class ASkyBlock extends JavaPlugin {
 	manager.registerEvents(new NetherPortals(this), this);
 	// Island Protection events
 	manager.registerEvents(new IslandGuard(this), this);
+	// New V1.8 events
+	Class<?> clazz;
+	try {
+	    clazz = Class.forName("org.bukkit.event.player.PlayerInteractAtEntityEvent");
+	} catch (Exception e) {
+	    getLogger().info("No PlayerInteractAtEntityEvent found.");
+	    clazz = null;
+	}
+	if (clazz != null) {
+	    manager.registerEvents(new IslandGuardNew(this), this);
+	}
 	// Events for when a player joins or leaves the server
 	manager.registerEvents(new JoinLeaveEvents(this), this);
 	// Ensures Lava flows correctly in ASkyBlock world

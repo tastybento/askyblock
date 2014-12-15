@@ -61,7 +61,6 @@ import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -89,13 +88,6 @@ public class IslandGuard implements Listener {
     }
 
     // Armor stand events
-    @EventHandler(priority = EventPriority.LOW)
-    public void onEntityDeath(EntityDeathEvent e) {
-	if (debug) {
-	    plugin.getLogger().info(e.getEventName());
-	}
-    }
-    
     @EventHandler(priority = EventPriority.LOWEST)
     void placeArmorStandEvent(PlayerInteractEvent e){
 	Player p = e.getPlayer();
@@ -150,35 +142,6 @@ public class IslandGuard implements Listener {
 	    }
 	    p.sendMessage(ChatColor.RED + Locale.islandProtected);
 	    e.setCancelled(true);
-	}
-    }
-
-    /**
-     * Handle interaction with armor stands V1.8
-     * @param e
-     */
-    @EventHandler(priority = EventPriority.LOW)
-    public void onPlayerInteract(final PlayerInteractAtEntityEvent e) {
-	if (debug) {
-	    plugin.getLogger().info(e.getEventName());
-	}
-	if (!e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
-	    return;
-	}
-	if (e.getPlayer().isOp()) {
-	    return;
-	}
-	// This permission bypasses protection
-	if (VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
-	    return;
-	}
-	if (e.getRightClicked() != null && e.getRightClicked().getType().equals(EntityType.ARMOR_STAND)
-		&& !plugin.locationIsOnIsland(e.getPlayer(),e.getRightClicked().getLocation())) {
-	    //plugin.getLogger().info("DEBUG: Armor stand clicked off island");
-	    if (!Settings.allowArmorStandUse) {
-		e.setCancelled(true);
-		e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
-	    }
 	}
     }
 
