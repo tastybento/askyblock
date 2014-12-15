@@ -150,33 +150,34 @@ public class ControlPanel implements Listener {
 		defaultPanelName = panelName;
 	    }
 	    //plugin.getLogger().info("DEBUG: Panel section " + panelName);
-	    // New inventory
-	    Inventory newPanel = Bukkit.createInventory(null, 9, panelName);
-	    if (newPanel == null) {
-		//plugin.getLogger().info("DEBUG: new panel is null!");
-	    }
-	    // Add inventory to map of inventories
-	    controlPanel.put(newPanel.getName(),newPanel);
 	    //plugin.getLogger().info("DEBUG: putting panel " + newPanel.getName());
 	    ConfigurationSection buttons = cpFile.getConfigurationSection(panel + ".buttons");
 	    if (buttons != null) {
+		// Get how many buttons can be in the CP
+		int size = buttons.getKeys(false).size() + 8;
+		size -= (size % 9);
+		// Add inventory to map of inventories
+		controlPanel.put(panelName,Bukkit.createInventory(null, size, panelName));
 		// Run through buttons
 		int slot = 0;
 		for (String item : buttons.getKeys(false)) {
 		    try {
-			String m = buttons.getString(item + ".material","AIR");
+			String m = buttons.getString(item + ".material","BOOK");
+			//Split off damage
+			String[] icon = m.split(":");
 			//plugin.getLogger().info("Material = " + m);
-			Material material = Material.matchMaterial(m);
+			Material material = Material.matchMaterial(icon[0]);
 			String description = buttons.getString(item + ".description","");
 			String command = buttons.getString(item + ".command","").replace("[island]", Settings.ISLANDCOMMAND);
 			String nextSection = buttons.getString(item + ".nextsection","");
-			CPItem cpItem = new CPItem(material,description,command,nextSection);
-			cp.put(slot, cpItem);
-			newPanel.setItem(slot, cpItem.getItem());
-			slot++;
-			if (slot > 8) {
-			    break;
+			ItemStack i = new ItemStack(material);
+			if (icon.length == 2) {
+			    i.setDurability(Short.parseShort(icon[1]));
 			}
+			CPItem cpItem = new CPItem(i,description,command,nextSection);
+			cp.put(slot, cpItem);
+			controlPanel.get(panelName).setItem(slot, cpItem.getItem());
+			slot++;
 		    } catch (Exception e) {
 			plugin.getLogger().warning("Problem loading control panel " + panel + " item #" + slot);
 			plugin.getLogger().warning(e.getMessage());
