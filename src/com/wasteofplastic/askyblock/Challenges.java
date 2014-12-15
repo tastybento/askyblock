@@ -641,7 +641,7 @@ public class Challenges implements CommandExecutor {
 			boolean hint = false;
 			for (Material m : Material.values()) {
 			    materialList += m.toString() + ",";
-			    if (m.toString().startsWith(s.substring(0, 3))) {
+			    if (m.toString().contains(s.substring(0, 3).toUpperCase())) {
 				plugin.getLogger().severe("Did you mean " + m.toString() + "?");
 				hint = true;
 			    }
@@ -673,9 +673,7 @@ public class Challenges implements CommandExecutor {
 			int reqDurability = Integer.parseInt(part[1]);
 			reqAmount = Integer.parseInt(part[2]);
 			int count = reqAmount;
-			// plugin.getLogger().info("DEBUG: 3 part " +
-			// reqItem.toString() + ":" + reqDurability + " x " +
-			// reqAmount);
+			//plugin.getLogger().info("DEBUG: 3 part " + reqItem.toString() + ":" + reqDurability + " x " + reqAmount);
 			ItemStack item = new ItemStack(reqItem);
 			// Check for potions
 			if (reqItem.equals(Material.POTION)) {
@@ -766,13 +764,30 @@ public class Challenges implements CommandExecutor {
 			//toBeRemoved.add(item);
 		    } catch (Exception e) {
 			plugin.getLogger().severe("Problem with " + s + " in challenges.yml!");
+			player.sendMessage(ChatColor.RED + Locale.errorCommandNotReady);
 			if (part[0].equalsIgnoreCase("POTION")) {
 			    plugin.getLogger().severe("Format POTION:TYPE:QTY where TYPE is the number of the following:");
 			    for (PotionType p : PotionType.values()) {
 				plugin.getLogger().info(p.toString() + ":" + p.getDamageValue());
 			    }
+			} else {
+			    String materialList = "";
+			    boolean hint = false;
+			    for (Material m : Material.values()) {
+				materialList += m.toString() + ",";
+				if (m.toString().contains(s.substring(0, 3))) {
+				    plugin.getLogger().severe("Did you mean " + m.toString() + "?");
+				    hint = true;
+				}
+			    }
+			    if (!hint) {
+				plugin.getLogger().severe("Sorry, I have no idea what " + s + " is. Pick from one of these:");
+				plugin.getLogger().severe(materialList.substring(0, materialList.length()-1));
+			    } else {
+				plugin.getLogger().severe("Correct challenges.yml with the correct material.");
+			    }
+			    return false;
 			}
-			e.printStackTrace();
 			return false;
 		    }
 		}
