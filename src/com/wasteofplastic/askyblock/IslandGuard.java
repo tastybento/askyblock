@@ -116,9 +116,10 @@ public class IslandGuard implements Listener {
 	// Check if they are holding armor stand
 	ItemStack inHand = e.getPlayer().getItemInHand();
 	if (inHand != null && inHand.getType().equals(Material.ARMOR_STAND)) {
-	    plugin.getLogger().info("DEBUG: stand place cancelled");
+	    //plugin.getLogger().info("DEBUG: stand place cancelled");
 	    e.setCancelled(true);
 	    e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
+	    e.getPlayer().updateInventory();
 	}
 	
     }
@@ -173,7 +174,7 @@ public class IslandGuard implements Listener {
 	}
 	if (e.getRightClicked() != null && e.getRightClicked().getType().equals(EntityType.ARMOR_STAND)
 		&& !plugin.locationIsOnIsland(e.getPlayer(),e.getRightClicked().getLocation())) {
-	    plugin.getLogger().info("DEBUG: Armor stand clicked off island");
+	    //plugin.getLogger().info("DEBUG: Armor stand clicked off island");
 	    if (!Settings.allowArmorStandUse) {
 		e.setCancelled(true);
 		e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
