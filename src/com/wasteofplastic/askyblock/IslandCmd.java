@@ -1523,24 +1523,25 @@ public class IslandCmd implements CommandExecutor {
 				}
 				//plugin.resetPlayer(target); <- no good if reset inventory is false
 				// Clear their inventory and equipment and set them as survival
-				player.getInventory().clear(); // Javadocs are wrong - this does not
+				target.getInventory().clear(); // Javadocs are wrong - this does not
 				// clear armor slots! So...
-				player.getInventory().setArmorContents(null);
-				player.getInventory().setHelmet(null);
-				player.getInventory().setChestplate(null);
-				player.getInventory().setLeggings(null);
-				player.getInventory().setBoots(null);
-				player.getEquipment().clear();
+				//plugin.getLogger().info("DEBUG: Clearing kicked player's inventory");
+				target.getInventory().setArmorContents(null);
+				target.getInventory().setHelmet(null);
+				target.getInventory().setChestplate(null);
+				target.getInventory().setLeggings(null);
+				target.getInventory().setBoots(null);
+				target.getEquipment().clear();
 				if (Settings.resetChallenges) {
 				    // Reset the player's challenge status
-				    plugin.getPlayers().resetAllChallenges(player.getUniqueId());
+				    plugin.getPlayers().resetAllChallenges(target.getUniqueId());
 				}
 				// Reset the island level
-				plugin.getPlayers().setIslandLevel(player.getUniqueId(), 0);
-				plugin.getPlayers().save(player.getUniqueId());
+				plugin.getPlayers().setIslandLevel(target.getUniqueId(), 0);
+				plugin.getPlayers().save(target.getUniqueId());
 				plugin.updateTopTen();
 				// Update the inventory
-				player.updateInventory();
+				target.updateInventory();
 			    }
 			    if (!target.performCommand(Settings.SPAWNCOMMAND)) {
 				target.teleport(ASkyBlock.getIslandWorld().getSpawnLocation());
