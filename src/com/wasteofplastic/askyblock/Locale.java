@@ -24,6 +24,7 @@ package com.wasteofplastic.askyblock;
 
 
 
+
 /**
  * @author ben
  * All the text strings in the game sent to players
@@ -276,6 +277,7 @@ public class Locale {
     public static String purgepurgeCancelled;
     public static String purgefinished;
     public static String purgeremovingName;
+    public static String adminHelppurgeholes;
 
     //confirm
     public static String confirmerrorTimeLimitExpired;
@@ -365,6 +367,7 @@ public class Locale {
     public static String islandhelpCoop;
     public static String coopInvited;
     public static String coopUseExpel;
+    
 
     
    

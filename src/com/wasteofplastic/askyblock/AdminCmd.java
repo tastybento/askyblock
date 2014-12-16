@@ -38,6 +38,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BlockIterator;
+import org.bukkit.util.Vector;
 
 /*
  * New commands:
@@ -101,6 +102,8 @@ public class AdminCmd implements CommandExecutor {
 	    }
 	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.purge") || player.isOp()) {
 		player.sendMessage(ChatColor.YELLOW + "/" + label + " purge [TimeInDays]:" + ChatColor.WHITE + " " + Locale.adminHelppurge);
+		player.sendMessage(ChatColor.YELLOW + "/" + label + " purge holes:" + ChatColor.WHITE + " " + Locale.adminHelppurgeholes);
+
 	    }
 	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.topten") || player.isOp()) {
 		player.sendMessage(ChatColor.YELLOW + "/" + label + " topten:" + ChatColor.WHITE + " " + Locale.adminHelptopTen);
@@ -365,6 +368,12 @@ public class AdminCmd implements CommandExecutor {
 		}
 		// Set the flag
 		purgeFlag = true;
+		// See if this purge holes
+		if (split[1].equalsIgnoreCase("holes")) {
+		    purgeHoles(sender);
+		    return true;
+		}
+
 		// Convert days to hours - no other limit checking?
 		final int time = Integer.parseInt(split[1]) * 24;
 
@@ -787,6 +796,101 @@ public class AdminCmd implements CommandExecutor {
 	default:
 	    return false;
 	}
+    }
+
+    /**
+     * Tries to free up holes in the map for reuse
+     * @param sender 
+     */
+    private void purgeHoles(final CommandSender sender) {
+	// Get a list of all the files in the island directory
+	final File islandFileDir = new File(plugin.getDataFolder() + File.separator + "islands");
+	if (!islandFileDir.exists()) {
+	    sender.sendMessage(ChatColor.GREEN + Locale.purgenoneFound);
+	    return;
+	}
+	// Make a list of islands to check
+	List <Location> islands = new ArrayList<Location>();
+	File[] filenames = islandFileDir.listFiles();
+	for (File file : filenames) {
+	    try {
+		String name = file.getName();
+		if (name.endsWith(".yml")) {
+		    // Get the coordinates of this file
+		    name = name.substring(0, name.length() - 4);
+		    String[] split = name.split(",");
+		    int x = Integer.valueOf(split[0]);
+		    int z = Integer.valueOf(split[1]);
+		    int y = Settings.island_level;
+
+		    // Quick check
+		    Location loc = new Location(ASkyBlock.getIslandWorld(), x,y,z);
+		    if (!loc.getBlock().getType().equals(Material.BEDROCK)) {
+			// Check distance from spawn
+			if (plugin.getSpawn().getSpawnLoc() != null) {
+			    // Spawn exists
+			    Vector spawn = plugin.getSpawn().getSpawnLoc().toVector().multiply(new Vector(1,0,1));
+			    Vector locVector = loc.toVector().multiply(new Vector(1,0,1));
+			    if (spawn.distanceSquared(locVector) > (double)((double)Settings.islandDistance) * Settings.islandDistance) {
+				// Far enough away from spawn
+				islands.add(loc);
+			    }
+			} else {
+			    // No spawn
+			    islands.add(loc);
+			}
+		    }
+		}
+	    } catch (Exception e) {
+		plugin.getLogger().warning("Could not read filename " + file.getName() + " skipping...");
+	    }
+	}
+	sender.sendMessage(ChatColor.GREEN + "Found " + islands.size() + " possible island holes. Now confirming...");
+	// Set up a repeating task to run every 5 seconds to remove
+	// holes one by one and then cancel when done
+	final List<Location> removeList = islands;
+	new BukkitRunnable() {
+	    @Override
+	    public void run() {
+		if (removeList.isEmpty() && purgeFlag) {
+		    purgeFlag = false;
+		    sender.sendMessage(ChatColor.YELLOW + Locale.purgefinished);
+		    this.cancel();
+		} 
+		if (removeList.size() > 0 && purgeFlag) {
+		    Location loc = removeList.get(0);
+		    boolean islandFound = false;
+		    // Look around
+		    final int px = loc.getBlockX();
+		    final int pz = loc.getBlockZ();
+		 
+		    for (int x = -5; x <= 5; x++) {
+			for (int z = -5; z <= 5; z++) {
+			    for (int y = 10; y <= 255; y++) {
+				if (loc.getWorld().getBlockAt(x + px, y, z + pz).getType().equals(Material.BEDROCK)) {
+				    //plugin.getLogger().info("Bedrock found during long search at " + (x + px) + " " + y + " " + (z + pz));
+				    islandFound = true;
+				    break;
+				}
+			    }
+			}
+		    }
+		    if (!islandFound) {
+			// Remove the file
+			String filename = px + "," + pz + ".yml";
+			sender.sendMessage(ChatColor.GREEN + "Removing " + filename);
+			final File islandFile = new File(plugin.getDataFolder() + File.separator + "islands" + File.separator + filename);
+			if (islandFile.exists()) {
+			    if (!islandFile.delete()) {
+				sender.sendMessage(ChatColor.RED + "Could not delete " + islandFile.getName() + "!");
+			    }
+			    return;
+			}
+		    }
+		    removeList.remove(0);
+		}
+	    }
+	}.runTaskTimer(plugin, 0L, 20L);
     }
 
     /**

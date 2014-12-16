@@ -265,6 +265,7 @@ adminHelp:
    resetAllChallenges: "resets all of the player's challenges"
    #/acid purge [TimeInDays]:
    purge: "delete inactive islands older than [TimeInDays]."
+   purgeholes: "free up island holes for reuse."
    #/acid info <player>:
    info: "info for the given player."
    #/acid info

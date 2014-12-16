@@ -1312,6 +1312,7 @@ public class ASkyBlock extends JavaPlugin {
 	Locale.adminHelpresetChallenge = locale.getString("adminHelp.resetChallenge","marks a challenge as incomplete");
 	Locale.adminHelpresetAllChallenges = locale.getString("adminHelp.resetAllChallenges","resets all of the player's challenges");
 	Locale.adminHelppurge = locale.getString("adminHelp.purge","delete inactive islands older than [TimeInDays].");
+	Locale.adminHelppurgeholes = locale.getString("adminHelp.purgeholes","free up island holes for reuse.");
 	Locale.adminHelpinfo = locale.getString("adminHelp.info","check information on the given player.");
 	Locale.adminHelpSetSpawn = locale.getString("adminHelp.setspawn","opens the spawn GUI for the island world.");
 	Locale.adminHelpinfoIsland = locale.getString("adminHelp.infoisland","provide info on the nearest island.");
