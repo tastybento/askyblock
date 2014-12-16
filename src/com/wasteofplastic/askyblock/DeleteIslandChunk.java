@@ -16,6 +16,8 @@
  *******************************************************************************/
 package com.wasteofplastic.askyblock;
 
+import java.io.File;
+
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -79,6 +81,17 @@ public class DeleteIslandChunk {
 		}
 	    }  
 	}
+	// Remove from file system
+	String checkName = loc.getBlockX() + "," + loc.getBlockZ() + ".yml";
+	final File islandFile = new File(plugin.getDataFolder() + File.separator + "islands" + File.separator + checkName);
+	if (islandFile.exists()) {
+	    //plugin.getLogger().info("File exists");
+	    if (!islandFile.delete()) {
+		plugin.getLogger().severe("Could not delete island file " + checkName + "!");
+	    }
+	}
+
+
 	plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
 
 	    @Override
