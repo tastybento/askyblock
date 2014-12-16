@@ -963,6 +963,10 @@ public class ASkyBlock extends JavaPlugin {
 	if (Settings.resetWait < 0) {
 	    Settings.resetWait = -1;
 	}
+	Settings.inviteWait = getConfig().getInt("general.invitewait", 60);
+	if (Settings.inviteWait < 0) {
+	    Settings.inviteWait = 0;
+	}
 	Settings.damageOps = getConfig().getBoolean("general.damageops", false);
 	//Settings.ultraSafeBoats = getConfig().getBoolean("general.ultrasafeboats", true);
 	Settings.logInRemoveMobs = getConfig().getBoolean("general.loginremovemobs", true);
@@ -1274,6 +1278,7 @@ public class ASkyBlock extends JavaPlugin {
 	Locale.invitewarningYouWillLoseIsland = locale.getString("invite.warningYouWillLoseIsland","WARNING: You will lose your current island if you accept!");
 	Locale.inviteerrorYourIslandIsFull = locale.getString("invite.errorYourIslandIsFull","Your island is full, you can't invite anyone else.");
 	Locale.inviteerrorThatPlayerIsAlreadyInATeam = locale.getString("invite.errorThatPlayerIsAlreadyInATeam","That player is already in a team.");
+	Locale.inviteerrorCoolDown = locale.getString("invite.errorCoolDown","You can invite that player again in [time] minutes");
 	Locale.rejectyouHaveRejectedInvitation = locale.getString("reject.youHaveRejectedInvitation","You have rejected the invitation to join an island.");
 	Locale.rejectnameHasRejectedInvite = locale.getString("reject.nameHasRejectedInvite","[name] has rejected your island invite!");
 	Locale.rejectyouHaveNotBeenInvited = locale.getString("reject.youHaveNotBeenInvited","You had not been invited to join a team.");

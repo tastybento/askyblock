@@ -179,6 +179,9 @@ public class Settings {
     // Schematic list (permission, filename)
     public static HashMap<String,String> schematics = new HashMap<String,String>();
     
+    // Wait between being invited to same team island
+    public static int inviteWait;
+    
 
   
 }

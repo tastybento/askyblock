@@ -16,10 +16,14 @@
  *******************************************************************************/
 package com.wasteofplastic.askyblock;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -47,6 +51,7 @@ public class Players {
     private UUID uuid;
     private String playerName;
     private int resetsLeft;
+    private HashMap<Location, Date> kickedList;
 
     /**
      * @param uuid
@@ -67,6 +72,7 @@ public class Players {
 	this.islandLevel = 0;
 	this.playerName = "";
 	this.resetsLeft = Settings.resetLimit;
+	this.kickedList = new HashMap<Location,Date>();
 	load(uuid);
     }
 
@@ -115,6 +121,30 @@ public class Players {
 	}
 	// Load reset limit
 	this.resetsLeft = playerInfo.getInt("resetsLeft", Settings.resetLimit);
+	// Load the invite cool downs
+	if (playerInfo.contains("invitecooldown")) {
+	    //plugin.getLogger().info("DEBUG: cooldown found");
+	    for (String timeIndex : playerInfo.getConfigurationSection("invitecooldown").getKeys(false)) {
+		try {
+		    //plugin.getLogger().info("DEBUG: index is " + timeIndex);
+		    String locationString = playerInfo.getString("invitecooldown." + timeIndex, "");
+		    //plugin.getLogger().info("DEBUG: location string is " + locationString);
+		    Location l = getLocationString(locationString);
+		    //plugin.getLogger().info("DEBUG: location is " + l);
+		    long timeInMillis = Long.valueOf(timeIndex);
+		    //plugin.getLogger().info("DEBUG: time in millis is " + timeInMillis);
+		    if (l != null && timeInMillis > 0) {
+			Date date = new Date();
+			date.setTime(timeInMillis);
+			//plugin.getLogger().info("DEBUG: date is " + date);
+			// Insert into hashmap
+			kickedList.put(l, date);
+		    }
+		} catch (Exception e) {
+		    plugin.getLogger().severe("Error in player " + playerName + "'s yml config when loading invite timeout - skipping");
+		}
+	    }
+	}
     }
 
     /**
@@ -145,8 +175,18 @@ public class Players {
 	for (String challenge : challengeList.keySet()) {
 	    playerInfo.set("challenges.status." + challenge, challengeList.get(challenge));
 	}
-	ASkyBlock.saveYamlFile(playerInfo, "players/" + uuid.toString() + ".yml");
 	playerInfo.set("resetsLeft", this.resetsLeft);
+	// Save invite cooldown timers
+	playerInfo.set("invitecooldown",null);
+	for (Entry<Location,Date> en: kickedList.entrySet()) {
+	    // Convert location and date to string (time in millis)
+	    Calendar coolDownTime = Calendar.getInstance();
+	    coolDownTime.setTime(en.getValue());
+	    playerInfo.set("invitecooldown." + coolDownTime.getTimeInMillis(), getStringLocation(en.getKey()));
+	}
+
+	ASkyBlock.saveYamlFile(playerInfo, "players/" + uuid.toString() + ".yml");
+
     }
 
     /**
@@ -507,6 +547,51 @@ public class Players {
 
     public void setHL(String hl) {
 	homeLocation = hl;
+    }
+
+    /**
+     * Can invite or still waiting for cool down to end
+     * @param location to check
+     * @return number of mins/hours left until cool down ends
+     */
+    public long getInviteCoolDownTime(Location location) {
+	// Check the hashmap
+	if (location != null && kickedList.containsKey(location)) {
+	    //plugin.getLogger().info("DEBUG: Location is known");
+	    // The location is in the list
+	    // Check the date/time
+	    Date kickedDate = kickedList.get(location);
+	    //plugin.getLogger().info("DEBUG: kicked date = " + kickedDate);
+	    Calendar coolDownTime = Calendar.getInstance();
+	    coolDownTime.setTime(kickedDate);
+	    //coolDownTime.add(Calendar.HOUR_OF_DAY, Settings.inviteWait);
+	    coolDownTime.add(Calendar.MINUTE, Settings.inviteWait);
+	    // Add the invite cooldown period
+	    Calendar timeNow = Calendar.getInstance();
+	    //plugin.getLogger().info("DEBUG: date now = " + timeNow);
+	    if (coolDownTime.before(timeNow)) {
+		// The time has expired
+		kickedList.remove(location);
+		return 0;
+	    } else {
+		// Still not there yet
+		//long hours = (coolDownTime.getTimeInMillis() - timeNow.getTimeInMillis())/(1000 * 60 * 60);
+		// Temp minutes
+		long hours = (coolDownTime.getTimeInMillis() - timeNow.getTimeInMillis())/(1000 * 60);
+		return hours;
+	    }
+	}
+	return 0;
+    }
+
+    /**
+     * Stores the location that the player has been kicked from along with the current time
+     * @param kickedList the kickedList to set
+     */
+    public void startInviteCoolDownTimer(Location location) {
+	if (location != null) {
+	    kickedList.put(location, new Date());
+	}
     }
 
 }

@@ -195,6 +195,7 @@ public class Locale {
     public static String inviteerrorYourIslandIsFull;
     //"That player is already with a group on an island."
     public static String inviteerrorThatPlayerIsAlreadyInATeam;
+    public static String inviteerrorCoolDown;
 
     //reject
     public static String rejectyouHaveRejectedInvitation;
@@ -364,6 +365,7 @@ public class Locale {
     public static String islandhelpCoop;
     public static String coopInvited;
     public static String coopUseExpel;
+
     
    
 }

@@ -39,8 +39,13 @@ general:
    #  schematic.vip2: vip2island.schematic
    #  schematic.jail: jail.schematic 
 
-   #How long a player must wait before they can reset their island again
+   #How long a player must wait before they can reset their island again in second
    resetwait: 300
+
+   #How long a player must wait until they can rejoin a team island after being
+   #kicked in minutes. This slows the effectiveness of players repeating challenges
+   #by repetitively being invited to a team island.
+   invitewait: 60
 
    #How many resets a player is allowed (override with /asadmin clearreset <player>
    #Value of -1 means unlimited, 0 means hardcore - no resets.

@@ -1107,6 +1107,9 @@ public class IslandCmd implements CommandExecutor {
 			    if (!player.performCommand(Settings.SPAWNCOMMAND)) {
 				player.teleport(player.getWorld().getSpawnLocation());
 			    }
+			    // Log the location that this player left so they cannot join again before the cool down ends
+			    plugin.getPlayers().startInviteCoolDownTimer(playerUUID, plugin.getPlayers().getTeamIslandLocation(teamLeader));
+			    // Remove from team
 			    removePlayerFromTeam(playerUUID, teamLeader);
 			    // Remove any warps
 			    plugin.removeWarp(playerUUID);
@@ -1287,6 +1290,12 @@ public class IslandCmd implements CommandExecutor {
 		    // Player cannot invite themselves
 		    if (player.getName().equalsIgnoreCase(split[1])) {
 			player.sendMessage(ChatColor.RED + Locale.inviteerrorYouCannotInviteYourself);
+			return true;
+		    }
+		    // Check if this player can be invited to this island, or whether they are still on cooldown
+		    long time = plugin.getPlayers().getInviteCoolDownTime(invitedPlayerUUID, plugin.getPlayers().getIslandLocation(playerUUID));
+		    if (time > 0) {
+			player.sendMessage(ChatColor.RED + Locale.inviteerrorCoolDown.replace("[time]", String.valueOf(time)));
 			return true;
 		    }
 		    // If the player already has a team then check that they are the leader, etc
@@ -1500,6 +1509,8 @@ public class IslandCmd implements CommandExecutor {
 			Player target = plugin.getServer().getPlayer(targetPlayer);
 			if (target != null) {
 			    target.sendMessage(ChatColor.RED + Locale.kicknameRemovedYou.replace("[name]", player.getName()));
+			    // Log the location that this player left so they cannot join again before the cool down ends
+			    plugin.getPlayers().startInviteCoolDownTimer(targetPlayer, plugin.getPlayers().getIslandLocation(playerUUID));
 			    // Clear any coop inventories
 			    // CoopPlay.getInstance().returnAllInventories(target);
 			    // Remove any of the target's coop invitees and anyone they invited

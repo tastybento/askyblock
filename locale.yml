@@ -187,6 +187,7 @@ invite:
    errorYourIslandIsFull: "Your island is full, you can't invite anyone else."
    #"That player is already with a group on an island."
    errorThatPlayerIsAlreadyInATeam: "That player is already in a team."
+   errorCoolDown: "You can invite that player again in [time] minutes"
 
 #reject
 reject:
