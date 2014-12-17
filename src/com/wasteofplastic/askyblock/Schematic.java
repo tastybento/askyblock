@@ -29,6 +29,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
@@ -213,6 +214,14 @@ public class Schematic {
 			    type +=256;
 			}
 			block.setTypeIdAndData(type, blockData[index], true);
+			/*
+			if (block.getType() == Material.SIGN_POST) {
+			    org.bukkit.material.Sign s = (org.bukkit.material.Sign) block.getState().getData();
+			    Bukkit.getLogger().info(s.getFacing().toString());
+			    
+			    Bukkit.getLogger().info("SIGN - data type = " + type + ":" + blockData[index]);
+			    Bukkit.getLogger().info("actual block data = " + block.getData());
+			}*/
 		    } catch (Exception e) {
 			Bukkit.getLogger().info("Could not set ("+ x + "," + y + "," + z +") block ID:"+blocks[index] + " block data = "+ blockData[index] );
 		    }
@@ -350,7 +359,7 @@ public class Schematic {
 	    sign.setLine(2, ChatColor.translateAlternateColorCodes('&', Locale.signLine3.replace("[player]", player.getName())));
 	    sign.setLine(3, ChatColor.translateAlternateColorCodes('&', Locale.signLine4.replace("[player]", player.getName())));
 	    //BlockFace direction = ((org.bukkit.material.Sign) sign.getData()).getFacing();
-	    //((org.bukkit.material.Sign) sign.getData()).setFacingDirection(BlockFace.NORTH);
+	    ((org.bukkit.material.Sign) sign.getData()).setFacingDirection(BlockFace.NORTH);
 	    sign.update();
 	}
 	chest.subtract(bedrock);

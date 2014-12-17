@@ -2223,7 +2223,7 @@ public class ASkyBlock extends JavaPlugin {
 		    if (!chunks.contains(chunkCoords)) {
 			chunks.add(chunkCoords);
 		    }
-		    //getLogger().info("DEBUG: Block   " + l.getBlockX() + "," + l.getBlockZ());
+		    //getLogger().info("DEBUG: Chunk saving  " + l.getChunk().getX() + "," + l.getChunk().getZ());
 		    /*
 		    // Weird stuff going on here. Sometimes the location does not get created.
 		    if (l.getBlockX() != (islandX +x)) {

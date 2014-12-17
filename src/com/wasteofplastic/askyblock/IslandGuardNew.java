@@ -18,11 +18,16 @@ package com.wasteofplastic.askyblock;
 
 
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 
 
 /**
@@ -67,6 +72,42 @@ public class IslandGuardNew implements Listener {
 	}
     }
 
+    /**
+     * Handle V1.8 blocks that need special treatment
+     * @param e
+     */
+    @EventHandler(priority = EventPriority.LOW)
+    public void onPlayerInteract(final PlayerInteractEvent e) {
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
+	if (!e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
+	    return;
+	}
+	if (!e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	    return;
+	}
+	if (e.getPlayer().isOp()) {
+	    return;
+	}
+	// This permission bypasses protection
+	if (VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
+	    return;
+	}
+	// Prevents tilling of coarse dirt into dirt
+	ItemStack inHand = e.getPlayer().getItemInHand();
+	if (inHand.getType() == Material.WOOD_HOE || inHand.getType() == Material.IRON_HOE
+		|| inHand.getType() == Material.GOLD_HOE || inHand.getType() == Material.DIAMOND_HOE) {
+	    //plugin.getLogger().info("DEBUG: hoe in hand");
+	    Block block = e.getClickedBlock();
+	    //plugin.getLogger().info("DEBUG: block is " + block.getType() + ":" + block.getData());
+	    // Check if coarse dirt
+	    if (block.getType() == Material.DIRT && block.getData() == (byte)1) {
+		//plugin.getLogger().info("DEBUG: hitting coarse dirt!");
+		e.setCancelled(true);
+	    }
+	}
+    }
 }
 
 

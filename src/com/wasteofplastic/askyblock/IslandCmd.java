@@ -336,6 +336,7 @@ public class IslandCmd implements CommandExecutor {
      * @param player
      * @param world
      */
+    @SuppressWarnings("deprecation")
     private Location generateIslandBlocks(final int x, final int z, final Player player, final World world) {
 	Location cowSpot = null;
 	Location islandLoc = new Location(world,x,Settings.island_level,z);
@@ -467,7 +468,7 @@ public class IslandCmd implements CommandExecutor {
 		sign.setLine(1, ChatColor.translateAlternateColorCodes('&', Locale.signLine2.replace("[player]", player.getName())));
 		sign.setLine(2, ChatColor.translateAlternateColorCodes('&', Locale.signLine3.replace("[player]", player.getName())));
 		sign.setLine(3, ChatColor.translateAlternateColorCodes('&', Locale.signLine4.replace("[player]", player.getName())));
-		((org.bukkit.material.Sign) sign.getData()).setFacingDirection(BlockFace.NORTH);
+		//((org.bukkit.material.Sign) sign.getData()).setFacingDirection(BlockFace.NORTH);
 		sign.update();
 		// Place the chest - no need to use the safe spawn function because we
 		// know what this island looks like
@@ -684,7 +685,7 @@ public class IslandCmd implements CommandExecutor {
 		if (Settings.resetMoney) {
 		    resetMoney(player);
 		}
-
+		plugin.setIslandBiome(plugin.getPlayers().getIslandLocation(playerUUID), Settings.defaultBiome);
 		plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable () {
 		    @Override
 		    public void run() {
