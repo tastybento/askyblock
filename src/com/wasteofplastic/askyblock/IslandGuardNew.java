@@ -38,7 +38,7 @@ public class IslandGuardNew implements Listener {
     private final ASkyBlock plugin;
     private final boolean debug = false;
 
-    public IslandGuardNew(final ASkyBlock plugin) {
+    protected IslandGuardNew(final ASkyBlock plugin) {
 	this.plugin = plugin;
 
     }

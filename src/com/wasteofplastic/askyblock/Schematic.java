@@ -55,7 +55,7 @@ public class Schematic {
     private short height;
     private Map<BlockVector, Map<String, Tag>> tileEntitiesMap;
 
-    public Schematic(byte[] blocks, byte[] data, short width, short length, short height, Map<BlockVector, Map<String, Tag>> tileEntitiesMap)
+    protected Schematic(byte[] blocks, byte[] data, short width, short length, short height, Map<BlockVector, Map<String, Tag>> tileEntitiesMap)
     {
 	this.blocks = blocks;
 	this.data = data;
@@ -68,7 +68,7 @@ public class Schematic {
     /**
      * @return the blocks
      */
-    public byte[] getBlocks()
+    protected byte[] getBlocks()
     {
 	return blocks;
     }
@@ -76,7 +76,7 @@ public class Schematic {
     /**
      * @return the data
      */
-    public byte[] getData()
+    protected byte[] getData()
     {
 	return data;
     }
@@ -84,7 +84,7 @@ public class Schematic {
     /**
      * @return the width
      */
-    public short getWidth()
+    protected short getWidth()
     {
 	return width;
     }
@@ -92,7 +92,7 @@ public class Schematic {
     /**
      * @return the length
      */
-    public short getLength()
+    protected short getLength()
     {
 	return length;
     }
@@ -100,7 +100,7 @@ public class Schematic {
     /**
      * @return the height
      */
-    public short getHeight()
+    protected short getHeight()
     {
 	return height;
     }
@@ -108,12 +108,12 @@ public class Schematic {
     /**
      * @return the tileEntitiesMap
      */
-    public Map<BlockVector, Map<String, Tag>> getTileEntitiesMap() {
+    protected Map<BlockVector, Map<String, Tag>> getTileEntitiesMap() {
 	return tileEntitiesMap;
     }
 
     @SuppressWarnings("deprecation")
-    public static Location pasteSchematic(final World world, final Location loc, final Schematic schematic, final Player player)
+    protected static Location pasteSchematic(final World world, final Location loc, final Schematic schematic, final Player player)
     {
 	byte[] blocks = schematic.getBlocks();
 	byte[] blockData = schematic.getData();
@@ -383,7 +383,7 @@ public class Schematic {
 	return grass;
     }
 
-    public static Schematic loadSchematic(File file) throws IOException
+    protected static Schematic loadSchematic(File file) throws IOException
     {
 	FileInputStream stream = new FileInputStream(file);
 	//InputStream is = new DataInputStream(new GZIPInputStream(stream));

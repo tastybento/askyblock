@@ -54,7 +54,7 @@ public class Challenges implements CommandExecutor {
     private PlayerCache players;
     private HashMap<UUID, List<CPItem>> playerChallengeGUI = new HashMap<UUID, List<CPItem>>();
 
-    public Challenges(ASkyBlock acidIsland, PlayerCache players) {
+    protected Challenges(ASkyBlock acidIsland, PlayerCache players) {
 	this.plugin = acidIsland;
 	this.players = players;
 	populateChallengeList();
@@ -402,7 +402,7 @@ public class Challenges implements CommandExecutor {
      * @param level
      * @return
      */
-    public int checkLevelCompletion(final Player player, final String level) {
+    protected int checkLevelCompletion(final Player player, final String level) {
 	int challengesCompleted = 0;
 	List<String> levelChallengeList = challengeList.get(level);
 	for (String challenge : levelChallengeList) {
@@ -420,7 +420,7 @@ public class Challenges implements CommandExecutor {
      * @param challenge
      * @return true if player can complete otherwise false
      */
-    public boolean checkIfCanCompleteChallenge(final Player player, final String challenge) {
+    protected boolean checkIfCanCompleteChallenge(final Player player, final String challenge) {
 	//plugin.getLogger().info("DEBUG: " + player.getDisplayName() + " " + challenge);
 	// Check if this challenge level is available
 	if (!isLevelAvailable(player, plugin.getChallengeConfig().getString("challenges.challengeList." + challenge + ".level"))) {
@@ -496,7 +496,7 @@ public class Challenges implements CommandExecutor {
      * Goes through all the challenges in the config.yml file and puts them into
      * the challenges list
      */
-    public void populateChallengeList() {
+    protected void populateChallengeList() {
 	for (String s : Settings.challengeList) {
 	    String level = plugin.getChallengeConfig().getString("challenges.challengeList." + s + ".level", "");
 	    // Verify that this challenge's level is in the list of levels
@@ -524,7 +524,7 @@ public class Challenges implements CommandExecutor {
      * @return true if the player has everything required
      */
     // @SuppressWarnings("deprecation")
-    public boolean hasRequired(final Player player, final String challenge, final String type) {
+    protected boolean hasRequired(final Player player, final String challenge, final String type) {
 	final String[] reqList = plugin.getChallengeConfig().getString("challenges.challengeList." + challenge + ".requiredItems").split(" ");
 	// The format of the requiredItems is as follows:
 	// Material:Qty
@@ -916,7 +916,7 @@ public class Challenges implements CommandExecutor {
 	return true;
     }
 
-    public boolean isLevelAvailable(final Player player, final String level) {
+    protected boolean isLevelAvailable(final Player player, final String level) {
 	if (challengeList.size() < 2) {
 	    return true;
 	}
@@ -942,7 +942,7 @@ public class Challenges implements CommandExecutor {
      * @param player
      * @return
      */
-    public Inventory challengePanel(Player player) {
+    protected Inventory challengePanel(Player player) {
 	// Create the challenges control panel
 	// New panel map
 	List<CPItem> cp = new ArrayList<CPItem>();
@@ -1133,11 +1133,11 @@ public class Challenges implements CommandExecutor {
 	return null;
     }
 
-    public List<CPItem> getCP(Player player) {
+    protected List<CPItem> getCP(Player player) {
 	return playerChallengeGUI.get(player.getUniqueId());
     }
 
-    public static List<String> chop(ChatColor color, String longLine, int length) {
+    protected static List<String> chop(ChatColor color, String longLine, int length) {
 	List<String> result = new ArrayList<String>();
 	// int multiples = longLine.length() / length;
 	int i = 0;

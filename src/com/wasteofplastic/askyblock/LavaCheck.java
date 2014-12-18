@@ -33,7 +33,7 @@ public class LavaCheck implements Listener {
     BukkitTask task;
     private final ASkyBlock plugin;
 
-    public LavaCheck(ASkyBlock aSkyBlock) {
+    protected LavaCheck(ASkyBlock aSkyBlock) {
 	plugin = aSkyBlock;
     }
 

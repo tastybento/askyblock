@@ -14,12 +14,12 @@ public class InventorySave {
     /**
      * Saves the inventory of a player
      */
-    public InventorySave(ASkyBlock plugin) {
+    protected InventorySave(ASkyBlock plugin) {
 	this.plugin = plugin;
 	inventories = new HashMap<UUID,HashMap<Location,InventoryStore>>();
     }
 
-    public void savePlayerInventory(Player player, Location loc) {
+    protected void savePlayerInventory(Player player, Location loc) {
 	//plugin.getLogger().info("DEBUG: Saving inventory: loc = " + loc);
 	// Save the player's armor and things
 	InventoryStore store = new InventoryStore(player.getInventory().getContents(),player.getInventory().getArmorContents());
@@ -39,7 +39,7 @@ public class InventorySave {
      * @param player
      * @param loc
      */
-    public void loadPlayerInventory(Player player, Location loc) {
+    protected void loadPlayerInventory(Player player, Location loc) {
 	//plugin.getLogger().info("DEBUG: Loading inventory");
 	// Get the info for this player
 	if (inventories.containsKey(player.getUniqueId())) {
@@ -68,7 +68,7 @@ public class InventorySave {
     /**
      * @return the inventories
      */
-    public HashMap<UUID, HashMap<Location, InventoryStore>> getInventories() {
+    protected HashMap<UUID, HashMap<Location, InventoryStore>> getInventories() {
         return inventories;
     }
 
@@ -78,34 +78,34 @@ public class InventorySave {
      * @param to
      */
     /*
-    public void switchPlayerInventory(Player player, Location from, Location to) {
+    protected void switchPlayerInventory(Player player, Location from, Location to) {
 	//plugin.getLogger().info("DEBUG: from " + from + " to " + to);
 	savePlayerInventory(player, from);
 	loadPlayerInventory(player, to);
     } 
 */
-    public static InventorySave getInstance() {
+    protected static InventorySave getInstance() {
 	return instance;
     }
     // For death keep inv
 
-    public void savePlayerInventory(Player player) {
+    protected void savePlayerInventory(Player player) {
 	this.savePlayerInventory(player, player.getLocation());
     }
 
-    public void loadPlayerInventory(Player player) {
+    protected void loadPlayerInventory(Player player) {
 	this.loadPlayerInventory(player, player.getLocation());
     }
 
-    public void removePlayer(UUID uniqueId) {
+    protected void removePlayer(UUID uniqueId) {
 	this.inventories.remove(uniqueId);
     }
 
-    public ItemStack[] getArmor(UUID uniqueId, Location coopIslands) {
+    protected ItemStack[] getArmor(UUID uniqueId, Location coopIslands) {
 	return this.inventories.get(uniqueId).get(coopIslands).getArmor();
     }
     
-    public ItemStack[] getInventory(UUID uniqueId, Location coopIslands) {
+    protected ItemStack[] getInventory(UUID uniqueId, Location coopIslands) {
 	return this.inventories.get(uniqueId).get(coopIslands).getInventory();
     }
 }

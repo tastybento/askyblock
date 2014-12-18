@@ -51,7 +51,7 @@ public class ControlPanel implements Listener {
     /**
      * @param plugin
      */
-    public ControlPanel(ASkyBlock plugin) {
+    protected ControlPanel(ASkyBlock plugin) {
 	this.plugin = plugin;
 	if (Settings.useEconomy) {
 	    loadShop();
@@ -69,9 +69,9 @@ public class ControlPanel implements Listener {
     /**
      * Map of CP inventories by name
      */
-    public static HashMap<String,Inventory> controlPanel = new HashMap<String,Inventory>();
+    protected static HashMap<String,Inventory> controlPanel = new HashMap<String,Inventory>();
 
-    public static Inventory miniShop;
+    protected static Inventory miniShop;
     // The first parameter, is the inventory owner. I make it null to let everyone use it.
     //The second parameter, is the slots in a inventory. Must be a multiple of 9. Can be up to 54.
     //The third parameter, is the inventory name. This will accept chat colors.
@@ -80,7 +80,7 @@ public class ControlPanel implements Listener {
     /**
      * This loads the minishop from the minishop.yml file
      */
-    public static void loadShop() {
+    protected static void loadShop() {
 	//The first parameter is the Material, then the durability (if wanted), slot, descriptions
 	// Minishop
 	store.clear();
@@ -127,7 +127,7 @@ public class ControlPanel implements Listener {
     /**
      * This loads the control panel from the controlpanel.yml file
      */
-    public static void loadControlPanel() {
+    protected static void loadControlPanel() {
 	ASkyBlock plugin = ASkyBlock.getPlugin();
 	// Map of known panel contents by name
 	panels.clear();
@@ -329,7 +329,7 @@ public class ControlPanel implements Listener {
     /**
      * @return the defaultPanelName
      */
-    public static String getDefaultPanelName() {
+    protected static String getDefaultPanelName() {
 	return defaultPanelName;
     }
 }

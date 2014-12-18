@@ -55,7 +55,7 @@ public class IslandCmd implements CommandExecutor {
     public boolean busyFlag = true;
     //private Schematic island = null;
     private HashMap<String,Schematic> schematics = new HashMap<String,Schematic>();
-    public Location Islandlocation;
+    //private Location Islandlocation;
     private ASkyBlock plugin;
     // The island reset confirmation
     private HashMap<UUID,Boolean> confirm = new HashMap<UUID,Boolean>();
@@ -75,7 +75,7 @@ public class IslandCmd implements CommandExecutor {
      * @param aSkyBlock
      * @param players 
      */
-    public IslandCmd(ASkyBlock aSkyBlock) {
+    protected IslandCmd(ASkyBlock aSkyBlock) {
 	// Plugin instance
 	this.plugin = aSkyBlock;
 	// Get the next island spot
@@ -130,7 +130,7 @@ public class IslandCmd implements CommandExecutor {
      * @param teamLeader
      * @return
      */
-    public boolean addPlayertoTeam(final UUID playerUUID, final UUID teamLeader) {
+    protected boolean addPlayertoTeam(final UUID playerUUID, final UUID teamLeader) {
 	// Only add online players
 	/*
 	if (!plugin.getServer().getPlayer(playerUUID).isOnline() || !plugin.getServer().getPlayer(teamLeader).isOnline()) {
@@ -175,7 +175,7 @@ public class IslandCmd implements CommandExecutor {
      * @param player
      * @param teamleader
      */
-    public void removePlayerFromTeam(final UUID player, final UUID teamleader) {
+    protected void removePlayerFromTeam(final UUID player, final UUID teamleader) {
 	// Remove player from the team
 	plugin.getPlayers().removeMember(teamleader,player);
 	// If player is online
@@ -533,7 +533,7 @@ public class IslandCmd implements CommandExecutor {
      * @param targetPlayer - UUID of the player's island that is being requested
      * @return - true if successful.
      */
-    public boolean calculateIslandLevel(final Player asker, final UUID targetPlayer) {
+    protected boolean calculateIslandLevel(final Player asker, final UUID targetPlayer) {
 	if (!busyFlag) {
 	    asker.sendMessage(ChatColor.RED + Locale.islanderrorLevelNotReady);
 	    plugin.getLogger().info(asker.getName() + " tried to use /island info but someone else used it first!");
@@ -631,7 +631,7 @@ public class IslandCmd implements CommandExecutor {
      * @param value
      * @return
      */
-    public static <T, E> T getKeyByValue(Map<T, E> map, E value) {
+    protected static <T, E> T getKeyByValue(Map<T, E> map, E value) {
 	for (Entry<T, E> entry : map.entrySet()) {
 	    if (value.equals(entry.getValue())) {
 		return entry.getKey();
@@ -1647,7 +1647,7 @@ public class IslandCmd implements CommandExecutor {
      * @param player
      * @return
      */
-    public boolean onRestartWaitTime(final Player player) {
+    protected boolean onRestartWaitTime(final Player player) {
 	if (resetWaitTime.containsKey(player.getUniqueId())) {
 	    if (resetWaitTime.get(player.getUniqueId()).longValue() > Calendar.getInstance().getTimeInMillis()) {
 		return true;
@@ -1663,7 +1663,7 @@ public class IslandCmd implements CommandExecutor {
      * 
      * @param player
      */
-    public void setResetWaitTime(final Player player) {
+    protected void setResetWaitTime(final Player player) {
 	resetWaitTime.put(player.getUniqueId(), Long.valueOf(Calendar.getInstance().getTimeInMillis() + Settings.resetWait * 1000));
     }
 
@@ -1673,7 +1673,7 @@ public class IslandCmd implements CommandExecutor {
      * @param player
      * @return
      */
-    public long getResetWaitTime(final Player player) {
+    protected long getResetWaitTime(final Player player) {
 	if (resetWaitTime.containsKey(player.getUniqueId())) {
 	    if (resetWaitTime.get(player.getUniqueId()).longValue() > Calendar.getInstance().getTimeInMillis()) {
 		return (resetWaitTime.get(player.getUniqueId()).longValue() - Calendar.getInstance().getTimeInMillis())/1000;

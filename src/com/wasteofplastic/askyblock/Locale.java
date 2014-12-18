@@ -16,21 +16,11 @@
  *******************************************************************************/
 package com.wasteofplastic.askyblock;
 
-
-
-
-
-
-
-
-
-
 /**
  * @author ben
  * All the text strings in the game sent to players
  */
 public class Locale {
-
     public static String changingObsidiantoLava;
     public static String acidLore;
     public static String acidBucket;
@@ -366,9 +356,5 @@ public class Locale {
     public static String coopOnYourTeam;
     public static String islandhelpCoop;
     public static String coopInvited;
-    public static String coopUseExpel;
-    
-
-    
-   
+    public static String coopUseExpel;  
 }

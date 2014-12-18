@@ -30,7 +30,7 @@ public class JoinLeaveEvents implements Listener {
     private ASkyBlock plugin;
     private PlayerCache players;
 
-    public JoinLeaveEvents(ASkyBlock aSkyBlock) {
+    protected JoinLeaveEvents(ASkyBlock aSkyBlock) {
 	this.plugin = aSkyBlock;
 	this.players = plugin.getPlayers();
     }

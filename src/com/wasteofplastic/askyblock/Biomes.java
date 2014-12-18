@@ -22,14 +22,8 @@ public class Biomes implements Listener {
     /**
      * @param plugin
      */
-    public Biomes(ASkyBlock plugin) {
+    protected Biomes(ASkyBlock plugin) {
 	this.plugin = plugin;
-	loadChooser();
-    }
-
-    private void loadChooser() {
-	// Create a custom inventory that features the available Biomes.
-	// Only 
     }
 
     /**
@@ -37,7 +31,7 @@ public class Biomes implements Listener {
      * @param player
      * @return custom Inventory object
      */
-    public Inventory getBiomePanel(Player player) {
+    protected Inventory getBiomePanel(Player player) {
 	// Go through the available biomes and check permission
 
 	int slot = 0;

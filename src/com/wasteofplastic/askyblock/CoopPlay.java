@@ -24,7 +24,7 @@ public class CoopPlay {
     /**
      * @param instance
      */
-    public CoopPlay(ASkyBlock plugin) {
+    private CoopPlay(ASkyBlock plugin) {
 	this.plugin = plugin;
     }
 
@@ -33,7 +33,7 @@ public class CoopPlay {
      * @param requester
      * @param newPlayer
      */
-    public void addCoopPlayer(Player requester, Player newPlayer) {
+    protected void addCoopPlayer(Player requester, Player newPlayer) {
 	//plugin.getLogger().info("DEBUG: adding coop player");
 	// Find out which island this coop player is being requested to join
 	Location island = null;
@@ -95,7 +95,7 @@ public class CoopPlay {
      * @param targetPlayer
      * @return true if the player was a coop player, and false if not
      */
-    public boolean removeCoopPlayer(Player requester, Player targetPlayer) {
+    protected boolean removeCoopPlayer(Player requester, Player targetPlayer) {
 	boolean removed = false;
 	// Only bother if the player is in the list
 	if (coopPlayers.containsKey(targetPlayer.getUniqueId())) {
@@ -114,7 +114,7 @@ public class CoopPlay {
      * @param player
      * @return
      */
-    public Set<Location> getCoopIslands(Player player) {
+    protected Set<Location> getCoopIslands(Player player) {
 	if (coopPlayers.containsKey(player.getUniqueId())) {
 	    return coopPlayers.get(player.getUniqueId()).keySet(); 
 	}
@@ -126,7 +126,7 @@ public class CoopPlay {
      * @param player
      */
     /*
-    public boolean clearCoopPlayer(Player player) {
+    protected boolean clearCoopPlayer(Player player) {
 	// Return any coop inventory items that this player has
 
 	if (onCoopIsland.containsKey(player.getUniqueId())) {
@@ -141,7 +141,7 @@ public class CoopPlay {
      * Removes all coop players from an island - used when doing an island reset
      * @param player
      */
-    public void clearAllIslandCoops(UUID player) {
+    protected void clearAllIslandCoops(UUID player) {
 	// Remove any and all islands related to requester
 	Location teamIsland = plugin.getPlayers().getTeamIslandLocation(player);
 	Location island = plugin.getPlayers().getIslandLocation(player);
@@ -169,7 +169,7 @@ public class CoopPlay {
      * Used when player logs out.
      * @param player
      */
-    public void clearMyCoops(Player player) {
+    protected void clearMyCoops(Player player) {
 	coopPlayers.remove(player.getUniqueId());
 
     }
@@ -179,7 +179,7 @@ public class CoopPlay {
      * @param clearer
      * @param target
      */
-    public void clearMyInvitedCoops(Player clearer) {
+    protected void clearMyInvitedCoops(Player clearer) {
 	Location expellersIsland = null;
 	if (plugin.getPlayers().inTeam(clearer.getUniqueId())) {
 	    expellersIsland = plugin.getPlayers().getTeamIslandLocation(clearer.getUniqueId());
@@ -224,7 +224,7 @@ public class CoopPlay {
      * Removes all coop players from an island - used when doing an island reset
      * @param player
      */
-    public void clearAllIslandCoops(Location island) {
+    protected void clearAllIslandCoops(Location island) {
 	// Remove any and all islands related to requester
 	for (HashMap<Location,UUID> coopPlayer : coopPlayers.values()) {
 	    if (island != null) {
@@ -235,7 +235,7 @@ public class CoopPlay {
     /**
      * @return the instance
      */
-    public static CoopPlay getInstance() {
+    protected static CoopPlay getInstance() {
 	return instance;
     }
 
@@ -243,7 +243,7 @@ public class CoopPlay {
      * @return the onCoopIsland
      */
     /*
-    public Location getOnCoopIsland(UUID playerUUID) {
+    protected Location getOnCoopIsland(UUID playerUUID) {
 	if (onCoopIsland.containsKey(playerUUID)) {
 	    return onCoopIsland.get(playerUUID);
 	}
@@ -254,7 +254,7 @@ public class CoopPlay {
      * @param to the onCoopIsland to set
      */
     /*
-    public void setOnCoopIsland(UUID playerUUID, Location to) {
+    protected void setOnCoopIsland(UUID playerUUID, Location to) {
 	this.onCoopIsland.put(playerUUID,to);
     }
      */
@@ -263,7 +263,7 @@ public class CoopPlay {
      * @param from - the location from where they are being rejected
      */
     /*
-    public void returnInventory(Player player, Location from) {
+    protected void returnInventory(Player player, Location from) {
 	ItemStack[] armor = player.getInventory().getArmorContents();
 	ItemStack[] contents = player.getInventory().getContents();
 	// Load the old inventory
@@ -321,7 +321,7 @@ public class CoopPlay {
      * @param player
      */
     /*
-    public void returnAllInventories(Player player) {
+    protected void returnAllInventories(Player player) {
 	// If the player is not coop then just return
 	if (!coopPlayers.containsKey(player.getUniqueId())) {
 	    return;
@@ -382,7 +382,7 @@ public class CoopPlay {
 	// That should do it! If there are not online then the items are lost.
     }
 
-    public void saveAndClearInventory(Player player) {
+    protected void saveAndClearInventory(Player player) {
 	// Save the player's inventory based on their island location and clear it
 	UUID playerUUID = player.getUniqueId();
 	if (plugin.getPlayers().inTeam(playerUUID)) {

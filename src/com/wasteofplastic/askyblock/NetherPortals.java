@@ -41,7 +41,7 @@ import org.bukkit.util.Vector;
 public class NetherPortals implements Listener {
     private final ASkyBlock plugin;
 
-    public NetherPortals(ASkyBlock plugin) {
+    protected NetherPortals(ASkyBlock plugin) {
 	this.plugin = plugin;
     }
 

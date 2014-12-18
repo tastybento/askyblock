@@ -54,7 +54,7 @@ public class AcidEffect implements Listener {
     private boolean isRaining = false; 
     private List<Player> wetPlayers = new ArrayList<Player>();
 
-    public AcidEffect(final ASkyBlock pluginI) {
+    protected AcidEffect(final ASkyBlock pluginI) {
 	plugin = pluginI;
     }
 
@@ -352,7 +352,7 @@ public class AcidEffect implements Listener {
      *         player has on. The higher the value, the more protection they
      *         have.
      */
-    static public double getDamageReduced(Player player) {
+    static protected double getDamageReduced(Player player) {
 	org.bukkit.inventory.PlayerInventory inv = player.getInventory();
 	ItemStack boots = inv.getBoots();
 	ItemStack helmet = inv.getHelmet();

@@ -33,7 +33,7 @@ public class VaultHelper {
      * Sets up the economy instance
      * @return
      */
-    public static boolean setupEconomy() {
+    protected static boolean setupEconomy() {
 	RegisteredServiceProvider<Economy> economyProvider = ASkyBlock.getPlugin().getServer().getServicesManager()
 		.getRegistration(net.milkbowl.vault.economy.Economy.class);
 	if (economyProvider != null) {
@@ -46,7 +46,7 @@ public class VaultHelper {
      * Sets up the permissions instance
      * @return
      */
-    public static boolean setupPermissions() {
+    protected static boolean setupPermissions() {
 	RegisteredServiceProvider<Permission> permissionProvider = ASkyBlock.getPlugin().getServer().getServicesManager()
 		.getRegistration(net.milkbowl.vault.permission.Permission.class);
 	if (permissionProvider != null) {
@@ -62,7 +62,7 @@ public class VaultHelper {
      * @param perm
      * @return
      */
-    public static boolean checkPerm(final Player player, final String perm) {
+    protected static boolean checkPerm(final Player player, final String perm) {
 	return permission.has(player, perm);
    }
     
@@ -71,7 +71,7 @@ public class VaultHelper {
      * @param player
      * @param perm
      */
-    public static void addPerm(final Player player, final String perm) {
+    protected static void addPerm(final Player player, final String perm) {
 	permission.playerAdd(player, perm);
     }
 
@@ -80,7 +80,7 @@ public class VaultHelper {
      * @param player
      * @param perm
      */
-    public static void removePerm(final Player player, final String perm) {
+    protected static void removePerm(final Player player, final String perm) {
 	permission.playerRemove(player, perm);
     }
 

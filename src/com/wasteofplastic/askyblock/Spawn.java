@@ -33,12 +33,12 @@ public class Spawn {
      * @param plugin
      * @param players
      */
-    public Spawn(ASkyBlock plugin) {
+    protected Spawn(ASkyBlock plugin) {
 	this.plugin = plugin;
 	reload();
     }
 
-    public void reload() {
+    protected void reload() {
 	spawnConfig = ASkyBlock.loadYamlFile("spawn.yml");
 	spawn = spawnConfig.getConfigurationSection("spawn");
 	// load the config items
@@ -61,7 +61,7 @@ public class Spawn {
 	this.bedrock = ASkyBlock.getLocationString(spawn.getString("bedrock",""));
 	this.range = spawn.getInt("range",100);
     }
-    public void save() {
+    protected void save() {
 	// Save the spawn location
 	plugin.getLogger().info("Saving spawn.yml file");
 	String spawnPlace = ASkyBlock.getStringLocation(spawnLoc);
@@ -73,7 +73,7 @@ public class Spawn {
     /**
      * @return the spawnLoc
      */
-    public Location getSpawnLoc() {
+    protected Location getSpawnLoc() {
 	return spawnLoc;
     }
 
@@ -81,7 +81,7 @@ public class Spawn {
      * @param spawnLoc the spawnLoc to set
      * @param bedrock 
      */
-    public void setSpawnLoc(Location bedrock, Location spawnLoc) {
+    protected void setSpawnLoc(Location bedrock, Location spawnLoc) {
 	this.spawnLoc = spawnLoc;
 	this.bedrock = bedrock;
     }
@@ -89,21 +89,21 @@ public class Spawn {
     /**
      * @return the range
      */
-    public int getRange() {
+    protected int getRange() {
 	return range;
     }
 
     /**
      * @param range the range to set
      */
-    public void setRange(int range) {
+    protected void setRange(int range) {
 	this.range = range;
     }
 
     /**
      * @return the bedrock
      */
-    public Location getBedrock() {
+    protected Location getBedrock() {
 	return bedrock;
     }
 
@@ -112,7 +112,7 @@ public class Spawn {
      * @param loc
      * @return
      */
-    public boolean isAtSpawn(Location loc) {
+    protected boolean isAtSpawn(Location loc) {
 	//plugin.getLogger().info("DEBUG: location is " + loc.toString());
 	//plugin.getLogger().info("DEBUG spawnLoc is " + spawnLoc.toString());
 	//plugin.getLogger().info("DEBUG: range = " + range);

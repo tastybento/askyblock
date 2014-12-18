@@ -63,7 +63,7 @@ public class AdminCmd implements CommandExecutor {
     private boolean confirmOK = false;
     private int confirmTimer = 0;
 
-    public AdminCmd(ASkyBlock aSkyBlock) {
+    protected AdminCmd(ASkyBlock aSkyBlock) {
 	this.plugin = aSkyBlock;
     }
 
@@ -1027,7 +1027,7 @@ public class AdminCmd implements CommandExecutor {
      *            - the assignee
      * @return - true if successful, false if not
      */
-    public boolean adminSetPlayerIsland(final CommandSender sender, final Location l, final UUID player) {
+    protected boolean adminSetPlayerIsland(final CommandSender sender, final Location l, final UUID player) {
 	// TODO switch to file system
 	// If the player is not online
 	Location island = getClosestIsland(l);
