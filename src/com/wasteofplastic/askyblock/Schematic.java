@@ -213,7 +213,10 @@ public class Schematic {
 			if (type < 0) {
 			    type +=256;
 			}
-			block.setTypeIdAndData(type, blockData[index], true);
+			block.setTypeId(type);
+			block.setData(blockData[index]);
+			// Using this command sometimes doesn't set the data correctly...
+			//block.setTypeIdAndData(type, blockData[index], true);
 			/*
 			if (block.getType() == Material.SIGN_POST) {
 			    org.bukkit.material.Sign s = (org.bukkit.material.Sign) block.getState().getData();
