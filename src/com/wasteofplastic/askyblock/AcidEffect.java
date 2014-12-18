@@ -58,7 +58,7 @@ public class AcidEffect implements Listener {
 	plugin = pluginI;
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOW)
     public void onPlayerDeath(PlayerDeathEvent e) {
 	burningPlayers.remove((Player) e.getEntity());
 	wetPlayers.remove((Player) e.getEntity());

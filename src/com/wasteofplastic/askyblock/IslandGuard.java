@@ -82,7 +82,7 @@ public class IslandGuard implements Listener {
     private final ASkyBlock plugin;
     private final boolean debug = false;
 
-    protected IslandGuard(final ASkyBlock plugin) {
+    public IslandGuard(final ASkyBlock plugin) {
 	this.plugin = plugin;
 
     }
@@ -349,6 +349,9 @@ public class IslandGuard implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onPlayerFall(final PlayerMoveEvent e) {
+	if (e.getPlayer().isDead()) {
+	    return;
+	}
 	/* too spammy
 	if (debug) {
 	    plugin.getLogger().info(e.getEventName());
@@ -363,9 +366,12 @@ public class IslandGuard implements Listener {
 	    return;
 	}
 	// Check if air below player
-	if (e.getPlayer().getLocation().getBlock().getRelative(BlockFace.DOWN).getType().equals(Material.AIR)) {
+	if (e.getPlayer().getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.AIR
+		&& e.getPlayer().getLocation().getBlock().getType() == Material.AIR) {
+	    //plugin.getLogger().info("DEBUG: falling");
 	    plugin.setFalling(e.getPlayer().getUniqueId());
 	} else {
+	    //plugin.getLogger().info("DEBUG: not falling");
 	    plugin.unsetFalling(e.getPlayer().getUniqueId());
 	}
     }

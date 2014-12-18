@@ -2193,6 +2193,7 @@ public class ASkyBlock extends JavaPlugin {
      * @param uniqueId
      */
     protected void unsetFalling(UUID uniqueId) {
+	//getLogger().info("DEBUG: unset falling");
 	this.fallingPlayers.remove(uniqueId);
     }
 

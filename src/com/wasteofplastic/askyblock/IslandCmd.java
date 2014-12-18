@@ -699,10 +699,15 @@ public class IslandCmd implements CommandExecutor {
 		if (Settings.useControlPanel) {
 		    player.performCommand(Settings.ISLANDCOMMAND + " cp");
 		} else {
-		    // Teleport home
-		    plugin.homeTeleport(player);
-		    if (Settings.islandRemoveMobs) {
-			plugin.removeMobs(player.getLocation());
+		    if (!player.getWorld().getName().equalsIgnoreCase(Settings.worldName) 
+			    || Settings.allowTeleportWhenFalling || !plugin.isFalling(playerUUID)) {
+			// Teleport home
+			plugin.homeTeleport(player);
+			if (Settings.islandRemoveMobs) {
+			    plugin.removeMobs(player.getLocation());
+			}
+		    } else {
+			player.sendMessage(ChatColor.RED + Locale.errorCommandNotReady);
 		    }
 		}
 		return true;
