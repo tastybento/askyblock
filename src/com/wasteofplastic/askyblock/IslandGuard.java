@@ -30,6 +30,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Boat;
 import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -69,6 +70,7 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerShearEntityEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerUnleashEntityEvent;
+import org.bukkit.event.vehicle.VehicleDamageEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 import org.bukkit.potion.Potion;
@@ -87,6 +89,39 @@ public class IslandGuard implements Listener {
 
     }
 
+    // Vehicle damage
+    @EventHandler(priority = EventPriority.LOW)
+    void vehicleDamageEvent(VehicleDamageEvent e){
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
+	if (e.getVehicle() instanceof Boat) {
+	    // Boats can always be hit
+	    return;
+	}
+	if (!(e.getAttacker() instanceof Player)) {
+	    return;
+	}
+	Player p = (Player)e.getAttacker();
+
+	if (!p.getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	    return;
+	}
+	if (p.isOp()) {
+	    // You can do anything if you are Op
+	    return;
+	}
+	// Check if on island
+	if (plugin.playerIsOnIsland(p)) {
+	    return;
+	}
+	if (!Settings.allowBreakBlocks) {
+	    e.setCancelled(true);
+	    p.sendMessage(ChatColor.RED + Locale.islandProtected);
+	}
+    }
+    
+    
     // Armor stand events
     @EventHandler(priority = EventPriority.LOWEST)
     void placeArmorStandEvent(PlayerInteractEvent e){
@@ -1029,8 +1064,8 @@ public class IslandGuard implements Listener {
 
 	// Check for disallowed clicked blocks
 	if (e.getClickedBlock() != null) {
-	    //plugin.getLogger().info("DEBUG: clicked block " + e.getClickedBlock());
-	    //plugin.getLogger().info("DEBUG: Material " + e.getMaterial());
+	    plugin.getLogger().info("DEBUG: clicked block " + e.getClickedBlock());
+	    plugin.getLogger().info("DEBUG: Material " + e.getMaterial());
 
 	    switch (e.getClickedBlock().getType()) {
 	    case WOODEN_DOOR:
@@ -1154,6 +1189,20 @@ public class IslandGuard implements Listener {
 		    return; 
 		}
 		break;
+	    case RAILS:
+	    case POWERED_RAIL:
+	    case DETECTOR_RAIL:
+	    case ACTIVATOR_RAIL:
+		if (!Settings.allowPlaceBlocks) {
+		    if (e.getMaterial() == Material.MINECART || e.getMaterial() == Material.STORAGE_MINECART
+			    || e.getMaterial() == Material.HOPPER_MINECART || e.getMaterial() == Material.EXPLOSIVE_MINECART
+			    || e.getMaterial() == Material.POWERED_MINECART) {
+			e.setCancelled(true);
+			e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
+			e.getPlayer().updateInventory();
+			return;
+		    }
+		}
 	    default:
 		break;
 	    }
@@ -1343,6 +1392,7 @@ public class IslandGuard implements Listener {
 		 */
 	    }
 	} else {
+	    // Not on island
 	    if (!Settings.allowBreeding) {
 		// Player is off island
 		if (e.getRightClicked() instanceof Animals) {
@@ -1350,6 +1400,21 @@ public class IslandGuard implements Listener {
 		    e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
 		    e.setCancelled(true); 
 		}
+	    }
+	    // Check for other entities
+	    //Minecarts and other storage entities
+	    switch (e.getRightClicked().getType()) {
+	    case ITEM_FRAME:
+	    case MINECART_CHEST:
+	    case MINECART_FURNACE:
+	    case MINECART_HOPPER:
+	    case MINECART_TNT:
+		if (!Settings.allowChestAccess) {
+		    e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
+		    e.setCancelled(true); 
+		}
+	    default:
+		break;
 	    }
 	}
     }

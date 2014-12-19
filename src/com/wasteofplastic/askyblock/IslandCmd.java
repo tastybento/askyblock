@@ -1227,6 +1227,10 @@ public class IslandCmd implements CommandExecutor {
 					    inFront.getBlockZ() + 0.5D, yaw, 30F);
 				    player.teleport(actualWarp);
 				    player.getWorld().playSound(player.getLocation(), Sound.BAT_TAKEOFF, 1F, 1F);
+				    Player warpOwner = plugin.getServer().getPlayer(foundWarp);
+				    if (warpOwner != null) {
+					warpOwner.sendMessage(ChatColor.translateAlternateColorCodes('&', Locale.warpsPlayerWarped).replace("[name]", player.getDisplayName()));
+				    }
 				    return true;
 				}
 			    } else {

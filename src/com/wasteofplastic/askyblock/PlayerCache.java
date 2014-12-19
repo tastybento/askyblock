@@ -121,7 +121,7 @@ public class PlayerCache {
 	    return true;
 	} else {
 	    // Get the file system
-	    final File folder = plugin.playersFolder;
+	    final File folder = plugin.getPlayersFolder();
 	    final File[] files = folder.listFiles();
 	    // Go through the native YAML files
 	    for (final File f : files) {
@@ -356,7 +356,7 @@ public class PlayerCache {
 	    }
 	}
 	// Look in the file system
-	for (final File f : plugin.playersFolder.listFiles()) {
+	for (final File f : plugin.getPlayersFolder().listFiles()) {
 	    // Need to remove the .yml suffix
 	    String fileName = f.getName();
 	    if (fileName.endsWith(".yml")) {
@@ -413,7 +413,7 @@ public class PlayerCache {
 	    }
 	}
 	// Look in the file system
-	for (final File f : plugin.playersFolder.listFiles()) {
+	for (final File f : plugin.getPlayersFolder().listFiles()) {
 	    // Need to remove the .yml suffix
 	    String fileName = f.getName();
 	    if (fileName.endsWith(".yml")) {

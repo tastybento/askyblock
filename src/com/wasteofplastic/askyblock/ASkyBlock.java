@@ -71,10 +71,10 @@ public class ASkyBlock extends JavaPlugin {
     // This plugin
     private static ASkyBlock plugin;
     // The ASkyBlock world
-    public static World acidWorld = null;
+    private static World acidWorld = null;
     // Player YAMLs
-    public YamlConfiguration playerFile;
-    public File playersFolder;
+    //public YamlConfiguration playerFile;
+    private File playersFolder;
     // Where challenges are stored
     private FileConfiguration challengeFile = null;
     private File challengeConfigFile = null;
@@ -83,7 +83,7 @@ public class ASkyBlock extends JavaPlugin {
     private FileConfiguration locale = null;
     private File localeFile = null;
     // Where warps are stored
-    public YamlConfiguration welcomeWarps;
+    private YamlConfiguration welcomeWarps;
     // Map of all warps stored as player, warp sign Location
     private HashMap<UUID, Object> warpList = new HashMap<UUID, Object>();
     // Top ten list of players
@@ -102,8 +102,8 @@ public class ASkyBlock extends JavaPlugin {
     // Biome chooser object
     Biomes biomes;
 
-    public boolean debug = false;
-    public boolean flag = false;
+    private boolean debug = false;
+    //public boolean flag = false;
 
     // Offline Messages
     private HashMap<UUID, List<String>> messages = new HashMap<UUID, List<String>>();
@@ -186,9 +186,15 @@ public class ASkyBlock extends JavaPlugin {
     }
 
     /**
+     * @return the playersFolder
+     */
+    public File getPlayersFolder() {
+        return playersFolder;
+    }
+
+    /**
      * Delete Island
      * Called when an island is restarted or reset
-     * Uses NMS fast delete if possible
      * @param player - player name String
      */
     protected void deletePlayerIsland(final UUID player) {
@@ -1193,6 +1199,7 @@ public class ASkyBlock extends JavaPlugin {
 	Locale.warpswarpToPlayersSign = locale.getString("warps.warpToPlayersSign","Warp to <player>'s welcome sign.");
 	Locale.warpserrorNoWarpsYet = locale.getString("warps.errorNoWarpsYet","There are no warps available yet!");
 	Locale.warpswarpsAvailable = locale.getString("warps.warpsAvailable","The following warps are available");
+	Locale.warpsPlayerWarped = locale.getString("warps.playerWarped", "[name] &2warped to your island!");
 	Locale.topTenheader = locale.getString("topTen.header","These are the Top 10 islands:");
 	Locale.topTenerrorNotReady = locale.getString("topTen.errorNotReady","Top ten list not generated yet!");
 	Locale.levelislandLevel = locale.getString("level.islandLevel","Island level");

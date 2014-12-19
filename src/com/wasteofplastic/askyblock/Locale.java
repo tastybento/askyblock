@@ -61,6 +61,7 @@ public class Locale {
     public static String warpswarpToPlayersSign;
     public static String warpserrorNoWarpsYet;
     public static String warpswarpsAvailable;
+    public static String warpsPlayerWarped;
 
     //ASkyBlock
     public static String topTenheader;
@@ -356,5 +357,6 @@ public class Locale {
     public static String coopOnYourTeam;
     public static String islandhelpCoop;
     public static String coopInvited;
-    public static String coopUseExpel;  
+    public static String coopUseExpel;
+      
 }

@@ -20,7 +20,10 @@ import java.util.UUID;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -36,6 +39,7 @@ import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.util.Vector;
 
 public class NetherPortals implements Listener {
@@ -140,8 +144,12 @@ public class NetherPortals implements Listener {
 	    } else {
 		//plugin.getLogger().info("DEBUG: transporting to nether spawn : " + plugin.getServer().getWorld(Settings.worldName + "_nether").getSpawnLocation().toString());
 		event.setTo(plugin.getServer().getWorld(Settings.worldName + "_nether").getSpawnLocation());
-	    }  
-	    event.useTravelAgent(true);
+	    }
+	    if (!Settings.newNether) {
+		event.useTravelAgent(true);
+	    } else {
+		event.useTravelAgent(false);
+	    }
 	} else {
 	    // Returning to island
 	    event.setTo(destination); 
@@ -150,7 +158,7 @@ public class NetherPortals implements Listener {
     }
 
     // Nether portal spawn protection
- 
+
     /**
      * Function to check proximity to nether spawn location
      * @param player
@@ -274,4 +282,22 @@ public class NetherPortals implements Listener {
 	}
     }
 
+    /**
+     * Converts trees to gravel and glowstone
+     * @param e
+     */
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
+    public void onTreeGrow(final StructureGrowEvent e) {
+	// Check world
+	if (!e.getLocation().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_nether")) {
+	    return;
+	}
+	for (BlockState b : e.getBlocks()) {
+	    if (b.getType() == Material.LOG || b.getType() == Material.LOG_2) {
+		b.setType(Material.GRAVEL);
+	    } else if (b.getType() == Material.LEAVES || b.getType() == Material.LEAVES_2) {
+		b.setType(Material.GLOWSTONE);
+	    } 
+	}
+    }
 }
