@@ -145,11 +145,12 @@ public class NetherPortals implements Listener {
 		//plugin.getLogger().info("DEBUG: transporting to nether spawn : " + plugin.getServer().getWorld(Settings.worldName + "_nether").getSpawnLocation().toString());
 		event.setTo(plugin.getServer().getWorld(Settings.worldName + "_nether").getSpawnLocation());
 	    }
-	    if (!Settings.newNether) {
+	    //if (!Settings.newNether) {
+	//	event.useTravelAgent(true);
+	    //} else {
+	    // Use the portal for now
 		event.useTravelAgent(true);
-	    } else {
-		event.useTravelAgent(false);
-	    }
+	    //}
 	} else {
 	    // Returning to island
 	    event.setTo(destination); 

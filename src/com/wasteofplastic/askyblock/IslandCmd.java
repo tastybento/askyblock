@@ -700,7 +700,8 @@ public class IslandCmd implements CommandExecutor {
 		    player.performCommand(Settings.ISLANDCOMMAND + " cp");
 		} else {
 		    if (!player.getWorld().getName().equalsIgnoreCase(Settings.worldName) 
-			    || Settings.allowTeleportWhenFalling || !plugin.isFalling(playerUUID)) {
+			    || Settings.allowTeleportWhenFalling || !plugin.isFalling(playerUUID)
+			    || (player.isOp() && !Settings.damageOps)) {
 			// Teleport home
 			plugin.homeTeleport(player);
 			if (Settings.islandRemoveMobs) {

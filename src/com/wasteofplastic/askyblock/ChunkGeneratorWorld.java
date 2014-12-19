@@ -115,7 +115,7 @@ public class ChunkGeneratorWorld extends ChunkGenerator {
 	    for (int z = 0; z < 16; z++) {	
 		// Do the ceiling
 		//Bukkit.getLogger().info("debug: " + x + ", " + (world.getMaxHeight()-1) + ", " + z);
-		int maxHeight = (world.getMaxHeight() < (Settings.island_level+50)) ? world.getMaxHeight() : (Settings.island_level+50);
+		int maxHeight = world.getMaxHeight();
 		setBlock(result,x,(maxHeight-1),z, (byte)Material.BEDROCK.getId());
 		// Next three layers are a mix of bedrock and netherrack
 		for (int y = 2; y < 5; y++) {
