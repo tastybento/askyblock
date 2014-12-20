@@ -673,11 +673,11 @@ public class Challenges implements CommandExecutor {
 			int reqDurability = Integer.parseInt(part[1]);
 			reqAmount = Integer.parseInt(part[2]);
 			int count = reqAmount;
-			//plugin.getLogger().info("DEBUG: 3 part " + reqItem.toString() + ":" + reqDurability + " x " + reqAmount);
+			plugin.getLogger().info("DEBUG: 3 part " + reqItem.toString() + ":" + reqDurability + " x " + reqAmount);
 			ItemStack item = new ItemStack(reqItem);
 			// Check for potions
 			if (reqItem.equals(Material.POTION)) {
-			    //plugin.getLogger().info("Potion");
+			    plugin.getLogger().info("Potion");
 			    // Contains at least does not work for potions
 			    ItemStack[] playerInv = player.getInventory().getContents();
 			    for (ItemStack i : playerInv) {
@@ -700,6 +700,7 @@ public class Challenges implements CommandExecutor {
 			    // Item
 			    item.setDurability((short) reqDurability);
 			    //plugin.getLogger().info("DEBUG: item with durability " + item.toString());
+			    //plugin.getLogger().info("DEBUG: required amount = " + reqAmount);
 			    // item.setAmount(reqAmount);
 			    /*
 			    if (!player.getInventory().containsAtLeast(item, reqAmount)) {
@@ -710,6 +711,7 @@ public class Challenges implements CommandExecutor {
 			    int amount = 0;
 			    // Go through all the inventory and try to find
 			    // enough required items
+			    //plugin.getLogger().info("DEBUG: required material = " + reqItem.toString());
 			    for (Entry<Integer, ? extends ItemStack> en : player.getInventory().all(reqItem).entrySet()) {
 				// Get the item
 				ItemStack i = en.getValue();
@@ -717,6 +719,7 @@ public class Challenges implements CommandExecutor {
 				    // Clear any naming, or lore etc.
 				    i.setItemMeta(null);
 				    player.getInventory().setItem(en.getKey(), i);
+				    //plugin.getLogger().info("DEBUG: item in inventory is " + i.toString());
 				    // #1 item stack qty + amount is less than
 				    // required items - take all i
 				    // #2 item stack qty + amount = required item -
@@ -750,6 +753,10 @@ public class Challenges implements CommandExecutor {
 					break;
 				    }
 				}
+			    }
+			    //plugin.getLogger().info("DEBUG: amount = " + amount);
+			    if (amount < reqAmount) {   
+				return false;
 			    }
 			}
 			// plugin.getLogger().info("DEBUG: before set amount " +
