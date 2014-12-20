@@ -120,8 +120,8 @@ public class IslandGuard implements Listener {
 	    p.sendMessage(ChatColor.RED + Locale.islandProtected);
 	}
     }
-    
-    
+
+
     // Armor stand events
     @EventHandler(priority = EventPriority.LOWEST)
     void placeArmorStandEvent(PlayerInteractEvent e){
@@ -148,7 +148,7 @@ public class IslandGuard implements Listener {
 	    e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
 	    e.getPlayer().updateInventory();
 	}
-	
+
     }
 
     @EventHandler(priority = EventPriority.LOW)
@@ -169,6 +169,10 @@ public class IslandGuard implements Listener {
 	if(e.getDamager() instanceof Player){
 	    Player p = (Player) e.getDamager();
 	    if (p.isOp()) {
+		return;
+	    }
+	    // Check if on island
+	    if (plugin.playerIsOnIsland(p)) {
 		return;
 	    }
 	    // This permission bypasses protection
