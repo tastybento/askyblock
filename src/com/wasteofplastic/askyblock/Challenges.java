@@ -796,10 +796,10 @@ public class Challenges implements CommandExecutor {
 	    if (plugin.getChallengeConfig().getBoolean("challenges.challengeList." + challenge + ".takeItems")) {
 		// checkChallengeItems(player, challenge);
 		// int qty = 0;
-		plugin.getLogger().info("DEBUG: Removing items");
+		//plugin.getLogger().info("DEBUG: Removing items");
 		for (ItemStack i : toBeRemoved) {
 		    // qty += i.getAmount();
-		    plugin.getLogger().info("DEBUG: Remove " + i.toString() + "::" + i.getDurability() + " x " + i.getAmount());
+		    //plugin.getLogger().info("DEBUG: Remove " + i.toString() + "::" + i.getDurability() + " x " + i.getAmount());
 		    HashMap<Integer,ItemStack> leftOver = player.getInventory().removeItem(i);
 		    if (!leftOver.isEmpty()) {
 			plugin.getLogger().warning("Exploit? Could not remove the following in challenge "+challenge+" for player " + player.getName() + ":");
