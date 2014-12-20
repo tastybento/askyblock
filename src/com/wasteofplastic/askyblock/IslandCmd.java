@@ -60,7 +60,7 @@ public class IslandCmd implements CommandExecutor {
     // The island reset confirmation
     private HashMap<UUID,Boolean> confirm = new HashMap<UUID,Boolean>();
     // Last island
-    Location last = null;
+    private static Location last = null;
     /**
      * Invite list - invited player name string (key), inviter name string (value)
      */
@@ -699,17 +699,17 @@ public class IslandCmd implements CommandExecutor {
 		if (Settings.useControlPanel) {
 		    player.performCommand(Settings.ISLANDCOMMAND + " cp");
 		} else {
-		    //if (!player.getWorld().getName().equalsIgnoreCase(Settings.worldName) 
-		//	    || Settings.allowTeleportWhenFalling || !plugin.isFalling(playerUUID)
-		//	    || (player.isOp() && !Settings.damageOps)) {
+		    if (!player.getWorld().getName().equalsIgnoreCase(Settings.worldName) 
+			    || Settings.allowTeleportWhenFalling || !plugin.isFalling(playerUUID)
+			    || (player.isOp() && !Settings.damageOps)) {
 			// Teleport home
 			plugin.homeTeleport(player);
 			if (Settings.islandRemoveMobs) {
 			    plugin.removeMobs(player.getLocation());
 			}
-		//    } else {
-		//	player.sendMessage(ChatColor.RED + Locale.errorCommandNotReady);
-		//    }
+		    } else {
+			player.sendMessage(ChatColor.RED + Locale.errorNoTeleport);
+		    }
 		}
 		return true;
 	    }
@@ -1695,6 +1695,12 @@ public class IslandCmd implements CommandExecutor {
 	return 0L;
     }
 
+    /**
+     * Resets the last island location to the starting point. Called when reloading settings.
+     */
+    protected static void resetLast() {
+	last = null;
+    }
 
 
 }

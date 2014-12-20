@@ -16,8 +16,9 @@
  *******************************************************************************/
 package com.wasteofplastic.askyblock;
 
+
 /**
- * @author ben
+ * @author tastybento
  * All the text strings in the game sent to players
  */
 public class Locale {
@@ -36,6 +37,7 @@ public class Locale {
     public static String errorOfflinePlayer;
     public static String errorUnknownCommand;
     public static String errorNoTeam;
+    public static String errorNoTeleport;
 
     //IslandGuard
     public static String islandProtected;
@@ -358,5 +360,8 @@ public class Locale {
     public static String islandhelpCoop;
     public static String coopInvited;
     public static String coopUseExpel;
+    
+    
+    
       
 }

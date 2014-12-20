@@ -385,6 +385,7 @@ public class IslandGuard implements Listener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onPlayerFall(final PlayerMoveEvent e) {
 	if (e.getPlayer().isDead()) {
+	    plugin.unsetFalling(e.getPlayer().getUniqueId());
 	    return;
 	}
 	/* too spammy
@@ -392,12 +393,16 @@ public class IslandGuard implements Listener {
 	    plugin.getLogger().info(e.getEventName());
 	}*/
 	if (!e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	    plugin.unsetFalling(e.getPlayer().getUniqueId());
 	    return;
 	}
 	if (Settings.allowTeleportWhenFalling) {
+	    plugin.unsetFalling(e.getPlayer().getUniqueId());
 	    return;
 	}
-	if (!e.getPlayer().getGameMode().equals(GameMode.SURVIVAL) || e.getPlayer().isOp()) {
+	if (!e.getPlayer().getGameMode().equals(GameMode.SURVIVAL) || e.getPlayer().isOp()
+		|| e.getPlayer().isFlying()) {
+	    plugin.unsetFalling(e.getPlayer().getUniqueId());
 	    return;
 	}
 	// Check if air below player

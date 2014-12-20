@@ -20,6 +20,7 @@ error:
    offlinePlayer: "That player is offline or doesn't exist."
    unknownCommand: "Unknown command."
    noTeam: "Player is not in a team."
+   noTeleport: "Teleporting when falling is disabled!"
 
 #AcidEffect
 changingObsidiantoLava: "Changing obsidian back into lava. Be careful!"

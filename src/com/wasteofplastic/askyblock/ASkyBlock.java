@@ -1181,6 +1181,7 @@ public class ASkyBlock extends JavaPlugin {
 	Locale.errorOfflinePlayer = locale.getString("error.offlinePlayer","That player is offline or doesn't exist.");
 	Locale.errorUnknownCommand = locale.getString("error.unknownCommand","Unknown command.");
 	Locale.errorNoTeam = locale.getString("error.noTeam","That player is not in a team.");
+	Locale.errorNoTeleport = locale.getString("Error.noTeleport","Teleporting when falling is disabled!");
 	Locale.islandProtected = locale.getString("islandProtected","Island protected.");
 	Locale.lavaTip = locale.getString("lavaTip","Changing obsidian back into lava. Be careful!");
 	Locale.warpswelcomeLine = locale.getString("warps.welcomeLine","[WELCOME]");

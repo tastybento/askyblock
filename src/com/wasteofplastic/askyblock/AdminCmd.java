@@ -330,6 +330,9 @@ public class AdminCmd implements CommandExecutor {
 		}
 		ControlPanel.loadControlPanel();
 		plugin.getSpawn().reload();
+		// Server has a problem if islands are placed in previously regenerated chunks
+		// Wait until server reset to reuse spots
+		//IslandCmd.resetLast();
 		sender.sendMessage(ChatColor.YELLOW + Locale.reloadconfigReloaded);
 		return true;
 	    } else if (split[0].equalsIgnoreCase("topten")) {
