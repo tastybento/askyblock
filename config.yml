@@ -170,13 +170,13 @@ general:
 
 island:
    # Space between islands in blocks - never change this mid-game.
-   distance: 150
+   distance: 110
 
    # The size of the protective region for each island. Must be at least 16 blocks
    # less than the island distance.
    # If you want to override this change overridelimit to true. This may result in
    # incomplete island deletion (~15% of the time if the island goes to edges)
-   protectionRange: 100
+   protectionRange: 94
    overridelimit: false
 
    # Coordinate offset - never change this mid-game and there is no
