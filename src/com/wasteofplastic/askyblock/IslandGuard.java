@@ -1068,8 +1068,8 @@ public class IslandGuard implements Listener {
 
 	// Check for disallowed clicked blocks
 	if (e.getClickedBlock() != null) {
-	    plugin.getLogger().info("DEBUG: clicked block " + e.getClickedBlock());
-	    plugin.getLogger().info("DEBUG: Material " + e.getMaterial());
+	    //plugin.getLogger().info("DEBUG: clicked block " + e.getClickedBlock());
+	    //plugin.getLogger().info("DEBUG: Material " + e.getMaterial());
 
 	    switch (e.getClickedBlock().getType()) {
 	    case WOODEN_DOOR:
