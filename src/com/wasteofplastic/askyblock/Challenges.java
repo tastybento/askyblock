@@ -673,7 +673,7 @@ public class Challenges implements CommandExecutor {
 			int reqDurability = Integer.parseInt(part[1]);
 			reqAmount = Integer.parseInt(part[2]);
 			int count = reqAmount;
-			plugin.getLogger().info("DEBUG: 3 part " + reqItem.toString() + ":" + reqDurability + " x " + reqAmount);
+			//plugin.getLogger().info("DEBUG: 3 part " + reqItem.toString() + ":" + reqDurability + " x " + reqAmount);
 			ItemStack item = new ItemStack(reqItem);
 			// Check for potions
 			if (reqItem.equals(Material.POTION)) {
