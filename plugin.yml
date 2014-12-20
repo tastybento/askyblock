@@ -1,6 +1,6 @@
 name: ASkyBlock
 main: com.wasteofplastic.askyblock.ASkyBlock
-version: 2.7
+version: 2.7.1
 description: A SkyBlock Plugin
 author: Tastybento
 depend: [Vault]

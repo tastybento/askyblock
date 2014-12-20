@@ -269,7 +269,7 @@ public class ControlPanel implements Listener {
 	/*
 	 * Minishop section
 	 */	
-	if (inventory.getName().equals(miniShop.getName())) { // The inventory is our custom Inventory
+	if (miniShop != null && inventory.getName().equals(miniShop.getName())) { // The inventory is our custom Inventory
 	    String message = "";
 	    //plugin.getLogger().info("You clicked on slot " + slot);
 	    event.setCancelled(true); // Don't let them pick it up
