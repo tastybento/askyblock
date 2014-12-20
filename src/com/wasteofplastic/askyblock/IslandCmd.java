@@ -468,7 +468,7 @@ public class IslandCmd implements CommandExecutor {
 		sign.setLine(1, ChatColor.translateAlternateColorCodes('&', Locale.signLine2.replace("[player]", player.getName())));
 		sign.setLine(2, ChatColor.translateAlternateColorCodes('&', Locale.signLine3.replace("[player]", player.getName())));
 		sign.setLine(3, ChatColor.translateAlternateColorCodes('&', Locale.signLine4.replace("[player]", player.getName())));
-		//((org.bukkit.material.Sign) sign.getData()).setFacingDirection(BlockFace.NORTH);
+		((org.bukkit.material.Sign) sign.getData()).setFacingDirection(BlockFace.NORTH);
 		sign.update();
 		// Place the chest - no need to use the safe spawn function because we
 		// know what this island looks like
@@ -699,17 +699,17 @@ public class IslandCmd implements CommandExecutor {
 		if (Settings.useControlPanel) {
 		    player.performCommand(Settings.ISLANDCOMMAND + " cp");
 		} else {
-		    if (!player.getWorld().getName().equalsIgnoreCase(Settings.worldName) 
-			    || Settings.allowTeleportWhenFalling || !plugin.isFalling(playerUUID)
-			    || (player.isOp() && !Settings.damageOps)) {
+		    //if (!player.getWorld().getName().equalsIgnoreCase(Settings.worldName) 
+		//	    || Settings.allowTeleportWhenFalling || !plugin.isFalling(playerUUID)
+		//	    || (player.isOp() && !Settings.damageOps)) {
 			// Teleport home
 			plugin.homeTeleport(player);
 			if (Settings.islandRemoveMobs) {
 			    plugin.removeMobs(player.getLocation());
 			}
-		    } else {
-			player.sendMessage(ChatColor.RED + Locale.errorCommandNotReady);
-		    }
+		//    } else {
+		//	player.sendMessage(ChatColor.RED + Locale.errorCommandNotReady);
+		//    }
 		}
 		return true;
 	    }
