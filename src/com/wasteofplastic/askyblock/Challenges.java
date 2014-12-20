@@ -677,20 +677,18 @@ public class Challenges implements CommandExecutor {
 			ItemStack item = new ItemStack(reqItem);
 			// Check for potions
 			if (reqItem.equals(Material.POTION)) {
+			    //plugin.getLogger().info("Potion");
 			    // Contains at least does not work for potions
 			    ItemStack[] playerInv = player.getInventory().getContents();
 			    for (ItemStack i : playerInv) {
 				if (i != null && i.getType().equals(Material.POTION)) {
-				    // plugin.getLogger().info("Potion found, durability = "+
-				    // i.getDurability());
+				    //plugin.getLogger().info("Potion found, durability = "+ i.getDurability());
 				    if (i.getDurability() == reqDurability) {
-					// plugin.getLogger().info("Matched! ");
+					//plugin.getLogger().info("Matched! ");
 					count--;
 					item = new ItemStack(i);
-					// plugin.getLogger().info("DEBUG: Found "
-					// + item.toString() + ":" +
-					// item.getDurability() + " x " +
-					// item.getAmount());
+					//plugin.getLogger().info("DEBUG: Found " + item.toString() + ":" + item.getDurability() + " x " + item.getAmount());
+					toBeRemoved.add(i.clone());
 				    }
 				}
 			    }
@@ -798,10 +796,10 @@ public class Challenges implements CommandExecutor {
 	    if (plugin.getChallengeConfig().getBoolean("challenges.challengeList." + challenge + ".takeItems")) {
 		// checkChallengeItems(player, challenge);
 		// int qty = 0;
-
+		plugin.getLogger().info("DEBUG: Removing items");
 		for (ItemStack i : toBeRemoved) {
 		    // qty += i.getAmount();
-		    //plugin.getLogger().info("DEBUG: Remove " + i.toString() + "::" + i.getDurability() + " x " + i.getAmount());
+		    plugin.getLogger().info("DEBUG: Remove " + i.toString() + "::" + i.getDurability() + " x " + i.getAmount());
 		    HashMap<Integer,ItemStack> leftOver = player.getInventory().removeItem(i);
 		    if (!leftOver.isEmpty()) {
 			plugin.getLogger().warning("Exploit? Could not remove the following in challenge "+challenge+" for player " + player.getName() + ":");
