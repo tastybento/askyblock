@@ -248,6 +248,12 @@ public class ControlPanel implements Listener {
 	    // Get the list of items in this inventory
 	    //plugin.getLogger().info("DEBUG: You clicked on slot " + slot);
 	    List<CPItem> challenges = plugin.getChallenges().getCP(player);
+	    if (challenges == null) {
+		plugin.getLogger().warning("Player was accessing Challenge Inventory, but it had lost state - was server restarted?");
+		player.closeInventory();
+		player.performCommand(Settings.CHALLENGECOMMAND);
+		return;
+	    }
 	    //plugin.getLogger().info("DEBUG: Challenges size = " + challenges.size());
 	    if (slot >=0 && slot < challenges.size()) {
 		CPItem item = challenges.get(slot);

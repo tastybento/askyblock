@@ -497,7 +497,14 @@ public class AdminCmd implements CommandExecutor {
 		    return true;
 		} else {
 		    if (plugin.getPlayers().getIslandLocation(playerUUID) != null) {
-			((Player)sender).teleport(plugin.getSafeHomeLocation(playerUUID));
+			Location safeSpot = plugin.getSafeHomeLocation(playerUUID);
+			if (safeSpot != null) {
+			    ((Player)sender).teleport(safeSpot);
+			} else {
+			    sender.sendMessage(ChatColor.RED + Locale.warpserrorNotSafe);
+			    Location warpSpot = plugin.getPlayers().getIslandLocation(playerUUID);
+			    sender.sendMessage(ChatColor.RED + "Manually warp to somewhere near " + warpSpot.getBlockX() + " " + warpSpot.getBlockY() + " " + warpSpot.getBlockZ());
+			}
 			return true;
 		    }
 		    sender.sendMessage(Locale.errorNoIslandOther);
