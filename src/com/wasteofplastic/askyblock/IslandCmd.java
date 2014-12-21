@@ -958,9 +958,9 @@ public class IslandCmd implements CommandExecutor {
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.biomes")) {
 		    player.sendMessage(ChatColor.YELLOW + "/" + label + " biomes: " + ChatColor.WHITE + Locale.islandhelpBiome);
 		}
-		if (!Settings.allowPvP) {
+		//if (!Settings.allowPvP) {
 		    player.sendMessage(ChatColor.YELLOW + "/" + label + " expel <player>: " + ChatColor.WHITE + Locale.islandhelpExpel);
-		}
+		//}
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "coop")) {
 		    player.sendMessage(ChatColor.YELLOW + "/" + label + " coop: " + ChatColor.WHITE + Locale.islandhelpCoop);
 		}
@@ -1424,10 +1424,11 @@ public class IslandCmd implements CommandExecutor {
 
 		}
 	    } else if (split[0].equalsIgnoreCase("expel")) {
+		/*
 		if (Settings.allowPvP) {
 		    player.sendMessage(ChatColor.RED + Locale.errorUnknownCommand);
 		    return false;
-		}
+		}*/
 		// Find out who they want to expel
 		final UUID targetPlayerUUID = plugin.getPlayers().getUUID(split[1]);
 		// Player must be known

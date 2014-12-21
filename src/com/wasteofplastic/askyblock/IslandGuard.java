@@ -122,67 +122,6 @@ public class IslandGuard implements Listener {
     }
 
 
-    // Armor stand events
-    @EventHandler(priority = EventPriority.LOWEST)
-    void placeArmorStandEvent(PlayerInteractEvent e){
-	Player p = e.getPlayer();
-	if (debug) {
-	    plugin.getLogger().info(e.getEventName());
-	}
-	if (!p.getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
-	    return;
-	}
-	if (p.isOp()) {
-	    // You can do anything if you are Op
-	    return;
-	}
-	// Check if on island
-	if (plugin.playerIsOnIsland(e.getPlayer())) {
-	    return;
-	}
-	// Check if they are holding armor stand
-	ItemStack inHand = e.getPlayer().getItemInHand();
-	if (inHand != null && inHand.getType().equals(Material.ARMOR_STAND)) {
-	    //plugin.getLogger().info("DEBUG: stand place cancelled");
-	    e.setCancelled(true);
-	    e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
-	    e.getPlayer().updateInventory();
-	}
-
-    }
-
-    @EventHandler(priority = EventPriority.LOW)
-    public void ArmorStandDestroy(EntityDamageByEntityEvent e){
-	if (debug) {
-	    plugin.getLogger().info(e.getEventName());
-	}
-	if (!(e.getEntity() instanceof LivingEntity)) {
-	    return;
-	}
-	if (!e.getEntity().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
-	    return;
-	}
-	final LivingEntity livingEntity = (LivingEntity)e.getEntity();
-	if(!livingEntity.getType().equals(EntityType.ARMOR_STAND)){
-	    return;
-	}
-	if(e.getDamager() instanceof Player){
-	    Player p = (Player) e.getDamager();
-	    if (p.isOp()) {
-		return;
-	    }
-	    // Check if on island
-	    if (plugin.playerIsOnIsland(p)) {
-		return;
-	    }
-	    // This permission bypasses protection
-	    if (VaultHelper.checkPerm(p, Settings.PERMPREFIX + "mod.bypassprotect")) {
-		return;
-	    }
-	    p.sendMessage(ChatColor.RED + Locale.islandProtected);
-	    e.setCancelled(true);
-	}
-    }
 
     /**
      * Handles coop inventory switching
