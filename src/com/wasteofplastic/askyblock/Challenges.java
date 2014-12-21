@@ -422,15 +422,15 @@ public class Challenges implements CommandExecutor {
      */
     protected boolean checkIfCanCompleteChallenge(final Player player, final String challenge) {
 	//plugin.getLogger().info("DEBUG: " + player.getDisplayName() + " " + challenge);
-	// Check if this challenge level is available
-	if (!isLevelAvailable(player, plugin.getChallengeConfig().getString("challenges.challengeList." + challenge + ".level"))) {
-	    player.sendMessage(ChatColor.RED + Locale.challengesyouHaveNotUnlocked);
-	    return false;
-	}
 	//plugin.getLogger().info("DEBUG: 1");
 	// Check if the challenge exists
 	if (!players.challengeExists(player.getUniqueId(), challenge)) {
 	    player.sendMessage(ChatColor.RED + Locale.challengesunknownChallenge);
+	    return false;
+	}
+	// Check if this challenge level is available
+	if (!isLevelAvailable(player, plugin.getChallengeConfig().getString("challenges.challengeList." + challenge + ".level"))) {
+	    player.sendMessage(ChatColor.RED + Locale.challengesyouHaveNotUnlocked);
 	    return false;
 	}
 	//plugin.getLogger().info("DEBUG: 2");
