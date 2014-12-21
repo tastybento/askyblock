@@ -751,6 +751,11 @@ public class Challenges implements CommandExecutor {
 				    }
 				}
 			    }
+			    //plugin.getLogger().info("DEBUG: amount is " + amount);
+			    //plugin.getLogger().info("DEBUG: req amount is " + reqAmount);
+			    if (amount < reqAmount) {
+				return false;
+			    }
 			}
 			// plugin.getLogger().info("DEBUG: before set amount " +
 			// item.toString() + ":" + item.getDurability() + " x "
