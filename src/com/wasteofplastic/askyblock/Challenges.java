@@ -73,6 +73,7 @@ public class Challenges implements CommandExecutor {
 	}
 	final Player player = (Player)sender;
 	if (!player.getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	    player.sendMessage(ChatColor.RED + Locale.errorWrongWorld);
 	    return true;
 	}
 	// Check permissions
