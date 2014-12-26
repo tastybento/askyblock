@@ -193,6 +193,7 @@ public class ControlPanel implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
+	// TODO : this needs optimization
 	Player player = (Player) event.getWhoClicked(); // The player that clicked the item
 	ItemStack clicked = event.getCurrentItem(); // The item that was clicked
 	Inventory inventory = event.getInventory(); // The inventory that was clicked in

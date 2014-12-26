@@ -35,7 +35,6 @@ import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -102,8 +101,12 @@ public class IslandGuard implements Listener {
 	if (!(e.getAttacker() instanceof Player)) {
 	    return;
 	}
-	Player p = (Player)e.getAttacker();
 
+	Player p = (Player)e.getAttacker();
+	// This permission bypasses protection
+	if (VaultHelper.checkPerm(p, Settings.PERMPREFIX + "mod.bypassprotect")) {
+	    return;
+	}
 	if (!p.getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    return;
 	}
