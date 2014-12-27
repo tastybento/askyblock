@@ -358,11 +358,24 @@ public class ASkyBlock extends JavaPlugin {
 		return n;
 	    }
 	}
-	// Try anywhere in the island area
-	// Start from up above and work down
-	for (int y = l.getWorld().getMaxHeight(); y>0; y--) {
-	    for (int x = l.getBlockX() - Settings.islandDistance/2; x < l.getBlockX() + Settings.islandDistance/2; x++) {
-		for (int z = l.getBlockZ() - Settings.islandDistance/2; z < l.getBlockZ() + Settings.islandDistance/2; z++) {
+	// Try anywhere in the protected island area
+	//Be smart and start at the island level
+	for (int y = Settings.island_level; y>0; y--) {
+	    for (int x = l.getBlockX() - Settings.island_protectionRange/2; x < l.getBlockX() + Settings.island_protectionRange/2; x++) {
+		for (int z = l.getBlockZ() - Settings.island_protectionRange/2; z < l.getBlockZ() + Settings.island_protectionRange/2; z++) {
+		    Location ultimate = new Location(l.getWorld(),x,y,z);
+		    if (!ultimate.getBlock().equals(Material.AIR)) {
+			if (isSafeLocation(ultimate)) {
+			    players.setHomeLocation(p, ultimate);
+			    return ultimate;
+			}
+		    }
+		}
+	    }
+	}
+	for (int y = Settings.island_level+1; y<l.getWorld().getMaxHeight(); y++) {
+	    for (int x = l.getBlockX() - Settings.island_protectionRange/2; x < l.getBlockX() + Settings.island_protectionRange/2; x++) {
+		for (int z = l.getBlockZ() - Settings.island_protectionRange/2; z < l.getBlockZ() + Settings.island_protectionRange/2; z++) {
 		    Location ultimate = new Location(l.getWorld(),x,y,z);
 		    if (!ultimate.getBlock().equals(Material.AIR)) {
 			if (isSafeLocation(ultimate)) {
@@ -1181,6 +1194,7 @@ public class ASkyBlock extends JavaPlugin {
 	Locale.errorOfflinePlayer = locale.getString("error.offlinePlayer","That player is offline or doesn't exist.");
 	Locale.errorUnknownCommand = locale.getString("error.unknownCommand","Unknown command.");
 	Locale.errorNoTeam = locale.getString("error.noTeam","That player is not in a team.");
+	Locale.errorWrongWorld = locale.getString("error.wrongWorld","You cannot do that in this world.");
 	Locale.islandProtected = locale.getString("islandProtected","Island protected.");
 	Locale.lavaTip = locale.getString("lavaTip","Changing obsidian back into lava. Be careful!");
 	Locale.warpswelcomeLine = locale.getString("warps.welcomeLine","[WELCOME]");
@@ -1239,6 +1253,7 @@ public class ASkyBlock extends JavaPlugin {
 	Locale.challengesguiTitle = locale.getString("challenges.guititle", "Challenges");
 	Locale.challengeserrorYouAreMissing = locale.getString("challenges.erroryouaremissing", "You are missing");
 	Locale.islandteleport = locale.getString("island.teleport","Teleporting you to your island. (/island help for more info)");
+	Locale.islandcannotTeleport = locale.getString("island.cannotTeleport","You cannot teleport when falling!");
 	Locale.islandnew = locale.getString("island.new","Creating a new island for you...");
 	Locale.islanderrorCouldNotCreateIsland = locale.getString("island.errorCouldNotCreateIsland","Could not create your Island. Please contact a server moderator.");
 	Locale.islanderrorYouDoNotHavePermission = locale.getString("island.errorYouDoNotHavePermission", "You do not have permission to use that command!");

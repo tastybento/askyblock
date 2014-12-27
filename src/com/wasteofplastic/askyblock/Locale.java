@@ -358,5 +358,8 @@ public class Locale {
     public static String islandhelpCoop;
     public static String coopInvited;
     public static String coopUseExpel;
+    
+    public static String errorWrongWorld;
+    public static String islandcannotTeleport;
       
 }

@@ -20,6 +20,7 @@ error:
    offlinePlayer: "That player is offline or doesn't exist."
    unknownCommand: "Unknown command."
    noTeam: "Player is not in a team."
+   wrongWorld: "You cannot do that in this world."
 
 #AcidEffect
 changingObsidiantoLava: "Changing obsidian back into lava. Be careful!"
@@ -110,6 +111,7 @@ challenges:
 #/island
 island:
    teleport: "Teleporting you to your island. (/island help for more info)"
+   cannotTeleport: "You cannot teleport when falling!"
    new: "Creating a new island for you..."
    errorCouldNotCreateIsland: "Could not create your Island. Please contact a server moderator."
    errorYouDoNotHavePermission: "You do not have permission to use that command!"
@@ -198,12 +200,12 @@ reject:
 
 #leave
 leave:
-  errorYouAreTheLeader: "You cannot leave because you are the leader, use /island makeleader <player> to transfer the island first."
+  errorYouAreTheLeader: "You cannot leave because you are the leader. Make someone the leader first."
   youHaveLeftTheIsland: "You have left the island and returned to the player spawn."
   nameHasLeftYourIsland: "[name] has left your island!"
-  errorYouCannotLeaveIsland: "You can't leave your island if you are the only person. Try using /island restart if you want a new one!"
-  errorYouMustBeInWorld: "You must be in the A Skyblock world to leave your team!"
-  errorLeadersCannotLeave: "Leaders cannot leave an island. Make someone else the leader fist using /island makeleader <player>"
+  errorYouCannotLeaveIsland: "You can't leave your island if you are the only person. Try restart if you want a new one!"
+  errorYouMustBeInWorld: "You must be in the island world to leave your team!"
+  errorLeadersCannotLeave: "Leaders cannot leave an island. Make someone else the leader first."
 
 #team
 team:

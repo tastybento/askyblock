@@ -52,7 +52,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.DirectionalContainer;
 
 public class IslandCmd implements CommandExecutor {
-    public boolean busyFlag = true;
+    public boolean levelCalcFreeFlag = true;
     //private Schematic island = null;
     private HashMap<String,Schematic> schematics = new HashMap<String,Schematic>();
     //private Location Islandlocation;
@@ -534,18 +534,18 @@ public class IslandCmd implements CommandExecutor {
      * @return - true if successful.
      */
     protected boolean calculateIslandLevel(final Player asker, final UUID targetPlayer) {
-	if (!busyFlag) {
+	if (!levelCalcFreeFlag) {
 	    asker.sendMessage(ChatColor.RED + Locale.islanderrorLevelNotReady);
 	    plugin.getLogger().info(asker.getName() + " tried to use /island info but someone else used it first!");
 	    return false;
 	}
-	busyFlag = false;
+	// This flag is true if the command can be used, and false if it is in the middle of a calcuation
+	levelCalcFreeFlag = false;
 	if (!plugin.getPlayers().hasIsland(targetPlayer) && !plugin.getPlayers().inTeam(targetPlayer)) {
 	    asker.sendMessage(ChatColor.RED + Locale.islanderrorInvalidPlayer);
-	    busyFlag = true;
+	    levelCalcFreeFlag = true;
 	    return false;
 	}
-
 	plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
 	    public void run() {
 		plugin.getLogger().info("Calculating island level");
@@ -599,12 +599,12 @@ public class IslandCmd implements CommandExecutor {
 		    }
 		} catch (final Exception e) {
 		    plugin.getLogger().info("Error while calculating Island Level: " + e);
-		    busyFlag = true;
+		    levelCalcFreeFlag = true;
 		}
 
 		plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
 		    public void run() {
-			busyFlag = true;
+			levelCalcFreeFlag = true;
 			plugin.updateTopTen();
 			if (asker.isOnline()) {
 			    if (asker.getUniqueId().equals(targetPlayer)) {
@@ -622,6 +622,7 @@ public class IslandCmd implements CommandExecutor {
 		}, 20L);
 	    }
 	});
+
 	return true;
     }
 
@@ -959,7 +960,7 @@ public class IslandCmd implements CommandExecutor {
 		    player.sendMessage(ChatColor.YELLOW + "/" + label + " biomes: " + ChatColor.WHITE + Locale.islandhelpBiome);
 		}
 		//if (!Settings.allowPvP) {
-		    player.sendMessage(ChatColor.YELLOW + "/" + label + " expel <player>: " + ChatColor.WHITE + Locale.islandhelpExpel);
+		player.sendMessage(ChatColor.YELLOW + "/" + label + " expel <player>: " + ChatColor.WHITE + Locale.islandhelpExpel);
 		//}
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "coop")) {
 		    player.sendMessage(ChatColor.YELLOW + "/" + label + " coop: " + ChatColor.WHITE + Locale.islandhelpCoop);

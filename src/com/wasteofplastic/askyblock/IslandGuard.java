@@ -73,6 +73,7 @@ import org.bukkit.event.vehicle.VehicleDamageEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 import org.bukkit.potion.Potion;
+import org.bukkit.util.Vector;
 
 
 /**
@@ -347,7 +348,8 @@ public class IslandGuard implements Listener {
 	    return;
 	}
 	// Check if air below player
-	if (e.getPlayer().getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.AIR
+	//plugin.getLogger().info("DEBUG:" + Math.round(e.getPlayer().getVelocity().getY()));
+	if ((Math.round(e.getPlayer().getVelocity().getY())<0L) && e.getPlayer().getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.AIR
 		&& e.getPlayer().getLocation().getBlock().getType() == Material.AIR) {
 	    //plugin.getLogger().info("DEBUG: falling");
 	    plugin.setFalling(e.getPlayer().getUniqueId());
@@ -377,7 +379,7 @@ public class IslandGuard implements Listener {
 	}
 	if (plugin.isFalling(e.getPlayer().getUniqueId())) {
 	    // Sorry you are going to die
-	    e.getPlayer().sendMessage(Locale.errorCommandNotReady);
+	    e.getPlayer().sendMessage(Locale.islandcannotTeleport);
 	    e.setCancelled(true);
 	    // Check if the player is in the void and kill them just in case
 	    if (e.getPlayer().getLocation().getBlockY() < 0) {
