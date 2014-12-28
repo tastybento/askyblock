@@ -1004,16 +1004,19 @@ public class IslandCmd implements CommandExecutor {
 		}
 		return false;
 	    } else if (split[0].equalsIgnoreCase("level")) {
-		if (plugin.playerIsOnIsland(player)) {
-		    if (!plugin.getPlayers().inTeam(playerUUID) && !plugin.getPlayers().hasIsland(playerUUID)) {
-			player.sendMessage(ChatColor.RED + Locale.errorNoIsland);
-		    } else {
-			calculateIslandLevel(player, playerUUID);
-		    }
-		    return true;
-		}
-		player.sendMessage(ChatColor.RED + Locale.challengeserrorNotOnIsland);
-		return true;
+	    	if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.level")) {
+			if (plugin.playerIsOnIsland(player)) {
+			    if (!plugin.getPlayers().inTeam(playerUUID) && !plugin.getPlayers().hasIsland(playerUUID)) {
+				player.sendMessage(ChatColor.RED + Locale.errorNoIsland);
+			    } else {
+				calculateIslandLevel(player, playerUUID);
+			    }
+			    return true;
+			}
+			player.sendMessage(ChatColor.RED + Locale.challengeserrorNotOnIsland);
+			return true;
+	    	}
+		return false;
 	    } else if (split[0].equalsIgnoreCase("invite")) {
 		// Invite label with no name, i.e., /island invite - tells the player how many more people they can invite
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.create")) {
