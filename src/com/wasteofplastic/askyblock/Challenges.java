@@ -539,6 +539,7 @@ public class Challenges implements CommandExecutor {
 	    int reqAmount = 0;
 	    for (final String s : reqList) {
 		final String[] part = s.split(":");
+		// Material:Qty
 		if (part.length == 2) {
 		    try {
 			// Correct some common mistakes
@@ -556,22 +557,23 @@ public class Challenges implements CommandExecutor {
 			reqItem = Material.getMaterial(part[0]);
 			reqAmount = Integer.parseInt(part[1]);
 			ItemStack item = new ItemStack(reqItem);
-			// plugin.getLogger().info("DEBUG: required item = " +
-			// reqItem.toString());
-			// plugin.getLogger().info("DEBUG: item amount = " +
-			// reqAmount);
+			//plugin.getLogger().info("DEBUG: required item = " + reqItem.toString());
+			//plugin.getLogger().info("DEBUG: item amount = " + reqAmount);
 
 			if (!player.getInventory().contains(reqItem)) {
 			    return false;
 			} else {
 			    // check amount
 			    int amount = 0;
+			    // plugin.getLogger().info("DEBUG: Amount in inventory = " + player.getInventory().all(reqItem).size());
 			    // Go through all the inventory and try to find
 			    // enough required items
 			    for (Entry<Integer, ? extends ItemStack> en : player.getInventory().all(reqItem).entrySet()) {
 				// Get the item
 				ItemStack i = en.getValue();
-				if (i.getDurability() == 0) {
+				// Map needs special handling because the durability increments every time a new one is made by the player
+				// TODO: if there are any other items that act in the same way, they need adding too...
+				if (i.getDurability() == 0 || (reqItem == Material.MAP && i.getType() == Material.MAP)) {
 				    // Clear any naming, or lore etc.
 				    i.setItemMeta(null);
 				    player.getInventory().setItem(en.getKey(), i);
@@ -588,18 +590,15 @@ public class Challenges implements CommandExecutor {
 					// original
 					toBeRemoved.add(i.clone());
 					amount += i.getAmount();
-					// plugin.getLogger().info("DEBUG: amount is <= req Remove "
-					// + i.toString() + ":" + i.getDurability()
-					// + " x " + i.getAmount());
+					// plugin.getLogger().info("DEBUG: amount is <= req Remove " + i.toString() + ":" + i.getDurability() + " x " + i.getAmount());
 				    } else if ((amount + i.getAmount()) == reqAmount) {
+					// plugin.getLogger().info("DEBUG: amount is = req Remove " + i.toString() + ":" + i.getDurability() + " x " + i.getAmount());
 					toBeRemoved.add(i.clone());
 					amount += i.getAmount();
 					break;
 				    } else {
 					// Remove a portion of this item
-					// plugin.getLogger().info("DEBUG: amount is > req Remove "
-					// + i.toString() + ":" + i.getDurability()
-					// + " x " + i.getAmount());
+					// plugin.getLogger().info("DEBUG: amount is > req Remove " + i.toString() + ":" + i.getDurability() + " x " + i.getAmount());
 
 					item.setAmount(reqAmount - amount);
 					item.setDurability(i.getDurability());
