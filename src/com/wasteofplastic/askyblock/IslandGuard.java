@@ -1262,8 +1262,8 @@ public class IslandGuard implements Listener {
 	if (!p.getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    return;
 	}
-	if (p.isOp()) {
-	    // You can do anything if you are Op
+	if (p.isOp() || VaultHelper.checkPerm(p, Settings.PERMPREFIX + "mod.bypassprotect")) {
+	    // You can do anything if you are Op of have the bypass
 	    return;
 	}
 	// Check limit of animals on island
