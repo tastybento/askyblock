@@ -61,6 +61,7 @@ import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
+import org.bukkit.util.Vector;
 
 /**
  * @author ben
@@ -461,7 +462,9 @@ public class ASkyBlock extends JavaPlugin {
 	    return true;
 	}
 	// Near spawn?
-	if ((getSpawn().getSpawnLoc() != null && loc.distanceSquared(getSpawn().getSpawnLoc()) < (double)((double)Settings.islandDistance) * Settings.islandDistance)) {
+	Vector v = loc.toVector();
+	v.multiply(new Vector(1,0,1));
+	if ((getSpawn().getSpawnLoc() != null && v.distanceSquared(getSpawn().getSpawnLoc().toVector().multiply(new Vector(1,0,1))) < (double)((double)Settings.islandDistance) * Settings.islandDistance)) {
 	    //plugin.getLogger().info("Too near spawn");
 	    return true;
 	}

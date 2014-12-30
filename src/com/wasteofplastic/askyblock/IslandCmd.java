@@ -929,12 +929,20 @@ public class IslandCmd implements CommandExecutor {
 		if (plugin.getSpawn().getSpawnLoc() != null) {
 		    player.sendMessage(ChatColor.YELLOW + "/" + label + " spawn: " + ChatColor.WHITE + Locale.islandhelpSpawn);
 		}
-		player.sendMessage(ChatColor.YELLOW + "/" + label + " controlpanel or cp: " + ChatColor.WHITE + Locale.islandhelpControlPanel);
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.controlpanel")) {
+		    player.sendMessage(ChatColor.YELLOW + "/" + label + " controlpanel or cp: " + ChatColor.WHITE + Locale.islandhelpControlPanel);
+		}
 		player.sendMessage(ChatColor.YELLOW + "/" + label + " restart: " + ChatColor.WHITE + Locale.islandhelpRestart);
-		player.sendMessage(ChatColor.YELLOW + "/" + label + " sethome: " + ChatColor.WHITE + Locale.islandhelpSetHome);
-		player.sendMessage(ChatColor.YELLOW + "/" + label + " level: " + ChatColor.WHITE + Locale.islandhelpLevel);
-		player.sendMessage(ChatColor.YELLOW + "/" + label + " level <player>: " + ChatColor.WHITE + Locale.islandhelpLevelPlayer);
-		player.sendMessage(ChatColor.YELLOW + "/" + label + " top: " + ChatColor.WHITE + Locale.islandhelpTop);
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.sethome")) {
+		    player.sendMessage(ChatColor.YELLOW + "/" + label + " sethome: " + ChatColor.WHITE + Locale.islandhelpSetHome);
+		}
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.level")) {
+		    player.sendMessage(ChatColor.YELLOW + "/" + label + " level: " + ChatColor.WHITE + Locale.islandhelpLevel);
+		    player.sendMessage(ChatColor.YELLOW + "/" + label + " level <player>: " + ChatColor.WHITE + Locale.islandhelpLevelPlayer);
+		}
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.topten")) {
+		    player.sendMessage(ChatColor.YELLOW + "/" + label + " top: " + ChatColor.WHITE + Locale.islandhelpTop);
+		}
 		if (Settings.useEconomy && VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.minishop")) {
 		    player.sendMessage(ChatColor.YELLOW + "/" + label + " minishop or ms: " + ChatColor.WHITE + Locale.islandhelpMiniShop);		    
 		}
@@ -1005,16 +1013,19 @@ public class IslandCmd implements CommandExecutor {
 		}
 		return false;
 	    } else if (split[0].equalsIgnoreCase("level")) {
-		if (plugin.playerIsOnIsland(player)) {
-		    if (!plugin.getPlayers().inTeam(playerUUID) && !plugin.getPlayers().hasIsland(playerUUID)) {
-			player.sendMessage(ChatColor.RED + Locale.errorNoIsland);
-		    } else {
-			calculateIslandLevel(player, playerUUID);
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.level")) {
+		    if (plugin.playerIsOnIsland(player)) {
+			if (!plugin.getPlayers().inTeam(playerUUID) && !plugin.getPlayers().hasIsland(playerUUID)) {
+			    player.sendMessage(ChatColor.RED + Locale.errorNoIsland);
+			} else {
+			    calculateIslandLevel(player, playerUUID);
+			}
+			return true;
 		    }
+		    player.sendMessage(ChatColor.RED + Locale.challengeserrorNotOnIsland);
 		    return true;
 		}
-		player.sendMessage(ChatColor.RED + Locale.challengeserrorNotOnIsland);
-		return true;
+		return false;
 	    } else if (split[0].equalsIgnoreCase("invite")) {
 		// Invite label with no name, i.e., /island invite - tells the player how many more people they can invite
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.create")) {

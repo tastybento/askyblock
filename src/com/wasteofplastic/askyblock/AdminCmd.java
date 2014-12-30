@@ -186,6 +186,9 @@ public class AdminCmd implements CommandExecutor {
 		    return true;
 		}
 		Player p = (Player)sender;
+		// TODO: The island location needs to be calculated based on the grid, NOT the bedrock location
+		
+		
 		Location closestBedRock = null;
 		double distance = 0;
 		for (int x = -Settings.islandDistance; x< Settings.islandDistance; x++) {

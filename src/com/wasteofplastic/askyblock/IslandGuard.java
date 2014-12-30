@@ -73,7 +73,6 @@ import org.bukkit.event.vehicle.VehicleDamageEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 import org.bukkit.potion.Potion;
-import org.bukkit.util.Vector;
 
 
 /**
@@ -1219,6 +1218,8 @@ public class IslandGuard implements Listener {
 		if(!(player.hasPermission(Settings.PERMPREFIX + "craft.enderchest"))) {
 		    event.setCancelled(true);
 		}
+	    } else {
+		player.sendMessage(ChatColor.RED + Locale.errorNoPermission);
 	    }
 	}
     }
@@ -1239,8 +1240,10 @@ public class IslandGuard implements Listener {
 		if (event.getClickedBlock().getType() == Material.ENDER_CHEST){
 		    if(!(event.getPlayer().hasPermission(Settings.PERMPREFIX + "craft.enderchest"))) {
 			event.setCancelled(true);
+		    } else {
+			player.sendMessage(ChatColor.RED + Locale.errorNoPermission);
 		    }
-		}
+		} 
 	    }
 	}
     }
