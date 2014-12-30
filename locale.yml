@@ -369,6 +369,7 @@ expel:
    success: "You expelled [name]!"
    expelled: "You were expelled from that island!"
    fail: "[name] cannot be expelled!"
+   notyourself: "You cannot expel yourself!"
 
 moblimits:
    error: "Island breeding limit of [number] reached!"

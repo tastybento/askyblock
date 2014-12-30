@@ -1408,6 +1408,7 @@ public class ASkyBlock extends JavaPlugin {
 	Locale.expelSuccess = locale.getString("expel.success", "You expelled [name]!");
 	Locale.expelExpelled = locale.getString("expel.expelled", "You were expelled from that island!");
 	Locale.expelFail = locale.getString("expel.fail", "[name] cannot be expelled!");
+	Locale.expelNotYourself = locale.getString("expel.notyourself", "You cannot expel yourself!");
 	Locale.moblimitsError = locale.getString("moblimits.error", "Island breeding limit of [number] reached!");
 	Locale.coopRemoved = locale.getString("coop.removed", "[name] remove your coop status!");
 	Locale.coopRemoveSuccess = locale.getString("coop.removesuccess", "[name] is no longer a coop player.");

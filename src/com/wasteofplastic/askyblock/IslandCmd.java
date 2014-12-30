@@ -1448,6 +1448,11 @@ public class IslandCmd implements CommandExecutor {
 		    player.sendMessage(ChatColor.RED + Locale.errorUnknownPlayer);
 		    return true;
 		}
+		// Target should not be themselves
+		if (targetPlayerUUID.equals(playerUUID)) {
+		    player.sendMessage(ChatColor.RED + Locale.expelNotYourself);
+		    return true; 
+		}
 		// Target must be online
 		Player target = plugin.getServer().getPlayer(targetPlayerUUID);
 		if (target == null) {
