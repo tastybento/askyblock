@@ -1004,6 +1004,9 @@ public class IslandCmd implements CommandExecutor {
 		// go to spawn
 		//plugin.getLogger().info("Debug: getSpawn" + plugin.getSpawn().toString() );
 		//plugin.getLogger().info("Debug: getSpawn loc" + plugin.getSpawn().getSpawnLoc().toString() );
+		player.sendBlockChange(plugin.getSpawn().getSpawnLoc()
+			,plugin.getSpawn().getSpawnLoc().getBlock().getType()
+			,plugin.getSpawn().getSpawnLoc().getBlock().getData());
 		player.teleport(plugin.getSpawn().getSpawnLoc());
 		return true;
 	    } else if (split[0].equalsIgnoreCase("top")) {

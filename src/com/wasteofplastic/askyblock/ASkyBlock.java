@@ -330,41 +330,46 @@ public class ASkyBlock extends JavaPlugin {
 	    getLogger().warning(players.getName(p) + " player has no island!");
 	    return null;
 	}
-	//getLogger().info("DEBUG: If these island locations are not safe, then we need to get creative");
+	getLogger().info("DEBUG: If these island locations are not safe, then we need to get creative");
 	// If these island locations are not safe, then we need to get creative
 	// Try the default location
+	getLogger().info("DEBUG: default");
 	Location dl = new Location(l.getWorld(), l.getX() + 0.5D, l.getY() + 5D, l.getZ() + 2.5D, 0F, 30F);
 	if (isSafeLocation(dl)) {
 	    players.setHomeLocation(p, dl);
 	    return dl;
 	}
 	// Try just above the bedrock
-	dl = new Location(l.getWorld(), l.getX(), l.getY() + 5D, l.getZ(), 0F, 30F);
+	getLogger().info("DEBUG: above bedrock");
+	dl = new Location(l.getWorld(), l.getX() + 0.5D, l.getY() + 5D, l.getZ() + 0.5D, 0F, 30F);
 	if (isSafeLocation(dl)) {
 	    players.setHomeLocation(p, dl);
 	    return dl;
 	}
 
 	// Try higher up - 25 blocks high and then move down
+	getLogger().info("DEBUG: Try higher up");
 	for (int y = l.getBlockY() + 25; y > 0; y--) {
-	    final Location n = new Location(l.getWorld(), l.getBlockX(), y, l.getBlockZ());
+	    final Location n = new Location(l.getWorld(), l.getX() + 0.5D, y, l.getZ() + 0.5D);
 	    if (isSafeLocation(n)) {
 		return n;
 	    }
 	}
 	// Try all the way up to the sky
+	getLogger().info("DEBUG: try all the way to the sky");
 	for (int y = l.getBlockY(); y < 255; y++) {
-	    final Location n = new Location(l.getWorld(), l.getBlockX(), y, l.getBlockZ());
+	    final Location n = new Location(l.getWorld(), l.getX() + 0.5D, y, l.getZ() + 0.5D);
 	    if (isSafeLocation(n)) {
 		return n;
 	    }
 	}
+	getLogger().info("DEBUG: trying around the protected area");
 	// Try anywhere in the protected island area
-	//Be smart and start at the island level
-	for (int y = Settings.island_level; y>0; y--) {
-	    for (int x = l.getBlockX() - Settings.island_protectionRange/2; x < l.getBlockX() + Settings.island_protectionRange/2; x++) {
-		for (int z = l.getBlockZ() - Settings.island_protectionRange/2; z < l.getBlockZ() + Settings.island_protectionRange/2; z++) {
-		    Location ultimate = new Location(l.getWorld(),x,y,z);
+	//Be smart and start at the island level and above it
+	for (int y = Settings.island_level; y<l.getWorld().getMaxHeight(); y++) {
+	    for (int x = l.getBlockX(); x < l.getBlockX() + Settings.island_protectionRange/2; x++) {
+		for (int z = l.getBlockZ(); z < l.getBlockZ() + Settings.island_protectionRange/2; z++) {
+		    Location ultimate = new Location(l.getWorld(),(double)x+0.5D,y,(double)z+0.5D);
 		    if (!ultimate.getBlock().equals(Material.AIR)) {
 			if (isSafeLocation(ultimate)) {
 			    players.setHomeLocation(p, ultimate);
@@ -374,10 +379,10 @@ public class ASkyBlock extends JavaPlugin {
 		}
 	    }
 	}
-	for (int y = Settings.island_level+1; y<l.getWorld().getMaxHeight(); y++) {
-	    for (int x = l.getBlockX() - Settings.island_protectionRange/2; x < l.getBlockX() + Settings.island_protectionRange/2; x++) {
-		for (int z = l.getBlockZ() - Settings.island_protectionRange/2; z < l.getBlockZ() + Settings.island_protectionRange/2; z++) {
-		    Location ultimate = new Location(l.getWorld(),x,y,z);
+	for (int y = Settings.island_level; y<l.getWorld().getMaxHeight(); y++) {
+	    for (int x = l.getBlockX(); x > l.getBlockX() - Settings.island_protectionRange/2; x--) {
+		for (int z = l.getBlockZ(); z < l.getBlockZ() - Settings.island_protectionRange/2; z--) {
+		    Location ultimate = new Location(l.getWorld(),(double)x+0.5D,y,(double)z+0.5D);
 		    if (!ultimate.getBlock().equals(Material.AIR)) {
 			if (isSafeLocation(ultimate)) {
 			    players.setHomeLocation(p, ultimate);
@@ -387,6 +392,36 @@ public class ASkyBlock extends JavaPlugin {
 		}
 	    }
 	}
+	// Try below the island level
+	// Move away from the center and go to the positive extreme
+	for (int y = Settings.island_level-1; y>0; y--) {
+	    for (int x = l.getBlockX(); x < l.getBlockX() + Settings.island_protectionRange/2; x++) {
+		for (int z = l.getBlockZ(); z < l.getBlockZ() + Settings.island_protectionRange/2; z++) {
+		    Location ultimate = new Location(l.getWorld(),(double)x+0.5D,y,(double)z+0.5D);
+		    if (!ultimate.getBlock().equals(Material.AIR)) {
+			if (isSafeLocation(ultimate)) {
+			    players.setHomeLocation(p, ultimate);
+			    return ultimate;
+			}
+		    }
+		}
+	    }
+	}
+	// Go to the negative extreme
+	for (int y = Settings.island_level-1; y>0; y--) {
+	    for (int x = l.getBlockX(); x > l.getBlockX() - Settings.island_protectionRange/2; x--) {
+		for (int z = l.getBlockZ(); z > l.getBlockZ() - Settings.island_protectionRange/2; z--) {
+		    Location ultimate = new Location(l.getWorld(),(double)x+0.5D,y,(double)z+0.5D);
+		    if (!ultimate.getBlock().equals(Material.AIR)) {
+			if (isSafeLocation(ultimate)) {
+			    players.setHomeLocation(p, ultimate);
+			    return ultimate;
+			}
+		    }
+		}
+	    }
+	}
+
 	// Nothing worked
 	return null;
     }
@@ -415,6 +450,7 @@ public class ASkyBlock extends JavaPlugin {
      * @param player
      * @return
      */
+    @SuppressWarnings("deprecation")
     protected boolean homeTeleport(final Player player) {
 	Location home = null;
 	home = getSafeHomeLocation(player.getUniqueId());
@@ -432,6 +468,9 @@ public class ASkyBlock extends JavaPlugin {
 	if (home == null) {
 	    // The home is not safe
 	    if (!player.performCommand(Settings.SPAWNCOMMAND)) {
+		player.sendBlockChange(player.getWorld().getSpawnLocation()
+			,player.getWorld().getSpawnLocation().getBlock().getType()
+			,player.getWorld().getSpawnLocation().getBlock().getData());
 		player.teleport(player.getWorld().getSpawnLocation());
 	    }
 	    player.sendMessage(ChatColor.RED + Locale.warpserrorNotSafe);
@@ -439,6 +478,10 @@ public class ASkyBlock extends JavaPlugin {
 	}
 	//home.getWorld().refreshChunk(home.getChunk().getX(), home.getChunk().getZ());
 	home.getWorld().loadChunk(home.getChunk());
+	//getLogger().info("DEBUG: " + home.toString());
+	// This next line should help players with long ping times
+	// http://bukkit.org/threads/workaround-for-playing-falling-after-teleport-when-lagging.293035/
+	player.sendBlockChange(home,home.getBlock().getType(),home.getBlock().getData());
 	player.teleport(home);	
 	player.sendMessage(ChatColor.GREEN + Locale.islandteleport);
 	return true;
@@ -519,6 +562,7 @@ public class ASkyBlock extends JavaPlugin {
 	if (l == null) {
 	    return false;
 	}
+	//Bukkit.getLogger().info("DEBUG: " + l.toString());
 	final Block ground = l.getBlock().getRelative(BlockFace.DOWN);
 	final Block space1 = l.getBlock();
 	final Block space2 = l.getBlock().getRelative(BlockFace.UP);
@@ -1785,7 +1829,10 @@ public class ASkyBlock extends JavaPlugin {
 		    if (!pl.isFlying()) {
 			// Move player to spawn
 			if (plugin.getSpawn().getSpawnLoc() != null) {
-			    // go to aSkyblock spawn
+			    // go to island spawn
+			    pl.sendBlockChange(plugin.getSpawn().getSpawnLoc()
+					,plugin.getSpawn().getSpawnLoc().getBlock().getType()
+					,plugin.getSpawn().getSpawnLoc().getBlock().getData());
 			    pl.teleport(plugin.getSpawn().getSpawnLoc());
 			    getLogger().warning("During island deletion player " + pl.getName() + " sent to spawn.");
 			} else {
