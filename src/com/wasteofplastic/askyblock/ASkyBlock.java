@@ -1099,6 +1099,7 @@ public class ASkyBlock extends JavaPlugin {
 	Settings.allowVisitorItemDrop = getConfig().getBoolean("island.allowvisitoritemdrop", true);
 	Settings.allowVisitorItemPickup = getConfig().getBoolean("island.allowvisitoritempickup", true);
 	Settings.allowArmorStandUse = getConfig().getBoolean("island.allowarmorstanduse", false);
+	Settings.allowBeaconAccess = getConfig().getBoolean("island.allowbeaconaccess", false);
 
 	// Challenges
 	final Set<String> challengeList = getChallengeConfig().getConfigurationSection("challenges.challengeList").getKeys(false);
@@ -1503,6 +1504,8 @@ public class ASkyBlock extends JavaPlugin {
 		getIslandWorld();
 		// Load warps
 		loadWarpList();
+		// Load spawn
+		getSpawn();
 		// update the list
 		//updateTopTen();
 		// Minishop - must wait for economy to load before we can use econ 

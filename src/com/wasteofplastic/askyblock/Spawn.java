@@ -55,7 +55,7 @@ public class Spawn {
 	Settings.allowSpawnNoAcidWater = spawn.getBoolean("allowspawnnoacidwater", false);
 	Settings.allowSpawnEnchanting = spawn.getBoolean("allowenchanting",true);
 	Settings.allowSpawnAnvilUse = spawn.getBoolean("allowanviluse",true);
-
+	Settings.allowSpawnBeaconAccess = spawn.getBoolean("allowbeaconaccess",false);
 
 	this.spawnLoc = ASkyBlock.getLocationString(spawn.getString("location",""));
 	this.bedrock = ASkyBlock.getLocationString(spawn.getString("bedrock",""));

@@ -1150,6 +1150,13 @@ public class IslandGuard implements Listener {
 			return;
 		    }
 		}
+	    case BEACON:
+		if (!Settings.allowBeaconAccess && !(playerAtSpawn && Settings.allowSpawnBeaconAccess)) {
+		    e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
+		    e.setCancelled(true);
+		    return; 
+		}
+		break;
 	    default:
 		break;
 	    }

@@ -275,6 +275,10 @@ island:
    allowvisitorkeepinvondeath: false
    # Allow armor stand use by visitors
    allowarmorstanduse: false
+   # Allow beacon use by visitors
+   allowbeaconaccess: false
+   # Allow portal use by visitors
+   allowportaluse: true
 
 # This section contains the biomes that can be bought or used
 biomesettings:
