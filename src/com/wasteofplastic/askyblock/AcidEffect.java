@@ -54,11 +54,11 @@ public class AcidEffect implements Listener {
     private boolean isRaining = false; 
     private List<Player> wetPlayers = new ArrayList<Player>();
 
-    public AcidEffect(final ASkyBlock pluginI) {
+    protected AcidEffect(final ASkyBlock pluginI) {
 	plugin = pluginI;
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOW)
     public void onPlayerDeath(PlayerDeathEvent e) {
 	burningPlayers.remove((Player) e.getEntity());
 	wetPlayers.remove((Player) e.getEntity());
@@ -81,7 +81,7 @@ public class AcidEffect implements Listener {
 	    return;
 	}
 	// Check no burn permissions
-	if (VaultHelper.checkPerm(player, "askyblock.mod.noburn") || VaultHelper.checkPerm(player, "askyblock.admin.noburn")) {
+	if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.noburn") || VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.noburn")) {
 	    return;
 	}
 
@@ -352,7 +352,7 @@ public class AcidEffect implements Listener {
      *         player has on. The higher the value, the more protection they
      *         have.
      */
-    static public double getDamageReduced(Player player) {
+    static protected double getDamageReduced(Player player) {
 	org.bukkit.inventory.PlayerInventory inv = player.getInventory();
 	ItemStack boots = inv.getBoots();
 	ItemStack helmet = inv.getHelmet();

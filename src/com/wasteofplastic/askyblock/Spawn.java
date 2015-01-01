@@ -19,6 +19,7 @@ package com.wasteofplastic.askyblock;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.util.Vector;
 
 public class Spawn {
     private ASkyBlock plugin;
@@ -32,12 +33,12 @@ public class Spawn {
      * @param plugin
      * @param players
      */
-    public Spawn(ASkyBlock plugin) {
+    protected Spawn(ASkyBlock plugin) {
 	this.plugin = plugin;
 	reload();
     }
 
-    public void reload() {
+    protected void reload() {
 	spawnConfig = ASkyBlock.loadYamlFile("spawn.yml");
 	spawn = spawnConfig.getConfigurationSection("spawn");
 	// load the config items
@@ -54,13 +55,13 @@ public class Spawn {
 	Settings.allowSpawnNoAcidWater = spawn.getBoolean("allowspawnnoacidwater", false);
 	Settings.allowSpawnEnchanting = spawn.getBoolean("allowenchanting",true);
 	Settings.allowSpawnAnvilUse = spawn.getBoolean("allowanviluse",true);
-	
-	
+
+
 	this.spawnLoc = ASkyBlock.getLocationString(spawn.getString("location",""));
 	this.bedrock = ASkyBlock.getLocationString(spawn.getString("bedrock",""));
 	this.range = spawn.getInt("range",100);
     }
-    public void save() {
+    protected void save() {
 	// Save the spawn location
 	plugin.getLogger().info("Saving spawn.yml file");
 	String spawnPlace = ASkyBlock.getStringLocation(spawnLoc);
@@ -72,7 +73,7 @@ public class Spawn {
     /**
      * @return the spawnLoc
      */
-    public Location getSpawnLoc() {
+    protected Location getSpawnLoc() {
 	return spawnLoc;
     }
 
@@ -80,7 +81,7 @@ public class Spawn {
      * @param spawnLoc the spawnLoc to set
      * @param bedrock 
      */
-    public void setSpawnLoc(Location bedrock, Location spawnLoc) {
+    protected void setSpawnLoc(Location bedrock, Location spawnLoc) {
 	this.spawnLoc = spawnLoc;
 	this.bedrock = bedrock;
     }
@@ -88,22 +89,22 @@ public class Spawn {
     /**
      * @return the range
      */
-    public int getRange() {
+    protected int getRange() {
 	return range;
     }
 
     /**
      * @param range the range to set
      */
-    public void setRange(int range) {
+    protected void setRange(int range) {
 	this.range = range;
     }
 
     /**
      * @return the bedrock
      */
-    public Location getBedrock() {
-        return bedrock;
+    protected Location getBedrock() {
+	return bedrock;
     }
 
     /**
@@ -111,13 +112,21 @@ public class Spawn {
      * @param loc
      * @return
      */
-    public boolean isAtSpawn(Location loc) {
+    protected boolean isAtSpawn(Location loc) {
 	//plugin.getLogger().info("DEBUG: location is " + loc.toString());
 	//plugin.getLogger().info("DEBUG spawnLoc is " + spawnLoc.toString());
 	//plugin.getLogger().info("DEBUG: range = " + range);
-	if (loc.distanceSquared(spawnLoc) < range * range) {
-	    //plugin.getLogger().info("DEBUG: within range");
-	    return true;
+	// Only check x and z directions
+	if (loc.getWorld().equals(spawnLoc.getWorld())) {
+	    Vector v = loc.toVector().multiply(new Vector(1,0,1));
+	    Vector l = spawnLoc.toVector().multiply(new Vector(1,0,1));
+	    //plugin.getLogger().info("DEBUG: v is " + v.toString());
+		//plugin.getLogger().info("DEBUG l is " + l.toString());
+		//plugin.getLogger().info("DEBUG: dist sq = " + v.distanceSquared(l));
+	    if (v.distanceSquared(l) < range * range) {
+		//plugin.getLogger().info("DEBUG: within range");
+		return true;
+	    }
 	}
 	return false;
     }

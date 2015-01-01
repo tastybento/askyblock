@@ -41,7 +41,7 @@ public class CPItem {
      * @param command
      * @param nextSection
      */
-    public CPItem(Material material, String name, String command, String nextSection) {
+    protected CPItem(Material material, String name, String command, String nextSection) {
 	this.command = command;
 	this.nextSection = nextSection;
 	item = new ItemStack(material);
@@ -50,17 +50,17 @@ public class CPItem {
 	item.setItemMeta(meta);
     }
     
-    public CPItem(ItemStack itemStack, String name, String command, String nextSection) {
+    protected CPItem(ItemStack itemStack, String name, String command, String nextSection) {
 	this.command = command;
 	this.nextSection = nextSection;
 	this.item = itemStack;
 	ItemMeta meta = item.getItemMeta();
 	meta.setDisplayName(name);
-	meta.setLore(null);
+	//meta.setLore(null);
 	item.setItemMeta(meta);
     }
 
-    public void setLore(List<String> lore) {
+    protected void setLore(List<String> lore) {
 	ItemMeta meta = item.getItemMeta();
 	meta.setLore(lore);
 	item.setItemMeta(meta);
@@ -69,7 +69,7 @@ public class CPItem {
     /**
      * @return the command
      */
-    public String getCommand() {
+    protected String getCommand() {
 	return command;
     }
 
@@ -77,12 +77,12 @@ public class CPItem {
     /**
      * @return the nextSection
      */
-    public String getNextSection() {
+    protected String getNextSection() {
 	return nextSection;
     }
 
 
-    public ItemStack getItem() {
+    protected ItemStack getItem() {
 	return item;
     }
 

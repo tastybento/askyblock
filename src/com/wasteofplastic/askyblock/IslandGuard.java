@@ -30,10 +30,12 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Boat;
 import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -51,6 +53,7 @@ import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.PlayerLeashEntityEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
@@ -58,12 +61,16 @@ import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerShearEntityEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerUnleashEntityEvent;
+import org.bukkit.event.vehicle.VehicleDamageEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 import org.bukkit.potion.Potion;
@@ -75,10 +82,242 @@ import org.bukkit.potion.Potion;
  */
 public class IslandGuard implements Listener {
     private final ASkyBlock plugin;
+    private final boolean debug = false;
 
     public IslandGuard(final ASkyBlock plugin) {
 	this.plugin = plugin;
 
+    }
+
+    // Vehicle damage
+    @EventHandler(priority = EventPriority.LOW)
+    void vehicleDamageEvent(VehicleDamageEvent e){
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
+	if (e.getVehicle() instanceof Boat) {
+	    // Boats can always be hit
+	    return;
+	}
+	if (!(e.getAttacker() instanceof Player)) {
+	    return;
+	}
+	Player p = (Player)e.getAttacker();
+
+	if (!p.getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	    return;
+	}
+	if (p.isOp()) {
+	    // You can do anything if you are Op
+	    return;
+	}
+	// Check if on island
+	if (plugin.playerIsOnIsland(p)) {
+	    return;
+	}
+	if (!Settings.allowBreakBlocks) {
+	    e.setCancelled(true);
+	    p.sendMessage(ChatColor.RED + Locale.islandProtected);
+	}
+    }
+
+
+
+    /**
+     * Handles coop inventory switching
+     * @param e
+     */
+    /*
+    @EventHandler(priority = EventPriority.LOW)
+    public void onPlayerMove(PlayerMoveEvent e) {
+	Player player = e.getPlayer();
+	UUID playerUUID = player.getUniqueId();
+	if (!e.getFrom().getWorld().getName().equalsIgnoreCase(Settings.worldName) || !e.getTo().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	    return;
+	}
+	// Find out if the player has any coop islands
+	Set<Location> coopIslands = CoopPlay.getInstance().getCoopIslands(player);
+	if (coopIslands.isEmpty()) {
+	    return;
+	}
+	// Options are:
+	// 1. Player entered a coop island
+	// 2. Player left a coop island
+	// 3. Player entered a coop island from another coop island (rare - more likely via teleport)
+	Location from = plugin.locationIsOnIsland(coopIslands, e.getFrom());
+	Location to = plugin.locationIsOnIsland(coopIslands, e.getTo());
+	if (from == null && to != null) {
+	    // Entering a coop island area
+	    player.sendMessage(ChatColor.GREEN + "Entering coop island. Switching inventory.");
+	    // Save and clear the visitor's inventory
+	    // Save and clear the visitor's inventory
+	    if (plugin.getPlayers().inTeam(playerUUID)) {
+		InventorySave.getInstance().switchPlayerInventory(player, plugin.getPlayers().getTeamIslandLocation(playerUUID), to);
+	    } else {
+		InventorySave.getInstance().switchPlayerInventory(player, plugin.getPlayers().getIslandLocation(playerUUID), to);
+	    }
+	} else if (from != null && to == null) {
+	    // Leaving a coop island area
+	    e.getPlayer().sendMessage(ChatColor.GREEN + "Leaving coop island. Returning inventory.");
+	    // Return the inventory to the island owners and swap in home inventory
+	    if (plugin.getPlayers().inTeam(playerUUID)) {
+		InventorySave.getInstance().switchPlayerInventory(player, from, plugin.getPlayers().getTeamIslandLocation(playerUUID));
+	    } else {
+		InventorySave.getInstance().switchPlayerInventory(player, from, plugin.getPlayers().getIslandLocation(playerUUID));
+	    }
+	} else if (from != null && to != null && !from.equals(to)) {
+	    // Moving from one coop to another that is immediately adjacent (very unlikely)
+	    e.getPlayer().sendMessage(ChatColor.GREEN + "Switching coop island. Switching inventory.");
+	    InventorySave.getInstance().switchPlayerInventory(player, from, to);
+	    CoopPlay.getInstance().saveAndClearInventory(e.getPlayer());
+	}
+	// Set the flag of whether they are on a coop island or not
+	// This flag is used to clean up the inventory situation should the player teleport or die
+	CoopPlay.getInstance().setOnCoopIsland(e.getPlayer().getUniqueId(), to);
+    }*/
+
+    /*
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onCoopTeleport(PlayerTeleportEvent e) {
+	plugin.getLogger().info("DEBUG coop teleport to " + e.getTo());
+	plugin.getLogger().info("DEBUG coop teleport from " + e.getFrom());
+	// If both from and to are not in the island world return
+	if (!e.getFrom().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	    plugin.getLogger().info("DEBUG return - not in right world");
+	    return;
+	}
+
+	Player player = e.getPlayer();
+	UUID playerUUID = player.getUniqueId();
+	// If to world is no island world then quit all coops
+	if (!e.getTo().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	    // Clear any coop inventories
+	    CoopPlay.getInstance().returnAllInventories(player);
+	    // Remove any of the target's coop invitees and grab their stuff
+	    CoopPlay.getInstance().clearMyCoops(player);
+	}
+	// Find out if the player is entering a coop area
+	Location to = plugin.locationIsOnIsland(CoopPlay.getInstance().getCoopIslands(player),e.getTo());
+	// Check they were not in a coop area
+	Location from = CoopPlay.getInstance().getOnCoopIsland(playerUUID);
+	// If this is nothing to do with coop return quickly
+	if (to == null && from == null) {
+	    return;
+	}
+	// If this is a teleport within the same island space then return
+	if (to != null && from != null && to.equals(from)) {
+	    return;
+	}
+	//plugin.getLogger().info("DEBUG coop teleport to coop island " + to);
+	//plugin.getLogger().info("DEBUG coop teleport last coop island location = " + from);
+	if (to != null) {
+	    //plugin.getLogger().info("DEBUG coop is not null");
+	    // Entering a coop area
+	    if (from == null) {
+		//plugin.getLogger().info("DEBUG lastcoop is null - entering island");
+		player.sendMessage(ChatColor.GREEN + "Entering coop island. Switching inventory.");
+		// Save and clear the visitor's inventory
+		if (plugin.getPlayers().inTeam(playerUUID)) {
+		    InventorySave.getInstance().switchPlayerInventory(player, plugin.getPlayers().getTeamIslandLocation(playerUUID), to);
+		} else {
+		    InventorySave.getInstance().switchPlayerInventory(player, plugin.getPlayers().getIslandLocation(playerUUID),to);
+		}
+		CoopPlay.getInstance().setOnCoopIsland(e.getPlayer().getUniqueId(), to);
+	    } else {
+		//plugin.getLogger().info("DEBUG lastcoop is not null - switched to new coop island");
+		// Player has teleported from one coop area to another
+		player.sendMessage(ChatColor.GREEN + "Switched to new coop island. Switching inventory.");
+		InventorySave.getInstance().switchPlayerInventory(player, from, to);
+		CoopPlay.getInstance().setOnCoopIsland(e.getPlayer().getUniqueId(), to);
+	    }
+	} else {
+	    //plugin.getLogger().info("DEBUG coop is null");
+	    // Check they were already in a coop area
+	    if (from != null) {	
+		//plugin.getLogger().info("DEBUG lastcoop is not null - leaving island");
+		player.sendMessage(ChatColor.GREEN + "Leaving coop island. Switching inventory.");
+		if (plugin.getPlayers().inTeam(playerUUID)) {
+		    InventorySave.getInstance().switchPlayerInventory(player, from, plugin.getPlayers().getTeamIslandLocation(playerUUID));
+		} else {
+		    InventorySave.getInstance().switchPlayerInventory(player, from, plugin.getPlayers().getIslandLocation(playerUUID));
+		}
+	    }
+	    CoopPlay.getInstance().setOnCoopIsland(e.getPlayer().getUniqueId(), null);
+	    // Nothing to do, they were not in a coop area and teleported to another non-coop area
+	}
+    }*/
+
+    /*
+     * Prevent dropping items if player dies on another island
+     * This option helps reduce the down side of dying due to traps, etc.
+     */
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled=false)
+    public void onVistorDeath(final PlayerDeathEvent e) {
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
+	if (!e.getEntity().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	    return;
+	}
+	// If the player is on their island then they die and lose everything - sorry :-(
+	if (plugin.playerIsOnIsland(e.getEntity())) {
+	    return;
+	}
+	// If visitors will keep items and their level on death 
+	// This will override any global settings
+	if (Settings.allowVisitorKeepInvOnDeath) {
+	    InventorySave.getInstance().savePlayerInventory(e.getEntity());
+	    e.getDrops().clear();
+	    e.setKeepLevel(true);
+	    e.setDroppedExp(0);
+	}
+    }
+
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
+    public void onVistorSpawn(final PlayerRespawnEvent e) {
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
+	// This will override any global settings
+	if (Settings.allowVisitorKeepInvOnDeath) {
+	    InventorySave.getInstance().loadPlayerInventory(e.getPlayer());
+	}
+    }
+    /*
+     * Prevent item pickup by visitors
+     */
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
+    public void onVisitorPickup(final PlayerPickupItemEvent e) {
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
+	if (!e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	    return;
+	}
+	if (Settings.allowVisitorItemPickup || e.getPlayer().isOp()
+		|| VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect") || plugin.locationIsOnIsland(e.getPlayer(), e.getItem().getLocation())) {
+	    return;
+	}
+	e.setCancelled(true);
+    }
+
+    /*
+     * Prevent item drop by visitors
+     */
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
+    public void onVisitorDrop(final PlayerDropItemEvent e) {
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
+	if (!e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	    return;
+	}
+	if (Settings.allowVisitorItemPickup || e.getPlayer().isOp()
+		|| VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect") || plugin.locationIsOnIsland(e.getPlayer(),e.getItemDrop().getLocation())) {
+	    return;
+	}
+	e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
+	e.setCancelled(true);
     }
 
     /*
@@ -88,6 +327,13 @@ public class IslandGuard implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onPlayerFall(final PlayerMoveEvent e) {
+	if (e.getPlayer().isDead()) {
+	    return;
+	}
+	/* too spammy
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}*/
 	if (!e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    return;
 	}
@@ -98,9 +344,12 @@ public class IslandGuard implements Listener {
 	    return;
 	}
 	// Check if air below player
-	if (e.getPlayer().getLocation().getBlock().getRelative(BlockFace.DOWN).getType().equals(Material.AIR)) {
+	if (e.getPlayer().getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.AIR
+		&& e.getPlayer().getLocation().getBlock().getType() == Material.AIR) {
+	    //plugin.getLogger().info("DEBUG: falling");
 	    plugin.setFalling(e.getPlayer().getUniqueId());
 	} else {
+	    //plugin.getLogger().info("DEBUG: not falling");
 	    plugin.unsetFalling(e.getPlayer().getUniqueId());
 	}
     }
@@ -111,6 +360,9 @@ public class IslandGuard implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onPlayerTeleport(final PlayerTeleportEvent e) {
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
 	if (Settings.allowTeleportWhenFalling) {
 	    return;
 	}
@@ -139,6 +391,9 @@ public class IslandGuard implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onMobSpawn(final CreatureSpawnEvent e) {
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
 	if (!e.getEntity().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    return;
 	}
@@ -155,8 +410,7 @@ public class IslandGuard implements Listener {
 	} else {
 	    plugin.getLogger().info("DEBUG: spawn loc does not exist");
 	}*/
-	if (plugin.getSpawn().getBedrock() != null && 
-		(e.getLocation().distanceSquared(plugin.getSpawn().getBedrock()) < (double)((double)plugin.getSpawn().getRange()*plugin.getSpawn().getRange()))) {
+	if (plugin.getSpawn().getBedrock() != null && plugin.getSpawn().isAtSpawn(e.getLocation())) {
 	    //plugin.getLogger().info("DEBUG: prevented mob spawn at spawn");
 	    e.setCancelled(true);
 	}
@@ -164,6 +418,9 @@ public class IslandGuard implements Listener {
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onExplosion(final EntityExplodeEvent e) {
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
 	// Find out what is exploding
 	Entity expl = e.getEntity();
 	if (expl == null) {
@@ -173,8 +430,7 @@ public class IslandGuard implements Listener {
 	    return;
 	}
 	// prevent at spawn
-	if (plugin.getSpawn().getBedrock() != null && 
-		(e.getLocation().distanceSquared(plugin.getSpawn().getBedrock()) < plugin.getSpawn().getRange()*plugin.getSpawn().getRange())) {
+	if (plugin.getSpawn().getBedrock() != null && plugin.getSpawn().isAtSpawn(e.getLocation())) {
 	    e.setCancelled(true);
 	}
 	// Find out what is exploding
@@ -251,12 +507,14 @@ public class IslandGuard implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onEndermanGrief(final EntityChangeBlockEvent e) {
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
 	if (!e.getEntity().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    return;
 	}
 	// prevent at spawn
-	if (plugin.getSpawn().getBedrock() != null && 
-		(e.getEntity().getLocation().distanceSquared(plugin.getSpawn().getBedrock()) < plugin.getSpawn().getRange()*plugin.getSpawn().getRange())) {
+	if (plugin.getSpawn().getBedrock() != null && plugin.getSpawn().isAtSpawn(e.getEntity().getLocation())) {
 	    e.setCancelled(true);
 	}
 	if (Settings.allowEndermanGriefing)
@@ -277,6 +535,9 @@ public class IslandGuard implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onEndermanDeath(final EntityDeathEvent e) {
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
 	if (!Settings.endermanDeathDrop)
 	    return;
 	if (!e.getEntity().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
@@ -303,13 +564,16 @@ public class IslandGuard implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onBlockBreak(final BlockBreakEvent e) {
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
 	if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    // This permission bypasses protection
-	    if (VaultHelper.checkPerm(e.getPlayer(), "askyblock.mod.bypassprotect")) {
+	    if (VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
 		return;
 	    }
 	    if (!Settings.allowBreakBlocks) {
-		if (!plugin.playerIsOnIsland(e.getPlayer()) && !e.getPlayer().isOp()) {
+		if (!plugin.locationIsOnIsland(e.getPlayer(),e.getBlock().getLocation()) && !e.getPlayer().isOp()) {
 		    e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
 		    e.setCancelled(true);
 		}
@@ -323,6 +587,9 @@ public class IslandGuard implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onEntityDamage(final EntityDamageByEntityEvent e) {
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
 	// Check world
 	if (!Settings.worldName.equalsIgnoreCase(e.getEntity().getWorld().getName())) {
 	    return;
@@ -334,7 +601,7 @@ public class IslandGuard implements Listener {
 		return;
 	    }
 	    // This permission bypasses protection
-	    if (VaultHelper.checkPerm((Player)e.getDamager(), "askyblock.mod.bypassprotect")) {
+	    if (VaultHelper.checkPerm((Player)e.getDamager(), Settings.PERMPREFIX + "mod.bypassprotect")) {
 		return;
 	    }
 	}
@@ -345,7 +612,7 @@ public class IslandGuard implements Listener {
 		// Try and protect against all player instigated damage
 		//plugin.getLogger().info("Damager is = " + e.getDamager().toString());
 		if (e.getDamager() instanceof Player) {
-		    if (!plugin.playerIsOnIsland((Player)e.getDamager())) {
+		    if (!plugin.locationIsOnIsland((Player)e.getDamager(),e.getEntity().getLocation())) {
 			((Player)e.getDamager()).sendMessage(ChatColor.RED + Locale.islandProtected);
 			e.setCancelled(true);
 		    }
@@ -373,8 +640,9 @@ public class IslandGuard implements Listener {
 	    if (!(e.getEntity() instanceof Player)) {
 		if (e.getEntity() instanceof Monster || e.getEntity() instanceof Slime || e.getEntity() instanceof Squid) {
 		    //plugin.getLogger().info("Entity is a monster - ok to hurt"); 
+		    // Monster has to be on player's island.
 		    if (!Settings.allowHurtMonsters) {
-			if (!plugin.playerIsOnIsland((Player)e.getDamager())) {
+			if (!plugin.locationIsOnIsland((Player)e.getDamager(),e.getEntity().getLocation())) {
 			    ((Player)e.getDamager()).sendMessage(ChatColor.RED + Locale.islandProtected);
 			    e.setCancelled(true);
 			    return;
@@ -388,7 +656,8 @@ public class IslandGuard implements Listener {
 		    //plugin.getLogger().info("player ID is null");
 		    //}
 		    if (!Settings.allowHurtMobs) {
-			if (!plugin.playerIsOnIsland((Player)e.getDamager())) {
+			// Mob has to be on damager's island
+			if (!plugin.locationIsOnIsland((Player)e.getDamager(),e.getEntity().getLocation())) {
 			    ((Player)e.getDamager()).sendMessage(ChatColor.RED + Locale.islandProtected);
 			    e.setCancelled(true);
 			    return;
@@ -431,7 +700,7 @@ public class IslandGuard implements Listener {
 		    if (!(e.getEntity() instanceof Monster) && !(e.getEntity() instanceof Slime) && !(e.getEntity() instanceof Squid)) {
 			//plugin.getLogger().info("Entity is a non-monster - check if ok to hurt"); 
 			if (!Settings.allowHurtMobs) {
-			    if (!plugin.playerIsOnIsland((Player)arrow.getShooter())) {
+			    if (!plugin.locationIsOnIsland((Player)arrow.getShooter(),e.getEntity().getLocation())) {
 				shooter.sendMessage(ChatColor.RED + Locale.islandProtected);
 				e.setCancelled(true);
 				return;
@@ -440,7 +709,7 @@ public class IslandGuard implements Listener {
 			return;
 		    } else {
 			if (!Settings.allowHurtMonsters) {
-			    if (!plugin.playerIsOnIsland((Player)e.getDamager())) {
+			    if (!plugin.locationIsOnIsland((Player)e.getDamager(),e.getEntity().getLocation())) {
 				((Player)e.getDamager()).sendMessage(ChatColor.RED + Locale.islandProtected);
 				e.setCancelled(true);
 				return;
@@ -459,38 +728,6 @@ public class IslandGuard implements Listener {
 	    } 
 	}
 	return;
-	/*
-	// If the attacker is non-human and not an arrow then everything is okay
-	if (!(e.getDamager() instanceof Player) && !(e.getDamager() instanceof Projectile)) {
-	    return;
-	}
-
-	// If the target is not a player return
-	if (!(e.getEntity() instanceof Player)) {
-	    return;
-	}
-	// If PVP is okay then return
-	if (Settings.allowPvP.equalsIgnoreCase("allow")) {
-	    return;
-	}
-	// Only damagers who are players or arrows are left
-	// If the projectile is anything else than an arrow don't worry about it in this listener
-	// Handle splash potions separately.
-	if (e.getDamager() instanceof Arrow) {
-	    Arrow arrow = (Arrow)e.getDamager();
-	    // It really is an Arrow
-	    if (arrow.getShooter() instanceof Player) {
-		// Arrow shot by a player at another player
-		if (Settings.allowPvP.equalsIgnoreCase("allow")) {
-		    return;
-		} else {
-		    e.setCancelled(true);
-		    return;
-		}
-	    }
-	}
-	return;
-	 */
     }
 
 
@@ -500,14 +737,17 @@ public class IslandGuard implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerBlockPlace(final BlockPlaceEvent e) {
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
 	//plugin.getLogger().info(e.getEventName());
 	if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    // This permission bypasses protection
-	    if (VaultHelper.checkPerm(e.getPlayer(), "askyblock.mod.bypassprotect")) {
+	    if (VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
 		return;
 	    }
 	    if (!Settings.allowPlaceBlocks) {
-		if (!plugin.playerIsOnIsland(e.getPlayer()) && !e.getPlayer().isOp()) {
+		if (!plugin.locationIsOnIsland(e.getPlayer(),e.getBlock().getLocation()) && !e.getPlayer().isOp()) {
 		    e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
 		    e.setCancelled(true);
 		}
@@ -517,14 +757,17 @@ public class IslandGuard implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerBlockPlace(final HangingPlaceEvent e) {
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
 	//plugin.getLogger().info(e.getEventName());
 	if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    // This permission bypasses protection
-	    if (VaultHelper.checkPerm(e.getPlayer(), "askyblock.mod.bypassprotect")) {
+	    if (VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
 		return;
 	    }
 	    if (!Settings.allowPlaceBlocks) {
-		if (!plugin.playerIsOnIsland(e.getPlayer()) && !e.getPlayer().isOp()) {
+		if (!plugin.locationIsOnIsland(e.getPlayer(),e.getBlock().getLocation()) && !e.getPlayer().isOp()) {
 		    e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
 		    e.setCancelled(true);
 		}
@@ -535,10 +778,13 @@ public class IslandGuard implements Listener {
     // Prevent sleeping in other beds
     @EventHandler(priority = EventPriority.LOW)
     public void onPlayerBedEnter(final PlayerBedEnterEvent e) {
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
 	// Check world
 	if (Settings.worldName.equalsIgnoreCase(e.getPlayer().getWorld().getName())) {
 	    // This permission bypasses protection
-	    if (VaultHelper.checkPerm(e.getPlayer(), "askyblock.mod.bypassprotect")) {
+	    if (VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
 		return;
 	    }
 	    if (!Settings.allowBedUse) {
@@ -555,16 +801,18 @@ public class IslandGuard implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW)
     public void onBreakHanging(final HangingBreakByEntityEvent e) {
-	//plugin.getLogger().info(e.getEventName());
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
 	if (e.getEntity().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    if (!Settings.allowBreakBlocks) {
 		if (e.getRemover() instanceof Player) {
 		    Player p = (Player)e.getRemover();
 		    // This permission bypasses protection
-		    if (VaultHelper.checkPerm(p, "askyblock.mod.bypassprotect")) {
+		    if (VaultHelper.checkPerm(p, Settings.PERMPREFIX + "mod.bypassprotect")) {
 			return;
 		    }
-		    if (!plugin.playerIsOnIsland(p) && !p.isOp()) {
+		    if (!plugin.locationIsOnIsland(p,e.getEntity().getLocation()) && !p.isOp()) {
 			p.sendMessage(ChatColor.RED + Locale.islandProtected);
 			e.setCancelled(true);
 		    }
@@ -579,17 +827,22 @@ public class IslandGuard implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW)
     public void onLeashUse(final PlayerLeashEntityEvent e) {
-	//plugin.getLogger().info(e.getEventName());
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
 	if (e.getEntity().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    if (!Settings.allowLeashUse) {
 		if (e.getPlayer() != null) {
-		    Player p = e.getPlayer();
+		    Player player = e.getPlayer();
 		    // This permission bypasses protection
-		    if (VaultHelper.checkPerm(p, "askyblock.mod.bypassprotect")) {
+		    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.bypassprotect")) {
 			return;
 		    }
-		    if (!plugin.playerIsOnIsland(p) && !p.isOp()) {
-			p.sendMessage(ChatColor.RED + Locale.islandProtected);
+		    if (!plugin.locationIsOnIsland(player,e.getEntity().getLocation()) && !player.isOp()) {
+			player.sendMessage(ChatColor.RED + Locale.islandProtected);
 			e.setCancelled(true);
 		    }
 		}
@@ -603,17 +856,20 @@ public class IslandGuard implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW)
     public void onLeashUse(final PlayerUnleashEntityEvent e) {
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
 	//plugin.getLogger().info(e.getEventName());
 	if (e.getEntity().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    if (!Settings.allowLeashUse) {
 		if (e.getPlayer() != null) {
-		    Player p = e.getPlayer();
+		    Player player = e.getPlayer();
 		    // This permission bypasses protection
-		    if (VaultHelper.checkPerm(p, "askyblock.mod.bypassprotect")) {
+		    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.bypassprotect")) {
 			return;
 		    }
-		    if (!plugin.playerIsOnIsland(p) && !p.isOp()) {
-			p.sendMessage(ChatColor.RED + Locale.islandProtected);
+		    if (!plugin.locationIsOnIsland(player,e.getEntity().getLocation()) && !player.isOp()) {
+			player.sendMessage(ChatColor.RED + Locale.islandProtected);
 			e.setCancelled(true);
 		    }
 		}
@@ -623,15 +879,21 @@ public class IslandGuard implements Listener {
 
     @EventHandler(priority = EventPriority.LOW)
     public void onBucketEmpty(final PlayerBucketEmptyEvent e) {
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
 	if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    // This permission bypasses protection
-	    if (VaultHelper.checkPerm(e.getPlayer(), "askyblock.mod.bypassprotect")) {
+	    if (VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
 		return;
 	    }
 	    if (!Settings.allowBucketUse) {
-		if (!plugin.playerIsOnIsland(e.getPlayer()) && !e.getPlayer().isOp()) {
-		    e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
-		    e.setCancelled(true);
+		if (e.getBlockClicked() != null) {
+		    if (!plugin.locationIsOnIsland(e.getPlayer(),e.getBlockClicked().getLocation()) && !e.getPlayer().isOp()) {
+			e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
+			e.setCancelled(true);
+			return;
+		    }
 		}
 	    }
 	    // Check if biome is Nether and then stop water placement
@@ -651,6 +913,9 @@ public class IslandGuard implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW)
     public void onNetherDispenser(final BlockDispenseEvent e) {
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
 	if (!e.getBlock().getWorld().getName().equalsIgnoreCase(Settings.worldName) ||
 		!e.getBlock().getBiome().equals(Biome.HELL)) {
 	    return;
@@ -666,13 +931,16 @@ public class IslandGuard implements Listener {
 
     @EventHandler(priority = EventPriority.LOW)
     public void onBucketFill(final PlayerBucketFillEvent e) {
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
 	if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    // This permission bypasses protection
-	    if (VaultHelper.checkPerm(e.getPlayer(), "askyblock.mod.bypassprotect")) {
+	    if (VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
 		return;
 	    }
 	    if (!Settings.allowBucketUse) {
-		if (!plugin.playerIsOnIsland(e.getPlayer()) && !e.getPlayer().isOp()) {
+		if (!plugin.locationIsOnIsland(e.getPlayer(),e.getBlockClicked().getLocation()) && !e.getPlayer().isOp()) {
 		    e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
 		    e.setCancelled(true);
 		}
@@ -683,13 +951,16 @@ public class IslandGuard implements Listener {
     // Protect sheep
     @EventHandler(priority = EventPriority.LOW)
     public void onShear(final PlayerShearEntityEvent e) {
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
 	if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    // This permission bypasses protection
-	    if (VaultHelper.checkPerm(e.getPlayer(), "askyblock.mod.bypassprotect")) {
+	    if (VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
 		return;
 	    }
 	    if (!Settings.allowShearing) {	
-		if (!plugin.playerIsOnIsland(e.getPlayer()) && !e.getPlayer().isOp()) {
+		if (!plugin.locationIsOnIsland(e.getPlayer(),e.getEntity().getLocation()) && !e.getPlayer().isOp()) {
 		    e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
 		    e.setCancelled(true);
 		}
@@ -697,25 +968,40 @@ public class IslandGuard implements Listener {
 	}
     }
 
+
+
+    /**
+     * Handles interaction with objects
+     * @param e
+     */
     @EventHandler(priority = EventPriority.LOW)
     public void onPlayerInteract(final PlayerInteractEvent e) {
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
 	if (!e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    return;
 	}
-	if (plugin.playerIsOnIsland(e.getPlayer()) || e.getPlayer().isOp()) {
+	if (e.getPlayer().isOp()) {
+	    return;
+	}
+	if ((e.getClickedBlock() != null && plugin.locationIsOnIsland(e.getPlayer(),e.getClickedBlock().getLocation()))) {
 	    // You can do anything on your island or if you are Op
 	    return;
 	}
+	// Player is not clicking a block, they are clicking a material so this is driven by where the player is
+	if (e.getClickedBlock() == null && (e.getMaterial() != null && plugin.playerIsOnIsland(e.getPlayer()))) {
+	    return;
+	}
 	// This permission bypasses protection
-	if (VaultHelper.checkPerm(e.getPlayer(), "askyblock.mod.bypassprotect")) {
+	if (VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
 	    return;
 	}
 	// Player is off island
 	// Check if player is at spawn
 	// prevent at spawn
 	boolean playerAtSpawn = false;
-	if (plugin.getSpawn().getBedrock() != null && 
-		(e.getPlayer().getLocation().distanceSquared(plugin.getSpawn().getBedrock()) < plugin.getSpawn().getRange()*plugin.getSpawn().getRange())) {
+	if (plugin.getSpawn().getBedrock() != null && plugin.getSpawn().isAtSpawn(e.getPlayer().getLocation())) {
 	    playerAtSpawn = true;
 	}
 
@@ -726,6 +1012,11 @@ public class IslandGuard implements Listener {
 
 	    switch (e.getClickedBlock().getType()) {
 	    case WOODEN_DOOR:
+	    case SPRUCE_DOOR:
+	    case ACACIA_DOOR:
+	    case DARK_OAK_DOOR:
+	    case BIRCH_DOOR:
+	    case JUNGLE_DOOR:
 	    case TRAP_DOOR:
 		if (!Settings.allowDoorUse && !(playerAtSpawn && Settings.allowSpawnDoorUse)) {
 		    e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
@@ -734,6 +1025,11 @@ public class IslandGuard implements Listener {
 		}
 		break;
 	    case FENCE_GATE:
+	    case SPRUCE_FENCE_GATE:
+	    case ACACIA_FENCE_GATE:
+	    case DARK_OAK_FENCE_GATE:
+	    case BIRCH_FENCE_GATE:
+	    case JUNGLE_FENCE_GATE:
 		if (!Settings.allowGateUse && !(playerAtSpawn && Settings.allowSpawnGateUse)) {
 		    e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
 		    e.setCancelled(true);
@@ -836,6 +1132,20 @@ public class IslandGuard implements Listener {
 		    return; 
 		}
 		break;
+	    case RAILS:
+	    case POWERED_RAIL:
+	    case DETECTOR_RAIL:
+	    case ACTIVATOR_RAIL:
+		if (!Settings.allowPlaceBlocks) {
+		    if (e.getMaterial() == Material.MINECART || e.getMaterial() == Material.STORAGE_MINECART
+			    || e.getMaterial() == Material.HOPPER_MINECART || e.getMaterial() == Material.EXPLOSIVE_MINECART
+			    || e.getMaterial() == Material.POWERED_MINECART) {
+			e.setCancelled(true);
+			e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
+			e.getPlayer().updateInventory();
+			return;
+		    }
+		}
 	    default:
 		break;
 	    }
@@ -894,11 +1204,14 @@ public class IslandGuard implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW)
     public void onCraft(CraftItemEvent event) {
+	if (debug) {
+	    plugin.getLogger().info(event.getEventName());
+	}
 	Player player = (Player) event.getWhoClicked();
 	if (player.getWorld().getName().equalsIgnoreCase(Settings.worldName) || 
 		player.getWorld().getName().equalsIgnoreCase(Settings.worldName + "_nether")) {
 	    if(event.getRecipe().getResult().getType() == Material.ENDER_CHEST) {
-		if(!(player.hasPermission("askyblock.craft.enderchest"))) {
+		if(!(player.hasPermission(Settings.PERMPREFIX + "craft.enderchest"))) {
 		    event.setCancelled(true);
 		}
 	    }
@@ -911,12 +1224,15 @@ public class IslandGuard implements Listener {
      */
     @EventHandler(priority = EventPriority.LOWEST)
     void PlayerInteractEvent(PlayerInteractEvent event){
+	if (debug) {
+	    plugin.getLogger().info(event.getEventName());
+	}
 	Player player = (Player) event.getPlayer();
 	if (player.getWorld().getName().equalsIgnoreCase(Settings.worldName) || 
 		player.getWorld().getName().equalsIgnoreCase(Settings.worldName + "_nether")) {
 	    if (event.getAction() == Action.RIGHT_CLICK_BLOCK ){
 		if (event.getClickedBlock().getType() == Material.ENDER_CHEST){
-		    if(!(event.getPlayer().hasPermission("askyblock.craft.enderchest"))) {
+		    if(!(event.getPlayer().hasPermission(Settings.PERMPREFIX + "craft.enderchest"))) {
 			event.setCancelled(true);
 		    }
 		}
@@ -932,7 +1248,9 @@ public class IslandGuard implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     void PlayerInteractEntityEvent(PlayerInteractEntityEvent e){
 	Player p = e.getPlayer();
-	//plugin.getLogger().info(e.getEventName());
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
 	if (!p.getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    return;
 	}
@@ -1017,6 +1335,7 @@ public class IslandGuard implements Listener {
 		 */
 	    }
 	} else {
+	    // Not on island
 	    if (!Settings.allowBreeding) {
 		// Player is off island
 		if (e.getRightClicked() instanceof Animals) {
@@ -1024,6 +1343,21 @@ public class IslandGuard implements Listener {
 		    e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
 		    e.setCancelled(true); 
 		}
+	    }
+	    // Check for other entities
+	    //Minecarts and other storage entities
+	    switch (e.getRightClicked().getType()) {
+	    case ITEM_FRAME:
+	    case MINECART_CHEST:
+	    case MINECART_FURNACE:
+	    case MINECART_HOPPER:
+	    case MINECART_TNT:
+		if (!Settings.allowChestAccess) {
+		    e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
+		    e.setCancelled(true); 
+		}
+	    default:
+		break;
 	    }
 	}
     }

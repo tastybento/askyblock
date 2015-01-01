@@ -47,7 +47,7 @@ public class AcidInventory implements Listener {
     private final ASkyBlock plugin;
     private ArrayList<String> lore = new ArrayList<String>(Arrays.asList(Locale.acidLore.split("\n")));
 
-    public AcidInventory(ASkyBlock aSkyBlock) {
+    protected AcidInventory(ASkyBlock aSkyBlock) {
 	plugin = aSkyBlock;
     }
 

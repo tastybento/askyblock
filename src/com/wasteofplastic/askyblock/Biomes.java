@@ -22,14 +22,8 @@ public class Biomes implements Listener {
     /**
      * @param plugin
      */
-    public Biomes(ASkyBlock plugin) {
+    protected Biomes(ASkyBlock plugin) {
 	this.plugin = plugin;
-	loadChooser();
-    }
-
-    private void loadChooser() {
-	// Create a custom inventory that features the available Biomes.
-	// Only 
     }
 
     /**
@@ -37,7 +31,7 @@ public class Biomes implements Listener {
      * @param player
      * @return custom Inventory object
      */
-    public Inventory getBiomePanel(Player player) {
+    protected Inventory getBiomePanel(Player player) {
 	// Go through the available biomes and check permission
 
 	int slot = 0;
@@ -126,15 +120,17 @@ public class Biomes implements Listener {
 	    Biome biome = thisPanel.get(slot).getBiome();
 	    if (biome != null) {
 		event.setCancelled(true);
-		// Check cost
-		double cost = thisPanel.get(slot).getPrice();
-		if (cost > 0D) {
-		    if (!VaultHelper.econ.has(player, cost)) {
-			player.sendMessage(ChatColor.RED + Locale.minishopYouCannotAfford.replace("[description]", VaultHelper.econ.format(cost)));
-			return;
-		    } else {
-			VaultHelper.econ.withdrawPlayer(player, cost);
-			player.sendMessage(ChatColor.GREEN + Locale.biomeYouBought.replace("[cost]", VaultHelper.econ.format(cost)));
+		if (Settings.useEconomy) {
+		    // Check cost
+		    double cost = thisPanel.get(slot).getPrice();
+		    if (cost > 0D) {
+			if (!VaultHelper.econ.has(player, cost)) {
+			    player.sendMessage(ChatColor.RED + Locale.minishopYouCannotAfford.replace("[description]", VaultHelper.econ.format(cost)));
+			    return;
+			} else {
+			    VaultHelper.econ.withdrawPlayer(player, cost);
+			    player.sendMessage(ChatColor.GREEN + Locale.biomeYouBought.replace("[cost]", VaultHelper.econ.format(cost)));
+			}
 		    }
 		}
 	    }

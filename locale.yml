@@ -59,6 +59,7 @@ warps:
    warpToPlayersSign: "Warp to <player>'s welcome sign."
    errorNoWarpsYet: "There are no warps available yet!"
    warpsAvailable: "The following warps are available"
+   playerWarped: "[name] &2warped to your island!"
 
 topTen:
    header: "These are the Top 10 islands:"
@@ -129,7 +130,7 @@ island:
    helpIsland: "start an island, or teleport to your island."
    helpTeleport: "teleport to your island."
    helpIslandSpawn: "go to spawn."
-   helpContolPanel: "open the island GUI."
+   helpControlPanel: "open the island GUI."
    #/island restart
    helpRestart: "restart your island and remove the old one."
    islandDeletedLifeboats: "Island deleted! Head to the lifeboats!"
@@ -187,6 +188,7 @@ invite:
    errorYourIslandIsFull: "Your island is full, you can't invite anyone else."
    #"That player is already with a group on an island."
    errorThatPlayerIsAlreadyInATeam: "That player is already in a team."
+   errorCoolDown: "You can invite that player again in [time] minutes"
 
 #reject
 reject:
@@ -264,6 +266,7 @@ adminHelp:
    resetAllChallenges: "resets all of the player's challenges"
    #/acid purge [TimeInDays]:
    purge: "delete inactive islands older than [TimeInDays]."
+   purgeholes: "free up island holes for reuse."
    #/acid info <player>:
    info: "info for the given player."
    #/acid info
@@ -283,12 +286,12 @@ adminTopTen:
 purge:
    #"A purge is already running, please wait for it to finish!"
    alreadyRunning: "Purge is already running, please wait for it to finish!"
-   usage: "Usage: /acid purge [TimeInDays]"
+   usage: "Usage: /[label] purge [TimeInDays]"
    calculating: "Calculating which islands have been inactive for more than [time] days."
    noneFound: "No inactive islands to remove."
    thisWillRemove: "This will remove [number] inactive islands!"
    warning: "DANGER! Do not run this with players on the server! MAKE BACKUP OF WORLD!"
-   typeConfirm: "Type /acid confirm to proceed within 10 seconds"
+   typeConfirm: "Type /[label] confirm to proceed within 10 seconds"
    purgeCancelled: "Purge cancelled."
    finished: "Finished purging of inactive islands."
    removingName: "Purge: Removing [name]'s island"
@@ -303,7 +306,7 @@ delete:
 
 #register
 register:
-   settingIsland: "Set [name]'s island to the bedrock nearest you."
+   settingIsland: "Set [name]'s island to the nearest island."
    errorBedrockNotFound: "Bedrock not found: unable to set the island!"
 
 #info
@@ -367,3 +370,14 @@ expel:
 
 moblimits:
    error: "Island breeding limit of [number] reached!"
+
+coop:
+   help: "temporarily give a player full access to your island"
+   removed: "[name] remove your coop status!"
+   removesuccess: "[name] is no longer a coop player."
+   success: "[name] is now a coop player until they log out or you expel them."
+   madeyoucoopy: "[name] made you a coop player until you log out or they expel you."
+   onyourteam: "Player is already on your team!"
+   invited: "[name] made [player] a coop player! Use expel to remove."
+   useexpel: "Use expel to remove."
+ 

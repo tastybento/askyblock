@@ -37,12 +37,12 @@ import org.bukkit.event.block.SignChangeEvent;
 public class WarpSigns implements Listener {
     private final ASkyBlock plugin;
 
-    public WarpSigns(ASkyBlock aSkyBlock) {
+    protected WarpSigns(ASkyBlock aSkyBlock) {
 	plugin = aSkyBlock;
     }
     /*
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
-    public void onSignPopped(BlockPhysicsEvent e) {
+    protected void onSignPopped(BlockPhysicsEvent e) {
 	Block b = e.getBlock();
 	if (!(b.getWorld()).getName().equals(Settings.worldName)) {
 	    // Wrong world
@@ -135,7 +135,7 @@ public class WarpSigns implements Listener {
 		if (title.equalsIgnoreCase(Locale.warpswelcomeLine)) {
 		    //plugin.getLogger().info("Welcome sign detected");
 		    // Welcome sign detected - check permissions
-		    if (!(VaultHelper.checkPerm(player, "askyblock.island.addwarp"))) {
+		    if (!(VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.addwarp"))) {
 			player.sendMessage(ChatColor.RED + Locale.warpserrorNoPerm);
 			return;
 		    }

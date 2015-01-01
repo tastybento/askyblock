@@ -16,18 +16,11 @@
  *******************************************************************************/
 package com.wasteofplastic.askyblock;
 
-
-
-
-
-
-
 /**
  * @author ben
  * All the text strings in the game sent to players
  */
 public class Locale {
-
     public static String changingObsidiantoLava;
     public static String acidLore;
     public static String acidBucket;
@@ -68,6 +61,7 @@ public class Locale {
     public static String warpswarpToPlayersSign;
     public static String warpserrorNoWarpsYet;
     public static String warpswarpsAvailable;
+    public static String warpsPlayerWarped;
 
     //ASkyBlock
     public static String topTenheader;
@@ -193,6 +187,7 @@ public class Locale {
     public static String inviteerrorYourIslandIsFull;
     //"That player is already with a group on an island."
     public static String inviteerrorThatPlayerIsAlreadyInATeam;
+    public static String inviteerrorCoolDown;
 
     //reject
     public static String rejectyouHaveRejectedInvitation;
@@ -273,6 +268,7 @@ public class Locale {
     public static String purgepurgeCancelled;
     public static String purgefinished;
     public static String purgeremovingName;
+    public static String adminHelppurgeholes;
 
     //confirm
     public static String confirmerrorTimeLimitExpired;
@@ -353,5 +349,14 @@ public class Locale {
     // Mob limits
     public static String moblimitsError;
     
-   
+    // Coop
+    public static String coopRemoved;
+    public static String coopSuccess;
+    public static String coopRemoveSuccess;
+    public static String coopMadeYouCoop;
+    public static String coopOnYourTeam;
+    public static String islandhelpCoop;
+    public static String coopInvited;
+    public static String coopUseExpel;
+      
 }

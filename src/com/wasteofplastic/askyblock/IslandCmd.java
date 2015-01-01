@@ -36,9 +36,11 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.TreeType;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.Chest;
 import org.bukkit.block.Sign;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -47,11 +49,13 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.DirectionalContainer;
 
 public class IslandCmd implements CommandExecutor {
     public boolean busyFlag = true;
-    private Schematic island = null;
-    public Location Islandlocation;
+    //private Schematic island = null;
+    private HashMap<String,Schematic> schematics = new HashMap<String,Schematic>();
+    //private Location Islandlocation;
     private ASkyBlock plugin;
     // The island reset confirmation
     private HashMap<UUID,Boolean> confirm = new HashMap<UUID,Boolean>();
@@ -71,7 +75,7 @@ public class IslandCmd implements CommandExecutor {
      * @param aSkyBlock
      * @param players 
      */
-    public IslandCmd(ASkyBlock aSkyBlock) {
+    protected IslandCmd(ASkyBlock aSkyBlock) {
 	// Plugin instance
 	this.plugin = aSkyBlock;
 	// Get the next island spot
@@ -80,16 +84,37 @@ public class IslandCmd implements CommandExecutor {
 	// Check if there is a schematic
 	File schematicFile = new File(plugin.getDataFolder(), "island.schematic");
 	if (!schematicFile.exists()) {
-	    plugin.saveResource("island.schematic", false);
-	    schematicFile = new File(plugin.getDataFolder(), "island.schematic");
+	    // Load in the ASkyBlock one if required
+	    if (Settings.GAMETYPE.equals(Settings.GameType.ASKYBLOCK)) {
+		plugin.saveResource("island.schematic", false);
+		schematicFile = new File(plugin.getDataFolder(), "island.schematic");
+	    }
 	}
 	if (schematicFile.exists()) {    
 	    plugin.getLogger().info("Trying to load island schematic...");
 	    try {
-		island = Schematic.loadSchematic(schematicFile);
+		schematics.put("", Schematic.loadSchematic(schematicFile));
+		//island = Schematic.loadSchematic(schematicFile);
 	    } catch (IOException e) {
 		plugin.getLogger().severe("Could not load island schematic! Error in file.");
 		e.printStackTrace();
+	    }
+	}
+	// Now add any permission-based schematics
+	if (!Settings.schematics.isEmpty()) {
+	    for (String perm : Settings.schematics.keySet()) {
+		schematicFile = new File(plugin.getDataFolder(), Settings.schematics.get(perm));
+		if (schematicFile.exists()) {
+		    try {
+			schematics.put(perm, Schematic.loadSchematic(schematicFile));
+			//island = Schematic.loadSchematic(schematicFile);
+		    } catch (IOException e) {
+			plugin.getLogger().severe("Could not load island schematic! Error in file.");
+			e.printStackTrace();
+		    }
+		} else {
+		    plugin.getLogger().severe("Schematic file '" + Settings.schematics.get(perm) +"' does not exist!");
+		}
 	    }
 	}
     }
@@ -105,7 +130,7 @@ public class IslandCmd implements CommandExecutor {
      * @param teamLeader
      * @return
      */
-    public boolean addPlayertoTeam(final UUID playerUUID, final UUID teamLeader) {
+    protected boolean addPlayertoTeam(final UUID playerUUID, final UUID teamLeader) {
 	// Only add online players
 	/*
 	if (!plugin.getServer().getPlayer(playerUUID).isOnline() || !plugin.getServer().getPlayer(teamLeader).isOnline()) {
@@ -150,7 +175,7 @@ public class IslandCmd implements CommandExecutor {
      * @param player
      * @param teamleader
      */
-    public void removePlayerFromTeam(final UUID player, final UUID teamleader) {
+    protected void removePlayerFromTeam(final UUID player, final UUID teamleader) {
 	// Remove player from the team
 	plugin.getPlayers().removeMember(teamleader,player);
 	// If player is online
@@ -176,7 +201,7 @@ public class IslandCmd implements CommandExecutor {
 	// Player who is issuing the command
 	final Player player = (Player) sender;
 	final UUID playerUUID = player.getUniqueId();
-	//final Players p = plugin.getPlayers().get(player.getName());
+	//final Players p = plugin.getPlayers().get(player.getName()); 
 	Location next = getNextIsland();
 	//plugin.getLogger().info("DEBUG: next location is " + next.toString());
 	plugin.setNewIsland(true);
@@ -235,8 +260,9 @@ public class IslandCmd implements CommandExecutor {
     private Location getNextIsland() {
 	// Find the next free spot
 	if (last == null) {
-	    last = new Location(ASkyBlock.getIslandWorld(), Settings.islandXOffset, Settings.island_level, Settings.islandZOffset);
+	    last = new Location(plugin.getServer().getWorld(Settings.worldName), Settings.islandXOffset, Settings.island_level, Settings.islandZOffset);
 	}
+	//plugin.getLogger().info("next island starting point " + last.toString());
 	Location next = last.clone();
 	while (plugin.islandAtLocation(next)) {
 	    next = nextGridLocation(next);
@@ -247,6 +273,9 @@ public class IslandCmd implements CommandExecutor {
     }
 
     private void resetMoney(Player player) {
+	if (!Settings.useEconomy) {
+	    return;
+	}
 	// Set player's balance in acid island to the starting balance
 	try {
 	    // plugin.getLogger().info("DEBUG: " + player.getName() + " " +
@@ -307,16 +336,159 @@ public class IslandCmd implements CommandExecutor {
      * @param player
      * @param world
      */
+    @SuppressWarnings("deprecation")
     private Location generateIslandBlocks(final int x, final int z, final Player player, final World world) {
 	Location cowSpot = null;
 	Location islandLoc = new Location(world,x,Settings.island_level,z);
-	cowSpot = Schematic.pasteSchematic(world, islandLoc, island, player);
-	if (cowSpot == null) {
-	    islandLoc.getBlock().setType(Material.BEDROCK);
-	    player.sendMessage(ChatColor.RED + "There was a massive problem pasting the new island. Please tell an admin!");
-	    return islandLoc;
+	// What happens next depends on whether this is AcidIsland or ASkyBlock
+	// Check to see if a baseline schematic is loaded
+	if (!schematics.isEmpty()) {
+	    // This is the same for AcidIsland or ASkyblock
+	    // Find out what level of island this player will get
+	    String mySchematic = "";
+	    for (String perm : schematics.keySet()) {
+		if (VaultHelper.checkPerm(player, perm)) {
+		    mySchematic = perm;
+		}
+	    }
+	    cowSpot = Schematic.pasteSchematic(world, islandLoc, schematics.get(mySchematic), player);
+	    if (cowSpot == null) {
+		islandLoc.getBlock().setType(Material.BEDROCK);
+		plugin.getLogger().severe("Schematic loading error - cannot load " + mySchematic);
+		player.sendMessage(ChatColor.RED + "There was a massive problem pasting the new island. Please tell an admin!");
+		return islandLoc;
+	    }
+	    return cowSpot;      
+	} else {
+	    // No schematic loaded
+	    if (Settings.GAMETYPE.equals(Settings.GameType.ASKYBLOCK)) { 
+		islandLoc.getBlock().setType(Material.BEDROCK);
+		player.sendMessage(ChatColor.RED + "No schematic!");
+		return islandLoc;    
+	    } else {
+		// AcidIsland
+		// Build island layer by layer
+		// Start from the base
+		// half sandstone; half sand
+		int y = 0;
+		for (int x_space = x - 4; x_space <= x + 4; x_space++) {
+		    for (int z_space = z - 4; z_space <= z + 4; z_space++) {
+			final Block b = world.getBlockAt(x_space, y, z_space);
+			b.setType(Material.BEDROCK);
+		    }
+		}
+		for (y = 1; y < Settings.island_level + 5; y++) {
+		    for (int x_space = x - 4; x_space <= x + 4; x_space++) {
+			for (int z_space = z - 4; z_space <= z + 4; z_space++) {
+			    final Block b = world.getBlockAt(x_space, y, z_space);
+			    if (y < (Settings.island_level / 2)) {
+				b.setType(Material.SANDSTONE);
+			    } else {
+				b.setType(Material.SAND);
+				b.setData((byte)0);
+			    }
+			}
+		    }
+		}
+		// Then cut off the corners to make it round-ish
+		for (y = 0; y < Settings.island_level + 5; y++) {
+		    for (int x_space = x - 4; x_space <= x + 4; x_space += 8) {
+			for (int z_space = z - 4; z_space <= z + 4; z_space += 8) {
+			    final Block b = world.getBlockAt(x_space, y, z_space);
+			    b.setType(Material.STATIONARY_WATER);
+			}
+		    }
+		}
+		// Add some grass
+		for (y = Settings.island_level + 4; y < Settings.island_level + 5; y++) {
+		    for (int x_space = x - 2; x_space <= x + 2; x_space++) {
+			for (int z_space = z - 2; z_space <= z + 2; z_space++) {
+			    final Block blockToChange = world.getBlockAt(x_space, y, z_space);
+			    blockToChange.setType(Material.GRASS);
+			}
+		    }
+		}
+		// Place bedrock - MUST be there (ensures island are not overwritten
+		Block b = world.getBlockAt(x, Settings.island_level, z);
+		b.setType(Material.BEDROCK);
+		// Then add some more dirt in the classic shape
+		y = Settings.island_level + 3;
+		for (int x_space = x - 2; x_space <= x + 2; x_space++) {
+		    for (int z_space = z - 2; z_space <= z + 2; z_space++) {
+			b = world.getBlockAt(x_space, y, z_space);
+			b.setType(Material.DIRT);
+		    }
+		}
+		b = world.getBlockAt(x - 3, y, z);
+		b.setType(Material.DIRT);
+		b = world.getBlockAt(x + 3, y, z);
+		b.setType(Material.DIRT);
+		b = world.getBlockAt(x, y, z - 3);
+		b.setType(Material.DIRT);
+		b = world.getBlockAt(x, y, z + 3);
+		b.setType(Material.DIRT);
+		y = Settings.island_level + 2;
+		for (int x_space = x - 1; x_space <= x + 1; x_space++) {
+		    for (int z_space = z - 1; z_space <= z + 1; z_space++) {
+			b = world.getBlockAt(x_space, y, z_space);
+			b.setType(Material.DIRT);
+		    }
+		}
+		b = world.getBlockAt(x - 2, y, z);
+		b.setType(Material.DIRT);
+		b = world.getBlockAt(x + 2, y, z);
+		b.setType(Material.DIRT);
+		b = world.getBlockAt(x, y, z - 2);
+		b.setType(Material.DIRT);
+		b = world.getBlockAt(x, y, z + 2);
+		b.setType(Material.DIRT);
+		y = Settings.island_level + 1;
+		b = world.getBlockAt(x - 1, y, z);
+		b.setType(Material.DIRT);
+		b = world.getBlockAt(x + 1, y, z);
+		b.setType(Material.DIRT);
+		b = world.getBlockAt(x, y, z - 1);
+		b.setType(Material.DIRT);
+		b = world.getBlockAt(x, y, z + 1);
+		b.setType(Material.DIRT);
+
+		// Add island items
+		y = Settings.island_level;
+		// Add tree (natural)
+		final Location treeLoc = new Location(world,x,y + 5D, z);
+		world.generateTree(treeLoc, TreeType.ACACIA);
+		// Place the cow
+		cowSpot = new Location(world, x, (Settings.island_level+5), z-2);
+
+		// Place a helpful sign in front of player
+		Block blockToChange = world.getBlockAt(x, Settings.island_level + 5, z + 3);
+		blockToChange.setType(Material.SIGN_POST);
+		Sign sign = (Sign) blockToChange.getState();
+		sign.setLine(0, ChatColor.translateAlternateColorCodes('&', Locale.signLine1.replace("[player]", player.getName())));
+		sign.setLine(1, ChatColor.translateAlternateColorCodes('&', Locale.signLine2.replace("[player]", player.getName())));
+		sign.setLine(2, ChatColor.translateAlternateColorCodes('&', Locale.signLine3.replace("[player]", player.getName())));
+		sign.setLine(3, ChatColor.translateAlternateColorCodes('&', Locale.signLine4.replace("[player]", player.getName())));
+		//((org.bukkit.material.Sign) sign.getData()).setFacingDirection(BlockFace.NORTH);
+		sign.update();
+		// Place the chest - no need to use the safe spawn function because we
+		// know what this island looks like
+		blockToChange = world.getBlockAt(x, Settings.island_level + 5, z + 1);
+		blockToChange.setType(Material.CHEST);
+		// Only set if the config has items in it
+		if (Settings.chestItems.length > 0) {
+		    final Chest chest = (Chest) blockToChange.getState();
+		    final Inventory inventory = chest.getInventory();
+		    inventory.clear();
+		    inventory.setContents(Settings.chestItems);
+		    chest.update();
+		}
+		// Fill the chest and orient it correctly (1.8 faces it north!
+		DirectionalContainer dc = (DirectionalContainer) blockToChange.getState().getData();
+		dc.setFacingDirection(BlockFace.SOUTH);
+		blockToChange.setData(dc.getData(), true);
+		return cowSpot;
+	    }
 	}
-	return cowSpot;
     }
 
     /**
@@ -361,7 +533,7 @@ public class IslandCmd implements CommandExecutor {
      * @param targetPlayer - UUID of the player's island that is being requested
      * @return - true if successful.
      */
-    public boolean calculateIslandLevel(final Player asker, final UUID targetPlayer) {
+    protected boolean calculateIslandLevel(final Player asker, final UUID targetPlayer) {
 	if (!busyFlag) {
 	    asker.sendMessage(ChatColor.RED + Locale.islanderrorLevelNotReady);
 	    plugin.getLogger().info(asker.getName() + " tried to use /island info but someone else used it first!");
@@ -394,12 +566,12 @@ public class IslandCmd implements CommandExecutor {
 		    }
 		    if (asker.getUniqueId().equals(targetPlayer) || asker.isOp()) {
 			final int px = l.getBlockX();
-			final int py = l.getBlockY();
+			//final int py = l.getBlockY();
 			final int pz = l.getBlockZ();
 			for (int x = -(Settings.island_protectionRange / 2); x <= (Settings.island_protectionRange / 2); x++) {
 			    for (int y = 0; y <= 255; y++) {
 				for (int z = -(Settings.island_protectionRange / 2); z <= (Settings.island_protectionRange / 2); z++) {
-				    final Block b = new Location(l.getWorld(), px + x, py + y, pz + z).getBlock();
+				    final Block b = new Location(l.getWorld(), px + x, y, pz + z).getBlock();
 				    final Material blockType = b.getType();
 				    // Total up the values
 				    if (Settings.blockValues.containsKey(blockType)) {
@@ -459,7 +631,7 @@ public class IslandCmd implements CommandExecutor {
      * @param value
      * @return
      */
-    public static <T, E> T getKeyByValue(Map<T, E> map, E value) {
+    protected static <T, E> T getKeyByValue(Map<T, E> map, E value) {
 	for (Entry<T, E> entry : map.entrySet()) {
 	    if (value.equals(entry.getValue())) {
 		return entry.getKey();
@@ -483,7 +655,7 @@ public class IslandCmd implements CommandExecutor {
 	}
 	final Player player = (Player) sender;
 	// Basic permissions check to even use /island
-	if (!VaultHelper.checkPerm(player, "askyblock.island.create")) {
+	if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.create")) {
 	    player.sendMessage(ChatColor.RED + Locale.islanderrorYouDoNotHavePermission);
 	    return true;
 	}
@@ -513,7 +685,7 @@ public class IslandCmd implements CommandExecutor {
 		if (Settings.resetMoney) {
 		    resetMoney(player);
 		}
-
+		plugin.setIslandBiome(plugin.getPlayers().getIslandLocation(playerUUID), Settings.defaultBiome);
 		plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable () {
 		    @Override
 		    public void run() {
@@ -525,12 +697,18 @@ public class IslandCmd implements CommandExecutor {
 		return true;
 	    } else {
 		if (Settings.useControlPanel) {
-		    player.performCommand("island cp");
+		    player.performCommand(Settings.ISLANDCOMMAND + " cp");
 		} else {
-		    // Teleport home
-		    plugin.homeTeleport(player);
-		    if (Settings.islandRemoveMobs) {
-			plugin.removeMobs(player.getLocation());
+		    if (!player.getWorld().getName().equalsIgnoreCase(Settings.worldName) 
+			    || Settings.allowTeleportWhenFalling || !plugin.isFalling(playerUUID)
+			    || (player.isOp() && !Settings.damageOps)) {
+			// Teleport home
+			plugin.homeTeleport(player);
+			if (Settings.islandRemoveMobs) {
+			    plugin.removeMobs(player.getLocation());
+			}
+		    } else {
+			player.sendMessage(ChatColor.RED + Locale.errorCommandNotReady);
 		    }
 		}
 		return true;
@@ -569,7 +747,7 @@ public class IslandCmd implements CommandExecutor {
 
 	    if (split[0].equalsIgnoreCase("controlpanel") || split[0].equalsIgnoreCase("cp")) {
 		//if (player.getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
-		if (VaultHelper.checkPerm(player, "askyblock.island.controlpanel")) {
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.controlpanel")) {
 		    player.openInventory(ControlPanel.controlPanel.get(ControlPanel.getDefaultPanelName()));
 		    return true;
 		}
@@ -577,8 +755,8 @@ public class IslandCmd implements CommandExecutor {
 	    }
 
 	    if (split[0].equalsIgnoreCase("minishop") || split[0].equalsIgnoreCase("ms")) {
-		if (player.getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
-		    if (VaultHelper.checkPerm(player, "askyblock.island.minishop")) {
+		if (Settings.useEconomy && player.getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+		    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.minishop")) {
 			player.openInventory(ControlPanel.miniShop);
 			return true;
 		    }
@@ -586,17 +764,17 @@ public class IslandCmd implements CommandExecutor {
 	    }
 	    // /island <command>
 	    if (split[0].equalsIgnoreCase("warp")) {
-		if (VaultHelper.checkPerm(player, "askyblock.island.warp")) {
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.warp")) {
 		    player.sendMessage(ChatColor.YELLOW + "/island warp <player>: " + ChatColor.WHITE + Locale.islandhelpWarp);
 		    return true;
 		}
 	    } else if (split[0].equalsIgnoreCase("warps")) {
-		if (VaultHelper.checkPerm(player, "askyblock.island.warp")) {
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.warp")) {
 		    // Step through warp table
 		    Set<UUID> warpList = plugin.listWarps();
 		    if (warpList.isEmpty()) {
 			player.sendMessage(ChatColor.YELLOW + Locale.warpserrorNoWarpsYet);
-			if (VaultHelper.checkPerm(player, "askyblock.island.addwarp") && plugin.playerIsOnIsland(player)) {
+			if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.addwarp") && plugin.playerIsOnIsland(player)) {
 			    player.sendMessage(ChatColor.YELLOW + Locale.warpswarpTip);
 			}
 			return true;
@@ -614,7 +792,7 @@ public class IslandCmd implements CommandExecutor {
 			    }
 			}
 			player.sendMessage(ChatColor.YELLOW + Locale.warpswarpsAvailable + ": " + ChatColor.WHITE + wlist);
-			if (!hasWarp && (VaultHelper.checkPerm(player, "askyblock.island.addwarp"))) {
+			if (!hasWarp && (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.addwarp"))) {
 			    player.sendMessage(ChatColor.YELLOW + Locale.warpswarpTip);
 			}
 			return true;
@@ -624,7 +802,7 @@ public class IslandCmd implements CommandExecutor {
 		// Check this player has an island
 		if (!plugin.getPlayers().hasIsland(playerUUID)) {
 		    // No so just start an island
-		    player.performCommand("island");
+		    player.performCommand(Settings.ISLANDCOMMAND);
 		    return true;
 		}
 		if (plugin.getPlayers().inTeam(playerUUID)) {
@@ -674,6 +852,11 @@ public class IslandCmd implements CommandExecutor {
 		    if (plugin.getPlayers().getResetsLeft(playerUUID) > 0) {
 			player.sendMessage(ChatColor.YELLOW + Locale.resetYouHave.replace("[number]", String.valueOf(plugin.getPlayers().getResetsLeft(playerUUID))));
 		    }
+		    // Clear any coop inventories
+		    //CoopPlay.getInstance().returnAllInventories(player);
+		    // Remove any coop invitees and grab their stuff
+		    CoopPlay.getInstance().clearMyInvitedCoops(player);
+		    CoopPlay.getInstance().clearMyCoops(player);
 		    //plugin.getLogger().info("DEBUG Reset command issued!");
 		    final Location oldIsland = plugin.getPlayers().getIslandLocation(playerUUID);
 		    //plugin.unregisterEvents();		
@@ -688,18 +871,24 @@ public class IslandCmd implements CommandExecutor {
 		    plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable () {
 			@Override
 			public void run() {
-			    //plugin.homeTeleport(player);
 			    player.getWorld().spawnEntity(cowSpot, EntityType.COW);
 
 			}
 		    }, 40L);		    
-		    //player.getWorld().spawnEntity(cowSpot, EntityType.COW);
 		    setResetWaitTime(player);
 		    plugin.removeWarp(playerUUID);
 		    if (oldIsland != null) {
-			plugin.removeIsland(oldIsland);
+			// Remove any coops
+			CoopPlay.getInstance().clearAllIslandCoops(oldIsland);
+			//I'm going to leave out reseting the biome to provide variety
+			//plugin.setIslandBiome(oldIsland, Settings.defaultBiome);
+			// TODO: Remove players
+			new DeleteIslandChunk(plugin,oldIsland);
+			/*
+			plugin.removeMobsFromIsland(oldIsland);
 			DeleteIsland deleteIsland = new DeleteIsland(plugin,oldIsland);
 			deleteIsland.runTaskTimer(plugin, 80L, 40L);
+			 */
 		    }
 		    //plugin.restartEvents();
 		    // Run any reset commands
@@ -723,13 +912,13 @@ public class IslandCmd implements CommandExecutor {
 		    return true;
 		}
 	    } else if (split[0].equalsIgnoreCase("sethome")) {
-		if (VaultHelper.checkPerm(player, "askyblock.island.sethome")) {
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.sethome")) {
 		    plugin.homeSet(player);
 		    return true;
 		}
 		return false;
 	    } else if (split[0].equalsIgnoreCase("help")) { 
-		player.sendMessage(ChatColor.GREEN + "ASkyBlock " + plugin.getDescription().getVersion() + " help:");
+		player.sendMessage(ChatColor.GREEN + plugin.getName() + " " + plugin.getDescription().getVersion() + " help:");
 		if (Settings.useControlPanel) {
 		    player.sendMessage(ChatColor.YELLOW + "/" + label + ": " + ChatColor.WHITE + Locale.islandhelpControlPanel);
 		} else {
@@ -745,36 +934,39 @@ public class IslandCmd implements CommandExecutor {
 		player.sendMessage(ChatColor.YELLOW + "/" + label + " level: " + ChatColor.WHITE + Locale.islandhelpLevel);
 		player.sendMessage(ChatColor.YELLOW + "/" + label + " level <player>: " + ChatColor.WHITE + Locale.islandhelpLevelPlayer);
 		player.sendMessage(ChatColor.YELLOW + "/" + label + " top: " + ChatColor.WHITE + Locale.islandhelpTop);
-		if (VaultHelper.checkPerm(player, "askyblock.island.minishop")) {
+		if (Settings.useEconomy && VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.minishop")) {
 		    player.sendMessage(ChatColor.YELLOW + "/" + label + " minishop or ms: " + ChatColor.WHITE + Locale.islandhelpMiniShop);		    
 		}
-		if (VaultHelper.checkPerm(player, "askyblock.island.warp")) {
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.warp")) {
 		    player.sendMessage(ChatColor.YELLOW + "/" + label + " warps: " + ChatColor.WHITE + Locale.islandhelpWarps);
 		    player.sendMessage(ChatColor.YELLOW + "/" + label + " warp <player>: " + ChatColor.WHITE + Locale.islandhelpWarp);
 		}
-		if (VaultHelper.checkPerm(player, "askyblock.team.create")) {
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.create")) {
 		    player.sendMessage(ChatColor.YELLOW + "/" + label + " team: " + ChatColor.WHITE + Locale.islandhelpTeam);
 		    player.sendMessage(ChatColor.YELLOW + "/" + label + " invite <player>: " + ChatColor.WHITE + Locale.islandhelpInvite);
 		    player.sendMessage(ChatColor.YELLOW + "/" + label + " leave: " + ChatColor.WHITE + Locale.islandhelpLeave);
 		}
-		if (VaultHelper.checkPerm(player, "askyblock.team.kick")) {
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.kick")) {
 		    player.sendMessage(ChatColor.YELLOW + "/" + label + " kick <player>: " + ChatColor.WHITE + Locale.islandhelpKick);
 		}
-		if (VaultHelper.checkPerm(player, "askyblock.team.join")) {
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.join")) {
 		    player.sendMessage(ChatColor.YELLOW + "/" + label + " <accept/reject>: " + ChatColor.WHITE + Locale.islandhelpAcceptReject);
 		}
-		if (VaultHelper.checkPerm(player, "askyblock.team.makeleader")) {
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.makeleader")) {
 		    player.sendMessage(ChatColor.YELLOW + "/" + label + " makeleader <player>: " + ChatColor.WHITE + Locale.islandhelpMakeLeader);
 		}
-		if (VaultHelper.checkPerm(player, "askyblock.island.biomes")) {
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.biomes")) {
 		    player.sendMessage(ChatColor.YELLOW + "/" + label + " biomes: " + ChatColor.WHITE + Locale.islandhelpBiome);
 		}
-		if (!Settings.allowPvP) {
+		//if (!Settings.allowPvP) {
 		    player.sendMessage(ChatColor.YELLOW + "/" + label + " expel <player>: " + ChatColor.WHITE + Locale.islandhelpExpel);
+		//}
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "coop")) {
+		    player.sendMessage(ChatColor.YELLOW + "/" + label + " coop: " + ChatColor.WHITE + Locale.islandhelpCoop);
 		}
 		return true;
 	    } else if (split[0].equalsIgnoreCase("biomes")) {
-		if (VaultHelper.checkPerm(player, "askyblock.island.biomes")) {
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.biomes")) {
 		    // Only the team leader can do this
 		    if (teamLeader != null && !teamLeader.equals(playerUUID)) {
 			player.sendMessage(ChatColor.RED + Locale.levelerrornotYourIsland);
@@ -806,7 +998,7 @@ public class IslandCmd implements CommandExecutor {
 		player.teleport(plugin.getSpawn().getSpawnLoc());
 		return true;
 	    } else if (split[0].equalsIgnoreCase("top")) {
-		if (VaultHelper.checkPerm(player, "askyblock.island.topten")) {
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.topten")) {
 		    plugin.showTopTen(player);
 		    return true;
 		}
@@ -824,7 +1016,7 @@ public class IslandCmd implements CommandExecutor {
 		return true;
 	    } else if (split[0].equalsIgnoreCase("invite")) {
 		// Invite label with no name, i.e., /island invite - tells the player how many more people they can invite
-		if (VaultHelper.checkPerm(player, "askyblock.team.create")) {
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.create")) {
 		    player.sendMessage(ChatColor.YELLOW + "Use" + ChatColor.WHITE + " /" + label + " invite <playername> " + ChatColor.YELLOW
 			    + Locale.islandhelpInvite);
 		    // If the player who is doing the inviting has a team
@@ -833,10 +1025,10 @@ public class IslandCmd implements CommandExecutor {
 			if (teamLeader.equals(playerUUID)) {
 			    // Check to see if the team is already full
 			    int maxSize = Settings.maxTeamSize;
-			    if (VaultHelper.checkPerm(player, "askyblock.team.vip")) {
+			    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.vip")) {
 				maxSize = Settings.maxTeamSizeVIP;
 			    }
-			    if (VaultHelper.checkPerm(player, "askyblock.team.vip2")) {
+			    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.vip2")) {
 				maxSize = Settings.maxTeamSizeVIP2;
 			    }
 			    if (teamMembers.size() < maxSize) {
@@ -856,20 +1048,14 @@ public class IslandCmd implements CommandExecutor {
 		return false;
 	    } else if (split[0].equalsIgnoreCase("accept")) {
 		// Accept an invite command
-		if (VaultHelper.checkPerm(player, "askyblock.team.join")) {
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.join")) {
 		    // If player is not in a team but has been invited to join one
 		    if (!plugin.getPlayers().inTeam(playerUUID) && inviteList.containsKey(playerUUID)) {
 			// If the invitee has an island of their own
 			if (plugin.getPlayers().hasIsland(playerUUID)) {
 			    plugin.getLogger().info(player.getName() + "'s island will be deleted because they joined a party.");
-			    // Delete the island next tick
-			    plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
-				@Override
-				public void run() {
-				    plugin.deletePlayerIsland(playerUUID);
-				    plugin.getLogger().info("Island deleted.");
-				}
-			    });
+			    plugin.deletePlayerIsland(playerUUID);
+			    plugin.getLogger().info("Island deleted.");
 			}
 			// Add the player to the team
 			addPlayertoTeam(playerUUID, inviteList.get(playerUUID));
@@ -912,17 +1098,25 @@ public class IslandCmd implements CommandExecutor {
 		return true;
 	    } else if (split[0].equalsIgnoreCase("leave")) {
 		// Leave team command
-		if (VaultHelper.checkPerm(player, "askyblock.team.join")) {
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.join")) {
 		    if (player.getWorld().getName().equalsIgnoreCase(ASkyBlock.getIslandWorld().getName())) {
 			if (plugin.getPlayers().inTeam(playerUUID)) {
 			    if (plugin.getPlayers().getTeamLeader(playerUUID).equals(playerUUID)) {
 				player.sendMessage(ChatColor.YELLOW + Locale.leaveerrorYouAreTheLeader);
 				return true;
 			    }
+			    // Clear any coop inventories
+			    //CoopPlay.getInstance().returnAllInventories(player);
+			    // Remove any of the target's coop invitees and grab their stuff
+			    CoopPlay.getInstance().clearMyInvitedCoops(player);
+			    CoopPlay.getInstance().clearMyCoops(player);
 			    plugin.resetPlayer(player);
-			    if (!player.performCommand("spawn")) {
+			    if (!player.performCommand(Settings.SPAWNCOMMAND)) {
 				player.teleport(player.getWorld().getSpawnLocation());
 			    }
+			    // Log the location that this player left so they cannot join again before the cool down ends
+			    plugin.getPlayers().startInviteCoolDownTimer(playerUUID, plugin.getPlayers().getTeamIslandLocation(teamLeader));
+			    // Remove from team
 			    removePlayerFromTeam(playerUUID, teamLeader);
 			    // Remove any warps
 			    plugin.removeWarp(playerUUID);
@@ -955,10 +1149,10 @@ public class IslandCmd implements CommandExecutor {
 		if (plugin.getPlayers().inTeam(playerUUID)) {
 		    if (teamLeader.equals(playerUUID)) {
 			int maxSize = Settings.maxTeamSize;
-			if (VaultHelper.checkPerm(player, "askyblock.team.vip")) {
+			if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.vip")) {
 			    maxSize = Settings.maxTeamSizeVIP;
 			}
-			if (VaultHelper.checkPerm(player, "askyblock.team.vip2")) {
+			if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.vip2")) {
 			    maxSize = Settings.maxTeamSizeVIP2;
 			}
 			if (teamMembers.size() < maxSize) {
@@ -991,11 +1185,11 @@ public class IslandCmd implements CommandExecutor {
 	case 2:
 	    if (split[0].equalsIgnoreCase("warp")) {
 		// Warp somewhere command
-		if (VaultHelper.checkPerm(player, "askyblock.island.warp")) {
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.warp")) {
 		    final Set<UUID> warpList = plugin.listWarps();
 		    if (warpList.isEmpty()) {
 			player.sendMessage(ChatColor.YELLOW + Locale.warpserrorNoWarpsYet);
-			if (VaultHelper.checkPerm(player, "askyblock.island.addwarp")) {
+			if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.addwarp")) {
 			    player.sendMessage(ChatColor.YELLOW + Locale.warpswarpTip);
 			}
 			return true;
@@ -1034,6 +1228,10 @@ public class IslandCmd implements CommandExecutor {
 					    inFront.getBlockZ() + 0.5D, yaw, 30F);
 				    player.teleport(actualWarp);
 				    player.getWorld().playSound(player.getLocation(), Sound.BAT_TAKEOFF, 1F, 1F);
+				    Player warpOwner = plugin.getServer().getPlayer(foundWarp);
+				    if (warpOwner != null) {
+					warpOwner.sendMessage(ChatColor.translateAlternateColorCodes('&', Locale.warpsPlayerWarped).replace("[name]", player.getDisplayName()));
+				    }
 				    return true;
 				}
 			    } else {
@@ -1061,7 +1259,7 @@ public class IslandCmd implements CommandExecutor {
 		}
 	    }    else if (split[0].equalsIgnoreCase("level")) {
 		// island level command
-		if (VaultHelper.checkPerm(player, "askyblock.island.info")) {
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.info")) {
 		    if (!plugin.getPlayers().inTeam(playerUUID) && !plugin.getPlayers().hasIsland(playerUUID)) {
 			player.sendMessage(ChatColor.RED + Locale.errorNoIsland);
 		    } else {
@@ -1081,7 +1279,7 @@ public class IslandCmd implements CommandExecutor {
 		return false;
 	    } else if (split[0].equalsIgnoreCase("invite")) {
 		// Team invite a player command
-		if (VaultHelper.checkPerm(player, "askyblock.team.create")) {
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.create")) {
 		    // May return null if not known
 		    final UUID invitedPlayerUUID = plugin.getPlayers().getUUID(split[1]);
 		    // Invited player must be known
@@ -1105,6 +1303,12 @@ public class IslandCmd implements CommandExecutor {
 			player.sendMessage(ChatColor.RED + Locale.inviteerrorYouCannotInviteYourself);
 			return true;
 		    }
+		    // Check if this player can be invited to this island, or whether they are still on cooldown
+		    long time = plugin.getPlayers().getInviteCoolDownTime(invitedPlayerUUID, plugin.getPlayers().getIslandLocation(playerUUID));
+		    if (time > 0) {
+			player.sendMessage(ChatColor.RED + Locale.inviteerrorCoolDown.replace("[time]", String.valueOf(time)));
+			return true;
+		    }
 		    // If the player already has a team then check that they are the leader, etc
 		    if (plugin.getPlayers().inTeam(player.getUniqueId())) {
 			// Leader?
@@ -1113,10 +1317,10 @@ public class IslandCmd implements CommandExecutor {
 			    if (!plugin.getPlayers().inTeam(invitedPlayerUUID)) {
 				// Player has space in their team
 				int maxSize = Settings.maxTeamSize;
-				if (VaultHelper.checkPerm(player, "askyblock.team.vip")) {
+				if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.vip")) {
 				    maxSize = Settings.maxTeamSizeVIP;
 				}
-				if (VaultHelper.checkPerm(player, "askyblock.team.vip2")) {
+				if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.vip2")) {
 				    maxSize = Settings.maxTeamSizeVIP2;
 				}
 				if (teamMembers.size() < maxSize) {
@@ -1173,11 +1377,58 @@ public class IslandCmd implements CommandExecutor {
 		    player.sendMessage(ChatColor.RED + Locale.errorNoPermission);
 		    return false;
 		}
+	    } else if (split[0].equalsIgnoreCase("coop")) {
+		// Give a player coop privileges
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "coop")) {
+		    // May return null if not known
+		    final UUID invitedPlayerUUID = plugin.getPlayers().getUUID(split[1]);
+		    // Invited player must be known
+		    if (invitedPlayerUUID == null) {
+			player.sendMessage(ChatColor.RED + Locale.errorUnknownPlayer);
+			return true;
+		    }
+		    // Player must be online
+		    Player newPlayer = plugin.getServer().getPlayer(invitedPlayerUUID);
+		    if (newPlayer == null) {
+			player.sendMessage(ChatColor.RED + Locale.errorOfflinePlayer);
+			return true;
+		    }
+		    // Player issuing the command must have an island
+		    if (!plugin.getPlayers().hasIsland(playerUUID) && !plugin.getPlayers().inTeam(playerUUID)) {
+			player.sendMessage(ChatColor.RED + Locale.inviteerrorYouMustHaveIslandToInvite);
+			return true;
+		    }
+		    // Player cannot invite themselves
+		    if (player.getName().equalsIgnoreCase(split[1])) {
+			player.sendMessage(ChatColor.RED + Locale.inviteerrorYouCannotInviteYourself);
+			return true;
+		    }
+		    // If target player is already on the team ignore
+		    if (plugin.getPlayers().getMembers(playerUUID).contains(invitedPlayerUUID)) {
+			player.sendMessage(ChatColor.RED + Locale.coopOnYourTeam);
+			return true;
+		    }
+		    // Target has to have an island
+		    if (!plugin.getPlayers().inTeam(invitedPlayerUUID)) {
+			if (!plugin.getPlayers().hasIsland(invitedPlayerUUID)) {
+			    player.sendMessage(ChatColor.RED + Locale.errorNoIslandOther);
+			    return true;
+			}
+		    }
+		    // Add target to coop list
+		    CoopPlay.getInstance().addCoopPlayer(player, newPlayer);
+		    // Tell everyone what happened
+		    player.sendMessage(ChatColor.GREEN + Locale.coopSuccess.replace("[name]", newPlayer.getDisplayName())); 
+		    newPlayer.sendMessage(ChatColor.GREEN + Locale.coopMadeYouCoop.replace("[name]", player.getDisplayName()));
+		    return true;
+
+		}
 	    } else if (split[0].equalsIgnoreCase("expel")) {
+		/*
 		if (Settings.allowPvP) {
 		    player.sendMessage(ChatColor.RED + Locale.errorUnknownCommand);
 		    return false;
-		}
+		}*/
 		// Find out who they want to expel
 		final UUID targetPlayerUUID = plugin.getPlayers().getUUID(split[1]);
 		// Player must be known
@@ -1185,34 +1436,61 @@ public class IslandCmd implements CommandExecutor {
 		    player.sendMessage(ChatColor.RED + Locale.errorUnknownPlayer);
 		    return true;
 		}
-		// Player must be online
+		// Target must be online
 		Player target = plugin.getServer().getPlayer(targetPlayerUUID);
 		if (target == null) {
 		    player.sendMessage(ChatColor.RED + Locale.errorOfflinePlayer);
 		    return true;
 		}
 		// Target cannot be op
-		if (target.isOp()) {
+		if (target.isOp() || VaultHelper.checkPerm(target, Settings.PERMPREFIX + "mod.bypassprotect")) {
 		    player.sendMessage(ChatColor.RED + Locale.expelFail.replace("[name]", target.getDisplayName()));
 		    return true;
 		}
+		/*
+		// Find out if the target is in a coop area
+		Location coopLocation = plugin.locationIsOnIsland(CoopPlay.getInstance().getCoopIslands(target),target.getLocation());
+		// Get the expeller's island
+		Location expellersIsland = null;
+		if (plugin.getPlayers().inTeam(player.getUniqueId())) {
+		    expellersIsland = plugin.getPlayers().getTeamIslandLocation(player.getUniqueId());
+		} else {
+		    expellersIsland = plugin.getPlayers().getIslandLocation(player.getUniqueId());
+		}
+		// Return this island inventory to the owner
+		CoopPlay.getInstance().returnInventory(target, expellersIsland);
+		// Mark them as no longer on a coop island
+		CoopPlay.getInstance().setOnCoopIsland(targetPlayerUUID, null);
+		// Find out if this location the same as this player's island
+		if (coopLocation != null && coopLocation.equals(expellersIsland)) {
+		    // They were on the island so return their home inventory
+		    if (plugin.getPlayers().inTeam(targetPlayerUUID)) {
+			InventorySave.getInstance().loadPlayerInventory(player, plugin.getPlayers().getTeamIslandLocation(targetPlayerUUID));
+		    } else {
+			InventorySave.getInstance().loadPlayerInventory(player, plugin.getPlayers().getIslandLocation(targetPlayerUUID));
+		    }
+		}*/
+		// Remove them from the coop list
+		boolean coop = CoopPlay.getInstance().removeCoopPlayer(player, target); 
+		if (coop) {
+		    target.sendMessage(ChatColor.RED + Locale.coopRemoved.replace("[name]", player.getDisplayName()));
+		    player.sendMessage(ChatColor.GREEN + Locale.coopRemoveSuccess.replace("[name]", target.getDisplayName()));
+		}
 		// See if target is on this player's island
-		if (plugin.isOnIsland(player, target)) {
+		if (plugin.isOnIsland(player, target)) {   
 		    plugin.homeTeleport(target);
 		    target.sendMessage(ChatColor.RED + Locale.expelExpelled);
 		    plugin.getLogger().info(player.getName() + " expelled " + target.getName() + " from their island.");
 		    // Yes they are
 		    player.sendMessage(ChatColor.GREEN + Locale.expelSuccess.replace("[name]", target.getDisplayName()));
-		    return true;
-		} else {
+		} else if (!coop){
 		    // No they're not
 		    player.sendMessage(ChatColor.RED + Locale.expelNotOnIsland);
-		    return true;
 		}
-
+		return true;
 	    } else if (split[0].equalsIgnoreCase("kick") || split[0].equalsIgnoreCase("remove")) {
 		// Island remove command with a player name, or island kick command
-		if (VaultHelper.checkPerm(player, "askyblock.team.kick")) {
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.kick")) {
 		    if (!plugin.getPlayers().inTeam(playerUUID)) {
 			player.sendMessage(ChatColor.RED + Locale.kickerrorNoTeam);
 			return true;
@@ -1243,14 +1521,19 @@ public class IslandCmd implements CommandExecutor {
 			Player target = plugin.getServer().getPlayer(targetPlayer);
 			if (target != null) {
 			    target.sendMessage(ChatColor.RED + Locale.kicknameRemovedYou.replace("[name]", player.getName()));
-
+			    // Log the location that this player left so they cannot join again before the cool down ends
+			    plugin.getPlayers().startInviteCoolDownTimer(targetPlayer, plugin.getPlayers().getIslandLocation(playerUUID));
+			    // Clear any coop inventories
+			    // CoopPlay.getInstance().returnAllInventories(target);
+			    // Remove any of the target's coop invitees and anyone they invited
+			    CoopPlay.getInstance().clearMyInvitedCoops(target);
+			    CoopPlay.getInstance().clearMyCoops(target);
 			    // Clear the player out and throw their stuff at the leader
 			    if (target.getWorld().getName().equalsIgnoreCase(ASkyBlock.getIslandWorld().getName())) {
 				for (ItemStack i : target.getInventory().getContents()) {
 				    if (i != null) {
 					try {
 					    player.getWorld().dropItemNaturally(player.getLocation(), i);
-					    target.getInventory().remove(i);
 					} catch (Exception e) {}
 				    }
 				}
@@ -1261,9 +1544,29 @@ public class IslandCmd implements CommandExecutor {
 					} catch (Exception e) {}
 				    }
 				}
-				plugin.resetPlayer(target);
+				//plugin.resetPlayer(target); <- no good if reset inventory is false
+				// Clear their inventory and equipment and set them as survival
+				target.getInventory().clear(); // Javadocs are wrong - this does not
+				// clear armor slots! So...
+				//plugin.getLogger().info("DEBUG: Clearing kicked player's inventory");
+				target.getInventory().setArmorContents(null);
+				target.getInventory().setHelmet(null);
+				target.getInventory().setChestplate(null);
+				target.getInventory().setLeggings(null);
+				target.getInventory().setBoots(null);
+				target.getEquipment().clear();
+				if (Settings.resetChallenges) {
+				    // Reset the player's challenge status
+				    plugin.getPlayers().resetAllChallenges(target.getUniqueId());
+				}
+				// Reset the island level
+				plugin.getPlayers().setIslandLevel(target.getUniqueId(), 0);
+				plugin.getPlayers().save(target.getUniqueId());
+				plugin.updateTopTen();
+				// Update the inventory
+				target.updateInventory();
 			    }
-			    if (!target.performCommand("spawn")) {
+			    if (!target.performCommand(Settings.SPAWNCOMMAND)) {
 				target.teleport(ASkyBlock.getIslandWorld().getSpawnLocation());
 			    } 
 			} else {
@@ -1290,7 +1593,7 @@ public class IslandCmd implements CommandExecutor {
 		    return false;
 		}
 	    } else if (split[0].equalsIgnoreCase("makeleader")) {
-		if (VaultHelper.checkPerm(player, "askyblock.team.makeleader")) {
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.makeleader")) {
 		    targetPlayer = plugin.getPlayers().getUUID(split[1]);
 		    if (targetPlayer == null) {
 			player.sendMessage(ChatColor.RED + Locale.errorUnknownPlayer);
@@ -1355,7 +1658,7 @@ public class IslandCmd implements CommandExecutor {
      * @param player
      * @return
      */
-    public boolean onRestartWaitTime(final Player player) {
+    protected boolean onRestartWaitTime(final Player player) {
 	if (resetWaitTime.containsKey(player.getUniqueId())) {
 	    if (resetWaitTime.get(player.getUniqueId()).longValue() > Calendar.getInstance().getTimeInMillis()) {
 		return true;
@@ -1371,7 +1674,7 @@ public class IslandCmd implements CommandExecutor {
      * 
      * @param player
      */
-    public void setResetWaitTime(final Player player) {
+    protected void setResetWaitTime(final Player player) {
 	resetWaitTime.put(player.getUniqueId(), Long.valueOf(Calendar.getInstance().getTimeInMillis() + Settings.resetWait * 1000));
     }
 
@@ -1381,7 +1684,7 @@ public class IslandCmd implements CommandExecutor {
      * @param player
      * @return
      */
-    public long getResetWaitTime(final Player player) {
+    protected long getResetWaitTime(final Player player) {
 	if (resetWaitTime.containsKey(player.getUniqueId())) {
 	    if (resetWaitTime.get(player.getUniqueId()).longValue() > Calendar.getInstance().getTimeInMillis()) {
 		return (resetWaitTime.get(player.getUniqueId()).longValue() - Calendar.getInstance().getTimeInMillis())/1000;

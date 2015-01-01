@@ -17,9 +17,12 @@
 package com.wasteofplastic.askyblock;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -47,13 +50,14 @@ public class Players {
     private UUID uuid;
     private String playerName;
     private int resetsLeft;
+    private HashMap<Location, Date> kickedList;
 
     /**
      * @param uuid
      *            Constructor - initializes the state variables
      * 
      */
-    public Players(final ASkyBlock aSkyBlock, final UUID uuid) {
+    protected Players(final ASkyBlock aSkyBlock, final UUID uuid) {
 	this.plugin = aSkyBlock;
 	this.uuid = uuid;
 	this.members = new ArrayList<UUID>();
@@ -67,6 +71,7 @@ public class Players {
 	this.islandLevel = 0;
 	this.playerName = "";
 	this.resetsLeft = Settings.resetLimit;
+	this.kickedList = new HashMap<Location,Date>();
 	load(uuid);
     }
 
@@ -74,7 +79,7 @@ public class Players {
      * Loads a player from file system and if they do not exist, then it is created
      * @param uuid
      */
-    public void load(UUID uuid) {
+    protected void load(UUID uuid) {
 	playerInfo = ASkyBlock.loadYamlFile("players/" + uuid.toString() + ".yml");
 	// Load in from YAML file
 	this.playerName = playerInfo.getString("playerName", "");
@@ -115,13 +120,37 @@ public class Players {
 	}
 	// Load reset limit
 	this.resetsLeft = playerInfo.getInt("resetsLeft", Settings.resetLimit);
+	// Load the invite cool downs
+	if (playerInfo.contains("invitecooldown")) {
+	    //plugin.getLogger().info("DEBUG: cooldown found");
+	    for (String timeIndex : playerInfo.getConfigurationSection("invitecooldown").getKeys(false)) {
+		try {
+		    //plugin.getLogger().info("DEBUG: index is " + timeIndex);
+		    String locationString = playerInfo.getString("invitecooldown." + timeIndex, "");
+		    //plugin.getLogger().info("DEBUG: location string is " + locationString);
+		    Location l = getLocationString(locationString);
+		    //plugin.getLogger().info("DEBUG: location is " + l);
+		    long timeInMillis = Long.valueOf(timeIndex);
+		    //plugin.getLogger().info("DEBUG: time in millis is " + timeInMillis);
+		    if (l != null && timeInMillis > 0) {
+			Date date = new Date();
+			date.setTime(timeInMillis);
+			//plugin.getLogger().info("DEBUG: date is " + date);
+			// Insert into hashmap
+			kickedList.put(l, date);
+		    }
+		} catch (Exception e) {
+		    plugin.getLogger().severe("Error in player " + playerName + "'s yml config when loading invite timeout - skipping");
+		}
+	    }
+	}
     }
 
     /**
      * Saves the player info to the file system
      */
-    public void save() {
-	plugin.getLogger().info("Saving player..." + playerName);
+    protected void save() {
+	//plugin.getLogger().info("Saving player..." + playerName);
 	// Save the variables
 	playerInfo.set("playerName", playerName);
 	playerInfo.set("hasIsland", hasIsland);
@@ -145,15 +174,25 @@ public class Players {
 	for (String challenge : challengeList.keySet()) {
 	    playerInfo.set("challenges.status." + challenge, challengeList.get(challenge));
 	}
-	ASkyBlock.saveYamlFile(playerInfo, "players/" + uuid.toString() + ".yml");
 	playerInfo.set("resetsLeft", this.resetsLeft);
+	// Save invite cooldown timers
+	playerInfo.set("invitecooldown",null);
+	for (Entry<Location,Date> en: kickedList.entrySet()) {
+	    // Convert location and date to string (time in millis)
+	    Calendar coolDownTime = Calendar.getInstance();
+	    coolDownTime.setTime(en.getValue());
+	    playerInfo.set("invitecooldown." + coolDownTime.getTimeInMillis(), getStringLocation(en.getKey()));
+	}
+
+	ASkyBlock.saveYamlFile(playerInfo, "players/" + uuid.toString() + ".yml");
+
     }
 
     /**
      * @param member
      *            Adds a member to the the player's list
      */
-    public void addTeamMember(final UUID member) {
+    protected void addTeamMember(final UUID member) {
 	members.add(member);
     }
 
@@ -161,7 +200,7 @@ public class Players {
      * A maintenance function. Rebuilds the challenge list for this player.
      * Should be used when the challenges change, e.g. config.yml changes.
      */
-    public void updateChallengeList() {
+    protected void updateChallengeList() {
 	// If it does not exist, then make it
 	if (challengeList == null) {
 	    challengeList = new HashMap<String, Boolean>();
@@ -195,7 +234,7 @@ public class Players {
      * @return true if challenge is listed in the player's challenge list,
      *         otherwise false
      */
-    public boolean challengeExists(final String challenge) {
+    protected boolean challengeExists(final String challenge) {
 	if (challengeList.containsKey(challenge.toLowerCase())) {
 	    return true;
 	}
@@ -213,15 +252,15 @@ public class Players {
      * @param challenge
      * @return true if the challenge is listed as complete, false if not
      */
-    public boolean checkChallenge(final String challenge) {
+    protected boolean checkChallenge(final String challenge) {
 	if (challengeList.containsKey(challenge.toLowerCase())) {
 	    //plugin.getLogger().info("DEBUG: " + challenge + ":" + challengeList.get(challenge.toLowerCase()).booleanValue() );
 	    return challengeList.get(challenge.toLowerCase()).booleanValue();
 	}
 	return false;
     }
-    
-    public HashMap<String,Boolean> getChallengeStatus() {
+
+    protected HashMap<String,Boolean> getChallengeStatus() {
 	return challengeList;
     }
 
@@ -232,14 +271,19 @@ public class Players {
      * 
      * @param challenge
      */
-    public void completeChallenge(final String challenge) {
+    protected void completeChallenge(final String challenge) {
 	if (challengeList.containsKey(challenge)) {
 	    challengeList.remove(challenge);
 	    challengeList.put(challenge, Boolean.valueOf(true));
 	}
     }
 
-    public boolean hasIsland() {
+    protected boolean hasIsland() {
+	// Check if the player really has an island
+	if (hasIsland && islandLocation.isEmpty()) {
+	    hasIsland = false;
+	    plugin.getLogger().warning(playerName + " apparently had an island, but the location is unknown.");
+	}
 	return hasIsland;
     }
 
@@ -247,14 +291,37 @@ public class Players {
      * 
      * @return boolean - true if player is in a team
      */
-    public boolean inTeam() {
+    protected boolean inTeam() {
+	// Check if this player really has a team island
+	if (inTeam && teamIslandLocation.isEmpty()) {
+	    // Something odd is going on
+	    // See if the player has a team leader
+	    if (teamLeader == null) {
+		// No, so just clear everything
+		inTeam = false;
+		plugin.getLogger().warning(playerName + " was listed as in a team, but has no team island or team leader. Removing from team.");
+	    } else {
+		// See if the team leader thinks this player is on their team
+		if (plugin.getPlayers().getMembers(teamLeader).contains(uuid)) {
+		    // Try and get the team leader's island
+		    if (plugin.getPlayers().getTeamIslandLocation(teamLeader) != null) {
+			teamIslandLocation = getStringLocation(plugin.getPlayers().getTeamIslandLocation(teamLeader));
+			plugin.getLogger().warning(playerName + " was listed as in a team, but has no team island. Fixed.");
+		    }  
+		} else {
+		    inTeam = false;
+		    teamLeader = null;
+		    plugin.getLogger().warning(playerName + " was listed as in a team, but the team leader does not have them on the team. Removing from team.");
+		}
+	    }
+	}
 	if (members == null) {
 	    members = new ArrayList<UUID>();
 	}
 	return inTeam;
     }
 
-    public Location getHomeLocation() {
+    protected Location getHomeLocation() {
 	if (homeLocation.isEmpty()) {
 	    return null;
 	}
@@ -267,14 +334,14 @@ public class Players {
      * @return The island level int. Note this function does not calculate the
      *         island level
      */
-    public int getIslandLevel() {
+    protected int getIslandLevel() {
 	return islandLevel;
     }
 
     /**
      * @return the location of the player's island in Location form
      */
-    public Location getIslandLocation() {
+    protected Location getIslandLocation() {
 	return getLocationString(islandLocation);
     }
 
@@ -300,36 +367,36 @@ public class Players {
 	return null;
     }
 
-    public List<UUID> getMembers() {
+    protected List<UUID> getMembers() {
 	return members;
     }
 
-    public Location getTeamIslandLocation() {
+    protected Location getTeamIslandLocation() {
 	// return teamIslandLoc.getLocation();
-	if (teamIslandLocation.isEmpty()) {
+	if (teamIslandLocation == null || teamIslandLocation.isEmpty()) {
 	    return null;
 	}
 	Location l = getLocationString(teamIslandLocation);
 	return l;
     }
 
-    public UUID getTeamLeader() {
+    protected UUID getTeamLeader() {
 	return teamLeader;
     }
 
-    public Player getPlayer() {
+    protected Player getPlayer() {
 	return Bukkit.getPlayer(uuid);
     }
 
-    public UUID getPlayerUUID() {
+    protected UUID getPlayerUUID() {
 	return uuid;
     }
 
-    public String getPlayerName() {
+    protected String getPlayerName() {
 	return playerName;
     }
 
-    public void setPlayerN(String playerName) {
+    protected void setPlayerN(String playerName) {
 	this.playerName = playerName;
     }
 
@@ -351,15 +418,15 @@ public class Players {
     /**
      * @return the resetsLeft
      */
-    public int getResetsLeft() {
-        return resetsLeft;
+    protected int getResetsLeft() {
+	return resetsLeft;
     }
 
     /**
      * @param resetsLeft the resetsLeft to set
      */
-    public void setResetsLeft(int resetsLeft) {
-        this.resetsLeft = resetsLeft;
+    protected void setResetsLeft(int resetsLeft) {
+	this.resetsLeft = resetsLeft;
     }
 
     /**
@@ -367,14 +434,14 @@ public class Players {
      * 
      * @param member
      */
-    public void removeMember(final UUID member) {
+    protected void removeMember(final UUID member) {
 	members.remove(member);
     }
 
     /**
      * Resets all the challenges for the player and rebuilds the challenge list
      */
-    public void resetAllChallenges() {
+    protected void resetAllChallenges() {
 	challengeList = null;
 	updateChallengeList();
     }
@@ -385,14 +452,14 @@ public class Players {
      * 
      * @param challenge
      */
-    public void resetChallenge(final String challenge) {
+    protected void resetChallenge(final String challenge) {
 	if (challengeList.containsKey(challenge)) {
 	    challengeList.remove(challenge);
 	    challengeList.put(challenge, Boolean.valueOf(false));
 	}
     }
 
-    public void setHasIsland(final boolean b) {
+    protected void setHasIsland(final boolean b) {
 	hasIsland = b;
     }
 
@@ -402,7 +469,7 @@ public class Players {
      * @param l
      *            a Bukkit location
      */
-    public void setHomeLocation(final Location l) {
+    protected void setHomeLocation(final Location l) {
 	homeLocation = getStringLocation(l);
     }
 
@@ -411,7 +478,7 @@ public class Players {
      * 
      * @param i
      */
-    public void setIslandLevel(final int i) {
+    protected void setIslandLevel(final int i) {
 	islandLevel = i;
     }
 
@@ -421,7 +488,7 @@ public class Players {
      * @param l
      *            a Bukkit Location
      */
-    public void setIslandLocation(final Location l) {
+    protected void setIslandLocation(final Location l) {
 	islandLocation = getStringLocation(l);
     }
 
@@ -434,7 +501,7 @@ public class Players {
      *            - the Bukkit location of the team's island (converted to a
      *            String in this function)
      */
-    public void setJoinTeam(final UUID leader, final Location l) {
+    protected void setJoinTeam(final UUID leader, final Location l) {
 	inTeam = true;
 	teamLeader = leader;
 	teamIslandLocation = getStringLocation(l);
@@ -445,7 +512,7 @@ public class Players {
      * islandLevel, teamIslandLocation and members array
      */
 
-    public void setLeaveTeam() {
+    protected void setLeaveTeam() {
 	inTeam = false;
 	teamLeader = null;
 	islandLevel = 0;
@@ -457,7 +524,7 @@ public class Players {
      * @param l
      *            a Bukkit Location of the team island
      */
-    public void setTeamIslandLocation(final Location l) {
+    protected void setTeamIslandLocation(final Location l) {
 	teamIslandLocation = getStringLocation(l);
     }
 
@@ -465,7 +532,7 @@ public class Players {
      * @param leader
      *            a String name of the team leader
      */
-    public void setTeamLeader(final UUID leader) {
+    protected void setTeamLeader(final UUID leader) {
 	teamLeader = leader;
     }
 
@@ -473,12 +540,57 @@ public class Players {
      * @param s
      *            a String name of the player
      */
-    public void setPlayerUUID(final UUID s) {
+    protected void setPlayerUUID(final UUID s) {
 	uuid = s;
     }
 
-    public void setHL(String hl) {
+    protected void setHL(String hl) {
 	homeLocation = hl;
+    }
+
+    /**
+     * Can invite or still waiting for cool down to end
+     * @param location to check
+     * @return number of mins/hours left until cool down ends
+     */
+    protected long getInviteCoolDownTime(Location location) {
+	// Check the hashmap
+	if (location != null && kickedList.containsKey(location)) {
+	    //plugin.getLogger().info("DEBUG: Location is known");
+	    // The location is in the list
+	    // Check the date/time
+	    Date kickedDate = kickedList.get(location);
+	    //plugin.getLogger().info("DEBUG: kicked date = " + kickedDate);
+	    Calendar coolDownTime = Calendar.getInstance();
+	    coolDownTime.setTime(kickedDate);
+	    //coolDownTime.add(Calendar.HOUR_OF_DAY, Settings.inviteWait);
+	    coolDownTime.add(Calendar.MINUTE, Settings.inviteWait);
+	    // Add the invite cooldown period
+	    Calendar timeNow = Calendar.getInstance();
+	    //plugin.getLogger().info("DEBUG: date now = " + timeNow);
+	    if (coolDownTime.before(timeNow)) {
+		// The time has expired
+		kickedList.remove(location);
+		return 0;
+	    } else {
+		// Still not there yet
+		//long hours = (coolDownTime.getTimeInMillis() - timeNow.getTimeInMillis())/(1000 * 60 * 60);
+		// Temp minutes
+		long hours = (coolDownTime.getTimeInMillis() - timeNow.getTimeInMillis())/(1000 * 60);
+		return hours;
+	    }
+	}
+	return 0;
+    }
+
+    /**
+     * Stores the location that the player has been kicked from along with the current time
+     * @param kickedList the kickedList to set
+     */
+    protected void startInviteCoolDownTimer(Location location) {
+	if (location != null) {
+	    kickedList.put(location, new Date());
+	}
     }
 
 }

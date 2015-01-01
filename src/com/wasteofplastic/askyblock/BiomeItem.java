@@ -23,7 +23,7 @@ public class BiomeItem {
      * @param description
      * @param name
      */
-    public BiomeItem(Material material, int slot, double cost, String description, String name, boolean confirm, Biome biome) {
+    protected BiomeItem(Material material, int slot, double cost, String description, String name, boolean confirm, Biome biome) {
 	this.slot = slot;
 	this.price = cost;
 	this.description = description;
@@ -38,7 +38,7 @@ public class BiomeItem {
 	List<String> Lore = new ArrayList<String>();
 	Lore = Challenges.chop(ChatColor.YELLOW, description, 20);
 	// Create price
-	if (cost > 0D) {
+	if (Settings.useEconomy && cost > 0D) {
 	    Lore.add(VaultHelper.econ.format(cost));
 	}
 	meta.setLore(Lore);
@@ -47,43 +47,43 @@ public class BiomeItem {
     /**
      * @return the item
      */
-    public ItemStack getItem() {
+    protected ItemStack getItem() {
         return item;
     }
     /**
      * @return the slot
      */
-    public int getSlot() {
+    protected int getSlot() {
         return slot;
     }
     /**
      * @return the confirm
      */
-    public boolean isConfirm() {
+    protected boolean isConfirm() {
         return confirm;
     }
     /**
      * @return the biome
      */
-    public Biome getBiome() {
+    protected Biome getBiome() {
         return biome;
     }
     /**
      * @return the name
      */
-    public String getName() {
+    protected String getName() {
         return name;
     }
     /**
      * @return the price
      */
-    public double getPrice() {
+    protected double getPrice() {
         return price;
     }
     /**
      * @param biome the biome to set
      */
-    public void setBiome(Biome biome) {
+    protected void setBiome(Biome biome) {
         this.biome = biome;
     }
 

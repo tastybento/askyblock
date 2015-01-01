@@ -28,8 +28,26 @@ general:
    # portal will return them back to their islands.
    createnether: true
 
-   #How long a player must wait before they can reset their island again
+   # Schematics
+   # The default schematic file (if used) for all players is island.schematic.
+   # To give players other schematics, list a permission and the filename
+   # then give the player that permission (it can be anything)
+   # If the file does not exist, it will not load.
+   schematics:
+   #  Note that in this example, the permission is 'schematic.vip'. It can be anything
+   #  you like. For example, an existing permission for a rank of player.
+   # Uncomment the lines after this one after you change them...
+   #  schematic.vip: vipisland.schematic
+   #  schematic.vip2: vip2island.schematic
+   #  schematic.jail: jail.schematic 
+
+   #How long a player must wait before they can reset their island again in second
    resetwait: 300
+
+   #How long a player must wait until they can rejoin a team island after being
+   #kicked in minutes. This slows the effectiveness of players repeating challenges
+   #by repetitively being invited to a team island.
+   invitewait: 60
 
    #How many resets a player is allowed (override with /asadmin clearreset <player>
    #Value of -1 means unlimited, 0 means hardcore - no resets.
@@ -54,6 +72,10 @@ general:
    mobaciddamage: 0
    # Damage that rain does.
    raindamage: 0
+   # Damage that animals will experience in acid.
+   animaldamage: 0
+   # Damage chickens in acid - true or false - chickens tend to go swimming...
+   damagechickens: false
 
    # Damage type to apply in addition to acid damage
    # Types can be : SLOW, SLOW_DIGGING, CONFUSION,BLINDNESS, HUNGER, WEAKNESS and POISON
@@ -95,11 +117,22 @@ general:
    #[integer] Island below this level will be removed if they are abandoned and admins issue the purge command
    abandonedislandlevel: 10
 
+
+   ##### Economy ######
+   # Use economy or not. If true, an economy plugin is required. If false,
+   # no money is used or give and the mini-shop is disabled.
+   # If there is no economy plugin present anyway, money will be automatically
+   # disabled.
+   useeconomy: true
+
    # Reset Money - if this is true, will reset the player's money to
    # the starting money (see below) when they start an island or reset
-   resetmoney: true
+   # Recommendation is that this is set to true, but if you run multi-worlds
+   # make sure your economy handles multi-worlds too.
+   resetmoney: false
 
-   # Starting money - this is how much money new players will have as their balance at the start of an island. (Default is zero)
+   # Starting money - this is how much money new players will have as their
+   # balance at the start of an island. 
    startingmoney: 10.00
 
    # Reset Challenges - if this is true, player's challenges will reset when they
@@ -112,22 +145,39 @@ general:
    # plugin may still reset the inventory when the world changes.
    resetinventory: true
 
-   # Nether spawn protection radius - this is the distance around the nether spawn point that will be protected from player interaction (breaking blocks, pouring lava etc.). Minimum is 0 (not recommended), maximum is 100. Default is 25.
+   # Nether spawn protection radius - this is the distance around the nether spawn
+   # that will be protected from player interaction (breaking blocks, pouring lava etc.)
+   # Minimum is 0 (not recommended), maximum is 100. Default is 25.
+   # Only applies to standard nether.
    netherspawnradius: 25
 
-   # Broadcast 1st time challenge completion messages to all players
+   # Broadcast 1st time challenge completion messages to all players.
+   # Change to false if the spam becomes too much.
    broadcastmessages: true
 
    # Allow /island teleport when falling. If set to false, all teleporting is
-   # disabled until death from the void...
+   # disabled until death from the void or until you hit something.
    allowfallingteleport: true
 
+   # Remove non-repeatable challenges from the challenge GUI when complete
+   removecompleteonetimechallenges: false
+
+   # Add enchanted glow to completed challenges (does not work with all clients)
+   # Also currently adds an "enchanted" line of text...
+   addcompletedglow: true
+
+##### Island Related Settings #####
+
 island:
-   # Space between islands in blocks
+   # Space between islands in blocks - never change this mid-game.
    distance: 110
 
-   # The size of the protective region for each island. Must be less than distance
-   protectionRange: 100
+   # The size of the protective region for each island. Must be at least 16 blocks
+   # less than the island distance.
+   # If you want to override this change overridelimit to true. This may result in
+   # incomplete island deletion (~15% of the time if the island goes to edges)
+   protectionRange: 94
+   overridelimit: false
 
    # Coordinate offset - never change this mid-game and there is no
    # need to set this. It is for compatibility with IslandWorld maps and set by
@@ -148,8 +198,10 @@ island:
    # Use <Damage> to set the durability of a item or to select sub-items/colors.
    # Format for POTION is POTION:<effect>:<qty> or POTION:<effect>:<type>:<qty>
    # <type> is EXTENDED, SPLASH or EXTENDEDSPLASH. Not all potions can be extended.
-   # Check console for errors and guidance after typing /acid reload
+   # Check console for errors and guidance after reloading configuration
+   # Set to '' if items are included in the schematic
    chestItems: 'ICE:2 MELON:1 TORCH:2 BONE:1 LAVA_BUCKET:1 PUMPKIN_SEEDS:1 SUGAR_CANE:1 RED_MUSHROOM:1 BROWN_MUSHROOM:1 CACTUS:1 BREAD:1 WHEAT:1 LEATHER_BOOTS:1 LEATHER_HELMET:1 LEATHER_CHESTPLATE:1 LEATHER_LEGGINGS:1'
+
    # Island Protection Settings
    # PVP is allowed or not.
    # If PVP is denied, then players can expel other players from islands
@@ -215,6 +267,14 @@ island:
    allowenchanting: true
    # Allow anvil use by visitors
    allowanviluse: true
+   # Allow item drop by visitors
+   allowvisitoritemdrop: true
+   # Allow item pickup by visitors
+   allowvisitoritempickup: true
+   # Allow visitors to keep their items if they die
+   allowvisitorkeepinvondeath: false
+   # Allow armor stand use by visitors
+   allowarmorstanduse: false
 
 # This section contains the biomes that can be bought or used
 biomesettings:
@@ -248,7 +308,7 @@ biomes:
     icon: RED_ROSE
     description: The place for flowers!
   HELL:
-    icon: STATIONARY_LAVA
+    icon: LAVA_BUCKET
     cost: 1000
     permission: askyblock.biomes.hell
     friendlyname: Nether

@@ -1,10 +1,10 @@
 name: ASkyBlock
 main: com.wasteofplastic.askyblock.ASkyBlock
-version: 2.5
+version: 2.7.6
 description: A SkyBlock Plugin
 author: Tastybento
-load: startup
 depend: [Vault]
+load: startup
 loadbefore: [Multiverse-Core]
 commands:
     island:
@@ -76,6 +76,9 @@ permissions:
           askyblock.team.vip2:
             description: Allows a bigger team size
             default: false
+      askyblock.coop:
+        description: Allows player to use the coop command
+        default: false
       askyblock.craft.*:
         children:
           askyblock.craft.enderchest:

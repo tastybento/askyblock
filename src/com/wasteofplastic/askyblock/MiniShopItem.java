@@ -43,7 +43,7 @@ public class MiniShopItem {
     /**
      * 
      */
-    public MiniShopItem(Material material, String extra, int slot, String description, int quantity, Double price, Double sellPrice) {
+    protected MiniShopItem(Material material, String extra, int slot, String description, int quantity, Double price, Double sellPrice) {
 	this.slot = slot;
 	this.material = material;
 	this.description = description;
@@ -129,7 +129,7 @@ public class MiniShopItem {
     /**
      * @return the item
      */
-    public ItemStack getItem() {
+    protected ItemStack getItem() {
 	return item;
     }
 
@@ -137,7 +137,7 @@ public class MiniShopItem {
      * Returns a clean version of this item with no meta data
      * @return
      */
-    public ItemStack getItemClean() {
+    protected ItemStack getItemClean() {
 	ItemStack temp = this.item.clone();
 	ItemMeta meta = temp.getItemMeta();
 	meta.setDisplayName(null);
@@ -149,21 +149,21 @@ public class MiniShopItem {
     /**
      * @return the slot
      */
-    public int getSlot() {
+    protected int getSlot() {
 	return slot;
     }
 
     /**
      * @return the price
      */
-    public double getPrice() {
+    protected double getPrice() {
 	return price;
     }
 
     /**
      * @return the sellPrice
      */
-    public double getSellPrice() {
+    protected double getSellPrice() {
         return sellPrice;
     }
 
@@ -171,70 +171,70 @@ public class MiniShopItem {
     /**
      * @return the quantity
      */
-    public int getQuantity() {
+    protected int getQuantity() {
 	return quantity;
     }
 
     /**
      * @return the material
      */
-    public Material getMaterial() {
+    protected Material getMaterial() {
 	return material;
     }
 
     /**
      * @return the description
      */
-    public String getDescription() {
+    protected String getDescription() {
 	return description;
     }
 
     /**
      * @param slot the slot to set
      */
-    public void setSlot(int slot) {
+    protected void setSlot(int slot) {
 	this.slot = slot;
     }
 
     /**
      * @param price the price to set
      */
-    public void setPrice(double price) {
+    protected void setPrice(double price) {
 	this.price = price;
     }
 
     /**
      * @param quantity the quantity to set
      */
-    public void setQuantity(int quantity) {
+    protected void setQuantity(int quantity) {
 	this.quantity = quantity;
     }
 
     /**
      * @param material the material to set
      */
-    public void setMaterial(Material material) {
+    protected void setMaterial(Material material) {
 	this.material = material;
     }
 
     /**
      * @param description the description to set
      */
-    public void setDescription(String description) {
+    protected void setDescription(String description) {
 	this.description = description;
     }
 
     /**
      * @return the extra
      */
-    public String getExtra() {
+    protected String getExtra() {
 	return extra;
     }
 
     /**
      * @param extra the extra to set
      */
-    public void setExtra(String extra) {
+    protected void setExtra(String extra) {
 	this.extra = extra;
     }
    /**
