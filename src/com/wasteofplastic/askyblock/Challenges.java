@@ -430,9 +430,13 @@ public class Challenges implements CommandExecutor {
 	    return false;
 	}
 	// Check if this challenge level is available
-	if (!isLevelAvailable(player, plugin.getChallengeConfig().getString("challenges.challengeList." + challenge + ".level"))) {
-	    player.sendMessage(ChatColor.RED + Locale.challengesyouHaveNotUnlocked);
-	    return false;
+	String level = plugin.getChallengeConfig().getString("challenges.challengeList." + challenge + ".level");
+	// Only check if the challenge has a level, otherwise it's a free level
+	if (!level.isEmpty()) {
+	    if (!isLevelAvailable(player, level)) {
+		player.sendMessage(ChatColor.RED + Locale.challengesyouHaveNotUnlocked);
+		return false;
+	    }
 	}
 	//plugin.getLogger().info("DEBUG: 2");
 	// Check if it is repeatable
