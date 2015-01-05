@@ -190,7 +190,7 @@ public class ASkyBlock extends JavaPlugin {
      * @return the playersFolder
      */
     public File getPlayersFolder() {
-        return playersFolder;
+	return playersFolder;
     }
 
     /**
@@ -303,7 +303,17 @@ public class ASkyBlock extends JavaPlugin {
 	    if (isSafeLocation(l)) {
 		return l;
 	    }    
-	} 
+	}
+	// To cover slabs, stairs and other half blocks, try one block above
+	Location lPlusOne = l.clone();
+	lPlusOne.add(new Vector(0,1,0));
+	if (lPlusOne != null) {
+	    if (isSafeLocation(lPlusOne)) {
+		// Adjust the home location accordingly
+		l = lPlusOne;
+		return lPlusOne;
+	    }    
+	}	
 	//getLogger().info("DEBUG: Home location either isn't safe, or does not exist so try the island");
 	// Home location either isn't safe, or does not exist so try the island
 	// location
@@ -330,17 +340,17 @@ public class ASkyBlock extends JavaPlugin {
 	    getLogger().warning(players.getName(p) + " player has no island!");
 	    return null;
 	}
-	getLogger().info("DEBUG: If these island locations are not safe, then we need to get creative");
+	//getLogger().info("DEBUG: If these island locations are not safe, then we need to get creative");
 	// If these island locations are not safe, then we need to get creative
 	// Try the default location
-	getLogger().info("DEBUG: default");
+	//getLogger().info("DEBUG: default");
 	Location dl = new Location(l.getWorld(), l.getX() + 0.5D, l.getY() + 5D, l.getZ() + 2.5D, 0F, 30F);
 	if (isSafeLocation(dl)) {
 	    players.setHomeLocation(p, dl);
 	    return dl;
 	}
 	// Try just above the bedrock
-	getLogger().info("DEBUG: above bedrock");
+	//getLogger().info("DEBUG: above bedrock");
 	dl = new Location(l.getWorld(), l.getX() + 0.5D, l.getY() + 5D, l.getZ() + 0.5D, 0F, 30F);
 	if (isSafeLocation(dl)) {
 	    players.setHomeLocation(p, dl);
@@ -348,7 +358,7 @@ public class ASkyBlock extends JavaPlugin {
 	}
 
 	// Try higher up - 25 blocks high and then move down
-	getLogger().info("DEBUG: Try higher up");
+	//getLogger().info("DEBUG: Try higher up");
 	for (int y = l.getBlockY() + 25; y > 0; y--) {
 	    final Location n = new Location(l.getWorld(), l.getX() + 0.5D, y, l.getZ() + 0.5D);
 	    if (isSafeLocation(n)) {
@@ -356,14 +366,14 @@ public class ASkyBlock extends JavaPlugin {
 	    }
 	}
 	// Try all the way up to the sky
-	getLogger().info("DEBUG: try all the way to the sky");
+	//getLogger().info("DEBUG: try all the way to the sky");
 	for (int y = l.getBlockY(); y < 255; y++) {
 	    final Location n = new Location(l.getWorld(), l.getX() + 0.5D, y, l.getZ() + 0.5D);
 	    if (isSafeLocation(n)) {
 		return n;
 	    }
 	}
-	getLogger().info("DEBUG: trying around the protected area");
+	//getLogger().info("DEBUG: trying around the protected area");
 	// Try anywhere in the protected island area
 	//Be smart and start at the island level and above it
 	for (int y = Settings.island_level; y<l.getWorld().getMaxHeight(); y++) {
@@ -482,6 +492,9 @@ public class ASkyBlock extends JavaPlugin {
 	// This next line should help players with long ping times
 	// http://bukkit.org/threads/workaround-for-playing-falling-after-teleport-when-lagging.293035/
 	player.sendBlockChange(home,home.getBlock().getType(),home.getBlock().getData());
+	player.sendBlockChange(home.getBlock().getRelative(BlockFace.DOWN).getLocation(),home.getBlock().getRelative(BlockFace.DOWN).getType(),home.getBlock().getRelative(BlockFace.DOWN).getData());
+	//getLogger().info("DEBUG: " + home.getBlock().getType().toString());
+	//getLogger().info("DEBUG: " + home.getBlock().getRelative(BlockFace.DOWN).getType());
 	player.teleport(home);	
 	player.sendMessage(ChatColor.GREEN + Locale.islandteleport);
 	return true;
@@ -562,29 +575,39 @@ public class ASkyBlock extends JavaPlugin {
 	if (l == null) {
 	    return false;
 	}
+	// TODO: improve the safe location finding.
 	//Bukkit.getLogger().info("DEBUG: " + l.toString());
 	final Block ground = l.getBlock().getRelative(BlockFace.DOWN);
 	final Block space1 = l.getBlock();
 	final Block space2 = l.getBlock().getRelative(BlockFace.UP);
-	if (ground.getType().equals(Material.AIR)) {
+	//Bukkit.getLogger().info("DEBUG: ground = " + ground.getType());
+	//Bukkit.getLogger().info("DEBUG: space 1 = " + space1.getType());
+	//Bukkit.getLogger().info("DEBUG: space 2 = " + space2.getType());
+	// If ground is AIR, then this is either not good, or they are on slab, stair, etc.
+	if (ground.getType() == Material.AIR) {
+	    //Bukkit.getLogger().info("DEBUG: air");
 	    return false;
 	}
-	// In aSkyblock, liquid maybe unsafe
+	// In aSkyblock, liquid may be unsafe
 	if (ground.isLiquid() || space1.isLiquid() || space2.isLiquid()) {
 	    // Check if acid has no damage
 	    if (Settings.acidDamage > 0D) {
+		//Bukkit.getLogger().info("DEBUG: acid");
 		return false;
 	    } else if (ground.getType().equals(Material.STATIONARY_LAVA) || ground.getType().equals(Material.LAVA)
 		    || space1.getType().equals(Material.STATIONARY_LAVA) || space1.getType().equals(Material.LAVA)
 		    || space2.getType().equals(Material.STATIONARY_LAVA) || space2.getType().equals(Material.LAVA)) {
 		// Lava check only
+		//Bukkit.getLogger().info("DEBUG: lava");
 		return false;
 	    }
 	}
 	if (ground.getType().equals(Material.CACTUS)) {
+	    //Bukkit.getLogger().info("DEBUG: cactus");
 	    return false;
 	} // Ouch - prickly
 	if (ground.getType().equals(Material.BOAT)) {
+	    //Bukkit.getLogger().info("DEBUG: boat");
 	    return false;
 	} // No, I don't want to end up on the boat again
 	// Check that the space is not solid
@@ -592,18 +615,54 @@ public class ASkyBlock extends JavaPlugin {
 	// a few other items
 	// isSolid thinks that PLATEs and SIGNS are solid, but they are not
 	if (space1.getType().isSolid()) {
+	    //Bukkit.getLogger().info("DEBUG: space 1 is solid");	    
 	    // Do a few other checks
 	    if (!(space1.getType().equals(Material.SIGN_POST)) && !(space1.getType().equals(Material.WALL_SIGN))) {
+		//Bukkit.getLogger().info("DEBUG: space 1 is a sign post or wall sign");
 		return false;
 	    }
+	    /*
+	    switch (space1.getType()) {
+	    case ACACIA_STAIRS:
+	    case BIRCH_WOOD_STAIRS:
+	    case BRICK_STAIRS:
+	    case COBBLESTONE_STAIRS:
+	    case DARK_OAK_STAIRS:
+	    case IRON_PLATE:
+	    case JUNGLE_WOOD_STAIRS:
+	    case NETHER_BRICK_STAIRS:
+	    case PORTAL:
+	    case QUARTZ_STAIRS:
+	    case RED_SANDSTONE_STAIRS:
+	    case SANDSTONE_STAIRS:
+	    case SIGN_POST:
+	    case SMOOTH_STAIRS:
+	    case SPRUCE_WOOD_STAIRS:
+	    case STEP:
+	    case STONE_PLATE:
+	    case STONE_SLAB2:
+	    case WOOD_DOUBLE_STEP:
+	    case WOOD_PLATE:
+	    case WOOD_STAIRS:
+	    case WOOD_STEP:
+		Bukkit.getLogger().info("DEBUG: not solid");
+		break;
+	    default:
+		Bukkit.getLogger().info("DEBUG: solid");
+		return false;
+	    }
+	    */
 	}
 	if (space2.getType().isSolid()) {
+	    //Bukkit.getLogger().info("DEBUG: space 2 is solid");
 	    // Do a few other checks
 	    if (!(space2.getType().equals(Material.SIGN_POST)) && !(space2.getType().equals(Material.WALL_SIGN))) {
+		//Bukkit.getLogger().info("DEBUG: space 2 is a sign post or wall sign");
 		return false;
 	    }
 	}
 	// Safe
+	//Bukkit.getLogger().info("DEBUG: safe!");
 	return true;
     }
 
@@ -905,10 +964,10 @@ public class ASkyBlock extends JavaPlugin {
 		Settings.acidDamage = 0D;
 	    }
 	    Settings.mobAcidDamage = getConfig().getDouble("general.mobaciddamage", 10D);
-	    if (Settings.acidDamage > 100D) {
-		Settings.acidDamage = 100D;
-	    } else if (Settings.acidDamage < 0D) {
-		Settings.acidDamage = 0D;
+	    if (Settings.mobAcidDamage > 100D) {
+		Settings.mobAcidDamage = 100D;
+	    } else if (Settings.mobAcidDamage < 0D) {
+		Settings.mobAcidDamage = 0D;
 	    }
 	    Settings.rainDamage = getConfig().getDouble("general.raindamage", 0.5D);
 	    if (Settings.rainDamage > 100D) {
@@ -924,10 +983,10 @@ public class ASkyBlock extends JavaPlugin {
 		Settings.acidDamage = 0D;
 	    }
 	    Settings.mobAcidDamage = getConfig().getDouble("general.mobaciddamage", 0D);
-	    if (Settings.acidDamage > 100D) {
-		Settings.acidDamage = 100D;
-	    } else if (Settings.acidDamage < 0D) {
-		Settings.acidDamage = 0D;
+	    if (Settings.mobAcidDamage > 100D) {
+		Settings.mobAcidDamage = 100D;
+	    } else if (Settings.mobAcidDamage < 0D) {
+		Settings.mobAcidDamage = 0D;
 	    }
 	    Settings.rainDamage = getConfig().getDouble("general.raindamage", 0D);
 	    if (Settings.rainDamage > 100D) {
@@ -1831,8 +1890,8 @@ public class ASkyBlock extends JavaPlugin {
 			if (plugin.getSpawn().getSpawnLoc() != null) {
 			    // go to island spawn
 			    pl.sendBlockChange(plugin.getSpawn().getSpawnLoc()
-					,plugin.getSpawn().getSpawnLoc().getBlock().getType()
-					,plugin.getSpawn().getSpawnLoc().getBlock().getData());
+				    ,plugin.getSpawn().getSpawnLoc().getBlock().getType()
+				    ,plugin.getSpawn().getSpawnLoc().getBlock().getData());
 			    pl.teleport(plugin.getSpawn().getSpawnLoc());
 			    getLogger().warning("During island deletion player " + pl.getName() + " sent to spawn.");
 			} else {
@@ -2485,6 +2544,16 @@ public class ASkyBlock extends JavaPlugin {
 	return biomes;
     }
 
-
+    /**
+     * This returns the coordinate of where an island should be on the grid.
+     * @param location
+     * @return
+     */
+    protected Location getClosestIsland(Location location) {
+	long x = Math.round((double)location.getBlockX() / Settings.islandDistance) * Settings.islandDistance + Settings.islandXOffset;
+	long z = Math.round((double)location.getBlockZ() / Settings.islandDistance) * Settings.islandDistance + Settings.islandZOffset;
+	long y = Settings.island_level;
+	return new Location(location.getWorld(),x,y,z);
+    }
 
 }
