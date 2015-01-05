@@ -60,12 +60,13 @@ public class AcidInventory implements Listener {
 	//plugin.getLogger().info("Inventory open event called");
 	if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    Inventory inventory = e.getInventory();
-	    // If this is the minishop - forget it
-	    if (inventory.getName().equalsIgnoreCase(Locale.islandMiniShopTitle)) {
+	    if (Settings.acidDamage == 0D) {
 		return;
 	    }
-	    if (Settings.acidDamage == 0D)
+	    // If this is the minishop - forget it
+	    if (inventory.getName() != null && inventory.getName().equalsIgnoreCase(Locale.islandMiniShopTitle)) {
 		return;
+	    }
 	    if (inventory.contains(Material.WATER_BUCKET)) {
 		//plugin.getLogger().info("Inventory contains water bucket");
 		ItemStack[] inv = inventory.getContents();
