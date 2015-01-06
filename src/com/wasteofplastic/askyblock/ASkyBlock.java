@@ -110,6 +110,8 @@ public class ASkyBlock extends JavaPlugin {
     private HashMap<UUID, List<String>> messages = new HashMap<UUID, List<String>>();
     private YamlConfiguration messageStore;
 
+    // Level calc
+    private boolean calculatingLevel = false;
 
     /**
      * @return ASkyBlock object instance
@@ -302,18 +304,19 @@ public class ASkyBlock extends JavaPlugin {
 	if (l != null) {
 	    if (isSafeLocation(l)) {
 		return l;
-	    }    
+	    }
+	    // To cover slabs, stairs and other half blocks, try one block above
+	    Location lPlusOne = l.clone();
+	    lPlusOne.add(new Vector(0,1,0));
+	    if (lPlusOne != null) {
+		if (isSafeLocation(lPlusOne)) {
+		    // Adjust the home location accordingly
+		    l = lPlusOne;
+		    return lPlusOne;
+		}    
+	    }	
 	}
-	// To cover slabs, stairs and other half blocks, try one block above
-	Location lPlusOne = l.clone();
-	lPlusOne.add(new Vector(0,1,0));
-	if (lPlusOne != null) {
-	    if (isSafeLocation(lPlusOne)) {
-		// Adjust the home location accordingly
-		l = lPlusOne;
-		return lPlusOne;
-	    }    
-	}	
+
 	//getLogger().info("DEBUG: Home location either isn't safe, or does not exist so try the island");
 	// Home location either isn't safe, or does not exist so try the island
 	// location
@@ -651,7 +654,7 @@ public class ASkyBlock extends JavaPlugin {
 		Bukkit.getLogger().info("DEBUG: solid");
 		return false;
 	    }
-	    */
+	     */
 	}
 	if (space2.getType().isSolid()) {
 	    //Bukkit.getLogger().info("DEBUG: space 2 is solid");
@@ -1325,6 +1328,7 @@ public class ASkyBlock extends JavaPlugin {
 	Locale.topTenerrorNotReady = locale.getString("topTen.errorNotReady","Top ten list not generated yet!");
 	Locale.levelislandLevel = locale.getString("level.islandLevel","Island level");
 	Locale.levelerrornotYourIsland = locale.getString("level.errornotYourIsland", "Only the island owner can do that.");
+	Locale.levelCalculating = locale.getString("level.calculating","Calculating island level. This will take a few seconds...");
 	Locale.setHomehomeSet = locale.getString("sethome.homeSet","Your island home has been set to your current location.");
 	Locale.setHomeerrorNotOnIsland = locale.getString("sethome.errorNotOnIsland","You must be within your island boundaries to set home!");
 	Locale.setHomeerrorNoIsland = locale.getString("sethome.errorNoIsland","You are not part of an island. Returning you the spawn area!");
@@ -2256,6 +2260,7 @@ public class ASkyBlock extends JavaPlugin {
      * @param player
      */
     protected void resetPlayer(Player player) {
+	//getLogger().info("DEBUG: clear inventory = " + Settings.clearInventory);
 	if (Settings.clearInventory && (player.getWorld().getName().equalsIgnoreCase(Settings.worldName)
 		|| player.getWorld().getName().equalsIgnoreCase(Settings.worldName + "_nether"))) {
 	    // Clear their inventory and equipment and set them as survival
@@ -2554,6 +2559,20 @@ public class ASkyBlock extends JavaPlugin {
 	long z = Math.round((double)location.getBlockZ() / Settings.islandDistance) * Settings.islandDistance + Settings.islandZOffset;
 	long y = Settings.island_level;
 	return new Location(location.getWorld(),x,y,z);
+    }
+
+    /**
+     * @return the calculatingLevel
+     */
+    public boolean isCalculatingLevel() {
+	return calculatingLevel;
+    }
+
+    /**
+     * @param calculatingLevel the calculatingLevel to set
+     */
+    public void setCalculatingLevel(boolean calculatingLevel) {
+	this.calculatingLevel = calculatingLevel;
     }
 
 }

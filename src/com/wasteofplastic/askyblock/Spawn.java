@@ -113,6 +113,9 @@ public class Spawn {
      * @return
      */
     protected boolean isAtSpawn(Location loc) {
+	if (spawnLoc == null) {
+	    return false;
+	}
 	//plugin.getLogger().info("DEBUG: location is " + loc.toString());
 	//plugin.getLogger().info("DEBUG spawnLoc is " + spawnLoc.toString());
 	//plugin.getLogger().info("DEBUG: range = " + range);

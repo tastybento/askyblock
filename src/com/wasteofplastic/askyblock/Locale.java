@@ -363,5 +363,6 @@ public class Locale {
     
     public static String errorWrongWorld;
     public static String islandcannotTeleport;
+    public static String levelCalculating;
       
 }

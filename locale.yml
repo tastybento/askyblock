@@ -68,6 +68,7 @@ topTen:
 level:
    islandLevel: "Island level"
    errornotYourIsland: "Only the leader can do that."
+   calculating: "Calculating island level. This will take a few seconds..."
    
 sethome:
    homeSet: "Your island home has been set to your current location."

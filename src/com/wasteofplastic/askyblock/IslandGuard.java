@@ -1224,9 +1224,9 @@ public class IslandGuard implements Listener {
 	    if(event.getRecipe().getResult().getType() == Material.ENDER_CHEST) {
 		if(!(player.hasPermission(Settings.PERMPREFIX + "craft.enderchest"))) {
 		    event.setCancelled(true);
+		} else {
+		    player.sendMessage(ChatColor.RED + Locale.errorNoPermission);
 		}
-	    } else {
-		player.sendMessage(ChatColor.RED + Locale.errorNoPermission);
 	    }
 	}
     }
@@ -1291,7 +1291,10 @@ public class IslandGuard implements Listener {
 		//plugin.getLogger().info("DEBUG: Limit is " + Settings.breedingLimit);
 		// Check if this player is at the limit of mobs
 		// Spawn snowball in island
-		Location islandLoc = plugin.getPlayers().getIslandLocation(p.getUniqueId());
+		// TODO Get the owner of the island and check this island
+		// ****** This next line is wrong in a coop situation.
+		//Location islandLoc = plugin.getPlayers().getIslandLocation(p.getUniqueId());
+		Location islandLoc = plugin.getClosestIsland(e.getPlayer().getLocation());
 		Entity snowball = p.getWorld().spawnEntity(new Location(p.getWorld(),islandLoc.getBlockX(),128,islandLoc.getBlockZ()), EntityType.SNOWBALL);
 		if (snowball == null)
 		    return;
