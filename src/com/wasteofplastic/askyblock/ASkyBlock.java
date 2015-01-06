@@ -1206,6 +1206,7 @@ public class ASkyBlock extends JavaPlugin {
 	Settings.allowVisitorItemPickup = getConfig().getBoolean("island.allowvisitoritempickup", true);
 	Settings.allowArmorStandUse = getConfig().getBoolean("island.allowarmorstanduse", false);
 	Settings.allowBeaconAccess = getConfig().getBoolean("island.allowbeaconaccess", false);
+	Settings.allowPortalUse = getConfig().getBoolean("island.allowportaluse", true);
 
 	// Challenges
 	final Set<String> challengeList = getChallengeConfig().getConfigurationSection("challenges.challengeList").getKeys(false);

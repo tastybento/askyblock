@@ -95,6 +95,18 @@ public class NetherPortals implements Listener {
 		&& !currentWorld.equalsIgnoreCase(Settings.worldName + "_the_end")) {
 	    return;
 	}
+	// Check if player has permission
+	if (!Settings.allowPortalUse && currentWorld.equalsIgnoreCase(Settings.worldName)) {
+	    // Portal use is disallowed for visitors, but okay for ops or bypass mods
+	    if (!event.getPlayer().isOp() && !VaultHelper.checkPerm(event.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
+		// Portals use is always allowed around the spawn
+		if (!plugin.locationIsOnIsland(event.getPlayer(),event.getPlayer().getLocation())
+			&& !plugin.getSpawn().isAtSpawn(event.getPlayer().getLocation())) {
+		    event.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
+		    event.setCancelled(true);
+		}
+	    }
+	}
 	//plugin.getLogger().info(event.getCause().toString());
 	//plugin.getLogger().info("Get from is " + currentLocation.toString());
 	// Check that we know this player (they could have come from another world)

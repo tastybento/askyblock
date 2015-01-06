@@ -120,6 +120,7 @@ public class Settings {
     protected static boolean allowVisitorItemDrop;
     protected static boolean allowArmorStandUse;
     protected static boolean allowBeaconAccess;
+    protected static boolean allowPortalUse;
     
     //protected static boolean ultraSafeBoats;
     protected static boolean logInRemoveMobs;
@@ -183,6 +184,7 @@ public class Settings {
     
     // Wait between being invited to same team island
     protected static int inviteWait;
+    
     
     
     
