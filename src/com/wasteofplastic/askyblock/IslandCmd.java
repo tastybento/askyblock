@@ -471,7 +471,7 @@ public class IslandCmd implements CommandExecutor {
 		sign.setLine(1, ChatColor.translateAlternateColorCodes('&', Locale.signLine2.replace("[player]", player.getName())));
 		sign.setLine(2, ChatColor.translateAlternateColorCodes('&', Locale.signLine3.replace("[player]", player.getName())));
 		sign.setLine(3, ChatColor.translateAlternateColorCodes('&', Locale.signLine4.replace("[player]", player.getName())));
-		//((org.bukkit.material.Sign) sign.getData()).setFacingDirection(BlockFace.NORTH);
+		((org.bukkit.material.Sign) sign.getData()).setFacingDirection(BlockFace.NORTH);
 		sign.update();
 		// Place the chest - no need to use the safe spawn function because we
 		// know what this island looks like
@@ -1433,8 +1433,19 @@ public class IslandCmd implements CommandExecutor {
 		    player.sendMessage(ChatColor.GREEN + Locale.coopRemoveSuccess.replace("[name]", target.getDisplayName()));
 		}
 		// See if target is on this player's island
-		if (plugin.isOnIsland(player, target)) {   
-		    plugin.homeTeleport(target);
+		if (plugin.isOnIsland(player, target)) { 
+		    // Check to see if this player has an island or is just helping out
+		    if (plugin.getPlayers().inTeam(targetPlayerUUID) || plugin.getPlayers().hasIsland(targetPlayerUUID)) {
+			plugin.homeTeleport(target);
+		    } else {
+			// Just move target to spawn
+			if (!target.performCommand(Settings.SPAWNCOMMAND)) {
+			    target.sendBlockChange(target.getWorld().getSpawnLocation()
+				    ,target.getWorld().getSpawnLocation().getBlock().getType()
+				    ,target.getWorld().getSpawnLocation().getBlock().getData());
+			    target.teleport(player.getWorld().getSpawnLocation());
+			}
+		    }
 		    target.sendMessage(ChatColor.RED + Locale.expelExpelled);
 		    plugin.getLogger().info(player.getName() + " expelled " + target.getName() + " from their island.");
 		    // Yes they are

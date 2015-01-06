@@ -28,11 +28,16 @@ general:
    # portal will return them back to their islands.
    createnether: true
 
+   # Try new island-style nether. Change to true
+   # Still in Beta!
+   newnether: false
+
    # Schematics
    # The default schematic file (if used) for all players is island.schematic.
    # To give players other schematics, list a permission and the filename
    # then give the player that permission (it can be anything)
    # If the file does not exist, it will not load.
+
    schematics:
    #  Note that in this example, the permission is 'schematic.vip'. It can be anything
    #  you like. For example, an existing permission for a rank of player.

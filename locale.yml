@@ -27,7 +27,7 @@ changingObsidiantoLava: "Changing obsidian back into lava. Be careful!"
 
 #AcidInventory
 # The warning that goes on the acid bottles or buckets. Lines are split by \n
-acidLore: "Do\nnot fall!\nBeware!\n"
+acidLore: "Do\nnot drink!\nBeware!\n"
 acidBucket: "Acid Bucket"
 acidBottle: "Acid Bottle"
 drankAcidAndDied: "just drank acid and died."
