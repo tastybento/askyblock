@@ -23,6 +23,12 @@ public class LevelCalc extends BukkitRunnable {
     private UUID targetPlayer;
     private Player asker;
 
+    /**
+     * Calculates the level of an island
+     * @param plugin
+     * @param targetPlayer
+     * @param asker
+     */
     public LevelCalc(ASkyBlock plugin, UUID targetPlayer, Player asker) {
 	this.plugin = plugin;
 	this.targetPlayer = targetPlayer;
@@ -78,16 +84,8 @@ public class LevelCalc extends BukkitRunnable {
 	    }
 	    plugin.updateTopTen();
 	    if (asker.isOnline()) {
-		if (asker.getUniqueId().equals(targetPlayer)) {
-		    asker.sendMessage(
-			    ChatColor.GREEN + Locale.islandislandLevelis + " " + ChatColor.WHITE + plugin.getPlayers().getIslandLevel(targetPlayer));
-		} else {
-		    if (plugin.getPlayers().isAKnownPlayer(targetPlayer)) {
-			asker.sendMessage(ChatColor.GREEN + Locale.islandislandLevelis + " " + ChatColor.WHITE + plugin.getPlayers().getIslandLevel(targetPlayer));
-		    } else {
-			asker.sendMessage(ChatColor.RED + Locale.errorUnknownPlayer);
-		    }
-		}
+		asker.sendMessage(
+			ChatColor.GREEN + Locale.islandislandLevelis + " " + ChatColor.WHITE + plugin.getPlayers().getIslandLevel(targetPlayer));
 	    }
 	    // Clear flag
 	    plugin.setCalculatingLevel(false);

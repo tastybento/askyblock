@@ -548,9 +548,14 @@ public class IslandCmd implements CommandExecutor {
 	    plugin.setCalculatingLevel(false);
 	    return false;
 	}
-	asker.sendMessage(ChatColor.GREEN + Locale.levelCalculating);
-	LevelCalc levelCalc = new LevelCalc(plugin,targetPlayer,asker);
-	levelCalc.runTaskTimer(plugin, 0L, 10L);
+	if (asker.getUniqueId().equals(targetPlayer)) {
+	    asker.sendMessage(ChatColor.GREEN + Locale.levelCalculating);
+	    LevelCalc levelCalc = new LevelCalc(plugin,targetPlayer,asker);
+	    levelCalc.runTaskTimer(plugin, 0L, 10L);
+	} else {
+	    asker.sendMessage(ChatColor.GREEN + Locale.islandislandLevelis + " " + ChatColor.WHITE + plugin.getPlayers().getIslandLevel(targetPlayer));
+	    plugin.setCalculatingLevel(false);
+	}
 	return true;
     }
 
