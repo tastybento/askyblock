@@ -247,9 +247,11 @@ public class Challenges implements CommandExecutor {
 		    boolean hint = false;
 		    for (Material m : Material.values()) {
 			materialList += m.toString() + ",";
-			if (m.toString().startsWith(element[0].substring(0, 3))) {
-			    plugin.getLogger().severe("Did you mean " + m.toString() + "? If so, put that in challenges.yml.");
-			    hint = true;
+			if (element[0].length()>3) {
+			    if (m.toString().startsWith(element[0].substring(0, 3))) {
+				plugin.getLogger().severe("Did you mean " + m.toString() + "? If so, put that in challenges.yml.");
+				hint = true;
+			    }
 			}
 		    }
 		    if (!hint) {
@@ -291,9 +293,11 @@ public class Challenges implements CommandExecutor {
 			boolean hint = false;
 			for (PotionEffectType m : PotionEffectType.values()) {
 			    potionList += m.toString() + ",";
-			    if (m.toString().startsWith(element[1].substring(0, 3))) {
-				plugin.getLogger().severe("Did you mean " + m.toString() + "?");
-				hint = true;
+			    if (element[1].length()>3) {
+				if (m.toString().startsWith(element[1].substring(0, 3))) {
+				    plugin.getLogger().severe("Did you mean " + m.toString() + "?");
+				    hint = true;
+				}
 			    }
 			}
 			if (!hint) {
