@@ -681,12 +681,12 @@ public class Challenges implements CommandExecutor {
 			ItemStack item = new ItemStack(reqItem);
 			// Check for potions
 			if (reqItem.equals(Material.POTION)) {
-			    //plugin.getLogger().info("Potion");
+			    //plugin.getLogger().info("DEBUG: Potion");
 			    // Contains at least does not work for potions
 			    ItemStack[] playerInv = player.getInventory().getContents();
 			    for (ItemStack i : playerInv) {
 				if (i != null && i.getType().equals(Material.POTION)) {
-				    //plugin.getLogger().info("Potion found, durability = "+ i.getDurability());
+				    //plugin.getLogger().info("DEBUG: Potion found, durability = "+ i.getDurability());
 				    if (i.getDurability() == reqDurability) {
 					//plugin.getLogger().info("Matched! ");
 					count--;
@@ -694,6 +694,9 @@ public class Challenges implements CommandExecutor {
 					//plugin.getLogger().info("DEBUG: Found " + item.toString() + ":" + item.getDurability() + " x " + item.getAmount());
 					toBeRemoved.add(i.clone());
 				    }
+				}
+				if (count == 0) {
+				    break;
 				}
 			    }
 			    if (count > 0) {
