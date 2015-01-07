@@ -448,7 +448,22 @@ public class ASkyBlock extends JavaPlugin {
      * @return
      */
     protected void homeSet(final Player player) {
-	if (playerIsOnIsland(player)) {
+	// Make a list of test locations and test them
+	Location islandTestLocation = null;
+	if (players.hasIsland(player.getUniqueId())) {
+	    islandTestLocation = players.getIslandLocation(player.getUniqueId());
+	} else if (players.inTeam(player.getUniqueId())) {
+	    islandTestLocation = players.get(player.getUniqueId()).getTeamIslandLocation();
+	}
+	if (islandTestLocation == null) {
+	    player.sendMessage(ChatColor.RED + Locale.setHomeerrorNotOnIsland);
+	    return;
+	}
+	// On island?
+	if (player.getLocation().getX() > islandTestLocation.getX() - Settings.island_protectionRange / 2
+		&& player.getLocation().getX() < islandTestLocation.getX() + Settings.island_protectionRange / 2
+		&& player.getLocation().getZ() > islandTestLocation.getZ() - Settings.island_protectionRange / 2
+		&& player.getLocation().getZ() < islandTestLocation.getZ() + Settings.island_protectionRange / 2) {
 	    players.setHomeLocation(player.getUniqueId(),player.getLocation());
 	    player.sendMessage(ChatColor.GREEN + Locale.setHomehomeSet);
 	} else {
