@@ -382,6 +382,6 @@ coop:
    success: "[name] is now a coop player until they log out or you expel them."
    madeyoucoopy: "[name] made you a coop player until you log out or they expel you."
    onyourteam: "Player is already on your team!"
-   invited: "[name] made [player] a coop player! Use expel to remove."
+   invited: "[name] made [player] a coop player!"
    useexpel: "Use expel to remove."
  
