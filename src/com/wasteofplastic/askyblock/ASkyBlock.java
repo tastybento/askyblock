@@ -61,6 +61,7 @@ import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
+import org.bukkit.util.Vector;
 
 /**
  * @author ben
@@ -109,6 +110,8 @@ public class ASkyBlock extends JavaPlugin {
     private HashMap<UUID, List<String>> messages = new HashMap<UUID, List<String>>();
     private YamlConfiguration messageStore;
 
+    // Level calc
+    private boolean calculatingLevel = false;
 
     /**
      * @return ASkyBlock object instance
@@ -189,7 +192,7 @@ public class ASkyBlock extends JavaPlugin {
      * @return the playersFolder
      */
     public File getPlayersFolder() {
-        return playersFolder;
+	return playersFolder;
     }
 
     /**
@@ -301,8 +304,19 @@ public class ASkyBlock extends JavaPlugin {
 	if (l != null) {
 	    if (isSafeLocation(l)) {
 		return l;
-	    }    
-	} 
+	    }
+	    // To cover slabs, stairs and other half blocks, try one block above
+	    Location lPlusOne = l.clone();
+	    lPlusOne.add(new Vector(0,1,0));
+	    if (lPlusOne != null) {
+		if (isSafeLocation(lPlusOne)) {
+		    // Adjust the home location accordingly
+		    l = lPlusOne;
+		    return lPlusOne;
+		}    
+	    }	
+	}
+
 	//getLogger().info("DEBUG: Home location either isn't safe, or does not exist so try the island");
 	// Home location either isn't safe, or does not exist so try the island
 	// location
@@ -332,38 +346,43 @@ public class ASkyBlock extends JavaPlugin {
 	//getLogger().info("DEBUG: If these island locations are not safe, then we need to get creative");
 	// If these island locations are not safe, then we need to get creative
 	// Try the default location
+	//getLogger().info("DEBUG: default");
 	Location dl = new Location(l.getWorld(), l.getX() + 0.5D, l.getY() + 5D, l.getZ() + 2.5D, 0F, 30F);
 	if (isSafeLocation(dl)) {
 	    players.setHomeLocation(p, dl);
 	    return dl;
 	}
 	// Try just above the bedrock
-	dl = new Location(l.getWorld(), l.getX(), l.getY() + 5D, l.getZ(), 0F, 30F);
+	//getLogger().info("DEBUG: above bedrock");
+	dl = new Location(l.getWorld(), l.getX() + 0.5D, l.getY() + 5D, l.getZ() + 0.5D, 0F, 30F);
 	if (isSafeLocation(dl)) {
 	    players.setHomeLocation(p, dl);
 	    return dl;
 	}
 
 	// Try higher up - 25 blocks high and then move down
+	//getLogger().info("DEBUG: Try higher up");
 	for (int y = l.getBlockY() + 25; y > 0; y--) {
-	    final Location n = new Location(l.getWorld(), l.getBlockX(), y, l.getBlockZ());
+	    final Location n = new Location(l.getWorld(), l.getX() + 0.5D, y, l.getZ() + 0.5D);
 	    if (isSafeLocation(n)) {
 		return n;
 	    }
 	}
 	// Try all the way up to the sky
+	//getLogger().info("DEBUG: try all the way to the sky");
 	for (int y = l.getBlockY(); y < 255; y++) {
-	    final Location n = new Location(l.getWorld(), l.getBlockX(), y, l.getBlockZ());
+	    final Location n = new Location(l.getWorld(), l.getX() + 0.5D, y, l.getZ() + 0.5D);
 	    if (isSafeLocation(n)) {
 		return n;
 	    }
 	}
-	// Try anywhere in the island area
-	// Start from up above and work down
-	for (int y = l.getWorld().getMaxHeight(); y>0; y--) {
-	    for (int x = l.getBlockX() - Settings.islandDistance/2; x < l.getBlockX() + Settings.islandDistance/2; x++) {
-		for (int z = l.getBlockZ() - Settings.islandDistance/2; z < l.getBlockZ() + Settings.islandDistance/2; z++) {
-		    Location ultimate = new Location(l.getWorld(),x,y,z);
+	//getLogger().info("DEBUG: trying around the protected area");
+	// Try anywhere in the protected island area
+	//Be smart and start at the island level and above it
+	for (int y = Settings.island_level; y<l.getWorld().getMaxHeight(); y++) {
+	    for (int x = l.getBlockX(); x < l.getBlockX() + Settings.island_protectionRange/2; x++) {
+		for (int z = l.getBlockZ(); z < l.getBlockZ() + Settings.island_protectionRange/2; z++) {
+		    Location ultimate = new Location(l.getWorld(),(double)x+0.5D,y,(double)z+0.5D);
 		    if (!ultimate.getBlock().equals(Material.AIR)) {
 			if (isSafeLocation(ultimate)) {
 			    players.setHomeLocation(p, ultimate);
@@ -373,6 +392,49 @@ public class ASkyBlock extends JavaPlugin {
 		}
 	    }
 	}
+	for (int y = Settings.island_level; y<l.getWorld().getMaxHeight(); y++) {
+	    for (int x = l.getBlockX(); x > l.getBlockX() - Settings.island_protectionRange/2; x--) {
+		for (int z = l.getBlockZ(); z < l.getBlockZ() - Settings.island_protectionRange/2; z--) {
+		    Location ultimate = new Location(l.getWorld(),(double)x+0.5D,y,(double)z+0.5D);
+		    if (!ultimate.getBlock().equals(Material.AIR)) {
+			if (isSafeLocation(ultimate)) {
+			    players.setHomeLocation(p, ultimate);
+			    return ultimate;
+			}
+		    }
+		}
+	    }
+	}
+	// Try below the island level
+	// Move away from the center and go to the positive extreme
+	for (int y = Settings.island_level-1; y>0; y--) {
+	    for (int x = l.getBlockX(); x < l.getBlockX() + Settings.island_protectionRange/2; x++) {
+		for (int z = l.getBlockZ(); z < l.getBlockZ() + Settings.island_protectionRange/2; z++) {
+		    Location ultimate = new Location(l.getWorld(),(double)x+0.5D,y,(double)z+0.5D);
+		    if (!ultimate.getBlock().equals(Material.AIR)) {
+			if (isSafeLocation(ultimate)) {
+			    players.setHomeLocation(p, ultimate);
+			    return ultimate;
+			}
+		    }
+		}
+	    }
+	}
+	// Go to the negative extreme
+	for (int y = Settings.island_level-1; y>0; y--) {
+	    for (int x = l.getBlockX(); x > l.getBlockX() - Settings.island_protectionRange/2; x--) {
+		for (int z = l.getBlockZ(); z > l.getBlockZ() - Settings.island_protectionRange/2; z--) {
+		    Location ultimate = new Location(l.getWorld(),(double)x+0.5D,y,(double)z+0.5D);
+		    if (!ultimate.getBlock().equals(Material.AIR)) {
+			if (isSafeLocation(ultimate)) {
+			    players.setHomeLocation(p, ultimate);
+			    return ultimate;
+			}
+		    }
+		}
+	    }
+	}
+
 	// Nothing worked
 	return null;
     }
@@ -386,7 +448,22 @@ public class ASkyBlock extends JavaPlugin {
      * @return
      */
     protected void homeSet(final Player player) {
-	if (playerIsOnIsland(player)) {
+	// Make a list of test locations and test them
+	Location islandTestLocation = null;
+	if (players.hasIsland(player.getUniqueId())) {
+	    islandTestLocation = players.getIslandLocation(player.getUniqueId());
+	} else if (players.inTeam(player.getUniqueId())) {
+	    islandTestLocation = players.get(player.getUniqueId()).getTeamIslandLocation();
+	}
+	if (islandTestLocation == null) {
+	    player.sendMessage(ChatColor.RED + Locale.setHomeerrorNotOnIsland);
+	    return;
+	}
+	// On island?
+	if (player.getLocation().getX() > islandTestLocation.getX() - Settings.island_protectionRange / 2
+		&& player.getLocation().getX() < islandTestLocation.getX() + Settings.island_protectionRange / 2
+		&& player.getLocation().getZ() > islandTestLocation.getZ() - Settings.island_protectionRange / 2
+		&& player.getLocation().getZ() < islandTestLocation.getZ() + Settings.island_protectionRange / 2) {
 	    players.setHomeLocation(player.getUniqueId(),player.getLocation());
 	    player.sendMessage(ChatColor.GREEN + Locale.setHomehomeSet);
 	} else {
@@ -401,6 +478,7 @@ public class ASkyBlock extends JavaPlugin {
      * @param player
      * @return
      */
+    @SuppressWarnings("deprecation")
     protected boolean homeTeleport(final Player player) {
 	Location home = null;
 	home = getSafeHomeLocation(player.getUniqueId());
@@ -418,6 +496,9 @@ public class ASkyBlock extends JavaPlugin {
 	if (home == null) {
 	    // The home is not safe
 	    if (!player.performCommand(Settings.SPAWNCOMMAND)) {
+		player.sendBlockChange(player.getWorld().getSpawnLocation()
+			,player.getWorld().getSpawnLocation().getBlock().getType()
+			,player.getWorld().getSpawnLocation().getBlock().getData());
 		player.teleport(player.getWorld().getSpawnLocation());
 	    }
 	    player.sendMessage(ChatColor.RED + Locale.warpserrorNotSafe);
@@ -425,6 +506,13 @@ public class ASkyBlock extends JavaPlugin {
 	}
 	//home.getWorld().refreshChunk(home.getChunk().getX(), home.getChunk().getZ());
 	home.getWorld().loadChunk(home.getChunk());
+	//getLogger().info("DEBUG: " + home.toString());
+	// This next line should help players with long ping times
+	// http://bukkit.org/threads/workaround-for-playing-falling-after-teleport-when-lagging.293035/
+	player.sendBlockChange(home,home.getBlock().getType(),home.getBlock().getData());
+	player.sendBlockChange(home.getBlock().getRelative(BlockFace.DOWN).getLocation(),home.getBlock().getRelative(BlockFace.DOWN).getType(),home.getBlock().getRelative(BlockFace.DOWN).getData());
+	//getLogger().info("DEBUG: " + home.getBlock().getType().toString());
+	//getLogger().info("DEBUG: " + home.getBlock().getRelative(BlockFace.DOWN).getType());
 	player.teleport(home);	
 	player.sendMessage(ChatColor.GREEN + Locale.islandteleport);
 	return true;
@@ -448,7 +536,9 @@ public class ASkyBlock extends JavaPlugin {
 	    return true;
 	}
 	// Near spawn?
-	if ((getSpawn().getSpawnLoc() != null && loc.distanceSquared(getSpawn().getSpawnLoc()) < (double)((double)Settings.islandDistance) * Settings.islandDistance)) {
+	Vector v = loc.toVector();
+	v.multiply(new Vector(1,0,1));
+	if ((getSpawn().getSpawnLoc() != null && v.distanceSquared(getSpawn().getSpawnLoc().toVector().multiply(new Vector(1,0,1))) < (double)((double)Settings.islandDistance) * Settings.islandDistance)) {
 	    //plugin.getLogger().info("Too near spawn");
 	    return true;
 	}
@@ -503,28 +593,39 @@ public class ASkyBlock extends JavaPlugin {
 	if (l == null) {
 	    return false;
 	}
+	// TODO: improve the safe location finding.
+	//Bukkit.getLogger().info("DEBUG: " + l.toString());
 	final Block ground = l.getBlock().getRelative(BlockFace.DOWN);
 	final Block space1 = l.getBlock();
 	final Block space2 = l.getBlock().getRelative(BlockFace.UP);
-	if (ground.getType().equals(Material.AIR)) {
+	//Bukkit.getLogger().info("DEBUG: ground = " + ground.getType());
+	//Bukkit.getLogger().info("DEBUG: space 1 = " + space1.getType());
+	//Bukkit.getLogger().info("DEBUG: space 2 = " + space2.getType());
+	// If ground is AIR, then this is either not good, or they are on slab, stair, etc.
+	if (ground.getType() == Material.AIR) {
+	    //Bukkit.getLogger().info("DEBUG: air");
 	    return false;
 	}
-	// In aSkyblock, liquid maybe unsafe
+	// In aSkyblock, liquid may be unsafe
 	if (ground.isLiquid() || space1.isLiquid() || space2.isLiquid()) {
 	    // Check if acid has no damage
 	    if (Settings.acidDamage > 0D) {
+		//Bukkit.getLogger().info("DEBUG: acid");
 		return false;
 	    } else if (ground.getType().equals(Material.STATIONARY_LAVA) || ground.getType().equals(Material.LAVA)
 		    || space1.getType().equals(Material.STATIONARY_LAVA) || space1.getType().equals(Material.LAVA)
 		    || space2.getType().equals(Material.STATIONARY_LAVA) || space2.getType().equals(Material.LAVA)) {
 		// Lava check only
+		//Bukkit.getLogger().info("DEBUG: lava");
 		return false;
 	    }
 	}
 	if (ground.getType().equals(Material.CACTUS)) {
+	    //Bukkit.getLogger().info("DEBUG: cactus");
 	    return false;
 	} // Ouch - prickly
 	if (ground.getType().equals(Material.BOAT)) {
+	    //Bukkit.getLogger().info("DEBUG: boat");
 	    return false;
 	} // No, I don't want to end up on the boat again
 	// Check that the space is not solid
@@ -532,18 +633,54 @@ public class ASkyBlock extends JavaPlugin {
 	// a few other items
 	// isSolid thinks that PLATEs and SIGNS are solid, but they are not
 	if (space1.getType().isSolid()) {
+	    //Bukkit.getLogger().info("DEBUG: space 1 is solid");	    
 	    // Do a few other checks
 	    if (!(space1.getType().equals(Material.SIGN_POST)) && !(space1.getType().equals(Material.WALL_SIGN))) {
+		//Bukkit.getLogger().info("DEBUG: space 1 is a sign post or wall sign");
 		return false;
 	    }
+	    /*
+	    switch (space1.getType()) {
+	    case ACACIA_STAIRS:
+	    case BIRCH_WOOD_STAIRS:
+	    case BRICK_STAIRS:
+	    case COBBLESTONE_STAIRS:
+	    case DARK_OAK_STAIRS:
+	    case IRON_PLATE:
+	    case JUNGLE_WOOD_STAIRS:
+	    case NETHER_BRICK_STAIRS:
+	    case PORTAL:
+	    case QUARTZ_STAIRS:
+	    case RED_SANDSTONE_STAIRS:
+	    case SANDSTONE_STAIRS:
+	    case SIGN_POST:
+	    case SMOOTH_STAIRS:
+	    case SPRUCE_WOOD_STAIRS:
+	    case STEP:
+	    case STONE_PLATE:
+	    case STONE_SLAB2:
+	    case WOOD_DOUBLE_STEP:
+	    case WOOD_PLATE:
+	    case WOOD_STAIRS:
+	    case WOOD_STEP:
+		Bukkit.getLogger().info("DEBUG: not solid");
+		break;
+	    default:
+		Bukkit.getLogger().info("DEBUG: solid");
+		return false;
+	    }
+	     */
 	}
 	if (space2.getType().isSolid()) {
+	    //Bukkit.getLogger().info("DEBUG: space 2 is solid");
 	    // Do a few other checks
 	    if (!(space2.getType().equals(Material.SIGN_POST)) && !(space2.getType().equals(Material.WALL_SIGN))) {
+		//Bukkit.getLogger().info("DEBUG: space 2 is a sign post or wall sign");
 		return false;
 	    }
 	}
 	// Safe
+	//Bukkit.getLogger().info("DEBUG: safe!");
 	return true;
     }
 
@@ -845,10 +982,10 @@ public class ASkyBlock extends JavaPlugin {
 		Settings.acidDamage = 0D;
 	    }
 	    Settings.mobAcidDamage = getConfig().getDouble("general.mobaciddamage", 10D);
-	    if (Settings.acidDamage > 100D) {
-		Settings.acidDamage = 100D;
-	    } else if (Settings.acidDamage < 0D) {
-		Settings.acidDamage = 0D;
+	    if (Settings.mobAcidDamage > 100D) {
+		Settings.mobAcidDamage = 100D;
+	    } else if (Settings.mobAcidDamage < 0D) {
+		Settings.mobAcidDamage = 0D;
 	    }
 	    Settings.rainDamage = getConfig().getDouble("general.raindamage", 0.5D);
 	    if (Settings.rainDamage > 100D) {
@@ -864,10 +1001,10 @@ public class ASkyBlock extends JavaPlugin {
 		Settings.acidDamage = 0D;
 	    }
 	    Settings.mobAcidDamage = getConfig().getDouble("general.mobaciddamage", 0D);
-	    if (Settings.acidDamage > 100D) {
-		Settings.acidDamage = 100D;
-	    } else if (Settings.acidDamage < 0D) {
-		Settings.acidDamage = 0D;
+	    if (Settings.mobAcidDamage > 100D) {
+		Settings.mobAcidDamage = 100D;
+	    } else if (Settings.mobAcidDamage < 0D) {
+		Settings.mobAcidDamage = 0D;
 	    }
 	    Settings.rainDamage = getConfig().getDouble("general.raindamage", 0D);
 	    if (Settings.rainDamage > 100D) {
@@ -1083,6 +1220,8 @@ public class ASkyBlock extends JavaPlugin {
 	Settings.allowVisitorItemDrop = getConfig().getBoolean("island.allowvisitoritemdrop", true);
 	Settings.allowVisitorItemPickup = getConfig().getBoolean("island.allowvisitoritempickup", true);
 	Settings.allowArmorStandUse = getConfig().getBoolean("island.allowarmorstanduse", false);
+	Settings.allowBeaconAccess = getConfig().getBoolean("island.allowbeaconaccess", false);
+	Settings.allowPortalUse = getConfig().getBoolean("island.allowportaluse", true);
 
 	// Challenges
 	final Set<String> challengeList = getChallengeConfig().getConfigurationSection("challenges.challengeList").getKeys(false);
@@ -1181,6 +1320,7 @@ public class ASkyBlock extends JavaPlugin {
 	Locale.errorOfflinePlayer = locale.getString("error.offlinePlayer","That player is offline or doesn't exist.");
 	Locale.errorUnknownCommand = locale.getString("error.unknownCommand","Unknown command.");
 	Locale.errorNoTeam = locale.getString("error.noTeam","That player is not in a team.");
+	Locale.errorWrongWorld = locale.getString("error.wrongWorld","You cannot do that in this world.");
 	Locale.islandProtected = locale.getString("islandProtected","Island protected.");
 	Locale.lavaTip = locale.getString("lavaTip","Changing obsidian back into lava. Be careful!");
 	Locale.warpswelcomeLine = locale.getString("warps.welcomeLine","[WELCOME]");
@@ -1204,6 +1344,7 @@ public class ASkyBlock extends JavaPlugin {
 	Locale.topTenerrorNotReady = locale.getString("topTen.errorNotReady","Top ten list not generated yet!");
 	Locale.levelislandLevel = locale.getString("level.islandLevel","Island level");
 	Locale.levelerrornotYourIsland = locale.getString("level.errornotYourIsland", "Only the island owner can do that.");
+	Locale.levelCalculating = locale.getString("level.calculating","Calculating island level. This will take a few seconds...");
 	Locale.setHomehomeSet = locale.getString("sethome.homeSet","Your island home has been set to your current location.");
 	Locale.setHomeerrorNotOnIsland = locale.getString("sethome.errorNotOnIsland","You must be within your island boundaries to set home!");
 	Locale.setHomeerrorNoIsland = locale.getString("sethome.errorNoIsland","You are not part of an island. Returning you the spawn area!");
@@ -1239,6 +1380,7 @@ public class ASkyBlock extends JavaPlugin {
 	Locale.challengesguiTitle = locale.getString("challenges.guititle", "Challenges");
 	Locale.challengeserrorYouAreMissing = locale.getString("challenges.erroryouaremissing", "You are missing");
 	Locale.islandteleport = locale.getString("island.teleport","Teleporting you to your island. (/island help for more info)");
+	Locale.islandcannotTeleport = locale.getString("island.cannotTeleport","You cannot teleport when falling!");
 	Locale.islandnew = locale.getString("island.new","Creating a new island for you...");
 	Locale.islanderrorCouldNotCreateIsland = locale.getString("island.errorCouldNotCreateIsland","Could not create your Island. Please contact a server moderator.");
 	Locale.islanderrorYouDoNotHavePermission = locale.getString("island.errorYouDoNotHavePermission", "You do not have permission to use that command!");
@@ -1390,6 +1532,7 @@ public class ASkyBlock extends JavaPlugin {
 	Locale.expelSuccess = locale.getString("expel.success", "You expelled [name]!");
 	Locale.expelExpelled = locale.getString("expel.expelled", "You were expelled from that island!");
 	Locale.expelFail = locale.getString("expel.fail", "[name] cannot be expelled!");
+	Locale.expelNotYourself = locale.getString("expel.notyourself", "You cannot expel yourself!");
 	Locale.moblimitsError = locale.getString("moblimits.error", "Island breeding limit of [number] reached!");
 	Locale.coopRemoved = locale.getString("coop.removed", "[name] remove your coop status!");
 	Locale.coopRemoveSuccess = locale.getString("coop.removesuccess", "[name] is no longer a coop player.");
@@ -1484,6 +1627,8 @@ public class ASkyBlock extends JavaPlugin {
 		getIslandWorld();
 		// Load warps
 		loadWarpList();
+		// Load spawn
+		getSpawn();
 		// update the list
 		//updateTopTen();
 		// Minishop - must wait for economy to load before we can use econ 
@@ -1763,7 +1908,10 @@ public class ASkyBlock extends JavaPlugin {
 		    if (!pl.isFlying()) {
 			// Move player to spawn
 			if (plugin.getSpawn().getSpawnLoc() != null) {
-			    // go to aSkyblock spawn
+			    // go to island spawn
+			    pl.sendBlockChange(plugin.getSpawn().getSpawnLoc()
+				    ,plugin.getSpawn().getSpawnLoc().getBlock().getType()
+				    ,plugin.getSpawn().getSpawnLoc().getBlock().getData());
 			    pl.teleport(plugin.getSpawn().getSpawnLoc());
 			    getLogger().warning("During island deletion player " + pl.getName() + " sent to spawn.");
 			} else {
@@ -2128,6 +2276,7 @@ public class ASkyBlock extends JavaPlugin {
      * @param player
      */
     protected void resetPlayer(Player player) {
+	//getLogger().info("DEBUG: clear inventory = " + Settings.clearInventory);
 	if (Settings.clearInventory && (player.getWorld().getName().equalsIgnoreCase(Settings.worldName)
 		|| player.getWorld().getName().equalsIgnoreCase(Settings.worldName + "_nether"))) {
 	    // Clear their inventory and equipment and set them as survival
@@ -2416,6 +2565,30 @@ public class ASkyBlock extends JavaPlugin {
 	return biomes;
     }
 
+    /**
+     * This returns the coordinate of where an island should be on the grid.
+     * @param location
+     * @return
+     */
+    protected Location getClosestIsland(Location location) {
+	long x = Math.round((double)location.getBlockX() / Settings.islandDistance) * Settings.islandDistance + Settings.islandXOffset;
+	long z = Math.round((double)location.getBlockZ() / Settings.islandDistance) * Settings.islandDistance + Settings.islandZOffset;
+	long y = Settings.island_level;
+	return new Location(location.getWorld(),x,y,z);
+    }
 
+    /**
+     * @return the calculatingLevel
+     */
+    public boolean isCalculatingLevel() {
+	return calculatingLevel;
+    }
+
+    /**
+     * @param calculatingLevel the calculatingLevel to set
+     */
+    public void setCalculatingLevel(boolean calculatingLevel) {
+	this.calculatingLevel = calculatingLevel;
+    }
 
 }

@@ -22,7 +22,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
@@ -96,6 +95,18 @@ public class NetherPortals implements Listener {
 		&& !currentWorld.equalsIgnoreCase(Settings.worldName + "_the_end")) {
 	    return;
 	}
+	// Check if player has permission
+	if (!Settings.allowPortalUse && currentWorld.equalsIgnoreCase(Settings.worldName)) {
+	    // Portal use is disallowed for visitors, but okay for ops or bypass mods
+	    if (!event.getPlayer().isOp() && !VaultHelper.checkPerm(event.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
+		// Portals use is always allowed around the spawn
+		if (!plugin.locationIsOnIsland(event.getPlayer(),event.getPlayer().getLocation())
+			&& !plugin.getSpawn().isAtSpawn(event.getPlayer().getLocation())) {
+		    event.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
+		    event.setCancelled(true);
+		}
+	    }
+	}
 	//plugin.getLogger().info(event.getCause().toString());
 	//plugin.getLogger().info("Get from is " + currentLocation.toString());
 	// Check that we know this player (they could have come from another world)
@@ -116,6 +127,7 @@ public class NetherPortals implements Listener {
 		    event.setCancelled(true);
 		    Location end_place = plugin.getServer().getWorld(Settings.worldName + "_the_end").getSpawnLocation();
 		    if (ASkyBlock.isSafeLocation(end_place)) {
+			event.getPlayer().sendBlockChange(end_place, end_place.getBlock().getType(),end_place.getBlock().getData());
 			event.getPlayer().teleport(end_place);
 			return;
 		    } else {
@@ -146,10 +158,10 @@ public class NetherPortals implements Listener {
 		event.setTo(plugin.getServer().getWorld(Settings.worldName + "_nether").getSpawnLocation());
 	    }
 	    //if (!Settings.newNether) {
-	//	event.useTravelAgent(true);
+	    //	event.useTravelAgent(true);
 	    //} else {
 	    // Use the portal for now
-		event.useTravelAgent(true);
+	    event.useTravelAgent(true);
 	    //}
 	} else {
 	    // Returning to island
@@ -183,6 +195,9 @@ public class NetherPortals implements Listener {
 	//plugin.getLogger().info("Block break");
 	if ((e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_nether") && !Settings.newNether) 
 		|| e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_the_end")) {
+	    if (VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
+		return;
+	    }
 	    //plugin.getLogger().info("Block break in acid island nether");
 	    if (!awayFromSpawn(e.getPlayer()) && !e.getPlayer().isOp()) {
 		e.getPlayer().sendMessage(Locale.netherSpawnIsProtected);
@@ -200,6 +215,9 @@ public class NetherPortals implements Listener {
     public void onPlayerBlockPlace(final BlockPlaceEvent e) {
 	if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_nether")
 		|| e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_the_end")) {
+	    if (VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
+		return;
+	    }
 	    if (!awayFromSpawn(e.getPlayer()) && !e.getPlayer().isOp()) {		   
 		e.setCancelled(true);
 	    }
@@ -211,6 +229,9 @@ public class NetherPortals implements Listener {
     public void onBucketEmpty(final PlayerBucketEmptyEvent e) {
 	if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_nether")
 		|| e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_the_end")) {
+	    if (VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
+		return;
+	    }
 	    if (!awayFromSpawn(e.getPlayer()) && !e.getPlayer().isOp()) {
 		e.setCancelled(true);
 	    }
@@ -289,6 +310,9 @@ public class NetherPortals implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onTreeGrow(final StructureGrowEvent e) {
+	if (!Settings.newNether) {
+	    return;
+	}
 	// Check world
 	if (!e.getLocation().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_nether")) {
 	    return;

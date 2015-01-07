@@ -215,6 +215,12 @@ public class PlayerCache {
 	return playerCache.get(playerUUID).getHomeLocation();
     }
 
+    /**
+     * Returns the player's island location.
+     * Returns an island location OR a team island location
+     * @param playerUUID
+     * @return
+     */
     protected Location getIslandLocation(UUID playerUUID) {
 	addPlayer(playerUUID);
 	return playerCache.get(playerUUID).getIslandLocation();

@@ -43,7 +43,7 @@ public class InventorySave {
 	//plugin.getLogger().info("DEBUG: Loading inventory");
 	// Get the info for this player
 	if (inventories.containsKey(player.getUniqueId())) {
-	    plugin.getLogger().info("DEBUG: player is known");
+	    //plugin.getLogger().info("DEBUG: player is known");
 	    HashMap<Location,InventoryStore> inv = inventories.get(player.getUniqueId());
 	    //plugin.getLogger().info("DEBUG: size of inv = " + inv.size());
 	    //plugin.getLogger().info("DEBUG: loc = " + loc);

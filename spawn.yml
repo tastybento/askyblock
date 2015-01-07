@@ -1,4 +1,5 @@
-# This file controls what is an is not allowed at spawn
+# This file controls what is and is not allowed at spawn
+# It also contains the coordinates of spawn if it exists
 spawn:
   # Range that spawn occupies
   range: 50
@@ -16,3 +17,4 @@ spawn:
   allowspawnnoacidwater: false
   allowenchanting: true
   allowanviluse: true
+  allowbeaconaccess: false

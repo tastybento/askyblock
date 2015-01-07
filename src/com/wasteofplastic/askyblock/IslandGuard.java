@@ -35,7 +35,6 @@ import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -102,8 +101,12 @@ public class IslandGuard implements Listener {
 	if (!(e.getAttacker() instanceof Player)) {
 	    return;
 	}
-	Player p = (Player)e.getAttacker();
 
+	Player p = (Player)e.getAttacker();
+	// This permission bypasses protection
+	if (VaultHelper.checkPerm(p, Settings.PERMPREFIX + "mod.bypassprotect")) {
+	    return;
+	}
 	if (!p.getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    return;
 	}
@@ -344,7 +347,8 @@ public class IslandGuard implements Listener {
 	    return;
 	}
 	// Check if air below player
-	if (e.getPlayer().getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.AIR
+	//plugin.getLogger().info("DEBUG:" + Math.round(e.getPlayer().getVelocity().getY()));
+	if ((Math.round(e.getPlayer().getVelocity().getY())<0L) && e.getPlayer().getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.AIR
 		&& e.getPlayer().getLocation().getBlock().getType() == Material.AIR) {
 	    //plugin.getLogger().info("DEBUG: falling");
 	    plugin.setFalling(e.getPlayer().getUniqueId());
@@ -374,7 +378,7 @@ public class IslandGuard implements Listener {
 	}
 	if (plugin.isFalling(e.getPlayer().getUniqueId())) {
 	    // Sorry you are going to die
-	    e.getPlayer().sendMessage(Locale.errorCommandNotReady);
+	    e.getPlayer().sendMessage(Locale.islandcannotTeleport);
 	    e.setCancelled(true);
 	    // Check if the player is in the void and kill them just in case
 	    if (e.getPlayer().getLocation().getBlockY() < 0) {
@@ -1146,6 +1150,13 @@ public class IslandGuard implements Listener {
 			return;
 		    }
 		}
+	    case BEACON:
+		if (!Settings.allowBeaconAccess && !(playerAtSpawn && Settings.allowSpawnBeaconAccess)) {
+		    e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
+		    e.setCancelled(true);
+		    return; 
+		}
+		break;
 	    default:
 		break;
 	    }
@@ -1213,6 +1224,8 @@ public class IslandGuard implements Listener {
 	    if(event.getRecipe().getResult().getType() == Material.ENDER_CHEST) {
 		if(!(player.hasPermission(Settings.PERMPREFIX + "craft.enderchest"))) {
 		    event.setCancelled(true);
+		} else {
+		    player.sendMessage(ChatColor.RED + Locale.errorNoPermission);
 		}
 	    }
 	}
@@ -1234,8 +1247,10 @@ public class IslandGuard implements Listener {
 		if (event.getClickedBlock().getType() == Material.ENDER_CHEST){
 		    if(!(event.getPlayer().hasPermission(Settings.PERMPREFIX + "craft.enderchest"))) {
 			event.setCancelled(true);
+		    } else {
+			player.sendMessage(ChatColor.RED + Locale.errorNoPermission);
 		    }
-		}
+		} 
 	    }
 	}
     }
@@ -1254,8 +1269,8 @@ public class IslandGuard implements Listener {
 	if (!p.getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    return;
 	}
-	if (p.isOp()) {
-	    // You can do anything if you are Op
+	if (p.isOp() || VaultHelper.checkPerm(p, Settings.PERMPREFIX + "mod.bypassprotect")) {
+	    // You can do anything if you are Op of have the bypass
 	    return;
 	}
 	// Check limit of animals on island
@@ -1276,7 +1291,10 @@ public class IslandGuard implements Listener {
 		//plugin.getLogger().info("DEBUG: Limit is " + Settings.breedingLimit);
 		// Check if this player is at the limit of mobs
 		// Spawn snowball in island
-		Location islandLoc = plugin.getPlayers().getIslandLocation(p.getUniqueId());
+		// TODO Get the owner of the island and check this island
+		// ****** This next line is wrong in a coop situation.
+		//Location islandLoc = plugin.getPlayers().getIslandLocation(p.getUniqueId());
+		Location islandLoc = plugin.getClosestIsland(e.getPlayer().getLocation());
 		Entity snowball = p.getWorld().spawnEntity(new Location(p.getWorld(),islandLoc.getBlockX(),128,islandLoc.getBlockZ()), EntityType.SNOWBALL);
 		if (snowball == null)
 		    return;

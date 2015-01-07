@@ -342,6 +342,10 @@ public class Players {
      * @return the location of the player's island in Location form
      */
     protected Location getIslandLocation() {
+	// TODO: Enable this, but check the implications
+	//if (islandLocation.isEmpty() && inTeam) {
+	//    return getLocationString(teamIslandLocation);
+	//}
 	return getLocationString(islandLocation);
     }
 

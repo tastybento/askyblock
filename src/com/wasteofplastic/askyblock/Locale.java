@@ -16,6 +16,7 @@
  *******************************************************************************/
 package com.wasteofplastic.askyblock;
 
+
 /**
  * @author ben
  * All the text strings in the game sent to players
@@ -345,6 +346,7 @@ public class Locale {
     public static String expelNotOnIsland;
     public static String expelExpelled;
     public static String expelFail;
+    public static String expelNotYourself;
     
     // Mob limits
     public static String moblimitsError;
@@ -358,5 +360,9 @@ public class Locale {
     public static String islandhelpCoop;
     public static String coopInvited;
     public static String coopUseExpel;
+    
+    public static String errorWrongWorld;
+    public static String islandcannotTeleport;
+    public static String levelCalculating;
       
 }

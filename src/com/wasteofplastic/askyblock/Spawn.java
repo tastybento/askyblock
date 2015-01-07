@@ -55,7 +55,7 @@ public class Spawn {
 	Settings.allowSpawnNoAcidWater = spawn.getBoolean("allowspawnnoacidwater", false);
 	Settings.allowSpawnEnchanting = spawn.getBoolean("allowenchanting",true);
 	Settings.allowSpawnAnvilUse = spawn.getBoolean("allowanviluse",true);
-
+	Settings.allowSpawnBeaconAccess = spawn.getBoolean("allowbeaconaccess",false);
 
 	this.spawnLoc = ASkyBlock.getLocationString(spawn.getString("location",""));
 	this.bedrock = ASkyBlock.getLocationString(spawn.getString("bedrock",""));
@@ -113,6 +113,9 @@ public class Spawn {
      * @return
      */
     protected boolean isAtSpawn(Location loc) {
+	if (spawnLoc == null) {
+	    return false;
+	}
 	//plugin.getLogger().info("DEBUG: location is " + loc.toString());
 	//plugin.getLogger().info("DEBUG spawnLoc is " + spawnLoc.toString());
 	//plugin.getLogger().info("DEBUG: range = " + range);
