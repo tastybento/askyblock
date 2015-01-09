@@ -20,13 +20,14 @@ error:
    offlinePlayer: "That player is offline or doesn't exist."
    unknownCommand: "Unknown command."
    noTeam: "Player is not in a team."
+   wrongWorld: "You cannot do that in this world."
 
 #AcidEffect
 changingObsidiantoLava: "Changing obsidian back into lava. Be careful!"
 
 #AcidInventory
 # The warning that goes on the acid bottles or buckets. Lines are split by \n
-acidLore: "Do\nnot fall!\nBeware!\n"
+acidLore: "Do\nnot drink!\nBeware!\n"
 acidBucket: "Acid Bucket"
 acidBottle: "Acid Bottle"
 drankAcidAndDied: "just drank acid and died."
@@ -67,6 +68,7 @@ topTen:
 level:
    islandLevel: "Island level"
    errornotYourIsland: "Only the leader can do that."
+   calculating: "Calculating island level. This will take a few seconds..."
    
 sethome:
    homeSet: "Your island home has been set to your current location."
@@ -110,6 +112,7 @@ challenges:
 #/island
 island:
    teleport: "Teleporting you to your island. (/island help for more info)"
+   cannotTeleport: "You cannot teleport when falling!"
    new: "Creating a new island for you..."
    errorCouldNotCreateIsland: "Could not create your Island. Please contact a server moderator."
    errorYouDoNotHavePermission: "You do not have permission to use that command!"
@@ -198,12 +201,12 @@ reject:
 
 #leave
 leave:
-  errorYouAreTheLeader: "You cannot leave because you are the leader, use /island makeleader <player> to transfer the island first."
+  errorYouAreTheLeader: "You cannot leave because you are the leader. Make someone the leader first."
   youHaveLeftTheIsland: "You have left the island and returned to the player spawn."
   nameHasLeftYourIsland: "[name] has left your island!"
-  errorYouCannotLeaveIsland: "You can't leave your island if you are the only person. Try using /island restart if you want a new one!"
-  errorYouMustBeInWorld: "You must be in the A Skyblock world to leave your team!"
-  errorLeadersCannotLeave: "Leaders cannot leave an island. Make someone else the leader fist using /island makeleader <player>"
+  errorYouCannotLeaveIsland: "You can't leave your island if you are the only person. Try restart if you want a new one!"
+  errorYouMustBeInWorld: "You must be in the island world to leave your team!"
+  errorLeadersCannotLeave: "Leaders cannot leave an island. Make someone else the leader first."
 
 #team
 team:
@@ -367,6 +370,7 @@ expel:
    success: "You expelled [name]!"
    expelled: "You were expelled from that island!"
    fail: "[name] cannot be expelled!"
+   notyourself: "You cannot expel yourself!"
 
 moblimits:
    error: "Island breeding limit of [number] reached!"
@@ -378,6 +382,6 @@ coop:
    success: "[name] is now a coop player until they log out or you expel them."
    madeyoucoopy: "[name] made you a coop player until you log out or they expel you."
    onyourteam: "Player is already on your team!"
-   invited: "[name] made [player] a coop player! Use expel to remove."
+   invited: "[name] made [player] a coop player!"
    useexpel: "Use expel to remove."
  

@@ -186,6 +186,9 @@ public class AdminCmd implements CommandExecutor {
 		    return true;
 		}
 		Player p = (Player)sender;
+		// TODO: The island location needs to be calculated based on the grid, NOT the bedrock location
+
+
 		Location closestBedRock = null;
 		double distance = 0;
 		for (int x = -Settings.islandDistance; x< Settings.islandDistance; x++) {
@@ -497,7 +500,16 @@ public class AdminCmd implements CommandExecutor {
 		    return true;
 		} else {
 		    if (plugin.getPlayers().getIslandLocation(playerUUID) != null) {
-			((Player)sender).teleport(plugin.getSafeHomeLocation(playerUUID));
+			Location safeSpot = plugin.getSafeHomeLocation(playerUUID);
+			if (safeSpot != null) {
+			    // This next line should help players with long ping times
+			    ((Player)sender).sendBlockChange(safeSpot,safeSpot.getBlock().getType(),safeSpot.getBlock().getData());
+			    ((Player)sender).teleport(safeSpot);
+			} else {
+			    sender.sendMessage(ChatColor.RED + Locale.warpserrorNotSafe);
+			    Location warpSpot = plugin.getPlayers().getIslandLocation(playerUUID);
+			    sender.sendMessage(ChatColor.RED + "Manually warp to somewhere near " + warpSpot.getBlockX() + " " + warpSpot.getBlockY() + " " + warpSpot.getBlockZ());
+			}
 			return true;
 		    }
 		    sender.sendMessage(Locale.errorNoIslandOther);
@@ -863,7 +875,7 @@ public class AdminCmd implements CommandExecutor {
 		    // Look around
 		    final int px = loc.getBlockX();
 		    final int pz = loc.getBlockZ();
-		 
+
 		    for (int x = -5; x <= 5; x++) {
 			for (int z = -5; z <= 5; z++) {
 			    for (int y = 10; y <= 255; y++) {
@@ -898,7 +910,7 @@ public class AdminCmd implements CommandExecutor {
      * @param location
      * @return
      */
-    private Location getClosestIsland(Location location) {
+    protected static Location getClosestIsland(Location location) {
 	long x = Math.round((double)location.getBlockX() / Settings.islandDistance) * Settings.islandDistance + Settings.islandXOffset;
 	long z = Math.round((double)location.getBlockZ() / Settings.islandDistance) * Settings.islandDistance + Settings.islandZOffset;
 	long y = Settings.island_level;

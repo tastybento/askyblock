@@ -258,4 +258,26 @@ public class ASkyBlockAPI {
 	plugin.tellOfflineTeam(playerUUID, message);
     }
 
+    /**
+     * Player is in a coop or not
+     * @param player
+     * @return true if player is in a coop, otherwise false
+     */
+    public boolean isCoop(Player player) {
+	if (CoopPlay.getInstance().getCoopIslands(player).isEmpty()) {
+	    return false;
+	}
+	return true;
+    }
+    
+    /**
+     * Find out which coop islands player is a part of
+     * @param player
+     * @return set of locations of islands or empty if none
+     */
+    public Set<Location> getCoopIslands(Player player) {
+	return CoopPlay.getInstance().getCoopIslands(player);
+    }
+    
+    
 }

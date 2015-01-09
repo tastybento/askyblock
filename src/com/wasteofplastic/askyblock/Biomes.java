@@ -128,7 +128,7 @@ public class Biomes implements Listener {
 			    player.sendMessage(ChatColor.RED + Locale.minishopYouCannotAfford.replace("[description]", VaultHelper.econ.format(cost)));
 			    return;
 			} else {
-			    VaultHelper.econ.withdrawPlayer(player, cost);
+			    VaultHelper.econ.withdrawPlayer(player, Settings.worldName, cost);
 			    player.sendMessage(ChatColor.GREEN + Locale.biomeYouBought.replace("[cost]", VaultHelper.econ.format(cost)));
 			}
 		    }

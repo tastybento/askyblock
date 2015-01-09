@@ -193,6 +193,7 @@ public class ControlPanel implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
+	// TODO : this needs optimization
 	Player player = (Player) event.getWhoClicked(); // The player that clicked the item
 	ItemStack clicked = event.getCurrentItem(); // The item that was clicked
 	Inventory inventory = event.getInventory(); // The inventory that was clicked in
@@ -248,6 +249,12 @@ public class ControlPanel implements Listener {
 	    // Get the list of items in this inventory
 	    //plugin.getLogger().info("DEBUG: You clicked on slot " + slot);
 	    List<CPItem> challenges = plugin.getChallenges().getCP(player);
+	    if (challenges == null) {
+		plugin.getLogger().warning("Player was accessing Challenge Inventory, but it had lost state - was server restarted?");
+		player.closeInventory();
+		player.performCommand(Settings.CHALLENGECOMMAND);
+		return;
+	    }
 	    //plugin.getLogger().info("DEBUG: Challenges size = " + challenges.size());
 	    if (slot >=0 && slot < challenges.size()) {
 		CPItem item = challenges.get(slot);
@@ -286,11 +293,11 @@ public class ControlPanel implements Listener {
 			// Check if item is for sale
 			if (item.getPrice() > 0D) {
 			    // Check they can afford it
-			    if (!VaultHelper.econ.has(player, player.getWorld().getName(), item.getPrice())) {
+			    if (!VaultHelper.econ.has(player, Settings.worldName, item.getPrice())) {
 				//message = "You cannot afford that item!";
 				message = (Locale.minishopYouCannotAfford).replace("[description]", item.getDescription());
 			    } else {
-				EconomyResponse r = VaultHelper.econ.withdrawPlayer(player, player.getWorld().getName(), item.getPrice());
+				EconomyResponse r = VaultHelper.econ.withdrawPlayer(player, Settings.worldName, item.getPrice());
 				if (r.transactionSuccess()) {
 				    //message = "You bought " + item.getQuantity() + " " + item.getDescription() + " for " + VaultHelper.econ.format(item.getPrice());			
 				    message = Locale.minishopYouBought.replace("[number]", Integer.toString(item.getQuantity()));
@@ -307,7 +314,7 @@ public class ControlPanel implements Listener {
 			// Check if they have the item
 			if (player.getInventory().containsAtLeast(item.getItemClean(),item.getQuantity())) {
 			    player.getInventory().removeItem(item.getItemClean());
-			    VaultHelper.econ.depositPlayer(player, item.getSellPrice());
+			    VaultHelper.econ.depositPlayer(player, Settings.worldName, item.getSellPrice());
 			    //message = "You sold " + item.getQuantity() + " " + item.getDescription() + " for " + VaultHelper.econ.format(item.getSellPrice());
 			    message = Locale.minishopYouSold.replace("[number]", Integer.toString(item.getQuantity()));
 			    message = message.replace("[description]", item.getDescription());

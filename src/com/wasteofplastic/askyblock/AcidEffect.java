@@ -45,8 +45,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 /**
- * @author ben
  * Applies the acid effect to players
+ * @author tastybento
  */
 public class AcidEffect implements Listener {
     private final ASkyBlock plugin;

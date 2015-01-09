@@ -73,6 +73,7 @@ public class Challenges implements CommandExecutor {
 	}
 	final Player player = (Player)sender;
 	if (!player.getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	    player.sendMessage(ChatColor.RED + Locale.errorWrongWorld);
 	    return true;
 	}
 	// Check permissions
@@ -246,9 +247,11 @@ public class Challenges implements CommandExecutor {
 		    boolean hint = false;
 		    for (Material m : Material.values()) {
 			materialList += m.toString() + ",";
-			if (m.toString().startsWith(element[0].substring(0, 3))) {
-			    plugin.getLogger().severe("Did you mean " + m.toString() + "? If so, put that in challenges.yml.");
-			    hint = true;
+			if (element[0].length()>3) {
+			    if (m.toString().startsWith(element[0].substring(0, 3))) {
+				plugin.getLogger().severe("Did you mean " + m.toString() + "? If so, put that in challenges.yml.");
+				hint = true;
+			    }
 			}
 		    }
 		    if (!hint) {
@@ -290,9 +293,11 @@ public class Challenges implements CommandExecutor {
 			boolean hint = false;
 			for (PotionEffectType m : PotionEffectType.values()) {
 			    potionList += m.toString() + ",";
-			    if (m.toString().startsWith(element[1].substring(0, 3))) {
-				plugin.getLogger().severe("Did you mean " + m.toString() + "?");
-				hint = true;
+			    if (element[1].length()>3) {
+				if (m.toString().startsWith(element[1].substring(0, 3))) {
+				    plugin.getLogger().severe("Did you mean " + m.toString() + "?");
+				    hint = true;
+				}
 			    }
 			}
 			if (!hint) {
@@ -422,16 +427,20 @@ public class Challenges implements CommandExecutor {
      */
     protected boolean checkIfCanCompleteChallenge(final Player player, final String challenge) {
 	//plugin.getLogger().info("DEBUG: " + player.getDisplayName() + " " + challenge);
-	// Check if this challenge level is available
-	if (!isLevelAvailable(player, plugin.getChallengeConfig().getString("challenges.challengeList." + challenge + ".level"))) {
-	    player.sendMessage(ChatColor.RED + Locale.challengesyouHaveNotUnlocked);
-	    return false;
-	}
 	//plugin.getLogger().info("DEBUG: 1");
 	// Check if the challenge exists
 	if (!players.challengeExists(player.getUniqueId(), challenge)) {
 	    player.sendMessage(ChatColor.RED + Locale.challengesunknownChallenge);
 	    return false;
+	}
+	// Check if this challenge level is available
+	String level = plugin.getChallengeConfig().getString("challenges.challengeList." + challenge + ".level");
+	// Only check if the challenge has a level, otherwise it's a free level
+	if (!level.isEmpty()) {
+	    if (!isLevelAvailable(player, level)) {
+		player.sendMessage(ChatColor.RED + Locale.challengesyouHaveNotUnlocked);
+		return false;
+	    }
 	}
 	//plugin.getLogger().info("DEBUG: 2");
 	// Check if it is repeatable
@@ -538,6 +547,7 @@ public class Challenges implements CommandExecutor {
 	    int reqAmount = 0;
 	    for (final String s : reqList) {
 		final String[] part = s.split(":");
+		// Material:Qty
 		if (part.length == 2) {
 		    try {
 			// Correct some common mistakes
@@ -555,22 +565,23 @@ public class Challenges implements CommandExecutor {
 			reqItem = Material.getMaterial(part[0]);
 			reqAmount = Integer.parseInt(part[1]);
 			ItemStack item = new ItemStack(reqItem);
-			// plugin.getLogger().info("DEBUG: required item = " +
-			// reqItem.toString());
-			// plugin.getLogger().info("DEBUG: item amount = " +
-			// reqAmount);
+			//plugin.getLogger().info("DEBUG: required item = " + reqItem.toString());
+			//plugin.getLogger().info("DEBUG: item amount = " + reqAmount);
 
 			if (!player.getInventory().contains(reqItem)) {
 			    return false;
 			} else {
 			    // check amount
 			    int amount = 0;
+			    // plugin.getLogger().info("DEBUG: Amount in inventory = " + player.getInventory().all(reqItem).size());
 			    // Go through all the inventory and try to find
 			    // enough required items
 			    for (Entry<Integer, ? extends ItemStack> en : player.getInventory().all(reqItem).entrySet()) {
 				// Get the item
 				ItemStack i = en.getValue();
-				if (i.getDurability() == 0) {
+				// Map needs special handling because the durability increments every time a new one is made by the player
+				// TODO: if there are any other items that act in the same way, they need adding too...
+				if (i.getDurability() == 0 || (reqItem == Material.MAP && i.getType() == Material.MAP)) {
 				    // Clear any naming, or lore etc.
 				    i.setItemMeta(null);
 				    player.getInventory().setItem(en.getKey(), i);
@@ -587,18 +598,15 @@ public class Challenges implements CommandExecutor {
 					// original
 					toBeRemoved.add(i.clone());
 					amount += i.getAmount();
-					// plugin.getLogger().info("DEBUG: amount is <= req Remove "
-					// + i.toString() + ":" + i.getDurability()
-					// + " x " + i.getAmount());
+					// plugin.getLogger().info("DEBUG: amount is <= req Remove " + i.toString() + ":" + i.getDurability() + " x " + i.getAmount());
 				    } else if ((amount + i.getAmount()) == reqAmount) {
+					// plugin.getLogger().info("DEBUG: amount is = req Remove " + i.toString() + ":" + i.getDurability() + " x " + i.getAmount());
 					toBeRemoved.add(i.clone());
 					amount += i.getAmount();
 					break;
 				    } else {
 					// Remove a portion of this item
-					// plugin.getLogger().info("DEBUG: amount is > req Remove "
-					// + i.toString() + ":" + i.getDurability()
-					// + " x " + i.getAmount());
+					// plugin.getLogger().info("DEBUG: amount is > req Remove " + i.toString() + ":" + i.getDurability() + " x " + i.getAmount());
 
 					item.setAmount(reqAmount - amount);
 					item.setDurability(i.getDurability());
@@ -677,12 +685,12 @@ public class Challenges implements CommandExecutor {
 			ItemStack item = new ItemStack(reqItem);
 			// Check for potions
 			if (reqItem.equals(Material.POTION)) {
-			    //plugin.getLogger().info("Potion");
+			    //plugin.getLogger().info("DEBUG: Potion");
 			    // Contains at least does not work for potions
 			    ItemStack[] playerInv = player.getInventory().getContents();
 			    for (ItemStack i : playerInv) {
 				if (i != null && i.getType().equals(Material.POTION)) {
-				    //plugin.getLogger().info("Potion found, durability = "+ i.getDurability());
+				    //plugin.getLogger().info("DEBUG: Potion found, durability = "+ i.getDurability());
 				    if (i.getDurability() == reqDurability) {
 					//plugin.getLogger().info("Matched! ");
 					count--;
@@ -690,6 +698,9 @@ public class Challenges implements CommandExecutor {
 					//plugin.getLogger().info("DEBUG: Found " + item.toString() + ":" + item.getDurability() + " x " + item.getAmount());
 					toBeRemoved.add(i.clone());
 				    }
+				}
+				if (count == 0) {
+				    break;
 				}
 			    }
 			    if (count > 0) {

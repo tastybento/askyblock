@@ -100,7 +100,8 @@ public class IslandGuardNew implements Listener {
 	// Prevents tilling of coarse dirt into dirt
 	ItemStack inHand = e.getPlayer().getItemInHand();
 	if (inHand.getType() == Material.WOOD_HOE || inHand.getType() == Material.IRON_HOE
-		|| inHand.getType() == Material.GOLD_HOE || inHand.getType() == Material.DIAMOND_HOE) {
+		|| inHand.getType() == Material.GOLD_HOE || inHand.getType() == Material.DIAMOND_HOE
+		|| inHand.getType() == Material.STONE_HOE) {
 	    //plugin.getLogger().info("DEBUG: hoe in hand");
 	    Block block = e.getClickedBlock();
 	    //plugin.getLogger().info("DEBUG: block is " + block.getType() + ":" + block.getData());
