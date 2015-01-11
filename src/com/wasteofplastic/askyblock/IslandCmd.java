@@ -52,6 +52,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.DirectionalContainer;
 import org.bukkit.scheduler.BukkitTask;
 
+import com.sk89q.worldedit.MaxChangedBlocksException;
+import com.sk89q.worldedit.world.DataException;
+
 public class IslandCmd implements CommandExecutor {
     public boolean levelCalcFreeFlag = true;
     //private Schematic island = null;
@@ -95,26 +98,16 @@ public class IslandCmd implements CommandExecutor {
 	}
 	if (schematicFile.exists()) {    
 	    plugin.getLogger().info("Trying to load island schematic...");
-	    try {
-		schematics.put("", Schematic.loadSchematic(schematicFile));
-		//island = Schematic.loadSchematic(schematicFile);
-	    } catch (IOException e) {
-		plugin.getLogger().severe("Could not load island schematic! Error in file.");
-		e.printStackTrace();
-	    }
+	    schematics.put("", new Schematic(schematicFile));
+	    //island = Schematic.loadSchematic(schematicFile);
 	}
 	// Now add any permission-based schematics
 	if (!Settings.schematics.isEmpty()) {
 	    for (String perm : Settings.schematics.keySet()) {
 		schematicFile = new File(plugin.getDataFolder(), Settings.schematics.get(perm));
 		if (schematicFile.exists()) {
-		    try {
-			schematics.put(perm, Schematic.loadSchematic(schematicFile));
-			//island = Schematic.loadSchematic(schematicFile);
-		    } catch (IOException e) {
-			plugin.getLogger().severe("Could not load island schematic! Error in file.");
-			e.printStackTrace();
-		    }
+		    schematics.put(perm, new Schematic(schematicFile));
+		    //island = Schematic.loadSchematic(schematicFile);
 		} else {
 		    plugin.getLogger().severe("Schematic file '" + Settings.schematics.get(perm) +"' does not exist!");
 		}
@@ -354,7 +347,22 @@ public class IslandCmd implements CommandExecutor {
 		    mySchematic = perm;
 		}
 	    }
-	    cowSpot = Schematic.pasteSchematic(world, islandLoc, schematics.get(mySchematic), player);
+	    //cowSpot = Schematic.pasteSchematic(world, islandLoc, schematics.get(mySchematic), player);
+	    try {
+		cowSpot = schematics.get(mySchematic).loadArea(world, islandLoc);
+	    } catch (MaxChangedBlocksException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+		cowSpot = null;
+	    } catch (DataException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+		cowSpot = null;
+	    } catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+		cowSpot = null;
+	    }
 	    if (cowSpot == null) {
 		islandLoc.getBlock().setType(Material.BEDROCK);
 		plugin.getLogger().severe("Schematic loading error - cannot load " + mySchematic);
@@ -467,10 +475,10 @@ public class IslandCmd implements CommandExecutor {
 		Block blockToChange = world.getBlockAt(x, Settings.island_level + 5, z + 3);
 		blockToChange.setType(Material.SIGN_POST);
 		Sign sign = (Sign) blockToChange.getState();
-		sign.setLine(0, ChatColor.translateAlternateColorCodes('&', Locale.signLine1.replace("[player]", player.getName())));
-		sign.setLine(1, ChatColor.translateAlternateColorCodes('&', Locale.signLine2.replace("[player]", player.getName())));
-		sign.setLine(2, ChatColor.translateAlternateColorCodes('&', Locale.signLine3.replace("[player]", player.getName())));
-		sign.setLine(3, ChatColor.translateAlternateColorCodes('&', Locale.signLine4.replace("[player]", player.getName())));
+		sign.setLine(0, Locale.signLine1.replace("[player]", player.getName()));
+		sign.setLine(1, Locale.signLine2.replace("[player]", player.getName()));
+		sign.setLine(2, Locale.signLine3.replace("[player]", player.getName()));
+		sign.setLine(3, Locale.signLine4.replace("[player]", player.getName()));
 		((org.bukkit.material.Sign) sign.getData()).setFacingDirection(BlockFace.NORTH);
 		sign.update();
 		// Place the chest - no need to use the safe spawn function because we
@@ -620,6 +628,7 @@ public class IslandCmd implements CommandExecutor {
 		    resetMoney(player);
 		}
 		plugin.setIslandBiome(plugin.getPlayers().getIslandLocation(playerUUID), Settings.defaultBiome);
+		plugin.getLogger().info("Spawning cow at " + cowSpot.toString());
 		plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable () {
 		    @Override
 		    public void run() {
@@ -1181,7 +1190,7 @@ public class IslandCmd implements CommandExecutor {
 				    player.getWorld().playSound(player.getLocation(), Sound.BAT_TAKEOFF, 1F, 1F);
 				    Player warpOwner = plugin.getServer().getPlayer(foundWarp);
 				    if (warpOwner != null) {
-					warpOwner.sendMessage(ChatColor.translateAlternateColorCodes('&', Locale.warpsPlayerWarped).replace("[name]", player.getDisplayName()));
+					warpOwner.sendMessage(Locale.warpsPlayerWarped.replace("[name]", player.getDisplayName()));
 				    }
 				    return true;
 				}
@@ -1564,6 +1573,10 @@ public class IslandCmd implements CommandExecutor {
 		    targetPlayer = plugin.getPlayers().getUUID(split[1]);
 		    if (targetPlayer == null) {
 			player.sendMessage(ChatColor.RED + Locale.errorUnknownPlayer);
+			return true;
+		    }
+		    if (targetPlayer.equals(playerUUID)) {
+			player.sendMessage(ChatColor.RED + Locale.makeLeadererrorGeneralError);
 			return true;
 		    }
 		    if (!plugin.getPlayers().inTeam(player.getUniqueId())) {
