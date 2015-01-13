@@ -79,7 +79,7 @@ public class NetherPortals implements Listener {
 	}
     }
 
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = false)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = false)
     public void onPlayerPortal(PlayerPortalEvent event) {
 	// If the nether is disabled then quit immediately
 	if (!Settings.createNether) {
@@ -104,6 +104,7 @@ public class NetherPortals implements Listener {
 			&& !plugin.getSpawn().isAtSpawn(event.getPlayer().getLocation())) {
 		    event.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
 		    event.setCancelled(true);
+		    return;
 		}
 	    }
 	}

@@ -52,9 +52,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.DirectionalContainer;
 import org.bukkit.scheduler.BukkitTask;
 
-import com.sk89q.worldedit.MaxChangedBlocksException;
-import com.sk89q.worldedit.world.DataException;
-
 public class IslandCmd implements CommandExecutor {
     public boolean levelCalcFreeFlag = true;
     //private Schematic island = null;
@@ -347,22 +344,9 @@ public class IslandCmd implements CommandExecutor {
 		    mySchematic = perm;
 		}
 	    }
-	    //cowSpot = Schematic.pasteSchematic(world, islandLoc, schematics.get(mySchematic), player);
-	    try {
-		cowSpot = schematics.get(mySchematic).loadArea(world, islandLoc);
-	    } catch (MaxChangedBlocksException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-		cowSpot = null;
-	    } catch (DataException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-		cowSpot = null;
-	    } catch (IOException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-		cowSpot = null;
-	    }
+	    plugin.getLogger().info("DEBUG: size of schematics = " + schematics.size());
+	    // Paste the schematic
+	    cowSpot = schematics.get(mySchematic).pasteSchematic(world, islandLoc, player);
 	    if (cowSpot == null) {
 		islandLoc.getBlock().setType(Material.BEDROCK);
 		plugin.getLogger().severe("Schematic loading error - cannot load " + mySchematic);

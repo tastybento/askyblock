@@ -19,19 +19,23 @@ package com.wasteofplastic.askyblock;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
+import org.bukkit.Color;
+import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Banner;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Sign;
+import org.bukkit.block.banner.Pattern;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -45,30 +49,111 @@ import org.jnbt.ShortTag;
 import org.jnbt.StringTag;
 import org.jnbt.Tag;
 
-
 public class Schematic {
 
-    private byte[] blocks;
+    private short[] blocks;
     private byte[] data;
     private short width;
     private short length;
     private short height;
-    private Map<BlockVector, Map<String, Tag>> tileEntitiesMap;
+    private Map<BlockVector, Map<String, Tag>> tileEntitiesMap = new HashMap<BlockVector, Map<String, Tag>>();
+    private File file;
 
-    protected Schematic(byte[] blocks, byte[] data, short width, short length, short height, Map<BlockVector, Map<String, Tag>> tileEntitiesMap)
-    {
-	this.blocks = blocks;
-	this.data = data;
-	this.width = width;
-	this.length = length;
-	this.height = height;
-	this.tileEntitiesMap = tileEntitiesMap;
+    protected Schematic(File file) {
+	try {
+	    this.file = file;
+	    FileInputStream stream = new FileInputStream(file);
+	    //InputStream is = new DataInputStream(new GZIPInputStream(stream));
+	    NBTInputStream nbtStream = new NBTInputStream(stream);
+
+	    CompoundTag schematicTag = (CompoundTag) nbtStream.readTag();
+	    nbtStream.close();
+	    if (!schematicTag.getName().equals("Schematic")) {
+		throw new IllegalArgumentException("Tag \"Schematic\" does not exist or is not first");
+	    }
+
+	    Map<String, Tag> schematic = schematicTag.getValue();
+	    if (!schematic.containsKey("Blocks")) {
+		throw new IllegalArgumentException("Schematic file is missing a \"Blocks\" tag");
+	    }
+
+	    width = getChildTag(schematic, "Width", ShortTag.class).getValue();
+	    length = getChildTag(schematic, "Length", ShortTag.class).getValue();
+	    height = getChildTag(schematic, "Height", ShortTag.class).getValue();
+
+	    String materials = getChildTag(schematic, "Materials", StringTag.class).getValue();
+	    if (!materials.equals("Alpha")) {
+		throw new IllegalArgumentException("Schematic file is not an Alpha schematic");
+	    }
+
+	    byte[] blockId = getChildTag(schematic, "Blocks", ByteArrayTag.class).getValue();
+	    data = getChildTag(schematic, "Data", ByteArrayTag.class).getValue();
+	    byte[] addId = new byte[0];
+	    blocks = new short[blockId.length]; // Have to later combine IDs
+	    // We support 4096 block IDs using the same method as vanilla Minecraft, where
+	    // the highest 4 bits are stored in a separate byte array.
+	    if (schematic.containsKey("AddBlocks")) {
+		addId = getChildTag(schematic, "AddBlocks", ByteArrayTag.class).getValue();
+	    }
+
+	    // Combine the AddBlocks data with the first 8-bit block ID
+	    for (int index = 0; index < blockId.length; index++) {
+		if ((index >> 1) >= addId.length) { // No corresponding AddBlocks index
+		    blocks[index] = (short) (blockId[index] & 0xFF);
+		} else {
+		    if ((index & 1) == 0) {
+			blocks[index] = (short) (((addId[index >> 1] & 0x0F) << 8) + (blockId[index] & 0xFF));
+		    } else {
+			blocks[index] = (short) (((addId[index >> 1] & 0xF0) << 4) + (blockId[index] & 0xFF));
+		    }
+		}
+	    }
+
+	    // Need to pull out tile entities
+	    List<Tag> tileEntities = getChildTag(schematic, "TileEntities", ListTag.class).getValue();
+	    //Map<BlockVector, Map<String, Tag>> tileEntitiesMap = new HashMap<BlockVector, Map<String, Tag>>();
+
+	    for (Tag tag : tileEntities) {
+		if (!(tag instanceof CompoundTag)) continue;
+		CompoundTag t = (CompoundTag) tag;
+
+		int x = 0;
+		int y = 0;
+		int z = 0;
+
+		Map<String, Tag> values = new HashMap<String, Tag>();
+
+		for (Map.Entry<String, Tag> entry : t.getValue().entrySet()) {
+		    if (entry.getKey().equals("x")) {
+			if (entry.getValue() instanceof IntTag) {
+			    x = ((IntTag) entry.getValue()).getValue();
+			}
+		    } else if (entry.getKey().equals("y")) {
+			if (entry.getValue() instanceof IntTag) {
+			    y = ((IntTag) entry.getValue()).getValue();
+			}
+		    } else if (entry.getKey().equals("z")) {
+			if (entry.getValue() instanceof IntTag) {
+			    z = ((IntTag) entry.getValue()).getValue();
+			}
+		    }
+
+		    values.put(entry.getKey(), entry.getValue());
+		}
+
+		BlockVector vec = new BlockVector(x, y, z);
+		tileEntitiesMap.put(vec, values);
+	    }
+	} catch (IOException e) {
+	    Bukkit.getLogger().severe("Could not load island schematic! Error in file.");
+	    e.printStackTrace();
+	}
     }
 
     /**
      * @return the blocks
      */
-    protected byte[] getBlocks()
+    protected short[] getBlocks()
     {
 	return blocks;
     }
@@ -113,15 +198,30 @@ public class Schematic {
     }
 
     @SuppressWarnings("deprecation")
-    protected static Location pasteSchematic(final World world, final Location loc, final Schematic schematic, final Player player)
+    protected Location pasteSchematic(final World world, final Location loc, Player player)
     {
-	byte[] blocks = schematic.getBlocks();
-	byte[] blockData = schematic.getData();
-
-	short length = schematic.getLength();
-	short width = schematic.getWidth();
-	short height = schematic.getHeight();
-	Map<BlockVector, Map<String, Tag>> tileEntitiesMap = schematic.getTileEntitiesMap();
+	// See if WorldEdit is loaded
+	if (Bukkit.getServer().getPluginManager().getPlugin("WorldEdit") != null) {
+	    Location cowSpot = null;
+	    try {
+		cowSpot = WorldEditFuncs.loadArea(file, world, loc, player);
+	    } catch (Exception e) {
+		Bukkit.getLogger().severe("Error loading schematic!");
+		e.printStackTrace();
+		cowSpot = null;
+	    } 
+	    return cowSpot;
+	} 
+	Bukkit.getLogger().info("blocks size = " + blocks.length);
+	/*
+	short[] blocks = this.getBlocks();
+	byte[] blockData = this.getData();
+	/*
+	short length = this.getLength();
+	short width = this.getWidth();
+	short height = this.getHeight();
+	 */
+	Map<BlockVector, Map<String, Tag>> tileEntitiesMap = this.getTileEntitiesMap();
 	//Bukkit.getLogger().info("World is " + world.getName() + "and schematic size is " + schematic.getBlocks().length);
 	//Bukkit.getLogger().info("DEBUG Location to place island is:" + loc.toString());
 	// Find top most bedrock - this is the key stone
@@ -201,36 +301,76 @@ public class Schematic {
 	//Bukkit.getLogger().info("DEBUG loc is after subtract:" + loc.toString());
 	//Bukkit.getLogger().info("DEBUG blockloc is:" + blockLoc.toString());
 	//Bukkit.getLogger().info("DEBUG there are " + tileEntitiesMap.size() + " tile entities in the schematic");
-	for (int x = 0; x < width; ++x) {
-	    for (int y = 0; y < height; ++y) {
+	Bukkit.getLogger().info("Placing blocks...");
+	for (int y = 0; y < height; ++y) {
+	    for (int x = 0; x < width; ++x) {
 		for (int z = 0; z < length; ++z) {
 		    int index = y * width * length + z * width + x;
 		    Block block = new Location(world, x, y, z).add(blockLoc).getBlock();
 		    //Bukkit.getLogger().info("DEBUG" + x + "," + y + "," + z + " block to change is " + block.toString());
 		    //Bukkit.getLogger().info("DEBUG " + index + " changing to ID:"+blocks[index] + " data = " + blockData[index])
 		    try {
-			int type = blocks[index];
-			if (type < 0) {
-			    type +=256;
+			//if (type < 0) {
+			//    type +=256;
+			//}
+			// Do not post air
+			if (blocks[index] != 0) {
+			    block.setTypeId(blocks[index]);
+			    block.setData(data[index]);
+			    //Bukkit.getLogger().info(x + "," + y + "," + z + " " + block.getType() + "(" + blocks[index] + "):" + data[index]);
 			}
-			block.setTypeId(type);
-			block.setData(blockData[index]);
 			// Using this command sometimes doesn't set the data correctly...
 			//block.setTypeIdAndData(type, blockData[index], true);
 			/*
 			if (block.getType() == Material.SIGN_POST) {
 			    org.bukkit.material.Sign s = (org.bukkit.material.Sign) block.getState().getData();
 			    Bukkit.getLogger().info(s.getFacing().toString());
-			    
+
 			    Bukkit.getLogger().info("SIGN - data type = " + type + ":" + blockData[index]);
 			    Bukkit.getLogger().info("actual block data = " + block.getData());
 			}*/
 		    } catch (Exception e) {
-			Bukkit.getLogger().info("Could not set ("+ x + "," + y + "," + z +") block ID:"+blocks[index] + " block data = "+ blockData[index] );
+			Bukkit.getLogger().info("Could not set ("+ x + "," + y + "," + z +") block ID:"+blocks[index] + " block data = "+ data[index] );
 		    }
 		    if (tileEntitiesMap.containsKey(new BlockVector(x,y,z))) {
+			Bukkit.getLogger().info("Tile entity at " + x + "," + y + "," + z);
 			//Block block = new Location(world, x, y, z).add(blockLoc).getBlock();
 			// TODO: Add support for other tile entities, like signs...
+			if (block.getType() == Material.STANDING_BANNER) {
+			    //Format for banner is:
+			    // Patterns = List of patterns
+			    // id = String "Banner"
+			    // Base = Int color
+			    // Then the location
+			    // z = Int
+			    // y = Int
+			    // x = Int
+			    ASkyBlock.getPlugin().getLogger().info("standing banner");
+			    Banner banner = (Banner)block.getState();
+			    Map<String, Tag> tileData = tileEntitiesMap.get(new BlockVector(x,y,z));
+			    //ASkyBlock.getPlugin().getLogger().info(tileData.toString());
+			    for (String key : tileData.keySet()) {
+				ASkyBlock.getPlugin().getLogger().info(key + " - " + tileData.get(key));
+			    }
+			    try {
+				// Do the base color
+				ASkyBlock.getPlugin().getLogger().info(((IntTag)tileData.get("Base")).getValue().toString());
+				int baseColor = ((IntTag)tileData.get("Base")).getValue();
+				banner.setBaseColor(DyeColor.getByColor(Color.fromBGR(baseColor)));
+				// Do the patterns (no idea if this will work or not)
+				List<Pattern> bannerPattern = new ArrayList<Pattern>();
+				ListTag patterns = (ListTag) tileData.get("Patterns");
+				if (patterns != null) {
+				    for (Tag pattern: patterns.getValue()) {
+					ASkyBlock.getPlugin().getLogger().info("pattern = " + pattern);
+					bannerPattern.add((Pattern)pattern.getValue());
+				    }
+				}
+				banner.setPatterns(bannerPattern);
+			    } catch (Exception e) {
+				e.printStackTrace();
+			    }
+			}
 			if (block.getType().equals(Material.CHEST)) {
 			    Chest chestBlock = (Chest)block.getState();
 			    //Bukkit.getLogger().info("Chest tile entity found");
@@ -357,10 +497,10 @@ public class Schematic {
 	    blockToChange = welcomeSign.getBlock();
 	    blockToChange.setType(Material.SIGN_POST);
 	    Sign sign = (Sign) blockToChange.getState();
-	    sign.setLine(0, ChatColor.translateAlternateColorCodes('&', Locale.signLine1.replace("[player]", player.getName())));
-	    sign.setLine(1, ChatColor.translateAlternateColorCodes('&', Locale.signLine2.replace("[player]", player.getName())));
-	    sign.setLine(2, ChatColor.translateAlternateColorCodes('&', Locale.signLine3.replace("[player]", player.getName())));
-	    sign.setLine(3, ChatColor.translateAlternateColorCodes('&', Locale.signLine4.replace("[player]", player.getName())));
+	    sign.setLine(0, Locale.signLine1.replace("[player]", player.getName()));
+	    sign.setLine(1, Locale.signLine2.replace("[player]", player.getName()));
+	    sign.setLine(2, Locale.signLine3.replace("[player]", player.getName()));
+	    sign.setLine(3, Locale.signLine4.replace("[player]", player.getName()));
 	    //BlockFace direction = ((org.bukkit.material.Sign) sign.getData()).getFacing();
 	    ((org.bukkit.material.Sign) sign.getData()).setFacingDirection(BlockFace.NORTH);
 	    sign.update();
@@ -383,92 +523,11 @@ public class Schematic {
 	return grass;
     }
 
-    protected static Schematic loadSchematic(File file) throws IOException
-    {
-	FileInputStream stream = new FileInputStream(file);
-	//InputStream is = new DataInputStream(new GZIPInputStream(stream));
-	NBTInputStream nbtStream = new NBTInputStream(stream);
-
-	CompoundTag schematicTag = (CompoundTag) nbtStream.readTag();
-	nbtStream.close();
-	if (!schematicTag.getName().equals("Schematic")) {
-	    throw new IllegalArgumentException("Tag \"Schematic\" does not exist or is not first");
-	}
-
-	Map<String, Tag> schematic = schematicTag.getValue();
-	if (!schematic.containsKey("Blocks")) {
-	    throw new IllegalArgumentException("Schematic file is missing a \"Blocks\" tag");
-	}
-
-	short width = getChildTag(schematic, "Width", ShortTag.class).getValue();
-	short length = getChildTag(schematic, "Length", ShortTag.class).getValue();
-	short height = getChildTag(schematic, "Height", ShortTag.class).getValue();
-
-	String materials = getChildTag(schematic, "Materials", StringTag.class).getValue();
-	if (!materials.equals("Alpha")) {
-	    throw new IllegalArgumentException("Schematic file is not an Alpha schematic");
-	}
-
-	byte[] blocks = getChildTag(schematic, "Blocks", ByteArrayTag.class).getValue();
-	byte[] blockData = getChildTag(schematic, "Data", ByteArrayTag.class).getValue();
-	byte[] addId = new byte[0];
-	short[] blockss = new short[blocks.length]; // Have to later combine IDs
-	// We support 4096 block IDs using the same method as vanilla Minecraft, where
-	// the highest 4 bits are stored in a separate byte array.
-	if (schematic.containsKey("AddBlocks")) {
-	    addId = getChildTag(schematic, "AddBlocks", ByteArrayTag.class).getValue();
-	}
-
-	// Combine the AddBlocks data with the first 8-bit block ID
-	for (int index = 0; index < blocks.length; index++) {
-	    if ((index >> 1) >= addId.length) { // No corresponding AddBlocks index
-		blockss[index] = (short) (blocks[index] & 0xFF);
-	    } else {
-		if ((index & 1) == 0) {
-		    blockss[index] = (short) (((addId[index >> 1] & 0x0F) << 8) + (blocks[index] & 0xFF));
-		} else {
-		    blockss[index] = (short) (((addId[index >> 1] & 0xF0) << 4) + (blocks[index] & 0xFF));
-		}
-	    }
-	}
-
-	// Need to pull out tile entities
-	List<Tag> tileEntities = getChildTag(schematic, "TileEntities", ListTag.class).getValue();
-	Map<BlockVector, Map<String, Tag>> tileEntitiesMap = new HashMap<BlockVector, Map<String, Tag>>();
-
-	for (Tag tag : tileEntities) {
-	    if (!(tag instanceof CompoundTag)) continue;
-	    CompoundTag t = (CompoundTag) tag;
-
-	    int x = 0;
-	    int y = 0;
-	    int z = 0;
-
-	    Map<String, Tag> values = new HashMap<String, Tag>();
-
-	    for (Map.Entry<String, Tag> entry : t.getValue().entrySet()) {
-		if (entry.getKey().equals("x")) {
-		    if (entry.getValue() instanceof IntTag) {
-			x = ((IntTag) entry.getValue()).getValue();
-		    }
-		} else if (entry.getKey().equals("y")) {
-		    if (entry.getValue() instanceof IntTag) {
-			y = ((IntTag) entry.getValue()).getValue();
-		    }
-		} else if (entry.getKey().equals("z")) {
-		    if (entry.getValue() instanceof IntTag) {
-			z = ((IntTag) entry.getValue()).getValue();
-		    }
-		}
-
-		values.put(entry.getKey(), entry.getValue());
-	    }
-
-	    BlockVector vec = new BlockVector(x, y, z);
-	    tileEntitiesMap.put(vec, values);
-	}
-
-	return new Schematic(blocks, blockData, width, length, height, tileEntitiesMap);
+    /**
+     * @return the file
+     */
+    public File getFile() {
+	return file;
     }
 
     /**
@@ -492,4 +551,5 @@ public class Schematic {
 	}
 	return expected.cast(tag);
     }
+
 }
