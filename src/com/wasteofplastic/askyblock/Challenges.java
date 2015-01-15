@@ -1169,7 +1169,8 @@ public class Challenges implements CommandExecutor {
 			// If it is not, then we are cutting a word in two and
 			// need to backtrack to the last space if possible
 			int lastSpace = line.lastIndexOf(" ");
-			if (lastSpace < line.length()) {
+			// Only do this if there is a space in the line to backtrack to...
+			if (lastSpace != -1 && lastSpace < line.length()) {
 			    line = line.substring(0, lastSpace);
 			    i -= (length - lastSpace - 1);
 			}
