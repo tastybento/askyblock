@@ -120,9 +120,9 @@ public class Spawn {
 	//plugin.getLogger().info("DEBUG spawnLoc is " + spawnLoc.toString());
 	//plugin.getLogger().info("DEBUG: range = " + range);
 	// Only check x and z directions
-	if (loc.getWorld().equals(spawnLoc.getWorld())) {
+	if (loc.getWorld().equals(bedrock.getWorld())) {
 	    Vector v = loc.toVector().multiply(new Vector(1,0,1));
-	    Vector l = spawnLoc.toVector().multiply(new Vector(1,0,1));
+	    Vector l = bedrock.toVector().multiply(new Vector(1,0,1));
 	    //plugin.getLogger().info("DEBUG: v is " + v.toString());
 		//plugin.getLogger().info("DEBUG l is " + l.toString());
 		//plugin.getLogger().info("DEBUG: dist sq = " + v.distanceSquared(l));

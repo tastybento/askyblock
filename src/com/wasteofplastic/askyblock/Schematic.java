@@ -302,8 +302,9 @@ public class Schematic {
 	//Bukkit.getLogger().info("DEBUG blockloc is:" + blockLoc.toString());
 	//Bukkit.getLogger().info("DEBUG there are " + tileEntitiesMap.size() + " tile entities in the schematic");
 	Bukkit.getLogger().info("Placing blocks...");
-	for (int y = 0; y < height; ++y) {
+	
 	    for (int x = 0; x < width; ++x) {
+		for (int y = 0; y < height; ++y) {
 		for (int z = 0; z < length; ++z) {
 		    int index = y * width * length + z * width + x;
 		    Block block = new Location(world, x, y, z).add(blockLoc).getBlock();
@@ -354,9 +355,11 @@ public class Schematic {
 			    }
 			    try {
 				// Do the base color
-				ASkyBlock.getPlugin().getLogger().info(((IntTag)tileData.get("Base")).getValue().toString());
-				int baseColor = ((IntTag)tileData.get("Base")).getValue();
-				banner.setBaseColor(DyeColor.getByColor(Color.fromBGR(baseColor)));
+				int baseColor = 15 - ((IntTag)tileData.get("Base")).getValue();
+				ASkyBlock.getPlugin().getLogger().info("Base value = " + baseColor);
+				// baseColor green = 10
+				
+				banner.setBaseColor(DyeColor.getByData((byte)baseColor));
 				// Do the patterns (no idea if this will work or not)
 				List<Pattern> bannerPattern = new ArrayList<Pattern>();
 				ListTag patterns = (ListTag) tileData.get("Patterns");
@@ -367,6 +370,7 @@ public class Schematic {
 				    }
 				}
 				banner.setPatterns(bannerPattern);
+				banner.update();
 			    } catch (Exception e) {
 				e.printStackTrace();
 			    }
