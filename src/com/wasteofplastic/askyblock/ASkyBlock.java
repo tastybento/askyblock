@@ -540,7 +540,7 @@ public class ASkyBlock extends JavaPlugin {
 	// Near spawn?
 	Vector v = loc.toVector();
 	v.multiply(new Vector(1,0,1));
-	if ((getSpawn().getSpawnLoc() != null && v.distanceSquared(getSpawn().getSpawnLoc().toVector().multiply(new Vector(1,0,1))) < (double)((double)Settings.islandDistance) * Settings.islandDistance)) {
+	if ((getSpawn().getSpawnLoc() != null && v.distanceSquared(getSpawn().getSpawnLoc().toVector().multiply(new Vector(1,0,1))) < (double)((double)spawn.getRange()) * spawn.getRange())) {
 	    //plugin.getLogger().info("Too near spawn");
 	    return true;
 	}
