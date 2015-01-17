@@ -505,14 +505,16 @@ public class ASkyBlock extends JavaPlugin {
 	    return true;
 	}
 	//home.getWorld().refreshChunk(home.getChunk().getX(), home.getChunk().getZ());
-	home.getWorld().loadChunk(home.getChunk());
+	// Removing this line because it appears to cause artifacts of hovering blocks
+	//home.getWorld().loadChunk(home.getChunk());
 	//getLogger().info("DEBUG: " + home.toString());
 	// This next line should help players with long ping times
 	// http://bukkit.org/threads/workaround-for-playing-falling-after-teleport-when-lagging.293035/
-	player.sendBlockChange(home,home.getBlock().getType(),home.getBlock().getData());
-	player.sendBlockChange(home.getBlock().getRelative(BlockFace.DOWN).getLocation(),home.getBlock().getRelative(BlockFace.DOWN).getType(),home.getBlock().getRelative(BlockFace.DOWN).getData());
-	//getLogger().info("DEBUG: " + home.getBlock().getType().toString());
-	//getLogger().info("DEBUG: " + home.getBlock().getRelative(BlockFace.DOWN).getType());
+	//getLogger().info("DEBUG: home = " + home.toString());
+	//player.sendBlockChange(home,home.getBlock().getType(),home.getBlock().getData());
+	//player.sendBlockChange(home.getBlock().getRelative(BlockFace.DOWN).getLocation(),home.getBlock().getRelative(BlockFace.DOWN).getType(),home.getBlock().getRelative(BlockFace.DOWN).getData());
+	getLogger().info("DEBUG: " + home.getBlock().getType().toString());
+	getLogger().info("DEBUG: " + home.getBlock().getRelative(BlockFace.DOWN).getType());
 	player.teleport(home);	
 	player.sendMessage(ChatColor.GREEN + Locale.islandteleport);
 	return true;
@@ -993,6 +995,15 @@ public class ASkyBlock extends JavaPlugin {
 	    } else if (Settings.rainDamage < 0D) {
 		Settings.rainDamage = 0D;
 	    }
+	    // The island's center is actually 5 below sea level
+	    Settings.sea_level = getConfig().getInt("general.sealevel", 50);
+	    if (Settings.sea_level < 0) {
+		Settings.sea_level = 0;
+	    }
+	    Settings.island_level = getConfig().getInt("general.islandlevel", 50) - 5;
+	    if (Settings.island_level < 0) {
+		Settings.island_level = 0;
+	    }
 	} else {
 	    Settings.acidDamage = getConfig().getDouble("general.aciddamage", 0D);
 	    if (Settings.acidDamage > 100D) {
@@ -1011,7 +1022,16 @@ public class ASkyBlock extends JavaPlugin {
 		Settings.rainDamage = 100D;
 	    } else if (Settings.rainDamage < 0D) {
 		Settings.rainDamage = 0D;
-	    }	    
+	    }
+	    // The island's center is actually 5 below sea level
+	    Settings.sea_level = getConfig().getInt("general.sealevel", 0);
+	    if (Settings.sea_level < 0) {
+		Settings.sea_level = 0;
+	    }
+	    Settings.island_level = getConfig().getInt("general.islandlevel", 120) - 5;
+	    if (Settings.island_level < 0) {
+		Settings.island_level = 0;
+	    }
 	}
 	Settings.animalAcidDamage = getConfig().getDouble("general.animaldamage", 0D);
 	if (Settings.animalAcidDamage > 100D) {
@@ -1114,15 +1134,7 @@ public class ASkyBlock extends JavaPlugin {
 	//Settings.ultraSafeBoats = getConfig().getBoolean("general.ultrasafeboats", true);
 	Settings.logInRemoveMobs = getConfig().getBoolean("general.loginremovemobs", true);
 	Settings.islandRemoveMobs = getConfig().getBoolean("general.islandremovemobs", false);
-	// The island's center is actually 5 below sea level
-	Settings.sea_level = getConfig().getInt("general.sealevel", 50);
-	if (Settings.sea_level < 0) {
-	    Settings.sea_level = 0;
-	}
-	Settings.island_level = getConfig().getInt("general.islandlevel", 50) - 5;
-	if (Settings.island_level < 0) {
-	    Settings.island_level = 0;
-	}
+
 	//getLogger().info("DEBUG: island level is " + Settings.island_level);
 	// Get chest items
 	final String[] chestItemString = getConfig().getString("island.chestItems").split(" ");
@@ -1289,7 +1301,7 @@ public class ASkyBlock extends JavaPlugin {
 	// Localization Locale Setting
 	// Command prefix - can be added to the beginning of any message
 	Locale.prefix = ChatColor.translateAlternateColorCodes('&',ChatColor.translateAlternateColorCodes('&',locale.getString("prefix", "")));
-	
+
 	if (Settings.GAMETYPE.equals(Settings.GameType.ASKYBLOCK)) {
 	    Locale.signLine1 = ChatColor.translateAlternateColorCodes('&',locale.getString("sign.line1", "&1[A Skyblock]"));
 	    Locale.signLine2 = ChatColor.translateAlternateColorCodes('&',locale.getString("sign.line2", "[player]"));
