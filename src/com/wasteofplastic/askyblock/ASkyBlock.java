@@ -496,17 +496,19 @@ public class ASkyBlock extends JavaPlugin {
 	if (home == null) {
 	    // The home is not safe
 	    if (!player.performCommand(Settings.SPAWNCOMMAND)) {
+		player.teleport(player.getWorld().getSpawnLocation());
+		/*
 		player.sendBlockChange(player.getWorld().getSpawnLocation()
 			,player.getWorld().getSpawnLocation().getBlock().getType()
 			,player.getWorld().getSpawnLocation().getBlock().getData());
-		player.teleport(player.getWorld().getSpawnLocation());
+			*/
 	    }
 	    player.sendMessage(ChatColor.RED + Locale.warpserrorNotSafe);
 	    return true;
 	}
 	//home.getWorld().refreshChunk(home.getChunk().getX(), home.getChunk().getZ());
 	// Removing this line because it appears to cause artifacts of hovering blocks
-	//home.getWorld().loadChunk(home.getChunk());
+	home.getWorld().loadChunk(home.getChunk());
 	//getLogger().info("DEBUG: " + home.toString());
 	// This next line should help players with long ping times
 	// http://bukkit.org/threads/workaround-for-playing-falling-after-teleport-when-lagging.293035/
@@ -515,7 +517,11 @@ public class ASkyBlock extends JavaPlugin {
 	//player.sendBlockChange(home.getBlock().getRelative(BlockFace.DOWN).getLocation(),home.getBlock().getRelative(BlockFace.DOWN).getType(),home.getBlock().getRelative(BlockFace.DOWN).getData());
 	//getLogger().info("DEBUG: " + home.getBlock().getType().toString());
 	//getLogger().info("DEBUG: " + home.getBlock().getRelative(BlockFace.DOWN).getType());
-	player.teleport(home);	
+	player.teleport(home);
+	/*
+	player.sendBlockChange(home,home.getBlock().getType(),home.getBlock().getData());
+	player.sendBlockChange(home.getBlock().getRelative(BlockFace.DOWN).getLocation(),home.getBlock().getRelative(BlockFace.DOWN).getType(),home.getBlock().getRelative(BlockFace.DOWN).getData());
+	*/
 	player.sendMessage(ChatColor.GREEN + Locale.islandteleport);
 	return true;
     }
@@ -1924,10 +1930,10 @@ public class ASkyBlock extends JavaPlugin {
 			// Move player to spawn
 			if (plugin.getSpawn().getSpawnLoc() != null) {
 			    // go to island spawn
+			    pl.teleport(plugin.getSpawn().getSpawnLoc());
 			    pl.sendBlockChange(plugin.getSpawn().getSpawnLoc()
 				    ,plugin.getSpawn().getSpawnLoc().getBlock().getType()
 				    ,plugin.getSpawn().getSpawnLoc().getBlock().getData());
-			    pl.teleport(plugin.getSpawn().getSpawnLoc());
 			    getLogger().warning("During island deletion player " + pl.getName() + " sent to spawn.");
 			} else {
 			    if (!pl.performCommand(Settings.SPAWNCOMMAND)) {

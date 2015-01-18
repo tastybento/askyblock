@@ -503,8 +503,8 @@ public class AdminCmd implements CommandExecutor {
 			Location safeSpot = plugin.getSafeHomeLocation(playerUUID);
 			if (safeSpot != null) {
 			    // This next line should help players with long ping times
-			    ((Player)sender).sendBlockChange(safeSpot,safeSpot.getBlock().getType(),safeSpot.getBlock().getData());
 			    ((Player)sender).teleport(safeSpot);
+			    //((Player)sender).sendBlockChange(safeSpot,safeSpot.getBlock().getType(),safeSpot.getBlock().getData());
 			} else {
 			    sender.sendMessage(ChatColor.RED + Locale.warpserrorNotSafe);
 			    Location warpSpot = plugin.getPlayers().getIslandLocation(playerUUID);

@@ -128,8 +128,8 @@ public class NetherPortals implements Listener {
 		    event.setCancelled(true);
 		    Location end_place = plugin.getServer().getWorld(Settings.worldName + "_the_end").getSpawnLocation();
 		    if (ASkyBlock.isSafeLocation(end_place)) {
-			event.getPlayer().sendBlockChange(end_place, end_place.getBlock().getType(),end_place.getBlock().getData());
 			event.getPlayer().teleport(end_place);
+			//event.getPlayer().sendBlockChange(end_place, end_place.getBlock().getType(),end_place.getBlock().getData());
 			return;
 		    } else {
 			event.getPlayer().sendMessage(ChatColor.RED + Locale.warpserrorNotSafe);

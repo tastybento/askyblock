@@ -930,13 +930,15 @@ public class IslandCmd implements CommandExecutor {
 		// go to spawn
 		//plugin.getLogger().info("Debug: getSpawn" + plugin.getSpawn().toString() );
 		//plugin.getLogger().info("Debug: getSpawn loc" + plugin.getSpawn().getSpawnLoc().toString() );
+		player.teleport(plugin.getSpawn().getSpawnLoc());
+		/*
 		player.sendBlockChange(plugin.getSpawn().getSpawnLoc()
 			,plugin.getSpawn().getSpawnLoc().getBlock().getType()
 			,plugin.getSpawn().getSpawnLoc().getBlock().getData());
 		player.sendBlockChange(plugin.getSpawn().getSpawnLoc().getBlock().getRelative(BlockFace.DOWN).getLocation()
 			,plugin.getSpawn().getSpawnLoc().getBlock().getRelative(BlockFace.DOWN).getType()
 			,plugin.getSpawn().getSpawnLoc().getBlock().getRelative(BlockFace.DOWN).getData());
-		player.teleport(plugin.getSpawn().getSpawnLoc());
+		*/
 		return true;
 	    } else if (split[0].equalsIgnoreCase("top")) {
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.topten")) {
@@ -1433,10 +1435,12 @@ public class IslandCmd implements CommandExecutor {
 		    } else {
 			// Just move target to spawn
 			if (!target.performCommand(Settings.SPAWNCOMMAND)) {
+			    target.teleport(player.getWorld().getSpawnLocation());
+			    /*
 			    target.sendBlockChange(target.getWorld().getSpawnLocation()
 				    ,target.getWorld().getSpawnLocation().getBlock().getType()
 				    ,target.getWorld().getSpawnLocation().getBlock().getData());
-			    target.teleport(player.getWorld().getSpawnLocation());
+				    */
 			}
 		    }
 		    target.sendMessage(ChatColor.RED + Locale.expelExpelled);
