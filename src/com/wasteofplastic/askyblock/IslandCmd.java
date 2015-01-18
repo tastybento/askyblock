@@ -654,7 +654,22 @@ public class IslandCmd implements CommandExecutor {
 		}
 		return true;
 	    } else if (split[0].equalsIgnoreCase("about")) {
-		player.sendMessage(ChatColor.GOLD + "ASkyBlock (c) 2014 by TastyBento");
+		player.sendMessage(ChatColor.GOLD + "(c) 2014 - 2015 by tastybento");
+		player.sendMessage(ChatColor.GOLD + "This plugin is free software: you can redistribute");
+		 player.sendMessage(ChatColor.GOLD + "it and/or modify it under the terms of the GNU");
+		 player.sendMessage(ChatColor.GOLD + "General Public License as published by the Free");
+		 player.sendMessage(ChatColor.GOLD + "Software Foundation, either version 3 of the License,");
+		 player.sendMessage(ChatColor.GOLD + "or (at your option) any later version.");
+		 player.sendMessage(ChatColor.GOLD + "This plugin is distributed in the hope that it");
+		 player.sendMessage(ChatColor.GOLD + "will be useful, but WITHOUT ANY WARRANTY; without");
+		 player.sendMessage(ChatColor.GOLD + "even the implied warranty of MERCHANTABILITY or");
+		 player.sendMessage(ChatColor.GOLD + "FITNESS FOR A PARTICULAR PURPOSE.  See the");
+		 player.sendMessage(ChatColor.GOLD + "GNU General Public License for more details.");
+		 player.sendMessage(ChatColor.GOLD + "You should have received a copy of the GNU");
+		 player.sendMessage(ChatColor.GOLD + "General Public License along with this plugin.");
+		 player.sendMessage(ChatColor.GOLD + "If not, see <http://www.gnu.org/licenses/>.");
+		 player.sendMessage(ChatColor.GOLD + "Souce code is available on GitHub.");
+		 return true;
 		//Spawn enderman
 		//Enderman enderman = (Enderman) player.getWorld().spawnEntity(player.getLocation().add(new Vector(5,0,5)), EntityType.ENDERMAN);
 		//enderman.setCustomName("TastyBento's Ghost");
