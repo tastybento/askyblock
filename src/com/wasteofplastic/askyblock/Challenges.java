@@ -410,12 +410,15 @@ public class Challenges implements CommandExecutor {
     protected int checkLevelCompletion(final Player player, final String level) {
 	int challengesCompleted = 0;
 	List<String> levelChallengeList = challengeList.get(level);
-	for (String challenge : levelChallengeList) {
-	    if (players.checkChallenge(player.getUniqueId(), challenge)) {
-		challengesCompleted++;
+	if (levelChallengeList != null) {
+	    for (String challenge : levelChallengeList) {
+		if (players.checkChallenge(player.getUniqueId(), challenge)) {
+		    challengesCompleted++;
+		}
 	    }
+	    return levelChallengeList.size() - Settings.waiverAmount - challengesCompleted;
 	}
-	return levelChallengeList.size() - Settings.waiverAmount - challengesCompleted;
+	return 0;
     }
 
     /**
