@@ -692,11 +692,15 @@ public class Challenges implements CommandExecutor {
 				if (i != null && i.getType().equals(Material.POTION)) {
 				    //plugin.getLogger().info("DEBUG: Potion found, durability = "+ i.getDurability());
 				    if (i.getDurability() == reqDurability) {
-					//plugin.getLogger().info("Matched! ");
-					count--;
-					item = new ItemStack(i);
+					item = i.clone();
+					if (item.getAmount() > reqAmount) {
+					    item.setAmount(reqAmount);
+					}
+					count = count - item.getAmount();
+					//plugin.getLogger().info("Matched! count = " + count);
+					// If the item stack has more in it than required, just take the minimum
 					//plugin.getLogger().info("DEBUG: Found " + item.toString() + ":" + item.getDurability() + " x " + item.getAmount());
-					toBeRemoved.add(i.clone());
+					toBeRemoved.add(item);
 				    }
 				}
 				if (count == 0) {

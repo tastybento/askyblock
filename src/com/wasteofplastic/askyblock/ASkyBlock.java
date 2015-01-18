@@ -544,12 +544,16 @@ public class ASkyBlock extends JavaPlugin {
 	    return true;
 	}
 	// Near spawn?
+	if (spawn.isAtSpawn(loc)) {
+	    return true;
+	}
+	/*
 	Vector v = loc.toVector();
 	v.multiply(new Vector(1,0,1));
 	if ((getSpawn().getBedrock() != null && v.distanceSquared(getSpawn().getBedrock().toVector().multiply(new Vector(1,0,1))) < (double)((double)spawn.getRange()) * spawn.getRange())) {
 	    //plugin.getLogger().info("Too near spawn");
 	    return true;
-	}
+	}*/
 	// Check the file system
 	String checkName = loc.getBlockX() + "," + loc.getBlockZ() + ".yml";
 	final File islandFile = new File(plugin.getDataFolder() + File.separator + "islands" + File.separator + checkName);

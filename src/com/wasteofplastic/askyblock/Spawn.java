@@ -19,7 +19,6 @@ package com.wasteofplastic.askyblock;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.util.Vector;
 
 public class Spawn {
     private ASkyBlock plugin;
@@ -109,6 +108,7 @@ public class Spawn {
 
     /**
      * Returns true if this location is within the spawn area
+     * Spawn are is square and goes out to range in + and - x and z directions
      * @param loc
      * @return
      */
@@ -121,6 +121,10 @@ public class Spawn {
 	//plugin.getLogger().info("DEBUG: range = " + range);
 	// Only check x and z directions
 	if (loc.getWorld().equals(bedrock.getWorld())) {
+	    if ((Math.abs(loc.getBlockX() - bedrock.getBlockX()) <= range) || (Math.abs(loc.getBlockZ() - bedrock.getBlockZ()) <= range)) {
+		return true;
+	    }
+	    /*
 	    Vector v = loc.toVector().multiply(new Vector(1,0,1));
 	    Vector l = bedrock.toVector().multiply(new Vector(1,0,1));
 	    //plugin.getLogger().info("DEBUG: v is " + v.toString());
@@ -129,7 +133,7 @@ public class Spawn {
 	    if (v.distanceSquared(l) < range * range) {
 		//plugin.getLogger().info("DEBUG: within range");
 		return true;
-	    }
+	    }*/
 	}
 	return false;
     }

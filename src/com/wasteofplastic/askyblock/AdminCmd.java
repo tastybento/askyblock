@@ -839,18 +839,10 @@ public class AdminCmd implements CommandExecutor {
 		    Location loc = new Location(ASkyBlock.getIslandWorld(), x,y,z);
 		    if (!loc.getBlock().getType().equals(Material.BEDROCK)) {
 			// Check distance from spawn
-			if (plugin.getSpawn().getBedrock() != null) {
-			    // Spawn exists
-			    Vector spawn = plugin.getSpawn().getBedrock().toVector().multiply(new Vector(1,0,1));
-			    Vector locVector = loc.toVector().multiply(new Vector(1,0,1));
-			    if (spawn.distanceSquared(locVector) > (double)((double)plugin.getSpawn().getRange()) * plugin.getSpawn().getRange()) {
-				// Far enough away from spawn
-				islands.add(loc);
-			    }
-			} else {
-			    // No spawn
+			if (!plugin.getSpawn().isAtSpawn(loc)) {
+			    // Far enough away from spawn
 			    islands.add(loc);
-			}
+			} 
 		    }
 		}
 	    } catch (Exception e) {
