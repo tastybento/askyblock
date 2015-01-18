@@ -513,8 +513,8 @@ public class ASkyBlock extends JavaPlugin {
 	//getLogger().info("DEBUG: home = " + home.toString());
 	//player.sendBlockChange(home,home.getBlock().getType(),home.getBlock().getData());
 	//player.sendBlockChange(home.getBlock().getRelative(BlockFace.DOWN).getLocation(),home.getBlock().getRelative(BlockFace.DOWN).getType(),home.getBlock().getRelative(BlockFace.DOWN).getData());
-	getLogger().info("DEBUG: " + home.getBlock().getType().toString());
-	getLogger().info("DEBUG: " + home.getBlock().getRelative(BlockFace.DOWN).getType());
+	//getLogger().info("DEBUG: " + home.getBlock().getType().toString());
+	//getLogger().info("DEBUG: " + home.getBlock().getRelative(BlockFace.DOWN).getType());
 	player.teleport(home);	
 	player.sendMessage(ChatColor.GREEN + Locale.islandteleport);
 	return true;

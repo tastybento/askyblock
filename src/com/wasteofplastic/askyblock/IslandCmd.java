@@ -344,7 +344,7 @@ public class IslandCmd implements CommandExecutor {
 		    mySchematic = perm;
 		}
 	    }
-	    plugin.getLogger().info("DEBUG: size of schematics = " + schematics.size());
+	    //plugin.getLogger().info("DEBUG: size of schematics = " + schematics.size());
 	    // Paste the schematic
 	    cowSpot = schematics.get(mySchematic).pasteSchematic(world, islandLoc, player);
 	    if (cowSpot == null) {
