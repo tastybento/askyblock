@@ -612,7 +612,7 @@ public class IslandCmd implements CommandExecutor {
 		    resetMoney(player);
 		}
 		plugin.setIslandBiome(plugin.getPlayers().getIslandLocation(playerUUID), Settings.defaultBiome);
-		plugin.getLogger().info("Spawning cow at " + cowSpot.toString());
+		//plugin.getLogger().info("Spawning cow at " + cowSpot.toString());
 		plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable () {
 		    @Override
 		    public void run() {
