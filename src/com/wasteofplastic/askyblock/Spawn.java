@@ -121,7 +121,7 @@ public class Spawn {
 	//plugin.getLogger().info("DEBUG: range = " + range);
 	// Only check x and z directions
 	if (loc.getWorld().equals(bedrock.getWorld())) {
-	    if ((Math.abs(loc.getBlockX() - bedrock.getBlockX()) <= range) || (Math.abs(loc.getBlockZ() - bedrock.getBlockZ()) <= range)) {
+	    if ((Math.abs(loc.getBlockX() - bedrock.getBlockX()) <= range) && (Math.abs(loc.getBlockZ() - bedrock.getBlockZ()) <= range)) {
 		return true;
 	    }
 	    /*
