@@ -1223,9 +1223,8 @@ public class IslandGuard implements Listener {
 		player.getWorld().getName().equalsIgnoreCase(Settings.worldName + "_nether")) {
 	    if(event.getRecipe().getResult().getType() == Material.ENDER_CHEST) {
 		if(!(player.hasPermission(Settings.PERMPREFIX + "craft.enderchest"))) {
-		    event.setCancelled(true);
-		} else {
 		    player.sendMessage(ChatColor.RED + Locale.errorNoPermission);
+		    event.setCancelled(true);
 		}
 	    }
 	}
@@ -1246,9 +1245,8 @@ public class IslandGuard implements Listener {
 	    if (event.getAction() == Action.RIGHT_CLICK_BLOCK ){
 		if (event.getClickedBlock().getType() == Material.ENDER_CHEST){
 		    if(!(event.getPlayer().hasPermission(Settings.PERMPREFIX + "craft.enderchest"))) {
-			event.setCancelled(true);
-		    } else {
 			player.sendMessage(ChatColor.RED + Locale.errorNoPermission);
+			event.setCancelled(true);
 		    }
 		} 
 	    }
