@@ -46,6 +46,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDispenseEvent;
+import org.bukkit.event.block.BlockMultiPlaceEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
@@ -739,7 +740,7 @@ public class IslandGuard implements Listener {
      * Prevents placing of blocks
      * @param e
      */
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerBlockPlace(final BlockPlaceEvent e) {
 	if (debug) {
 	    plugin.getLogger().info(e.getEventName());
@@ -759,7 +760,28 @@ public class IslandGuard implements Listener {
 	}
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onPlayerBlockPlace(final BlockMultiPlaceEvent e) {
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
+	//plugin.getLogger().info(e.getEventName());
+	if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	    // This permission bypasses protection
+	    if (VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
+		return;
+	    }
+	    if (!Settings.allowPlaceBlocks) {
+		if (!plugin.locationIsOnIsland(e.getPlayer(),e.getBlock().getLocation()) && !e.getPlayer().isOp()) {
+		    e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
+		    e.setCancelled(true);
+		}
+	    }
+	}
+    }
+    
+    
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerBlockPlace(final HangingPlaceEvent e) {
 	if (debug) {
 	    plugin.getLogger().info(e.getEventName());
@@ -978,7 +1000,7 @@ public class IslandGuard implements Listener {
      * Handles interaction with objects
      * @param e
      */
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerInteract(final PlayerInteractEvent e) {
 	if (debug) {
 	    plugin.getLogger().info(e.getEventName());
@@ -1006,6 +1028,7 @@ public class IslandGuard implements Listener {
 	// prevent at spawn
 	boolean playerAtSpawn = false;
 	if (plugin.getSpawn().getBedrock() != null && plugin.getSpawn().isAtSpawn(e.getPlayer().getLocation())) {
+	    //plugin.getLogger().info("DEBUG: Player is at spawn");
 	    playerAtSpawn = true;
 	}
 
@@ -1162,8 +1185,16 @@ public class IslandGuard implements Listener {
 	    }
 	}
 	// Check for disallowed in-hand items
+	//plugin.getLogger().info("Material = " + e.getMaterial());
+	//plugin.getLogger().info("in hand = " + e.getPlayer().getItemInHand().toString());
 	if (e.getMaterial() != null) {
-	    if (e.getMaterial().equals(Material.BOAT) && (e.getClickedBlock() != null && !e.getClickedBlock().isLiquid())) {
+	    // This check protects against an exploit in 1.7.9 against cactus and sugar cane
+	    if (e.getMaterial() == Material.WOOD_DOOR) {
+		e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
+		e.setCancelled(true);
+		e.getPlayer().updateInventory();
+		return;
+	    } else if (e.getMaterial().equals(Material.BOAT) && (e.getClickedBlock() != null && !e.getClickedBlock().isLiquid())) {
 		// Trying to put a boat on non-liquid
 		e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
 		e.setCancelled(true);
@@ -1234,10 +1265,11 @@ public class IslandGuard implements Listener {
      * Prevents usage of an Ender Chest
      * @param event
      */
+    
     @EventHandler(priority = EventPriority.LOWEST)
     void PlayerInteractEvent(PlayerInteractEvent event){
 	if (debug) {
-	    plugin.getLogger().info(event.getEventName());
+	    plugin.getLogger().info("Ender chest " + event.getEventName());
 	}
 	Player player = (Player) event.getPlayer();
 	if (player.getWorld().getName().equalsIgnoreCase(Settings.worldName) || 
