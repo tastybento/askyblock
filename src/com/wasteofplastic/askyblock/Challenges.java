@@ -17,7 +17,6 @@
 package com.wasteofplastic.askyblock;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -912,7 +911,7 @@ public class Challenges implements CommandExecutor {
 		// plugin.getLogger().info("DEBUG: Items are there");
 		// Check for needed entities
 		for (Entity entity : player.getNearbyEntities(10, 10, 10)) {
-		    plugin.getLogger().info("DEBUG: Entity found:" + entity.getType().toString());
+		    //plugin.getLogger().info("DEBUG: Entity found:" + entity.getType().toString());
 		    if (neededEntities.containsKey(entity.getType())) {
 			// plugin.getLogger().info("DEBUG: Entity in list");
 			if (neededEntities.get(entity.getType()) == 1) {
