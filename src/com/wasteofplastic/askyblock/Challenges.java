@@ -410,12 +410,15 @@ public class Challenges implements CommandExecutor {
     protected int checkLevelCompletion(final Player player, final String level) {
 	int challengesCompleted = 0;
 	List<String> levelChallengeList = challengeList.get(level);
-	for (String challenge : levelChallengeList) {
-	    if (players.checkChallenge(player.getUniqueId(), challenge)) {
-		challengesCompleted++;
+	if (levelChallengeList != null) {
+	    for (String challenge : levelChallengeList) {
+		if (players.checkChallenge(player.getUniqueId(), challenge)) {
+		    challengesCompleted++;
+		}
 	    }
+	    return levelChallengeList.size() - Settings.waiverAmount - challengesCompleted;
 	}
-	return levelChallengeList.size() - Settings.waiverAmount - challengesCompleted;
+	return 0;
     }
 
     /**
@@ -692,11 +695,15 @@ public class Challenges implements CommandExecutor {
 				if (i != null && i.getType().equals(Material.POTION)) {
 				    //plugin.getLogger().info("DEBUG: Potion found, durability = "+ i.getDurability());
 				    if (i.getDurability() == reqDurability) {
-					//plugin.getLogger().info("Matched! ");
-					count--;
-					item = new ItemStack(i);
+					item = i.clone();
+					if (item.getAmount() > reqAmount) {
+					    item.setAmount(reqAmount);
+					}
+					count = count - item.getAmount();
+					//plugin.getLogger().info("Matched! count = " + count);
+					// If the item stack has more in it than required, just take the minimum
 					//plugin.getLogger().info("DEBUG: Found " + item.toString() + ":" + item.getDurability() + " x " + item.getAmount());
-					toBeRemoved.add(i.clone());
+					toBeRemoved.add(item);
 				    }
 				}
 				if (count == 0) {
@@ -838,22 +845,26 @@ public class Challenges implements CommandExecutor {
 		try {
 		    final int qty = Integer.parseInt(sPart[1]);
 		    // Find out if the needed item is a Material or an Entity
-		    Material item = Material.getMaterial(sPart[0]);
-		    if (item != null) {
-			neededItem.put(item, qty);
-			// plugin.getLogger().info("DEBUG: Needed item is " +
-			// Integer.parseInt(sPart[1]) + " x " +
-			// Material.getMaterial(sPart[0]).toString());
-
-		    } else {
-			// plugin.getLogger().info("DEBUG: Not a material, trying entities");
-			// Not a material, try an Entity
+		    boolean isEntity = false;
+		    for (EntityType entityType : EntityType.values()) {
+			if (entityType.toString().equalsIgnoreCase(sPart[0])) {
+			    isEntity = true;
+			    break;
+			}
+		    }
+		    if (isEntity) {
+			//plugin.getLogger().info("DEBUG: Item " + sPart[0].toUpperCase() + " is an entity");
 			EntityType entityType = EntityType.valueOf(sPart[0].toUpperCase());
 			if (entityType != null) {
 			    neededEntities.put(entityType, qty);
-			    // plugin.getLogger().info("DEBUG: Needed entity is "
-			    // + Integer.parseInt(sPart[1]) + " x " +
-			    // EntityType.valueOf(sPart[0].toUpperCase()).toString());
+			    //plugin.getLogger().info("DEBUG: Needed entity is " + Integer.parseInt(sPart[1]) + " x " + EntityType.valueOf(sPart[0].toUpperCase()).toString());
+			}
+		    } else {
+			Material item = Material.getMaterial(sPart[0].toUpperCase());
+			if (item != null) {
+			    neededItem.put(item, qty);
+			    //plugin.getLogger().info("DEBUG: Needed item is " + Integer.parseInt(sPart[1]) + " x " + Material.getMaterial(sPart[0]).toString());
+
 			} else {
 			    plugin.getLogger().warning("Problem parsing required item for challenge " + challenge + " in challenges.yml!");
 			    return false;
@@ -900,8 +911,7 @@ public class Challenges implements CommandExecutor {
 		// plugin.getLogger().info("DEBUG: Items are there");
 		// Check for needed entities
 		for (Entity entity : player.getNearbyEntities(10, 10, 10)) {
-		    // plugin.getLogger().info("DEBUG: Entity found:" +
-		    // entity.getType().toString());
+		    //plugin.getLogger().info("DEBUG: Entity found:" + entity.getType().toString());
 		    if (neededEntities.containsKey(entity.getType())) {
 			// plugin.getLogger().info("DEBUG: Entity in list");
 			if (neededEntities.get(entity.getType()) == 1) {
@@ -1169,7 +1179,8 @@ public class Challenges implements CommandExecutor {
 			// If it is not, then we are cutting a word in two and
 			// need to backtrack to the last space if possible
 			int lastSpace = line.lastIndexOf(" ");
-			if (lastSpace < line.length()) {
+			// Only do this if there is a space in the line to backtrack to...
+			if (lastSpace != -1 && lastSpace < line.length()) {
 			    line = line.substring(0, lastSpace);
 			    i -= (length - lastSpace - 1);
 			}

@@ -79,7 +79,7 @@ public class NetherPortals implements Listener {
 	}
     }
 
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = false)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = false)
     public void onPlayerPortal(PlayerPortalEvent event) {
 	// If the nether is disabled then quit immediately
 	if (!Settings.createNether) {
@@ -104,6 +104,7 @@ public class NetherPortals implements Listener {
 			&& !plugin.getSpawn().isAtSpawn(event.getPlayer().getLocation())) {
 		    event.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
 		    event.setCancelled(true);
+		    return;
 		}
 	    }
 	}
@@ -127,8 +128,8 @@ public class NetherPortals implements Listener {
 		    event.setCancelled(true);
 		    Location end_place = plugin.getServer().getWorld(Settings.worldName + "_the_end").getSpawnLocation();
 		    if (ASkyBlock.isSafeLocation(end_place)) {
-			event.getPlayer().sendBlockChange(end_place, end_place.getBlock().getType(),end_place.getBlock().getData());
 			event.getPlayer().teleport(end_place);
+			//event.getPlayer().sendBlockChange(end_place, end_place.getBlock().getType(),end_place.getBlock().getData());
 			return;
 		    } else {
 			event.getPlayer().sendMessage(ChatColor.RED + Locale.warpserrorNotSafe);

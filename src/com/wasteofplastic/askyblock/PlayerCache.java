@@ -17,14 +17,17 @@
 package com.wasteofplastic.askyblock;
 
 import java.io.File;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
+
+import com.google.common.collect.Lists;
 
 /**
  * @author ben
@@ -38,8 +41,8 @@ public class PlayerCache {
 
     protected PlayerCache(ASkyBlock plugin) {
 	this.plugin = plugin;
-	final Collection<? extends Player> serverPlayers = Bukkit.getServer().getOnlinePlayers();
-	for (Player p : serverPlayers) {
+	//final Collection<? extends Player> serverPlayers = Bukkit.getServer().getOnlinePlayers();
+	for (Player p : getOnlinePlayers()) {
 	    if (p.isOnline()) {
 		final Players playerInf = new Players(plugin, p.getUniqueId());
 		// Make sure parties are working correctly
@@ -53,7 +56,14 @@ public class PlayerCache {
 	    }
 	}
     }
-
+    public static List<Player> getOnlinePlayers() {
+	    List<Player> list = Lists.newArrayList();
+	    for (World world : Bukkit.getWorlds()) {
+	        list.addAll(world.getPlayers());
+	    }
+	    return Collections.unmodifiableList(list);
+	}
+    
     /*
      * Cache control methods
      */

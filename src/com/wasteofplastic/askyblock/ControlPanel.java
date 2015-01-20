@@ -94,7 +94,7 @@ public class ControlPanel implements Listener {
 	    // Get how many the store should be
 	    int size = items.getKeys(false).size() + 8;
 	    size -= (size % 9);
-	    miniShop = Bukkit.createInventory(null, size, ChatColor.translateAlternateColorCodes('&',Locale.islandMiniShopTitle));
+	    miniShop = Bukkit.createInventory(null, size, Locale.islandMiniShopTitle);
 	    // Run through items
 	    int slot = 0;
 	    for (String item : items.getKeys(false)) {

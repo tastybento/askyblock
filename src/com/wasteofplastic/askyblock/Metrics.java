@@ -10,15 +10,21 @@ import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.scheduler.BukkitTask;
+
+import com.google.common.collect.Lists;
 
 public class Metrics {
     private static String encode(final String text) throws UnsupportedEncodingException {
@@ -130,7 +136,7 @@ public class Metrics {
 	final boolean onlineMode = Bukkit.getServer().getOnlineMode();
 	final String pluginVersion = description.getVersion();
 	final String serverVersion = Bukkit.getVersion();
-	final int playersOnline = Bukkit.getServer().getOnlinePlayers().size();
+	final int playersOnline = getOnlinePlayers().size();
 
 	final StringBuilder data = new StringBuilder();
 
@@ -185,7 +191,15 @@ public class Metrics {
 	    throw new IOException(response);
 	}
     }
-
+    
+    public static List<Player> getOnlinePlayers() {
+	    List<Player> list = Lists.newArrayList();
+	    for (World world : Bukkit.getWorlds()) {
+	        list.addAll(world.getPlayers());
+	    }
+	    return Collections.unmodifiableList(list);
+	}
+    
     public boolean start() {
 	synchronized (optOutLock) {
 	    if (isOptOut()) {
