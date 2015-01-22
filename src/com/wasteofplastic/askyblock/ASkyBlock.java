@@ -62,7 +62,6 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 import org.bukkit.util.Vector;
-
 /**
  * @author ben
  * Main ASkyBlock class - provides an island minigame in a sea of acid
@@ -113,6 +112,11 @@ public class ASkyBlock extends JavaPlugin {
     // Level calc
     private boolean calculatingLevel = false;
 
+    // MySQL
+    //MySQL MySQL = new MySQL(plugin, "host.name", "port", "database", "user", "pass");
+    //MySQL MySQL = new MySQL(plugin, "127.0.0.1", "port", "askyblock", "tastybento", "mukonoso");
+    //Connection c = null;
+    
     /**
      * @return ASkyBlock object instance
      */
@@ -478,7 +482,6 @@ public class ASkyBlock extends JavaPlugin {
      * @param player
      * @return
      */
-    @SuppressWarnings("deprecation")
     protected boolean homeTeleport(final Player player) {
 	Location home = null;
 	home = getSafeHomeLocation(player.getUniqueId());
@@ -508,7 +511,7 @@ public class ASkyBlock extends JavaPlugin {
 	}
 	//home.getWorld().refreshChunk(home.getChunk().getX(), home.getChunk().getZ());
 	// Removing this line because it appears to cause artifacts of hovering blocks
-	home.getWorld().loadChunk(home.getChunk());
+	home.getWorld().loadChunk(home.getChunk().getX(),home.getChunk().getZ(),false);
 	//getLogger().info("DEBUG: " + home.toString());
 	// This next line should help players with long ping times
 	// http://bukkit.org/threads/workaround-for-playing-falling-after-teleport-when-lagging.293035/
@@ -517,12 +520,20 @@ public class ASkyBlock extends JavaPlugin {
 	//player.sendBlockChange(home.getBlock().getRelative(BlockFace.DOWN).getLocation(),home.getBlock().getRelative(BlockFace.DOWN).getType(),home.getBlock().getRelative(BlockFace.DOWN).getData());
 	//getLogger().info("DEBUG: " + home.getBlock().getType().toString());
 	//getLogger().info("DEBUG: " + home.getBlock().getRelative(BlockFace.DOWN).getType());
-	player.teleport(home);
+	final Location teleportTo = home.clone();
+	player.sendMessage(ChatColor.GREEN + Locale.islandteleport);
+	Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
+
+	    @Override
+	    public void run() {
+		player.teleport(teleportTo);
+	    }}, 20L);
+	
 	/*
 	player.sendBlockChange(home,home.getBlock().getType(),home.getBlock().getData());
 	player.sendBlockChange(home.getBlock().getRelative(BlockFace.DOWN).getLocation(),home.getBlock().getRelative(BlockFace.DOWN).getType(),home.getBlock().getRelative(BlockFace.DOWN).getData());
 	*/
-	player.sendMessage(ChatColor.GREEN + Locale.islandteleport);
+	
 	return true;
     }
 

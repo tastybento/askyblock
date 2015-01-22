@@ -28,11 +28,9 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 public class JoinLeaveEvents implements Listener {
     private ASkyBlock plugin;
-    private PlayerCache players;
 
     protected JoinLeaveEvents(ASkyBlock aSkyBlock) {
 	this.plugin = aSkyBlock;
-	this.players = plugin.getPlayers();
     }
 
     /**
@@ -41,17 +39,17 @@ public class JoinLeaveEvents implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerJoin(final PlayerJoinEvent event) {
 	final UUID playerUUID = event.getPlayer().getUniqueId();
-	if (players == null) {
-	    plugin.getLogger().severe("players is NULL");
+	if (plugin.getPlayers() == null) {
+	    plugin.getLogger().severe("plugin.getPlayers() is NULL");
 	}
-	if (players.inTeam(playerUUID) && players.getTeamIslandLocation(playerUUID) == null) {
-	    final UUID leader = players.getTeamLeader(playerUUID);
-	    players.setTeamIslandLocation(playerUUID, players.getIslandLocation(leader));
+	if (plugin.getPlayers().inTeam(playerUUID) && plugin.getPlayers().getTeamIslandLocation(playerUUID) == null) {
+	    final UUID leader = plugin.getPlayers().getTeamLeader(playerUUID);
+	    plugin.getPlayers().setTeamIslandLocation(playerUUID, plugin.getPlayers().getIslandLocation(leader));
 	}
-	players.addPlayer(playerUUID);
+	plugin.getPlayers().addPlayer(playerUUID);
 	// Set the player's name (it may have changed)
-	players.setPlayerName(playerUUID, event.getPlayer().getName());
-	players.save(playerUUID);
+	plugin.getPlayers().setPlayerName(playerUUID, event.getPlayer().getName());
+	plugin.getPlayers().save(playerUUID);
 	if (Settings.logInRemoveMobs) {
 	    plugin.removeMobs(event.getPlayer().getLocation());
 	}
@@ -79,6 +77,6 @@ public class JoinLeaveEvents implements Listener {
 	CoopPlay.getInstance().clearMyInvitedCoops(event.getPlayer());
 	//CoopPlay.getInstance().returnAllInventories(event.getPlayer());
 	//plugin.setMessage(event.getPlayer().getUniqueId(), "Hello! This is a test. You logged out");
-	players.removeOnlinePlayer(event.getPlayer().getUniqueId());
+	plugin.getPlayers().removeOnlinePlayer(event.getPlayer().getUniqueId());
     }
 }

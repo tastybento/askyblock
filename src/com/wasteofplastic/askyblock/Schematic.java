@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -309,6 +310,7 @@ public class Schematic {
 		    //Bukkit.getLogger().info("DEBUG" + x + "," + y + "," + z + " block to change is " + block.toString());
 		    //Bukkit.getLogger().info("DEBUG " + index + " changing to ID:"+blocks[index] + " data = " + blockData[index])
 		    try {
+
 			//if (type < 0) {
 			//    type +=256;
 			//}
