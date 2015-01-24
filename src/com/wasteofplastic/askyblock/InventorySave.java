@@ -57,12 +57,15 @@ public class InventorySave {
 	    } 
 	}
 	//plugin.getLogger().info("DEBUG: name or location not known, clearing inventory - nothing to load");
-	// Else Clear
+	// Else Clear - NO DO NOT CLEAR - this will clear all inventories if player dies and override server
+	// setting keepInventory:true
+	/*
 	player.getInventory().clear();
 	player.getInventory().setBoots(null);
 	player.getInventory().setChestplate(null);
 	player.getInventory().setHelmet(null);
 	player.getInventory().setLeggings(null);
+	*/
     }
 
     /**

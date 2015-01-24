@@ -91,7 +91,7 @@ public class DeleteIslandChunk {
 	    }
 	}
 
-
+/*
 	plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
 
 	    @Override
@@ -101,6 +101,6 @@ public class DeleteIslandChunk {
 			loc.getWorld().refreshChunk(x, z);
 		    }
 		}
-	    }});
+	    }});*/
     }
 }

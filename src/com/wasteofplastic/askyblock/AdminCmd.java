@@ -38,7 +38,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BlockIterator;
-import org.bukkit.util.Vector;
 
 /*
  * New commands:
@@ -503,8 +502,8 @@ public class AdminCmd implements CommandExecutor {
 			Location safeSpot = plugin.getSafeHomeLocation(playerUUID);
 			if (safeSpot != null) {
 			    // This next line should help players with long ping times
-			    ((Player)sender).sendBlockChange(safeSpot,safeSpot.getBlock().getType(),safeSpot.getBlock().getData());
 			    ((Player)sender).teleport(safeSpot);
+			    //((Player)sender).sendBlockChange(safeSpot,safeSpot.getBlock().getType(),safeSpot.getBlock().getData());
 			} else {
 			    sender.sendMessage(ChatColor.RED + Locale.warpserrorNotSafe);
 			    Location warpSpot = plugin.getPlayers().getIslandLocation(playerUUID);
@@ -839,18 +838,10 @@ public class AdminCmd implements CommandExecutor {
 		    Location loc = new Location(ASkyBlock.getIslandWorld(), x,y,z);
 		    if (!loc.getBlock().getType().equals(Material.BEDROCK)) {
 			// Check distance from spawn
-			if (plugin.getSpawn().getSpawnLoc() != null) {
-			    // Spawn exists
-			    Vector spawn = plugin.getSpawn().getSpawnLoc().toVector().multiply(new Vector(1,0,1));
-			    Vector locVector = loc.toVector().multiply(new Vector(1,0,1));
-			    if (spawn.distanceSquared(locVector) > (double)((double)Settings.islandDistance) * Settings.islandDistance) {
-				// Far enough away from spawn
-				islands.add(loc);
-			    }
-			} else {
-			    // No spawn
+			if (!plugin.getSpawn().isAtSpawn(loc)) {
+			    // Far enough away from spawn
 			    islands.add(loc);
-			}
+			} 
 		    }
 		}
 	    } catch (Exception e) {

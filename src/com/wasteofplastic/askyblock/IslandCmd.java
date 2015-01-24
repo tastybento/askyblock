@@ -95,26 +95,16 @@ public class IslandCmd implements CommandExecutor {
 	}
 	if (schematicFile.exists()) {    
 	    plugin.getLogger().info("Trying to load island schematic...");
-	    try {
-		schematics.put("", Schematic.loadSchematic(schematicFile));
-		//island = Schematic.loadSchematic(schematicFile);
-	    } catch (IOException e) {
-		plugin.getLogger().severe("Could not load island schematic! Error in file.");
-		e.printStackTrace();
-	    }
+	    schematics.put("", new Schematic(schematicFile));
+	    //island = Schematic.loadSchematic(schematicFile);
 	}
 	// Now add any permission-based schematics
 	if (!Settings.schematics.isEmpty()) {
 	    for (String perm : Settings.schematics.keySet()) {
 		schematicFile = new File(plugin.getDataFolder(), Settings.schematics.get(perm));
 		if (schematicFile.exists()) {
-		    try {
-			schematics.put(perm, Schematic.loadSchematic(schematicFile));
-			//island = Schematic.loadSchematic(schematicFile);
-		    } catch (IOException e) {
-			plugin.getLogger().severe("Could not load island schematic! Error in file.");
-			e.printStackTrace();
-		    }
+		    schematics.put(perm, new Schematic(schematicFile));
+		    //island = Schematic.loadSchematic(schematicFile);
 		} else {
 		    plugin.getLogger().severe("Schematic file '" + Settings.schematics.get(perm) +"' does not exist!");
 		}
@@ -354,7 +344,9 @@ public class IslandCmd implements CommandExecutor {
 		    mySchematic = perm;
 		}
 	    }
-	    cowSpot = Schematic.pasteSchematic(world, islandLoc, schematics.get(mySchematic), player);
+	    //plugin.getLogger().info("DEBUG: size of schematics = " + schematics.size());
+	    // Paste the schematic
+	    cowSpot = schematics.get(mySchematic).pasteSchematic(world, islandLoc, player);
 	    if (cowSpot == null) {
 		islandLoc.getBlock().setType(Material.BEDROCK);
 		plugin.getLogger().severe("Schematic loading error - cannot load " + mySchematic);
@@ -467,10 +459,10 @@ public class IslandCmd implements CommandExecutor {
 		Block blockToChange = world.getBlockAt(x, Settings.island_level + 5, z + 3);
 		blockToChange.setType(Material.SIGN_POST);
 		Sign sign = (Sign) blockToChange.getState();
-		sign.setLine(0, ChatColor.translateAlternateColorCodes('&', Locale.signLine1.replace("[player]", player.getName())));
-		sign.setLine(1, ChatColor.translateAlternateColorCodes('&', Locale.signLine2.replace("[player]", player.getName())));
-		sign.setLine(2, ChatColor.translateAlternateColorCodes('&', Locale.signLine3.replace("[player]", player.getName())));
-		sign.setLine(3, ChatColor.translateAlternateColorCodes('&', Locale.signLine4.replace("[player]", player.getName())));
+		sign.setLine(0, Locale.signLine1.replace("[player]", player.getName()));
+		sign.setLine(1, Locale.signLine2.replace("[player]", player.getName()));
+		sign.setLine(2, Locale.signLine3.replace("[player]", player.getName()));
+		sign.setLine(3, Locale.signLine4.replace("[player]", player.getName()));
 		((org.bukkit.material.Sign) sign.getData()).setFacingDirection(BlockFace.NORTH);
 		sign.update();
 		// Place the chest - no need to use the safe spawn function because we
@@ -620,6 +612,7 @@ public class IslandCmd implements CommandExecutor {
 		    resetMoney(player);
 		}
 		plugin.setIslandBiome(plugin.getPlayers().getIslandLocation(playerUUID), Settings.defaultBiome);
+		//plugin.getLogger().info("Spawning cow at " + cowSpot.toString());
 		plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable () {
 		    @Override
 		    public void run() {
@@ -661,7 +654,22 @@ public class IslandCmd implements CommandExecutor {
 		}
 		return true;
 	    } else if (split[0].equalsIgnoreCase("about")) {
-		player.sendMessage(ChatColor.GOLD + "ASkyBlock (c) 2014 by TastyBento");
+		player.sendMessage(ChatColor.GOLD + "(c) 2014 - 2015 by tastybento");
+		player.sendMessage(ChatColor.GOLD + "This plugin is free software: you can redistribute");
+		 player.sendMessage(ChatColor.GOLD + "it and/or modify it under the terms of the GNU");
+		 player.sendMessage(ChatColor.GOLD + "General Public License as published by the Free");
+		 player.sendMessage(ChatColor.GOLD + "Software Foundation, either version 3 of the License,");
+		 player.sendMessage(ChatColor.GOLD + "or (at your option) any later version.");
+		 player.sendMessage(ChatColor.GOLD + "This plugin is distributed in the hope that it");
+		 player.sendMessage(ChatColor.GOLD + "will be useful, but WITHOUT ANY WARRANTY; without");
+		 player.sendMessage(ChatColor.GOLD + "even the implied warranty of MERCHANTABILITY or");
+		 player.sendMessage(ChatColor.GOLD + "FITNESS FOR A PARTICULAR PURPOSE.  See the");
+		 player.sendMessage(ChatColor.GOLD + "GNU General Public License for more details.");
+		 player.sendMessage(ChatColor.GOLD + "You should have received a copy of the GNU");
+		 player.sendMessage(ChatColor.GOLD + "General Public License along with this plugin.");
+		 player.sendMessage(ChatColor.GOLD + "If not, see <http://www.gnu.org/licenses/>.");
+		 player.sendMessage(ChatColor.GOLD + "Souce code is available on GitHub.");
+		 return true;
 		//Spawn enderman
 		//Enderman enderman = (Enderman) player.getWorld().spawnEntity(player.getLocation().add(new Vector(5,0,5)), EntityType.ENDERMAN);
 		//enderman.setCustomName("TastyBento's Ghost");
@@ -937,13 +945,15 @@ public class IslandCmd implements CommandExecutor {
 		// go to spawn
 		//plugin.getLogger().info("Debug: getSpawn" + plugin.getSpawn().toString() );
 		//plugin.getLogger().info("Debug: getSpawn loc" + plugin.getSpawn().getSpawnLoc().toString() );
+		player.teleport(plugin.getSpawn().getSpawnLoc());
+		/*
 		player.sendBlockChange(plugin.getSpawn().getSpawnLoc()
 			,plugin.getSpawn().getSpawnLoc().getBlock().getType()
 			,plugin.getSpawn().getSpawnLoc().getBlock().getData());
 		player.sendBlockChange(plugin.getSpawn().getSpawnLoc().getBlock().getRelative(BlockFace.DOWN).getLocation()
 			,plugin.getSpawn().getSpawnLoc().getBlock().getRelative(BlockFace.DOWN).getType()
 			,plugin.getSpawn().getSpawnLoc().getBlock().getRelative(BlockFace.DOWN).getData());
-		player.teleport(plugin.getSpawn().getSpawnLoc());
+		*/
 		return true;
 	    } else if (split[0].equalsIgnoreCase("top")) {
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.topten")) {
@@ -1181,7 +1191,7 @@ public class IslandCmd implements CommandExecutor {
 				    player.getWorld().playSound(player.getLocation(), Sound.BAT_TAKEOFF, 1F, 1F);
 				    Player warpOwner = plugin.getServer().getPlayer(foundWarp);
 				    if (warpOwner != null) {
-					warpOwner.sendMessage(ChatColor.translateAlternateColorCodes('&', Locale.warpsPlayerWarped).replace("[name]", player.getDisplayName()));
+					warpOwner.sendMessage(Locale.warpsPlayerWarped.replace("[name]", player.getDisplayName()));
 				    }
 				    return true;
 				}
@@ -1440,10 +1450,12 @@ public class IslandCmd implements CommandExecutor {
 		    } else {
 			// Just move target to spawn
 			if (!target.performCommand(Settings.SPAWNCOMMAND)) {
+			    target.teleport(player.getWorld().getSpawnLocation());
+			    /*
 			    target.sendBlockChange(target.getWorld().getSpawnLocation()
 				    ,target.getWorld().getSpawnLocation().getBlock().getType()
 				    ,target.getWorld().getSpawnLocation().getBlock().getData());
-			    target.teleport(player.getWorld().getSpawnLocation());
+				    */
 			}
 		    }
 		    target.sendMessage(ChatColor.RED + Locale.expelExpelled);
@@ -1564,6 +1576,10 @@ public class IslandCmd implements CommandExecutor {
 		    targetPlayer = plugin.getPlayers().getUUID(split[1]);
 		    if (targetPlayer == null) {
 			player.sendMessage(ChatColor.RED + Locale.errorUnknownPlayer);
+			return true;
+		    }
+		    if (targetPlayer.equals(playerUUID)) {
+			player.sendMessage(ChatColor.RED + Locale.makeLeadererrorGeneralError);
 			return true;
 		    }
 		    if (!plugin.getPlayers().inTeam(player.getUniqueId())) {
