@@ -205,20 +205,8 @@ public class IslandCmd implements CommandExecutor {
 	//plugin.getLogger().info("DEBUG: Set island to true - actually is " + plugin.getPlayers().hasIsland(playerUUID));
 
 	plugin.getPlayers().setIslandLocation(playerUUID,next);
-	// Store this island in the file system
-	String islandName = next.getBlockX() + "," + next.getBlockZ() + ".yml";
-	final File islandFolder = new File(plugin.getDataFolder() + File.separator + "islands");
-	if (!islandFolder.exists()) {
-	    islandFolder.mkdir();
-	}
-	final File islandFile = new File(plugin.getDataFolder() + File.separator + "islands" + File.separator + islandName);
-	try {
-	    if (!islandFile.createNewFile()) {
-		plugin.getLogger().severe("Problem creating island file " + islandName + " - file exists, but should not!");
-	    }
-	} catch (IOException e) {
-	    plugin.getLogger().severe("Problem creating island file " + islandName);
-	}
+	// Add to the grid
+	plugin.getGrid().addIsland(next.getBlockX(), next.getBlockZ(), playerUUID);
 	//plugin.getLogger().info("DEBUG: player island location is " + plugin.getPlayers().getIslandLocation(playerUUID).toString());
 	// Teleport the player to a safe place
 	//plugin.homeTeleport(player);
@@ -1541,7 +1529,7 @@ public class IslandCmd implements CommandExecutor {
 				// Reset the island level
 				plugin.getPlayers().setIslandLevel(target.getUniqueId(), 0);
 				plugin.getPlayers().save(target.getUniqueId());
-				plugin.createTopTen();
+				plugin.updateTopTen(playerUUID,0);
 				// Update the inventory
 				target.updateInventory();
 			    }

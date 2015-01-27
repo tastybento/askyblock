@@ -103,6 +103,8 @@ public class ASkyBlock extends JavaPlugin {
     HashSet<UUID> fallingPlayers = new HashSet<UUID>();
     // Biome chooser object
     Biomes biomes;
+    // Island grid manager
+    private GridManager grid;
 
     private boolean debug = false;
     //public boolean flag = false;
@@ -509,7 +511,7 @@ public class ASkyBlock extends JavaPlugin {
 	//home.getWorld().refreshChunk(home.getChunk().getX(), home.getChunk().getZ());
 	// Removing this line because it appears to cause artifacts of hovering blocks
 	//home.getWorld().loadChunk(home.getChunk());
-	getLogger().info("DEBUG: " + home.toString());
+	//getLogger().info("DEBUG: " + home.toString());
 	// This next line should help players with long ping times
 	// http://bukkit.org/threads/workaround-for-playing-falling-after-teleport-when-lagging.293035/
 	//getLogger().info("DEBUG: home = " + home.toString());
@@ -538,27 +540,20 @@ public class ASkyBlock extends JavaPlugin {
 	    return true;
 	}
 	//getLogger().info("DEBUG checking islandAtLocation for location " + loc.toString());
-	// Immediate check
-	if (loc.getBlock().getType().equals(Material.BEDROCK)) {
-	    //getLogger().info("DEBUG found bedrock at island height");
+	// Check the island grid
+	if (grid.getIslandAt(loc) != null) {
+	    //getLogger().info("DEBUG: Island at " + loc.toString());
 	    return true;
 	}
 	// Near spawn?
 	if (spawn.isAtSpawn(loc)) {
+	    //getLogger().info("DEBUG: too close to spawn");
 	    return true;
 	}
-	/*
-	Vector v = loc.toVector();
-	v.multiply(new Vector(1,0,1));
-	if ((getSpawn().getBedrock() != null && v.distanceSquared(getSpawn().getBedrock().toVector().multiply(new Vector(1,0,1))) < (double)((double)spawn.getRange()) * spawn.getRange())) {
-	    //plugin.getLogger().info("Too near spawn");
-	    return true;
-	}*/
-	// Check the file system
-	String checkName = loc.getBlockX() + "," + loc.getBlockZ() + ".yml";
-	final File islandFile = new File(plugin.getDataFolder() + File.separator + "islands" + File.separator + checkName);
-	if (islandFile.exists()) {
-	    //plugin.getLogger().info("File exists");
+	// Bedrock check
+	if (loc.getBlock().getType().equals(Material.BEDROCK)) {
+	    getLogger().info("Found bedrock at island height - adding to islands.yml " + loc.getBlockX() + "," + loc.getBlockZ());
+	    grid.addIsland(loc.getBlockX(), loc.getBlockZ());
 	    return true;
 	}
 	// Look around
@@ -568,7 +563,8 @@ public class ASkyBlock extends JavaPlugin {
 	    for (int y = 10; y <= 255; y++) {
 		for (int z = -5; z <= 5; z++) {
 		    if (loc.getWorld().getBlockAt(x + px, y, z + pz).getType().equals(Material.BEDROCK)) {
-			//plugin.getLogger().info("Bedrock found during long search");
+			plugin.getLogger().info("Bedrock found during long search - adding to islands.yml");
+			grid.addIsland(loc.getBlockX(), loc.getBlockZ());
 			return true;
 		    }
 		}
@@ -1580,6 +1576,7 @@ public class ASkyBlock extends JavaPlugin {
 	    // Remove players from memory
 	    players.removeAllPlayers();
 	    //saveConfig();
+	    grid.saveGrid();
 	    saveWarpList();
 	    saveMessages();
 	} catch (final Exception e) {
@@ -1672,6 +1669,7 @@ public class ASkyBlock extends JavaPlugin {
 		    public void run() {
 			// load the list
 			loadTopTen();
+			grid = new GridManager(plugin);
 		    }
 		});
 		// This part will kill monsters if they fall into the water because it
@@ -2023,7 +2021,7 @@ public class ASkyBlock extends JavaPlugin {
      * @param level
      */
     protected void updateTopTen(UUID ownerUUID, int level) {
-	getLogger().info("DEBUG: updating TopTen");
+	//getLogger().info("DEBUG: updating TopTen");
 	topTenList.put(ownerUUID, level);
 	topTenList = MapUtil.sortByValue(topTenList);
     }
@@ -2397,7 +2395,7 @@ public class ASkyBlock extends JavaPlugin {
 	// Reset the island level
 	players.setIslandLevel(player.getUniqueId(), 0);
 	players.save(player.getUniqueId());
-	createTopTen();
+	updateTopTen(player.getUniqueId(),0);
 	// Update the inventory
 	player.updateInventory();
 	/*
@@ -2689,6 +2687,13 @@ public class ASkyBlock extends JavaPlugin {
      */
     public void setCalculatingLevel(boolean calculatingLevel) {
 	this.calculatingLevel = calculatingLevel;
+    }
+
+    /**
+     * @return the grid
+     */
+    public GridManager getGrid() {
+        return grid;
     }
 
 }

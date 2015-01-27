@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -48,7 +49,22 @@ public class JoinLeaveEvents implements Listener {
 	    final UUID leader = players.getTeamLeader(playerUUID);
 	    players.setTeamIslandLocation(playerUUID, players.getIslandLocation(leader));
 	}
-	players.addPlayer(playerUUID);
+	//players.addPlayer(playerUUID);
+	// Add owners to the island grid list as they log in
+	if (players.hasIsland(playerUUID)) {
+	    Location loc = players.getIslandLocation(playerUUID);
+	    // Check if the island is in the grid list
+	    if (plugin.getGrid().getOwnerOfIslandAt(loc) == null) {
+		Island island = plugin.getGrid().getIslandAt(loc);
+		if (island == null) {
+		    // Island exists but isn't in the grid
+		    plugin.getGrid().addIsland(loc.getBlockX(), loc.getBlockZ(), playerUUID);
+		} else {
+		    // Assign ownership
+		    island.setOwner(playerUUID);
+		}
+	    }
+	}
 	// Set the player's name (it may have changed)
 	players.setPlayerName(playerUUID, event.getPlayer().getName());
 	players.save(playerUUID);
