@@ -207,7 +207,7 @@ public class PlayerCache {
 	playerCache.get(playerUUID).setIslandLocation(null);
 	playerCache.get(playerUUID).setIslandLevel(0);
 	playerCache.get(playerUUID).save(); // Needed?
-	plugin.updateTopTen();
+	plugin.createTopTen();
     }
 
     protected void setHomeLocation(UUID playerUUID, Location location) {

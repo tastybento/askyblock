@@ -336,7 +336,7 @@ public class AdminCmd implements CommandExecutor {
 		return true;
 	    } else if (split[0].equalsIgnoreCase("topten")) {
 		sender.sendMessage(ChatColor.YELLOW + Locale.adminTopTengenerating);
-		plugin.updateTopTen();
+		plugin.createTopTen();
 		sender.sendMessage(ChatColor.YELLOW + Locale.adminTopTenfinished);
 		return true;
 	    } else if (split[0].equalsIgnoreCase("purge")) {

@@ -1541,7 +1541,7 @@ public class IslandCmd implements CommandExecutor {
 				// Reset the island level
 				plugin.getPlayers().setIslandLevel(target.getUniqueId(), 0);
 				plugin.getPlayers().save(target.getUniqueId());
-				plugin.updateTopTen();
+				plugin.createTopTen();
 				// Update the inventory
 				target.updateInventory();
 			    }

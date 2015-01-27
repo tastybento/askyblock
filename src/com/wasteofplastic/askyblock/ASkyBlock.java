@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -88,7 +89,7 @@ public class ASkyBlock extends JavaPlugin {
     // Map of all warps stored as player, warp sign Location
     private HashMap<UUID, Object> warpList = new HashMap<UUID, Object>();
     // Top ten list of players
-    private Map<UUID, Integer> topTenList;
+    private LinkedHashMap<UUID, Integer> topTenList = new LinkedHashMap<UUID, Integer>();
     // Players object
     private PlayerCache players;
     // Acid Damage Potion
@@ -222,7 +223,7 @@ public class ASkyBlock extends JavaPlugin {
     protected boolean showTopTen(final Player player) {
 	player.sendMessage(ChatColor.GOLD + Locale.topTenheader);
 	if (topTenList == null) {
-	    updateTopTen();
+	    createTopTen();
 	    //player.sendMessage(ChatColor.RED + Locale.topTenerrorNotReady);
 	    //return true;
 	}
@@ -478,7 +479,6 @@ public class ASkyBlock extends JavaPlugin {
      * @param player
      * @return
      */
-    @SuppressWarnings("deprecation")
     protected boolean homeTeleport(final Player player) {
 	Location home = null;
 	home = getSafeHomeLocation(player.getUniqueId());
@@ -501,15 +501,15 @@ public class ASkyBlock extends JavaPlugin {
 		player.sendBlockChange(player.getWorld().getSpawnLocation()
 			,player.getWorld().getSpawnLocation().getBlock().getType()
 			,player.getWorld().getSpawnLocation().getBlock().getData());
-			*/
+		 */
 	    }
 	    player.sendMessage(ChatColor.RED + Locale.warpserrorNotSafe);
 	    return true;
 	}
 	//home.getWorld().refreshChunk(home.getChunk().getX(), home.getChunk().getZ());
 	// Removing this line because it appears to cause artifacts of hovering blocks
-	home.getWorld().loadChunk(home.getChunk());
-	//getLogger().info("DEBUG: " + home.toString());
+	//home.getWorld().loadChunk(home.getChunk());
+	getLogger().info("DEBUG: " + home.toString());
 	// This next line should help players with long ping times
 	// http://bukkit.org/threads/workaround-for-playing-falling-after-teleport-when-lagging.293035/
 	//getLogger().info("DEBUG: home = " + home.toString());
@@ -521,7 +521,7 @@ public class ASkyBlock extends JavaPlugin {
 	/*
 	player.sendBlockChange(home,home.getBlock().getType(),home.getBlock().getData());
 	player.sendBlockChange(home.getBlock().getRelative(BlockFace.DOWN).getLocation(),home.getBlock().getRelative(BlockFace.DOWN).getType(),home.getBlock().getRelative(BlockFace.DOWN).getData());
-	*/
+	 */
 	player.sendMessage(ChatColor.GREEN + Locale.islandteleport);
 	return true;
     }
@@ -1654,8 +1654,6 @@ public class ASkyBlock extends JavaPlugin {
 		loadWarpList();
 		// Load spawn
 		getSpawn();
-		// update the list
-		//updateTopTen();
 		// Minishop - must wait for economy to load before we can use econ 
 		getServer().getPluginManager().registerEvents(new ControlPanel(plugin), plugin);
 		if (getServer().getWorld(Settings.worldName).getGenerator() == null) {
@@ -1669,6 +1667,13 @@ public class ASkyBlock extends JavaPlugin {
 		    getServer().getPluginManager().disablePlugin(plugin);
 		    return;
 		}
+		getServer().getScheduler().runTask(plugin, new Runnable() {
+		    @Override
+		    public void run() {
+			// load the list
+			loadTopTen();
+		    }
+		});
 		// This part will kill monsters if they fall into the water because it
 		// is acid
 		if (Settings.mobAcidDamage > 0D || Settings.animalAcidDamage > 0D) {
@@ -1978,12 +1983,57 @@ public class ASkyBlock extends JavaPlugin {
 	return false;
     }
 
+    protected void loadTopTen() {
+	topTenList.clear();
+	// Check to see if the top ten list exists
+	File topTenFile = new File(getDataFolder(),"topten.yml");
+	if (!topTenFile.exists()) {
+	    getLogger().warning("Top ten file does not exist - creating it. This could take some time with a large number of players");
+	    createTopTen();
+	    getLogger().warning("Completed top ten creation.");
+	} else {
+	    // Load the top ten
+	    YamlConfiguration topTenConfig = loadYamlFile("topten.yml");
+	    // Load the values
+	    if (topTenConfig.contains("topten")) {
+		for (String playerUUID : topTenConfig.getConfigurationSection("topten").getKeys(false)) {
+		    //getLogger().info(playerUUID);
+		    try {
+			UUID uuid = UUID.fromString(playerUUID);
+			//getLogger().info(uuid.toString());
+			int level = topTenConfig.getInt("topten." + playerUUID);
+			//getLogger().info("Level = " + level);
+			topTenList.put(uuid, level);
+		    } catch (Exception e) {
+			e.printStackTrace();
+			getLogger().severe("Problem loading top ten list - recreating - this may take some time");
+			createTopTen();
+		    }
+		}
+	    } else {
+		getLogger().severe("Problem loading top ten list - recreating - this may take some time - no toptensection");
+		createTopTen();
+	    }
+	}
+    }
 
     /**
-     * Generates a sorted map of islands for the Top Ten list
+     * Adds a player to the top ten, if the level is good enough
+     * @param ownerUUID
+     * @param level
      */
-    protected void updateTopTen() {
-	Map<UUID, Integer> top = new HashMap<UUID, Integer>();
+    protected void updateTopTen(UUID ownerUUID, int level) {
+	getLogger().info("DEBUG: updating TopTen");
+	topTenList.put(ownerUUID, level);
+	topTenList = MapUtil.sortByValue(topTenList);
+    }
+
+    /**
+     * Generates a sorted map of islands for the Top Ten list from all player files
+     */
+    protected void createTopTen() {
+	// This map is a list of owner and island level
+	LinkedHashMap<UUID, Integer> top = new LinkedHashMap<UUID, Integer>();
 	for (final File f : playersFolder.listFiles()) {
 	    // Need to remove the .yml suffix
 	    String fileName = f.getName();
@@ -2012,6 +2062,31 @@ public class ASkyBlock extends JavaPlugin {
 	// Now sort the list
 	top = MapUtil.sortByValue(top);
 	topTenList = top;
+	// Save the top ten
+	saveTopTenList();
+    }
+
+    protected void saveTopTenList() {
+	getLogger().info("Saving top ten list");
+	// Make file
+	File topTenFile = new File(getDataFolder(),"topten.yml");
+	// Make configuration
+	YamlConfiguration config = new YamlConfiguration();
+	// Save config
+	int rank = 0;
+	for (UUID uuid : topTenList.keySet()) {
+	    if (rank++ == 10) {
+		break;
+	    }
+	    config.set("topten." + uuid.toString(), topTenList.get(uuid));
+	}
+	try {
+	    config.save(topTenFile);
+	    getLogger().info("Saved top ten list");
+	} catch (Exception e) {
+	    getLogger().severe("Could not save top ten list!");
+	    e.printStackTrace();
+	}
     }
 
     /**
@@ -2022,7 +2097,7 @@ public class ASkyBlock extends JavaPlugin {
 	    challengeConfigFile = new File(getDataFolder(), "challenges.yml");
 	}
 	if (!challengeConfigFile.exists()) {            
-	    plugin.saveResource("challenges.yml", false);
+	    saveResource("challenges.yml", false);
 	}
     }
 
@@ -2322,7 +2397,7 @@ public class ASkyBlock extends JavaPlugin {
 	// Reset the island level
 	players.setIslandLevel(player.getUniqueId(), 0);
 	players.save(player.getUniqueId());
-	updateTopTen();
+	createTopTen();
 	// Update the inventory
 	player.updateInventory();
 	/*

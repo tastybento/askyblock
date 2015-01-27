@@ -176,7 +176,7 @@ public class Challenges implements CommandExecutor {
 	int expReward = 0;
 	String rewardText = "";
 	// If the friendly name is available use it
-	String challengeName = ChatColor.GREEN + plugin.getChallengeConfig().getString("challenges.challengeList." + challenge + ".friendlyname",
+	String challengeName = plugin.getChallengeConfig().getString("challenges.challengeList." + challenge + ".friendlyname",
 		challenge.substring(0, 1).toUpperCase() + challenge.substring(1));
 
 	// Gather the rewards due
