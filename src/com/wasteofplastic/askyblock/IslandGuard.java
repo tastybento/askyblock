@@ -77,7 +77,7 @@ import org.bukkit.potion.Potion;
 
 
 /**
- * @author ben
+ * @author tastybento
  * Provides protection to islands
  */
 public class IslandGuard implements Listener {
@@ -323,6 +323,53 @@ public class IslandGuard implements Listener {
 	e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
 	e.setCancelled(true);
     }
+
+    /**
+     * Adds island lock function
+     * @param e
+     */
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
+    public void onPlayerMove(final PlayerMoveEvent e) {
+	if (e.getPlayer().isDead()) {
+	    return;
+	}
+	if (!e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	    return;
+	}
+	if (plugin.getGrid() == null) {
+	    return;
+	}
+	Island islandTo = plugin.getGrid().getProtectedIslandAt(e.getTo());
+	// Announcement entering
+	Island islandFrom = plugin.getGrid().getProtectedIslandAt(e.getFrom());
+	// Only says something if there is a change in islands
+	/*
+	 * Situations:
+	 * islandTo == null && islandFrom != null - exit
+	 * islandTo == null && islandFrom == null - nothing
+	 * islandTo != null && islandFrom == null - enter
+	 * islandTo != null && islandFrom != null - same Island or teleport?
+	 * islandTo == islandFrom
+	 */
+	if (islandTo !=null && islandFrom == null && islandTo.getOwner() != null) {
+	    // Entering
+	    if (islandTo.isLocked()) {
+		e.getPlayer().sendMessage(ChatColor.RED + "Island is locked to visitors");
+		if (!plugin.locationIsOnIsland(e.getPlayer(),e.getTo()) 
+			&& !e.getPlayer().isOp()
+			&& !VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
+		    e.setCancelled(true);
+		    return;
+		}
+	    }
+	    e.getPlayer().sendMessage("Now entering " + plugin.getPlayers().getName(islandTo.getOwner()) + "'s island");
+	} else if (islandTo == null && islandFrom != null && islandFrom.getOwner() != null) {
+	    // Leaving
+	    e.getPlayer().sendMessage("Now leaving " + plugin.getPlayers().getName(islandFrom.getOwner()) + "'s island");
+	}
+	// TODO: prevent teleport if island locked
+    }
+
 
     /*
      * Prevent typing /island if falling - hard core
@@ -779,8 +826,8 @@ public class IslandGuard implements Listener {
 	    }
 	}
     }
-    
-    
+
+
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerBlockPlace(final HangingPlaceEvent e) {
 	if (debug) {
@@ -1265,7 +1312,7 @@ public class IslandGuard implements Listener {
      * Prevents usage of an Ender Chest
      * @param event
      */
-    
+
     @EventHandler(priority = EventPriority.LOWEST)
     void PlayerInteractEvent(PlayerInteractEvent event){
 	if (debug) {

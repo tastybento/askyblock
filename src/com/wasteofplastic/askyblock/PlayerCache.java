@@ -30,7 +30,7 @@ import org.bukkit.entity.Player;
 import com.google.common.collect.Lists;
 
 /**
- * @author ben
+ * @author tastybento
  * Provides a memory cache of online player information
  * This is the one-stop-shop of player info
  * If the player is not cached, then a request is made to Players to obtain it
@@ -57,13 +57,13 @@ public class PlayerCache {
 	}
     }
     public static List<Player> getOnlinePlayers() {
-	    List<Player> list = Lists.newArrayList();
-	    for (World world : Bukkit.getWorlds()) {
-	        list.addAll(world.getPlayers());
-	    }
-	    return Collections.unmodifiableList(list);
+	List<Player> list = Lists.newArrayList();
+	for (World world : Bukkit.getWorlds()) {
+	    list.addAll(world.getPlayers());
 	}
-    
+	return Collections.unmodifiableList(list);
+    }
+
     /*
      * Cache control methods
      */
@@ -116,7 +116,7 @@ public class PlayerCache {
 	final Players player = new Players(plugin, playerUUID);
 	return player.getIslandLocation();
     }
-*/
+     */
     /**
      * Checks if the player is known or not by looking through the filesystem
      * 
@@ -428,6 +428,12 @@ public class PlayerCache {
 		}
 	    }
 	}
+	// Look in the grid
+	Island island = plugin.getGrid().getIslandAt(loc);
+	UUID owner = island.getOwner();
+	if (owner != null) {
+	    return owner;
+	} 
 	// Look in the file system
 	for (final File f : plugin.getPlayersFolder().listFiles()) {
 	    // Need to remove the .yml suffix
@@ -441,6 +447,12 @@ public class PlayerCache {
 			//plugin.getLogger().info("DEBUG: checking " + check.toString());
 			if (check.getBlockX() == loc.getBlockX()
 				&& check.getBlockZ() == loc.getBlockZ()) {
+			    // Add to the grid
+			    if (island == null) {
+				plugin.getGrid().addIsland(loc.getBlockX(), loc.getBlockZ(), uuid);
+			    } else if (owner == null) {
+				island.setOwner(uuid);
+			    }
 			    return uuid;
 			}	
 		    }
@@ -482,7 +494,7 @@ public class PlayerCache {
 	addPlayer(playerUUID);
 	return playerCache.get(playerUUID).getInviteCoolDownTime(location);
     }
-    
+
     /**
      * Starts the timer for the player for this location before which they can be invited
      * Called when they are kicked from an island or leave.
@@ -493,6 +505,6 @@ public class PlayerCache {
 	addPlayer(playerUUID);
 	playerCache.get(playerUUID).startInviteCoolDownTimer(location);
     }
-    
+
 }
 

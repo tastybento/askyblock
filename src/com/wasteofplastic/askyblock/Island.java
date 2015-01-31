@@ -17,6 +17,9 @@ public class Island {
     // Coordinates of the island area
     private int minX;
     private int minZ;
+    // Coordinates of minimum protected area
+    private int minProtectedX;
+    private int minProtectedZ;
     // Protection size
     private int protectionRange;
     // Height of island
@@ -35,6 +38,7 @@ public class Island {
     // Votes for how awesome the island is
     private int votes;
     private int islandDistance;
+    private boolean locked = false;
 
     public Island(String serial) {
 	// Deserialize
@@ -43,15 +47,19 @@ public class Island {
 	String[] split = serial.split(":");
 	try {
 	    protectionRange = Integer.parseInt(split[3]);
-	    minX = Integer.parseInt(split[0]) - protectionRange/2;
-	    y = Integer.parseInt(split[1]);
-	    minZ = Integer.parseInt(split[2]) - protectionRange/2;
 	    islandDistance = Integer.parseInt(split[4]);
+	    int x = Integer.parseInt(split[0]);
+	    minX = x - islandDistance/2;
+	    y = Integer.parseInt(split[1]);
+	    int z = Integer.parseInt(split[2]);
+	    minZ = z - islandDistance/2;
+	    minProtectedX = Integer.parseInt(split[0]) - protectionRange/2;
+	    minProtectedZ = Integer.parseInt(split[2]) - protectionRange/2;  
 	    if (!split[5].equals("null")) {
 		owner = UUID.fromString(split[5]);
 	    }
 	    this.world = ASkyBlock.getIslandWorld();
-	    this.center = new Location(world,minX,y,minZ);
+	    this.center = new Location(world,x,y,z);
 	    this.createdDate = new Date();
 	    this.updatedDate = createdDate;
 	    this.password = "";
@@ -68,8 +76,10 @@ public class Island {
      */
     public Island(int x, int z) {
 	// Calculate min minX and z
-	this.minX = x - Settings.island_protectionRange/2;
-	this.minZ = z - Settings.island_protectionRange/2;
+	this.minX = x - Settings.islandDistance/2;
+	this.minZ = z - Settings.islandDistance/2;
+	this.minProtectedX = x - Settings.island_protectionRange/2;
+	this.minProtectedZ = z - Settings.island_protectionRange/2;
 	this.y = Settings.island_level;
 	this.islandDistance = Settings.islandDistance;
 	this.protectionRange = Settings.island_protectionRange;
@@ -83,8 +93,10 @@ public class Island {
 
     public Island(int x, int z, UUID owner) {
 	// Calculate min minX and z
-	this.minX = x - Settings.island_protectionRange/2;
-	this.minZ = z - Settings.island_protectionRange/2;
+	this.minX = x - Settings.islandDistance/2;
+	this.minZ = z - Settings.islandDistance/2;
+	this.minProtectedX = x - Settings.island_protectionRange/2;
+	this.minProtectedZ = z - Settings.island_protectionRange/2;
 	this.y = Settings.island_level;
 	this.islandDistance = Settings.islandDistance;
 	this.protectionRange = Settings.island_protectionRange;
@@ -108,8 +120,10 @@ public class Island {
      * @param votes
      */
     public Island(int x, int z, int protectionRange, Location center, UUID owner, Date createdDate, Date updatedDate, String password, int votes) {
-	this.minX = x;
-	this.minZ = z;
+	this.minX = x - Settings.islandDistance/2;
+	this.minZ = z - Settings.islandDistance/2;
+	this.minProtectedX = x - Settings.island_protectionRange/2;
+	this.minProtectedZ = z - Settings.island_protectionRange/2;
 	this.protectionRange = protectionRange;
 	this.center = center;
 	this.world = center.getWorld();
@@ -139,6 +153,23 @@ public class Island {
     }
 
     /**
+     * Checks if location is anywhere in the island space (island distance)
+     * @param target
+     * @return true if in the area
+     */
+    public boolean inIslandSpace(Location target) {
+	if (target.getWorld().equals(world)) {
+	    if (target.getX() > center.getBlockX() - islandDistance / 2
+		    && target.getX() < center.getBlockX() + islandDistance / 2
+		    && target.getZ() > center.getBlockZ() - islandDistance / 2
+		    && target.getZ() < center.getBlockZ() + islandDistance / 2) {
+		return true;
+	    }
+	}
+	return false;	
+    }
+    
+    /**
      * @return the minX
      */
     public int getMinX() {
@@ -163,6 +194,20 @@ public class Island {
 	this.minZ = minZ;
     }
     /**
+     * @return the minProtectedX
+     */
+    public int getMinProtectedX() {
+        return minProtectedX;
+    }
+
+    /**
+     * @return the minProtectedZ
+     */
+    public int getMinProtectedZ() {
+        return minProtectedZ;
+    }
+
+    /**
      * @return the protectionRange
      */
     public int getProtectionSize() {
@@ -174,6 +219,20 @@ public class Island {
     public void setProtectionSize(int protectionSize) {
 	this.protectionRange = protectionSize;
     }
+    /**
+     * @return the islandDistance
+     */
+    public int getIslandDistance() {
+        return islandDistance;
+    }
+
+    /**
+     * @param islandDistance the islandDistance to set
+     */
+    public void setIslandDistance(int islandDistance) {
+        this.islandDistance = islandDistance;
+    }
+
     /**
      * @return the center
      */
@@ -245,6 +304,20 @@ public class Island {
      */
     public void setVotes(int votes) {
 	this.votes = votes;
+    }
+
+    /**
+     * @return the locked
+     */
+    public boolean isLocked() {
+        return locked;
+    }
+
+    /**
+     * @param locked the locked to set
+     */
+    public void setLocked(boolean locked) {
+        this.locked = locked;
     }
 
     protected String serialize() {

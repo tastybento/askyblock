@@ -92,7 +92,7 @@ public class DeleteIslandChunk {
 	    }
 	}*/
 	// Remove from grid
-	plugin.getGrid().deleteIsland(loc.getBlockX(), loc.getBlockZ());
+	plugin.getGrid().deleteIsland(loc);
 
 /*
 	plugin.getServer().getScheduler().runTask(plugin, new Runnable() {

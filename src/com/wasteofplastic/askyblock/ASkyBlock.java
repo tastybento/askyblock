@@ -65,7 +65,7 @@ import org.bukkit.potion.PotionType;
 import org.bukkit.util.Vector;
 
 /**
- * @author ben
+ * @author tastybento
  * Main ASkyBlock class - provides an island minigame in a sea of acid
  */
 public class ASkyBlock extends JavaPlugin {

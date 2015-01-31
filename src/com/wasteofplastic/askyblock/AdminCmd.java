@@ -257,6 +257,16 @@ public class AdminCmd implements CommandExecutor {
 		    sender.sendMessage(ChatColor.RED + "Sorry, could not find an island. Move closer?");
 		    return true;
 		}
+		/*
+		Island island = plugin.getGrid().getIslandAt(closestIsland);
+		plugin.getLogger().info("DEBUG: minimums " + island.getMinX() + ", " + island.getMinZ());
+		plugin.getLogger().info("DEBUG: min protection " + island.getMinProtectedX() + ", " + island.getMinProtectedZ());
+		plugin.getLogger().info("DEBUG: max protection " + (island.getMinProtectedX() + island.getProtectionSize() -1)
+			+ ", " + (island.getMinProtectedZ() + island.getProtectionSize() -1));
+		plugin.getLogger().info("DEBUG: center = " + island.getCenter());
+		plugin.getLogger().info("DEBUG: protection size = " + island.getProtectionSize());
+		plugin.getLogger().info("DEBUG: island dist = " + island.getIslandDistance());
+		*/
 		//plugin.getLogger().info("DEBUG: location = " + closestIsland.toString());
 		// Find out whose island this is
 		//plugin.getLogger().info("DEBUG: closest bedrock: " + closestBedRock.toString());
@@ -945,7 +955,7 @@ public class AdminCmd implements CommandExecutor {
 	    Date d = new Date(plugin.getServer().getOfflinePlayer(playerUUID).getLastPlayed());
 	    sender.sendMessage(ChatColor.GOLD + "Last login: " + d.toString());
 	} catch (Exception e) {}
-
+	Location islandLoc = null;
 	// Teams
 	if (plugin.getPlayers().inTeam(playerUUID)) {
 	    final UUID leader = plugin.getPlayers().getTeamLeader(playerUUID);
@@ -954,13 +964,11 @@ public class AdminCmd implements CommandExecutor {
 	    for (UUID member: pList) {
 		sender.sendMessage(ChatColor.WHITE + " - " + plugin.getPlayers().getName(member));
 	    }
-	    sender.sendMessage(ChatColor.YELLOW + Locale.adminInfoislandLocation + ":" + ChatColor.WHITE + " (" + plugin.getPlayers().getTeamIslandLocation(playerUUID).getBlockX() + ","
-		    + plugin.getPlayers().getTeamIslandLocation(playerUUID).getBlockY() + "," + plugin.getPlayers().getTeamIslandLocation(playerUUID).getBlockZ() + ")");
+	    islandLoc = plugin.getPlayers().getTeamIslandLocation(playerUUID);
 	} else {
 	    sender.sendMessage(ChatColor.YELLOW + Locale.errorNoTeam);
 	    if (plugin.getPlayers().hasIsland(playerUUID)) {
-		sender.sendMessage(ChatColor.YELLOW + Locale.adminInfoislandLocation + ":" + ChatColor.WHITE + " (" + plugin.getPlayers().getIslandLocation(playerUUID).getBlockX() + ","
-			+ plugin.getPlayers().getIslandLocation(playerUUID).getBlockY() + "," + plugin.getPlayers().getIslandLocation(playerUUID).getBlockZ() + ")");
+		islandLoc =  plugin.getPlayers().getIslandLocation(playerUUID);
 	    }
 	    if (!(plugin.getPlayers().getTeamLeader(playerUUID) == null)) {
 		sender.sendMessage(ChatColor.RED + Locale.adminInfoerrorNullTeamLeader);
@@ -969,7 +977,15 @@ public class AdminCmd implements CommandExecutor {
 		sender.sendMessage(ChatColor.RED + Locale.adminInfoerrorTeamMembersExist);
 	    }
 	}
-
+	sender.sendMessage(ChatColor.YELLOW + Locale.adminInfoislandLocation + ":" + ChatColor.WHITE + " (" + islandLoc.getBlockX() + ","
+		    + islandLoc.getBlockY() + "," + islandLoc.getBlockZ() + ")");
+	Island island = plugin.getGrid().getIslandAt(islandLoc);
+	sender.sendMessage(ChatColor.YELLOW + "Island max size (distance) = " + island.getIslandDistance());
+	sender.sendMessage(ChatColor.YELLOW + "Island maximums " + island.getMinX() + "," + island.getMinZ() + " to " 
+		+ (island.getMinX()+ island.getIslandDistance() -1) + "," + (island.getMinZ() + island.getIslandDistance() -1));
+	sender.sendMessage(ChatColor.YELLOW + "Island protection size = " + island.getProtectionSize());
+	sender.sendMessage(ChatColor.YELLOW + "Island protection " + island.getMinProtectedX() + ", " + island.getMinProtectedZ() + " to "+ (island.getMinProtectedX() + island.getProtectionSize() -1)
+		+ ", " + (island.getMinProtectedZ() + island.getProtectionSize() -1));
     }
 
     /**

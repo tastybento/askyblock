@@ -629,6 +629,32 @@ public class IslandCmd implements CommandExecutor {
 		return true;
 	    }
 	case 1:
+	    if (split[0].equalsIgnoreCase("lock")) {
+		if (!plugin.getPlayers().hasIsland(playerUUID) && !plugin.getPlayers().inTeam(playerUUID)) {
+		    // Player has no island
+		    player.sendMessage(ChatColor.RED + Locale.errorNoIsland);
+		    return true;
+		}
+		if (plugin.getPlayers().inTeam(playerUUID)) {
+		    if (!plugin.getPlayers().getTeamLeader(playerUUID).equals(playerUUID)) {
+			player.sendMessage(ChatColor.RED + Locale.errorNoIslandOther);
+			return true;
+		    } 
+		}
+		if (plugin.playerIsOnIsland(player)) {
+		    Island island = plugin.getGrid().getIslandAt(player.getLocation());
+		    if (island != null) {
+			if (!island.isLocked()) {
+			    player.sendMessage(ChatColor.GREEN + "Locking island");
+			    island.setLocked(true);
+			} else {
+			    player.sendMessage(ChatColor.GREEN + "Unlocking island");
+			    island.setLocked(false);
+			}
+			return true;
+		    }
+		}
+	    }
 	    if (split[0].equalsIgnoreCase("go")) {
 		if (!plugin.getPlayers().hasIsland(playerUUID) && !plugin.getPlayers().inTeam(playerUUID)) {
 		    // Player has no island
@@ -644,20 +670,20 @@ public class IslandCmd implements CommandExecutor {
 	    } else if (split[0].equalsIgnoreCase("about")) {
 		player.sendMessage(ChatColor.GOLD + "(c) 2014 - 2015 by tastybento");
 		player.sendMessage(ChatColor.GOLD + "This plugin is free software: you can redistribute");
-		 player.sendMessage(ChatColor.GOLD + "it and/or modify it under the terms of the GNU");
-		 player.sendMessage(ChatColor.GOLD + "General Public License as published by the Free");
-		 player.sendMessage(ChatColor.GOLD + "Software Foundation, either version 3 of the License,");
-		 player.sendMessage(ChatColor.GOLD + "or (at your option) any later version.");
-		 player.sendMessage(ChatColor.GOLD + "This plugin is distributed in the hope that it");
-		 player.sendMessage(ChatColor.GOLD + "will be useful, but WITHOUT ANY WARRANTY; without");
-		 player.sendMessage(ChatColor.GOLD + "even the implied warranty of MERCHANTABILITY or");
-		 player.sendMessage(ChatColor.GOLD + "FITNESS FOR A PARTICULAR PURPOSE.  See the");
-		 player.sendMessage(ChatColor.GOLD + "GNU General Public License for more details.");
-		 player.sendMessage(ChatColor.GOLD + "You should have received a copy of the GNU");
-		 player.sendMessage(ChatColor.GOLD + "General Public License along with this plugin.");
-		 player.sendMessage(ChatColor.GOLD + "If not, see <http://www.gnu.org/licenses/>.");
-		 player.sendMessage(ChatColor.GOLD + "Souce code is available on GitHub.");
-		 return true;
+		player.sendMessage(ChatColor.GOLD + "it and/or modify it under the terms of the GNU");
+		player.sendMessage(ChatColor.GOLD + "General Public License as published by the Free");
+		player.sendMessage(ChatColor.GOLD + "Software Foundation, either version 3 of the License,");
+		player.sendMessage(ChatColor.GOLD + "or (at your option) any later version.");
+		player.sendMessage(ChatColor.GOLD + "This plugin is distributed in the hope that it");
+		player.sendMessage(ChatColor.GOLD + "will be useful, but WITHOUT ANY WARRANTY; without");
+		player.sendMessage(ChatColor.GOLD + "even the implied warranty of MERCHANTABILITY or");
+		player.sendMessage(ChatColor.GOLD + "FITNESS FOR A PARTICULAR PURPOSE.  See the");
+		player.sendMessage(ChatColor.GOLD + "GNU General Public License for more details.");
+		player.sendMessage(ChatColor.GOLD + "You should have received a copy of the GNU");
+		player.sendMessage(ChatColor.GOLD + "General Public License along with this plugin.");
+		player.sendMessage(ChatColor.GOLD + "If not, see <http://www.gnu.org/licenses/>.");
+		player.sendMessage(ChatColor.GOLD + "Souce code is available on GitHub.");
+		return true;
 		//Spawn enderman
 		//Enderman enderman = (Enderman) player.getWorld().spawnEntity(player.getLocation().add(new Vector(5,0,5)), EntityType.ENDERMAN);
 		//enderman.setCustomName("TastyBento's Ghost");
@@ -941,7 +967,7 @@ public class IslandCmd implements CommandExecutor {
 		player.sendBlockChange(plugin.getSpawn().getSpawnLoc().getBlock().getRelative(BlockFace.DOWN).getLocation()
 			,plugin.getSpawn().getSpawnLoc().getBlock().getRelative(BlockFace.DOWN).getType()
 			,plugin.getSpawn().getSpawnLoc().getBlock().getRelative(BlockFace.DOWN).getData());
-		*/
+		 */
 		return true;
 	    } else if (split[0].equalsIgnoreCase("top")) {
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.topten")) {
@@ -1443,7 +1469,7 @@ public class IslandCmd implements CommandExecutor {
 			    target.sendBlockChange(target.getWorld().getSpawnLocation()
 				    ,target.getWorld().getSpawnLocation().getBlock().getType()
 				    ,target.getWorld().getSpawnLocation().getBlock().getData());
-				    */
+			     */
 			}
 		    }
 		    target.sendMessage(ChatColor.RED + Locale.expelExpelled);

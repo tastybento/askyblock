@@ -26,7 +26,7 @@ import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.scheduler.BukkitTask;
 
 /**
- * @author ben
+ * @author tastybento
  * 
  */
 public class LavaCheck implements Listener {

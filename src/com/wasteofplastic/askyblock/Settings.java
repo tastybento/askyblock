@@ -27,7 +27,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 
 /**
- * @author ben
+ * @author tastybento
  * Where all the settings are
  */
 public class Settings {

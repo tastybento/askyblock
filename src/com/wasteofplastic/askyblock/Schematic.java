@@ -339,18 +339,12 @@ public class Schematic {
 
 			String ver = Bukkit.getServer().getBukkitVersion();
 			//Bukkit.getLogger().info("DEBUG " + ver.substring(0, 1) + " " + ver.substring(ver.indexOf(".") +1 , ver.indexOf(".") + 2));
-			try {
-			    int major = Integer.valueOf(ver.substring(0, 1));
-			    int minor = Integer.valueOf(ver.substring(ver.indexOf(".") + 1, ver.indexOf(".") + 2));
-			    if (major >= 1 && minor >= 8) {
-				if (block.getType() == Material.STANDING_BANNER || block.getType() == Material.WALL_BANNER) {
-				    BannerBlock.set(block,tileEntitiesMap.get(new BlockVector(x,y,z)));
-				}
-			    } else {
-				Bukkit.getLogger().warning("Banners in schematic not supported by this server.");
+			int major = Integer.valueOf(ver.substring(0, 1));
+			int minor = Integer.valueOf(ver.substring(ver.indexOf(".") + 1, ver.indexOf(".") + 2));
+			if (major >= 1 && minor >= 8) {
+			    if (block.getType() == Material.STANDING_BANNER || block.getType() == Material.WALL_BANNER) {
+				BannerBlock.set(block,tileEntitiesMap.get(new BlockVector(x,y,z)));
 			    }
-			} catch (Exception e) {
-			    Bukkit.getLogger().warning("Banners in schematic not supported by this server.");
 			}
 			if (block.getType().equals(Material.CHEST)) {
 			    Chest chestBlock = (Chest)block.getState();

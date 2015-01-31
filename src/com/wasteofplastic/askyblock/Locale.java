@@ -18,7 +18,7 @@ package com.wasteofplastic.askyblock;
 
 
 /**
- * @author ben
+ * @author tastybento
  * All the text strings in the game sent to players
  */
 public class Locale {
