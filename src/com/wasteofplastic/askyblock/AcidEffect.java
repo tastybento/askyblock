@@ -214,7 +214,7 @@ public class AcidEffect implements Listener {
 	    // Check if the player is above sealevel because the sea is always acid
 	    if (playerLoc.getBlockY() > Settings.sea_level) {
 		//plugin.getLogger().info("DEBUG: player is above sea level");
-		if (plugin.getSpawn().isAtSpawn(playerLoc)) {
+		if (plugin.getGrid().isAtSpawn(playerLoc)) {
 		    //plugin.getLogger().info("DEBUG: player is at spawn");
 		    return;
 		}

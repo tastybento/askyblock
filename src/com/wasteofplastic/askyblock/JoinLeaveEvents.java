@@ -45,26 +45,46 @@ public class JoinLeaveEvents implements Listener {
 	if (players == null) {
 	    plugin.getLogger().severe("players is NULL");
 	}
+	// If this player is not an island player just skip all this
+	if (!players.hasIsland(playerUUID) && !players.inTeam(playerUUID)) {
+	    return;
+	}
 	if (players.inTeam(playerUUID) && players.getTeamIslandLocation(playerUUID) == null) {
 	    final UUID leader = players.getTeamLeader(playerUUID);
 	    players.setTeamIslandLocation(playerUUID, players.getIslandLocation(leader));
 	}
 	//players.addPlayer(playerUUID);
+	// Add island to grid if it is not in there already
 	// Add owners to the island grid list as they log in
+	Location loc = null;
+	UUID leader = null;
+	// Leader or solo
 	if (players.hasIsland(playerUUID)) {
-	    Location loc = players.getIslandLocation(playerUUID);
-	    // Check if the island is in the grid list
-	    if (plugin.getGrid().getOwnerOfIslandAt(loc) == null) {
-		Island island = plugin.getGrid().getIslandAt(loc);
+	    loc = players.getIslandLocation(playerUUID);
+	    leader = playerUUID;
+	} else if (players.inTeam(playerUUID)) {
+	    // Team player
+	    loc = players.getTeamIslandLocation(playerUUID);
+	    leader = players.getTeamLeader(playerUUID);
+	}
+	// If the player has an island of some kind
+	if (loc != null) {
+	    // Check if the island is on the grid by owner (fast)
+	    Island island = plugin.getGrid().getIsland(leader);
+	    if (island == null) {
+		// Check if the island exists in the grid
+		island = plugin.getGrid().getIslandAt(loc);
+		// Island isn't in the grid, so add it
 		if (island == null) {
-		    // Island exists but isn't in the grid
-		    plugin.getGrid().addIsland(loc.getBlockX(), loc.getBlockZ(), playerUUID);
-		} else {
-		    // Assign ownership
-		    island.setOwner(playerUUID);
+		    plugin.getGrid().addIsland(loc.getBlockX(), loc.getBlockZ(), leader);
 		}
+	    } else {
+		// Island exists
+		// Assign ownership
+		island.setOwner(leader);
 	    }
 	}
+
 	// Set the player's name (it may have changed)
 	players.setPlayerName(playerUUID, event.getPlayer().getName());
 	players.save(playerUUID);

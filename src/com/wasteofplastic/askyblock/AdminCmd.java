@@ -101,7 +101,7 @@ public class AdminCmd implements CommandExecutor {
 	    }
 	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.purge") || player.isOp()) {
 		player.sendMessage(ChatColor.YELLOW + "/" + label + " purge [TimeInDays]:" + ChatColor.WHITE + " " + Locale.adminHelppurge);
-		player.sendMessage(ChatColor.YELLOW + "/" + label + " purge holes:" + ChatColor.WHITE + " " + Locale.adminHelppurgeholes);
+		//player.sendMessage(ChatColor.YELLOW + "/" + label + " purge holes:" + ChatColor.WHITE + " " + Locale.adminHelppurgeholes);
 
 	    }
 	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.topten") || player.isOp()) {
@@ -185,66 +185,51 @@ public class AdminCmd implements CommandExecutor {
 		    return true;
 		}
 		Player p = (Player)sender;
-		// TODO: The island location needs to be calculated based on the grid, NOT the bedrock location
-
-
-		Location closestBedRock = null;
-		double distance = 0;
-		for (int x = -Settings.islandDistance; x< Settings.islandDistance; x++) {
-		    for (int z = -Settings.islandDistance; z< Settings.islandDistance; z++) {
-
-			Location blockLoc = new Location(p.getWorld(),x + p.getLocation().getBlockX(),Settings.island_level,z + p.getLocation().getBlockZ());
-			if (blockLoc.getBlock().getType().equals(Material.BEDROCK)) {
-			    if (closestBedRock == null) {
-				closestBedRock = blockLoc.clone();
-				distance = closestBedRock.distanceSquared(p.getLocation());
-			    } else {
-				// Find out if this is closer to the player
-
-				double newDist = blockLoc.distanceSquared(p.getLocation());
-				if (distance > newDist) {
-				    closestBedRock = blockLoc.clone();
-				    distance = newDist;
-				}
-			    }
-			}
-		    }
-		}
-
-		// TODO: find closest island locus and check file syste,
-
-		if (closestBedRock == null) {
-		    sender.sendMessage(ChatColor.RED + "Sorry, could not find an island. Move closer?");
+		// Island spawn must be in the island world
+		if (!p.getLocation().getWorld().getName().equals(Settings.worldName)) {
+		    p.sendMessage(ChatColor.RED + Locale.errorWrongWorld);
 		    return true;
 		}
-		// Find out whose island this is
-		//plugin.getLogger().info("DEBUG: closest bedrock: " + closestBedRock.toString());
-		UUID target = plugin.getPlayers().getPlayerFromIslandLocation(closestBedRock);
-		if (target == null) {
-		    sender.sendMessage(ChatColor.GREEN + "This island is not owned by anyone right now.");
-		} else {
-		    sender.sendMessage(ChatColor.GREEN + "This island was owned by " + plugin.getPlayers().getName(target));
-		    if (plugin.getPlayers().inTeam(target)) {
-			sender.sendMessage(ChatColor.RED + "That is a team island. Remove the team members first!");
-			return true;
+		// The island location is calculated based on the grid
+		Location closestIsland = getClosestIsland(((Player)sender).getLocation());
+		Island oldSpawn = plugin.getGrid().getSpawn();
+		Island newSpawn = plugin.getGrid().getIslandAt(closestIsland);
+		if (newSpawn != null && newSpawn.isSpawn()) {
+		    // Already spawn, so just set the world spawn coords
+		    ASkyBlock.getIslandWorld().setSpawnLocation(p.getLocation().getBlockX(), p.getLocation().getBlockY(), p.getLocation().getBlockZ());
+		    sender.sendMessage(ChatColor.GREEN + "Set island spawn to your location.");
+		    return true;
+		}
+		// Space otherwise occupied
+		if (newSpawn != null) {
+		    UUID target = plugin.getPlayers().getPlayerFromIslandLocation(closestIsland);
+		    sender.sendMessage(ChatColor.RED + "Island exits at " + ChatColor.YELLOW + newSpawn.getCenter().getBlockX() + "," + newSpawn.getCenter().getBlockZ() + "!");
+		    if (target != null) {
+			sender.sendMessage(ChatColor.RED + "Owned by: " + plugin.getPlayers().getName(target));
 		    }
+		    sender.sendMessage(ChatColor.RED + "Remove it or move to another location. (Setspawn no longer can take over an island).");
+		    return true;
 		}
-		// Set the spawn
-		plugin.getSpawn().setSpawnLoc(closestBedRock,((Player)sender).getLocation());
-		// Set it for the world too
-		closestBedRock.getWorld().setSpawnLocation(((Player)sender).getLocation().getBlockX(),closestBedRock.getBlockY(),closestBedRock.getBlockZ());
-		// Remove player's ownership and set them to having no island
-		if (target != null) {
-		    plugin.getPlayers().setIslandLevel(target, 0);
-		    plugin.getPlayers().setHasIsland(target, false);
-		    plugin.getPlayers().setHomeLocation(target, null);
-		    plugin.getPlayers().setIslandLocation(target, null);
-		    plugin.getPlayers().save(target);
+		if (oldSpawn != null) {
+		    sender.sendMessage(ChatColor.GOLD + "Changing spawn island location. Warning: old spawn island location at "
+			    + oldSpawn.getCenter().getBlockX() + "," + oldSpawn.getCenter().getBlockZ()
+			    + " will be at risk of being overwritten with new islands. Recommend to clear that old area.");
+		    plugin.getGrid().deleteSpawn();
 		}
-		sender.sendMessage(ChatColor.GREEN + "Converted island to spawn. (to undo, use " + label + " register <playername>");
-		sender.sendMessage(ChatColor.GREEN + "Settings are in spawn.yml");
-		sender.sendMessage(ChatColor.GREEN + "Set spawn location.");
-		plugin.getSpawn().save();
+		// New spawn site is free, so make it official
+		newSpawn = plugin.getGrid().addIsland(closestIsland.getBlockX(), closestIsland.getBlockZ());
+		plugin.getGrid().setSpawn(newSpawn);
+		ASkyBlock.getIslandWorld().setSpawnLocation(p.getLocation().getBlockX(), p.getLocation().getBlockY(), p.getLocation().getBlockZ());
+		sender.sendMessage(ChatColor.GREEN + "Set island spawn to your location " + p.getLocation().getBlockX() + "," + p.getLocation().getBlockZ());
+		sender.sendMessage(ChatColor.YELLOW + "Spawn island center " + newSpawn.getCenter().getBlockX() + "," + newSpawn.getCenter().getBlockZ());
+		sender.sendMessage(ChatColor.YELLOW + "Spawn island limits " + newSpawn.getMinX() + "," + newSpawn.getMinZ() + " to " 
+			    + (newSpawn.getMinX()+ newSpawn.getIslandDistance() -1) + "," + (newSpawn.getMinZ() + newSpawn.getIslandDistance() -1));
+		    sender.sendMessage(ChatColor.YELLOW + "Spawn protection size = " + newSpawn.getProtectionSize());
+		    sender.sendMessage(ChatColor.YELLOW + "Spawn protection coords " + newSpawn.getMinProtectedX() + ", " + newSpawn.getMinProtectedZ() + " to "+ (newSpawn.getMinProtectedX() + newSpawn.getProtectionSize() -1)
+			    + ", " + (newSpawn.getMinProtectedZ() + newSpawn.getProtectionSize() -1));
+		    if (newSpawn.isLocked()) {
+			sender.sendMessage(ChatColor.RED + "Spawn is locked!");
+		    }
 		return true;
 	    } else if (split[0].equalsIgnoreCase("info")) {
 		// Find the closest island
@@ -266,10 +251,23 @@ public class AdminCmd implements CommandExecutor {
 		plugin.getLogger().info("DEBUG: center = " + island.getCenter());
 		plugin.getLogger().info("DEBUG: protection size = " + island.getProtectionSize());
 		plugin.getLogger().info("DEBUG: island dist = " + island.getIslandDistance());
-		*/
+		 */
 		//plugin.getLogger().info("DEBUG: location = " + closestIsland.toString());
 		// Find out whose island this is
 		//plugin.getLogger().info("DEBUG: closest bedrock: " + closestBedRock.toString());
+		Island island = plugin.getGrid().getIslandAt(closestIsland);
+		if (island != null && island.isSpawn()) {
+		    sender.sendMessage(ChatColor.GREEN + "This is spawn island");
+		    sender.sendMessage(ChatColor.YELLOW + "Spawn max coords " + island.getMinX() + "," + island.getMinZ() + " to " 
+			    + (island.getMinX()+ island.getIslandDistance() -1) + "," + (island.getMinZ() + island.getIslandDistance() -1));
+		    sender.sendMessage(ChatColor.YELLOW + "Spawn protection size = " + island.getProtectionSize());
+		    sender.sendMessage(ChatColor.YELLOW + "Spawn protection coords " + island.getMinProtectedX() + ", " + island.getMinProtectedZ() + " to "+ (island.getMinProtectedX() + island.getProtectionSize() -1)
+			    + ", " + (island.getMinProtectedZ() + island.getProtectionSize() -1));
+		    if (island.isLocked()) {
+			sender.sendMessage(ChatColor.RED + "Spawn is locked!");
+		    }
+		    return true;
+		}
 		UUID target = plugin.getPlayers().getPlayerFromIslandLocation(closestIsland);
 		if (target == null) {
 		    sender.sendMessage(ChatColor.RED + "This island is not owned by anyone right now.");
@@ -341,7 +339,6 @@ public class AdminCmd implements CommandExecutor {
 		    ControlPanel.loadShop();
 		}
 		ControlPanel.loadControlPanel();
-		plugin.getSpawn().reload();
 		sender.sendMessage(ChatColor.YELLOW + Locale.reloadconfigReloaded);
 		return true;
 	    } else if (split[0].equalsIgnoreCase("topten")) {
@@ -381,11 +378,12 @@ public class AdminCmd implements CommandExecutor {
 		// Set the flag
 		purgeFlag = true;
 		// See if this purge holes
+		/*
 		if (split[1].equalsIgnoreCase("holes")) {
 		    purgeHoles(sender);
 		    return true;
 		}
-
+		 */
 		// Convert days to hours - no other limit checking?
 		final int time = Integer.parseInt(split[1]) * 24;
 
@@ -823,6 +821,7 @@ public class AdminCmd implements CommandExecutor {
      * Tries to free up holes in the map for reuse
      * @param sender 
      */
+    /*
     private void purgeHoles(final CommandSender sender) {
 	// Get a list of all the files in the island directory
 	final File islandFileDir = new File(plugin.getDataFolder() + File.separator + "islands");
@@ -905,7 +904,7 @@ public class AdminCmd implements CommandExecutor {
 	    }
 	}.runTaskTimer(plugin, 0L, 20L);
     }
-
+     */
     /**
      * This returns the coordinate of where an island should be on the grid.
      * @param location
@@ -978,7 +977,7 @@ public class AdminCmd implements CommandExecutor {
 	    }
 	}
 	sender.sendMessage(ChatColor.YELLOW + Locale.adminInfoislandLocation + ":" + ChatColor.WHITE + " (" + islandLoc.getBlockX() + ","
-		    + islandLoc.getBlockY() + "," + islandLoc.getBlockZ() + ")");
+		+ islandLoc.getBlockY() + "," + islandLoc.getBlockZ() + ")");
 	Island island = plugin.getGrid().getIslandAt(islandLoc);
 	sender.sendMessage(ChatColor.YELLOW + "Island max size (distance) = " + island.getIslandDistance());
 	sender.sendMessage(ChatColor.YELLOW + "Island maximums " + island.getMinX() + "," + island.getMinZ() + " to " 
@@ -986,6 +985,12 @@ public class AdminCmd implements CommandExecutor {
 	sender.sendMessage(ChatColor.YELLOW + "Island protection size = " + island.getProtectionSize());
 	sender.sendMessage(ChatColor.YELLOW + "Island protection " + island.getMinProtectedX() + ", " + island.getMinProtectedZ() + " to "+ (island.getMinProtectedX() + island.getProtectionSize() -1)
 		+ ", " + (island.getMinProtectedZ() + island.getProtectionSize() -1));
+	if (island.isSpawn()) {
+	    sender.sendMessage(ChatColor.YELLOW + "Island is spawn");
+	}
+	if (island.isLocked()) {
+	    sender.sendMessage(ChatColor.YELLOW + "Island is locked");
+	}
     }
 
     /**

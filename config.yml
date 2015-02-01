@@ -285,6 +285,23 @@ island:
    # Allow portal use by visitors
    allowportaluse: true
 
+spawn:
+  # Protection options
+  allowdooruse: true
+  allowleverbuttonuse: true
+  allowchestaccess: true
+  allowfurnaceuse: true
+  allowredstone: false
+  allowmusic: true
+  allowcrafting: true
+  allowbrewing: true
+  allowgateuse: true
+  allowmobspawn: false
+  allowspawnnoacidwater: false
+  allowenchanting: true
+  allowanviluse: true
+  allowbeaconaccess: false
+
 # This section contains the biomes that can be bought or used
 biomesettings:
   # The default cost for changing biome. Can be over-ridden by the Biome settings

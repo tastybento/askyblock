@@ -17,7 +17,6 @@
 package com.wasteofplastic.askyblock;
 
 import java.io.File;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -630,32 +629,32 @@ public class IslandCmd implements CommandExecutor {
 	    }
 	case 1:
 	    if (split[0].equalsIgnoreCase("lock")) {
-		if (!plugin.getPlayers().hasIsland(playerUUID) && !plugin.getPlayers().inTeam(playerUUID)) {
-		    // Player has no island
+		if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.lock")) {
+		    player.sendMessage(ChatColor.RED + Locale.errorNoPermission);
+		    return true; 
+		}
+		//plugin.getLogger().info("DEBUG: perms ok");
+		// Find out which island they want to lock
+		Island island = plugin.getGrid().getIsland(playerUUID);
+		if (island == null) {
+		    // Player has no island in the grid
 		    player.sendMessage(ChatColor.RED + Locale.errorNoIsland);
 		    return true;
-		}
-		if (plugin.getPlayers().inTeam(playerUUID)) {
-		    if (!plugin.getPlayers().getTeamLeader(playerUUID).equals(playerUUID)) {
-			player.sendMessage(ChatColor.RED + Locale.errorNoIslandOther);
-			return true;
-		    } 
-		}
-		if (plugin.playerIsOnIsland(player)) {
-		    Island island = plugin.getGrid().getIslandAt(player.getLocation());
-		    if (island != null) {
-			if (!island.isLocked()) {
-			    player.sendMessage(ChatColor.GREEN + "Locking island");
-			    island.setLocked(true);
-			} else {
-			    player.sendMessage(ChatColor.GREEN + "Unlocking island");
-			    island.setLocked(false);
-			}
-			return true;
+		} else {
+		    if (!island.isLocked()) {
+			player.sendMessage(ChatColor.GREEN + Locale.lockLocking);
+			plugin.tellOfflineTeam(playerUUID,Locale.lockPlayerLocked.replace("[name]", player.getDisplayName()));
+			plugin.tellTeam(playerUUID,Locale.lockPlayerLocked.replace("[name]", player.getDisplayName()));
+			island.setLocked(true);
+		    } else {
+			player.sendMessage(ChatColor.GREEN + Locale.lockUnlocking);
+			plugin.tellOfflineTeam(playerUUID,Locale.lockPlayerUnlocked.replace("[name]", player.getDisplayName()));
+			plugin.tellTeam(playerUUID,Locale.lockPlayerUnlocked.replace("[name]", player.getDisplayName()));
+			island.setLocked(false);
 		    }
+		    return true;
 		}
-	    }
-	    if (split[0].equalsIgnoreCase("go")) {
+	    } else if (split[0].equalsIgnoreCase("go")) {
 		if (!plugin.getPlayers().hasIsland(playerUUID) && !plugin.getPlayers().inTeam(playerUUID)) {
 		    // Player has no island
 		    player.sendMessage(ChatColor.RED + Locale.errorNoIsland);
@@ -864,7 +863,7 @@ public class IslandCmd implements CommandExecutor {
 		    }
 		    return true;
 		} else {
-		    player.sendMessage(ChatColor.YELLOW + "/island restart: " + ChatColor.WHITE + Locale.islandhelpRestart);
+		    player.sendMessage(Locale.helpColor + "/island restart: " + ChatColor.WHITE + Locale.islandhelpRestart);
 		    return true;
 		}
 	    } else if (split[0].equalsIgnoreCase("sethome")) {
@@ -876,57 +875,60 @@ public class IslandCmd implements CommandExecutor {
 	    } else if (split[0].equalsIgnoreCase("help")) { 
 		player.sendMessage(ChatColor.GREEN + plugin.getName() + " " + plugin.getDescription().getVersion() + " help:");
 		if (Settings.useControlPanel) {
-		    player.sendMessage(ChatColor.YELLOW + "/" + label + ": " + ChatColor.WHITE + Locale.islandhelpControlPanel);
+		    player.sendMessage(Locale.helpColor + "/" + label + ": " + ChatColor.WHITE + Locale.islandhelpControlPanel);
 		} else {
-		    player.sendMessage(ChatColor.YELLOW + "/" + label + ": " + ChatColor.WHITE + Locale.islandhelpIsland);
+		    player.sendMessage(Locale.helpColor + "/" + label + ": " + ChatColor.WHITE + Locale.islandhelpIsland);
 		}
-		player.sendMessage(ChatColor.YELLOW + "/" + label + " go: " + ChatColor.WHITE + Locale.islandhelpTeleport);
-		if (plugin.getSpawn().getSpawnLoc() != null) {
-		    player.sendMessage(ChatColor.YELLOW + "/" + label + " spawn: " + ChatColor.WHITE + Locale.islandhelpSpawn);
+		player.sendMessage(Locale.helpColor + "/" + label + " go: " + ChatColor.WHITE + Locale.islandhelpTeleport);
+		if (plugin.getGrid().getSpawn() != null) {
+		    player.sendMessage(Locale.helpColor + "/" + label + " spawn: " + ChatColor.WHITE + Locale.islandhelpSpawn);
 		}
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.controlpanel")) {
-		    player.sendMessage(ChatColor.YELLOW + "/" + label + " controlpanel or cp: " + ChatColor.WHITE + Locale.islandhelpControlPanel);
+		    player.sendMessage(Locale.helpColor + "/" + label + " controlpanel or cp: " + ChatColor.WHITE + Locale.islandhelpControlPanel);
 		}
-		player.sendMessage(ChatColor.YELLOW + "/" + label + " restart: " + ChatColor.WHITE + Locale.islandhelpRestart);
+		player.sendMessage(Locale.helpColor + "/" + label + " restart: " + ChatColor.WHITE + Locale.islandhelpRestart);
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.sethome")) {
-		    player.sendMessage(ChatColor.YELLOW + "/" + label + " sethome: " + ChatColor.WHITE + Locale.islandhelpSetHome);
+		    player.sendMessage(Locale.helpColor + "/" + label + " sethome: " + ChatColor.WHITE + Locale.islandhelpSetHome);
 		}
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.info")) {
-		    player.sendMessage(ChatColor.YELLOW + "/" + label + " level: " + ChatColor.WHITE + Locale.islandhelpLevel);
-		    player.sendMessage(ChatColor.YELLOW + "/" + label + " level <player>: " + ChatColor.WHITE + Locale.islandhelpLevelPlayer);
+		    player.sendMessage(Locale.helpColor + "/" + label + " level: " + ChatColor.WHITE + Locale.islandhelpLevel);
+		    player.sendMessage(Locale.helpColor + "/" + label + " level <player>: " + ChatColor.WHITE + Locale.islandhelpLevelPlayer);
 		}
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.topten")) {
-		    player.sendMessage(ChatColor.YELLOW + "/" + label + " top: " + ChatColor.WHITE + Locale.islandhelpTop);
+		    player.sendMessage(Locale.helpColor + "/" + label + " top: " + ChatColor.WHITE + Locale.islandhelpTop);
 		}
 		if (Settings.useEconomy && VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.minishop")) {
-		    player.sendMessage(ChatColor.YELLOW + "/" + label + " minishop or ms: " + ChatColor.WHITE + Locale.islandhelpMiniShop);		    
+		    player.sendMessage(Locale.helpColor + "/" + label + " minishop or ms: " + ChatColor.WHITE + Locale.islandhelpMiniShop);		    
 		}
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.warp")) {
-		    player.sendMessage(ChatColor.YELLOW + "/" + label + " warps: " + ChatColor.WHITE + Locale.islandhelpWarps);
-		    player.sendMessage(ChatColor.YELLOW + "/" + label + " warp <player>: " + ChatColor.WHITE + Locale.islandhelpWarp);
+		    player.sendMessage(Locale.helpColor + "/" + label + " warps: " + ChatColor.WHITE + Locale.islandhelpWarps);
+		    player.sendMessage(Locale.helpColor + "/" + label + " warp <player>: " + ChatColor.WHITE + Locale.islandhelpWarp);
 		}
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.create")) {
-		    player.sendMessage(ChatColor.YELLOW + "/" + label + " team: " + ChatColor.WHITE + Locale.islandhelpTeam);
-		    player.sendMessage(ChatColor.YELLOW + "/" + label + " invite <player>: " + ChatColor.WHITE + Locale.islandhelpInvite);
-		    player.sendMessage(ChatColor.YELLOW + "/" + label + " leave: " + ChatColor.WHITE + Locale.islandhelpLeave);
+		    player.sendMessage(Locale.helpColor + "/" + label + " team: " + ChatColor.WHITE + Locale.islandhelpTeam);
+		    player.sendMessage(Locale.helpColor + "/" + label + " invite <player>: " + ChatColor.WHITE + Locale.islandhelpInvite);
+		    player.sendMessage(Locale.helpColor + "/" + label + " leave: " + ChatColor.WHITE + Locale.islandhelpLeave);
 		}
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.kick")) {
-		    player.sendMessage(ChatColor.YELLOW + "/" + label + " kick <player>: " + ChatColor.WHITE + Locale.islandhelpKick);
+		    player.sendMessage(Locale.helpColor + "/" + label + " kick <player>: " + ChatColor.WHITE + Locale.islandhelpKick);
 		}
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.join")) {
-		    player.sendMessage(ChatColor.YELLOW + "/" + label + " <accept/reject>: " + ChatColor.WHITE + Locale.islandhelpAcceptReject);
+		    player.sendMessage(Locale.helpColor + "/" + label + " <accept/reject>: " + ChatColor.WHITE + Locale.islandhelpAcceptReject);
 		}
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.makeleader")) {
-		    player.sendMessage(ChatColor.YELLOW + "/" + label + " makeleader <player>: " + ChatColor.WHITE + Locale.islandhelpMakeLeader);
+		    player.sendMessage(Locale.helpColor + "/" + label + " makeleader <player>: " + ChatColor.WHITE + Locale.islandhelpMakeLeader);
 		}
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.biomes")) {
-		    player.sendMessage(ChatColor.YELLOW + "/" + label + " biomes: " + ChatColor.WHITE + Locale.islandhelpBiome);
+		    player.sendMessage(Locale.helpColor + "/" + label + " biomes: " + ChatColor.WHITE + Locale.islandhelpBiome);
 		}
 		//if (!Settings.allowPvP) {
-		player.sendMessage(ChatColor.YELLOW + "/" + label + " expel <player>: " + ChatColor.WHITE + Locale.islandhelpExpel);
+		player.sendMessage(Locale.helpColor + "/" + label + " expel <player>: " + ChatColor.WHITE + Locale.islandhelpExpel);
 		//}
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "coop")) {
-		    player.sendMessage(ChatColor.YELLOW + "/" + label + " coop: " + ChatColor.WHITE + Locale.islandhelpCoop);
+		    player.sendMessage(Locale.helpColor + "/" + label + " coop: " + ChatColor.WHITE + Locale.islandhelpCoop);
+		}
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.lock")) {
+		    player.sendMessage(Locale.helpColor + "/" + label + " lock: " + ChatColor.WHITE + Locale.islandHelpLock);
 		}
 		return true;
 	    } else if (split[0].equalsIgnoreCase("biomes")) {
@@ -945,7 +947,7 @@ public class IslandCmd implements CommandExecutor {
 			player.sendMessage(ChatColor.RED + Locale.challengeserrorNotOnIsland);
 			return true;
 		    }
-		    //player.sendMessage(ChatColor.YELLOW + "[Biomes]");
+		    //player.sendMessage(Locale.helpColor + "[Biomes]");
 		    Inventory inv = plugin.biomes.getBiomePanel(player);
 		    if (inv != null) {
 			player.openInventory(inv);
@@ -955,11 +957,11 @@ public class IslandCmd implements CommandExecutor {
 		    player.sendMessage(ChatColor.RED + Locale.errorNoPermission);
 		    return true;
 		}
-	    } else if (split[0].equalsIgnoreCase("spawn") && plugin.getSpawn().getSpawnLoc() != null) {
+	    } else if (split[0].equalsIgnoreCase("spawn") && plugin.getGrid().getSpawn() != null) {
 		// go to spawn
 		//plugin.getLogger().info("Debug: getSpawn" + plugin.getSpawn().toString() );
 		//plugin.getLogger().info("Debug: getSpawn loc" + plugin.getSpawn().getSpawnLoc().toString() );
-		player.teleport(plugin.getSpawn().getSpawnLoc());
+		player.teleport(ASkyBlock.getIslandWorld().getSpawnLocation());
 		/*
 		player.sendBlockChange(plugin.getSpawn().getSpawnLoc()
 			,plugin.getSpawn().getSpawnLoc().getBlock().getType()
@@ -992,7 +994,7 @@ public class IslandCmd implements CommandExecutor {
 	    } else if (split[0].equalsIgnoreCase("invite")) {
 		// Invite label with no name, i.e., /island invite - tells the player how many more people they can invite
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.create")) {
-		    player.sendMessage(ChatColor.YELLOW + "Use" + ChatColor.WHITE + " /" + label + " invite <playername> " + ChatColor.YELLOW
+		    player.sendMessage(Locale.helpColor + "Use" + ChatColor.WHITE + " /" + label + " invite <playername> " + Locale.helpColor
 			    + Locale.islandhelpInvite);
 		    // If the player who is doing the inviting has a team
 		    if (plugin.getPlayers().inTeam(playerUUID)) {

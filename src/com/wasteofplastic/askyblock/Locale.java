@@ -365,5 +365,15 @@ public class Locale {
     public static String islandcannotTeleport;
     public static String levelCalculating;
     public static String prefix;
+    // Lock
+    public static String lockIslandLocked;
+    public static String lockNowEntering;
+    public static String lockNowLeaving;
+    public static String lockLocking;
+    public static String lockUnlocking;
+    public static String islandHelpLock;
+    public static String helpColor;
+    public static String lockPlayerLocked;
+    public static String lockPlayerUnlocked;
       
 }

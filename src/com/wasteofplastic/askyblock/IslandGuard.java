@@ -31,15 +31,18 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Boat;
+import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Explosive;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Slime;
 import org.bukkit.entity.Squid;
+import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -82,7 +85,7 @@ import org.bukkit.potion.Potion;
  */
 public class IslandGuard implements Listener {
     private final ASkyBlock plugin;
-    private final boolean debug = false;
+    private final boolean debug = true;
 
     public IslandGuard(final ASkyBlock plugin) {
 	this.plugin = plugin;
@@ -351,23 +354,33 @@ public class IslandGuard implements Listener {
 	 * islandTo != null && islandFrom != null - same Island or teleport?
 	 * islandTo == islandFrom
 	 */
-	if (islandTo !=null && islandFrom == null && islandTo.getOwner() != null) {
+	//plugin.getLogger().info("islandTo = " + islandTo);
+	//plugin.getLogger().info("islandFrom = " + islandFrom);
+	if (islandTo !=null && islandFrom == null && (islandTo.getOwner() != null || islandTo.isSpawn())) {
 	    // Entering
 	    if (islandTo.isLocked()) {
-		e.getPlayer().sendMessage(ChatColor.RED + "Island is locked to visitors");
-		if (!plugin.locationIsOnIsland(e.getPlayer(),e.getTo()) 
+		e.getPlayer().sendMessage(ChatColor.RED + Locale.lockIslandLocked);
+		if (!islandTo.getMembers().contains(e.getPlayer().getUniqueId()) 
 			&& !e.getPlayer().isOp()
 			&& !VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
 		    e.setCancelled(true);
 		    return;
 		}
 	    }
-	    e.getPlayer().sendMessage("Now entering " + plugin.getPlayers().getName(islandTo.getOwner()) + "'s island");
-	} else if (islandTo == null && islandFrom != null && islandFrom.getOwner() != null) {
+	    if (islandTo.isSpawn()) {
+		e.getPlayer().sendMessage("Entering spawn");
+	    } else {
+		e.getPlayer().sendMessage(Locale.lockNowEntering.replace("[name]", plugin.getPlayers().getName(islandTo.getOwner())));
+	    }
+	} else if (islandTo == null && islandFrom != null && (islandFrom.getOwner() != null || islandFrom.isSpawn())) {
 	    // Leaving
-	    e.getPlayer().sendMessage("Now leaving " + plugin.getPlayers().getName(islandFrom.getOwner()) + "'s island");
+	    if (islandFrom.isSpawn()) {
+		// Leaving
+		e.getPlayer().sendMessage("Leaving spawn");
+	    } else {
+		e.getPlayer().sendMessage(Locale.lockNowLeaving.replace("[name]", plugin.getPlayers().getName(islandFrom.getOwner())));
+	    }
 	}
-	// TODO: prevent teleport if island locked
     }
 
 
@@ -415,23 +428,52 @@ public class IslandGuard implements Listener {
 	if (debug) {
 	    plugin.getLogger().info(e.getEventName());
 	}
-	if (Settings.allowTeleportWhenFalling) {
-	    return;
-	}
 	if (!e.getFrom().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    return;
 	}
-	if (!e.getPlayer().getGameMode().equals(GameMode.SURVIVAL) || e.getPlayer().isOp()) {
-	    return;
+	// Teleporting while falling check
+	if (!Settings.allowTeleportWhenFalling && e.getPlayer().getGameMode().equals(GameMode.SURVIVAL)
+		&& !e.getPlayer().isOp()) {
+	    if (plugin.isFalling(e.getPlayer().getUniqueId())) {
+		// Sorry you are going to die
+		e.getPlayer().sendMessage(Locale.islandcannotTeleport);
+		e.setCancelled(true);
+		// Check if the player is in the void and kill them just in case
+		if (e.getPlayer().getLocation().getBlockY() < 0) {
+		    e.getPlayer().setHealth(0D);
+		    plugin.unsetFalling(e.getPlayer().getUniqueId());
+		}
+		return;
+	    }
 	}
-	if (plugin.isFalling(e.getPlayer().getUniqueId())) {
-	    // Sorry you are going to die
-	    e.getPlayer().sendMessage(Locale.islandcannotTeleport);
-	    e.setCancelled(true);
-	    // Check if the player is in the void and kill them just in case
-	    if (e.getPlayer().getLocation().getBlockY() < 0) {
-		e.getPlayer().setHealth(0D);
-		plugin.unsetFalling(e.getPlayer().getUniqueId());
+	//plugin.getLogger().info("DEBUG: From : " + e.getFrom());
+	//plugin.getLogger().info("DEBUG: To : " + e.getTo());
+	// Teleporting to a locked island
+	Island islandTo = plugin.getGrid().getProtectedIslandAt(e.getTo());
+	// Announcement entering
+	Island islandFrom = plugin.getGrid().getProtectedIslandAt(e.getFrom());
+	// Only says something if there is a change in islands
+	/*
+	 * Teleport Situations:
+	 * islandTo == null && islandFrom != null - exit
+	 * islandTo == null && islandFrom == null - nothing
+	 * islandTo != null && islandFrom == null - enter
+	 * islandTo != null && islandFrom != null - same Island or teleport?
+	 * islandTo == islandFrom
+	 */
+	if (islandTo != null && islandTo.getOwner() != null) {
+	    if (islandTo != islandFrom){
+		// Entering
+		if (islandTo.isLocked()) {
+		    e.getPlayer().sendMessage(ChatColor.RED + Locale.lockIslandLocked);
+		    if (!plugin.locationIsOnIsland(e.getPlayer(),e.getTo()) 
+			    && !e.getPlayer().isOp()
+			    && !VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
+			e.setCancelled(true);
+			return;
+		    }
+		}
+		e.getPlayer().sendMessage(Locale.lockNowEntering.replace("[name]", plugin.getPlayers().getName(islandTo.getOwner())));
 	    }
 	}
     }
@@ -462,7 +504,7 @@ public class IslandGuard implements Listener {
 	} else {
 	    plugin.getLogger().info("DEBUG: spawn loc does not exist");
 	}*/
-	if (plugin.getSpawn().getBedrock() != null && plugin.getSpawn().isAtSpawn(e.getLocation())) {
+	if (plugin.getGrid().isAtSpawn(e.getLocation())) {
 	    //plugin.getLogger().info("DEBUG: prevented mob spawn at spawn");
 	    e.setCancelled(true);
 	}
@@ -482,7 +524,7 @@ public class IslandGuard implements Listener {
 	    return;
 	}
 	// prevent at spawn
-	if (plugin.getSpawn().getBedrock() != null && plugin.getSpawn().isAtSpawn(e.getLocation())) {
+	if (plugin.getGrid().isAtSpawn(e.getLocation())) {
 	    e.setCancelled(true);
 	}
 	// Find out what is exploding
@@ -566,7 +608,7 @@ public class IslandGuard implements Listener {
 	    return;
 	}
 	// prevent at spawn
-	if (plugin.getSpawn().getBedrock() != null && plugin.getSpawn().isAtSpawn(e.getEntity().getLocation())) {
+	if (plugin.getGrid().isAtSpawn(e.getEntity().getLocation())) {
 	    e.setCancelled(true);
 	}
 	if (Settings.allowEndermanGriefing)
@@ -641,6 +683,7 @@ public class IslandGuard implements Listener {
     public void onEntityDamage(final EntityDamageByEntityEvent e) {
 	if (debug) {
 	    plugin.getLogger().info(e.getEventName());
+	    plugin.getLogger().info(e.getDamager().toString());
 	}
 	// Check world
 	if (!Settings.worldName.equalsIgnoreCase(e.getEntity().getWorld().getName())) {
@@ -667,6 +710,7 @@ public class IslandGuard implements Listener {
 		    if (!plugin.locationIsOnIsland((Player)e.getDamager(),e.getEntity().getLocation())) {
 			((Player)e.getDamager()).sendMessage(ChatColor.RED + Locale.islandProtected);
 			e.setCancelled(true);
+			return;
 		    }
 		} else if (e.getDamager() instanceof Projectile) {
 		    // Find out who threw the arrow
@@ -675,8 +719,13 @@ public class IslandGuard implements Listener {
 		    if (p.getShooter() instanceof Player) {
 			((Player)p.getShooter()).sendMessage(ChatColor.RED + Locale.islandProtected);
 			e.setCancelled(true);
+			return;
 		    }
 		} 
+		// This catches TNT
+	    } else if ((e.getDamager() instanceof TNTPrimed) && !Settings.allowTNTDamage) {
+		e.setCancelled(true); 
+		return;
 	    }
 	}
 	// If the attacker is non-human and not an arrow then everything is okay
@@ -876,6 +925,7 @@ public class IslandGuard implements Listener {
     public void onBreakHanging(final HangingBreakByEntityEvent e) {
 	if (debug) {
 	    plugin.getLogger().info(e.getEventName());
+	    plugin.getLogger().info(e.getRemover().toString());
 	}
 	if (e.getEntity().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    if (!Settings.allowBreakBlocks) {
@@ -889,6 +939,8 @@ public class IslandGuard implements Listener {
 			p.sendMessage(ChatColor.RED + Locale.islandProtected);
 			e.setCancelled(true);
 		    }
+		} else if ((e.getRemover() instanceof Creeper) && !Settings.allowCreeperDamage) {
+		    e.setCancelled(true);   
 		}
 	    }
 	}
@@ -1074,7 +1126,7 @@ public class IslandGuard implements Listener {
 	// Check if player is at spawn
 	// prevent at spawn
 	boolean playerAtSpawn = false;
-	if (plugin.getSpawn().getBedrock() != null && plugin.getSpawn().isAtSpawn(e.getPlayer().getLocation())) {
+	if (plugin.getGrid().isAtSpawn(e.getPlayer().getLocation())) {
 	    //plugin.getLogger().info("DEBUG: Player is at spawn");
 	    playerAtSpawn = true;
 	}

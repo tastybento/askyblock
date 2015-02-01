@@ -1,6 +1,8 @@
 package com.wasteofplastic.askyblock;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Location;
@@ -39,8 +41,11 @@ public class Island {
     private int votes;
     private int islandDistance;
     private boolean locked = false;
+    // Set if this island is a spawn island
+    private boolean isSpawn = false;
 
     public Island(String serial) {
+	//Bukkit.getLogger().info("DEBUG: adding serialized island to grid ");
 	// Deserialize
 	// Format:
 	// x:height:z:protection range:island distance:owner UUID
@@ -49,21 +54,37 @@ public class Island {
 	    protectionRange = Integer.parseInt(split[3]);
 	    islandDistance = Integer.parseInt(split[4]);
 	    int x = Integer.parseInt(split[0]);
+	    int z = Integer.parseInt(split[2]);
 	    minX = x - islandDistance/2;
 	    y = Integer.parseInt(split[1]);
-	    int z = Integer.parseInt(split[2]);
 	    minZ = z - islandDistance/2;
-	    minProtectedX = Integer.parseInt(split[0]) - protectionRange/2;
-	    minProtectedZ = Integer.parseInt(split[2]) - protectionRange/2;  
-	    if (!split[5].equals("null")) {
-		owner = UUID.fromString(split[5]);
-	    }
+	    minProtectedX = x - protectionRange/2;
+	    minProtectedZ = z - protectionRange/2;  
 	    this.world = ASkyBlock.getIslandWorld();
 	    this.center = new Location(world,x,y,z);
 	    this.createdDate = new Date();
 	    this.updatedDate = createdDate;
 	    this.password = "";
 	    this.votes = 0;
+	    if (split.length> 6) {
+		//Bukkit.getLogger().info("DEBUG: " + split[6]);
+		// Get locked status
+		if (split[6].equalsIgnoreCase("true")) {
+		    this.locked = true;
+		} else {
+		    this.locked = false;
+		}
+		//Bukkit.getLogger().info("DEBUG: " + locked);
+	    } else {
+		this.locked = false;
+	    }
+	    if (!split[5].equals("null")) {
+		if (split[5].equals("spawn")) {
+		    isSpawn = true;
+		} else {
+		    owner = UUID.fromString(split[5]);
+		}
+	    }
 	} catch (Exception e) {
 	    e.printStackTrace();
 	}
@@ -168,7 +189,7 @@ public class Island {
 	}
 	return false;	
     }
-    
+
     /**
      * @return the minX
      */
@@ -197,14 +218,14 @@ public class Island {
      * @return the minProtectedX
      */
     public int getMinProtectedX() {
-        return minProtectedX;
+	return minProtectedX;
     }
 
     /**
      * @return the minProtectedZ
      */
     public int getMinProtectedZ() {
-        return minProtectedZ;
+	return minProtectedZ;
     }
 
     /**
@@ -218,19 +239,22 @@ public class Island {
      */
     public void setProtectionSize(int protectionSize) {
 	this.protectionRange = protectionSize;
+	this.minProtectedX = center.getBlockX() - Settings.island_protectionRange/2;
+	this.minProtectedZ = center.getBlockZ() - Settings.island_protectionRange/2;
+
     }
     /**
      * @return the islandDistance
      */
     public int getIslandDistance() {
-        return islandDistance;
+	return islandDistance;
     }
 
     /**
      * @param islandDistance the islandDistance to set
      */
     public void setIslandDistance(int islandDistance) {
-        this.islandDistance = islandDistance;
+	this.islandDistance = islandDistance;
     }
 
     /**
@@ -310,14 +334,15 @@ public class Island {
      * @return the locked
      */
     public boolean isLocked() {
-        return locked;
+	return locked;
     }
 
     /**
      * @param locked the locked to set
      */
     public void setLocked(boolean locked) {
-        this.locked = locked;
+	//Bukkit.getLogger().info("DEBUG: island is now " + locked);
+	this.locked = locked;
     }
 
     protected String serialize() {
@@ -326,8 +351,42 @@ public class Island {
 	if (owner != null) {
 	    ownerString = owner.toString();
 	}
+	if (isSpawn) {
+	    ownerString = "spawn";
+	}
 	return center.getBlockX() + ":" + center.getBlockY() + ":" + center.getBlockZ() + ":" + protectionRange 
-		+ ":" + islandDistance + ":" + ownerString;
+		+ ":" + islandDistance + ":" + ownerString + ":" + locked;
     }
 
+    /**
+     * Provides a list of all the players who are allowed on this island
+     * including coop members
+     * @return a list of UUIDs that have legitimate access to the island
+     */
+    protected List<UUID> getMembers() {
+	List<UUID> result = new ArrayList<UUID>();
+	// Add any coop members for this island
+	result.addAll(CoopPlay.getInstance().getCoopPlayers(center));
+	if (owner == null) {
+	    return result;
+	}
+	result.add(owner);
+	// Add any team members
+	result.addAll(ASkyBlock.getPlugin().getPlayers().getMembers(owner));
+	return result;
+    }
+
+    /**
+     * @return the isSpawn
+     */
+    public boolean isSpawn() {
+        return isSpawn;
+    }
+
+    /**
+     * @param isSpawn the isSpawn to set
+     */
+    public void setSpawn(boolean isSpawn) {
+        this.isSpawn = isSpawn;
+    }
 }

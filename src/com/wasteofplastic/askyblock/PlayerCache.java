@@ -430,9 +430,8 @@ public class PlayerCache {
 	}
 	// Look in the grid
 	Island island = plugin.getGrid().getIslandAt(loc);
-	UUID owner = island.getOwner();
-	if (owner != null) {
-	    return owner;
+	if (island != null) {
+	    return island.getOwner();
 	} 
 	// Look in the file system
 	for (final File f : plugin.getPlayersFolder().listFiles()) {
@@ -450,7 +449,7 @@ public class PlayerCache {
 			    // Add to the grid
 			    if (island == null) {
 				plugin.getGrid().addIsland(loc.getBlockX(), loc.getBlockZ(), uuid);
-			    } else if (owner == null) {
+			    } else if (island != null) {
 				island.setOwner(uuid);
 			    }
 			    return uuid;

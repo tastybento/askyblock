@@ -1,8 +1,10 @@
 package com.wasteofplastic.askyblock;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
@@ -119,6 +121,21 @@ public class CoopPlay {
 	    return coopPlayers.get(player.getUniqueId()).keySet(); 
 	}
 	return new HashSet<Location>();
+    }
+    
+    /**
+     * Gets a list of all the players that are currently coop on this island
+     * @param island
+     * @return List of UUID's of players that have coop rights to the island
+     */
+    protected List<UUID> getCoopPlayers(Location island) {
+	List<UUID> result = new ArrayList<UUID>();
+	for (UUID player : coopPlayers.keySet()) {
+	    if (coopPlayers.get(player).containsKey(island)) {
+		result.add(player);
+	    }
+	}
+	return result;
     }
 
     /**

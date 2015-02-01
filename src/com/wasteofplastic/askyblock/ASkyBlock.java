@@ -97,8 +97,6 @@ public class ASkyBlock extends JavaPlugin {
     // Listeners
     private Listener warpSignsListener;
     private Listener lavaListener;
-    // Spawn object
-    Spawn spawn;
     // A set of falling players
     HashSet<UUID> fallingPlayers = new HashSet<UUID>();
     // Biome chooser object
@@ -543,11 +541,6 @@ public class ASkyBlock extends JavaPlugin {
 	// Check the island grid
 	if (grid.getIslandAt(loc) != null) {
 	    //getLogger().info("DEBUG: Island at " + loc.toString());
-	    return true;
-	}
-	// Near spawn?
-	if (spawn.isAtSpawn(loc)) {
-	    //getLogger().info("DEBUG: too close to spawn");
 	    return true;
 	}
 	// Bedrock check
@@ -1240,7 +1233,21 @@ public class ASkyBlock extends JavaPlugin {
 	Settings.allowArmorStandUse = getConfig().getBoolean("island.allowarmorstanduse", false);
 	Settings.allowBeaconAccess = getConfig().getBoolean("island.allowbeaconaccess", false);
 	Settings.allowPortalUse = getConfig().getBoolean("island.allowportaluse", true);
-
+	// Spawn Settings
+	Settings.allowSpawnDoorUse = getConfig().getBoolean("spawn.allowdooruse", true);
+	Settings.allowSpawnLeverButtonUse = getConfig().getBoolean("spawn.allowleverbuttonuse", true);
+	Settings.allowSpawnChestAccess = getConfig().getBoolean("spawn.allowchestaccess", true);
+	Settings.allowSpawnFurnaceUse = getConfig().getBoolean("spawn.allowfurnaceuse", true);
+	Settings.allowSpawnRedStone = getConfig().getBoolean("spawn.allowredstone", false);
+	Settings.allowSpawnMusic = getConfig().getBoolean("spawn.allowmusic", true);
+	Settings.allowSpawnCrafting = getConfig().getBoolean("spawn.allowcrafting", true);
+	Settings.allowSpawnBrewing = getConfig().getBoolean("spawn.allowbrewing", true);
+	Settings.allowSpawnGateUse = getConfig().getBoolean("spawn.allowgateuse", true);	
+	Settings.allowSpawnMobSpawn = getConfig().getBoolean("spawn.allowmobspawn", false);
+	Settings.allowSpawnNoAcidWater = getConfig().getBoolean("spawn.allowspawnnoacidwater", false);
+	Settings.allowSpawnEnchanting = getConfig().getBoolean("spawn.allowenchanting",true);
+	Settings.allowSpawnAnvilUse = getConfig().getBoolean("spawn.allowanviluse",true);
+	Settings.allowSpawnBeaconAccess = getConfig().getBoolean("spawn.allowbeaconaccess",false);
 	// Challenges
 	final Set<String> challengeList = getChallengeConfig().getConfigurationSection("challenges.challengeList").getKeys(false);
 	Settings.challengeList = challengeList;
@@ -1563,6 +1570,15 @@ public class ASkyBlock extends JavaPlugin {
 	Locale.islandhelpCoop = ChatColor.translateAlternateColorCodes('&',locale.getString("coop.help", "temporarily give a player full access to your island"));
 	Locale.coopInvited = ChatColor.translateAlternateColorCodes('&',locale.getString("coop.invited", "[name] made [player] a coop player!"));
 	Locale.coopUseExpel = ChatColor.translateAlternateColorCodes('&',locale.getString("coop.useexpel", "Use expel to remove."));
+	Locale.lockIslandLocked = ChatColor.translateAlternateColorCodes('&',locale.getString("lock.islandlocked", "Island is locked to visitors"));
+	Locale.lockNowEntering = ChatColor.translateAlternateColorCodes('&',locale.getString("lock.nowentering", "Now entering [name]'s island"));
+	Locale.lockNowLeaving = ChatColor.translateAlternateColorCodes('&',locale.getString("lock.nowleaving", "Now leaving [name]'s island"));
+	Locale.lockLocking = ChatColor.translateAlternateColorCodes('&',locale.getString("lock.locking", "Locking island"));
+	Locale.lockUnlocking = ChatColor.translateAlternateColorCodes('&',locale.getString("lock.unlocking", "Unlocking island"));
+	Locale.islandHelpLock = ChatColor.translateAlternateColorCodes('&',locale.getString("island.helpLock", "Locks island so visitors cannot enter it"));
+	Locale.helpColor = ChatColor.translateAlternateColorCodes('&',locale.getString("island.helpColor", "&e"));
+	Locale.lockPlayerLocked = ChatColor.translateAlternateColorCodes('&',locale.getString("lock.playerlocked", "[name] locked the island"));
+	Locale.lockPlayerUnlocked = ChatColor.translateAlternateColorCodes('&',locale.getString("lock.playerunlocked", "[name] unlocked the island"));
     }
 
     /*
@@ -1649,8 +1665,6 @@ public class ASkyBlock extends JavaPlugin {
 		getIslandWorld();
 		// Load warps
 		loadWarpList();
-		// Load spawn
-		getSpawn();
 		// Minishop - must wait for economy to load before we can use econ 
 		getServer().getPluginManager().registerEvents(new ControlPanel(plugin), plugin);
 		if (getServer().getWorld(Settings.worldName).getGenerator() == null) {
@@ -1710,7 +1724,7 @@ public class ASkyBlock extends JavaPlugin {
      * 
      * @param player
      *            - the player who is being checked
-     * @return - true if they are on their island, otherwise false
+     * @return - true if they are on an island they have rights to be on, otherwise false
      */
     protected boolean playerIsOnIsland(final Player player) {
 	// Make a list of test locations and test them
@@ -1728,10 +1742,17 @@ public class ASkyBlock extends JavaPlugin {
 	// Run through all the locations
 	for (Location islandTestLocation : islandTestLocations) {
 	    if (islandTestLocation != null) {
-		if (player.getLocation().getX() > islandTestLocation.getX() - Settings.island_protectionRange / 2
-			&& player.getLocation().getX() < islandTestLocation.getX() + Settings.island_protectionRange / 2
-			&& player.getLocation().getZ() > islandTestLocation.getZ() - Settings.island_protectionRange / 2
-			&& player.getLocation().getZ() < islandTestLocation.getZ() + Settings.island_protectionRange / 2) {
+		int protectionRange = Settings.island_protectionRange;
+		if (grid.getIslandAt(islandTestLocation) != null) {
+		    // Get the protection range for this location if possible
+		    if (grid.getProtectedIslandAt(islandTestLocation) != null) {
+			// We are in a protected island area.
+			return true;
+		    }
+		} else if (player.getLocation().getX() > islandTestLocation.getX() - protectionRange / 2
+			&& player.getLocation().getX() < islandTestLocation.getX() + protectionRange / 2
+			&& player.getLocation().getZ() > islandTestLocation.getZ() - protectionRange / 2
+			&& player.getLocation().getZ() < islandTestLocation.getZ() + protectionRange / 2) {
 		    return true;
 		}
 	    }
@@ -1764,7 +1785,13 @@ public class ASkyBlock extends JavaPlugin {
 	    return false;
 	}
 	if (target.getWorld().equals(islandTestLocation.getWorld())) {
-	    if (target.getLocation().getX() > islandTestLocation.getX() - Settings.island_protectionRange / 2
+	    if (grid.getIslandAt(islandTestLocation) != null) {
+		// Get the protection range for this location if possible
+		if (grid.getProtectedIslandAt(islandTestLocation) != null) {
+		    // We are in a protected island area.
+		    return true;
+		}
+	    } else if (target.getLocation().getX() > islandTestLocation.getX() - Settings.island_protectionRange / 2
 		    && target.getLocation().getX() < islandTestLocation.getX() + Settings.island_protectionRange / 2
 		    && target.getLocation().getZ() > islandTestLocation.getZ() - Settings.island_protectionRange / 2
 		    && target.getLocation().getZ() < islandTestLocation.getZ() + Settings.island_protectionRange / 2) {
@@ -1781,6 +1808,19 @@ public class ASkyBlock extends JavaPlugin {
      * @return
      */
     protected boolean locationIsOnIsland(final Player player, final Location loc) {
+	// Get the player's island from the grid if it exists
+	Island island = grid.getIslandAt(loc);
+	if (island != null) {
+	    // On an island in the grid
+	    if (island.onIsland(loc) && island.getMembers().contains(player.getUniqueId())) {
+		// In a protected zone but is on the list of acceptable players
+		return true;
+	    } else {
+		// Not allowed
+		return false;
+	    }
+	}
+	// Not in the grid, so do it the old way
 	// Make a list of test locations and test them
 	Set<Location> islandTestLocations = new HashSet<Location>();
 	if (players.hasIsland(player.getUniqueId())) {
@@ -1817,7 +1857,14 @@ public class ASkyBlock extends JavaPlugin {
 	// Run through all the locations
 	for (Location islandTestLocation : islandTestLocations) {
 	    if (loc.getWorld().equals(islandTestLocation.getWorld())) {
-		if (loc.getX() > islandTestLocation.getX() - Settings.island_protectionRange / 2
+		if (grid.getIslandAt(islandTestLocation) != null) {
+		    // Get the protection range for this location if possible
+		    Island island = grid.getProtectedIslandAt(islandTestLocation);
+		    if (island != null) {
+			// We are in a protected island area.
+			return island.getCenter();
+		    }
+		} else if (loc.getX() > islandTestLocation.getX() - Settings.island_protectionRange / 2
 			&& loc.getX() < islandTestLocation.getX() + Settings.island_protectionRange / 2
 			&& loc.getZ() > islandTestLocation.getZ() - Settings.island_protectionRange / 2
 			&& loc.getZ() < islandTestLocation.getZ() + Settings.island_protectionRange / 2) {
@@ -1935,12 +1982,10 @@ public class ASkyBlock extends JavaPlugin {
 		    }
 		    if (!pl.isFlying()) {
 			// Move player to spawn
-			if (plugin.getSpawn().getSpawnLoc() != null) {
+			Island spawn = grid.getSpawn();
+			if (spawn != null) {
 			    // go to island spawn
-			    pl.teleport(plugin.getSpawn().getSpawnLoc());
-			    pl.sendBlockChange(plugin.getSpawn().getSpawnLoc()
-				    ,plugin.getSpawn().getSpawnLoc().getBlock().getType()
-				    ,plugin.getSpawn().getSpawnLoc().getBlock().getData());
+			    pl.teleport(acidWorld.getSpawnLocation());
 			    getLogger().warning("During island deletion player " + pl.getName() + " sent to spawn.");
 			} else {
 			    if (!pl.performCommand(Settings.SPAWNCOMMAND)) {
@@ -2217,6 +2262,28 @@ public class ASkyBlock extends JavaPlugin {
 	    }
 	}
     }
+
+    /**
+     * Tells all online team members something happened
+     * @param playerUUID
+     * @param message
+     */
+    protected void tellTeam(UUID playerUUID, String message) {
+	//getLogger().info("DEBUG: tell offline team called");
+	if (!players.inTeam(playerUUID)) {
+	    //getLogger().info("DEBUG: player is not in a team");
+	    return;
+	}
+	UUID teamLeader = players.getTeamLeader(playerUUID);
+	List<UUID> teamMembers = players.getMembers(teamLeader);
+	for (UUID member : teamMembers) {
+	    //getLogger().info("DEBUG: trying UUID " + member.toString());
+	    if (!member.equals(playerUUID) && getServer().getPlayer(member) != null) {
+		// Online player
+		getServer().getPlayer(member).sendMessage(message);
+	    }
+	}
+    }
     /**
      * Sets a message for the player to receive next time they login
      * @param player
@@ -2407,16 +2474,6 @@ public class ASkyBlock extends JavaPlugin {
 	// Clear any potion effects
 	for (PotionEffect effect : player.getActivePotionEffects())
 	    player.removePotionEffect(effect.getType());	
-    }
-
-    /**
-     * @return the spawn
-     */
-    protected Spawn getSpawn() {
-	if (spawn == null) {
-	    spawn = new Spawn(this);
-	}
-	return spawn;
     }
 
     /**
@@ -2693,7 +2750,7 @@ public class ASkyBlock extends JavaPlugin {
      * @return the grid
      */
     public GridManager getGrid() {
-        return grid;
+	return grid;
     }
 
 }

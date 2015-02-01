@@ -24,12 +24,12 @@ public class GridManager {
     private ASkyBlock plugin = ASkyBlock.getPlugin();
     // 2D islandGrid of islands, x,z
     private TreeMap<Integer,TreeMap<Integer,Island>> islandGrid = new TreeMap<Integer,TreeMap<Integer,Island>>();
-    private TreeMap<Integer,TreeMap<Integer,Island>> protectionGrid = new TreeMap<Integer,TreeMap<Integer,Island>>();
+    //private TreeMap<Integer,TreeMap<Integer,Island>> protectionGrid = new TreeMap<Integer,TreeMap<Integer,Island>>();
     // Reverse lookup for owner, if they exists
     private HashMap<UUID,Island> ownershipMap = new HashMap<UUID,Island>();
     private File islandFile;
-
-
+    private Island spawn;
+    
     /**
      * @param plugin
      */
@@ -40,7 +40,7 @@ public class GridManager {
 
     protected void loadGrid() {
 	islandGrid.clear();
-	protectionGrid.clear();
+	//protectionGrid.clear();
 	islandFile = new File(plugin.getDataFolder(),"islands.yml");
 	if (!islandFile.exists()) {
 	    // check if island folder exists
@@ -56,16 +56,24 @@ public class GridManager {
 	    if (islandYaml.contains(Settings.worldName)) {
 		islandList = islandYaml.getStringList(Settings.worldName);
 		for (String island : islandList) {
-		    addIsland(island);
+		    Island newIsland = addIsland(island);
+		    ownershipMap.put(newIsland.getOwner(), newIsland);
+		    if (newIsland.isSpawn()) {
+			spawn = newIsland;
+		    }
 		}
 	    } else {
 		plugin.getLogger().severe("Could not find any islands for this world...");
 	    } 
 	}
-	plugin.getLogger().info("Debug: protection grid is size " + protectionGrid.size());
-	plugin.getLogger().info("Debug: Island grid is sized = " + islandGrid.size());
+	//for (int x : protectionGrid.)
+	//plugin.getLogger().info("Debug: protection grid is size " + protectionGrid.size());
+	//plugin.getLogger().info("Debug: Island grid is sized = " + islandGrid.size());
     }
 
+    /**
+     * TODO: Need to convert from player files too
+     */
     private void convert() {
 	final File islandFolder = new File(plugin.getDataFolder() + File.separator + "islands");
 	for (File f: islandFolder.listFiles()) {
@@ -78,7 +86,8 @@ public class GridManager {
 		    int x = Integer.parseInt(fileName.substring(0, comma));
 		    int z = Integer.parseInt(fileName.substring(comma +1 , fileName.indexOf(".")));
 		    // Note that this is the CENTER of the island
-		    addIsland(x,z);
+		    Island newIsland = addIsland(x,z);
+		    ownershipMap.put(newIsland.getOwner(), newIsland);
 		    //plugin.getLogger().info("DEBUG: added island " + x + "," +z);
 		} catch (Exception e) {
 		    e.printStackTrace(); 
@@ -140,20 +149,12 @@ public class GridManager {
      * @return Island object
      */
     protected Island getProtectedIslandAt(Location location) {
-	int x = location.getBlockX();
-	Entry<Integer, TreeMap<Integer,Island>> en = protectionGrid.lowerEntry(x);
-	if (en != null) {
-	    int z = location.getBlockZ();
-	    Entry<Integer, Island> ent = en.getValue().lowerEntry(z);
-	    if (ent != null) {
-		// Check if in the island protected space
-		Island island = ent.getValue();
-		if (island.onIsland(location)) {
-		    //plugin.getLogger().info("DEBUG: In island protected space");
-		    return island;
-		}
-		//plugin.getLogger().info("DEBUG: not in island protected space");
-	    }
+	Island island = getIslandAt(location);
+	if (island == null) {
+	    return null;
+	}
+	if (island.onIsland(location)) {
+	    return island;
 	}
 	return null;
     }
@@ -176,8 +177,8 @@ public class GridManager {
      * @param x
      * @param z
      */
-    protected void addIsland(int x, int z) {
-	addIsland(x, z, null);
+    protected Island addIsland(int x, int z) {
+	return addIsland(x, z, null);
     }
 
     /**
@@ -186,22 +187,27 @@ public class GridManager {
      * @param z
      * @param owner
      */
-    protected void addIsland(int x, int z, UUID owner) {
+    protected Island addIsland(int x, int z, UUID owner) {
 	Island newIsland = new Island(x,z, owner);
 	addToGrids(newIsland);
+	return newIsland;
     }
 
     /**
      * Adds island to the grid using the stored information
      * @param islandSerialized
      */
-    protected void addIsland(String islandSerialized) {
+    protected Island addIsland(String islandSerialized) {
+	//plugin.getLogger().info("DEBUG: adding island " + islandSerialized);
 	Island newIsland = new Island(islandSerialized);
 	addToGrids(newIsland);
+	return newIsland;
     }
 
     private void addToGrids(Island newIsland) {
+	//plugin.getLogger().info("DEBUG: adding island to grid");
 	if (islandGrid.containsKey(newIsland.getMinX())) {
+	    //plugin.getLogger().info("DEBUG: min x is in the grid :" + newIsland.getMinX()); 
 	    TreeMap<Integer,Island> zEntry = islandGrid.get(newIsland.getMinX());
 	    if (zEntry.containsKey(newIsland.getMinZ())) {
 		// Island already exists
@@ -212,43 +218,21 @@ public class GridManager {
 		return;
 	    } else {
 		// Add island
+		//plugin.getLogger().info("DEBUG: min z is not in the grid :" + newIsland.getMinZ());
 		zEntry.put(newIsland.getMinZ(), newIsland);
 		islandGrid.put(newIsland.getMinX(), zEntry);
 		//plugin.getLogger().info("Debug: " + newIsland.toString());
 	    }
 	} else {
 	    // Add island
+	    //plugin.getLogger().info("DEBUG: min x is not in the grid :" + newIsland.getMinX());
+	    //plugin.getLogger().info("DEBUG: min Z is not in the grid :" + newIsland.getMinZ());
 	    TreeMap<Integer,Island> zEntry = new TreeMap<Integer,Island>();
 	    zEntry.put(newIsland.getMinZ(), newIsland);
 	    islandGrid.put(newIsland.getMinX(), zEntry);
 	}
-	// Now add to protection grid
-	if (protectionGrid.containsKey(newIsland.getMinProtectedX())) {
-	    TreeMap<Integer,Island> zEntry = protectionGrid.get(newIsland.getMinProtectedX());
-	    if (zEntry.containsKey(newIsland.getMinProtectedZ())) {
-		Island conflict = islandGrid.get(newIsland.getMinProtectedX()).get(newIsland.getMinProtectedZ());
-		plugin.getLogger().warning("Conflict in protetion grid");
-		plugin.getLogger().warning("Previous island center = " + conflict.getCenter().toString());
-		plugin.getLogger().warning("Duplicate island found in island.yml: " + newIsland.getCenter().toString());
-		return;
-	    } else {
-		// Add island
-		zEntry.put(newIsland.getMinProtectedZ(), newIsland);
-		protectionGrid.put(newIsland.getMinProtectedX(), zEntry);
-		//plugin.getLogger().info("Debug: " + newIsland.toString());
-	    }
-	} else {
-	    // Add island
-	    TreeMap<Integer,Island> zEntry = new TreeMap<Integer,Island>();
-	    zEntry.put(newIsland.getMinProtectedZ(), newIsland);
-	    protectionGrid.put(newIsland.getMinProtectedX(), zEntry);
-	}
-	// Add reverse look up for owner
-	if (newIsland.getOwner() != null) {
-	    ownershipMap.put(newIsland.getOwner(), newIsland);
-	}
     }
- 
+
     protected void deleteIsland(Location loc) {
 	Island island = getIslandAt(loc);
 	int x = island.getMinX();
@@ -260,23 +244,13 @@ public class GridManager {
 		zEntry.remove(z);
 		islandGrid.put(x, zEntry);
 	    } 
-	}
-	// Remove the protection grid
-	x = island.getMinProtectedX();
-	z = island.getMinProtectedZ();
-	if (protectionGrid.containsKey(x)) {
-	    TreeMap<Integer,Island> zEntry = protectionGrid.get(x);
-	    if (zEntry.containsKey(z)) {
-		// Island exists - delete it
-		zEntry.remove(z);
-		protectionGrid.put(x, zEntry);
-	    } 
 	}	
     }
     
     /**
      * Gets island by owner's UUID. Just because the island does not exist in this map
      * does not mean it does not exist in this world, due to legacy island support
+     * Will return the island that this player is a member of if a team player
      * @param owner
      * @return island object or null if it does not exist in the list
      */
@@ -285,7 +259,47 @@ public class GridManager {
 	    if (ownershipMap.containsKey(owner)) {
 		return ownershipMap.get(owner);
 	    }
+	    // Try and get team islands
+	    UUID leader = plugin.getPlayers().getTeamLeader(owner);
+	    if (leader != null && ownershipMap.containsKey(leader)) {
+		return ownershipMap.get(leader);
+	    } 
 	}
 	return null;
     }
+
+    /**
+     * @return the spawn
+     */
+    public Island getSpawn() {
+        return spawn;
+    }
+
+    /**
+     * @param spawn the spawn to set
+     */
+    public void setSpawn(Island spawn) {
+	spawn.setSpawn(true);
+	spawn.setProtectionSize(spawn.getIslandDistance());
+        this.spawn = spawn;
+    }
+
+    public void deleteSpawn() {
+	deleteIsland(spawn.getCenter());
+        this.spawn = null;
+        
+    }
+    /**
+     * Indicates whether a player is at the island spawn or not
+     * @param playerLoc
+     * @return true if they are, false if they are not, or spawn does not exist
+     */
+    public boolean isAtSpawn(Location playerLoc) {
+	if (spawn == null) {
+	    return false;
+	}
+	return spawn.onIsland(playerLoc);
+    }
+
+
 }

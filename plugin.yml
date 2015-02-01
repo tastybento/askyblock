@@ -57,6 +57,9 @@ permissions:
           askyblock.island.biomes:
             description: Allows biome changing
             default: true
+          askyblock.island.lock:
+            description: Allows island locking
+            default: false
       askyblock.team.*:
         children:
           askyblock.team.create:
