@@ -142,6 +142,9 @@ public class Settings {
     protected static boolean allowSpawnEnchanting;
     protected static boolean allowSpawnAnvilUse;
     protected static boolean allowSpawnBeaconAccess;
+    protected static boolean allowSpawnAnimalSpawn;
+    protected static boolean allowSpawnAnimalKilling;
+    protected static boolean allowSpawnMobKilling;
     
     // Levels
     protected static HashMap<Material,Integer> blockLimits;
@@ -184,6 +187,7 @@ public class Settings {
     
     // Wait between being invited to same team island
     protected static int inviteWait;
+
     
     
     

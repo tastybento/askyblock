@@ -35,7 +35,6 @@ import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Explosive;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
@@ -52,6 +51,7 @@ import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.block.BlockMultiPlaceEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
@@ -368,7 +368,7 @@ public class IslandGuard implements Listener {
 		}
 	    }
 	    if (islandTo.isSpawn()) {
-		e.getPlayer().sendMessage("Entering spawn");
+		e.getPlayer().sendMessage(Locale.lockEnteringSpawn);
 	    } else {
 		e.getPlayer().sendMessage(Locale.lockNowEntering.replace("[name]", plugin.getPlayers().getName(islandTo.getOwner())));
 	    }
@@ -376,10 +376,23 @@ public class IslandGuard implements Listener {
 	    // Leaving
 	    if (islandFrom.isSpawn()) {
 		// Leaving
-		e.getPlayer().sendMessage("Leaving spawn");
+		e.getPlayer().sendMessage(Locale.lockLeavingSpawn);
 	    } else {
 		e.getPlayer().sendMessage(Locale.lockNowLeaving.replace("[name]", plugin.getPlayers().getName(islandFrom.getOwner())));
 	    }
+	} else if (islandTo != null && islandFrom !=null && !islandTo.equals(islandFrom)) {
+	    // Adjacent islands or overlapping protections
+	    if (islandFrom.isSpawn()) {
+		// Leaving
+		e.getPlayer().sendMessage(Locale.lockLeavingSpawn);
+	    } else if (islandFrom.getOwner() != null){
+		e.getPlayer().sendMessage(Locale.lockNowLeaving.replace("[name]", plugin.getPlayers().getName(islandFrom.getOwner())));
+	    }
+	    if (islandTo.isSpawn()) {
+		e.getPlayer().sendMessage(Locale.lockEnteringSpawn);
+	    } else if (islandTo.getOwner() != null){
+		e.getPlayer().sendMessage(Locale.lockNowEntering.replace("[name]", plugin.getPlayers().getName(islandTo.getOwner())));
+	    }    
 	}
     }
 
@@ -491,22 +504,15 @@ public class IslandGuard implements Listener {
 	if (!e.getEntity().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    return;
 	}
-	if (Settings.allowSpawnMobSpawn) {
-	    return;
-	}
-	//plugin.getLogger().info("DEBUG: mob spawn");
-	// prevent at spawn
-	/*
-	if (plugin.getSpawn().getBedrock() != null) {
-	    plugin.getLogger().info("DEBUG: spawn loc exists");
-	plugin.getLogger().info("DEBUG: distance sq = " + e.getLocation().distanceSquared(plugin.getSpawn().getBedrock()));
-	plugin.getLogger().info("DEBUG: range sq = " + (plugin.getSpawn().getRange()*plugin.getSpawn().getRange()));
-	} else {
-	    plugin.getLogger().info("DEBUG: spawn loc does not exist");
-	}*/
-	if (plugin.getGrid().isAtSpawn(e.getLocation())) {
-	    //plugin.getLogger().info("DEBUG: prevented mob spawn at spawn");
-	    e.setCancelled(true);
+	if ((!Settings.allowSpawnMobSpawn && (e.getEntity() instanceof Monster || e.getEntity() instanceof Slime)) 
+		|| (!Settings.allowSpawnAnimalSpawn && (e.getEntity() instanceof Animals))){
+	    if (plugin.getGrid().isAtSpawn(e.getLocation())) {
+		if (e.getSpawnReason() == SpawnReason.SPAWNER_EGG) {
+		    plugin.getLogger().info("Spawn prevented egg spawn due to config settings.");
+		}
+		//plugin.getLogger().info("DEBUG: prevented mob spawn at spawn");
+		e.setCancelled(true);
+	    }
 	}
     }
 
@@ -737,25 +743,42 @@ public class IslandGuard implements Listener {
 	// Check for player initiated damage
 	if (e.getDamager() instanceof Player) {
 	    //plugin.getLogger().info("Damager is " + ((Player)e.getDamager()).getName());
-	    // If the target is not a player check if mobs can be hurt
+	    // If the target is not a player check if mobs or animals can be hurt
 	    if (!(e.getEntity() instanceof Player)) {
+		Location targetLoc = e.getEntity().getLocation();
+		// Check monsters
 		if (e.getEntity() instanceof Monster || e.getEntity() instanceof Slime || e.getEntity() instanceof Squid) {
-		    //plugin.getLogger().info("Entity is a monster - ok to hurt"); 
+		    //plugin.getLogger().info("Entity is a monster - ok to hurt");
+		    // At spawn?
+		    if (plugin.getGrid().isAtSpawn(targetLoc)) {
+			if (!Settings.allowSpawnMobKilling) {
+			    ((Player)e.getDamager()).sendMessage(ChatColor.RED + Locale.islandProtected);
+			    e.setCancelled(true);
+			    return;
+			}
+			return;
+		    }
 		    // Monster has to be on player's island.
-		    if (!Settings.allowHurtMonsters) {
-			if (!plugin.locationIsOnIsland((Player)e.getDamager(),e.getEntity().getLocation())) {
+		    if (!plugin.locationIsOnIsland((Player)e.getDamager(),e.getEntity().getLocation())) {
+			if (Settings.allowHurtMonsters) {
 			    ((Player)e.getDamager()).sendMessage(ChatColor.RED + Locale.islandProtected);
 			    e.setCancelled(true);
 			    return;
 			}
 		    }
 		    return;
-		} else {
+		}
+		if (e.getEntity() instanceof Animals ){
 		    //plugin.getLogger().info("Entity is a non-monster - check if ok to hurt"); 
-		    //UUID playerUUID = e.getDamager().getUniqueId();
-		    //if (playerUUID == null) {
-		    //plugin.getLogger().info("player ID is null");
-		    //}
+		    // At spawn?
+		    if (plugin.getGrid().isAtSpawn(e.getEntity().getLocation())) {
+			if (!Settings.allowSpawnAnimalKilling) {
+			    ((Player)e.getDamager()).sendMessage(ChatColor.RED + Locale.islandProtected);
+			    e.setCancelled(true);
+			    return;
+			}
+			return;
+		    }
 		    if (!Settings.allowHurtMobs) {
 			// Mob has to be on damager's island
 			if (!plugin.locationIsOnIsland((Player)e.getDamager(),e.getEntity().getLocation())) {

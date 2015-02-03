@@ -240,12 +240,38 @@ public class IslandCmd implements CommandExecutor {
     private Location getNextIsland() {
 	// Find the next free spot
 	if (last == null) {
-	    last = new Location(plugin.getServer().getWorld(Settings.worldName), Settings.islandXOffset, Settings.island_level, Settings.islandZOffset);
+	    last = new Location(ASkyBlock.getIslandWorld(), Settings.islandXOffset, Settings.island_level, Settings.islandZOffset);
 	}
-	//plugin.getLogger().info("next island starting point " + last.toString());
 	Location next = last.clone();
-	while (plugin.islandAtLocation(next)) {
+	int x = next.getBlockX();
+	int y = next.getBlockY();
+	int z = next.getBlockZ();
+	// Check all 4 corners of the island
+	Location one = new Location(ASkyBlock.getIslandWorld(),x - Settings.islandDistance/2,y,z - Settings.islandDistance/2);
+	Location two = new Location(ASkyBlock.getIslandWorld(),x + Settings.islandDistance/2,y,z - Settings.islandDistance/2);
+	Location three = new Location(ASkyBlock.getIslandWorld(),x - Settings.islandDistance/2,y,z + Settings.islandDistance/2);
+	Location four = new Location(ASkyBlock.getIslandWorld(),x + Settings.islandDistance/2,y,z + Settings.islandDistance/2);
+	plugin.getLogger().info("DEBUG 1=" + one + " 2 = " + two 
+		+ " 3 = "+ three + " 4 = " + four);
+	plugin.getLogger().info("DEBUG 1=" + plugin.islandAtLocation(one) + " 2 = " + plugin.islandAtLocation(two) 
+		+ " 3 = "+ plugin.islandAtLocation(three) + " 4 = " + plugin.islandAtLocation(four));
+	//plugin.getLogger().info("next island starting point " + last.toString());
+	
+	while (plugin.islandAtLocation(next) || plugin.islandAtLocation(one) || plugin.islandAtLocation(two) 
+		|| plugin.islandAtLocation(three) || plugin.islandAtLocation(four)) {
 	    next = nextGridLocation(next);
+		x = next.getBlockX();
+		y = next.getBlockY();
+		z = next.getBlockZ();
+		// Check all 4 corners of the island
+		one = new Location(ASkyBlock.getIslandWorld(),x - Settings.islandDistance/2,y,z - Settings.islandDistance/2);
+		two = new Location(ASkyBlock.getIslandWorld(),x + Settings.islandDistance/2,y,z - Settings.islandDistance/2);
+		three = new Location(ASkyBlock.getIslandWorld(),x - Settings.islandDistance/2,y,z + Settings.islandDistance/2);
+		four = new Location(ASkyBlock.getIslandWorld(),x + Settings.islandDistance/2,y,z + Settings.islandDistance/2);
+		plugin.getLogger().info("DEBUG 1=" + one + " 2 = " + two 
+			+ " 3 = "+ three + " 4 = " + four);
+		plugin.getLogger().info("DEBUG 1=" + plugin.islandAtLocation(one) + " 2 = " + plugin.islandAtLocation(two) 
+			+ " 3 = "+ plugin.islandAtLocation(three) + " 4 = " + plugin.islandAtLocation(four));
 	}
 	// Make the last next, last
 	last = next.clone();
@@ -522,12 +548,13 @@ public class IslandCmd implements CommandExecutor {
 	}
 	// This flag is true if the command can be used
 	plugin.setCalculatingLevel(true);
+	/*
 	if (!plugin.getPlayers().hasIsland(targetPlayer) && !plugin.getPlayers().inTeam(targetPlayer)) {
 	    asker.sendMessage(ChatColor.RED + Locale.islanderrorInvalidPlayer);
 	    plugin.setCalculatingLevel(false);
 	    return false;
-	}
-	if (asker.getUniqueId().equals(targetPlayer)) {
+	}*/
+	if (asker.getUniqueId().equals(targetPlayer) || asker.isOp()) {
 	    asker.sendMessage(ChatColor.GREEN + Locale.levelCalculating);
 	    LevelCalc levelCalc = new LevelCalc(plugin,targetPlayer,asker);
 	    levelCalc.runTaskTimer(plugin, 0L, 10L);
@@ -1235,20 +1262,17 @@ public class IslandCmd implements CommandExecutor {
 		    return false;
 		}
 	    } else if (split[0].equalsIgnoreCase("level")) {
-		// island level command
+		// island level <name> command
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.info")) {
-		    if (!plugin.getPlayers().inTeam(playerUUID) && !plugin.getPlayers().hasIsland(playerUUID)) {
-			player.sendMessage(ChatColor.RED + Locale.errorNoIsland);
-		    } else {
-			// May return null if not known
-			final UUID invitedPlayerUUID = plugin.getPlayers().getUUID(split[1]);
-			// Invited player must be known
-			if (invitedPlayerUUID == null) {
-			    player.sendMessage(ChatColor.RED + Locale.errorUnknownPlayer);
-			    return true;
-			}
-			calculateIslandLevel(player, plugin.getPlayers().getUUID(split[1]));
+		    // Find out if the target has an island
+		    final UUID targetPlayerUUID = plugin.getPlayers().getUUID(split[1]);
+		    // Invited player must be known
+		    if (targetPlayerUUID == null) {
+			//plugin.getLogger().info("DEBUG: unknown player");
+			player.sendMessage(ChatColor.RED + Locale.errorUnknownPlayer);
+			return true;
 		    }
+		    calculateIslandLevel(player, targetPlayerUUID);
 		    return true;
 		} else {
 		    player.sendMessage(ChatColor.RED + Locale.errorNoPermission);

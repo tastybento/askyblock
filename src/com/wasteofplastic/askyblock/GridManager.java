@@ -29,7 +29,7 @@ public class GridManager {
     private HashMap<UUID,Island> ownershipMap = new HashMap<UUID,Island>();
     private File islandFile;
     private Island spawn;
-    
+
     /**
      * @param plugin
      */
@@ -39,16 +39,14 @@ public class GridManager {
     }
 
     protected void loadGrid() {
+	plugin.getLogger().info("Loading island grid...");
 	islandGrid.clear();
 	//protectionGrid.clear();
 	islandFile = new File(plugin.getDataFolder(),"islands.yml");
 	if (!islandFile.exists()) {
 	    // check if island folder exists
-	    File islandFolder = new File(plugin.getDataFolder() + File.pathSeparator + "islands");
-	    if (islandFolder.exists()) {
-		plugin.getLogger().info("islands.yml does not exist. Converting...");
-		convert();
-	    }
+	    plugin.getLogger().info("islands.yml does not exist. Creating...");
+	    convert();
 	} else {
 	    plugin.getLogger().info("Loading islands.yml");
 	    YamlConfiguration islandYaml = ASkyBlock.loadYamlFile("islands.yml");
@@ -75,28 +73,72 @@ public class GridManager {
      * TODO: Need to convert from player files too
      */
     private void convert() {
-	final File islandFolder = new File(plugin.getDataFolder() + File.separator + "islands");
-	for (File f: islandFolder.listFiles()) {
-	    // Need to remove the .yml suffix
-	    String fileName = f.getName();
-	    int comma = fileName.indexOf(",");
-	    if (fileName.endsWith(".yml") && comma != -1) {
-		try {
-		    // Parse to an island value
-		    int x = Integer.parseInt(fileName.substring(0, comma));
-		    int z = Integer.parseInt(fileName.substring(comma +1 , fileName.indexOf(".")));
-		    // Note that this is the CENTER of the island
-		    Island newIsland = addIsland(x,z);
-		    ownershipMap.put(newIsland.getOwner(), newIsland);
-		    //plugin.getLogger().info("DEBUG: added island " + x + "," +z);
-		} catch (Exception e) {
-		    e.printStackTrace(); 
+	// Go through player folder
+	final File playerFolder = new File(plugin.getDataFolder() + File.separator + "players");
+	YamlConfiguration playerFile = new YamlConfiguration();
+	int count = 0;
+	if (playerFolder.exists()) {
+	    plugin.getLogger().warning("Reading player folder. This could time some time with a large number of players...");
+	    for (File f: playerFolder.listFiles()) {
+		// Need to remove the .yml suffix
+		String fileName = f.getName();
+		if (fileName.endsWith(".yml")) {
+		    try {
+			playerFile.load(f);
+			boolean hasIsland = playerFile.getBoolean("hasIsland",false);
+			if (hasIsland) {
+			    String islandLocation = playerFile.getString("islandLocation");
+			    if (islandLocation.isEmpty()) {
+				plugin.getLogger().severe("Problem with " + fileName);
+				plugin.getLogger().severe("Player file says they have an island, but there is no location.");
+			    } else {
+				Location islandLoc = ASkyBlock.getLocationString(islandLocation);
+				UUID owner = UUID.fromString(fileName.substring(0, fileName.length()-4));
+				Island newIsland = addIsland(islandLoc.getBlockX(),islandLoc.getBlockZ(),owner);
+				ownershipMap.put(owner, newIsland);
+				count++;
+				//plugin.getLogger().info("Converted island at " + islandLoc);
+			    }
+			}
+
+		    } catch (Exception e) {
+			plugin.getLogger().severe("Problem with " + fileName);
+			//e.printStackTrace(); 
+		    }
 		}
 	    }
 	}
+	plugin.getLogger().info("Converted "+ count + " islands from player's folder");
+	int count2 = 0;
+	// Check island folder
+	final File islandFolder = new File(plugin.getDataFolder() + File.separator + "islands");
+	if (islandFolder.exists()) {
+	    plugin.getLogger().warning("Reading island folder. This could time some time with a large number of islands...");
+	    for (File f: islandFolder.listFiles()) {
+		// Need to remove the .yml suffix
+		String fileName = f.getName();
+		int comma = fileName.indexOf(",");
+		if (fileName.endsWith(".yml") && comma != -1) {
+		    try {
+			// Parse to an island value
+			int x = Integer.parseInt(fileName.substring(0, comma));
+			int z = Integer.parseInt(fileName.substring(comma +1 , fileName.indexOf(".")));
+			// Note that this is the CENTER of the island
+			if (getIslandAt(x,z) == null) {
+			    addIsland(x,z);
+			    count2++;
+			    //plugin.getLogger().info("Added island from island folder: " + x + "," +z);
+			}
+		    } catch (Exception e) {
+			e.printStackTrace(); 
+		    }
+		}
+	    }
+	}
+	plugin.getLogger().info("Converted "+ count2 + " islands from island folder");
+	plugin.getLogger().info("Total "+ (count+count2) + " islands converted.");
 	// Now save the islandGrid
 	saveGrid();
-
     }
 
     protected void saveGrid() {
@@ -119,12 +161,33 @@ public class GridManager {
 	}
     }
 
+    protected Island getIslandAt(int x, int z) {
+	Entry<Integer, TreeMap<Integer,Island>> en = islandGrid.lowerEntry(x);
+	if (en != null) {
+	    Entry<Integer, Island> ent = en.getValue().lowerEntry(z);
+	    if (ent != null) {
+		// Check if in the island range
+		Island island = ent.getValue();
+		if (island.inIslandSpace(x,z)) {
+		    //plugin.getLogger().info("DEBUG: In island space");
+		    return island;
+		}
+		//plugin.getLogger().info("DEBUG: not in island space");
+	    }
+	}
+	return null;	
+    }
+
     /**
      * Returns the island at the location or null if there is none
      * @param location
      * @return Island object
      */
     protected Island getIslandAt(Location location) {
+	// Check if it is spawn
+	if (spawn != null && spawn.onIsland(location)) {
+	    return spawn;
+	}
 	int x = location.getBlockX();
 	Entry<Integer, TreeMap<Integer,Island>> en = islandGrid.lowerEntry(x);
 	if (en != null) {
@@ -149,6 +212,10 @@ public class GridManager {
      * @return Island object
      */
     protected Island getProtectedIslandAt(Location location) {
+	// Try spawn
+	if (spawn != null && spawn.onIsland(location)) {
+	    return spawn;
+	}
 	Island island = getIslandAt(location);
 	if (island == null) {
 	    return null;
@@ -246,7 +313,7 @@ public class GridManager {
 	    } 
 	}	
     }
-    
+
     /**
      * Gets island by owner's UUID. Just because the island does not exist in this map
      * does not mean it does not exist in this world, due to legacy island support
@@ -272,7 +339,7 @@ public class GridManager {
      * @return the spawn
      */
     public Island getSpawn() {
-        return spawn;
+	return spawn;
     }
 
     /**
@@ -281,13 +348,13 @@ public class GridManager {
     public void setSpawn(Island spawn) {
 	spawn.setSpawn(true);
 	spawn.setProtectionSize(spawn.getIslandDistance());
-        this.spawn = spawn;
+	this.spawn = spawn;
     }
 
     public void deleteSpawn() {
 	deleteIsland(spawn.getCenter());
-        this.spawn = null;
-        
+	this.spawn = null;
+
     }
     /**
      * Indicates whether a player is at the island spawn or not

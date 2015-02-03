@@ -417,7 +417,13 @@ public class PlayerCache {
     protected UUID getPlayerFromIslandLocation(Location loc) {
 	if (loc == null)
 	    return null;
-	// Check the cache first
+	// Look in the grid
+	Island island = plugin.getGrid().getIslandAt(loc);
+	if (island != null) {
+	    return island.getOwner();
+	}
+	// Check the cache
+	/*
 	for (UUID uuid: playerCache.keySet()) {
 	    // Check for block equiv
 	    Location check = playerCache.get(uuid).getIslandLocation();
@@ -428,11 +434,8 @@ public class PlayerCache {
 		}
 	    }
 	}
-	// Look in the grid
-	Island island = plugin.getGrid().getIslandAt(loc);
-	if (island != null) {
-	    return island.getOwner();
-	} 
+*/
+	/*
 	// Look in the file system
 	for (final File f : plugin.getPlayersFolder().listFiles()) {
 	    // Need to remove the .yml suffix
@@ -458,7 +461,7 @@ public class PlayerCache {
 		} catch (Exception e) {
 		}
 	    }
-	}
+	}*/
 
 	return null;
     }

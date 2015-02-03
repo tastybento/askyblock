@@ -120,7 +120,10 @@ permissions:
             description: Reload the config.yml
             default: op
           askyblock.admin.delete:
-            description: Let a player completely remove a player's island (including blocks)
+            description: Let a player completely remove a player (including island)
+            default: op
+          askyblock.admin.deleteisland:
+            description: Let a player completely remove the island the player is on
             default: op
           askyblock.admin.register:
             description: Let a player register the nearest island (using the bedrock) to another player.

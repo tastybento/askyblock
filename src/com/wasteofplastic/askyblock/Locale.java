@@ -16,6 +16,8 @@
  *******************************************************************************/
 package com.wasteofplastic.askyblock;
 
+import org.bukkit.ChatColor;
+
 
 /**
  * @author tastybento
@@ -375,5 +377,7 @@ public class Locale {
     public static String helpColor;
     public static String lockPlayerLocked;
     public static String lockPlayerUnlocked;
+    public static String lockEnteringSpawn;
+    public static String lockLeavingSpawn;
       
 }

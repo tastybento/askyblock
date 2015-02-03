@@ -1244,6 +1244,11 @@ public class ASkyBlock extends JavaPlugin {
 	Settings.allowSpawnBrewing = getConfig().getBoolean("spawn.allowbrewing", true);
 	Settings.allowSpawnGateUse = getConfig().getBoolean("spawn.allowgateuse", true);	
 	Settings.allowSpawnMobSpawn = getConfig().getBoolean("spawn.allowmobspawn", false);
+	Settings.allowSpawnAnimalSpawn = getConfig().getBoolean("spawn.allowanimalspawn", true);
+	Settings.allowSpawnAnimalKilling = getConfig().getBoolean("spawn.allowanimalkilling", false);
+	Settings.allowSpawnMobKilling = getConfig().getBoolean("spawn.allowmobkilling", true);
+	Settings.allowSpawnEggs = getConfig().getBoolean("spawn.alloweggs", false);
+
 	Settings.allowSpawnNoAcidWater = getConfig().getBoolean("spawn.allowspawnnoacidwater", false);
 	Settings.allowSpawnEnchanting = getConfig().getBoolean("spawn.allowenchanting",true);
 	Settings.allowSpawnAnvilUse = getConfig().getBoolean("spawn.allowanviluse",true);
@@ -1579,6 +1584,9 @@ public class ASkyBlock extends JavaPlugin {
 	Locale.helpColor = ChatColor.translateAlternateColorCodes('&',locale.getString("island.helpColor", "&e"));
 	Locale.lockPlayerLocked = ChatColor.translateAlternateColorCodes('&',locale.getString("lock.playerlocked", "[name] locked the island"));
 	Locale.lockPlayerUnlocked = ChatColor.translateAlternateColorCodes('&',locale.getString("lock.playerunlocked", "[name] unlocked the island"));
+	Locale.lockEnteringSpawn = ChatColor.translateAlternateColorCodes('&',locale.getString("lock.enteringspawn", "Entering Spawn"));
+	Locale.lockLeavingSpawn = ChatColor.translateAlternateColorCodes('&',locale.getString("lock.leavingspawn", "Leaving Spawn"));
+
     }
 
     /*
@@ -2038,7 +2046,7 @@ public class ASkyBlock extends JavaPlugin {
 	    // Load the top ten
 	    YamlConfiguration topTenConfig = loadYamlFile("topten.yml");
 	    // Load the values
-	    if (topTenConfig.contains("topten")) {
+	    if (topTenConfig.isSet("topten")) {
 		for (String playerUUID : topTenConfig.getConfigurationSection("topten").getKeys(false)) {
 		    //getLogger().info(playerUUID);
 		    try {
@@ -2053,9 +2061,6 @@ public class ASkyBlock extends JavaPlugin {
 			createTopTen();
 		    }
 		}
-	    } else {
-		getLogger().severe("Problem loading top ten list - recreating - this may take some time - no toptensection");
-		createTopTen();
 	    }
 	}
     }

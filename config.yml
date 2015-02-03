@@ -296,11 +296,15 @@ spawn:
   allowcrafting: true
   allowbrewing: true
   allowgateuse: true
+  allowanimalspawn: true
+  allowanimalkilling: false
+  allowmobkilling: true
   allowmobspawn: false
   allowspawnnoacidwater: false
   allowenchanting: true
   allowanviluse: true
   allowbeaconaccess: false
+  alloweggs: false
 
 # This section contains the biomes that can be bought or used
 biomesettings:

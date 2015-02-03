@@ -22,6 +22,7 @@ public class LevelCalc extends BukkitRunnable {
     private int oldLevel;
     private UUID targetPlayer;
     private Player asker;
+    private int range = Settings.island_protectionRange;
 
     /**
      * Calculates the level of an island
@@ -41,9 +42,16 @@ public class LevelCalc extends BukkitRunnable {
 	}
 	this.px = l.getBlockX();
 	this.pz = l.getBlockZ();
+	// Get player's island
+	Island island = plugin.getGrid().getIsland(targetPlayer);
+	if (island != null) {
+	    range = island.getProtectionSize();
+	} else {
+	    range = Settings.island_protectionRange;    
+	}
 	// Calculated based on the size of the protection area
-	double ratio = (double)counter * 10000 / (double)(Settings.island_protectionRange * Settings.island_protectionRange);
-	// plugin.getLogger().info("DEBUG: ratio = " + ratio + " protection range = " + Settings.island_protectionRange);
+	double ratio = (double)counter * 10000 / (double)(range * range);
+	// plugin.getLogger().info("DEBUG: ratio = " + ratio + " protection range = " + range);
 	this.slice = (int)ratio;
 	if (this.slice < 1) {
 	    this.slice = 1;
@@ -115,8 +123,8 @@ public class LevelCalc extends BukkitRunnable {
 	}
 	for (int y = top; y >= bottom; y--) {
 	    // plugin.getLogger().info("DEBUG: y = " + y);
-	    for (int x = Settings.island_protectionRange / 2 * -1; x <= Settings.island_protectionRange / 2; x++) {
-		for (int z = Settings.island_protectionRange / 2 * -1; z <= Settings.island_protectionRange / 2; z++) {
+	    for (int x = range / 2 * -1; x <= range / 2; x++) {
+		for (int z = range / 2 * -1; z <= range / 2; z++) {
 		    final Block b = new Location(l.getWorld(), px + x, y, pz + z).getBlock();
 		    final Material blockType = b.getType();
 		    if (blockType != Material.AIR) {

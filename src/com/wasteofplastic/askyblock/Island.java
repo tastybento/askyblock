@@ -190,6 +190,15 @@ public class Island {
 	return false;	
     }
 
+    public boolean inIslandSpace(int x, int z) {
+	if (x > center.getBlockX() - islandDistance / 2
+		&& x < center.getBlockX() + islandDistance / 2
+		&& z > center.getBlockZ() - islandDistance / 2
+		&& z < center.getBlockZ() + islandDistance / 2) {
+	    return true;
+	}
+	return false;	
+    }
     /**
      * @return the minX
      */
@@ -239,8 +248,8 @@ public class Island {
      */
     public void setProtectionSize(int protectionSize) {
 	this.protectionRange = protectionSize;
-	this.minProtectedX = center.getBlockX() - Settings.island_protectionRange/2;
-	this.minProtectedZ = center.getBlockZ() - Settings.island_protectionRange/2;
+	this.minProtectedX = center.getBlockX() - protectionSize/2;
+	this.minProtectedZ = center.getBlockZ() - protectionSize/2;
 
     }
     /**
@@ -380,13 +389,13 @@ public class Island {
      * @return the isSpawn
      */
     public boolean isSpawn() {
-        return isSpawn;
+	return isSpawn;
     }
 
     /**
      * @param isSpawn the isSpawn to set
      */
     public void setSpawn(boolean isSpawn) {
-        this.isSpawn = isSpawn;
+	this.isSpawn = isSpawn;
     }
 }
