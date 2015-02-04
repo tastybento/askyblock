@@ -243,6 +243,20 @@ public class IslandCmd implements CommandExecutor {
 	    last = new Location(ASkyBlock.getIslandWorld(), Settings.islandXOffset, Settings.island_level, Settings.islandZOffset);
 	}
 	Location next = last.clone();
+	
+	while (plugin.islandAtLocation(next)) {
+	    next = nextGridLocation(next);
+	}
+	// Make the last next, last
+	last = next.clone();
+	return next;
+    }
+    /*
+     * 	// Find the next free spot
+	if (last == null) {
+	    last = new Location(ASkyBlock.getIslandWorld(), Settings.islandXOffset, Settings.island_level, Settings.islandZOffset);
+	}
+	Location next = last.clone();
 	int x = next.getBlockX();
 	int y = next.getBlockY();
 	int z = next.getBlockZ();
@@ -277,6 +291,7 @@ public class IslandCmd implements CommandExecutor {
 	last = next.clone();
 	return next;
     }
+     */
 
     private void resetMoney(Player player) {
 	if (!Settings.useEconomy) {
@@ -1646,10 +1661,12 @@ public class IslandCmd implements CommandExecutor {
 				}
 				player.sendMessage(ChatColor.GREEN + Locale.makeLeadernameIsNowTheOwner.replace("[name]", plugin.getPlayers().getName(targetPlayer)));
 				// targetPlayer is the new leader
+				//plugin.getLogger().info("DEBUG: " + plugin.getPlayers().getIslandLevel(teamLeader));
 				// Remove the target player from the team
 				removePlayerFromTeam(targetPlayer, teamLeader);
 				// Remove the leader from the team
 				removePlayerFromTeam(teamLeader, teamLeader);
+				//plugin.getLogger().info("DEBUG: " + plugin.getPlayers().getIslandLevel(teamLeader));
 				// Transfer the data from the old leader to the new one
 				plugin.transferIsland(player.getUniqueId(), targetPlayer);
 				// Create a new team with 			

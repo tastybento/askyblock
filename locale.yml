@@ -314,7 +314,7 @@ delete:
 #register
 register:
    settingIsland: "Set [name]'s island to the nearest island."
-   errorBedrockNotFound: "Bedrock not found: unable to set the island!"
+   errorBedrockNotFound: "Could not register the island!"
 
 #info
 adminInfo:

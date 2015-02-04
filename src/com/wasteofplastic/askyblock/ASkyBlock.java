@@ -203,12 +203,10 @@ public class ASkyBlock extends JavaPlugin {
      */
     protected void deletePlayerIsland(final UUID player) {
 	// Removes the island
+	//getLogger().info("DEBUG: deleting player island");
 	CoopPlay.getInstance().clearAllIslandCoops(player);
 	removeWarp(player);
 	removeMobsFromIsland(players.getIslandLocation(player));
-	// TODO TEST ONLY
-	//DeleteIsland deleteIsland = new DeleteIsland(this,players.getIslandLocation(player));
-	//deleteIsland.runTaskTimer(this, 40L, 40L);
 	new DeleteIslandChunk(this,players.getIslandLocation(player));
 	players.zeroPlayerData(player);
     }
@@ -529,9 +527,10 @@ public class ASkyBlock extends JavaPlugin {
     /**
      * Determines if an island is at a location in this area
      * location. Also checks if the spawn island is in this area.
+     * Used for creating new islands ONLY
      * 
      * @param loc
-     * @return
+     * @return true if found, otherwise false
      */
     protected boolean islandAtLocation(final Location loc) {	
 	if (loc == null) {
@@ -540,24 +539,36 @@ public class ASkyBlock extends JavaPlugin {
 	//getLogger().info("DEBUG checking islandAtLocation for location " + loc.toString());
 	// Check the island grid
 	if (grid.getIslandAt(loc) != null) {
-	    //getLogger().info("DEBUG: Island at " + loc.toString());
+	    // This checks if loc is inside the island spawn radius too
 	    return true;
 	}
+	final int px = loc.getBlockX();
+	final int pz = loc.getBlockZ();
+	// Extra spawn area check
+	// If island protection distance is less than island distance then the check above will cover it
+	// Island edge must be > protection edge spawn
+	Island spawn = grid.getSpawn();
+	if (spawn != null && spawn.getProtectionSize() > spawn.getIslandDistance()) {
+	    if (Math.abs(px - spawn.getCenter().getBlockX()) < ((spawn.getProtectionSize() + Settings.islandDistance)/2)
+		    && Math.abs(pz - spawn.getCenter().getBlockZ()) < ((spawn.getProtectionSize() + Settings.islandDistance)/2)) {
+		//getLogger().info("DEBUG: island is within spawn space " + px + " " + pz);
+		return true;
+	    }
+	}
+
 	// Bedrock check
 	if (loc.getBlock().getType().equals(Material.BEDROCK)) {
-	    getLogger().info("Found bedrock at island height - adding to islands.yml " + loc.getBlockX() + "," + loc.getBlockZ());
-	    grid.addIsland(loc.getBlockX(), loc.getBlockZ());
+	    getLogger().info("Found bedrock at island height - adding to islands.yml " + px + "," + pz);
+	    grid.addIsland(px,pz);
 	    return true;
 	}
 	// Look around
-	final int px = loc.getBlockX();
-	final int pz = loc.getBlockZ();
 	for (int x = -5; x <= 5; x++) {
 	    for (int y = 10; y <= 255; y++) {
 		for (int z = -5; z <= 5; z++) {
 		    if (loc.getWorld().getBlockAt(x + px, y, z + pz).getType().equals(Material.BEDROCK)) {
-			plugin.getLogger().info("Bedrock found during long search - adding to islands.yml");
-			grid.addIsland(loc.getBlockX(), loc.getBlockZ());
+			plugin.getLogger().info("Bedrock found during long search - adding to islands.yml " + px + "," + pz);
+			grid.addIsland(px,pz);
 			return true;
 		    }
 		}
@@ -2015,20 +2026,28 @@ public class ASkyBlock extends JavaPlugin {
     /**
      * Transfers ownership of an island from one player to another
      * 
-     * @param playerOne
-     * @param playerTwo
+     * @param oldOwner
+     * @param newOwner
      * @return
      */
-    protected boolean transferIsland(final UUID playerOne, final UUID playerTwo) {
-	if (players.hasIsland(playerOne)) {
-	    players.setHasIsland(playerTwo, true);
-	    players.setIslandLocation(playerTwo, players.getIslandLocation(playerOne));
-	    players.setIslandLevel(playerTwo, players.getIslandLevel(playerOne));
-	    players.setTeamIslandLocation(playerTwo, null);
-	    players.setHasIsland(playerOne, false);
-	    players.setIslandLocation(playerOne, null);
-	    players.setIslandLevel(playerOne, 0);
-	    players.setTeamIslandLocation(playerOne, players.getIslandLocation(playerOne));
+    protected boolean transferIsland(final UUID oldOwner, final UUID newOwner) {
+	if (players.hasIsland(oldOwner)) {
+	    Location islandLoc = players.getIslandLocation(oldOwner);
+	    players.setHasIsland(newOwner, true);
+	    players.setIslandLocation(newOwner, islandLoc);
+	    //players.setIslandLevel(newOwner, players.getIslandLevel(oldOwner));
+	    players.setTeamIslandLocation(newOwner, null);
+	    players.setHasIsland(oldOwner, false);
+	    players.setIslandLocation(oldOwner, null);
+	    //players.setIslandLevel(oldOwner, 0);
+	    players.setTeamIslandLocation(oldOwner, islandLoc);
+	    // Update grid
+	    Island island = grid.getIslandAt(islandLoc);
+	    if (island != null) {
+		grid.setIslandOwner(island, newOwner);
+	    }
+	    // Update top ten list
+	    topTenChangeOwner(oldOwner,newOwner);
 	    return true;
 	}
 	return false;
@@ -2074,6 +2093,20 @@ public class ASkyBlock extends JavaPlugin {
 	//getLogger().info("DEBUG: updating TopTen");
 	topTenList.put(ownerUUID, level);
 	topTenList = MapUtil.sortByValue(topTenList);
+    }
+
+    /**
+     * Changes owernship of the top ten entry when there is a change in island ownership
+     * @param oldOwner
+     * @param newOwner
+     */
+    protected void topTenChangeOwner(UUID oldOwner, UUID newOwner) {
+	topTenList.remove(newOwner);
+	if (topTenList.containsKey(oldOwner)) {
+	    int level = topTenList.get(oldOwner);
+	    topTenList.remove(oldOwner);
+	    topTenList.put(newOwner,level);
+	}
     }
 
     /**

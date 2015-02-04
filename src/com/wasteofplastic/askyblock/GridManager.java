@@ -301,17 +301,30 @@ public class GridManager {
     }
 
     protected void deleteIsland(Location loc) {
+	plugin.getLogger().info("DEBUG: deleting island at " + loc);
 	Island island = getIslandAt(loc);
-	int x = island.getMinX();
-	int z = island.getMinZ();
-	if (islandGrid.containsKey(x)) {
-	    TreeMap<Integer,Island> zEntry = islandGrid.get(x);
-	    if (zEntry.containsKey(z)) {
-		// Island exists - delete it
-		zEntry.remove(z);
-		islandGrid.put(x, zEntry);
-	    } 
-	}	
+	if (island != null) {
+	    UUID owner = island.getOwner();
+	    int x = island.getMinX();
+	    int z = island.getMinZ();
+	    plugin.getLogger().info("DEBUG: x = " + x + " z = " + z);
+	    if (islandGrid.containsKey(x)) {
+		plugin.getLogger().info("DEBUG: x found");
+		TreeMap<Integer,Island> zEntry = islandGrid.get(x);
+		if (zEntry.containsKey(z)) {
+		    plugin.getLogger().info("DEBUG: z found - deleting the island");
+		    // Island exists - delete it
+		    zEntry.remove(z);
+		    islandGrid.put(x, zEntry);
+		}  else {
+		    plugin.getLogger().info("DEBUG: could not find z");
+		}
+	    }
+	 // Remove from the ownership map
+	    ownershipMap.remove(owner);
+	}
+	
+	
     }
 
     /**
@@ -335,6 +348,28 @@ public class GridManager {
 	return null;
     }
 
+    /**
+     * Sets an island to be owned by another player. If the new owner had an island, that island is released to null ownership
+     * @param island
+     * @param newOwner
+     */
+    protected void setIslandOwner(Island island, UUID newOwner) {
+	if (newOwner != null && island != null) {
+	    // See if this island has an owner already
+	    UUID owner = island.getOwner();
+	    island.setOwner(newOwner);
+	    if (ownershipMap.containsKey(owner)) {
+		// Remove the old entry
+		ownershipMap.remove(owner);
+	    }
+	    if (ownershipMap.containsKey(newOwner)) {
+		// new owner had an island - make owner null
+		ownershipMap.get(newOwner).setOwner(null);
+	    }
+	    // Insert the new entry
+	    ownershipMap.put(newOwner,island);
+	}
+    }
     /**
      * @return the spawn
      */

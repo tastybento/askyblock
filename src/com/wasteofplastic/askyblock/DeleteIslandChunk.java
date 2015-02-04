@@ -16,8 +16,6 @@
  *******************************************************************************/
 package com.wasteofplastic.askyblock;
 
-import java.io.File;
-
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
