@@ -379,5 +379,10 @@ public class Locale {
     public static String lockPlayerUnlocked;
     public static String lockEnteringSpawn;
     public static String lockLeavingSpawn;
+    // Titles
+    public static String islandSubTitle;
+    public static String islandTitle;
+    public static String islandDonate;
+    public static String islandURL;
       
 }

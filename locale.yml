@@ -111,6 +111,15 @@ challenges:
    erroryouaremissing: "You are missing"
 #/island
 island:
+   # Titles for V1.8+ servers only. Set to '' to remove.
+   # Colors are fixed as blue and gold for now.
+   title: "A SkyBlock"
+   subtitle: "by tastybento"
+   # This section is to solicit donations from players. Feel free to set to '' to remove :-)
+   # Only works on 1.8+ servers
+   donate: "Click here to donate to tastybento via PayPal"
+   url: "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZSBJG5J2E3B7U"
+
    teleport: "Teleporting you to your island. (/island help for more info)"
    cannotTeleport: "You cannot teleport when falling!"
    new: "Creating a new island for you..."

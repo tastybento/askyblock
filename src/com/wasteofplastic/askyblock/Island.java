@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 
@@ -163,9 +164,15 @@ public class Island {
      */
     public boolean onIsland(Location target) {
 	if (target.getWorld().equals(world)) {
-	    if (target.getX() > center.getBlockX() - protectionRange / 2
+	    //Bukkit.getLogger().info("Target = " + target.getBlockX() + "," + target.getBlockZ());
+	    //Bukkit.getLogger().info("Center = " + center.getBlockX() + "," + center.getBlockZ());
+	    //Bukkit.getLogger().info(target.getX() + ">=" + (center.getBlockX() - protectionRange / 2));
+	    //Bukkit.getLogger().info(target.getX() + "<" + (center.getBlockX() + protectionRange / 2));
+	    //Bukkit.getLogger().info(target.getZ() + ">=" + (center.getBlockZ() - protectionRange / 2));
+	    //Bukkit.getLogger().info(target.getZ() + "<" + (center.getBlockZ() + protectionRange / 2));
+	    if (target.getX() >= center.getBlockX() - protectionRange / 2
 		    && target.getX() < center.getBlockX() + protectionRange / 2
-		    && target.getZ() > center.getBlockZ() - protectionRange / 2
+		    && target.getZ() >= center.getBlockZ() - protectionRange / 2
 		    && target.getZ() < center.getBlockZ() + protectionRange / 2) {
 		return true;
 	    }
@@ -179,10 +186,18 @@ public class Island {
      * @return true if in the area
      */
     public boolean inIslandSpace(Location target) {
+	/*
+	    Bukkit.getLogger().info("Target = " + target.getBlockX() + "," + target.getBlockZ());
+	    Bukkit.getLogger().info("Center = " + center.getBlockX() + "," + center.getBlockZ());
+	    Bukkit.getLogger().info(target.getX() + ">=" + (center.getBlockX() - islandDistance / 2));
+	    Bukkit.getLogger().info(target.getX() + "<" + (center.getBlockX() + islandDistance / 2));
+	    Bukkit.getLogger().info(target.getZ() + ">=" + (center.getBlockZ() - islandDistance / 2));
+	    Bukkit.getLogger().info(target.getZ() + "<" + (center.getBlockZ() + islandDistance / 2));
+	    */
 	if (target.getWorld().equals(world)) {
-	    if (target.getX() > center.getBlockX() - islandDistance / 2
+	    if (target.getX() >= center.getBlockX() - islandDistance / 2
 		    && target.getX() < center.getBlockX() + islandDistance / 2
-		    && target.getZ() > center.getBlockZ() - islandDistance / 2
+		    && target.getZ() >= center.getBlockZ() - islandDistance / 2
 		    && target.getZ() < center.getBlockZ() + islandDistance / 2) {
 		return true;
 	    }
@@ -191,9 +206,9 @@ public class Island {
     }
 
     public boolean inIslandSpace(int x, int z) {
-	if (x > center.getBlockX() - islandDistance / 2
+	if (x >= center.getBlockX() - islandDistance / 2
 		&& x < center.getBlockX() + islandDistance / 2
-		&& z > center.getBlockZ() - islandDistance / 2
+		&& z >= center.getBlockZ() - islandDistance / 2
 		&& z < center.getBlockZ() + islandDistance / 2) {
 	    return true;
 	}

@@ -28,7 +28,9 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NavigableMap;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -89,7 +91,7 @@ public class ASkyBlock extends JavaPlugin {
     // Map of all warps stored as player, warp sign Location
     private HashMap<UUID, Object> warpList = new HashMap<UUID, Object>();
     // Top ten list of players
-    private LinkedHashMap<UUID, Integer> topTenList = new LinkedHashMap<UUID, Integer>();
+    private TreeMap<Integer, UUID> topTenList = new TreeMap<Integer, UUID>();
     // Players object
     private PlayerCache players;
     // Acid Damage Potion
@@ -218,16 +220,17 @@ public class ASkyBlock extends JavaPlugin {
      *            - the requesting player
      * @return - true if successful, false if no Top Ten list exists
      */
-    protected boolean showTopTen(final Player player) {
+    protected boolean topTenShow(final Player player) {
 	player.sendMessage(ChatColor.GOLD + Locale.topTenheader);
 	if (topTenList == null) {
-	    createTopTen();
+	    topTenCreate();
 	    //player.sendMessage(ChatColor.RED + Locale.topTenerrorNotReady);
 	    //return true;
 	}
 	int i = 1;
-	for (Map.Entry<UUID, Integer> m : topTenList.entrySet()) {
-	    final UUID playerUUID = m.getKey();
+	NavigableMap<Integer,UUID> topScores = topTenList.descendingMap();
+	for (Map.Entry<Integer, UUID> m : topScores.entrySet()) {
+	    final UUID playerUUID = m.getValue();
 	    if (players.inTeam(playerUUID)) {
 		final List<UUID> pMembers = players.getMembers(playerUUID);
 		String memberList = "";
@@ -237,9 +240,9 @@ public class ASkyBlock extends JavaPlugin {
 		if (memberList.length()>2) {
 		    memberList = memberList.substring(0, memberList.length() - 2);
 		}
-		player.sendMessage(ChatColor.AQUA + "#" + i + ": " + players.getName(playerUUID) + " (" + memberList + ") - " + Locale.levelislandLevel + " "+ m.getValue());
+		player.sendMessage(ChatColor.AQUA + "#" + i + ": " + players.getName(playerUUID) + " (" + memberList + ") - " + Locale.levelislandLevel + " "+ m.getKey());
 	    } else {
-		player.sendMessage(ChatColor.AQUA + "#" + i + ": " + players.getName(playerUUID) + " - " + Locale.levelislandLevel + " " + m.getValue());
+		player.sendMessage(ChatColor.AQUA + "#" + i + ": " + players.getName(playerUUID) + " - " + Locale.levelislandLevel + " " + m.getKey());
 	    }
 	    if (i++ == 10) {
 		break;
@@ -1426,6 +1429,10 @@ public class ASkyBlock extends JavaPlugin {
 	Locale.islandteleport = ChatColor.translateAlternateColorCodes('&',locale.getString("island.teleport","Teleporting you to your island. (/island help for more info)"));
 	Locale.islandcannotTeleport = ChatColor.translateAlternateColorCodes('&',locale.getString("island.cannotTeleport","You cannot teleport when falling!"));
 	Locale.islandnew = ChatColor.translateAlternateColorCodes('&',locale.getString("island.new","Creating a new island for you..."));
+	Locale.islandSubTitle = locale.getString("island.subtitle","by tastybento");
+	Locale.islandDonate = locale.getString("island.donate","Click here to donate to tastybento via PayPal");
+	Locale.islandTitle = locale.getString("island.title","A SkyBlock");
+	Locale.islandURL = locale.getString("island.url","https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZSBJG5J2E3B7U");
 	Locale.islanderrorCouldNotCreateIsland = ChatColor.translateAlternateColorCodes('&',locale.getString("island.errorCouldNotCreateIsland","Could not create your Island. Please contact a server moderator."));
 	Locale.islanderrorYouDoNotHavePermission = ChatColor.translateAlternateColorCodes('&',locale.getString("island.errorYouDoNotHavePermission", "You do not have permission to use that command!"));
 	Locale.islandresetOnlyOwner = ChatColor.translateAlternateColorCodes('&',locale.getString("island.resetOnlyOwner","Only the owner may restart this island. Leave this island in order to start your own (/island leave)."));
@@ -1700,9 +1707,9 @@ public class ASkyBlock extends JavaPlugin {
 		getServer().getScheduler().runTask(plugin, new Runnable() {
 		    @Override
 		    public void run() {
-			// load the list
-			loadTopTen();
+			// load the list - order matters - grid first, then top ten to optimize upgrades
 			grid = new GridManager(plugin);
+			topTenLoad();
 		    }
 		});
 		// This part will kill monsters if they fall into the water because it
@@ -2047,19 +2054,23 @@ public class ASkyBlock extends JavaPlugin {
 		grid.setIslandOwner(island, newOwner);
 	    }
 	    // Update top ten list
-	    topTenChangeOwner(oldOwner,newOwner);
+	    // Remove old owner score from top ten list
+	    while(topTenList.values().remove(oldOwner));
 	    return true;
 	}
 	return false;
     }
 
-    protected void loadTopTen() {
+    /**
+     * Loads the top ten from the file system topten.yml. If it does not exist then the top ten is created
+     */
+    protected void topTenLoad() {
 	topTenList.clear();
 	// Check to see if the top ten list exists
 	File topTenFile = new File(getDataFolder(),"topten.yml");
 	if (!topTenFile.exists()) {
 	    getLogger().warning("Top ten file does not exist - creating it. This could take some time with a large number of players");
-	    createTopTen();
+	    topTenCreate();
 	    getLogger().warning("Completed top ten creation.");
 	} else {
 	    // Load the top ten
@@ -2073,11 +2084,11 @@ public class ASkyBlock extends JavaPlugin {
 			//getLogger().info(uuid.toString());
 			int level = topTenConfig.getInt("topten." + playerUUID);
 			//getLogger().info("Level = " + level);
-			topTenList.put(uuid, level);
+			topTenAddEntry(uuid, level);
 		    } catch (Exception e) {
 			e.printStackTrace();
 			getLogger().severe("Problem loading top ten list - recreating - this may take some time");
-			createTopTen();
+			topTenCreate();
 		    }
 		}
 	    }
@@ -2089,49 +2100,49 @@ public class ASkyBlock extends JavaPlugin {
      * @param ownerUUID
      * @param level
      */
-    protected void updateTopTen(UUID ownerUUID, int level) {
-	//getLogger().info("DEBUG: updating TopTen");
-	topTenList.put(ownerUUID, level);
-	topTenList = MapUtil.sortByValue(topTenList);
-    }
-
-    /**
-     * Changes owernship of the top ten entry when there is a change in island ownership
-     * @param oldOwner
-     * @param newOwner
-     */
-    protected void topTenChangeOwner(UUID oldOwner, UUID newOwner) {
-	topTenList.remove(newOwner);
-	if (topTenList.containsKey(oldOwner)) {
-	    int level = topTenList.get(oldOwner);
-	    topTenList.remove(oldOwner);
-	    topTenList.put(newOwner,level);
+    protected void topTenAddEntry(UUID ownerUUID, int level) {
+	// Only keep the top 20
+	if (topTenList.size() > 20) {
+	 // The first entry is always the lowest level
+	    int lowestScore = topTenList.firstEntry().getKey();
+	    if (lowestScore < level) {
+		// This is a better entry than the lowest, so remove the lowest
+		topTenList.remove(lowestScore);
+	    }
 	}
+	//getLogger().info("DEBUG: updating TopTen");
+	topTenList.put(level, ownerUUID);
+	//topTenList = MapUtil.sortByValue(topTenList);
     }
 
     /**
      * Generates a sorted map of islands for the Top Ten list from all player files
      */
-    protected void createTopTen() {
+    protected void topTenCreate() {
 	// This map is a list of owner and island level
-	LinkedHashMap<UUID, Integer> top = new LinkedHashMap<UUID, Integer>();
+	//LinkedHashMap<UUID, Integer> top = new LinkedHashMap<UUID, Integer>();
+	YamlConfiguration player = new YamlConfiguration();
 	for (final File f : playersFolder.listFiles()) {
 	    // Need to remove the .yml suffix
 	    String fileName = f.getName();
 	    if (fileName.endsWith(".yml")) {
 		try {
-		    final UUID playerUUID = UUID.fromString(fileName.substring(0, fileName.length() - 4));
+		    String playerUUIDString = fileName.substring(0, fileName.length() - 4);
+		    final UUID playerUUID = UUID.fromString(playerUUIDString);
 		    if (playerUUID == null) {
 			getLogger().warning("Player file contains erroneous UUID data.");
-			getLogger().info("Looking at " + fileName.substring(0, fileName.length() - 4));
+			getLogger().info("Looking at " + playerUUIDString);
 		    }
-		    Players player = new Players(this, playerUUID);    
-		    if (player.getIslandLevel() > 0) {
-			if (!player.inTeam()) {
-			    top.put(player.getPlayerUUID(), player.getIslandLevel());
-			} else if (player.getTeamLeader() != null) {
-			    if (player.getTeamLeader().equals(player.getPlayerUUID())) {
-				top.put(player.getPlayerUUID(), player.getIslandLevel());
+		    player.load(f);
+		    //Players player = new Players(this, playerUUID);
+		    int islandLevel = player.getInt("islandLevel",0);
+		    String teamLeaderUUID = player.getString("teamLeader","");
+		    if (islandLevel > 0) {
+			if (!player.getBoolean("hasTeam")) {
+			    topTenAddEntry(playerUUID, islandLevel);
+			} else if (!teamLeaderUUID.isEmpty()) {
+			    if (teamLeaderUUID.equals(playerUUIDString)) {
+				topTenAddEntry(playerUUID, islandLevel);
 			    }
 			}
 		    }
@@ -2140,26 +2151,25 @@ public class ASkyBlock extends JavaPlugin {
 		}
 	    }
 	}
-	// Now sort the list
-	top = MapUtil.sortByValue(top);
-	topTenList = top;
 	// Save the top ten
-	saveTopTenList();
+	topTenSave();
     }
 
-    protected void saveTopTenList() {
+    protected void topTenSave() {
 	getLogger().info("Saving top ten list");
 	// Make file
 	File topTenFile = new File(getDataFolder(),"topten.yml");
 	// Make configuration
 	YamlConfiguration config = new YamlConfiguration();
 	// Save config
+
 	int rank = 0;
-	for (UUID uuid : topTenList.keySet()) {
+	NavigableMap<Integer,UUID> topScores = topTenList.descendingMap();
+	for (Map.Entry<Integer, UUID> m : topScores.entrySet()) {
 	    if (rank++ == 10) {
 		break;
 	    }
-	    config.set("topten." + uuid.toString(), topTenList.get(uuid));
+	    config.set("topten." + m.getValue().toString(), m.getKey());
 	}
 	try {
 	    config.save(topTenFile);
@@ -2500,7 +2510,7 @@ public class ASkyBlock extends JavaPlugin {
 	// Reset the island level
 	players.setIslandLevel(player.getUniqueId(), 0);
 	players.save(player.getUniqueId());
-	updateTopTen(player.getUniqueId(),0);
+	topTenAddEntry(player.getUniqueId(),0);
 	// Update the inventory
 	player.updateInventory();
 	/*

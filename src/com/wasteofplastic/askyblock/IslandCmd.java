@@ -243,7 +243,7 @@ public class IslandCmd implements CommandExecutor {
 	    last = new Location(ASkyBlock.getIslandWorld(), Settings.islandXOffset, Settings.island_level, Settings.islandZOffset);
 	}
 	Location next = last.clone();
-	
+
 	while (plugin.islandAtLocation(next)) {
 	    next = nextGridLocation(next);
 	}
@@ -270,7 +270,7 @@ public class IslandCmd implements CommandExecutor {
 	plugin.getLogger().info("DEBUG 1=" + plugin.islandAtLocation(one) + " 2 = " + plugin.islandAtLocation(two) 
 		+ " 3 = "+ plugin.islandAtLocation(three) + " 4 = " + plugin.islandAtLocation(four));
 	//plugin.getLogger().info("next island starting point " + last.toString());
-	
+
 	while (plugin.islandAtLocation(next) || plugin.islandAtLocation(one) || plugin.islandAtLocation(two) 
 		|| plugin.islandAtLocation(three) || plugin.islandAtLocation(four)) {
 	    next = nextGridLocation(next);
@@ -650,6 +650,21 @@ public class IslandCmd implements CommandExecutor {
 		    }
 		}, 40L);		    
 		setResetWaitTime(player);
+		if (!Locale.islandSubTitle.isEmpty()) {
+		    plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(),"title " + player.getName()
+			    + " subtitle {text:\"" + Locale.islandSubTitle + "\", color:blue}");
+		}
+		if (!Locale.islandTitle.isEmpty()) {
+		    plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(),"title " + player.getName()
+			    + " title {text:\"" + Locale.islandTitle + "\", color:gold}");
+		}
+		if (!Locale.islandDonate.isEmpty() && !Locale.islandURL.isEmpty()) {
+		    plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(),
+			    "tellraw "+ player.getName() +" {text:\"" + Locale.islandDonate + "\",color:aqua"
+				    + ",clickEvent:{action:open_url,value:\""
+				    + Locale.islandURL
+				    + "\"}}");
+		}
 		return true;
 	    } else {
 		if (Settings.useControlPanel) {
@@ -1015,7 +1030,7 @@ public class IslandCmd implements CommandExecutor {
 		return true;
 	    } else if (split[0].equalsIgnoreCase("top")) {
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.topten")) {
-		    plugin.showTopTen(player);
+		    plugin.topTenShow(player);
 		    return true;
 		}
 		return false;
@@ -1596,7 +1611,7 @@ public class IslandCmd implements CommandExecutor {
 				// Reset the island level
 				plugin.getPlayers().setIslandLevel(target.getUniqueId(), 0);
 				plugin.getPlayers().save(target.getUniqueId());
-				plugin.updateTopTen(playerUUID,0);
+				plugin.topTenAddEntry(playerUUID,0);
 				// Update the inventory
 				target.updateInventory();
 			    }

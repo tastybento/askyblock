@@ -352,7 +352,7 @@ public class AdminCmd implements CommandExecutor {
 		return true;
 	    } else if (split[0].equalsIgnoreCase("topten")) {
 		sender.sendMessage(ChatColor.YELLOW + Locale.adminTopTengenerating);
-		plugin.createTopTen();
+		plugin.topTenCreate();
 		sender.sendMessage(ChatColor.YELLOW + Locale.adminTopTenfinished);
 		return true;
 	    } else if (split[0].equalsIgnoreCase("purge")) {
@@ -1216,7 +1216,7 @@ public class AdminCmd implements CommandExecutor {
 		plugin.getPlayers().setIslandLocation(oldOwner, null);
 		plugin.getPlayers().setIslandLevel(oldOwner, 0);
 		plugin.getPlayers().setTeamIslandLocation(oldOwner, null);
-		plugin.topTenChangeOwner(oldOwner, newOwner);
+		//plugin.topTenChangeOwner(oldOwner, newOwner);
 	    }
 	    // Check if the assigned player already has an island
 	    Island playersIsland = plugin.getGrid().getIsland(newOwner);

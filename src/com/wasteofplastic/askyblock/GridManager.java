@@ -85,6 +85,7 @@ public class GridManager {
 		if (fileName.endsWith(".yml")) {
 		    try {
 			playerFile.load(f);
+			// TODO: ADD TOP TEN INPUT HERE!!!!
 			boolean hasIsland = playerFile.getBoolean("hasIsland",false);
 			if (hasIsland) {
 			    String islandLocation = playerFile.getString("islandLocation");
@@ -93,11 +94,24 @@ public class GridManager {
 				plugin.getLogger().severe("Player file says they have an island, but there is no location.");
 			    } else {
 				Location islandLoc = ASkyBlock.getLocationString(islandLocation);
-				UUID owner = UUID.fromString(fileName.substring(0, fileName.length()-4));
+				String ownerString = fileName.substring(0, fileName.length()-4);
+				UUID owner = UUID.fromString(ownerString);
 				Island newIsland = addIsland(islandLoc.getBlockX(),islandLoc.getBlockZ(),owner);
 				ownershipMap.put(owner, newIsland);
 				count++;
 				//plugin.getLogger().info("Converted island at " + islandLoc);
+				// Top ten
+				int islandLevel = playerFile.getInt("islandLevel",0);
+				String teamLeaderUUID = playerFile.getString("teamLeader","");
+				if (islandLevel > 0) {
+				    if (!playerFile.getBoolean("hasTeam")) {
+					plugin.topTenAddEntry(owner, islandLevel);
+				    } else if (!teamLeaderUUID.isEmpty()) {
+					if (teamLeaderUUID.equals(ownerString)) {
+					    plugin.topTenAddEntry(owner, islandLevel);
+					}
+				    }
+				}
 			    }
 			}
 
@@ -108,6 +122,7 @@ public class GridManager {
 		}
 	    }
 	}
+	plugin.topTenSave();
 	plugin.getLogger().info("Converted "+ count + " islands from player's folder");
 	int count2 = 0;
 	// Check island folder
@@ -301,30 +316,30 @@ public class GridManager {
     }
 
     protected void deleteIsland(Location loc) {
-	plugin.getLogger().info("DEBUG: deleting island at " + loc);
+	//plugin.getLogger().info("DEBUG: deleting island at " + loc);
 	Island island = getIslandAt(loc);
 	if (island != null) {
 	    UUID owner = island.getOwner();
 	    int x = island.getMinX();
 	    int z = island.getMinZ();
-	    plugin.getLogger().info("DEBUG: x = " + x + " z = " + z);
+	    //plugin.getLogger().info("DEBUG: x = " + x + " z = " + z);
 	    if (islandGrid.containsKey(x)) {
-		plugin.getLogger().info("DEBUG: x found");
+		//plugin.getLogger().info("DEBUG: x found");
 		TreeMap<Integer,Island> zEntry = islandGrid.get(x);
 		if (zEntry.containsKey(z)) {
-		    plugin.getLogger().info("DEBUG: z found - deleting the island");
+		    //plugin.getLogger().info("DEBUG: z found - deleting the island");
 		    // Island exists - delete it
 		    zEntry.remove(z);
 		    islandGrid.put(x, zEntry);
 		}  else {
-		    plugin.getLogger().info("DEBUG: could not find z");
+		    //plugin.getLogger().info("DEBUG: could not find z");
 		}
 	    }
-	 // Remove from the ownership map
+	    // Remove from the ownership map
 	    ownershipMap.remove(owner);
 	}
-	
-	
+
+
     }
 
     /**

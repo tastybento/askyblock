@@ -98,7 +98,7 @@ public class LevelCalc extends BukkitRunnable {
 		plugin.tellOfflineTeam(targetPlayer, ChatColor.GREEN + Locale.islandislandLevelis + " " + ChatColor.WHITE + plugin.getPlayers().getIslandLevel(targetPlayer));
 	    }
 	    // plugin.getLogger().info("DEBUG: updating top ten");
-	    plugin.updateTopTen(targetPlayer, blockcount / 100);
+	    plugin.topTenAddEntry(targetPlayer, blockcount / 100);
 	    // plugin.getLogger().info("DEBUG: finished updating top ten");
 	    if (asker.isOnline()) {
 		// plugin.getLogger().info("DEBUG: updating player GUI");
