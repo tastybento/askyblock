@@ -376,6 +376,7 @@ public class Island {
 	    ownerString = owner.toString();
 	}
 	if (isSpawn) {
+	    //Bukkit.getLogger().info("DEBUG: island is spawn");
 	    ownerString = "spawn";
 	}
 	return center.getBlockX() + ":" + center.getBlockY() + ":" + center.getBlockZ() + ":" + protectionRange 

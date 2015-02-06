@@ -400,6 +400,9 @@ public class PlayerCache {
      * @return String - playerName
      */
     protected String getName(UUID playerUUID) {
+	if (playerUUID == null) {
+	    return "";
+	}
 	addPlayer(playerUUID);
 	return playerCache.get(playerUUID).getPlayerName();
     }

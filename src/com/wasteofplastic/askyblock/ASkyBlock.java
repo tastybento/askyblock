@@ -25,7 +25,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -1717,6 +1716,7 @@ public class ASkyBlock extends JavaPlugin {
 		    @Override
 		    public void run() {
 			// load the list - order matters - grid first, then top ten to optimize upgrades
+			// Load grid
 			grid = new GridManager(plugin);
 			topTenLoad();
 		    }
