@@ -133,7 +133,7 @@ island:
    #Cool down warning - [time] is number of seconds left
    resetWait: "You have to wait [time] seconds before you can do that again."
    #Confirm
-   resetConfirm: "Type /island confirm within 10 seconds to delete your island and restart!"
+   resetConfirm: "Type /island confirm within [seconds] seconds to delete your island and restart!"
    resetYouHave: "You have [number] resets left."
    resetNoMore: "No more resets are allowed for your island!"
    resetTo: "Cleared reset limit"

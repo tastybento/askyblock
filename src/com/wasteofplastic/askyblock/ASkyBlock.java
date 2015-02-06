@@ -154,21 +154,6 @@ public class ASkyBlock extends JavaPlugin {
 	    //Bukkit.getLogger().info("DEBUG worldName = " + Settings.worldName);
 	    acidWorld = WorldCreator.name(Settings.worldName).type(WorldType.FLAT).environment(World.Environment.NORMAL)
 		    .generator(new ChunkGeneratorWorld()).createWorld();
-	    // Multiverse configuration
-	    if (Bukkit.getServer().getPluginManager().isPluginEnabled("Multiverse-Core")) {
-		Bukkit.getLogger().info("Trying to register generator with Multiverse ");
-		try {
-		    Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv import " + Settings.worldName + " normal -g " + plugin.getName());
-		    Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv modify set generator " + plugin.getName() + " " + Settings.worldName);
-		    if (Settings.newNether) {
-			Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv modify set generator " + plugin.getName() + " " + Settings.worldName + "_nether");
-		    }
-		} catch (Exception e) {
-		    Bukkit.getLogger().info("Not successfull! Disabling " + plugin.getName() + "!");
-		    e.printStackTrace();
-		    Bukkit.getServer().getPluginManager().disablePlugin(plugin);
-		}
-	    }
 	    // Make the nether if it does not exist
 	    if (Settings.createNether) {
 		if (plugin.getServer().getWorld(Settings.worldName + "_nether") == null) {
@@ -182,6 +167,25 @@ public class ASkyBlock extends JavaPlugin {
 		    // netherWorld.setAnimalSpawnLimit(Settings.animalSpawnLimit);
 		}
 	    }
+	    // Multiverse configuration
+	    if (Bukkit.getServer().getPluginManager().isPluginEnabled("Multiverse-Core")) {
+		Bukkit.getLogger().info("Trying to register generator with Multiverse ");
+		try {
+		    Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv import " + Settings.worldName + " normal -g " + plugin.getName());
+		    Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv modify set generator " + plugin.getName() + " " + Settings.worldName);
+		    if (Settings.newNether) {
+			Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv import " + Settings.worldName + "_nether nether -g " + plugin.getName());
+			Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv modify set generator " + plugin.getName() + " " + Settings.worldName + "_nether");
+		    } else {
+			Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv import " + Settings.worldName + "_nether nether");
+		    }
+		} catch (Exception e) {
+		    Bukkit.getLogger().info("Not successfull! Disabling " + plugin.getName() + "!");
+		    e.printStackTrace();
+		    Bukkit.getServer().getPluginManager().disablePlugin(plugin);
+		}
+	    }
+
 	}
 	// Set world settings
 	acidWorld.setWaterAnimalSpawnLimit(Settings.waterAnimalSpawnLimit);
@@ -958,6 +962,7 @@ public class ASkyBlock extends JavaPlugin {
 	Settings.useEconomy = getConfig().getBoolean("general.useeconomy",true);
 	// Island reset commands
 	Settings.resetCommands = getConfig().getStringList("general.resetcommands");
+	Settings.leaveCommands = getConfig().getStringList("general.leavecommands");
 	Settings.useControlPanel = getConfig().getBoolean("general.usecontrolpanel", false);
 	// Check if /island command is allowed when falling
 	Settings.allowTeleportWhenFalling = getConfig().getBoolean("general.allowfallingteleport", true);
@@ -1148,6 +1153,15 @@ public class ASkyBlock extends JavaPlugin {
 	Settings.inviteWait = getConfig().getInt("general.invitewait", 60);
 	if (Settings.inviteWait < 0) {
 	    Settings.inviteWait = 0;
+	}
+	Settings.levelWait = getConfig().getInt("general.levelwait", 60);
+	if (Settings.levelWait < 0) {
+	    Settings.levelWait = 0;
+	}
+	// Seconds to wait for a confirmation of reset
+	Settings.resetConfirmWait = getConfig().getInt("general.resetconfirmwait", 10);
+	if (Settings.resetConfirmWait < 0) {
+	    Settings.resetConfirmWait = 0;
 	}
 	Settings.damageOps = getConfig().getBoolean("general.damageops", false);
 	//Settings.ultraSafeBoats = getConfig().getBoolean("general.ultrasafeboats", true);
@@ -1446,7 +1460,7 @@ public class ASkyBlock extends JavaPlugin {
 	Locale.islandresetMustRemovePlayers = ChatColor.translateAlternateColorCodes('&',locale.getString("island.resetMustRemovePlayers","You must remove all players from your island before you can restart it (/island kick <player>). See a list of players currently part of your island using /island team."));
 	Locale.islandresetPleaseWait = ChatColor.translateAlternateColorCodes('&',locale.getString("island.resetPleaseWait","Please wait, generating new island"));
 	Locale.islandresetWait = ChatColor.translateAlternateColorCodes('&',locale.getString("island.resetWait","You have to wait [time] seconds before you can do that again."));
-	Locale.islandresetConfirm = ChatColor.translateAlternateColorCodes('&',locale.getString("island.resetConfirm", "Type /island confirm within 10 seconds to delete your island and restart!"));
+	Locale.islandresetConfirm = ChatColor.translateAlternateColorCodes('&',locale.getString("island.resetConfirm", "Type /island confirm within [seconds] seconds to delete your island and restart!"));
 	Locale.islandhelpIsland = ChatColor.translateAlternateColorCodes('&',locale.getString("island.helpIsland","start an island, or teleport to your island."));
 	Locale.islandhelpTeleport = ChatColor.translateAlternateColorCodes('&',locale.getString("island.helpTeleport", "teleport to your island."));
 	Locale.islandhelpControlPanel = ChatColor.translateAlternateColorCodes('&',locale.getString("island.helpControlPanel","open the island GUI."));
@@ -1721,6 +1735,7 @@ public class ASkyBlock extends JavaPlugin {
 			// Load grid
 			grid = new GridManager(plugin);
 			topTenLoad();
+			getLogger().info("All files loaded. Ready to play...");
 		    }
 		});
 		// This part will kill monsters if they fall into the water because it

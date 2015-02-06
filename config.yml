@@ -49,10 +49,16 @@ general:
    #How long a player must wait before they can reset their island again in second
    resetwait: 300
 
+   #The number of seconds to wait for confirmation of a reset
+   resetconfirmwait: 10
+
    #How long a player must wait until they can rejoin a team island after being
    #kicked in minutes. This slows the effectiveness of players repeating challenges
    #by repetitively being invited to a team island.
    invitewait: 60
+
+   # Island level calculation cool down in seconds
+   levelwait: 60
 
    #How many resets a player is allowed (override with /asadmin clearreset <player>
    #Value of -1 means unlimited, 0 means hardcore - no resets.
@@ -61,9 +67,15 @@ general:
 
    #Commands to run when the player resets their island (uncomment and customize)
    # [player] is the player name of who is reseting
-   #resetcommands:
-   #  - kit tools [player]
-   #  - some other command
+   resetcommands:
+   #- kit tools [player]
+   #- some other command
+
+   # Commands to execute when player leaves a team, either by leaving or being kicked
+   # Commands will execute even if the player is offline, so may cause errors in
+   # the console if the commands doesn't make sense
+   leavecommands:
+   #- kit tools [player]
 
    # Ops receive damage from acid (Set to true if you want Ops to play properly)
    damageops: false
@@ -179,6 +191,7 @@ general:
    # Use physics when pasting schematic blocks. If this is false, then blocks
    # like water will not flow from the schematic
    usephysics: false
+
 
 ##### Island Related Settings #####
 

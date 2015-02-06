@@ -93,7 +93,6 @@ public class IslandGuard implements Listener {
 
     }
 
-
     // Vehicle damage
     @EventHandler(priority = EventPriority.LOW)
     void vehicleDamageEvent(VehicleDamageEvent e){
@@ -449,7 +448,7 @@ public class IslandGuard implements Listener {
 	    return;
 	}
 	// Check commands
-	plugin.getLogger().info("DEBUG: falling command: '" + e.getMessage().substring(1).toLowerCase() + "'");
+	//plugin.getLogger().info("DEBUG: falling command: '" + e.getMessage().substring(1).toLowerCase() + "'");
 	if (plugin.isFalling(e.getPlayer().getUniqueId()) &&
 		Settings.fallingCommandBlockList.contains(e.getMessage().substring(1).toLowerCase())) {
 	    // Sorry you are going to die	

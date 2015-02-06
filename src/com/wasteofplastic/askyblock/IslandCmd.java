@@ -68,6 +68,8 @@ public class IslandCmd implements CommandExecutor {
     //private PlayerCache players;
     // The time a player has to wait until they can reset their island again
     private HashMap<UUID, Long> resetWaitTime = new HashMap<UUID, Long>();
+    // Level calc cool down
+    private HashMap<UUID, Long> levelWaitTime = new HashMap<UUID, Long>();
 
     // Level calc checker
     BukkitTask checker = null;
@@ -176,10 +178,12 @@ public class IslandCmd implements CommandExecutor {
 	    plugin.getPlayers().setLeaveTeam(player);
 	    plugin.getPlayers().setHomeLocation(player, null);
 	    plugin.getPlayers().setIslandLocation(player, null);
+	    runCommands(Settings.leaveCommands, player);
 	} else {
 	    // Ex-Leaders keeps their island, but the rest of the team items are removed
 	    plugin.getPlayers().setLeaveTeam(player);	    
 	}
+
     }
 
     /**
@@ -563,20 +567,21 @@ public class IslandCmd implements CommandExecutor {
 	}
 	// This flag is true if the command can be used
 	plugin.setCalculatingLevel(true);
-	/*
-	if (!plugin.getPlayers().hasIsland(targetPlayer) && !plugin.getPlayers().inTeam(targetPlayer)) {
-	    asker.sendMessage(ChatColor.RED + Locale.islanderrorInvalidPlayer);
-	    plugin.setCalculatingLevel(false);
-	    return false;
-	}*/
 	if (asker.getUniqueId().equals(targetPlayer) || asker.isOp()) {
-	    asker.sendMessage(ChatColor.GREEN + Locale.levelCalculating);
-	    LevelCalc levelCalc = new LevelCalc(plugin,targetPlayer,asker);
-	    levelCalc.runTaskTimer(plugin, 0L, 10L);
+	    if (!onLevelWaitTime(asker) || Settings.levelWait <= 0 || asker.isOp()) {
+		asker.sendMessage(ChatColor.GREEN + Locale.levelCalculating);
+		LevelCalc levelCalc = new LevelCalc(plugin,targetPlayer,asker);
+		levelCalc.runTaskTimer(plugin, 0L, 10L);
+		setLevelWaitTime(asker);
+	    } else {
+		asker.sendMessage(ChatColor.YELLOW + Locale.islandresetWait.replace("[time]",String.valueOf(getLevelWaitTime(asker))));
+		plugin.setCalculatingLevel(false);
+	    }
 	} else {
 	    asker.sendMessage(ChatColor.GREEN + Locale.islandislandLevelis + " " + ChatColor.WHITE + plugin.getPlayers().getIslandLevel(targetPlayer));
 	    plugin.setCalculatingLevel(false);
 	}
+
 	return true;
     }
 
@@ -837,7 +842,7 @@ public class IslandCmd implements CommandExecutor {
 		}
 		if (!onRestartWaitTime(player) || Settings.resetWait == 0 || player.isOp()) {
 		    // Kick off the confirmation
-		    player.sendMessage(ChatColor.RED + Locale.islandresetConfirm);
+		    player.sendMessage(ChatColor.RED + Locale.islandresetConfirm.replace("[seconds]", String.valueOf(Settings.resetConfirmWait)));
 		    if (!confirm.containsKey(playerUUID) || !confirm.get(playerUUID)) {
 			confirm.put(playerUUID, true);
 			plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable () {
@@ -845,7 +850,7 @@ public class IslandCmd implements CommandExecutor {
 			    public void run() {
 				confirm.put(playerUUID,false);
 			    }
-			}, 200L);	
+			}, (Settings.resetConfirmWait * 20));	
 		    }
 		    return true;
 		} else {
@@ -903,21 +908,7 @@ public class IslandCmd implements CommandExecutor {
 			 */
 		    }
 		    //plugin.restartEvents();
-		    // Run any reset commands
-		    for (String cmd : Settings.resetCommands) {
-			// Substitute in any references to player
-			try {
-			    if (!plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(),cmd.replace("[player]", player.getName()))) {
-				plugin.getLogger().severe("Problem executing island reset commands - skipping!");
-				plugin.getLogger().severe("Command was : " + cmd);
-			    }
-			} catch (Exception e) {
-			    plugin.getLogger().severe("Problem executing island reset commands - skipping!");
-			    plugin.getLogger().severe("Command was : " + cmd);
-			    plugin.getLogger().severe("Error was: " + e.getMessage());
-			    e.printStackTrace();
-			}
-		    }
+		    runCommands(Settings.resetCommands, player.getUniqueId());
 		    return true;
 		} else {
 		    player.sendMessage(Locale.helpColor + "/island restart: " + ChatColor.WHITE + Locale.islandhelpRestart);
@@ -979,8 +970,9 @@ public class IslandCmd implements CommandExecutor {
 		    player.sendMessage(Locale.helpColor + "/" + label + " biomes: " + ChatColor.WHITE + Locale.islandhelpBiome);
 		}
 		//if (!Settings.allowPvP) {
-		player.sendMessage(Locale.helpColor + "/" + label + " expel <player>: " + ChatColor.WHITE + Locale.islandhelpExpel);
-		//}
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.expel")) {
+		    player.sendMessage(Locale.helpColor + "/" + label + " expel <player>: " + ChatColor.WHITE + Locale.islandhelpExpel);
+		}
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "coop")) {
 		    player.sendMessage(Locale.helpColor + "/" + label + " coop: " + ChatColor.WHITE + Locale.islandhelpCoop);
 		}
@@ -1165,7 +1157,7 @@ public class IslandCmd implements CommandExecutor {
 			    // Check if the size of the team is now 1
 			    //teamMembers.remove(playerUUID);
 			    if (teamMembers.size() < 2) {
-				plugin.getLogger().info("Party is less than 2 - removing leader from team");
+				//plugin.getLogger().info("DEBUG: Party is less than 2 - removing leader from team");
 				removePlayerFromTeam(teamLeader, teamLeader);
 			    }
 			    return true;
@@ -1455,11 +1447,10 @@ public class IslandCmd implements CommandExecutor {
 
 		}
 	    } else if (split[0].equalsIgnoreCase("expel")) {
-		/*
-		if (Settings.allowPvP) {
-		    player.sendMessage(ChatColor.RED + Locale.errorUnknownCommand);
-		    return false;
-		}*/
+		if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.expel")) {
+		    player.sendMessage(ChatColor.RED + Locale.errorNoPermission);
+		    return true;
+		}
 		// Find out who they want to expel
 		final UUID targetPlayerUUID = plugin.getPlayers().getUUID(split[1]);
 		// Player must be known
@@ -1708,6 +1699,31 @@ public class IslandCmd implements CommandExecutor {
 	return false;
     }
 
+
+    /**
+     * Runs commands when a player resets or leaves a team, etc.
+     * @param commands
+     * @param player
+     */
+    private void runCommands(List<String> commands, UUID player) {
+	// Run any reset commands
+	for (String cmd : commands) {
+	    // Substitute in any references to player
+	    try {
+		if (!plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(),cmd.replace("[player]", plugin.getPlayers().getName(player)))) {
+		    plugin.getLogger().severe("Problem executing island reset commands - skipping!");
+		    plugin.getLogger().severe("Command was : " + cmd);
+		}
+	    } catch (Exception e) {
+		plugin.getLogger().severe("Problem executing island reset commands - skipping!");
+		plugin.getLogger().severe("Command was : " + cmd);
+		plugin.getLogger().severe("Error was: " + e.getMessage());
+		e.printStackTrace();
+	    }
+	}
+
+    }
+
     /**
      * Set time out for island restarting
      * @param player
@@ -1724,22 +1740,40 @@ public class IslandCmd implements CommandExecutor {
 
 	return false;
     }
+    protected boolean onLevelWaitTime(final Player player) {
+	if (levelWaitTime.containsKey(player.getUniqueId())) {
+	    if (levelWaitTime.get(player.getUniqueId()).longValue() > Calendar.getInstance().getTimeInMillis()) {
+		return true;
+	    }
+
+	    return false;
+	}
+
+	return false;
+    }
     /**
      * Sets a timeout for player into the Hashmap resetWaitTime
      * 
      * @param player
      */
-    protected void setResetWaitTime(final Player player) {
+    private void setResetWaitTime(final Player player) {
 	resetWaitTime.put(player.getUniqueId(), Long.valueOf(Calendar.getInstance().getTimeInMillis() + Settings.resetWait * 1000));
     }
 
+    /**
+     * Sets cool down for the level command
+     * @param player
+     */
+    private void setLevelWaitTime(final Player player) {
+	levelWaitTime.put(player.getUniqueId(), Long.valueOf(Calendar.getInstance().getTimeInMillis() + Settings.levelWait * 1000));
+    }
     /**
      * Returns how long the player must wait until they can restart their island in seconds
      * 
      * @param player
      * @return
      */
-    protected long getResetWaitTime(final Player player) {
+    private long getResetWaitTime(final Player player) {
 	if (resetWaitTime.containsKey(player.getUniqueId())) {
 	    if (resetWaitTime.get(player.getUniqueId()).longValue() > Calendar.getInstance().getTimeInMillis()) {
 		return (resetWaitTime.get(player.getUniqueId()).longValue() - Calendar.getInstance().getTimeInMillis())/1000;
@@ -1751,6 +1785,16 @@ public class IslandCmd implements CommandExecutor {
 	return 0L;
     }
 
+    private long getLevelWaitTime(final Player player) {
+	if (levelWaitTime.containsKey(player.getUniqueId())) {
+	    if (levelWaitTime.get(player.getUniqueId()).longValue() > Calendar.getInstance().getTimeInMillis()) {
+		return (levelWaitTime.get(player.getUniqueId()).longValue() - Calendar.getInstance().getTimeInMillis())/1000;
+	    }
 
+	    return 0L;
+	}
+
+	return 0L;
+    }
 
 }

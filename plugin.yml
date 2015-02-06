@@ -60,6 +60,9 @@ permissions:
           askyblock.island.lock:
             description: Allows island locking
             default: false
+          askyblock.island.expel:
+            description: Allows expelling of visitors
+            default: true
       askyblock.team.*:
         children:
           askyblock.team.create:
@@ -82,7 +85,7 @@ permissions:
             default: false
       askyblock.coop:
         description: Allows player to use the coop command
-        default: false
+        default: false    
       askyblock.craft.*:
         children:
           askyblock.craft.enderchest:

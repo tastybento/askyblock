@@ -193,5 +193,8 @@ public class Settings {
 
     // Falling blocked commands
     protected static List<String> fallingCommandBlockList;
+    public static List<String> leaveCommands;
+    public static int levelWait;
+    public static long resetConfirmWait;
 
 }

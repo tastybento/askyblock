@@ -47,7 +47,7 @@ public class GridManager {
 	    // check if island folder exists
 	    plugin.getLogger().info("islands.yml does not exist. Creating...");
 	    convert();
-	    plugin.getLogger().info("islands.yml created. You can play now. :-)");
+	    plugin.getLogger().info("islands.yml created.");
 	} else {
 	    plugin.getLogger().info("Loading islands.yml");
 	    YamlConfiguration islandYaml = ASkyBlock.loadYamlFile("islands.yml");
@@ -117,7 +117,7 @@ public class GridManager {
 	final File playerFolder = new File(plugin.getDataFolder() + File.separator + "players");
 	YamlConfiguration playerFile = new YamlConfiguration();
 	int count = 0;
-	if (playerFolder.exists()) {
+	if (playerFolder.exists() && playerFolder.listFiles().length > 0) {
 	    plugin.getLogger().warning("Reading player folder. This could time some time with a large number of players...");
 	    for (File f: playerFolder.listFiles()) {
 		// Need to remove the .yml suffix
@@ -169,13 +169,14 @@ public class GridManager {
 		    }
 		}
 	    }
+	    plugin.getLogger().info("Converted "+ count + " islands from player's folder");
 	}
 	plugin.topTenSave();
-	plugin.getLogger().info("Converted "+ count + " islands from player's folder");
+
 	int count2 = 0;
 	// Check island folder
 	final File islandFolder = new File(plugin.getDataFolder() + File.separator + "islands");
-	if (islandFolder.exists()) {
+	if (islandFolder.exists() && islandFolder.listFiles().length > 0) {
 	    plugin.getLogger().warning("Reading island folder. This could time some time with a large number of islands...");
 	    for (File f: islandFolder.listFiles()) {
 		// Need to remove the .yml suffix
@@ -204,9 +205,9 @@ public class GridManager {
 		    }
 		}
 	    }
+	    plugin.getLogger().info("Converted "+ count2 + " islands from island folder");
+	    plugin.getLogger().info("Total "+ (count+count2) + " islands converted.");
 	}
-	plugin.getLogger().info("Converted "+ count2 + " islands from island folder");
-	plugin.getLogger().info("Total "+ (count+count2) + " islands converted.");
 	// Now save the islandGrid
 	saveGrid();
     }
