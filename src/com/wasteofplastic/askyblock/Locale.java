@@ -16,6 +16,8 @@
  *******************************************************************************/
 package com.wasteofplastic.askyblock;
 
+import org.bukkit.ChatColor;
+
 
 
 /**
@@ -385,5 +387,6 @@ public class Locale {
     public static String islandURL;
     public static String adminHelpunregister;
     public static String adminHelpSetRange;
+    public static String challengeserrorRewardProblem;
       
 }

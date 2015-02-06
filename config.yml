@@ -162,7 +162,12 @@ general:
 
    # Allow /island teleport when falling. If set to false, all teleporting is
    # disabled until death from the void or until you hit something.
+   # See commands that this will block too
    allowfallingteleport: true
+   blockingcommands:
+   - home
+   #- anotherCommand
+   #- andAnotherOne
 
    # Remove non-repeatable challenges from the challenge GUI when complete
    removecompleteonetimechallenges: false

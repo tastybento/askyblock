@@ -961,6 +961,7 @@ public class ASkyBlock extends JavaPlugin {
 	Settings.useControlPanel = getConfig().getBoolean("general.usecontrolpanel", false);
 	// Check if /island command is allowed when falling
 	Settings.allowTeleportWhenFalling = getConfig().getBoolean("general.allowfallingteleport", true);
+	Settings.fallingCommandBlockList = getConfig().getStringList("general.blockingcommands");
 	// Max team size
 	Settings.maxTeamSize = getConfig().getInt("island.maxteamsize",4);
 	Settings.maxTeamSizeVIP = getConfig().getInt("island.maxteamsizeVIP",8);
@@ -1429,6 +1430,7 @@ public class ASkyBlock extends JavaPlugin {
 	Locale.challengeserrorNotCloseEnough = ChatColor.translateAlternateColorCodes('&',locale.getString("challenges.errorNotCloseEnough","You must be standing within 10 blocks of all required items."));
 	Locale.challengeserrorItemsNotThere = ChatColor.translateAlternateColorCodes('&',locale.getString("challenges.errorItemsNotThere","All required items must be close to you on your island!"));
 	Locale.challengeserrorIslandLevel = ChatColor.translateAlternateColorCodes('&',locale.getString("challenges.errorIslandLevel","Your island must be level [level] to complete this challenge!"));
+	Locale.challengeserrorRewardProblem = ChatColor.translateAlternateColorCodes('&',locale.getString("challenges.errorRewardProblem", "There was a problem giving your reward. Ask Admin to check log!"));
 	Locale.challengesguiTitle = ChatColor.translateAlternateColorCodes('&',locale.getString("challenges.guititle", "Challenges"));
 	Locale.challengeserrorYouAreMissing = ChatColor.translateAlternateColorCodes('&',locale.getString("challenges.erroryouaremissing", "You are missing"));
 	Locale.islandteleport = ChatColor.translateAlternateColorCodes('&',locale.getString("island.teleport","Teleporting you to your island. (/island help for more info)"));

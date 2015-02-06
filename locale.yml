@@ -109,6 +109,7 @@ challenges:
    errorIslandLevel: "Your island must be level [level] to complete this challenge!"
    guititle: "aSkyBlock Challenges"
    erroryouaremissing: "You are missing"
+   errorRewardProblem: "There was a problem giving your reward. Ask Admin to check log!"
 #/island
 island:
    # Titles for V1.8+ servers only. Set to '' to remove.

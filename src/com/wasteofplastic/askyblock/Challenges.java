@@ -233,7 +233,7 @@ public class Challenges implements CommandExecutor {
 	    final String[] element = s.split(":");
 	    if (element.length == 2) {
 		try {
-		    rewardItem = Material.getMaterial(element[0]);
+		    rewardItem = Material.getMaterial(element[0].toUpperCase());
 		    rewardQty = Integer.parseInt(element[1]);
 		    final HashMap<Integer, ItemStack> leftOvers = player.getInventory().addItem(new ItemStack[] { new ItemStack(rewardItem, rewardQty) });
 		    if (!leftOvers.isEmpty()) {
@@ -241,7 +241,7 @@ public class Challenges implements CommandExecutor {
 		    }
 		    player.getWorld().playSound(player.getLocation(), Sound.ITEM_PICKUP, 1F, 1F);
 		} catch (Exception e) {
-		    player.sendMessage(ChatColor.RED + "There was a problem giving your reward. Ask Admin to check log!");
+		    player.sendMessage(ChatColor.RED + Locale.challengeserrorRewardProblem);
 		    plugin.getLogger().severe("Could not give " + element[0] + ":" + element[1] + " to "+ player.getName() + " for challenge reward!");
 		    String materialList = "";
 		    boolean hint = false;

@@ -64,6 +64,7 @@ import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -91,6 +92,7 @@ public class IslandGuard implements Listener {
 	this.plugin = plugin;
 
     }
+
 
     // Vehicle damage
     @EventHandler(priority = EventPriority.LOW)
@@ -429,6 +431,30 @@ public class IslandGuard implements Listener {
 	} else {
 	    //plugin.getLogger().info("DEBUG: not falling");
 	    plugin.unsetFalling(e.getPlayer().getUniqueId());
+	}
+    }
+
+    /**
+     * Prevents teleporting when falling based on setting by stopping commands
+     * @param e
+     */
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
+    public void onPlayerTeleport(final PlayerCommandPreprocessEvent e) {
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
+	if (!e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)
+		|| Settings.allowTeleportWhenFalling || e.getPlayer().isOp()
+		|| !e.getPlayer().getGameMode().equals(GameMode.SURVIVAL)) {
+	    return;
+	}
+	// Check commands
+	plugin.getLogger().info("DEBUG: falling command: '" + e.getMessage().substring(1).toLowerCase() + "'");
+	if (plugin.isFalling(e.getPlayer().getUniqueId()) &&
+		Settings.fallingCommandBlockList.contains(e.getMessage().substring(1).toLowerCase())) {
+	    // Sorry you are going to die	
+	    e.getPlayer().sendMessage(Locale.islandcannotTeleport);
+	    e.setCancelled(true);
 	}
     }
 

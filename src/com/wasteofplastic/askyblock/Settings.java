@@ -189,12 +189,9 @@ public class Settings {
     protected static int inviteWait;
     
     // Use physics when pasting schematic blocks
-    public static boolean usePhysics;
+    protected static boolean usePhysics;
 
-    
-    
-    
-    
+    // Falling blocked commands
+    protected static List<String> fallingCommandBlockList;
 
-  
 }
