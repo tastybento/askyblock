@@ -19,6 +19,7 @@ package com.wasteofplastic.askyblock;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -209,7 +210,6 @@ public class Schematic {
 	    return cowSpot;
 	} 
 	 */
-
 	//Bukkit.getLogger().info("blocks size = " + blocks.length);
 	/*
 	short[] blocks = this.getBlocks();
@@ -293,6 +293,7 @@ public class Schematic {
 	    return null;
 	}
 	// Center on the last bedrock location
+	//Bukkit.getLogger().info("DEBUG bedrock is:" + bedrock.toString());
 	//Bukkit.getLogger().info("DEBUG loc is before subtract:" + loc.toString());
 	Location blockLoc = new Location(world, loc.getX(), loc.getY(), loc.getZ());
 	blockLoc.subtract(bedrock);
@@ -300,7 +301,24 @@ public class Schematic {
 	//Bukkit.getLogger().info("DEBUG blockloc is:" + blockLoc.toString());
 	//Bukkit.getLogger().info("DEBUG there are " + tileEntitiesMap.size() + " tile entities in the schematic");
 	//Bukkit.getLogger().info("Placing blocks...");
+	for (int x = 0; x < width; ++x) {
+	    for (int y = 0; y < height; ++y) {
+		for (int z = 0; z < length; ++z) {
+		    int index = y * width * length + z * width + x;
+		    Block block = new Location(world, x, y, z).add(blockLoc).getBlock();
+		    try {
+			// Do not post air
+			if (blocks[index] != 0) {
+			    block.setTypeIdAndData(blocks[index], data[index], Settings.usePhysics);
+			}
+		    } catch (Exception e) {
+			Bukkit.getLogger().info("Could not set ("+ x + "," + y + "," + z +") block ID:"+blocks[index] + " block data = "+ data[index] );
+		    }
+		}
+	    }
+	}
 
+	// Second pass
 	for (int x = 0; x < width; ++x) {
 	    for (int y = 0; y < height; ++y) {
 		for (int z = 0; z < length; ++z) {
@@ -314,8 +332,9 @@ public class Schematic {
 			//}
 			// Do not post air
 			if (blocks[index] != 0) {
-			    block.setTypeId(blocks[index]);
-			    block.setData(data[index]);
+			    block.setTypeIdAndData(blocks[index], data[index], Settings.usePhysics);
+			    // block.setTypeId(blocks[index]);
+			    // block.setData(data[index]);
 			    //Bukkit.getLogger().info(x + "," + y + "," + z + " " + block.getType() + "(" + blocks[index] + "):" + data[index]);
 			}
 			// Using this command sometimes doesn't set the data correctly...
@@ -346,6 +365,28 @@ public class Schematic {
 				BannerBlock.set(block,tileEntitiesMap.get(new BlockVector(x,y,z)));
 			    }
 			}
+			if ((block.getType() == Material.SIGN_POST) || (block.getType() == Material.WALL_SIGN)) {
+			    Sign sign = (Sign) block.getState();
+			    Map<String, Tag> tileData = tileEntitiesMap.get(new BlockVector(x,y,z));
+
+			    //for (String key : tileData.keySet()) {
+				//Bukkit.getLogger().info("DEBUG: key = " + key + " : " + tileData.get(key));
+				////StringTag st = (StringTag) tileData.get(key);
+				//Bukkit.getLogger().info("DEBUG: key = " + key + " : " + st.getName() + " " + st.getValue());
+			    //}
+			    List<String> text = new ArrayList<String>();
+			    text.add(((StringTag) tileData.get("Text1")).getValue());
+			    text.add(((StringTag) tileData.get("Text2")).getValue());
+			    text.add(((StringTag) tileData.get("Text3")).getValue());
+			    text.add(((StringTag) tileData.get("Text4")).getValue());
+			    // Parse sign text
+			    for (int line = 0; line<4; line++) {
+				if (!text.get(line).equals("\"\"")) {
+				    sign.setLine(line, text.get(line).replace("{\"extra\":[\"", "").replace("\"],\"text\":\"\"}", ""));
+				}
+			    }
+			    sign.update();
+			}
 			if (block.getType().equals(Material.CHEST)) {
 			    Chest chestBlock = (Chest)block.getState();
 			    //Bukkit.getLogger().info("Chest tile entity found");
@@ -375,6 +416,10 @@ public class Schematic {
 						    // Get the material
 						    if (itemType.startsWith("minecraft:")) {
 							String material = itemType.substring(10).toUpperCase();
+							// Special case for REEDS, that is sugar cane
+							if (material.equalsIgnoreCase("REEDS")) {
+							    material = "SUGAR_CANE";
+							}
 							Material itemMaterial = Material.valueOf(material);
 							short itemDamage = (Short) ((CompoundTag)item).getValue().get("Damage").getValue();
 							byte itemAmount = (Byte) ((CompoundTag)item).getValue().get("Count").getValue();
@@ -406,54 +451,6 @@ public class Schematic {
 		}
 	    }
 	}
-	// Tile entities
-	/*
-	for (int x = 0; x < width; ++x) {
-	    for (int y = 0; y < height; ++y) {
-		for (int z = 0; z < length; ++z) {
-		    if (tileEntitiesMap.containsKey(new BlockVector(x,y,z))) {
-			Block block = new Location(world, x, y, z).add(blockLoc).getBlock();
-			if (block.getType().equals(Material.CHEST)) {
-			    Chest chestBlock = (Chest)block.getState();
-			    //Bukkit.getLogger().info("Chest tile entity found");
-			    Map<String, Tag> tileData = tileEntitiesMap.get(new BlockVector(x,y,z));
-			    try {
-				ListTag chestItems = (ListTag) tileData.get("Items");
-				if (chestItems != null) {
-				    for (Tag item : chestItems.getValue()) {
-					// Format for chest items is:
-					// id = short value of item id
-					// Damage = short value of item damage
-					// Count = the number of items
-					// Slot = the slot in the chest inventory
-					if (item instanceof CompoundTag) {
-					    short itemType = (Short) ((CompoundTag)item).getValue().get("id").getValue();
-					    short itemDamage = (Short) ((CompoundTag)item).getValue().get("Damage").getValue();
-					    byte itemAmount = (Byte) ((CompoundTag)item).getValue().get("Count").getValue();
-					    byte itemSlot = (Byte) ((CompoundTag)item).getValue().get("Slot").getValue();
-					    ItemStack chestItem = new ItemStack(itemType, itemAmount, itemDamage);
-					    chestBlock.getInventory().setItem(itemSlot, chestItem);
-					    //Bukkit.getLogger().info("Set chest inventory slot " + itemSlot + " to " + chestItem.toString());
-					}
-				    }
-				}
-			    } catch (Exception e) {
-				e.printStackTrace();
-			    }
-			}
-		    }
-		}
-	    }
-	}*/
-
-	//Bukkit.getLogger().info("DEBUG loc is after island build:" + loc.toString());
-	// Add island items
-	//int y = Settings.sea_level;
-	// Add tree (natural)
-	//final Location treeLoc = new Location(world,x,y + 5, z);
-	//world.generateTree(treeLoc, TreeType.ACACIA);
-	// Place the cow
-	//Location cowSpot = new Location(world, x, Settings.sea_level + 5, z - 2);
 	grass.subtract(bedrock);
 	grass.add(loc);
 	while (!ASkyBlock.isSafeLocation(grass) && grass.getY() < 250) {
@@ -485,15 +482,18 @@ public class Schematic {
 	// Place the chest - no need to use the safe spawn function because we
 	// know what this island looks like
 	blockToChange = chest.getBlock();
+	//Bukkit.getLogger().info("Chest block = " + blockToChange);
 	//blockToChange.setType(Material.CHEST);
 	//Bukkit.getLogger().info("Chest item settings = " + Settings.chestItems[0]);
 	//Bukkit.getLogger().info("Chest item settings length = " + Settings.chestItems.length);
 	if (Settings.chestItems[0] != null) {
 	    // Fill the chest
-	    final Chest islandChest = (Chest) blockToChange.getState();
-	    final Inventory inventory = islandChest.getInventory();
-	    inventory.clear();
-	    inventory.setContents(Settings.chestItems);
+	    if (blockToChange.getType() == Material.CHEST) {
+		final Chest islandChest = (Chest) blockToChange.getState();
+		final Inventory inventory = islandChest.getInventory();
+		inventory.clear();
+		inventory.setContents(Settings.chestItems);
+	    }
 	}
 	return grass;
     }

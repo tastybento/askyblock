@@ -28,6 +28,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.NavigableMap;
 import java.util.Set;
 import java.util.TreeMap;
@@ -202,14 +203,17 @@ public class ASkyBlock extends JavaPlugin {
      * Delete Island
      * Called when an island is restarted or reset
      * @param player - player name String
+     * @param removeBlocks
      */
-    protected void deletePlayerIsland(final UUID player) {
+    protected void deletePlayerIsland(final UUID player, boolean removeBlocks) {
 	// Removes the island
 	//getLogger().info("DEBUG: deleting player island");
 	CoopPlay.getInstance().clearAllIslandCoops(player);
 	removeWarp(player);
 	removeMobsFromIsland(players.getIslandLocation(player));
-	new DeleteIslandChunk(this,players.getIslandLocation(player));
+	if (removeBlocks) {
+	    new DeleteIslandChunk(this,players.getIslandLocation(player));
+	}
 	players.zeroPlayerData(player);
     }
 
@@ -948,6 +952,8 @@ public class ASkyBlock extends JavaPlugin {
 		}
 	    }
 	}
+	// Use physics when pasting island block schematics
+	Settings.usePhysics = getConfig().getBoolean("general.usephysics",false);
 	// Use economy or not
 	// In future expand to include internal economy
 	Settings.useEconomy = getConfig().getBoolean("general.useeconomy",true);
@@ -1507,6 +1513,7 @@ public class ASkyBlock extends JavaPlugin {
 	Locale.adminHelpreload = ChatColor.translateAlternateColorCodes('&',locale.getString("adminHelp.reload","reload configuration from file."));
 	Locale.adminHelptopTen = ChatColor.translateAlternateColorCodes('&',locale.getString("adminHelp.topTen","manually update the top 10 list"));
 	Locale.adminHelpregister = ChatColor.translateAlternateColorCodes('&',locale.getString("adminHelp.register","set a player's island to your location"));
+	Locale.adminHelpunregister = ChatColor.translateAlternateColorCodes('&',locale.getString("adminHelp.unregister","deletes a player without deleting the island blocks"));
 	Locale.adminHelpdelete = ChatColor.translateAlternateColorCodes('&',locale.getString("adminHelp.delete","delete an island (removes blocks)."));
 	Locale.adminHelpcompleteChallenge = ChatColor.translateAlternateColorCodes('&',locale.getString("adminHelp.completeChallenge","marks a challenge as complete"));
 	Locale.adminHelpresetChallenge = ChatColor.translateAlternateColorCodes('&',locale.getString("adminHelp.resetChallenge","marks a challenge as incomplete"));
@@ -1514,7 +1521,8 @@ public class ASkyBlock extends JavaPlugin {
 	Locale.adminHelppurge = ChatColor.translateAlternateColorCodes('&',locale.getString("adminHelp.purge","delete inactive islands older than [TimeInDays]."));
 	Locale.adminHelppurgeholes = ChatColor.translateAlternateColorCodes('&',locale.getString("adminHelp.purgeholes","free up island holes for reuse."));
 	Locale.adminHelpinfo = ChatColor.translateAlternateColorCodes('&',locale.getString("adminHelp.info","check information on the given player."));
-	Locale.adminHelpSetSpawn = ChatColor.translateAlternateColorCodes('&',locale.getString("adminHelp.setspawn","opens the spawn GUI for the island world."));
+	Locale.adminHelpSetSpawn = ChatColor.translateAlternateColorCodes('&',locale.getString("adminHelp.setspawn","sets the island world spawn to a location close to you."));
+	Locale.adminHelpSetRange = ChatColor.translateAlternateColorCodes('&',locale.getString("adminHelp.setrange","changes the island's protection range."));
 	Locale.adminHelpinfoIsland = ChatColor.translateAlternateColorCodes('&',locale.getString("adminHelp.infoisland","provide info on the nearest island."));
 	Locale.adminHelptp = ChatColor.translateAlternateColorCodes('&',locale.getString("adminHelp.tp", "Teleport to a player's island."));
 	Locale.reloadconfigReloaded = ChatColor.translateAlternateColorCodes('&',locale.getString("reload.configReloaded","Configuration reloaded from file."));
@@ -1621,6 +1629,7 @@ public class ASkyBlock extends JavaPlugin {
 	    grid.saveGrid();
 	    saveWarpList();
 	    saveMessages();
+	    topTenSave();
 	} catch (final Exception e) {
 	    plugin.getLogger().severe("Something went wrong saving files!");
 	    e.printStackTrace();
@@ -2103,7 +2112,7 @@ public class ASkyBlock extends JavaPlugin {
     protected void topTenAddEntry(UUID ownerUUID, int level) {
 	// Only keep the top 20
 	if (topTenList.size() > 20) {
-	 // The first entry is always the lowest level
+	    // The first entry is always the lowest level
 	    int lowestScore = topTenList.firstEntry().getKey();
 	    if (lowestScore < level) {
 		// This is a better entry than the lowest, so remove the lowest
@@ -2116,12 +2125,25 @@ public class ASkyBlock extends JavaPlugin {
     }
 
     /**
+     * Removes ownerUUID from the top ten list
+     * @param ownerUUID
+     */
+    protected void topTenRemoveEntry(UUID ownerUUID) {
+	TreeMap<Integer,UUID> tt = new TreeMap<Integer,UUID>();
+	for (Entry<Integer,UUID> en : topTenList.entrySet()) {
+	    if (!en.getValue().equals(ownerUUID)) {
+		tt.put(en.getKey(), en.getValue());
+	    }
+	}
+	topTenList = tt;
+    }
+    /**
      * Generates a sorted map of islands for the Top Ten list from all player files
      */
     protected void topTenCreate() {
 	// This map is a list of owner and island level
-	//LinkedHashMap<UUID, Integer> top = new LinkedHashMap<UUID, Integer>();
 	YamlConfiguration player = new YamlConfiguration();
+	int index = 1;
 	for (final File f : playersFolder.listFiles()) {
 	    // Need to remove the .yml suffix
 	    String fileName = f.getName();
@@ -2134,6 +2156,10 @@ public class ASkyBlock extends JavaPlugin {
 			getLogger().info("Looking at " + playerUUIDString);
 		    }
 		    player.load(f);
+		    index++;
+		    if (index%1000 == 0) {
+			getLogger().info("Processed " + index + " players");
+		    }
 		    //Players player = new Players(this, playerUUID);
 		    int islandLevel = player.getInt("islandLevel",0);
 		    String teamLeaderUUID = player.getString("teamLeader","");
@@ -2151,6 +2177,7 @@ public class ASkyBlock extends JavaPlugin {
 		}
 	    }
 	}
+	getLogger().info("Processed " + index + " players");
 	// Save the top ten
 	topTenSave();
     }

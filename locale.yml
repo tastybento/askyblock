@@ -266,29 +266,21 @@ minishop:
 #Help
 adminHelp:
    help: "Admin Commands:"
-   #/acid reload:
    reload: "reload configuration from file."
-   #/acid top ten:
    topTen: "manually update the top 10 list"
-   #/acid register <player>:
    register: "set a player's island to your location"
-   #/acid delete <player>:
+   unregister: "deletes a player without deleting the island blocks"
    delete: "delete an island (removes blocks)."
-   #/acid completechallenge <challengename> <player>
    completeChallenge: "marks a challenge as complete"
-   #/acid resetchallenge <challengename> <player>
    resetChallenge: "marks a challenge as incomplete"
-   #/acid resetallchallenges <player>:
    resetAllChallenges: "resets all of the player's challenges"
-   #/acid purge [TimeInDays]:
    purge: "delete inactive islands older than [TimeInDays]."
    purgeholes: "free up island holes for reuse."
-   #/acid info <player>:
    info: "info for the given player."
-   #/acid info
    infoisland: "provide info on the nearest island."
-   #/acid clear reset
    clearreset: "resets the island reset limit for player."
+   setspawn: "sets the island world spawn to a location close to you."
+   setrange: "changes the island's protection range."
 
 #acid reload
 reload:

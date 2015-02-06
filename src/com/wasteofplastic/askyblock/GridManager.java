@@ -315,6 +315,10 @@ public class GridManager {
 	}
     }
 
+    /**
+     * Removes the island at location loc from the grid and removes the player from the ownership map
+     * @param loc
+     */
     protected void deleteIsland(Location loc) {
 	//plugin.getLogger().info("DEBUG: deleting island at " + loc);
 	Island island = getIslandAt(loc);

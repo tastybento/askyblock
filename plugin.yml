@@ -110,10 +110,10 @@ permissions:
             default: op
           askyblock.mod.bypassprotect:
             description: Allow moderator to bypass island protection
-            default: false
+            default: op
           askyblock.mod.setbiome:
             description: Allows setting player island biomes
-            default: false
+            default: op
       askyblock.admin.*:
         children:
           askyblock.admin.reload:
@@ -126,7 +126,10 @@ permissions:
             description: Let a player completely remove the island the player is on
             default: op
           askyblock.admin.register:
-            description: Let a player register the nearest island (using the bedrock) to another player.
+            description: Let a player register the nearest island to another player.
+            default: op
+          askyblock.admin.unregister:
+            description: Removes a player from an island without deleting the island blocks.
             default: op
           askyblock.admin.purge:
             description: Let a player purge old islands.
@@ -136,4 +139,7 @@ permissions:
             default: false
           askyblock.admin.setspawn:
             description: Allows use of spawn tools
+            default: op
+          askyblock.admin.setrange:
+            description: Allows setting of island protection range
             default: op

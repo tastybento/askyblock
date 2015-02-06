@@ -187,6 +187,9 @@ public class Settings {
     
     // Wait between being invited to same team island
     protected static int inviteWait;
+    
+    // Use physics when pasting schematic blocks
+    public static boolean usePhysics;
 
     
     

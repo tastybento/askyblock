@@ -384,5 +384,7 @@ public class Locale {
     public static String islandTitle;
     public static String islandDonate;
     public static String islandURL;
+    public static String adminHelpunregister;
+    public static String adminHelpSetRange;
       
 }

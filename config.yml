@@ -171,6 +171,10 @@ general:
    # Also currently adds an "enchanted" line of text...
    addcompletedglow: true
 
+   # Use physics when pasting schematic blocks. If this is false, then blocks
+   # like water will not flow from the schematic
+   usephysics: false
+
 ##### Island Related Settings #####
 
 island:

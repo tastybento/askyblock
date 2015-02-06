@@ -70,6 +70,7 @@ public class AdminCmd implements CommandExecutor {
 	if (!(sender instanceof Player)) {
 	    sender.sendMessage(ChatColor.YELLOW + "/" + label + " reload:" + ChatColor.WHITE + " " + Locale.adminHelpreload);
 	    sender.sendMessage(ChatColor.YELLOW + "/" + label + " topten:" + ChatColor.WHITE + " " + Locale.adminHelptopTen);
+	    sender.sendMessage(ChatColor.YELLOW + "/" + label + " unregister <player>:" + ChatColor.WHITE + " " + Locale.adminHelpunregister);
 	    sender.sendMessage(ChatColor.YELLOW + "/" + label + " delete <player>:" + ChatColor.WHITE + " " + Locale.adminHelpdelete);
 	    sender.sendMessage(ChatColor.YELLOW + "/" + label + " completechallenge <challengename> <player>:" + ChatColor.WHITE
 		    + " " + Locale.adminHelpcompleteChallenge);
@@ -95,6 +96,9 @@ public class AdminCmd implements CommandExecutor {
 	    }
 	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.register") || player.isOp()) {
 		player.sendMessage(ChatColor.YELLOW + "/" + label + " register <player>:" + ChatColor.WHITE + " " + Locale.adminHelpregister);
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.unregister") || player.isOp()) {
+		player.sendMessage(ChatColor.YELLOW + "/" + label + " unregister <player>:" + ChatColor.WHITE + " " + Locale.adminHelpunregister);
 	    }
 	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.delete") || player.isOp()) {
 		player.sendMessage(ChatColor.YELLOW + "/" + label + " delete <player>:" + ChatColor.WHITE + " " + Locale.adminHelpdelete);
@@ -129,6 +133,9 @@ public class AdminCmd implements CommandExecutor {
 	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.setspawn") || player.isOp()) {
 		player.sendMessage(ChatColor.YELLOW + "/" + label + " setspawn:" + ChatColor.WHITE + " " + Locale.adminHelpSetSpawn);
 	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.setrange") || player.isOp()) {
+		player.sendMessage(ChatColor.YELLOW + "/" + label + " setrange:" + ChatColor.WHITE + " " + Locale.adminHelpSetRange);
+	    }
 	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.tp") || player.isOp()) {
 		player.sendMessage(ChatColor.YELLOW + "/" + label + " tp <player>:" + ChatColor.WHITE + " " + Locale.adminHelptp);
 	    }
@@ -162,7 +169,7 @@ public class AdminCmd implements CommandExecutor {
 		if (split[0].equalsIgnoreCase("reload") || split[0].equalsIgnoreCase("register")
 			|| split[0].equalsIgnoreCase("delete") || split[0].equalsIgnoreCase("purge")
 			|| split[0].equalsIgnoreCase("confirm") || split[0].equalsIgnoreCase("setspawn")
-			|| split[0].equalsIgnoreCase("deleteisland")) {
+			|| split[0].equalsIgnoreCase("deleteisland") || split[0].equalsIgnoreCase("setrange")) {
 		    if (!checkAdminPerms(player, split)) {
 			player.sendMessage(ChatColor.RED + Locale.errorNoPermission);
 			return true;
@@ -216,8 +223,8 @@ public class AdminCmd implements CommandExecutor {
 		    if (target != null) {
 			sender.sendMessage(ChatColor.RED + "Owned by: " + plugin.getPlayers().getName(target));
 		    }
-		    sender.sendMessage(ChatColor.RED + "Remove it or move to another location. (Setspawn no longer can take over an island).");
-		    return true;
+		    sender.sendMessage(ChatColor.RED + "Unregister the owner first.");
+		    return false;
 		}
 		if (oldSpawn != null) {
 		    sender.sendMessage(ChatColor.GOLD + "Changing spawn island location. Warning: old spawn island location at "
@@ -561,7 +568,7 @@ public class AdminCmd implements CommandExecutor {
 					    } 
 
 					    if (removeList.size() > 0 && purgeFlag) {
-						plugin.deletePlayerIsland(removeList.get(0));
+						plugin.deletePlayerIsland(removeList.get(0),true);
 						sender.sendMessage(ChatColor.YELLOW + "[" + removeList.size() + "/" + total + "] " 
 							+ Locale.purgeremovingName.replace("[name]", plugin.getPlayers().getName(removeList.get(0))));
 						removeList.remove(0);
@@ -636,7 +643,7 @@ public class AdminCmd implements CommandExecutor {
 			plugin.resetPlayer(target);
 		    }
 		    //plugin.getLogger().info("DEBUG: deleting player");
-		    plugin.deletePlayerIsland(playerUUID);
+		    plugin.deletePlayerIsland(playerUUID,true);
 		    return true;
 		}
 	    } else if (split[0].equalsIgnoreCase("register")) {
@@ -658,6 +665,29 @@ public class AdminCmd implements CommandExecutor {
 		    sender.sendMessage(ChatColor.RED + Locale.errorUnknownCommand);
 		}
 		return true;
+	    } else if (split[0].equalsIgnoreCase("unregister")) {
+		// Convert name to a UUID
+		final UUID playerUUID = plugin.getPlayers().getUUID(split[1]);
+		if (!plugin.getPlayers().isAKnownPlayer(playerUUID)) {
+		    sender.sendMessage(ChatColor.RED + Locale.errorUnknownPlayer);
+		    return true;
+		} else {
+		    if (plugin.getPlayers().inTeam(playerUUID)) {
+			sender.sendMessage(ChatColor.RED + "Player is in a team - disband it first.");
+			return true;
+		    }
+		    Location island = plugin.getPlayers().getIslandLocation(playerUUID);
+		    if (island == null) {
+			sender.sendMessage(ChatColor.RED + Locale.errorNoIslandOther);
+			return true;
+		    }
+		    // Delete player, but keep blocks
+		    sender.sendMessage(ChatColor.GREEN + "Removing player from world, but keeping island at "
+			    + plugin.getPlayers().getIslandLocation(playerUUID).getBlockX() + ","
+			    + plugin.getPlayers().getIslandLocation(playerUUID).getBlockZ());
+		    plugin.deletePlayerIsland(playerUUID, false);
+		    return true;
+		}
 	    } else if (split[0].equalsIgnoreCase("info")) {
 		// Convert name to a UUID
 		final UUID playerUUID = plugin.getPlayers().getUUID(split[1]);
@@ -1084,7 +1114,7 @@ public class AdminCmd implements CommandExecutor {
      * @param sender
      */
     private void showInfo(UUID playerUUID, CommandSender sender) {
-	sender.sendMessage("Owner:" + ChatColor.GREEN + plugin.getPlayers().getName(playerUUID));
+	sender.sendMessage("Owner: " + ChatColor.GREEN + plugin.getPlayers().getName(playerUUID));
 	sender.sendMessage(ChatColor.WHITE + "UUID: " + playerUUID.toString());
 	// Display island level
 	sender.sendMessage(ChatColor.GREEN + Locale.levelislandLevel + ": " + plugin.getPlayers().getIslandLevel(playerUUID));
