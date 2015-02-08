@@ -1322,7 +1322,7 @@ public class IslandCmd implements CommandExecutor {
 		    }
 		    // Check if this player can be invited to this island, or whether they are still on cooldown
 		    long time = plugin.getPlayers().getInviteCoolDownTime(invitedPlayerUUID, plugin.getPlayers().getIslandLocation(playerUUID));
-		    if (time > 0) {
+		    if (time > 0 && !player.isOp()) {
 			player.sendMessage(ChatColor.RED + Locale.inviteerrorCoolDown.replace("[time]", String.valueOf(time)));
 			return true;
 		    }

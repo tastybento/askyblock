@@ -2124,7 +2124,7 @@ public class ASkyBlock extends JavaPlugin {
 	    }
 	    // Update top ten list
 	    // Remove old owner score from top ten list
-	    while(topTenList.values().remove(oldOwner));
+	    topTenList.remove(oldOwner);
 	    return true;
 	}
 	return false;

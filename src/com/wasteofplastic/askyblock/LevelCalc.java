@@ -113,7 +113,14 @@ public class LevelCalc extends BukkitRunnable {
 	    }
 	    this.silent = false;
 	    //plugin.getLogger().info("DEBUG: updating top ten");
-	    plugin.topTenAddEntry(targetPlayer, blockcount / 100);
+	    if (plugin.getPlayers().inTeam(targetPlayer)) {
+		UUID leader = plugin.getPlayers().getTeamLeader(targetPlayer);
+		if (leader != null) {
+		    plugin.topTenAddEntry(leader, blockcount / 100);
+		}
+	    } else {
+		plugin.topTenAddEntry(targetPlayer, blockcount / 100);
+	    }
 	    //plugin.getLogger().info("DEBUG: finished updating top ten");
 
 	    // plugin.getLogger().info("DEBUG: clearing flag");
