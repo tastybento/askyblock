@@ -69,6 +69,7 @@ public class PlayerCache {
      */
 
     protected void addPlayer(final UUID playerUUID) {
+	//plugin.getLogger().info("DEBUG: added player");
 	if (!playerCache.containsKey(playerUUID)) {
 	    final Players player = new Players(plugin, playerUUID);
 	    playerCache.put(playerUUID,player);

@@ -368,6 +368,9 @@ public class IslandGuard implements Listener {
 		    return;
 		}
 	    }
+	    //else {
+	    //plugin.getLogger().info("DEBUG: islandTo is not locked");
+	    //}
 	    if (islandTo.isSpawn()) {
 		e.getPlayer().sendMessage(Locale.lockEnteringSpawn);
 	    } else {
@@ -526,16 +529,26 @@ public class IslandGuard implements Listener {
 	if (debug) {
 	    plugin.getLogger().info(e.getEventName());
 	}
+	// If not in the right world, return
 	if (!e.getEntity().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    return;
 	}
-	if ((!Settings.allowSpawnMobSpawn && (e.getEntity() instanceof Monster || e.getEntity() instanceof Slime)) 
-		|| (!Settings.allowSpawnAnimalSpawn && (e.getEntity() instanceof Animals))){
-	    if (plugin.getGrid().isAtSpawn(e.getLocation())) {
-		if (e.getSpawnReason() == SpawnReason.SPAWNER_EGG) {
-		    plugin.getLogger().info("Spawn prevented egg spawn due to config settings.");
-		}
-		//plugin.getLogger().info("DEBUG: prevented mob spawn at spawn");
+	// If not at spawn, return
+	if (!plugin.getGrid().isAtSpawn(e.getLocation())) {
+	    return;
+	}
+
+	// If mobs can spawn at spawn and this is a monster, return, unless monster eggs are banned
+	if ((Settings.allowSpawnMobSpawn && (e.getEntity() instanceof Monster || e.getEntity() instanceof Slime))) {
+	    if (e.getSpawnReason() == SpawnReason.SPAWNER_EGG && !Settings.allowSpawnSpawnEggs) {
+		e.setCancelled(true);
+		return;
+	    }
+	}
+	// If animals can spawn, check if the spawning is natural, or egg-induced
+	if (Settings.allowSpawnAnimalSpawn && (e.getEntity() instanceof Animals)){
+	    // Find out why it happened and allow it if it is allowed, otherwise deny
+	    if (e.getSpawnReason() == SpawnReason.EGG && !Settings.allowSpawnEggs) {
 		e.setCancelled(true);
 	    }
 	}

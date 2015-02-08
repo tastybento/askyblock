@@ -34,8 +34,8 @@ public class Island {
     // The owner of the island
     private UUID owner;
     // Time parameters
-    private Date createdDate;
-    private Date updatedDate;
+    private long createdDate;
+    private long updatedDate;
     // A password associated with the island
     private String password;
     // Votes for how awesome the island is
@@ -63,7 +63,7 @@ public class Island {
 	    minProtectedZ = z - protectionRange/2;  
 	    this.world = ASkyBlock.getIslandWorld();
 	    this.center = new Location(world,x,y,z);
-	    this.createdDate = new Date();
+	    this.createdDate = new Date().getTime();
 	    this.updatedDate = createdDate;
 	    this.password = "";
 	    this.votes = 0;
@@ -107,7 +107,7 @@ public class Island {
 	this.protectionRange = Settings.island_protectionRange;
 	this.world = ASkyBlock.getIslandWorld();
 	this.center = new Location(world,x,y,z);
-	this.createdDate = new Date();
+	this.createdDate = new Date().getTime();
 	this.updatedDate = createdDate;
 	this.password = "";
 	this.votes = 0;
@@ -124,7 +124,7 @@ public class Island {
 	this.protectionRange = Settings.island_protectionRange;
 	this.world = ASkyBlock.getIslandWorld();
 	this.center = new Location(world,x,y,z);
-	this.createdDate = new Date();
+	this.createdDate = new Date().getTime();
 	this.updatedDate = createdDate;
 	this.password = "";
 	this.votes = 0;
@@ -141,7 +141,7 @@ public class Island {
      * @param password
      * @param votes
      */
-    public Island(int x, int z, int protectionRange, Location center, UUID owner, Date createdDate, Date updatedDate, String password, int votes) {
+    public Island(int x, int z, int protectionRange, Location center, UUID owner, long createdDate, long updatedDate, String password, int votes) {
 	this.minX = x - Settings.islandDistance/2;
 	this.minZ = z - Settings.islandDistance/2;
 	this.minProtectedX = x - Settings.island_protectionRange/2;
@@ -308,25 +308,25 @@ public class Island {
     /**
      * @return the createdDate
      */
-    public Date getCreatedDate() {
+    public long getCreatedDate() {
 	return createdDate;
     }
     /**
      * @param createdDate the createdDate to set
      */
-    public void setCreatedDate(Date createdDate) {
+    public void setCreatedDate(long createdDate) {
 	this.createdDate = createdDate;
     }
     /**
      * @return the updatedDate
      */
-    public Date getUpdatedDate() {
+    public long getUpdatedDate() {
 	return updatedDate;
     }
     /**
      * @param updatedDate the updatedDate to set
      */
-    public void setUpdatedDate(Date updatedDate) {
+    public void setUpdatedDate(long updatedDate) {
 	this.updatedDate = updatedDate;
     }
     /**

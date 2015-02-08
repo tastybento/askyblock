@@ -23,6 +23,11 @@ public class LevelCalc extends BukkitRunnable {
     private UUID targetPlayer;
     private Player asker;
     private int range = Settings.island_protectionRange;
+    private boolean silent = false;
+
+    public LevelCalc(ASkyBlock plugin, UUID targetPlayer, Player asker) {
+	this(plugin, targetPlayer, asker, false);
+    }
 
     /**
      * Calculates the level of an island
@@ -30,8 +35,10 @@ public class LevelCalc extends BukkitRunnable {
      * @param targetPlayer
      * @param asker
      */
-    public LevelCalc(ASkyBlock plugin, UUID targetPlayer, Player asker) {
+    public LevelCalc(ASkyBlock plugin, UUID targetPlayer, Player asker, boolean silent) {
+	this.silent = silent;
 	this.plugin = plugin;
+	//plugin.getLogger().info("DEBUG: running level calc " + silent);
 	this.targetPlayer = targetPlayer;
 	this.asker = asker;
 	this.counter = 255;
@@ -92,19 +99,23 @@ public class LevelCalc extends BukkitRunnable {
 	    }
 	    // plugin.getLogger().info("DEBUG: finished team member saving");
 	    //plugin.updateTopTen();
-	    // Tell offline team members the island level increased.
-	    if (plugin.getPlayers().getIslandLevel(targetPlayer) > oldLevel) {
-		// plugin.getLogger().info("DEBUG: telling offline players");
-		plugin.tellOfflineTeam(targetPlayer, ChatColor.GREEN + Locale.islandislandLevelis + " " + ChatColor.WHITE + plugin.getPlayers().getIslandLevel(targetPlayer));
+	    if (!this.silent) {
+		// Tell offline team members the island level increased.
+		if (plugin.getPlayers().getIslandLevel(targetPlayer) > oldLevel) {
+		    // plugin.getLogger().info("DEBUG: telling offline players");
+		    plugin.tellOfflineTeam(targetPlayer, ChatColor.GREEN + Locale.islandislandLevelis + " " + ChatColor.WHITE + plugin.getPlayers().getIslandLevel(targetPlayer));
+		}
+		if (asker.isOnline()) {
+		    // plugin.getLogger().info("DEBUG: updating player GUI");
+		    asker.sendMessage(
+			    ChatColor.GREEN + Locale.islandislandLevelis + " " + ChatColor.WHITE + plugin.getPlayers().getIslandLevel(targetPlayer));
+		}
 	    }
-	    // plugin.getLogger().info("DEBUG: updating top ten");
+	    this.silent = false;
+	    //plugin.getLogger().info("DEBUG: updating top ten");
 	    plugin.topTenAddEntry(targetPlayer, blockcount / 100);
-	    // plugin.getLogger().info("DEBUG: finished updating top ten");
-	    if (asker.isOnline()) {
-		// plugin.getLogger().info("DEBUG: updating player GUI");
-		asker.sendMessage(
-			ChatColor.GREEN + Locale.islandislandLevelis + " " + ChatColor.WHITE + plugin.getPlayers().getIslandLevel(targetPlayer));
-	    }
+	    //plugin.getLogger().info("DEBUG: finished updating top ten");
+
 	    // plugin.getLogger().info("DEBUG: clearing flag");
 	    // Clear flag
 	    plugin.setCalculatingLevel(false);

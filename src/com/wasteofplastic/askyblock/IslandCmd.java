@@ -699,6 +699,7 @@ public class IslandCmd implements CommandExecutor {
 		// Find out which island they want to lock
 		Island island = plugin.getGrid().getIsland(playerUUID);
 		if (island == null) {
+		    plugin.getLogger().info("DEBUG: player has no island in grid");
 		    // Player has no island in the grid
 		    player.sendMessage(ChatColor.RED + Locale.errorNoIsland);
 		    return true;
@@ -897,15 +898,8 @@ public class IslandCmd implements CommandExecutor {
 		    if (oldIsland != null) {
 			// Remove any coops
 			CoopPlay.getInstance().clearAllIslandCoops(oldIsland);
-			//I'm going to leave out reseting the biome to provide variety
-			//plugin.setIslandBiome(oldIsland, Settings.defaultBiome);
-			// TODO: Remove players
+			// Delete the island itself
 			new DeleteIslandChunk(plugin,oldIsland);
-			/*
-			plugin.removeMobsFromIsland(oldIsland);
-			DeleteIsland deleteIsland = new DeleteIsland(plugin,oldIsland);
-			deleteIsland.runTaskTimer(plugin, 80L, 40L);
-			 */
 		    }
 		    //plugin.restartEvents();
 		    runCommands(Settings.resetCommands, player.getUniqueId());

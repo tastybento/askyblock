@@ -49,15 +49,15 @@ public class JoinLeaveEvents implements Listener {
 	if (!players.hasIsland(playerUUID) && !players.inTeam(playerUUID)) {
 	    return;
 	}
+	UUID leader = null;
+	Location loc = null;
 	if (players.inTeam(playerUUID) && players.getTeamIslandLocation(playerUUID) == null) {
-	    final UUID leader = players.getTeamLeader(playerUUID);
+	    leader = players.getTeamLeader(playerUUID);
 	    players.setTeamIslandLocation(playerUUID, players.getIslandLocation(leader));
 	}
-	//players.addPlayer(playerUUID);
 	// Add island to grid if it is not in there already
 	// Add owners to the island grid list as they log in
-	Location loc = null;
-	UUID leader = null;
+
 	// Leader or solo
 	if (players.hasIsland(playerUUID)) {
 	    loc = players.getIslandLocation(playerUUID);
@@ -81,7 +81,16 @@ public class JoinLeaveEvents implements Listener {
 	    } else {
 		// Island exists
 		// Assign ownership
-		island.setOwner(leader);
+		plugin.getGrid().setIslandOwner(island, leader);
+	    }
+	    // Run the level command if it's free to do so
+	    if (Settings.loginLevel) {
+		if (!plugin.isCalculatingLevel()) {
+		    // This flag is true if the command can be used
+		    plugin.setCalculatingLevel(true);
+		    LevelCalc levelCalc = new LevelCalc(plugin,playerUUID,event.getPlayer(),true);
+		    levelCalc.runTaskTimer(plugin, 0L, 10L);
+		}
 	    }
 	}
 

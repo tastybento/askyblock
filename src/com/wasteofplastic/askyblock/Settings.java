@@ -196,5 +196,7 @@ public class Settings {
     public static List<String> leaveCommands;
     public static int levelWait;
     public static long resetConfirmWait;
+    public static boolean allowSpawnSpawnEggs;
+    public static boolean loginLevel;
 
 }

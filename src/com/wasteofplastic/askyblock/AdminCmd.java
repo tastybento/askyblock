@@ -1149,6 +1149,10 @@ public class AdminCmd implements CommandExecutor {
 	    sender.sendMessage(ChatColor.YELLOW + Locale.adminInfoislandLocation + ":" + ChatColor.WHITE + " (" + islandLoc.getBlockX() + ","
 		    + islandLoc.getBlockY() + "," + islandLoc.getBlockZ() + ")");
 	    Island island = plugin.getGrid().getIslandAt(islandLoc);
+	    if (island == null) {
+		plugin.getLogger().warning("Player has an island, but it is not in the grid. Adding it now...");
+		island = plugin.getGrid().addIsland(islandLoc.getBlockX(), islandLoc.getBlockZ(), playerUUID);
+	    }
 	    sender.sendMessage(ChatColor.YELLOW + "Island max size (distance) = " + island.getIslandDistance());
 	    sender.sendMessage(ChatColor.YELLOW + "Island maximums " + island.getMinX() + "," + island.getMinZ() + " to " 
 		    + (island.getMinX()+ island.getIslandDistance() -1) + "," + (island.getMinZ() + island.getIslandDistance() -1));
@@ -1160,6 +1164,8 @@ public class AdminCmd implements CommandExecutor {
 	    }
 	    if (island.isLocked()) {
 		sender.sendMessage(ChatColor.YELLOW + "Island is locked");
+	    } else {
+		sender.sendMessage(ChatColor.YELLOW + "Island is unlocked");
 	    }
 	} else {
 	    sender.sendMessage(ChatColor.RED + Locale.errorNoIslandOther);
