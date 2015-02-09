@@ -39,7 +39,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.BlockIterator;
 
 /**
- * @author ben
+ * @author tastybento
  * This listener will check to see if a player has a water bucket and if so change it to acid bucket
  * It also checks for interactions with water bottles
  */

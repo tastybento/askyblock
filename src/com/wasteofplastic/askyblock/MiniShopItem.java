@@ -26,7 +26,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionType;
 
 /**
- * @author ben
+ * @author tastybento
  *
  */
 public class MiniShopItem {

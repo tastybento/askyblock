@@ -34,7 +34,7 @@ import org.bukkit.inventory.ItemStack;
 
 
 /**
- * @author ben
+ * @author tastybento
  * Provides protection to islands - handles newer events that may not exist in older servers
  */
 public class IslandGuardNew implements Listener {

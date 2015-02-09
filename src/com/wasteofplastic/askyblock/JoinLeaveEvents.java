@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -44,11 +45,55 @@ public class JoinLeaveEvents implements Listener {
 	if (players == null) {
 	    plugin.getLogger().severe("players is NULL");
 	}
+	// If this player is not an island player just skip all this
+	if (!players.hasIsland(playerUUID) && !players.inTeam(playerUUID)) {
+	    return;
+	}
+	UUID leader = null;
+	Location loc = null;
 	if (players.inTeam(playerUUID) && players.getTeamIslandLocation(playerUUID) == null) {
-	    final UUID leader = players.getTeamLeader(playerUUID);
+	    leader = players.getTeamLeader(playerUUID);
 	    players.setTeamIslandLocation(playerUUID, players.getIslandLocation(leader));
 	}
-	players.addPlayer(playerUUID);
+	// Add island to grid if it is not in there already
+	// Add owners to the island grid list as they log in
+
+	// Leader or solo
+	if (players.hasIsland(playerUUID)) {
+	    loc = players.getIslandLocation(playerUUID);
+	    leader = playerUUID;
+	} else if (players.inTeam(playerUUID)) {
+	    // Team player
+	    loc = players.getTeamIslandLocation(playerUUID);
+	    leader = players.getTeamLeader(playerUUID);
+	}
+	// If the player has an island of some kind
+	if (loc != null) {
+	    // Check if the island is on the grid by owner (fast)
+	    Island island = plugin.getGrid().getIsland(leader);
+	    if (island == null) {
+		// Check if the island exists in the grid
+		island = plugin.getGrid().getIslandAt(loc);
+		// Island isn't in the grid, so add it
+		if (island == null) {
+		    plugin.getGrid().addIsland(loc.getBlockX(), loc.getBlockZ(), leader);
+		}
+	    } else {
+		// Island exists
+		// Assign ownership
+		plugin.getGrid().setIslandOwner(island, leader);
+	    }
+	    // Run the level command if it's free to do so
+	    if (Settings.loginLevel) {
+		if (!plugin.isCalculatingLevel()) {
+		    // This flag is true if the command can be used
+		    plugin.setCalculatingLevel(true);
+		    LevelCalc levelCalc = new LevelCalc(plugin,playerUUID,event.getPlayer(),true);
+		    levelCalc.runTaskTimer(plugin, 0L, 10L);
+		}
+	    }
+	}
+
 	// Set the player's name (it may have changed)
 	players.setPlayerName(playerUUID, event.getPlayer().getName());
 	players.save(playerUUID);

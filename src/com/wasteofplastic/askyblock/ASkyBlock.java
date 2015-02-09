@@ -63,8 +63,10 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 import org.bukkit.util.Vector;
 
+import com.wasteofplastic.askyblock.NotSetup.Reason;
+
 /**
- * @author ben
+ * @author tastybento
  * Main ASkyBlock class - provides an island minigame in a sea of acid
  */
 public class ASkyBlock extends JavaPlugin {
@@ -88,7 +90,7 @@ public class ASkyBlock extends JavaPlugin {
     // Map of all warps stored as player, warp sign Location
     private HashMap<UUID, Object> warpList = new HashMap<UUID, Object>();
     // Top ten list of players
-    private Map<UUID, Integer> topTenList;
+    private Map<UUID, Integer> topTenList = new HashMap<UUID, Integer>();
     // Players object
     private PlayerCache players;
     // Acid Damage Potion
@@ -96,12 +98,12 @@ public class ASkyBlock extends JavaPlugin {
     // Listeners
     private Listener warpSignsListener;
     private Listener lavaListener;
-    // Spawn object
-    Spawn spawn;
     // A set of falling players
     HashSet<UUID> fallingPlayers = new HashSet<UUID>();
     // Biome chooser object
     Biomes biomes;
+    // Island grid manager
+    private GridManager grid;
 
     private boolean debug = false;
     //public boolean flag = false;
@@ -151,21 +153,6 @@ public class ASkyBlock extends JavaPlugin {
 	    //Bukkit.getLogger().info("DEBUG worldName = " + Settings.worldName);
 	    acidWorld = WorldCreator.name(Settings.worldName).type(WorldType.FLAT).environment(World.Environment.NORMAL)
 		    .generator(new ChunkGeneratorWorld()).createWorld();
-	    // Multiverse configuration
-	    if (Bukkit.getServer().getPluginManager().isPluginEnabled("Multiverse-Core")) {
-		Bukkit.getLogger().info("Trying to register generator with Multiverse ");
-		try {
-		    Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv import " + Settings.worldName + " normal -g " + plugin.getName());
-		    Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv modify set generator " + plugin.getName() + " " + Settings.worldName);
-		    if (Settings.newNether) {
-			Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv modify set generator " + plugin.getName() + " " + Settings.worldName + "_nether");
-		    }
-		} catch (Exception e) {
-		    Bukkit.getLogger().info("Not successfull! Disabling " + plugin.getName() + "!");
-		    e.printStackTrace();
-		    Bukkit.getServer().getPluginManager().disablePlugin(plugin);
-		}
-	    }
 	    // Make the nether if it does not exist
 	    if (Settings.createNether) {
 		if (plugin.getServer().getWorld(Settings.worldName + "_nether") == null) {
@@ -179,6 +166,27 @@ public class ASkyBlock extends JavaPlugin {
 		    // netherWorld.setAnimalSpawnLimit(Settings.animalSpawnLimit);
 		}
 	    }
+	    // Multiverse configuration
+	    if (Bukkit.getServer().getPluginManager().isPluginEnabled("Multiverse-Core")) {
+		Bukkit.getLogger().info("Trying to register generator with Multiverse ");
+		try {
+		    Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv import " + Settings.worldName + " normal -g " + plugin.getName());
+		    if (!Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv modify set generator " + plugin.getName() + " " + Settings.worldName)) {
+			Bukkit.getLogger().severe("Multiverse is out of date! - Upgrade to latest version!");
+		    }
+		    if (Settings.newNether) {
+			Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv import " + Settings.worldName + "_nether nether -g " + plugin.getName());
+			Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv modify set generator " + plugin.getName() + " " + Settings.worldName + "_nether");
+		    } else {
+			Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv import " + Settings.worldName + "_nether nether");
+		    }
+		} catch (Exception e) {
+		    Bukkit.getLogger().severe("Not successfull! Disabling " + plugin.getName() + "!");
+		    e.printStackTrace();
+		    Bukkit.getServer().getPluginManager().disablePlugin(plugin);
+		}
+	    }
+
 	}
 	// Set world settings
 	acidWorld.setWaterAnimalSpawnLimit(Settings.waterAnimalSpawnLimit);
@@ -199,16 +207,23 @@ public class ASkyBlock extends JavaPlugin {
      * Delete Island
      * Called when an island is restarted or reset
      * @param player - player name String
+     * @param removeBlocks
      */
-    protected void deletePlayerIsland(final UUID player) {
+    protected void deletePlayerIsland(final UUID player, boolean removeBlocks) {
 	// Removes the island
+	//getLogger().info("DEBUG: deleting player island");
 	CoopPlay.getInstance().clearAllIslandCoops(player);
 	removeWarp(player);
 	removeMobsFromIsland(players.getIslandLocation(player));
-	// TODO TEST ONLY
-	//DeleteIsland deleteIsland = new DeleteIsland(this,players.getIslandLocation(player));
-	//deleteIsland.runTaskTimer(this, 40L, 40L);
-	new DeleteIslandChunk(this,players.getIslandLocation(player));
+	if (removeBlocks) {
+	    new DeleteIslandChunk(this,players.getIslandLocation(player));
+	} else {
+	    Island island = grid.getIsland(player);
+	    if (island != null) {
+		island.setLocked(false);
+		grid.setIslandOwner(island, null);
+	    }
+	}
 	players.zeroPlayerData(player);
     }
 
@@ -219,14 +234,16 @@ public class ASkyBlock extends JavaPlugin {
      *            - the requesting player
      * @return - true if successful, false if no Top Ten list exists
      */
-    protected boolean showTopTen(final Player player) {
+    protected boolean topTenShow(final Player player) {
 	player.sendMessage(ChatColor.GOLD + Locale.topTenheader);
 	if (topTenList == null) {
-	    updateTopTen();
+	    topTenCreate();
 	    //player.sendMessage(ChatColor.RED + Locale.topTenerrorNotReady);
 	    //return true;
 	}
 	int i = 1;
+	//getLogger().info("DEBUG: " + topTenList.toString());
+	//getLogger().info("DEBUG: " + topTenList.values());
 	for (Map.Entry<UUID, Integer> m : topTenList.entrySet()) {
 	    final UUID playerUUID = m.getKey();
 	    if (players.inTeam(playerUUID)) {
@@ -478,7 +495,6 @@ public class ASkyBlock extends JavaPlugin {
      * @param player
      * @return
      */
-    @SuppressWarnings("deprecation")
     protected boolean homeTeleport(final Player player) {
 	Location home = null;
 	home = getSafeHomeLocation(player.getUniqueId());
@@ -501,14 +517,14 @@ public class ASkyBlock extends JavaPlugin {
 		player.sendBlockChange(player.getWorld().getSpawnLocation()
 			,player.getWorld().getSpawnLocation().getBlock().getType()
 			,player.getWorld().getSpawnLocation().getBlock().getData());
-			*/
+		 */
 	    }
 	    player.sendMessage(ChatColor.RED + Locale.warpserrorNotSafe);
 	    return true;
 	}
 	//home.getWorld().refreshChunk(home.getChunk().getX(), home.getChunk().getZ());
 	// Removing this line because it appears to cause artifacts of hovering blocks
-	home.getWorld().loadChunk(home.getChunk());
+	//home.getWorld().loadChunk(home.getChunk());
 	//getLogger().info("DEBUG: " + home.toString());
 	// This next line should help players with long ping times
 	// http://bukkit.org/threads/workaround-for-playing-falling-after-teleport-when-lagging.293035/
@@ -521,7 +537,7 @@ public class ASkyBlock extends JavaPlugin {
 	/*
 	player.sendBlockChange(home,home.getBlock().getType(),home.getBlock().getData());
 	player.sendBlockChange(home.getBlock().getRelative(BlockFace.DOWN).getLocation(),home.getBlock().getRelative(BlockFace.DOWN).getType(),home.getBlock().getRelative(BlockFace.DOWN).getData());
-	*/
+	 */
 	player.sendMessage(ChatColor.GREEN + Locale.islandteleport);
 	return true;
     }
@@ -529,46 +545,48 @@ public class ASkyBlock extends JavaPlugin {
     /**
      * Determines if an island is at a location in this area
      * location. Also checks if the spawn island is in this area.
+     * Used for creating new islands ONLY
      * 
      * @param loc
-     * @return
+     * @return true if found, otherwise false
      */
     protected boolean islandAtLocation(final Location loc) {	
 	if (loc == null) {
 	    return true;
 	}
 	//getLogger().info("DEBUG checking islandAtLocation for location " + loc.toString());
-	// Immediate check
+	// Check the island grid
+	if (grid.getIslandAt(loc) != null) {
+	    // This checks if loc is inside the island spawn radius too
+	    return true;
+	}
+	final int px = loc.getBlockX();
+	final int pz = loc.getBlockZ();
+	// Extra spawn area check
+	// If island protection distance is less than island distance then the check above will cover it
+	// Island edge must be > protection edge spawn
+	Island spawn = grid.getSpawn();
+	if (spawn != null && spawn.getProtectionSize() > spawn.getIslandDistance()) {
+	    if (Math.abs(px - spawn.getCenter().getBlockX()) < ((spawn.getProtectionSize() + Settings.islandDistance)/2)
+		    && Math.abs(pz - spawn.getCenter().getBlockZ()) < ((spawn.getProtectionSize() + Settings.islandDistance)/2)) {
+		//getLogger().info("DEBUG: island is within spawn space " + px + " " + pz);
+		return true;
+	    }
+	}
+
+	// Bedrock check
 	if (loc.getBlock().getType().equals(Material.BEDROCK)) {
-	    //getLogger().info("DEBUG found bedrock at island height");
-	    return true;
-	}
-	// Near spawn?
-	if (spawn.isAtSpawn(loc)) {
-	    return true;
-	}
-	/*
-	Vector v = loc.toVector();
-	v.multiply(new Vector(1,0,1));
-	if ((getSpawn().getBedrock() != null && v.distanceSquared(getSpawn().getBedrock().toVector().multiply(new Vector(1,0,1))) < (double)((double)spawn.getRange()) * spawn.getRange())) {
-	    //plugin.getLogger().info("Too near spawn");
-	    return true;
-	}*/
-	// Check the file system
-	String checkName = loc.getBlockX() + "," + loc.getBlockZ() + ".yml";
-	final File islandFile = new File(plugin.getDataFolder() + File.separator + "islands" + File.separator + checkName);
-	if (islandFile.exists()) {
-	    //plugin.getLogger().info("File exists");
+	    getLogger().info("Found bedrock at island height - adding to islands.yml " + px + "," + pz);
+	    grid.addIsland(px,pz);
 	    return true;
 	}
 	// Look around
-	final int px = loc.getBlockX();
-	final int pz = loc.getBlockZ();
 	for (int x = -5; x <= 5; x++) {
 	    for (int y = 10; y <= 255; y++) {
 		for (int z = -5; z <= 5; z++) {
 		    if (loc.getWorld().getBlockAt(x + px, y, z + pz).getType().equals(Material.BEDROCK)) {
-			//plugin.getLogger().info("Bedrock found during long search");
+			plugin.getLogger().info("Bedrock found during long search - adding to islands.yml " + px + "," + pz);
+			grid.addIsland(px,pz);
 			return true;
 		    }
 		}
@@ -786,6 +804,9 @@ public class ASkyBlock extends JavaPlugin {
      * Saves the warp lists to file
      */
     protected void saveWarpList() {
+	if (warpList == null || welcomeWarps == null) {
+	    return;
+	}
 	getLogger().info("Saving warps...");
 	final HashMap<String,Object> warps = new HashMap<String,Object>();
 	for (UUID p : warpList.keySet()) {
@@ -945,14 +966,20 @@ public class ASkyBlock extends JavaPlugin {
 		}
 	    }
 	}
+	// Use physics when pasting island block schematics
+	Settings.usePhysics = getConfig().getBoolean("general.usephysics",false);
+	// Run level calc at login
+	Settings.loginLevel = getConfig().getBoolean("general.loginlevel",false);
 	// Use economy or not
 	// In future expand to include internal economy
 	Settings.useEconomy = getConfig().getBoolean("general.useeconomy",true);
 	// Island reset commands
 	Settings.resetCommands = getConfig().getStringList("general.resetcommands");
+	Settings.leaveCommands = getConfig().getStringList("general.leavecommands");
 	Settings.useControlPanel = getConfig().getBoolean("general.usecontrolpanel", false);
 	// Check if /island command is allowed when falling
 	Settings.allowTeleportWhenFalling = getConfig().getBoolean("general.allowfallingteleport", true);
+	Settings.fallingCommandBlockList = getConfig().getStringList("general.blockingcommands");
 	// Max team size
 	Settings.maxTeamSize = getConfig().getInt("island.maxteamsize",4);
 	Settings.maxTeamSizeVIP = getConfig().getInt("island.maxteamsizeVIP",8);
@@ -964,7 +991,7 @@ public class ASkyBlock extends JavaPlugin {
 	    getLogger().info("The Nether is disabled");
 	}
 
-	Settings.islandDistance = getConfig().getInt("island.distance", 110);
+	Settings.islandDistance = getConfig().getInt("island.distance",200);
 	if (Settings.islandDistance < 50) {
 	    Settings.islandDistance = 50;
 	    getLogger().info("Setting minimum island distance to 50");
@@ -1103,15 +1130,15 @@ public class ASkyBlock extends JavaPlugin {
 	    Settings.abandonedIslandLevel = 0;
 	}
 
-	Settings.island_protectionRange = getConfig().getInt("island.protectionRange", 94);
+	Settings.island_protectionRange = getConfig().getInt("island.protectionRange", 100);
 	if (!getConfig().getBoolean("island.overridelimit", false)) {
 	    if (Settings.island_protectionRange > (Settings.islandDistance-16)) {
 		Settings.island_protectionRange = Settings.islandDistance - 16;
 		getLogger().warning("*** Island protection range must be " + (Settings.islandDistance-16) + " or less, (island range -16). Setting to: " + Settings.island_protectionRange);
 	    }
 	}
-	if (Settings.island_protectionRange < 0) {
-	    Settings.island_protectionRange = 0;
+	if (Settings.island_protectionRange < 50) {
+	    Settings.island_protectionRange = 50;
 	}
 	Settings.resetChallenges = getConfig().getBoolean("general.resetchallenges", true);
 	Settings.resetMoney = getConfig().getBoolean("general.resetmoney", true);
@@ -1139,6 +1166,15 @@ public class ASkyBlock extends JavaPlugin {
 	Settings.inviteWait = getConfig().getInt("general.invitewait", 60);
 	if (Settings.inviteWait < 0) {
 	    Settings.inviteWait = 0;
+	}
+	Settings.levelWait = getConfig().getInt("general.levelwait", 60);
+	if (Settings.levelWait < 0) {
+	    Settings.levelWait = 0;
+	}
+	// Seconds to wait for a confirmation of reset
+	Settings.resetConfirmWait = getConfig().getInt("general.resetconfirmwait", 10);
+	if (Settings.resetConfirmWait < 0) {
+	    Settings.resetConfirmWait = 0;
 	}
 	Settings.damageOps = getConfig().getBoolean("general.damageops", false);
 	//Settings.ultraSafeBoats = getConfig().getBoolean("general.ultrasafeboats", true);
@@ -1244,7 +1280,27 @@ public class ASkyBlock extends JavaPlugin {
 	Settings.allowArmorStandUse = getConfig().getBoolean("island.allowarmorstanduse", false);
 	Settings.allowBeaconAccess = getConfig().getBoolean("island.allowbeaconaccess", false);
 	Settings.allowPortalUse = getConfig().getBoolean("island.allowportaluse", true);
+	// Spawn Settings
+	Settings.allowSpawnDoorUse = getConfig().getBoolean("spawn.allowdooruse", true);
+	Settings.allowSpawnLeverButtonUse = getConfig().getBoolean("spawn.allowleverbuttonuse", true);
+	Settings.allowSpawnChestAccess = getConfig().getBoolean("spawn.allowchestaccess", true);
+	Settings.allowSpawnFurnaceUse = getConfig().getBoolean("spawn.allowfurnaceuse", true);
+	Settings.allowSpawnRedStone = getConfig().getBoolean("spawn.allowredstone", false);
+	Settings.allowSpawnMusic = getConfig().getBoolean("spawn.allowmusic", true);
+	Settings.allowSpawnCrafting = getConfig().getBoolean("spawn.allowcrafting", true);
+	Settings.allowSpawnBrewing = getConfig().getBoolean("spawn.allowbrewing", true);
+	Settings.allowSpawnGateUse = getConfig().getBoolean("spawn.allowgateuse", true);	
+	Settings.allowSpawnMobSpawn = getConfig().getBoolean("spawn.allowmobspawn", false);
+	Settings.allowSpawnAnimalSpawn = getConfig().getBoolean("spawn.allowanimalspawn", true);
+	Settings.allowSpawnAnimalKilling = getConfig().getBoolean("spawn.allowanimalkilling", false);
+	Settings.allowSpawnMobKilling = getConfig().getBoolean("spawn.allowmobkilling", true);
+	Settings.allowSpawnSpawnEggs = getConfig().getBoolean("spawn.allowspawneggs", false);
+	Settings.allowSpawnEggs = getConfig().getBoolean("spawn.alloweggs", false);
 
+	Settings.allowSpawnNoAcidWater = getConfig().getBoolean("spawn.allowspawnnoacidwater", false);
+	Settings.allowSpawnEnchanting = getConfig().getBoolean("spawn.allowenchanting",true);
+	Settings.allowSpawnAnvilUse = getConfig().getBoolean("spawn.allowanviluse",true);
+	Settings.allowSpawnBeaconAccess = getConfig().getBoolean("spawn.allowbeaconaccess",false);
 	// Challenges
 	final Set<String> challengeList = getChallengeConfig().getConfigurationSection("challenges.challengeList").getKeys(false);
 	Settings.challengeList = challengeList;
@@ -1402,18 +1458,23 @@ public class ASkyBlock extends JavaPlugin {
 	Locale.challengeserrorNotCloseEnough = ChatColor.translateAlternateColorCodes('&',locale.getString("challenges.errorNotCloseEnough","You must be standing within 10 blocks of all required items."));
 	Locale.challengeserrorItemsNotThere = ChatColor.translateAlternateColorCodes('&',locale.getString("challenges.errorItemsNotThere","All required items must be close to you on your island!"));
 	Locale.challengeserrorIslandLevel = ChatColor.translateAlternateColorCodes('&',locale.getString("challenges.errorIslandLevel","Your island must be level [level] to complete this challenge!"));
+	Locale.challengeserrorRewardProblem = ChatColor.translateAlternateColorCodes('&',locale.getString("challenges.errorRewardProblem", "There was a problem giving your reward. Ask Admin to check log!"));
 	Locale.challengesguiTitle = ChatColor.translateAlternateColorCodes('&',locale.getString("challenges.guititle", "Challenges"));
 	Locale.challengeserrorYouAreMissing = ChatColor.translateAlternateColorCodes('&',locale.getString("challenges.erroryouaremissing", "You are missing"));
 	Locale.islandteleport = ChatColor.translateAlternateColorCodes('&',locale.getString("island.teleport","Teleporting you to your island. (/island help for more info)"));
 	Locale.islandcannotTeleport = ChatColor.translateAlternateColorCodes('&',locale.getString("island.cannotTeleport","You cannot teleport when falling!"));
 	Locale.islandnew = ChatColor.translateAlternateColorCodes('&',locale.getString("island.new","Creating a new island for you..."));
+	Locale.islandSubTitle = locale.getString("island.subtitle","by tastybento");
+	Locale.islandDonate = locale.getString("island.donate","ASkyBlock by tastybento, click here to donate via PayPal!");
+	Locale.islandTitle = locale.getString("island.title","A SkyBlock");
+	Locale.islandURL = locale.getString("island.url","https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZSBJG5J2E3B7U");
 	Locale.islanderrorCouldNotCreateIsland = ChatColor.translateAlternateColorCodes('&',locale.getString("island.errorCouldNotCreateIsland","Could not create your Island. Please contact a server moderator."));
 	Locale.islanderrorYouDoNotHavePermission = ChatColor.translateAlternateColorCodes('&',locale.getString("island.errorYouDoNotHavePermission", "You do not have permission to use that command!"));
 	Locale.islandresetOnlyOwner = ChatColor.translateAlternateColorCodes('&',locale.getString("island.resetOnlyOwner","Only the owner may restart this island. Leave this island in order to start your own (/island leave)."));
 	Locale.islandresetMustRemovePlayers = ChatColor.translateAlternateColorCodes('&',locale.getString("island.resetMustRemovePlayers","You must remove all players from your island before you can restart it (/island kick <player>). See a list of players currently part of your island using /island team."));
 	Locale.islandresetPleaseWait = ChatColor.translateAlternateColorCodes('&',locale.getString("island.resetPleaseWait","Please wait, generating new island"));
 	Locale.islandresetWait = ChatColor.translateAlternateColorCodes('&',locale.getString("island.resetWait","You have to wait [time] seconds before you can do that again."));
-	Locale.islandresetConfirm = ChatColor.translateAlternateColorCodes('&',locale.getString("island.resetConfirm", "Type /island confirm within 10 seconds to delete your island and restart!"));
+	Locale.islandresetConfirm = ChatColor.translateAlternateColorCodes('&',locale.getString("island.resetConfirm", "Type /island confirm within [seconds] seconds to delete your island and restart!"));
 	Locale.islandhelpIsland = ChatColor.translateAlternateColorCodes('&',locale.getString("island.helpIsland","start an island, or teleport to your island."));
 	Locale.islandhelpTeleport = ChatColor.translateAlternateColorCodes('&',locale.getString("island.helpTeleport", "teleport to your island."));
 	Locale.islandhelpControlPanel = ChatColor.translateAlternateColorCodes('&',locale.getString("island.helpControlPanel","open the island GUI."));
@@ -1481,6 +1542,7 @@ public class ASkyBlock extends JavaPlugin {
 	Locale.adminHelpreload = ChatColor.translateAlternateColorCodes('&',locale.getString("adminHelp.reload","reload configuration from file."));
 	Locale.adminHelptopTen = ChatColor.translateAlternateColorCodes('&',locale.getString("adminHelp.topTen","manually update the top 10 list"));
 	Locale.adminHelpregister = ChatColor.translateAlternateColorCodes('&',locale.getString("adminHelp.register","set a player's island to your location"));
+	Locale.adminHelpunregister = ChatColor.translateAlternateColorCodes('&',locale.getString("adminHelp.unregister","deletes a player without deleting the island blocks"));
 	Locale.adminHelpdelete = ChatColor.translateAlternateColorCodes('&',locale.getString("adminHelp.delete","delete an island (removes blocks)."));
 	Locale.adminHelpcompleteChallenge = ChatColor.translateAlternateColorCodes('&',locale.getString("adminHelp.completeChallenge","marks a challenge as complete"));
 	Locale.adminHelpresetChallenge = ChatColor.translateAlternateColorCodes('&',locale.getString("adminHelp.resetChallenge","marks a challenge as incomplete"));
@@ -1488,7 +1550,8 @@ public class ASkyBlock extends JavaPlugin {
 	Locale.adminHelppurge = ChatColor.translateAlternateColorCodes('&',locale.getString("adminHelp.purge","delete inactive islands older than [TimeInDays]."));
 	Locale.adminHelppurgeholes = ChatColor.translateAlternateColorCodes('&',locale.getString("adminHelp.purgeholes","free up island holes for reuse."));
 	Locale.adminHelpinfo = ChatColor.translateAlternateColorCodes('&',locale.getString("adminHelp.info","check information on the given player."));
-	Locale.adminHelpSetSpawn = ChatColor.translateAlternateColorCodes('&',locale.getString("adminHelp.setspawn","opens the spawn GUI for the island world."));
+	Locale.adminHelpSetSpawn = ChatColor.translateAlternateColorCodes('&',locale.getString("adminHelp.setspawn","sets the island world spawn to a location close to you."));
+	Locale.adminHelpSetRange = ChatColor.translateAlternateColorCodes('&',locale.getString("adminHelp.setrange","changes the island's protection range."));
 	Locale.adminHelpinfoIsland = ChatColor.translateAlternateColorCodes('&',locale.getString("adminHelp.infoisland","provide info on the nearest island."));
 	Locale.adminHelptp = ChatColor.translateAlternateColorCodes('&',locale.getString("adminHelp.tp", "Teleport to a player's island."));
 	Locale.reloadconfigReloaded = ChatColor.translateAlternateColorCodes('&',locale.getString("reload.configReloaded","Configuration reloaded from file."));
@@ -1567,6 +1630,18 @@ public class ASkyBlock extends JavaPlugin {
 	Locale.islandhelpCoop = ChatColor.translateAlternateColorCodes('&',locale.getString("coop.help", "temporarily give a player full access to your island"));
 	Locale.coopInvited = ChatColor.translateAlternateColorCodes('&',locale.getString("coop.invited", "[name] made [player] a coop player!"));
 	Locale.coopUseExpel = ChatColor.translateAlternateColorCodes('&',locale.getString("coop.useexpel", "Use expel to remove."));
+	Locale.lockIslandLocked = ChatColor.translateAlternateColorCodes('&',locale.getString("lock.islandlocked", "Island is locked to visitors"));
+	Locale.lockNowEntering = ChatColor.translateAlternateColorCodes('&',locale.getString("lock.nowentering", "Now entering [name]'s island"));
+	Locale.lockNowLeaving = ChatColor.translateAlternateColorCodes('&',locale.getString("lock.nowleaving", "Now leaving [name]'s island"));
+	Locale.lockLocking = ChatColor.translateAlternateColorCodes('&',locale.getString("lock.locking", "Locking island"));
+	Locale.lockUnlocking = ChatColor.translateAlternateColorCodes('&',locale.getString("lock.unlocking", "Unlocking island"));
+	Locale.islandHelpLock = ChatColor.translateAlternateColorCodes('&',locale.getString("island.helpLock", "Locks island so visitors cannot enter it"));
+	Locale.helpColor = ChatColor.translateAlternateColorCodes('&',locale.getString("island.helpColor", "&e"));
+	Locale.lockPlayerLocked = ChatColor.translateAlternateColorCodes('&',locale.getString("lock.playerlocked", "[name] locked the island"));
+	Locale.lockPlayerUnlocked = ChatColor.translateAlternateColorCodes('&',locale.getString("lock.playerunlocked", "[name] unlocked the island"));
+	Locale.lockEnteringSpawn = ChatColor.translateAlternateColorCodes('&',locale.getString("lock.enteringspawn", "Entering Spawn"));
+	Locale.lockLeavingSpawn = ChatColor.translateAlternateColorCodes('&',locale.getString("lock.leavingspawn", "Leaving Spawn"));
+
     }
 
     /*
@@ -1577,13 +1652,17 @@ public class ASkyBlock extends JavaPlugin {
     @Override
     public void onDisable() {
 	try {
-	    // Remove players from memory
-	    players.removeAllPlayers();
-	    //saveConfig();
+	    if (players != null) {
+		players.removeAllPlayers();
+	    }
+	    if (grid != null) {
+		grid.saveGrid();
+	    }
 	    saveWarpList();
 	    saveMessages();
+	    topTenSave();
 	} catch (final Exception e) {
-	    plugin.getLogger().severe("Something went wrong saving files!");
+	    getLogger().severe("Something went wrong saving files!");
 	    e.printStackTrace();
 	}
     }
@@ -1600,6 +1679,25 @@ public class ASkyBlock extends JavaPlugin {
 	saveDefaultConfig();
 	saveDefaultChallengeConfig();
 	saveDefaultLocale();
+	// Check to see if island distance is set or not
+	if (getConfig().getInt("island.distance",-1) < 1) {
+	    getLogger().severe("+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
+	    getLogger().severe("More set up is required. Go to config.yml and edit it.");
+	    getLogger().severe("");
+	    getLogger().severe("Make sure you set island distance. If upgrading, set it to what it was before.");
+	    getLogger().severe("");
+	    getLogger().severe("+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
+	    if (Settings.GAMETYPE.equals(Settings.GameType.ASKYBLOCK)) {
+		getCommand("island").setExecutor(new NotSetup(Reason.DISTANCE));
+		getCommand("asc").setExecutor(new NotSetup(Reason.DISTANCE));
+		getCommand("asadmin").setExecutor(new NotSetup(Reason.DISTANCE));
+	    } else {
+		getCommand("ai").setExecutor(new NotSetup(Reason.DISTANCE));
+		getCommand("aic").setExecutor(new NotSetup(Reason.DISTANCE));
+		getCommand("acid").setExecutor(new NotSetup(Reason.DISTANCE));
+	    }
+	    return;	    
+	}
 	loadPluginConfig();
 	if (Settings.useEconomy && !VaultHelper.setupEconomy()) {
 	    getLogger().warning("Could not set up economy! - Running without an economy.");
@@ -1652,10 +1750,6 @@ public class ASkyBlock extends JavaPlugin {
 		getIslandWorld();
 		// Load warps
 		loadWarpList();
-		// Load spawn
-		getSpawn();
-		// update the list
-		//updateTopTen();
 		// Minishop - must wait for economy to load before we can use econ 
 		getServer().getPluginManager().registerEvents(new ControlPanel(plugin), plugin);
 		if (getServer().getWorld(Settings.worldName).getGenerator() == null) {
@@ -1666,9 +1760,27 @@ public class ASkyBlock extends JavaPlugin {
 		    getLogger().severe("  # The next line must be the name of your world:");
 		    getLogger().severe("  " + Settings.worldName + ":");
 		    getLogger().severe("    generator: " + plugin.getName());
-		    getServer().getPluginManager().disablePlugin(plugin);
+		    if (Settings.GAMETYPE.equals(Settings.GameType.ASKYBLOCK)) {
+			getCommand("island").setExecutor(new NotSetup(Reason.GENERATOR));
+			getCommand("asc").setExecutor(new NotSetup(Reason.GENERATOR));
+			getCommand("asadmin").setExecutor(new NotSetup(Reason.GENERATOR));
+		    } else {
+			getCommand("ai").setExecutor(new NotSetup(Reason.GENERATOR));
+			getCommand("aic").setExecutor(new NotSetup(Reason.GENERATOR));
+			getCommand("acid").setExecutor(new NotSetup(Reason.GENERATOR));
+		    }
 		    return;
 		}
+		getServer().getScheduler().runTask(plugin, new Runnable() {
+		    @Override
+		    public void run() {
+			// load the list - order matters - grid first, then top ten to optimize upgrades
+			// Load grid
+			grid = new GridManager(plugin);
+			topTenLoad();
+			getLogger().info("All files loaded. Ready to play...");
+		    }
+		});
 		// This part will kill monsters if they fall into the water because it
 		// is acid
 		if (Settings.mobAcidDamage > 0D || Settings.animalAcidDamage > 0D) {
@@ -1707,7 +1819,7 @@ public class ASkyBlock extends JavaPlugin {
      * 
      * @param player
      *            - the player who is being checked
-     * @return - true if they are on their island, otherwise false
+     * @return - true if they are on an island they have rights to be on, otherwise false
      */
     protected boolean playerIsOnIsland(final Player player) {
 	// Make a list of test locations and test them
@@ -1725,10 +1837,17 @@ public class ASkyBlock extends JavaPlugin {
 	// Run through all the locations
 	for (Location islandTestLocation : islandTestLocations) {
 	    if (islandTestLocation != null) {
-		if (player.getLocation().getX() > islandTestLocation.getX() - Settings.island_protectionRange / 2
-			&& player.getLocation().getX() < islandTestLocation.getX() + Settings.island_protectionRange / 2
-			&& player.getLocation().getZ() > islandTestLocation.getZ() - Settings.island_protectionRange / 2
-			&& player.getLocation().getZ() < islandTestLocation.getZ() + Settings.island_protectionRange / 2) {
+		int protectionRange = Settings.island_protectionRange;
+		if (grid.getIslandAt(islandTestLocation) != null) {
+		    // Get the protection range for this location if possible
+		    if (grid.getProtectedIslandAt(islandTestLocation) != null) {
+			// We are in a protected island area.
+			return true;
+		    }
+		} else if (player.getLocation().getX() > islandTestLocation.getX() - protectionRange / 2
+			&& player.getLocation().getX() < islandTestLocation.getX() + protectionRange / 2
+			&& player.getLocation().getZ() > islandTestLocation.getZ() - protectionRange / 2
+			&& player.getLocation().getZ() < islandTestLocation.getZ() + protectionRange / 2) {
 		    return true;
 		}
 	    }
@@ -1761,7 +1880,13 @@ public class ASkyBlock extends JavaPlugin {
 	    return false;
 	}
 	if (target.getWorld().equals(islandTestLocation.getWorld())) {
-	    if (target.getLocation().getX() > islandTestLocation.getX() - Settings.island_protectionRange / 2
+	    if (grid.getIslandAt(islandTestLocation) != null) {
+		// Get the protection range for this location if possible
+		if (grid.getProtectedIslandAt(islandTestLocation) != null) {
+		    // We are in a protected island area.
+		    return true;
+		}
+	    } else if (target.getLocation().getX() > islandTestLocation.getX() - Settings.island_protectionRange / 2
 		    && target.getLocation().getX() < islandTestLocation.getX() + Settings.island_protectionRange / 2
 		    && target.getLocation().getZ() > islandTestLocation.getZ() - Settings.island_protectionRange / 2
 		    && target.getLocation().getZ() < islandTestLocation.getZ() + Settings.island_protectionRange / 2) {
@@ -1778,6 +1903,19 @@ public class ASkyBlock extends JavaPlugin {
      * @return
      */
     protected boolean locationIsOnIsland(final Player player, final Location loc) {
+	// Get the player's island from the grid if it exists
+	Island island = grid.getIslandAt(loc);
+	if (island != null) {
+	    // On an island in the grid
+	    if (island.onIsland(loc) && island.getMembers().contains(player.getUniqueId())) {
+		// In a protected zone but is on the list of acceptable players
+		return true;
+	    } else {
+		// Not allowed
+		return false;
+	    }
+	}
+	// Not in the grid, so do it the old way
 	// Make a list of test locations and test them
 	Set<Location> islandTestLocations = new HashSet<Location>();
 	if (players.hasIsland(player.getUniqueId())) {
@@ -1814,7 +1952,14 @@ public class ASkyBlock extends JavaPlugin {
 	// Run through all the locations
 	for (Location islandTestLocation : islandTestLocations) {
 	    if (loc.getWorld().equals(islandTestLocation.getWorld())) {
-		if (loc.getX() > islandTestLocation.getX() - Settings.island_protectionRange / 2
+		if (grid.getIslandAt(islandTestLocation) != null) {
+		    // Get the protection range for this location if possible
+		    Island island = grid.getProtectedIslandAt(islandTestLocation);
+		    if (island != null) {
+			// We are in a protected island area.
+			return island.getCenter();
+		    }
+		} else if (loc.getX() > islandTestLocation.getX() - Settings.island_protectionRange / 2
 			&& loc.getX() < islandTestLocation.getX() + Settings.island_protectionRange / 2
 			&& loc.getZ() > islandTestLocation.getZ() - Settings.island_protectionRange / 2
 			&& loc.getZ() < islandTestLocation.getZ() + Settings.island_protectionRange / 2) {
@@ -1932,12 +2077,10 @@ public class ASkyBlock extends JavaPlugin {
 		    }
 		    if (!pl.isFlying()) {
 			// Move player to spawn
-			if (plugin.getSpawn().getSpawnLoc() != null) {
+			Island spawn = grid.getSpawn();
+			if (spawn != null) {
 			    // go to island spawn
-			    pl.teleport(plugin.getSpawn().getSpawnLoc());
-			    pl.sendBlockChange(plugin.getSpawn().getSpawnLoc()
-				    ,plugin.getSpawn().getSpawnLoc().getBlock().getType()
-				    ,plugin.getSpawn().getSpawnLoc().getBlock().getData());
+			    pl.teleport(acidWorld.getSpawnLocation());
 			    getLogger().warning("During island deletion player " + pl.getName() + " sent to spawn.");
 			} else {
 			    if (!pl.performCommand(Settings.SPAWNCOMMAND)) {
@@ -1959,48 +2102,126 @@ public class ASkyBlock extends JavaPlugin {
     /**
      * Transfers ownership of an island from one player to another
      * 
-     * @param playerOne
-     * @param playerTwo
+     * @param oldOwner
+     * @param newOwner
      * @return
      */
-    protected boolean transferIsland(final UUID playerOne, final UUID playerTwo) {
-	if (players.hasIsland(playerOne)) {
-	    players.setHasIsland(playerTwo, true);
-	    players.setIslandLocation(playerTwo, players.getIslandLocation(playerOne));
-	    players.setIslandLevel(playerTwo, players.getIslandLevel(playerOne));
-	    players.setTeamIslandLocation(playerTwo, null);
-	    players.setHasIsland(playerOne, false);
-	    players.setIslandLocation(playerOne, null);
-	    players.setIslandLevel(playerOne, 0);
-	    players.setTeamIslandLocation(playerOne, players.getIslandLocation(playerOne));
+    protected boolean transferIsland(final UUID oldOwner, final UUID newOwner) {
+	if (players.hasIsland(oldOwner)) {
+	    Location islandLoc = players.getIslandLocation(oldOwner);
+	    players.setHasIsland(newOwner, true);
+	    players.setIslandLocation(newOwner, islandLoc);
+	    //players.setIslandLevel(newOwner, players.getIslandLevel(oldOwner));
+	    players.setTeamIslandLocation(newOwner, null);
+	    players.setHasIsland(oldOwner, false);
+	    players.setIslandLocation(oldOwner, null);
+	    //players.setIslandLevel(oldOwner, 0);
+	    players.setTeamIslandLocation(oldOwner, islandLoc);
+	    // Update grid
+	    Island island = grid.getIslandAt(islandLoc);
+	    if (island != null) {
+		grid.setIslandOwner(island, newOwner);
+	    }
+	    // Update top ten list
+	    // Remove old owner score from top ten list
+	    topTenList.remove(oldOwner);
 	    return true;
 	}
 	return false;
     }
 
+    /**
+     * Loads the top ten from the file system topten.yml. If it does not exist then the top ten is created
+     */
+    protected void topTenLoad() {
+	topTenList.clear();
+	// Check to see if the top ten list exists
+	File topTenFile = new File(getDataFolder(),"topten.yml");
+	if (!topTenFile.exists()) {
+	    getLogger().warning("Top ten file does not exist - creating it. This could take some time with a large number of players");
+	    topTenCreate();
+	    getLogger().warning("Completed top ten creation.");
+	} else {
+	    // Load the top ten
+	    YamlConfiguration topTenConfig = loadYamlFile("topten.yml");
+	    // Load the values
+	    if (topTenConfig.isSet("topten")) {
+		for (String playerUUID : topTenConfig.getConfigurationSection("topten").getKeys(false)) {
+		    //getLogger().info(playerUUID);
+		    try {
+			UUID uuid = UUID.fromString(playerUUID);
+			//getLogger().info(uuid.toString());
+			int level = topTenConfig.getInt("topten." + playerUUID);
+			//getLogger().info("Level = " + level);
+			topTenAddEntry(uuid, level);
+		    } catch (Exception e) {
+			e.printStackTrace();
+			getLogger().severe("Problem loading top ten list - recreating - this may take some time");
+			topTenCreate();
+		    }
+		}
+	    }
+	}
+    }
 
     /**
-     * Generates a sorted map of islands for the Top Ten list
+     * Adds a player to the top ten, if the level is good enough
+     * @param ownerUUID
+     * @param level
      */
-    protected void updateTopTen() {
-	Map<UUID, Integer> top = new HashMap<UUID, Integer>();
+    protected void topTenAddEntry(UUID ownerUUID, int level) {
+	// Special case for removals
+	if (level <1 ) {
+	    if (topTenList.containsKey(ownerUUID)) {
+		topTenList.remove(ownerUUID);
+	    }
+	    return;
+	}
+	// Only keep the top 20
+	topTenList.put(ownerUUID, level);
+	topTenList = MapUtil.sortByValue(topTenList);
+	//getLogger().info("DEBUG: +" + level + ": " + topTenList.values().toString());
+    }
+
+    /**
+     * Removes ownerUUID from the top ten list
+     * @param ownerUUID
+     */
+    protected void topTenRemoveEntry(UUID ownerUUID) {
+	topTenList.remove(ownerUUID);
+    }
+    /**
+     * Generates a sorted map of islands for the Top Ten list from all player files
+     */
+    protected void topTenCreate() {
+	// This map is a list of owner and island level
+	YamlConfiguration player = new YamlConfiguration();
+	int index = 1;
 	for (final File f : playersFolder.listFiles()) {
 	    // Need to remove the .yml suffix
 	    String fileName = f.getName();
 	    if (fileName.endsWith(".yml")) {
 		try {
-		    final UUID playerUUID = UUID.fromString(fileName.substring(0, fileName.length() - 4));
+		    String playerUUIDString = fileName.substring(0, fileName.length() - 4);
+		    final UUID playerUUID = UUID.fromString(playerUUIDString);
 		    if (playerUUID == null) {
 			getLogger().warning("Player file contains erroneous UUID data.");
-			getLogger().info("Looking at " + fileName.substring(0, fileName.length() - 4));
+			getLogger().info("Looking at " + playerUUIDString);
 		    }
-		    Players player = new Players(this, playerUUID);    
-		    if (player.getIslandLevel() > 0) {
-			if (!player.inTeam()) {
-			    top.put(player.getPlayerUUID(), player.getIslandLevel());
-			} else if (player.getTeamLeader() != null) {
-			    if (player.getTeamLeader().equals(player.getPlayerUUID())) {
-				top.put(player.getPlayerUUID(), player.getIslandLevel());
+		    player.load(f);
+		    index++;
+		    if (index%1000 == 0) {
+			getLogger().info("Processed " + index + " players");
+		    }
+		    //Players player = new Players(this, playerUUID);
+		    int islandLevel = player.getInt("islandLevel",0);
+		    String teamLeaderUUID = player.getString("teamLeader","");
+		    if (islandLevel > 0) {
+			if (!player.getBoolean("hasTeam")) {
+			    topTenAddEntry(playerUUID, islandLevel);
+			} else if (!teamLeaderUUID.isEmpty()) {
+			    if (teamLeaderUUID.equals(playerUUIDString)) {
+				topTenAddEntry(playerUUID, islandLevel);
 			    }
 			}
 		    }
@@ -2009,9 +2230,36 @@ public class ASkyBlock extends JavaPlugin {
 		}
 	    }
 	}
-	// Now sort the list
-	top = MapUtil.sortByValue(top);
-	topTenList = top;
+	getLogger().info("Processed " + index + " players");
+	// Save the top ten
+	topTenSave();
+    }
+
+    protected void topTenSave() {
+	if (topTenList == null) {
+	    return;
+	}
+	getLogger().info("Saving top ten list");
+	// Make file
+	File topTenFile = new File(getDataFolder(),"topten.yml");
+	// Make configuration
+	YamlConfiguration config = new YamlConfiguration();
+	// Save config
+
+	int rank = 0;
+	for (Map.Entry<UUID,Integer> m : topTenList.entrySet()) {
+	    if (rank++ == 10) {
+		break;
+	    }
+	    config.set("topten." + m.getKey().toString(), m.getValue());
+	}
+	try {
+	    config.save(topTenFile);
+	    getLogger().info("Saved top ten list");
+	} catch (Exception e) {
+	    getLogger().severe("Could not save top ten list!");
+	    e.printStackTrace();
+	}
     }
 
     /**
@@ -2022,7 +2270,7 @@ public class ASkyBlock extends JavaPlugin {
 	    challengeConfigFile = new File(getDataFolder(), "challenges.yml");
 	}
 	if (!challengeConfigFile.exists()) {            
-	    plugin.saveResource("challenges.yml", false);
+	    saveResource("challenges.yml", false);
 	}
     }
 
@@ -2144,6 +2392,28 @@ public class ASkyBlock extends JavaPlugin {
 	    }
 	}
     }
+
+    /**
+     * Tells all online team members something happened
+     * @param playerUUID
+     * @param message
+     */
+    protected void tellTeam(UUID playerUUID, String message) {
+	//getLogger().info("DEBUG: tell offline team called");
+	if (!players.inTeam(playerUUID)) {
+	    //getLogger().info("DEBUG: player is not in a team");
+	    return;
+	}
+	UUID teamLeader = players.getTeamLeader(playerUUID);
+	List<UUID> teamMembers = players.getMembers(teamLeader);
+	for (UUID member : teamMembers) {
+	    //getLogger().info("DEBUG: trying UUID " + member.toString());
+	    if (!member.equals(playerUUID) && getServer().getPlayer(member) != null) {
+		// Online player
+		getServer().getPlayer(member).sendMessage(message);
+	    }
+	}
+    }
     /**
      * Sets a message for the player to receive next time they login
      * @param player
@@ -2184,7 +2454,10 @@ public class ASkyBlock extends JavaPlugin {
 	return playerMessages;
     }
 
-    protected boolean saveMessages() {
+    protected void saveMessages() {
+	if (messageStore == null) {
+	    return;
+	}
 	plugin.getLogger().info("Saving offline messages...");
 	try {
 	    // Convert to a serialized string
@@ -2195,10 +2468,10 @@ public class ASkyBlock extends JavaPlugin {
 	    // Convert to YAML
 	    messageStore.set("messages", offlineMessages);
 	    saveYamlFile(messageStore, "messages.yml");
-	    return true;
+	    return;
 	} catch (Exception e) {
 	    e.printStackTrace();
-	    return false;
+	    return;
 	}
     }
 
@@ -2322,7 +2595,7 @@ public class ASkyBlock extends JavaPlugin {
 	// Reset the island level
 	players.setIslandLevel(player.getUniqueId(), 0);
 	players.save(player.getUniqueId());
-	updateTopTen();
+	topTenAddEntry(player.getUniqueId(),0);
 	// Update the inventory
 	player.updateInventory();
 	/*
@@ -2334,16 +2607,6 @@ public class ASkyBlock extends JavaPlugin {
 	// Clear any potion effects
 	for (PotionEffect effect : player.getActivePotionEffects())
 	    player.removePotionEffect(effect.getType());	
-    }
-
-    /**
-     * @return the spawn
-     */
-    protected Spawn getSpawn() {
-	if (spawn == null) {
-	    spawn = new Spawn(this);
-	}
-	return spawn;
     }
 
     /**
@@ -2614,6 +2877,13 @@ public class ASkyBlock extends JavaPlugin {
      */
     public void setCalculatingLevel(boolean calculatingLevel) {
 	this.calculatingLevel = calculatingLevel;
+    }
+
+    /**
+     * @return the grid
+     */
+    public GridManager getGrid() {
+	return grid;
     }
 
 }

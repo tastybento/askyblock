@@ -28,7 +28,7 @@ import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.util.noise.PerlinOctaveGenerator;
 
 /**
- * @author ben
+ * @author tastybento
  * Creates the world
  */
 public class ChunkGeneratorWorld extends ChunkGenerator {

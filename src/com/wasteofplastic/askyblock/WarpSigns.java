@@ -31,7 +31,7 @@ import org.bukkit.event.block.SignChangeEvent;
 /**
  * Handles warping in ASkyBlock Players can add one sign
  * 
- * @author ben
+ * @author tastybento
  * 
  */
 public class WarpSigns implements Listener {

@@ -109,8 +109,18 @@ challenges:
    errorIslandLevel: "Your island must be level [level] to complete this challenge!"
    guititle: "aSkyBlock Challenges"
    erroryouaremissing: "You are missing"
+   errorRewardProblem: "There was a problem giving your reward. Ask Admin to check log!"
 #/island
 island:
+   # Titles for V1.8+ servers only. Set to '' to remove.
+   # Colors are fixed as blue and gold for now.
+   # Only works on 1.8+ servers
+   title: "A SkyBlock"
+   subtitle: "by tastybento"
+   # This section is to solicit donations from players. Feel free to set to '' to remove :-)
+   donate: "ASkyBlock by tastybento, click here to donate via PayPal!"
+   url: "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZSBJG5J2E3B7U"
+
    teleport: "Teleporting you to your island. (/island help for more info)"
    cannotTeleport: "You cannot teleport when falling!"
    new: "Creating a new island for you..."
@@ -123,7 +133,7 @@ island:
    #Cool down warning - [time] is number of seconds left
    resetWait: "You have to wait [time] seconds before you can do that again."
    #Confirm
-   resetConfirm: "Type /island confirm within 10 seconds to delete your island and restart!"
+   resetConfirm: "Type /island confirm within [seconds] seconds to delete your island and restart!"
    resetYouHave: "You have [number] resets left."
    resetNoMore: "No more resets are allowed for your island!"
    resetTo: "Cleared reset limit"
@@ -167,6 +177,10 @@ island:
    islandLevelis: "Island level is"
    #/island expel <player>
    helpExpel: "force a player from your island."
+   helpLock: "Locks island so visitors cannot enter it"
+   # The color that is placed before the /commands in /island help
+   # See http://ess.khhq.net/mc/ for a list
+   helpColor: "&e"
 
 ###################
 #/island commands #
@@ -253,29 +267,21 @@ minishop:
 #Help
 adminHelp:
    help: "Admin Commands:"
-   #/acid reload:
    reload: "reload configuration from file."
-   #/acid top ten:
    topTen: "manually update the top 10 list"
-   #/acid register <player>:
    register: "set a player's island to your location"
-   #/acid delete <player>:
+   unregister: "deletes a player without deleting the island blocks"
    delete: "delete an island (removes blocks)."
-   #/acid completechallenge <challengename> <player>
    completeChallenge: "marks a challenge as complete"
-   #/acid resetchallenge <challengename> <player>
    resetChallenge: "marks a challenge as incomplete"
-   #/acid resetallchallenges <player>:
    resetAllChallenges: "resets all of the player's challenges"
-   #/acid purge [TimeInDays]:
    purge: "delete inactive islands older than [TimeInDays]."
    purgeholes: "free up island holes for reuse."
-   #/acid info <player>:
    info: "info for the given player."
-   #/acid info
    infoisland: "provide info on the nearest island."
-   #/acid clear reset
    clearreset: "resets the island reset limit for player."
+   setspawn: "sets the island world spawn to a location close to you."
+   setrange: "changes the island's protection range."
 
 #acid reload
 reload:
@@ -310,7 +316,7 @@ delete:
 #register
 register:
    settingIsland: "Set [name]'s island to the nearest island."
-   errorBedrockNotFound: "Bedrock not found: unable to set the island!"
+   errorBedrockNotFound: "Could not register the island!"
 
 #info
 adminInfo:
@@ -384,4 +390,13 @@ coop:
    onyourteam: "Player is already on your team!"
    invited: "[name] made [player] a coop player!"
    useexpel: "Use expel to remove."
- 
+
+lock:
+   islandlocked: "Island is locked to visitors"
+   nowentering: "Now entering [name]'s island"
+   nowleaving: "Now leaving [name]'s island"
+   locking: "Locking island"
+   unlocking: "Unlocking island"
+   enteringspawn: "Entering Spawn"
+   leavingspawn: "Leaving Spawn"
+

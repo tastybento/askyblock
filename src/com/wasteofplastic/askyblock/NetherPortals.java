@@ -101,7 +101,7 @@ public class NetherPortals implements Listener {
 	    if (!event.getPlayer().isOp() && !VaultHelper.checkPerm(event.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
 		// Portals use is always allowed around the spawn
 		if (!plugin.locationIsOnIsland(event.getPlayer(),event.getPlayer().getLocation())
-			&& !plugin.getSpawn().isAtSpawn(event.getPlayer().getLocation())) {
+			&& !plugin.getGrid().isAtSpawn(event.getPlayer().getLocation())) {
 		    event.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
 		    event.setCancelled(true);
 		    return;

@@ -70,6 +70,7 @@ public class AdminCmd implements CommandExecutor {
 	if (!(sender instanceof Player)) {
 	    sender.sendMessage(ChatColor.YELLOW + "/" + label + " reload:" + ChatColor.WHITE + " " + Locale.adminHelpreload);
 	    sender.sendMessage(ChatColor.YELLOW + "/" + label + " topten:" + ChatColor.WHITE + " " + Locale.adminHelptopTen);
+	    sender.sendMessage(ChatColor.YELLOW + "/" + label + " unregister <player>:" + ChatColor.WHITE + " " + Locale.adminHelpunregister);
 	    sender.sendMessage(ChatColor.YELLOW + "/" + label + " delete <player>:" + ChatColor.WHITE + " " + Locale.adminHelpdelete);
 	    sender.sendMessage(ChatColor.YELLOW + "/" + label + " completechallenge <challengename> <player>:" + ChatColor.WHITE
 		    + " " + Locale.adminHelpcompleteChallenge);
@@ -96,12 +97,18 @@ public class AdminCmd implements CommandExecutor {
 	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.register") || player.isOp()) {
 		player.sendMessage(ChatColor.YELLOW + "/" + label + " register <player>:" + ChatColor.WHITE + " " + Locale.adminHelpregister);
 	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.unregister") || player.isOp()) {
+		player.sendMessage(ChatColor.YELLOW + "/" + label + " unregister <player>:" + ChatColor.WHITE + " " + Locale.adminHelpunregister);
+	    }
 	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.delete") || player.isOp()) {
 		player.sendMessage(ChatColor.YELLOW + "/" + label + " delete <player>:" + ChatColor.WHITE + " " + Locale.adminHelpdelete);
 	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.deleteisland") || player.isOp()) {
+		player.sendMessage(ChatColor.YELLOW + "/" + label + " deleteisland confirm:" + ChatColor.WHITE + " " + Locale.adminHelpdelete);
+	    }
 	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.purge") || player.isOp()) {
 		player.sendMessage(ChatColor.YELLOW + "/" + label + " purge [TimeInDays]:" + ChatColor.WHITE + " " + Locale.adminHelppurge);
-		player.sendMessage(ChatColor.YELLOW + "/" + label + " purge holes:" + ChatColor.WHITE + " " + Locale.adminHelppurgeholes);
+		//player.sendMessage(ChatColor.YELLOW + "/" + label + " purge holes:" + ChatColor.WHITE + " " + Locale.adminHelppurgeholes);
 
 	    }
 	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.topten") || player.isOp()) {
@@ -125,6 +132,9 @@ public class AdminCmd implements CommandExecutor {
 	    }	    
 	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.setspawn") || player.isOp()) {
 		player.sendMessage(ChatColor.YELLOW + "/" + label + " setspawn:" + ChatColor.WHITE + " " + Locale.adminHelpSetSpawn);
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.setrange") || player.isOp()) {
+		player.sendMessage(ChatColor.YELLOW + "/" + label + " setrange:" + ChatColor.WHITE + " " + Locale.adminHelpSetRange);
 	    }
 	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.tp") || player.isOp()) {
 		player.sendMessage(ChatColor.YELLOW + "/" + label + " tp <player>:" + ChatColor.WHITE + " " + Locale.adminHelptp);
@@ -158,7 +168,8 @@ public class AdminCmd implements CommandExecutor {
 		// Admin : reload, register, delete and purge
 		if (split[0].equalsIgnoreCase("reload") || split[0].equalsIgnoreCase("register")
 			|| split[0].equalsIgnoreCase("delete") || split[0].equalsIgnoreCase("purge")
-			|| split[0].equalsIgnoreCase("confirm") || split[0].equalsIgnoreCase("setspawn")) {
+			|| split[0].equalsIgnoreCase("confirm") || split[0].equalsIgnoreCase("setspawn")
+			|| split[0].equalsIgnoreCase("deleteisland") || split[0].equalsIgnoreCase("setrange")) {
 		    if (!checkAdminPerms(player, split)) {
 			player.sendMessage(ChatColor.RED + Locale.errorNoPermission);
 			return true;
@@ -178,6 +189,11 @@ public class AdminCmd implements CommandExecutor {
 	    help(sender,label);
 	    return true;
 	case 1:
+	    if (split[0].equalsIgnoreCase("deleteisland")) {
+		sender.sendMessage(ChatColor.RED + "Use " + ChatColor.BOLD + "deleteisland confirm" 
+			+ ChatColor.RESET + "" + ChatColor.RED + " to delete the island you are on.");
+		return true;
+	    }
 	    if (split[0].equalsIgnoreCase("setspawn")) {
 		// Find the closest island
 		if (!(sender instanceof Player)) {
@@ -185,68 +201,53 @@ public class AdminCmd implements CommandExecutor {
 		    return true;
 		}
 		Player p = (Player)sender;
-		// TODO: The island location needs to be calculated based on the grid, NOT the bedrock location
-
-
-		Location closestBedRock = null;
-		double distance = 0;
-		for (int x = -Settings.islandDistance; x< Settings.islandDistance; x++) {
-		    for (int z = -Settings.islandDistance; z< Settings.islandDistance; z++) {
-
-			Location blockLoc = new Location(p.getWorld(),x + p.getLocation().getBlockX(),Settings.island_level,z + p.getLocation().getBlockZ());
-			if (blockLoc.getBlock().getType().equals(Material.BEDROCK)) {
-			    if (closestBedRock == null) {
-				closestBedRock = blockLoc.clone();
-				distance = closestBedRock.distanceSquared(p.getLocation());
-			    } else {
-				// Find out if this is closer to the player
-
-				double newDist = blockLoc.distanceSquared(p.getLocation());
-				if (distance > newDist) {
-				    closestBedRock = blockLoc.clone();
-				    distance = newDist;
-				}
-			    }
-			}
-		    }
-		}
-
-		// TODO: find closest island locus and check file syste,
-
-		if (closestBedRock == null) {
-		    sender.sendMessage(ChatColor.RED + "Sorry, could not find an island. Move closer?");
+		// Island spawn must be in the island world
+		if (!p.getLocation().getWorld().getName().equals(Settings.worldName)) {
+		    p.sendMessage(ChatColor.RED + Locale.errorWrongWorld);
 		    return true;
 		}
-		// Find out whose island this is
-		//plugin.getLogger().info("DEBUG: closest bedrock: " + closestBedRock.toString());
-		UUID target = plugin.getPlayers().getPlayerFromIslandLocation(closestBedRock);
-		if (target == null) {
-		    sender.sendMessage(ChatColor.GREEN + "This island is not owned by anyone right now.");
-		} else {
-		    sender.sendMessage(ChatColor.GREEN + "This island was owned by " + plugin.getPlayers().getName(target));
-		    if (plugin.getPlayers().inTeam(target)) {
-			sender.sendMessage(ChatColor.RED + "That is a team island. Remove the team members first!");
-			return true;
+		// The island location is calculated based on the grid
+		Location closestIsland = getClosestIsland(((Player)sender).getLocation());
+		Island oldSpawn = plugin.getGrid().getSpawn();
+		Island newSpawn = plugin.getGrid().getIslandAt(closestIsland);
+		if (newSpawn != null && newSpawn.isSpawn()) {
+		    // Already spawn, so just set the world spawn coords
+		    ASkyBlock.getIslandWorld().setSpawnLocation(p.getLocation().getBlockX(), p.getLocation().getBlockY(), p.getLocation().getBlockZ());
+		    sender.sendMessage(ChatColor.GREEN + "Set island spawn to your location.");
+		    return true;
+		}
+		// Space otherwise occupied
+		if (newSpawn != null) {
+		    UUID target = plugin.getPlayers().getPlayerFromIslandLocation(closestIsland);
+		    sender.sendMessage(ChatColor.RED + "Island exists at " + ChatColor.YELLOW + newSpawn.getCenter().getBlockX() + "," + newSpawn.getCenter().getBlockZ() + "!");
+		    if (target != null) {
+			sender.sendMessage(ChatColor.RED + "Owned by: " + plugin.getPlayers().getName(target));
 		    }
+		    sender.sendMessage(ChatColor.RED + "Unregister the owner first.");
+		    return false;
 		}
-		// Set the spawn
-		plugin.getSpawn().setSpawnLoc(closestBedRock,((Player)sender).getLocation());
-		// Set it for the world too
-		closestBedRock.getWorld().setSpawnLocation(((Player)sender).getLocation().getBlockX(),closestBedRock.getBlockY(),closestBedRock.getBlockZ());
-		// Remove player's ownership and set them to having no island
-		if (target != null) {
-		    plugin.getPlayers().setIslandLevel(target, 0);
-		    plugin.getPlayers().setHasIsland(target, false);
-		    plugin.getPlayers().setHomeLocation(target, null);
-		    plugin.getPlayers().setIslandLocation(target, null);
-		    plugin.getPlayers().save(target);
+		if (oldSpawn != null) {
+		    sender.sendMessage(ChatColor.GOLD + "Changing spawn island location. Warning: old spawn island location at "
+			    + oldSpawn.getCenter().getBlockX() + "," + oldSpawn.getCenter().getBlockZ()
+			    + " will be at risk of being overwritten with new islands. Recommend to clear that old area.");
+		    plugin.getGrid().deleteSpawn();
 		}
-		sender.sendMessage(ChatColor.GREEN + "Converted island to spawn. (to undo, use " + label + " register <playername>");
-		sender.sendMessage(ChatColor.GREEN + "Settings are in spawn.yml");
-		sender.sendMessage(ChatColor.GREEN + "Set spawn location.");
-		plugin.getSpawn().save();
+		// New spawn site is free, so make it official
+		newSpawn = plugin.getGrid().addIsland(closestIsland.getBlockX(), closestIsland.getBlockZ());
+		plugin.getGrid().setSpawn(newSpawn);
+		ASkyBlock.getIslandWorld().setSpawnLocation(p.getLocation().getBlockX(), p.getLocation().getBlockY(), p.getLocation().getBlockZ());
+		sender.sendMessage(ChatColor.GREEN + "Set island spawn to your location " + p.getLocation().getBlockX() + "," + p.getLocation().getBlockZ());
+		sender.sendMessage(ChatColor.YELLOW + "Spawn island center " + newSpawn.getCenter().getBlockX() + "," + newSpawn.getCenter().getBlockZ());
+		sender.sendMessage(ChatColor.YELLOW + "Spawn island limits " + newSpawn.getMinX() + "," + newSpawn.getMinZ() + " to " 
+			+ (newSpawn.getMinX()+ newSpawn.getIslandDistance() -1) + "," + (newSpawn.getMinZ() + newSpawn.getIslandDistance() -1));
+		sender.sendMessage(ChatColor.YELLOW + "Spawn protection range = " + newSpawn.getProtectionSize());
+		sender.sendMessage(ChatColor.YELLOW + "Spawn protection coords " + newSpawn.getMinProtectedX() + ", " + newSpawn.getMinProtectedZ() + " to "+ (newSpawn.getMinProtectedX() + newSpawn.getProtectionSize() -1)
+			+ ", " + (newSpawn.getMinProtectedZ() + newSpawn.getProtectionSize() -1));
+		if (newSpawn.isLocked()) {
+		    sender.sendMessage(ChatColor.RED + "Spawn is locked!");
+		}
 		return true;
-	    } else if (split[0].equalsIgnoreCase("info")) {
+	    } else if (split[0].equalsIgnoreCase("info") || split[0].equalsIgnoreCase("setrange")) {
 		// Find the closest island
 		if (!(sender instanceof Player)) {
 		    sender.sendMessage(ChatColor.RED + "This command must be used in-game.");
@@ -257,9 +258,32 @@ public class AdminCmd implements CommandExecutor {
 		    sender.sendMessage(ChatColor.RED + "Sorry, could not find an island. Move closer?");
 		    return true;
 		}
+		/*
+		Island island = plugin.getGrid().getIslandAt(closestIsland);
+		plugin.getLogger().info("DEBUG: minimums " + island.getMinX() + ", " + island.getMinZ());
+		plugin.getLogger().info("DEBUG: min protection " + island.getMinProtectedX() + ", " + island.getMinProtectedZ());
+		plugin.getLogger().info("DEBUG: max protection " + (island.getMinProtectedX() + island.getProtectionSize() -1)
+			+ ", " + (island.getMinProtectedZ() + island.getProtectionSize() -1));
+		plugin.getLogger().info("DEBUG: center = " + island.getCenter());
+		plugin.getLogger().info("DEBUG: protection range = " + island.getProtectionSize());
+		plugin.getLogger().info("DEBUG: island dist = " + island.getIslandDistance());
+		 */
 		//plugin.getLogger().info("DEBUG: location = " + closestIsland.toString());
 		// Find out whose island this is
 		//plugin.getLogger().info("DEBUG: closest bedrock: " + closestBedRock.toString());
+		Island island = plugin.getGrid().getIslandAt(closestIsland);
+		if (island != null && island.isSpawn()) {
+		    sender.sendMessage(ChatColor.GREEN + "This is spawn island");
+		    sender.sendMessage(ChatColor.YELLOW + "Spawn max coords " + island.getMinX() + "," + island.getMinZ() + " to " 
+			    + (island.getMinX()+ island.getIslandDistance() -1) + "," + (island.getMinZ() + island.getIslandDistance() -1));
+		    sender.sendMessage(ChatColor.YELLOW + "Spawn protection range = " + island.getProtectionSize());
+		    sender.sendMessage(ChatColor.YELLOW + "Spawn protection coords " + island.getMinProtectedX() + ", " + island.getMinProtectedZ() + " to "+ (island.getMinProtectedX() + island.getProtectionSize() -1)
+			    + ", " + (island.getMinProtectedZ() + island.getProtectionSize() -1));
+		    if (island.isLocked()) {
+			sender.sendMessage(ChatColor.RED + "Spawn is locked!");
+		    }
+		    return true;
+		}
 		UUID target = plugin.getPlayers().getPlayerFromIslandLocation(closestIsland);
 		if (target == null) {
 		    sender.sendMessage(ChatColor.RED + "This island is not owned by anyone right now.");
@@ -331,12 +355,11 @@ public class AdminCmd implements CommandExecutor {
 		    ControlPanel.loadShop();
 		}
 		ControlPanel.loadControlPanel();
-		plugin.getSpawn().reload();
 		sender.sendMessage(ChatColor.YELLOW + Locale.reloadconfigReloaded);
 		return true;
 	    } else if (split[0].equalsIgnoreCase("topten")) {
 		sender.sendMessage(ChatColor.YELLOW + Locale.adminTopTengenerating);
-		plugin.updateTopTen();
+		plugin.topTenCreate();
 		sender.sendMessage(ChatColor.YELLOW + Locale.adminTopTenfinished);
 		return true;
 	    } else if (split[0].equalsIgnoreCase("purge")) {
@@ -361,6 +384,91 @@ public class AdminCmd implements CommandExecutor {
 		return false;
 	    }
 	case 2:
+	    // Delete the island you are on
+	    if (split[0].equalsIgnoreCase("deleteisland")) {
+		if (!split[1].equalsIgnoreCase("confirm")) {
+		    sender.sendMessage(ChatColor.RED + "Use " + ChatColor.BOLD + "deleteisland confirm" 
+			    + ChatColor.RESET + "" + ChatColor.RED + " to delete the island you are on.");
+		    return true;
+		}
+		// Get the island I am on
+		Island island = plugin.getGrid().getIslandAt(((Player)sender).getLocation());
+		if (island == null) {
+		    sender.sendMessage(ChatColor.RED + "Cannot identify island.");
+		    return true;
+		}
+		// Try to get the owner of this island
+		UUID owner = island.getOwner();
+		String name = "unknown";
+		if (owner != null) {
+		    name = plugin.getPlayers().getName(owner);
+		    sender.sendMessage(ChatColor.RED + "This island is owned by " + name);
+		    sender.sendMessage(ChatColor.RED + "Use " + ChatColor.BOLD + "delete " + name
+			    + ChatColor.RESET + "" + ChatColor.RED + " to delete the player instead.");
+		    return true;
+		} else {
+		    sender.sendMessage(ChatColor.YELLOW + Locale.deleteremoving.replace("[name]", name));
+		    new DeleteIslandChunk(plugin,island.getCenter());
+		    return true;
+		}
+	    }
+	    // Set protection for the island the player is on
+	    if (split[0].equalsIgnoreCase("setrange")) {
+		if (!(sender instanceof Player)) {
+		    sender.sendMessage(ChatColor.RED + "Must use command in-game while on an island!");
+		    return true; 
+		}
+		Island island  = plugin.getGrid().getIslandAt(((Player)sender).getLocation());
+		// Check if island exists
+		if (island == null) {
+		    sender.sendMessage(ChatColor.RED + "You are not in an island space!");
+		    return true;
+		} else {
+		    int newRange = 10;
+		    int maxRange = Settings.islandDistance;
+		    // If spawn do something different
+		    if (island.isSpawn()) {
+			try {
+			    newRange = Integer.valueOf(split[1]);
+			} catch (Exception e) {
+			    sender.sendMessage(ChatColor.RED + "Invalid range!");
+			    return true;
+			}
+			sender.sendMessage(ChatColor.GREEN + "This is spawn island - setting new range to " + newRange);
+			if (newRange > maxRange) {
+			    sender.sendMessage(ChatColor.RED + "" + ChatColor.BOLD + "Warning - range is greater than island range " + maxRange);
+			    sender.sendMessage(ChatColor.RED + "Overlapped islands will act like spawn!");
+			}
+			island.setProtectionSize(newRange);
+			sender.sendMessage(ChatColor.YELLOW + "Spawn max coords " + island.getMinX() + "," + island.getMinZ() + " to " 
+				+ (island.getMinX()+ island.getIslandDistance() -1) + "," + (island.getMinZ() + island.getIslandDistance() -1));
+			sender.sendMessage(ChatColor.YELLOW + "Spawn protection range = " + island.getProtectionSize());
+			sender.sendMessage(ChatColor.YELLOW + "Spawn protection coords " + island.getMinProtectedX() + ", " + island.getMinProtectedZ() + " to "+ (island.getMinProtectedX() + island.getProtectionSize() -1)
+				+ ", " + (island.getMinProtectedZ() + island.getProtectionSize() -1));
+			if (island.isLocked()) {
+			    sender.sendMessage(ChatColor.RED + "Spawn is locked!");
+			}
+		    } else {
+			if (!plugin.getConfig().getBoolean("island.overridelimit")) {
+			    maxRange -= 16;
+			}
+			try {
+			    newRange = Integer.valueOf(split[1]);
+			} catch (Exception e) {
+			    sender.sendMessage(ChatColor.RED + "Invalid range use 10 to " + maxRange);
+			    return true;
+			}
+			if (newRange < 10 || newRange > maxRange) {
+			    sender.sendMessage(ChatColor.RED + "Invalid range use 10 to " + maxRange);
+			    return true;
+			}
+			island.setProtectionSize(newRange);
+			sender.sendMessage(ChatColor.GREEN + "Set new range to " + ChatColor.WHITE + newRange);
+			showInfo(island.getOwner(),sender);
+		    }
+		    return true;    
+		}
+	    }
 	    if (split[0].equalsIgnoreCase("purge")) {
 		// PURGE Command
 		// Purge runs in the background so if one is already running this flag stops a repeat
@@ -371,11 +479,12 @@ public class AdminCmd implements CommandExecutor {
 		// Set the flag
 		purgeFlag = true;
 		// See if this purge holes
+		/*
 		if (split[1].equalsIgnoreCase("holes")) {
 		    purgeHoles(sender);
 		    return true;
 		}
-
+		 */
 		// Convert days to hours - no other limit checking?
 		final int time = Integer.parseInt(split[1]) * 24;
 
@@ -459,7 +568,7 @@ public class AdminCmd implements CommandExecutor {
 					    } 
 
 					    if (removeList.size() > 0 && purgeFlag) {
-						plugin.deletePlayerIsland(removeList.get(0));
+						plugin.deletePlayerIsland(removeList.get(0),true);
 						sender.sendMessage(ChatColor.YELLOW + "[" + removeList.size() + "/" + total + "] " 
 							+ Locale.purgeremovingName.replace("[name]", plugin.getPlayers().getName(removeList.get(0))));
 						removeList.remove(0);
@@ -533,7 +642,8 @@ public class AdminCmd implements CommandExecutor {
 			CoopPlay.getInstance().clearMyCoops(target);
 			plugin.resetPlayer(target);
 		    }
-		    plugin.deletePlayerIsland(playerUUID);
+		    //plugin.getLogger().info("DEBUG: deleting player");
+		    plugin.deletePlayerIsland(playerUUID,true);
 		    return true;
 		}
 	    } else if (split[0].equalsIgnoreCase("register")) {
@@ -555,6 +665,29 @@ public class AdminCmd implements CommandExecutor {
 		    sender.sendMessage(ChatColor.RED + Locale.errorUnknownCommand);
 		}
 		return true;
+	    } else if (split[0].equalsIgnoreCase("unregister")) {
+		// Convert name to a UUID
+		final UUID playerUUID = plugin.getPlayers().getUUID(split[1]);
+		if (!plugin.getPlayers().isAKnownPlayer(playerUUID)) {
+		    sender.sendMessage(ChatColor.RED + Locale.errorUnknownPlayer);
+		    return true;
+		} else {
+		    if (plugin.getPlayers().inTeam(playerUUID)) {
+			sender.sendMessage(ChatColor.RED + "Player is in a team - disband it first.");
+			return true;
+		    }
+		    Location island = plugin.getPlayers().getIslandLocation(playerUUID);
+		    if (island == null) {
+			sender.sendMessage(ChatColor.RED + Locale.errorNoIslandOther);
+			return true;
+		    }
+		    // Delete player, but keep blocks
+		    sender.sendMessage(ChatColor.GREEN + "Removing player from world, but keeping island at "
+			    + plugin.getPlayers().getIslandLocation(playerUUID).getBlockX() + ","
+			    + plugin.getPlayers().getIslandLocation(playerUUID).getBlockZ());
+		    plugin.deletePlayerIsland(playerUUID, false);
+		    return true;
+		}
 	    } else if (split[0].equalsIgnoreCase("info")) {
 		// Convert name to a UUID
 		final UUID playerUUID = plugin.getPlayers().getUUID(split[1]);
@@ -580,6 +713,50 @@ public class AdminCmd implements CommandExecutor {
 		return false;
 	    }
 	case 3:
+	    // Set protection
+	    if (split[0].equalsIgnoreCase("setrange")) {
+		// Convert name to a UUID
+		final UUID playerUUID = plugin.getPlayers().getUUID(split[1]);
+		// Check if player exists
+		if (!plugin.getPlayers().isAKnownPlayer(playerUUID)) {
+		    sender.sendMessage(ChatColor.RED + Locale.errorUnknownPlayer);
+		    return true;
+		}
+		// Check if the target is in a team and if so, the leader
+		if (plugin.getPlayers().inTeam(playerUUID)) {
+		    if (!plugin.getPlayers().getTeamLeader(playerUUID).equals(playerUUID)) {
+			sender.sendMessage(ChatColor.RED + "That player is not the leader of the team. Leader is "
+				+ plugin.getPlayers().getName(plugin.getPlayers().getTeamLeader(playerUUID)));
+			return true;
+		    }
+		}
+		// Get the range that this player has now
+		Island island = plugin.getGrid().getIsland(playerUUID);
+		if (island == null) {
+		    sender.sendMessage(ChatColor.RED + "That player does not have an island...");
+		    return true;
+		} else {
+		    int newRange = 0;
+		    int maxRange = Settings.islandDistance;
+		    if (!plugin.getConfig().getBoolean("island.overridelimit")) {
+			maxRange -= 16;
+		    }
+		    try {
+			newRange = Integer.valueOf(split[2]);
+		    } catch (Exception e) {
+			sender.sendMessage(ChatColor.RED + "Invalid range use 10 to " + maxRange);
+			return true;
+		    }
+		    if (newRange < 10 || newRange > maxRange) {
+			sender.sendMessage(ChatColor.RED + "Invalid range use 10 to " + maxRange);
+			return true;
+		    }
+		    island.setProtectionSize(newRange);
+		    sender.sendMessage(ChatColor.GREEN + "Set new range to " + ChatColor.WHITE + newRange);
+		    showInfo(playerUUID,sender);
+		    return true;    
+		}
+	    }
 	    // Change biomes
 	    if (split[0].equalsIgnoreCase("setbiome")) {
 		// Convert name to a UUID
@@ -813,6 +990,7 @@ public class AdminCmd implements CommandExecutor {
      * Tries to free up holes in the map for reuse
      * @param sender 
      */
+    /*
     private void purgeHoles(final CommandSender sender) {
 	// Get a list of all the files in the island directory
 	final File islandFileDir = new File(plugin.getDataFolder() + File.separator + "islands");
@@ -895,7 +1073,7 @@ public class AdminCmd implements CommandExecutor {
 	    }
 	}.runTaskTimer(plugin, 0L, 20L);
     }
-
+     */
     /**
      * This returns the coordinate of where an island should be on the grid.
      * @param location
@@ -936,7 +1114,7 @@ public class AdminCmd implements CommandExecutor {
      * @param sender
      */
     private void showInfo(UUID playerUUID, CommandSender sender) {
-	sender.sendMessage("Owner:" + ChatColor.GREEN + plugin.getPlayers().getName(playerUUID));
+	sender.sendMessage("Owner: " + ChatColor.GREEN + plugin.getPlayers().getName(playerUUID));
 	sender.sendMessage(ChatColor.WHITE + "UUID: " + playerUUID.toString());
 	// Display island level
 	sender.sendMessage(ChatColor.GREEN + Locale.levelislandLevel + ": " + plugin.getPlayers().getIslandLevel(playerUUID));
@@ -945,7 +1123,7 @@ public class AdminCmd implements CommandExecutor {
 	    Date d = new Date(plugin.getServer().getOfflinePlayer(playerUUID).getLastPlayed());
 	    sender.sendMessage(ChatColor.GOLD + "Last login: " + d.toString());
 	} catch (Exception e) {}
-
+	Location islandLoc = null;
 	// Teams
 	if (plugin.getPlayers().inTeam(playerUUID)) {
 	    final UUID leader = plugin.getPlayers().getTeamLeader(playerUUID);
@@ -954,13 +1132,11 @@ public class AdminCmd implements CommandExecutor {
 	    for (UUID member: pList) {
 		sender.sendMessage(ChatColor.WHITE + " - " + plugin.getPlayers().getName(member));
 	    }
-	    sender.sendMessage(ChatColor.YELLOW + Locale.adminInfoislandLocation + ":" + ChatColor.WHITE + " (" + plugin.getPlayers().getTeamIslandLocation(playerUUID).getBlockX() + ","
-		    + plugin.getPlayers().getTeamIslandLocation(playerUUID).getBlockY() + "," + plugin.getPlayers().getTeamIslandLocation(playerUUID).getBlockZ() + ")");
+	    islandLoc = plugin.getPlayers().getTeamIslandLocation(playerUUID);
 	} else {
 	    sender.sendMessage(ChatColor.YELLOW + Locale.errorNoTeam);
 	    if (plugin.getPlayers().hasIsland(playerUUID)) {
-		sender.sendMessage(ChatColor.YELLOW + Locale.adminInfoislandLocation + ":" + ChatColor.WHITE + " (" + plugin.getPlayers().getIslandLocation(playerUUID).getBlockX() + ","
-			+ plugin.getPlayers().getIslandLocation(playerUUID).getBlockY() + "," + plugin.getPlayers().getIslandLocation(playerUUID).getBlockZ() + ")");
+		islandLoc =  plugin.getPlayers().getIslandLocation(playerUUID);
 	    }
 	    if (!(plugin.getPlayers().getTeamLeader(playerUUID) == null)) {
 		sender.sendMessage(ChatColor.RED + Locale.adminInfoerrorNullTeamLeader);
@@ -969,7 +1145,31 @@ public class AdminCmd implements CommandExecutor {
 		sender.sendMessage(ChatColor.RED + Locale.adminInfoerrorTeamMembersExist);
 	    }
 	}
-
+	if (islandLoc != null) {
+	    sender.sendMessage(ChatColor.YELLOW + Locale.adminInfoislandLocation + ":" + ChatColor.WHITE + " (" + islandLoc.getBlockX() + ","
+		    + islandLoc.getBlockY() + "," + islandLoc.getBlockZ() + ")");
+	    Island island = plugin.getGrid().getIslandAt(islandLoc);
+	    if (island == null) {
+		plugin.getLogger().warning("Player has an island, but it is not in the grid. Adding it now...");
+		island = plugin.getGrid().addIsland(islandLoc.getBlockX(), islandLoc.getBlockZ(), playerUUID);
+	    }
+	    sender.sendMessage(ChatColor.YELLOW + "Island max size (distance) = " + island.getIslandDistance());
+	    sender.sendMessage(ChatColor.YELLOW + "Island maximums " + island.getMinX() + "," + island.getMinZ() + " to " 
+		    + (island.getMinX()+ island.getIslandDistance() -1) + "," + (island.getMinZ() + island.getIslandDistance() -1));
+	    sender.sendMessage(ChatColor.YELLOW + "Island protection range = " + island.getProtectionSize());
+	    sender.sendMessage(ChatColor.YELLOW + "Island protection " + island.getMinProtectedX() + ", " + island.getMinProtectedZ() + " to "+ (island.getMinProtectedX() + island.getProtectionSize() -1)
+		    + ", " + (island.getMinProtectedZ() + island.getProtectionSize() -1));
+	    if (island.isSpawn()) {
+		sender.sendMessage(ChatColor.YELLOW + "Island is spawn");
+	    }
+	    if (island.isLocked()) {
+		sender.sendMessage(ChatColor.YELLOW + "Island is locked");
+	    } else {
+		sender.sendMessage(ChatColor.YELLOW + "Island is unlocked");
+	    }
+	} else {
+	    sender.sendMessage(ChatColor.RED + Locale.errorNoIslandOther);
+	}
     }
 
     /**
@@ -1026,21 +1226,52 @@ public class AdminCmd implements CommandExecutor {
      *            - the player requesting the assignment
      * @param l
      *            - the location of sender
-     * @param player
+     * @param newOwner
      *            - the assignee
      * @return - true if successful, false if not
      */
-    protected boolean adminSetPlayerIsland(final CommandSender sender, final Location l, final UUID player) {
-	// TODO switch to file system
-	// If the player is not online
-	Location island = getClosestIsland(l);
+    protected boolean adminSetPlayerIsland(final CommandSender sender, final Location l, final UUID newOwner) {
+	//Location island = getClosestIsland(l);
+	// Check what the grid thinks
+	Island island = plugin.getGrid().getIslandAt(l);
 	if (island != null) {
-	    plugin.getPlayers().setHomeLocation(player, island);
-	    plugin.getPlayers().setHasIsland(player,true);
-	    plugin.getPlayers().setIslandLocation(player, island);
+	    if (island.isSpawn()) {
+		sender.sendMessage(ChatColor.RED + "You cannot take ownership of spawn!");
+		return false;
+	    }
+	    UUID oldOwner = island.getOwner();
+	    if (oldOwner != null) {
+		if (plugin.getPlayers().inTeam(oldOwner)) {
+		    sender.sendMessage(ChatColor.RED + plugin.getPlayers().getName(oldOwner) + " leads a team. Kick players from it first."); 
+		    return false;
+		}
+		sender.sendMessage(ChatColor.RED + "Taking ownership away from " + plugin.getPlayers().getName(oldOwner));
+		plugin.getPlayers().setIslandLevel(newOwner, plugin.getPlayers().getIslandLevel(oldOwner));
+		plugin.getPlayers().setTeamIslandLocation(oldOwner, null);
+		plugin.getPlayers().setHasIsland(oldOwner, false);
+		plugin.getPlayers().setIslandLocation(oldOwner, null);
+		plugin.getPlayers().setIslandLevel(oldOwner, 0);
+		plugin.getPlayers().setTeamIslandLocation(oldOwner, null);
+		//plugin.topTenChangeOwner(oldOwner, newOwner);
+	    }
+	    // Check if the assigned player already has an island
+	    Island playersIsland = plugin.getGrid().getIsland(newOwner);
+	    if (playersIsland != null) {
+		sender.sendMessage(ChatColor.RED + plugin.getPlayers().getName(playersIsland.getOwner()) + " had an island at ("
+			+ playersIsland.getCenter().getBlockX() + "," + playersIsland.getCenter().getBlockZ() + ")");
+		plugin.getGrid().setIslandOwner(playersIsland, null);
+	    }
+
+	    plugin.getPlayers().setHomeLocation(newOwner, island.getCenter());
+	    plugin.getPlayers().setHasIsland(newOwner,true);
+	    plugin.getPlayers().setIslandLocation(newOwner, island.getCenter());
+	    // Change the grid
+	    plugin.getGrid().setIslandOwner(island, newOwner);
 	    return true;
+	} else {
+	    sender.sendMessage(ChatColor.RED + "There is no known island in this area!");
+	    return false;
 	}
-	return false;
 	/*
 	final int px = l.getBlockX();
 	final int py = l.getBlockY();
