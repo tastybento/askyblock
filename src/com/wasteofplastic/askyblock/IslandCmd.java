@@ -699,7 +699,7 @@ public class IslandCmd implements CommandExecutor {
 		// Find out which island they want to lock
 		Island island = plugin.getGrid().getIsland(playerUUID);
 		if (island == null) {
-		    plugin.getLogger().info("DEBUG: player has no island in grid");
+		    //plugin.getLogger().info("DEBUG: player has no island in grid");
 		    // Player has no island in the grid
 		    player.sendMessage(ChatColor.RED + Locale.errorNoIsland);
 		    return true;
