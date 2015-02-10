@@ -23,7 +23,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 /**
- * @author ben
+ * @author tastybento
  * This class is for a control panel button that has an icon, a command to run if pressed or a link to
  * another control panel.
  */

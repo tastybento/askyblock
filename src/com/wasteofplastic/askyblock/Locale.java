@@ -17,8 +17,10 @@
 package com.wasteofplastic.askyblock;
 
 
+
+
 /**
- * @author ben
+ * @author tastybento
  * All the text strings in the game sent to players
  */
 public class Locale {
@@ -365,5 +367,25 @@ public class Locale {
     public static String islandcannotTeleport;
     public static String levelCalculating;
     public static String prefix;
+    // Lock
+    public static String lockIslandLocked;
+    public static String lockNowEntering;
+    public static String lockNowLeaving;
+    public static String lockLocking;
+    public static String lockUnlocking;
+    public static String islandHelpLock;
+    public static String helpColor;
+    public static String lockPlayerLocked;
+    public static String lockPlayerUnlocked;
+    public static String lockEnteringSpawn;
+    public static String lockLeavingSpawn;
+    // Titles
+    public static String islandSubTitle;
+    public static String islandTitle;
+    public static String islandDonate;
+    public static String islandURL;
+    public static String adminHelpunregister;
+    public static String adminHelpSetRange;
+    public static String challengeserrorRewardProblem;
       
 }

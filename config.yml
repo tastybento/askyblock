@@ -1,4 +1,15 @@
+#############################################################################
 # Config for A SkyBlock (also playable as AcidIsland)
+# For initial set up you must configure or check at least these settings:
+#
+# 1. islandLevel - the height you want your islands to float
+# 2. resetmoney - set to true so that everyone starts with nothing
+# 3. distance (in the island section) - the distance between islands
+# 4. protectionRange - big a player's island is at the start
+#
+# The plugin will NOT start until #3 is set!!!
+#############################################################################
+
 general:
    # Sea level height (don't changes this mid-game unless you delete the world)
    # Minimum is 0, which means you are playing sky block!
@@ -49,10 +60,16 @@ general:
    #How long a player must wait before they can reset their island again in second
    resetwait: 300
 
+   #The number of seconds to wait for confirmation of a reset
+   resetconfirmwait: 10
+
    #How long a player must wait until they can rejoin a team island after being
    #kicked in minutes. This slows the effectiveness of players repeating challenges
    #by repetitively being invited to a team island.
    invitewait: 60
+
+   # Island level calculation cool down in seconds
+   levelwait: 60
 
    #How many resets a player is allowed (override with /asadmin clearreset <player>
    #Value of -1 means unlimited, 0 means hardcore - no resets.
@@ -61,9 +78,15 @@ general:
 
    #Commands to run when the player resets their island (uncomment and customize)
    # [player] is the player name of who is reseting
-   #resetcommands:
-   #  - kit tools [player]
-   #  - some other command
+   resetcommands:
+   #- kit tools [player]
+   #- some other command
+
+   # Commands to execute when player leaves a team, either by leaving or being kicked
+   # Commands will execute even if the player is offline, so may cause errors in
+   # the console if the commands doesn't make sense
+   leavecommands:
+   #- kit tools [player]
 
    # Ops receive damage from acid (Set to true if you want Ops to play properly)
    damageops: false
@@ -162,7 +185,12 @@ general:
 
    # Allow /island teleport when falling. If set to false, all teleporting is
    # disabled until death from the void or until you hit something.
+   # See commands that this will block too
    allowfallingteleport: true
+   blockingcommands:
+   - home
+   #- anotherCommand
+   #- andAnotherOne
 
    # Remove non-repeatable challenges from the challenge GUI when complete
    removecompleteonetimechallenges: false
@@ -171,17 +199,42 @@ general:
    # Also currently adds an "enchanted" line of text...
    addcompletedglow: true
 
+   # Use physics when pasting schematic blocks. If this is false, then blocks
+   # like water will not flow from the schematic
+   usephysics: false
+   
+   # Calculate leve on login
+   # If true, the plugin will run the level command for the player when they login
+   # If the command is busy, it will fail silently
+   loginlevel: false
+
 ##### Island Related Settings #####
 
 island:
-   # Space between islands in blocks - never change this mid-game.
-   distance: 110
+   # Space between islands in blocks - NEVER change this mid-game.
+   # Values for a new world:
+   # 400 - puts players distance enough that they usually cannot see each other
+   # 200 - allows some expansion of the protected zone (recommended)
+   # 110 - for compatibility with established worlds. Cozy.
+   # 50 - minimum - not recommended
+   # IF YOU ARE UPGRADING YOU MUST USE YOUR OLD VALUE EXACTLY, E.G., 110
+   #
+   # You MUST change this value to something to start the plugin!
 
-   # The size of the protective region for each island. Must be at least 16 blocks
-   # less than the island distance.
-   # If you want to override this change overridelimit to true. This may result in
-   # incomplete island deletion (~15% of the time if the island goes to edges)
-   protectionRange: 94
+   distance: -1
+
+   # The size of the protective region for new islands. Must be at least 16 blocks
+   # less than the island distance. Large sizes will slow down island level calculation
+   # when players do /is level.
+   #
+   # Recommended size is 100 because it gives players a good starting size.
+   # Minimum size is 50.
+   # Admins can change protection sizes for players individually using 
+
+   protectionRange: 100
+
+   # If you want to try to have protection range = distance set the following to true.
+   # It may result is incomplete deletion of islands. Not recommended.
    overridelimit: false
 
    # Coordinate offset - never change this mid-game and there is no
@@ -205,9 +258,11 @@ island:
    # <type> is EXTENDED, SPLASH or EXTENDEDSPLASH. Not all potions can be extended.
    # Check console for errors and guidance after reloading configuration
    # Set to '' if items are included in the schematic
+
    chestItems: 'ICE:2 MELON:1 TORCH:2 BONE:1 LAVA_BUCKET:1 PUMPKIN_SEEDS:1 SUGAR_CANE:1 RED_MUSHROOM:1 BROWN_MUSHROOM:1 CACTUS:1 BREAD:1 WHEAT:1 LEATHER_BOOTS:1 LEATHER_HELMET:1 LEATHER_CHESTPLATE:1 LEATHER_LEGGINGS:1'
 
    # Island Protection Settings
+
    # PVP is allowed or not.
    # If PVP is denied, then players can expel other players from islands
    # otherwise players have to kill each other
@@ -259,7 +314,7 @@ island:
    # Allow TNT damage to blocks (stops players using TNT to destroy other's islands)
    allowtntdamage: false
    # Allow spawn egg use
-   allowspawneggs: false
+   allowspawneggs: true
    # Allow animal breeding by visitors
    allowbreeding: false
    # Allow use of Flint & Steel by visitors
@@ -284,6 +339,34 @@ island:
    allowbeaconaccess: false
    # Allow portal use by visitors
    allowportaluse: true
+
+# Spawn protection options - different to regular islands
+spawn:
+  # The following are recommended to be true at spawn
+  allowdooruse: true
+  allowleverbuttonuse: true
+  allowchestaccess: true
+  allowfurnaceuse: true
+  allowmusic: true
+  allowcrafting: true
+  allowbrewing: true
+  allowgateuse: true
+  allowanimalspawn: true
+  allowmobkilling: true
+  allowenchanting: true
+  allowanviluse: true
+
+  # The following are recommended to be false at spawn, but you can change
+  allowbreakblocks: false
+  allowplaceblocks: false
+  allowredstone: false
+  allowanimalkilling: false
+  allowmobspawn: false
+  allowbeaconaccess: false
+  allowspawneggs: false
+  alloweggs: false
+  # The following stops water above sea level from being acid at spawn if acid is active
+  allowspawnnoacidwater: false
 
 # This section contains the biomes that can be bought or used
 biomesettings:

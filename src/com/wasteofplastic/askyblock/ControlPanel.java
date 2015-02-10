@@ -35,7 +35,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 /**
- * @author ben
+ * @author tastybento
  * Provides a handy control panel and minishop
  */
 public class ControlPanel implements Listener {
