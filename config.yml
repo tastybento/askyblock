@@ -314,7 +314,7 @@ island:
    # Allow TNT damage to blocks (stops players using TNT to destroy other's islands)
    allowtntdamage: false
    # Allow spawn egg use
-   allowspawneggs: false
+   allowspawneggs: true
    # Allow animal breeding by visitors
    allowbreeding: false
    # Allow use of Flint & Steel by visitors
@@ -357,6 +357,8 @@ spawn:
   allowanviluse: true
 
   # The following are recommended to be false at spawn, but you can change
+  allowbreakblocks: false
+  allowplaceblocks: false
   allowredstone: false
   allowanimalkilling: false
   allowmobspawn: false
