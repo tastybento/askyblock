@@ -174,11 +174,13 @@ public class ASkyBlock extends JavaPlugin {
 		    if (!Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv modify set generator " + plugin.getName() + " " + Settings.worldName)) {
 			Bukkit.getLogger().severe("Multiverse is out of date! - Upgrade to latest version!");
 		    }
-		    if (Settings.newNether) {
-			Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv import " + Settings.worldName + "_nether nether -g " + plugin.getName());
-			Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv modify set generator " + plugin.getName() + " " + Settings.worldName + "_nether");
-		    } else {
-			Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv import " + Settings.worldName + "_nether nether");
+		    if (Settings.createNether) {
+			if (Settings.newNether) {
+			    Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv import " + Settings.worldName + "_nether nether -g " + plugin.getName());
+			    Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv modify set generator " + plugin.getName() + " " + Settings.worldName + "_nether");
+			} else {
+			    Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv import " + Settings.worldName + "_nether nether");
+			}
 		    }
 		} catch (Exception e) {
 		    Bukkit.getLogger().severe("Not successfull! Disabling " + plugin.getName() + "!");
@@ -1885,7 +1887,7 @@ public class ASkyBlock extends JavaPlugin {
 	if (target.getWorld().equals(islandTestLocation.getWorld())) {
 	    int protectionRange = Settings.island_protectionRange;
 	    if (grid.getIslandAt(islandTestLocation) != null) {
-		
+
 		Island island = grid.getProtectedIslandAt(islandTestLocation);
 		// Get the protection range for this location if possible
 		if (island != null) {
