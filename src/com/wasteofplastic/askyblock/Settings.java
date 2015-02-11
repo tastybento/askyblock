@@ -107,7 +107,7 @@ public class Settings {
     protected static boolean allowEndermanGriefing;
     protected static boolean allowCreeperDamage;
     protected static boolean allowTNTDamage;
-    protected static boolean allowSpawnEggs;
+    protected static boolean allowMonsterEggs;
     protected static boolean allowBreeding;
     protected static boolean allowFire;
     protected static boolean allowChestDamage;
@@ -196,7 +196,10 @@ public class Settings {
     public static List<String> leaveCommands;
     public static int levelWait;
     public static long resetConfirmWait;
-    public static boolean allowSpawnSpawnEggs;
+    public static boolean allowSpawnMonsterEggs;
     public static boolean loginLevel;
+    public static boolean allowSpawnBreakBlocks;
+    public static boolean allowSpawnPlaceBlocks;
+    public static boolean allowSpawnEggs;
 
 }

@@ -1266,7 +1266,7 @@ public class ASkyBlock extends JavaPlugin {
 	Settings.allowEndermanGriefing = getConfig().getBoolean("island.allowendermangriefing", true);
 	Settings.allowCreeperDamage = getConfig().getBoolean("island.allowcreeperdamage", true);
 	Settings.allowTNTDamage = getConfig().getBoolean("island.allowtntdamage", false);
-	Settings.allowSpawnEggs = getConfig().getBoolean("island.allowspawneggs", false);
+	Settings.allowMonsterEggs = getConfig().getBoolean("island.allowspawneggs", false);
 	Settings.allowBreeding = getConfig().getBoolean("island.allowbreeding", false);
 	Settings.allowFire = getConfig().getBoolean("island.allowfire", false);
 	Settings.allowChestDamage = getConfig().getBoolean("island.allowchestdamage", false);
@@ -1294,9 +1294,10 @@ public class ASkyBlock extends JavaPlugin {
 	Settings.allowSpawnAnimalSpawn = getConfig().getBoolean("spawn.allowanimalspawn", true);
 	Settings.allowSpawnAnimalKilling = getConfig().getBoolean("spawn.allowanimalkilling", false);
 	Settings.allowSpawnMobKilling = getConfig().getBoolean("spawn.allowmobkilling", true);
-	Settings.allowSpawnSpawnEggs = getConfig().getBoolean("spawn.allowspawneggs", false);
+	Settings.allowSpawnMonsterEggs = getConfig().getBoolean("spawn.allowspawneggs", false);
 	Settings.allowSpawnEggs = getConfig().getBoolean("spawn.alloweggs", false);
-
+	Settings.allowSpawnBreakBlocks = getConfig().getBoolean("spawn.allowbreakblocks", false);
+	Settings.allowSpawnPlaceBlocks = getConfig().getBoolean("spawn.allowplaceblocks", false);
 	Settings.allowSpawnNoAcidWater = getConfig().getBoolean("spawn.allowspawnnoacidwater", false);
 	Settings.allowSpawnEnchanting = getConfig().getBoolean("spawn.allowenchanting",true);
 	Settings.allowSpawnAnvilUse = getConfig().getBoolean("spawn.allowanviluse",true);
@@ -1840,11 +1841,13 @@ public class ASkyBlock extends JavaPlugin {
 		int protectionRange = Settings.island_protectionRange;
 		if (grid.getIslandAt(islandTestLocation) != null) {
 		    // Get the protection range for this location if possible
-		    if (grid.getProtectedIslandAt(islandTestLocation) != null) {
+		    Island island = grid.getProtectedIslandAt(islandTestLocation);
+		    if (island != null) {
 			// We are in a protected island area.
-			return true;
+			protectionRange = island.getProtectionSize();
 		    }
-		} else if (player.getLocation().getX() > islandTestLocation.getX() - protectionRange / 2
+		}
+		if (player.getLocation().getX() > islandTestLocation.getX() - protectionRange / 2
 			&& player.getLocation().getX() < islandTestLocation.getX() + protectionRange / 2
 			&& player.getLocation().getZ() > islandTestLocation.getZ() - protectionRange / 2
 			&& player.getLocation().getZ() < islandTestLocation.getZ() + protectionRange / 2) {
@@ -1880,16 +1883,20 @@ public class ASkyBlock extends JavaPlugin {
 	    return false;
 	}
 	if (target.getWorld().equals(islandTestLocation.getWorld())) {
+	    int protectionRange = Settings.island_protectionRange;
 	    if (grid.getIslandAt(islandTestLocation) != null) {
+		
+		Island island = grid.getProtectedIslandAt(islandTestLocation);
 		// Get the protection range for this location if possible
-		if (grid.getProtectedIslandAt(islandTestLocation) != null) {
+		if (island != null) {
 		    // We are in a protected island area.
-		    return true;
+		    protectionRange = island.getProtectionSize();
 		}
-	    } else if (target.getLocation().getX() > islandTestLocation.getX() - Settings.island_protectionRange / 2
-		    && target.getLocation().getX() < islandTestLocation.getX() + Settings.island_protectionRange / 2
-		    && target.getLocation().getZ() > islandTestLocation.getZ() - Settings.island_protectionRange / 2
-		    && target.getLocation().getZ() < islandTestLocation.getZ() + Settings.island_protectionRange / 2) {
+	    }
+	    if (target.getLocation().getX() > islandTestLocation.getX() - protectionRange / 2
+		    && target.getLocation().getX() < islandTestLocation.getX() + protectionRange / 2
+		    && target.getLocation().getZ() > islandTestLocation.getZ() - protectionRange / 2
+		    && target.getLocation().getZ() < islandTestLocation.getZ() + protectionRange / 2) {
 		return true;
 	    }
 	}
