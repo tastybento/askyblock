@@ -78,6 +78,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 import org.bukkit.potion.Potion;
 
+import com.wasteofplastic.askyblock.events.ChallengeCompleteEvent;
+import com.wasteofplastic.askyblock.events.ChallengeLevelCompleteEvent;
+
 
 /**
  * @author tastybento
@@ -91,7 +94,20 @@ public class IslandGuard implements Listener {
 	this.plugin = plugin;
 
     }
+    /*
+     * For testing only
+    @EventHandler()
+    void testEvent(ChallengeLevelCompleteEvent e) {
+	plugin.getLogger().info(e.getEventName());
+	plugin.getLogger().info("DEBUG: challenge level complete!");
+    }
 
+    @EventHandler()
+    void testEvent(ChallengeCompleteEvent e) {
+	plugin.getLogger().info(e.getEventName());
+	plugin.getLogger().info("DEBUG: challenge complete!");
+    }
+    */
     // Vehicle damage
     @EventHandler(priority = EventPriority.LOW)
     void vehicleDamageEvent(VehicleDamageEvent e){
@@ -523,8 +539,8 @@ public class IslandGuard implements Listener {
 	if (!e.getEntity().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    return;
 	}
-	// If not at spawn, return
-	if (!plugin.getGrid().isAtSpawn(e.getLocation())) {
+	// If not at spawn, return, or if grid is not loaded yet.
+	if (plugin.getGrid() == null || !plugin.getGrid().isAtSpawn(e.getLocation())) {
 	    return;
 	}
 
@@ -849,6 +865,8 @@ public class IslandGuard implements Listener {
 		    }
 		    return;
 		}
+		// Other entities
+		return;
 	    } else {
 		// PVP
 		// If PVP is okay then return
@@ -859,6 +877,7 @@ public class IslandGuard implements Listener {
 		//plugin.getLogger().info("PVP not allowed");
 
 	    }
+	    
 	}
 
 	//plugin.getLogger().info("Player attack (or arrow)");

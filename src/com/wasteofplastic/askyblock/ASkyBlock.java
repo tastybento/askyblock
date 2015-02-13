@@ -1145,7 +1145,8 @@ public class ASkyBlock extends JavaPlugin {
 	Settings.resetChallenges = getConfig().getBoolean("general.resetchallenges", true);
 	Settings.resetMoney = getConfig().getBoolean("general.resetmoney", true);
 	Settings.clearInventory = getConfig().getBoolean("general.resetinventory", true);
-
+	Settings.resetEnderChest = getConfig().getBoolean("general.resetenderchest", false);
+	
 	Settings.startingMoney = getConfig().getDouble("general.startingmoney", 0D);
 
 	Settings.newNether = getConfig().getBoolean("general.newnether", false);
@@ -2607,12 +2608,11 @@ public class ASkyBlock extends JavaPlugin {
 	topTenAddEntry(player.getUniqueId(),0);
 	// Update the inventory
 	player.updateInventory();
-	/*
 	if (Settings.resetEnderChest) {
 	    // Clear any Enderchest contents
 	    final ItemStack[] items = new ItemStack[player.getEnderChest().getContents().length];
 	    player.getEnderChest().setContents(items);
-	}*/
+	}
 	// Clear any potion effects
 	for (PotionEffect effect : player.getActivePotionEffects())
 	    player.removePotionEffect(effect.getType());	

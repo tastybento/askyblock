@@ -44,6 +44,9 @@ import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 
+import com.wasteofplastic.askyblock.events.ChallengeCompleteEvent;
+import com.wasteofplastic.askyblock.events.ChallengeLevelCompleteEvent;
+
 /**
  * Handles challenge commands and related methods
  */
@@ -151,7 +154,15 @@ public class Challenges implements CommandExecutor {
 	case 2:
 	    if (cmd[0].equalsIgnoreCase("complete") || cmd[0].equalsIgnoreCase("c")) {
 		if (checkIfCanCompleteChallenge(player, cmd[1].toLowerCase())) {
+		    int oldLevel = levelDone(player);
 		    giveReward(player, cmd[1].toLowerCase());
+		    int newLevel = levelDone(player);
+		    // Fire an event if they are different
+		    plugin.getLogger().info("DEBUG: " + oldLevel + " " + newLevel);
+		    if (oldLevel<newLevel) {
+			ChallengeLevelCompleteEvent event = new ChallengeLevelCompleteEvent(player,oldLevel,newLevel);
+			plugin.getServer().getPluginManager().callEvent(event);
+		    }
 		}
 		return true;
 	    }
@@ -160,6 +171,20 @@ public class Challenges implements CommandExecutor {
 	}
     }
 
+    private int levelDone(Player player) {
+	int level = 0;
+	int toBeDone = 0;
+	if (!Settings.challengeLevels.isEmpty()) {
+	    for (int i = 1; i < Settings.challengeLevels.size(); i++) {
+		toBeDone = checkLevelCompletion(player, Settings.challengeLevels.get(i - 1));
+		if (toBeDone <= 0) {
+		    level = i;
+		    break;
+		}
+	    }
+	}
+	return level;
+    }
     /**
      * Gives the reward for completing the challenge Uses the same format as
      * uSkyblock config.yml
@@ -362,7 +387,10 @@ public class Challenges implements CommandExecutor {
 	// Mark the challenge as complete
 	if (!players.checkChallenge(player.getUniqueId(),challenge)) {
 	    players.completeChallenge(player.getUniqueId(),challenge);
-	}	
+	}
+	// Call the Challenge Complete Event
+	final ChallengeCompleteEvent event = new ChallengeCompleteEvent(player, challenge, permList, itemRewards, moneyReward, expReward, rewardText);
+	plugin.getServer().getPluginManager().callEvent(event);
 	return true;
     }
 

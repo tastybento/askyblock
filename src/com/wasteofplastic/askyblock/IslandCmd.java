@@ -773,9 +773,15 @@ public class IslandCmd implements CommandExecutor {
 	    }
 
 	    if (split[0].equalsIgnoreCase("minishop") || split[0].equalsIgnoreCase("ms")) {
-		if (Settings.useEconomy && player.getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
-		    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.minishop")) {
-			player.openInventory(ControlPanel.miniShop);
+		if (Settings.useEconomy) {
+		    if (player.getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+
+			if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.minishop")) {
+			    player.openInventory(ControlPanel.miniShop);
+			    return true;
+			}
+		    } else {
+			player.sendMessage(ChatColor.RED + Locale.errorWrongWorld);
 			return true;
 		    }
 		}
