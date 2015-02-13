@@ -1183,8 +1183,15 @@ public class AdminCmd implements CommandExecutor {
 	// Completed challenges
 	sender.sendMessage(ChatColor.WHITE + "Challenges:");
 	HashMap<String,Boolean> challenges = plugin.getPlayers().getChallengeStatus(playerUUID);
+	HashMap<String,Integer> challengeTimes = plugin.getPlayers().getChallengeTimes(playerUUID);
 	for (String c: challenges.keySet()) {
+	    if (challengeTimes.containsKey(c)) {
+		sender.sendMessage(c + ": " + ((challenges.get(c)) ? ChatColor.GREEN + Locale.challengescomplete :ChatColor.AQUA + Locale.challengesincomplete)
+			+ "(" + plugin.getPlayers().checkChallengeTimes(playerUUID, c) + ")");
+		    
+	    } else {
 	    sender.sendMessage(c + ": " + ((challenges.get(c)) ? ChatColor.GREEN + Locale.challengescomplete :ChatColor.AQUA + Locale.challengesincomplete));
+	    }
 	}
     }
 

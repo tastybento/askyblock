@@ -474,7 +474,8 @@ public class Players {
      * Resets all the challenges for the player and rebuilds the challenge list
      */
     protected void resetAllChallenges() {
-	challengeList = null;
+	challengeList.clear();
+	challengeListTimes.clear();
 	updateChallengeList();
     }
 
@@ -486,8 +487,8 @@ public class Players {
      */
     protected void resetChallenge(final String challenge) {
 	if (challengeList.containsKey(challenge)) {
-	    challengeList.remove(challenge);
 	    challengeList.put(challenge, Boolean.valueOf(false));
+	    challengeListTimes.put(challenge, 0);
 	}
     }
 

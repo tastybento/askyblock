@@ -294,6 +294,15 @@ public class PlayerCache {
 	return playerCache.get(playerUUID).getChallengeStatus();	
     }
 
+    /**
+     * How many times a challenge has been completed
+     * @param playerUUID
+     * @return map of completion times
+     */
+    protected HashMap<String, Integer> getChallengeTimes(UUID playerUUID) {
+	addPlayer(playerUUID);
+	return playerCache.get(playerUUID).getChallengeCompleteTimes();	
+    }
 
     protected void resetChallenge(UUID playerUUID, String challenge) {
 	addPlayer(playerUUID);
