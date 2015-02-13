@@ -316,7 +316,7 @@ public class AcidEffect implements Listener {
      * @param e
      */
     // Deprecation is due to the updateinventory that still is required for some reason.
-    @SuppressWarnings("deprecation")
+    //@SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerInteract(final PlayerInteractEvent e) {
 	if (plugin.playerIsOnIsland(e.getPlayer())) {

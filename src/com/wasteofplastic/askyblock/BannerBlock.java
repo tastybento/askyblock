@@ -66,6 +66,7 @@ public class BannerBlock {
         patternKey.put("tts", PatternType.TRIANGLES_TOP);	
     }
     
+    @SuppressWarnings("deprecation")
     protected static boolean set(Block block, Map<String, Tag> tileData) {
 	    //Format for banner is:
 	    // Patterns = List of patterns

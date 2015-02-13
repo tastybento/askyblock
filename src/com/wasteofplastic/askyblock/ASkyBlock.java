@@ -158,9 +158,9 @@ public class ASkyBlock extends JavaPlugin {
 		if (plugin.getServer().getWorld(Settings.worldName + "_nether") == null) {
 		    Bukkit.getLogger().info("Creating " + plugin.getName() + "'s Nether...");
 		    if (!Settings.newNether) {
-			World netherWorld = WorldCreator.name(Settings.worldName + "_nether").type(WorldType.NORMAL).environment(World.Environment.NETHER).createWorld();
+			WorldCreator.name(Settings.worldName + "_nether").type(WorldType.NORMAL).environment(World.Environment.NETHER).createWorld();
 		    } else {
-			World netherWorld = WorldCreator.name(Settings.worldName + "_nether").type(WorldType.FLAT).generator(new ChunkGeneratorWorld()).environment(World.Environment.NETHER).createWorld();
+			WorldCreator.name(Settings.worldName + "_nether").type(WorldType.FLAT).generator(new ChunkGeneratorWorld()).environment(World.Environment.NETHER).createWorld();
 		    }
 		    //netherWorld.setMonsterSpawnLimit(Settings.monsterSpawnLimit);
 		    // netherWorld.setAnimalSpawnLimit(Settings.animalSpawnLimit);
@@ -2353,7 +2353,7 @@ public class ASkyBlock extends JavaPlugin {
 	// Look for defaults in the jar
 	InputStream defLocaleStream = this.getResource("locale.yml");
 	if (defLocaleStream != null) {
-	    YamlConfiguration defLocale = YamlConfiguration.loadConfiguration(defLocaleStream);
+	    YamlConfiguration defLocale = new YamlConfiguration().loadConfiguration(defLocaleStream);
 	    locale.setDefaults(defLocale);
 	}
     }

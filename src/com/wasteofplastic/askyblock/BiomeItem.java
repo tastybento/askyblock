@@ -13,7 +13,7 @@ public class BiomeItem {
     private ItemStack item;
     private int slot;
     private double price;
-    private String description;
+    //private String description;
     private String name;
     private boolean confirm;
     private Biome biome;
@@ -26,7 +26,7 @@ public class BiomeItem {
     protected BiomeItem(Material material, int slot, double cost, String description, String name, boolean confirm, Biome biome) {
 	this.slot = slot;
 	this.price = cost;
-	this.description = description;
+	//this.description = description;
 	this.name = name;
 	this.confirm = confirm;
 	this.biome = biome;

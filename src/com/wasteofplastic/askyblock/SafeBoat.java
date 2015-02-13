@@ -127,7 +127,7 @@ public class SafeBoat implements Listener {
 	if (!exitedBoat.containsKey(player.getUniqueId())) {
 	    return;
 	}
-	Entity boat = exitedBoat.get(player.getUniqueId());
+	//Entity boat = exitedBoat.get(player.getUniqueId());
 	// Reset the flag
 	exitedBoat.remove(player.getUniqueId());
 	// Okay, so a player is getting out of a boat in the the right world.
