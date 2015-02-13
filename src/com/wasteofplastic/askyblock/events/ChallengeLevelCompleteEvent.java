@@ -15,10 +15,11 @@ public class ChallengeLevelCompleteEvent extends Event {
     private final int oldLevel;
     private final int newLevel;
     
+
     /**
      * @param player
-     * @param previousChallengeLevelName
-     * @param newChallengeLevelName
+     * @param oldLevel
+     * @param newLevel
      */
     public ChallengeLevelCompleteEvent(Player player, int oldLevel, int newLevel) {
 	this.player = player;
