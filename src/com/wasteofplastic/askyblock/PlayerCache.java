@@ -274,6 +274,17 @@ public class PlayerCache {
     }
 
     /**
+     * Checks how often a challenge has been completed
+     * @param playerUUID
+     * @param challenge
+     * @return
+     */
+    protected int checkChallengeTimes(UUID playerUUID, String challenge) {
+	addPlayer(playerUUID);
+	return playerCache.get(playerUUID).checkChallengeTimes(challenge);
+    }
+    
+    /**
      * Provides the status of all challenges for this player
      * @param playerUUID
      * @return
@@ -351,7 +362,7 @@ public class PlayerCache {
 
     protected void completeChallenge(UUID playerUUID, String challenge) {
 	addPlayer(playerUUID);
-	playerCache.get(playerUUID).completeChallenge(challenge);	
+	playerCache.get(playerUUID).completeChallenge(challenge);
     }
 
     protected boolean challengeExists(UUID playerUUID, String challenge) {

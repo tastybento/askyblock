@@ -158,7 +158,7 @@ public class Challenges implements CommandExecutor {
 		    giveReward(player, cmd[1].toLowerCase());
 		    int newLevel = levelDone(player);
 		    // Fire an event if they are different
-		    plugin.getLogger().info("DEBUG: " + oldLevel + " " + newLevel);
+		    //plugin.getLogger().info("DEBUG: " + oldLevel + " " + newLevel);
 		    if (oldLevel<newLevel) {
 			ChallengeLevelCompleteEvent event = new ChallengeLevelCompleteEvent(player,oldLevel,newLevel);
 			plugin.getServer().getPluginManager().callEvent(event);
@@ -385,9 +385,9 @@ public class Challenges implements CommandExecutor {
 	}	
 
 	// Mark the challenge as complete
-	if (!players.checkChallenge(player.getUniqueId(),challenge)) {
-	    players.completeChallenge(player.getUniqueId(),challenge);
-	}
+	//if (!players.checkChallenge(player.getUniqueId(),challenge)) {
+	players.completeChallenge(player.getUniqueId(),challenge);
+	//}
 	// Call the Challenge Complete Event
 	final ChallengeCompleteEvent event = new ChallengeCompleteEvent(player, challenge, permList, itemRewards, moneyReward, expReward, rewardText);
 	plugin.getServer().getPluginManager().callEvent(event);
@@ -471,6 +471,17 @@ public class Challenges implements CommandExecutor {
 	    if (!isLevelAvailable(player, level)) {
 		player.sendMessage(ChatColor.RED + Locale.challengesyouHaveNotUnlocked);
 		return false;
+	    }
+	}
+	// Check if the player has maxed out the challenge
+	if (plugin.getChallengeConfig().getBoolean("challenges.challengeList." + challenge + ".repeatable")) {
+	    int maxTimes = plugin.getChallengeConfig().getInt("challenges.challengeList." + challenge + ".maxtimes",0);
+	    if (maxTimes > 0) {
+		// There is a limit
+		if (plugin.getPlayers().checkChallengeTimes(player.getUniqueId(), challenge) >= maxTimes) {
+		    player.sendMessage(ChatColor.RED + Locale.challengesnotRepeatable);
+		    return false;
+		}
 	    }
 	}
 	//plugin.getLogger().info("DEBUG: 2");
@@ -1241,16 +1252,36 @@ public class Challenges implements CommandExecutor {
 	}
 	// Check if completed or not
 	boolean complete = false;
+	int maxTimes = plugin.getChallengeConfig().getInt("challenges.challengeList." + challenge + ".maxtimes",0);
+	int doneTimes = plugin.getPlayers().checkChallengeTimes(player.getUniqueId(), challenge);
 	if (players.checkChallenge(player.getUniqueId(),challenge)) {
 	    // Complete!
-	    result.add(ChatColor.AQUA + Locale.challengescomplete);
+	    //result.add(ChatColor.AQUA + Locale.challengescomplete);
 	    complete = true;
 	}
 	boolean repeatable = false;
 	if (plugin.getChallengeConfig().getBoolean("challenges.challengeList." + challenge + ".repeatable", false)) {
-	    // Repeatable
 	    repeatable = true;
 	}
+
+	if (repeatable) {
+	    if (maxTimes == 0) {
+		if (complete) {
+		    result.add(ChatColor.AQUA + Locale.challengescomplete);
+		}
+	    } else {
+		// Check if the player has maxed out the challenge   
+		if (doneTimes < maxTimes) {
+		    result.add("Completed " + doneTimes + " out of " + maxTimes); 
+		} else {
+		    repeatable = false;
+		    result.add("Max reached " + doneTimes + " out of " + maxTimes);
+		}
+	    }
+	} else if (complete) {
+	    result.add(ChatColor.AQUA + Locale.challengescomplete);
+	}
+
 	final String type = plugin.getChallengeConfig().getString("challenges.challengeList." + challenge + ".type","").toLowerCase();
 	if (!complete || (complete && repeatable)) {
 	    result.addAll(chop(ChatColor.GOLD, plugin.getChallengeConfig().getString("challenges.challengeList." + challenge + ".description",""),length));	    

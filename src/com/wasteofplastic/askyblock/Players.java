@@ -39,6 +39,7 @@ public class Players {
     private ASkyBlock plugin;
     private YamlConfiguration playerInfo;
     private HashMap<String, Boolean> challengeList;
+    private HashMap<String, Integer> challengeListTimes;
     private boolean hasIsland;
     private boolean inTeam;
     private String homeLocation;
@@ -68,6 +69,7 @@ public class Players {
 	this.teamLeader = null;
 	this.teamIslandLocation = null;
 	this.challengeList = new HashMap<String, Boolean>();
+	this.challengeListTimes = new HashMap<String, Integer>();
 	this.islandLevel = 0;
 	this.playerName = "";
 	this.resetsLeft = Settings.resetLimit;
@@ -117,6 +119,7 @@ public class Players {
 	for (String challenge : Settings.challengeList) {
 	    // If they are in the list, then use the value, otherwise use false
 	    challengeList.put(challenge, playerInfo.getBoolean("challenges.status." + challenge, false));
+	    challengeListTimes.put(challenge, playerInfo.getInt("challenges.times." + challenge, 0));
 	}
 	// Load reset limit
 	this.resetsLeft = playerInfo.getInt("resetsLeft", Settings.resetLimit);
@@ -170,9 +173,12 @@ public class Players {
 	    temp.add(m.toString());
 	}
 	playerInfo.set("members", temp);
-	// Get the challenges
+	// Save the challenges
 	for (String challenge : challengeList.keySet()) {
 	    playerInfo.set("challenges.status." + challenge, challengeList.get(challenge));
+	}
+	for (String challenge : challengeListTimes.keySet()) {
+	    playerInfo.set("challenges.times." + challenge, challengeListTimes.get(challenge));
 	}
 	playerInfo.set("resetsLeft", this.resetsLeft);
 	// Save invite cooldown timers
@@ -260,6 +266,19 @@ public class Players {
 	return false;
     }
 
+    /**
+     * Checks how many times a challenge has been done
+     * @param challenge
+     * @return
+     */
+    protected int checkChallengeTimes(final String challenge) {
+	if (challengeListTimes.containsKey(challenge.toLowerCase())) {
+	    //plugin.getLogger().info("DEBUG: check " + challenge + ":" + challengeListTimes.get(challenge.toLowerCase()).intValue() );
+	    return challengeListTimes.get(challenge.toLowerCase()).intValue();
+	}
+	return 0;
+    }
+    
     protected HashMap<String,Boolean> getChallengeStatus() {
 	return challengeList;
     }
@@ -272,9 +291,18 @@ public class Players {
      * @param challenge
      */
     protected void completeChallenge(final String challenge) {
+	//plugin.getLogger().info("DEBUG: Complete challenge");
 	if (challengeList.containsKey(challenge)) {
 	    challengeList.remove(challenge);
 	    challengeList.put(challenge, Boolean.valueOf(true));
+	    // Count how many times the challenge has been done
+	    int times = 0;
+	    if (challengeListTimes.containsKey(challenge)) {
+		times = challengeListTimes.get(challenge);
+	    }
+	    times++;
+	    challengeListTimes.put(challenge, times);
+	    //plugin.getLogger().info("DEBUG: complete " + challenge + ":" + challengeListTimes.get(challenge.toLowerCase()).intValue() );
 	}
     }
 
@@ -595,6 +623,13 @@ public class Players {
 	if (location != null) {
 	    kickedList.put(location, new Date());
 	}
+    }
+
+    /**
+     * @return the challengeListTimes
+     */
+    protected HashMap<String, Integer> getChallengeCompleteTimes() {
+        return challengeListTimes;
     }
 
 }

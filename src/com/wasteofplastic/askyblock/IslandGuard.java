@@ -78,9 +78,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 import org.bukkit.potion.Potion;
 
-import com.wasteofplastic.askyblock.events.ChallengeCompleteEvent;
-import com.wasteofplastic.askyblock.events.ChallengeLevelCompleteEvent;
-
 
 /**
  * @author tastybento
