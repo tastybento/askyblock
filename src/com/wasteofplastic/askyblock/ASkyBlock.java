@@ -2432,7 +2432,7 @@ public class ASkyBlock extends JavaPlugin {
      * @return true if player is offline, false if online
      */
     protected boolean setMessage(UUID playerUUID, String message) {
-	getLogger().info("DEBUG: received message - " + message);
+	//getLogger().info("DEBUG: received message - " + message);
 	Player player = getServer().getPlayer(playerUUID);
 	// Check if player is online
 	if (player != null) {
@@ -2442,7 +2442,7 @@ public class ASkyBlock extends JavaPlugin {
 	    }
 	}
 	// Player is offline so store the message
-	plugin.getLogger().info("DEBUG: player is offline - storing message");
+	//getLogger().info("DEBUG: player is offline - storing message");
 	List<String> playerMessages = messages.get(playerUUID);
 	if (playerMessages != null) {
 	    playerMessages.add(message);
