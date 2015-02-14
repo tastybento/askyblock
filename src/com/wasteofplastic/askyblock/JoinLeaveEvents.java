@@ -46,10 +46,10 @@ public class JoinLeaveEvents implements Listener {
 	    plugin.getLogger().severe("players is NULL");
 	}
 	// Load any messages for the player
-	plugin.getLogger().info("Checking messages for " + event.getPlayer().getName());
+	//plugin.getLogger().info("DEBUG: Checking messages for " + event.getPlayer().getName());
 	final List<String> messages = plugin.getMessages(playerUUID);
 	if (messages != null) {
-	    plugin.getLogger().info("Messages waiting!");
+	    //plugin.getLogger().info("DEBUG: Messages waiting!");
 	    plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
 		@Override
 		public void run() {
@@ -76,7 +76,7 @@ public class JoinLeaveEvents implements Listener {
 	 * This should not be needed
 	 */
 	if (players.inTeam(playerUUID) && players.getTeamIslandLocation(playerUUID) == null) {
-	    plugin.getLogger().info("DEBUG: reseting team island");
+	    //plugin.getLogger().info("DEBUG: reseting team island");
 	    leader = players.getTeamLeader(playerUUID);
 	    players.setTeamIslandLocation(playerUUID, players.getIslandLocation(leader));
 	}

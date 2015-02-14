@@ -1574,7 +1574,7 @@ public class IslandCmd implements CommandExecutor {
 			// If target is online
 			Player target = plugin.getServer().getPlayer(targetPlayer);
 			if (target != null) {
-			    plugin.getLogger().info("DEBUG: player is online");
+			    //plugin.getLogger().info("DEBUG: player is online");
 			    target.sendMessage(ChatColor.RED + Locale.kicknameRemovedYou.replace("[name]", player.getName()));
 			    // Log the location that this player left so they cannot join again before the cool down ends
 			    plugin.getPlayers().startInviteCoolDownTimer(targetPlayer, plugin.getPlayers().getIslandLocation(playerUUID));
@@ -1626,7 +1626,7 @@ public class IslandCmd implements CommandExecutor {
 			    } 
 			} else {
 			    // Offline
-			    plugin.getLogger().info("DEBUG: player is offline " + targetPlayer.toString());
+			    //plugin.getLogger().info("DEBUG: player is offline " + targetPlayer.toString());
 			    // Tell offline player they were kicked
 			    plugin.setMessage(targetPlayer, ChatColor.RED + Locale.kicknameRemovedYou.replace("[name]", player.getName()));
 			}
