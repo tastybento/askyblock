@@ -181,6 +181,8 @@ island:
    # The color that is placed before the /commands in /island help
    # See http://ess.khhq.net/mc/ for a list
    helpColor: "&e"
+   helpSettings: "see island protection and game settings"
+   helpChallenges: "/challenges: &fshow challenges"
 
 ###################
 #/island commands #

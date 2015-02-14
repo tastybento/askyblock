@@ -735,6 +735,7 @@ public class IslandCmd implements CommandExecutor {
 		}
 		return true;
 	    } else if (split[0].equalsIgnoreCase("about")) {
+		player.sendMessage("");
 		player.sendMessage(ChatColor.GOLD + "(c) 2014 - 2015 by tastybento");
 		player.sendMessage(ChatColor.GOLD + "This plugin is free software: you can redistribute");
 		player.sendMessage(ChatColor.GOLD + "it and/or modify it under the terms of the GNU");
@@ -933,7 +934,7 @@ public class IslandCmd implements CommandExecutor {
 		    player.sendMessage(Locale.helpColor + "/" + label + ": " + ChatColor.WHITE + Locale.islandhelpIsland);
 		}
 		player.sendMessage(Locale.helpColor + "/" + label + " go: " + ChatColor.WHITE + Locale.islandhelpTeleport);
-		if (plugin.getGrid().getSpawn() != null) {
+		if (plugin.getGrid() != null && plugin.getGrid().getSpawn() != null) {
 		    player.sendMessage(Locale.helpColor + "/" + label + " spawn: " + ChatColor.WHITE + Locale.islandhelpSpawn);
 		}
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.controlpanel")) {
@@ -983,6 +984,10 @@ public class IslandCmd implements CommandExecutor {
 		}
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.lock")) {
 		    player.sendMessage(Locale.helpColor + "/" + label + " lock: " + ChatColor.WHITE + Locale.islandHelpLock);
+		}
+		player.sendMessage(Locale.helpColor + "/" + label + " settings: " + ChatColor.WHITE + Locale.islandHelpSettings);
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.challenges")) {
+		    player.sendMessage(Locale.helpColor + Locale.islandHelpChallenges);
 		}
 		return true;
 	    } else if (split[0].equalsIgnoreCase("biomes")) {

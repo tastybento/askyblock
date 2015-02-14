@@ -57,6 +57,8 @@ challenges:
       repeatMoneyReward: 5
       repeatExpReward: 10
       #repeatrewardcommands:
+      # Max times limits how many times a challenge can be done. Comment out to make unlimited
+      maxtimes: 100
     breadmaker:
       friendlyname: 'Bread Maker'
       description: 'Bake 21 loaves of bread'
@@ -75,6 +77,8 @@ challenges:
       repeatRewardText: '1 dirt'
       repeatMoneyReward: 5
       repeatExpReward: 10
+      # Max times limits how many times a challenge can be done. Comment out to make unlimited
+      maxtimes: 100
     dyemaker:
       friendlyname: 'Dye Maker'
       description: 'Craft 32 cactus green dyes'
@@ -93,6 +97,8 @@ challenges:
       repeatRewardText: '1 of each kind of sapling'
       repeatMoneyReward: 5
       repeatExpReward: 10
+      # Max times limits how many times a challenge can be done. Comment out to make unlimited
+      maxtimes: 100
     papermaker:
       friendlyname: 'Paper Maker'
       description: 'Create 21 pages of paper'
@@ -111,6 +117,8 @@ challenges:
       repeatRewardText: '2 clay blocks'
       repeatMoneyReward: 5
       repeatExpReward: 10
+      # Max times limits how many times a challenge can be done. Comment out to make unlimited
+      maxtimes: 100
     cobblemaker:
       friendlyname: 'Cobble Maker'
       description: 'Create a cobblestone generator and mine 64 cobblestone.'
@@ -129,6 +137,8 @@ challenges:
       repeatRewardText: '1 leather'
       repeatMoneyReward: 5
       repeatExpReward: 10
+      # Max times limits how many times a challenge can be done. Comment out to make unlimited
+      maxtimes: 100
     seedbank:
       friendlyname: 'Seedbank'
       description: 'Collect 64 melon seeds, 64 pumpkin seeds and 64 wheat seeds'
@@ -147,6 +157,8 @@ challenges:
       repeatRewardText: '2 dirt blocks and 5 vines'
       repeatMoneyReward: 5
       repeatExpReward: 10
+      # Max times limits how many times a challenge can be done. Comment out to make unlimited
+      maxtimes: 100
     stewmaker:
       friendlyname: 'Stew Maker'
       description: 'Cook up 18 bowls of mushroom stew'
@@ -165,6 +177,8 @@ challenges:
       repeatRewardText: '1 mycelium block'
       repeatMoneyReward: 5
       repeatExpReward: 10
+      # Max times limits how many times a challenge can be done. Comment out to make unlimited
+      maxtimes: 100
     builder:
       friendlyname: 'Builder'
       description: 'Reach island level 10 (/island level).'
@@ -200,6 +214,8 @@ challenges:
       repeatRewardText: '2 redstone dust, 1 flint, 1 water breathing potion and 1 iron(ore)'
       repeatMoneyReward: 15
       repeatExpReward: 15
+      # Max times limits how many times a challenge can be done. Comment out to make unlimited
+      maxtimes: 100
     farmer:
       description: 'Harvest 64 units of the following: wheat, sugar, melon, carrots, potatoes, pumpkin'
       icon: WHEAT
@@ -217,6 +233,8 @@ challenges:
       repeatRewardText: '1 cocoa bean, 1 spawn egg(chicken,cow,pig)'
       repeatMoneyReward: 20
       repeatExpReward: 20
+      # Max times limits how many times a challenge can be done. Comment out to make unlimited
+      maxtimes: 100
     angler:
       friendlyname: 'Angler'
       description: 'Catch and cook 10 standard fish (no salmon)'
@@ -235,6 +253,8 @@ challenges:
       repeatRewardText: '2 redstone dust, 1 inksac, 1 iron (ore)'
       repeatMoneyReward: 15
       repeatExpReward: 15
+      # Max times limits how many times a challenge can be done. Comment out to make unlimited
+      maxtimes: 100
     treecutter:
       friendlyname: 'Treecutter'
       description: 'Create a tree farm and collect 16 oak, birch, jungle, and spruce logs'
@@ -253,6 +273,8 @@ challenges:
       repeatRewardText: '2 redstone dust, 1 iron (ore)'
       repeatMoneyReward: 15
       repeatExpReward: 15
+      # Max times limits how many times a challenge can be done. Comment out to make unlimited
+      maxtimes: 100
     cookiemaker:
       friendlyname: 'Cookie Maker'
       description: 'Make 128 cookies and a bucket of milk'
@@ -271,6 +293,8 @@ challenges:
       repeatRewardText: '2 redstone dust, 1 iron (ore)'
       repeatMoneyReward: 15
       repeatExpReward: 15
+      # Max times limits how many times a challenge can be done. Comment out to make unlimited
+      maxtimes: 100
     craftsman:
       friendlyname: 'Craftsman'
       description: 'Reach island level 75 (/island level).'
@@ -343,6 +367,8 @@ challenges:
       repeatRewardText: '1 gold ingot and 1 blaze rod'
       repeatMoneyReward: 15
       repeatExpReward: 15
+      # Max times limits how many times a challenge can be done. Comment out to make unlimited
+      maxtimes: 100
     slimeballfarmer:
       friendlyname: 'Slimeball Farmer'
       description: 'Collect 40 slimeballs from slimes'
@@ -361,6 +387,8 @@ challenges:
       repeatRewardText: '8 redstone dust'
       repeatMoneyReward: 15
       repeatExpReward: 15
+      # Max times limits how many times a challenge can be done. Comment out to make unlimited
+      maxtimes: 100
     baker:
       friendlyname: 'baker'
       description: 'Bake 5 cakes and 5 pumpkin pies'
@@ -379,6 +407,8 @@ challenges:
       repeatRewardText: '1 iron (ore)'
       repeatMoneyReward: 15
       repeatExpReward: 15
+      # Max times limits how many times a challenge can be done. Comment out to make unlimited
+      maxtimes: 100
     pioneer:
       friendlyname: 'Pioneer'
       description: 'Make 1 map and use it, a compass, a clock and collect 64 netherrack, 16 soulsand, and 1 ghast tear'
@@ -397,6 +427,8 @@ challenges:
       repeatRewardText: '1 iron (ore)'
       repeatMoneyReward: 20
       repeatExpReward: 20
+      # Max times limits how many times a challenge can be done. Comment out to make unlimited
+      maxtimes: 100
     mason:
       friendlyname: 'Mason'
       description: 'Reach island level 150 (/island level).'
@@ -433,6 +465,8 @@ challenges:
       repeatRewardText: '1 emerald, 1 sheep spawn egg'
       repeatMoneyReward: 20
       repeatExpReward: 20
+      # Max times limits how many times a challenge can be done. Comment out to make unlimited
+      maxtimes: 100
     alchemist:
       friendlyname: 'Alchemist'
       description: 'Brew 1 potion of Fire Resistance, Slowness, Swiftness, Healing, Harming, Invisibility, Strength and Regeneration'
@@ -469,6 +503,8 @@ challenges:
       repeatRewardText: '1 diamond, 5 emeralds and 2 gold bars'
       repeatMoneyReward: 20
       repeatExpReward: 20
+      # Max times limits how many times a challenge can be done. Comment out to make unlimited
+      maxtimes: 100
     gemcollector:
       friendlyname: 'Gem Collector'
       description: 'Collect 50 emeralds'
@@ -487,6 +523,8 @@ challenges:
       repeatRewardText: '2 gold ingots'
       repeatMoneyReward: 20
       repeatExpReward: 20
+      # Max times limits how many times a challenge can be done. Comment out to make unlimited
+      maxtimes: 100
     culinaryartist:
       friendlyname: 'Culinary Artist'
       description: 'Collect 1 of every kind of cooked or crafted edible food (no raw food, zombie flesh, or super golden apples)'
@@ -505,6 +543,8 @@ challenges:
       repeatRewardText: '10 gold ingots, 1 mooshroom spawn egg, 1 emerald'
       repeatMoneyReward: 20
       repeatExpReward: 20
+      # Max times limits how many times a challenge can be done. Comment out to make unlimited
+      maxtimes: 100
     beaconator:
       friendlyname: 'Beaconator'
       description: 'Build a beacon and let it shine!'

@@ -1496,6 +1496,8 @@ public class ASkyBlock extends JavaPlugin {
 	Locale.islandhelpLeave = ChatColor.translateAlternateColorCodes('&',locale.getString("island.helpLeave","leave another player's island."));
 	Locale.islandhelpKick = ChatColor.translateAlternateColorCodes('&',locale.getString("island.helpKick","remove a team member from your island."));
 	Locale.islandhelpExpel = ChatColor.translateAlternateColorCodes('&',locale.getString("island.helpExpel","force a player from your island."));
+	Locale.islandHelpSettings = ChatColor.translateAlternateColorCodes('&',locale.getString("island.helpSettings","see island protection and game settings"));
+	Locale.islandHelpChallenges = ChatColor.translateAlternateColorCodes('&',locale.getString("island.helpChallenges","/challenges: &fshow challenges"));
 	Locale.adminHelpHelp = ChatColor.translateAlternateColorCodes('&',locale.getString("adminHelp.help","Acid Admin Commands:"));
 	Locale.islandhelpAcceptReject = ChatColor.translateAlternateColorCodes('&',locale.getString("island.helpAcceptReject","accept or reject an invitation."));
 	Locale.islandhelpMakeLeader = ChatColor.translateAlternateColorCodes('&',locale.getString("island.helpMakeLeader","transfer the island to <player>."));
