@@ -475,6 +475,10 @@ public class IslandGuard implements Listener {
 	if (!e.getFrom().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    return;
 	}
+	// Check if ready
+	if (plugin.getGrid() == null) {
+	    return;
+	}
 	// Teleporting while falling check
 	if (!Settings.allowTeleportWhenFalling && e.getPlayer().getGameMode().equals(GameMode.SURVIVAL)
 		&& !e.getPlayer().isOp()) {

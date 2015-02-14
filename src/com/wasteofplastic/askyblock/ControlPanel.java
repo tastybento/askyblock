@@ -31,6 +31,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -199,14 +200,23 @@ public class ControlPanel implements Listener {
 	Inventory inventory = event.getInventory(); // The inventory that was clicked in
 	//ASkyBlock plugin = ASkyBlock.getPlugin();
 	int slot = event.getRawSlot();
-	// Challenges
-	if (inventory.getName().equals(Locale.challengesguiTitle)) {
-	    event.setCancelled(true);
-	    if (slot == -999) {
+	// Settings
+	if (inventory.getName().equalsIgnoreCase("Island Guard Settings")) {
+	    if (event.getSlotType() == SlotType.OUTSIDE) {	
 		player.closeInventory();
 		return;
 	    }
-
+	    event.setCancelled(true);
+	    return;
+	}
+	// Challenges
+	if (inventory.getName().equals(Locale.challengesguiTitle)) {
+	    event.setCancelled(true);
+	    if (event.getSlotType() == SlotType.OUTSIDE) {	
+		player.closeInventory();
+		return;
+	    }
+	    
 	    // Get the list of items in this inventory
 	    //plugin.getLogger().info("DEBUG: You clicked on slot " + slot);
 	    List<CPItem> challenges = plugin.getChallenges().getCP(player);

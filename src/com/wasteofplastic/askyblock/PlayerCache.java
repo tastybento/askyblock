@@ -165,6 +165,7 @@ public class PlayerCache {
      */
     protected boolean hasIsland(final UUID playerUUID) {
 	addPlayer(playerUUID);
+	//plugin.getLogger().info("DEBUG: hasIsland = " + playerUUID.toString() + " = " + playerCache.get(playerUUID).hasIsland());
 	return playerCache.get(playerUUID).hasIsland();
     }
 
@@ -238,6 +239,7 @@ public class PlayerCache {
     }
 
     protected void setHasIsland(UUID playerUUID, boolean b) {
+	//plugin.getLogger().info("DEBUG: setHasIsland " + playerUUID.toString() + " " + b);
 	addPlayer(playerUUID);
 	playerCache.get(playerUUID).setHasIsland(b);
     }

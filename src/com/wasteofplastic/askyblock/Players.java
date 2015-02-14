@@ -99,6 +99,7 @@ public class Players {
 	}
 	//plugin.getLogger().info("Loading player..." + playerName);
 	this.hasIsland = playerInfo.getBoolean("hasIsland", false);
+	//plugin.getLogger().info("DEBUG: hasIsland load = " + this.hasIsland);
 	this.islandLocation = playerInfo.getString("islandLocation", "");
 	this.homeLocation = playerInfo.getString("homeLocation", "");
 	this.inTeam = playerInfo.getBoolean("hasTeam", false);

@@ -36,7 +36,7 @@ public class BiomeItem {
 	ItemMeta meta = item.getItemMeta();
 	meta.setDisplayName(name);
 	List<String> Lore = new ArrayList<String>();
-	Lore = Challenges.chop(ChatColor.YELLOW, description, 20);
+	Lore = Util.chop(ChatColor.YELLOW, description, 20);
 	// Create price
 	if (Settings.useEconomy && cost > 0D) {
 	    Lore.add(VaultHelper.econ.format(cost));

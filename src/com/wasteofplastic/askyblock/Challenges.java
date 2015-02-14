@@ -1129,7 +1129,7 @@ public class Challenges implements CommandExecutor {
 		List<String> lore = new ArrayList<String>();
 		if (levelDone <= 0) {
 		    CPItem item = new CPItem(Material.BOOK_AND_QUILL, ChatColor.GOLD + Settings.challengeLevels.get(i), null, null);
-		    lore = chop(ChatColor.WHITE,
+		    lore = Util.chop(ChatColor.WHITE,
 			    Locale.challengesNavigation.replace("[level]", Settings.challengeLevels.get(i)), 25);
 		    item.setNextSection(Settings.challengeLevels.get(i));
 		    item.setLore(lore);
@@ -1138,7 +1138,7 @@ public class Challenges implements CommandExecutor {
 		    // Hint at what is to come
 		    CPItem item = new CPItem(Material.BOOK, ChatColor.GOLD + Settings.challengeLevels.get(i), null, null);
 		    // Add the level
-		    lore = chop(ChatColor.WHITE,
+		    lore = Util.chop(ChatColor.WHITE,
 			    Locale.challengestoComplete.replace("[challengesToDo]"
 				    ,String.valueOf(levelDone)).replace("[thisLevel]",Settings.challengeLevels.get(i-1)), 25);
 		    item.setLore(lore);
@@ -1311,7 +1311,7 @@ public class Challenges implements CommandExecutor {
 		CPItem item = new CPItem(Material.BOOK, ChatColor.GOLD + Settings.challengeLevels.get(i), null, null);
 		List<String> lore = new ArrayList<String>();
 		// Add the level
-		lore = chop(
+		lore = Util.chop(
 			ChatColor.WHITE,
 			Locale.challengestoComplete.replace("[challengesToDo]", String.valueOf(levelDone)).replace("[thisLevel]",
 				Settings.challengeLevels.get(i - 1)), 25);
@@ -1340,38 +1340,7 @@ public class Challenges implements CommandExecutor {
 	return playerChallengeGUI.get(player.getUniqueId());
     }
 
-    protected static List<String> chop(ChatColor color, String longLine, int length) {
-	List<String> result = new ArrayList<String>();
-	// int multiples = longLine.length() / length;
-	int i = 0;
-	for (i = 0; i < longLine.length(); i += length) {
-	    // for (int i = 0; i< (multiples*length); i += length) {
-	    int endIndex = Math.min(i + length, longLine.length());
-	    String line = longLine.substring(i, endIndex);
-	    // Do the following only if i+length is not the end of the string
-	    if (endIndex < longLine.length()) {
-		// Check if last character in this string is not a space
-		if (!line.substring(line.length() - 1).equals(" ")) {
-		    // If it is not a space, check to see if the next character
-		    // in long line is a space.
-		    if (!longLine.substring(endIndex, endIndex + 1).equals(" ")) {
-			// If it is not, then we are cutting a word in two and
-			// need to backtrack to the last space if possible
-			int lastSpace = line.lastIndexOf(" ");
-			// Only do this if there is a space in the line to backtrack to...
-			if (lastSpace != -1 && lastSpace < line.length()) {
-			    line = line.substring(0, lastSpace);
-			    i -= (length - lastSpace - 1);
-			}
-		    }
-		}
-	    }
-	    // }
-	    result.add(color + line);
-	}
-	// result.add(color + longLine.substring(i, longLine.length()));
-	return result;
-    }
+
 
     /**
      * Creates the challenge description for the "item" in the inventory
@@ -1388,7 +1357,7 @@ public class Challenges implements CommandExecutor {
 	//plugin.getLogger().info(plugin.getChallengeConfig().getString("challenges.challengeList." + challenge + ".level"));
 	String level = plugin.getChallengeConfig().getString("challenges.challengeList." + challenge + ".level","");
 	if (!level.isEmpty()) {
-	    result.addAll(chop(ChatColor.WHITE, Locale.challengeslevel +": " + level,length));
+	    result.addAll(Util.chop(ChatColor.WHITE, Locale.challengeslevel +": " + level,length));
 	}
 	// Check if completed or not
 	boolean complete = false;
@@ -1424,17 +1393,17 @@ public class Challenges implements CommandExecutor {
 
 	final String type = plugin.getChallengeConfig().getString("challenges.challengeList." + challenge + ".type","").toLowerCase();
 	if (!complete || (complete && repeatable)) {
-	    result.addAll(chop(ChatColor.GOLD, plugin.getChallengeConfig().getString("challenges.challengeList." + challenge + ".description",""),length));	    
+	    result.addAll(Util.chop(ChatColor.GOLD, plugin.getChallengeConfig().getString("challenges.challengeList." + challenge + ".description",""),length));	    
 	    if (type.equals("inventory")) {
 		if (plugin.getChallengeConfig().getBoolean("challenges.challengeList." + challenge.toLowerCase() + ".takeItems")) {
-		    result.addAll(chop(ChatColor.RED, Locale.challengesitemTakeWarning,length));
+		    result.addAll(Util.chop(ChatColor.RED, Locale.challengesitemTakeWarning,length));
 		}
 	    } else if (type.equals("island")) {
-		result.addAll(chop(ChatColor.RED, Locale.challengeserrorItemsNotThere,length));
+		result.addAll(Util.chop(ChatColor.RED, Locale.challengeserrorItemsNotThere,length));
 	    }
 	}
 	if (complete && (!type.equals("inventory") || !repeatable)) {
-	    result.addAll(chop(ChatColor.RED, Locale.challengesnotRepeatable,length));
+	    result.addAll(Util.chop(ChatColor.RED, Locale.challengesnotRepeatable,length));
 	    return result;
 	}
 	int moneyReward = 0;
@@ -1445,21 +1414,21 @@ public class Challenges implements CommandExecutor {
 	    moneyReward = plugin.getChallengeConfig().getInt("challenges.challengeList." + challenge.toLowerCase() + ".moneyReward", 0);
 	    rewardText = ChatColor.translateAlternateColorCodes('&',plugin.getChallengeConfig().getString("challenges.challengeList." + challenge.toLowerCase() + ".rewardText", "Goodies!"));
 	    expReward = plugin.getChallengeConfig().getInt("challenges.challengeList." + challenge + ".xpReward", 0);
-	    result.addAll(chop(ChatColor.GOLD, Locale.challengesfirstTimeRewards,length));
+	    result.addAll(Util.chop(ChatColor.GOLD, Locale.challengesfirstTimeRewards,length));
 	} else {
 	    // Repeat challenge
 	    moneyReward = plugin.getChallengeConfig().getInt("challenges.challengeList." + challenge.toLowerCase() + ".repeatMoneyReward", 0);
 	    rewardText = ChatColor.translateAlternateColorCodes('&',plugin.getChallengeConfig().getString("challenges.challengeList." + challenge.toLowerCase() + ".repeatRewardText", "Goodies!"));
 	    expReward = plugin.getChallengeConfig().getInt("challenges.challengeList." + challenge + ".repeatExpReward", 0);
-	    result.addAll(chop(ChatColor.GOLD,  Locale.challengesrepeatRewards,length));
+	    result.addAll(Util.chop(ChatColor.GOLD,  Locale.challengesrepeatRewards,length));
 
 	}	
-	result.addAll(chop(ChatColor.WHITE, rewardText,length));
+	result.addAll(Util.chop(ChatColor.WHITE, rewardText,length));
 	if (expReward > 0) {
-	    result.addAll(chop(ChatColor.GOLD, Locale.challengesexpReward + ": " + ChatColor.WHITE + expReward,length));
+	    result.addAll(Util.chop(ChatColor.GOLD, Locale.challengesexpReward + ": " + ChatColor.WHITE + expReward,length));
 	}
 	if (Settings.useEconomy && moneyReward > 0) { 
-	    result.addAll(chop(ChatColor.GOLD, Locale.challengesmoneyReward + ": " + ChatColor.WHITE + VaultHelper.econ.format(moneyReward),length));
+	    result.addAll(Util.chop(ChatColor.GOLD, Locale.challengesmoneyReward + ": " + ChatColor.WHITE + VaultHelper.econ.format(moneyReward),length));
 	}
 	return result;	
     }

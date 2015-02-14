@@ -222,9 +222,9 @@ public class AdminCmd implements CommandExecutor {
 		    sender.sendMessage(ChatColor.RED + "Island exists at " + ChatColor.YELLOW + newSpawn.getCenter().getBlockX() + "," + newSpawn.getCenter().getBlockZ() + "!");
 		    if (target != null) {
 			sender.sendMessage(ChatColor.RED + "Owned by: " + plugin.getPlayers().getName(target));
+			sender.sendMessage(ChatColor.RED + "Unregister the owner first.");
+			return false;
 		    }
-		    sender.sendMessage(ChatColor.RED + "Unregister the owner first.");
-		    return false;
 		}
 		if (oldSpawn != null) {
 		    sender.sendMessage(ChatColor.GOLD + "Changing spawn island location. Warning: old spawn island location at "
@@ -1188,9 +1188,9 @@ public class AdminCmd implements CommandExecutor {
 	    if (challengeTimes.containsKey(c)) {
 		sender.sendMessage(c + ": " + ((challenges.get(c)) ? ChatColor.GREEN + Locale.challengescomplete :ChatColor.AQUA + Locale.challengesincomplete)
 			+ "(" + plugin.getPlayers().checkChallengeTimes(playerUUID, c) + ")");
-		    
+
 	    } else {
-	    sender.sendMessage(c + ": " + ((challenges.get(c)) ? ChatColor.GREEN + Locale.challengescomplete :ChatColor.AQUA + Locale.challengesincomplete));
+		sender.sendMessage(c + ": " + ((challenges.get(c)) ? ChatColor.GREEN + Locale.challengescomplete :ChatColor.AQUA + Locale.challengesincomplete));
 	    }
 	}
     }
