@@ -62,9 +62,9 @@ public class JoinLeaveEvents implements Listener {
 		    plugin.clearMessages(playerUUID);
 		}
 	    }, 40L);
-	} else {
-	    plugin.getLogger().info("no messages");
-	}
+	} //else {
+	  //  plugin.getLogger().info("no messages");
+	//}
 
 	// If this player is not an island player just skip all this
 	if (!players.hasIsland(playerUUID) && !players.inTeam(playerUUID)) {
