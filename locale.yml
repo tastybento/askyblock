@@ -110,6 +110,9 @@ challenges:
    guititle: "aSkyBlock Challenges"
    erroryouaremissing: "You are missing"
    errorRewardProblem: "There was a problem giving your reward. Ask Admin to check log!"
+   completedtimes: "Completed [donetimes] out of [maxtimes]"
+   maxreached: "Max reached [donetimes] out of [maxtimes]"
+
 #/island
 island:
    # Titles for V1.8+ servers only. Set to '' to remove.

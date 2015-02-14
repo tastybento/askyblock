@@ -390,5 +390,7 @@ public class Locale {
     public static String challengesNavigation;
     public static String islandHelpSettings;
     public static String islandHelpChallenges;
+    public static String challengesmaxreached;
+    public static String challengescompletedtimes;
       
 }

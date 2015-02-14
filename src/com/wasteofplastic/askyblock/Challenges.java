@@ -75,10 +75,11 @@ public class Challenges implements CommandExecutor {
 	    return false;
 	}
 	final Player player = (Player)sender;
+	/*
 	if (!player.getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    player.sendMessage(ChatColor.RED + Locale.errorWrongWorld);
 	    return true;
-	}
+	}*/
 	// Check permissions
 	if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.challenges")) {
 	    player.sendMessage(ChatColor.RED + Locale.errorNoPermission);
@@ -153,6 +154,10 @@ public class Challenges implements CommandExecutor {
 	    return true;
 	case 2:
 	    if (cmd[0].equalsIgnoreCase("complete") || cmd[0].equalsIgnoreCase("c")) {
+		if (!player.getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+		    player.sendMessage(ChatColor.RED + Locale.errorWrongWorld);
+		    return true;
+		}
 		if (checkIfCanCompleteChallenge(player, cmd[1].toLowerCase())) {
 		    int oldLevel = levelDone(player);
 		    giveReward(player, cmd[1].toLowerCase());
@@ -1381,10 +1386,10 @@ public class Challenges implements CommandExecutor {
 	    } else {
 		// Check if the player has maxed out the challenge   
 		if (doneTimes < maxTimes) {
-		    result.add("Completed " + doneTimes + " out of " + maxTimes); 
+		    result.add(Locale.challengescompletedtimes.replace("[donetimes]", String.valueOf(doneTimes)).replace("[maxtimes]",String.valueOf(maxTimes)));
 		} else {
 		    repeatable = false;
-		    result.add("Max reached " + doneTimes + " out of " + maxTimes);
+		    result.add(Locale.challengesmaxreached.replace("[donetimes]", String.valueOf(doneTimes)).replace("[maxtimes]",String.valueOf(maxTimes)));
 		}
 	    }
 	} else if (complete) {

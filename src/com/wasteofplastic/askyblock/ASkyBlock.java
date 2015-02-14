@@ -1466,6 +1466,8 @@ public class ASkyBlock extends JavaPlugin {
 	Locale.challengesguiTitle = ChatColor.translateAlternateColorCodes('&',locale.getString("challenges.guititle", "Challenges"));
 	Locale.challengeserrorYouAreMissing = ChatColor.translateAlternateColorCodes('&',locale.getString("challenges.erroryouaremissing", "You are missing"));
 	Locale.challengesNavigation = ChatColor.translateAlternateColorCodes('&',locale.getString("challenges.navigation", "Click to see [level] challenges!"));
+	Locale.challengescompletedtimes = ChatColor.translateAlternateColorCodes('&',locale.getString("challenges.completedtimes", "Completed [donetimes] out of [maxtimes]"));
+	Locale.challengesmaxreached = ChatColor.translateAlternateColorCodes('&',locale.getString("challenges.maxreached", "Max reached [donetimes] out of [maxtimes]"));
 	Locale.islandteleport = ChatColor.translateAlternateColorCodes('&',locale.getString("island.teleport","Teleporting you to your island. (/island help for more info)"));
 	Locale.islandcannotTeleport = ChatColor.translateAlternateColorCodes('&',locale.getString("island.cannotTeleport","You cannot teleport when falling!"));
 	Locale.islandnew = ChatColor.translateAlternateColorCodes('&',locale.getString("island.new","Creating a new island for you..."));
