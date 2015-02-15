@@ -74,9 +74,11 @@ import org.bukkit.event.player.PlayerShearEntityEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerUnleashEntityEvent;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
+import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 import org.bukkit.potion.Potion;
+import org.bukkit.util.Vector;
 
 
 /**
@@ -104,7 +106,7 @@ public class IslandGuard implements Listener {
 	plugin.getLogger().info(e.getEventName());
 	plugin.getLogger().info("DEBUG: challenge complete!");
     }
-    */
+     */
     // Vehicle damage
     @EventHandler(priority = EventPriority.LOW)
     void vehicleDamageEvent(VehicleDamageEvent e){
@@ -331,6 +333,78 @@ public class IslandGuard implements Listener {
 	e.setCancelled(true);
     }
 
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
+    public void onVehicleMove(final VehicleMoveEvent e) {
+	if (!e.getVehicle().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	    return;
+	}
+	Entity passenger = e.getVehicle().getPassenger();
+	if (passenger == null || !(passenger instanceof Player)) {
+	    return;
+	}
+	Player player = (Player)passenger;
+
+	Island islandTo = plugin.getGrid().getProtectedIslandAt(e.getTo());
+	// Announcement entering
+	Island islandFrom = plugin.getGrid().getProtectedIslandAt(e.getFrom());
+	// Only says something if there is a change in islands
+	/*
+	 * Situations:
+	 * islandTo == null && islandFrom != null - exit
+	 * islandTo == null && islandFrom == null - nothing
+	 * islandTo != null && islandFrom == null - enter
+	 * islandTo != null && islandFrom != null - same Island or teleport?
+	 * islandTo == islandFrom
+	 */
+  
+	//plugin.getLogger().info("islandTo = " + islandTo);
+	//plugin.getLogger().info("islandFrom = " + islandFrom);
+	if (islandTo !=null && islandTo.isLocked() && (islandTo.getOwner() != null || islandTo.isSpawn())) {
+	    player.sendMessage(ChatColor.RED + Locale.lockIslandLocked);
+	    if (!islandTo.getMembers().contains(player.getUniqueId()) 
+		    && !player.isOp()
+		    && !VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.bypassprotect")) {
+		// Set velocities
+		Vector velocity = e.getVehicle().getVelocity();
+		velocity.multiply(new Vector(-1.1D,0D,-1.1D));
+		player.setVelocity(velocity);
+		e.getVehicle().setVelocity(velocity);
+		return;
+	    }
+	}
+
+	if (islandTo !=null && islandFrom == null && (islandTo.getOwner() != null || islandTo.isSpawn())) {
+	    // Entering
+	    if (islandTo.isSpawn()) {
+		player.sendMessage(Locale.lockEnteringSpawn);
+	    } else {
+		player.sendMessage(Locale.lockNowEntering.replace("[name]", plugin.getPlayers().getName(islandTo.getOwner())));
+	    }
+	} else if (islandTo == null && islandFrom != null && (islandFrom.getOwner() != null || islandFrom.isSpawn())) {
+	    // Leaving
+	    if (islandFrom.isSpawn()) {
+		// Leaving
+		player.sendMessage(Locale.lockLeavingSpawn);
+	    } else {
+		player.sendMessage(Locale.lockNowLeaving.replace("[name]", plugin.getPlayers().getName(islandFrom.getOwner())));
+	    }
+	} else if (islandTo != null && islandFrom !=null && !islandTo.equals(islandFrom)) {
+	    // Adjacent islands or overlapping protections
+	    if (islandFrom.isSpawn()) {
+		// Leaving
+		player.sendMessage(Locale.lockLeavingSpawn);
+	    } else if (islandFrom.getOwner() != null){
+		player.sendMessage(Locale.lockNowLeaving.replace("[name]", plugin.getPlayers().getName(islandFrom.getOwner())));
+	    }
+	    if (islandTo.isSpawn()) {
+		player.sendMessage(Locale.lockEnteringSpawn);
+	    } else if (islandTo.getOwner() != null){
+		player.sendMessage(Locale.lockNowEntering.replace("[name]", plugin.getPlayers().getName(islandTo.getOwner())));
+	    }    
+	}	
+    }
+
+
     /**
      * Adds island lock function
      * @param e
@@ -344,6 +418,9 @@ public class IslandGuard implements Listener {
 	    return;
 	}
 	if (plugin.getGrid() == null) {
+	    return;
+	}
+	if (e.getPlayer().isInsideVehicle()) {
 	    return;
 	}
 	Island islandTo = plugin.getGrid().getProtectedIslandAt(e.getTo());
@@ -367,6 +444,13 @@ public class IslandGuard implements Listener {
 		if (!islandTo.getMembers().contains(e.getPlayer().getUniqueId()) 
 			&& !e.getPlayer().isOp()
 			&& !VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
+		    // Set velocities
+		    Vector velocity = e.getPlayer().getVelocity();
+		    velocity.multiply(new Vector(-1.1D,0D,-1.1D));
+		    e.getPlayer().setVelocity(velocity);
+		    if (e.getPlayer().isInsideVehicle()) {
+			e.getPlayer().getVehicle().setVelocity(velocity);
+		    }
 		    e.setCancelled(true);
 		    return;
 		}
@@ -878,7 +962,7 @@ public class IslandGuard implements Listener {
 		//plugin.getLogger().info("PVP not allowed");
 
 	    }
-	    
+
 	}
 
 	//plugin.getLogger().info("Player attack (or arrow)");
@@ -998,10 +1082,10 @@ public class IslandGuard implements Listener {
 		return;
 	    }
 	    if (plugin.getGrid().isAtSpawn(e.getBlock().getLocation())) {
-	    if (!Settings.allowSpawnPlaceBlocks) {
-		e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
-		e.setCancelled(true);
-	    }
+		if (!Settings.allowSpawnPlaceBlocks) {
+		    e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
+		    e.setCancelled(true);
+		}
 	    } else if (!Settings.allowPlaceBlocks && !plugin.locationIsOnIsland(e.getPlayer(),e.getBlock().getLocation())) {
 		e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
 		e.setCancelled(true);
