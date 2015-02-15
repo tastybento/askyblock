@@ -535,7 +535,15 @@ public class GridManager {
      * @param newOwner
      */
     protected void setIslandOwner(Island island, UUID newOwner) {
-	// Check if this owner already has an island
+	// The old owner
+	UUID oldOwner = island.getOwner();
+	// If the island owner is being set to null - remove the old owner's ownership
+	if (newOwner == null && oldOwner != null) {
+	    ownershipMap.remove(oldOwner);
+	    island.setOwner(null);
+	    return;
+	}
+	// Check if the new owner already has an island
 	if (ownershipMap.containsKey(newOwner)) {
 	    Island oldIsland = ownershipMap.get(newOwner);
 	    //plugin.getLogger().warning("Island at " + oldIsland.getCenter().getBlockX() + ", " + oldIsland.getCenter().getBlockZ()
@@ -543,22 +551,26 @@ public class GridManager {
 	    oldIsland.setOwner(null);
 	    ownershipMap.remove(newOwner);
 	}
+	// Make the new owner own the island
 	if (newOwner != null && island != null) {
-	    // See if this island has an owner already
-	    UUID owner = island.getOwner();
+	    // See if this island has an owner already    
 	    island.setOwner(newOwner);
-	    if (ownershipMap.containsKey(owner)) {
+	    // If the old owner exists remove them from the map
+	    if (oldOwner != null && ownershipMap.containsKey(oldOwner)) {
 		// Remove the old entry
-		ownershipMap.remove(owner);
-	    }
-	    if (ownershipMap.containsKey(newOwner)) {
-		// new owner had an island - make owner null
-		ownershipMap.get(newOwner).setOwner(null);
+		ownershipMap.remove(oldOwner);
 	    }
 	    // Insert the new entry
 	    ownershipMap.put(newOwner,island);
 	}
     }
+    /**
+     * @return the ownershipMap
+     */
+    protected HashMap<UUID, Island> getOwnershipMap() {
+        return ownershipMap;
+    }
+
     /**
      * @return the spawn
      */

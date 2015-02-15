@@ -201,5 +201,6 @@ public class Settings {
     public static boolean allowSpawnBreakBlocks;
     public static boolean allowSpawnPlaceBlocks;
     public static boolean allowSpawnEggs;
+    public static boolean resetEnderChest;
 
 }

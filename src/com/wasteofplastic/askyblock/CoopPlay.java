@@ -197,12 +197,13 @@ public class CoopPlay {
      * @param target
      */
     protected void clearMyInvitedCoops(Player clearer) {
+	/*
 	Location expellersIsland = null;
 	if (plugin.getPlayers().inTeam(clearer.getUniqueId())) {
 	    expellersIsland = plugin.getPlayers().getTeamIslandLocation(clearer.getUniqueId());
 	} else {
 	    expellersIsland = plugin.getPlayers().getIslandLocation(clearer.getUniqueId());
-	}
+	}*/
 	for (UUID players :coopPlayers.keySet()) {
 	    Iterator<Entry<Location,UUID>> en = coopPlayers.get(players).entrySet().iterator();
 	    while (en.hasNext()) {

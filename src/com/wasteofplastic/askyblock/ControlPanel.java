@@ -31,6 +31,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -199,53 +200,23 @@ public class ControlPanel implements Listener {
 	Inventory inventory = event.getInventory(); // The inventory that was clicked in
 	//ASkyBlock plugin = ASkyBlock.getPlugin();
 	int slot = event.getRawSlot();
-	// Check control panels
-	for (String panelName : controlPanel.keySet()) {
-	    if (inventory.getName().equals(panelName)) {
-		//plugin.getLogger().info("DEBUG: panels length " + panels.size());
-		//plugin.getLogger().info("DEBUG: panel name " + panelName);
-		if (slot == -999) {
-		    player.closeInventory();
-		    event.setCancelled(true);
-		    return;
-		}
-		HashMap<Integer, CPItem> thisPanel = panels.get(panelName);
-		if (slot >= 0 && slot < thisPanel.size()) {
-		    //plugin.getLogger().info("DEBUG: slot is " + slot);
-		    // Do something
-		    String command = thisPanel.get(slot).getCommand();
-		    String nextSection = ChatColor.translateAlternateColorCodes('&',thisPanel.get(slot).getNextSection());
-		    if (!command.isEmpty()) {
-			player.closeInventory(); // Closes the inventory
-			event.setCancelled(true);
-			//plugin.getLogger().info("DEBUG: performing command " + command);
-			player.performCommand(command);
-			return;
-		    }
-		    if (!nextSection.isEmpty()) {
-			player.closeInventory(); // Closes the inventory
-			Inventory next = controlPanel.get(nextSection);
-			if (next == null) {
-			    //plugin.getLogger().info("DEBUG: next panel is null");
-			}
-			//plugin.getLogger().info("DEBUG: opening next cp "+nextSection);
-			player.openInventory(next);
-			event.setCancelled(true);
-			return;
-		    }
-		    player.closeInventory(); // Closes the inventory
-		    event.setCancelled(true);
-		    return;
-		}
-	    }
-	}
-	if (inventory.getName().equals(Locale.challengesguiTitle)) {
-	    event.setCancelled(true);
-	    if (slot == -999) {
+	// Settings
+	if (inventory.getName().equalsIgnoreCase("Island Guard Settings")) {
+	    if (event.getSlotType() == SlotType.OUTSIDE) {	
 		player.closeInventory();
 		return;
 	    }
-
+	    event.setCancelled(true);
+	    return;
+	}
+	// Challenges
+	if (inventory.getName().equals(Locale.challengesguiTitle)) {
+	    event.setCancelled(true);
+	    if (event.getSlotType() == SlotType.OUTSIDE) {	
+		player.closeInventory();
+		return;
+	    }
+	    
 	    // Get the list of items in this inventory
 	    //plugin.getLogger().info("DEBUG: You clicked on slot " + slot);
 	    List<CPItem> challenges = plugin.getChallenges().getCP(player);
@@ -265,7 +236,12 @@ public class ControlPanel implements Listener {
 		if (clicked.equals(item.getItem())) {
 		    //plugin.getLogger().info("DEBUG: You clicked on a challenge item");
 		    //plugin.getLogger().info("DEBUG: performing  /" + item.getCommand());
-		    if (item.getCommand() != null) {
+		    //plugin.getLogger().info("DEBUG: going to " + item.getNextSection());
+		    // Next section indicates the level of panel to open
+		    if (item.getNextSection() != null) {
+			player.closeInventory();
+			player.openInventory(plugin.getChallenges().challengePanel(player, item.getNextSection()));
+		    } else if (item.getCommand() != null) {
 			player.performCommand(item.getCommand());
 			player.closeInventory();
 			player.openInventory(plugin.getChallenges().challengePanel(player));
@@ -328,6 +304,46 @@ public class ControlPanel implements Listener {
 		    if (!message.isEmpty()) {
 			player.sendMessage(message);	
 		    }
+		}
+	    }
+	}
+	// Check control panels
+	for (String panelName : controlPanel.keySet()) {
+	    if (inventory.getName().equals(panelName)) {
+		//plugin.getLogger().info("DEBUG: panels length " + panels.size());
+		//plugin.getLogger().info("DEBUG: panel name " + panelName);
+		if (slot == -999) {
+		    player.closeInventory();
+		    event.setCancelled(true);
+		    return;
+		}
+		HashMap<Integer, CPItem> thisPanel = panels.get(panelName);
+		if (slot >= 0 && slot < thisPanel.size()) {
+		    //plugin.getLogger().info("DEBUG: slot is " + slot);
+		    // Do something
+		    String command = thisPanel.get(slot).getCommand();
+		    String nextSection = ChatColor.translateAlternateColorCodes('&',thisPanel.get(slot).getNextSection());
+		    if (!command.isEmpty()) {
+			player.closeInventory(); // Closes the inventory
+			event.setCancelled(true);
+			//plugin.getLogger().info("DEBUG: performing command " + command);
+			player.performCommand(command);
+			return;
+		    }
+		    if (!nextSection.isEmpty()) {
+			player.closeInventory(); // Closes the inventory
+			Inventory next = controlPanel.get(nextSection);
+			if (next == null) {
+			    //plugin.getLogger().info("DEBUG: next panel is null");
+			}
+			//plugin.getLogger().info("DEBUG: opening next cp "+nextSection);
+			player.openInventory(next);
+			event.setCancelled(true);
+			return;
+		    }
+		    player.closeInventory(); // Closes the inventory
+		    event.setCancelled(true);
+		    return;
 		}
 	    }
 	}
