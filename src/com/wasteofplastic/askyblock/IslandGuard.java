@@ -845,7 +845,7 @@ public class IslandGuard implements Listener {
 		    }
 		    return;
 		}
-		if (e.getEntity() instanceof Animals ){
+		if (e.getEntity() instanceof Animals || e.getEntity() instanceof Villager){
 		    //plugin.getLogger().info("Entity is a non-monster - check if ok to hurt"); 
 		    // At spawn?
 		    if (plugin.getGrid().isAtSpawn(e.getEntity().getLocation())) {
