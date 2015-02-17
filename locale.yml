@@ -110,6 +110,9 @@ challenges:
    guititle: "aSkyBlock Challenges"
    erroryouaremissing: "You are missing"
    errorRewardProblem: "There was a problem giving your reward. Ask Admin to check log!"
+   completedtimes: "Completed [donetimes] out of [maxtimes]"
+   maxreached: "Max reached [donetimes] out of [maxtimes]"
+
 #/island
 island:
    # Titles for V1.8+ servers only. Set to '' to remove.
@@ -181,6 +184,8 @@ island:
    # The color that is placed before the /commands in /island help
    # See http://ess.khhq.net/mc/ for a list
    helpColor: "&e"
+   helpSettings: "see island protection and game settings"
+   helpChallenges: "/challenges: &fshow challenges"
 
 ###################
 #/island commands #

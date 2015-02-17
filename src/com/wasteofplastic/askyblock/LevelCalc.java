@@ -135,12 +135,13 @@ public class LevelCalc extends BukkitRunnable {
     }
 
     private void calculateSlice(int top, int bottom) {
-	// plugin.getLogger().info("DEBUG: calculating top = " + top + " bottom = "+ bottom);
+	//plugin.getLogger().info("DEBUG: calculating top = " + top + " bottom = "+ bottom);
 	if (bottom <0) {
 	    bottom = 0;
 	}
 	for (int y = top; y >= bottom; y--) {
-	    // plugin.getLogger().info("DEBUG: y = " + y);
+	    //plugin.getLogger().info("DEBUG: y = " + y);
+	    //plugin.getLogger().info("DEBUG: blockcount = " + blockcount);
 	    for (int x = range / 2 * -1; x <= range / 2; x++) {
 		for (int z = range / 2 * -1; z <= range / 2; z++) {
 		    final Block b = new Location(l.getWorld(), px + x, y, pz + z).getBlock();
@@ -150,13 +151,13 @@ public class LevelCalc extends BukkitRunnable {
 			if (Settings.blockValues.containsKey(blockType)) {
 			    if (limitCount.containsKey(blockType)) {
 				int count = limitCount.get(blockType);
-				// plugin.getLogger().info("DEBUG: Count for " + blockType + " is " + count);
+				//plugin.getLogger().info("DEBUG: Count for " + blockType + " is " + count);
 				if (count > 0) {
 				    limitCount.put(blockType, --count);
 				    blockcount += Settings.blockValues.get(blockType);
 				} 
 			    } else {
-				// plugin.getLogger().info("DEBUG: Adding " + blockType);
+				//plugin.getLogger().info("DEBUG: Adding " + blockType + " = " + Settings.blockValues.get(blockType));
 				blockcount += Settings.blockValues.get(blockType);
 			    }
 			} 

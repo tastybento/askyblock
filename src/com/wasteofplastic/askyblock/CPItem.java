@@ -33,7 +33,6 @@ public class CPItem {
     private String command;
     private String nextSection;
 
-
     /**
      * @param item
      * @param material
@@ -82,6 +81,13 @@ public class CPItem {
     }
 
 
+    /**
+     * @param nextSection the nextSection to set
+     */
+    protected void setNextSection(String nextSection) {
+        this.nextSection = nextSection;
+    }
+    
     protected ItemStack getItem() {
 	return item;
     }

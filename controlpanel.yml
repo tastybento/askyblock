@@ -51,3 +51,8 @@ default:
       description: Change biome
       command: '[island] biomes'
       nextsection: ''
+    9:
+      material: ENCHANTMENT_TABLE
+      description: Challenges
+      command: 'asc'
+      nextsection: ''

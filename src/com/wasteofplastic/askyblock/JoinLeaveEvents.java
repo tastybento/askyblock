@@ -45,13 +45,38 @@ public class JoinLeaveEvents implements Listener {
 	if (players == null) {
 	    plugin.getLogger().severe("players is NULL");
 	}
+	// Load any messages for the player
+	//plugin.getLogger().info("DEBUG: Checking messages for " + event.getPlayer().getName());
+	final List<String> messages = plugin.getMessages(playerUUID);
+	if (messages != null) {
+	    //plugin.getLogger().info("DEBUG: Messages waiting!");
+	    plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
+		@Override
+		public void run() {
+		    event.getPlayer().sendMessage(ChatColor.AQUA + Locale.newsHeadline);
+		    int i = 1;
+		    for (String message : messages) {
+			event.getPlayer().sendMessage(i++ + ": " + message);
+		    }
+		    // Clear the messages
+		    plugin.clearMessages(playerUUID);
+		}
+	    }, 40L);
+	} //else {
+	  //  plugin.getLogger().info("no messages");
+	//}
+
 	// If this player is not an island player just skip all this
 	if (!players.hasIsland(playerUUID) && !players.inTeam(playerUUID)) {
 	    return;
 	}
 	UUID leader = null;
 	Location loc = null;
+	/*
+	 * This should not be needed
+	 */
 	if (players.inTeam(playerUUID) && players.getTeamIslandLocation(playerUUID) == null) {
+	    //plugin.getLogger().info("DEBUG: reseting team island");
 	    leader = players.getTeamLeader(playerUUID);
 	    players.setTeamIslandLocation(playerUUID, players.getIslandLocation(leader));
 	}
@@ -101,20 +126,7 @@ public class JoinLeaveEvents implements Listener {
 	    plugin.removeMobs(event.getPlayer().getLocation());
 	}
 	//plugin.getLogger().info("Cached " + event.getPlayer().getName());
-	// Load any messages for the player
-	final List<String> messages = plugin.getMessages(playerUUID);
-	if (!messages.isEmpty()) {
-	    plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
-		@Override
-		public void run() {
-		    event.getPlayer().sendMessage(ChatColor.AQUA + Locale.newsHeadline);
-		    int i = 1;
-		    for (String message : messages) {
-			event.getPlayer().sendMessage(i++ + ": " + message);
-		    }
-		}
-	    }, 40L);
-	}
+
     }
 
     @EventHandler(priority = EventPriority.NORMAL)

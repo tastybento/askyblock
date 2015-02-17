@@ -158,9 +158,9 @@ public class ASkyBlock extends JavaPlugin {
 		if (plugin.getServer().getWorld(Settings.worldName + "_nether") == null) {
 		    Bukkit.getLogger().info("Creating " + plugin.getName() + "'s Nether...");
 		    if (!Settings.newNether) {
-			World netherWorld = WorldCreator.name(Settings.worldName + "_nether").type(WorldType.NORMAL).environment(World.Environment.NETHER).createWorld();
+			WorldCreator.name(Settings.worldName + "_nether").type(WorldType.NORMAL).environment(World.Environment.NETHER).createWorld();
 		    } else {
-			World netherWorld = WorldCreator.name(Settings.worldName + "_nether").type(WorldType.FLAT).generator(new ChunkGeneratorWorld()).environment(World.Environment.NETHER).createWorld();
+			WorldCreator.name(Settings.worldName + "_nether").type(WorldType.FLAT).generator(new ChunkGeneratorWorld()).environment(World.Environment.NETHER).createWorld();
 		    }
 		    //netherWorld.setMonsterSpawnLimit(Settings.monsterSpawnLimit);
 		    // netherWorld.setAnimalSpawnLimit(Settings.animalSpawnLimit);
@@ -174,11 +174,13 @@ public class ASkyBlock extends JavaPlugin {
 		    if (!Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv modify set generator " + plugin.getName() + " " + Settings.worldName)) {
 			Bukkit.getLogger().severe("Multiverse is out of date! - Upgrade to latest version!");
 		    }
-		    if (Settings.newNether) {
-			Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv import " + Settings.worldName + "_nether nether -g " + plugin.getName());
-			Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv modify set generator " + plugin.getName() + " " + Settings.worldName + "_nether");
-		    } else {
-			Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv import " + Settings.worldName + "_nether nether");
+		    if (Settings.createNether) {
+			if (Settings.newNether) {
+			    Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv import " + Settings.worldName + "_nether nether -g " + plugin.getName());
+			    Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv modify set generator " + plugin.getName() + " " + Settings.worldName + "_nether");
+			} else {
+			    Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv import " + Settings.worldName + "_nether nether");
+			}
 		    }
 		} catch (Exception e) {
 		    Bukkit.getLogger().severe("Not successfull! Disabling " + plugin.getName() + "!");
@@ -214,8 +216,8 @@ public class ASkyBlock extends JavaPlugin {
 	//getLogger().info("DEBUG: deleting player island");
 	CoopPlay.getInstance().clearAllIslandCoops(player);
 	removeWarp(player);
-	removeMobsFromIsland(players.getIslandLocation(player));
 	if (removeBlocks) {
+	    removeMobsFromIsland(players.getIslandLocation(player));
 	    new DeleteIslandChunk(this,players.getIslandLocation(player));
 	} else {
 	    Island island = grid.getIsland(player);
@@ -1143,7 +1145,8 @@ public class ASkyBlock extends JavaPlugin {
 	Settings.resetChallenges = getConfig().getBoolean("general.resetchallenges", true);
 	Settings.resetMoney = getConfig().getBoolean("general.resetmoney", true);
 	Settings.clearInventory = getConfig().getBoolean("general.resetinventory", true);
-
+	Settings.resetEnderChest = getConfig().getBoolean("general.resetenderchest", false);
+	
 	Settings.startingMoney = getConfig().getDouble("general.startingmoney", 0D);
 
 	Settings.newNether = getConfig().getBoolean("general.newnether", false);
@@ -1462,6 +1465,9 @@ public class ASkyBlock extends JavaPlugin {
 	Locale.challengeserrorRewardProblem = ChatColor.translateAlternateColorCodes('&',locale.getString("challenges.errorRewardProblem", "There was a problem giving your reward. Ask Admin to check log!"));
 	Locale.challengesguiTitle = ChatColor.translateAlternateColorCodes('&',locale.getString("challenges.guititle", "Challenges"));
 	Locale.challengeserrorYouAreMissing = ChatColor.translateAlternateColorCodes('&',locale.getString("challenges.erroryouaremissing", "You are missing"));
+	Locale.challengesNavigation = ChatColor.translateAlternateColorCodes('&',locale.getString("challenges.navigation", "Click to see [level] challenges!"));
+	Locale.challengescompletedtimes = ChatColor.translateAlternateColorCodes('&',locale.getString("challenges.completedtimes", "Completed [donetimes] out of [maxtimes]"));
+	Locale.challengesmaxreached = ChatColor.translateAlternateColorCodes('&',locale.getString("challenges.maxreached", "Max reached [donetimes] out of [maxtimes]"));
 	Locale.islandteleport = ChatColor.translateAlternateColorCodes('&',locale.getString("island.teleport","Teleporting you to your island. (/island help for more info)"));
 	Locale.islandcannotTeleport = ChatColor.translateAlternateColorCodes('&',locale.getString("island.cannotTeleport","You cannot teleport when falling!"));
 	Locale.islandnew = ChatColor.translateAlternateColorCodes('&',locale.getString("island.new","Creating a new island for you..."));
@@ -1492,6 +1498,8 @@ public class ASkyBlock extends JavaPlugin {
 	Locale.islandhelpLeave = ChatColor.translateAlternateColorCodes('&',locale.getString("island.helpLeave","leave another player's island."));
 	Locale.islandhelpKick = ChatColor.translateAlternateColorCodes('&',locale.getString("island.helpKick","remove a team member from your island."));
 	Locale.islandhelpExpel = ChatColor.translateAlternateColorCodes('&',locale.getString("island.helpExpel","force a player from your island."));
+	Locale.islandHelpSettings = ChatColor.translateAlternateColorCodes('&',locale.getString("island.helpSettings","see island protection and game settings"));
+	Locale.islandHelpChallenges = ChatColor.translateAlternateColorCodes('&',locale.getString("island.helpChallenges","/challenges: &fshow challenges"));
 	Locale.adminHelpHelp = ChatColor.translateAlternateColorCodes('&',locale.getString("adminHelp.help","Acid Admin Commands:"));
 	Locale.islandhelpAcceptReject = ChatColor.translateAlternateColorCodes('&',locale.getString("island.helpAcceptReject","accept or reject an invitation."));
 	Locale.islandhelpMakeLeader = ChatColor.translateAlternateColorCodes('&',locale.getString("island.helpMakeLeader","transfer the island to <player>."));
@@ -1885,7 +1893,7 @@ public class ASkyBlock extends JavaPlugin {
 	if (target.getWorld().equals(islandTestLocation.getWorld())) {
 	    int protectionRange = Settings.island_protectionRange;
 	    if (grid.getIslandAt(islandTestLocation) != null) {
-		
+
 		Island island = grid.getProtectedIslandAt(islandTestLocation);
 		// Get the protection range for this location if possible
 		if (island != null) {
@@ -2349,7 +2357,7 @@ public class ASkyBlock extends JavaPlugin {
 	// Look for defaults in the jar
 	InputStream defLocaleStream = this.getResource("locale.yml");
 	if (defLocaleStream != null) {
-	    YamlConfiguration defLocale = YamlConfiguration.loadConfiguration(defLocaleStream);
+	    YamlConfiguration defLocale = new YamlConfiguration().loadConfiguration(defLocaleStream);
 	    locale.setDefaults(defLocale);
 	}
     }
@@ -2438,7 +2446,7 @@ public class ASkyBlock extends JavaPlugin {
 	    }
 	}
 	// Player is offline so store the message
-
+	//getLogger().info("DEBUG: player is offline - storing message");
 	List<String> playerMessages = messages.get(playerUUID);
 	if (playerMessages != null) {
 	    playerMessages.add(message);
@@ -2449,18 +2457,24 @@ public class ASkyBlock extends JavaPlugin {
 	return true;
     }
 
+    /**
+     * Returns what messages are waiting for the player or null if none
+     * @param playerUUID
+     * @return
+     */
     protected List<String> getMessages(UUID playerUUID) {
 	List<String> playerMessages = messages.get(playerUUID);
-	if (playerMessages != null) {
-	    // Remove the messages
-	    messages.remove(playerUUID);
-	} else {
-	    // No messages
-	    playerMessages = new ArrayList<String>();
-	}
 	return playerMessages;
     }
 
+    /**
+     * Clears any messages for player
+     * @param playerUUID
+     */
+    protected void clearMessages(UUID playerUUID) {
+	messages.remove(playerUUID);
+    }
+    
     protected void saveMessages() {
 	if (messageStore == null) {
 	    return;
@@ -2605,12 +2619,11 @@ public class ASkyBlock extends JavaPlugin {
 	topTenAddEntry(player.getUniqueId(),0);
 	// Update the inventory
 	player.updateInventory();
-	/*
 	if (Settings.resetEnderChest) {
 	    // Clear any Enderchest contents
 	    final ItemStack[] items = new ItemStack[player.getEnderChest().getContents().length];
 	    player.getEnderChest().setContents(items);
-	}*/
+	}
 	// Clear any potion effects
 	for (PotionEffect effect : player.getActivePotionEffects())
 	    player.removePotionEffect(effect.getType());	

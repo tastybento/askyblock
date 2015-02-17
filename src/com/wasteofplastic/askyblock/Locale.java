@@ -387,5 +387,10 @@ public class Locale {
     public static String adminHelpunregister;
     public static String adminHelpSetRange;
     public static String challengeserrorRewardProblem;
+    public static String challengesNavigation;
+    public static String islandHelpSettings;
+    public static String islandHelpChallenges;
+    public static String challengesmaxreached;
+    public static String challengescompletedtimes;
       
 }

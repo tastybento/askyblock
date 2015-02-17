@@ -35,7 +35,7 @@ public class ChunkGeneratorWorld extends ChunkGenerator {
     Random rand = new Random();
     PerlinOctaveGenerator gen;
 
-    //@SuppressWarnings("deprecation")
+    @SuppressWarnings("deprecation")
     public byte[][] generateBlockSections(World world, Random random, int chunkX, int chunkZ, BiomeGrid biomeGrid)
     {
 	//Bukkit.getLogger().info("DEBUG: world environment = " + world.getEnvironment().toString());
@@ -101,6 +101,7 @@ public class ChunkGeneratorWorld extends ChunkGenerator {
     /*
      * Nether Section
      */
+    @SuppressWarnings("deprecation")
     private byte[][] generateNetherBlockSections(World world, Random random, int chunkX, int chunkZ, BiomeGrid biomeGrid) {
 	//Bukkit.getLogger().info("DEBUG: world environment(nether) = " + world.getEnvironment().toString());
 	rand.setSeed(world.getSeed());
@@ -175,8 +176,8 @@ public class ChunkGeneratorWorld extends ChunkGenerator {
 	    }
 	}
 	// Center points of the chunk I'm being given
-	int actualX = chunkX * 16;
-	int actualZ = chunkZ * 16;
+	//int actualX = chunkX * 16;
+	//int actualZ = chunkZ * 16;
 	//Bukkit.getLogger().info("DEBUG: sea_level" + Settings.sea_level);
 	int chunkDist = Math.round((float)Settings.islandDistance / 16F);
 	// Main island creation. Make if the chunks match the isandDistance
