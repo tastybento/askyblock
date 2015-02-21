@@ -30,7 +30,6 @@ import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Animals;
-import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
@@ -66,6 +65,7 @@ import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
@@ -614,8 +614,8 @@ public class IslandGuard implements Listener {
     public void onAnimalSpawn(final CreatureSpawnEvent e) {
 	if (debug) {
 	    plugin.getLogger().info("Animal spawn event! " + e.getEventName());
-	    plugin.getLogger().info(e.getSpawnReason().toString());
-	    plugin.getLogger().info(e.getCreatureType().toString());
+	    //plugin.getLogger().info(e.getSpawnReason().toString());
+	    //plugin.getLogger().info(e.getCreatureType().toString());
 	}
 	// If grid is not loaded yet, return
 	if (plugin.getGrid() == null) {
@@ -658,7 +658,9 @@ public class IslandGuard implements Listener {
 		    //plugin.getLogger().info("DEBUG: Animal count is " + animals);
 		    animals++;
 		    if (animals >= Settings.breedingLimit) {
-			plugin.getLogger().warning("Island at " + islandLoc.getBlockX() + "," + islandLoc.getBlockZ() + " hit the island animal breeding limit of " + Settings.breedingLimit);
+			if (e.getSpawnReason() != SpawnReason.SPAWNER) {
+			    plugin.getLogger().warning("Island at " + islandLoc.getBlockX() + "," + islandLoc.getBlockZ() + " hit the island animal breeding limit of " + Settings.breedingLimit);
+			}
 			animal.remove();
 			e.setCancelled(true);
 			snowball.remove();
@@ -1020,6 +1022,23 @@ public class IslandGuard implements Listener {
 		    return;
 		}
 		// Other entities
+		
+		switch (e.getEntityType()) {
+		case IRON_GOLEM:
+		case SNOWMAN:
+		case VILLAGER:
+		    if (!Settings.allowHurtMobs) {
+			if (!plugin.locationIsOnIsland((Player)e.getDamager(),e.getEntity().getLocation())) {
+			    ((Player)e.getDamager()).sendMessage(ChatColor.RED + Locale.islandProtected);
+			    e.setCancelled(true);
+			    return;
+			}
+		    }
+		    break;
+		default:
+		    break;
+
+		}
 		return;
 	    } else {
 		// PVP
@@ -1033,23 +1052,23 @@ public class IslandGuard implements Listener {
 	    }
 
 	}
-
+	// Check for fishing rods
 	//plugin.getLogger().info("Player attack (or arrow)");
 	// Only damagers who are players or arrows are left
 	// Handle splash potions separately.
-	if (e.getDamager() instanceof Arrow) {
+	if (e.getDamager() instanceof Projectile) {
 	    //plugin.getLogger().info("Arrow attack");
-	    Arrow arrow = (Arrow)e.getDamager();
+	    Projectile projectile = (Projectile)e.getDamager();
 	    // It really is an Arrow
-	    if (arrow.getShooter() instanceof Player) {
-		Player shooter = (Player)arrow.getShooter();
+	    if (projectile.getShooter() instanceof Player) {
+		Player shooter = (Player)projectile.getShooter();
 		//plugin.getLogger().info("Player arrow attack");
 		if (e.getEntity() instanceof Player) {
 		    //plugin.getLogger().info("Player vs Player!");
 		    // Arrow shot by a player at another player
 		    if (!Settings.allowPvP) {
 			//plugin.getLogger().info("Target player is in a no-PVP area!");
-			((Player)arrow.getShooter()).sendMessage("Target is in a no-PVP area!");
+			((Player)projectile.getShooter()).sendMessage("Target is in a no-PVP area!");
 			e.setCancelled(true);
 			return;
 		    } 
@@ -1057,7 +1076,7 @@ public class IslandGuard implements Listener {
 		    if (!(e.getEntity() instanceof Monster) && !(e.getEntity() instanceof Slime) && !(e.getEntity() instanceof Squid)) {
 			//plugin.getLogger().info("Entity is a non-monster - check if ok to hurt"); 
 			if (!Settings.allowHurtMobs) {
-			    if (!plugin.locationIsOnIsland((Player)arrow.getShooter(),e.getEntity().getLocation())) {
+			    if (!plugin.locationIsOnIsland((Player)projectile.getShooter(),e.getEntity().getLocation())) {
 				shooter.sendMessage(ChatColor.RED + Locale.islandProtected);
 				e.setCancelled(true);
 				return;
@@ -1874,6 +1893,45 @@ public class IslandGuard implements Listener {
 	}
     }
      */
+
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onPlayerHitEntity(PlayerInteractEntityEvent e){
+	Player p = e.getPlayer();
+	if (debug) {
+	    plugin.getLogger().info("Hit entity event " + e.getEventName());
+	}
+	if (!p.getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	    return;
+	}
+	if (p.isOp() || VaultHelper.checkPerm(p, Settings.PERMPREFIX + "mod.bypassprotect")) {
+	    // You can do anything if you are Op of have the bypass
+	    return;
+	}
+	// Check limit of animals on island
+	if (plugin.playerIsOnIsland(e.getPlayer())) {
+	    // TODO: FIX THIS
+	    plugin.getLogger().info("DEBUG: Player is on island");
+	} else {
+	    // Not on island
+	    //Minecarts and other storage entities
+	    //plugin.getLogger().info("DEBUG: " + e.getRightClicked().getType().toString());
+	    switch (e.getRightClicked().getType()) {
+	    case ITEM_FRAME:
+	    case MINECART_CHEST:
+	    case MINECART_FURNACE:
+	    case MINECART_HOPPER:
+	    case MINECART_TNT:
+		if (!Settings.allowChestAccess) {
+		    e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
+		    e.setCancelled(true); 
+		}
+	    default:
+		break;
+	    }
+	}
+    }
+
 }
 
 
