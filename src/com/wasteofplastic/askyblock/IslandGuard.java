@@ -25,6 +25,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -65,7 +66,6 @@ import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
@@ -109,7 +109,7 @@ public class IslandGuard implements Listener {
      */
     // Vehicle damage
     @EventHandler(priority = EventPriority.LOW)
-    void vehicleDamageEvent(VehicleDamageEvent e){
+    public void onVehicleDamageEvent(VehicleDamageEvent e){
 	if (debug) {
 	    plugin.getLogger().info(e.getEventName());
 	    plugin.getLogger().info(e.getAttacker().getType().toString());
@@ -356,7 +356,7 @@ public class IslandGuard implements Listener {
 	 * islandTo != null && islandFrom != null - same Island or teleport?
 	 * islandTo == islandFrom
 	 */
-  
+
 	//plugin.getLogger().info("islandTo = " + islandTo);
 	//plugin.getLogger().info("islandFrom = " + islandFrom);
 	if (islandTo !=null && islandTo.isLocked() && (islandTo.getOwner() != null || islandTo.isSpawn())) {
@@ -610,6 +610,75 @@ public class IslandGuard implements Listener {
 	}
     }
 
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled=true)
+    public void onAnimalSpawn(final CreatureSpawnEvent e) {
+	if (debug) {
+	    plugin.getLogger().info("Animal spawn event! " + e.getEventName());
+	    plugin.getLogger().info(e.getSpawnReason().toString());
+	    plugin.getLogger().info(e.getCreatureType().toString());
+	}
+	// If grid is not loaded yet, return
+	if (plugin.getGrid() == null) {
+	    return;
+	}
+	// If there's no limit - leave it
+	if (Settings.breedingLimit <= 0) {
+	    return;
+	}
+	// We only care about spawning and breeding
+	if (e.getSpawnReason() != SpawnReason.SPAWNER && e.getSpawnReason() != SpawnReason.BREEDING
+		&& e.getSpawnReason() != SpawnReason.EGG && e.getSpawnReason() != SpawnReason.DISPENSE_EGG
+		&& e.getSpawnReason() != SpawnReason.SPAWNER_EGG) {
+	    return;
+	}
+	// If not an animal
+	if (!(e.getEntity() instanceof Animals)) {
+	    return;
+	}
+	Animals animal = (Animals)e.getEntity();
+	World world = animal.getWorld();
+	// If not in the right world, return
+	if (!world.getName().equalsIgnoreCase(Settings.worldName)) {
+	    return;
+	}
+	Location islandLoc = plugin.getClosestIsland(animal.getLocation());
+	Entity snowball = islandLoc.getWorld().spawnEntity(new Location(world,islandLoc.getBlockX(),128,islandLoc.getBlockZ()), EntityType.SNOWBALL);
+	if (snowball == null)
+	    return;
+	int animals = 0;
+	// All for the island space is checked
+	List<Entity> islandEntities = snowball.getNearbyEntities(Settings.islandDistance/2, 128, Settings.islandDistance/2);
+	// An optimization - don't bother looping unless the number of all entities is greater than the breeding limit
+	//plugin.getLogger().info("DEBUG: islandEntities total = "+islandEntities.size());
+	if (islandEntities.size() >= Settings.breedingLimit) {
+	    //plugin.getLogger().info("DEBUG: breeding limit breached " + Settings.breedingLimit);
+	    for (Entity entity : islandEntities) {
+		//plugin.getLogger().info("DEBUG: Entity is " + entity.getType());
+		if (entity instanceof Animals) {
+		    //plugin.getLogger().info("DEBUG: Animal count is " + animals);
+		    animals++;
+		    if (animals >= Settings.breedingLimit) {
+			plugin.getLogger().warning("Island at " + islandLoc.getBlockX() + "," + islandLoc.getBlockZ() + " hit the island animal breeding limit of " + Settings.breedingLimit);
+			animal.remove();
+			e.setCancelled(true);
+			snowball.remove();
+			return;
+		    }
+		} else if (entity instanceof Player && e.getSpawnReason() != SpawnReason.SPAWNER && e.getSpawnReason() != SpawnReason.DISPENSE_EGG) {
+		    ItemStack itemInHand = ((Player)entity).getItemInHand();
+		    if (itemInHand != null) {
+			Material type = itemInHand.getType();
+			if (type == Material.EGG || type == Material.MONSTER_EGG || type == Material.WHEAT || type == Material.CARROT_ITEM
+				|| type == Material.SEEDS) {
+			    ((Player)entity).sendMessage(ChatColor.RED + Locale.moblimitsError.replace("[number]",String.valueOf(Settings.breedingLimit)));
+			}
+		    }
+		}
+	    }
+	}
+	snowball.remove();
+	//plugin.getLogger().info("DEBUG: Animal count is " + animals);
+    }
 
     /**
      * Prevents mobs spawning at spawn
@@ -1649,7 +1718,7 @@ public class IslandGuard implements Listener {
      */
 
     @EventHandler(priority = EventPriority.LOWEST)
-    void PlayerInteractEvent(PlayerInteractEvent event){
+    public void onEnderChestEvent(PlayerInteractEvent event){
 	if (debug) {
 	    plugin.getLogger().info("Ender chest " + event.getEventName());
 	}
@@ -1672,11 +1741,12 @@ public class IslandGuard implements Listener {
      * Adds a limit to how many animals can be bred by a player
      * @param e
      */
+    /*
     @EventHandler(priority = EventPriority.LOWEST)
-    void PlayerInteractEntityEvent(PlayerInteractEntityEvent e){
+    public void onPlayerBreedingEvent(PlayerInteractEntityEvent e){
 	Player p = e.getPlayer();
 	if (debug) {
-	    plugin.getLogger().info(e.getEventName());
+	    plugin.getLogger().info("Breeding event " + e.getEventName());
 	}
 	if (!p.getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    return;
@@ -1688,12 +1758,12 @@ public class IslandGuard implements Listener {
 	// Check limit of animals on island
 	if (plugin.playerIsOnIsland(e.getPlayer())) {
 	    // TODO: FIX THIS
-	    //plugin.getLogger().info("DEBUG: Player is on island");
+	    plugin.getLogger().info("DEBUG: Player is on island");
 	    if (Settings.breedingLimit > 0) {
 		// Check if they are holding food
 		ItemStack inHand = e.getPlayer().getItemInHand();
-		//if (inHand != null)
-		//    plugin.getLogger().info("DEBUG: in hand = " + inHand.getType().toString());
+		if (inHand != null)
+		    plugin.getLogger().info("DEBUG: in hand = " + inHand.getType().toString());
 		if (inHand == null || !(inHand.getType().equals(Material.WHEAT) || inHand.getType().equals(Material.CARROT)
 			|| inHand.getType().equals(Material.SEEDS))) {
 		    //plugin.getLogger().info("DEBUG: no food in hand");
@@ -1713,21 +1783,30 @@ public class IslandGuard implements Listener {
 		if (snowball == null)
 		    return;
 		int animals = 0;
-		for (Entity entity : snowball.getNearbyEntities(Settings.island_protectionRange/2, 128, Settings.island_protectionRange/2)) {
-		    if (entity instanceof Animals) {
-			animals++;
-			if (animals > Settings.breedingLimit) {
-			    p.sendMessage(ChatColor.RED + Locale.moblimitsError.replace("[number]",String.valueOf(Settings.breedingLimit)));
-			    //plugin.getLogger().warning(p.getName() + " hit the island animal breeding limit of " + Settings.breedingLimit);
-			    e.setCancelled(true);
-			    snowball.remove();
-			    return;
+		// All for the island space is checked
+		List<Entity> islandEntities = snowball.getNearbyEntities(Settings.islandDistance/2, 128, Settings.islandDistance/2);
+		// An optimization - don't bother looping unless the number of all entities is greater than the breeding limit
+		plugin.getLogger().info("DEBUG: islandEntities total = "+islandEntities.size());
+		if (islandEntities.size() > Settings.breedingLimit) {
+		    plugin.getLogger().info("DEBUG: breeding limit breached " + Settings.breedingLimit);
+		    for (Entity entity : islandEntities) {
+			plugin.getLogger().info("DEBUG: Entity is " + entity.getType());
+			if (entity instanceof Animals) {
+			    plugin.getLogger().info("DEBUG: Animal count is " + animals);
+			    animals++;
+			    if (animals > Settings.breedingLimit) {
+				p.sendMessage(ChatColor.RED + Locale.moblimitsError.replace("[number]",String.valueOf(Settings.breedingLimit)));
+				plugin.getLogger().warning(p.getName() + " hit the island animal breeding limit of " + Settings.breedingLimit);
+				e.setCancelled(true);
+				snowball.remove();
+				return;
+			    }
 			}
 		    }
 		}
 		snowball.remove();
-		//plugin.getLogger().info("DEBUG: Animal count is " + animals);
-		/* 
+		plugin.getLogger().info("DEBUG: Animal count is " + animals);
+
 	    // Approach 2 - just check around player for concentrations - not accurate enough
 	    int limit = 100;
 	    int animals = 0;
@@ -1764,7 +1843,7 @@ public class IslandGuard implements Listener {
 		return;
 	    }
 	    snowball.remove();
-		 */
+
 	    }
 	} else {
 	    // Not on island
@@ -1794,7 +1873,7 @@ public class IslandGuard implements Listener {
 	    }
 	}
     }
-
+     */
 }
 
 
