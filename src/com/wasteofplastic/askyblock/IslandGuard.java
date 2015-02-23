@@ -41,6 +41,7 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Slime;
 import org.bukkit.entity.Squid;
 import org.bukkit.entity.TNTPrimed;
+import org.bukkit.entity.Vehicle;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -333,6 +334,7 @@ public class IslandGuard implements Listener {
 	e.setCancelled(true);
     }
 
+    /*
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onVehicleMove(final VehicleMoveEvent e) {
 	if (!e.getVehicle().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
@@ -349,14 +351,14 @@ public class IslandGuard implements Listener {
 	Island islandFrom = plugin.getGrid().getProtectedIslandAt(e.getFrom());
 	// Only says something if there is a change in islands
 	/*
-	 * Situations:
-	 * islandTo == null && islandFrom != null - exit
-	 * islandTo == null && islandFrom == null - nothing
-	 * islandTo != null && islandFrom == null - enter
-	 * islandTo != null && islandFrom != null - same Island or teleport?
-	 * islandTo == islandFrom
-	 */
-
+     * Situations:
+     * islandTo == null && islandFrom != null - exit
+     * islandTo == null && islandFrom == null - nothing
+     * islandTo != null && islandFrom == null - enter
+     * islandTo != null && islandFrom != null - same Island or teleport?
+     * islandTo == islandFrom
+     */
+    /*
 	//plugin.getLogger().info("islandTo = " + islandTo);
 	//plugin.getLogger().info("islandFrom = " + islandFrom);
 	if (islandTo !=null && islandTo.isLocked() && (islandTo.getOwner() != null || islandTo.isSpawn())) {
@@ -403,7 +405,7 @@ public class IslandGuard implements Listener {
 	    }    
 	}	
     }
-
+     */
 
     /**
      * Adds island lock function
@@ -420,9 +422,9 @@ public class IslandGuard implements Listener {
 	if (plugin.getGrid() == null) {
 	    return;
 	}
-	if (e.getPlayer().isInsideVehicle()) {
-	    return;
-	}
+	//if (e.getPlayer().isInsideVehicle()) {
+	//    return;
+	//}
 	Island islandTo = plugin.getGrid().getProtectedIslandAt(e.getTo());
 	// Announcement entering
 	Island islandFrom = plugin.getGrid().getProtectedIslandAt(e.getFrom());
@@ -437,27 +439,73 @@ public class IslandGuard implements Listener {
 	 */
 	//plugin.getLogger().info("islandTo = " + islandTo);
 	//plugin.getLogger().info("islandFrom = " + islandFrom);
-	if (islandTo !=null && islandFrom == null && (islandTo.getOwner() != null || islandTo.isSpawn())) {
-	    // Entering
+	if (islandTo !=null && (islandTo.getOwner() != null || islandTo.isSpawn())) {
+	    // Lock check
 	    if (islandTo.isLocked()) {
-		e.getPlayer().sendMessage(ChatColor.RED + Locale.lockIslandLocked);
 		if (!islandTo.getMembers().contains(e.getPlayer().getUniqueId()) 
 			&& !e.getPlayer().isOp()
 			&& !VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
+		    e.getPlayer().sendMessage(ChatColor.RED + Locale.lockIslandLocked);
+		    // Get the closest border
+		    //plugin.getLogger().info("DEBUG: minx = " + islandTo.getMinProtectedX());
+		    //plugin.getLogger().info("DEBUG: minz = " + islandTo.getMinProtectedZ());
+		    //plugin.getLogger().info("DEBUG: maxx = " + (islandTo.getMinProtectedX() + islandTo.getProtectionSize()));
+		    //plugin.getLogger().info("DEBUG: maxz = " + (islandTo.getMinProtectedZ() + islandTo.getProtectionSize()));
+		    // Distance from x
+		    int xTeleport = islandTo.getMinProtectedX() - 1;
+		    int distanceX = Math.abs(islandTo.getMinProtectedX() - e.getTo().getBlockX());
+		    //plugin.getLogger().info("DEBUG: distance from min X = " + distanceX);
+		    int distfromMaxX = Math.abs(islandTo.getMinProtectedX() + islandTo.getProtectionSize() - e.getTo().getBlockX());
+		    //plugin.getLogger().info("DEBUG: distance from max X = " + distfromMaxX);
+		    int xdiff = Math.min(distanceX, distfromMaxX);
+		    if (distanceX > distfromMaxX) {
+			xTeleport = islandTo.getMinProtectedX() + islandTo.getProtectionSize() + 1;
+		    }
+		    //plugin.getLogger().info("DEBUG: X teleport location = " + xTeleport);
+
+		    int zTeleport = islandTo.getMinProtectedZ() - 1;
+		    int distanceZ = Math.abs(islandTo.getMinProtectedZ() - e.getTo().getBlockZ());
+		    //plugin.getLogger().info("DEBUG: distance from min Z = " + distanceZ);
+		    int distfromMaxZ = Math.abs(islandTo.getMinProtectedZ() + islandTo.getProtectionSize() - e.getTo().getBlockZ());
+		    //plugin.getLogger().info("DEBUG: distance from max Z = " + distfromMaxZ);
+		    if (distanceZ > distfromMaxZ) {
+			zTeleport = islandTo.getMinProtectedZ() + islandTo.getProtectionSize() + 1;
+		    }
+		    //plugin.getLogger().info("DEBUG: Z teleport location = " + zTeleport);
+		    int zdiff = Math.min(distanceZ, distfromMaxZ);
+		    Location diff = new Location(e.getFrom().getWorld(),xTeleport,e.getFrom().getBlockY(),zTeleport);
+		    if (xdiff < zdiff) {
+			diff = new Location(e.getFrom().getWorld(),xTeleport,e.getFrom().getBlockY(),e.getFrom().getZ());
+		    } else if (zdiff < xdiff) {
+			diff = new Location(e.getFrom().getWorld(),e.getFrom().getX(),e.getFrom().getBlockY(),zTeleport);
+		    } 
+		    //plugin.getLogger().info("DEBUG: " + diff.toString());
 		    // Set velocities
+
 		    Vector velocity = e.getPlayer().getVelocity();
-		    velocity.multiply(new Vector(-1.1D,0D,-1.1D));
+		    velocity.multiply(new Vector(-1D,1D,-1D));
 		    e.getPlayer().setVelocity(velocity);
 		    if (e.getPlayer().isInsideVehicle()) {
-			e.getPlayer().getVehicle().setVelocity(velocity);
+			Entity vehicle = e.getPlayer().getVehicle();
+			diff = new Location(diff.getWorld(),diff.getX(),vehicle.getLocation().getY(),diff.getZ());
+			e.getPlayer().teleport(diff);
+			vehicle.teleport(diff);
+			vehicle.setPassenger(e.getPlayer());
+			vehicle.setVelocity(velocity);
+		    } else {
+			e.getPlayer().teleport(diff);
 		    }
 		    e.setCancelled(true);
 		    return;
 		}
 	    }
-	    //else {
-	    //plugin.getLogger().info("DEBUG: islandTo is not locked");
-	    //}
+	}
+
+	if (islandTo !=null && islandFrom == null && (islandTo.getOwner() != null || islandTo.isSpawn())) {
+	    // Entering
+	    if (islandTo.isLocked()) {
+		e.getPlayer().sendMessage(ChatColor.RED + Locale.lockIslandLocked);
+	    }
 	    if (islandTo.isSpawn()) {
 		e.getPlayer().sendMessage(Locale.lockEnteringSpawn);
 	    } else {
@@ -1022,7 +1070,7 @@ public class IslandGuard implements Listener {
 		    return;
 		}
 		// Other entities
-		
+
 		switch (e.getEntityType()) {
 		case IRON_GOLEM:
 		case SNOWMAN:
