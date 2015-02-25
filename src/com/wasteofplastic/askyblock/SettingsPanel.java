@@ -12,12 +12,20 @@ public class SettingsPanel {
     private static List<IPItem> ip = new ArrayList<IPItem>();
     private static Inventory newPanel;
     static {
-	ip.add(new IPItem(Settings.allowAnvilUse, Material.ANVIL));   
-	ip.add(new IPItem(Settings.allowArmorStandUse, Material.ARMOR_STAND));
+	ip.add(new IPItem(Settings.allowAnvilUse, Material.ANVIL));
+	Class<?> clazz;
+	try {
+	    clazz = Class.forName("org.bukkit.entity.ArmorStand");
+	} catch (Exception e) {
+	    clazz = null;
+	}
+	if (clazz != null) {
+	    ip.add(new IPItem(Settings.allowArmorStandUse, Material.ARMOR_STAND));
+	}
 	ip.add(new IPItem(Settings.allowBeaconAccess, Material.BEACON));
 	ip.add(new IPItem(Settings.allowBedUse, Material.BED));
 	ip.add(new IPItem(Settings.allowBreakBlocks, Material.DIRT, "Break blocks"));
-	ip.add(new IPItem(Settings.allowBreeding, Material.CARROT, "Breeding"));
+	ip.add(new IPItem(Settings.allowBreeding, Material.CARROT_ITEM, "Breeding"));
 	ip.add(new IPItem(Settings.allowBrewing, Material.BREWING_STAND_ITEM, "Potion Brewing"));
 	ip.add(new IPItem(Settings.allowBucketUse, Material.BUCKET));
 	ip.add(new IPItem(Settings.allowChestAccess, Material.CHEST));
