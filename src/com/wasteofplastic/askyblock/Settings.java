@@ -23,6 +23,7 @@ import java.util.Set;
 
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
+import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 
@@ -202,5 +203,7 @@ public class Settings {
     public static boolean allowSpawnPlaceBlocks;
     public static boolean allowSpawnEggs;
     public static boolean resetEnderChest;
+    protected static EntityType islandCompanion;
+    public static boolean updateCheck;
 
 }

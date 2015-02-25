@@ -124,6 +124,10 @@ public class Players {
 	}
 	// Load reset limit
 	this.resetsLeft = playerInfo.getInt("resetsLeft", Settings.resetLimit);
+	// Check what the global limit is and raise it if it was changed
+	if (Settings.resetLimit > 0 && this.resetsLeft == -1) {
+	    resetsLeft = Settings.resetLimit;
+	}
 	// Load the invite cool downs
 	if (playerInfo.contains("invitecooldown")) {
 	    //plugin.getLogger().info("DEBUG: cooldown found");
@@ -180,6 +184,10 @@ public class Players {
 	}
 	for (String challenge : challengeListTimes.keySet()) {
 	    playerInfo.set("challenges.times." + challenge, challengeListTimes.get(challenge));
+	}
+	// Check what the global limit is
+	if (Settings.resetLimit < this.resetsLeft) {
+	    this.resetsLeft = Settings.resetLimit;
 	}
 	playerInfo.set("resetsLeft", this.resetsLeft);
 	// Save invite cooldown timers
@@ -279,7 +287,7 @@ public class Players {
 	}
 	return 0;
     }
-    
+
     protected HashMap<String,Boolean> getChallengeStatus() {
 	return challengeList;
     }
@@ -452,6 +460,15 @@ public class Players {
      * @return the resetsLeft
      */
     protected int getResetsLeft() {
+	// Check what the global limit is
+	if (Settings.resetLimit < resetsLeft) {
+	    // Lower to the limit, which may be -1
+	    resetsLeft = Settings.resetLimit;
+	} 
+	if (Settings.resetLimit > 0 && resetsLeft == -1) {
+	    // Set to the new limit if it has been raised from previously being unlimited
+	    resetsLeft = Settings.resetLimit;
+	}
 	return resetsLeft;
     }
 
@@ -631,7 +648,7 @@ public class Players {
      * @return the challengeListTimes
      */
     protected HashMap<String, Integer> getChallengeCompleteTimes() {
-        return challengeListTimes;
+	return challengeListTimes;
     }
 
 }

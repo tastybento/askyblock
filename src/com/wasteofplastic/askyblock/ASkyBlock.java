@@ -64,6 +64,7 @@ import org.bukkit.potion.PotionType;
 import org.bukkit.util.Vector;
 
 import com.wasteofplastic.askyblock.NotSetup.Reason;
+import com.wasteofplastic.askyblock.Settings.GameType;
 
 /**
  * @author tastybento
@@ -114,6 +115,9 @@ public class ASkyBlock extends JavaPlugin {
 
     // Level calc
     private boolean calculatingLevel = false;
+
+    // Update object
+    Update updateCheck = null;
 
     /**
      * @return ASkyBlock object instance
@@ -209,7 +213,7 @@ public class ASkyBlock extends JavaPlugin {
      * Delete Island
      * Called when an island is restarted or reset
      * @param player - player name String
-     * @param removeBlocks
+     * @param removeBlocks - true to remove the siland blocks
      */
     protected void deletePlayerIsland(final UUID player, boolean removeBlocks) {
 	// Removes the island
@@ -217,8 +221,20 @@ public class ASkyBlock extends JavaPlugin {
 	CoopPlay.getInstance().clearAllIslandCoops(player);
 	removeWarp(player);
 	if (removeBlocks) {
-	    removeMobsFromIsland(players.getIslandLocation(player));
-	    new DeleteIslandChunk(this,players.getIslandLocation(player));
+	    // Check that the player's island location exists and is in the island world
+	    Location islandLoc = players.getIslandLocation(player);
+	    if (islandLoc != null) {
+		if (islandLoc.getWorld() != null) {
+		    if (islandLoc.getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+			removeMobsFromIsland(islandLoc);
+			new DeleteIslandChunk(this,islandLoc);
+		    } else {
+			getLogger().severe("Cannot delete island at location " + islandLoc.toString() + " because it is not in the official island world");
+		    }
+		} else {
+		    getLogger().severe("Cannot delete island at location " + islandLoc.toString() + " because the world is unknown");
+		}
+	    }
 	} else {
 	    Island island = grid.getIsland(player);
 	    if (island != null) {
@@ -975,6 +991,8 @@ public class ASkyBlock extends JavaPlugin {
 	// Use economy or not
 	// In future expand to include internal economy
 	Settings.useEconomy = getConfig().getBoolean("general.useeconomy",true);
+	// Check for updates
+	Settings.updateCheck = getConfig().getBoolean("general.checkupdates", true);
 	// Island reset commands
 	Settings.resetCommands = getConfig().getStringList("general.resetcommands");
 	Settings.leaveCommands = getConfig().getStringList("general.leavecommands");
@@ -993,6 +1011,38 @@ public class ASkyBlock extends JavaPlugin {
 	    getLogger().info("The Nether is disabled");
 	}
 
+	String companion = getConfig().getString("island.companion","COW").toUpperCase();
+	if (companion == "NOTHING") {
+	    Settings.islandCompanion = null;
+	} else {
+	    try {
+		Settings.islandCompanion = EntityType.valueOf(companion);
+		// Limit types
+		switch (Settings.islandCompanion) {
+		case BAT:	
+		case CHICKEN:		
+		case COW:		
+		case HORSE:		
+		case IRON_GOLEM:		
+		case MUSHROOM_COW:		
+		case OCELOT:		
+		case PIG:		
+		case RABBIT:		
+		case SHEEP:		
+		case SNOWMAN:		
+		case VILLAGER:		
+		case WOLF:
+		    break;
+		default:
+		    getLogger().warning("Island companion is not recognized. Pick from COW, PIG, SHEEP, CHICKEN, VILLAGER, HORSE, IRON_GOLEM, OCELOT, RABBIT, WOLF, SNOWMAN, BAT, MUSHROOM_COW");
+		    Settings.islandCompanion = EntityType.COW;
+		    break;
+		}
+	    } catch (Exception e) {
+		getLogger().warning("Island companion is not recognized. Pick from COW, PIG, SHEEP, CHICKEN, VILLAGER, HORSE, IRON_GOLEM, OCELOT, RABBIT, WOLF, BAT, MUSHROOM_COW, SNOWMAN");
+		Settings.islandCompanion = EntityType.COW;
+	    }
+	}
 	Settings.islandDistance = getConfig().getInt("island.distance",200);
 	if (Settings.islandDistance < 50) {
 	    Settings.islandDistance = 50;
@@ -1146,7 +1196,7 @@ public class ASkyBlock extends JavaPlugin {
 	Settings.resetMoney = getConfig().getBoolean("general.resetmoney", true);
 	Settings.clearInventory = getConfig().getBoolean("general.resetinventory", true);
 	Settings.resetEnderChest = getConfig().getBoolean("general.resetenderchest", false);
-	
+
 	Settings.startingMoney = getConfig().getDouble("general.startingmoney", 0D);
 
 	Settings.newNether = getConfig().getBoolean("general.newnether", false);
@@ -1708,6 +1758,21 @@ public class ASkyBlock extends JavaPlugin {
 	    return;	    
 	}
 	loadPluginConfig();
+	if (Settings.updateCheck) {
+	    // Version checker
+	    getServer().getScheduler().runTaskAsynchronously(this, new Runnable() {
+		@Override
+		public void run() {
+		    if (Settings.GAMETYPE.equals(GameType.ASKYBLOCK)) {
+			updateCheck = new Update(85189); // ASkyBlock
+		    } else {
+			updateCheck = new Update(80095); // AcidIsland
+		    }
+		    if (!updateCheck.isSuccess()) {
+			updateCheck = null;
+		    }
+		}});
+	}
 	if (Settings.useEconomy && !VaultHelper.setupEconomy()) {
 	    getLogger().warning("Could not set up economy! - Running without an economy.");
 	    Settings.useEconomy = false;
@@ -1790,6 +1855,26 @@ public class ASkyBlock extends JavaPlugin {
 			getLogger().info("All files loaded. Ready to play...");
 		    }
 		});
+		// Just try this once. Op logins will also trigger a check
+		final String pluginVersion = getDescription().getVersion();
+		getServer().getScheduler().runTaskLater(plugin, new Runnable() {
+		    @Override
+		    public void run() {
+			if (getUpdateCheck() != null) {
+			    // Check to see if the latest file is newer that this one
+			    String[] split = getUpdateCheck().getVersionName().split(" V");
+			    if (split.length>1 && !pluginVersion.equals(split[1])) {
+				// Show the results
+				getLogger().warning(getUpdateCheck().getVersionName() + " is available! You are running " + pluginVersion);
+				if (Settings.GAMETYPE.equals(GameType.ASKYBLOCK)) {
+				    getLogger().warning("Update at: http://dev.bukkit.org/bukkit-plugins/skyblock");
+				} else {
+				    getLogger().warning("Update at: http://dev.bukkit.org/bukkit-plugins/acidisland");
+				}
+			    }
+			}
+		    }
+		},80L);
 		// This part will kill monsters if they fall into the water because it
 		// is acid
 		if (Settings.mobAcidDamage > 0D || Settings.animalAcidDamage > 0D) {
@@ -1847,7 +1932,7 @@ public class ASkyBlock extends JavaPlugin {
 	for (Location islandTestLocation : islandTestLocations) {
 	    if (islandTestLocation != null) {
 		int protectionRange = Settings.island_protectionRange;
-		if (grid.getIslandAt(islandTestLocation) != null) {
+		if (grid != null && grid.getIslandAt(islandTestLocation) != null) {
 		    // Get the protection range for this location if possible
 		    Island island = grid.getProtectedIslandAt(islandTestLocation);
 		    if (island != null) {
@@ -2075,7 +2160,10 @@ public class ASkyBlock extends JavaPlugin {
 	if (loc != null) {
 	    // Place a temporary entity
 	    //final World world = getIslandWorld();
-
+	    // Check to see if this world exists or not
+	    if (loc.getWorld() == null) {
+		return;
+	    }
 	    Entity snowBall = loc.getWorld().spawnEntity(loc, EntityType.SNOWBALL);
 	    // Remove any mobs if they just so happen to be around in the
 	    // vicinity
@@ -2474,7 +2562,7 @@ public class ASkyBlock extends JavaPlugin {
     protected void clearMessages(UUID playerUUID) {
 	messages.remove(playerUUID);
     }
-    
+
     protected void saveMessages() {
 	if (messageStore == null) {
 	    return;
@@ -2904,6 +2992,13 @@ public class ASkyBlock extends JavaPlugin {
      */
     public GridManager getGrid() {
 	return grid;
+    }
+
+    /**
+     * @return the updateCheck
+     */
+    protected Update getUpdateCheck() {
+	return updateCheck;
     }
 
 }

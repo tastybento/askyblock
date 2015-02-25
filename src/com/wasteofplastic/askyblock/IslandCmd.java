@@ -648,13 +648,15 @@ public class IslandCmd implements CommandExecutor {
 		}
 		plugin.setIslandBiome(plugin.getPlayers().getIslandLocation(playerUUID), Settings.defaultBiome);
 		//plugin.getLogger().info("Spawning cow at " + cowSpot.toString());
-		plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable () {
-		    @Override
-		    public void run() {
-			player.getWorld().spawnEntity(cowSpot, EntityType.COW);
+		if (Settings.islandCompanion != null) {
+		    plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable () {
+			@Override
+			public void run() {
+			    player.getWorld().spawnEntity(cowSpot, Settings.islandCompanion);
 
-		    }
-		}, 40L);		    
+			}
+		    }, 40L);
+		}
 		setResetWaitTime(player);
 		if (!Locale.islandSubTitle.isEmpty()) {
 		    plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(),"title " + player.getName()
@@ -898,13 +900,15 @@ public class IslandCmd implements CommandExecutor {
 			resetMoney(player);
 		    }
 		    plugin.setIslandBiome(plugin.getPlayers().getIslandLocation(playerUUID), Settings.defaultBiome);
-		    plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable () {
-			@Override
-			public void run() {
-			    player.getWorld().spawnEntity(cowSpot, EntityType.COW);
+		    if (Settings.islandCompanion != null) {
+			plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable () {
+			    @Override
+			    public void run() {
+				player.getWorld().spawnEntity(cowSpot, Settings.islandCompanion);
 
-			}
-		    }, 40L);		    
+			    }
+			}, 40L);
+		    }
 		    setResetWaitTime(player);
 		    plugin.removeWarp(playerUUID);
 		    if (oldIsland != null) {

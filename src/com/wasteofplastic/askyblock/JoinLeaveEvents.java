@@ -27,6 +27,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import com.wasteofplastic.askyblock.Settings.GameType;
+
 public class JoinLeaveEvents implements Listener {
     private ASkyBlock plugin;
     private PlayerCache players;
@@ -41,6 +43,22 @@ public class JoinLeaveEvents implements Listener {
      */
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerJoin(final PlayerJoinEvent event) {
+	// Check updates
+	final String pluginVersion = plugin.getDescription().getVersion();
+		if (plugin.getUpdateCheck() != null) {
+		    // Check to see if the latest file is newer that this one
+		    String[] split = plugin.getUpdateCheck().getVersionName().split(" V");
+		    if (split.length>1 && !pluginVersion.equals(split[1])) {
+			// For now, just show the results
+			event.getPlayer().sendMessage(ChatColor.RED + plugin.getUpdateCheck().getVersionName() + " is available! You are running " + pluginVersion);
+			if (Settings.GAMETYPE.equals(GameType.ASKYBLOCK)) {
+			    event.getPlayer().sendMessage(ChatColor.RED + "Update at: http://dev.bukkit.org/bukkit-plugins/skyblock");
+			} else {
+			    event.getPlayer().sendMessage(ChatColor.RED + "Update at: http://dev.bukkit.org/bukkit-plugins/acidisland");
+			}
+		    }
+		}
+
 	final UUID playerUUID = event.getPlayer().getUniqueId();
 	if (players == null) {
 	    plugin.getLogger().severe("players is NULL");

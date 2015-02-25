@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -35,6 +37,10 @@ import org.bukkit.block.Sign;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BlockIterator;
@@ -83,6 +89,7 @@ public class AdminCmd implements CommandExecutor {
 	    sender.sendMessage(ChatColor.YELLOW + "/" + label + " info:" + ChatColor.WHITE + " " + Locale.adminHelpinfoIsland);
 	    sender.sendMessage(ChatColor.YELLOW + "/" + label + " clearreset <player>:" + ChatColor.WHITE + " " + Locale.adminHelpclearReset);
 	    sender.sendMessage(ChatColor.YELLOW + "/" + label + " setbiome <leader> <biome>:" + ChatColor.WHITE + " Sets leader's island biome.");
+	    sender.sendMessage(ChatColor.YELLOW + "/" + label + " topbreeders: " + ChatColor.WHITE + " Lists most populated islands current loaded");
 	    sender.sendMessage(ChatColor.GREEN + "== Team Editing Commands ==");
 	    sender.sendMessage(ChatColor.YELLOW + "/" + label + " team kick <player>:" + ChatColor.WHITE + " Removes player from any team.");
 	    sender.sendMessage(ChatColor.YELLOW + "/" + label + " team add <player> <leader>:" + ChatColor.WHITE + " Adds player to leader's team.");	    
@@ -113,6 +120,9 @@ public class AdminCmd implements CommandExecutor {
 	    }
 	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.topten") || player.isOp()) {
 		player.sendMessage(ChatColor.YELLOW + "/" + label + " topten:" + ChatColor.WHITE + " " + Locale.adminHelptopTen);
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.topbreeders") || player.isOp()) {
+		player.sendMessage(ChatColor.YELLOW + "/" + label + " topbreeders: " + ChatColor.WHITE + " Lists most populated islands current loaded");
 	    }
 	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.challenges") || player.isOp()) {
 		player.sendMessage(ChatColor.YELLOW + "/" + label + " completechallenge <challengename> <player>:" + ChatColor.WHITE
@@ -165,7 +175,7 @@ public class AdminCmd implements CommandExecutor {
 	if (sender instanceof Player) {
 	    player = (Player)sender;
 	    if (split.length > 0) {
-		// Admin : reload, register, delete and purge
+		// Admin-only commands : reload, register, delete and purge
 		if (split[0].equalsIgnoreCase("reload") || split[0].equalsIgnoreCase("register")
 			|| split[0].equalsIgnoreCase("delete") || split[0].equalsIgnoreCase("purge")
 			|| split[0].equalsIgnoreCase("confirm") || split[0].equalsIgnoreCase("setspawn")
@@ -189,6 +199,82 @@ public class AdminCmd implements CommandExecutor {
 	    help(sender,label);
 	    return true;
 	case 1:
+	    // Find farms
+	    if (split[0].equalsIgnoreCase("topbreeders")) {
+		// Go through each island and find how many farms there are
+		sender.sendMessage("Finding top breeders...");
+		TreeMap<Integer, List<UUID>> topEntityIslands = new TreeMap<Integer,List<UUID>>();
+		// Generate the stats
+		sender.sendMessage("Checking " + plugin.getGrid().getOwnershipMap().size() + " islands...");
+		for (Island island:plugin.getGrid().getOwnershipMap().values()) {
+		    if (!island.isSpawn()) {
+			Location islandLoc = new Location(island.getCenter().getWorld(),island.getCenter().getBlockX(),128,island.getCenter().getBlockZ());
+			Entity snowball = islandLoc.getWorld().spawnEntity(islandLoc, EntityType.SNOWBALL);
+			if (snowball == null) {
+			    sender.sendMessage("Problem checking island " + island.getCenter().toString());
+			} else {
+			    // Clear stats
+			    island.clearStats();
+			    // All of the island space is checked
+			    List<Entity> islandEntities = snowball.getNearbyEntities(Settings.islandDistance/2, 128, Settings.islandDistance/2);
+			    snowball.remove();
+			    if (islandEntities.size() > 2) {
+				int numOfEntities = 0;
+				for (Entity entity: islandEntities) {
+				    if (entity instanceof LivingEntity && !(entity instanceof Player)) {
+					numOfEntities++;
+					island.addEntity(entity.getType());
+				    }
+				}
+				// Store the gross number
+				List<UUID> players = new ArrayList<UUID>();
+				if (topEntityIslands.containsKey(numOfEntities)) {
+				    // Get the previous values
+				    players = topEntityIslands.get(numOfEntities);
+				} 
+				players.add(island.getOwner());
+				topEntityIslands.put(numOfEntities, players);
+			    }
+			}
+		    }
+		}
+		//sender.sendMessage("Done");
+		// Display the stats
+		int rank = 1;
+		for (int numOfEntities: topEntityIslands.descendingKeySet()) {
+		    if (numOfEntities > 0) {
+			List<UUID> owners = topEntityIslands.get(numOfEntities);
+			for (UUID owner : owners) {
+			    sender.sendMessage("#" + rank + " " + plugin.getPlayers().getName(owner) + " total " + numOfEntities);
+			    String content = "";
+			    for (Entry<EntityType, Integer> entry: plugin.getGrid().getIsland(owner).getEntities().entrySet()) {
+				int num = entry.getValue();
+				String color = ChatColor.GREEN.toString();
+				if (num > 10 && num <= 20) {
+				    color = ChatColor.YELLOW.toString();
+				} else if (num > 20 && num <= 40) {
+				    color = ChatColor.GOLD.toString();
+				} else if (num > 40) {
+				    color = ChatColor.RED.toString();
+				}
+				content += ASkyBlock.prettifyText(entry.getKey().toString()) + " x " + color + entry.getValue() + ChatColor.WHITE + ", ";
+			    }
+			    int lastComma = content.lastIndexOf(",");
+			    //plugin.getLogger().info("DEBUG: last comma " + lastComma);
+			    if (lastComma > 0) {
+				content = content.substring(0, lastComma);
+			    }
+			    sender.sendMessage("  " + content);
+			}
+			rank++;
+			if (rank > 10) {
+			    break;
+			}
+		    }
+		}
+		return true;
+	    }
+	    // Delete island
 	    if (split[0].equalsIgnoreCase("deleteisland")) {
 		sender.sendMessage(ChatColor.RED + "Use " + ChatColor.BOLD + "deleteisland confirm" 
 			+ ChatColor.RESET + "" + ChatColor.RED + " to delete the island you are on.");
@@ -499,8 +585,8 @@ public class AdminCmd implements CommandExecutor {
 			for (final File playerFile : directoryPlayers.listFiles()) {
 			    if (playerFile.getName().endsWith(".yml")) {
 				final UUID playerUUID = UUID.fromString(playerFile.getName().substring(0, playerFile.getName().length()-4));
-				// Only bother if the layer is offline (by definition)
-				if (Bukkit.getOfflinePlayer(playerUUID) != null && Bukkit.getPlayer(playerUUID) == null) {
+				// Only bother if the player is offline (by definition)
+				if (Bukkit.getPlayer(playerUUID) == null) {
 				    final OfflinePlayer oplayer = Bukkit.getOfflinePlayer(playerUUID);
 				    offlineTime = oplayer.getLastPlayed();
 				    // Calculate the number of hours the player has
@@ -509,22 +595,31 @@ public class AdminCmd implements CommandExecutor {
 				    //plugin.getLogger().info(plugin.getPlayers().getName(playerUUID) + " has been offline " + offlineTime + " hours. Required = " + time);
 				    if (offlineTime > time) {
 					//plugin.getLogger().info(plugin.getPlayers().getName(playerUUID) + " has not logged on recently enough");
-					if (plugin.getPlayers().hasIsland(playerUUID)) {
-					    // If the player is in a team then ignore
-					    if (!plugin.getPlayers().inTeam(playerUUID)) {
-						//plugin.getLogger().info("and is a lone player");
-						if (plugin.getPlayers().getIslandLevel(playerUUID) < Settings.abandonedIslandLevel) {
-						    //plugin.getLogger().info("and their island will be removed!");
-						    //player.sendMessage("Island level for " + plugin.getPlayers().getName(playerUUID) + " is " + plugin.getPlayers().getIslandLevel(playerUUID));
-						    removeList.add(playerUUID);
+					// Do the rest without loading the player file
+					YamlConfiguration oldPlayer = new YamlConfiguration();
+					try {
+					    oldPlayer.load(playerFile);
+					    // Check if this player has an island - if not skip
+					    if (oldPlayer.getBoolean("hasIsland",false)) {
+						// If the player is in a team then ignore
+						if (!oldPlayer.getBoolean("hasTeam",false)) {
+						    //plugin.getLogger().info("and is a lone player");
+						    if (oldPlayer.getInt("islandLevel",0) < Settings.abandonedIslandLevel) {
+							//plugin.getLogger().info("and their island will be removed!");
+							//player.sendMessage("Island level for " + plugin.getPlayers().getName(playerUUID) + " is " + plugin.getPlayers().getIslandLevel(playerUUID));
+							removeList.add(playerUUID);
+						    } else {
+							//plugin.getLogger().info("but their island level is > " + Settings.abandonedIslandLevel + " so not deleting");
+						    }
 						} else {
-						    //plugin.getLogger().info("but thei island level is > " + Settings.abandonedIslandLevel + " so not deleting");
+						    //plugin.getLogger().info("but is in a team");
 						}
 					    } else {
-						//plugin.getLogger().info("but is in a team");
+						//plugin.getLogger().info("but does not have an island.");
 					    }
-					} else {
-					    //plugin.getLogger().info("but does not have an island.");
+					} catch (Exception e) {
+					    //Just skip it
+					    plugin.getLogger().severe("Error trying to load player file " + playerFile.getName() + " skipping...");
 					}
 				    }
 				}
@@ -555,7 +650,7 @@ public class AdminCmd implements CommandExecutor {
 				    sender.sendMessage(ChatColor.YELLOW + Locale.purgepurgeCancelled);
 				    this.cancel();
 				} else if (confirmOK) {
-				    // Set up a repeating task to run every 5 seconds to remove
+				    // Set up a repeating task to run every 2 seconds to remove
 				    // islands one by one and then cancel when done
 				    final int total = removeList.size();
 				    new BukkitRunnable() {

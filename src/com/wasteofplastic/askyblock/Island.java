@@ -2,11 +2,13 @@ package com.wasteofplastic.askyblock;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.EntityType;
 
 /**
  * Stores all the info about an island
@@ -43,6 +45,8 @@ public class Island {
     private boolean locked = false;
     // Set if this island is a spawn island
     private boolean isSpawn = false;
+    // Stats variables
+    private HashMap<EntityType,Integer> entities = new HashMap<EntityType,Integer>();
 
     protected Island(String serial) {
 	//Bukkit.getLogger().info("DEBUG: adding serialized island to grid ");
@@ -192,7 +196,7 @@ public class Island {
 	    Bukkit.getLogger().info(target.getX() + "<" + (center.getBlockX() + islandDistance / 2));
 	    Bukkit.getLogger().info(target.getZ() + ">=" + (center.getBlockZ() - islandDistance / 2));
 	    Bukkit.getLogger().info(target.getZ() + "<" + (center.getBlockZ() + islandDistance / 2));
-	    */
+	 */
 	if (target.getWorld().equals(world)) {
 	    if (target.getX() >= center.getBlockX() - islandDistance / 2
 		    && target.getX() < center.getBlockX() + islandDistance / 2
@@ -412,5 +416,32 @@ public class Island {
      */
     protected void setSpawn(boolean isSpawn) {
 	this.isSpawn = isSpawn;
+    }
+
+    protected void addEntity(EntityType type) {
+	if (this.entities.containsKey(type)) {
+	    int sum = this.entities.get(type);
+	    this.entities.put(type, (sum + 1));
+	} else {
+	    this.entities.put(type, 1);
+	}
+    }
+
+    protected int getEntity(EntityType type) {
+	if (this.entities.containsKey(type)) {
+	    return this.entities.get(type);
+	} 
+	return 0;
+    }
+        
+    /**
+     * @return the entities
+     */
+    protected HashMap<EntityType, Integer> getEntities() {
+        return entities;
+    }
+
+    protected void clearStats() {
+	this.entities.clear();
     }
 }

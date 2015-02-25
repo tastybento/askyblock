@@ -117,6 +117,9 @@ permissions:
           askyblock.mod.setbiome:
             description: Allows setting player island biomes
             default: op
+          askyblock.mod.topbreeders:
+            description: Lists most populated islands current loaded
+            default: op
       askyblock.admin.*:
         children:
           askyblock.admin.reload:
