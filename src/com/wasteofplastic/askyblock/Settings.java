@@ -28,8 +28,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 
 /**
- * @author tastybento
  * Where all the settings are
+ * @author tastybento
  */
 public class Settings {
     // Constants

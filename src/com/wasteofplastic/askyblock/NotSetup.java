@@ -6,6 +6,12 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
+/**
+ * This class runs when the config file is not set up enough, or is unsafe
+ * It provides useful information to the admin on what is wrong.
+ * @author tastybento
+ *
+ */
 public class NotSetup implements CommandExecutor {
 
     public enum Reason { DISTANCE, GENERATOR };

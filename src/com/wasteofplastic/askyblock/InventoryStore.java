@@ -3,8 +3,8 @@ package com.wasteofplastic.askyblock;
 import org.bukkit.inventory.ItemStack;
 
 /**
+ * Where the inventory data is stored
  * @author tastybento
- * Where player inventories are stored
  */
 public class InventoryStore {
     private ItemStack[] inventory;

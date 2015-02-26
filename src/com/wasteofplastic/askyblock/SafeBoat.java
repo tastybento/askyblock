@@ -38,10 +38,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 /**
- * @author tastybento This file improves the safety of boats in Acid Island It enables
- *         players to get out of boats without being dropped into the acid. It
- *         enables players to hit a boat and have it pop into their inventory
- *         immediately
+ * This file improves the safety of boats in Acid Island It enables
+ * players to get out of boats without being dropped into the acid. It
+ * enables players to hit a boat and have it pop into their inventory
+ * immediately
+ * @author tastybento
  */
 public class SafeBoat implements Listener {
     // Flags to indicate if a player has exited a boat recently or not

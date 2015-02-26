@@ -36,6 +36,7 @@ import com.wasteofplastic.askyblock.util.Util;
 
 /**
  * Tracks the following info on the player
+ * @author tastybento
  */
 public class Players {
     private ASkyBlock plugin;

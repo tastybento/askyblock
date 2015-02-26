@@ -10,6 +10,12 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
+/**
+ * A class that calculates the level of an island. Runs through all the island blocks
+ * Designed to run repeatedly until the calculation is done.
+ * @author tastybento
+ *
+ */
 public class LevelCalc extends BukkitRunnable {
     private ASkyBlock plugin;
     private Location l;

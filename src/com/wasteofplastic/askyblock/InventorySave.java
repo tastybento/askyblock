@@ -7,6 +7,11 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+/**
+ * Stashes inventories when required for a player
+ * @author tastybento
+ *
+ */
 public class InventorySave {
     private static InventorySave instance = new InventorySave(ASkyBlock.getPlugin());
     private HashMap<UUID,HashMap<Location,InventoryStore>> inventories; 

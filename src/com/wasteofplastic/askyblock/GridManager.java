@@ -32,10 +32,10 @@ import org.bukkit.util.Vector;
 import com.wasteofplastic.askyblock.util.Util;
 
 /**
- * @author tastybento
  * This class manages the island islandGrid. It knows where every island is, and where new
  * ones should go. It can handle any size of island or protection size
  * The islandGrid is stored in a YML file.
+ * @author tastybento
  */
 public class GridManager {
     private ASkyBlock plugin = ASkyBlock.getPlugin();

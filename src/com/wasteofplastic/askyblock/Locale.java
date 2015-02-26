@@ -20,8 +20,8 @@ package com.wasteofplastic.askyblock;
 
 
 /**
- * @author tastybento
  * All the text strings in the game sent to players
+ * @author tastybento
  */
 public class Locale {
     public static String changingObsidiantoLava;

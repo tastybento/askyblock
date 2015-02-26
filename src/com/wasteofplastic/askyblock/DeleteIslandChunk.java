@@ -21,6 +21,12 @@ import org.bukkit.Location;
 import org.bukkit.World;
 
 
+/**
+ * Deletes islands fast using chunk regeneration
+ * 
+ * @author tastybento
+ *
+ */
 public class DeleteIslandChunk {
     private ASkyBlock plugin;
 

@@ -11,6 +11,11 @@ import org.bukkit.entity.Player;
 
 import com.wasteofplastic.askyblock.util.Util;
 
+/**
+ * Handles offline messaging to players and teams
+ * @author tastybento
+ *
+ */
 public class Messages {
     private static ASkyBlock plugin = ASkyBlock.getPlugin();
     // Offline Messages

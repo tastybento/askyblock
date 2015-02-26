@@ -20,7 +20,6 @@ package com.wasteofplastic.askyblock;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -69,7 +68,6 @@ import com.wasteofplastic.askyblock.listeners.LavaCheck;
 import com.wasteofplastic.askyblock.listeners.NetherPortals;
 import com.wasteofplastic.askyblock.panels.Biomes;
 import com.wasteofplastic.askyblock.panels.ControlPanel;
-import com.wasteofplastic.askyblock.util.Pair;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 

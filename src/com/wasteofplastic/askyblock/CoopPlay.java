@@ -13,10 +13,13 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+/**
+ * Handles coop play interactions
+ * 
+ * @author tastybento
+ *
+ */
 public class CoopPlay {
-    // TODO: If all team members log out from an island then remove coop players
-
-
     private static CoopPlay instance = new CoopPlay(ASkyBlock.getPlugin());
     // Stores all the coop islands, the coop player, the location and the inviter
     private HashMap<UUID, HashMap<Location,UUID>> coopPlayers = new HashMap<UUID, HashMap<Location,UUID>>();

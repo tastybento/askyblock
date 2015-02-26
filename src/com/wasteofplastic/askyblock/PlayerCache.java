@@ -30,10 +30,10 @@ import org.bukkit.entity.Player;
 import com.google.common.collect.Lists;
 
 /**
- * @author tastybento
  * Provides a memory cache of online player information
  * This is the one-stop-shop of player info
  * If the player is not cached, then a request is made to Players to obtain it
+ * @author tastybento
  */
 public class PlayerCache {
     private HashMap<UUID, Players> playerCache = new HashMap<UUID, Players>();

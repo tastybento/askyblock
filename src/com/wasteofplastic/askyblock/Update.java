@@ -12,6 +12,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
 /**
+ * Bukkit.org update checker
  * Source: https://github.com/gravitylow/ServerModsAPI-Example/blob/master/Update.java
  * License: free
  */
