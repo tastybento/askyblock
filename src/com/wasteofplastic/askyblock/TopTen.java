@@ -17,21 +17,23 @@ import com.wasteofplastic.askyblock.util.Util;
  * Handles all Top Ten List functions
  * 
  * @author tastybento
- *
+ * 
  */
 public class TopTen {
     private static ASkyBlock plugin = ASkyBlock.getPlugin();
     // Top ten list of players
-    private static Map<UUID, Integer> topTenList = new HashMap<UUID, Integer>();    
-    
+    private static Map<UUID, Integer> topTenList = new HashMap<UUID, Integer>();
+
     /**
      * Adds a player to the top ten, if the level is good enough
+     * 
      * @param ownerUUID
      * @param level
      */
     public static void topTenAddEntry(UUID ownerUUID, int level) {
-	// Special case for removals. If a level of zero is given the player needs to be removed from the list
-	if (level <1 ) {
+	// Special case for removals. If a level of zero is given the player
+	// needs to be removed from the list
+	if (level < 1) {
 	    if (topTenList.containsKey(ownerUUID)) {
 		topTenList.remove(ownerUUID);
 	    }
@@ -40,18 +42,22 @@ public class TopTen {
 	// Only keep the top 20
 	topTenList.put(ownerUUID, level);
 	topTenList = MapUtil.sortByValue(topTenList);
-	//plugin.getLogger().info("DEBUG: +" + level + ": " + topTenList.values().toString());
+	// plugin.getLogger().info("DEBUG: +" + level + ": " +
+	// topTenList.values().toString());
     }
 
     /**
      * Removes ownerUUID from the top ten list
+     * 
      * @param ownerUUID
      */
     public static void topTenRemoveEntry(UUID ownerUUID) {
 	topTenList.remove(ownerUUID);
     }
+
     /**
-     * Generates a sorted map of islands for the Top Ten list from all player files
+     * Generates a sorted map of islands for the Top Ten list from all player
+     * files
      */
     public static void topTenCreate() {
 	// This map is a list of owner and island level
@@ -70,12 +76,12 @@ public class TopTen {
 		    }
 		    player.load(f);
 		    index++;
-		    if (index%1000 == 0) {
+		    if (index % 1000 == 0) {
 			plugin.getLogger().info("Processed " + index + " players");
 		    }
-		    //Players player = new Players(this, playerUUID);
-		    int islandLevel = player.getInt("islandLevel",0);
-		    String teamLeaderUUID = player.getString("teamLeader","");
+		    // Players player = new Players(this, playerUUID);
+		    int islandLevel = player.getInt("islandLevel", 0);
+		    String teamLeaderUUID = player.getString("teamLeader", "");
 		    if (islandLevel > 0) {
 			if (!player.getBoolean("hasTeam")) {
 			    topTenAddEntry(playerUUID, islandLevel);
@@ -101,13 +107,13 @@ public class TopTen {
 	}
 	plugin.getLogger().info("Saving top ten list");
 	// Make file
-	File topTenFile = new File(plugin.getDataFolder(),"topten.yml");
+	File topTenFile = new File(plugin.getDataFolder(), "topten.yml");
 	// Make configuration
 	YamlConfiguration config = new YamlConfiguration();
 	// Save config
 
 	int rank = 0;
-	for (Map.Entry<UUID,Integer> m : topTenList.entrySet()) {
+	for (Map.Entry<UUID, Integer> m : topTenList.entrySet()) {
 	    if (rank++ == 10) {
 		break;
 	    }
@@ -121,14 +127,15 @@ public class TopTen {
 	    e.printStackTrace();
 	}
     }
-    
+
     /**
-     * Loads the top ten from the file system topten.yml. If it does not exist then the top ten is created
+     * Loads the top ten from the file system topten.yml. If it does not exist
+     * then the top ten is created
      */
     public static void topTenLoad() {
 	topTenList.clear();
 	// Check to see if the top ten list exists
-	File topTenFile = new File(plugin.getDataFolder(),"topten.yml");
+	File topTenFile = new File(plugin.getDataFolder(), "topten.yml");
 	if (!topTenFile.exists()) {
 	    plugin.getLogger().warning("Top ten file does not exist - creating it. This could take some time with a large number of players");
 	    topTenCreate();
@@ -139,12 +146,12 @@ public class TopTen {
 	    // Load the values
 	    if (topTenConfig.isSet("topten")) {
 		for (String playerUUID : topTenConfig.getConfigurationSection("topten").getKeys(false)) {
-		    //getLogger().info(playerUUID);
+		    // getLogger().info(playerUUID);
 		    try {
 			UUID uuid = UUID.fromString(playerUUID);
-			//getLogger().info(uuid.toString());
+			// getLogger().info(uuid.toString());
 			int level = topTenConfig.getInt("topten." + playerUUID);
-			//getLogger().info("Level = " + level);
+			// getLogger().info("Level = " + level);
 			TopTen.topTenAddEntry(uuid, level);
 		    } catch (Exception e) {
 			e.printStackTrace();
@@ -155,7 +162,7 @@ public class TopTen {
 	    }
 	}
     }
-    
+
     /**
      * Displays the Top Ten list if it exists in chat
      * 
@@ -167,12 +174,12 @@ public class TopTen {
 	player.sendMessage(ChatColor.GOLD + Locale.topTenheader);
 	if (topTenList == null) {
 	    topTenCreate();
-	    //player.sendMessage(ChatColor.RED + Locale.topTenerrorNotReady);
-	    //return true;
+	    // player.sendMessage(ChatColor.RED + Locale.topTenerrorNotReady);
+	    // return true;
 	}
 	int i = 1;
-	//getLogger().info("DEBUG: " + topTenList.toString());
-	//getLogger().info("DEBUG: " + topTenList.values());
+	// getLogger().info("DEBUG: " + topTenList.toString());
+	// getLogger().info("DEBUG: " + topTenList.values());
 	for (Map.Entry<UUID, Integer> m : topTenList.entrySet()) {
 	    final UUID playerUUID = m.getKey();
 	    if (plugin.getPlayers().inTeam(playerUUID)) {
@@ -181,12 +188,14 @@ public class TopTen {
 		for (UUID members : pMembers) {
 		    memberList += plugin.getPlayers().getName(members) + ", ";
 		}
-		if (memberList.length()>2) {
+		if (memberList.length() > 2) {
 		    memberList = memberList.substring(0, memberList.length() - 2);
 		}
-		player.sendMessage(ChatColor.AQUA + "#" + i + ": " + plugin.getPlayers().getName(playerUUID) + " (" + memberList + ") - " + Locale.levelislandLevel + " "+ m.getValue());
+		player.sendMessage(ChatColor.AQUA + "#" + i + ": " + plugin.getPlayers().getName(playerUUID) + " (" + memberList + ") - "
+			+ Locale.levelislandLevel + " " + m.getValue());
 	    } else {
-		player.sendMessage(ChatColor.AQUA + "#" + i + ": " + plugin.getPlayers().getName(playerUUID) + " - " + Locale.levelislandLevel + " " + m.getValue());
+		player.sendMessage(ChatColor.AQUA + "#" + i + ": " + plugin.getPlayers().getName(playerUUID) + " - " + Locale.levelislandLevel + " "
+			+ m.getValue());
 	    }
 	    if (i++ == 10) {
 		break;

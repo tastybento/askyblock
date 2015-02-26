@@ -13,8 +13,9 @@ import org.bukkit.entity.EntityType;
 /**
  * Stores all the info about an island
  * Managed by GridManager
+ * 
  * @author tastybento
- *
+ * 
  */
 public class Island {
 
@@ -46,10 +47,10 @@ public class Island {
     // Set if this island is a spawn island
     private boolean isSpawn = false;
     // Stats variables
-    private HashMap<EntityType,Integer> entities = new HashMap<EntityType,Integer>();
+    private HashMap<EntityType, Integer> entities = new HashMap<EntityType, Integer>();
 
     public Island(String serial) {
-	//Bukkit.getLogger().info("DEBUG: adding serialized island to grid ");
+	// Bukkit.getLogger().info("DEBUG: adding serialized island to grid ");
 	// Deserialize
 	// Format:
 	// x:height:z:protection range:island distance:owner UUID
@@ -59,26 +60,26 @@ public class Island {
 	    islandDistance = Integer.parseInt(split[4]);
 	    int x = Integer.parseInt(split[0]);
 	    int z = Integer.parseInt(split[2]);
-	    minX = x - islandDistance/2;
+	    minX = x - islandDistance / 2;
 	    y = Integer.parseInt(split[1]);
-	    minZ = z - islandDistance/2;
-	    minProtectedX = x - protectionRange/2;
-	    minProtectedZ = z - protectionRange/2;  
+	    minZ = z - islandDistance / 2;
+	    minProtectedX = x - protectionRange / 2;
+	    minProtectedZ = z - protectionRange / 2;
 	    this.world = ASkyBlock.getIslandWorld();
-	    this.center = new Location(world,x,y,z);
+	    this.center = new Location(world, x, y, z);
 	    this.createdDate = new Date().getTime();
 	    this.updatedDate = createdDate;
 	    this.password = "";
 	    this.votes = 0;
-	    if (split.length> 6) {
-		//Bukkit.getLogger().info("DEBUG: " + split[6]);
+	    if (split.length > 6) {
+		// Bukkit.getLogger().info("DEBUG: " + split[6]);
 		// Get locked status
 		if (split[6].equalsIgnoreCase("true")) {
 		    this.locked = true;
 		} else {
 		    this.locked = false;
 		}
-		//Bukkit.getLogger().info("DEBUG: " + locked);
+		// Bukkit.getLogger().info("DEBUG: " + locked);
 	    } else {
 		this.locked = false;
 	    }
@@ -96,20 +97,21 @@ public class Island {
 
     /**
      * Add a new island using the island center method
+     * 
      * @param minX
      * @param minZ
      */
     public Island(int x, int z) {
 	// Calculate min minX and z
-	this.minX = x - Settings.islandDistance/2;
-	this.minZ = z - Settings.islandDistance/2;
-	this.minProtectedX = x - Settings.island_protectionRange/2;
-	this.minProtectedZ = z - Settings.island_protectionRange/2;
+	this.minX = x - Settings.islandDistance / 2;
+	this.minZ = z - Settings.islandDistance / 2;
+	this.minProtectedX = x - Settings.island_protectionRange / 2;
+	this.minProtectedZ = z - Settings.island_protectionRange / 2;
 	this.y = Settings.island_level;
 	this.islandDistance = Settings.islandDistance;
 	this.protectionRange = Settings.island_protectionRange;
 	this.world = ASkyBlock.getIslandWorld();
-	this.center = new Location(world,x,y,z);
+	this.center = new Location(world, x, y, z);
 	this.createdDate = new Date().getTime();
 	this.updatedDate = createdDate;
 	this.password = "";
@@ -118,21 +120,22 @@ public class Island {
 
     public Island(int x, int z, UUID owner) {
 	// Calculate min minX and z
-	this.minX = x - Settings.islandDistance/2;
-	this.minZ = z - Settings.islandDistance/2;
-	this.minProtectedX = x - Settings.island_protectionRange/2;
-	this.minProtectedZ = z - Settings.island_protectionRange/2;
+	this.minX = x - Settings.islandDistance / 2;
+	this.minZ = z - Settings.islandDistance / 2;
+	this.minProtectedX = x - Settings.island_protectionRange / 2;
+	this.minProtectedZ = z - Settings.island_protectionRange / 2;
 	this.y = Settings.island_level;
 	this.islandDistance = Settings.islandDistance;
 	this.protectionRange = Settings.island_protectionRange;
 	this.world = ASkyBlock.getIslandWorld();
-	this.center = new Location(world,x,y,z);
+	this.center = new Location(world, x, y, z);
 	this.createdDate = new Date().getTime();
 	this.updatedDate = createdDate;
 	this.password = "";
 	this.votes = 0;
 	this.owner = owner;
     }
+
     /**
      * @param minX
      * @param z
@@ -145,10 +148,10 @@ public class Island {
      * @param votes
      */
     public Island(int x, int z, int protectionRange, Location center, UUID owner, long createdDate, long updatedDate, String password, int votes) {
-	this.minX = x - Settings.islandDistance/2;
-	this.minZ = z - Settings.islandDistance/2;
-	this.minProtectedX = x - Settings.island_protectionRange/2;
-	this.minProtectedZ = z - Settings.island_protectionRange/2;
+	this.minX = x - Settings.islandDistance / 2;
+	this.minZ = z - Settings.islandDistance / 2;
+	this.minProtectedX = x - Settings.island_protectionRange / 2;
+	this.minProtectedZ = z - Settings.island_protectionRange / 2;
 	this.protectionRange = protectionRange;
 	this.center = center;
 	this.world = center.getWorld();
@@ -162,85 +165,100 @@ public class Island {
 
     /**
      * Checks if a location is within this island's protected area
+     * 
      * @param loc
      * @return
      */
     public boolean onIsland(Location target) {
 	if (target.getWorld().equals(world)) {
-	    //Bukkit.getLogger().info("Target = " + target.getBlockX() + "," + target.getBlockZ());
-	    //Bukkit.getLogger().info("Center = " + center.getBlockX() + "," + center.getBlockZ());
-	    //Bukkit.getLogger().info(target.getX() + ">=" + (center.getBlockX() - protectionRange / 2));
-	    //Bukkit.getLogger().info(target.getX() + "<" + (center.getBlockX() + protectionRange / 2));
-	    //Bukkit.getLogger().info(target.getZ() + ">=" + (center.getBlockZ() - protectionRange / 2));
-	    //Bukkit.getLogger().info(target.getZ() + "<" + (center.getBlockZ() + protectionRange / 2));
-	    if (target.getX() >= center.getBlockX() - protectionRange / 2
-		    && target.getX() < center.getBlockX() + protectionRange / 2
-		    && target.getZ() >= center.getBlockZ() - protectionRange / 2
-		    && target.getZ() < center.getBlockZ() + protectionRange / 2) {
+	    // Bukkit.getLogger().info("Target = " + target.getBlockX() + "," +
+	    // target.getBlockZ());
+	    // Bukkit.getLogger().info("Center = " + center.getBlockX() + "," +
+	    // center.getBlockZ());
+	    // Bukkit.getLogger().info(target.getX() + ">=" +
+	    // (center.getBlockX() - protectionRange / 2));
+	    // Bukkit.getLogger().info(target.getX() + "<" + (center.getBlockX()
+	    // + protectionRange / 2));
+	    // Bukkit.getLogger().info(target.getZ() + ">=" +
+	    // (center.getBlockZ() - protectionRange / 2));
+	    // Bukkit.getLogger().info(target.getZ() + "<" + (center.getBlockZ()
+	    // + protectionRange / 2));
+	    if (target.getX() >= center.getBlockX() - protectionRange / 2 && target.getX() < center.getBlockX() + protectionRange / 2
+		    && target.getZ() >= center.getBlockZ() - protectionRange / 2 && target.getZ() < center.getBlockZ() + protectionRange / 2) {
 		return true;
 	    }
 	}
-	return false;	
+	return false;
     }
 
     /**
      * Checks if location is anywhere in the island space (island distance)
+     * 
      * @param target
      * @return true if in the area
      */
     public boolean inIslandSpace(Location target) {
 	/*
-	    Bukkit.getLogger().info("Target = " + target.getBlockX() + "," + target.getBlockZ());
-	    Bukkit.getLogger().info("Center = " + center.getBlockX() + "," + center.getBlockZ());
-	    Bukkit.getLogger().info(target.getX() + ">=" + (center.getBlockX() - islandDistance / 2));
-	    Bukkit.getLogger().info(target.getX() + "<" + (center.getBlockX() + islandDistance / 2));
-	    Bukkit.getLogger().info(target.getZ() + ">=" + (center.getBlockZ() - islandDistance / 2));
-	    Bukkit.getLogger().info(target.getZ() + "<" + (center.getBlockZ() + islandDistance / 2));
+	 * Bukkit.getLogger().info("Target = " + target.getBlockX() + "," +
+	 * target.getBlockZ());
+	 * Bukkit.getLogger().info("Center = " + center.getBlockX() + "," +
+	 * center.getBlockZ());
+	 * Bukkit.getLogger().info(target.getX() + ">=" + (center.getBlockX() -
+	 * islandDistance / 2));
+	 * Bukkit.getLogger().info(target.getX() + "<" + (center.getBlockX() +
+	 * islandDistance / 2));
+	 * Bukkit.getLogger().info(target.getZ() + ">=" + (center.getBlockZ() -
+	 * islandDistance / 2));
+	 * Bukkit.getLogger().info(target.getZ() + "<" + (center.getBlockZ() +
+	 * islandDistance / 2));
 	 */
 	if (target.getWorld().equals(world)) {
-	    if (target.getX() >= center.getBlockX() - islandDistance / 2
-		    && target.getX() < center.getBlockX() + islandDistance / 2
-		    && target.getZ() >= center.getBlockZ() - islandDistance / 2
-		    && target.getZ() < center.getBlockZ() + islandDistance / 2) {
+	    if (target.getX() >= center.getBlockX() - islandDistance / 2 && target.getX() < center.getBlockX() + islandDistance / 2
+		    && target.getZ() >= center.getBlockZ() - islandDistance / 2 && target.getZ() < center.getBlockZ() + islandDistance / 2) {
 		return true;
 	    }
 	}
-	return false;	
+	return false;
     }
 
     public boolean inIslandSpace(int x, int z) {
-	if (x >= center.getBlockX() - islandDistance / 2
-		&& x < center.getBlockX() + islandDistance / 2
-		&& z >= center.getBlockZ() - islandDistance / 2
+	if (x >= center.getBlockX() - islandDistance / 2 && x < center.getBlockX() + islandDistance / 2 && z >= center.getBlockZ() - islandDistance / 2
 		&& z < center.getBlockZ() + islandDistance / 2) {
 	    return true;
 	}
-	return false;	
+	return false;
     }
+
     /**
      * @return the minX
      */
     public int getMinX() {
 	return minX;
     }
+
     /**
-     * @param minX the minX to set
+     * @param minX
+     *            the minX to set
      */
     public void setMinX(int minX) {
 	this.minX = minX;
     }
+
     /**
      * @return the z
      */
     public int getMinZ() {
 	return minZ;
     }
+
     /**
-     * @param z the z to set
+     * @param z
+     *            the z to set
      */
     public void setMinZ(int minZ) {
 	this.minZ = minZ;
     }
+
     /**
      * @return the minprotectedX
      */
@@ -261,15 +279,18 @@ public class Island {
     public int getProtectionSize() {
 	return protectionRange;
     }
+
     /**
-     * @param protectionRange the protectionRange to set
+     * @param protectionRange
+     *            the protectionRange to set
      */
     public void setProtectionSize(int protectionSize) {
 	this.protectionRange = protectionSize;
-	this.minProtectedX = center.getBlockX() - protectionSize/2;
-	this.minProtectedZ = center.getBlockZ() - protectionSize/2;
+	this.minProtectedX = center.getBlockX() - protectionSize / 2;
+	this.minProtectedZ = center.getBlockZ() - protectionSize / 2;
 
     }
+
     /**
      * @return the islandDistance
      */
@@ -278,7 +299,8 @@ public class Island {
     }
 
     /**
-     * @param islandDistance the islandDistance to set
+     * @param islandDistance
+     *            the islandDistance to set
      */
     public void setIslandDistance(int islandDistance) {
 	this.islandDistance = islandDistance;
@@ -290,68 +312,85 @@ public class Island {
     public Location getCenter() {
 	return center;
     }
+
     /**
-     * @param center the center to set
+     * @param center
+     *            the center to set
      */
     public void setCenter(Location center) {
 	this.center = center;
     }
+
     /**
      * @return the owner
      */
     public UUID getOwner() {
 	return owner;
     }
+
     /**
-     * @param owner the owner to set
+     * @param owner
+     *            the owner to set
      */
     public void setOwner(UUID owner) {
 	this.owner = owner;
     }
+
     /**
      * @return the createdDate
      */
     public long getCreatedDate() {
 	return createdDate;
     }
+
     /**
-     * @param createdDate the createdDate to set
+     * @param createdDate
+     *            the createdDate to set
      */
     public void setCreatedDate(long createdDate) {
 	this.createdDate = createdDate;
     }
+
     /**
      * @return the updatedDate
      */
     public long getUpdatedDate() {
 	return updatedDate;
     }
+
     /**
-     * @param updatedDate the updatedDate to set
+     * @param updatedDate
+     *            the updatedDate to set
      */
     public void setUpdatedDate(long updatedDate) {
 	this.updatedDate = updatedDate;
     }
+
     /**
      * @return the password
      */
     public String getPassword() {
 	return password;
     }
+
     /**
-     * @param password the password to set
+     * @param password
+     *            the password to set
      */
     public void setPassword(String password) {
 	this.password = password;
     }
+
     /**
      * @return the votes
      */
     public int getVotes() {
 	return votes;
     }
+
     /**
-     * @param votes the votes to set
+     * @param votes
+     *            the votes to set
      */
     public void setVotes(int votes) {
 	this.votes = votes;
@@ -365,10 +404,11 @@ public class Island {
     }
 
     /**
-     * @param locked the locked to set
+     * @param locked
+     *            the locked to set
      */
     public void setLocked(boolean locked) {
-	//Bukkit.getLogger().info("DEBUG: island is now " + locked);
+	// Bukkit.getLogger().info("DEBUG: island is now " + locked);
 	this.locked = locked;
     }
 
@@ -379,16 +419,17 @@ public class Island {
 	    ownerString = owner.toString();
 	}
 	if (isSpawn) {
-	    //Bukkit.getLogger().info("DEBUG: island is spawn");
+	    // Bukkit.getLogger().info("DEBUG: island is spawn");
 	    ownerString = "spawn";
 	}
-	return center.getBlockX() + ":" + center.getBlockY() + ":" + center.getBlockZ() + ":" + protectionRange 
-		+ ":" + islandDistance + ":" + ownerString + ":" + locked;
+	return center.getBlockX() + ":" + center.getBlockY() + ":" + center.getBlockZ() + ":" + protectionRange + ":" + islandDistance + ":" + ownerString
+		+ ":" + locked;
     }
 
     /**
      * Provides a list of all the players who are allowed on this island
      * including coop members
+     * 
      * @return a list of UUIDs that have legitimate access to the island
      */
     public List<UUID> getMembers() {
@@ -412,7 +453,8 @@ public class Island {
     }
 
     /**
-     * @param isSpawn the isSpawn to set
+     * @param isSpawn
+     *            the isSpawn to set
      */
     public void setSpawn(boolean isSpawn) {
 	this.isSpawn = isSpawn;
@@ -430,15 +472,15 @@ public class Island {
     public int getEntity(EntityType type) {
 	if (this.entities.containsKey(type)) {
 	    return this.entities.get(type);
-	} 
+	}
 	return 0;
     }
-        
+
     /**
      * @return the entities
      */
     public HashMap<EntityType, Integer> getEntities() {
-        return entities;
+	return entities;
     }
 
     public void clearStats() {

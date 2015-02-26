@@ -33,6 +33,7 @@ public class VaultHelper {
 
     /**
      * Sets up the economy instance
+     * 
      * @return
      */
     public static boolean setupEconomy() {
@@ -46,6 +47,7 @@ public class VaultHelper {
 
     /**
      * Sets up the permissions instance
+     * 
      * @return
      */
     public static boolean setupPermissions() {
@@ -56,20 +58,21 @@ public class VaultHelper {
 	}
 	return (permission != null);
     }
-    
 
     /**
      * Checks permission of player in world or in any world
+     * 
      * @param player
      * @param perm
      * @return
      */
     public static boolean checkPerm(final Player player, final String perm) {
 	return permission.has(player, perm);
-   }
-    
+    }
+
     /**
      * Adds permission to player
+     * 
      * @param player
      * @param perm
      */
@@ -79,12 +82,12 @@ public class VaultHelper {
 
     /**
      * Removes a player's permission
+     * 
      * @param player
      * @param perm
      */
     public static void removePerm(final Player player, final String perm) {
 	permission.playerRemove(player, perm);
     }
-
 
 }

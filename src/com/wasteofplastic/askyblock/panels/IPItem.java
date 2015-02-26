@@ -12,7 +12,7 @@ import com.wasteofplastic.askyblock.util.Util;
 
 /**
  * @author tastybento
- * Info panel item
+ *         Info panel item
  */
 public class IPItem {
     private ItemStack item;
@@ -21,7 +21,10 @@ public class IPItem {
     private int slot;
     private boolean flagValue;
     private Type type;
-    public enum Type {INFO, TOGGLE};
+
+    public enum Type {
+	INFO, TOGGLE
+    };
 
     // Info icons
     public IPItem(Material material, String name, String description) {
@@ -41,7 +44,7 @@ public class IPItem {
     public IPItem(boolean flagValue, Material material) {
 	createToggleableItem(flagValue, material, Util.prettifyText(material.toString()) + " use");
     }
-    
+
     public IPItem(boolean flagValue, Material material, String name) {
 	createToggleableItem(flagValue, material, name);
     }
@@ -58,12 +61,12 @@ public class IPItem {
 	if (flagValue) {
 	    description.add(ChatColor.GREEN + "Allowed");
 	} else {
-	    description.add(ChatColor.RED + "Disallowed");	    
+	    description.add(ChatColor.RED + "Disallowed");
 	}
 	meta.setLore(description);
-	item.setItemMeta(meta);	
+	item.setItemMeta(meta);
     }
-    
+
     public void setLore(List<String> lore) {
 	ItemMeta meta = item.getItemMeta();
 	meta.setLore(lore);
@@ -84,6 +87,7 @@ public class IPItem {
     public void setSlot(int slot) {
 	this.slot = slot;
     }
+
     /**
      * @return the flagValue
      */
@@ -92,7 +96,8 @@ public class IPItem {
     }
 
     /**
-     * @param flagValue the flagValue to set
+     * @param flagValue
+     *            the flagValue to set
      */
     public void setFlagValue(boolean flagValue) {
 	this.flagValue = flagValue;
@@ -101,7 +106,7 @@ public class IPItem {
 	if (flagValue) {
 	    description.add(ChatColor.GREEN + "Allowed by all");
 	} else {
-	    description.add(ChatColor.RED + "Disallowed for visitors");	    
+	    description.add(ChatColor.RED + "Disallowed for visitors");
 	}
 	meta.setLore(description);
 	item.setItemMeta(meta);

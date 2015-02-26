@@ -42,6 +42,7 @@ import org.bukkit.util.Vector;
  * players to get out of boats without being dropped into the acid. It
  * enables players to hit a boat and have it pop into their inventory
  * immediately
+ * 
  * @author tastybento
  */
 public class SafeBoat implements Listener {
@@ -60,7 +61,7 @@ public class SafeBoat implements Listener {
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onClick(VehicleDamageEvent e) {
-	//plugin.getLogger().info("Damage event " + e.getDamage());
+	// plugin.getLogger().info("Damage event " + e.getDamage());
 	// Find out what block is being clicked
 	Vehicle boat = e.getVehicle();
 	if (!(boat instanceof Boat)) {
@@ -128,7 +129,7 @@ public class SafeBoat implements Listener {
 	if (!exitedBoat.containsKey(player.getUniqueId())) {
 	    return;
 	}
-	//Entity boat = exitedBoat.get(player.getUniqueId());
+	// Entity boat = exitedBoat.get(player.getUniqueId());
 	// Reset the flag
 	exitedBoat.remove(player.getUniqueId());
 	// Okay, so a player is getting out of a boat in the the right world.

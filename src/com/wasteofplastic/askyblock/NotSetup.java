@@ -9,16 +9,21 @@ import org.bukkit.command.CommandSender;
 /**
  * This class runs when the config file is not set up enough, or is unsafe
  * It provides useful information to the admin on what is wrong.
+ * 
  * @author tastybento
- *
+ * 
  */
 public class NotSetup implements CommandExecutor {
 
-    public enum Reason { DISTANCE, GENERATOR };
+    public enum Reason {
+	DISTANCE, GENERATOR
+    };
+
     private Reason reason;
 
     /**
      * Handles plugin operation if a critical setup parameter is missing
+     * 
      * @param reason
      */
     public NotSetup(Reason reason) {
@@ -28,7 +33,7 @@ public class NotSetup implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String arg2, String[] arg3) {
 	sender.sendMessage(ChatColor.RED + "More set up is required before the plugin can start...");
-	switch(reason) {
+	switch (reason) {
 	case DISTANCE:
 	    sender.sendMessage(ChatColor.RED + "Edit config.yml. Then restart server.");
 	    sender.sendMessage(ChatColor.RED + "Make sure you set island distance. If upgrading, set it to what it was before.");

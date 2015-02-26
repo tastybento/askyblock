@@ -24,8 +24,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 /**
  * @author tastybento
- * This class is for a control panel button that has an icon, a command to run if pressed or a link to
- * another control panel.
+ *         This class is for a control panel button that has an icon, a command
+ *         to run if pressed or a link to
+ *         another control panel.
  */
 public class CPItem {
 
@@ -48,14 +49,14 @@ public class CPItem {
 	meta.setDisplayName(name);
 	item.setItemMeta(meta);
     }
-    
+
     public CPItem(ItemStack itemStack, String name, String command, String nextSection) {
 	this.command = command;
 	this.nextSection = nextSection;
 	this.item = itemStack;
 	ItemMeta meta = item.getItemMeta();
 	meta.setDisplayName(name);
-	//meta.setLore(null);
+	// meta.setLore(null);
 	item.setItemMeta(meta);
     }
 
@@ -72,7 +73,6 @@ public class CPItem {
 	return command;
     }
 
-
     /**
      * @return the nextSection
      */
@@ -80,14 +80,14 @@ public class CPItem {
 	return nextSection;
     }
 
-
     /**
-     * @param nextSection the nextSection to set
+     * @param nextSection
+     *            the nextSection to set
      */
     public void setNextSection(String nextSection) {
-        this.nextSection = nextSection;
+	this.nextSection = nextSection;
     }
-    
+
     public ItemStack getItem() {
 	return item;
     }

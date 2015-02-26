@@ -11,10 +11,12 @@ import org.bukkit.entity.Player;
 
 /**
  * Provides a programming interface to Island
+ * 
  * @author tastybento
  */
 public class ASkyBlockAPI {
     private static ASkyBlockAPI instance = new ASkyBlockAPI(ASkyBlock.getPlugin());
+
     /**
      * @return the instance
      */
@@ -31,10 +33,8 @@ public class ASkyBlockAPI {
     /*
      * Get information about (island): Level Owner Party members Rank (Something
      * with the top-ten ?) Bedrock coordinates Island bounds Biome
-     * 
      * Playing with challenges would be interesting: Number of completed
      * challenges Challenge names / list
-     * 
      * Now, we could be able to: Play with party members (add, kick, set owner)
      * Change island biome Complete a challenge Send someone to the Welcome Sign
      * of an island
@@ -260,6 +260,7 @@ public class ASkyBlockAPI {
 
     /**
      * Player is in a coop or not
+     * 
      * @param player
      * @return true if player is in a coop, otherwise false
      */
@@ -269,15 +270,15 @@ public class ASkyBlockAPI {
 	}
 	return true;
     }
-    
+
     /**
      * Find out which coop islands player is a part of
+     * 
      * @param player
      * @return set of locations of islands or empty if none
      */
     public Set<Location> getCoopIslands(Player player) {
 	return CoopPlay.getInstance().getCoopIslands(player);
     }
-    
-    
+
 }

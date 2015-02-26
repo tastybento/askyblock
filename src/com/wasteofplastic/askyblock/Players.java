@@ -36,6 +36,7 @@ import com.wasteofplastic.askyblock.util.Util;
 
 /**
  * Tracks the following info on the player
+ * 
  * @author tastybento
  */
 public class Players {
@@ -76,12 +77,14 @@ public class Players {
 	this.islandLevel = 0;
 	this.playerName = "";
 	this.resetsLeft = Settings.resetLimit;
-	this.kickedList = new HashMap<Location,Date>();
+	this.kickedList = new HashMap<Location, Date>();
 	load(uuid);
     }
 
     /**
-     * Loads a player from file system and if they do not exist, then it is created
+     * Loads a player from file system and if they do not exist, then it is
+     * created
+     * 
      * @param uuid
      */
     public void load(UUID uuid) {
@@ -97,12 +100,12 @@ public class Players {
 	    }
 	    if (playerName == null) {
 		plugin.getLogger().severe("Could not obtain a name for the player with UUID " + uuid.toString());
-		playerName = "";		
+		playerName = "";
 	    }
 	}
-	//plugin.getLogger().info("Loading player..." + playerName);
+	// plugin.getLogger().info("Loading player..." + playerName);
 	this.hasIsland = playerInfo.getBoolean("hasIsland", false);
-	//plugin.getLogger().info("DEBUG: hasIsland load = " + this.hasIsland);
+	// plugin.getLogger().info("DEBUG: hasIsland load = " + this.hasIsland);
 	this.islandLocation = playerInfo.getString("islandLocation", "");
 	this.homeLocation = playerInfo.getString("homeLocation", "");
 	this.inTeam = playerInfo.getBoolean("hasTeam", false);
@@ -115,7 +118,7 @@ public class Players {
 	this.teamIslandLocation = playerInfo.getString("teamIslandLocation", "");
 	this.islandLevel = playerInfo.getInt("islandLevel", 0);
 	List<String> temp = playerInfo.getStringList("members");
-	for (String s: temp) {
+	for (String s : temp) {
 	    this.members.add(UUID.fromString(s));
 	}
 	// Challenges
@@ -133,20 +136,22 @@ public class Players {
 	}
 	// Load the invite cool downs
 	if (playerInfo.contains("invitecooldown")) {
-	    //plugin.getLogger().info("DEBUG: cooldown found");
+	    // plugin.getLogger().info("DEBUG: cooldown found");
 	    for (String timeIndex : playerInfo.getConfigurationSection("invitecooldown").getKeys(false)) {
 		try {
-		    //plugin.getLogger().info("DEBUG: index is " + timeIndex);
+		    // plugin.getLogger().info("DEBUG: index is " + timeIndex);
 		    String locationString = playerInfo.getString("invitecooldown." + timeIndex, "");
-		    //plugin.getLogger().info("DEBUG: location string is " + locationString);
+		    // plugin.getLogger().info("DEBUG: location string is " +
+		    // locationString);
 		    Location l = getLocationString(locationString);
-		    //plugin.getLogger().info("DEBUG: location is " + l);
+		    // plugin.getLogger().info("DEBUG: location is " + l);
 		    long timeInMillis = Long.valueOf(timeIndex);
-		    //plugin.getLogger().info("DEBUG: time in millis is " + timeInMillis);
+		    // plugin.getLogger().info("DEBUG: time in millis is " +
+		    // timeInMillis);
 		    if (l != null && timeInMillis > 0) {
 			Date date = new Date();
 			date.setTime(timeInMillis);
-			//plugin.getLogger().info("DEBUG: date is " + date);
+			// plugin.getLogger().info("DEBUG: date is " + date);
 			// Insert into hashmap
 			kickedList.put(l, date);
 		    }
@@ -161,7 +166,7 @@ public class Players {
      * Saves the player info to the file system
      */
     public void save() {
-	//plugin.getLogger().info("Saving player..." + playerName);
+	// plugin.getLogger().info("Saving player..." + playerName);
 	// Save the variables
 	playerInfo.set("playerName", playerName);
 	playerInfo.set("hasIsland", hasIsland);
@@ -169,7 +174,7 @@ public class Players {
 	playerInfo.set("homeLocation", homeLocation);
 	playerInfo.set("hasTeam", inTeam);
 	if (teamLeader == null) {
-	    playerInfo.set("teamLeader","");
+	    playerInfo.set("teamLeader", "");
 	} else {
 	    playerInfo.set("teamLeader", teamLeader.toString());
 	}
@@ -177,7 +182,7 @@ public class Players {
 	playerInfo.set("islandLevel", islandLevel);
 	// Serialize UUIDs
 	List<String> temp = new ArrayList<String>();
-	for (UUID m: members) {
+	for (UUID m : members) {
 	    temp.add(m.toString());
 	}
 	playerInfo.set("members", temp);
@@ -194,8 +199,8 @@ public class Players {
 	}
 	playerInfo.set("resetsLeft", this.resetsLeft);
 	// Save invite cooldown timers
-	playerInfo.set("invitecooldown",null);
-	for (Entry<Location,Date> en: kickedList.entrySet()) {
+	playerInfo.set("invitecooldown", null);
+	for (Entry<Location, Date> en : kickedList.entrySet()) {
 	    // Convert location and date to string (time in millis)
 	    Calendar coolDownTime = Calendar.getInstance();
 	    coolDownTime.setTime(en.getValue());
@@ -272,7 +277,8 @@ public class Players {
      */
     public boolean checkChallenge(final String challenge) {
 	if (challengeList.containsKey(challenge.toLowerCase())) {
-	    //plugin.getLogger().info("DEBUG: " + challenge + ":" + challengeList.get(challenge.toLowerCase()).booleanValue() );
+	    // plugin.getLogger().info("DEBUG: " + challenge + ":" +
+	    // challengeList.get(challenge.toLowerCase()).booleanValue() );
 	    return challengeList.get(challenge.toLowerCase()).booleanValue();
 	}
 	return false;
@@ -280,18 +286,20 @@ public class Players {
 
     /**
      * Checks how many times a challenge has been done
+     * 
      * @param challenge
      * @return
      */
     public int checkChallengeTimes(final String challenge) {
 	if (challengeListTimes.containsKey(challenge.toLowerCase())) {
-	    //plugin.getLogger().info("DEBUG: check " + challenge + ":" + challengeListTimes.get(challenge.toLowerCase()).intValue() );
+	    // plugin.getLogger().info("DEBUG: check " + challenge + ":" +
+	    // challengeListTimes.get(challenge.toLowerCase()).intValue() );
 	    return challengeListTimes.get(challenge.toLowerCase()).intValue();
 	}
 	return 0;
     }
 
-    public HashMap<String,Boolean> getChallengeStatus() {
+    public HashMap<String, Boolean> getChallengeStatus() {
 	return challengeList;
     }
 
@@ -303,7 +311,7 @@ public class Players {
      * @param challenge
      */
     public void completeChallenge(final String challenge) {
-	//plugin.getLogger().info("DEBUG: Complete challenge");
+	// plugin.getLogger().info("DEBUG: Complete challenge");
 	if (challengeList.containsKey(challenge)) {
 	    challengeList.remove(challenge);
 	    challengeList.put(challenge, Boolean.valueOf(true));
@@ -314,7 +322,8 @@ public class Players {
 	    }
 	    times++;
 	    challengeListTimes.put(challenge, times);
-	    //plugin.getLogger().info("DEBUG: complete " + challenge + ":" + challengeListTimes.get(challenge.toLowerCase()).intValue() );
+	    // plugin.getLogger().info("DEBUG: complete " + challenge + ":" +
+	    // challengeListTimes.get(challenge.toLowerCase()).intValue() );
 	}
     }
 
@@ -347,11 +356,12 @@ public class Players {
 		    if (plugin.getPlayers().getTeamIslandLocation(teamLeader) != null) {
 			teamIslandLocation = getStringLocation(plugin.getPlayers().getTeamIslandLocation(teamLeader));
 			plugin.getLogger().warning(playerName + " was listed as in a team, but has no team island. Fixed.");
-		    }  
+		    }
 		} else {
 		    inTeam = false;
 		    teamLeader = null;
-		    plugin.getLogger().warning(playerName + " was listed as in a team, but the team leader does not have them on the team. Removing from team.");
+		    plugin.getLogger()
+			    .warning(playerName + " was listed as in a team, but the team leader does not have them on the team. Removing from team.");
 		}
 	    }
 	}
@@ -366,7 +376,7 @@ public class Players {
 	    return null;
 	}
 	// return homeLoc.getLocation();
-	Location home = getLocationString(homeLocation).add(new Vector(0.5D,0D,0.5D));
+	Location home = getLocationString(homeLocation).add(new Vector(0.5D, 0D, 0.5D));
 	return home;
     }
 
@@ -383,9 +393,9 @@ public class Players {
      */
     public Location getIslandLocation() {
 	// TODO: Enable this, but check the implications
-	//if (islandLocation.isEmpty() && inTeam) {
-	//    return getLocationString(teamIslandLocation);
-	//}
+	// if (islandLocation.isEmpty() && inTeam) {
+	// return getLocationString(teamIslandLocation);
+	// }
 	return getLocationString(islandLocation);
     }
 
@@ -467,16 +477,18 @@ public class Players {
 	if (Settings.resetLimit < resetsLeft) {
 	    // Lower to the limit, which may be -1
 	    resetsLeft = Settings.resetLimit;
-	} 
+	}
 	if (Settings.resetLimit > 0 && resetsLeft == -1) {
-	    // Set to the new limit if it has been raised from previously being unlimited
+	    // Set to the new limit if it has been raised from previously being
+	    // unlimited
 	    resetsLeft = Settings.resetLimit;
 	}
 	return resetsLeft;
     }
 
     /**
-     * @param resetsLeft the resetsLeft to set
+     * @param resetsLeft
+     *            the resetsLeft to set
      */
     public void setResetsLeft(int resetsLeft) {
 	this.resetsLeft = resetsLeft;
@@ -604,33 +616,36 @@ public class Players {
 
     /**
      * Can invite or still waiting for cool down to end
-     * @param location to check
+     * 
+     * @param location
+     *            to check
      * @return number of mins/hours left until cool down ends
      */
     public long getInviteCoolDownTime(Location location) {
 	// Check the hashmap
 	if (location != null && kickedList.containsKey(location)) {
-	    //plugin.getLogger().info("DEBUG: Location is known");
+	    // plugin.getLogger().info("DEBUG: Location is known");
 	    // The location is in the list
 	    // Check the date/time
 	    Date kickedDate = kickedList.get(location);
-	    //plugin.getLogger().info("DEBUG: kicked date = " + kickedDate);
+	    // plugin.getLogger().info("DEBUG: kicked date = " + kickedDate);
 	    Calendar coolDownTime = Calendar.getInstance();
 	    coolDownTime.setTime(kickedDate);
-	    //coolDownTime.add(Calendar.HOUR_OF_DAY, Settings.inviteWait);
+	    // coolDownTime.add(Calendar.HOUR_OF_DAY, Settings.inviteWait);
 	    coolDownTime.add(Calendar.MINUTE, Settings.inviteWait);
 	    // Add the invite cooldown period
 	    Calendar timeNow = Calendar.getInstance();
-	    //plugin.getLogger().info("DEBUG: date now = " + timeNow);
+	    // plugin.getLogger().info("DEBUG: date now = " + timeNow);
 	    if (coolDownTime.before(timeNow)) {
 		// The time has expired
 		kickedList.remove(location);
 		return 0;
 	    } else {
 		// Still not there yet
-		//long hours = (coolDownTime.getTimeInMillis() - timeNow.getTimeInMillis())/(1000 * 60 * 60);
+		// long hours = (coolDownTime.getTimeInMillis() -
+		// timeNow.getTimeInMillis())/(1000 * 60 * 60);
 		// Temp minutes
-		long hours = (coolDownTime.getTimeInMillis() - timeNow.getTimeInMillis())/(1000 * 60);
+		long hours = (coolDownTime.getTimeInMillis() - timeNow.getTimeInMillis()) / (1000 * 60);
 		return hours;
 	    }
 	}
@@ -638,8 +653,11 @@ public class Players {
     }
 
     /**
-     * Stores the location that the player has been kicked from along with the current time
-     * @param kickedList the kickedList to set
+     * Stores the location that the player has been kicked from along with the
+     * current time
+     * 
+     * @param kickedList
+     *            the kickedList to set
      */
     public void startInviteCoolDownTimer(Location location) {
 	if (location != null) {

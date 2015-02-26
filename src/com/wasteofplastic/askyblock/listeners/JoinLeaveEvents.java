@@ -53,29 +53,30 @@ public class JoinLeaveEvents implements Listener {
     public void onPlayerJoin(final PlayerJoinEvent event) {
 	// Check updates
 	final String pluginVersion = plugin.getDescription().getVersion();
-		if (plugin.getUpdateCheck() != null) {
-		    // Check to see if the latest file is newer that this one
-		    String[] split = plugin.getUpdateCheck().getVersionName().split(" V");
-		    if (split.length>1 && !pluginVersion.equals(split[1])) {
-			// For now, just show the results
-			event.getPlayer().sendMessage(ChatColor.RED + plugin.getUpdateCheck().getVersionName() + " is available! You are running " + pluginVersion);
-			if (Settings.GAMETYPE.equals(GameType.ASKYBLOCK)) {
-			    event.getPlayer().sendMessage(ChatColor.RED + "Update at: http://dev.bukkit.org/bukkit-plugins/skyblock");
-			} else {
-			    event.getPlayer().sendMessage(ChatColor.RED + "Update at: http://dev.bukkit.org/bukkit-plugins/acidisland");
-			}
-		    }
+	if (plugin.getUpdateCheck() != null) {
+	    // Check to see if the latest file is newer that this one
+	    String[] split = plugin.getUpdateCheck().getVersionName().split(" V");
+	    if (split.length > 1 && !pluginVersion.equals(split[1])) {
+		// For now, just show the results
+		event.getPlayer().sendMessage(ChatColor.RED + plugin.getUpdateCheck().getVersionName() + " is available! You are running " + pluginVersion);
+		if (Settings.GAMETYPE.equals(GameType.ASKYBLOCK)) {
+		    event.getPlayer().sendMessage(ChatColor.RED + "Update at: http://dev.bukkit.org/bukkit-plugins/skyblock");
+		} else {
+		    event.getPlayer().sendMessage(ChatColor.RED + "Update at: http://dev.bukkit.org/bukkit-plugins/acidisland");
 		}
+	    }
+	}
 
 	final UUID playerUUID = event.getPlayer().getUniqueId();
 	if (players == null) {
 	    plugin.getLogger().severe("players is NULL");
 	}
 	// Load any messages for the player
-	//plugin.getLogger().info("DEBUG: Checking messages for " + event.getPlayer().getName());
+	// plugin.getLogger().info("DEBUG: Checking messages for " +
+	// event.getPlayer().getName());
 	final List<String> messages = Messages.getMessages(playerUUID);
 	if (messages != null) {
-	    //plugin.getLogger().info("DEBUG: Messages waiting!");
+	    // plugin.getLogger().info("DEBUG: Messages waiting!");
 	    plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
 		@Override
 		public void run() {
@@ -88,9 +89,9 @@ public class JoinLeaveEvents implements Listener {
 		    Messages.clearMessages(playerUUID);
 		}
 	    }, 40L);
-	} //else {
-	  //  plugin.getLogger().info("no messages");
-	//}
+	} // else {
+	  // plugin.getLogger().info("no messages");
+	  // }
 
 	// If this player is not an island player just skip all this
 	if (!players.hasIsland(playerUUID) && !players.inTeam(playerUUID)) {
@@ -102,7 +103,7 @@ public class JoinLeaveEvents implements Listener {
 	 * This should not be needed
 	 */
 	if (players.inTeam(playerUUID) && players.getTeamIslandLocation(playerUUID) == null) {
-	    //plugin.getLogger().info("DEBUG: reseting team island");
+	    // plugin.getLogger().info("DEBUG: reseting team island");
 	    leader = players.getTeamLeader(playerUUID);
 	    players.setTeamIslandLocation(playerUUID, players.getIslandLocation(leader));
 	}
@@ -139,7 +140,7 @@ public class JoinLeaveEvents implements Listener {
 		if (!plugin.isCalculatingLevel()) {
 		    // This flag is true if the command can be used
 		    plugin.setCalculatingLevel(true);
-		    LevelCalc levelCalc = new LevelCalc(plugin,playerUUID,event.getPlayer(),true);
+		    LevelCalc levelCalc = new LevelCalc(plugin, playerUUID, event.getPlayer(), true);
 		    levelCalc.runTaskTimer(plugin, 0L, 10L);
 		}
 	    }
@@ -151,7 +152,7 @@ public class JoinLeaveEvents implements Listener {
 	if (Settings.logInRemoveMobs) {
 	    plugin.getGrid().removeMobs(event.getPlayer().getLocation());
 	}
-	//plugin.getLogger().info("Cached " + event.getPlayer().getName());
+	// plugin.getLogger().info("Cached " + event.getPlayer().getName());
 
     }
 
@@ -160,8 +161,9 @@ public class JoinLeaveEvents implements Listener {
 	// Remove from coop list
 	CoopPlay.getInstance().clearMyCoops(event.getPlayer());
 	CoopPlay.getInstance().clearMyInvitedCoops(event.getPlayer());
-	//CoopPlay.getInstance().returnAllInventories(event.getPlayer());
-	//plugin.setMessage(event.getPlayer().getUniqueId(), "Hello! This is a test. You logged out");
+	// CoopPlay.getInstance().returnAllInventories(event.getPlayer());
+	// plugin.setMessage(event.getPlayer().getUniqueId(),
+	// "Hello! This is a test. You logged out");
 	players.removeOnlinePlayer(event.getPlayer().getUniqueId());
     }
 }

@@ -13,7 +13,8 @@ import org.json.simple.JSONValue;
 
 /**
  * Bukkit.org update checker
- * Source: https://github.com/gravitylow/ServerModsAPI-Example/blob/master/Update.java
+ * Source:
+ * https://github.com/gravitylow/ServerModsAPI-Example/blob/master/Update.java
  * License: free
  */
 public class Update {
@@ -34,7 +35,7 @@ public class Update {
     // Static information for querying the API
     private static final String API_QUERY = "/servermods/files?projectIds=";
     private static final String API_HOST = "https://api.curseforge.com";
-    
+
     // Results of query
     // Version's title
     String versionName = "";
@@ -55,134 +56,142 @@ public class Update {
 
     /**
      * Check for updates anonymously (keyless)
-     *
-     * @param projectID The BukkitDev Project ID, found in the "Facts" panel on the right-side of your project page.
+     * 
+     * @param projectID
+     *            The BukkitDev Project ID, found in the "Facts" panel on the
+     *            right-side of your project page.
      */
     public Update(int projectID) {
-        this(projectID, null);
+	this(projectID, null);
     }
 
     /**
      * Check for updates using your Curse account (with key)
-     *
-     * @param projectID The BukkitDev Project ID, found in the "Facts" panel on the right-side of your project page.
-     * @param apiKey Your ServerMods API key, found at https://dev.bukkit.org/home/servermods-apikey/
+     * 
+     * @param projectID
+     *            The BukkitDev Project ID, found in the "Facts" panel on the
+     *            right-side of your project page.
+     * @param apiKey
+     *            Your ServerMods API key, found at
+     *            https://dev.bukkit.org/home/servermods-apikey/
      */
     public Update(int projectID, String apiKey) {
-        this.projectID = projectID;
-        this.apiKey = apiKey;
+	this.projectID = projectID;
+	this.apiKey = apiKey;
 
-        success = query();
+	success = query();
     }
 
     /**
      * Query the API to find the latest approved file's details.
+     * 
      * @return true if successful
      */
     public boolean query() {
-        URL url = null;
+	URL url = null;
 
-        try {
-            // Create the URL to query using the project's ID
-            url = new URL(API_HOST + API_QUERY + projectID);
-        } catch (MalformedURLException e) {
-            // There was an error creating the URL
+	try {
+	    // Create the URL to query using the project's ID
+	    url = new URL(API_HOST + API_QUERY + projectID);
+	} catch (MalformedURLException e) {
+	    // There was an error creating the URL
 
-            e.printStackTrace();
-            return false;
-        }
+	    e.printStackTrace();
+	    return false;
+	}
 
-        try {
-            // Open a connection and query the project
-            URLConnection conn = url.openConnection();
+	try {
+	    // Open a connection and query the project
+	    URLConnection conn = url.openConnection();
 
-            if (apiKey != null) {
-                // Add the API key to the request if present
-                conn.addRequestProperty("X-API-Key", apiKey);
-            }
+	    if (apiKey != null) {
+		// Add the API key to the request if present
+		conn.addRequestProperty("X-API-Key", apiKey);
+	    }
 
-            // Add the user-agent to identify the program
-            conn.addRequestProperty("User-Agent", "ASkyBlockAcidIsland Update Checker");
+	    // Add the user-agent to identify the program
+	    conn.addRequestProperty("User-Agent", "ASkyBlockAcidIsland Update Checker");
 
-            // Read the response of the query
-            // The response will be in a JSON format, so only reading one line is necessary.
-            final BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            String response = reader.readLine();
+	    // Read the response of the query
+	    // The response will be in a JSON format, so only reading one line
+	    // is necessary.
+	    final BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+	    String response = reader.readLine();
 
-            // Parse the array of files from the query's response
-            JSONArray array = (JSONArray) JSONValue.parse(response);
+	    // Parse the array of files from the query's response
+	    JSONArray array = (JSONArray) JSONValue.parse(response);
 
-            if (array.size() > 0) {
-                // Get the newest file's details
-                JSONObject latest = (JSONObject) array.get(array.size() - 1);
+	    if (array.size() > 0) {
+		// Get the newest file's details
+		JSONObject latest = (JSONObject) array.get(array.size() - 1);
 
-                // Get the version's title
-                versionName = (String) latest.get(API_NAME_VALUE);
+		// Get the version's title
+		versionName = (String) latest.get(API_NAME_VALUE);
 
-                // Get the version's link
-                versionLink = (String) latest.get(API_LINK_VALUE);
+		// Get the version's link
+		versionLink = (String) latest.get(API_LINK_VALUE);
 
-                // Get the version's release type
-                versionType = (String) latest.get(API_RELEASE_TYPE_VALUE);
+		// Get the version's release type
+		versionType = (String) latest.get(API_RELEASE_TYPE_VALUE);
 
-                // Get the version's file name
-                versionFileName = (String) latest.get(API_FILE_NAME_VALUE);
+		// Get the version's file name
+		versionFileName = (String) latest.get(API_FILE_NAME_VALUE);
 
-                // Get the version's game version
-                versionGameVersion = (String) latest.get(API_GAME_VERSION_VALUE);
+		// Get the version's game version
+		versionGameVersion = (String) latest.get(API_GAME_VERSION_VALUE);
 
-                return true;
-            } else {
-                System.out.println("There are no files for this project");
-                return false;
-            }
-        } catch (IOException e) {
-            // There was an error reading the query
+		return true;
+	    } else {
+		System.out.println("There are no files for this project");
+		return false;
+	    }
+	} catch (IOException e) {
+	    // There was an error reading the query
 
-            e.printStackTrace();
-            return false;
-        }
+	    e.printStackTrace();
+	    return false;
+	}
     }
 
     /**
      * @return the versionName
      */
     public String getVersionName() {
-        return versionName;
+	return versionName;
     }
 
     /**
      * @return the versionLink
      */
     public String getVersionLink() {
-        return versionLink;
+	return versionLink;
     }
 
     /**
      * @return the versionType
      */
     public String getVersionType() {
-        return versionType;
+	return versionType;
     }
 
     /**
      * @return the versionFileName
      */
     public String getVersionFileName() {
-        return versionFileName;
+	return versionFileName;
     }
 
     /**
      * @return the versionGameVersion
      */
     public String getVersionGameVersion() {
-        return versionGameVersion;
+	return versionGameVersion;
     }
 
     /**
      * @return the success
      */
     public boolean isSuccess() {
-        return success;
+	return success;
     }
 }

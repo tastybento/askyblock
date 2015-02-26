@@ -44,8 +44,9 @@ import com.wasteofplastic.askyblock.Settings;
 
 /**
  * @author tastybento
- * This listener will check to see if a player has a water bucket and if so change it to acid bucket
- * It also checks for interactions with water bottles
+ *         This listener will check to see if a player has a water bucket and if
+ *         so change it to acid bucket
+ *         It also checks for interactions with water bottles
  */
 public class AcidInventory implements Listener {
     private final ASkyBlock plugin;
@@ -57,11 +58,12 @@ public class AcidInventory implements Listener {
 
     /**
      * This covers items in a chest, etc. inventory, then change the name then
+     * 
      * @param e
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
     public void onInventoryOpen(InventoryOpenEvent e) {
-	//plugin.getLogger().info("Inventory open event called");
+	// plugin.getLogger().info("Inventory open event called");
 	if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    Inventory inventory = e.getInventory();
 	    if (Settings.acidDamage == 0D) {
@@ -72,13 +74,13 @@ public class AcidInventory implements Listener {
 		return;
 	    }
 	    if (inventory.contains(Material.WATER_BUCKET)) {
-		//plugin.getLogger().info("Inventory contains water bucket");
+		// plugin.getLogger().info("Inventory contains water bucket");
 		ItemStack[] inv = inventory.getContents();
 		for (ItemStack item : inv) {
 		    if (item != null) {
-			//plugin.getLogger().info(item.toString());
+			// plugin.getLogger().info(item.toString());
 			if (item.getType() == Material.WATER_BUCKET) {
-			    //plugin.getLogger().info("Found it!");
+			    // plugin.getLogger().info("Found it!");
 			    ItemMeta meta = item.getItemMeta();
 			    meta.setDisplayName(Locale.acidBucket);
 			    meta.setLore(lore);
@@ -87,13 +89,13 @@ public class AcidInventory implements Listener {
 		    }
 		}
 	    } else if (inventory.contains(Material.POTION)) {
-		//plugin.getLogger().info("Inventory contains water bottle");
+		// plugin.getLogger().info("Inventory contains water bottle");
 		ItemStack[] inv = inventory.getContents();
 		for (ItemStack item : inv) {
 		    if (item != null) {
-			//plugin.getLogger().info(item.toString());
+			// plugin.getLogger().info(item.toString());
 			if (item.getType() == Material.POTION && item.getDurability() == 0) {
-			    //plugin.getLogger().info("Found it!");
+			    // plugin.getLogger().info("Found it!");
 			    ItemMeta meta = item.getItemMeta();
 			    meta.setDisplayName(Locale.acidBottle);
 			    meta.setLore(lore);
@@ -107,6 +109,7 @@ public class AcidInventory implements Listener {
 
     /**
      * If the player filled up the bucket themselves
+     * 
      * @param e
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
@@ -128,13 +131,15 @@ public class AcidInventory implements Listener {
 
     /**
      * Checks to see if a player is drinking acid
+     * 
      * @param e
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
     public void onWaterBottleDrink(final PlayerItemConsumeEvent e) {
 	if (Settings.acidDamage == 0D)
 	    return;
-	//plugin.getLogger().info(e.getEventName() + " called for " + e.getItem().getType().toString());	
+	// plugin.getLogger().info(e.getEventName() + " called for " +
+	// e.getItem().getType().toString());
 	if (e.getItem().getType().equals(Material.POTION) && e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    if (e.getItem().getDurability() == 0) {
 		plugin.getLogger().info(e.getPlayer().getName() + " " + Locale.drankAcidAndDied);
@@ -148,20 +153,23 @@ public class AcidInventory implements Listener {
     }
 
     /**
-     * This event makes sure that any acid bottles become potions without the warning
+     * This event makes sure that any acid bottles become potions without the
+     * warning
+     * 
      * @param e
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
     public void onBrewComplete(final BrewEvent e) {
 	if (e.getBlock().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
-	    //plugin.getLogger().info("DEBUG: Brew Event called");
+	    // plugin.getLogger().info("DEBUG: Brew Event called");
 	    BrewerInventory inv = e.getContents();
-	    int i=0;
+	    int i = 0;
 	    for (ItemStack item : inv.getContents()) {
 		if (item != null) {
 		    // Remove lore
 		    ItemMeta meta = item.getItemMeta();
-		    //plugin.getLogger().info("DEBUG: " + meta.getDisplayName());
+		    // plugin.getLogger().info("DEBUG: " +
+		    // meta.getDisplayName());
 		    meta.setDisplayName(null);
 		    meta.setLore(null);
 		    item.setItemMeta(null);
@@ -171,7 +179,6 @@ public class AcidInventory implements Listener {
 	    }
 	}
     }
-
 
     /**
      * Event that covers filling a bottle
@@ -183,10 +190,10 @@ public class AcidInventory implements Listener {
 	    return;
 	if (Settings.acidDamage == 0D)
 	    return;
-	if(!player.getItemInHand().getType().equals(Material.GLASS_BOTTLE)){
+	if (!player.getItemInHand().getType().equals(Material.GLASS_BOTTLE)) {
 	    return;
-	}	    
-	//plugin.getLogger().info(e.getEventName() + " called");
+	}
+	// plugin.getLogger().info(e.getEventName() + " called");
 	// Look at what the player was looking at
 	BlockIterator iter = new BlockIterator(player, 10);
 	Block lastBlock = iter.next();
@@ -196,7 +203,7 @@ public class AcidInventory implements Listener {
 		continue;
 	    break;
 	}
-	//plugin.getLogger().info(lastBlock.getType().toString());
+	// plugin.getLogger().info(lastBlock.getType().toString());
 	if (lastBlock.getType().equals(Material.WATER) || lastBlock.getType().equals(Material.STATIONARY_WATER)
 		|| lastBlock.getType().equals(Material.CAULDRON)) {
 	    // They *may* have filled a bottle with water
@@ -204,20 +211,23 @@ public class AcidInventory implements Listener {
 	    plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
 		@Override
 		public void run() {
-		    //plugin.getLogger().info("Checking inventory");
+		    // plugin.getLogger().info("Checking inventory");
 		    PlayerInventory inv = e.getPlayer().getInventory();
 		    if (inv.contains(Material.POTION)) {
-			//plugin.getLogger().info("POTION in inventory");
-			//They have a POTION of some kind in inventory
+			// plugin.getLogger().info("POTION in inventory");
+			// They have a POTION of some kind in inventory
 			int i = 0;
 			for (ItemStack item : inv.getContents()) {
 			    if (item != null) {
-				//plugin.getLogger().info(i + ":" + item.getType().toString());
+				// plugin.getLogger().info(i + ":" +
+				// item.getType().toString());
 				if (item.getType().equals(Material.POTION) && item.getDurability() == 0) {
-				    //plugin.getLogger().info("Water bottle found!");
+				    // plugin.getLogger().info("Water bottle found!");
 				    ItemMeta meta = item.getItemMeta();
 				    meta.setDisplayName(Locale.acidBottle);
-				    //ArrayList<String> lore = new ArrayList<String>(Arrays.asList("Poison", "Beware!", "Do not drink!"));
+				    // ArrayList<String> lore = new
+				    // ArrayList<String>(Arrays.asList("Poison",
+				    // "Beware!", "Do not drink!"));
 				    meta.setLore(lore);
 				    item.setItemMeta(meta);
 				    inv.setItem(i, item);

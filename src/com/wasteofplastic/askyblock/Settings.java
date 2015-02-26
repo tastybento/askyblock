@@ -29,6 +29,7 @@ import org.bukkit.potion.PotionEffectType;
 
 /**
  * Where all the settings are
+ * 
  * @author tastybento
  */
 public class Settings {
@@ -36,7 +37,8 @@ public class Settings {
     // Game Type ASKYBLOCK or ACIDISLAND
     public enum GameType {
 	ASKYBLOCK, ACIDISLAND
-	}
+    }
+
     public final static GameType GAMETYPE = GameType.ASKYBLOCK;
     // Permission prefix
     public final static String PERMPREFIX = "askyblock.";
@@ -45,23 +47,23 @@ public class Settings {
     // The challenge command
     public static final String CHALLENGECOMMAND = "asc";
     // The spawn command (Essentials spawn for example)
-    public final static String SPAWNCOMMAND = "spawn";    
+    public final static String SPAWNCOMMAND = "spawn";
 
-    /* Acid Island
-     *
-    // Permission prefix
-    public final static String PERMPREFIX = "acidisland.";
-    // The island command
-    public final static String ISLANDCOMMAND = "ai";
-    // The challenge command
-    public static final String CHALLENGECOMMAND = "aic";
+    /*
+     * Acid Island
+     * // Permission prefix
+     * public final static String PERMPREFIX = "acidisland.";
+     * // The island command
+     * public final static String ISLANDCOMMAND = "ai";
+     * // The challenge command
+     * public static final String CHALLENGECOMMAND = "aic";
      */
-  
+
     public static Set<String> challengeList;
     public static int waiverAmount;
     public static List<String> challengeLevels;
     public static double acidDamage;
-    public static double mobAcidDamage;   
+    public static double mobAcidDamage;
     public static double rainDamage;
     public static int resetWait;
     public static int resetLimit;
@@ -91,7 +93,7 @@ public class Settings {
     public static boolean allowBrewing;
     public static boolean allowGateUse;
     public static boolean allowHurtMobs;
-    
+
     public static ItemStack[] chestItems;
     public static int islandDistance;
     public static int islandXOffset;
@@ -122,8 +124,8 @@ public class Settings {
     public static boolean allowArmorStandUse;
     public static boolean allowBeaconAccess;
     public static boolean allowPortalUse;
-    
-    //public static boolean ultraSafeBoats;
+
+    // public static boolean ultraSafeBoats;
     public static boolean logInRemoveMobs;
     public static boolean islandRemoveMobs;
     public static int island_level;
@@ -146,12 +148,12 @@ public class Settings {
     public static boolean allowSpawnAnimalSpawn;
     public static boolean allowSpawnAnimalKilling;
     public static boolean allowSpawnMobKilling;
-    
+
     // Levels
-    public static HashMap<Material,Integer> blockLimits;
-    public static HashMap<Material,Integer> blockValues;
-    
-   // Challenge completion broadcast
+    public static HashMap<Material, Integer> blockLimits;
+    public static HashMap<Material, Integer> blockValues;
+
+    // Challenge completion broadcast
     public static boolean broadcastMessages;
     // Nether world
     public static boolean createNether;
@@ -163,32 +165,32 @@ public class Settings {
     // Biomes
     public static double biomeCost;
     public static Biome defaultBiome;
-    
+
     // Island reset commands
     public static List<String> resetCommands = new ArrayList<String>();
     // Mob limits
     public static int breedingLimit;
-    
+
     // Challenges - show or remove completed on-time challenges
     public static boolean removeCompleteOntimeChallenges;
     public static boolean addCompletedGlow;
-    
+
     // New nether
     public static boolean newNether;
-    
+
     // Animal Damage
     public static double animalAcidDamage;
     public static boolean damageChickens;
-    
+
     // Use Economy
     public static boolean useEconomy;
-    
+
     // Schematic list (permission, filename)
-    public static HashMap<String,String> schematics = new HashMap<String,String>();
-    
+    public static HashMap<String, String> schematics = new HashMap<String, String>();
+
     // Wait between being invited to same team island
     public static int inviteWait;
-    
+
     // Use physics when pasting schematic blocks
     public static boolean usePhysics;
 

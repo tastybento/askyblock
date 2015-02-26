@@ -17,10 +17,11 @@ import com.wasteofplastic.askyblock.ASkyBlock;
  * A set of utility methods
  * 
  * @author tastybento
- *
+ * 
  */
 public class Util {
     private static ASkyBlock plugin = ASkyBlock.getPlugin();
+
     /**
      * Loads a YAML file and if it does not exist it is looked for in the JAR
      * 
@@ -58,7 +59,7 @@ public class Util {
 	}
 	return config;
     }
-    
+
     /**
      * Saves a YAML file
      * 
@@ -77,7 +78,9 @@ public class Util {
     }
 
     /**
-     * Cuts up a string into multiple lines with the same color code at the start of each line
+     * Cuts up a string into multiple lines with the same color code at the
+     * start of each line
+     * 
      * @param color
      * @param longLine
      * @param length
@@ -101,7 +104,8 @@ public class Util {
 			// If it is not, then we are cutting a word in two and
 			// need to backtrack to the last space if possible
 			int lastSpace = line.lastIndexOf(" ");
-			// Only do this if there is a space in the line to backtrack to...
+			// Only do this if there is a space in the line to
+			// backtrack to...
 			if (lastSpace != -1 && lastSpace < line.length()) {
 			    line = line.substring(0, lastSpace);
 			    i -= (length - lastSpace - 1);
@@ -115,9 +119,11 @@ public class Util {
 	// result.add(color + longLine.substring(i, longLine.length()));
 	return result;
     }
-    
+
     /**
-     * Converts block face direction to radial degrees. Returns 0 if block face is not radial.
+     * Converts block face direction to radial degrees. Returns 0 if block face
+     * is not radial.
+     * 
      * @param face
      * @return degrees
      */
@@ -156,10 +162,10 @@ public class Util {
 	case WEST_SOUTH_WEST:
 	    return 247.5F;
 	default:
-	    return 0F;	
+	    return 0F;
 	}
     }
-    
+
     /**
      * Converts a name like IRON_INGOT into Iron Ingot to improve readability
      * 
@@ -188,10 +194,13 @@ public class Util {
 	}
 	return fin;
     }
-    
+
     /**
-     * Converts a serialized location to a Location. Returns null if string is empty
-     * @param s - serialized location in format "world:x:y:z"
+     * Converts a serialized location to a Location. Returns null if string is
+     * empty
+     * 
+     * @param s
+     *            - serialized location in format "world:x:y:z"
      * @return Location
      */
     static public Location getLocationString(final String s) {
@@ -212,6 +221,7 @@ public class Util {
     /**
      * Converts a location to a simple string representation
      * If location is null, returns empty string
+     * 
      * @param l
      * @return
      */

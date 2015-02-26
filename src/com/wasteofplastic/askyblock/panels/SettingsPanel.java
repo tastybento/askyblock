@@ -58,7 +58,7 @@ public class SettingsPanel {
 	ip.add(new IPItem(Settings.allowVisitorKeepInvOnDeath, Material.IRON_CHESTPLATE, "Visitor keep item on death"));
 	if (ip.size() > 0) {
 	    // Make sure size is a multiple of 9
-	    int size = ip.size() +8;
+	    int size = ip.size() + 8;
 	    size -= (size % 9);
 	    newPanel = Bukkit.createInventory(null, size, "Island Guard Settings");
 	    // Fill the inventory and return
@@ -69,6 +69,7 @@ public class SettingsPanel {
 	    }
 	}
     }
+
     public static Inventory islandGuardPanel() {
 	return newPanel;
     }

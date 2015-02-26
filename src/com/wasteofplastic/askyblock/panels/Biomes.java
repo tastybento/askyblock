@@ -26,10 +26,11 @@ import com.wasteofplastic.askyblock.util.VaultHelper;
 
 public class Biomes implements Listener {
     private static ASkyBlock plugin = ASkyBlock.getPlugin();
-    private static HashMap<UUID,List<BiomeItem>> biomeItems = new HashMap<UUID,List<BiomeItem>>();
+    private static HashMap<UUID, List<BiomeItem>> biomeItems = new HashMap<UUID, List<BiomeItem>>();
 
     /**
      * Returns a customized panel of available Biomes for the player
+     * 
      * @param player
      * @return custom Inventory object
      */
@@ -64,7 +65,8 @@ public class Biomes implements Listener {
 		    // Get confirmation or not
 		    boolean confirm = plugin.getConfig().getBoolean("biomes." + biomeName + ".confirm", false);
 		    // Add item to list
-		    //plugin.getLogger().info("DEBUG: " + description +  name +  confirm);
+		    // plugin.getLogger().info("DEBUG: " + description + name +
+		    // confirm);
 		    BiomeItem item = new BiomeItem(material, slot++, cost, description, name, confirm, biome);
 		    // Add to item list
 		    items.add(item);
@@ -95,9 +97,11 @@ public class Biomes implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-	Player player = (Player) event.getWhoClicked(); // The player that clicked the item
+	Player player = (Player) event.getWhoClicked(); // The player that
+							// clicked the item
 	UUID playerUUID = player.getUniqueId();
-	Inventory inventory = event.getInventory(); // The inventory that was clicked in
+	Inventory inventory = event.getInventory(); // The inventory that was
+						    // clicked in
 	int slot = event.getRawSlot();
 	// Check this is the right panel
 	if (!inventory.getName().equals(Locale.biomePanelTitle)) {
@@ -113,11 +117,11 @@ public class Biomes implements Listener {
 	if (thisPanel == null) {
 	    player.closeInventory();
 	    event.setCancelled(true);
-	    return;		
+	    return;
 	}
 	if (slot >= 0 && slot < thisPanel.size()) {
 	    event.setCancelled(true);
-	    //plugin.getLogger().info("DEBUG: slot is " + slot);
+	    // plugin.getLogger().info("DEBUG: slot is " + slot);
 	    // Do something
 	    Biome biome = thisPanel.get(slot).getBiome();
 	    if (biome != null) {
@@ -139,17 +143,18 @@ public class Biomes implements Listener {
 	    player.closeInventory(); // Closes the inventory
 	    // Actually set the biome
 	    if (plugin.getPlayers().inTeam(playerUUID) && plugin.getPlayers().getTeamIslandLocation(playerUUID) != null) {
-		setIslandBiome(plugin.getPlayers().getTeamIslandLocation(playerUUID),biome);
+		setIslandBiome(plugin.getPlayers().getTeamIslandLocation(playerUUID), biome);
 	    } else {
 		setIslandBiome(plugin.getPlayers().getIslandLocation(player.getUniqueId()), biome);
 	    }
 	    player.sendMessage(ChatColor.GREEN + Locale.biomeSet.replace("[biome]", thisPanel.get(slot).getName()));
-	} 
+	}
 	return;
     }
 
     /**
      * Sets all blocks in an island to a specified biome type
+     * 
      * @param islandLoc
      * @param biomeType
      */
@@ -157,30 +162,37 @@ public class Biomes implements Listener {
 	final int islandX = islandLoc.getBlockX();
 	final int islandZ = islandLoc.getBlockZ();
 	final World world = islandLoc.getWorld();
-	final int range = (int)Math.round((double)Settings.islandDistance / 2);
+	final int range = (int) Math.round((double) Settings.islandDistance / 2);
 	List<Pair> chunks = new ArrayList<Pair>();
 	try {
-	    // Biomes only work in 2D, so there's no need to set every block in the island area
+	    // Biomes only work in 2D, so there's no need to set every block in
+	    // the island area
 	    // However, we need to collect the chunks and push them out again
-	    //getLogger().info("DEBUG: Protection range is = " + Settings.island_protectionRange);
+	    // getLogger().info("DEBUG: Protection range is = " +
+	    // Settings.island_protectionRange);
 	    for (int x = -range; x <= range; x++) {
 		for (int z = -range; z <= range; z++) {
-		    Location l = new Location(world,(islandX + x), 0, (islandZ + z));
-		    final Pair chunkCoords = new Pair(l.getChunk().getX(),l.getChunk().getZ());
+		    Location l = new Location(world, (islandX + x), 0, (islandZ + z));
+		    final Pair chunkCoords = new Pair(l.getChunk().getX(), l.getChunk().getZ());
 		    if (!chunks.contains(chunkCoords)) {
 			chunks.add(chunkCoords);
 		    }
-		    //getLogger().info("DEBUG: Chunk saving  " + l.getChunk().getX() + "," + l.getChunk().getZ());
+		    // getLogger().info("DEBUG: Chunk saving  " +
+		    // l.getChunk().getX() + "," + l.getChunk().getZ());
 		    /*
-		    // Weird stuff going on here. Sometimes the location does not get created.
-		    if (l.getBlockX() != (islandX +x)) {
-			getLogger().info("DEBUG: Setting " + (islandX + x) + "," + (islandZ + z));
-			getLogger().info("DEBUG: disparity in x");
-		    }
-		    if (l.getBlockZ() != (islandZ +z)) {
-			getLogger().info("DEBUG: Setting " + (islandX + x) + "," + (islandZ + z));
-			getLogger().info("DEBUG: disparity in z");
-		    }*/
+		     * // Weird stuff going on here. Sometimes the location does
+		     * not get created.
+		     * if (l.getBlockX() != (islandX +x)) {
+		     * getLogger().info("DEBUG: Setting " + (islandX + x) + ","
+		     * + (islandZ + z));
+		     * getLogger().info("DEBUG: disparity in x");
+		     * }
+		     * if (l.getBlockZ() != (islandZ +z)) {
+		     * getLogger().info("DEBUG: Setting " + (islandX + x) + ","
+		     * + (islandZ + z));
+		     * getLogger().info("DEBUG: disparity in z");
+		     * }
+		     */
 		    l.getBlock().setBiome(biomeType);
 		}
 	    }
@@ -200,9 +212,9 @@ public class Biomes implements Listener {
 	case SWAMPLAND:
 	    // No ice or snow allowed
 	    for (int y = islandLoc.getWorld().getMaxHeight(); y >= Settings.sea_level; y--) {
-		for (int x = islandX-range; x <= islandX + range; x++) {
-		    for (int z = islandZ-range; z <= islandZ+range; z++) {
-			switch(world.getBlockAt(x, y, z).getType()) {
+		for (int x = islandX - range; x <= islandX + range; x++) {
+		    for (int z = islandZ - range; z <= islandZ + range; z++) {
+			switch (world.getBlockAt(x, y, z).getType()) {
 			case ICE:
 			case SNOW:
 			    world.getBlockAt(x, y, z).setType(Material.AIR);
@@ -216,9 +228,9 @@ public class Biomes implements Listener {
 	case HELL:
 	    // No water or ice allowed
 	    for (int y = islandLoc.getWorld().getMaxHeight(); y >= Settings.sea_level; y--) {
-		for (int x = islandX-range; x <= islandX + range; x++) {
-		    for (int z = islandZ-range; z <= islandZ+range; z++) {
-			switch(world.getBlockAt(x, y, z).getType()) {
+		for (int x = islandX - range; x <= islandX + range; x++) {
+		    for (int z = islandZ - range; z <= islandZ + range; z++) {
+			switch (world.getBlockAt(x, y, z).getType()) {
 			case ICE:
 			case WATER:
 			case STATIONARY_WATER:
@@ -337,11 +349,11 @@ public class Biomes implements Listener {
 	    break;
 	}
 	// Update chunks
-	for (Pair p: chunks) {
+	for (Pair p : chunks) {
 	    islandLoc.getWorld().refreshChunk(p.getLeft(), p.getRight());
-	    //plugin.getLogger().info("DEBUG: refreshing " + p.getLeft() + "," + p.getRight());
+	    // plugin.getLogger().info("DEBUG: refreshing " + p.getLeft() + ","
+	    // + p.getRight());
 	}
 	return true;
     }
 }
-
