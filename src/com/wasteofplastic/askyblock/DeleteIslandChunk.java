@@ -29,7 +29,7 @@ public class DeleteIslandChunk {
      * @param plugin
      * @param loc
      */
-    protected DeleteIslandChunk(ASkyBlock plugin, final Location loc) {
+    public DeleteIslandChunk(ASkyBlock plugin, final Location loc) {
 	if (loc == null)
 	    return;
 	World world = loc.getWorld();

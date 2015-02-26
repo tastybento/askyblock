@@ -14,7 +14,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with ASkyBlock.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-package com.wasteofplastic.askyblock;
+package com.wasteofplastic.askyblock.listeners;
 
 import java.util.UUID;
 
@@ -41,10 +41,15 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.util.Vector;
 
+import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.Locale;
+import com.wasteofplastic.askyblock.Settings;
+import com.wasteofplastic.askyblock.util.VaultHelper;
+
 public class NetherPortals implements Listener {
     private final ASkyBlock plugin;
 
-    protected NetherPortals(ASkyBlock plugin) {
+    public NetherPortals(ASkyBlock plugin) {
 	this.plugin = plugin;
     }
 

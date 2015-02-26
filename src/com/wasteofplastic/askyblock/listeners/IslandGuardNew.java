@@ -14,7 +14,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with ASkyBlock.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-package com.wasteofplastic.askyblock;
+package com.wasteofplastic.askyblock.listeners;
 
 
 import org.bukkit.ChatColor;
@@ -32,6 +32,11 @@ import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
+import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.Locale;
+import com.wasteofplastic.askyblock.Settings;
+import com.wasteofplastic.askyblock.util.VaultHelper;
+
 
 /**
  * @author tastybento
@@ -41,7 +46,7 @@ public class IslandGuardNew implements Listener {
     private final ASkyBlock plugin;
     private final boolean debug = false;
 
-    protected IslandGuardNew(final ASkyBlock plugin) {
+    public IslandGuardNew(final ASkyBlock plugin) {
 	this.plugin = plugin;
 
     }

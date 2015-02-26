@@ -8,7 +8,7 @@ import org.bukkit.command.CommandSender;
 
 public class NotSetup implements CommandExecutor {
 
-    protected enum Reason { DISTANCE, GENERATOR };
+    public enum Reason { DISTANCE, GENERATOR };
     private Reason reason;
 
     /**

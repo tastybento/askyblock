@@ -1,4 +1,4 @@
-package com.wasteofplastic.askyblock;
+package com.wasteofplastic.askyblock.panels;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,6 +7,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.util.Util;
 
 /**
  * @author tastybento
@@ -19,10 +22,10 @@ public class IPItem {
     private int slot;
     private boolean flagValue;
     private Type type;
-    protected enum Type {INFO, TOGGLE};
+    public enum Type {INFO, TOGGLE};
 
     // Info icons
-    protected IPItem(Material material, String name, String description) {
+    public IPItem(Material material, String name, String description) {
 	this.flagValue = false;
 	this.slot = -1;
 	this.name = name;
@@ -36,11 +39,11 @@ public class IPItem {
 	item.setItemMeta(meta);
     }
 
-    protected IPItem(boolean flagValue, Material material) {
-	createToggleableItem(flagValue, material, ASkyBlock.prettifyText(material.toString()) + " use");
+    public IPItem(boolean flagValue, Material material) {
+	createToggleableItem(flagValue, material, Util.prettifyText(material.toString()) + " use");
     }
     
-    protected IPItem(boolean flagValue, Material material, String name) {
+    public IPItem(boolean flagValue, Material material, String name) {
 	createToggleableItem(flagValue, material, name);
     }
 
@@ -62,37 +65,37 @@ public class IPItem {
 	item.setItemMeta(meta);	
     }
     
-    protected void setLore(List<String> lore) {
+    public void setLore(List<String> lore) {
 	ItemMeta meta = item.getItemMeta();
 	meta.setLore(lore);
 	item.setItemMeta(meta);
     }
 
-    protected ItemStack getItem() {
+    public ItemStack getItem() {
 	return item;
     }
 
     /**
      * @return the slot
      */
-    protected int getSlot() {
+    public int getSlot() {
 	return slot;
     }
 
-    protected void setSlot(int slot) {
+    public void setSlot(int slot) {
 	this.slot = slot;
     }
     /**
      * @return the flagValue
      */
-    protected boolean isFlagValue() {
+    public boolean isFlagValue() {
 	return flagValue;
     }
 
     /**
      * @param flagValue the flagValue to set
      */
-    protected void setFlagValue(boolean flagValue) {
+    public void setFlagValue(boolean flagValue) {
 	this.flagValue = flagValue;
 	description.clear();
 	ItemMeta meta = item.getItemMeta();
@@ -105,14 +108,14 @@ public class IPItem {
 	item.setItemMeta(meta);
     }
 
-    protected String getName() {
+    public String getName() {
 	return name;
     }
 
     /**
      * @return the type
      */
-    protected Type getType() {
+    public Type getType() {
 	return type;
     }
 

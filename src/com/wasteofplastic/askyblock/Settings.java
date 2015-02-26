@@ -34,166 +34,166 @@ import org.bukkit.potion.PotionEffectType;
 public class Settings {
     // Constants
     // Game Type ASKYBLOCK or ACIDISLAND
-    protected enum GameType {
+    public enum GameType {
 	ASKYBLOCK, ACIDISLAND
 	}
-    protected final static GameType GAMETYPE = GameType.ASKYBLOCK;
+    public final static GameType GAMETYPE = GameType.ASKYBLOCK;
     // Permission prefix
-    protected final static String PERMPREFIX = "askyblock.";
+    public final static String PERMPREFIX = "askyblock.";
     // The island command
-    protected final static String ISLANDCOMMAND = "island";
+    public final static String ISLANDCOMMAND = "island";
     // The challenge command
-    protected static final String CHALLENGECOMMAND = "asc";
+    public static final String CHALLENGECOMMAND = "asc";
     // The spawn command (Essentials spawn for example)
-    protected final static String SPAWNCOMMAND = "spawn";    
+    public final static String SPAWNCOMMAND = "spawn";    
 
     /* Acid Island
      *
     // Permission prefix
-    protected final static String PERMPREFIX = "acidisland.";
+    public final static String PERMPREFIX = "acidisland.";
     // The island command
-    protected final static String ISLANDCOMMAND = "ai";
+    public final static String ISLANDCOMMAND = "ai";
     // The challenge command
-    protected static final String CHALLENGECOMMAND = "aic";
+    public static final String CHALLENGECOMMAND = "aic";
      */
   
-    protected static Set<String> challengeList;
-    protected static int waiverAmount;
-    protected static List<String> challengeLevels;
-    protected static double acidDamage;
-    protected static double mobAcidDamage;   
-    protected static double rainDamage;
-    protected static int resetWait;
-    protected static int resetLimit;
-    protected static int maxTeamSize;
-    protected static int maxTeamSizeVIP;
-    protected static int maxTeamSizeVIP2;
-    protected static String worldName;
-    protected static int monsterSpawnLimit;
-    protected static int animalSpawnLimit;
-    protected static int waterAnimalSpawnLimit;
+    public static Set<String> challengeList;
+    public static int waiverAmount;
+    public static List<String> challengeLevels;
+    public static double acidDamage;
+    public static double mobAcidDamage;   
+    public static double rainDamage;
+    public static int resetWait;
+    public static int resetLimit;
+    public static int maxTeamSize;
+    public static int maxTeamSizeVIP;
+    public static int maxTeamSizeVIP2;
+    public static String worldName;
+    public static int monsterSpawnLimit;
+    public static int animalSpawnLimit;
+    public static int waterAnimalSpawnLimit;
     // IslandGuard settings
-    protected static boolean allowPvP;
-    protected static boolean allowBreakBlocks;
-    protected static boolean allowPlaceBlocks;
-    protected static boolean allowBedUse;
-    protected static boolean allowBucketUse;
-    protected static boolean allowShearing;
-    protected static boolean allowEnderPearls;
-    protected static boolean allowDoorUse;
-    protected static boolean allowLeverButtonUse;
-    protected static boolean allowCropTrample;
-    protected static boolean allowChestAccess;
-    protected static boolean allowFurnaceUse;
-    protected static boolean allowRedStone;
-    protected static boolean allowMusic;
-    protected static boolean allowCrafting;
-    protected static boolean allowBrewing;
-    protected static boolean allowGateUse;
-    protected static boolean allowHurtMobs;
+    public static boolean allowPvP;
+    public static boolean allowBreakBlocks;
+    public static boolean allowPlaceBlocks;
+    public static boolean allowBedUse;
+    public static boolean allowBucketUse;
+    public static boolean allowShearing;
+    public static boolean allowEnderPearls;
+    public static boolean allowDoorUse;
+    public static boolean allowLeverButtonUse;
+    public static boolean allowCropTrample;
+    public static boolean allowChestAccess;
+    public static boolean allowFurnaceUse;
+    public static boolean allowRedStone;
+    public static boolean allowMusic;
+    public static boolean allowCrafting;
+    public static boolean allowBrewing;
+    public static boolean allowGateUse;
+    public static boolean allowHurtMobs;
     
-    protected static ItemStack[] chestItems;
-    protected static int islandDistance;
-    protected static int islandXOffset;
-    protected static int islandZOffset;
-    protected static int sea_level;
-    protected static int island_protectionRange;
-    protected static int abandonedIslandLevel;
-    protected static Double startingMoney;
-    protected static double netherSpawnRadius;
-    protected static List<PotionEffectType> acidDamageType = new ArrayList<PotionEffectType>();
-    protected static boolean resetMoney;
-    protected static boolean damageOps;
-    protected static boolean endermanDeathDrop;
-    protected static boolean allowEndermanGriefing;
-    protected static boolean allowCreeperDamage;
-    protected static boolean allowTNTDamage;
-    protected static boolean allowMonsterEggs;
-    protected static boolean allowBreeding;
-    protected static boolean allowFire;
-    protected static boolean allowChestDamage;
-    protected static boolean allowLeashUse;
-    protected static boolean allowHurtMonsters;
-    protected static boolean allowEnchanting;
-    protected static boolean allowAnvilUse;
-    protected static boolean allowVisitorKeepInvOnDeath;
-    protected static boolean allowVisitorItemPickup;
-    protected static boolean allowVisitorItemDrop;
-    protected static boolean allowArmorStandUse;
-    protected static boolean allowBeaconAccess;
-    protected static boolean allowPortalUse;
+    public static ItemStack[] chestItems;
+    public static int islandDistance;
+    public static int islandXOffset;
+    public static int islandZOffset;
+    public static int sea_level;
+    public static int island_protectionRange;
+    public static int abandonedIslandLevel;
+    public static Double startingMoney;
+    public static double netherSpawnRadius;
+    public static List<PotionEffectType> acidDamageType = new ArrayList<PotionEffectType>();
+    public static boolean resetMoney;
+    public static boolean damageOps;
+    public static boolean endermanDeathDrop;
+    public static boolean allowEndermanGriefing;
+    public static boolean allowCreeperDamage;
+    public static boolean allowTNTDamage;
+    public static boolean allowMonsterEggs;
+    public static boolean allowBreeding;
+    public static boolean allowFire;
+    public static boolean allowChestDamage;
+    public static boolean allowLeashUse;
+    public static boolean allowHurtMonsters;
+    public static boolean allowEnchanting;
+    public static boolean allowAnvilUse;
+    public static boolean allowVisitorKeepInvOnDeath;
+    public static boolean allowVisitorItemPickup;
+    public static boolean allowVisitorItemDrop;
+    public static boolean allowArmorStandUse;
+    public static boolean allowBeaconAccess;
+    public static boolean allowPortalUse;
     
-    //protected static boolean ultraSafeBoats;
-    protected static boolean logInRemoveMobs;
-    protected static boolean islandRemoveMobs;
-    protected static int island_level;
-    protected static boolean resetChallenges;
+    //public static boolean ultraSafeBoats;
+    public static boolean logInRemoveMobs;
+    public static boolean islandRemoveMobs;
+    public static int island_level;
+    public static boolean resetChallenges;
     // Spawn fields
-    protected static boolean allowSpawnDoorUse;
-    protected static boolean allowSpawnLeverButtonUse;
-    protected static boolean allowSpawnChestAccess;
-    protected static boolean allowSpawnFurnaceUse;
-    protected static boolean allowSpawnRedStone;
-    protected static boolean allowSpawnMusic;
-    protected static boolean allowSpawnCrafting;
-    protected static boolean allowSpawnBrewing;
-    protected static boolean allowSpawnGateUse;
-    protected static boolean allowSpawnMobSpawn;
-    protected static boolean allowSpawnNoAcidWater;
-    protected static boolean allowSpawnEnchanting;
-    protected static boolean allowSpawnAnvilUse;
-    protected static boolean allowSpawnBeaconAccess;
-    protected static boolean allowSpawnAnimalSpawn;
-    protected static boolean allowSpawnAnimalKilling;
-    protected static boolean allowSpawnMobKilling;
+    public static boolean allowSpawnDoorUse;
+    public static boolean allowSpawnLeverButtonUse;
+    public static boolean allowSpawnChestAccess;
+    public static boolean allowSpawnFurnaceUse;
+    public static boolean allowSpawnRedStone;
+    public static boolean allowSpawnMusic;
+    public static boolean allowSpawnCrafting;
+    public static boolean allowSpawnBrewing;
+    public static boolean allowSpawnGateUse;
+    public static boolean allowSpawnMobSpawn;
+    public static boolean allowSpawnNoAcidWater;
+    public static boolean allowSpawnEnchanting;
+    public static boolean allowSpawnAnvilUse;
+    public static boolean allowSpawnBeaconAccess;
+    public static boolean allowSpawnAnimalSpawn;
+    public static boolean allowSpawnAnimalKilling;
+    public static boolean allowSpawnMobKilling;
     
     // Levels
-    protected static HashMap<Material,Integer> blockLimits;
-    protected static HashMap<Material,Integer> blockValues;
+    public static HashMap<Material,Integer> blockLimits;
+    public static HashMap<Material,Integer> blockValues;
     
    // Challenge completion broadcast
-    protected static boolean broadcastMessages;
+    public static boolean broadcastMessages;
     // Nether world
-    protected static boolean createNether;
-    protected static boolean clearInventory;
+    public static boolean createNether;
+    public static boolean clearInventory;
     // Use control panel for /island
-    protected static boolean useControlPanel;
+    public static boolean useControlPanel;
     // Prevent /island when falling
-    protected static boolean allowTeleportWhenFalling;
+    public static boolean allowTeleportWhenFalling;
     // Biomes
-    protected static double biomeCost;
-    protected static Biome defaultBiome;
+    public static double biomeCost;
+    public static Biome defaultBiome;
     
     // Island reset commands
-    protected static List<String> resetCommands = new ArrayList<String>();
+    public static List<String> resetCommands = new ArrayList<String>();
     // Mob limits
-    protected static int breedingLimit;
+    public static int breedingLimit;
     
     // Challenges - show or remove completed on-time challenges
-    protected static boolean removeCompleteOntimeChallenges;
-    protected static boolean addCompletedGlow;
+    public static boolean removeCompleteOntimeChallenges;
+    public static boolean addCompletedGlow;
     
     // New nether
-    protected static boolean newNether;
+    public static boolean newNether;
     
     // Animal Damage
-    protected static double animalAcidDamage;
-    protected static boolean damageChickens;
+    public static double animalAcidDamage;
+    public static boolean damageChickens;
     
     // Use Economy
-    protected static boolean useEconomy;
+    public static boolean useEconomy;
     
     // Schematic list (permission, filename)
-    protected static HashMap<String,String> schematics = new HashMap<String,String>();
+    public static HashMap<String,String> schematics = new HashMap<String,String>();
     
     // Wait between being invited to same team island
-    protected static int inviteWait;
+    public static int inviteWait;
     
     // Use physics when pasting schematic blocks
-    protected static boolean usePhysics;
+    public static boolean usePhysics;
 
     // Falling blocked commands
-    protected static List<String> fallingCommandBlockList;
+    public static List<String> fallingCommandBlockList;
     public static List<String> leaveCommands;
     public static int levelWait;
     public static long resetConfirmWait;
@@ -203,7 +203,7 @@ public class Settings {
     public static boolean allowSpawnPlaceBlocks;
     public static boolean allowSpawnEggs;
     public static boolean resetEnderChest;
-    protected static EntityType islandCompanion;
+    public static EntityType islandCompanion;
     public static boolean updateCheck;
 
 }

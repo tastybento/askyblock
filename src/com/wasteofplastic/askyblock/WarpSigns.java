@@ -28,6 +28,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
 
+import com.wasteofplastic.askyblock.util.VaultHelper;
+
 /**
  * Handles warping in ASkyBlock Players can add one sign
  * 
@@ -37,12 +39,12 @@ import org.bukkit.event.block.SignChangeEvent;
 public class WarpSigns implements Listener {
     private final ASkyBlock plugin;
 
-    protected WarpSigns(ASkyBlock aSkyBlock) {
+    public WarpSigns(ASkyBlock aSkyBlock) {
 	plugin = aSkyBlock;
     }
     /*
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
-    protected void onSignPopped(BlockPhysicsEvent e) {
+    public void onSignPopped(BlockPhysicsEvent e) {
 	Block b = e.getBlock();
 	if (!(b.getWorld()).getName().equals(Settings.worldName)) {
 	    // Wrong world

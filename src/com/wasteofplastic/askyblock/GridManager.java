@@ -218,10 +218,10 @@ public class GridManager {
 				    String teamLeaderUUID = playerFile.getString("teamLeader","");
 				    if (islandLevel > 0) {
 					if (!playerFile.getBoolean("hasTeam")) {
-					    plugin.topTenAddEntry(owner, islandLevel);
+					    TopTen.topTenAddEntry(owner, islandLevel);
 					} else if (!teamLeaderUUID.isEmpty()) {
 					    if (teamLeaderUUID.equals(ownerString)) {
-						plugin.topTenAddEntry(owner, islandLevel);
+						TopTen.topTenAddEntry(owner, islandLevel);
 					    }
 					}
 				    }
@@ -244,7 +244,7 @@ public class GridManager {
 	    plugin.getLogger().info(noisland + " have no island, of which " + inTeam + " are in a team.");
 	    plugin.getLogger().info((noisland-inTeam) + " are in the system, but have no island or team");
 	}
-	plugin.topTenSave();
+	TopTen.topTenSave();
 
 	int count2 = 0;
 	// Check island folder
@@ -288,7 +288,7 @@ public class GridManager {
 	saveGrid();
     }
 
-    protected void saveGrid() {
+    public void saveGrid() {
 	final File islandFile = new File(plugin.getDataFolder(), "islands.yml");
 	YamlConfiguration islandYaml = new YamlConfiguration();
 	List <String> islandList = new ArrayList<String>();
@@ -313,7 +313,7 @@ public class GridManager {
      * @param location
      * @return Island object
      */
-    protected Island getIslandAt(Location location) {
+    public Island getIslandAt(Location location) {
 	// Check if it is spawn
 	if (spawn != null && spawn.onIsland(location)) {
 	    return spawn;
@@ -327,7 +327,7 @@ public class GridManager {
      * @param z
      * @return Island or null
      */
-    protected Island getIslandAt(int x, int z) {
+    public Island getIslandAt(int x, int z) {
 	Entry<Integer, TreeMap<Integer,Island>> en = islandGrid.lowerEntry(x);
 	if (en != null) {
 	    Entry<Integer, Island> ent = en.getValue().lowerEntry(z);
@@ -347,11 +347,11 @@ public class GridManager {
 
 
     /**
-     * Returns the island being protected at the location or null if there is none
+     * Returns the island being public at the location or null if there is none
      * @param location
      * @return Island object
      */
-    protected Island getProtectedIslandAt(Location location) {
+    public Island getProtectedIslandAt(Location location) {
 	// Try spawn
 	if (spawn != null && spawn.onIsland(location)) {
 	    return spawn;
@@ -370,7 +370,7 @@ public class GridManager {
      * @param location
      * @return UUID of owner
      */
-    protected UUID getOwnerOfIslandAt(Location location) {
+    public UUID getOwnerOfIslandAt(Location location) {
 	Island island = getIslandAt(location);
 	if (island != null) {
 	    return island.getOwner();
@@ -384,7 +384,7 @@ public class GridManager {
      * @param x
      * @param z
      */
-    protected Island addIsland(int x, int z) {
+    public Island addIsland(int x, int z) {
 	return addIsland(x, z, null);
     }
 
@@ -394,7 +394,7 @@ public class GridManager {
      * @param z
      * @param owner
      */
-    protected Island addIsland(int x, int z, UUID owner) {
+    public Island addIsland(int x, int z, UUID owner) {
 	// Check if this owner already has an island
 	if (ownershipMap.containsKey(owner)) {
 	    Island island = ownershipMap.get(owner);
@@ -416,7 +416,7 @@ public class GridManager {
      * Adds island to the grid using the stored information
      * @param islandSerialized
      */
-    protected Island addIsland(String islandSerialized) {
+    public Island addIsland(String islandSerialized) {
 	//plugin.getLogger().info("DEBUG: adding island " + islandSerialized);
 	Island newIsland = new Island(islandSerialized);
 	addToGrids(newIsland);
@@ -473,7 +473,7 @@ public class GridManager {
      * Removes the island at location loc from the grid and removes the player from the ownership map
      * @param loc
      */
-    protected void deleteIsland(Location loc) {
+    public void deleteIsland(Location loc) {
 	//plugin.getLogger().info("DEBUG: deleting island at " + loc);
 	Island island = getIslandAt(loc);
 	if (island != null) {
@@ -515,7 +515,7 @@ public class GridManager {
      * @param owner
      * @return island object or null if it does not exist in the list
      */
-    protected Island getIsland(UUID owner) {
+    public Island getIsland(UUID owner) {
 	if (owner != null) {
 	    if (ownershipMap.containsKey(owner)) {
 		return ownershipMap.get(owner);
@@ -534,7 +534,7 @@ public class GridManager {
      * @param island
      * @param newOwner
      */
-    protected void setIslandOwner(Island island, UUID newOwner) {
+    public void setIslandOwner(Island island, UUID newOwner) {
 	// The old owner
 	UUID oldOwner = island.getOwner();
 	// If the island owner is being set to null - remove the old owner's ownership
@@ -567,7 +567,7 @@ public class GridManager {
     /**
      * @return the ownershipMap
      */
-    protected HashMap<UUID, Island> getOwnershipMap() {
+    public HashMap<UUID, Island> getOwnershipMap() {
         return ownershipMap;
     }
 

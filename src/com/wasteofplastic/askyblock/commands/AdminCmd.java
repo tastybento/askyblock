@@ -15,7 +15,7 @@
  *     along with ASkyBlock.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
 
-package com.wasteofplastic.askyblock;
+package com.wasteofplastic.askyblock.commands;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -45,6 +45,17 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BlockIterator;
 
+import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.CoopPlay;
+import com.wasteofplastic.askyblock.DeleteIslandChunk;
+import com.wasteofplastic.askyblock.Island;
+import com.wasteofplastic.askyblock.Locale;
+import com.wasteofplastic.askyblock.Settings;
+import com.wasteofplastic.askyblock.TopTen;
+import com.wasteofplastic.askyblock.panels.ControlPanel;
+import com.wasteofplastic.askyblock.util.Util;
+import com.wasteofplastic.askyblock.util.VaultHelper;
+
 /*
  * New commands:
  * 
@@ -68,7 +79,7 @@ public class AdminCmd implements CommandExecutor {
     private boolean confirmOK = false;
     private int confirmTimer = 0;
 
-    protected AdminCmd(ASkyBlock aSkyBlock) {
+    public AdminCmd(ASkyBlock aSkyBlock) {
 	this.plugin = aSkyBlock;
     }
 
@@ -257,7 +268,7 @@ public class AdminCmd implements CommandExecutor {
 				} else if (num > 40) {
 				    color = ChatColor.RED.toString();
 				}
-				content += ASkyBlock.prettifyText(entry.getKey().toString()) + " x " + color + entry.getValue() + ChatColor.WHITE + ", ";
+				content += Util.prettifyText(entry.getKey().toString()) + " x " + color + entry.getValue() + ChatColor.WHITE + ", ";
 			    }
 			    int lastComma = content.lastIndexOf(",");
 			    //plugin.getLogger().info("DEBUG: last comma " + lastComma);
@@ -445,7 +456,7 @@ public class AdminCmd implements CommandExecutor {
 		return true;
 	    } else if (split[0].equalsIgnoreCase("topten")) {
 		sender.sendMessage(ChatColor.YELLOW + Locale.adminTopTengenerating);
-		plugin.topTenCreate();
+		TopTen.topTenCreate();
 		sender.sendMessage(ChatColor.YELLOW + Locale.adminTopTenfinished);
 		return true;
 	    } else if (split[0].equalsIgnoreCase("purge")) {
@@ -886,7 +897,7 @@ public class AdminCmd implements CommandExecutor {
 			return true;
 		    }
 		    // Get friendly name
-		    biomeName = plugin.getConfig().getString("biomes." + biomeName + ".friendlyname", ASkyBlock.prettifyText(biomeName));
+		    biomeName = plugin.getConfig().getString("biomes." + biomeName + ".friendlyname", Util.prettifyText(biomeName));
 
 		} catch (Exception e) {
 		    sender.sendMessage(ChatColor.RED + Locale.biomeUnknown);
@@ -1174,7 +1185,7 @@ public class AdminCmd implements CommandExecutor {
      * @param location
      * @return
      */
-    protected static Location getClosestIsland(Location location) {
+    public static Location getClosestIsland(Location location) {
 	long x = Math.round((double)location.getBlockX() / Settings.islandDistance) * Settings.islandDistance + Settings.islandXOffset;
 	long z = Math.round((double)location.getBlockZ() / Settings.islandDistance) * Settings.islandDistance + Settings.islandZOffset;
 	long y = Settings.island_level;
@@ -1332,7 +1343,7 @@ public class AdminCmd implements CommandExecutor {
      *            - the assignee
      * @return - true if successful, false if not
      */
-    protected boolean adminSetPlayerIsland(final CommandSender sender, final Location l, final UUID newOwner) {
+    public boolean adminSetPlayerIsland(final CommandSender sender, final Location l, final UUID newOwner) {
 	//Location island = getClosestIsland(l);
 	// Check what the grid thinks
 	Island island = plugin.getGrid().getIslandAt(l);

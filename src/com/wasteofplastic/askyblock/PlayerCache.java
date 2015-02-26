@@ -39,7 +39,7 @@ public class PlayerCache {
     private HashMap<UUID, Players> playerCache = new HashMap<UUID, Players>();
     private final ASkyBlock plugin;
 
-    protected PlayerCache(ASkyBlock plugin) {
+    public PlayerCache(ASkyBlock plugin) {
 	this.plugin = plugin;
 	//final Collection<? extends Player> serverPlayers = Bukkit.getServer().getOnlinePlayers();
 	for (Player p : getOnlinePlayers()) {
@@ -68,7 +68,7 @@ public class PlayerCache {
      * Cache control methods
      */
 
-    protected void addPlayer(final UUID playerUUID) {
+    public void addPlayer(final UUID playerUUID) {
 	//plugin.getLogger().info("DEBUG: added player");
 	if (!playerCache.containsKey(playerUUID)) {
 	    final Players player = new Players(plugin, playerUUID);
@@ -83,7 +83,7 @@ public class PlayerCache {
      * @param player
      *            - name of player
      */
-    protected void removeOnlinePlayer(final UUID player) {
+    public void removeOnlinePlayer(final UUID player) {
 	if (playerCache.containsKey(player)) {
 	    playerCache.get(player).save();
 	    playerCache.remove(player);
@@ -94,7 +94,7 @@ public class PlayerCache {
     /**
      * Removes all players on the server now from cache and saves their info
      */
-    protected void removeAllPlayers() {
+    public void removeAllPlayers() {
 	for (UUID pl : playerCache.keySet()) {
 	    playerCache.get(pl).save();
 	}
@@ -110,7 +110,7 @@ public class PlayerCache {
      * @return Location of player's island
      */
     /*
-    protected Location getPlayerIsland(final UUID playerUUID) {
+    public Location getPlayerIsland(final UUID playerUUID) {
 	if (playerCache.containsKey(playerUUID)) {
 	    return playerCache.get(playerUUID).getIslandLocation();
 	}
@@ -124,7 +124,7 @@ public class PlayerCache {
      * @param uniqueID
      * @return true if player is know, otherwise false
      */
-    protected boolean isAKnownPlayer(final UUID uniqueID) {
+    public boolean isAKnownPlayer(final UUID uniqueID) {
 	if (uniqueID == null) {
 	    return false;
 	}
@@ -153,7 +153,7 @@ public class PlayerCache {
      * @param playerUUID - String name of player
      * @return - player object
      */
-    protected Players get(UUID playerUUID) {
+    public Players get(UUID playerUUID) {
 	addPlayer(playerUUID);
 	return playerCache.get(playerUUID);
     }
@@ -163,7 +163,7 @@ public class PlayerCache {
      * @param playerUUID - string name of player
      * @return true if player has island
      */
-    protected boolean hasIsland(final UUID playerUUID) {
+    public boolean hasIsland(final UUID playerUUID) {
 	addPlayer(playerUUID);
 	//plugin.getLogger().info("DEBUG: hasIsland = " + playerUUID.toString() + " = " + playerCache.get(playerUUID).hasIsland());
 	return playerCache.get(playerUUID).hasIsland();
@@ -174,7 +174,7 @@ public class PlayerCache {
      * @param playerUUID
      * @return
      */
-    protected boolean inTeam(final UUID playerUUID) {
+    public boolean inTeam(final UUID playerUUID) {
 	addPlayer(playerUUID);
 	return playerCache.get(playerUUID).inTeam();
     }
@@ -183,7 +183,7 @@ public class PlayerCache {
      * Removes any island associated with this player and generally cleans up the player
      * @param playerUUID
      */
-    protected void zeroPlayerData(UUID playerUUID) {
+    public void zeroPlayerData(UUID playerUUID) {
 	addPlayer(playerUUID);
 	// Remove and clean up any team players (if the asadmin delete command was called this is needed)
 	if (playerCache.get(playerUUID).inTeam()) {
@@ -209,10 +209,10 @@ public class PlayerCache {
 	playerCache.get(playerUUID).setIslandLocation(null);
 	playerCache.get(playerUUID).setIslandLevel(0);
 	playerCache.get(playerUUID).save(); // Needed?
-	plugin.topTenRemoveEntry(playerUUID);
+	TopTen.topTenRemoveEntry(playerUUID);
     }
 
-    protected void setHomeLocation(UUID playerUUID, Location location) {
+    public void setHomeLocation(UUID playerUUID, Location location) {
 	addPlayer(playerUUID);
 	playerCache.get(playerUUID).setHomeLocation(location);
     }
@@ -222,7 +222,7 @@ public class PlayerCache {
      * @param playerUUID
      * @return
      */
-    protected Location getHomeLocation(UUID playerUUID) {
+    public Location getHomeLocation(UUID playerUUID) {
 	addPlayer(playerUUID);
 	return playerCache.get(playerUUID).getHomeLocation();
     }
@@ -233,33 +233,33 @@ public class PlayerCache {
      * @param playerUUID
      * @return
      */
-    protected Location getIslandLocation(UUID playerUUID) {
+    public Location getIslandLocation(UUID playerUUID) {
 	addPlayer(playerUUID);
 	return playerCache.get(playerUUID).getIslandLocation();
     }
 
-    protected void setHasIsland(UUID playerUUID, boolean b) {
+    public void setHasIsland(UUID playerUUID, boolean b) {
 	//plugin.getLogger().info("DEBUG: setHasIsland " + playerUUID.toString() + " " + b);
 	addPlayer(playerUUID);
 	playerCache.get(playerUUID).setHasIsland(b);
     }
 
-    protected void setIslandLocation(UUID playerUUID, Location islandLocation) {
+    public void setIslandLocation(UUID playerUUID, Location islandLocation) {
 	addPlayer(playerUUID);
 	playerCache.get(playerUUID).setIslandLocation(islandLocation);	
     }
 
-    protected Integer getIslandLevel(UUID playerUUID) {
+    public Integer getIslandLevel(UUID playerUUID) {
 	addPlayer(playerUUID);
 	return playerCache.get(playerUUID).getIslandLevel();
     }
 
-    protected void setIslandLevel(UUID playerUUID, Integer islandLevel) {
+    public void setIslandLevel(UUID playerUUID, Integer islandLevel) {
 	addPlayer(playerUUID);
 	playerCache.get(playerUUID).setIslandLevel(islandLevel);
     }
 
-    protected void setTeamIslandLocation(UUID playerUUID, Location islandLocation) {
+    public void setTeamIslandLocation(UUID playerUUID, Location islandLocation) {
 	addPlayer(playerUUID);
 	playerCache.get(playerUUID).setTeamIslandLocation(islandLocation);	
     }
@@ -270,7 +270,7 @@ public class PlayerCache {
      * @param challenge
      * @return
      */
-    protected boolean checkChallenge(UUID playerUUID, String challenge) {
+    public boolean checkChallenge(UUID playerUUID, String challenge) {
 	addPlayer(playerUUID);
 	return playerCache.get(playerUUID).checkChallenge(challenge);
     }
@@ -281,7 +281,7 @@ public class PlayerCache {
      * @param challenge
      * @return
      */
-    protected int checkChallengeTimes(UUID playerUUID, String challenge) {
+    public int checkChallengeTimes(UUID playerUUID, String challenge) {
 	addPlayer(playerUUID);
 	return playerCache.get(playerUUID).checkChallengeTimes(challenge);
     }
@@ -291,7 +291,7 @@ public class PlayerCache {
      * @param playerUUID
      * @return
      */
-    protected HashMap<String, Boolean> getChallengeStatus(UUID playerUUID) {
+    public HashMap<String, Boolean> getChallengeStatus(UUID playerUUID) {
 	addPlayer(playerUUID);
 	return playerCache.get(playerUUID).getChallengeStatus();	
     }
@@ -301,22 +301,22 @@ public class PlayerCache {
      * @param playerUUID
      * @return map of completion times
      */
-    protected HashMap<String, Integer> getChallengeTimes(UUID playerUUID) {
+    public HashMap<String, Integer> getChallengeTimes(UUID playerUUID) {
 	addPlayer(playerUUID);
 	return playerCache.get(playerUUID).getChallengeCompleteTimes();	
     }
 
-    protected void resetChallenge(UUID playerUUID, String challenge) {
+    public void resetChallenge(UUID playerUUID, String challenge) {
 	addPlayer(playerUUID);
 	playerCache.get(playerUUID).resetChallenge(challenge);	
     }
 
-    protected void resetAllChallenges(UUID playerUUID) {
+    public void resetAllChallenges(UUID playerUUID) {
 	addPlayer(playerUUID);
 	playerCache.get(playerUUID).resetAllChallenges();	
     }
 
-    protected void setJoinTeam(UUID playerUUID, UUID teamLeader, Location islandLocation) {
+    public void setJoinTeam(UUID playerUUID, UUID teamLeader, Location islandLocation) {
 	addPlayer(playerUUID);
 	addPlayer(teamLeader);
 	playerCache.get(playerUUID).setJoinTeam(teamLeader, islandLocation);
@@ -325,7 +325,7 @@ public class PlayerCache {
      * Called when a player leaves a team Resets inTeam, teamLeader,
      * islandLevel, teamIslandLocation, islandLocation and members array
      */
-    protected void setLeaveTeam(UUID playerUUID) {
+    public void setLeaveTeam(UUID playerUUID) {
 	addPlayer(playerUUID);
 	playerCache.get(playerUUID).setLeaveTeam();
     }
@@ -335,7 +335,7 @@ public class PlayerCache {
      * @param playerUUID
      * @return
      */
-    protected List<UUID> getMembers(UUID playerUUID) {
+    public List<UUID> getMembers(UUID playerUUID) {
 	addPlayer(playerUUID);
 	UUID leader = getTeamLeader(playerUUID);
 	if (leader != null && !leader.equals(playerUUID)) {
@@ -346,19 +346,19 @@ public class PlayerCache {
 	return playerCache.get(playerUUID).getMembers();
     }
 
-    protected void addTeamMember(UUID teamLeader, UUID playerUUID) {
+    public void addTeamMember(UUID teamLeader, UUID playerUUID) {
 	addPlayer(teamLeader);
 	addPlayer(playerUUID);
 	playerCache.get(teamLeader).addTeamMember(playerUUID);
     }
 
-    protected void removeMember(UUID teamLeader, UUID playerUUID) {
+    public void removeMember(UUID teamLeader, UUID playerUUID) {
 	addPlayer(teamLeader);
 	addPlayer(playerUUID);
 	playerCache.get(teamLeader).removeMember(playerUUID);
     }
 
-    protected UUID getTeamLeader(UUID playerUUID) {
+    public UUID getTeamLeader(UUID playerUUID) {
 	addPlayer(playerUUID);
 	return playerCache.get(playerUUID).getTeamLeader();
     }
@@ -367,16 +367,16 @@ public class PlayerCache {
      * Saves the player's info to the file system
      * @param playerUUID
      */
-    protected void save(UUID playerUUID) {
+    public void save(UUID playerUUID) {
 	playerCache.get(playerUUID).save();
     }
 
-    protected void completeChallenge(UUID playerUUID, String challenge) {
+    public void completeChallenge(UUID playerUUID, String challenge) {
 	addPlayer(playerUUID);
 	playerCache.get(playerUUID).completeChallenge(challenge);
     }
 
-    protected boolean challengeExists(UUID playerUUID, String challenge) {
+    public boolean challengeExists(UUID playerUUID, String challenge) {
 	addPlayer(playerUUID);
 	return playerCache.get(playerUUID).challengeExists(challenge);	
     }
@@ -386,7 +386,7 @@ public class PlayerCache {
      * @param string
      * @return
      */
-    protected UUID getUUID(String string) {
+    public UUID getUUID(String string) {
 	for (UUID id : playerCache.keySet()) {
 	    String name = playerCache.get(id).getPlayerName();
 	    //plugin.getLogger().info("DEBUG: Testing name " + name);
@@ -411,7 +411,7 @@ public class PlayerCache {
 	return null;
     }
 
-    protected void setPlayerName(UUID uniqueId, String name) {
+    public void setPlayerName(UUID uniqueId, String name) {
 	addPlayer(uniqueId);
 	playerCache.get(uniqueId).setPlayerN(name);
     }
@@ -422,7 +422,7 @@ public class PlayerCache {
      * @param playerUUID
      * @return String - playerName
      */
-    protected String getName(UUID playerUUID) {
+    public String getName(UUID playerUUID) {
 	if (playerUUID == null) {
 	    return "";
 	}
@@ -430,7 +430,7 @@ public class PlayerCache {
 	return playerCache.get(playerUUID).getPlayerName();
     }
 
-    protected Location getTeamIslandLocation(UUID playerUUID) {
+    public Location getTeamIslandLocation(UUID playerUUID) {
 	addPlayer(playerUUID);
 	return playerCache.get(playerUUID).getTeamIslandLocation();
     }
@@ -440,7 +440,7 @@ public class PlayerCache {
      * @param loc
      * @return
      */
-    protected UUID getPlayerFromIslandLocation(Location loc) {
+    public UUID getPlayerFromIslandLocation(Location loc) {
 	if (loc == null)
 	    return null;
 	// Look in the grid
@@ -497,7 +497,7 @@ public class PlayerCache {
      * @param playerUUID
      * @return
      */
-    protected int getResetsLeft(UUID playerUUID) {
+    public int getResetsLeft(UUID playerUUID) {
 	addPlayer(playerUUID);
 	return playerCache.get(playerUUID).getResetsLeft();
     }
@@ -507,7 +507,7 @@ public class PlayerCache {
      * @param playerUUID
      * @param resets
      */
-    protected void setResetsLeft(UUID playerUUID, int resets) {
+    public void setResetsLeft(UUID playerUUID, int resets) {
 	addPlayer(playerUUID);
 	playerCache.get(playerUUID).setResetsLeft(resets);
     }
@@ -518,7 +518,7 @@ public class PlayerCache {
      * @param location
      * @return time to wait in minutes/hours
      */
-    protected long getInviteCoolDownTime(UUID playerUUID, Location location) {
+    public long getInviteCoolDownTime(UUID playerUUID, Location location) {
 	addPlayer(playerUUID);
 	return playerCache.get(playerUUID).getInviteCoolDownTime(location);
     }
@@ -529,7 +529,7 @@ public class PlayerCache {
      * @param playerUUID
      * @param location
      */
-    protected void startInviteCoolDownTimer(UUID playerUUID, Location location) {
+    public void startInviteCoolDownTimer(UUID playerUUID, Location location) {
 	addPlayer(playerUUID);
 	playerCache.get(playerUUID).startInviteCoolDownTimer(location);
     }

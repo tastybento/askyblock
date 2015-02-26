@@ -1,4 +1,4 @@
-package com.wasteofplastic.askyblock;
+package com.wasteofplastic.askyblock.util;
 
 public class Pair {
 	private final int left;

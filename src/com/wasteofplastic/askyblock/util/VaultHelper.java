@@ -14,13 +14,15 @@
  *     You should have received a copy of the GNU General Public License
  *     along with ASkyBlock.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-package com.wasteofplastic.askyblock;
+package com.wasteofplastic.askyblock.util;
 
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
+
+import com.wasteofplastic.askyblock.ASkyBlock;
 
 /**
  * Helper class for Vault Economy and Permissions
@@ -33,7 +35,7 @@ public class VaultHelper {
      * Sets up the economy instance
      * @return
      */
-    protected static boolean setupEconomy() {
+    public static boolean setupEconomy() {
 	RegisteredServiceProvider<Economy> economyProvider = ASkyBlock.getPlugin().getServer().getServicesManager()
 		.getRegistration(net.milkbowl.vault.economy.Economy.class);
 	if (economyProvider != null) {
@@ -46,7 +48,7 @@ public class VaultHelper {
      * Sets up the permissions instance
      * @return
      */
-    protected static boolean setupPermissions() {
+    public static boolean setupPermissions() {
 	RegisteredServiceProvider<Permission> permissionProvider = ASkyBlock.getPlugin().getServer().getServicesManager()
 		.getRegistration(net.milkbowl.vault.permission.Permission.class);
 	if (permissionProvider != null) {
@@ -62,7 +64,7 @@ public class VaultHelper {
      * @param perm
      * @return
      */
-    protected static boolean checkPerm(final Player player, final String perm) {
+    public static boolean checkPerm(final Player player, final String perm) {
 	return permission.has(player, perm);
    }
     
@@ -71,7 +73,7 @@ public class VaultHelper {
      * @param player
      * @param perm
      */
-    protected static void addPerm(final Player player, final String perm) {
+    public static void addPerm(final Player player, final String perm) {
 	permission.playerAdd(player, perm);
     }
 
@@ -80,7 +82,7 @@ public class VaultHelper {
      * @param player
      * @param perm
      */
-    protected static void removePerm(final Player player, final String perm) {
+    public static void removePerm(final Player player, final String perm) {
 	permission.playerRemove(player, perm);
     }
 

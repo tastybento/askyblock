@@ -14,7 +14,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with ASkyBlock.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-package com.wasteofplastic.askyblock;
+package com.wasteofplastic.askyblock.schematics;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -45,6 +45,10 @@ import org.jnbt.ShortTag;
 import org.jnbt.StringTag;
 import org.jnbt.Tag;
 
+import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.Locale;
+import com.wasteofplastic.askyblock.Settings;
+
 public class Schematic {
 
     private short[] blocks;
@@ -55,7 +59,7 @@ public class Schematic {
     private Map<BlockVector, Map<String, Tag>> tileEntitiesMap = new HashMap<BlockVector, Map<String, Tag>>();
     private File file;
 
-    protected Schematic(File file) {
+    public Schematic(File file) {
 	try {
 	    this.file = file;
 	    FileInputStream stream = new FileInputStream(file);
@@ -149,7 +153,7 @@ public class Schematic {
     /**
      * @return the blocks
      */
-    protected short[] getBlocks()
+    public short[] getBlocks()
     {
 	return blocks;
     }
@@ -157,7 +161,7 @@ public class Schematic {
     /**
      * @return the data
      */
-    protected byte[] getData()
+    public byte[] getData()
     {
 	return data;
     }
@@ -165,7 +169,7 @@ public class Schematic {
     /**
      * @return the width
      */
-    protected short getWidth()
+    public short getWidth()
     {
 	return width;
     }
@@ -173,7 +177,7 @@ public class Schematic {
     /**
      * @return the length
      */
-    protected short getLength()
+    public short getLength()
     {
 	return length;
     }
@@ -181,7 +185,7 @@ public class Schematic {
     /**
      * @return the height
      */
-    protected short getHeight()
+    public short getHeight()
     {
 	return height;
     }
@@ -189,12 +193,12 @@ public class Schematic {
     /**
      * @return the tileEntitiesMap
      */
-    protected Map<BlockVector, Map<String, Tag>> getTileEntitiesMap() {
+    public Map<BlockVector, Map<String, Tag>> getTileEntitiesMap() {
 	return tileEntitiesMap;
     }
 
     @SuppressWarnings("deprecation")
-    protected Location pasteSchematic(final World world, final Location loc, Player player)
+    public Location pasteSchematic(final World world, final Location loc, Player player)
     {
 	// See if WorldEdit is loaded
 	/*

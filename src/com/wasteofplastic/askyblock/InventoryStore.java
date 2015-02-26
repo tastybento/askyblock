@@ -14,32 +14,32 @@ public class InventoryStore {
      * @param inventory
      * @param armor
      */
-    protected InventoryStore(ItemStack[] inventory, ItemStack[] armor) {
+    public InventoryStore(ItemStack[] inventory, ItemStack[] armor) {
 	this.inventory = inventory;
 	this.armor = armor;
     }
     /**
      * @return the inventory
      */
-    protected ItemStack[] getInventory() {
+    public ItemStack[] getInventory() {
         return inventory;
     }
     /**
      * @param inventory the inventory to set
      */
-    protected void setInventory(ItemStack[] inventory) {
+    public void setInventory(ItemStack[] inventory) {
         this.inventory = inventory;
     }
     /**
      * @return the armor
      */
-    protected ItemStack[] getArmor() {
+    public ItemStack[] getArmor() {
         return armor;
     }
     /**
      * @param armor the armor to set
      */
-    protected void setArmor(ItemStack[] armor) {
+    public void setArmor(ItemStack[] armor) {
         this.armor = armor;
     }
 }

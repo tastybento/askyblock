@@ -14,7 +14,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with ASkyBlock.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-package com.wasteofplastic.askyblock;
+package com.wasteofplastic.askyblock.panels;
 
 import java.util.ArrayList;
 
@@ -24,6 +24,11 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionType;
+
+import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.Locale;
+import com.wasteofplastic.askyblock.util.Util;
+import com.wasteofplastic.askyblock.util.VaultHelper;
 
 /**
  * @author tastybento
@@ -43,7 +48,7 @@ public class MiniShopItem {
     /**
      * 
      */
-    protected MiniShopItem(Material material, String extra, int slot, String description, int quantity, Double price, Double sellPrice) {
+    public MiniShopItem(Material material, String extra, int slot, String description, int quantity, Double price, Double sellPrice) {
 	this.slot = slot;
 	this.material = material;
 	this.description = description;
@@ -120,7 +125,7 @@ public class MiniShopItem {
 	}
 	// If there's no description, then set it.
 	if (description == null) {
-	    this.description = ASkyBlock.prettifyText(getDataName(item));
+	    this.description = Util.prettifyText(getDataName(item));
 	}
 
     }
@@ -129,7 +134,7 @@ public class MiniShopItem {
     /**
      * @return the item
      */
-    protected ItemStack getItem() {
+    public ItemStack getItem() {
 	return item;
     }
 
@@ -137,7 +142,7 @@ public class MiniShopItem {
      * Returns a clean version of this item with no meta data
      * @return
      */
-    protected ItemStack getItemClean() {
+    public ItemStack getItemClean() {
 	ItemStack temp = this.item.clone();
 	ItemMeta meta = temp.getItemMeta();
 	meta.setDisplayName(null);
@@ -149,21 +154,21 @@ public class MiniShopItem {
     /**
      * @return the slot
      */
-    protected int getSlot() {
+    public int getSlot() {
 	return slot;
     }
 
     /**
      * @return the price
      */
-    protected double getPrice() {
+    public double getPrice() {
 	return price;
     }
 
     /**
      * @return the sellPrice
      */
-    protected double getSellPrice() {
+    public double getSellPrice() {
         return sellPrice;
     }
 
@@ -171,70 +176,70 @@ public class MiniShopItem {
     /**
      * @return the quantity
      */
-    protected int getQuantity() {
+    public int getQuantity() {
 	return quantity;
     }
 
     /**
      * @return the material
      */
-    protected Material getMaterial() {
+    public Material getMaterial() {
 	return material;
     }
 
     /**
      * @return the description
      */
-    protected String getDescription() {
+    public String getDescription() {
 	return description;
     }
 
     /**
      * @param slot the slot to set
      */
-    protected void setSlot(int slot) {
+    public void setSlot(int slot) {
 	this.slot = slot;
     }
 
     /**
      * @param price the price to set
      */
-    protected void setPrice(double price) {
+    public void setPrice(double price) {
 	this.price = price;
     }
 
     /**
      * @param quantity the quantity to set
      */
-    protected void setQuantity(int quantity) {
+    public void setQuantity(int quantity) {
 	this.quantity = quantity;
     }
 
     /**
      * @param material the material to set
      */
-    protected void setMaterial(Material material) {
+    public void setMaterial(Material material) {
 	this.material = material;
     }
 
     /**
      * @param description the description to set
      */
-    protected void setDescription(String description) {
+    public void setDescription(String description) {
 	this.description = description;
     }
 
     /**
      * @return the extra
      */
-    protected String getExtra() {
+    public String getExtra() {
 	return extra;
     }
 
     /**
      * @param extra the extra to set
      */
-    protected void setExtra(String extra) {
+    public void setExtra(String extra) {
 	this.extra = extra;
     }
    /**

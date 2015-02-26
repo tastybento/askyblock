@@ -14,7 +14,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with ASkyBlock.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-package com.wasteofplastic.askyblock;
+package com.wasteofplastic.askyblock.listeners;
 
 
 import java.util.ArrayList;
@@ -78,6 +78,13 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 import org.bukkit.potion.Potion;
 import org.bukkit.util.Vector;
+
+import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.InventorySave;
+import com.wasteofplastic.askyblock.Island;
+import com.wasteofplastic.askyblock.Locale;
+import com.wasteofplastic.askyblock.Settings;
+import com.wasteofplastic.askyblock.util.VaultHelper;
 
 
 /**

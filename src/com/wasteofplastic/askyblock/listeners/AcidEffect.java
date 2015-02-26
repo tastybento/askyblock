@@ -15,7 +15,7 @@
  *     along with ASkyBlock.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
 
-package com.wasteofplastic.askyblock;
+package com.wasteofplastic.askyblock.listeners;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -44,6 +44,11 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
+import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.Locale;
+import com.wasteofplastic.askyblock.Settings;
+import com.wasteofplastic.askyblock.util.VaultHelper;
+
 /**
  * Applies the acid effect to players
  * @author tastybento
@@ -54,7 +59,7 @@ public class AcidEffect implements Listener {
     private boolean isRaining = false; 
     private List<Player> wetPlayers = new ArrayList<Player>();
 
-    protected AcidEffect(final ASkyBlock pluginI) {
+    public AcidEffect(final ASkyBlock pluginI) {
 	plugin = pluginI;
     }
 
@@ -354,7 +359,7 @@ public class AcidEffect implements Listener {
      *         player has on. The higher the value, the more protection they
      *         have.
      */
-    static protected double getDamageReduced(Player player) {
+    static public double getDamageReduced(Player player) {
 	org.bukkit.inventory.PlayerInventory inv = player.getInventory();
 	ItemStack boots = inv.getBoots();
 	ItemStack helmet = inv.getHelmet();

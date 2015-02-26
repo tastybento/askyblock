@@ -14,7 +14,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with ASkyBlock.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-package com.wasteofplastic.askyblock;
+package com.wasteofplastic.askyblock.panels;
 
 import java.util.List;
 
@@ -40,7 +40,7 @@ public class CPItem {
      * @param command
      * @param nextSection
      */
-    protected CPItem(Material material, String name, String command, String nextSection) {
+    public CPItem(Material material, String name, String command, String nextSection) {
 	this.command = command;
 	this.nextSection = nextSection;
 	item = new ItemStack(material);
@@ -49,7 +49,7 @@ public class CPItem {
 	item.setItemMeta(meta);
     }
     
-    protected CPItem(ItemStack itemStack, String name, String command, String nextSection) {
+    public CPItem(ItemStack itemStack, String name, String command, String nextSection) {
 	this.command = command;
 	this.nextSection = nextSection;
 	this.item = itemStack;
@@ -59,7 +59,7 @@ public class CPItem {
 	item.setItemMeta(meta);
     }
 
-    protected void setLore(List<String> lore) {
+    public void setLore(List<String> lore) {
 	ItemMeta meta = item.getItemMeta();
 	meta.setLore(lore);
 	item.setItemMeta(meta);
@@ -68,7 +68,7 @@ public class CPItem {
     /**
      * @return the command
      */
-    protected String getCommand() {
+    public String getCommand() {
 	return command;
     }
 
@@ -76,7 +76,7 @@ public class CPItem {
     /**
      * @return the nextSection
      */
-    protected String getNextSection() {
+    public String getNextSection() {
 	return nextSection;
     }
 
@@ -84,11 +84,11 @@ public class CPItem {
     /**
      * @param nextSection the nextSection to set
      */
-    protected void setNextSection(String nextSection) {
+    public void setNextSection(String nextSection) {
         this.nextSection = nextSection;
     }
     
-    protected ItemStack getItem() {
+    public ItemStack getItem() {
 	return item;
     }
 

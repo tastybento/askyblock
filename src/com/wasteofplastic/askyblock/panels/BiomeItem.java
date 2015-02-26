@@ -1,4 +1,4 @@
-package com.wasteofplastic.askyblock;
+package com.wasteofplastic.askyblock.panels;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +8,10 @@ import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import com.wasteofplastic.askyblock.Settings;
+import com.wasteofplastic.askyblock.util.Util;
+import com.wasteofplastic.askyblock.util.VaultHelper;
 
 public class BiomeItem {
     private ItemStack item;
@@ -23,7 +27,7 @@ public class BiomeItem {
      * @param description
      * @param name
      */
-    protected BiomeItem(Material material, int slot, double cost, String description, String name, boolean confirm, Biome biome) {
+    public BiomeItem(Material material, int slot, double cost, String description, String name, boolean confirm, Biome biome) {
 	this.slot = slot;
 	this.price = cost;
 	//this.description = description;
@@ -47,43 +51,43 @@ public class BiomeItem {
     /**
      * @return the item
      */
-    protected ItemStack getItem() {
+    public ItemStack getItem() {
         return item;
     }
     /**
      * @return the slot
      */
-    protected int getSlot() {
+    public int getSlot() {
         return slot;
     }
     /**
      * @return the confirm
      */
-    protected boolean isConfirm() {
+    public boolean isConfirm() {
         return confirm;
     }
     /**
      * @return the biome
      */
-    protected Biome getBiome() {
+    public Biome getBiome() {
         return biome;
     }
     /**
      * @return the name
      */
-    protected String getName() {
+    public String getName() {
         return name;
     }
     /**
      * @return the price
      */
-    protected double getPrice() {
+    public double getPrice() {
         return price;
     }
     /**
      * @param biome the biome to set
      */
-    protected void setBiome(Biome biome) {
+    public void setBiome(Biome biome) {
         this.biome = biome;
     }
 

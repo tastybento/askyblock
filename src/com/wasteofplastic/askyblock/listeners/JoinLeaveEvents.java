@@ -14,7 +14,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with ASkyBlock.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-package com.wasteofplastic.askyblock;
+package com.wasteofplastic.askyblock.listeners;
 
 import java.util.List;
 import java.util.UUID;
@@ -27,13 +27,20 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.CoopPlay;
+import com.wasteofplastic.askyblock.Island;
+import com.wasteofplastic.askyblock.LevelCalc;
+import com.wasteofplastic.askyblock.Locale;
+import com.wasteofplastic.askyblock.PlayerCache;
+import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.Settings.GameType;
 
 public class JoinLeaveEvents implements Listener {
     private ASkyBlock plugin;
     private PlayerCache players;
 
-    protected JoinLeaveEvents(ASkyBlock aSkyBlock) {
+    public JoinLeaveEvents(ASkyBlock aSkyBlock) {
 	this.plugin = aSkyBlock;
 	this.players = plugin.getPlayers();
     }

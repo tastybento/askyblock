@@ -1,4 +1,4 @@
-package com.wasteofplastic.askyblock;
+package com.wasteofplastic.askyblock.generators;
 
 import java.util.Random;
 

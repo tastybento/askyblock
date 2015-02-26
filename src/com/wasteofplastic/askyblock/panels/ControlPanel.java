@@ -14,7 +14,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with ASkyBlock.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-package com.wasteofplastic.askyblock;
+package com.wasteofplastic.askyblock.panels;
 
 import java.util.HashMap;
 import java.util.List;
@@ -35,6 +35,12 @@ import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.Locale;
+import com.wasteofplastic.askyblock.Settings;
+import com.wasteofplastic.askyblock.util.Util;
+import com.wasteofplastic.askyblock.util.VaultHelper;
+
 /**
  * @author tastybento
  * Provides a handy control panel and minishop
@@ -52,7 +58,7 @@ public class ControlPanel implements Listener {
     /**
      * @param plugin
      */
-    protected ControlPanel(ASkyBlock plugin) {
+    public ControlPanel(ASkyBlock plugin) {
 	this.plugin = plugin;
 	if (Settings.useEconomy) {
 	    loadShop();
@@ -70,9 +76,9 @@ public class ControlPanel implements Listener {
     /**
      * Map of CP inventories by name
      */
-    protected static HashMap<String,Inventory> controlPanel = new HashMap<String,Inventory>();
+    public static HashMap<String,Inventory> controlPanel = new HashMap<String,Inventory>();
 
-    protected static Inventory miniShop;
+    public static Inventory miniShop;
     // The first parameter, is the inventory owner. I make it null to let everyone use it.
     //The second parameter, is the slots in a inventory. Must be a multiple of 9. Can be up to 54.
     //The third parameter, is the inventory name. This will accept chat colors.
@@ -81,11 +87,11 @@ public class ControlPanel implements Listener {
     /**
      * This loads the minishop from the minishop.yml file
      */
-    protected static void loadShop() {
+    public static void loadShop() {
 	//The first parameter is the Material, then the durability (if wanted), slot, descriptions
 	// Minishop
 	store.clear();
-	miniShopFile = ASkyBlock.loadYamlFile("minishop.yml");
+	miniShopFile = Util.loadYamlFile("minishop.yml");
 	allowSelling = miniShopFile.getBoolean("config.allowselling", false);
 	ConfigurationSection items = miniShopFile.getConfigurationSection("items");
 	ASkyBlock plugin = ASkyBlock.getPlugin();
@@ -128,13 +134,13 @@ public class ControlPanel implements Listener {
     /**
      * This loads the control panel from the controlpanel.yml file
      */
-    protected static void loadControlPanel() {
+    public static void loadControlPanel() {
 	ASkyBlock plugin = ASkyBlock.getPlugin();
 	// Map of known panel contents by name
 	panels.clear();
 	// Map of panel inventories by name
 	controlPanel.clear();
-	cpFile = ASkyBlock.loadYamlFile("controlpanel.yml");
+	cpFile = Util.loadYamlFile("controlpanel.yml");
 	ConfigurationSection controlPanels = cpFile.getRoot();
 	if (controlPanels == null) {
 	    plugin.getLogger().severe("Controlpanel.yml is corrupted! Delete so it can be regenerated or fix!");
@@ -352,7 +358,7 @@ public class ControlPanel implements Listener {
     /**
      * @return the defaultPanelName
      */
-    protected static String getDefaultPanelName() {
+    public static String getDefaultPanelName() {
 	return defaultPanelName;
     }
 }

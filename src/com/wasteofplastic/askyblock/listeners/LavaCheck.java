@@ -14,7 +14,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with ASkyBlock.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-package com.wasteofplastic.askyblock;
+package com.wasteofplastic.askyblock.listeners;
 
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -25,6 +25,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.scheduler.BukkitTask;
 
+import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.Settings;
+
 /**
  * @author tastybento
  * 
@@ -33,7 +36,7 @@ public class LavaCheck implements Listener {
     BukkitTask task;
     private final ASkyBlock plugin;
 
-    protected LavaCheck(ASkyBlock aSkyBlock) {
+    public LavaCheck(ASkyBlock aSkyBlock) {
 	plugin = aSkyBlock;
     }
 

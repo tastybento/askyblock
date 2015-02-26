@@ -14,7 +14,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with ASkyBlock.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-package com.wasteofplastic.askyblock;
+package com.wasteofplastic.askyblock.commands;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,8 +44,15 @@ import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 
+import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.Locale;
+import com.wasteofplastic.askyblock.PlayerCache;
+import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.events.ChallengeCompleteEvent;
 import com.wasteofplastic.askyblock.events.ChallengeLevelCompleteEvent;
+import com.wasteofplastic.askyblock.panels.CPItem;
+import com.wasteofplastic.askyblock.util.Util;
+import com.wasteofplastic.askyblock.util.VaultHelper;
 
 /**
  * Handles challenge commands and related methods
@@ -57,7 +64,7 @@ public class Challenges implements CommandExecutor {
     private PlayerCache players;
     private HashMap<UUID, List<CPItem>> playerChallengeGUI = new HashMap<UUID, List<CPItem>>();
 
-    protected Challenges(ASkyBlock acidIsland, PlayerCache players) {
+    public Challenges(ASkyBlock acidIsland, PlayerCache players) {
 	this.plugin = acidIsland;
 	this.players = players;
 	populateChallengeList();
@@ -440,7 +447,7 @@ public class Challenges implements CommandExecutor {
      * @param level
      * @return
      */
-    protected int checkLevelCompletion(final Player player, final String level) {
+    public int checkLevelCompletion(final Player player, final String level) {
 	int challengesCompleted = 0;
 	List<String> levelChallengeList = challengeList.get(level);
 	if (levelChallengeList != null) {
@@ -461,7 +468,7 @@ public class Challenges implements CommandExecutor {
      * @param challenge
      * @return true if player can complete otherwise false
      */
-    protected boolean checkIfCanCompleteChallenge(final Player player, final String challenge) {
+    public boolean checkIfCanCompleteChallenge(final Player player, final String challenge) {
 	//plugin.getLogger().info("DEBUG: " + player.getDisplayName() + " " + challenge);
 	//plugin.getLogger().info("DEBUG: 1");
 	// Check if the challenge exists
@@ -552,7 +559,7 @@ public class Challenges implements CommandExecutor {
      * Goes through all the challenges in the config.yml file and puts them into
      * the challenges list
      */
-    protected void populateChallengeList() {
+    public void populateChallengeList() {
 	for (String s : Settings.challengeList) {
 	    String level = plugin.getChallengeConfig().getString("challenges.challengeList." + s + ".level", "");
 	    // Verify that this challenge's level is in the list of levels
@@ -581,7 +588,7 @@ public class Challenges implements CommandExecutor {
      */
     // @SuppressWarnings("deprecation")
     @SuppressWarnings("deprecation")
-    protected boolean hasRequired(final Player player, final String challenge, final String type) {
+    public boolean hasRequired(final Player player, final String challenge, final String type) {
 	final String[] reqList = plugin.getChallengeConfig().getString("challenges.challengeList." + challenge + ".requiredItems").split(" ");
 	// The format of the requiredItems is as follows:
 	// Material:Qty
@@ -949,7 +956,7 @@ public class Challenges implements CommandExecutor {
 		// plugin.getLogger().info("DEBUG: Insufficient items around");
 		for (Material missing : neededItem.keySet()) {
 		    player.sendMessage(ChatColor.RED + Locale.challengeserrorYouAreMissing + " " + neededItem.get(missing) + " x "
-			    + ASkyBlock.prettifyText(missing.toString()));
+			    + Util.prettifyText(missing.toString()));
 		}
 		return false;
 	    } else {
@@ -975,7 +982,7 @@ public class Challenges implements CommandExecutor {
 		} else {
 		    for (EntityType missing : neededEntities.keySet()) {
 			player.sendMessage(ChatColor.RED + Locale.challengeserrorYouAreMissing + " " + neededEntities.get(missing) + " x "
-				+ ASkyBlock.prettifyText(missing.toString()));
+				+ Util.prettifyText(missing.toString()));
 		    }
 		    return false;
 		}
@@ -991,7 +998,7 @@ public class Challenges implements CommandExecutor {
      * @param level
      * @return true/false
      */
-    protected boolean isLevelAvailable(final Player player, final String level) {
+    public boolean isLevelAvailable(final Player player, final String level) {
 	if (challengeList.size() < 2) {
 	    return true;
 	}
@@ -1017,7 +1024,7 @@ public class Challenges implements CommandExecutor {
      * @param player
      * @return inventory
      */
-    protected Inventory challengePanel(Player player) {
+    public Inventory challengePanel(Player player) {
 	return challengePanel(player, "");
     }
 
@@ -1028,7 +1035,7 @@ public class Challenges implements CommandExecutor {
      * @param level
      * @return inventory
      */
-    protected Inventory challengePanel(Player player, String level) {
+    public Inventory challengePanel(Player player, String level) {
 	// Create the challenges control panel
 	// New panel map
 	List<CPItem> cp = new ArrayList<CPItem>();
@@ -1341,7 +1348,7 @@ public class Challenges implements CommandExecutor {
 	return null;
     }
 
-    protected List<CPItem> getCP(Player player) {
+    public List<CPItem> getCP(Player player) {
 	return playerChallengeGUI.get(player.getUniqueId());
     }
 

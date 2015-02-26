@@ -1,4 +1,4 @@
-package com.wasteofplastic.askyblock;
+package com.wasteofplastic.askyblock.panels;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,6 +6,8 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
+
+import com.wasteofplastic.askyblock.Settings;
 
 public class SettingsPanel {
     // Island Guard Settings Panel

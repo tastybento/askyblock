@@ -1,4 +1,4 @@
-package com.wasteofplastic.askyblock;
+package com.wasteofplastic.askyblock.schematics;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,6 +16,11 @@ import org.jnbt.ListTag;
 import org.jnbt.StringTag;
 import org.jnbt.Tag;
 
+/**
+ * This class describes banners and is used in schematic importing
+ * @author tastybento
+ *
+ */
 public class BannerBlock {
     private static HashMap<String,PatternType> patternKey;
     // bs, mc, cr, drs, dls, hhb, mr, hh, sc, gru, ss, gra, ts, ms, tt
@@ -67,7 +72,7 @@ public class BannerBlock {
     }
     
     @SuppressWarnings("deprecation")
-    protected static boolean set(Block block, Map<String, Tag> tileData) {
+    public static boolean set(Block block, Map<String, Tag> tileData) {
 	    //Format for banner is:
 	    // Patterns = List of patterns
 	    // id = String "BannerBlock"

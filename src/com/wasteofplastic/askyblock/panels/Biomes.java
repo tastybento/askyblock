@@ -1,4 +1,4 @@
-package com.wasteofplastic.askyblock;
+package com.wasteofplastic.askyblock.panels;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,6 +15,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 
+import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.Locale;
+import com.wasteofplastic.askyblock.Settings;
+import com.wasteofplastic.askyblock.util.Util;
+import com.wasteofplastic.askyblock.util.VaultHelper;
+
 public class Biomes implements Listener {
     private ASkyBlock plugin;
     private HashMap<UUID,List<BiomeItem>> biomeItems = new HashMap<UUID,List<BiomeItem>>();
@@ -22,7 +28,7 @@ public class Biomes implements Listener {
     /**
      * @param plugin
      */
-    protected Biomes(ASkyBlock plugin) {
+    public Biomes(ASkyBlock plugin) {
 	this.plugin = plugin;
     }
 
@@ -31,7 +37,7 @@ public class Biomes implements Listener {
      * @param player
      * @return custom Inventory object
      */
-    protected Inventory getBiomePanel(Player player) {
+    public Inventory getBiomePanel(Player player) {
 	// Go through the available biomes and check permission
 
 	int slot = 0;
@@ -56,7 +62,7 @@ public class Biomes implements Listener {
 		    // Get cost
 		    double cost = plugin.getConfig().getDouble("biomes." + biomeName + ".cost", Settings.biomeCost);
 		    // Get friendly name
-		    String name = plugin.getConfig().getString("biomes." + biomeName + ".friendlyname", ASkyBlock.prettifyText(biomeName));
+		    String name = plugin.getConfig().getString("biomes." + biomeName + ".friendlyname", Util.prettifyText(biomeName));
 		    // Get description
 		    String description = plugin.getConfig().getString("biomes." + biomeName + ".description", "");
 		    // Get confirmation or not

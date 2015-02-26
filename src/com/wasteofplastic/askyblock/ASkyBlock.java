@@ -65,6 +65,23 @@ import org.bukkit.util.Vector;
 
 import com.wasteofplastic.askyblock.NotSetup.Reason;
 import com.wasteofplastic.askyblock.Settings.GameType;
+import com.wasteofplastic.askyblock.commands.AdminCmd;
+import com.wasteofplastic.askyblock.commands.Challenges;
+import com.wasteofplastic.askyblock.commands.IslandCmd;
+import com.wasteofplastic.askyblock.generators.ChunkGeneratorWorld;
+import com.wasteofplastic.askyblock.listeners.AcidEffect;
+import com.wasteofplastic.askyblock.listeners.AcidInventory;
+import com.wasteofplastic.askyblock.listeners.IslandGuard;
+import com.wasteofplastic.askyblock.listeners.IslandGuardNew;
+import com.wasteofplastic.askyblock.listeners.JoinLeaveEvents;
+import com.wasteofplastic.askyblock.listeners.LavaCheck;
+import com.wasteofplastic.askyblock.listeners.NetherPortals;
+import com.wasteofplastic.askyblock.panels.Biomes;
+import com.wasteofplastic.askyblock.panels.ControlPanel;
+import com.wasteofplastic.askyblock.util.MapUtil;
+import com.wasteofplastic.askyblock.util.Pair;
+import com.wasteofplastic.askyblock.util.Util;
+import com.wasteofplastic.askyblock.util.VaultHelper;
 
 /**
  * @author tastybento
@@ -122,14 +139,14 @@ public class ASkyBlock extends JavaPlugin {
     /**
      * @return ASkyBlock object instance
      */
-    protected static ASkyBlock getPlugin() {
+    public static ASkyBlock getPlugin() {
 	return plugin;
     }
 
     /**
      * @return the challenges
      */
-    protected Challenges getChallenges() {
+    public Challenges getChallenges() {
 	if (challenges == null) {
 	    challenges = new Challenges(this, getPlayers());
 	}
@@ -139,7 +156,7 @@ public class ASkyBlock extends JavaPlugin {
     /**
      * @return the players
      */
-    protected PlayerCache getPlayers() {
+    public PlayerCache getPlayers() {
 	if (players == null) {
 	    players = new PlayerCache(this);
 	}
@@ -152,7 +169,7 @@ public class ASkyBlock extends JavaPlugin {
      * 
      * @return islandWorld - Bukkit World object for the ASkyBlock world
      */
-    protected static World getIslandWorld() {
+    public static World getIslandWorld() {
 	if (acidWorld == null) {
 	    //Bukkit.getLogger().info("DEBUG worldName = " + Settings.worldName);
 	    acidWorld = WorldCreator.name(Settings.worldName).type(WorldType.FLAT).environment(World.Environment.NORMAL)
@@ -215,7 +232,7 @@ public class ASkyBlock extends JavaPlugin {
      * @param player - player name String
      * @param removeBlocks - true to remove the siland blocks
      */
-    protected void deletePlayerIsland(final UUID player, boolean removeBlocks) {
+    public void deletePlayerIsland(final UUID player, boolean removeBlocks) {
 	// Removes the island
 	//getLogger().info("DEBUG: deleting player island");
 	CoopPlay.getInstance().clearAllIslandCoops(player);
@@ -245,46 +262,6 @@ public class ASkyBlock extends JavaPlugin {
 	players.zeroPlayerData(player);
     }
 
-    /**
-     * Displays the Top Ten list if it exists in chat
-     * 
-     * @param player
-     *            - the requesting player
-     * @return - true if successful, false if no Top Ten list exists
-     */
-    protected boolean topTenShow(final Player player) {
-	player.sendMessage(ChatColor.GOLD + Locale.topTenheader);
-	if (topTenList == null) {
-	    topTenCreate();
-	    //player.sendMessage(ChatColor.RED + Locale.topTenerrorNotReady);
-	    //return true;
-	}
-	int i = 1;
-	//getLogger().info("DEBUG: " + topTenList.toString());
-	//getLogger().info("DEBUG: " + topTenList.values());
-	for (Map.Entry<UUID, Integer> m : topTenList.entrySet()) {
-	    final UUID playerUUID = m.getKey();
-	    if (players.inTeam(playerUUID)) {
-		final List<UUID> pMembers = players.getMembers(playerUUID);
-		String memberList = "";
-		for (UUID members : pMembers) {
-		    memberList += players.getName(members) + ", ";
-		}
-		if (memberList.length()>2) {
-		    memberList = memberList.substring(0, memberList.length() - 2);
-		}
-		player.sendMessage(ChatColor.AQUA + "#" + i + ": " + players.getName(playerUUID) + " (" + memberList + ") - " + Locale.levelislandLevel + " "+ m.getValue());
-	    } else {
-		player.sendMessage(ChatColor.AQUA + "#" + i + ": " + players.getName(playerUUID) + " - " + Locale.levelislandLevel + " " + m.getValue());
-	    }
-	    if (i++ == 10) {
-		break;
-	    }
-	}
-	return true;
-    }
-
-
     @Override
     public ChunkGenerator getDefaultWorldGenerator(final String worldName, final String id) {
 	return new ChunkGeneratorWorld();
@@ -295,7 +272,7 @@ public class ASkyBlock extends JavaPlugin {
      * @param s - serialized location in format "world:x:y:z"
      * @return Location
      */
-    static protected Location getLocationString(final String s) {
+    static public Location getLocationString(final String s) {
 	if (s == null || s.trim() == "") {
 	    return null;
 	}
@@ -316,7 +293,7 @@ public class ASkyBlock extends JavaPlugin {
      * @param l
      * @return
      */
-    static protected String getStringLocation(final Location l) {
+    static public String getStringLocation(final Location l) {
 	if (l == null) {
 	    return "";
 	}
@@ -331,7 +308,7 @@ public class ASkyBlock extends JavaPlugin {
      *            PlayerInfo for active player
      * @return Location of a safe teleport spot
      */
-    protected Location getSafeHomeLocation(final UUID p) {
+    public Location getSafeHomeLocation(final UUID p) {
 	//getLogger().info("DEBUG: getSafeHomeLocation called for " + p.toString());
 	// Try home location first
 	Location l = players.getHomeLocation(p);
@@ -482,7 +459,7 @@ public class ASkyBlock extends JavaPlugin {
      * @param player
      * @return
      */
-    protected void homeSet(final Player player) {
+    public void homeSet(final Player player) {
 	// Make a list of test locations and test them
 	Location islandTestLocation = null;
 	if (players.hasIsland(player.getUniqueId())) {
@@ -513,7 +490,7 @@ public class ASkyBlock extends JavaPlugin {
      * @param player
      * @return
      */
-    protected boolean homeTeleport(final Player player) {
+    public boolean homeTeleport(final Player player) {
 	Location home = null;
 	home = getSafeHomeLocation(player.getUniqueId());
 	// Check if the player is a passenger in a boat
@@ -568,7 +545,7 @@ public class ASkyBlock extends JavaPlugin {
      * @param loc
      * @return true if found, otherwise false
      */
-    protected boolean islandAtLocation(final Location loc) {	
+    public boolean islandAtLocation(final Location loc) {	
 	if (loc == null) {
 	    return true;
 	}
@@ -617,14 +594,14 @@ public class ASkyBlock extends JavaPlugin {
     /**
      * @return the newIsland
      */
-    protected boolean isNewIsland() {
+    public boolean isNewIsland() {
 	return newIsland;
     }
 
     /**
      * @param newIsland the newIsland to set
      */
-    protected void setNewIsland(boolean newIsland) {
+    public void setNewIsland(boolean newIsland) {
 	this.newIsland = newIsland;
     }
 
@@ -637,7 +614,7 @@ public class ASkyBlock extends JavaPlugin {
      *            - Location to be checked
      * @return true if safe, otherwise false
      */
-    protected static boolean isSafeLocation(final Location l) {
+    public static boolean isSafeLocation(final Location l) {
 	if (l == null) {
 	    return false;
 	}
@@ -739,7 +716,7 @@ public class ASkyBlock extends JavaPlugin {
      * @param yamlFile
      * @param fileLocation
      */
-    protected static void saveYamlFile(YamlConfiguration yamlFile, String fileLocation) {
+    public static void saveYamlFile(YamlConfiguration yamlFile, String fileLocation) {
 	File dataFolder = plugin.getDataFolder();
 	File file = new File(dataFolder, fileLocation);
 
@@ -751,50 +728,12 @@ public class ASkyBlock extends JavaPlugin {
     }
 
     /**
-     * Loads a YAML file and if it does not exist it is looked for in the JAR
-     * 
-     * @param file
-     * @return
-     */
-    protected static YamlConfiguration loadYamlFile(String file) {
-	File dataFolder = plugin.getDataFolder();
-	File yamlFile = new File(dataFolder, file);
-
-	YamlConfiguration config = null;
-	if (yamlFile.exists()) {
-	    try {
-		config = new YamlConfiguration();
-		config.load(yamlFile);
-	    } catch (Exception e) {
-		e.printStackTrace();
-	    }
-	} else {
-	    // Create the missing file
-	    config = new YamlConfiguration();
-	    getPlugin().getLogger().info("No " + file + " found. Creating it...");
-	    try {
-		if (plugin.getResource(file) != null) {
-		    getPlugin().getLogger().info("Using default found in jar file.");
-		    plugin.saveResource(file, false);
-		    config = new YamlConfiguration();
-		    config.load(yamlFile);
-		} else {
-		    config.save(yamlFile);
-		}
-	    } catch (Exception e) {
-		getPlugin().getLogger().severe("Could not create the " + file + " file!");
-	    }
-	}
-	return config;
-    }
-
-    /**
      * Creates the warp list if it does not exist
      */
-    protected void loadWarpList() {
+    public void loadWarpList() {
 	getLogger().info("Loading warps...");
 	// warpList.clear();
-	welcomeWarps = loadYamlFile("warps.yml");
+	welcomeWarps = Util.loadYamlFile("warps.yml");
 	if (welcomeWarps.getConfigurationSection("warps") == null) {
 	    welcomeWarps.createSection("warps"); // This is only used to create
 	    // the warp.yml file so forgive
@@ -821,7 +760,7 @@ public class ASkyBlock extends JavaPlugin {
     /**
      * Saves the warp lists to file
      */
-    protected void saveWarpList() {
+    public void saveWarpList() {
 	if (warpList == null || welcomeWarps == null) {
 	    return;
 	}
@@ -840,7 +779,7 @@ public class ASkyBlock extends JavaPlugin {
      * @param player
      * @param loc
      */
-    protected boolean addWarp(UUID player, Location loc) {
+    public boolean addWarp(UUID player, Location loc) {
 	final String locS = getStringLocation(loc);
 	// Do not allow warps to be in the same location
 	if (warpList.containsValue(locS)) {
@@ -861,7 +800,7 @@ public class ASkyBlock extends JavaPlugin {
      * 
      * @param uuid
      */
-    protected void removeWarp(UUID uuid) {
+    public void removeWarp(UUID uuid) {
 	if (warpList.containsKey(uuid)) {
 	    popSign(getLocationString((String)warpList.get(uuid)));
 	    warpList.remove(uuid);
@@ -886,7 +825,7 @@ public class ASkyBlock extends JavaPlugin {
      * 
      * @param loc
      */
-    protected void removeWarp(Location loc) {
+    public void removeWarp(Location loc) {
 	final String locS = getStringLocation(loc);
 	getLogger().info("Asked to remove warp at " + locS);
 	popSign(loc);
@@ -923,7 +862,7 @@ public class ASkyBlock extends JavaPlugin {
      * @param loc
      * @return true if this location has a warp sign, false if not
      */
-    protected boolean checkWarp(Location loc) {
+    public boolean checkWarp(Location loc) {
 	final String locS = getStringLocation(loc);
 	if (warpList.containsValue(locS)) {
 	    return true;
@@ -936,7 +875,7 @@ public class ASkyBlock extends JavaPlugin {
      * 
      * @return String set of warps
      */
-    protected Set<UUID> listWarps() {
+    public Set<UUID> listWarps() {
 	//getLogger().info("DEBUG Warp list count = " + warpList.size());
 	return warpList.keySet();
     }
@@ -948,7 +887,7 @@ public class ASkyBlock extends JavaPlugin {
      *            - the warp requested
      * @return Location of warp
      */
-    protected Location getWarp(UUID player) {
+    public Location getWarp(UUID player) {
 	if (warpList.containsKey(player)) {
 	    return getLocationString((String) warpList.get(player));
 	} else {
@@ -959,7 +898,7 @@ public class ASkyBlock extends JavaPlugin {
     /**
      * Loads the various settings from the config.yml file into the plugin
      */
-    protected void loadPluginConfig() {
+    public void loadPluginConfig() {
 	//getLogger().info("*********************************************");
 	try {
 	    getConfig();
@@ -1368,7 +1307,7 @@ public class ASkyBlock extends JavaPlugin {
 
 	// Levels
 	// Get the blockvalues.yml file
-	YamlConfiguration blockValuesConfig = ASkyBlock.loadYamlFile("blockvalues.yml");
+	YamlConfiguration blockValuesConfig = Util.loadYamlFile("blockvalues.yml");
 	Settings.blockLimits = new HashMap<Material,Integer>();
 	if (blockValuesConfig.isSet("limits")) {
 	    for (String material : blockValuesConfig.getConfigurationSection("limits").getKeys(false)) {
@@ -1719,7 +1658,7 @@ public class ASkyBlock extends JavaPlugin {
 	    }
 	    saveWarpList();
 	    saveMessages();
-	    topTenSave();
+	    TopTen.topTenSave();
 	} catch (final Exception e) {
 	    getLogger().severe("Something went wrong saving files!");
 	    e.printStackTrace();
@@ -1851,7 +1790,7 @@ public class ASkyBlock extends JavaPlugin {
 			// load the list - order matters - grid first, then top ten to optimize upgrades
 			// Load grid
 			grid = new GridManager(plugin);
-			topTenLoad();
+			TopTen.topTenLoad();
 			getLogger().info("All files loaded. Ready to play...");
 		    }
 		});
@@ -1915,7 +1854,7 @@ public class ASkyBlock extends JavaPlugin {
      *            - the player who is being checked
      * @return - true if they are on an island they have rights to be on, otherwise false
      */
-    protected boolean playerIsOnIsland(final Player player) {
+    public boolean playerIsOnIsland(final Player player) {
 	// Make a list of test locations and test them
 	Set<Location> islandTestLocations = new HashSet<Location>();
 	if (players.hasIsland(player.getUniqueId())) {
@@ -1957,7 +1896,7 @@ public class ASkyBlock extends JavaPlugin {
      * @param target
      * @return true if they are on the island otherwise false.
      */
-    protected boolean isOnIsland(final Player owner, final Player target) {
+    public boolean isOnIsland(final Player owner, final Player target) {
 	// Get the island location of owner
 	Location islandTestLocation = null;
 	if (players.inTeam(owner.getUniqueId())) {
@@ -2002,7 +1941,7 @@ public class ASkyBlock extends JavaPlugin {
      * @param loc
      * @return
      */
-    protected boolean locationIsOnIsland(final Player player, final Location loc) {
+    public boolean locationIsOnIsland(final Player player, final Location loc) {
 	// Get the player's island from the grid if it exists
 	Island island = grid.getIslandAt(loc);
 	if (island != null) {
@@ -2048,7 +1987,7 @@ public class ASkyBlock extends JavaPlugin {
      * @param loc
      * @return
      */
-    protected Location locationIsOnIsland(final Set<Location> islandTestLocations, final Location loc) {
+    public Location locationIsOnIsland(final Set<Location> islandTestLocations, final Location loc) {
 	// Run through all the locations
 	for (Location islandTestLocation : islandTestLocations) {
 	    if (loc.getWorld().equals(islandTestLocation.getWorld())) {
@@ -2073,7 +2012,7 @@ public class ASkyBlock extends JavaPlugin {
     /**
      * Registers events
      */
-    protected void registerEvents() {
+    public void registerEvents() {
 	final PluginManager manager = getServer().getPluginManager();
 	// Nether portal events
 	manager.registerEvents(new NetherPortals(this), this);
@@ -2114,12 +2053,12 @@ public class ASkyBlock extends JavaPlugin {
 	manager.registerEvents(biomes, this);
     }
 
-    protected void unregisterEvents() {
+    public void unregisterEvents() {
 	HandlerList.unregisterAll(warpSignsListener);
 	HandlerList.unregisterAll(lavaListener);	
     }
 
-    protected void restartEvents() {
+    public void restartEvents() {
 	final PluginManager manager = getServer().getPluginManager();
 	lavaListener = new LavaCheck(this);
 	manager.registerEvents(lavaListener, this);
@@ -2133,7 +2072,7 @@ public class ASkyBlock extends JavaPlugin {
      * 
      * @param l
      */
-    protected void removeMobs(final Location l) {
+    public void removeMobs(final Location l) {
 	final int px = l.getBlockX();
 	final int py = l.getBlockY();
 	final int pz = l.getBlockZ();
@@ -2155,7 +2094,7 @@ public class ASkyBlock extends JavaPlugin {
      * @param loc
      *            - a Location
      */
-    protected void removeMobsFromIsland(final Location loc) {
+    public void removeMobsFromIsland(final Location loc) {
 	//getLogger().info("DEBUG: removeIsland");
 	if (loc != null) {
 	    // Place a temporary entity
@@ -2209,7 +2148,7 @@ public class ASkyBlock extends JavaPlugin {
      * @param newOwner
      * @return
      */
-    protected boolean transferIsland(final UUID oldOwner, final UUID newOwner) {
+    public boolean transferIsland(final UUID oldOwner, final UUID newOwner) {
 	if (players.hasIsland(oldOwner)) {
 	    Location islandLoc = players.getIslandLocation(oldOwner);
 	    players.setHasIsland(newOwner, true);
@@ -2233,142 +2172,12 @@ public class ASkyBlock extends JavaPlugin {
 	return false;
     }
 
-    /**
-     * Loads the top ten from the file system topten.yml. If it does not exist then the top ten is created
-     */
-    protected void topTenLoad() {
-	topTenList.clear();
-	// Check to see if the top ten list exists
-	File topTenFile = new File(getDataFolder(),"topten.yml");
-	if (!topTenFile.exists()) {
-	    getLogger().warning("Top ten file does not exist - creating it. This could take some time with a large number of players");
-	    topTenCreate();
-	    getLogger().warning("Completed top ten creation.");
-	} else {
-	    // Load the top ten
-	    YamlConfiguration topTenConfig = loadYamlFile("topten.yml");
-	    // Load the values
-	    if (topTenConfig.isSet("topten")) {
-		for (String playerUUID : topTenConfig.getConfigurationSection("topten").getKeys(false)) {
-		    //getLogger().info(playerUUID);
-		    try {
-			UUID uuid = UUID.fromString(playerUUID);
-			//getLogger().info(uuid.toString());
-			int level = topTenConfig.getInt("topten." + playerUUID);
-			//getLogger().info("Level = " + level);
-			topTenAddEntry(uuid, level);
-		    } catch (Exception e) {
-			e.printStackTrace();
-			getLogger().severe("Problem loading top ten list - recreating - this may take some time");
-			topTenCreate();
-		    }
-		}
-	    }
-	}
-    }
 
-    /**
-     * Adds a player to the top ten, if the level is good enough
-     * @param ownerUUID
-     * @param level
-     */
-    protected void topTenAddEntry(UUID ownerUUID, int level) {
-	// Special case for removals
-	if (level <1 ) {
-	    if (topTenList.containsKey(ownerUUID)) {
-		topTenList.remove(ownerUUID);
-	    }
-	    return;
-	}
-	// Only keep the top 20
-	topTenList.put(ownerUUID, level);
-	topTenList = MapUtil.sortByValue(topTenList);
-	//getLogger().info("DEBUG: +" + level + ": " + topTenList.values().toString());
-    }
-
-    /**
-     * Removes ownerUUID from the top ten list
-     * @param ownerUUID
-     */
-    protected void topTenRemoveEntry(UUID ownerUUID) {
-	topTenList.remove(ownerUUID);
-    }
-    /**
-     * Generates a sorted map of islands for the Top Ten list from all player files
-     */
-    protected void topTenCreate() {
-	// This map is a list of owner and island level
-	YamlConfiguration player = new YamlConfiguration();
-	int index = 1;
-	for (final File f : playersFolder.listFiles()) {
-	    // Need to remove the .yml suffix
-	    String fileName = f.getName();
-	    if (fileName.endsWith(".yml")) {
-		try {
-		    String playerUUIDString = fileName.substring(0, fileName.length() - 4);
-		    final UUID playerUUID = UUID.fromString(playerUUIDString);
-		    if (playerUUID == null) {
-			getLogger().warning("Player file contains erroneous UUID data.");
-			getLogger().info("Looking at " + playerUUIDString);
-		    }
-		    player.load(f);
-		    index++;
-		    if (index%1000 == 0) {
-			getLogger().info("Processed " + index + " players");
-		    }
-		    //Players player = new Players(this, playerUUID);
-		    int islandLevel = player.getInt("islandLevel",0);
-		    String teamLeaderUUID = player.getString("teamLeader","");
-		    if (islandLevel > 0) {
-			if (!player.getBoolean("hasTeam")) {
-			    topTenAddEntry(playerUUID, islandLevel);
-			} else if (!teamLeaderUUID.isEmpty()) {
-			    if (teamLeaderUUID.equals(playerUUIDString)) {
-				topTenAddEntry(playerUUID, islandLevel);
-			    }
-			}
-		    }
-		} catch (Exception e) {
-		    e.printStackTrace();
-		}
-	    }
-	}
-	getLogger().info("Processed " + index + " players");
-	// Save the top ten
-	topTenSave();
-    }
-
-    protected void topTenSave() {
-	if (topTenList == null) {
-	    return;
-	}
-	getLogger().info("Saving top ten list");
-	// Make file
-	File topTenFile = new File(getDataFolder(),"topten.yml");
-	// Make configuration
-	YamlConfiguration config = new YamlConfiguration();
-	// Save config
-
-	int rank = 0;
-	for (Map.Entry<UUID,Integer> m : topTenList.entrySet()) {
-	    if (rank++ == 10) {
-		break;
-	    }
-	    config.set("topten." + m.getKey().toString(), m.getValue());
-	}
-	try {
-	    config.save(topTenFile);
-	    getLogger().info("Saved top ten list");
-	} catch (Exception e) {
-	    getLogger().severe("Could not save top ten list!");
-	    e.printStackTrace();
-	}
-    }
 
     /**
      * Saves the challenge.yml file if it does not exist
      */
-    protected void saveDefaultChallengeConfig() {
+    public void saveDefaultChallengeConfig() {
 	if (challengeConfigFile == null) {
 	    challengeConfigFile = new File(getDataFolder(), "challenges.yml");
 	}
@@ -2380,7 +2189,7 @@ public class ASkyBlock extends JavaPlugin {
     /**
      * Reloads the challenge config file
      */
-    protected void reloadChallengeConfig() {
+    public void reloadChallengeConfig() {
 	if (challengeConfigFile == null) {
 	    challengeConfigFile = new File(getDataFolder(), "challenges.yml");
 	}
@@ -2399,7 +2208,7 @@ public class ASkyBlock extends JavaPlugin {
     /**
      * @return challenges FileConfiguration object
      */
-    protected FileConfiguration getChallengeConfig() {
+    public FileConfiguration getChallengeConfig() {
 	if (challengeFile == null) {
 	    reloadChallengeConfig();
 	}
@@ -2409,7 +2218,7 @@ public class ASkyBlock extends JavaPlugin {
     /**
      * Saves challenges.yml
      */
-    protected void saveChallengeConfig() {
+    public void saveChallengeConfig() {
 	if (challengeFile == null || challengeConfigFile == null) {
 	    return;
 	}
@@ -2424,7 +2233,7 @@ public class ASkyBlock extends JavaPlugin {
     /**
      * Saves the locale.yml file if it does not exist
      */
-    protected void saveDefaultLocale() {
+    public void saveDefaultLocale() {
 	if (localeFile == null) {
 	    localeFile = new File(getDataFolder(), "locale.yml");
 	}
@@ -2436,7 +2245,7 @@ public class ASkyBlock extends JavaPlugin {
     /**
      * Reloads the locale file
      */
-    protected void reloadLocale() {
+    public void reloadLocale() {
 	if (localeFile == null) {
 	    localeFile = new File(getDataFolder(), "locale.yml");
 	}
@@ -2453,7 +2262,7 @@ public class ASkyBlock extends JavaPlugin {
     /**
      * @return locale FileConfiguration object
      */
-    protected FileConfiguration getLocale() {
+    public FileConfiguration getLocale() {
 	if (locale == null) {
 	    reloadLocale();
 	}
@@ -2463,7 +2272,7 @@ public class ASkyBlock extends JavaPlugin {
     /**
      * Saves challenges.yml
      */
-    protected void saveLocale() {
+    public void saveLocale() {
 	if (locale == null || localeFile == null) {
 	    return;
 	}
@@ -2479,7 +2288,7 @@ public class ASkyBlock extends JavaPlugin {
      * @param playerUUID
      * @param message
      */
-    protected void tellOfflineTeam(UUID playerUUID, String message) {
+    public void tellOfflineTeam(UUID playerUUID, String message) {
 	//getLogger().info("DEBUG: tell offline team called");
 	if (!players.inTeam(playerUUID)) {
 	    //getLogger().info("DEBUG: player is not in a team");
@@ -2501,7 +2310,7 @@ public class ASkyBlock extends JavaPlugin {
      * @param playerUUID
      * @param message
      */
-    protected void tellTeam(UUID playerUUID, String message) {
+    public void tellTeam(UUID playerUUID, String message) {
 	//getLogger().info("DEBUG: tell offline team called");
 	if (!players.inTeam(playerUUID)) {
 	    //getLogger().info("DEBUG: player is not in a team");
@@ -2523,7 +2332,7 @@ public class ASkyBlock extends JavaPlugin {
      * @param message
      * @return true if player is offline, false if online
      */
-    protected boolean setMessage(UUID playerUUID, String message) {
+    public boolean setMessage(UUID playerUUID, String message) {
 	//getLogger().info("DEBUG: received message - " + message);
 	Player player = getServer().getPlayer(playerUUID);
 	// Check if player is online
@@ -2550,7 +2359,7 @@ public class ASkyBlock extends JavaPlugin {
      * @param playerUUID
      * @return
      */
-    protected List<String> getMessages(UUID playerUUID) {
+    public List<String> getMessages(UUID playerUUID) {
 	List<String> playerMessages = messages.get(playerUUID);
 	return playerMessages;
     }
@@ -2559,11 +2368,11 @@ public class ASkyBlock extends JavaPlugin {
      * Clears any messages for player
      * @param playerUUID
      */
-    protected void clearMessages(UUID playerUUID) {
+    public void clearMessages(UUID playerUUID) {
 	messages.remove(playerUUID);
     }
 
-    protected void saveMessages() {
+    public void saveMessages() {
 	if (messageStore == null) {
 	    return;
 	}
@@ -2584,10 +2393,10 @@ public class ASkyBlock extends JavaPlugin {
 	}
     }
 
-    protected boolean loadMessages() {
+    public boolean loadMessages() {
 	getLogger().info("Loading offline messages...");
 	try {
-	    messageStore = loadYamlFile("messages.yml");
+	    messageStore = Util.loadYamlFile("messages.yml");
 	    if (messageStore.getConfigurationSection("messages") == null) {
 		messageStore.createSection("messages"); // This is only used to create
 	    }
@@ -2606,83 +2415,10 @@ public class ASkyBlock extends JavaPlugin {
     }
 
     /**
-     * Converts a name like IRON_INGOT into Iron Ingot to improve readability
-     * 
-     * @param ugly
-     *            The string such as IRON_INGOT
-     * @return A nicer version, such as Iron Ingot
-     * 
-     *         Credits to mikenon on GitHub!
-     */
-    protected static String prettifyText(String ugly) {
-	if (!ugly.contains("_") && (!ugly.equals(ugly.toUpperCase())))
-	    return ugly;
-	String fin = "";
-	ugly = ugly.toLowerCase();
-	if (ugly.contains("_")) {
-	    String[] splt = ugly.split("_");
-	    int i = 0;
-	    for (String s : splt) {
-		i += 1;
-		fin += Character.toUpperCase(s.charAt(0)) + s.substring(1);
-		if (i < splt.length)
-		    fin += " ";
-	    }
-	} else {
-	    fin += Character.toUpperCase(ugly.charAt(0)) + ugly.substring(1);
-	}
-	return fin;
-    }
-
-    /**
-     * Converts block face direction to radial degrees. Returns 0 if block face is not radial.
-     * @param face
-     * @return degrees
-     */
-    protected static float blockFaceToFloat(BlockFace face) {
-	switch (face) {
-	case EAST:
-	    return 90F;
-	case EAST_NORTH_EAST:
-	    return 67.5F;
-	case EAST_SOUTH_EAST:
-	    return 0F;
-	case NORTH:
-	    return 0F;
-	case NORTH_EAST:
-	    return 45F;
-	case NORTH_NORTH_EAST:
-	    return 22.5F;
-	case NORTH_NORTH_WEST:
-	    return 337.5F;
-	case NORTH_WEST:
-	    return 315F;
-	case SOUTH:
-	    return 180F;
-	case SOUTH_EAST:
-	    return 135F;
-	case SOUTH_SOUTH_EAST:
-	    return 157.5F;
-	case SOUTH_SOUTH_WEST:
-	    return 202.5F;
-	case SOUTH_WEST:
-	    return 225F;
-	case WEST:
-	    return 270F;
-	case WEST_NORTH_WEST:
-	    return 292.5F;
-	case WEST_SOUTH_WEST:
-	    return 247.5F;
-	default:
-	    return 0F;	
-	}
-    }
-
-    /**
      * Resets a player's inventory, armor slots, equipment, enderchest and potion effects
      * @param player
      */
-    protected void resetPlayer(Player player) {
+    public void resetPlayer(Player player) {
 	//getLogger().info("DEBUG: clear inventory = " + Settings.clearInventory);
 	if (Settings.clearInventory && (player.getWorld().getName().equalsIgnoreCase(Settings.worldName)
 		|| player.getWorld().getName().equalsIgnoreCase(Settings.worldName + "_nether"))) {
@@ -2704,7 +2440,7 @@ public class ASkyBlock extends JavaPlugin {
 	// Reset the island level
 	players.setIslandLevel(player.getUniqueId(), 0);
 	players.save(player.getUniqueId());
-	topTenAddEntry(player.getUniqueId(),0);
+	TopTen.topTenAddEntry(player.getUniqueId(),0);
 	// Update the inventory
 	player.updateInventory();
 	if (Settings.resetEnderChest) {
@@ -2721,7 +2457,7 @@ public class ASkyBlock extends JavaPlugin {
      * @param location
      * @return Name of warp owner
      */
-    protected String getWarpOwner(Location location) {
+    public String getWarpOwner(Location location) {
 	for (UUID playerUUID : warpList.keySet()) {
 	    Location l = getLocationString((String) warpList.get(playerUUID));
 	    if (l.equals(location)) {
@@ -2736,7 +2472,7 @@ public class ASkyBlock extends JavaPlugin {
      * Used to prevent teleporting when falling
      * @param uniqueId
      */
-    protected void setFalling(UUID uniqueId) {
+    public void setFalling(UUID uniqueId) {
 	this.fallingPlayers.add(uniqueId);
     }
 
@@ -2744,7 +2480,7 @@ public class ASkyBlock extends JavaPlugin {
      * Used to prevent teleporting when falling
      * @param uniqueId
      */
-    protected void unsetFalling(UUID uniqueId) {
+    public void unsetFalling(UUID uniqueId) {
 	//getLogger().info("DEBUG: unset falling");
 	this.fallingPlayers.remove(uniqueId);
     }
@@ -2754,7 +2490,7 @@ public class ASkyBlock extends JavaPlugin {
      * @param uniqueId
      * @return true or false
      */
-    protected boolean isFalling(UUID uniqueId) {
+    public boolean isFalling(UUID uniqueId) {
 	return this.fallingPlayers.contains(uniqueId);
     }
 
@@ -2763,7 +2499,7 @@ public class ASkyBlock extends JavaPlugin {
      * @param islandLoc
      * @param biomeType
      */
-    protected boolean setIslandBiome(Location islandLoc, Biome biomeType) {
+    public boolean setIslandBiome(Location islandLoc, Biome biomeType) {
 	final int islandX = islandLoc.getBlockX();
 	final int islandZ = islandLoc.getBlockZ();
 	final World world = islandLoc.getWorld();
@@ -2957,7 +2693,7 @@ public class ASkyBlock extends JavaPlugin {
     /**
      * @return the biomes
      */
-    protected Biomes getBiomes() {
+    public Biomes getBiomes() {
 	return biomes;
     }
 
@@ -2966,7 +2702,7 @@ public class ASkyBlock extends JavaPlugin {
      * @param location
      * @return
      */
-    protected Location getClosestIsland(Location location) {
+    public Location getClosestIsland(Location location) {
 	long x = Math.round((double)location.getBlockX() / Settings.islandDistance) * Settings.islandDistance + Settings.islandXOffset;
 	long z = Math.round((double)location.getBlockZ() / Settings.islandDistance) * Settings.islandDistance + Settings.islandZOffset;
 	long y = Settings.island_level;
@@ -2997,7 +2733,7 @@ public class ASkyBlock extends JavaPlugin {
     /**
      * @return the updateCheck
      */
-    protected Update getUpdateCheck() {
+    public Update getUpdateCheck() {
 	return updateCheck;
     }
 

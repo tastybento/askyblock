@@ -14,7 +14,7 @@
  *     along with ASkyBlock.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
 
-package com.wasteofplastic.askyblock;
+package com.wasteofplastic.askyblock.generators;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,6 +26,8 @@ import org.bukkit.World.Environment;
 import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.util.noise.PerlinOctaveGenerator;
+
+import com.wasteofplastic.askyblock.Settings;
 
 /**
  * @author tastybento

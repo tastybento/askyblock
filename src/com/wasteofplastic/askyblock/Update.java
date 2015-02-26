@@ -146,42 +146,42 @@ public class Update {
     /**
      * @return the versionName
      */
-    protected String getVersionName() {
+    public String getVersionName() {
         return versionName;
     }
 
     /**
      * @return the versionLink
      */
-    protected String getVersionLink() {
+    public String getVersionLink() {
         return versionLink;
     }
 
     /**
      * @return the versionType
      */
-    protected String getVersionType() {
+    public String getVersionType() {
         return versionType;
     }
 
     /**
      * @return the versionFileName
      */
-    protected String getVersionFileName() {
+    public String getVersionFileName() {
         return versionFileName;
     }
 
     /**
      * @return the versionGameVersion
      */
-    protected String getVersionGameVersion() {
+    public String getVersionGameVersion() {
         return versionGameVersion;
     }
 
     /**
      * @return the success
      */
-    protected boolean isSuccess() {
+    public boolean isSuccess() {
         return success;
     }
 }

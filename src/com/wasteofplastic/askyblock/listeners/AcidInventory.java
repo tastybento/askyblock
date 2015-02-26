@@ -15,7 +15,7 @@
  *     along with ASkyBlock.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
 
-package com.wasteofplastic.askyblock;
+package com.wasteofplastic.askyblock.listeners;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,6 +38,10 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.BlockIterator;
 
+import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.Locale;
+import com.wasteofplastic.askyblock.Settings;
+
 /**
  * @author tastybento
  * This listener will check to see if a player has a water bucket and if so change it to acid bucket
@@ -47,7 +51,7 @@ public class AcidInventory implements Listener {
     private final ASkyBlock plugin;
     private ArrayList<String> lore = new ArrayList<String>(Arrays.asList(Locale.acidLore.split("\n")));
 
-    protected AcidInventory(ASkyBlock aSkyBlock) {
+    public AcidInventory(ASkyBlock aSkyBlock) {
 	plugin = aSkyBlock;
     }
 

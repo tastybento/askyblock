@@ -14,7 +14,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with ASkyBlock.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-package com.wasteofplastic.askyblock;
+package com.wasteofplastic.askyblock.commands;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -44,12 +44,26 @@ import org.bukkit.block.Sign;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.DirectionalContainer;
 import org.bukkit.scheduler.BukkitTask;
+
+import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.CoopPlay;
+import com.wasteofplastic.askyblock.DeleteIslandChunk;
+import com.wasteofplastic.askyblock.Island;
+import com.wasteofplastic.askyblock.LevelCalc;
+import com.wasteofplastic.askyblock.Locale;
+import com.wasteofplastic.askyblock.Settings;
+import com.wasteofplastic.askyblock.TopTen;
+import com.wasteofplastic.askyblock.Settings.GameType;
+import com.wasteofplastic.askyblock.panels.ControlPanel;
+import com.wasteofplastic.askyblock.panels.SettingsPanel;
+import com.wasteofplastic.askyblock.schematics.Schematic;
+import com.wasteofplastic.askyblock.util.Util;
+import com.wasteofplastic.askyblock.util.VaultHelper;
 
 public class IslandCmd implements CommandExecutor {
     public boolean levelCalcFreeFlag = true;
@@ -79,7 +93,7 @@ public class IslandCmd implements CommandExecutor {
      * @param aSkyBlock
      * @param players 
      */
-    protected IslandCmd(ASkyBlock aSkyBlock) {
+    public IslandCmd(ASkyBlock aSkyBlock) {
 	// Plugin instance
 	this.plugin = aSkyBlock;
 	// Get the next island spot
@@ -124,7 +138,7 @@ public class IslandCmd implements CommandExecutor {
      * @param teamLeader
      * @return
      */
-    protected boolean addPlayertoTeam(final UUID playerUUID, final UUID teamLeader) {
+    public boolean addPlayertoTeam(final UUID playerUUID, final UUID teamLeader) {
 	// Only add online players
 	/*
 	if (!plugin.getServer().getPlayer(playerUUID).isOnline() || !plugin.getServer().getPlayer(teamLeader).isOnline()) {
@@ -169,7 +183,7 @@ public class IslandCmd implements CommandExecutor {
      * @param player
      * @param teamleader
      */
-    protected void removePlayerFromTeam(final UUID player, final UUID teamleader) {
+    public void removePlayerFromTeam(final UUID player, final UUID teamleader) {
 	// Remove player from the team
 	plugin.getPlayers().removeMember(teamleader,player);
 	// If player is online
@@ -561,7 +575,7 @@ public class IslandCmd implements CommandExecutor {
      * @param targetPlayer - UUID of the player's island that is being requested
      * @return - true if successful.
      */
-    protected boolean calculateIslandLevel(final Player asker, final UUID targetPlayer) {
+    public boolean calculateIslandLevel(final Player asker, final UUID targetPlayer) {
 	if (plugin.isCalculatingLevel()) {
 	    asker.sendMessage(ChatColor.RED + Locale.islanderrorLevelNotReady);
 	    return false;
@@ -592,7 +606,7 @@ public class IslandCmd implements CommandExecutor {
      * @param value
      * @return
      */
-    protected static <T, E> T getKeyByValue(Map<T, E> map, E value) {
+    public static <T, E> T getKeyByValue(Map<T, E> map, E value) {
 	for (Entry<T, E> entry : map.entrySet()) {
 	    if (value.equals(entry.getValue())) {
 		return entry.getKey();
@@ -1011,7 +1025,7 @@ public class IslandCmd implements CommandExecutor {
 			return true;
 		    }
 		    //player.sendMessage(Locale.helpColor + "[Biomes]");
-		    Inventory inv = plugin.biomes.getBiomePanel(player);
+		    Inventory inv = plugin.getBiomes().getBiomePanel(player);
 		    if (inv != null) {
 			player.openInventory(inv);
 		    }
@@ -1036,7 +1050,7 @@ public class IslandCmd implements CommandExecutor {
 		return true;
 	    } else if (split[0].equalsIgnoreCase("top")) {
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.topten")) {
-		    plugin.topTenShow(player);
+		    TopTen.topTenShow(player);
 		    return true;
 		}
 		return false;
@@ -1263,7 +1277,7 @@ public class IslandCmd implements CommandExecutor {
 				Location inFront = b.getRelative(directionFacing).getLocation();
 				if ((ASkyBlock.isSafeLocation(inFront))) {
 				    // convert blockface to angle
-				    float yaw = ASkyBlock.blockFaceToFloat(directionFacing);
+				    float yaw = Util.blockFaceToFloat(directionFacing);
 				    final Location actualWarp = new Location(inFront.getWorld(), inFront.getBlockX() + 0.5D, inFront.getBlockY(),
 					    inFront.getBlockZ() + 0.5D, yaw, 30F);
 				    player.teleport(actualWarp);
@@ -1621,7 +1635,7 @@ public class IslandCmd implements CommandExecutor {
 				// Reset the island level
 				plugin.getPlayers().setIslandLevel(target.getUniqueId(), 0);
 				plugin.getPlayers().save(target.getUniqueId());
-				plugin.topTenAddEntry(playerUUID,0);
+				TopTen.topTenAddEntry(playerUUID,0);
 				// Update the inventory
 				target.updateInventory();
 			    }
@@ -1750,7 +1764,7 @@ public class IslandCmd implements CommandExecutor {
      * @param player
      * @return
      */
-    protected boolean onRestartWaitTime(final Player player) {
+    public boolean onRestartWaitTime(final Player player) {
 	if (resetWaitTime.containsKey(player.getUniqueId())) {
 	    if (resetWaitTime.get(player.getUniqueId()).longValue() > Calendar.getInstance().getTimeInMillis()) {
 		return true;
@@ -1761,7 +1775,7 @@ public class IslandCmd implements CommandExecutor {
 
 	return false;
     }
-    protected boolean onLevelWaitTime(final Player player) {
+    public boolean onLevelWaitTime(final Player player) {
 	if (levelWaitTime.containsKey(player.getUniqueId())) {
 	    if (levelWaitTime.get(player.getUniqueId()).longValue() > Calendar.getInstance().getTimeInMillis()) {
 		return true;
