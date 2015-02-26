@@ -53,12 +53,16 @@ import org.bukkit.scheduler.BukkitTask;
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.CoopPlay;
 import com.wasteofplastic.askyblock.DeleteIslandChunk;
+import com.wasteofplastic.askyblock.GridManager;
 import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.LevelCalc;
 import com.wasteofplastic.askyblock.Locale;
+import com.wasteofplastic.askyblock.Messages;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.TopTen;
-import com.wasteofplastic.askyblock.Settings.GameType;
+import com.wasteofplastic.askyblock.WarpSigns;
+import com.wasteofplastic.askyblock.listeners.IslandGuard;
+import com.wasteofplastic.askyblock.panels.Biomes;
 import com.wasteofplastic.askyblock.panels.ControlPanel;
 import com.wasteofplastic.askyblock.panels.SettingsPanel;
 import com.wasteofplastic.askyblock.schematics.Schematic;
@@ -227,7 +231,7 @@ public class IslandCmd implements CommandExecutor {
 	plugin.getGrid().addIsland(next.getBlockX(), next.getBlockZ(), playerUUID);
 	//plugin.getLogger().info("DEBUG: player island location is " + plugin.getPlayers().getIslandLocation(playerUUID).toString());
 	// Teleport the player to a safe place
-	//plugin.homeTeleport(player);
+	//plugin.getGrid().homeTeleport(player);
 	plugin.getPlayers().save(playerUUID);
 	// Remove any mobs if they just so happen to be around in the
 	// vicinity
@@ -263,7 +267,7 @@ public class IslandCmd implements CommandExecutor {
 	}
 	Location next = last.clone();
 
-	while (plugin.islandAtLocation(next)) {
+	while (plugin.getGrid().islandAtLocation(next)) {
 	    next = nextGridLocation(next);
 	}
 	// Make the last next, last
@@ -655,12 +659,12 @@ public class IslandCmd implements CommandExecutor {
 		// Create new island for player
 		player.sendMessage(ChatColor.GREEN + Locale.islandnew);
 		final Location cowSpot = newIsland(sender);
-		plugin.homeTeleport(player);
+		plugin.getGrid().homeTeleport(player);
 		plugin.resetPlayer(player);
 		if (Settings.resetMoney) {
 		    resetMoney(player);
 		}
-		plugin.setIslandBiome(plugin.getPlayers().getIslandLocation(playerUUID), Settings.defaultBiome);
+		plugin.getBiomes().setIslandBiome(plugin.getPlayers().getIslandLocation(playerUUID), Settings.defaultBiome);
 		//plugin.getLogger().info("Spawning cow at " + cowSpot.toString());
 		if (Settings.islandCompanion != null) {
 		    plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable () {
@@ -693,12 +697,12 @@ public class IslandCmd implements CommandExecutor {
 		    player.performCommand(Settings.ISLANDCOMMAND + " cp");
 		} else {
 		    if (!player.getWorld().getName().equalsIgnoreCase(Settings.worldName) 
-			    || Settings.allowTeleportWhenFalling || !plugin.isFalling(playerUUID)
+			    || Settings.allowTeleportWhenFalling || !IslandGuard.isFalling(playerUUID)
 			    || (player.isOp() && !Settings.damageOps)) {
 			// Teleport home
-			plugin.homeTeleport(player);
+			plugin.getGrid().homeTeleport(player);
 			if (Settings.islandRemoveMobs) {
-			    plugin.removeMobs(player.getLocation());
+			    plugin.getGrid().removeMobs(player.getLocation());
 			}
 		    } else {
 			player.sendMessage(ChatColor.RED + Locale.errorCommandNotReady);
@@ -727,13 +731,13 @@ public class IslandCmd implements CommandExecutor {
 		} else {
 		    if (!island.isLocked()) {
 			player.sendMessage(ChatColor.GREEN + Locale.lockLocking);
-			plugin.tellOfflineTeam(playerUUID,Locale.lockPlayerLocked.replace("[name]", player.getDisplayName()));
-			plugin.tellTeam(playerUUID,Locale.lockPlayerLocked.replace("[name]", player.getDisplayName()));
+			Messages.tellOfflineTeam(playerUUID,Locale.lockPlayerLocked.replace("[name]", player.getDisplayName()));
+			Messages.tellTeam(playerUUID,Locale.lockPlayerLocked.replace("[name]", player.getDisplayName()));
 			island.setLocked(true);
 		    } else {
 			player.sendMessage(ChatColor.GREEN + Locale.lockUnlocking);
-			plugin.tellOfflineTeam(playerUUID,Locale.lockPlayerUnlocked.replace("[name]", player.getDisplayName()));
-			plugin.tellTeam(playerUUID,Locale.lockPlayerUnlocked.replace("[name]", player.getDisplayName()));
+			Messages.tellOfflineTeam(playerUUID,Locale.lockPlayerUnlocked.replace("[name]", player.getDisplayName()));
+			Messages.tellTeam(playerUUID,Locale.lockPlayerUnlocked.replace("[name]", player.getDisplayName()));
 			island.setLocked(false);
 		    }
 		    return true;
@@ -745,9 +749,9 @@ public class IslandCmd implements CommandExecutor {
 		    return true;
 		}
 		// Teleport home
-		plugin.homeTeleport(player);
+		plugin.getGrid().homeTeleport(player);
 		if (Settings.islandRemoveMobs) {
-		    plugin.removeMobs(player.getLocation());
+		    plugin.getGrid().removeMobs(player.getLocation());
 		}
 		return true;
 	    } else if (split[0].equalsIgnoreCase("about")) {
@@ -817,10 +821,10 @@ public class IslandCmd implements CommandExecutor {
 	    } else if (split[0].equalsIgnoreCase("warps")) {
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.warp")) {
 		    // Step through warp table
-		    Set<UUID> warpList = plugin.listWarps();
+		    Set<UUID> warpList = WarpSigns.listWarps();
 		    if (warpList.isEmpty()) {
 			player.sendMessage(ChatColor.YELLOW + Locale.warpserrorNoWarpsYet);
-			if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.addwarp") && plugin.playerIsOnIsland(player)) {
+			if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.addwarp") && plugin.getGrid().playerIsOnIsland(player)) {
 			    player.sendMessage(ChatColor.YELLOW + Locale.warpswarpTip);
 			}
 			return true;
@@ -908,12 +912,12 @@ public class IslandCmd implements CommandExecutor {
 		    //plugin.unregisterEvents();		
 		    final Location cowSpot = newIsland(sender);
 		    plugin.getPlayers().setHomeLocation(playerUUID, null);
-		    plugin.homeTeleport(player);
+		    plugin.getGrid().homeTeleport(player);
 		    plugin.resetPlayer(player);
 		    if (Settings.resetMoney) {
 			resetMoney(player);
 		    }
-		    plugin.setIslandBiome(plugin.getPlayers().getIslandLocation(playerUUID), Settings.defaultBiome);
+		    plugin.getBiomes().setIslandBiome(plugin.getPlayers().getIslandLocation(playerUUID), Settings.defaultBiome);
 		    if (Settings.islandCompanion != null) {
 			plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable () {
 			    @Override
@@ -924,7 +928,7 @@ public class IslandCmd implements CommandExecutor {
 			}, 40L);
 		    }
 		    setResetWaitTime(player);
-		    plugin.removeWarp(playerUUID);
+		    WarpSigns.removeWarp(playerUUID);
 		    if (oldIsland != null) {
 			// Remove any coops
 			CoopPlay.getInstance().clearAllIslandCoops(oldIsland);
@@ -940,7 +944,7 @@ public class IslandCmd implements CommandExecutor {
 		}
 	    } else if (split[0].equalsIgnoreCase("sethome")) {
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.sethome")) {
-		    plugin.homeSet(player);
+		    plugin.getGrid().homeSet(player);
 		    return true;
 		}
 		return false;
@@ -1020,12 +1024,12 @@ public class IslandCmd implements CommandExecutor {
 			player.sendMessage(ChatColor.RED + Locale.errorNoIsland);
 			return true;
 		    }
-		    if (!plugin.playerIsOnIsland(player)) {
+		    if (!plugin.getGrid().playerIsOnIsland(player)) {
 			player.sendMessage(ChatColor.RED + Locale.challengeserrorNotOnIsland);
 			return true;
 		    }
 		    //player.sendMessage(Locale.helpColor + "[Biomes]");
-		    Inventory inv = plugin.getBiomes().getBiomePanel(player);
+		    Inventory inv = Biomes.getBiomePanel(player);
 		    if (inv != null) {
 			player.openInventory(inv);
 		    }
@@ -1056,7 +1060,7 @@ public class IslandCmd implements CommandExecutor {
 		return false;
 	    } else if (split[0].equalsIgnoreCase("level")) {
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.info")) {
-		    if (plugin.playerIsOnIsland(player)) {
+		    if (plugin.getGrid().playerIsOnIsland(player)) {
 			if (!plugin.getPlayers().inTeam(playerUUID) && !plugin.getPlayers().hasIsland(playerUUID)) {
 			    player.sendMessage(ChatColor.RED + Locale.errorNoIsland);
 			} else {
@@ -1120,7 +1124,7 @@ public class IslandCmd implements CommandExecutor {
 			} 
 			setResetWaitTime(player);
 
-			plugin.homeTeleport(player);
+			plugin.getGrid().homeTeleport(player);
 			plugin.resetPlayer(player);
 			player.sendMessage(ChatColor.GREEN + Locale.inviteyouHaveJoinedAnIsland);
 			if (Bukkit.getPlayer(inviteList.get(playerUUID)) != null) {
@@ -1173,14 +1177,14 @@ public class IslandCmd implements CommandExecutor {
 			    // Remove from team
 			    removePlayerFromTeam(playerUUID, teamLeader);
 			    // Remove any warps
-			    plugin.removeWarp(playerUUID);
+			    WarpSigns.removeWarp(playerUUID);
 			    player.sendMessage(ChatColor.YELLOW + Locale.leaveyouHaveLeftTheIsland);
 			    // Tell the leader if they are online
 			    if (plugin.getServer().getPlayer(teamLeader) != null) {
 				plugin.getServer().getPlayer(teamLeader).sendMessage(ChatColor.RED + Locale.leavenameHasLeftYourIsland.replace("[name]",player.getName()));
 			    } else {
 				// Leave them a message
-				plugin.setMessage(teamLeader, ChatColor.RED + Locale.leavenameHasLeftYourIsland.replace("[name]",player.getName()));
+				Messages.setMessage(teamLeader, ChatColor.RED + Locale.leavenameHasLeftYourIsland.replace("[name]",player.getName()));
 			    }
 			    // Check if the size of the team is now 1
 			    //teamMembers.remove(playerUUID);
@@ -1240,7 +1244,7 @@ public class IslandCmd implements CommandExecutor {
 	    if (split[0].equalsIgnoreCase("warp")) {
 		// Warp somewhere command
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.warp")) {
-		    final Set<UUID> warpList = plugin.listWarps();
+		    final Set<UUID> warpList = WarpSigns.listWarps();
 		    if (warpList.isEmpty()) {
 			player.sendMessage(ChatColor.YELLOW + Locale.warpserrorNoWarpsYet);
 			if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.addwarp")) {
@@ -1261,7 +1265,7 @@ public class IslandCmd implements CommandExecutor {
 			    return true;
 			} else {
 			    // Warp exists!
-			    final Location warpSpot = plugin.getWarp(foundWarp);
+			    final Location warpSpot = WarpSigns.getWarp(foundWarp);
 			    // Check if the warp spot is safe
 			    if (warpSpot == null) {
 				player.sendMessage(ChatColor.RED + Locale.warpserrorNotReadyYet);
@@ -1275,7 +1279,7 @@ public class IslandCmd implements CommandExecutor {
 				org.bukkit.material.Sign s = (org.bukkit.material.Sign)sign.getData();
 				BlockFace directionFacing = s.getFacing();
 				Location inFront = b.getRelative(directionFacing).getLocation();
-				if ((ASkyBlock.isSafeLocation(inFront))) {
+				if ((GridManager.isSafeLocation(inFront))) {
 				    // convert blockface to angle
 				    float yaw = Util.blockFaceToFloat(directionFacing);
 				    final Location actualWarp = new Location(inFront.getWorld(), inFront.getBlockX() + 0.5D, inFront.getBlockY(),
@@ -1291,10 +1295,10 @@ public class IslandCmd implements CommandExecutor {
 			    } else {
 				// Warp has been removed
 				player.sendMessage(ChatColor.RED + "Sorry, that warp is no longer active.");
-				plugin.removeWarp(warpSpot);
+				WarpSigns.removeWarp(warpSpot);
 				return true;
 			    }
-			    if (!(ASkyBlock.isSafeLocation(warpSpot))) {
+			    if (!(GridManager.isSafeLocation(warpSpot))) {
 				player.sendMessage(ChatColor.RED + Locale.warpserrorNotSafe);
 				plugin.getLogger().warning("Unsafe warp found at " + warpSpot.toString() + " owned by " + plugin.getPlayers().getName(foundWarp));
 				return true;
@@ -1536,10 +1540,10 @@ public class IslandCmd implements CommandExecutor {
 		    player.sendMessage(ChatColor.GREEN + Locale.coopRemoveSuccess.replace("[name]", target.getDisplayName()));
 		}
 		// See if target is on this player's island
-		if (plugin.isOnIsland(player, target)) { 
+		if (plugin.getGrid().isOnIsland(player, target)) { 
 		    // Check to see if this player has an island or is just helping out
 		    if (plugin.getPlayers().inTeam(targetPlayerUUID) || plugin.getPlayers().hasIsland(targetPlayerUUID)) {
-			plugin.homeTeleport(target);
+			plugin.getGrid().homeTeleport(target);
 		    } else {
 			// Just move target to spawn
 			if (!target.performCommand(Settings.SPAWNCOMMAND)) {
@@ -1646,10 +1650,10 @@ public class IslandCmd implements CommandExecutor {
 			    // Offline
 			    //plugin.getLogger().info("DEBUG: player is offline " + targetPlayer.toString());
 			    // Tell offline player they were kicked
-			    plugin.setMessage(targetPlayer, ChatColor.RED + Locale.kicknameRemovedYou.replace("[name]", player.getName()));
+			    Messages.setMessage(targetPlayer, ChatColor.RED + Locale.kicknameRemovedYou.replace("[name]", player.getName()));
 			}
 			// Remove any warps
-			plugin.removeWarp(targetPlayer);
+			WarpSigns.removeWarp(targetPlayer);
 			// Tell leader they removed the player
 			sender.sendMessage(ChatColor.RED + Locale.kicknameRemoved.replace("[name]", split[1]));
 			removePlayerFromTeam(targetPlayer, teamLeader);
@@ -1697,7 +1701,7 @@ public class IslandCmd implements CommandExecutor {
 				if (plugin.getServer().getPlayer(targetPlayer) != null) {
 				    plugin.getServer().getPlayer(targetPlayer).sendMessage(ChatColor.GREEN + Locale.makeLeaderyouAreNowTheOwner);
 				} else {
-				    plugin.setMessage(targetPlayer, Locale.makeLeaderyouAreNowTheOwner);
+				    Messages.setMessage(targetPlayer, Locale.makeLeaderyouAreNowTheOwner);
 				    //.makeLeadererrorPlayerMustBeOnline
 				}
 				player.sendMessage(ChatColor.GREEN + Locale.makeLeadernameIsNowTheOwner.replace("[name]", plugin.getPlayers().getName(targetPlayer)));
@@ -1709,7 +1713,7 @@ public class IslandCmd implements CommandExecutor {
 				removePlayerFromTeam(teamLeader, teamLeader);
 				//plugin.getLogger().info("DEBUG: " + plugin.getPlayers().getIslandLevel(teamLeader));
 				// Transfer the data from the old leader to the new one
-				plugin.transferIsland(player.getUniqueId(), targetPlayer);
+				plugin.getGrid().transferIsland(player.getUniqueId(), targetPlayer);
 				// Create a new team with 			
 				addPlayertoTeam(player.getUniqueId(), targetPlayer);
 				addPlayertoTeam(targetPlayer, targetPlayer);

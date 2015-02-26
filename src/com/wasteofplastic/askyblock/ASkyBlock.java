@@ -23,16 +23,12 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Chunk;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -40,13 +36,9 @@ import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.WorldType;
 import org.bukkit.block.Biome;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.Sign;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Animals;
-import org.bukkit.entity.Boat;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Monster;
@@ -61,7 +53,6 @@ import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
-import org.bukkit.util.Vector;
 
 import com.wasteofplastic.askyblock.NotSetup.Reason;
 import com.wasteofplastic.askyblock.Settings.GameType;
@@ -78,7 +69,6 @@ import com.wasteofplastic.askyblock.listeners.LavaCheck;
 import com.wasteofplastic.askyblock.listeners.NetherPortals;
 import com.wasteofplastic.askyblock.panels.Biomes;
 import com.wasteofplastic.askyblock.panels.ControlPanel;
-import com.wasteofplastic.askyblock.util.MapUtil;
 import com.wasteofplastic.askyblock.util.Pair;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
@@ -88,80 +78,38 @@ import com.wasteofplastic.askyblock.util.VaultHelper;
  * Main ASkyBlock class - provides an island minigame in a sea of acid
  */
 public class ASkyBlock extends JavaPlugin {
-    private boolean newIsland = false;
     // This plugin
     private static ASkyBlock plugin;
     // The ASkyBlock world
     private static World acidWorld = null;
-    // Player YAMLs
-    //public YamlConfiguration playerFile;
+    // Flag indicating if a new islands is in the process of being generated or not
+    private boolean newIsland = false;
+    // Player folder file
     private File playersFolder;
-    // Where challenges are stored
-    private FileConfiguration challengeFile = null;
-    private File challengeConfigFile = null;
+    // Challenges object
     private Challenges challenges;
     // Localization Strings
     private FileConfiguration locale = null;
     private File localeFile = null;
-    // Where warps are stored
-    private YamlConfiguration welcomeWarps;
-    // Map of all warps stored as player, warp sign Location
-    private HashMap<UUID, Object> warpList = new HashMap<UUID, Object>();
-    // Top ten list of players
-    private Map<UUID, Integer> topTenList = new HashMap<UUID, Integer>();
     // Players object
     private PlayerCache players;
-    // Acid Damage Potion
-    PotionEffectType acidPotion;
     // Listeners
     private Listener warpSignsListener;
     private Listener lavaListener;
-    // A set of falling players
-    HashSet<UUID> fallingPlayers = new HashSet<UUID>();
+
     // Biome chooser object
-    Biomes biomes;
+    private Biomes biomes;
+    
     // Island grid manager
     private GridManager grid;
 
     private boolean debug = false;
-    //public boolean flag = false;
-
-    // Offline Messages
-    private HashMap<UUID, List<String>> messages = new HashMap<UUID, List<String>>();
-    private YamlConfiguration messageStore;
 
     // Level calc
     private boolean calculatingLevel = false;
 
     // Update object
-    Update updateCheck = null;
-
-    /**
-     * @return ASkyBlock object instance
-     */
-    public static ASkyBlock getPlugin() {
-	return plugin;
-    }
-
-    /**
-     * @return the challenges
-     */
-    public Challenges getChallenges() {
-	if (challenges == null) {
-	    challenges = new Challenges(this, getPlayers());
-	}
-	return challenges;
-    }
-
-    /**
-     * @return the players
-     */
-    public PlayerCache getPlayers() {
-	if (players == null) {
-	    players = new PlayerCache(this);
-	}
-	return players;
-    }
+    private Update updateCheck = null;
 
     /**
      * Returns the World object for the Acid Island world named in config.yml.
@@ -218,12 +166,11 @@ public class ASkyBlock extends JavaPlugin {
 
 	return acidWorld;
     }
-
     /**
-     * @return the playersFolder
+     * @return ASkyBlock object instance
      */
-    public File getPlayersFolder() {
-	return playersFolder;
+    public static ASkyBlock getPlugin() {
+	return plugin;
     }
 
     /**
@@ -236,14 +183,14 @@ public class ASkyBlock extends JavaPlugin {
 	// Removes the island
 	//getLogger().info("DEBUG: deleting player island");
 	CoopPlay.getInstance().clearAllIslandCoops(player);
-	removeWarp(player);
+	WarpSigns.removeWarp(player);
 	if (removeBlocks) {
 	    // Check that the player's island location exists and is in the island world
 	    Location islandLoc = players.getIslandLocation(player);
 	    if (islandLoc != null) {
 		if (islandLoc.getWorld() != null) {
 		    if (islandLoc.getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
-			removeMobsFromIsland(islandLoc);
+			grid.removeMobsFromIsland(islandLoc);
 			new DeleteIslandChunk(this,islandLoc);
 		    } else {
 			getLogger().severe("Cannot delete island at location " + islandLoc.toString() + " because it is not in the official island world");
@@ -262,637 +209,81 @@ public class ASkyBlock extends JavaPlugin {
 	players.zeroPlayerData(player);
     }
 
+    /**
+     * @return the biomes
+     */
+    public Biomes getBiomes() {
+	return biomes;
+    }
+
+    /**
+     * @return the challenges
+     */
+    public Challenges getChallenges() {
+	if (challenges == null) {
+	    challenges = new Challenges(getPlayers());
+	}
+	return challenges;
+    }
+
     @Override
     public ChunkGenerator getDefaultWorldGenerator(final String worldName, final String id) {
 	return new ChunkGeneratorWorld();
     }
 
     /**
-     * Converts a serialized location to a Location. Returns null if string is empty
-     * @param s - serialized location in format "world:x:y:z"
-     * @return Location
+     * @return the grid
      */
-    static public Location getLocationString(final String s) {
-	if (s == null || s.trim() == "") {
-	    return null;
-	}
-	final String[] parts = s.split(":");
-	if (parts.length == 4) {
-	    final World w = Bukkit.getServer().getWorld(parts[0]);
-	    final int x = Integer.parseInt(parts[1]);
-	    final int y = Integer.parseInt(parts[2]);
-	    final int z = Integer.parseInt(parts[3]);
-	    return new Location(w, x, y, z);
-	}
-	return null;
+    public GridManager getGrid() {
+	return grid;
     }
 
     /**
-     * Converts a location to a simple string representation
-     * If location is null, returns empty string
-     * @param l
-     * @return
+     * @return locale FileConfiguration object
      */
-    static public String getStringLocation(final Location l) {
-	if (l == null) {
-	    return "";
+    public FileConfiguration getLocale() {
+	if (locale == null) {
+	    reloadLocale();
 	}
-	return l.getWorld().getName() + ":" + l.getBlockX() + ":" + l.getBlockY() + ":" + l.getBlockZ();
+	return locale;
     }
 
     /**
-     * Determines a safe teleport spot on player's island or the team island
-     * they belong to.
-     * 
-     * @param p
-     *            PlayerInfo for active player
-     * @return Location of a safe teleport spot
+     * @return the players
      */
-    public Location getSafeHomeLocation(final UUID p) {
-	//getLogger().info("DEBUG: getSafeHomeLocation called for " + p.toString());
-	// Try home location first
-	Location l = players.getHomeLocation(p);
-	//getLogger().info("DEBUG: Home location " + l.toString());
-	if (l != null) {
-	    if (isSafeLocation(l)) {
-		return l;
-	    }
-	    // To cover slabs, stairs and other half blocks, try one block above
-	    Location lPlusOne = l.clone();
-	    lPlusOne.add(new Vector(0,1,0));
-	    if (lPlusOne != null) {
-		if (isSafeLocation(lPlusOne)) {
-		    // Adjust the home location accordingly
-		    l = lPlusOne;
-		    return lPlusOne;
-		}    
-	    }	
+    public PlayerCache getPlayers() {
+	if (players == null) {
+	    players = new PlayerCache(this);
 	}
-
-	//getLogger().info("DEBUG: Home location either isn't safe, or does not exist so try the island");
-	// Home location either isn't safe, or does not exist so try the island
-	// location
-	if (players.inTeam(p)) {
-	    l = players.getTeamIslandLocation(p);
-	    if (isSafeLocation(l)) {
-		return l;
-	    } else {
-		// try team leader's home
-		Location tlh = players.getHomeLocation(players.getTeamLeader(p));
-		if (tlh != null) {
-		    if (isSafeLocation(tlh)) {
-			return tlh;
-		    }
-		}
-	    }
-	} else {
-	    l = players.getIslandLocation(p);
-	    if (isSafeLocation(l)) {
-		return l;
-	    }
-	}
-	if (l == null) {
-	    getLogger().warning(players.getName(p) + " player has no island!");
-	    return null;
-	}
-	//getLogger().info("DEBUG: If these island locations are not safe, then we need to get creative");
-	// If these island locations are not safe, then we need to get creative
-	// Try the default location
-	//getLogger().info("DEBUG: default");
-	Location dl = new Location(l.getWorld(), l.getX() + 0.5D, l.getY() + 5D, l.getZ() + 2.5D, 0F, 30F);
-	if (isSafeLocation(dl)) {
-	    players.setHomeLocation(p, dl);
-	    return dl;
-	}
-	// Try just above the bedrock
-	//getLogger().info("DEBUG: above bedrock");
-	dl = new Location(l.getWorld(), l.getX() + 0.5D, l.getY() + 5D, l.getZ() + 0.5D, 0F, 30F);
-	if (isSafeLocation(dl)) {
-	    players.setHomeLocation(p, dl);
-	    return dl;
-	}
-
-	// Try higher up - 25 blocks high and then move down
-	//getLogger().info("DEBUG: Try higher up");
-	for (int y = l.getBlockY() + 25; y > 0; y--) {
-	    final Location n = new Location(l.getWorld(), l.getX() + 0.5D, y, l.getZ() + 0.5D);
-	    if (isSafeLocation(n)) {
-		return n;
-	    }
-	}
-	// Try all the way up to the sky
-	//getLogger().info("DEBUG: try all the way to the sky");
-	for (int y = l.getBlockY(); y < 255; y++) {
-	    final Location n = new Location(l.getWorld(), l.getX() + 0.5D, y, l.getZ() + 0.5D);
-	    if (isSafeLocation(n)) {
-		return n;
-	    }
-	}
-	//getLogger().info("DEBUG: trying around the protected area");
-	// Try anywhere in the protected island area
-	//Be smart and start at the island level and above it
-	for (int y = Settings.island_level; y<l.getWorld().getMaxHeight(); y++) {
-	    for (int x = l.getBlockX(); x < l.getBlockX() + Settings.island_protectionRange/2; x++) {
-		for (int z = l.getBlockZ(); z < l.getBlockZ() + Settings.island_protectionRange/2; z++) {
-		    Location ultimate = new Location(l.getWorld(),(double)x+0.5D,y,(double)z+0.5D);
-		    if (!ultimate.getBlock().equals(Material.AIR)) {
-			if (isSafeLocation(ultimate)) {
-			    players.setHomeLocation(p, ultimate);
-			    return ultimate;
-			}
-		    }
-		}
-	    }
-	}
-	for (int y = Settings.island_level; y<l.getWorld().getMaxHeight(); y++) {
-	    for (int x = l.getBlockX(); x > l.getBlockX() - Settings.island_protectionRange/2; x--) {
-		for (int z = l.getBlockZ(); z < l.getBlockZ() - Settings.island_protectionRange/2; z--) {
-		    Location ultimate = new Location(l.getWorld(),(double)x+0.5D,y,(double)z+0.5D);
-		    if (!ultimate.getBlock().equals(Material.AIR)) {
-			if (isSafeLocation(ultimate)) {
-			    players.setHomeLocation(p, ultimate);
-			    return ultimate;
-			}
-		    }
-		}
-	    }
-	}
-	// Try below the island level
-	// Move away from the center and go to the positive extreme
-	for (int y = Settings.island_level-1; y>0; y--) {
-	    for (int x = l.getBlockX(); x < l.getBlockX() + Settings.island_protectionRange/2; x++) {
-		for (int z = l.getBlockZ(); z < l.getBlockZ() + Settings.island_protectionRange/2; z++) {
-		    Location ultimate = new Location(l.getWorld(),(double)x+0.5D,y,(double)z+0.5D);
-		    if (!ultimate.getBlock().equals(Material.AIR)) {
-			if (isSafeLocation(ultimate)) {
-			    players.setHomeLocation(p, ultimate);
-			    return ultimate;
-			}
-		    }
-		}
-	    }
-	}
-	// Go to the negative extreme
-	for (int y = Settings.island_level-1; y>0; y--) {
-	    for (int x = l.getBlockX(); x > l.getBlockX() - Settings.island_protectionRange/2; x--) {
-		for (int z = l.getBlockZ(); z > l.getBlockZ() - Settings.island_protectionRange/2; z--) {
-		    Location ultimate = new Location(l.getWorld(),(double)x+0.5D,y,(double)z+0.5D);
-		    if (!ultimate.getBlock().equals(Material.AIR)) {
-			if (isSafeLocation(ultimate)) {
-			    players.setHomeLocation(p, ultimate);
-			    return ultimate;
-			}
-		    }
-		}
-	    }
-	}
-
-	// Nothing worked
-	return null;
-    }
-
-
-
-    /**
-     * Sets the home location based on where the player is now
-     * 
-     * @param player
-     * @return
-     */
-    public void homeSet(final Player player) {
-	// Make a list of test locations and test them
-	Location islandTestLocation = null;
-	if (players.hasIsland(player.getUniqueId())) {
-	    islandTestLocation = players.getIslandLocation(player.getUniqueId());
-	} else if (players.inTeam(player.getUniqueId())) {
-	    islandTestLocation = players.get(player.getUniqueId()).getTeamIslandLocation();
-	}
-	if (islandTestLocation == null) {
-	    player.sendMessage(ChatColor.RED + Locale.setHomeerrorNotOnIsland);
-	    return;
-	}
-	// On island?
-	if (player.getLocation().getX() > islandTestLocation.getX() - Settings.island_protectionRange / 2
-		&& player.getLocation().getX() < islandTestLocation.getX() + Settings.island_protectionRange / 2
-		&& player.getLocation().getZ() > islandTestLocation.getZ() - Settings.island_protectionRange / 2
-		&& player.getLocation().getZ() < islandTestLocation.getZ() + Settings.island_protectionRange / 2) {
-	    players.setHomeLocation(player.getUniqueId(),player.getLocation());
-	    player.sendMessage(ChatColor.GREEN + Locale.setHomehomeSet);
-	} else {
-	    player.sendMessage(ChatColor.RED + Locale.setHomeerrorNotOnIsland);
-	}
+	return players;
     }
 
     /**
-     * This teleports player to their island. If not safe place can be found
-     * then the player is sent to spawn via /spawn command
-     * 
-     * @param player
-     * @return
+     * @return the playersFolder
      */
-    public boolean homeTeleport(final Player player) {
-	Location home = null;
-	home = getSafeHomeLocation(player.getUniqueId());
-	// Check if the player is a passenger in a boat
-	if (player.isInsideVehicle()) {
-	    Entity boat = player.getVehicle();
-	    if (boat instanceof Boat) {
-		player.leaveVehicle();
-		// Remove the boat so they don't lie around everywhere
-		boat.remove();
-		player.getInventory().addItem(new ItemStack(Material.BOAT, 1));
-		player.updateInventory();
-	    }
-	}
-	if (home == null) {
-	    // The home is not safe
-	    if (!player.performCommand(Settings.SPAWNCOMMAND)) {
-		player.teleport(player.getWorld().getSpawnLocation());
-		/*
-		player.sendBlockChange(player.getWorld().getSpawnLocation()
-			,player.getWorld().getSpawnLocation().getBlock().getType()
-			,player.getWorld().getSpawnLocation().getBlock().getData());
-		 */
-	    }
-	    player.sendMessage(ChatColor.RED + Locale.warpserrorNotSafe);
-	    return true;
-	}
-	//home.getWorld().refreshChunk(home.getChunk().getX(), home.getChunk().getZ());
-	// Removing this line because it appears to cause artifacts of hovering blocks
-	//home.getWorld().loadChunk(home.getChunk());
-	//getLogger().info("DEBUG: " + home.toString());
-	// This next line should help players with long ping times
-	// http://bukkit.org/threads/workaround-for-playing-falling-after-teleport-when-lagging.293035/
-	//getLogger().info("DEBUG: home = " + home.toString());
-	//player.sendBlockChange(home,home.getBlock().getType(),home.getBlock().getData());
-	//player.sendBlockChange(home.getBlock().getRelative(BlockFace.DOWN).getLocation(),home.getBlock().getRelative(BlockFace.DOWN).getType(),home.getBlock().getRelative(BlockFace.DOWN).getData());
-	//getLogger().info("DEBUG: " + home.getBlock().getType().toString());
-	//getLogger().info("DEBUG: " + home.getBlock().getRelative(BlockFace.DOWN).getType());
-	player.teleport(home);
-	/*
-	player.sendBlockChange(home,home.getBlock().getType(),home.getBlock().getData());
-	player.sendBlockChange(home.getBlock().getRelative(BlockFace.DOWN).getLocation(),home.getBlock().getRelative(BlockFace.DOWN).getType(),home.getBlock().getRelative(BlockFace.DOWN).getData());
-	 */
-	player.sendMessage(ChatColor.GREEN + Locale.islandteleport);
-	return true;
+    public File getPlayersFolder() {
+	return playersFolder;
     }
 
     /**
-     * Determines if an island is at a location in this area
-     * location. Also checks if the spawn island is in this area.
-     * Used for creating new islands ONLY
-     * 
-     * @param loc
-     * @return true if found, otherwise false
+     * @return the updateCheck
      */
-    public boolean islandAtLocation(final Location loc) {	
-	if (loc == null) {
-	    return true;
-	}
-	//getLogger().info("DEBUG checking islandAtLocation for location " + loc.toString());
-	// Check the island grid
-	if (grid.getIslandAt(loc) != null) {
-	    // This checks if loc is inside the island spawn radius too
-	    return true;
-	}
-	final int px = loc.getBlockX();
-	final int pz = loc.getBlockZ();
-	// Extra spawn area check
-	// If island protection distance is less than island distance then the check above will cover it
-	// Island edge must be > protection edge spawn
-	Island spawn = grid.getSpawn();
-	if (spawn != null && spawn.getProtectionSize() > spawn.getIslandDistance()) {
-	    if (Math.abs(px - spawn.getCenter().getBlockX()) < ((spawn.getProtectionSize() + Settings.islandDistance)/2)
-		    && Math.abs(pz - spawn.getCenter().getBlockZ()) < ((spawn.getProtectionSize() + Settings.islandDistance)/2)) {
-		//getLogger().info("DEBUG: island is within spawn space " + px + " " + pz);
-		return true;
-	    }
-	}
-
-	// Bedrock check
-	if (loc.getBlock().getType().equals(Material.BEDROCK)) {
-	    getLogger().info("Found bedrock at island height - adding to islands.yml " + px + "," + pz);
-	    grid.addIsland(px,pz);
-	    return true;
-	}
-	// Look around
-	for (int x = -5; x <= 5; x++) {
-	    for (int y = 10; y <= 255; y++) {
-		for (int z = -5; z <= 5; z++) {
-		    if (loc.getWorld().getBlockAt(x + px, y, z + pz).getType().equals(Material.BEDROCK)) {
-			plugin.getLogger().info("Bedrock found during long search - adding to islands.yml " + px + "," + pz);
-			grid.addIsland(px,pz);
-			return true;
-		    }
-		}
-	    }
-	}
-	return false;
+    public Update getUpdateCheck() {
+	return updateCheck;
     }
 
+    /**
+     * @return the calculatingLevel
+     */
+    public boolean isCalculatingLevel() {
+	return calculatingLevel;
+    }
 
     /**
      * @return the newIsland
      */
     public boolean isNewIsland() {
 	return newIsland;
-    }
-
-    /**
-     * @param newIsland the newIsland to set
-     */
-    public void setNewIsland(boolean newIsland) {
-	this.newIsland = newIsland;
-    }
-
-    /**
-     * Checks if this location is safe for a player to teleport to. Used by
-     * warps and boat exits Unsafe is any liquid or air and also if there's no
-     * space
-     * 
-     * @param l
-     *            - Location to be checked
-     * @return true if safe, otherwise false
-     */
-    public static boolean isSafeLocation(final Location l) {
-	if (l == null) {
-	    return false;
-	}
-	// TODO: improve the safe location finding.
-	//Bukkit.getLogger().info("DEBUG: " + l.toString());
-	final Block ground = l.getBlock().getRelative(BlockFace.DOWN);
-	final Block space1 = l.getBlock();
-	final Block space2 = l.getBlock().getRelative(BlockFace.UP);
-	//Bukkit.getLogger().info("DEBUG: ground = " + ground.getType());
-	//Bukkit.getLogger().info("DEBUG: space 1 = " + space1.getType());
-	//Bukkit.getLogger().info("DEBUG: space 2 = " + space2.getType());
-	// If ground is AIR, then this is either not good, or they are on slab, stair, etc.
-	if (ground.getType() == Material.AIR) {
-	    //Bukkit.getLogger().info("DEBUG: air");
-	    return false;
-	}
-	// In aSkyblock, liquid may be unsafe
-	if (ground.isLiquid() || space1.isLiquid() || space2.isLiquid()) {
-	    // Check if acid has no damage
-	    if (Settings.acidDamage > 0D) {
-		//Bukkit.getLogger().info("DEBUG: acid");
-		return false;
-	    } else if (ground.getType().equals(Material.STATIONARY_LAVA) || ground.getType().equals(Material.LAVA)
-		    || space1.getType().equals(Material.STATIONARY_LAVA) || space1.getType().equals(Material.LAVA)
-		    || space2.getType().equals(Material.STATIONARY_LAVA) || space2.getType().equals(Material.LAVA)) {
-		// Lava check only
-		//Bukkit.getLogger().info("DEBUG: lava");
-		return false;
-	    }
-	}
-	if (ground.getType().equals(Material.CACTUS)) {
-	    //Bukkit.getLogger().info("DEBUG: cactus");
-	    return false;
-	} // Ouch - prickly
-	if (ground.getType().equals(Material.BOAT)) {
-	    //Bukkit.getLogger().info("DEBUG: boat");
-	    return false;
-	} // No, I don't want to end up on the boat again
-	// Check that the space is not solid
-	// The isSolid function is not fully accurate (yet) so we have to check
-	// a few other items
-	// isSolid thinks that PLATEs and SIGNS are solid, but they are not
-	if (space1.getType().isSolid()) {
-	    //Bukkit.getLogger().info("DEBUG: space 1 is solid");	    
-	    // Do a few other checks
-	    if (!(space1.getType().equals(Material.SIGN_POST)) && !(space1.getType().equals(Material.WALL_SIGN))) {
-		//Bukkit.getLogger().info("DEBUG: space 1 is a sign post or wall sign");
-		return false;
-	    }
-	    /*
-	    switch (space1.getType()) {
-	    case ACACIA_STAIRS:
-	    case BIRCH_WOOD_STAIRS:
-	    case BRICK_STAIRS:
-	    case COBBLESTONE_STAIRS:
-	    case DARK_OAK_STAIRS:
-	    case IRON_PLATE:
-	    case JUNGLE_WOOD_STAIRS:
-	    case NETHER_BRICK_STAIRS:
-	    case PORTAL:
-	    case QUARTZ_STAIRS:
-	    case RED_SANDSTONE_STAIRS:
-	    case SANDSTONE_STAIRS:
-	    case SIGN_POST:
-	    case SMOOTH_STAIRS:
-	    case SPRUCE_WOOD_STAIRS:
-	    case STEP:
-	    case STONE_PLATE:
-	    case STONE_SLAB2:
-	    case WOOD_DOUBLE_STEP:
-	    case WOOD_PLATE:
-	    case WOOD_STAIRS:
-	    case WOOD_STEP:
-		Bukkit.getLogger().info("DEBUG: not solid");
-		break;
-	    default:
-		Bukkit.getLogger().info("DEBUG: solid");
-		return false;
-	    }
-	     */
-	}
-	if (space2.getType().isSolid()) {
-	    //Bukkit.getLogger().info("DEBUG: space 2 is solid");
-	    // Do a few other checks
-	    if (!(space2.getType().equals(Material.SIGN_POST)) && !(space2.getType().equals(Material.WALL_SIGN))) {
-		//Bukkit.getLogger().info("DEBUG: space 2 is a sign post or wall sign");
-		return false;
-	    }
-	}
-	// Safe
-	//Bukkit.getLogger().info("DEBUG: safe!");
-	return true;
-    }
-
-
-    /**
-     * Saves a YAML file
-     * 
-     * @param yamlFile
-     * @param fileLocation
-     */
-    public static void saveYamlFile(YamlConfiguration yamlFile, String fileLocation) {
-	File dataFolder = plugin.getDataFolder();
-	File file = new File(dataFolder, fileLocation);
-
-	try {
-	    yamlFile.save(file);
-	} catch (Exception e) {
-	    e.printStackTrace();
-	}
-    }
-
-    /**
-     * Creates the warp list if it does not exist
-     */
-    public void loadWarpList() {
-	getLogger().info("Loading warps...");
-	// warpList.clear();
-	welcomeWarps = Util.loadYamlFile("warps.yml");
-	if (welcomeWarps.getConfigurationSection("warps") == null) {
-	    welcomeWarps.createSection("warps"); // This is only used to create
-	    // the warp.yml file so forgive
-	    // this code
-	}
-	HashMap<String,Object> temp = (HashMap<String, Object>) welcomeWarps.getConfigurationSection("warps").getValues(true);
-	for (String s : temp.keySet()) {
-	    try {
-		UUID playerUUID = UUID.fromString(s);
-		Location l = getLocationString((String)temp.get(s));
-		Block b = l.getBlock();   
-		// Check that a warp sign is still there
-		if (b.getType().equals(Material.SIGN_POST)) {
-		    warpList.put(playerUUID, temp.get(s));
-		} else {
-		    getLogger().warning("Warp at location "+ (String)temp.get(s) + " has no sign - removing.");
-		}
-	    } catch (Exception e) {
-		getLogger().severe("Problem loading warp at location "+ (String)temp.get(s) + " - removing.");
-	    }
-	}
-    }
-
-    /**
-     * Saves the warp lists to file
-     */
-    public void saveWarpList() {
-	if (warpList == null || welcomeWarps == null) {
-	    return;
-	}
-	getLogger().info("Saving warps...");
-	final HashMap<String,Object> warps = new HashMap<String,Object>();
-	for (UUID p : warpList.keySet()) {
-	    warps.put(p.toString(),warpList.get(p));
-	}
-	welcomeWarps.set("warps", warps);
-	saveYamlFile(welcomeWarps, "warps.yml");
-    }
-
-    /**
-     * Stores warps in the warp array
-     * 
-     * @param player
-     * @param loc
-     */
-    public boolean addWarp(UUID player, Location loc) {
-	final String locS = getStringLocation(loc);
-	// Do not allow warps to be in the same location
-	if (warpList.containsValue(locS)) {
-	    return false;
-	}
-	// Remove the old warp if it existed
-	if (warpList.containsKey(player)) {
-	    warpList.remove(player);
-	}
-	warpList.put(player, locS);
-	saveWarpList();
-	return true;
-    }
-
-    /**
-     * Removes a warp when the welcome sign is destroyed. Called by
-     * WarpSigns.java.
-     * 
-     * @param uuid
-     */
-    public void removeWarp(UUID uuid) {
-	if (warpList.containsKey(uuid)) {
-	    popSign(getLocationString((String)warpList.get(uuid)));
-	    warpList.remove(uuid);
-	}
-	saveWarpList();
-    }
-
-    private void popSign(Location loc) {
-	Block b = loc.getBlock();
-	if (b.getType().equals(Material.SIGN_POST)) {
-	    Sign s = (Sign) b.getState();
-	    if (s != null) {
-		if (s.getLine(0).equalsIgnoreCase(ChatColor.GREEN + Locale.warpswelcomeLine)) {
-		    s.setLine(0, ChatColor.RED + Locale.warpswelcomeLine);
-		    s.update();
-		}
-	    }
-	}
-    }
-    /**
-     * Removes a warp at a location. Called by WarpSigns.java.
-     * 
-     * @param loc
-     */
-    public void removeWarp(Location loc) {
-	final String locS = getStringLocation(loc);
-	getLogger().info("Asked to remove warp at " + locS);
-	popSign(loc);
-	if (warpList.containsValue(locS)) {
-	    // Step through every key (sigh)
-	    List<UUID> playerList = new ArrayList<UUID>();
-	    for (UUID player : warpList.keySet()) {
-		if (locS.equals(warpList.get(player))) {
-		    playerList.add(player);
-		}
-	    }
-	    for (UUID rp : playerList) {
-		warpList.remove(rp);
-		final Player p = getServer().getPlayer(rp);
-		if (p != null) {
-		    // Inform the player
-		    p.sendMessage(ChatColor.RED + Locale.warpssignRemoved);
-		}
-		getLogger().warning(rp.toString() + "'s welcome sign at " + loc.toString() + " was removed by something.");
-	    }
-	} else {
-	    getLogger().info("Not in the list which is:");
-	    for (UUID player : warpList.keySet()) {
-		getLogger().info(player.toString() + "," + warpList.get(player));
-	    }
-
-	}
-	saveWarpList();
-    }
-
-    /**
-     * Returns true if the location supplied is a warp location
-     * 
-     * @param loc
-     * @return true if this location has a warp sign, false if not
-     */
-    public boolean checkWarp(Location loc) {
-	final String locS = getStringLocation(loc);
-	if (warpList.containsValue(locS)) {
-	    return true;
-	}
-	return false;
-    }
-
-    /**
-     * Lists all the known warps
-     * 
-     * @return String set of warps
-     */
-    public Set<UUID> listWarps() {
-	//getLogger().info("DEBUG Warp list count = " + warpList.size());
-	return warpList.keySet();
-    }
-
-    /**
-     * Provides the location of the warp for player
-     * 
-     * @param player
-     *            - the warp requested
-     * @return Location of warp
-     */
-    public Location getWarp(UUID player) {
-	if (warpList.containsKey(player)) {
-	    return getLocationString((String) warpList.get(player));
-	} else {
-	    return null;
-	}
     }
 
     /**
@@ -906,7 +297,7 @@ public class ASkyBlock extends JavaPlugin {
 	    e.printStackTrace();
 	}
 	// Get the challenges
-	getChallengeConfig();
+	Challenges.getChallengeConfig();
 	// Get the localization strings
 	getLocale();
 	// Assign settings
@@ -1295,10 +686,10 @@ public class ASkyBlock extends JavaPlugin {
 	Settings.allowSpawnAnvilUse = getConfig().getBoolean("spawn.allowanviluse",true);
 	Settings.allowSpawnBeaconAccess = getConfig().getBoolean("spawn.allowbeaconaccess",false);
 	// Challenges
-	final Set<String> challengeList = getChallengeConfig().getConfigurationSection("challenges.challengeList").getKeys(false);
+	final Set<String> challengeList = Challenges.getChallengeConfig().getConfigurationSection("challenges.challengeList").getKeys(false);
 	Settings.challengeList = challengeList;
-	Settings.challengeLevels = Arrays.asList(getChallengeConfig().getString("challenges.levels").split(" "));
-	Settings.waiverAmount = getChallengeConfig().getInt("challenges.waiveramount", 1);
+	Settings.challengeLevels = Arrays.asList(Challenges.getChallengeConfig().getString("challenges.levels").split(" "));
+	Settings.waiverAmount = Challenges.getChallengeConfig().getInt("challenges.waiveramount", 1);
 	if (Settings.waiverAmount < 0) {
 	    Settings.waiverAmount = 0;
 	}
@@ -1656,8 +1047,8 @@ public class ASkyBlock extends JavaPlugin {
 	    if (grid != null) {
 		grid.saveGrid();
 	    }
-	    saveWarpList();
-	    saveMessages();
+	    WarpSigns.saveWarpList();
+	    Messages.saveMessages();
 	    TopTen.topTenSave();
 	} catch (final Exception e) {
 	    getLogger().severe("Something went wrong saving files!");
@@ -1675,7 +1066,7 @@ public class ASkyBlock extends JavaPlugin {
 	// instance of this plugin
 	plugin = this;
 	saveDefaultConfig();
-	saveDefaultChallengeConfig();
+	Challenges.saveDefaultChallengeConfig();
 	saveDefaultLocale();
 	// Check to see if island distance is set or not
 	if (getConfig().getInt("island.distance",-1) < 1) {
@@ -1744,7 +1135,7 @@ public class ASkyBlock extends JavaPlugin {
 	// Register events that this plugin uses
 	//registerEvents();
 	// Load messages
-	loadMessages();
+	Messages.loadMessages();
 	// Register events
 	registerEvents();
 	// Metrics
@@ -1762,7 +1153,7 @@ public class ASkyBlock extends JavaPlugin {
 		// Create the world if it does not exist. This is run after the server starts.
 		getIslandWorld();
 		// Load warps
-		loadWarpList();
+		WarpSigns.loadWarpList();
 		// Minishop - must wait for economy to load before we can use econ 
 		getServer().getPluginManager().registerEvents(new ControlPanel(plugin), plugin);
 		if (getServer().getWorld(Settings.worldName).getGenerator() == null) {
@@ -1847,167 +1238,6 @@ public class ASkyBlock extends JavaPlugin {
 	});
     }
 
-    /**
-     * Checks if an online player is on their island, on a team island or on a coop island
-     * 
-     * @param player
-     *            - the player who is being checked
-     * @return - true if they are on an island they have rights to be on, otherwise false
-     */
-    public boolean playerIsOnIsland(final Player player) {
-	// Make a list of test locations and test them
-	Set<Location> islandTestLocations = new HashSet<Location>();
-	if (players.hasIsland(player.getUniqueId())) {
-	    islandTestLocations.add(players.getIslandLocation(player.getUniqueId()));
-	} else if (players.inTeam(player.getUniqueId())) {
-	    islandTestLocations.add(players.get(player.getUniqueId()).getTeamIslandLocation());
-	}
-	// Check coop locations
-	islandTestLocations.addAll(CoopPlay.getInstance().getCoopIslands(player));
-	if (islandTestLocations.isEmpty()) {
-	    return false;
-	}
-	// Run through all the locations
-	for (Location islandTestLocation : islandTestLocations) {
-	    if (islandTestLocation != null) {
-		int protectionRange = Settings.island_protectionRange;
-		if (grid != null && grid.getIslandAt(islandTestLocation) != null) {
-		    // Get the protection range for this location if possible
-		    Island island = grid.getProtectedIslandAt(islandTestLocation);
-		    if (island != null) {
-			// We are in a protected island area.
-			protectionRange = island.getProtectionSize();
-		    }
-		}
-		if (player.getLocation().getX() > islandTestLocation.getX() - protectionRange / 2
-			&& player.getLocation().getX() < islandTestLocation.getX() + protectionRange / 2
-			&& player.getLocation().getZ() > islandTestLocation.getZ() - protectionRange / 2
-			&& player.getLocation().getZ() < islandTestLocation.getZ() + protectionRange / 2) {
-		    return true;
-		}
-	    }
-	}
-	return false;
-    }
-    /**
-     * Checks to see if a player is trespassing on another player's island
-     * Both players must be online.
-     * @param owner - owner or team member of an island
-     * @param target
-     * @return true if they are on the island otherwise false.
-     */
-    public boolean isOnIsland(final Player owner, final Player target) {
-	// Get the island location of owner
-	Location islandTestLocation = null;
-	if (players.inTeam(owner.getUniqueId())) {
-	    // Is the target in the owner's team?
-	    if (players.getMembers(players.getTeamLeader(owner.getUniqueId())).contains(target.getUniqueId())) {
-		// Yes, so this is not a trespass for sure
-		return false;
-	    }
-	    // No, so check where the target is now
-	    islandTestLocation = players.getTeamIslandLocation(owner.getUniqueId());
-	} else {
-	    islandTestLocation = players.getIslandLocation(owner.getUniqueId());
-	}
-	// Check position of target
-	if (islandTestLocation == null) {
-	    return false;
-	}
-	if (target.getWorld().equals(islandTestLocation.getWorld())) {
-	    int protectionRange = Settings.island_protectionRange;
-	    if (grid.getIslandAt(islandTestLocation) != null) {
-
-		Island island = grid.getProtectedIslandAt(islandTestLocation);
-		// Get the protection range for this location if possible
-		if (island != null) {
-		    // We are in a protected island area.
-		    protectionRange = island.getProtectionSize();
-		}
-	    }
-	    if (target.getLocation().getX() > islandTestLocation.getX() - protectionRange / 2
-		    && target.getLocation().getX() < islandTestLocation.getX() + protectionRange / 2
-		    && target.getLocation().getZ() > islandTestLocation.getZ() - protectionRange / 2
-		    && target.getLocation().getZ() < islandTestLocation.getZ() + protectionRange / 2) {
-		return true;
-	    }
-	}
-	return false;	
-    }
-
-    /**
-     * Checks if a specific location is within the protected range of an island owned by the player
-     * @param player
-     * @param loc
-     * @return
-     */
-    public boolean locationIsOnIsland(final Player player, final Location loc) {
-	// Get the player's island from the grid if it exists
-	Island island = grid.getIslandAt(loc);
-	if (island != null) {
-	    // On an island in the grid
-	    if (island.onIsland(loc) && island.getMembers().contains(player.getUniqueId())) {
-		// In a protected zone but is on the list of acceptable players
-		return true;
-	    } else {
-		// Not allowed
-		return false;
-	    }
-	}
-	// Not in the grid, so do it the old way
-	// Make a list of test locations and test them
-	Set<Location> islandTestLocations = new HashSet<Location>();
-	if (players.hasIsland(player.getUniqueId())) {
-	    islandTestLocations.add(players.getIslandLocation(player.getUniqueId()));
-	} else if (players.inTeam(player.getUniqueId())) {
-	    islandTestLocations.add(players.get(player.getUniqueId()).getTeamIslandLocation());
-	}
-	// Check any coop locations
-	islandTestLocations.addAll(CoopPlay.getInstance().getCoopIslands(player));
-	if (islandTestLocations.isEmpty()) {
-	    return false;
-	}
-	// Run through all the locations
-	for (Location islandTestLocation : islandTestLocations) {
-	    if (loc.getWorld().equals(islandTestLocation.getWorld())) {
-		if (loc.getX() >= islandTestLocation.getX() - Settings.island_protectionRange / 2
-			&& loc.getX() < islandTestLocation.getX() + Settings.island_protectionRange / 2
-			&& loc.getZ() >= islandTestLocation.getZ() - Settings.island_protectionRange / 2
-			&& loc.getZ() < islandTestLocation.getZ() + Settings.island_protectionRange / 2) {
-		    return true;
-		}
-	    }
-	}
-	return false;
-    }
-
-    /**
-     * Finds out if location is within a set of island locations and returns the one that is there or null if not
-     * @param islandTestLocations
-     * @param loc
-     * @return
-     */
-    public Location locationIsOnIsland(final Set<Location> islandTestLocations, final Location loc) {
-	// Run through all the locations
-	for (Location islandTestLocation : islandTestLocations) {
-	    if (loc.getWorld().equals(islandTestLocation.getWorld())) {
-		if (grid.getIslandAt(islandTestLocation) != null) {
-		    // Get the protection range for this location if possible
-		    Island island = grid.getProtectedIslandAt(islandTestLocation);
-		    if (island != null) {
-			// We are in a protected island area.
-			return island.getCenter();
-		    }
-		} else if (loc.getX() > islandTestLocation.getX() - Settings.island_protectionRange / 2
-			&& loc.getX() < islandTestLocation.getX() + Settings.island_protectionRange / 2
-			&& loc.getZ() > islandTestLocation.getZ() - Settings.island_protectionRange / 2
-			&& loc.getZ() < islandTestLocation.getZ() + Settings.island_protectionRange / 2) {
-		    return islandTestLocation;
-		}
-	    }
-	}
-	return null;
-    }
 
     /**
      * Registers events
@@ -2041,7 +1271,7 @@ public class ASkyBlock extends JavaPlugin {
 	    manager.registerEvents(new SafeBoat(this), this);
 	}
 	// Enables warp signs in ASkyBlock
-	warpSignsListener = new WarpSigns(this);
+	warpSignsListener = new WarpSigns();
 	manager.registerEvents(warpSignsListener, this);
 	// Control panel - for future use
 	//manager.registerEvents(new ControlPanel(), this);
@@ -2049,197 +1279,8 @@ public class ASkyBlock extends JavaPlugin {
 	manager.registerEvents(new AcidInventory(this), this);
 	// Biomes
 	// Load Biomes
-	biomes = new Biomes(this);
+	biomes = new Biomes();
 	manager.registerEvents(biomes, this);
-    }
-
-    public void unregisterEvents() {
-	HandlerList.unregisterAll(warpSignsListener);
-	HandlerList.unregisterAll(lavaListener);	
-    }
-
-    public void restartEvents() {
-	final PluginManager manager = getServer().getPluginManager();
-	lavaListener = new LavaCheck(this);
-	manager.registerEvents(lavaListener, this);
-	// Enables warp signs in ASkyBlock
-	warpSignsListener = new WarpSigns(this);
-	manager.registerEvents(warpSignsListener, this);
-    }
-
-    /**
-     * Removes monsters around location l 
-     * 
-     * @param l
-     */
-    public void removeMobs(final Location l) {
-	final int px = l.getBlockX();
-	final int py = l.getBlockY();
-	final int pz = l.getBlockZ();
-	for (int x = -1; x <= 1; x++) {
-	    for (int z = -1; z <= 1; z++) {
-		final Chunk c = l.getWorld().getChunkAt(new Location(l.getWorld(), px + x * 16, py, pz + z * 16));
-		for (final Entity e : c.getEntities()) {
-		    if (e instanceof Monster) {
-			e.remove();
-		    }
-		}
-	    }
-	}
-    }
-
-    /**
-     * This removes mobs from an island
-     * 
-     * @param loc
-     *            - a Location
-     */
-    public void removeMobsFromIsland(final Location loc) {
-	//getLogger().info("DEBUG: removeIsland");
-	if (loc != null) {
-	    // Place a temporary entity
-	    //final World world = getIslandWorld();
-	    // Check to see if this world exists or not
-	    if (loc.getWorld() == null) {
-		return;
-	    }
-	    Entity snowBall = loc.getWorld().spawnEntity(loc, EntityType.SNOWBALL);
-	    // Remove any mobs if they just so happen to be around in the
-	    // vicinity
-	    final Iterator<Entity> ents = snowBall.getNearbyEntities((Settings.island_protectionRange / 2.0), 110.0D, (Settings.island_protectionRange / 2.0))
-		    .iterator();
-	    while (ents.hasNext()) {
-		final Entity tempent = ents.next();
-		// Remove anything except for a players
-		if (tempent instanceof Player) {
-		    // Player
-		    Player pl = (Player)tempent;
-		    if (pl.isInsideVehicle()) {
-			pl.leaveVehicle();
-		    }
-		    if (!pl.isFlying()) {
-			// Move player to spawn
-			Island spawn = grid.getSpawn();
-			if (spawn != null) {
-			    // go to island spawn
-			    pl.teleport(acidWorld.getSpawnLocation());
-			    getLogger().warning("During island deletion player " + pl.getName() + " sent to spawn.");
-			} else {
-			    if (!pl.performCommand(Settings.SPAWNCOMMAND)) {
-				getLogger().warning("During island deletion player " + pl.getName() + " could not be sent to spawn so was dropped, sorry.");	
-			    } else {
-				getLogger().warning("During island deletion player " + pl.getName() + " sent to spawn using /spawn.");
-			    }
-			}
-		    } else {
-			getLogger().warning("Not moving player " + pl.getName() + " because they are flying");
-		    }
-		} else {
-		    tempent.remove();
-		}
-	    }
-	}
-    }
-
-    /**
-     * Transfers ownership of an island from one player to another
-     * 
-     * @param oldOwner
-     * @param newOwner
-     * @return
-     */
-    public boolean transferIsland(final UUID oldOwner, final UUID newOwner) {
-	if (players.hasIsland(oldOwner)) {
-	    Location islandLoc = players.getIslandLocation(oldOwner);
-	    players.setHasIsland(newOwner, true);
-	    players.setIslandLocation(newOwner, islandLoc);
-	    //players.setIslandLevel(newOwner, players.getIslandLevel(oldOwner));
-	    players.setTeamIslandLocation(newOwner, null);
-	    players.setHasIsland(oldOwner, false);
-	    players.setIslandLocation(oldOwner, null);
-	    //players.setIslandLevel(oldOwner, 0);
-	    players.setTeamIslandLocation(oldOwner, islandLoc);
-	    // Update grid
-	    Island island = grid.getIslandAt(islandLoc);
-	    if (island != null) {
-		grid.setIslandOwner(island, newOwner);
-	    }
-	    // Update top ten list
-	    // Remove old owner score from top ten list
-	    topTenList.remove(oldOwner);
-	    return true;
-	}
-	return false;
-    }
-
-
-
-    /**
-     * Saves the challenge.yml file if it does not exist
-     */
-    public void saveDefaultChallengeConfig() {
-	if (challengeConfigFile == null) {
-	    challengeConfigFile = new File(getDataFolder(), "challenges.yml");
-	}
-	if (!challengeConfigFile.exists()) {            
-	    saveResource("challenges.yml", false);
-	}
-    }
-
-    /**
-     * Reloads the challenge config file
-     */
-    public void reloadChallengeConfig() {
-	if (challengeConfigFile == null) {
-	    challengeConfigFile = new File(getDataFolder(), "challenges.yml");
-	}
-	challengeFile = YamlConfiguration.loadConfiguration(challengeConfigFile);
-
-	// Look for defaults in the jar
-
-	InputStream defConfigStream = this.getResource("challenges.yml");
-	if (defConfigStream != null) {
-	    @SuppressWarnings("deprecation")
-	    YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
-	    challengeFile.setDefaults(defConfig);
-	}
-    }
-
-    /**
-     * @return challenges FileConfiguration object
-     */
-    public FileConfiguration getChallengeConfig() {
-	if (challengeFile == null) {
-	    reloadChallengeConfig();
-	}
-	return challengeFile;
-    }
-
-    /**
-     * Saves challenges.yml
-     */
-    public void saveChallengeConfig() {
-	if (challengeFile == null || challengeConfigFile == null) {
-	    return;
-	}
-	try {
-	    getChallengeConfig().save(challengeConfigFile);
-	} catch (IOException ex) {
-	    getLogger().severe("Could not save config to " + challengeConfigFile);
-	}
-    }
-
-    // Localization
-    /**
-     * Saves the locale.yml file if it does not exist
-     */
-    public void saveDefaultLocale() {
-	if (localeFile == null) {
-	    localeFile = new File(getDataFolder(), "locale.yml");
-	}
-	if (!localeFile.exists()) {            
-	    plugin.saveResource("locale.yml", false);
-	}
     }
 
     /**
@@ -2256,161 +1297,6 @@ public class ASkyBlock extends JavaPlugin {
 	if (defLocaleStream != null) {
 	    YamlConfiguration defLocale = new YamlConfiguration().loadConfiguration(defLocaleStream);
 	    locale.setDefaults(defLocale);
-	}
-    }
-
-    /**
-     * @return locale FileConfiguration object
-     */
-    public FileConfiguration getLocale() {
-	if (locale == null) {
-	    reloadLocale();
-	}
-	return locale;
-    }
-
-    /**
-     * Saves challenges.yml
-     */
-    public void saveLocale() {
-	if (locale == null || localeFile == null) {
-	    return;
-	}
-	try {
-	    getLocale().save(localeFile);
-	} catch (IOException ex) {
-	    getLogger().severe("Could not save config to " + localeFile);
-	}
-    }
-
-    /**
-     * Sends a message to every player in the team that is offline
-     * @param playerUUID
-     * @param message
-     */
-    public void tellOfflineTeam(UUID playerUUID, String message) {
-	//getLogger().info("DEBUG: tell offline team called");
-	if (!players.inTeam(playerUUID)) {
-	    //getLogger().info("DEBUG: player is not in a team");
-	    return;
-	}
-	UUID teamLeader = players.getTeamLeader(playerUUID);
-	List<UUID> teamMembers = players.getMembers(teamLeader);
-	for (UUID member : teamMembers) {
-	    //getLogger().info("DEBUG: trying UUID " + member.toString());
-	    if (getServer().getPlayer(member) == null) {
-		// Offline player
-		setMessage(member, message);
-	    }
-	}
-    }
-
-    /**
-     * Tells all online team members something happened
-     * @param playerUUID
-     * @param message
-     */
-    public void tellTeam(UUID playerUUID, String message) {
-	//getLogger().info("DEBUG: tell offline team called");
-	if (!players.inTeam(playerUUID)) {
-	    //getLogger().info("DEBUG: player is not in a team");
-	    return;
-	}
-	UUID teamLeader = players.getTeamLeader(playerUUID);
-	List<UUID> teamMembers = players.getMembers(teamLeader);
-	for (UUID member : teamMembers) {
-	    //getLogger().info("DEBUG: trying UUID " + member.toString());
-	    if (!member.equals(playerUUID) && getServer().getPlayer(member) != null) {
-		// Online player
-		getServer().getPlayer(member).sendMessage(message);
-	    }
-	}
-    }
-    /**
-     * Sets a message for the player to receive next time they login
-     * @param player
-     * @param message
-     * @return true if player is offline, false if online
-     */
-    public boolean setMessage(UUID playerUUID, String message) {
-	//getLogger().info("DEBUG: received message - " + message);
-	Player player = getServer().getPlayer(playerUUID);
-	// Check if player is online
-	if (player != null) {
-	    if (player.isOnline()) {
-		//player.sendMessage(message);
-		return false;
-	    }
-	}
-	// Player is offline so store the message
-	//getLogger().info("DEBUG: player is offline - storing message");
-	List<String> playerMessages = messages.get(playerUUID);
-	if (playerMessages != null) {
-	    playerMessages.add(message);
-	} else {
-	    playerMessages = new ArrayList<String>(Arrays.asList(message));
-	}
-	messages.put(playerUUID, playerMessages);
-	return true;
-    }
-
-    /**
-     * Returns what messages are waiting for the player or null if none
-     * @param playerUUID
-     * @return
-     */
-    public List<String> getMessages(UUID playerUUID) {
-	List<String> playerMessages = messages.get(playerUUID);
-	return playerMessages;
-    }
-
-    /**
-     * Clears any messages for player
-     * @param playerUUID
-     */
-    public void clearMessages(UUID playerUUID) {
-	messages.remove(playerUUID);
-    }
-
-    public void saveMessages() {
-	if (messageStore == null) {
-	    return;
-	}
-	plugin.getLogger().info("Saving offline messages...");
-	try {
-	    // Convert to a serialized string
-	    final HashMap<String,Object> offlineMessages = new HashMap<String,Object>();
-	    for (UUID p : messages.keySet()) {
-		offlineMessages.put(p.toString(),messages.get(p));
-	    }
-	    // Convert to YAML
-	    messageStore.set("messages", offlineMessages);
-	    saveYamlFile(messageStore, "messages.yml");
-	    return;
-	} catch (Exception e) {
-	    e.printStackTrace();
-	    return;
-	}
-    }
-
-    public boolean loadMessages() {
-	getLogger().info("Loading offline messages...");
-	try {
-	    messageStore = Util.loadYamlFile("messages.yml");
-	    if (messageStore.getConfigurationSection("messages") == null) {
-		messageStore.createSection("messages"); // This is only used to create
-	    }
-	    HashMap<String,Object> temp = (HashMap<String, Object>) messageStore.getConfigurationSection("messages").getValues(true);
-	    for (String s : temp.keySet()) {
-		List<String> messageList = messageStore.getStringList("messages." + s);
-		if (!messageList.isEmpty()) {
-		    messages.put(UUID.fromString(s), messageList);
-		}
-	    }
-	    return true;
-	} catch (Exception e) {
-	    e.printStackTrace();
-	    return false;
 	}
     }
 
@@ -2453,267 +1339,40 @@ public class ASkyBlock extends JavaPlugin {
 	    player.removePotionEffect(effect.getType());	
     }
 
+    public void restartEvents() {
+	final PluginManager manager = getServer().getPluginManager();
+	lavaListener = new LavaCheck(this);
+	manager.registerEvents(lavaListener, this);
+	// Enables warp signs in ASkyBlock
+	warpSignsListener = new WarpSigns();
+	manager.registerEvents(warpSignsListener, this);
+    }
+
+    // Localization
     /**
-     * @param location
-     * @return Name of warp owner
+     * Saves the locale.yml file if it does not exist
      */
-    public String getWarpOwner(Location location) {
-	for (UUID playerUUID : warpList.keySet()) {
-	    Location l = getLocationString((String) warpList.get(playerUUID));
-	    if (l.equals(location)) {
-		return players.getName(playerUUID);
-	    }
+    public void saveDefaultLocale() {
+	if (localeFile == null) {
+	    localeFile = new File(getDataFolder(), "locale.yml");
 	}
-	return "";
-    }
-
-
-    /**
-     * Used to prevent teleporting when falling
-     * @param uniqueId
-     */
-    public void setFalling(UUID uniqueId) {
-	this.fallingPlayers.add(uniqueId);
+	if (!localeFile.exists()) {            
+	    plugin.saveResource("locale.yml", false);
+	}
     }
 
     /**
-     * Used to prevent teleporting when falling
-     * @param uniqueId
+     * Saves locale.yml
      */
-    public void unsetFalling(UUID uniqueId) {
-	//getLogger().info("DEBUG: unset falling");
-	this.fallingPlayers.remove(uniqueId);
-    }
-
-    /**
-     * Used to prevent teleporting when falling
-     * @param uniqueId
-     * @return true or false
-     */
-    public boolean isFalling(UUID uniqueId) {
-	return this.fallingPlayers.contains(uniqueId);
-    }
-
-    /**
-     * Sets all blocks in an island to a specified biome type
-     * @param islandLoc
-     * @param biomeType
-     */
-    public boolean setIslandBiome(Location islandLoc, Biome biomeType) {
-	final int islandX = islandLoc.getBlockX();
-	final int islandZ = islandLoc.getBlockZ();
-	final World world = islandLoc.getWorld();
-	final int range = (int)Math.round((double)Settings.island_protectionRange / 2);
-	List<Pair> chunks = new ArrayList<Pair>();
+    public void saveLocale() {
+	if (locale == null || localeFile == null) {
+	    return;
+	}
 	try {
-	    // Biomes only work in 2D, so there's no need to set every block in the island area
-	    // However, we need to collect the chunks and push them out again
-	    //getLogger().info("DEBUG: Protection range is = " + Settings.island_protectionRange);
-	    for (int x = -range; x <= range; x++) {
-		for (int z = -range; z <= range; z++) {
-		    Location l = new Location(world,(islandX + x), 0, (islandZ + z));
-		    final Pair chunkCoords = new Pair(l.getChunk().getX(),l.getChunk().getZ());
-		    if (!chunks.contains(chunkCoords)) {
-			chunks.add(chunkCoords);
-		    }
-		    //getLogger().info("DEBUG: Chunk saving  " + l.getChunk().getX() + "," + l.getChunk().getZ());
-		    /*
-		    // Weird stuff going on here. Sometimes the location does not get created.
-		    if (l.getBlockX() != (islandX +x)) {
-			getLogger().info("DEBUG: Setting " + (islandX + x) + "," + (islandZ + z));
-			getLogger().info("DEBUG: disparity in x");
-		    }
-		    if (l.getBlockZ() != (islandZ +z)) {
-			getLogger().info("DEBUG: Setting " + (islandX + x) + "," + (islandZ + z));
-			getLogger().info("DEBUG: disparity in z");
-		    }*/
-		    l.getBlock().setBiome(biomeType);
-		}
-	    }
-	} catch (Exception noBiome) {
-	    return false;
+	    getLocale().save(localeFile);
+	} catch (IOException ex) {
+	    getLogger().severe("Could not save config to " + localeFile);
 	}
-	// Now do some adjustments based on the Biome
-	switch (biomeType) {
-	case MESA:
-	case MESA_BRYCE:
-	case DESERT:
-	case JUNGLE:
-	case SAVANNA:
-	case SAVANNA_MOUNTAINS:
-	case SAVANNA_PLATEAU:
-	case SAVANNA_PLATEAU_MOUNTAINS:
-	case SWAMPLAND:
-	    // No ice or snow allowed
-	    for (int y = islandLoc.getWorld().getMaxHeight(); y >= Settings.sea_level; y--) {
-		for (int x = islandX-range; x <= islandX + range; x++) {
-		    for (int z = islandZ-range; z <= islandZ+range; z++) {
-			switch(world.getBlockAt(x, y, z).getType()) {
-			case ICE:
-			case SNOW:
-			    world.getBlockAt(x, y, z).setType(Material.AIR);
-			    break;
-			default:
-			}
-		    }
-		}
-	    }
-	    break;
-	case HELL:
-	    // No water or ice allowed
-	    for (int y = islandLoc.getWorld().getMaxHeight(); y >= Settings.sea_level; y--) {
-		for (int x = islandX-range; x <= islandX + range; x++) {
-		    for (int z = islandZ-range; z <= islandZ+range; z++) {
-			switch(world.getBlockAt(x, y, z).getType()) {
-			case ICE:
-			case WATER:
-			case STATIONARY_WATER:
-			case SNOW:
-			    world.getBlockAt(x, y, z).setType(Material.AIR);
-			    break;
-			default:
-			}
-		    }
-		}
-	    }
-	    break;
-	case BEACH:
-	    break;
-	case BIRCH_FOREST:
-	    break;
-	case BIRCH_FOREST_HILLS:
-	    break;
-	case BIRCH_FOREST_HILLS_MOUNTAINS:
-	    break;
-	case BIRCH_FOREST_MOUNTAINS:
-	    break;
-	case COLD_BEACH:
-	    break;
-	case COLD_TAIGA:
-	    break;
-	case COLD_TAIGA_HILLS:
-	    break;
-	case COLD_TAIGA_MOUNTAINS:
-	    break;
-	case DEEP_OCEAN:
-	    break;
-	case DESERT_HILLS:
-	    break;
-	case DESERT_MOUNTAINS:
-	    break;
-	case EXTREME_HILLS:
-	    break;
-	case EXTREME_HILLS_MOUNTAINS:
-	    break;
-	case EXTREME_HILLS_PLUS:
-	    break;
-	case EXTREME_HILLS_PLUS_MOUNTAINS:
-	    break;
-	case FLOWER_FOREST:
-	    break;
-	case FOREST:
-	    break;
-	case FOREST_HILLS:
-	    break;
-	case FROZEN_OCEAN:
-	    break;
-	case FROZEN_RIVER:
-	    break;
-	case ICE_MOUNTAINS:
-	    break;
-	case ICE_PLAINS:
-	    break;
-	case ICE_PLAINS_SPIKES:
-	    break;
-	case JUNGLE_EDGE:
-	    break;
-	case JUNGLE_EDGE_MOUNTAINS:
-	    break;
-	case JUNGLE_HILLS:
-	    break;
-	case JUNGLE_MOUNTAINS:
-	    break;
-	case MEGA_SPRUCE_TAIGA:
-	    break;
-	case MEGA_SPRUCE_TAIGA_HILLS:
-	    break;
-	case MEGA_TAIGA:
-	    break;
-	case MEGA_TAIGA_HILLS:
-	    break;
-	case MUSHROOM_ISLAND:
-	    break;
-	case MUSHROOM_SHORE:
-	    break;
-	case OCEAN:
-	    break;
-	case PLAINS:
-	    break;
-	case RIVER:
-	    break;
-	case ROOFED_FOREST:
-	    break;
-	case ROOFED_FOREST_MOUNTAINS:
-	    break;
-	case SKY:
-	    break;
-	case SMALL_MOUNTAINS:
-	    break;
-	case STONE_BEACH:
-	    break;
-	case SUNFLOWER_PLAINS:
-	    break;
-	case SWAMPLAND_MOUNTAINS:
-	    break;
-	case TAIGA:
-	    break;
-	case TAIGA_HILLS:
-	    break;
-	case TAIGA_MOUNTAINS:
-	    break;
-	case MESA_PLATEAU:
-	    break;
-	case MESA_PLATEAU_FOREST:
-	    break;
-	case MESA_PLATEAU_FOREST_MOUNTAINS:
-	    break;
-	case MESA_PLATEAU_MOUNTAINS:
-	    break;
-	default:
-	    break;
-	}
-	// Update chunks
-	for (Pair p: chunks) {
-	    islandLoc.getWorld().refreshChunk(p.getLeft(), p.getRight());
-	    //plugin.getLogger().info("DEBUG: refreshing " + p.getLeft() + "," + p.getRight());
-	}
-	return true;
-    }
-
-    /**
-     * @return the biomes
-     */
-    public Biomes getBiomes() {
-	return biomes;
-    }
-
-    /**
-     * This returns the coordinate of where an island should be on the grid.
-     * @param location
-     * @return
-     */
-    public Location getClosestIsland(Location location) {
-	long x = Math.round((double)location.getBlockX() / Settings.islandDistance) * Settings.islandDistance + Settings.islandXOffset;
-	long z = Math.round((double)location.getBlockZ() / Settings.islandDistance) * Settings.islandDistance + Settings.islandZOffset;
-	long y = Settings.island_level;
-	return new Location(location.getWorld(),x,y,z);
-    }
-
-    /**
-     * @return the calculatingLevel
-     */
-    public boolean isCalculatingLevel() {
-	return calculatingLevel;
     }
 
     /**
@@ -2724,17 +1383,15 @@ public class ASkyBlock extends JavaPlugin {
     }
 
     /**
-     * @return the grid
+     * @param newIsland the newIsland to set
      */
-    public GridManager getGrid() {
-	return grid;
+    public void setNewIsland(boolean newIsland) {
+	this.newIsland = newIsland;
     }
 
-    /**
-     * @return the updateCheck
-     */
-    public Update getUpdateCheck() {
-	return updateCheck;
+    public void unregisterEvents() {
+	HandlerList.unregisterAll(warpSignsListener);
+	HandlerList.unregisterAll(lavaListener);	
     }
 
 }

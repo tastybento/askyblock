@@ -145,7 +145,7 @@ public class SafeBoat implements Listener {
 			// plugin.getLogger().info("XYZ is " + x + " " + y + " "
 			// + z);
 			// Make sure the location is safe
-			if (ASkyBlock.isSafeLocation(loc)) {
+			if (GridManager.isSafeLocation(loc)) {
 			    // plugin.getLogger().info("Safe!");
 			    e.setTo(loc);
 			    return;

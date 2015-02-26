@@ -71,7 +71,7 @@ public class IslandGuardNew implements Listener {
 	    return;
 	}
 	if (e.getRightClicked() != null && e.getRightClicked().getType().equals(EntityType.ARMOR_STAND)
-		&& !plugin.locationIsOnIsland(e.getPlayer(),e.getRightClicked().getLocation())) {
+		&& !plugin.getGrid().locationIsOnIsland(e.getPlayer(),e.getRightClicked().getLocation())) {
 	    //plugin.getLogger().info("DEBUG: Armor stand clicked off island");
 	    if (!Settings.allowArmorStandUse) {
 		e.setCancelled(true);
@@ -134,7 +134,7 @@ public class IslandGuardNew implements Listener {
 	    return;
 	}
 	// Check if on island
-	if (plugin.playerIsOnIsland(e.getPlayer())) {
+	if (plugin.getGrid().playerIsOnIsland(e.getPlayer())) {
 	    return;
 	}
 	// Check if they are holding armor stand
@@ -169,7 +169,7 @@ public class IslandGuardNew implements Listener {
 		return;
 	    }
 	    // Check if on island
-	    if (plugin.playerIsOnIsland(p)) {
+	    if (plugin.getGrid().playerIsOnIsland(p)) {
 		return;
 	    }
 	    // This permission bypasses protection

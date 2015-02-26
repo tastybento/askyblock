@@ -201,7 +201,7 @@ public class Players {
 	    playerInfo.set("invitecooldown." + coolDownTime.getTimeInMillis(), getStringLocation(en.getKey()));
 	}
 
-	ASkyBlock.saveYamlFile(playerInfo, "players/" + uuid.toString() + ".yml");
+	Util.saveYamlFile(playerInfo, "players/" + uuid.toString() + ".yml");
 
     }
 

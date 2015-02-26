@@ -54,7 +54,7 @@ public class CoopPlay {
 		    } else {
 			if (member.equals(leaderUUID)){
 			    // offline - tell leader
-			    plugin.setMessage(leaderUUID, Locale.coopInvited.replace("[name]", requester.getDisplayName()).replace("[player]", newPlayer.getDisplayName()));
+			    Messages.setMessage(leaderUUID, Locale.coopInvited.replace("[name]", requester.getDisplayName()).replace("[player]", newPlayer.getDisplayName()));
 			}
 		    }
 		}

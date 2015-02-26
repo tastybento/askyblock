@@ -45,7 +45,7 @@ import org.jnbt.ShortTag;
 import org.jnbt.StringTag;
 import org.jnbt.Tag;
 
-import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.GridManager;
 import com.wasteofplastic.askyblock.Locale;
 import com.wasteofplastic.askyblock.Settings;
 
@@ -457,7 +457,7 @@ public class Schematic {
 	}
 	grass.subtract(bedrock);
 	grass.add(loc);
-	while (!ASkyBlock.isSafeLocation(grass) && grass.getY() < 250) {
+	while (!GridManager.isSafeLocation(grass) && grass.getY() < 250) {
 	    grass.setY(grass.getY() + 1.1D);
 	}
 	Block blockToChange = null;

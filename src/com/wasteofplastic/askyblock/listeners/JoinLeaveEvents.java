@@ -32,6 +32,7 @@ import com.wasteofplastic.askyblock.CoopPlay;
 import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.LevelCalc;
 import com.wasteofplastic.askyblock.Locale;
+import com.wasteofplastic.askyblock.Messages;
 import com.wasteofplastic.askyblock.PlayerCache;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.Settings.GameType;
@@ -72,7 +73,7 @@ public class JoinLeaveEvents implements Listener {
 	}
 	// Load any messages for the player
 	//plugin.getLogger().info("DEBUG: Checking messages for " + event.getPlayer().getName());
-	final List<String> messages = plugin.getMessages(playerUUID);
+	final List<String> messages = Messages.getMessages(playerUUID);
 	if (messages != null) {
 	    //plugin.getLogger().info("DEBUG: Messages waiting!");
 	    plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
@@ -84,7 +85,7 @@ public class JoinLeaveEvents implements Listener {
 			event.getPlayer().sendMessage(i++ + ": " + message);
 		    }
 		    // Clear the messages
-		    plugin.clearMessages(playerUUID);
+		    Messages.clearMessages(playerUUID);
 		}
 	    }, 40L);
 	} //else {
@@ -148,7 +149,7 @@ public class JoinLeaveEvents implements Listener {
 	players.setPlayerName(playerUUID, event.getPlayer().getName());
 	players.save(playerUUID);
 	if (Settings.logInRemoveMobs) {
-	    plugin.removeMobs(event.getPlayer().getLocation());
+	    plugin.getGrid().removeMobs(event.getPlayer().getLocation());
 	}
 	//plugin.getLogger().info("Cached " + event.getPlayer().getName());
 

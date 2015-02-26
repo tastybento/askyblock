@@ -50,8 +50,10 @@ import com.wasteofplastic.askyblock.CoopPlay;
 import com.wasteofplastic.askyblock.DeleteIslandChunk;
 import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.Locale;
+import com.wasteofplastic.askyblock.Messages;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.TopTen;
+import com.wasteofplastic.askyblock.WarpSigns;
 import com.wasteofplastic.askyblock.panels.ControlPanel;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
@@ -435,19 +437,19 @@ public class AdminCmd implements CommandExecutor {
 		    sender.sendMessage(ChatColor.RED + "This island is not owned by anyone right now - recommend that sign is removed.");
 		    return true;
 		}
-		if (plugin.addWarp(target, lastBlock.getLocation())) {
+		if (WarpSigns.addWarp(target, lastBlock.getLocation())) {
 		    sender.sendMessage(ChatColor.GREEN + "Warp rescued and assigned to " + plugin.getPlayers().getName(target));
 		    return true;	    
 		}
 		// Warp already exists
-		sender.sendMessage(ChatColor.RED + "That warp sign is already active and owned by " + plugin.getWarpOwner(lastBlock.getLocation()));
+		sender.sendMessage(ChatColor.RED + "That warp sign is already active and owned by " + WarpSigns.getWarpOwner(lastBlock.getLocation()));
 		return true;
 
 
 	    } else if (split[0].equalsIgnoreCase("reload")) {
 		plugin.reloadConfig();
 		plugin.loadPluginConfig();
-		plugin.reloadChallengeConfig();
+		plugin.getChallenges().reloadChallengeConfig();
 		if (Settings.useEconomy) {
 		    ControlPanel.loadShop();
 		}
@@ -714,7 +716,7 @@ public class AdminCmd implements CommandExecutor {
 		    return true;
 		} else {
 		    if (plugin.getPlayers().getIslandLocation(playerUUID) != null) {
-			Location safeSpot = plugin.getSafeHomeLocation(playerUUID);
+			Location safeSpot = plugin.getGrid().getSafeHomeLocation(playerUUID);
 			if (safeSpot != null) {
 			    // This next line should help players with long ping times
 			    ((Player)sender).teleport(safeSpot);
@@ -911,9 +913,9 @@ public class AdminCmd implements CommandExecutor {
 		// Okay clear to set biome
 		// Actually set the biome
 		if (plugin.getPlayers().inTeam(playerUUID) && plugin.getPlayers().getTeamIslandLocation(playerUUID) != null) {
-		    plugin.setIslandBiome(plugin.getPlayers().getTeamIslandLocation(playerUUID),biome);
+		    plugin.getBiomes().setIslandBiome(plugin.getPlayers().getTeamIslandLocation(playerUUID),biome);
 		} else {
-		    plugin.setIslandBiome(plugin.getPlayers().getIslandLocation(playerUUID), biome);
+		    plugin.getBiomes().setIslandBiome(plugin.getPlayers().getIslandLocation(playerUUID), biome);
 		}
 		sender.sendMessage(ChatColor.GREEN + Locale.biomeSet.replace("[biome]", biomeName));
 		Player targetPlayer = plugin.getServer().getPlayer(playerUUID);
@@ -921,7 +923,7 @@ public class AdminCmd implements CommandExecutor {
 		    // Online
 		    targetPlayer.sendMessage("[Admin] " + ChatColor.GREEN + Locale.biomeSet.replace("[biome]", biomeName));
 		} else {
-		    plugin.setMessage(playerUUID, "[Admin] " + ChatColor.GREEN + Locale.biomeSet.replace("[biome]", biomeName));
+		    Messages.setMessage(playerUUID, "[Admin] " + ChatColor.GREEN + Locale.biomeSet.replace("[biome]", biomeName));
 		}
 		return true;
 	    } else 
@@ -952,7 +954,7 @@ public class AdminCmd implements CommandExecutor {
 				plugin.getPlayers().setLeaveTeam(teamLeader);
 			    }				
 			    // Remove any warps
-			    plugin.removeWarp(playerUUID);
+			    WarpSigns.removeWarp(playerUUID);
 			    sender.sendMessage(ChatColor.RED + Locale.kicknameRemoved.replace("[name]", split[2]));
 			    // If target is online -- do not tell target
 			    /*
@@ -1080,7 +1082,7 @@ public class AdminCmd implements CommandExecutor {
 		}
 		// Teleport the player if they are online
 		if (targetPlayer != null) {
-		    plugin.homeTeleport(targetPlayer);
+		    plugin.getGrid().homeTeleport(targetPlayer);
 		} 
 		return true;
 	    } else {

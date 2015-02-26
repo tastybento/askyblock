@@ -67,7 +67,7 @@ public class AcidEffect implements Listener {
     public void onPlayerDeath(PlayerDeathEvent e) {
 	burningPlayers.remove((Player) e.getEntity());
 	wetPlayers.remove((Player) e.getEntity());
-	plugin.unsetFalling(((Player)e.getEntity()).getUniqueId());
+	IslandGuard.unsetFalling(((Player)e.getEntity()).getUniqueId());
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
@@ -324,7 +324,7 @@ public class AcidEffect implements Listener {
     //@SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerInteract(final PlayerInteractEvent e) {
-	if (plugin.playerIsOnIsland(e.getPlayer())) {
+	if (plugin.getGrid().playerIsOnIsland(e.getPlayer())) {
 	    boolean otherOb = false;
 	    if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK) && e.getPlayer().getItemInHand().getType().equals(Material.BUCKET)
 		    && e.getClickedBlock().getType().equals(Material.OBSIDIAN)) {

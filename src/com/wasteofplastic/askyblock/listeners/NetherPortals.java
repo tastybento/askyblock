@@ -42,6 +42,7 @@ import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.util.Vector;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.GridManager;
 import com.wasteofplastic.askyblock.Locale;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.util.VaultHelper;
@@ -105,7 +106,7 @@ public class NetherPortals implements Listener {
 	    // Portal use is disallowed for visitors, but okay for ops or bypass mods
 	    if (!event.getPlayer().isOp() && !VaultHelper.checkPerm(event.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
 		// Portals use is always allowed around the spawn
-		if (!plugin.locationIsOnIsland(event.getPlayer(),event.getPlayer().getLocation())
+		if (!plugin.getGrid().locationIsOnIsland(event.getPlayer(),event.getPlayer().getLocation())
 			&& !plugin.getGrid().isAtSpawn(event.getPlayer().getLocation())) {
 		    event.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
 		    event.setCancelled(true);
@@ -116,7 +117,7 @@ public class NetherPortals implements Listener {
 	//plugin.getLogger().info(event.getCause().toString());
 	//plugin.getLogger().info("Get from is " + currentLocation.toString());
 	// Check that we know this player (they could have come from another world)
-	Location destination = plugin.getSafeHomeLocation(event.getPlayer().getUniqueId());
+	Location destination = plugin.getGrid().getSafeHomeLocation(event.getPlayer().getUniqueId());
 	if (destination == null) {
 	    event.getPlayer().sendMessage(ChatColor.YELLOW + "Type /" + Settings.ISLANDCOMMAND + " to start an island.");
 	    event.setCancelled(true);
@@ -132,13 +133,13 @@ public class NetherPortals implements Listener {
 		    //event.useTravelAgent(true);
 		    event.setCancelled(true);
 		    Location end_place = plugin.getServer().getWorld(Settings.worldName + "_the_end").getSpawnLocation();
-		    if (ASkyBlock.isSafeLocation(end_place)) {
+		    if (GridManager.isSafeLocation(end_place)) {
 			event.getPlayer().teleport(end_place);
 			//event.getPlayer().sendBlockChange(end_place, end_place.getBlock().getType(),end_place.getBlock().getData());
 			return;
 		    } else {
 			event.getPlayer().sendMessage(ChatColor.RED + Locale.warpserrorNotSafe);
-			plugin.homeTeleport(event.getPlayer());
+			plugin.getGrid().homeTeleport(event.getPlayer());
 			return;
 		    }
 		}
