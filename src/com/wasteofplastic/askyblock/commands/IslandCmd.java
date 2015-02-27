@@ -637,7 +637,7 @@ public class IslandCmd implements CommandExecutor {
 	    if (!onLevelWaitTime(asker) || Settings.levelWait <= 0 || asker.isOp()) {
 		asker.sendMessage(ChatColor.GREEN + Locale.levelCalculating);
 		LevelCalc levelCalc = new LevelCalc(plugin, targetPlayer, asker);
-		levelCalc.runTaskTimer(plugin, 0L, 10L);
+		levelCalc.runTaskTimer(plugin, 0L, 5L);
 		setLevelWaitTime(asker);
 	    } else {
 		asker.sendMessage(ChatColor.YELLOW + Locale.islandresetWait.replace("[time]", String.valueOf(getLevelWaitTime(asker))));

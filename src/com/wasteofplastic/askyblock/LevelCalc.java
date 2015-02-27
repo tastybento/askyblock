@@ -6,7 +6,6 @@ import java.util.UUID;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -66,7 +65,7 @@ public class LevelCalc extends BukkitRunnable {
 	    range = Settings.island_protectionRange;
 	}
 	// Calculated based on the size of the protection area
-	double ratio = (double) counter * 10000 / (double) (range * range);
+	double ratio = (double) counter * 12100 / (double) (range*range);
 	// plugin.getLogger().info("DEBUG: ratio = " + ratio +
 	// " protection range = " + range);
 	this.slice = (int) ratio;
@@ -148,20 +147,18 @@ public class LevelCalc extends BukkitRunnable {
     }
 
     private void calculateSlice(int top, int bottom) {
-	// plugin.getLogger().info("DEBUG: calculating top = " + top +
-	// " bottom = "+ bottom);
+	//plugin.getLogger().info("DEBUG: calculating top = " + top + " bottom = "+ bottom);
 	if (bottom < 0) {
 	    bottom = 0;
 	}
+	int r = range /2;
+	//plugin.getLogger().info("DEBUG: range = " + r);
 	for (int y = top; y >= bottom; y--) {
 	    // plugin.getLogger().info("DEBUG: y = " + y);
 	    // plugin.getLogger().info("DEBUG: blockcount = " + blockcount);
-	    int r = range /2;
-	    for (int x = r * -1; x <= r; x++) {
-		for (int z = r * -1; z <= r; z++) {
-		    Material blockType = l.getWorld().getBlockAt(px + x, y, pz + z).getType();
-		    //final Block b = new Location(l.getWorld(), px + x, y, pz + z).getBlock();
-		    //final Material blockType = b.getType();
+	    for (int x = px - r; x <= px + r; x++) {
+		for (int z = pz - r; z <= pz + r; z++) {
+		    Material blockType = l.getWorld().getBlockAt(x, y, z).getType();
 		    if (blockType != Material.AIR) {
 			// Total up the values
 			if (Settings.blockValues.containsKey(blockType)) {
