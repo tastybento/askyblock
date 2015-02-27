@@ -170,19 +170,7 @@ public class Island {
      * @return
      */
     public boolean onIsland(Location target) {
-	if (target.getWorld().equals(world)) {
-	    // Bukkit.getLogger().info("Target = " + target.getBlockX() + "," +
-	    // target.getBlockZ());
-	    // Bukkit.getLogger().info("Center = " + center.getBlockX() + "," +
-	    // center.getBlockZ());
-	    // Bukkit.getLogger().info(target.getX() + ">=" +
-	    // (center.getBlockX() - protectionRange / 2));
-	    // Bukkit.getLogger().info(target.getX() + "<" + (center.getBlockX()
-	    // + protectionRange / 2));
-	    // Bukkit.getLogger().info(target.getZ() + ">=" +
-	    // (center.getBlockZ() - protectionRange / 2));
-	    // Bukkit.getLogger().info(target.getZ() + "<" + (center.getBlockZ()
-	    // + protectionRange / 2));
+	if (world != null && target.getWorld().equals(world)) {
 	    if (target.getX() >= center.getBlockX() - protectionRange / 2 && target.getX() < center.getBlockX() + protectionRange / 2
 		    && target.getZ() >= center.getBlockZ() - protectionRange / 2 && target.getZ() < center.getBlockZ() + protectionRange / 2) {
 		return true;
