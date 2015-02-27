@@ -207,5 +207,6 @@ public class Settings {
     public static boolean resetEnderChest;
     public static EntityType islandCompanion;
     public static boolean updateCheck;
+    public static List<String> companionNames;
 
 }

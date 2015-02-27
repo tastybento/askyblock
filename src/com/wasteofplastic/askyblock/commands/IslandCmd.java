@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 
@@ -44,6 +45,7 @@ import org.bukkit.block.Sign;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -717,8 +719,15 @@ public class IslandCmd implements CommandExecutor {
 		    plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
 			@Override
 			public void run() {
-			    player.getWorld().spawnEntity(cowSpot, Settings.islandCompanion);
-
+			    Entity companion = player.getWorld().spawnEntity(cowSpot, Settings.islandCompanion);  
+			    if (!Settings.companionNames.isEmpty()) {
+				Random rand = new Random();
+				int randomNum = rand.nextInt(Settings.companionNames.size());
+				String name = Settings.companionNames.get(randomNum).replace("[player]", player.getDisplayName());
+				//plugin.getLogger().info("DEBUG: name is " + name);
+				companion.setCustomName(name);
+				companion.setCustomNameVisible(true);
+			    } 
 			}
 		    }, 40L);
 		}
@@ -972,8 +981,15 @@ public class IslandCmd implements CommandExecutor {
 			plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
 			    @Override
 			    public void run() {
-				player.getWorld().spawnEntity(cowSpot, Settings.islandCompanion);
-
+				Entity companion = player.getWorld().spawnEntity(cowSpot, Settings.islandCompanion);  
+				if (!Settings.companionNames.isEmpty()) {
+				    Random rand = new Random();
+				    int randomNum = rand.nextInt(Settings.companionNames.size());
+				    String name = Settings.companionNames.get(randomNum).replace("[player]", player.getDisplayName());
+				    //plugin.getLogger().info("DEBUG: name is " + name);
+				    companion.setCustomName(name);
+				    companion.setCustomNameVisible(true);
+				} 
 			    }
 			}, 40L);
 		    }
@@ -1245,7 +1261,7 @@ public class IslandCmd implements CommandExecutor {
 			    // Tell the leader if they are online
 			    if (plugin.getServer().getPlayer(teamLeader) != null) {
 				plugin.getServer().getPlayer(teamLeader)
-					.sendMessage(ChatColor.RED + Locale.leavenameHasLeftYourIsland.replace("[name]", player.getName()));
+				.sendMessage(ChatColor.RED + Locale.leavenameHasLeftYourIsland.replace("[name]", player.getName()));
 			    } else {
 				// Leave them a message
 				Messages.setMessage(teamLeader, ChatColor.RED + Locale.leavenameHasLeftYourIsland.replace("[name]", player.getName()));
@@ -1725,8 +1741,8 @@ public class IslandCmd implements CommandExecutor {
 				// Clear their inventory and equipment and set
 				// them as survival
 				target.getInventory().clear(); // Javadocs are
-							       // wrong - this
-							       // does not
+				// wrong - this
+				// does not
 				// clear armor slots! So...
 				// plugin.getLogger().info("DEBUG: Clearing kicked player's inventory");
 				target.getInventory().setArmorContents(null);

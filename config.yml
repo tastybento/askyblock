@@ -279,6 +279,13 @@ island:
    # RABBIT, WOLF or NOTHING. Default is COW.
 
    companion: COW
+   # This is a list of names, picked at random that will apply to the companion
+   # You can add more if you like. If none are listed, the companion will not be
+   # named.
+   companionnames:
+   - "&9[player]'s cow"
+   - "&cEmergency &fFood"
+   - "&aD&6a&di&6s&9y"
 
    # Island Protection Settings
 

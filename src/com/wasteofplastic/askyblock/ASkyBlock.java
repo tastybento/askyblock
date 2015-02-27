@@ -20,6 +20,7 @@ package com.wasteofplastic.askyblock;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -597,6 +598,12 @@ public class ASkyBlock extends JavaPlugin {
 				"Island companion is not recognized. Pick from COW, PIG, SHEEP, CHICKEN, VILLAGER, HORSE, IRON_GOLEM, OCELOT, RABBIT, WOLF, BAT, MUSHROOM_COW, SNOWMAN");
 		Settings.islandCompanion = EntityType.COW;
 	    }
+	}
+	// Companion names
+	List<String> companionNames = getConfig().getStringList("island.companionnames");
+	Settings.companionNames = new ArrayList<String>();
+	for (String name : companionNames) {
+	    Settings.companionNames.add(ChatColor.translateAlternateColorCodes('&', name));
 	}
 	Settings.islandDistance = getConfig().getInt("island.distance", 200);
 	if (Settings.islandDistance < 50) {
