@@ -464,9 +464,12 @@ public class AdminCmd implements CommandExecutor {
 	    } else if (split[0].equalsIgnoreCase("reload")) {
 		plugin.reloadConfig();
 		plugin.loadPluginConfig();
-		plugin.getChallenges().reloadChallengeConfig();
-		if (Settings.useEconomy) {
+		Challenges.reloadChallengeConfig();
+		plugin.getChallenges();
+		if (Settings.useEconomy && VaultHelper.setupEconomy()) {
 		    ControlPanel.loadShop();
+		} else {
+		    Settings.useEconomy = false;
 		}
 		ControlPanel.loadControlPanel();
 		sender.sendMessage(ChatColor.YELLOW + Locale.reloadconfigReloaded);

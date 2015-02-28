@@ -17,6 +17,8 @@
 package com.wasteofplastic.askyblock;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Location;
@@ -49,6 +51,9 @@ public class SafeBoat implements Listener {
     // Flags to indicate if a player has exited a boat recently or not
     private static HashMap<UUID, Entity> exitedBoat = new HashMap<UUID, Entity>();
     private final ASkyBlock plugin;
+    // Stores players that should be ignored because they are being teleported away from 
+    // a locked islands
+    private static Set<UUID> ignoreList = new HashSet<UUID>();
 
     public SafeBoat(ASkyBlock aSkyBlock) {
 	plugin = aSkyBlock;
@@ -125,6 +130,9 @@ public class SafeBoat implements Listener {
 	//
 	// plugin.getLogger().info("DEBUG: Teleport called");
 	Player player = e.getPlayer();
+	if (SafeBoat.ignoreList.contains(player.getUniqueId())) {
+	    return;
+	}
 	// If the player is not teleporting due to boat exit, return
 	if (!exitedBoat.containsKey(player.getUniqueId())) {
 	    return;
@@ -134,7 +142,7 @@ public class SafeBoat implements Listener {
 	exitedBoat.remove(player.getUniqueId());
 	// Okay, so a player is getting out of a boat in the the right world.
 	// Now...
-	plugin.getLogger().info("Player just exited a boat");
+	//plugin.getLogger().info("DEBUG: Player just exited a boat");
 	// Find a safe place for the player to land
 	int radius = 0;
 	while (radius++ < 2) {
@@ -181,7 +189,9 @@ public class SafeBoat implements Listener {
 	    // Not the right world
 	    return;
 	}
-
+	if (SafeBoat.ignoreList.contains(player.getUniqueId())) {
+	    return;
+	}
 	// Set the boat exit flag for this player
 	// midTeleport.add(player.getUniqueId());
 	if (exitedBoat.containsKey(player.getUniqueId())) {
@@ -191,5 +201,17 @@ public class SafeBoat implements Listener {
 	    exitedBoat.put(player.getUniqueId(), boat);
 	}
 	return;
+    }
+    
+    /**
+     * Temporarily ignore a player
+     * @param player
+     */
+    public static void setIgnore(UUID player) {
+	if (SafeBoat.ignoreList.contains(player)) {
+	    SafeBoat.ignoreList.remove(player);
+	} else {
+	    SafeBoat.ignoreList.add(player);
+	}
     }
 }
