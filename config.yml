@@ -284,7 +284,7 @@ island:
    # named.
    companionnames:
    - "&9[player]'s cow"
-   - "&cEmergency &fFood"
+   - "&cEmergency &fFood?"
    - "&aD&6a&di&6s&9y"
 
    # Island Protection Settings
