@@ -317,16 +317,11 @@ public class AdminCmd implements CommandExecutor {
 		    sender.sendMessage(ChatColor.GREEN + "Set island spawn to your location.");
 		    return true;
 		}
-		// Space otherwise occupied
-		if (newSpawn != null) {
-		    UUID target = plugin.getPlayers().getPlayerFromIslandLocation(closestIsland);
-		    sender.sendMessage(ChatColor.RED + "Island exists at " + ChatColor.YELLOW + newSpawn.getCenter().getBlockX() + ","
-			    + newSpawn.getCenter().getBlockZ() + "!");
-		    if (target != null) {
-			sender.sendMessage(ChatColor.RED + "Owned by: " + plugin.getPlayers().getName(target));
-			sender.sendMessage(ChatColor.RED + "Unregister the owner first.");
-			return false;
-		    }
+		// Space otherwise occupied - find if anyone owns it
+		if (newSpawn != null && newSpawn.getOwner() != null) {
+			sender.sendMessage(ChatColor.RED + "This island space is owned by " + plugin.getPlayers().getName(newSpawn.getOwner()));
+			sender.sendMessage(ChatColor.RED + "Move further away or unregister the owner.");
+			return true;
 		}
 		if (oldSpawn != null) {
 		    sender.sendMessage(ChatColor.GOLD + "Changing spawn island location. Warning: old spawn island location at "
@@ -335,7 +330,10 @@ public class AdminCmd implements CommandExecutor {
 		    plugin.getGrid().deleteSpawn();
 		}
 		// New spawn site is free, so make it official
-		newSpawn = plugin.getGrid().addIsland(closestIsland.getBlockX(), closestIsland.getBlockZ());
+		if (newSpawn == null) {
+		    // Make the new spawn
+		    newSpawn = plugin.getGrid().addIsland(closestIsland.getBlockX(), closestIsland.getBlockZ());
+		}
 		plugin.getGrid().setSpawn(newSpawn);
 		ASkyBlock.getIslandWorld().setSpawnLocation(p.getLocation().getBlockX(), p.getLocation().getBlockY(), p.getLocation().getBlockZ());
 		sender.sendMessage(ChatColor.GREEN + "Set island spawn to your location " + p.getLocation().getBlockX() + "," + p.getLocation().getBlockZ());
@@ -975,105 +973,105 @@ public class AdminCmd implements CommandExecutor {
 		}
 		return true;
 	    } else
-	    // team kick <player> and team delete <leader>
-	    if (split[0].equalsIgnoreCase("team")) {
-		// Convert name to a UUID
-		final UUID playerUUID = plugin.getPlayers().getUUID(split[2]);
-		if (!plugin.getPlayers().isAKnownPlayer(playerUUID)) {
-		    sender.sendMessage(ChatColor.RED + Locale.errorUnknownPlayer);
-		    return true;
-		}
-		if (split[1].equalsIgnoreCase("kick")) {
-		    // Remove player from team
-		    if (!plugin.getPlayers().inTeam(playerUUID)) {
-			sender.sendMessage(ChatColor.RED + Locale.errorNoTeam);
+		// team kick <player> and team delete <leader>
+		if (split[0].equalsIgnoreCase("team")) {
+		    // Convert name to a UUID
+		    final UUID playerUUID = plugin.getPlayers().getUUID(split[2]);
+		    if (!plugin.getPlayers().isAKnownPlayer(playerUUID)) {
+			sender.sendMessage(ChatColor.RED + Locale.errorUnknownPlayer);
 			return true;
 		    }
-		    UUID teamLeader = plugin.getPlayers().getTeamLeader(playerUUID);
-		    // Payer is not a team leader
-		    if (!teamLeader.equals(playerUUID)) {
-			// Clear the player of all team-related items
-			plugin.getPlayers().setLeaveTeam(playerUUID);
-			plugin.getPlayers().setHomeLocation(playerUUID, null);
-			plugin.getPlayers().setIslandLocation(playerUUID, null);
-			// Clear the leader of this player and if they now have
-			// no team, remove the team
-			plugin.getPlayers().removeMember(teamLeader, playerUUID);
-			if (plugin.getPlayers().getMembers(teamLeader).size() < 2) {
-			    plugin.getPlayers().setLeaveTeam(teamLeader);
+		    if (split[1].equalsIgnoreCase("kick")) {
+			// Remove player from team
+			if (!plugin.getPlayers().inTeam(playerUUID)) {
+			    sender.sendMessage(ChatColor.RED + Locale.errorNoTeam);
+			    return true;
 			}
-			// Remove any warps
-			WarpSigns.removeWarp(playerUUID);
-			sender.sendMessage(ChatColor.RED + Locale.kicknameRemoved.replace("[name]", split[2]));
-			// If target is online -- do not tell target
-			/*
-			 * Player target =
-			 * plugin.getServer().getPlayer(playerUUID);
-			 * if (target != null) {
-			 * target.sendMessage(ChatColor.RED +
-			 * Locale.kicknameRemovedYou.replace("[name]",
-			 * sender.getName()));
-			 * } else {
-			 * plugin.setMessage(playerUUID,ChatColor.RED +
-			 * Locale.kicknameRemovedYou.replace("[name]",
-			 * sender.getName()));
-			 * }
-			 */
+			UUID teamLeader = plugin.getPlayers().getTeamLeader(playerUUID);
+			// Payer is not a team leader
+			if (!teamLeader.equals(playerUUID)) {
+			    // Clear the player of all team-related items
+			    plugin.getPlayers().setLeaveTeam(playerUUID);
+			    plugin.getPlayers().setHomeLocation(playerUUID, null);
+			    plugin.getPlayers().setIslandLocation(playerUUID, null);
+			    // Clear the leader of this player and if they now have
+			    // no team, remove the team
+			    plugin.getPlayers().removeMember(teamLeader, playerUUID);
+			    if (plugin.getPlayers().getMembers(teamLeader).size() < 2) {
+				plugin.getPlayers().setLeaveTeam(teamLeader);
+			    }
+			    // Remove any warps
+			    WarpSigns.removeWarp(playerUUID);
+			    sender.sendMessage(ChatColor.RED + Locale.kicknameRemoved.replace("[name]", split[2]));
+			    // If target is online -- do not tell target
+			    /*
+			     * Player target =
+			     * plugin.getServer().getPlayer(playerUUID);
+			     * if (target != null) {
+			     * target.sendMessage(ChatColor.RED +
+			     * Locale.kicknameRemovedYou.replace("[name]",
+			     * sender.getName()));
+			     * } else {
+			     * plugin.setMessage(playerUUID,ChatColor.RED +
+			     * Locale.kicknameRemovedYou.replace("[name]",
+			     * sender.getName()));
+			     * }
+			     */
+			    return true;
+			} else {
+			    sender.sendMessage(ChatColor.RED + "That player is a team leader. Remove team members first. Use '/" + label + " info " + split[2]
+				    + "' to find team members.");
+			    return true;
+			}
+		    } else {
+			sender.sendMessage(ChatColor.RED + Locale.errorUnknownCommand);
+			return false;
+		    }
+		} else if (split[0].equalsIgnoreCase("completechallenge")) {
+		    // Convert name to a UUID
+		    final UUID playerUUID = plugin.getPlayers().getUUID(split[2]);
+		    if (!plugin.getPlayers().isAKnownPlayer(playerUUID)) {
+			sender.sendMessage(ChatColor.RED + Locale.errorUnknownPlayer);
+			return true;
+		    }
+		    if (plugin.getPlayers().checkChallenge(playerUUID, split[1].toLowerCase())
+			    || !plugin.getPlayers().get(playerUUID).challengeExists(split[1].toLowerCase())) {
+			sender.sendMessage(ChatColor.RED + Locale.completeChallengeerrorChallengeDoesNotExist);
+			return true;
+		    }
+		    plugin.getPlayers().get(playerUUID).completeChallenge(split[1].toLowerCase());
+		    sender.sendMessage(ChatColor.YELLOW
+			    + Locale.completeChallengechallangeCompleted.replace("[challengename]", split[1].toLowerCase()).replace("[name]", split[2]));
+		    return true;
+		} else if (split[0].equalsIgnoreCase("resetchallenge")) {
+		    // Convert name to a UUID
+		    final UUID playerUUID = plugin.getPlayers().getUUID(split[2]);
+		    if (!plugin.getPlayers().isAKnownPlayer(playerUUID)) {
+			sender.sendMessage(ChatColor.RED + Locale.errorUnknownPlayer);
+			return true;
+		    }
+		    if (!plugin.getPlayers().checkChallenge(playerUUID, split[1].toLowerCase())
+			    || !plugin.getPlayers().get(playerUUID).challengeExists(split[1].toLowerCase())) {
+			sender.sendMessage(ChatColor.RED + Locale.resetChallengeerrorChallengeDoesNotExist);
+			return true;
+		    }
+		    plugin.getPlayers().resetChallenge(playerUUID, split[1].toLowerCase());
+		    sender.sendMessage(ChatColor.YELLOW
+			    + Locale.resetChallengechallengeReset.replace("[challengename]", split[1].toLowerCase()).replace("[name]", split[2]));
+		    return true;
+		} else if (split[0].equalsIgnoreCase("info") && split[1].equalsIgnoreCase("challenges")) {
+		    // Convert name to a UUID
+		    final UUID playerUUID = plugin.getPlayers().getUUID(split[2]);
+		    // plugin.getLogger().info("DEBUG: console player info UUID = "
+		    // + playerUUID);
+		    if (!plugin.getPlayers().isAKnownPlayer(playerUUID)) {
+			sender.sendMessage(ChatColor.RED + Locale.errorUnknownPlayer);
 			return true;
 		    } else {
-			sender.sendMessage(ChatColor.RED + "That player is a team leader. Remove team members first. Use '/" + label + " info " + split[2]
-				+ "' to find team members.");
+			showInfoChallenges(playerUUID, sender);
 			return true;
 		    }
-		} else {
-		    sender.sendMessage(ChatColor.RED + Locale.errorUnknownCommand);
-		    return false;
 		}
-	    } else if (split[0].equalsIgnoreCase("completechallenge")) {
-		// Convert name to a UUID
-		final UUID playerUUID = plugin.getPlayers().getUUID(split[2]);
-		if (!plugin.getPlayers().isAKnownPlayer(playerUUID)) {
-		    sender.sendMessage(ChatColor.RED + Locale.errorUnknownPlayer);
-		    return true;
-		}
-		if (plugin.getPlayers().checkChallenge(playerUUID, split[1].toLowerCase())
-			|| !plugin.getPlayers().get(playerUUID).challengeExists(split[1].toLowerCase())) {
-		    sender.sendMessage(ChatColor.RED + Locale.completeChallengeerrorChallengeDoesNotExist);
-		    return true;
-		}
-		plugin.getPlayers().get(playerUUID).completeChallenge(split[1].toLowerCase());
-		sender.sendMessage(ChatColor.YELLOW
-			+ Locale.completeChallengechallangeCompleted.replace("[challengename]", split[1].toLowerCase()).replace("[name]", split[2]));
-		return true;
-	    } else if (split[0].equalsIgnoreCase("resetchallenge")) {
-		// Convert name to a UUID
-		final UUID playerUUID = plugin.getPlayers().getUUID(split[2]);
-		if (!plugin.getPlayers().isAKnownPlayer(playerUUID)) {
-		    sender.sendMessage(ChatColor.RED + Locale.errorUnknownPlayer);
-		    return true;
-		}
-		if (!plugin.getPlayers().checkChallenge(playerUUID, split[1].toLowerCase())
-			|| !plugin.getPlayers().get(playerUUID).challengeExists(split[1].toLowerCase())) {
-		    sender.sendMessage(ChatColor.RED + Locale.resetChallengeerrorChallengeDoesNotExist);
-		    return true;
-		}
-		plugin.getPlayers().resetChallenge(playerUUID, split[1].toLowerCase());
-		sender.sendMessage(ChatColor.YELLOW
-			+ Locale.resetChallengechallengeReset.replace("[challengename]", split[1].toLowerCase()).replace("[name]", split[2]));
-		return true;
-	    } else if (split[0].equalsIgnoreCase("info") && split[1].equalsIgnoreCase("challenges")) {
-		// Convert name to a UUID
-		final UUID playerUUID = plugin.getPlayers().getUUID(split[2]);
-		// plugin.getLogger().info("DEBUG: console player info UUID = "
-		// + playerUUID);
-		if (!plugin.getPlayers().isAKnownPlayer(playerUUID)) {
-		    sender.sendMessage(ChatColor.RED + Locale.errorUnknownPlayer);
-		    return true;
-		} else {
-		    showInfoChallenges(playerUUID, sender);
-		    return true;
-		}
-	    }
 	    return false;
 	case 4:
 	    // Team add <player> <leader>
