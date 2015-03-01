@@ -191,15 +191,15 @@ public class Metrics {
 	    throw new IOException(response);
 	}
     }
-    
+
     public static List<Player> getOnlinePlayers() {
-	    List<Player> list = Lists.newArrayList();
-	    for (World world : Bukkit.getWorlds()) {
-	        list.addAll(world.getPlayers());
-	    }
-	    return Collections.unmodifiableList(list);
+	List<Player> list = Lists.newArrayList();
+	for (World world : Bukkit.getWorlds()) {
+	    list.addAll(world.getPlayers());
 	}
-    
+	return Collections.unmodifiableList(list);
+    }
+
     public boolean start() {
 	synchronized (optOutLock) {
 	    if (isOptOut()) {

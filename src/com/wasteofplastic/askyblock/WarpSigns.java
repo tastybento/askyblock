@@ -16,17 +16,27 @@
  *******************************************************************************/
 package com.wasteofplastic.askyblock;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
+
+import com.wasteofplastic.askyblock.util.Util;
+import com.wasteofplastic.askyblock.util.VaultHelper;
 
 /**
  * Handles warping in ASkyBlock Players can add one sign
@@ -35,48 +45,50 @@ import org.bukkit.event.block.SignChangeEvent;
  * 
  */
 public class WarpSigns implements Listener {
-    private final ASkyBlock plugin;
+    private final static ASkyBlock plugin = ASkyBlock.getPlugin();
+    // Map of all warps stored as player, warp sign Location
+    private static HashMap<UUID, Object> warpList = new HashMap<UUID, Object>();
+    // Where warps are stored
+    private static YamlConfiguration welcomeWarps;
 
-    protected WarpSigns(ASkyBlock aSkyBlock) {
-	plugin = aSkyBlock;
-    }
     /*
-    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
-    protected void onSignPopped(BlockPhysicsEvent e) {
-	Block b = e.getBlock();
-	if (!(b.getWorld()).getName().equals(Settings.worldName)) {
-	    // Wrong world
-	    return;
-	}
-	if (!plugin.checkWarp(b.getLocation())) {
-	    return;
-	}
-	// Block b = e.getBlock().getRelative(BlockFace.UP);	
-	if (!(b.getState() instanceof Sign)) {
-	    return;
-	}
-	if (!plugin.checkWarp(b.getLocation())) {
-	    return;
-	}
-	//plugin.getLogger().info("DEBUG: Known warp location! " + b.getLocation().toString());
-	// This is the sign block - check to see if it is still a sign
-	//if (b.getType().equals(Material.SIGN_POST)) {
-	// Check to see if it is still attached
-	MaterialData m = b.getState().getData();
-	BlockFace face = BlockFace.DOWN; // Most of the time it's going
-	// to be down
-	if (m instanceof Attachable) {
-	    face = ((Attachable) m).getAttachedFace();
-	}
-	if (b.getRelative(face).getType().isSolid()) {
-	    //plugin.getLogger().info("Attached to some solid block");
-	} else {
-	    plugin.removeWarp(b.getLocation());
-	    //plugin.getLogger().info("Warp removed");
-	}
-	//}
-
-    }*/
+     * @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
+     * public void onSignPopped(BlockPhysicsEvent e) {
+     * Block b = e.getBlock();
+     * if (!(b.getWorld()).getName().equals(Settings.worldName)) {
+     * // Wrong world
+     * return;
+     * }
+     * if (!plugin.checkWarp(b.getLocation())) {
+     * return;
+     * }
+     * // Block b = e.getBlock().getRelative(BlockFace.UP);
+     * if (!(b.getState() instanceof Sign)) {
+     * return;
+     * }
+     * if (!plugin.checkWarp(b.getLocation())) {
+     * return;
+     * }
+     * //plugin.plugin.getLogger().info("DEBUG: Known warp location! " +
+     * b.getLocation().toString());
+     * // This is the sign block - check to see if it is still a sign
+     * //if (b.getType().equals(Material.SIGN_POST)) {
+     * // Check to see if it is still attached
+     * MaterialData m = b.getState().getData();
+     * BlockFace face = BlockFace.DOWN; // Most of the time it's going
+     * // to be down
+     * if (m instanceof Attachable) {
+     * face = ((Attachable) m).getAttachedFace();
+     * }
+     * if (b.getRelative(face).getType().isSolid()) {
+     * //plugin.plugin.getLogger().info("Attached to some solid block");
+     * } else {
+     * plugin.removeWarp(b.getLocation());
+     * //plugin.plugin.getLogger().info("Warp removed");
+     * }
+     * //}
+     * }
+     */
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
     public void onSignBreak(BlockBreakEvent e) {
@@ -89,16 +101,16 @@ public class WarpSigns implements Listener {
 		    if (s.getLine(0).equalsIgnoreCase(ChatColor.GREEN + Locale.warpswelcomeLine)) {
 			// Do a quick check to see if this sign location is in
 			// the list of warp signs
-			if (plugin.checkWarp(s.getLocation())) {
+			if (checkWarp(s.getLocation())) {
 			    // Welcome sign detected - check to see if it is
 			    // this player's sign
-			    final Location playerSignLoc = plugin.getWarp(player.getUniqueId());
+			    final Location playerSignLoc = getWarp(player.getUniqueId());
 			    if (playerSignLoc != null) {
 				if (playerSignLoc.equals(s.getLocation())) {
 				    // This is the player's sign, so allow it to
 				    // be destroyed
 				    player.sendMessage(ChatColor.GREEN + Locale.warpssignRemoved);
-				    plugin.removeWarp(player.getUniqueId());
+				    removeWarp(player.getUniqueId());
 				} else {
 				    player.sendMessage(ChatColor.RED + Locale.warpserrorNoRemove);
 				    e.setCancelled(true);
@@ -123,34 +135,36 @@ public class WarpSigns implements Listener {
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
     public void onSignWarpCreate(SignChangeEvent e) {
-	//plugin.getLogger().info("SignChangeEvent called");
+	// plugin.plugin.getLogger().info("SignChangeEvent called");
 	String title = e.getLine(0);
 	Player player = e.getPlayer();
 	if (player.getWorld().getName().equals(Settings.worldName)) {
 	    if (e.getBlock().getType().equals(Material.SIGN_POST)) {
-		//plugin.getLogger().info("Correct world");
-		//plugin.getLogger().info("The first line of the sign says " + title);
+		// plugin.plugin.getLogger().info("Correct world");
+		// plugin.plugin.getLogger().info("The first line of the sign says "
+		// + title);
 		// Check if someone is changing their own sign
 		// This should never happen !!
 		if (title.equalsIgnoreCase(Locale.warpswelcomeLine)) {
-		    //plugin.getLogger().info("Welcome sign detected");
+		    // plugin.plugin.getLogger().info("Welcome sign detected");
 		    // Welcome sign detected - check permissions
 		    if (!(VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.addwarp"))) {
 			player.sendMessage(ChatColor.RED + Locale.warpserrorNoPerm);
 			return;
 		    }
 		    // Check that the player is on their island
-		    if (!(plugin.playerIsOnIsland(player))) {
+		    if (!(plugin.getGrid().playerIsOnIsland(player))) {
 			player.sendMessage(ChatColor.RED + Locale.warpserrorNoPlace);
 			e.setLine(0, ChatColor.RED + Locale.warpswelcomeLine);
 			return;
 		    }
 		    // Check if the player already has a sign
-		    final Location oldSignLoc = plugin.getWarp(player.getUniqueId());
+		    final Location oldSignLoc = getWarp(player.getUniqueId());
 		    if (oldSignLoc == null) {
-			//plugin.getLogger().info("Player does not have a sign already");
-			// First time the sign has been placed or this is a new sign
-			if (plugin.addWarp(player.getUniqueId(), e.getBlock().getLocation())) {
+			// plugin.plugin.getLogger().info("Player does not have a sign already");
+			// First time the sign has been placed or this is a new
+			// sign
+			if (addWarp(player.getUniqueId(), e.getBlock().getLocation())) {
 			    player.sendMessage(ChatColor.GREEN + Locale.warpssuccess);
 			    e.setLine(0, ChatColor.GREEN + Locale.warpswelcomeLine);
 			} else {
@@ -158,27 +172,28 @@ public class WarpSigns implements Listener {
 			    e.setLine(0, ChatColor.RED + Locale.warpswelcomeLine);
 			}
 		    } else {
-			//plugin.getLogger().info("Player already has a Sign");
-			// A sign already exists. Check if it still there and if so,
+			// plugin.plugin.getLogger().info("Player already has a Sign");
+			// A sign already exists. Check if it still there and if
+			// so,
 			// deactivate it
 			Block oldSignBlock = oldSignLoc.getBlock();
 			if (oldSignBlock.getType().equals(Material.SIGN_POST)) {
 			    // The block is still a sign
-			    //plugin.getLogger().info("The block is still a sign");
+			    // plugin.plugin.getLogger().info("The block is still a sign");
 			    Sign oldSign = (Sign) oldSignBlock.getState();
 			    if (oldSign != null) {
-				//plugin.getLogger().info("Sign block is a sign");
+				// plugin.plugin.getLogger().info("Sign block is a sign");
 				if (oldSign.getLine(0).equalsIgnoreCase(ChatColor.GREEN + Locale.warpswelcomeLine)) {
-				    //plugin.getLogger().info("Old sign had a green welcome");
+				    // plugin.plugin.getLogger().info("Old sign had a green welcome");
 				    oldSign.setLine(0, ChatColor.RED + Locale.warpswelcomeLine);
 				    oldSign.update();
 				    player.sendMessage(ChatColor.RED + Locale.warpsdeactivate);
-				    plugin.removeWarp(player.getUniqueId());
+				    removeWarp(player.getUniqueId());
 				}
 			    }
 			}
 			// Set up the warp
-			if (plugin.addWarp(player.getUniqueId(), e.getBlock().getLocation())) {
+			if (addWarp(player.getUniqueId(), e.getBlock().getLocation())) {
 			    player.sendMessage(ChatColor.GREEN + Locale.warpssuccess);
 			    e.setLine(0, ChatColor.GREEN + Locale.warpswelcomeLine);
 			} else {
@@ -189,6 +204,190 @@ public class WarpSigns implements Listener {
 		}
 	    }
 	}
+    }
+
+    /**
+     * Saves the warp lists to file
+     */
+    public static void saveWarpList() {
+	if (warpList == null || welcomeWarps == null) {
+	    return;
+	}
+	plugin.getLogger().info("Saving warps...");
+	final HashMap<String, Object> warps = new HashMap<String, Object>();
+	for (UUID p : warpList.keySet()) {
+	    warps.put(p.toString(), warpList.get(p));
+	}
+	welcomeWarps.set("warps", warps);
+	Util.saveYamlFile(welcomeWarps, "warps.yml");
+    }
+
+    /**
+     * Creates the warp list if it does not exist
+     */
+    public static void loadWarpList() {
+	plugin.getLogger().info("Loading warps...");
+	// warpList.clear();
+	welcomeWarps = Util.loadYamlFile("warps.yml");
+	if (welcomeWarps.getConfigurationSection("warps") == null) {
+	    welcomeWarps.createSection("warps"); // This is only used to create
+	    // the warp.yml file so forgive
+	    // this code
+	}
+	HashMap<String, Object> temp = (HashMap<String, Object>) welcomeWarps.getConfigurationSection("warps").getValues(true);
+	for (String s : temp.keySet()) {
+	    try {
+		UUID playerUUID = UUID.fromString(s);
+		Location l = Util.getLocationString((String) temp.get(s));
+		Block b = l.getBlock();
+		// Check that a warp sign is still there
+		if (b.getType().equals(Material.SIGN_POST)) {
+		    warpList.put(playerUUID, temp.get(s));
+		} else {
+		    plugin.getLogger().warning("Warp at location " + (String) temp.get(s) + " has no sign - removing.");
+		}
+	    } catch (Exception e) {
+		plugin.getLogger().severe("Problem loading warp at location " + (String) temp.get(s) + " - removing.");
+	    }
+	}
+    }
+
+    /**
+     * Stores warps in the warp array
+     * 
+     * @param player
+     * @param loc
+     */
+    public static boolean addWarp(UUID player, Location loc) {
+	final String locS = Util.getStringLocation(loc);
+	// Do not allow warps to be in the same location
+	if (warpList.containsValue(locS)) {
+	    return false;
+	}
+	// Remove the old warp if it existed
+	if (warpList.containsKey(player)) {
+	    warpList.remove(player);
+	}
+	warpList.put(player, locS);
+	saveWarpList();
+	return true;
+    }
+
+    /**
+     * Removes a warp when the welcome sign is destroyed. Called by
+     * WarpSigns.java.
+     * 
+     * @param uuid
+     */
+    public static void removeWarp(UUID uuid) {
+	if (warpList.containsKey(uuid)) {
+	    popSign(Util.getLocationString((String) warpList.get(uuid)));
+	    warpList.remove(uuid);
+	}
+	saveWarpList();
+    }
+
+    private static void popSign(Location loc) {
+	Block b = loc.getBlock();
+	if (b.getType().equals(Material.SIGN_POST)) {
+	    Sign s = (Sign) b.getState();
+	    if (s != null) {
+		if (s.getLine(0).equalsIgnoreCase(ChatColor.GREEN + Locale.warpswelcomeLine)) {
+		    s.setLine(0, ChatColor.RED + Locale.warpswelcomeLine);
+		    s.update();
+		}
+	    }
+	}
+    }
+
+    /**
+     * Removes a warp at a location. Called by WarpSigns.java.
+     * 
+     * @param loc
+     */
+    public static void removeWarp(Location loc) {
+	final String locS = Util.getStringLocation(loc);
+	plugin.getLogger().info("Asked to remove warp at " + locS);
+	popSign(loc);
+	if (warpList.containsValue(locS)) {
+	    // Step through every key (sigh)
+	    List<UUID> playerList = new ArrayList<UUID>();
+	    for (UUID player : warpList.keySet()) {
+		if (locS.equals(warpList.get(player))) {
+		    playerList.add(player);
+		}
+	    }
+	    for (UUID rp : playerList) {
+		warpList.remove(rp);
+		final Player p = plugin.getServer().getPlayer(rp);
+		if (p != null) {
+		    // Inform the player
+		    p.sendMessage(ChatColor.RED + Locale.warpssignRemoved);
+		}
+		plugin.getLogger().warning(rp.toString() + "'s welcome sign at " + loc.toString() + " was removed by something.");
+	    }
+	} else {
+	    plugin.getLogger().info("Not in the list which is:");
+	    for (UUID player : warpList.keySet()) {
+		plugin.getLogger().info(player.toString() + "," + warpList.get(player));
+	    }
+
+	}
+	saveWarpList();
+    }
+
+    /**
+     * Returns true if the location supplied is a warp location
+     * 
+     * @param loc
+     * @return true if this location has a warp sign, false if not
+     */
+    public boolean checkWarp(Location loc) {
+	final String locS = Util.getStringLocation(loc);
+	if (warpList.containsValue(locS)) {
+	    return true;
+	}
+	return false;
+    }
+
+    /**
+     * Lists all the known warps
+     * 
+     * @return String set of warps
+     */
+    public static Set<UUID> listWarps() {
+	// plugin.getLogger().info("DEBUG Warp list count = " +
+	// warpList.size());
+	return warpList.keySet();
+    }
+
+    /**
+     * Provides the location of the warp for player
+     * 
+     * @param player
+     *            - the warp requested
+     * @return Location of warp
+     */
+    public static Location getWarp(UUID player) {
+	if (warpList.containsKey(player)) {
+	    return Util.getLocationString((String) warpList.get(player));
+	} else {
+	    return null;
+	}
+    }
+
+    /**
+     * @param location
+     * @return Name of warp owner
+     */
+    public static String getWarpOwner(Location location) {
+	for (UUID playerUUID : warpList.keySet()) {
+	    Location l = Util.getLocationString((String) warpList.get(playerUUID));
+	    if (l.equals(location)) {
+		return plugin.getPlayers().getName(playerUUID);
+	    }
+	}
+	return "";
     }
 
 }

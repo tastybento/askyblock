@@ -14,7 +14,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with ASkyBlock.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-package com.wasteofplastic.askyblock;
+package com.wasteofplastic.askyblock.panels;
 
 import java.util.ArrayList;
 
@@ -25,9 +25,14 @@ import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionType;
 
+import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.Locale;
+import com.wasteofplastic.askyblock.util.Util;
+import com.wasteofplastic.askyblock.util.VaultHelper;
+
 /**
  * @author tastybento
- *
+ * 
  */
 public class MiniShopItem {
     private int slot;
@@ -38,12 +43,13 @@ public class MiniShopItem {
     private String extra;
     private String description;
     private ItemStack item;
-    //private ASkyBlock plugin = ASkyBlock.getPlugin();
+
+    // private ASkyBlock plugin = ASkyBlock.getPlugin();
 
     /**
      * 
      */
-    protected MiniShopItem(Material material, String extra, int slot, String description, int quantity, Double price, Double sellPrice) {
+    public MiniShopItem(Material material, String extra, int slot, String description, int quantity, Double price, Double sellPrice) {
 	this.slot = slot;
 	this.material = material;
 	this.description = description;
@@ -53,11 +59,11 @@ public class MiniShopItem {
 	// Make the item(s)
 	try {
 	    item = new ItemStack(material);
-	    if (quantity <1) {
+	    if (quantity < 1) {
 		quantity = 1;
 	    }
 	    item.setAmount(quantity);
-	    // Set the description and price	    
+	    // Set the description and price
 	    ItemMeta meta = item.getItemMeta();
 	    meta.setDisplayName(description);
 	    ArrayList<String> Lore = new ArrayList<String>();
@@ -75,35 +81,42 @@ public class MiniShopItem {
 	    item.setItemMeta(meta);
 	    // Deal with extras
 	    if (!extra.isEmpty()) {
-		//plugin.getLogger().info("DEBUG: extra is not empty");
+		// plugin.getLogger().info("DEBUG: extra is not empty");
 		// If it not a potion, then the extras should just be durability
 		if (!material.equals(Material.POTION)) {
 		    item.setDurability(Short.parseShort(extra));
 		} else {
-		    //plugin.getLogger().info("DEBUG: extra is a potion");
+		    // plugin.getLogger().info("DEBUG: extra is a potion");
 		    Potion newPotion;
 		    // Get extras - delimiter is colon
 		    String[] extras = extra.split(":");
 		    switch (extras.length) {
-		    case 1: 
-			//Potion, not extended or throw
+		    case 1:
+			// Potion, not extended or throw
 			newPotion = new Potion(PotionType.valueOf(extras[0]));
 			newPotion.apply(item);
-			//ASkyBlock.getPlugin().getLogger().info("Potion in shop is :" + newPotion.getType().toString());
+			// ASkyBlock.getPlugin().getLogger().info("Potion in shop is :"
+			// + newPotion.getType().toString());
 			break;
 		    case 2:
 			// Extended or splash potions
 			if (extras[1].equalsIgnoreCase("EXTENDED")) {
 			    newPotion = new Potion(PotionType.valueOf(extras[0])).extend();
-			    //ASkyBlock.getPlugin().getLogger().info("Potion in shop is :" + newPotion.getType().toString() + " extended duration");
+			    // ASkyBlock.getPlugin().getLogger().info("Potion in shop is :"
+			    // + newPotion.getType().toString() +
+			    // " extended duration");
 			    newPotion.apply(item);
 			} else if (extras[1].equalsIgnoreCase("SPLASH")) {
 			    newPotion = new Potion(PotionType.valueOf(extras[0])).splash();
-			    //ASkyBlock.getPlugin().getLogger().info("Potion in shop is :" + newPotion.getType().toString() + " splash duration");
+			    // ASkyBlock.getPlugin().getLogger().info("Potion in shop is :"
+			    // + newPotion.getType().toString() +
+			    // " splash duration");
 			    newPotion.apply(item);
 			} else if (extras[1].equalsIgnoreCase("EXTENDEDSPLASH")) {
 			    newPotion = new Potion(PotionType.valueOf(extras[0])).extend().splash();
-			    //ASkyBlock.getPlugin().getLogger().info("Potion in shop is :" + newPotion.getType().toString() + " extended duration splash");
+			    // ASkyBlock.getPlugin().getLogger().info("Potion in shop is :"
+			    // + newPotion.getType().toString() +
+			    // " extended duration splash");
 			    newPotion.apply(item);
 			}
 		    }
@@ -120,24 +133,24 @@ public class MiniShopItem {
 	}
 	// If there's no description, then set it.
 	if (description == null) {
-	    this.description = ASkyBlock.prettifyText(getDataName(item));
+	    this.description = Util.prettifyText(getDataName(item));
 	}
 
     }
 
-
     /**
      * @return the item
      */
-    protected ItemStack getItem() {
+    public ItemStack getItem() {
 	return item;
     }
 
     /**
      * Returns a clean version of this item with no meta data
+     * 
      * @return
      */
-    protected ItemStack getItemClean() {
+    public ItemStack getItemClean() {
 	ItemStack temp = this.item.clone();
 	ItemMeta meta = temp.getItemMeta();
 	meta.setDisplayName(null);
@@ -149,95 +162,101 @@ public class MiniShopItem {
     /**
      * @return the slot
      */
-    protected int getSlot() {
+    public int getSlot() {
 	return slot;
     }
 
     /**
      * @return the price
      */
-    protected double getPrice() {
+    public double getPrice() {
 	return price;
     }
 
     /**
      * @return the sellPrice
      */
-    protected double getSellPrice() {
-        return sellPrice;
+    public double getSellPrice() {
+	return sellPrice;
     }
-
 
     /**
      * @return the quantity
      */
-    protected int getQuantity() {
+    public int getQuantity() {
 	return quantity;
     }
 
     /**
      * @return the material
      */
-    protected Material getMaterial() {
+    public Material getMaterial() {
 	return material;
     }
 
     /**
      * @return the description
      */
-    protected String getDescription() {
+    public String getDescription() {
 	return description;
     }
 
     /**
-     * @param slot the slot to set
+     * @param slot
+     *            the slot to set
      */
-    protected void setSlot(int slot) {
+    public void setSlot(int slot) {
 	this.slot = slot;
     }
 
     /**
-     * @param price the price to set
+     * @param price
+     *            the price to set
      */
-    protected void setPrice(double price) {
+    public void setPrice(double price) {
 	this.price = price;
     }
 
     /**
-     * @param quantity the quantity to set
+     * @param quantity
+     *            the quantity to set
      */
-    protected void setQuantity(int quantity) {
+    public void setQuantity(int quantity) {
 	this.quantity = quantity;
     }
 
     /**
-     * @param material the material to set
+     * @param material
+     *            the material to set
      */
-    protected void setMaterial(Material material) {
+    public void setMaterial(Material material) {
 	this.material = material;
     }
 
     /**
-     * @param description the description to set
+     * @param description
+     *            the description to set
      */
-    protected void setDescription(String description) {
+    public void setDescription(String description) {
 	this.description = description;
     }
 
     /**
      * @return the extra
      */
-    protected String getExtra() {
+    public String getExtra() {
 	return extra;
     }
 
     /**
-     * @param extra the extra to set
+     * @param extra
+     *            the extra to set
      */
-    protected void setExtra(String extra) {
+    public void setExtra(String extra) {
 	this.extra = extra;
     }
-   /**
+
+    /**
      * Converts a given ItemStack into a pretty string
      * 
      * @param item
@@ -1535,6 +1554,5 @@ public class MiniShopItem {
 	}
 
     }
-
 
 }

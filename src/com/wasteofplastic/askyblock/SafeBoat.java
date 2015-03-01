@@ -17,6 +17,8 @@
 package com.wasteofplastic.askyblock;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Location;
@@ -38,15 +40,20 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 /**
- * @author tastybento This file improves the safety of boats in Acid Island It enables
- *         players to get out of boats without being dropped into the acid. It
- *         enables players to hit a boat and have it pop into their inventory
- *         immediately
+ * This file improves the safety of boats in Acid Island It enables
+ * players to get out of boats without being dropped into the acid. It
+ * enables players to hit a boat and have it pop into their inventory
+ * immediately
+ * 
+ * @author tastybento
  */
 public class SafeBoat implements Listener {
     // Flags to indicate if a player has exited a boat recently or not
     private static HashMap<UUID, Entity> exitedBoat = new HashMap<UUID, Entity>();
     private final ASkyBlock plugin;
+    // Stores players that should be ignored because they are being teleported away from 
+    // a locked islands
+    private static Set<UUID> ignoreList = new HashSet<UUID>();
 
     public SafeBoat(ASkyBlock aSkyBlock) {
 	plugin = aSkyBlock;
@@ -59,7 +66,7 @@ public class SafeBoat implements Listener {
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onClick(VehicleDamageEvent e) {
-	//plugin.getLogger().info("Damage event " + e.getDamage());
+	// plugin.getLogger().info("Damage event " + e.getDamage());
 	// Find out what block is being clicked
 	Vehicle boat = e.getVehicle();
 	if (!(boat instanceof Boat)) {
@@ -123,16 +130,19 @@ public class SafeBoat implements Listener {
 	//
 	// plugin.getLogger().info("DEBUG: Teleport called");
 	Player player = e.getPlayer();
+	if (SafeBoat.ignoreList.contains(player.getUniqueId())) {
+	    return;
+	}
 	// If the player is not teleporting due to boat exit, return
 	if (!exitedBoat.containsKey(player.getUniqueId())) {
 	    return;
 	}
-	//Entity boat = exitedBoat.get(player.getUniqueId());
+	// Entity boat = exitedBoat.get(player.getUniqueId());
 	// Reset the flag
 	exitedBoat.remove(player.getUniqueId());
 	// Okay, so a player is getting out of a boat in the the right world.
 	// Now...
-	plugin.getLogger().info("Player just exited a boat");
+	//plugin.getLogger().info("DEBUG: Player just exited a boat");
 	// Find a safe place for the player to land
 	int radius = 0;
 	while (radius++ < 2) {
@@ -145,7 +155,7 @@ public class SafeBoat implements Listener {
 			// plugin.getLogger().info("XYZ is " + x + " " + y + " "
 			// + z);
 			// Make sure the location is safe
-			if (ASkyBlock.isSafeLocation(loc)) {
+			if (GridManager.isSafeLocation(loc)) {
 			    // plugin.getLogger().info("Safe!");
 			    e.setTo(loc);
 			    return;
@@ -179,7 +189,9 @@ public class SafeBoat implements Listener {
 	    // Not the right world
 	    return;
 	}
-
+	if (SafeBoat.ignoreList.contains(player.getUniqueId())) {
+	    return;
+	}
 	// Set the boat exit flag for this player
 	// midTeleport.add(player.getUniqueId());
 	if (exitedBoat.containsKey(player.getUniqueId())) {
@@ -189,5 +201,17 @@ public class SafeBoat implements Listener {
 	    exitedBoat.put(player.getUniqueId(), boat);
 	}
 	return;
+    }
+    
+    /**
+     * Temporarily ignore a player
+     * @param player
+     */
+    public static void setIgnore(UUID player) {
+	if (SafeBoat.ignoreList.contains(player)) {
+	    SafeBoat.ignoreList.remove(player);
+	} else {
+	    SafeBoat.ignoreList.add(player);
+	}
     }
 }

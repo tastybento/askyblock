@@ -14,7 +14,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with ASkyBlock.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-package com.wasteofplastic.askyblock;
+package com.wasteofplastic.askyblock.panels;
 
 import java.util.List;
 
@@ -24,8 +24,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 /**
  * @author tastybento
- * This class is for a control panel button that has an icon, a command to run if pressed or a link to
- * another control panel.
+ *         This class is for a control panel button that has an icon, a command
+ *         to run if pressed or a link to
+ *         another control panel.
  */
 public class CPItem {
 
@@ -40,7 +41,7 @@ public class CPItem {
      * @param command
      * @param nextSection
      */
-    protected CPItem(Material material, String name, String command, String nextSection) {
+    public CPItem(Material material, String name, String command, String nextSection) {
 	this.command = command;
 	this.nextSection = nextSection;
 	item = new ItemStack(material);
@@ -48,18 +49,18 @@ public class CPItem {
 	meta.setDisplayName(name);
 	item.setItemMeta(meta);
     }
-    
-    protected CPItem(ItemStack itemStack, String name, String command, String nextSection) {
+
+    public CPItem(ItemStack itemStack, String name, String command, String nextSection) {
 	this.command = command;
 	this.nextSection = nextSection;
 	this.item = itemStack;
 	ItemMeta meta = item.getItemMeta();
 	meta.setDisplayName(name);
-	//meta.setLore(null);
+	// meta.setLore(null);
 	item.setItemMeta(meta);
     }
 
-    protected void setLore(List<String> lore) {
+    public void setLore(List<String> lore) {
 	ItemMeta meta = item.getItemMeta();
 	meta.setLore(lore);
 	item.setItemMeta(meta);
@@ -68,27 +69,26 @@ public class CPItem {
     /**
      * @return the command
      */
-    protected String getCommand() {
+    public String getCommand() {
 	return command;
     }
-
 
     /**
      * @return the nextSection
      */
-    protected String getNextSection() {
+    public String getNextSection() {
 	return nextSection;
     }
 
-
     /**
-     * @param nextSection the nextSection to set
+     * @param nextSection
+     *            the nextSection to set
      */
-    protected void setNextSection(String nextSection) {
-        this.nextSection = nextSection;
+    public void setNextSection(String nextSection) {
+	this.nextSection = nextSection;
     }
-    
-    protected ItemStack getItem() {
+
+    public ItemStack getItem() {
 	return item;
     }
 

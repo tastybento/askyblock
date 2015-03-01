@@ -16,12 +16,10 @@
  *******************************************************************************/
 package com.wasteofplastic.askyblock;
 
-
-
-
 /**
- * @author tastybento
  * All the text strings in the game sent to players
+ * 
+ * @author tastybento
  */
 public class Locale {
     public static String changingObsidiantoLava;
@@ -40,13 +38,13 @@ public class Locale {
     public static String errorUnknownCommand;
     public static String errorNoTeam;
 
-    //IslandGuard
+    // IslandGuard
     public static String islandProtected;
 
-    //LavaCheck
+    // LavaCheck
     public static String lavaTip;
 
-    //WarpSigns
+    // WarpSigns
     public static String warpswelcomeLine;
     public static String warpswarpTip;
     public static String warpssuccess;
@@ -60,24 +58,23 @@ public class Locale {
     public static String warpserrorDoesNotExist;
     public static String warpserrorNotReadyYet;
     public static String warpserrorNotSafe;
-    //island warp help
+    // island warp help
     public static String warpswarpToPlayersSign;
     public static String warpserrorNoWarpsYet;
     public static String warpswarpsAvailable;
     public static String warpsPlayerWarped;
 
-    //ASkyBlock
+    // ASkyBlock
     public static String topTenheader;
     public static String topTenerrorNotReady;
     public static String levelislandLevel;
     public static String levelerrornotYourIsland;
-    //sethome
+    // sethome
     public static String setHomehomeSet;
     public static String setHomeerrorNotOnIsland;
     public static String setHomeerrorNoIsland;
 
-
-    //Challenges
+    // Challenges
     public static String challengesyouHaveCompleted;
     public static String challengesnameHasCompleted;
     public static String challengesyouRepeated;
@@ -109,54 +106,54 @@ public class Locale {
     public static String challengeserrorIslandLevel;
     public static String challengeserrorYouAreMissing;
 
-    ///island
+    // /island
     public static String islandteleport;
     public static String islandnew;
     public static String islanderrorCouldNotCreateIsland;
     public static String islanderrorYouDoNotHavePermission;
 
-    ///island reset
+    // /island reset
     public static String islandresetOnlyOwner;
     public static String islandresetMustRemovePlayers;
     public static String islandresetPleaseWait;
     public static String islandresetConfirm;
     public static String resetYouHave;
     public static String islandResetNoMore;
-    //Cool down warning - [time] is number of seconds left
+    // Cool down warning - [time] is number of seconds left
     public static String islandresetWait;
-    ///island help
-    ///island
+    // /island help
+    // /island
     public static String islandhelpIsland;
-    //island cp
+    // island cp
     public static String islandhelpControlPanel;
-    ///island restart
+    // /island restart
     public static String islandhelpRestart;
     public static String islandDeletedLifeboats;
-    ///island sethome
+    // /island sethome
     public static String islandhelpSetHome;
-    ///island level
+    // /island level
     public static String islandhelpLevel;
-    ///island level <player>
+    // /island level <player>
     public static String islandhelpLevelPlayer;
-    ///island top;
+    // /island top;
     public static String islandhelpTop;
-    ///island warps;
+    // /island warps;
     public static String islandhelpWarps;
-    ///island warp <player>
+    // /island warp <player>
     public static String islandhelpWarp;
-    ///island team
+    // /island team
     public static String islandhelpTeam;
-    ///island invite <player>;
+    // /island invite <player>;
     public static String islandhelpInvite;
-    ///island leave;
+    // /island leave;
     public static String islandhelpLeave;
-    ///island kick <player>
+    // /island kick <player>
     public static String islandhelpKick;
-    ///island <accept/reject>
+    // /island <accept/reject>
     public static String islandhelpAcceptReject;
-    ///island makeLeader<player>
+    // /island makeLeader<player>
     public static String islandhelpMakeLeader;
-    //Level
+    // Level
     public static String islanderrorLevelNotReady;
     public static String islanderrorInvalidPlayer;
     public static String islandislandLevelis;
@@ -167,15 +164,15 @@ public class Locale {
     // Expel
     public static String islandhelpExpel;
 
-    //////////////////////////////////////
-    ///island commands //
-    //////////////////////////////////////
+    // ////////////////////////////////////
+    // /island commands //
+    // ////////////////////////////////////
 
-    //invite
+    // invite
     public static String invitehelp;
     public static String inviteyouCanInvite;
     public static String inviteyouCannotInvite;
-    //"Only the island's owner may invite new players."
+    // "Only the island's owner may invite new players."
     public static String inviteonlyIslandOwnerCanInvite;
     public static String inviteyouHaveJoinedAnIsland;
     public static String invitehasJoinedYourIsland;
@@ -188,16 +185,16 @@ public class Locale {
     public static String invitetoAcceptOrReject;
     public static String invitewarningYouWillLoseIsland;
     public static String inviteerrorYourIslandIsFull;
-    //"That player is already with a group on an island."
+    // "That player is already with a group on an island."
     public static String inviteerrorThatPlayerIsAlreadyInATeam;
     public static String inviteerrorCoolDown;
 
-    //reject
+    // reject
     public static String rejectyouHaveRejectedInvitation;
     public static String rejectnameHasRejectedInvite;
     public static String rejectyouHaveNotBeenInvited;
 
-    //leave
+    // leave
     public static String leaveerrorYouAreTheLeader;
     public static String leaveyouHaveLeftTheIsland;
     public static String leavenameHasLeftYourIsland;
@@ -205,11 +202,10 @@ public class Locale {
     public static String leaveerrorYouMustBeInWorld;
     public static String leaveerrorLeadersCannotLeave;
 
-    //team
+    // team
     public static String teamlistingMembers;
 
-
-    //kick / remove
+    // kick / remove
     public static String kickerrorPlayerNotInTeam;
     public static String kicknameRemovedYou;
     public static String kicknameRemoved;
@@ -217,7 +213,7 @@ public class Locale {
     public static String kickerrorOnlyLeaderCan;
     public static String kickerrorNoTeam;
 
-    //makeleader
+    // makeleader
     public static String makeLeadererrorPlayerMustBeOnline;
     public static String makeLeadererrorYouMustBeInTeam;
     public static String makeLeadererrorRemoveAllPlayersFirst;
@@ -227,40 +223,40 @@ public class Locale {
     public static String makeLeadererrorNotYourIsland;
     public static String makeLeadererrorGeneralError;
 
-    ////////////////////////////////////////////////////////////////
-    //Admin commands that use /acid //
-    ////////////////////////////////////////////////////////////////
+    // //////////////////////////////////////////////////////////////
+    // Admin commands that use /acid //
+    // //////////////////////////////////////////////////////////////
 
-    //Help
+    // Help
     public static String adminHelpHelp;
     public static String adminHelpreload;
-    ///acid top ten;
+    // /acid top ten;
     public static String adminHelptopTen;
-    ///acid register <player>;
+    // /acid register <player>;
     public static String adminHelpregister;
-    ///acid delete <player>;
+    // /acid delete <player>;
     public static String adminHelpdelete;
-    ///acid completechallenge <challengename> <player>
+    // /acid completechallenge <challengename> <player>
     public static String adminHelpcompleteChallenge;
-    ///acid resetchallenge <challengename> <player>
+    // /acid resetchallenge <challengename> <player>
     public static String adminHelpresetChallenge;
-    ///acid resetallchallenges <player>;
+    // /acid resetallchallenges <player>;
     public static String adminHelpresetAllChallenges;
-    ///acid purge [TimeInDays];
+    // /acid purge [TimeInDays];
     public static String adminHelppurge;
-    ///acid info <player>;
+    // /acid info <player>;
     public static String adminHelpinfo;
     public static String adminHelpclearReset;
-    
+
     public static String adminHelptp;
 
-    //acid reload
+    // acid reload
     public static String reloadconfigReloaded;
-    //topten
+    // topten
     public static String adminTopTengenerating;
     public static String adminTopTenfinished;
 
-    //purge
+    // purge
     public static String purgealreadyRunning;
     public static String purgeusage;
     public static String purgecalculating;
@@ -273,17 +269,17 @@ public class Locale {
     public static String purgeremovingName;
     public static String adminHelppurgeholes;
 
-    //confirm
+    // confirm
     public static String confirmerrorTimeLimitExpired;
 
-    //delete
+    // delete
     public static String deleteremoving;
 
-    //register
+    // register
     public static String registersettingIsland;
     public static String registererrorBedrockNotFound;
 
-    //info
+    // info
     public static String adminInfoislandLocation;
     public static String adminInfoerrorNotPartOfTeam;
     public static String adminInfoerrorNullTeamLeader;
@@ -291,26 +287,26 @@ public class Locale {
     public static String adminHelpinfoIsland;
     public static String adminHelpSetSpawn;
 
-    //resetallchallenges
+    // resetallchallenges
     public static String resetChallengessuccess;
 
-    //checkteam
+    // checkteam
     public static String checkTeamcheckingTeam;
 
-    //completechallenge
+    // completechallenge
     public static String completeChallengeerrorChallengeDoesNotExist;
     public static String completeChallengechallangeCompleted;
 
-    //resetchallenge
+    // resetchallenge
     public static String resetChallengeerrorChallengeDoesNotExist;
     public static String resetChallengechallengeReset;
-    
+
     // ASkyBlock news
     public static String newsHeadline;
-    
+
     // Nether
     public static String netherSpawnIsProtected;
-    
+
     // Minishop & other Control Panels
     public static String islandhelpMiniShop;
     public static String islandMiniShopTitle;
@@ -319,40 +315,40 @@ public class Locale {
     public static String minishopBuy;
     public static String minishopSell;
     public static String minishopOutOfStock;
-    
+
     // Ultra safe boats
     public static String boatWarningItIsUnsafe;
     public static String clearedResetLimit;
-    
+
     public static String minishopYouBought;
     public static String minishopSellProblem;
     public static String minishopYouSold;
     public static String minishopBuyProblem;
     public static String minishopYouCannotAfford;
-    
+
     // Sign
     public static String signLine1;
     public static String signLine2;
     public static String signLine3;
     public static String signLine4;
-    
+
     // Biomes
     public static String islandhelpBiome;
     public static String biomeSet;
     public static String biomeUnknown;
     public static String biomeYouBought;
     public static String biomePanelTitle;
-    
+
     // Expel
     public static String expelSuccess;
     public static String expelNotOnIsland;
     public static String expelExpelled;
     public static String expelFail;
     public static String expelNotYourself;
-    
+
     // Mob limits
     public static String moblimitsError;
-    
+
     // Coop
     public static String coopRemoved;
     public static String coopSuccess;
@@ -362,7 +358,7 @@ public class Locale {
     public static String islandhelpCoop;
     public static String coopInvited;
     public static String coopUseExpel;
-    
+
     public static String errorWrongWorld;
     public static String islandcannotTeleport;
     public static String levelCalculating;
@@ -392,5 +388,5 @@ public class Locale {
     public static String islandHelpChallenges;
     public static String challengesmaxreached;
     public static String challengescompletedtimes;
-      
+
 }
