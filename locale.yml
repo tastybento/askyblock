@@ -22,7 +22,7 @@ error:
    noTeam: "Player is not in a team."
    wrongWorld: "You cannot do that in this world."
 
-#AcidEffect
+#AcidEffect/Users/ben/git/askyblock/locale.yml
 changingObsidiantoLava: "Changing obsidian back into lava. Be careful!"
 
 #AcidInventory
@@ -35,7 +35,48 @@ drankAcid: "drank acid."
 
 #IslandGuard
 islandProtected: "Island protected."
+targetInPVPArea: "Target is in a no-PVP area!"
+# The following are strings for the Settings panel
+islandguardsettings:
+  title: "Island Guard Settings"
+  allowed: "Allowed"
+  disallowed: "Disallowed"
+  anvil: "Anvil use"
+  armorstand: "Armor Stand use"
+  beacon: "Beacon use"
+  bed: "Bed use"
+  breakblocks: "Break blocks"
+  breeding: "Breeding"
+  brewingstand: "Potion Brewing"
+  bucket: "Bucket use"
+  chest: "Chest use"
+  chestdamage: "Chest damage by TNT"
+  workbench: "Workbench use"
+  croptrample: "Crop trampling"
+  door: "Door use"
+  enchantingtable: "Enchanting table use"
+  enderpearl: "Enderpearl use"
+  fire: "Fire"
+  furnace: "Furnace use"
+  gate: "Gate use"
+  hurtanimals: "Hurting animals"
+  hurtmonsters: "Hurting monsters"
+  leash: "Leash use"
+  lever: "Lever or Button Use"
+  spawnegg: "Spawn egg use"
+  jukebox: "Jukebox use"
+  placeblocks: "Place blocks"
+  portaluse: "Portal use"
+  pvp: "PVP"
+  redstone: "Redstone use"
+  shears: "Shears use"
+  teleportwhenfalling: "Teleport when falling"
+  TNTdamage: "TNT Damage"
+  visitordrop: "Visitor item dropping"
+  visitorpickup: "Visitor item pick-up"
+  visitorkeepitems: "Visitor keep item on death"
 
+  
 #LavaCheck
 lavaTip: "Tip: If obsidian was not intended, it can be scooped back up again with a bucket."
 
@@ -404,4 +445,5 @@ lock:
    unlocking: "Unlocking island"
    enteringspawn: "Entering Spawn"
    leavingspawn: "Leaving Spawn"
+
 

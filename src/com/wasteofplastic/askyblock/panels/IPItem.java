@@ -8,6 +8,7 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import com.wasteofplastic.askyblock.Locale;
 import com.wasteofplastic.askyblock.util.Util;
 
 /**
@@ -59,9 +60,9 @@ public class IPItem {
 	ItemMeta meta = item.getItemMeta();
 	meta.setDisplayName(name);
 	if (flagValue) {
-	    description.add(ChatColor.GREEN + "Allowed");
+	    description.add(ChatColor.GREEN + Locale.igsAllowed);
 	} else {
-	    description.add(ChatColor.RED + "Disallowed");
+	    description.add(ChatColor.RED + Locale.igsDisallowed);
 	}
 	meta.setLore(description);
 	item.setItemMeta(meta);
