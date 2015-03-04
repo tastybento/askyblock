@@ -626,6 +626,12 @@ public class ASkyBlock extends JavaPlugin {
 	    Settings.islandZOffset = Settings.islandDistance;
 	    getLogger().info("Setting maximum island Z Offset to " + Settings.islandDistance);
 	}
+	long x = getConfig().getLong("island.startx", 0);
+	// Check this is a multiple of island distance
+	long z = getConfig().getLong("island.startz", 0);
+	Settings.islandStartX = Math.round((double) x / Settings.islandDistance) * Settings.islandDistance + Settings.islandXOffset;
+	Settings.islandStartZ = Math.round((double) z / Settings.islandDistance) * Settings.islandDistance + Settings.islandZOffset;
+
 	// ASkyBlock and AcidIsland difference
 	if (Settings.GAMETYPE.equals(Settings.GameType.ACIDISLAND)) {
 	    Settings.acidDamage = getConfig().getDouble("general.aciddamage", 5D);

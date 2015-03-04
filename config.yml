@@ -250,6 +250,14 @@ island:
    # It may result is incomplete deletion of islands. Not recommended.
    overridelimit: false
 
+   # Start islands at these coordinates. This is where new islands will start in the
+   # world. These must be a factor of your island distance, but the plugin will auto
+   # calculate the closest location on the grid. Islands develop around this location
+   # both positively and negatively in a square grid.
+   # If none of this makes sense, leave at 0,0.
+   startx: 0
+   startz: 0
+
    # Coordinate offset - never change this mid-game and there is no
    # need to set this. It is for compatibility with IslandWorld maps and set by
    # BlockConverter.

@@ -289,7 +289,7 @@ public class IslandCmd implements CommandExecutor {
     private Location getNextIsland() {
 	// Find the next free spot
 	if (last == null) {
-	    last = new Location(ASkyBlock.getIslandWorld(), Settings.islandXOffset, Settings.island_level, Settings.islandZOffset);
+	    last = new Location(ASkyBlock.getIslandWorld(), Settings.islandXOffset + Settings.islandStartX, Settings.island_level, Settings.islandZOffset + Settings.islandStartZ);
 	}
 	Location next = last.clone();
 
