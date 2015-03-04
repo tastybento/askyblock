@@ -7,6 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 
+import com.wasteofplastic.askyblock.Locale;
 import com.wasteofplastic.askyblock.Settings;
 
 public class SettingsPanel {
@@ -22,45 +23,46 @@ public class SettingsPanel {
 	    clazz = null;
 	}
 	if (clazz != null) {
-	    ip.add(new IPItem(Settings.allowArmorStandUse, Material.ARMOR_STAND));
+	    ip.add(new IPItem(Settings.allowArmorStandUse, Material.ARMOR_STAND, Locale.igsArmorStand));
 	}
-	ip.add(new IPItem(Settings.allowBeaconAccess, Material.BEACON));
-	ip.add(new IPItem(Settings.allowBedUse, Material.BED));
-	ip.add(new IPItem(Settings.allowBreakBlocks, Material.DIRT, "Break blocks"));
-	ip.add(new IPItem(Settings.allowBreeding, Material.CARROT_ITEM, "Breeding"));
-	ip.add(new IPItem(Settings.allowBrewing, Material.BREWING_STAND_ITEM, "Potion Brewing"));
-	ip.add(new IPItem(Settings.allowBucketUse, Material.BUCKET));
-	ip.add(new IPItem(Settings.allowChestAccess, Material.CHEST));
-	ip.add(new IPItem(Settings.allowChestDamage, Material.CHEST, "Chest damage by TNT"));
-	ip.add(new IPItem(Settings.allowCrafting, Material.WORKBENCH));
-	ip.add(new IPItem(Settings.allowCropTrample, Material.WHEAT, "Crop trampling"));
-	ip.add(new IPItem(Settings.allowDoorUse, Material.WOOD_DOOR, "Door use"));
-	ip.add(new IPItem(Settings.allowEnchanting, Material.ENCHANTMENT_TABLE));
-	ip.add(new IPItem(Settings.allowEnderPearls, Material.ENDER_PEARL));
-	ip.add(new IPItem(Settings.allowFire, Material.FLINT_AND_STEEL, "Fire"));
-	ip.add(new IPItem(Settings.allowFurnaceUse, Material.FURNACE));
-	ip.add(new IPItem(Settings.allowGateUse, Material.FENCE_GATE));
-	ip.add(new IPItem(Settings.allowHurtMobs, Material.EGG, "Hurting animals"));
-	ip.add(new IPItem(Settings.allowHurtMonsters, Material.SKULL_ITEM, "Hurting monsters"));
-	ip.add(new IPItem(Settings.allowLeashUse, Material.LEASH));
-	ip.add(new IPItem(Settings.allowLeverButtonUse, Material.LEVER, "Leaver or Button Use"));
-	ip.add(new IPItem(Settings.allowMonsterEggs, Material.MONSTER_EGG));
-	ip.add(new IPItem(Settings.allowMusic, Material.JUKEBOX));
-	ip.add(new IPItem(Settings.allowPlaceBlocks, Material.DIRT, "Place blocks"));
-	ip.add(new IPItem(Settings.allowPortalUse, Material.OBSIDIAN, "Portal use"));
-	ip.add(new IPItem(Settings.allowPvP, Material.ARROW, "PVP"));
-	ip.add(new IPItem(Settings.allowRedStone, Material.REDSTONE));
-	ip.add(new IPItem(Settings.allowShearing, Material.SHEARS));
-	ip.add(new IPItem(Settings.allowTeleportWhenFalling, Material.GLASS, "Teleport when falling"));
-	ip.add(new IPItem(Settings.allowTNTDamage, Material.TNT, "TNT Damage"));
-	ip.add(new IPItem(Settings.allowVisitorItemDrop, Material.GOLD_INGOT, "Visitor item dropping"));
-	ip.add(new IPItem(Settings.allowVisitorItemPickup, Material.DIAMOND, "Visitor item pick-up"));
-	ip.add(new IPItem(Settings.allowVisitorKeepInvOnDeath, Material.IRON_CHESTPLATE, "Visitor keep item on death"));
+	ip.add(new IPItem(Settings.allowBeaconAccess, Material.BEACON, Locale.igsBeacon));
+	ip.add(new IPItem(Settings.allowBedUse, Material.BED, Locale.igsBed));
+	ip.add(new IPItem(Settings.allowBreakBlocks, Material.DIRT, Locale.igsBreakBlocks));
+	ip.add(new IPItem(Settings.allowBreeding, Material.CARROT_ITEM, Locale.igsBreeding));
+	ip.add(new IPItem(Settings.allowBrewing, Material.BREWING_STAND_ITEM, Locale.igsBrewing));
+	ip.add(new IPItem(Settings.allowBucketUse, Material.WATER_BUCKET, Locale.igsBucket));
+	ip.add(new IPItem(Settings.allowChestAccess, Material.CHEST, Locale.igsChest));
+	ip.add(new IPItem(Settings.allowChestDamage, Material.CHEST, Locale.igsChestDamage));
+	ip.add(new IPItem(Settings.allowCrafting, Material.WORKBENCH, Locale.igsWorkbench));
+	ip.add(new IPItem(Settings.allowCropTrample, Material.WHEAT, Locale.igsCropTrampling));
+	ip.add(new IPItem(Settings.allowDoorUse, Material.WOOD_DOOR, Locale.igsDoor));
+	ip.add(new IPItem(Settings.allowEnchanting, Material.ENCHANTMENT_TABLE, Locale.igsEnchanting));
+	ip.add(new IPItem(Settings.allowEnderPearls, Material.ENDER_PEARL,Locale.igsEnderPearl));
+	ip.add(new IPItem(Settings.allowFire, Material.FLINT_AND_STEEL, Locale.igsFire));
+	ip.add(new IPItem(Settings.allowFurnaceUse, Material.FURNACE, Locale.igsFurnace));
+	ip.add(new IPItem(Settings.allowGateUse, Material.FENCE_GATE, Locale.igsGate));
+	ip.add(new IPItem(Settings.allowHurtMobs, Material.EGG, Locale.igsHurtAnimals));
+	ip.add(new IPItem(Settings.allowHurtMonsters, Material.SKULL_ITEM, Locale.igsHurtMobs));
+	ip.add(new IPItem(Settings.allowLeashUse, Material.LEASH, Locale.igsLeash));
+	ip.add(new IPItem(Settings.allowLeverButtonUse, Material.LEVER, Locale.igsLever));
+	ip.add(new IPItem(Settings.allowMonsterEggs, Material.MONSTER_EGG, Locale.igsSpawnEgg));
+	ip.add(new IPItem(Settings.allowMusic, Material.JUKEBOX, Locale.igsJukebox));
+	ip.add(new IPItem(Settings.allowPlaceBlocks, Material.DIRT, Locale.igsPlaceBlocks));
+	ip.add(new IPItem(Settings.allowPortalUse, Material.OBSIDIAN, Locale.igsPortalUse));
+	ip.add(new IPItem(Settings.allowPvP, Material.ARROW, Locale.igsPVP));
+	ip.add(new IPItem(Settings.allowNetherPvP, Material.NETHERRACK, Locale.igsNetherPVP));
+	ip.add(new IPItem(Settings.allowRedStone, Material.REDSTONE_COMPARATOR, Locale.igsRedstone));
+	ip.add(new IPItem(Settings.allowShearing, Material.SHEARS, Locale.igsShears));
+	ip.add(new IPItem(Settings.allowTeleportWhenFalling, Material.GLASS, Locale.igsTeleport));
+	ip.add(new IPItem(Settings.allowTNTDamage, Material.TNT, Locale.igsTNT));
+	ip.add(new IPItem(Settings.allowVisitorItemDrop, Material.GOLD_INGOT, Locale.igsVisitorDrop));
+	ip.add(new IPItem(Settings.allowVisitorItemPickup, Material.DIAMOND, Locale.igsVisitorPickUp));
+	ip.add(new IPItem(Settings.allowVisitorKeepInvOnDeath, Material.IRON_CHESTPLATE, Locale.igsVisitorKeep));
 	if (ip.size() > 0) {
 	    // Make sure size is a multiple of 9
 	    int size = ip.size() + 8;
 	    size -= (size % 9);
-	    newPanel = Bukkit.createInventory(null, size, "Island Guard Settings");
+	    newPanel = Bukkit.createInventory(null, size, Locale.igsTitle);
 	    // Fill the inventory and return
 	    int slot = 0;
 	    for (IPItem i : ip) {

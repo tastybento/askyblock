@@ -1219,20 +1219,20 @@ public class IslandGuard implements Listener {
 		// PVP
 		// If PVP is okay then return
 		if (Settings.allowPvP) {
-		    plugin.getLogger().info("PVP allowed");
+		    //plugin.getLogger().info("DEBUG: PVP allowed");
 		    return;
 		}
-		plugin.getLogger().info("PVP not allowed");
+		//plugin.getLogger().info("PVP not allowed");
 
 	    }
 
 	}
 	// Check for fishing rods
-	plugin.getLogger().info("Player attack (or arrow)");
+	//plugin.getLogger().info("DEBUG: Player attack (or arrow)");
 	// Only damagers who are players or arrows are left
 	// Handle splash potions separately.
 	if (e.getDamager() instanceof Projectile) {
-	    plugin.getLogger().info("Projectile attack");
+	    //plugin.getLogger().info("DEBUG: Projectile attack");
 	    Projectile projectile = (Projectile) e.getDamager();
 	    // It really is an Arrow
 	    if (projectile.getShooter() instanceof Player) {
@@ -1243,7 +1243,7 @@ public class IslandGuard implements Listener {
 		    // Arrow shot by a player at another player
 		    if (!Settings.allowPvP) {
 			// plugin.getLogger().info("Target player is in a no-PVP area!");
-			((Player) projectile.getShooter()).sendMessage("Target is in a no-PVP area!");
+			((Player) projectile.getShooter()).sendMessage(Locale.targetInNoPVPArea);
 			e.setCancelled(true);
 			return;
 		    }
@@ -1270,10 +1270,10 @@ public class IslandGuard implements Listener {
 		}
 	    }
 	} else if (e.getDamager() instanceof Player) {
-	    plugin.getLogger().info("Player attack");
+	    //plugin.getLogger().info("DEBUG: Player attack");
 	    // Just a player attack
 	    if (!Settings.allowPvP) {
-		((Player) e.getDamager()).sendMessage("Target is in a no-PVP area!");
+		((Player) e.getDamager()).sendMessage(Locale.targetInNoPVPArea);
 		e.setCancelled(true);
 		return;
 	    }

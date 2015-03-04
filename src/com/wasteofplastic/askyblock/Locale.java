@@ -16,6 +16,7 @@
  *******************************************************************************/
 package com.wasteofplastic.askyblock;
 
+
 /**
  * All the text strings in the game sent to players
  * 
@@ -388,5 +389,44 @@ public class Locale {
     public static String islandHelpChallenges;
     public static String challengesmaxreached;
     public static String challengescompletedtimes;
+    public static String targetInNoPVPArea;
+    // Island Guard Settings
+    public static String igsTitle;
+    public static String igsAllowed;
+    public static String igsDisallowed;
+    public static String igsArmorStand;
+    public static String igsBeacon;
+    public static String igsBed;
+    public static String igsBreakBlocks;
+    public static String igsBreeding;
+    public static String igsBrewing;
+    public static String igsBucket;
+    public static String igsChest;
+    public static String igsChestDamage;
+    public static String igsWorkbench;
+    public static String igsCropTrampling;
+    public static String igsDoor;
+    public static String igsEnchanting;
+    public static String igsEnderPearl;
+    public static String igsFire;
+    public static String igsFurnace;
+    public static String igsGate;
+    public static String igsHurtAnimals;
+    public static String igsHurtMobs;
+    public static String igsLeash;
+    public static String igsLever;
+    public static String igsSpawnEgg;
+    public static String igsJukebox;
+    public static String igsPlaceBlocks;
+    public static String igsPortalUse;
+    public static String igsPVP;
+    public static String igsRedstone;
+    public static String igsShears;
+    public static String igsTeleport;
+    public static String igsTNT;
+    public static String igsVisitorDrop;
+    public static String igsVisitorPickUp;
+    public static String igsVisitorKeep;
+    public static String igsNetherPVP;
 
 }
