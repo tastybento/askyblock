@@ -46,6 +46,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -719,15 +720,7 @@ public class IslandCmd implements CommandExecutor {
 		    plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
 			@Override
 			public void run() {
-			    Entity companion = player.getWorld().spawnEntity(cowSpot, Settings.islandCompanion);  
-			    if (!Settings.companionNames.isEmpty()) {
-				Random rand = new Random();
-				int randomNum = rand.nextInt(Settings.companionNames.size());
-				String name = Settings.companionNames.get(randomNum).replace("[player]", player.getDisplayName());
-				//plugin.getLogger().info("DEBUG: name is " + name);
-				companion.setCustomName(name);
-				companion.setCustomNameVisible(true);
-			    } 
+			    spawnCompanion(player, cowSpot);
 			}
 		    }, 40L);
 		}
@@ -981,15 +974,7 @@ public class IslandCmd implements CommandExecutor {
 			plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
 			    @Override
 			    public void run() {
-				Entity companion = player.getWorld().spawnEntity(cowSpot, Settings.islandCompanion);  
-				if (!Settings.companionNames.isEmpty()) {
-				    Random rand = new Random();
-				    int randomNum = rand.nextInt(Settings.companionNames.size());
-				    String name = Settings.companionNames.get(randomNum).replace("[player]", player.getDisplayName());
-				    //plugin.getLogger().info("DEBUG: name is " + name);
-				    companion.setCustomName(name);
-				    companion.setCustomNameVisible(true);
-				} 
+				spawnCompanion(player, cowSpot);
 			    }
 			}, 40L);
 		    }
@@ -1860,6 +1845,24 @@ public class IslandCmd implements CommandExecutor {
 	    }
 	}
 	return false;
+    }
+
+    /**
+     * Spawns a companion for the player at the location given
+     * @param player
+     * @param cowSpot
+     */
+    protected void spawnCompanion(Player player, Location cowSpot) {
+	// Older versions of the server require custom names to only apply to Living Entities
+	LivingEntity companion = (LivingEntity) player.getWorld().spawnEntity(cowSpot, Settings.islandCompanion);  
+	if (!Settings.companionNames.isEmpty()) {
+	    Random rand = new Random();
+	    int randomNum = rand.nextInt(Settings.companionNames.size());
+	    String name = Settings.companionNames.get(randomNum).replace("[player]", player.getDisplayName());
+	    //plugin.getLogger().info("DEBUG: name is " + name);
+	    companion.setCustomName(name);
+	    companion.setCustomNameVisible(true);
+	} 
     }
 
     /**

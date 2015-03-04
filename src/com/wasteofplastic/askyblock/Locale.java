@@ -16,7 +16,6 @@
  *******************************************************************************/
 package com.wasteofplastic.askyblock;
 
-import org.bukkit.ChatColor;
 
 /**
  * All the text strings in the game sent to players
