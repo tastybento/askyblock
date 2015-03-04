@@ -298,9 +298,8 @@ island:
    # Island Protection Settings
 
    # PVP is allowed or not.
-   # If PVP is denied, then players can expel other players from islands
-   # otherwise players have to kill each other
    allowPvP: false
+   allowNetherPvP: false
    # Other players can break blocks or not or generally damage things
    allowbreakblocks: false
    # Other players can place blocks

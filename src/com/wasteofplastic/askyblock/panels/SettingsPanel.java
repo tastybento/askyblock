@@ -30,7 +30,7 @@ public class SettingsPanel {
 	ip.add(new IPItem(Settings.allowBreakBlocks, Material.DIRT, Locale.igsBreakBlocks));
 	ip.add(new IPItem(Settings.allowBreeding, Material.CARROT_ITEM, Locale.igsBreeding));
 	ip.add(new IPItem(Settings.allowBrewing, Material.BREWING_STAND_ITEM, Locale.igsBrewing));
-	ip.add(new IPItem(Settings.allowBucketUse, Material.BUCKET, Locale.igsBucket));
+	ip.add(new IPItem(Settings.allowBucketUse, Material.WATER_BUCKET, Locale.igsBucket));
 	ip.add(new IPItem(Settings.allowChestAccess, Material.CHEST, Locale.igsChest));
 	ip.add(new IPItem(Settings.allowChestDamage, Material.CHEST, Locale.igsChestDamage));
 	ip.add(new IPItem(Settings.allowCrafting, Material.WORKBENCH, Locale.igsWorkbench));
@@ -50,7 +50,8 @@ public class SettingsPanel {
 	ip.add(new IPItem(Settings.allowPlaceBlocks, Material.DIRT, Locale.igsPlaceBlocks));
 	ip.add(new IPItem(Settings.allowPortalUse, Material.OBSIDIAN, Locale.igsPortalUse));
 	ip.add(new IPItem(Settings.allowPvP, Material.ARROW, Locale.igsPVP));
-	ip.add(new IPItem(Settings.allowRedStone, Material.REDSTONE, Locale.igsRedstone));
+	ip.add(new IPItem(Settings.allowNetherPvP, Material.NETHERRACK, Locale.igsNetherPVP));
+	ip.add(new IPItem(Settings.allowRedStone, Material.REDSTONE_COMPARATOR, Locale.igsRedstone));
 	ip.add(new IPItem(Settings.allowShearing, Material.SHEARS, Locale.igsShears));
 	ip.add(new IPItem(Settings.allowTeleportWhenFalling, Material.GLASS, Locale.igsTeleport));
 	ip.add(new IPItem(Settings.allowTNTDamage, Material.TNT, Locale.igsTNT));

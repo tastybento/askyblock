@@ -210,5 +210,6 @@ public class Settings {
     public static List<String> companionNames;
     public static long islandStartX;
     public static long islandStartZ;
+    public static boolean allowNetherPvP;
 
 }

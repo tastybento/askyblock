@@ -23,7 +23,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.BlockState;
-import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -277,7 +276,7 @@ public class NetherPortals implements Listener {
 	    return;
 	}
 	// If PVP is okay then return
-	if (Settings.allowPvP) {
+	if (Settings.allowNetherPvP) {
 	    return;
 	}
 	// If the attacker is non-human and not an arrow then everything is okay
@@ -293,10 +292,10 @@ public class NetherPortals implements Listener {
 	    // It really is an Projectile
 	    if (arrow.getShooter() instanceof Player) {
 		// Arrow shot by a player at another player
-		if (Settings.allowPvP) {
+		if (Settings.allowNetherPvP) {
 		    return;
 		} else {
-		    if (!Settings.allowPvP) {
+		    if (!Settings.allowNetherPvP) {
 			// plugin.getLogger().info("Target player is in a no-PVP area!");
 			((Player) arrow.getShooter()).sendMessage(Locale.targetInNoPVPArea);
 			e.setCancelled(true);
@@ -308,7 +307,7 @@ public class NetherPortals implements Listener {
 	} else if (e.getDamager() instanceof Player) {
 	    //plugin.getLogger().info("DEBUG: Player attack");
 	    // Just a player attack
-	    if (!Settings.allowPvP) {
+	    if (!Settings.allowNetherPvP) {
 		((Player) e.getDamager()).sendMessage(Locale.targetInNoPVPArea);
 		e.setCancelled(true);
 		return;

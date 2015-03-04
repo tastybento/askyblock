@@ -427,5 +427,6 @@ public class Locale {
     public static String igsVisitorDrop;
     public static String igsVisitorPickUp;
     public static String igsVisitorKeep;
+    public static String igsNetherPVP;
 
 }

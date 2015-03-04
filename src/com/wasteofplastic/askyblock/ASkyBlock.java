@@ -872,6 +872,7 @@ public class ASkyBlock extends JavaPlugin {
 	}
 	Settings.chestItems = tempChest;
 	Settings.allowPvP = getConfig().getBoolean("island.allowPvP", false);
+	Settings.allowNetherPvP = getConfig().getBoolean("island.allowNetherPvP", false);
 	Settings.allowBreakBlocks = getConfig().getBoolean("island.allowbreakblocks", false);
 	Settings.allowPlaceBlocks = getConfig().getBoolean("island.allowplaceblocks", false);
 	Settings.allowBedUse = getConfig().getBoolean("island.allowbeduse", false);
@@ -1065,7 +1066,8 @@ public class ASkyBlock extends JavaPlugin {
 	Locale.igsJukebox = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.jukebox", "Jukebox use"));
 	Locale.igsPlaceBlocks = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.placeblocks", "Place blocks"));
 	Locale.igsPortalUse = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.portaluse", "Portal use"));
-	Locale.igsPVP = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.pvp", "PVP"));
+	Locale.igsPVP = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.pvp", "PvP"));
+	Locale.igsNetherPVP = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.netherpvp", "Nether PvP"));
 	Locale.igsRedstone = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.redstone", "Redstone use"));
 	Locale.igsShears = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.shears", "Shears use"));
 	Locale.igsTeleport = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.teleportwhenfalling", "Teleport when falling"));
