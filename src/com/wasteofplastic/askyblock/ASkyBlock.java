@@ -1039,6 +1039,7 @@ public class ASkyBlock extends JavaPlugin {
 	Locale.islandProtected = ChatColor.translateAlternateColorCodes('&', locale.getString("islandProtected", "Island protected."));
 	Locale.targetInNoPVPArea = ChatColor.translateAlternateColorCodes('&', locale.getString("targetInPVPArea", "Target is in a no-PVP area!"));
 	Locale.igsTitle = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.title", "Island Guard Settings"));
+	Locale.igsAnvil = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.anvil", "Anvil Use"));
 	Locale.igsAllowed = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.allowed", "Allowed"));
 	Locale.igsDisallowed = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.disallowed", "Disallowed"));
 	Locale.igsArmorStand = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.armorstand", "Armor Stand use"));
