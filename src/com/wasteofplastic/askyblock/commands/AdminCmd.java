@@ -470,6 +470,11 @@ public class AdminCmd implements CommandExecutor {
 		    Settings.useEconomy = false;
 		}
 		ControlPanel.loadControlPanel();
+		if (Settings.updateCheck) {
+		    plugin.checkUpdates();
+		} else {
+		    plugin.setUpdateCheck(null);
+		}
 		sender.sendMessage(ChatColor.YELLOW + Locale.reloadconfigReloaded);
 		return true;
 	    } else if (split[0].equalsIgnoreCase("topten")) {

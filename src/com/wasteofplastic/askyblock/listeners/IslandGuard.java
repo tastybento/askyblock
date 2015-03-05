@@ -2115,10 +2115,7 @@ public class IslandGuard implements Listener {
 	    return;
 	}
 	// Check limit of animals on island
-	if (plugin.getGrid().playerIsOnIsland(e.getPlayer())) {
-	    // TODO: FIX THIS
-	    plugin.getLogger().info("DEBUG: Player is on island");
-	} else {
+	if (!plugin.getGrid().playerIsOnIsland(e.getPlayer())) {
 	    // Not on island
 	    // Minecarts and other storage entities
 	    // plugin.getLogger().info("DEBUG: " +

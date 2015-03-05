@@ -131,7 +131,7 @@ public class ASkyBlock extends JavaPlugin {
 			WorldCreator.name(Settings.worldName + "_nether").type(WorldType.NORMAL).environment(World.Environment.NETHER).createWorld();
 		    } else {
 			WorldCreator.name(Settings.worldName + "_nether").type(WorldType.FLAT).generator(new ChunkGeneratorWorld())
-				.environment(World.Environment.NETHER).createWorld();
+			.environment(World.Environment.NETHER).createWorld();
 		    }
 		    // netherWorld.setMonsterSpawnLimit(Settings.monsterSpawnLimit);
 		    // netherWorld.setAnimalSpawnLimit(Settings.animalSpawnLimit);
@@ -234,20 +234,7 @@ public class ASkyBlock extends JavaPlugin {
 	}
 	loadPluginConfig();
 	if (Settings.updateCheck) {
-	    // Version checker
-	    getServer().getScheduler().runTaskAsynchronously(this, new Runnable() {
-		@Override
-		public void run() {
-		    if (Settings.GAMETYPE.equals(GameType.ASKYBLOCK)) {
-			updateCheck = new Update(85189); // ASkyBlock
-		    } else {
-			updateCheck = new Update(80095); // AcidIsland
-		    }
-		    if (!updateCheck.isSuccess()) {
-			updateCheck = null;
-		    }
-		}
-	    });
+	    checkUpdates();
 	}
 	if (Settings.useEconomy && !VaultHelper.setupEconomy()) {
 	    getLogger().warning("Could not set up economy! - Running without an economy.");
@@ -392,6 +379,27 @@ public class ASkyBlock extends JavaPlugin {
     }
 
     /**
+     * Checks to see if there are any plugin updates
+     * Called when reloading settings too
+     */
+    public void checkUpdates() {
+	// Version checker
+	getServer().getScheduler().runTaskAsynchronously(this, new Runnable() {
+	    @Override
+	    public void run() {
+		if (Settings.GAMETYPE.equals(GameType.ASKYBLOCK)) {
+		    updateCheck = new Update(85189); // ASkyBlock
+		} else {
+		    updateCheck = new Update(80095); // AcidIsland
+		}
+		if (!updateCheck.isSuccess()) {
+		    updateCheck = null;
+		}
+	    }
+	});
+    }
+
+    /**
      * Delete Island
      * Called when an island is restarted or reset
      * 
@@ -495,6 +503,13 @@ public class ASkyBlock extends JavaPlugin {
     }
 
     /**
+     * @param updateCheck the updateCheck to set
+     */
+    public void setUpdateCheck(Update updateCheck) {
+	this.updateCheck = updateCheck;
+    }
+
+    /**
      * @return the calculatingLevel
      */
     public boolean isCalculatingLevel() {
@@ -587,15 +602,15 @@ public class ASkyBlock extends JavaPlugin {
 		    break;
 		default:
 		    getLogger()
-			    .warning(
-				    "Island companion is not recognized. Pick from COW, PIG, SHEEP, CHICKEN, VILLAGER, HORSE, IRON_GOLEM, OCELOT, RABBIT, WOLF, SNOWMAN, BAT, MUSHROOM_COW");
+		    .warning(
+			    "Island companion is not recognized. Pick from COW, PIG, SHEEP, CHICKEN, VILLAGER, HORSE, IRON_GOLEM, OCELOT, RABBIT, WOLF, SNOWMAN, BAT, MUSHROOM_COW");
 		    Settings.islandCompanion = EntityType.COW;
 		    break;
 		}
 	    } catch (Exception e) {
 		getLogger()
-			.warning(
-				"Island companion is not recognized. Pick from COW, PIG, SHEEP, CHICKEN, VILLAGER, HORSE, IRON_GOLEM, OCELOT, RABBIT, WOLF, BAT, MUSHROOM_COW, SNOWMAN");
+		.warning(
+			"Island companion is not recognized. Pick from COW, PIG, SHEEP, CHICKEN, VILLAGER, HORSE, IRON_GOLEM, OCELOT, RABBIT, WOLF, BAT, MUSHROOM_COW, SNOWMAN");
 		Settings.islandCompanion = EntityType.COW;
 	    }
 	}

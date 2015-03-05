@@ -53,7 +53,7 @@ public class JoinLeaveEvents implements Listener {
     public void onPlayerJoin(final PlayerJoinEvent event) {
 	// Check updates
 	final String pluginVersion = plugin.getDescription().getVersion();
-	if (plugin.getUpdateCheck() != null) {
+	if (event.getPlayer().isOp() && plugin.getUpdateCheck() != null) {
 	    // Check to see if the latest file is newer that this one
 	    String[] split = plugin.getUpdateCheck().getVersionName().split(" V");
 	    if (split.length > 1 && !pluginVersion.equals(split[1])) {
