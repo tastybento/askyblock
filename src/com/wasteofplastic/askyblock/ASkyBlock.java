@@ -53,6 +53,7 @@ import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import com.wasteofplastic.askyblock.NotSetup.Reason;
 import com.wasteofplastic.askyblock.Settings.GameType;
@@ -233,9 +234,6 @@ public class ASkyBlock extends JavaPlugin {
 	    return;
 	}
 	loadPluginConfig();
-	if (Settings.updateCheck) {
-	    checkUpdates();
-	}
 	if (Settings.useEconomy && !VaultHelper.setupEconomy()) {
 	    getLogger().warning("Could not set up economy! - Running without an economy.");
 	    Settings.useEconomy = false;
@@ -323,27 +321,30 @@ public class ASkyBlock extends JavaPlugin {
 			getLogger().info("All files loaded. Ready to play...");
 		    }
 		});
-		// Just try this once. Op logins will also trigger a check
-		final String pluginVersion = getDescription().getVersion();
-		getServer().getScheduler().runTaskLater(plugin, new Runnable() {
-		    @Override
-		    public void run() {
-			if (getUpdateCheck() != null) {
-			    // Check to see if the latest file is newer that
-			    // this one
-			    String[] split = getUpdateCheck().getVersionName().split(" V");
-			    if (split.length > 1 && !pluginVersion.equals(split[1])) {
-				// Show the results
-				getLogger().warning(getUpdateCheck().getVersionName() + " is available! You are running " + pluginVersion);
-				if (Settings.GAMETYPE.equals(GameType.ASKYBLOCK)) {
-				    getLogger().warning("Update at: http://dev.bukkit.org/bukkit-plugins/skyblock");
-				} else {
-				    getLogger().warning("Update at: http://dev.bukkit.org/bukkit-plugins/acidisland");
+		// Check for updates asynchronously
+		if (Settings.updateCheck) {
+		    checkUpdates();
+		    new BukkitRunnable() {
+			int count = 0;
+			@Override
+			public void run() {
+			    if (count++ > 10) {
+				plugin.getLogger().info("No updates found. (No response from server after 10s)");
+				this.cancel();
+			    } else {
+				// Wait for the response
+				if (updateCheck != null) {
+				    if (updateCheck.isSuccess()) {
+					checkUpdatesNotify(null);
+				    } else {
+					plugin.getLogger().info("No update.");
+				    }
+				    this.cancel();
 				}
 			    }
 			}
-		    }
-		}, 80L);
+		    }.runTaskTimer(plugin, 0L, 20L); // Check status every second
+		}
 		// This part will kill monsters if they fall into the water
 		// because it
 		// is acid
@@ -384,6 +385,7 @@ public class ASkyBlock extends JavaPlugin {
      */
     public void checkUpdates() {
 	// Version checker
+	getLogger().info("Checking for new updates...");
 	getServer().getScheduler().runTaskAsynchronously(this, new Runnable() {
 	    @Override
 	    public void run() {
@@ -397,6 +399,79 @@ public class ASkyBlock extends JavaPlugin {
 		}
 	    }
 	});
+    }
+
+    public void checkUpdatesNotify(Player p) {
+	boolean update = false;
+	final String pluginVersion = plugin.getDescription().getVersion();
+	// Check to see if the latest file is newer that this one
+	String[] split = plugin.getUpdateCheck().getVersionName().split(" V");
+	// Only do this if the format is what we expect
+	if (split.length == 2) {
+	    //getLogger().info("DEBUG: " + split[1]);
+	    // Need to escape the period in the regex expression
+	    String[] updateVer = split[1].split("\\.");
+	    //getLogger().info("DEBUG: split length = " + updateVer.length);
+	    // CHeck the version #'s
+	    String[] pluginVer = pluginVersion.split("\\.");
+	    //getLogger().info("DEBUG: split length = " + pluginVer.length);
+	    // Run through major, minor, sub
+	    for (int i = 0; i < Math.max(updateVer.length, pluginVer.length); i++) {
+		try {
+		    int updateCheck = 0;
+		    if (i < updateVer.length) {
+			updateCheck = Integer.valueOf(updateVer[i]);
+		    }
+		    int pluginCheck = 0;
+		    if (i < pluginVer.length) {
+			pluginCheck = Integer.valueOf(pluginVer[i]);
+		    }
+		    //getLogger().info("DEBUG: update is " + updateCheck + " plugin is " + pluginCheck);
+		    if (updateCheck < pluginCheck) {
+			//getLogger().info("DEBUG: plugin is newer!");
+			//plugin is newer
+			update = false;
+			break;
+		    } else if (updateCheck > pluginCheck) {
+			//getLogger().info("DEBUG: update is newer!");
+			update = true;
+			break;
+		    }
+		} catch (Exception e) {
+		    getLogger().warning("Could not determine update's version # ");
+		    getLogger().warning("Plugin version: "+ pluginVersion);
+		    getLogger().warning("Update version: " + plugin.getUpdateCheck().getVersionName());
+		    return;
+		}
+	    }
+	}
+	// Show the results
+	if (p != null) {
+	    if (!update) {
+		return;
+	    } else {
+		// Player login
+		p.sendMessage(ChatColor.GOLD + plugin.getUpdateCheck().getVersionName() + " is available! You are running " + pluginVersion);
+		if (Settings.GAMETYPE.equals(GameType.ASKYBLOCK)) {
+		    p.sendMessage(ChatColor.RED + "Update at: http://dev.bukkit.org/bukkit-plugins/skyblock");
+		} else {
+		    p.sendMessage(ChatColor.RED + "Update at: http://dev.bukkit.org/bukkit-plugins/acidisland");
+		}
+	    }
+	} else {
+	    // Console
+	    if (!update) {
+		getLogger().info("No updates available.");
+		return;
+	    } else {
+		getLogger().info(plugin.getUpdateCheck().getVersionName() + " is available! You are running " + pluginVersion);
+		if (Settings.GAMETYPE.equals(GameType.ASKYBLOCK)) {
+		    getLogger().info("Update at: http://dev.bukkit.org/bukkit-plugins/skyblock");
+		} else {
+		    getLogger().info("Update at: http://dev.bukkit.org/bukkit-plugins/acidisland");
+		}
+	    }
+	}
     }
 
     /**

@@ -21,6 +21,7 @@ import java.util.UUID;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -52,21 +53,9 @@ public class JoinLeaveEvents implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerJoin(final PlayerJoinEvent event) {
 	// Check updates
-	final String pluginVersion = plugin.getDescription().getVersion();
 	if (event.getPlayer().isOp() && plugin.getUpdateCheck() != null) {
-	    // Check to see if the latest file is newer that this one
-	    String[] split = plugin.getUpdateCheck().getVersionName().split(" V");
-	    if (split.length > 1 && !pluginVersion.equals(split[1])) {
-		// For now, just show the results
-		event.getPlayer().sendMessage(ChatColor.RED + plugin.getUpdateCheck().getVersionName() + " is available! You are running " + pluginVersion);
-		if (Settings.GAMETYPE.equals(GameType.ASKYBLOCK)) {
-		    event.getPlayer().sendMessage(ChatColor.RED + "Update at: http://dev.bukkit.org/bukkit-plugins/skyblock");
-		} else {
-		    event.getPlayer().sendMessage(ChatColor.RED + "Update at: http://dev.bukkit.org/bukkit-plugins/acidisland");
-		}
-	    }
+	    plugin.checkUpdatesNotify((Player)event.getPlayer());
 	}
-
 	final UUID playerUUID = event.getPlayer().getUniqueId();
 	if (players == null) {
 	    plugin.getLogger().severe("players is NULL");
@@ -90,8 +79,8 @@ public class JoinLeaveEvents implements Listener {
 		}
 	    }, 40L);
 	} // else {
-	  // plugin.getLogger().info("no messages");
-	  // }
+	// plugin.getLogger().info("no messages");
+	// }
 
 	// If this player is not an island player just skip all this
 	if (!players.hasIsland(playerUUID) && !players.inTeam(playerUUID)) {
