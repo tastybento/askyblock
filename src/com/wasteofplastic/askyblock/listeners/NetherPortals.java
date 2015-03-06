@@ -179,6 +179,28 @@ public class NetherPortals implements Listener {
 	    event.useTravelAgent(true);
 	    // }
 	} else {
+	    // Going to the end
+	    // TODO Need safe teleport and protection around the end spawn point
+	    if (plugin.getServer().getWorld(Settings.worldName + "_the_end") != null) {
+		// plugin.getLogger().info("End world exists");
+		if (event.getCause().equals(TeleportCause.END_PORTAL)) {
+		    // plugin.getLogger().info("PlayerPortalEvent End Portal!");
+		    // event.useTravelAgent(true);
+		    event.setCancelled(true);
+		    Location end_place = plugin.getServer().getWorld(Settings.worldName + "_the_end").getSpawnLocation();
+		    if (GridManager.isSafeLocation(end_place)) {
+			event.getPlayer().teleport(end_place);
+			// event.getPlayer().sendBlockChange(end_place,
+			// end_place.getBlock().getType(),end_place.getBlock().getData());
+			return;
+		    } else {
+			event.getPlayer().sendMessage(ChatColor.RED + Locale.warpserrorNotSafe);
+			plugin.getGrid().homeTeleport(event.getPlayer());
+			return;
+		    }
+		}
+	    }
+
 	    // Returning to island
 	    event.setTo(destination);
 	    event.useTravelAgent(false);

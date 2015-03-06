@@ -212,7 +212,7 @@ public class ControlPanel implements Listener {
 	// ASkyBlock plugin = ASkyBlock.getPlugin();
 	int slot = event.getRawSlot();
 	// Settings
-	if (inventory.getName().equalsIgnoreCase("Island Guard Settings")) {
+	if (inventory.getName().equalsIgnoreCase(Locale.igsTitle)) {
 	    if (event.getSlotType() == SlotType.OUTSIDE) {
 		player.closeInventory();
 		return;

@@ -52,6 +52,7 @@ public class Update {
     // Version's game version
     String versionGameVersion = "";
 
+    // Whether the look up was successful or not
     private boolean success = false;
 
     /**
@@ -78,8 +79,7 @@ public class Update {
     public Update(int projectID, String apiKey) {
 	this.projectID = projectID;
 	this.apiKey = apiKey;
-
-	success = query();
+	this.success = query();
     }
 
     /**

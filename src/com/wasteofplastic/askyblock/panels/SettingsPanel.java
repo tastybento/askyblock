@@ -15,7 +15,7 @@ public class SettingsPanel {
     private static List<IPItem> ip = new ArrayList<IPItem>();
     private static Inventory newPanel;
     static {
-	ip.add(new IPItem(Settings.allowAnvilUse, Material.ANVIL));
+	ip.add(new IPItem(Settings.allowAnvilUse, Material.ANVIL, Locale.igsAnvil));
 	Class<?> clazz;
 	try {
 	    clazz = Class.forName("org.bukkit.entity.ArmorStand");
@@ -30,7 +30,7 @@ public class SettingsPanel {
 	ip.add(new IPItem(Settings.allowBreakBlocks, Material.DIRT, Locale.igsBreakBlocks));
 	ip.add(new IPItem(Settings.allowBreeding, Material.CARROT_ITEM, Locale.igsBreeding));
 	ip.add(new IPItem(Settings.allowBrewing, Material.BREWING_STAND_ITEM, Locale.igsBrewing));
-	ip.add(new IPItem(Settings.allowBucketUse, Material.WATER_BUCKET, Locale.igsBucket));
+	ip.add(new IPItem(Settings.allowBucketUse, Material.LAVA_BUCKET, Locale.igsBucket));
 	ip.add(new IPItem(Settings.allowChestAccess, Material.CHEST, Locale.igsChest));
 	ip.add(new IPItem(Settings.allowChestDamage, Material.CHEST, Locale.igsChestDamage));
 	ip.add(new IPItem(Settings.allowCrafting, Material.WORKBENCH, Locale.igsWorkbench));
