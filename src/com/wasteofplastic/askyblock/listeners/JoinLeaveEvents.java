@@ -36,7 +36,6 @@ import com.wasteofplastic.askyblock.Locale;
 import com.wasteofplastic.askyblock.Messages;
 import com.wasteofplastic.askyblock.PlayerCache;
 import com.wasteofplastic.askyblock.Settings;
-import com.wasteofplastic.askyblock.Settings.GameType;
 
 public class JoinLeaveEvents implements Listener {
     private ASkyBlock plugin;

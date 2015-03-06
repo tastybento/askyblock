@@ -748,9 +748,14 @@ public class GridManager {
 	final Block ground = l.getBlock().getRelative(BlockFace.DOWN);
 	final Block space1 = l.getBlock();
 	final Block space2 = l.getBlock().getRelative(BlockFace.UP);
-	// Bukkit.getLogger().info("DEBUG: ground = " + ground.getType());
-	// Bukkit.getLogger().info("DEBUG: space 1 = " + space1.getType());
-	// Bukkit.getLogger().info("DEBUG: space 2 = " + space2.getType());
+	//Bukkit.getLogger().info("DEBUG: ground = " + ground.getType());
+	//Bukkit.getLogger().info("DEBUG: space 1 = " + space1.getType());
+	//Bukkit.getLogger().info("DEBUG: space 2 = " + space2.getType());
+	// Portals are not "safe"
+	if (space1.getType() == Material.PORTAL || ground.getType() == Material.PORTAL || space2.getType() == Material.PORTAL
+		|| space1.getType() == Material.ENDER_PORTAL || ground.getType() == Material.ENDER_PORTAL || space2.getType() == Material.ENDER_PORTAL) {
+	    return false;
+	}
 	// If ground is AIR, then this is either not good, or they are on slab,
 	// stair, etc.
 	if (ground.getType() == Material.AIR) {
