@@ -1093,17 +1093,23 @@ public class GridManager {
      * @return
      */
     public boolean locationIsOnIsland(final Player player, final Location loc) {
+	
 	// Get the player's island from the grid if it exists
 	Island island = getIslandAt(loc);
 	if (island != null) {
+	    //plugin.getLogger().info("DEBUG: island here is " + island.getCenter());
 	    // On an island in the grid
 	    if (island.onIsland(loc) && island.getMembers().contains(player.getUniqueId())) {
+		//plugin.getLogger().info("DEBUG: allowed");
 		// In a protected zone but is on the list of acceptable players
 		return true;
 	    } else {
 		// Not allowed
+		//plugin.getLogger().info("DEBUG: not allowed");
 		return false;
 	    }
+	} else {
+	    //plugin.getLogger().info("DEBUG: no island at this location");
 	}
 	// Not in the grid, so do it the old way
 	// Make a list of test locations and test them
@@ -1176,8 +1182,15 @@ public class GridManager {
 	Set<Location> islandTestLocations = new HashSet<Location>();
 	if (plugin.getPlayers().hasIsland(player.getUniqueId())) {
 	    islandTestLocations.add(plugin.getPlayers().getIslandLocation(player.getUniqueId()));
+	    // If new Nether
+	    if (Settings.newNether) {
+		islandTestLocations.add(netherIsland(plugin.getPlayers().getIslandLocation(player.getUniqueId())));
+	    }
 	} else if (plugin.getPlayers().inTeam(player.getUniqueId())) {
-	    islandTestLocations.add(plugin.getPlayers().get(player.getUniqueId()).getTeamIslandLocation());
+	    islandTestLocations.add(plugin.getPlayers().getTeamIslandLocation(player.getUniqueId()));
+	    if (Settings.newNether) {
+		islandTestLocations.add(netherIsland(plugin.getPlayers().getTeamIslandLocation(player.getUniqueId())));
+	    }
 	}
 	// Check coop locations
 	islandTestLocations.addAll(CoopPlay.getInstance().getCoopIslands(player));
@@ -1186,7 +1199,8 @@ public class GridManager {
 	}
 	// Run through all the locations
 	for (Location islandTestLocation : islandTestLocations) {
-	    if (islandTestLocation != null) {
+	    // Must be in the same world as the locations being checked
+	    if (islandTestLocation != null && islandTestLocation.getWorld().equals(player.getWorld())) {
 		int protectionRange = Settings.island_protectionRange;
 		if (getIslandAt(islandTestLocation) != null) {
 		    // Get the protection range for this location if possible
@@ -1205,6 +1219,16 @@ public class GridManager {
 	    }
 	}
 	return false;
+    }
+
+    /**
+     * Generates a Nether version of the locations
+     * @param islandLocation
+     * @return
+     */
+    private Location netherIsland(Location islandLocation) {
+	//plugin.getLogger().info("DEBUG: netherworld = " + ASkyBlock.getNetherWorld());
+	return new Location(ASkyBlock.getNetherWorld(),islandLocation.getX(),islandLocation.getY(),islandLocation.getZ(),islandLocation.getYaw(),islandLocation.getPitch());
     }
 
     /**

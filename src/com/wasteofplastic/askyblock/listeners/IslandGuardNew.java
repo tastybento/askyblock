@@ -60,7 +60,7 @@ public class IslandGuardNew implements Listener {
 	if (debug) {
 	    plugin.getLogger().info(e.getEventName());
 	}
-	if (!e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	if (!IslandGuard.inWorld(e.getPlayer())) {
 	    return;
 	}
 	if (e.getPlayer().isOp()) {
@@ -94,7 +94,7 @@ public class IslandGuardNew implements Listener {
 	if (!e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
 	    return;
 	}
-	if (!e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	if (!IslandGuard.inWorld(e.getPlayer())) {
 	    return;
 	}
 	if (e.getPlayer().isOp()) {
@@ -127,7 +127,7 @@ public class IslandGuardNew implements Listener {
 	if (debug) {
 	    plugin.getLogger().info(e.getEventName());
 	}
-	if (!p.getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	if (!IslandGuard.inWorld(p)) {
 	    return;
 	}
 	if (p.isOp()) {
@@ -157,7 +157,7 @@ public class IslandGuardNew implements Listener {
 	if (!(e.getEntity() instanceof LivingEntity)) {
 	    return;
 	}
-	if (!e.getEntity().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	if (!IslandGuard.inWorld(e.getEntity())) {
 	    return;
 	}
 	final LivingEntity livingEntity = (LivingEntity) e.getEntity();

@@ -170,10 +170,13 @@ public class Island {
      * @return
      */
     public boolean onIsland(Location target) {
-	if (world != null && target.getWorld().equals(world)) {
-	    if (target.getX() >= center.getBlockX() - protectionRange / 2 && target.getX() < center.getBlockX() + protectionRange / 2
-		    && target.getZ() >= center.getBlockZ() - protectionRange / 2 && target.getZ() < center.getBlockZ() + protectionRange / 2) {
-		return true;
+	if (world != null) {
+	    // If the new nether is being used, islands exist in the nether too
+	    if (target.getWorld().equals(world) || (Settings.newNether && target.getWorld().equals(ASkyBlock.getNetherWorld()))) {
+		if (target.getX() >= center.getBlockX() - protectionRange / 2 && target.getX() < center.getBlockX() + protectionRange / 2
+			&& target.getZ() >= center.getBlockZ() - protectionRange / 2 && target.getZ() < center.getBlockZ() + protectionRange / 2) {
+		    return true;
+		}
 	    }
 	}
 	return false;

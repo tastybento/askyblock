@@ -82,6 +82,7 @@ public class ASkyBlock extends JavaPlugin {
     private static ASkyBlock plugin;
     // The ASkyBlock world
     private static World islandWorld = null;
+    private static World netherWorld = null;
     // Flag indicating if a new islands is in the process of being generated or
     // not
     private boolean newIsland = false;
@@ -126,17 +127,7 @@ public class ASkyBlock extends JavaPlugin {
 		    .createWorld();
 	    // Make the nether if it does not exist
 	    if (Settings.createNether) {
-		if (plugin.getServer().getWorld(Settings.worldName + "_nether") == null) {
-		    Bukkit.getLogger().info("Creating " + plugin.getName() + "'s Nether...");
-		    if (!Settings.newNether) {
-			WorldCreator.name(Settings.worldName + "_nether").type(WorldType.NORMAL).environment(World.Environment.NETHER).createWorld();
-		    } else {
-			WorldCreator.name(Settings.worldName + "_nether").type(WorldType.FLAT).generator(new ChunkGeneratorWorld())
-			.environment(World.Environment.NETHER).createWorld();
-		    }
-		    // netherWorld.setMonsterSpawnLimit(Settings.monsterSpawnLimit);
-		    // netherWorld.setAnimalSpawnLimit(Settings.animalSpawnLimit);
-		}
+		getNetherWorld();
 	    }
 	    // Multiverse configuration
 	    if (Bukkit.getServer().getPluginManager().isPluginEnabled("Multiverse-Core")) {
@@ -1720,6 +1711,26 @@ public class ASkyBlock extends JavaPlugin {
     public void unregisterEvents() {
 	HandlerList.unregisterAll(warpSignsListener);
 	HandlerList.unregisterAll(lavaListener);
+    }
+
+    /**
+     * @return the netherWorld
+     */
+    public static World getNetherWorld() {
+	if (netherWorld == null) {
+	    if (plugin.getServer().getWorld(Settings.worldName + "_nether") == null) {
+		Bukkit.getLogger().info("Creating " + plugin.getName() + "'s Nether...");
+	    }
+	    if (!Settings.newNether) {
+		netherWorld = WorldCreator.name(Settings.worldName + "_nether").type(WorldType.NORMAL).environment(World.Environment.NETHER).createWorld();
+	    } else {
+		netherWorld = WorldCreator.name(Settings.worldName + "_nether").type(WorldType.FLAT).generator(new ChunkGeneratorWorld())
+			.environment(World.Environment.NETHER).createWorld();
+	    }
+	    netherWorld.setMonsterSpawnLimit(Settings.monsterSpawnLimit);
+	    netherWorld.setAnimalSpawnLimit(Settings.animalSpawnLimit);
+	}
+	return netherWorld;
     }
 
 }
