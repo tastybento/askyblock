@@ -1188,16 +1188,16 @@ public class IslandGuard implements Listener {
 	if (debug) {
 	    plugin.getLogger().info(e.getEventName());
 	}
-	plugin.getLogger().info(e.getEventName());
+	//plugin.getLogger().info(e.getEventName());
 	if (inWorld(e.getPlayer())) {
-	    plugin.getLogger().info("DEBUG: in world");
+	    //plugin.getLogger().info("DEBUG: in world");
 	    // This permission bypasses protection
 	    if (e.getPlayer().isOp() || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
 		return;
 	    }
-	    plugin.getLogger().info("DEBUG: not op or bypass");
+	    //plugin.getLogger().info("DEBUG: not op or bypass");
 	    if (plugin.getGrid().isAtSpawn(e.getBlock().getLocation())) {
-		plugin.getLogger().info("DEBUG: at spawn");
+		//plugin.getLogger().info("DEBUG: at spawn");
 		if (!Settings.allowSpawnPlaceBlocks) {
 		    e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
 		    e.setCancelled(true);

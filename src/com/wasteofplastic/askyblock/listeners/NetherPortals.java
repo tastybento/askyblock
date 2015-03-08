@@ -153,7 +153,7 @@ public class NetherPortals implements Listener {
 	    // event.setTo(plugin.getServer().getWorld(Settings.worldName +
 	    // "_nether").getSpawnLocation());
 	    UUID playerUUID = event.getPlayer().getUniqueId();
-	    World world = plugin.getServer().getWorld(Settings.worldName + "_nether");
+	    World world = ASkyBlock.getNetherWorld();
 	    if (Settings.newNether) {
 		Location netherHome = null;
 		if (plugin.getPlayers().inTeam(playerUUID)) {
@@ -165,18 +165,33 @@ public class NetherPortals implements Listener {
 		    event.setCancelled(true);
 		    return;
 		}
-		event.setTo(netherHome);
+		if (!GridManager.isSafeLocation(netherHome)) {
+		    netherHome = plugin.getGrid().bigScan(netherHome, playerUUID, 10);
+		    //plugin.getLogger().info("DEBUG: Found netherhome at " + netherHome);
+		    if (netherHome == null) {
+			plugin.getLogger().info("Could not find a safe spot to port " + event.getPlayer().getName() + " to Nether island");
+			event.getPlayer().sendMessage(Locale.warpserrorNotSafe);
+			event.setCancelled(true);
+			return;
+		    }
+		}
+		event.getPlayer().teleport(netherHome);
+		event.setCancelled(true);
+		return;
+		//event.setTo(netherHome);
+		//event.useTravelAgent(false);
 	    } else {
 		// plugin.getLogger().info("DEBUG: transporting to nether spawn : "
 		// + plugin.getServer().getWorld(Settings.worldName +
 		// "_nether").getSpawnLocation().toString());
 		event.setTo(plugin.getServer().getWorld(Settings.worldName + "_nether").getSpawnLocation());
+		event.useTravelAgent(true);
 	    }
 	    // if (!Settings.newNether) {
 	    // event.useTravelAgent(true);
 	    // } else {
 	    // Use the portal for now
-	    event.useTravelAgent(true);
+	    
 	    // }
 	} else {
 	    // Going to the end

@@ -434,7 +434,7 @@ public class GridManager {
 	    Island island = ownershipMap.get(owner);
 	    plugin.getLogger().warning(
 		    "Island at " + island.getCenter().getBlockX() + ", " + island.getCenter().getBlockZ()
-			    + " is already owned by this player. Removing ownership of this island.");
+		    + " is already owned by this player. Removing ownership of this island.");
 	    island.setOwner(null);
 	    ownershipMap.remove(owner);
 	}
@@ -536,8 +536,8 @@ public class GridManager {
 		    zEntry.remove(z);
 		    islandGrid.put(x, zEntry);
 		} // else {
-		  // plugin.getLogger().info("DEBUG: could not find z");
-		  // }
+		// plugin.getLogger().info("DEBUG: could not find z");
+		// }
 	    }
 	    // Remove from the ownership map
 	    // If the owner already has been given a new island, then this will
@@ -744,7 +744,7 @@ public class GridManager {
 	    return false;
 	}
 	// TODO: improve the safe location finding.
-	// Bukkit.getLogger().info("DEBUG: " + l.toString());
+	//Bukkit.getLogger().info("DEBUG: " + l.toString());
 	final Block ground = l.getBlock().getRelative(BlockFace.DOWN);
 	final Block space1 = l.getBlock();
 	final Block space2 = l.getBlock().getRelative(BlockFace.UP);
@@ -776,19 +776,16 @@ public class GridManager {
 		return false;
 	    }
 	}
-	if (ground.getType().equals(Material.CACTUS)) {
+	if (ground.getType().equals(Material.CACTUS) || ground.getType().equals(Material.BOAT) || ground.getType().equals(Material.FENCE)
+		|| ground.getType().equals(Material.NETHER_FENCE)) {
 	    // Bukkit.getLogger().info("DEBUG: cactus");
 	    return false;
-	} // Ouch - prickly
-	if (ground.getType().equals(Material.BOAT)) {
-	    // Bukkit.getLogger().info("DEBUG: boat");
-	    return false;
-	} // No, I don't want to end up on the boat again
-	  // Check that the space is not solid
-	  // The isSolid function is not fully accurate (yet) so we have to
-	  // check
-	  // a few other items
-	  // isSolid thinks that PLATEs and SIGNS are solid, but they are not
+	}
+	// Check that the space is not solid
+	// The isSolid function is not fully accurate (yet) so we have to
+	// check
+	// a few other items
+	// isSolid thinks that PLATEs and SIGNS are solid, but they are not
 	if (space1.getType().isSolid()) {
 	    // Bukkit.getLogger().info("DEBUG: space 1 is solid");
 	    // Do a few other checks
@@ -837,7 +834,7 @@ public class GridManager {
 	    }
 	}
 	// Safe
-	// Bukkit.getLogger().info("DEBUG: safe!");
+	//Bukkit.getLogger().info("DEBUG: safe!");
 	return true;
     }
 
@@ -930,65 +927,60 @@ public class GridManager {
 		return n;
 	    }
 	}
-	// getLogger().info("DEBUG: trying around the protected area");
-	// Try anywhere in the protected island area
-	// Be smart and start at the island level and above it
-	for (int y = Settings.island_level; y < l.getWorld().getMaxHeight(); y++) {
-	    for (int x = l.getBlockX(); x < l.getBlockX() + Settings.island_protectionRange / 2; x++) {
-		for (int z = l.getBlockZ(); z < l.getBlockZ() + Settings.island_protectionRange / 2; z++) {
-		    Location ultimate = new Location(l.getWorld(), (double) x + 0.5D, y, (double) z + 0.5D);
-		    if (!ultimate.getBlock().equals(Material.AIR)) {
-			if (isSafeLocation(ultimate)) {
-			    plugin.getPlayers().setHomeLocation(p, ultimate);
-			    return ultimate;
-			}
-		    }
-		}
-	    }
-	}
-	for (int y = Settings.island_level; y < l.getWorld().getMaxHeight(); y++) {
-	    for (int x = l.getBlockX(); x > l.getBlockX() - Settings.island_protectionRange / 2; x--) {
-		for (int z = l.getBlockZ(); z < l.getBlockZ() - Settings.island_protectionRange / 2; z--) {
-		    Location ultimate = new Location(l.getWorld(), (double) x + 0.5D, y, (double) z + 0.5D);
-		    if (!ultimate.getBlock().equals(Material.AIR)) {
-			if (isSafeLocation(ultimate)) {
-			    plugin.getPlayers().setHomeLocation(p, ultimate);
-			    return ultimate;
-			}
-		    }
-		}
-	    }
-	}
-	// Try below the island level
-	// Move away from the center and go to the positive extreme
-	for (int y = Settings.island_level - 1; y > 0; y--) {
-	    for (int x = l.getBlockX(); x < l.getBlockX() + Settings.island_protectionRange / 2; x++) {
-		for (int z = l.getBlockZ(); z < l.getBlockZ() + Settings.island_protectionRange / 2; z++) {
-		    Location ultimate = new Location(l.getWorld(), (double) x + 0.5D, y, (double) z + 0.5D);
-		    if (!ultimate.getBlock().equals(Material.AIR)) {
-			if (isSafeLocation(ultimate)) {
-			    plugin.getPlayers().setHomeLocation(p, ultimate);
-			    return ultimate;
-			}
-		    }
-		}
-	    }
-	}
-	// Go to the negative extreme
-	for (int y = Settings.island_level - 1; y > 0; y--) {
-	    for (int x = l.getBlockX(); x > l.getBlockX() - Settings.island_protectionRange / 2; x--) {
-		for (int z = l.getBlockZ(); z > l.getBlockZ() - Settings.island_protectionRange / 2; z--) {
-		    Location ultimate = new Location(l.getWorld(), (double) x + 0.5D, y, (double) z + 0.5D);
-		    if (!ultimate.getBlock().equals(Material.AIR)) {
-			if (isSafeLocation(ultimate)) {
-			    plugin.getPlayers().setHomeLocation(p, ultimate);
-			    return ultimate;
-			}
-		    }
-		}
-	    }
-	}
+	// Try a full protected area scan (-1 = full area scan)
+	return bigScan(l, p, -1);
+    }
 
+    /**
+     * This is a generic scan that can work in the overworld or the nether
+     * @param l - location around which to scan
+     * @param p - the player whose island this is
+     * @param i - the range to scan for a location < 0 means the full island.
+     * @return - safe location, or null if none can be found
+     */
+    public Location bigScan(Location l, UUID p, int i) {
+	Island island = plugin.getGrid().getIsland(p);
+	if (island == null) {
+	    return null;
+	}
+	int minX = island.getMinProtectedX();
+	int minZ = island.getMinProtectedZ();
+	int maxX = minX + island.getProtectionSize();
+	int maxZ = minZ + island.getProtectionSize();
+	int height = l.getWorld().getMaxHeight();
+	int depth = 0;
+	if (i > 0) {
+	    minX = island.getCenter().getBlockX() - i;
+	    minZ = island.getCenter().getBlockZ() - i;
+	    maxX = island.getCenter().getBlockX() + i;
+	    maxZ = island.getCenter().getBlockZ() + i;
+	    height = island.getCenter().getBlockY() + i;
+	    depth = island.getCenter().getBlockY() - i;
+	}
+	
+	
+	//plugin.getLogger().info("DEBUG: ranges i = " + i);
+	//plugin.getLogger().info(" " + minX + "," + minZ + " " + maxX + " " + maxZ);
+	//plugin.getLogger().info("DEBUG: height = " + height);
+	//plugin.getLogger().info("DEBUG: depth = " + depth);
+	//plugin.getLogger().info("DEBUG: trying to find a safe spot at " + l.toString());
+	for (int y = height; y > depth; y--) {
+	    for (int x = minX; x< maxX; x++) {
+		for (int z = minZ; z < maxZ; z++) {
+		    //plugin.getLogger().info("DEBUG: checking " + x + "," + y + "," + z);
+		    Location ultimate = new Location(l.getWorld(), x + 0.5D, y, z + 0.5D);
+		    if (ultimate.getBlock().getRelative(BlockFace.DOWN).getType() != Material.AIR) {
+			if (isSafeLocation(ultimate)) {
+			    if (ultimate.getWorld().equals(ASkyBlock.getIslandWorld())) {
+				plugin.getPlayers().setHomeLocation(p, ultimate);
+			    }
+			    //plugin.getLogger().info("DEBUG: Found! " + ultimate);
+			    return ultimate;
+			}
+		    }
+		}
+	    }
+	}	
 	// Nothing worked
 	return null;
     }
@@ -1093,7 +1085,7 @@ public class GridManager {
      * @return
      */
     public boolean locationIsOnIsland(final Player player, final Location loc) {
-	
+
 	// Get the player's island from the grid if it exists
 	Island island = getIslandAt(loc);
 	if (island != null) {
@@ -1228,7 +1220,7 @@ public class GridManager {
      */
     private Location netherIsland(Location islandLocation) {
 	//plugin.getLogger().info("DEBUG: netherworld = " + ASkyBlock.getNetherWorld());
-	return new Location(ASkyBlock.getNetherWorld(),islandLocation.getX(),islandLocation.getY(),islandLocation.getZ(),islandLocation.getYaw(),islandLocation.getPitch());
+	return islandLocation.toVector().toLocation(ASkyBlock.getNetherWorld());
     }
 
     /**
