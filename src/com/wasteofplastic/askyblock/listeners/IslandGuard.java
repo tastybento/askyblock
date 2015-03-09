@@ -1006,7 +1006,7 @@ public class IslandGuard implements Listener {
 		e.setCancelled(true);
 		return;
 	    }
-	    if (Settings.allowBreakBlocks) {
+	    if (Settings.allowBreakBlocks || (Settings.allowSpawnBreakBlocks && plugin.getGrid().isAtSpawn(e.getEntity().getLocation()))) {
 		return;
 	    }
 	    // plugin.getLogger().info("Damager is = " +
