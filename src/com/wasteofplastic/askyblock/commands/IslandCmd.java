@@ -56,7 +56,7 @@ import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.CoopPlay;
 import com.wasteofplastic.askyblock.DeleteIslandChunk;
 import com.wasteofplastic.askyblock.GridManager;
-import com.wasteofplastic.askyblock.Island;
+import com.wasteofplastic.askyblock.PlayerIsland;
 import com.wasteofplastic.askyblock.LevelCalc;
 import com.wasteofplastic.askyblock.Locale;
 import com.wasteofplastic.askyblock.Messages;
@@ -768,7 +768,7 @@ public class IslandCmd implements CommandExecutor {
 		}
 		// plugin.getLogger().info("DEBUG: perms ok");
 		// Find out which island they want to lock
-		Island island = plugin.getGrid().getIsland(playerUUID);
+		PlayerIsland island = plugin.getGrid().getIsland(playerUUID);
 		if (island == null) {
 		    // plugin.getLogger().info("DEBUG: player has no island in grid");
 		    // Player has no island in the grid
@@ -1171,7 +1171,7 @@ public class IslandCmd implements CommandExecutor {
 			if (plugin.getPlayers().hasIsland(playerUUID)) {
 			    plugin.getLogger().info(player.getName() + "'s island will be deleted because they joined a party.");
 			    plugin.deletePlayerIsland(playerUUID, true);
-			    plugin.getLogger().info("Island deleted.");
+			    plugin.getLogger().info("PlayerIsland deleted.");
 			}
 			// Add the player to the team
 			addPlayertoTeam(playerUUID, inviteList.get(playerUUID));
@@ -1656,7 +1656,7 @@ public class IslandCmd implements CommandExecutor {
 		}
 		return true;
 	    } else if (split[0].equalsIgnoreCase("kick") || split[0].equalsIgnoreCase("remove")) {
-		// Island remove command with a player name, or island kick
+		// PlayerIsland remove command with a player name, or island kick
 		// command
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.kick")) {
 		    if (!plugin.getPlayers().inTeam(playerUUID)) {

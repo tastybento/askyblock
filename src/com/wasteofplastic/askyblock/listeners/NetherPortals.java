@@ -63,7 +63,7 @@ public class NetherPortals implements Listener {
     public void onEntityPortal(EntityPortalEvent event) {
 	Location currentLocation = event.getFrom().clone();
 	String currentWorld = currentLocation.getWorld().getName();
-	// Only operate if this is Island territory
+	// Only operate if this is PlayerIsland territory
 	if (!currentWorld.equalsIgnoreCase(Settings.worldName) && !currentWorld.equalsIgnoreCase(Settings.worldName + "_nether")
 		&& !currentWorld.equalsIgnoreCase(Settings.worldName + "_the_end")) {
 	    return;

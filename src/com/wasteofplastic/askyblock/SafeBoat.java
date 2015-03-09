@@ -40,7 +40,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 /**
- * This file improves the safety of boats in Acid Island It enables
+ * This file improves the safety of boats in Acid PlayerIsland It enables
  * players to get out of boats without being dropped into the acid. It
  * enables players to hit a boat and have it pop into their inventory
  * immediately

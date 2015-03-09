@@ -560,7 +560,7 @@ public class Challenges implements CommandExecutor {
 	    // plugin.getLogger().info("DEBUG: 7");
 	    return true;
 	}
-	// Island level check
+	// PlayerIsland level check
 	if (getChallengeConfig().getString("challenges.challengeList." + challenge + ".type").equalsIgnoreCase("level")) {
 	    if (players.getIslandLevel(player.getUniqueId()) >= getChallengeConfig().getInt("challenges.challengeList." + challenge + ".requiredItems")) {
 		return true;

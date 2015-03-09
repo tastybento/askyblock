@@ -471,7 +471,7 @@ public class PlayerCache {
 	if (loc == null)
 	    return null;
 	// Look in the grid
-	Island island = plugin.getGrid().getIslandAt(loc);
+	PlayerIsland island = plugin.getGrid().getIslandAt(loc);
 	if (island != null) {
 	    return island.getOwner();
 	}

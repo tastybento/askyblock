@@ -30,7 +30,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.CoopPlay;
-import com.wasteofplastic.askyblock.Island;
+import com.wasteofplastic.askyblock.PlayerIsland;
 import com.wasteofplastic.askyblock.LevelCalc;
 import com.wasteofplastic.askyblock.Locale;
 import com.wasteofplastic.askyblock.Messages;
@@ -110,16 +110,16 @@ public class JoinLeaveEvents implements Listener {
 	// If the player has an island of some kind
 	if (loc != null) {
 	    // Check if the island is on the grid by owner (fast)
-	    Island island = plugin.getGrid().getIsland(leader);
+	    PlayerIsland island = plugin.getGrid().getIsland(leader);
 	    if (island == null) {
 		// Check if the island exists in the grid
 		island = plugin.getGrid().getIslandAt(loc);
-		// Island isn't in the grid, so add it
+		// PlayerIsland isn't in the grid, so add it
 		if (island == null) {
 		    plugin.getGrid().addIsland(loc.getBlockX(), loc.getBlockZ(), leader);
 		}
 	    } else {
-		// Island exists
+		// PlayerIsland exists
 		// Assign ownership
 		plugin.getGrid().setIslandOwner(island, leader);
 	    }

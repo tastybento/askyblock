@@ -32,6 +32,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Creeper;
+import org.bukkit.entity.EnderPearl;
 import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -83,7 +84,7 @@ import org.bukkit.util.Vector;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.InventorySave;
-import com.wasteofplastic.askyblock.Island;
+import com.wasteofplastic.askyblock.PlayerIsland;
 import com.wasteofplastic.askyblock.Locale;
 import com.wasteofplastic.askyblock.SafeBoat;
 import com.wasteofplastic.askyblock.Settings;
@@ -96,7 +97,7 @@ import com.wasteofplastic.askyblock.util.VaultHelper;
  */
 public class IslandGuard implements Listener {
     private final ASkyBlock plugin;
-    private final boolean debug = false;
+    private final boolean debug = true;
     // A set of falling players
     private static HashSet<UUID> fallingPlayers = new HashSet<UUID>();
 
@@ -260,16 +261,16 @@ public class IslandGuard implements Listener {
 	if (plugin.getGrid() == null) {
 	    return;
 	}
-	Island islandTo = plugin.getGrid().getProtectedIslandAt(e.getTo());
+	PlayerIsland islandTo = plugin.getGrid().getProtectedIslandAt(e.getTo());
 	// Announcement entering
-	Island islandFrom = plugin.getGrid().getProtectedIslandAt(e.getFrom());
+	PlayerIsland islandFrom = plugin.getGrid().getProtectedIslandAt(e.getFrom());
 	// Only says something if there is a change in islands
 	/*
 	 * Situations:
 	 * islandTo == null && islandFrom != null - exit
 	 * islandTo == null && islandFrom == null - nothing
 	 * islandTo != null && islandFrom == null - enter
-	 * islandTo != null && islandFrom != null - same Island or teleport?
+	 * islandTo != null && islandFrom != null - same PlayerIsland or teleport?
 	 * islandTo == islandFrom
 	 */
 	// plugin.getLogger().info("islandTo = " + islandTo);
@@ -397,16 +398,16 @@ public class IslandGuard implements Listener {
 	if (e.getPlayer().isInsideVehicle()) {
 	    return;
 	}
-	Island islandTo = plugin.getGrid().getProtectedIslandAt(e.getTo());
+	PlayerIsland islandTo = plugin.getGrid().getProtectedIslandAt(e.getTo());
 	// Announcement entering
-	Island islandFrom = plugin.getGrid().getProtectedIslandAt(e.getFrom());
+	PlayerIsland islandFrom = plugin.getGrid().getProtectedIslandAt(e.getFrom());
 	// Only says something if there is a change in islands
 	/*
 	 * Situations:
 	 * islandTo == null && islandFrom != null - exit
 	 * islandTo == null && islandFrom == null - nothing
 	 * islandTo != null && islandFrom == null - enter
-	 * islandTo != null && islandFrom != null - same Island or teleport?
+	 * islandTo != null && islandFrom != null - same PlayerIsland or teleport?
 	 * islandTo == islandFrom
 	 */
 	// plugin.getLogger().info("islandTo = " + islandTo);
@@ -617,16 +618,16 @@ public class IslandGuard implements Listener {
 	// plugin.getLogger().info("DEBUG: From : " + e.getFrom());
 	// plugin.getLogger().info("DEBUG: To : " + e.getTo());
 	// Teleporting to a locked island
-	Island islandTo = plugin.getGrid().getProtectedIslandAt(e.getTo());
+	PlayerIsland islandTo = plugin.getGrid().getProtectedIslandAt(e.getTo());
 	// Announcement entering
-	Island islandFrom = plugin.getGrid().getProtectedIslandAt(e.getFrom());
+	PlayerIsland islandFrom = plugin.getGrid().getProtectedIslandAt(e.getFrom());
 	// Only says something if there is a change in islands
 	/*
 	 * Teleport Situations:
 	 * islandTo == null && islandFrom != null - exit
 	 * islandTo == null && islandFrom == null - nothing
 	 * islandTo != null && islandFrom == null - enter
-	 * islandTo != null && islandFrom != null - same Island or teleport?
+	 * islandTo != null && islandFrom != null - same PlayerIsland or teleport?
 	 * islandTo == islandFrom
 	 */
 	if (islandTo != null && islandTo.getOwner() != null) {
@@ -698,7 +699,7 @@ public class IslandGuard implements Listener {
 		    if (animals >= Settings.breedingLimit) {
 			if (e.getSpawnReason() != SpawnReason.SPAWNER) {
 			    plugin.getLogger().warning(
-				    "Island at " + islandLoc.getBlockX() + "," + islandLoc.getBlockZ() + " hit the island animal breeding limit of "
+				    "PlayerIsland at " + islandLoc.getBlockX() + "," + islandLoc.getBlockZ() + " hit the island animal breeding limit of "
 					    + Settings.breedingLimit);
 			}
 			animal.remove();
@@ -976,16 +977,20 @@ public class IslandGuard implements Listener {
 	    plugin.getLogger().info(e.getEventName());
 	    plugin.getLogger().info(e.getDamager().toString());
 	}
+	// We do not care about any EnderPearl damage in this method
+	if (e.getDamager() instanceof EnderPearl) {
+	    return;
+	}
 	// Check world
 	if (!inWorld(e.getEntity())) {
 	    return;
 	}
-
+	// Stop TNT damage if it is disallowed
 	if (!Settings.allowTNTDamage && e.getDamager().getType().equals(EntityType.PRIMED_TNT)) {
 	    e.setCancelled(true);
 	    return;
 	}
-
+	// Stop Creeper damager if it is disallowed
 	if (!Settings.allowCreeperDamage && e.getDamager().getType().equals(EntityType.CREEPER) && !(e.getEntity() instanceof Player)) {
 	    e.setCancelled(true);
 	    return;
@@ -1124,20 +1129,25 @@ public class IslandGuard implements Listener {
 	    }
 
 	}
-	// Check for fishing rods
-	//plugin.getLogger().info("DEBUG: Player attack (or arrow)");
+	// Check for projectiles
+	//plugin.getLogger().info("DEBUG: projectile");
 	// Only damagers who are players or arrows are left
 	// Handle splash potions separately.
 	if (e.getDamager() instanceof Projectile) {
 	    //plugin.getLogger().info("DEBUG: Projectile attack");
 	    Projectile projectile = (Projectile) e.getDamager();
-	    // It really is an Arrow
+	    // It really is a projectile
 	    if (projectile.getShooter() instanceof Player) {
 		Player shooter = (Player) projectile.getShooter();
 		// plugin.getLogger().info("Player arrow attack");
 		if (e.getEntity() instanceof Player) {
 		    // plugin.getLogger().info("Player vs Player!");
-		    // Arrow shot by a player at another player
+		    // If this is self-inflicted damage, e.g., harming thrown potions then it is ok
+		    if (shooter.equals((Player)e.getEntity())) {
+			//plugin.getLogger().info("Self damage!");
+			return;
+		    }
+		    // Projectile shot by a player at another player
 		    if (!Settings.allowPvP) {
 			// plugin.getLogger().info("Target player is in a no-PVP area!");
 			((Player) projectile.getShooter()).sendMessage(Locale.targetInNoPVPArea);

@@ -102,7 +102,7 @@ public class ASkyBlock extends JavaPlugin {
     // Biome chooser object
     private Biomes biomes;
 
-    // Island grid manager
+    // PlayerIsland grid manager
     private GridManager grid;
 
     private boolean debug = false;
@@ -114,7 +114,7 @@ public class ASkyBlock extends JavaPlugin {
     private Update updateCheck = null;
 
     /**
-     * Returns the World object for the Acid Island world named in config.yml.
+     * Returns the World object for the Acid PlayerIsland world named in config.yml.
      * If the world does not exist then it is created.
      * 
      * @return islandWorld - Bukkit World object for the ASkyBlock world
@@ -466,7 +466,7 @@ public class ASkyBlock extends JavaPlugin {
     }
 
     /**
-     * Delete Island
+     * Delete PlayerIsland
      * Called when an island is restarted or reset
      * 
      * @param player
@@ -496,7 +496,7 @@ public class ASkyBlock extends JavaPlugin {
 		}
 	    }
 	} else {
-	    Island island = grid.getIsland(player);
+	    PlayerIsland island = grid.getIsland(player);
 	    if (island != null) {
 		island.setLocked(false);
 		grid.setIslandOwner(island, null);
@@ -626,7 +626,7 @@ public class ASkyBlock extends JavaPlugin {
 	Settings.useEconomy = getConfig().getBoolean("general.useeconomy", true);
 	// Check for updates
 	Settings.updateCheck = getConfig().getBoolean("general.checkupdates", true);
-	// Island reset commands
+	// PlayerIsland reset commands
 	Settings.resetCommands = getConfig().getStringList("general.resetcommands");
 	Settings.leaveCommands = getConfig().getStringList("general.leavecommands");
 	Settings.useControlPanel = getConfig().getBoolean("general.usecontrolpanel", false);
@@ -669,14 +669,14 @@ public class ASkyBlock extends JavaPlugin {
 		default:
 		    getLogger()
 		    .warning(
-			    "Island companion is not recognized. Pick from COW, PIG, SHEEP, CHICKEN, VILLAGER, HORSE, IRON_GOLEM, OCELOT, RABBIT, WOLF, SNOWMAN, BAT, MUSHROOM_COW");
+			    "PlayerIsland companion is not recognized. Pick from COW, PIG, SHEEP, CHICKEN, VILLAGER, HORSE, IRON_GOLEM, OCELOT, RABBIT, WOLF, SNOWMAN, BAT, MUSHROOM_COW");
 		    Settings.islandCompanion = EntityType.COW;
 		    break;
 		}
 	    } catch (Exception e) {
 		getLogger()
 		.warning(
-			"Island companion is not recognized. Pick from COW, PIG, SHEEP, CHICKEN, VILLAGER, HORSE, IRON_GOLEM, OCELOT, RABBIT, WOLF, BAT, MUSHROOM_COW, SNOWMAN");
+			"PlayerIsland companion is not recognized. Pick from COW, PIG, SHEEP, CHICKEN, VILLAGER, HORSE, IRON_GOLEM, OCELOT, RABBIT, WOLF, BAT, MUSHROOM_COW, SNOWMAN");
 		Settings.islandCompanion = EntityType.COW;
 	    }
 	}
@@ -831,7 +831,7 @@ public class ASkyBlock extends JavaPlugin {
 	    if (Settings.island_protectionRange > (Settings.islandDistance - 16)) {
 		Settings.island_protectionRange = Settings.islandDistance - 16;
 		getLogger().warning(
-			"*** Island protection range must be " + (Settings.islandDistance - 16) + " or less, (island range -16). Setting to: "
+			"*** PlayerIsland protection range must be " + (Settings.islandDistance - 16) + " or less, (island range -16). Setting to: "
 				+ Settings.island_protectionRange);
 	    }
 	}
@@ -1088,7 +1088,7 @@ public class ASkyBlock extends JavaPlugin {
 
 	} else {
 	    // AcidIsland
-	    Locale.signLine1 = ChatColor.translateAlternateColorCodes('&', locale.getString("sign.line1", "&1[Acid Island]"));
+	    Locale.signLine1 = ChatColor.translateAlternateColorCodes('&', locale.getString("sign.line1", "&1[Acid PlayerIsland]"));
 	    Locale.signLine2 = ChatColor.translateAlternateColorCodes('&', locale.getString("sign.line2", "[player]"));
 	    Locale.signLine3 = ChatColor.translateAlternateColorCodes('&', locale.getString("sign.line3", "Water is acid!"));
 	    Locale.signLine4 = ChatColor.translateAlternateColorCodes('&', locale.getString("sign.line4", "Beware!"));
@@ -1117,9 +1117,9 @@ public class ASkyBlock extends JavaPlugin {
 	Locale.errorUnknownCommand = ChatColor.translateAlternateColorCodes('&', locale.getString("error.unknownCommand", "Unknown command."));
 	Locale.errorNoTeam = ChatColor.translateAlternateColorCodes('&', locale.getString("error.noTeam", "That player is not in a team."));
 	Locale.errorWrongWorld = ChatColor.translateAlternateColorCodes('&', locale.getString("error.wrongWorld", "You cannot do that in this world."));
-	Locale.islandProtected = ChatColor.translateAlternateColorCodes('&', locale.getString("islandProtected", "Island protected."));
+	Locale.islandProtected = ChatColor.translateAlternateColorCodes('&', locale.getString("islandProtected", "PlayerIsland protected."));
 	Locale.targetInNoPVPArea = ChatColor.translateAlternateColorCodes('&', locale.getString("targetInPVPArea", "Target is in a no-PVP area!"));
-	Locale.igsTitle = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.title", "Island Guard Settings"));
+	Locale.igsTitle = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.title", "PlayerIsland Guard Settings"));
 	Locale.igsAnvil = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.anvil", "Anvil Use"));
 	Locale.igsAllowed = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.allowed", "Allowed"));
 	Locale.igsDisallowed = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.disallowed", "Disallowed"));
@@ -1186,7 +1186,7 @@ public class ASkyBlock extends JavaPlugin {
 	Locale.warpsPlayerWarped = ChatColor.translateAlternateColorCodes('&', locale.getString("warps.playerWarped", "[name] &2warped to your island!"));
 	Locale.topTenheader = ChatColor.translateAlternateColorCodes('&', locale.getString("topTen.header", "These are the Top 10 islands:"));
 	Locale.topTenerrorNotReady = ChatColor.translateAlternateColorCodes('&', locale.getString("topTen.errorNotReady", "Top ten list not generated yet!"));
-	Locale.levelislandLevel = ChatColor.translateAlternateColorCodes('&', locale.getString("level.islandLevel", "Island level"));
+	Locale.levelislandLevel = ChatColor.translateAlternateColorCodes('&', locale.getString("level.islandLevel", "PlayerIsland level"));
 	Locale.levelerrornotYourIsland = ChatColor.translateAlternateColorCodes('&',
 		locale.getString("level.errornotYourIsland", "Only the island owner can do that."));
 	Locale.levelCalculating = ChatColor.translateAlternateColorCodes('&',
@@ -1267,7 +1267,7 @@ public class ASkyBlock extends JavaPlugin {
 	Locale.islandTitle = locale.getString("island.title", "A SkyBlock");
 	Locale.islandURL = locale.getString("island.url", "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZSBJG5J2E3B7U");
 	Locale.islanderrorCouldNotCreateIsland = ChatColor.translateAlternateColorCodes('&',
-		locale.getString("island.errorCouldNotCreateIsland", "Could not create your Island. Please contact a server moderator."));
+		locale.getString("island.errorCouldNotCreateIsland", "Could not create your PlayerIsland. Please contact a server moderator."));
 	Locale.islanderrorYouDoNotHavePermission = ChatColor.translateAlternateColorCodes('&',
 		locale.getString("island.errorYouDoNotHavePermission", "You do not have permission to use that command!"));
 	Locale.islandresetOnlyOwner = ChatColor.translateAlternateColorCodes('&', locale.getString("island.resetOnlyOwner",
@@ -1291,7 +1291,7 @@ public class ASkyBlock extends JavaPlugin {
 	Locale.islandhelpRestart = ChatColor.translateAlternateColorCodes('&',
 		locale.getString("island.helpRestart", "restart your island and remove the old one."));
 	Locale.islandDeletedLifeboats = ChatColor.translateAlternateColorCodes('&',
-		locale.getString("island.islandDeletedLifeboats", "Island deleted! Head to the lifeboats!"));
+		locale.getString("island.islandDeletedLifeboats", "PlayerIsland deleted! Head to the lifeboats!"));
 	Locale.islandhelpSetHome = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpSetHome", "set your teleport point for /island."));
 	Locale.islandhelpLevel = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpLevel", "calculate your island level"));
 	Locale.islandhelpLevelPlayer = ChatColor.translateAlternateColorCodes('&',
@@ -1316,7 +1316,7 @@ public class ASkyBlock extends JavaPlugin {
 		locale.getString("island.errorLevelNotReady", "Can't use that command right now! Try again in a few seconds."));
 	Locale.islanderrorInvalidPlayer = ChatColor.translateAlternateColorCodes('&',
 		locale.getString("island.errorInvalidPlayer", "That player is invalid or does not have an island!"));
-	Locale.islandislandLevelis = ChatColor.translateAlternateColorCodes('&', locale.getString("island.islandLevelis", "Island level is"));
+	Locale.islandislandLevelis = ChatColor.translateAlternateColorCodes('&', locale.getString("island.islandLevelis", "PlayerIsland level is"));
 	Locale.invitehelp = ChatColor.translateAlternateColorCodes('&',
 		locale.getString("invite.help", "Use [/island invite <playername>] to invite a player to your island."));
 	Locale.inviteyouCanInvite = ChatColor.translateAlternateColorCodes('&',
@@ -1447,7 +1447,7 @@ public class ASkyBlock extends JavaPlugin {
 		locale.getString("register.settingIsland", "Set [name]'s island to the bedrock nearest you."));
 	Locale.registererrorBedrockNotFound = ChatColor.translateAlternateColorCodes('&',
 		locale.getString("register.errorBedrockNotFound", "Error: unable to set the island!"));
-	Locale.adminInfoislandLocation = ChatColor.translateAlternateColorCodes('&', locale.getString("adminInfo.islandLocation", "Island Location"));
+	Locale.adminInfoislandLocation = ChatColor.translateAlternateColorCodes('&', locale.getString("adminInfo.islandLocation", "PlayerIsland Location"));
 	Locale.adminInfoerrorNotPartOfTeam = ChatColor.translateAlternateColorCodes('&',
 		locale.getString("adminInfo.errorNotPartOfTeam", "That player is not a member of an island team."));
 	Locale.adminInfoerrorNullTeamLeader = ChatColor.translateAlternateColorCodes('&',
@@ -1470,7 +1470,7 @@ public class ASkyBlock extends JavaPlugin {
 		locale.getString("register.settingIsland", "Set [name]'s island to the bedrock nearest you."));
 	Locale.registererrorBedrockNotFound = ChatColor.translateAlternateColorCodes('&',
 		locale.getString("register.errorBedrockNotFound", "Error: unable to set the island!"));
-	Locale.adminInfoislandLocation = ChatColor.translateAlternateColorCodes('&', locale.getString("adminInfo.islandLocation", "Island Location"));
+	Locale.adminInfoislandLocation = ChatColor.translateAlternateColorCodes('&', locale.getString("adminInfo.islandLocation", "PlayerIsland Location"));
 	Locale.adminInfoerrorNotPartOfTeam = ChatColor.translateAlternateColorCodes('&',
 		locale.getString("adminInfo.errorNotPartOfTeam", "That player is not a member of an island team."));
 	Locale.adminInfoerrorNullTeamLeader = ChatColor.translateAlternateColorCodes('&',
@@ -1515,7 +1515,7 @@ public class ASkyBlock extends JavaPlugin {
 	Locale.clearedResetLimit = ChatColor.translateAlternateColorCodes('&', locale.getString("resetTo", "Cleared reset limit"));
 
 	Locale.islandhelpBiome = ChatColor.translateAlternateColorCodes('&', locale.getString("biome.help", "open the biome GUI."));
-	Locale.biomeSet = ChatColor.translateAlternateColorCodes('&', locale.getString("biome.set", "Island biome set to [biome]!"));
+	Locale.biomeSet = ChatColor.translateAlternateColorCodes('&', locale.getString("biome.set", "PlayerIsland biome set to [biome]!"));
 	Locale.biomeUnknown = ChatColor.translateAlternateColorCodes('&', locale.getString("biome.unknown", "Unknown biome!"));
 	Locale.biomeYouBought = ChatColor.translateAlternateColorCodes('&', locale.getString("biome.youbought", "Purchased for [cost]!"));
 	Locale.biomePanelTitle = ChatColor.translateAlternateColorCodes('&', locale.getString("biome.paneltitle", "Select A Biome"));
@@ -1525,7 +1525,7 @@ public class ASkyBlock extends JavaPlugin {
 	Locale.expelExpelled = ChatColor.translateAlternateColorCodes('&', locale.getString("expel.expelled", "You were expelled from that island!"));
 	Locale.expelFail = ChatColor.translateAlternateColorCodes('&', locale.getString("expel.fail", "[name] cannot be expelled!"));
 	Locale.expelNotYourself = ChatColor.translateAlternateColorCodes('&', locale.getString("expel.notyourself", "You cannot expel yourself!"));
-	Locale.moblimitsError = ChatColor.translateAlternateColorCodes('&', locale.getString("moblimits.error", "Island breeding limit of [number] reached!"));
+	Locale.moblimitsError = ChatColor.translateAlternateColorCodes('&', locale.getString("moblimits.error", "PlayerIsland breeding limit of [number] reached!"));
 	Locale.coopRemoved = ChatColor.translateAlternateColorCodes('&', locale.getString("coop.removed", "[name] remove your coop status!"));
 	Locale.coopRemoveSuccess = ChatColor.translateAlternateColorCodes('&', locale.getString("coop.removesuccess", "[name] is no longer a coop player."));
 	Locale.coopSuccess = ChatColor.translateAlternateColorCodes('&',
@@ -1537,7 +1537,7 @@ public class ASkyBlock extends JavaPlugin {
 		locale.getString("coop.help", "temporarily give a player full access to your island"));
 	Locale.coopInvited = ChatColor.translateAlternateColorCodes('&', locale.getString("coop.invited", "[name] made [player] a coop player!"));
 	Locale.coopUseExpel = ChatColor.translateAlternateColorCodes('&', locale.getString("coop.useexpel", "Use expel to remove."));
-	Locale.lockIslandLocked = ChatColor.translateAlternateColorCodes('&', locale.getString("lock.islandlocked", "Island is locked to visitors"));
+	Locale.lockIslandLocked = ChatColor.translateAlternateColorCodes('&', locale.getString("lock.islandlocked", "PlayerIsland is locked to visitors"));
 	Locale.lockNowEntering = ChatColor.translateAlternateColorCodes('&', locale.getString("lock.nowentering", "Now entering [name]'s island"));
 	Locale.lockNowLeaving = ChatColor.translateAlternateColorCodes('&', locale.getString("lock.nowleaving", "Now leaving [name]'s island"));
 	Locale.lockLocking = ChatColor.translateAlternateColorCodes('&', locale.getString("lock.locking", "Locking island"));
@@ -1559,7 +1559,7 @@ public class ASkyBlock extends JavaPlugin {
 	final PluginManager manager = getServer().getPluginManager();
 	// Nether portal events
 	manager.registerEvents(new NetherPortals(this), this);
-	// Island Protection events
+	// PlayerIsland Protection events
 	manager.registerEvents(new IslandGuard(this), this);
 	// New V1.8 events
 	Class<?> clazz;

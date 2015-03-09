@@ -10,7 +10,7 @@ import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
 
 /**
- * Provides a programming interface to Island
+ * Provides a programming interface to PlayerIsland
  * 
  * @author tastybento
  */
@@ -32,7 +32,7 @@ public class ASkyBlockAPI {
 
     /*
      * Get information about (island): Level Owner Party members Rank (Something
-     * with the top-ten ?) Bedrock coordinates Island bounds Biome
+     * with the top-ten ?) Bedrock coordinates PlayerIsland bounds Biome
      * Playing with challenges would be interesting: Number of completed
      * challenges Challenge names / list
      * Now, we could be able to: Play with party members (add, kick, set owner)
@@ -281,4 +281,29 @@ public class ASkyBlockAPI {
 	return CoopPlay.getInstance().getCoopIslands(player);
     }
 
+    /**
+     * Provides spawn location
+     * @return Location of spawn's central point
+     */
+    public Location getSpawnLocation() {
+	return plugin.getGrid().getSpawn().getCenter();
+    }
+    
+    /**
+     * Provides the spawn range
+     * @return
+     */
+    public int getSpawnRange() {
+	return plugin.getGrid().getSpawn().getProtectionSize();
+    }
+    
+    /**
+     * Checks if a location is at spawn or not
+     * @param location
+     * @return true if at spawn
+     */
+    public boolean isAtSpawn(Location location) {
+	return plugin.getGrid().isAtSpawn(location);
+    }
+    
 }
