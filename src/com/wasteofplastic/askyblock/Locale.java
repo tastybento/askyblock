@@ -429,5 +429,6 @@ public class Locale {
     public static String igsVisitorKeep;
     public static String igsNetherPVP;
     public static String igsAnvil;
+    public static String setHomeerrorNumHomes;
 
 }

@@ -97,7 +97,7 @@ import com.wasteofplastic.askyblock.util.VaultHelper;
  */
 public class IslandGuard implements Listener {
     private final ASkyBlock plugin;
-    private final boolean debug = true;
+    private final boolean debug = false;
     // A set of falling players
     private static HashSet<UUID> fallingPlayers = new HashSet<UUID>();
 

@@ -637,6 +637,11 @@ public class ASkyBlock extends JavaPlugin {
 	Settings.maxTeamSize = getConfig().getInt("island.maxteamsize", 4);
 	Settings.maxTeamSizeVIP = getConfig().getInt("island.maxteamsizeVIP", 8);
 	Settings.maxTeamSizeVIP2 = getConfig().getInt("island.maxteamsizeVIP2", 12);
+	// Max home number
+	Settings.maxHomes = getConfig().getInt("general.maxhomes",1);
+	if (Settings.maxHomes < 1) {
+	    Settings.maxHomes = 1;
+	}
 	// Settings from config.yml
 	Settings.worldName = getConfig().getString("general.worldName");
 	Settings.createNether = getConfig().getBoolean("general.createnether", true);
@@ -1195,6 +1200,8 @@ public class ASkyBlock extends JavaPlugin {
 		locale.getString("sethome.homeSet", "Your island home has been set to your current location."));
 	Locale.setHomeerrorNotOnIsland = ChatColor.translateAlternateColorCodes('&',
 		locale.getString("sethome.errorNotOnIsland", "You must be within your island boundaries to set home!"));
+	Locale.setHomeerrorNumHomes = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("sethome.errorNumHomes", "Homes can be 1 to [max]"));
 	Locale.setHomeerrorNoIsland = ChatColor.translateAlternateColorCodes('&',
 		locale.getString("sethome.errorNoIsland", "You are not part of an island. Returning you the spawn area!"));
 	Locale.challengesyouHaveCompleted = ChatColor.translateAlternateColorCodes('&',

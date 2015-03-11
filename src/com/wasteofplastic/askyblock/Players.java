@@ -46,7 +46,8 @@ public class Players {
     private HashMap<String, Integer> challengeListTimes;
     private boolean hasIsland;
     private boolean inTeam;
-    private String homeLocation;
+    //private String homeLocation;
+    private HashMap<Integer, Location> homeLocations;
     private int islandLevel;
     private String islandLocation;
     private List<UUID> members;
@@ -68,7 +69,8 @@ public class Players {
 	this.members = new ArrayList<UUID>();
 	this.hasIsland = false;
 	this.islandLocation = null;
-	this.homeLocation = null;
+	//this.homeLocation = null;
+	this.homeLocations = new HashMap<Integer,Location>();
 	this.inTeam = false;
 	this.teamLeader = null;
 	this.teamIslandLocation = null;
@@ -107,7 +109,27 @@ public class Players {
 	this.hasIsland = playerInfo.getBoolean("hasIsland", false);
 	// plugin.getLogger().info("DEBUG: hasIsland load = " + this.hasIsland);
 	this.islandLocation = playerInfo.getString("islandLocation", "");
-	this.homeLocation = playerInfo.getString("homeLocation", "");
+	// Old home location storage
+	Location homeLocation = Util.getLocationString(playerInfo.getString("homeLocation",""));
+	// New home location storage
+	if (homeLocation != null) {
+	    // Transfer the old into the new
+	    this.homeLocations.put(1,homeLocation);
+	} else {
+	    // Import
+	    if (playerInfo.contains("homeLocations")) {
+		// Import to hashmap
+		for (String number : playerInfo.getConfigurationSection("homeLocations").getValues(false).keySet()) {
+		    try {
+			int num = Integer.valueOf(number);
+			Location loc = Util.getLocationString(playerInfo.getString("homeLocations." + number));
+			homeLocations.put(num, loc);
+		    } catch (Exception e) {
+			plugin.getLogger().warning("Error importing home locations for " + playerName);
+		    }
+		}
+	    }
+	}
 	this.inTeam = playerInfo.getBoolean("hasTeam", false);
 	final String teamLeaderString = playerInfo.getString("teamLeader", "");
 	if (!teamLeaderString.isEmpty()) {
@@ -143,7 +165,7 @@ public class Players {
 		    String locationString = playerInfo.getString("invitecooldown." + timeIndex, "");
 		    // plugin.getLogger().info("DEBUG: location string is " +
 		    // locationString);
-		    Location l = getLocationString(locationString);
+		    Location l = Util.getLocationString(locationString);
 		    // plugin.getLogger().info("DEBUG: location is " + l);
 		    long timeInMillis = Long.valueOf(timeIndex);
 		    // plugin.getLogger().info("DEBUG: time in millis is " +
@@ -171,7 +193,11 @@ public class Players {
 	playerInfo.set("playerName", playerName);
 	playerInfo.set("hasIsland", hasIsland);
 	playerInfo.set("islandLocation", islandLocation);
-	playerInfo.set("homeLocation", homeLocation);
+	playerInfo.set("homeLocation", null);
+	// Only store the new way
+	for (int num : homeLocations.keySet()) {
+	    playerInfo.set("homeLocations." + num, Util.getStringLocation(homeLocations.get(num)));
+	}
 	playerInfo.set("hasTeam", inTeam);
 	if (teamLeader == null) {
 	    playerInfo.set("teamLeader", "");
@@ -204,7 +230,7 @@ public class Players {
 	    // Convert location and date to string (time in millis)
 	    Calendar coolDownTime = Calendar.getInstance();
 	    coolDownTime.setTime(en.getValue());
-	    playerInfo.set("invitecooldown." + coolDownTime.getTimeInMillis(), getStringLocation(en.getKey()));
+	    playerInfo.set("invitecooldown." + coolDownTime.getTimeInMillis(), Util.getStringLocation(en.getKey()));
 	}
 
 	Util.saveYamlFile(playerInfo, "players/" + uuid.toString() + ".yml");
@@ -354,7 +380,7 @@ public class Players {
 		if (plugin.getPlayers().getMembers(teamLeader).contains(uuid)) {
 		    // Try and get the team leader's island
 		    if (plugin.getPlayers().getTeamIslandLocation(teamLeader) != null) {
-			teamIslandLocation = getStringLocation(plugin.getPlayers().getTeamIslandLocation(teamLeader));
+			teamIslandLocation = Util.getStringLocation(plugin.getPlayers().getTeamIslandLocation(teamLeader));
 			plugin.getLogger().warning(playerName + " was listed as in a team, but has no team island. Fixed.");
 		    }
 		} else {
@@ -371,15 +397,39 @@ public class Players {
 	return inTeam;
     }
 
+    /**
+     * Gets the default home location.
+     * @return
+     */
     public Location getHomeLocation() {
-	if (homeLocation.isEmpty()) {
-	    return null;
-	}
-	// return homeLoc.getLocation();
-	Location home = getLocationString(homeLocation).add(new Vector(0.5D, 0D, 0.5D));
-	return home;
+	return getHomeLocation(1); // Default
     }
 
+    /**
+     * Gets the home location by number. Note that the number is a string (to avoid conversion)
+     * @param number
+     * @return Location of this home or null if not available
+     */
+    public Location getHomeLocation(int number) {
+	if (homeLocations.containsKey(number)) {
+	    return homeLocations.get(number);
+	} else {
+	    return null;
+	}
+    }
+    
+    /**
+     * Provides a list of all home locations - used when searching for a safe spot to place someone
+     * @return List of home locations
+     */
+    public HashMap<Integer,Location> getHomeLocations() {
+	HashMap<Integer,Location> result = new HashMap<Integer,Location>();
+	for (int number : homeLocations.keySet()) {
+	    result.put(number, homeLocations.get(number));
+	}
+	return result;
+    }
+    
     /**
      * @return The island level int. Note this function does not calculate the
      *         island level
@@ -396,29 +446,7 @@ public class Players {
 	// if (islandLocation.isEmpty() && inTeam) {
 	// return getLocationString(teamIslandLocation);
 	// }
-	return getLocationString(islandLocation);
-    }
-
-    /**
-     * Converts a serialized location string to a Bukkit Location
-     * 
-     * @param s
-     *            - a serialized Location
-     * @return a new Location based on string or null if it cannot be parsed
-     */
-    private static Location getLocationString(final String s) {
-	if (s == null || s.trim() == "") {
-	    return null;
-	}
-	final String[] parts = s.split(":");
-	if (parts.length == 4) {
-	    final World w = Bukkit.getServer().getWorld(parts[0]);
-	    final int x = Integer.parseInt(parts[1]);
-	    final int y = Integer.parseInt(parts[2]);
-	    final int z = Integer.parseInt(parts[3]);
-	    return new Location(w, x, y, z);
-	}
-	return null;
+	return Util.getLocationString(islandLocation);
     }
 
     public List<UUID> getMembers() {
@@ -430,7 +458,7 @@ public class Players {
 	if (teamIslandLocation == null || teamIslandLocation.isEmpty()) {
 	    return null;
 	}
-	Location l = getLocationString(teamIslandLocation);
+	Location l = Util.getLocationString(teamIslandLocation);
 	return l;
     }
 
@@ -452,21 +480,6 @@ public class Players {
 
     public void setPlayerN(String playerName) {
 	this.playerName = playerName;
-    }
-
-    /**
-     * Converts a Bukkit location to a String
-     * 
-     * @param l
-     *            a Bukkit Location
-     * @return String of the floored block location of l or "" if l is null
-     */
-
-    private String getStringLocation(final Location l) {
-	if (l == null) {
-	    return "";
-	}
-	return l.getWorld().getName() + ":" + l.getBlockX() + ":" + l.getBlockY() + ":" + l.getBlockZ();
     }
 
     /**
@@ -536,9 +549,19 @@ public class Players {
      *            a Bukkit location
      */
     public void setHomeLocation(final Location l) {
-	homeLocation = getStringLocation(l);
+	setHomeLocation(l, 1);
     }
-
+    
+    /**
+     * Stores the numbered home location of the player. Numbering starts at 1. 
+     * @param location
+     * @param number
+     */
+    public void setHomeLocation(final Location location, int number) {
+	// Quantize to block
+	homeLocations.put(number, new Location(location.getWorld(),location.getBlockX(),location.getBlockY(),location.getBlockZ()));
+    }
+    
     /**
      * Records the island's level. Does not calculate it
      * 
@@ -555,7 +578,7 @@ public class Players {
      *            a Bukkit Location
      */
     public void setIslandLocation(final Location l) {
-	islandLocation = getStringLocation(l);
+	islandLocation = Util.getStringLocation(l);
     }
 
     /**
@@ -570,7 +593,7 @@ public class Players {
     public void setJoinTeam(final UUID leader, final Location l) {
 	inTeam = true;
 	teamLeader = leader;
-	teamIslandLocation = getStringLocation(l);
+	teamIslandLocation = Util.getStringLocation(l);
     }
 
     /**
@@ -591,7 +614,7 @@ public class Players {
      *            a Bukkit Location of the team island
      */
     public void setTeamIslandLocation(final Location l) {
-	teamIslandLocation = getStringLocation(l);
+	teamIslandLocation = Util.getStringLocation(l);
     }
 
     /**
@@ -608,10 +631,6 @@ public class Players {
      */
     public void setPlayerUUID(final UUID s) {
 	uuid = s;
-    }
-
-    public void setHL(String hl) {
-	homeLocation = hl;
     }
 
     /**
@@ -670,6 +689,13 @@ public class Players {
      */
     public HashMap<String, Integer> getChallengeCompleteTimes() {
 	return challengeListTimes;
+    }
+
+    /**
+     * Clears all home Locations
+     */
+    public void clearHomeLocations() {
+	homeLocations.clear();
     }
 
 }

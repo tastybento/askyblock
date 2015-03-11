@@ -218,29 +218,75 @@ public class PlayerCache {
 	}
 	playerCache.get(playerUUID).setLeaveTeam();
 	playerCache.get(playerUUID).setHasIsland(false);
-	playerCache.get(playerUUID).setHomeLocation(null);
+	playerCache.get(playerUUID).clearHomeLocations();
 	playerCache.get(playerUUID).setIslandLocation(null);
 	playerCache.get(playerUUID).setIslandLevel(0);
 	playerCache.get(playerUUID).save(); // Needed?
 	TopTen.topTenRemoveEntry(playerUUID);
     }
 
+    /**
+     * Sets the home location for the player
+     * @param playerUUID
+     * @param location
+     * @param number - 1 is default. Can be any number.
+     */
+    public void setHomeLocation(UUID playerUUID, Location location, int number) {
+	addPlayer(playerUUID);
+	playerCache.get(playerUUID).setHomeLocation(location,number);
+    }
+    
+    /**
+     * Set the default home location for player
+     * @param playerUUID
+     * @param location
+     */
     public void setHomeLocation(UUID playerUUID, Location location) {
 	addPlayer(playerUUID);
-	playerCache.get(playerUUID).setHomeLocation(location);
+	playerCache.get(playerUUID).setHomeLocation(location,1);
     }
-
+    
+    /**
+     * Clears any home locations for player
+     * @param playerUUID
+     */
+    public void clearHomeLocations(UUID playerUUID) {
+	addPlayer(playerUUID);
+	playerCache.get(playerUUID).clearHomeLocations();
+    }
+    
     /**
      * Returns the home location, or null if none
      * 
      * @param playerUUID
-     * @return
+     * @param number 
+     * @return Home location or null if none
+     */
+    public Location getHomeLocation(UUID playerUUID, int number) {
+	addPlayer(playerUUID);
+	return playerCache.get(playerUUID).getHomeLocation(number);
+    }
+
+    /**
+     * Gets the default home location for player
+     * @param playerUUID
+     * @return Home location or null if none
      */
     public Location getHomeLocation(UUID playerUUID) {
 	addPlayer(playerUUID);
-	return playerCache.get(playerUUID).getHomeLocation();
+	return playerCache.get(playerUUID).getHomeLocation(1);
     }
-
+    
+    /**
+     * Provides all home locations for player
+     * @param playerUUID
+     * @return List of home locations
+     */
+    public HashMap<Integer, Location> getHomeLocations(UUID playerUUID) {
+	addPlayer(playerUUID);
+	return playerCache.get(playerUUID).getHomeLocations();
+    }
+    
     /**
      * Returns the player's island location.
      * Returns an island location OR a team island location

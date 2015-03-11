@@ -844,13 +844,18 @@ public class GridManager {
      * 
      * @param p
      *            PlayerInfo for active player
+     * @param number 
      * @return Location of a safe teleport spot
      */
-    public Location getSafeHomeLocation(final UUID p) {
-	// getLogger().info("DEBUG: getSafeHomeLocation called for " +
-	// p.toString());
-	// Try home location first
-	Location l = plugin.getPlayers().getHomeLocation(p);
+    public Location getSafeHomeLocation(final UUID p, int number) {
+	// Try the numbered home location first
+	Location l = plugin.getPlayers().getHomeLocation(p, number);
+	if (l == null) {
+	    // Get the default home, which may be null too, but that's okay
+	    number = 1;
+	    l = plugin.getPlayers().getHomeLocation(p, number);
+	}
+	// Check if it is safe
 	// getLogger().info("DEBUG: Home location " + l.toString());
 	if (l != null) {
 	    if (isSafeLocation(l)) {
@@ -862,7 +867,7 @@ public class GridManager {
 	    if (lPlusOne != null) {
 		if (isSafeLocation(lPlusOne)) {
 		    // Adjust the home location accordingly
-		    l = lPlusOne;
+		    plugin.getPlayers().setHomeLocation(p, lPlusOne, number);
 		    return lPlusOne;
 		}
 	    }
@@ -874,12 +879,14 @@ public class GridManager {
 	if (plugin.getPlayers().inTeam(p)) {
 	    l = plugin.getPlayers().getTeamIslandLocation(p);
 	    if (isSafeLocation(l)) {
+		plugin.getPlayers().setHomeLocation(p, l, number);
 		return l;
 	    } else {
 		// try team leader's home
 		Location tlh = plugin.getPlayers().getHomeLocation(plugin.getPlayers().getTeamLeader(p));
 		if (tlh != null) {
 		    if (isSafeLocation(tlh)) {
+			plugin.getPlayers().setHomeLocation(p, tlh, number);
 			return tlh;
 		    }
 		}
@@ -887,6 +894,7 @@ public class GridManager {
 	} else {
 	    l = plugin.getPlayers().getIslandLocation(p);
 	    if (isSafeLocation(l)) {
+		plugin.getPlayers().setHomeLocation(p, l, number);
 		return l;
 	    }
 	}
@@ -900,14 +908,14 @@ public class GridManager {
 	// getLogger().info("DEBUG: default");
 	Location dl = new Location(l.getWorld(), l.getX() + 0.5D, l.getY() + 5D, l.getZ() + 2.5D, 0F, 30F);
 	if (isSafeLocation(dl)) {
-	    plugin.getPlayers().setHomeLocation(p, dl);
+	    plugin.getPlayers().setHomeLocation(p, dl, number);
 	    return dl;
 	}
 	// Try just above the bedrock
 	// getLogger().info("DEBUG: above bedrock");
 	dl = new Location(l.getWorld(), l.getX() + 0.5D, l.getY() + 5D, l.getZ() + 0.5D, 0F, 30F);
 	if (isSafeLocation(dl)) {
-	    plugin.getPlayers().setHomeLocation(p, dl);
+	    plugin.getPlayers().setHomeLocation(p, dl, number);
 	    return dl;
 	}
 
@@ -916,6 +924,7 @@ public class GridManager {
 	for (int y = l.getBlockY() + 25; y > 0; y--) {
 	    final Location n = new Location(l.getWorld(), l.getX() + 0.5D, y, l.getZ() + 0.5D);
 	    if (isSafeLocation(n)) {
+		plugin.getPlayers().setHomeLocation(p, n, number);
 		return n;
 	    }
 	}
@@ -924,11 +933,17 @@ public class GridManager {
 	for (int y = l.getBlockY(); y < 255; y++) {
 	    final Location n = new Location(l.getWorld(), l.getX() + 0.5D, y, l.getZ() + 0.5D);
 	    if (isSafeLocation(n)) {
+		plugin.getPlayers().setHomeLocation(p, n, number);
 		return n;
 	    }
 	}
 	// Try a full protected area scan (-1 = full area scan)
-	return bigScan(l, p, -1);
+	l = bigScan(l, p, -1);
+	// Save if it is successful
+	if (l != null) {
+	    plugin.getPlayers().setHomeLocation(p, l, number);
+	}
+	return l;
     }
 
     /**
@@ -957,8 +972,8 @@ public class GridManager {
 	    height = island.getCenter().getBlockY() + i;
 	    depth = island.getCenter().getBlockY() - i;
 	}
-	
-	
+
+
 	//plugin.getLogger().info("DEBUG: ranges i = " + i);
 	//plugin.getLogger().info(" " + minX + "," + minZ + " " + maxX + " " + maxZ);
 	//plugin.getLogger().info("DEBUG: height = " + height);
@@ -971,9 +986,6 @@ public class GridManager {
 		    Location ultimate = new Location(l.getWorld(), x + 0.5D, y, z + 0.5D);
 		    if (ultimate.getBlock().getRelative(BlockFace.DOWN).getType() != Material.AIR) {
 			if (isSafeLocation(ultimate)) {
-			    if (ultimate.getWorld().equals(ASkyBlock.getIslandWorld())) {
-				plugin.getPlayers().setHomeLocation(p, ultimate);
-			    }
 			    //plugin.getLogger().info("DEBUG: Found! " + ultimate);
 			    return ultimate;
 			}
@@ -985,16 +997,9 @@ public class GridManager {
 	return null;
     }
 
-    /**
-     * This teleports player to their island. If not safe place can be found
-     * then the player is sent to spawn via /spawn command
-     * 
-     * @param player
-     * @return
-     */
-    public boolean homeTeleport(final Player player) {
+    public boolean homeTeleport(final Player player, int number) {
 	Location home = null;
-	home = getSafeHomeLocation(player.getUniqueId());
+	home = getSafeHomeLocation(player.getUniqueId(), number);
 	// Check if the player is a passenger in a boat
 	if (player.isInsideVehicle()) {
 	    Entity boat = player.getVehicle();
@@ -1010,40 +1015,49 @@ public class GridManager {
 	    // The home is not safe
 	    if (!player.performCommand(Settings.SPAWNCOMMAND)) {
 		player.teleport(player.getWorld().getSpawnLocation());
-		/*
-		 * player.sendBlockChange(player.getWorld().getSpawnLocation()
-		 * ,player.getWorld().getSpawnLocation().getBlock().getType()
-		 * ,player.getWorld().getSpawnLocation().getBlock().getData());
-		 */
 	    }
 	    player.sendMessage(ChatColor.RED + Locale.warpserrorNotSafe);
 	    return true;
 	}
-	// home.getWorld().refreshChunk(home.getChunk().getX(),
-	// home.getChunk().getZ());
-	// Removing this line because it appears to cause artifacts of hovering
-	// blocks
-	// home.getWorld().loadChunk(home.getChunk());
-	// getLogger().info("DEBUG: " + home.toString());
-	// This next line should help players with long ping times
-	// http://bukkit.org/threads/workaround-for-playing-falling-after-teleport-when-lagging.293035/
-	// getLogger().info("DEBUG: home = " + home.toString());
-	// player.sendBlockChange(home,home.getBlock().getType(),home.getBlock().getData());
-	// player.sendBlockChange(home.getBlock().getRelative(BlockFace.DOWN).getLocation(),home.getBlock().getRelative(BlockFace.DOWN).getType(),home.getBlock().getRelative(BlockFace.DOWN).getData());
-	// getLogger().info("DEBUG: " + home.getBlock().getType().toString());
-	// getLogger().info("DEBUG: " +
-	// home.getBlock().getRelative(BlockFace.DOWN).getType());
-	player.teleport(home);
-	/*
-	 * player.sendBlockChange(home,home.getBlock().getType(),home.getBlock().
-	 * getData());
-	 * player.sendBlockChange(home.getBlock().getRelative(BlockFace.DOWN).
-	 * getLocation
-	 * (),home.getBlock().getRelative(BlockFace.DOWN).getType(),home
-	 * .getBlock().getRelative(BlockFace.DOWN).getData());
-	 */
-	player.sendMessage(ChatColor.GREEN + Locale.islandteleport);
+	//plugin.getLogger().info("DEBUG: home loc = " + home);
+	player.teleport(home.clone().add(new Vector(0.5D,0D,0.5D)));
+	if (number ==1 ) {
+	    player.sendMessage(ChatColor.GREEN + Locale.islandteleport);
+	} else {
+	    player.sendMessage(ChatColor.GREEN + Locale.islandteleport + " #" + number);
+	}
 	return true;
+
+    }
+
+    /**
+     * This teleports player to their island. If not safe place can be found
+     * then the player is sent to spawn via /spawn command
+     * 
+     * @param player
+     * @return
+     */
+    public boolean homeTeleport(final Player player) {
+	return homeTeleport(player, 1);
+    }
+
+    /**
+     * Sets the numbered home location based on where the player is now
+     * @param player
+     * @param number
+     */
+    public void homeSet(Player player, int number) {
+	// Check if player is on island
+	if (!plugin.getGrid().playerIsOnIsland(player)) {
+	    player.sendMessage(ChatColor.RED + Locale.setHomeerrorNotOnIsland);
+	    return;
+	}
+	plugin.getPlayers().setHomeLocation(player.getUniqueId(), player.getLocation(), number);
+	if (number == 1) {
+	    player.sendMessage(ChatColor.GREEN + Locale.setHomehomeSet);
+	} else {
+	    player.sendMessage(ChatColor.GREEN + Locale.setHomehomeSet + " #" + number);
+	}
     }
 
     /**
@@ -1053,27 +1067,7 @@ public class GridManager {
      * @return
      */
     public void homeSet(final Player player) {
-	// Make a list of test locations and test them
-	Location islandTestLocation = null;
-	if (plugin.getPlayers().hasIsland(player.getUniqueId())) {
-	    islandTestLocation = plugin.getPlayers().getIslandLocation(player.getUniqueId());
-	} else if (plugin.getPlayers().inTeam(player.getUniqueId())) {
-	    islandTestLocation = plugin.getPlayers().get(player.getUniqueId()).getTeamIslandLocation();
-	}
-	if (islandTestLocation == null) {
-	    player.sendMessage(ChatColor.RED + Locale.setHomeerrorNotOnIsland);
-	    return;
-	}
-	// On island?
-	if (player.getLocation().getX() > islandTestLocation.getX() - Settings.island_protectionRange / 2
-		&& player.getLocation().getX() < islandTestLocation.getX() + Settings.island_protectionRange / 2
-		&& player.getLocation().getZ() > islandTestLocation.getZ() - Settings.island_protectionRange / 2
-		&& player.getLocation().getZ() < islandTestLocation.getZ() + Settings.island_protectionRange / 2) {
-	    plugin.getPlayers().setHomeLocation(player.getUniqueId(), player.getLocation());
-	    player.sendMessage(ChatColor.GREEN + Locale.setHomehomeSet);
-	} else {
-	    player.sendMessage(ChatColor.RED + Locale.setHomeerrorNotOnIsland);
-	}
+	homeSet(player, 1);
     }
 
     /**

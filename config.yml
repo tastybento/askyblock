@@ -216,10 +216,14 @@ general:
    # like water will not flow from the schematic
    usephysics: false
    
-   # Calculate leve on login
+   # Calculate level on login
    # If true, the plugin will run the level command for the player when they login
    # If the command is busy, it will fail silently
    loginlevel: false
+
+   # Maximum number of homes a player can have
+   # Accessed via sethome <number> or go <number>
+   maxhomes: 4
 
 ##### Island Related Settings #####
 

@@ -50,7 +50,7 @@ public class ASkyBlockAPI {
     }
 
     public Location getHomeLocation(UUID playerUUID) {
-	return plugin.getPlayers().getHomeLocation(playerUUID);
+	return plugin.getPlayers().getHomeLocation(playerUUID,1);
     }
 
     /**

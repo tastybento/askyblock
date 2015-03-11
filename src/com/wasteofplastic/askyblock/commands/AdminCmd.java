@@ -760,7 +760,7 @@ public class AdminCmd implements CommandExecutor {
 		    return true;
 		} else {
 		    if (plugin.getPlayers().getIslandLocation(playerUUID) != null) {
-			Location safeSpot = plugin.getGrid().getSafeHomeLocation(playerUUID);
+			Location safeSpot = plugin.getGrid().getSafeHomeLocation(playerUUID,1);
 			if (safeSpot != null) {
 			    // This next line should help players with long ping
 			    // times
@@ -1126,8 +1126,7 @@ public class AdminCmd implements CommandExecutor {
 		}
 		// Remove their old island affiliation - do not delete the
 		// island just in case
-		plugin.getPlayers().setIslandLocation(playerUUID, null);
-		plugin.getPlayers().setHasIsland(playerUUID, false);
+		plugin.deletePlayerIsland(playerUUID, false);
 		// Join the team and set the team island location and leader
 		plugin.getPlayers().setJoinTeam(playerUUID, teamLeader, plugin.getPlayers().getIslandLocation(teamLeader));
 		// Configure the best home location for this player

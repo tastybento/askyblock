@@ -121,7 +121,7 @@ public class NetherPortals implements Listener {
 	// plugin.getLogger().info("Get from is " + currentLocation.toString());
 	// Check that we know this player (they could have come from another
 	// world)
-	Location destination = plugin.getGrid().getSafeHomeLocation(event.getPlayer().getUniqueId());
+	Location destination = plugin.getGrid().getSafeHomeLocation(event.getPlayer().getUniqueId(),1);
 	if (destination == null) {
 	    event.getPlayer().sendMessage(ChatColor.YELLOW + "Type /" + Settings.ISLANDCOMMAND + " to start an island.");
 	    event.setCancelled(true);

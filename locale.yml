@@ -116,7 +116,7 @@ sethome:
    homeSet: "Your island home has been set to your current location."
    errorNotOnIsland: "You must be within your island boundaries to set home!"
    errorNoIsland: "You are not part of an island. Returning you the spawn area!"
-
+   errorNumHomes: "Homes can be 1 to [max]"
 
 #Challenges
 challenges:

@@ -174,11 +174,12 @@ public class IslandCmd implements CommandExecutor {
 	// home location
 	// if it exists, and if not set to the island location
 	if (!playerUUID.equals(teamLeader)) {
-	    if (plugin.getPlayers().getHomeLocation(teamLeader) != null) {
+	    // Clear any old home locations
+	    plugin.getPlayers().clearHomeLocations(playerUUID);
+	    if (plugin.getPlayers().getHomeLocation(teamLeader,1) != null) {
 		plugin.getPlayers().setHomeLocation(playerUUID, plugin.getPlayers().getHomeLocation(teamLeader));
 		// plugin.getLogger().info("DEBUG: Setting player's home to the leader's home location");
 	    } else {
-		// TODO - concerned this may be a bug
 		plugin.getPlayers().setHomeLocation(playerUUID, plugin.getPlayers().getIslandLocation(teamLeader));
 		// plugin.getLogger().info("DEBUG: Setting player's home to the team island location");
 	    }
@@ -1290,7 +1291,6 @@ public class IslandCmd implements CommandExecutor {
 			player.sendMessage(ChatColor.WHITE + plugin.getPlayers().getName(m));
 		    }
 		} else if (inviteList.containsKey(playerUUID)) {
-		    // TODO: Worried about this next line...
 		    player.sendMessage(ChatColor.YELLOW
 			    + Locale.invitenameHasInvitedYou.replace("[name]", plugin.getPlayers().getName(inviteList.get(playerUUID))));
 		    player.sendMessage(ChatColor.WHITE + "/" + label + " [accept/reject]" + ChatColor.YELLOW + Locale.invitetoAcceptOrReject);
@@ -1306,7 +1306,64 @@ public class IslandCmd implements CommandExecutor {
 	     * Commands that have two parameters
 	     */
 	case 2:
-	    if (split[0].equalsIgnoreCase("warp")) {
+	    // Multi home
+	    if (split[0].equalsIgnoreCase("go")) {
+		if (!plugin.getPlayers().hasIsland(playerUUID) && !plugin.getPlayers().inTeam(playerUUID)) {
+		    // Player has no island
+		    player.sendMessage(ChatColor.RED + Locale.errorNoIsland);
+		    return true;
+		}
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.sethome")) {
+		    int number = 1;
+		    try {
+			number = Integer.valueOf(split[1]);
+			if (number < 1) {
+			    plugin.getGrid().homeTeleport(player,1);
+			}
+			if (number > Settings.maxHomes) {
+			    if (Settings.maxHomes > 1) {
+				player.sendMessage(ChatColor.RED + Locale.setHomeerrorNumHomes.replace("[max]",String.valueOf(Settings.maxHomes)));
+			    } else {
+				plugin.getGrid().homeTeleport(player,1);
+			    }
+			} else {
+			    // Teleport home
+			    plugin.getGrid().homeTeleport(player,number);
+			}
+		    } catch (Exception e) {
+			// Teleport home
+			plugin.getGrid().homeTeleport(player,1);
+		    }
+		    if (Settings.islandRemoveMobs) {
+			plugin.getGrid().removeMobs(player.getLocation());
+		    }
+		} else {
+		    player.sendMessage(ChatColor.RED + Locale.errorNoPermission); 
+		}
+		return true;
+	    } else if (split[0].equalsIgnoreCase("sethome")) {
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.sethome")) {
+		    if (Settings.maxHomes > 1) {
+			// Check the number given is a number
+			int number = 0;
+			try {
+			    number = Integer.valueOf(split[1]);
+			    if (number < 0 || number > Settings.maxHomes) {
+				player.sendMessage(ChatColor.RED + Locale.setHomeerrorNumHomes.replace("[max]",String.valueOf(Settings.maxHomes)));
+			    } else {
+				plugin.getGrid().homeSet(player, number);
+			    }
+			} catch (Exception e) {
+			    player.sendMessage(ChatColor.RED + Locale.setHomeerrorNumHomes.replace("[max]",String.valueOf(Settings.maxHomes)));
+			}
+		    } else {
+			player.sendMessage(ChatColor.RED + Locale.errorNoPermission);
+		    }
+		    return true;
+		}
+		player.sendMessage(ChatColor.RED + Locale.errorNoPermission);
+		return true;
+	    } else if (split[0].equalsIgnoreCase("warp")) {
 		// Warp somewhere command
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.warp")) {
 		    final Set<UUID> warpList = WarpSigns.listWarps();
@@ -1314,6 +1371,8 @@ public class IslandCmd implements CommandExecutor {
 			player.sendMessage(ChatColor.YELLOW + Locale.warpserrorNoWarpsYet);
 			if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.addwarp")) {
 			    player.sendMessage(ChatColor.YELLOW + Locale.warpswarpTip);
+			} else {
+			    player.sendMessage(ChatColor.RED + Locale.errorNoPermission);
 			}
 			return true;
 		    } else {
@@ -1409,7 +1468,6 @@ public class IslandCmd implements CommandExecutor {
 			return true;
 		    }
 		    // Player must be online
-		    // TODO: enable offline players to be invited
 		    if (plugin.getServer().getPlayer(invitedPlayerUUID) == null) {
 			player.sendMessage(ChatColor.RED + Locale.errorOfflinePlayer);
 			return true;
