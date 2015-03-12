@@ -68,6 +68,7 @@ import com.wasteofplastic.askyblock.listeners.IslandGuardNew;
 import com.wasteofplastic.askyblock.listeners.JoinLeaveEvents;
 import com.wasteofplastic.askyblock.listeners.LavaCheck;
 import com.wasteofplastic.askyblock.listeners.NetherPortals;
+import com.wasteofplastic.askyblock.listeners.WorldEnter;
 import com.wasteofplastic.askyblock.panels.Biomes;
 import com.wasteofplastic.askyblock.panels.ControlPanel;
 import com.wasteofplastic.askyblock.util.Util;
@@ -617,6 +618,10 @@ public class ASkyBlock extends JavaPlugin {
 		}
 	    }
 	}
+	// Immediate teleport
+	Settings.immediateTeleport = getConfig().getBoolean("general.immediateteleport", false);
+	// Make island automatically
+	Settings.makeIslandIfNone = getConfig().getBoolean("general.makeislandifnone", false);
 	// Use physics when pasting island block schematics
 	Settings.usePhysics = getConfig().getBoolean("general.usephysics", false);
 	// Run level calc at login
@@ -1601,6 +1606,8 @@ public class ASkyBlock extends JavaPlugin {
 	// Load Biomes
 	biomes = new Biomes();
 	manager.registerEvents(biomes, this);
+	// Track incoming world teleports
+	manager.registerEvents(new WorldEnter(this), this);
     }
 
     /**

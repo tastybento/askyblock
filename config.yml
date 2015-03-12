@@ -225,6 +225,14 @@ general:
    # Accessed via sethome <number> or go <number>
    maxhomes: 4
 
+   # Make island if player teleports to the island world and does not have one
+   makeislandifnone: false
+
+   # Immediately teleport player to their island (home 1 if it exists) when 
+   # entering the world
+   immediateteleport: false
+
+
 ##### Island Related Settings #####
 
 island:
