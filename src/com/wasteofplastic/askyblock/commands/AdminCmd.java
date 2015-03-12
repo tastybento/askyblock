@@ -38,9 +38,9 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BlockIterator;
@@ -48,9 +48,9 @@ import org.bukkit.util.BlockIterator;
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.CoopPlay;
 import com.wasteofplastic.askyblock.DeleteIslandChunk;
-import com.wasteofplastic.askyblock.PlayerIsland;
 import com.wasteofplastic.askyblock.Locale;
 import com.wasteofplastic.askyblock.Messages;
+import com.wasteofplastic.askyblock.PlayerIsland;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.TopTen;
 import com.wasteofplastic.askyblock.WarpSigns;
@@ -235,7 +235,7 @@ public class AdminCmd implements CommandExecutor {
 			    if (islandEntities.size() > 2) {
 				int numOfEntities = 0;
 				for (Entity entity : islandEntities) {
-				    if (entity instanceof LivingEntity && !(entity instanceof Player)) {
+				    if (entity instanceof Creature && !(entity instanceof Player)) {
 					numOfEntities++;
 					island.addEntity(entity.getType());
 				    }
