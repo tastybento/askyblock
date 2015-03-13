@@ -84,8 +84,8 @@ import org.bukkit.util.Vector;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.InventorySave;
-import com.wasteofplastic.askyblock.PlayerIsland;
 import com.wasteofplastic.askyblock.Locale;
+import com.wasteofplastic.askyblock.PlayerIsland;
 import com.wasteofplastic.askyblock.SafeBoat;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.util.Util;
@@ -131,7 +131,6 @@ public class IslandGuard implements Listener {
 	}
 	return false;
     }
-
 
     /*
      * For testing only
@@ -717,7 +716,7 @@ public class IslandGuard implements Listener {
 		if (overLimit) {
 		    if (e.getSpawnReason() != SpawnReason.SPAWNER) {
 			plugin.getLogger().warning(
-				"PlayerIsland at " + islandLoc.getBlockX() + "," + islandLoc.getBlockZ() + " hit the island animal breeding limit of "
+				"Island at " + islandLoc.getBlockX() + "," + islandLoc.getBlockZ() + " hit the island animal breeding limit of "
 					+ Settings.breedingLimit);
 			for (Player player : culprits) {
 			    player.sendMessage(ChatColor.RED + Locale.moblimitsError.replace("[number]", String.valueOf(Settings.breedingLimit)));
@@ -1879,6 +1878,7 @@ public class IslandGuard implements Listener {
 	    // plugin.getLogger().info("DEBUG: " +
 	    // e.getRightClicked().getType().toString());
 	    switch (e.getRightClicked().getType()) {
+	    case HORSE:
 	    case ITEM_FRAME:
 	    case MINECART_CHEST:
 	    case MINECART_FURNACE:
