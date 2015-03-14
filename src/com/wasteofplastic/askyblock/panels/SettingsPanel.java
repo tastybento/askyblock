@@ -11,7 +11,7 @@ import com.wasteofplastic.askyblock.Locale;
 import com.wasteofplastic.askyblock.Settings;
 
 public class SettingsPanel {
-    // PlayerIsland Guard Settings Panel
+    // Island Guard Settings Panel
     private static List<IPItem> ip = new ArrayList<IPItem>();
     private static Inventory newPanel;
     static {

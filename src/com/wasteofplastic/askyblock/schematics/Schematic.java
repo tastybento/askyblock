@@ -253,7 +253,7 @@ public class Schematic {
 			// Last chest
 			if (chest == null || chest.getY() < y) {
 			    chest = new Location(world, x, y, z);
-			    // Bukkit.getLogger().info("PlayerIsland loc:" +
+			    // Bukkit.getLogger().info("Island loc:" +
 			    // loc.toString());
 			    // Bukkit.getLogger().info("Chest relative location is "
 			    // + chest.toString());

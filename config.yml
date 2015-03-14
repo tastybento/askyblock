@@ -232,6 +232,14 @@ general:
    # entering the world
    immediateteleport: false
 
+   # Set TEAMSUFFIX variable to player's island level
+   # If true, this will set the server TEAMNAME variable to the player's name and
+   # TEAMSUFFIX to the player's island level.
+   # Use in chat. e.g., for essentials chat, the format could be:
+   #   format: '<{DISPLAYNAME}> (Level {TEAMSUFFIX}): {MESSAGE}'
+   # <tastybento> (Level: 223): hi there
+   # If you have other plugins that use scoreboards/teams, this may mess with them
+   setteamsuffix: false
 
 ##### Island Related Settings #####
 

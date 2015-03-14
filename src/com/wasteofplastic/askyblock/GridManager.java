@@ -96,7 +96,7 @@ public class GridManager {
 	// for (int x : protectionGrid.)
 	// plugin.getLogger().info("Debug: protection grid is size " +
 	// protectionGrid.size());
-	// plugin.getLogger().info("Debug: PlayerIsland grid is sized = " +
+	// plugin.getLogger().info("Debug: Island grid is sized = " +
 	// islandGrid.size());
     }
 
@@ -224,7 +224,7 @@ public class GridManager {
 				    if (!onGrid(islandLoc)) {
 					plugin.getLogger().severe("Problem with " + fileName);
 					plugin.getLogger().severe("Owner :" + playerFile.getString("playerName", "Unknown"));
-					plugin.getLogger().severe("PlayerIsland is not on grid lines! " + islandLoc);
+					plugin.getLogger().severe("Island is not on grid lines! " + islandLoc);
 				    }
 				    String ownerString = fileName.substring(0, fileName.length() - 4);
 				    // Add the island
@@ -292,7 +292,7 @@ public class GridManager {
 			int x = Integer.parseInt(fileName.substring(0, comma));
 			int z = Integer.parseInt(fileName.substring(comma + 1, fileName.indexOf(".")));
 			if (!onGrid(x, z)) {
-			    plugin.getLogger().severe("PlayerIsland is not on grid lines! " + x + "," + z + " skipping...");
+			    plugin.getLogger().severe("Island is not on grid lines! " + x + "," + z + " skipping...");
 			} else {
 			    // Note that this is the CENTER of the island
 			    if (getIslandAt(x, z) == null) {
@@ -433,7 +433,7 @@ public class GridManager {
 	if (ownershipMap.containsKey(owner)) {
 	    PlayerIsland island = ownershipMap.get(owner);
 	    plugin.getLogger().warning(
-		    "PlayerIsland at " + island.getCenter().getBlockX() + ", " + island.getCenter().getBlockZ()
+		    "Island at " + island.getCenter().getBlockX() + ", " + island.getCenter().getBlockZ()
 		    + " is already owned by this player. Removing ownership of this island.");
 	    island.setOwner(null);
 	    ownershipMap.remove(owner);
@@ -470,11 +470,11 @@ public class GridManager {
 	    // newIsland.getMinX());
 	    TreeMap<Integer, PlayerIsland> zEntry = islandGrid.get(newIsland.getMinX());
 	    if (zEntry.containsKey(newIsland.getMinZ())) {
-		// PlayerIsland already exists
+		// Island already exists
 		PlayerIsland conflict = islandGrid.get(newIsland.getMinX()).get(newIsland.getMinZ());
 		plugin.getLogger().warning("*** Duplicate or overlapping islands! ***");
 		plugin.getLogger().warning(
-			"PlayerIsland at (" + newIsland.getCenter().getBlockX() + ", " + newIsland.getCenter().getBlockZ() + ") conflicts with ("
+			"Island at (" + newIsland.getCenter().getBlockX() + ", " + newIsland.getCenter().getBlockZ() + ") conflicts with ("
 				+ conflict.getCenter().getBlockX() + ", " + conflict.getCenter().getBlockZ() + ")");
 		if (conflict.getOwner() != null) {
 		    plugin.getLogger().warning("Accepted island is owned by " + plugin.getPlayers().getName(conflict.getOwner()));
@@ -529,7 +529,7 @@ public class GridManager {
 		TreeMap<Integer, PlayerIsland> zEntry = islandGrid.get(x);
 		if (zEntry.containsKey(z)) {
 		    // plugin.getLogger().info("DEBUG: z found - deleting the island");
-		    // PlayerIsland exists - delete it
+		    // Island exists - delete it
 		    PlayerIsland deletedIsland = zEntry.get(z);
 		    deletedIsland.setOwner(null);
 		    deletedIsland.setLocked(false);
@@ -595,7 +595,7 @@ public class GridManager {
 	// Check if the new owner already has an island
 	if (ownershipMap.containsKey(newOwner)) {
 	    PlayerIsland oldIsland = ownershipMap.get(newOwner);
-	    // plugin.getLogger().warning("PlayerIsland at " +
+	    // plugin.getLogger().warning("Island at " +
 	    // oldIsland.getCenter().getBlockX() + ", " +
 	    // oldIsland.getCenter().getBlockZ()
 	    // +
@@ -685,7 +685,7 @@ public class GridManager {
 	// Extra spawn area check
 	// If island protection distance is less than island distance then the
 	// check above will cover it
-	// PlayerIsland edge must be > protection edge spawn
+	// Island edge must be > protection edge spawn
 	PlayerIsland spawn = getSpawn();
 	if (spawn != null && spawn.getProtectionSize() > spawn.getIslandDistance()) {
 	    if (Math.abs(px - spawn.getCenter().getBlockX()) < ((spawn.getProtectionSize() + Settings.islandDistance) / 2)

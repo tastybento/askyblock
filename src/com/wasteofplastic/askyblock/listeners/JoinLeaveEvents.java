@@ -30,11 +30,12 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.CoopPlay;
-import com.wasteofplastic.askyblock.PlayerIsland;
 import com.wasteofplastic.askyblock.LevelCalc;
 import com.wasteofplastic.askyblock.Locale;
 import com.wasteofplastic.askyblock.Messages;
 import com.wasteofplastic.askyblock.PlayerCache;
+import com.wasteofplastic.askyblock.PlayerIsland;
+import com.wasteofplastic.askyblock.Scoreboards;
 import com.wasteofplastic.askyblock.Settings;
 
 public class JoinLeaveEvents implements Listener {
@@ -114,12 +115,12 @@ public class JoinLeaveEvents implements Listener {
 	    if (island == null) {
 		// Check if the island exists in the grid
 		island = plugin.getGrid().getIslandAt(loc);
-		// PlayerIsland isn't in the grid, so add it
+		// Island isn't in the grid, so add it
 		if (island == null) {
 		    plugin.getGrid().addIsland(loc.getBlockX(), loc.getBlockZ(), leader);
 		}
 	    } else {
-		// PlayerIsland exists
+		// Island exists
 		// Assign ownership
 		plugin.getGrid().setIslandOwner(island, leader);
 	    }
@@ -142,6 +143,10 @@ public class JoinLeaveEvents implements Listener {
 	}
 	// plugin.getLogger().info("Cached " + event.getPlayer().getName());
 
+	// Set the TEAMNAME and TEAMSUFFIX variable if required
+	if (Settings.setTeamName) {
+	    Scoreboards.getInstance().setLevel(event.getPlayer().getUniqueId());
+	}
     }
 
     @EventHandler(priority = EventPriority.NORMAL)

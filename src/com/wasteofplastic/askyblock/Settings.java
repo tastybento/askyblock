@@ -50,7 +50,7 @@ public class Settings {
     public final static String SPAWNCOMMAND = "spawn";
 
     /*
-     * Acid PlayerIsland
+     * AcidIsland
      * // Permission prefix
      * public final static String PERMPREFIX = "acidisland.";
      * // The island command
@@ -166,7 +166,7 @@ public class Settings {
     public static double biomeCost;
     public static Biome defaultBiome;
 
-    // PlayerIsland reset commands
+    // Island reset commands
     public static List<String> resetCommands = new ArrayList<String>();
     // Mob limits
     public static int breedingLimit;
@@ -214,5 +214,6 @@ public class Settings {
     public static int maxHomes;
     public static boolean immediateTeleport;
     public static boolean makeIslandIfNone;
+    public static boolean setTeamName;
 
 }

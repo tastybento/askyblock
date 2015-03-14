@@ -302,7 +302,7 @@ public class AdminCmd implements CommandExecutor {
 		    return true;
 		}
 		Player p = (Player) sender;
-		// PlayerIsland spawn must be in the island world
+		// Island spawn must be in the island world
 		if (!p.getLocation().getWorld().getName().equals(Settings.worldName)) {
 		    p.sendMessage(ChatColor.RED + Locale.errorWrongWorld);
 		    return true;
@@ -652,7 +652,7 @@ public class AdminCmd implements CommandExecutor {
 						    // plugin.getLogger().info("and is a lone player");
 						    if (oldPlayer.getInt("islandLevel", 0) < Settings.abandonedIslandLevel) {
 							// plugin.getLogger().info("and their island will be removed!");
-							// player.sendMessage("PlayerIsland level for "
+							// player.sendMessage("Island level for "
 							// +
 							// plugin.getPlayers().getName(playerUUID)
 							// + " is " +
@@ -1338,19 +1338,19 @@ public class AdminCmd implements CommandExecutor {
 		plugin.getLogger().warning("Player has an island, but it is not in the grid. Adding it now...");
 		island = plugin.getGrid().addIsland(islandLoc.getBlockX(), islandLoc.getBlockZ(), playerUUID);
 	    }
-	    sender.sendMessage(ChatColor.YELLOW + "PlayerIsland max size (distance) = " + island.getIslandDistance());
-	    sender.sendMessage(ChatColor.YELLOW + "PlayerIsland maximums " + island.getMinX() + "," + island.getMinZ() + " to "
+	    sender.sendMessage(ChatColor.YELLOW + "Island max size (distance) = " + island.getIslandDistance());
+	    sender.sendMessage(ChatColor.YELLOW + "Island maximums " + island.getMinX() + "," + island.getMinZ() + " to "
 		    + (island.getMinX() + island.getIslandDistance() - 1) + "," + (island.getMinZ() + island.getIslandDistance() - 1));
-	    sender.sendMessage(ChatColor.YELLOW + "PlayerIsland protection range = " + island.getProtectionSize());
-	    sender.sendMessage(ChatColor.YELLOW + "PlayerIsland protection " + island.getMinProtectedX() + ", " + island.getMinProtectedZ() + " to "
+	    sender.sendMessage(ChatColor.YELLOW + "Island protection range = " + island.getProtectionSize());
+	    sender.sendMessage(ChatColor.YELLOW + "Island protection " + island.getMinProtectedX() + ", " + island.getMinProtectedZ() + " to "
 		    + (island.getMinProtectedX() + island.getProtectionSize() - 1) + ", " + (island.getMinProtectedZ() + island.getProtectionSize() - 1));
 	    if (island.isSpawn()) {
-		sender.sendMessage(ChatColor.YELLOW + "PlayerIsland is spawn");
+		sender.sendMessage(ChatColor.YELLOW + "Island is spawn");
 	    }
 	    if (island.isLocked()) {
-		sender.sendMessage(ChatColor.YELLOW + "PlayerIsland is locked");
+		sender.sendMessage(ChatColor.YELLOW + "Island is locked");
 	    } else {
-		sender.sendMessage(ChatColor.YELLOW + "PlayerIsland is unlocked");
+		sender.sendMessage(ChatColor.YELLOW + "Island is unlocked");
 	    }
 	} else {
 	    sender.sendMessage(ChatColor.RED + Locale.errorNoIslandOther);

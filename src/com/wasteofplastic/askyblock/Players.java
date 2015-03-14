@@ -27,10 +27,8 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
 
 import com.wasteofplastic.askyblock.util.Util;
 
@@ -387,7 +385,7 @@ public class Players {
 		    inTeam = false;
 		    teamLeader = null;
 		    plugin.getLogger()
-			    .warning(playerName + " was listed as in a team, but the team leader does not have them on the team. Removing from team.");
+		    .warning(playerName + " was listed as in a team, but the team leader does not have them on the team. Removing from team.");
 		}
 	    }
 	}
@@ -417,7 +415,7 @@ public class Players {
 	    return null;
 	}
     }
-    
+
     /**
      * Provides a list of all home locations - used when searching for a safe spot to place someone
      * @return List of home locations
@@ -429,7 +427,7 @@ public class Players {
 	}
 	return result;
     }
-    
+
     /**
      * @return The island level int. Note this function does not calculate the
      *         island level
@@ -462,6 +460,10 @@ public class Players {
 	return l;
     }
 
+    /**
+     * Provides UUID of this player's team leader or null if it does not exist
+     * @return
+     */
     public UUID getTeamLeader() {
 	return teamLeader;
     }
@@ -551,7 +553,7 @@ public class Players {
     public void setHomeLocation(final Location l) {
 	setHomeLocation(l, 1);
     }
-    
+
     /**
      * Stores the numbered home location of the player. Numbering starts at 1. 
      * @param location
@@ -561,7 +563,7 @@ public class Players {
 	// Quantize to block
 	homeLocations.put(number, new Location(location.getWorld(),location.getBlockX(),location.getBlockY(),location.getBlockZ()));
     }
-    
+
     /**
      * Records the island's level. Does not calculate it
      * 
@@ -569,6 +571,9 @@ public class Players {
      */
     public void setIslandLevel(final int i) {
 	islandLevel = i;
+	if (Settings.setTeamName) {
+	    Scoreboards.getInstance().setLevel(uuid, i);
+	}
     }
 
     /**

@@ -56,10 +56,11 @@ import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.CoopPlay;
 import com.wasteofplastic.askyblock.DeleteIslandChunk;
 import com.wasteofplastic.askyblock.GridManager;
-import com.wasteofplastic.askyblock.PlayerIsland;
 import com.wasteofplastic.askyblock.LevelCalc;
 import com.wasteofplastic.askyblock.Locale;
 import com.wasteofplastic.askyblock.Messages;
+import com.wasteofplastic.askyblock.PlayerIsland;
+import com.wasteofplastic.askyblock.Scoreboards;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.TopTen;
 import com.wasteofplastic.askyblock.WarpSigns;
@@ -1172,7 +1173,7 @@ public class IslandCmd implements CommandExecutor {
 			if (plugin.getPlayers().hasIsland(playerUUID)) {
 			    plugin.getLogger().info(player.getName() + "'s island will be deleted because they joined a party.");
 			    plugin.deletePlayerIsland(playerUUID, true);
-			    plugin.getLogger().info("PlayerIsland deleted.");
+			    plugin.getLogger().info("Island deleted.");
 			}
 			// Add the player to the team
 			addPlayertoTeam(playerUUID, inviteList.get(playerUUID));

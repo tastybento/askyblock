@@ -427,6 +427,11 @@ public class PlayerCache {
 	playerCache.get(teamLeader).removeMember(playerUUID);
     }
 
+    /**
+     * Provides UUID of this player's team leader or null if it does not exist
+     * @param playerUUID
+     * @return
+     */
     public UUID getTeamLeader(UUID playerUUID) {
 	addPlayer(playerUUID);
 	return playerCache.get(playerUUID).getTeamLeader();

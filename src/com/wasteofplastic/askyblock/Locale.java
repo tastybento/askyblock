@@ -390,7 +390,7 @@ public class Locale {
     public static String challengesmaxreached;
     public static String challengescompletedtimes;
     public static String targetInNoPVPArea;
-    // PlayerIsland Guard Settings
+    // Island Guard Settings
     public static String igsTitle;
     public static String igsAllowed;
     public static String igsDisallowed;

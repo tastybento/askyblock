@@ -10,7 +10,7 @@ import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
 
 /**
- * Provides a programming interface to PlayerIsland
+ * Provides a programming interface
  * 
  * @author tastybento
  */
@@ -29,16 +29,6 @@ public class ASkyBlockAPI {
     private ASkyBlockAPI(ASkyBlock plugin) {
 	this.plugin = plugin;
     }
-
-    /*
-     * Get information about (island): Level Owner Party members Rank (Something
-     * with the top-ten ?) Bedrock coordinates PlayerIsland bounds Biome
-     * Playing with challenges would be interesting: Number of completed
-     * challenges Challenge names / list
-     * Now, we could be able to: Play with party members (add, kick, set owner)
-     * Change island biome Complete a challenge Send someone to the Welcome Sign
-     * of an island
-     */
 
     /**
      * @param playerUUID
