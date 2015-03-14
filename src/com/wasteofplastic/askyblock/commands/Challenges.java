@@ -1093,7 +1093,15 @@ public class Challenges implements CommandExecutor {
      * @return inventory
      */
     public Inventory challengePanel(Player player) {
-	return challengePanel(player, "");
+	// Get the highest level the player has achieved
+	String maxLevel = "";
+	for (String level : Settings.challengeLevels) {
+	    if (checkLevelCompletion(player, level) > 0) {
+		maxLevel = level;
+		break;
+	    }
+	}
+	return challengePanel(player, maxLevel);
     }
 
     /**
