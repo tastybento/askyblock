@@ -1006,7 +1006,11 @@ public class IslandCmd implements CommandExecutor {
 		} else {
 		    player.sendMessage(Locale.helpColor + "/" + label + ": " + ChatColor.WHITE + Locale.islandhelpIsland);
 		}
-		player.sendMessage(Locale.helpColor + "/" + label + " go: " + ChatColor.WHITE + Locale.islandhelpTeleport);
+		if (Settings.maxHomes > 1 && VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.sethome")) {
+		    player.sendMessage(Locale.helpColor + "/" + label + " go <1 - " + Settings.maxHomes + ">: " + ChatColor.WHITE + Locale.islandhelpTeleport);
+		} else {
+		    player.sendMessage(Locale.helpColor + "/" + label + " go: " + ChatColor.WHITE + Locale.islandhelpTeleport);
+		}
 		if (plugin.getGrid() != null && plugin.getGrid().getSpawn() != null) {
 		    player.sendMessage(Locale.helpColor + "/" + label + " spawn: " + ChatColor.WHITE + Locale.islandhelpSpawn);
 		}
@@ -1015,7 +1019,11 @@ public class IslandCmd implements CommandExecutor {
 		}
 		player.sendMessage(Locale.helpColor + "/" + label + " restart: " + ChatColor.WHITE + Locale.islandhelpRestart);
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.sethome")) {
-		    player.sendMessage(Locale.helpColor + "/" + label + " sethome: " + ChatColor.WHITE + Locale.islandhelpSetHome);
+		    if (Settings.maxHomes > 1) {
+			player.sendMessage(Locale.helpColor + "/" + label + " sethome <1 - " + Settings.maxHomes + ">: " + ChatColor.WHITE + Locale.islandhelpSetHome);
+		    } else {
+			player.sendMessage(Locale.helpColor + "/" + label + " sethome: " + ChatColor.WHITE + Locale.islandhelpSetHome);
+		    }
 		}
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.info")) {
 		    player.sendMessage(Locale.helpColor + "/" + label + " level: " + ChatColor.WHITE + Locale.islandhelpLevel);
