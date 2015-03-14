@@ -1047,6 +1047,11 @@ public class GridManager {
      * @param number
      */
     public void homeSet(Player player, int number) {
+	// Check if player is in overworld
+	if (!player.getWorld().equals(ASkyBlock.getIslandWorld())) {
+	    player.sendMessage(ChatColor.RED + Locale.setHomeerrorNotOnIsland);
+	    return; 
+	}
 	// Check if player is on island
 	if (!plugin.getGrid().playerIsOnIsland(player)) {
 	    player.sendMessage(ChatColor.RED + Locale.setHomeerrorNotOnIsland);
