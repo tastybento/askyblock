@@ -497,7 +497,7 @@ public class ASkyBlock extends JavaPlugin {
 		}
 	    }
 	} else {
-	    PlayerIsland island = grid.getIsland(player);
+	    Island island = grid.getIsland(player);
 	    if (island != null) {
 		island.setLocked(false);
 		grid.setIslandOwner(island, null);

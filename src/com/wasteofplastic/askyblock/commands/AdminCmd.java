@@ -50,7 +50,7 @@ import com.wasteofplastic.askyblock.CoopPlay;
 import com.wasteofplastic.askyblock.DeleteIslandChunk;
 import com.wasteofplastic.askyblock.Locale;
 import com.wasteofplastic.askyblock.Messages;
-import com.wasteofplastic.askyblock.PlayerIsland;
+import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.TopTen;
 import com.wasteofplastic.askyblock.WarpSigns;
@@ -220,7 +220,7 @@ public class AdminCmd implements CommandExecutor {
 		TreeMap<Integer, List<UUID>> topEntityIslands = new TreeMap<Integer, List<UUID>>();
 		// Generate the stats
 		sender.sendMessage("Checking " + plugin.getGrid().getOwnershipMap().size() + " islands...");
-		for (PlayerIsland island : plugin.getGrid().getOwnershipMap().values()) {
+		for (Island island : plugin.getGrid().getOwnershipMap().values()) {
 		    if (!island.isSpawn()) {
 			Location islandLoc = new Location(island.getCenter().getWorld(), island.getCenter().getBlockX(), 128, island.getCenter().getBlockZ());
 			Entity snowball = islandLoc.getWorld().spawnEntity(islandLoc, EntityType.SNOWBALL);
@@ -309,8 +309,8 @@ public class AdminCmd implements CommandExecutor {
 		}
 		// The island location is calculated based on the grid
 		Location closestIsland = getClosestIsland(((Player) sender).getLocation());
-		PlayerIsland oldSpawn = plugin.getGrid().getSpawn();
-		PlayerIsland newSpawn = plugin.getGrid().getIslandAt(closestIsland);
+		Island oldSpawn = plugin.getGrid().getSpawn();
+		Island newSpawn = plugin.getGrid().getIslandAt(closestIsland);
 		if (newSpawn != null && newSpawn.isSpawn()) {
 		    // Already spawn, so just set the world spawn coords
 		    ASkyBlock.getIslandWorld().setSpawnLocation(p.getLocation().getBlockX(), p.getLocation().getBlockY(), p.getLocation().getBlockZ());
@@ -382,7 +382,7 @@ public class AdminCmd implements CommandExecutor {
 		// Find out whose island this is
 		// plugin.getLogger().info("DEBUG: closest bedrock: " +
 		// closestBedRock.toString());
-		PlayerIsland island = plugin.getGrid().getIslandAt(closestIsland);
+		Island island = plugin.getGrid().getIslandAt(closestIsland);
 		if (island != null && island.isSpawn()) {
 		    sender.sendMessage(ChatColor.GREEN + "This is spawn island");
 		    sender.sendMessage(ChatColor.YELLOW + "Spawn max coords " + island.getMinX() + "," + island.getMinZ() + " to "
@@ -512,7 +512,7 @@ public class AdminCmd implements CommandExecutor {
 		    return true;
 		}
 		// Get the island I am on
-		PlayerIsland island = plugin.getGrid().getIslandAt(((Player) sender).getLocation());
+		Island island = plugin.getGrid().getIslandAt(((Player) sender).getLocation());
 		if (island == null) {
 		    sender.sendMessage(ChatColor.RED + "Cannot identify island.");
 		    return true;
@@ -538,7 +538,7 @@ public class AdminCmd implements CommandExecutor {
 		    sender.sendMessage(ChatColor.RED + "Must use command in-game while on an island!");
 		    return true;
 		}
-		PlayerIsland island = plugin.getGrid().getIslandAt(((Player) sender).getLocation());
+		Island island = plugin.getGrid().getIslandAt(((Player) sender).getLocation());
 		// Check if island exists
 		if (island == null) {
 		    sender.sendMessage(ChatColor.RED + "You are not in an island space!");
@@ -889,7 +889,7 @@ public class AdminCmd implements CommandExecutor {
 		    }
 		}
 		// Get the range that this player has now
-		PlayerIsland island = plugin.getGrid().getIsland(playerUUID);
+		Island island = plugin.getGrid().getIsland(playerUUID);
 		if (island == null) {
 		    sender.sendMessage(ChatColor.RED + "That player does not have an island...");
 		    return true;
@@ -1333,7 +1333,7 @@ public class AdminCmd implements CommandExecutor {
 	if (islandLoc != null) {
 	    sender.sendMessage(ChatColor.YELLOW + Locale.adminInfoislandLocation + ":" + ChatColor.WHITE + " (" + islandLoc.getBlockX() + ","
 		    + islandLoc.getBlockY() + "," + islandLoc.getBlockZ() + ")");
-	    PlayerIsland island = plugin.getGrid().getIslandAt(islandLoc);
+	    Island island = plugin.getGrid().getIslandAt(islandLoc);
 	    if (island == null) {
 		plugin.getLogger().warning("Player has an island, but it is not in the grid. Adding it now...");
 		island = plugin.getGrid().addIsland(islandLoc.getBlockX(), islandLoc.getBlockZ(), playerUUID);
@@ -1428,7 +1428,7 @@ public class AdminCmd implements CommandExecutor {
     public boolean adminSetPlayerIsland(final CommandSender sender, final Location l, final UUID newOwner) {
 	// Location island = getClosestIsland(l);
 	// Check what the grid thinks
-	PlayerIsland island = plugin.getGrid().getIslandAt(l);
+	Island island = plugin.getGrid().getIslandAt(l);
 	if (island != null) {
 	    if (island.isSpawn()) {
 		sender.sendMessage(ChatColor.RED + "You cannot take ownership of spawn!");
@@ -1450,7 +1450,7 @@ public class AdminCmd implements CommandExecutor {
 		// plugin.topTenChangeOwner(oldOwner, newOwner);
 	    }
 	    // Check if the assigned player already has an island
-	    PlayerIsland playersIsland = plugin.getGrid().getIsland(newOwner);
+	    Island playersIsland = plugin.getGrid().getIsland(newOwner);
 	    if (playersIsland != null) {
 		sender.sendMessage(ChatColor.RED + plugin.getPlayers().getName(playersIsland.getOwner()) + " had an island at ("
 			+ playersIsland.getCenter().getBlockX() + "," + playersIsland.getCenter().getBlockZ() + ")");

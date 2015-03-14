@@ -85,7 +85,7 @@ import org.bukkit.util.Vector;
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.InventorySave;
 import com.wasteofplastic.askyblock.Locale;
-import com.wasteofplastic.askyblock.PlayerIsland;
+import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.SafeBoat;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.util.Util;
@@ -260,9 +260,9 @@ public class IslandGuard implements Listener {
 	if (plugin.getGrid() == null) {
 	    return;
 	}
-	PlayerIsland islandTo = plugin.getGrid().getProtectedIslandAt(e.getTo());
+	Island islandTo = plugin.getGrid().getProtectedIslandAt(e.getTo());
 	// Announcement entering
-	PlayerIsland islandFrom = plugin.getGrid().getProtectedIslandAt(e.getFrom());
+	Island islandFrom = plugin.getGrid().getProtectedIslandAt(e.getFrom());
 	// Only says something if there is a change in islands
 	/*
 	 * Situations:
@@ -397,9 +397,9 @@ public class IslandGuard implements Listener {
 	if (e.getPlayer().isInsideVehicle()) {
 	    return;
 	}
-	PlayerIsland islandTo = plugin.getGrid().getProtectedIslandAt(e.getTo());
+	Island islandTo = plugin.getGrid().getProtectedIslandAt(e.getTo());
 	// Announcement entering
-	PlayerIsland islandFrom = plugin.getGrid().getProtectedIslandAt(e.getFrom());
+	Island islandFrom = plugin.getGrid().getProtectedIslandAt(e.getFrom());
 	// Only says something if there is a change in islands
 	/*
 	 * Situations:
@@ -617,9 +617,9 @@ public class IslandGuard implements Listener {
 	// plugin.getLogger().info("DEBUG: From : " + e.getFrom());
 	// plugin.getLogger().info("DEBUG: To : " + e.getTo());
 	// Teleporting to a locked island
-	PlayerIsland islandTo = plugin.getGrid().getProtectedIslandAt(e.getTo());
+	Island islandTo = plugin.getGrid().getProtectedIslandAt(e.getTo());
 	// Announcement entering
-	PlayerIsland islandFrom = plugin.getGrid().getProtectedIslandAt(e.getFrom());
+	Island islandFrom = plugin.getGrid().getProtectedIslandAt(e.getFrom());
 	// Only says something if there is a change in islands
 	/*
 	 * Teleport Situations:

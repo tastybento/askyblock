@@ -42,13 +42,13 @@ import com.wasteofplastic.askyblock.util.Util;
 public class GridManager {
     private ASkyBlock plugin = ASkyBlock.getPlugin();
     // 2D islandGrid of islands, x,z
-    private TreeMap<Integer, TreeMap<Integer, PlayerIsland>> islandGrid = new TreeMap<Integer, TreeMap<Integer, PlayerIsland>>();
+    private TreeMap<Integer, TreeMap<Integer, Island>> islandGrid = new TreeMap<Integer, TreeMap<Integer, Island>>();
     // private TreeMap<Integer,TreeMap<Integer,PlayerIsland>> protectionGrid = new
     // TreeMap<Integer,TreeMap<Integer,PlayerIsland>>();
     // Reverse lookup for owner, if they exists
-    private HashMap<UUID, PlayerIsland> ownershipMap = new HashMap<UUID, PlayerIsland>();
+    private HashMap<UUID, Island> ownershipMap = new HashMap<UUID, Island>();
     private File islandFile;
-    private PlayerIsland spawn;
+    private Island spawn;
 
     /**
      * @param plugin
@@ -77,7 +77,7 @@ public class GridManager {
 		if (islandYaml.contains(Settings.worldName)) {
 		    islandList = islandYaml.getStringList(Settings.worldName);
 		    for (String island : islandList) {
-			PlayerIsland newIsland = addIsland(island);
+			Island newIsland = addIsland(island);
 			ownershipMap.put(newIsland.getOwner(), newIsland);
 			if (newIsland.isSpawn()) {
 			    spawn = newIsland;
@@ -139,7 +139,7 @@ public class GridManager {
 		// spawn.getString("spawn.bedrock",""));
 		Location spawnLoc = Util.getLocationString(spawn.getString("spawn.bedrock", ""));
 		if (spawnLoc != null && onGrid(spawnLoc)) {
-		    PlayerIsland newIsland = addIsland(spawnLoc.getBlockX(), spawnLoc.getBlockZ());
+		    Island newIsland = addIsland(spawnLoc.getBlockX(), spawnLoc.getBlockZ());
 		    setSpawn(newIsland);
 		    newIsland.setProtectionSize(range);
 		} else {
@@ -187,7 +187,7 @@ public class GridManager {
 				// Location exists
 				Location islandLoc = Util.getLocationString(islandLocation);
 				// Check to see if this island is already loaded
-				PlayerIsland island = getIslandAt(islandLoc);
+				Island island = getIslandAt(islandLoc);
 				if (island != null) {
 				    // PlayerIsland exists, compare creation dates
 				    plugin.getLogger().severe("Problem with " + fileName);
@@ -229,7 +229,7 @@ public class GridManager {
 				    String ownerString = fileName.substring(0, fileName.length() - 4);
 				    // Add the island
 				    UUID owner = UUID.fromString(ownerString);
-				    PlayerIsland newIsland = addIsland(islandLoc.getBlockX(), islandLoc.getBlockZ(), owner);
+				    Island newIsland = addIsland(islandLoc.getBlockX(), islandLoc.getBlockZ(), owner);
 				    ownershipMap.put(owner, newIsland);
 				    // Grab when this was last updated
 				    newIsland.setUpdatedDate(f.lastModified());
@@ -323,7 +323,7 @@ public class GridManager {
 	List<String> islandList = new ArrayList<String>();
 	for (int x : islandGrid.keySet()) {
 	    for (int z : islandGrid.get(x).keySet()) {
-		PlayerIsland island = islandGrid.get(x).get(z);
+		Island island = islandGrid.get(x).get(z);
 		islandList.add(island.serialize());
 	    }
 	}
@@ -343,7 +343,7 @@ public class GridManager {
      * @param location
      * @return PlayerIsland object
      */
-    public PlayerIsland getIslandAt(Location location) {
+    public Island getIslandAt(Location location) {
 	// Check if it is spawn
 	if (spawn != null && spawn.onIsland(location)) {
 	    return spawn;
@@ -358,13 +358,13 @@ public class GridManager {
      * @param z
      * @return PlayerIsland or null
      */
-    public PlayerIsland getIslandAt(int x, int z) {
-	Entry<Integer, TreeMap<Integer, PlayerIsland>> en = islandGrid.lowerEntry(x);
+    public Island getIslandAt(int x, int z) {
+	Entry<Integer, TreeMap<Integer, Island>> en = islandGrid.lowerEntry(x);
 	if (en != null) {
-	    Entry<Integer, PlayerIsland> ent = en.getValue().lowerEntry(z);
+	    Entry<Integer, Island> ent = en.getValue().lowerEntry(z);
 	    if (ent != null) {
 		// Check if in the island range
-		PlayerIsland island = ent.getValue();
+		Island island = ent.getValue();
 		if (island.inIslandSpace(x, z)) {
 		    // plugin.getLogger().info("DEBUG: In island space");
 		    return island;
@@ -381,12 +381,12 @@ public class GridManager {
      * @param location
      * @return PlayerIsland object
      */
-    public PlayerIsland getProtectedIslandAt(Location location) {
+    public Island getProtectedIslandAt(Location location) {
 	// Try spawn
 	if (spawn != null && spawn.onIsland(location)) {
 	    return spawn;
 	}
-	PlayerIsland island = getIslandAt(location);
+	Island island = getIslandAt(location);
 	if (island == null) {
 	    return null;
 	}
@@ -403,7 +403,7 @@ public class GridManager {
      * @return UUID of owner
      */
     public UUID getOwnerOfIslandAt(Location location) {
-	PlayerIsland island = getIslandAt(location);
+	Island island = getIslandAt(location);
 	if (island != null) {
 	    return island.getOwner();
 	}
@@ -417,7 +417,7 @@ public class GridManager {
      * @param x
      * @param z
      */
-    public PlayerIsland addIsland(int x, int z) {
+    public Island addIsland(int x, int z) {
 	return addIsland(x, z, null);
     }
 
@@ -428,10 +428,10 @@ public class GridManager {
      * @param z
      * @param owner
      */
-    public PlayerIsland addIsland(int x, int z, UUID owner) {
+    public Island addIsland(int x, int z, UUID owner) {
 	// Check if this owner already has an island
 	if (ownershipMap.containsKey(owner)) {
-	    PlayerIsland island = ownershipMap.get(owner);
+	    Island island = ownershipMap.get(owner);
 	    plugin.getLogger().warning(
 		    "Island at " + island.getCenter().getBlockX() + ", " + island.getCenter().getBlockZ()
 		    + " is already owned by this player. Removing ownership of this island.");
@@ -440,7 +440,7 @@ public class GridManager {
 	}
 	// plugin.getLogger().info("DEBUG: adding island to grid at " + x + ", "
 	// + z + " for " + owner.toString());
-	PlayerIsland newIsland = new PlayerIsland(x, z, owner);
+	Island newIsland = new Island(x, z, owner);
 	// if (newIsland != null) {
 	// plugin.getLogger().info("DEBUG: new island is good");
 	// }
@@ -453,14 +453,14 @@ public class GridManager {
      * 
      * @param islandSerialized
      */
-    public PlayerIsland addIsland(String islandSerialized) {
+    public Island addIsland(String islandSerialized) {
 	// plugin.getLogger().info("DEBUG: adding island " + islandSerialized);
-	PlayerIsland newIsland = new PlayerIsland(islandSerialized);
+	Island newIsland = new Island(islandSerialized);
 	addToGrids(newIsland);
 	return newIsland;
     }
 
-    private void addToGrids(PlayerIsland newIsland) {
+    private void addToGrids(Island newIsland) {
 	if (newIsland.getOwner() != null) {
 	    ownershipMap.put(newIsland.getOwner(), newIsland);
 	}
@@ -468,10 +468,10 @@ public class GridManager {
 	if (islandGrid.containsKey(newIsland.getMinX())) {
 	    // plugin.getLogger().info("DEBUG: min x is in the grid :" +
 	    // newIsland.getMinX());
-	    TreeMap<Integer, PlayerIsland> zEntry = islandGrid.get(newIsland.getMinX());
+	    TreeMap<Integer, Island> zEntry = islandGrid.get(newIsland.getMinX());
 	    if (zEntry.containsKey(newIsland.getMinZ())) {
 		// Island already exists
-		PlayerIsland conflict = islandGrid.get(newIsland.getMinX()).get(newIsland.getMinZ());
+		Island conflict = islandGrid.get(newIsland.getMinX()).get(newIsland.getMinZ());
 		plugin.getLogger().warning("*** Duplicate or overlapping islands! ***");
 		plugin.getLogger().warning(
 			"Island at (" + newIsland.getCenter().getBlockX() + ", " + newIsland.getCenter().getBlockZ() + ") conflicts with ("
@@ -504,7 +504,7 @@ public class GridManager {
 	    // newIsland.getMinX());
 	    // plugin.getLogger().info("DEBUG: min Z is not in the grid :" +
 	    // newIsland.getMinZ());
-	    TreeMap<Integer, PlayerIsland> zEntry = new TreeMap<Integer, PlayerIsland>();
+	    TreeMap<Integer, Island> zEntry = new TreeMap<Integer, Island>();
 	    zEntry.put(newIsland.getMinZ(), newIsland);
 	    islandGrid.put(newIsland.getMinX(), zEntry);
 	}
@@ -518,7 +518,7 @@ public class GridManager {
      */
     public void deleteIsland(Location loc) {
 	// plugin.getLogger().info("DEBUG: deleting island at " + loc);
-	PlayerIsland island = getIslandAt(loc);
+	Island island = getIslandAt(loc);
 	if (island != null) {
 	    UUID owner = island.getOwner();
 	    int x = island.getMinX();
@@ -526,11 +526,11 @@ public class GridManager {
 	    // plugin.getLogger().info("DEBUG: x = " + x + " z = " + z);
 	    if (islandGrid.containsKey(x)) {
 		// plugin.getLogger().info("DEBUG: x found");
-		TreeMap<Integer, PlayerIsland> zEntry = islandGrid.get(x);
+		TreeMap<Integer, Island> zEntry = islandGrid.get(x);
 		if (zEntry.containsKey(z)) {
 		    // plugin.getLogger().info("DEBUG: z found - deleting the island");
 		    // Island exists - delete it
-		    PlayerIsland deletedIsland = zEntry.get(z);
+		    Island deletedIsland = zEntry.get(z);
 		    deletedIsland.setOwner(null);
 		    deletedIsland.setLocked(false);
 		    zEntry.remove(z);
@@ -561,7 +561,7 @@ public class GridManager {
      * @param owner
      * @return island object or null if it does not exist in the list
      */
-    public PlayerIsland getIsland(UUID owner) {
+    public Island getIsland(UUID owner) {
 	if (owner != null) {
 	    if (ownershipMap.containsKey(owner)) {
 		return ownershipMap.get(owner);
@@ -582,7 +582,7 @@ public class GridManager {
      * @param island
      * @param newOwner
      */
-    public void setIslandOwner(PlayerIsland island, UUID newOwner) {
+    public void setIslandOwner(Island island, UUID newOwner) {
 	// The old owner
 	UUID oldOwner = island.getOwner();
 	// If the island owner is being set to null - remove the old owner's
@@ -594,7 +594,7 @@ public class GridManager {
 	}
 	// Check if the new owner already has an island
 	if (ownershipMap.containsKey(newOwner)) {
-	    PlayerIsland oldIsland = ownershipMap.get(newOwner);
+	    Island oldIsland = ownershipMap.get(newOwner);
 	    // plugin.getLogger().warning("Island at " +
 	    // oldIsland.getCenter().getBlockX() + ", " +
 	    // oldIsland.getCenter().getBlockZ()
@@ -620,14 +620,14 @@ public class GridManager {
     /**
      * @return the ownershipMap
      */
-    public HashMap<UUID, PlayerIsland> getOwnershipMap() {
+    public HashMap<UUID, Island> getOwnershipMap() {
 	return ownershipMap;
     }
 
     /**
      * @return the spawn
      */
-    public PlayerIsland getSpawn() {
+    public Island getSpawn() {
 	return spawn;
     }
 
@@ -635,7 +635,7 @@ public class GridManager {
      * @param spawn
      *            the spawn to set
      */
-    public void setSpawn(PlayerIsland spawn) {
+    public void setSpawn(Island spawn) {
 	// plugin.getLogger().info("DEBUG: Spawn set");
 	spawn.setSpawn(true);
 	spawn.setProtectionSize(spawn.getIslandDistance());
@@ -686,7 +686,7 @@ public class GridManager {
 	// If island protection distance is less than island distance then the
 	// check above will cover it
 	// Island edge must be > protection edge spawn
-	PlayerIsland spawn = getSpawn();
+	Island spawn = getSpawn();
 	if (spawn != null && spawn.getProtectionSize() > spawn.getIslandDistance()) {
 	    if (Math.abs(px - spawn.getCenter().getBlockX()) < ((spawn.getProtectionSize() + Settings.islandDistance) / 2)
 		    && Math.abs(pz - spawn.getCenter().getBlockZ()) < ((spawn.getProtectionSize() + Settings.islandDistance) / 2)) {
@@ -954,7 +954,7 @@ public class GridManager {
      * @return - safe location, or null if none can be found
      */
     public Location bigScan(Location l, UUID p, int i) {
-	PlayerIsland island = plugin.getGrid().getIsland(p);
+	Island island = plugin.getGrid().getIsland(p);
 	if (island == null) {
 	    return null;
 	}
@@ -1081,7 +1081,7 @@ public class GridManager {
     public boolean locationIsOnIsland(final Player player, final Location loc) {
 
 	// Get the player's island from the grid if it exists
-	PlayerIsland island = getIslandAt(loc);
+	Island island = getIslandAt(loc);
 	if (island != null) {
 	    //plugin.getLogger().info("DEBUG: island here is " + island.getCenter());
 	    // On an island in the grid
@@ -1138,7 +1138,7 @@ public class GridManager {
 	    if (loc.getWorld().equals(islandTestLocation.getWorld())) {
 		if (getIslandAt(islandTestLocation) != null) {
 		    // Get the protection range for this location if possible
-		    PlayerIsland island = getProtectedIslandAt(islandTestLocation);
+		    Island island = getProtectedIslandAt(islandTestLocation);
 		    if (island != null) {
 			// We are in a protected island area.
 			return island.getCenter();
@@ -1190,7 +1190,7 @@ public class GridManager {
 		int protectionRange = Settings.island_protectionRange;
 		if (getIslandAt(islandTestLocation) != null) {
 		    // Get the protection range for this location if possible
-		    PlayerIsland island = getProtectedIslandAt(islandTestLocation);
+		    Island island = getProtectedIslandAt(islandTestLocation);
 		    if (island != null) {
 			// We are in a protected island area.
 			protectionRange = island.getProtectionSize();
@@ -1248,7 +1248,7 @@ public class GridManager {
 	    int protectionRange = Settings.island_protectionRange;
 	    if (getIslandAt(islandTestLocation) != null) {
 
-		PlayerIsland island = getProtectedIslandAt(islandTestLocation);
+		Island island = getProtectedIslandAt(islandTestLocation);
 		// Get the protection range for this location if possible
 		if (island != null) {
 		    // We are in a protected island area.
@@ -1285,7 +1285,7 @@ public class GridManager {
 	    // plugin.getPlayers().setIslandLevel(oldOwner, 0);
 	    plugin.getPlayers().setTeamIslandLocation(oldOwner, islandLoc);
 	    // Update grid
-	    PlayerIsland island = getIslandAt(islandLoc);
+	    Island island = getIslandAt(islandLoc);
 	    if (island != null) {
 		setIslandOwner(island, newOwner);
 	    }
@@ -1349,7 +1349,7 @@ public class GridManager {
 		    }
 		    if (!pl.isFlying()) {
 			// Move player to spawn
-			PlayerIsland spawn = getSpawn();
+			Island spawn = getSpawn();
 			if (spawn != null) {
 			    // go to island spawn
 			    pl.teleport(ASkyBlock.getIslandWorld().getSpawnLocation());

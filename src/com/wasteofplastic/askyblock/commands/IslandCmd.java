@@ -59,8 +59,7 @@ import com.wasteofplastic.askyblock.GridManager;
 import com.wasteofplastic.askyblock.LevelCalc;
 import com.wasteofplastic.askyblock.Locale;
 import com.wasteofplastic.askyblock.Messages;
-import com.wasteofplastic.askyblock.PlayerIsland;
-import com.wasteofplastic.askyblock.Scoreboards;
+import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.TopTen;
 import com.wasteofplastic.askyblock.WarpSigns;
@@ -770,7 +769,7 @@ public class IslandCmd implements CommandExecutor {
 		}
 		// plugin.getLogger().info("DEBUG: perms ok");
 		// Find out which island they want to lock
-		PlayerIsland island = plugin.getGrid().getIsland(playerUUID);
+		Island island = plugin.getGrid().getIsland(playerUUID);
 		if (island == null) {
 		    // plugin.getLogger().info("DEBUG: player has no island in grid");
 		    // Player has no island in the grid

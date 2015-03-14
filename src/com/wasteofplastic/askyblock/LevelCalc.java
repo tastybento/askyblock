@@ -58,7 +58,7 @@ public class LevelCalc extends BukkitRunnable {
 	this.px = l.getBlockX();
 	this.pz = l.getBlockZ();
 	// Get player's island
-	PlayerIsland island = plugin.getGrid().getIsland(targetPlayer);
+	Island island = plugin.getGrid().getIsland(targetPlayer);
 	if (island != null) {
 	    range = island.getProtectionSize();
 	} else {

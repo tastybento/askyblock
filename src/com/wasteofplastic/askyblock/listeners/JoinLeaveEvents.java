@@ -34,7 +34,7 @@ import com.wasteofplastic.askyblock.LevelCalc;
 import com.wasteofplastic.askyblock.Locale;
 import com.wasteofplastic.askyblock.Messages;
 import com.wasteofplastic.askyblock.PlayerCache;
-import com.wasteofplastic.askyblock.PlayerIsland;
+import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.Scoreboards;
 import com.wasteofplastic.askyblock.Settings;
 
@@ -111,7 +111,7 @@ public class JoinLeaveEvents implements Listener {
 	// If the player has an island of some kind
 	if (loc != null) {
 	    // Check if the island is on the grid by owner (fast)
-	    PlayerIsland island = plugin.getGrid().getIsland(leader);
+	    Island island = plugin.getGrid().getIsland(leader);
 	    if (island == null) {
 		// Check if the island exists in the grid
 		island = plugin.getGrid().getIslandAt(loc);
