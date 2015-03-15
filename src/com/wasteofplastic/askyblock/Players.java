@@ -560,8 +560,11 @@ public class Players {
      * @param number
      */
     public void setHomeLocation(final Location location, int number) {
-	// Quantize to block
-	homeLocations.put(number, new Location(location.getWorld(),location.getBlockX(),location.getBlockY(),location.getBlockZ()));
+	if (location == null) {
+	    homeLocations.clear();
+	} else {
+	    homeLocations.put(number, new Location(location.getWorld(),location.getBlockX(),location.getBlockY(),location.getBlockZ()));
+	}
     }
 
     /**

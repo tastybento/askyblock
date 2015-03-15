@@ -164,7 +164,7 @@ island:
    subtitle: "by tastybento"
    # This section is to solicit donations from players. Feel free to set to '' to remove :-)
    donate: "Welcome to A SkyBlock by tastybento"
-   url: "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZSBJG5J2E3B7U"
+   url: ""
 
    teleport: "Teleporting you to your island. (/island help for more info)"
    cannotTeleport: "You cannot teleport when falling!"
