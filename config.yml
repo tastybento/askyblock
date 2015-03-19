@@ -11,6 +11,11 @@
 #############################################################################
 
 general:
+   # Check for updates - this will tell Ops and the console if there is a new
+   # version available. It contacts dev.bukkit.org to request the latest version
+   # info. It does not download the latest version or change any files
+   checkupdates: true
+
    # Sea level height (don't changes this mid-game unless you delete the world)
    # Minimum is 0, which means you are playing sky block!
    # If sea level is less than about 10, then players will drop right through it
@@ -133,7 +138,7 @@ general:
    # Breeding limits - if this is set to more than 0, then players will not be able
    # to breed more animals than that number on their island. A value of zero means no
    # limit. Note that animals will not be killed or reduced to this limit.
-   # This will not affect mobspawn blocks or monster egg use. Note that hearts will
+   # This WILL affect mobspawn blocks AND monster egg use. Note that hearts will
    # still appear, but breeding will not happen.
    breedinglimit: 0
 
@@ -211,10 +216,30 @@ general:
    # like water will not flow from the schematic
    usephysics: false
    
-   # Calculate leve on login
+   # Calculate level on login
    # If true, the plugin will run the level command for the player when they login
    # If the command is busy, it will fail silently
    loginlevel: false
+
+   # Maximum number of homes a player can have
+   # Accessed via sethome <number> or go <number>
+   maxhomes: 1
+
+   # Make island if player teleports to the island world and does not have one
+   makeislandifnone: false
+
+   # Immediately teleport player to their island (home 1 if it exists) when 
+   # entering the world
+   immediateteleport: false
+
+   # Set TEAMSUFFIX variable to player's island level
+   # If true, this will set the server TEAMNAME variable to the player's name and
+   # TEAMSUFFIX to the player's island level.
+   # Use in chat. e.g., for essentials chat, the format could be:
+   #   format: '<{DISPLAYNAME}> (Level {TEAMSUFFIX}): {MESSAGE}'
+   # <tastybento> (Level: 223): hi there
+   # If you have other plugins that use scoreboards/teams, this may mess with them
+   setteamsuffix: false
 
 ##### Island Related Settings #####
 
@@ -245,6 +270,14 @@ island:
    # It may result is incomplete deletion of islands. Not recommended.
    overridelimit: false
 
+   # Start islands at these coordinates. This is where new islands will start in the
+   # world. These must be a factor of your island distance, but the plugin will auto
+   # calculate the closest location on the grid. Islands develop around this location
+   # both positively and negatively in a square grid.
+   # If none of this makes sense, leave at 0,0.
+   startx: 0
+   startz: 0
+
    # Coordinate offset - never change this mid-game and there is no
    # need to set this. It is for compatibility with IslandWorld maps and set by
    # BlockConverter.
@@ -269,12 +302,24 @@ island:
 
    chestItems: 'ICE:2 MELON:1 TORCH:2 BONE:1 LAVA_BUCKET:1 PUMPKIN_SEEDS:1 SUGAR_CANE:1 RED_MUSHROOM:1 BROWN_MUSHROOM:1 CACTUS:1 BREAD:1 WHEAT:1 LEATHER_BOOTS:1 LEATHER_HELMET:1 LEATHER_CHESTPLATE:1 LEATHER_LEGGINGS:1'
 
+   # Your island companion
+   # Options are: COW, PIG, SHEEP, CHICKEN, VILLAGER, HORSE, IRON_GOLEM, OCELOT,
+   # RABBIT, WOLF or NOTHING. Default is COW.
+
+   companion: COW
+   # This is a list of names, picked at random that will apply to the companion
+   # You can add more if you like. If none are listed, the companion will not be
+   # named.
+   companionnames:
+   - "&9[player]'s cow"
+   - "&cEmergency &fFood?"
+   - "&aD&6a&di&6s&9y"
+
    # Island Protection Settings
 
    # PVP is allowed or not.
-   # If PVP is denied, then players can expel other players from islands
-   # otherwise players have to kill each other
    allowPvP: false
+   allowNetherPvP: false
    # Other players can break blocks or not or generally damage things
    allowbreakblocks: false
    # Other players can place blocks

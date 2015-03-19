@@ -6,10 +6,17 @@ import java.util.UUID;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
+/**
+ * A class that calculates the level of an island. Runs through all the island
+ * blocks
+ * Designed to run repeatedly until the calculation is done.
+ * 
+ * @author tastybento
+ * 
+ */
 public class LevelCalc extends BukkitRunnable {
     private ASkyBlock plugin;
     private Location l;
@@ -17,7 +24,7 @@ public class LevelCalc extends BukkitRunnable {
     private int px;
     private int pz;
     private int slice;
-    private HashMap<Material,Integer> limitCount = new HashMap<Material, Integer>();
+    private HashMap<Material, Integer> limitCount = new HashMap<Material, Integer>();
     private int blockcount;
     private int oldLevel;
     private UUID targetPlayer;
@@ -31,6 +38,7 @@ public class LevelCalc extends BukkitRunnable {
 
     /**
      * Calculates the level of an island
+     * 
      * @param plugin
      * @param targetPlayer
      * @param asker
@@ -38,7 +46,7 @@ public class LevelCalc extends BukkitRunnable {
     public LevelCalc(ASkyBlock plugin, UUID targetPlayer, Player asker, boolean silent) {
 	this.silent = silent;
 	this.plugin = plugin;
-	//plugin.getLogger().info("DEBUG: running level calc " + silent);
+	// plugin.getLogger().info("DEBUG: running level calc " + silent);
 	this.targetPlayer = targetPlayer;
 	this.asker = asker;
 	this.counter = 255;
@@ -54,19 +62,21 @@ public class LevelCalc extends BukkitRunnable {
 	if (island != null) {
 	    range = island.getProtectionSize();
 	} else {
-	    range = Settings.island_protectionRange;    
+	    range = Settings.island_protectionRange;
 	}
 	// Calculated based on the size of the protection area
-	double ratio = (double)counter * 10000 / (double)(range * range);
-	// plugin.getLogger().info("DEBUG: ratio = " + ratio + " protection range = " + range);
-	this.slice = (int)ratio;
+	double ratio = (double) counter * 12100 / (double) (range*range);
+	// plugin.getLogger().info("DEBUG: ratio = " + ratio +
+	// " protection range = " + range);
+	this.slice = (int) ratio;
 	if (this.slice < 1) {
 	    this.slice = 1;
 	}
-	// Copy the limits hashmap	
+	// Copy the limits hashmap
 	for (Material m : Settings.blockLimits.keySet()) {
 	    limitCount.put(m, Settings.blockLimits.get(m));
-	    // plugin.getLogger().info("DEBUG:" + m.toString() + " x " + Settings.blockLimits.get(m));
+	    // plugin.getLogger().info("DEBUG:" + m.toString() + " x " +
+	    // Settings.blockLimits.get(m));
 	}
 	this.blockcount = 0;
 	oldLevel = plugin.getPlayers().getIslandLevel(targetPlayer);
@@ -78,10 +88,13 @@ public class LevelCalc extends BukkitRunnable {
 	if (!plugin.isCalculatingLevel()) {
 	    this.cancel();
 	}
-	// plugin.getLogger().info("DEBUG: slice = " + slice);
-	calculateSlice(counter, (counter-slice));
+	//slice = 256;
+	//plugin.getLogger().info("DEBUG: slice = " + slice);
+	//long lastPoll = System.currentTimeMillis();
+	calculateSlice(counter, (counter - slice));
+	//plugin.getLogger().info("DEBUG: timer = " + (System.currentTimeMillis()- lastPoll) + "ms");
 	counter = counter - slice - 1;
-	if (counter <=0) {
+	if (counter <= 0) {
 	    // plugin.getLogger().info("DEBUG: updating player");
 	    // Update player and team mates
 	    plugin.getPlayers().setIslandLevel(targetPlayer, blockcount / 100);
@@ -91,37 +104,37 @@ public class LevelCalc extends BukkitRunnable {
 	    // Update any team members too
 	    if (plugin.getPlayers().inTeam(targetPlayer)) {
 		// plugin.getLogger().info("DEBUG: player is in team");
-		for (UUID member: plugin.getPlayers().getMembers(targetPlayer)) {
+		for (UUID member : plugin.getPlayers().getMembers(targetPlayer)) {
 		    // plugin.getLogger().info("DEBUG: updating team member level too");
 		    plugin.getPlayers().setIslandLevel(member, blockcount / 100);
 		    plugin.getPlayers().save(member);
 		}
 	    }
 	    // plugin.getLogger().info("DEBUG: finished team member saving");
-	    //plugin.updateTopTen();
+	    // plugin.updateTopTen();
 	    if (!this.silent) {
 		// Tell offline team members the island level increased.
 		if (plugin.getPlayers().getIslandLevel(targetPlayer) > oldLevel) {
 		    // plugin.getLogger().info("DEBUG: telling offline players");
-		    plugin.tellOfflineTeam(targetPlayer, ChatColor.GREEN + Locale.islandislandLevelis + " " + ChatColor.WHITE + plugin.getPlayers().getIslandLevel(targetPlayer));
+		    Messages.tellOfflineTeam(targetPlayer, ChatColor.GREEN + Locale.islandislandLevelis + " " + ChatColor.WHITE
+			    + plugin.getPlayers().getIslandLevel(targetPlayer));
 		}
 		if (asker.isOnline()) {
 		    // plugin.getLogger().info("DEBUG: updating player GUI");
-		    asker.sendMessage(
-			    ChatColor.GREEN + Locale.islandislandLevelis + " " + ChatColor.WHITE + plugin.getPlayers().getIslandLevel(targetPlayer));
+		    asker.sendMessage(ChatColor.GREEN + Locale.islandislandLevelis + " " + ChatColor.WHITE + plugin.getPlayers().getIslandLevel(targetPlayer));
 		}
 	    }
 	    this.silent = false;
-	    //plugin.getLogger().info("DEBUG: updating top ten");
+	    // plugin.getLogger().info("DEBUG: updating top ten");
 	    if (plugin.getPlayers().inTeam(targetPlayer)) {
 		UUID leader = plugin.getPlayers().getTeamLeader(targetPlayer);
 		if (leader != null) {
-		    plugin.topTenAddEntry(leader, blockcount / 100);
+		    TopTen.topTenAddEntry(leader, blockcount / 100);
 		}
 	    } else {
-		plugin.topTenAddEntry(targetPlayer, blockcount / 100);
+		TopTen.topTenAddEntry(targetPlayer, blockcount / 100);
 	    }
-	    //plugin.getLogger().info("DEBUG: finished updating top ten");
+	    // plugin.getLogger().info("DEBUG: finished updating top ten");
 
 	    // plugin.getLogger().info("DEBUG: clearing flag");
 	    // Clear flag
@@ -131,39 +144,41 @@ public class LevelCalc extends BukkitRunnable {
 	    this.cancel();
 	    // plugin.getLogger().info("DEBUG: cancelled");
 	}
-
     }
 
     private void calculateSlice(int top, int bottom) {
 	//plugin.getLogger().info("DEBUG: calculating top = " + top + " bottom = "+ bottom);
-	if (bottom <0) {
+	if (bottom < 0) {
 	    bottom = 0;
 	}
+	int r = range /2;
+	//plugin.getLogger().info("DEBUG: range = " + r);
 	for (int y = top; y >= bottom; y--) {
-	    //plugin.getLogger().info("DEBUG: y = " + y);
-	    //plugin.getLogger().info("DEBUG: blockcount = " + blockcount);
-	    for (int x = range / 2 * -1; x <= range / 2; x++) {
-		for (int z = range / 2 * -1; z <= range / 2; z++) {
-		    final Block b = new Location(l.getWorld(), px + x, y, pz + z).getBlock();
-		    final Material blockType = b.getType();
+	    // plugin.getLogger().info("DEBUG: y = " + y);
+	    // plugin.getLogger().info("DEBUG: blockcount = " + blockcount);
+	    for (int x = px - r; x <= px + r; x++) {
+		for (int z = pz - r; z <= pz + r; z++) {
+		    Material blockType = l.getWorld().getBlockAt(x, y, z).getType();
 		    if (blockType != Material.AIR) {
 			// Total up the values
 			if (Settings.blockValues.containsKey(blockType)) {
 			    if (limitCount.containsKey(blockType)) {
 				int count = limitCount.get(blockType);
-				//plugin.getLogger().info("DEBUG: Count for " + blockType + " is " + count);
+				// plugin.getLogger().info("DEBUG: Count for " +
+				// blockType + " is " + count);
 				if (count > 0) {
 				    limitCount.put(blockType, --count);
 				    blockcount += Settings.blockValues.get(blockType);
-				} 
+				}
 			    } else {
-				//plugin.getLogger().info("DEBUG: Adding " + blockType + " = " + Settings.blockValues.get(blockType));
+				// plugin.getLogger().info("DEBUG: Adding " +
+				// blockType + " = " +
+				// Settings.blockValues.get(blockType));
 				blockcount += Settings.blockValues.get(blockType);
 			    }
-			} 
+			}
 		    }
 		}
-
 	    }
 	}
     }

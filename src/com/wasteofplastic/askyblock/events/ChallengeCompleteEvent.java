@@ -6,8 +6,9 @@ import org.bukkit.event.HandlerList;
 
 /**
  * This event is fired when a player completes a challenge
+ * 
  * @author tastybento
- *
+ * 
  */
 public class ChallengeCompleteEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
@@ -18,7 +19,7 @@ public class ChallengeCompleteEvent extends Event {
     private final double moneyReward;
     private final int expReward;
     private final String rewardText;
-   
+
     /**
      * @param player
      * @param challengeName
@@ -39,74 +40,53 @@ public class ChallengeCompleteEvent extends Event {
 	this.rewardText = rewardText;
     }
 
-
-
-
     /**
      * @return the player
      */
     public Player getPlayer() {
-        return player;
+	return player;
     }
-
-
-
 
     /**
      * @return the challengeName
      */
     public String getChallengeName() {
-        return challengeName;
+	return challengeName;
     }
-
-
-
 
     /**
      * @return the permList
      */
     public String[] getPermList() {
-        return permList;
+	return permList;
     }
-
-
-
 
     /**
      * @return the itemRewards
      */
     public String[] getItemRewards() {
-        return itemRewards;
+	return itemRewards;
     }
-
-
-
 
     /**
      * @return the moneyReward
      */
     public double getMoneyReward() {
-        return moneyReward;
+	return moneyReward;
     }
-
-
-
 
     /**
      * @return the expReward
      */
     public int getExpReward() {
-        return expReward;
+	return expReward;
     }
-
-
-
 
     /**
      * @return the rewardText
      */
     public String getRewardText() {
-        return rewardText;
+	return rewardText;
     }
 
     @Override
@@ -115,6 +95,6 @@ public class ChallengeCompleteEvent extends Event {
     }
 
     public static HandlerList getHandlerList() {
-        return handlers;
+	return handlers;
     }
 }

@@ -35,7 +35,49 @@ drankAcid: "drank acid."
 
 #IslandGuard
 islandProtected: "Island protected."
+targetInPVPArea: "Target is in a no-PVP area!"
+# The following are strings for the Settings panel
+islandguardsettings:
+  title: "Island Guard Settings"
+  allowed: "Allowed"
+  disallowed: "Disallowed"
+  anvil: "Anvil use"
+  armorstand: "Armor Stand use"
+  beacon: "Beacon use"
+  bed: "Bed use"
+  breakblocks: "Break blocks"
+  breeding: "Breeding"
+  brewingstand: "Potion Brewing"
+  bucket: "Bucket use"
+  chest: "Chest use"
+  chestdamage: "Chest damage by TNT"
+  workbench: "Workbench use"
+  croptrample: "Crop trampling"
+  door: "Door use"
+  enchantingtable: "Enchanting table use"
+  enderpearl: "Enderpearl use"
+  fire: "Fire"
+  furnace: "Furnace use"
+  gate: "Gate use"
+  hurtanimals: "Hurting animals"
+  hurtmonsters: "Hurting monsters"
+  leash: "Leash use"
+  lever: "Lever or Button Use"
+  spawnegg: "Spawn egg use"
+  jukebox: "Jukebox use"
+  placeblocks: "Place blocks"
+  portaluse: "Portal use"
+  pvp: "PvP"
+  netherpvp: "Nether PvP"
+  redstone: "Redstone use"
+  shears: "Shears use"
+  teleportwhenfalling: "Teleport when falling"
+  TNTdamage: "TNT Damage"
+  visitordrop: "Visitor item dropping"
+  visitorpickup: "Visitor item pick-up"
+  visitorkeepitems: "Visitor keep item on death"
 
+  
 #LavaCheck
 lavaTip: "Tip: If obsidian was not intended, it can be scooped back up again with a bucket."
 
@@ -74,7 +116,7 @@ sethome:
    homeSet: "Your island home has been set to your current location."
    errorNotOnIsland: "You must be within your island boundaries to set home!"
    errorNoIsland: "You are not part of an island. Returning you the spawn area!"
-
+   errorNumHomes: "Homes can be 1 to [max]"
 
 #Challenges
 challenges:
@@ -121,8 +163,8 @@ island:
    title: "A SkyBlock"
    subtitle: "by tastybento"
    # This section is to solicit donations from players. Feel free to set to '' to remove :-)
-   donate: "ASkyBlock by tastybento, click here to donate via PayPal!"
-   url: "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZSBJG5J2E3B7U"
+   donate: "Welcome to A SkyBlock by tastybento"
+   url: ""
 
    teleport: "Teleporting you to your island. (/island help for more info)"
    cannotTeleport: "You cannot teleport when falling!"
@@ -404,4 +446,5 @@ lock:
    unlocking: "Unlocking island"
    enteringspawn: "Entering Spawn"
    leavingspawn: "Leaving Spawn"
+
 

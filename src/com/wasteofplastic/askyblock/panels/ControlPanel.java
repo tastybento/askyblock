@@ -14,7 +14,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with ASkyBlock.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-package com.wasteofplastic.askyblock;
+package com.wasteofplastic.askyblock.panels;
 
 import java.util.HashMap;
 import java.util.List;
@@ -35,24 +35,29 @@ import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.Locale;
+import com.wasteofplastic.askyblock.Settings;
+import com.wasteofplastic.askyblock.util.Util;
+import com.wasteofplastic.askyblock.util.VaultHelper;
+
 /**
  * @author tastybento
- * Provides a handy control panel and minishop
+ *         Provides a handy control panel and minishop
  */
 public class ControlPanel implements Listener {
 
     private static YamlConfiguration miniShopFile;
-    private static HashMap<Integer, MiniShopItem> store = new HashMap<Integer,MiniShopItem>();
+    private static HashMap<Integer, MiniShopItem> store = new HashMap<Integer, MiniShopItem>();
     private static YamlConfiguration cpFile;
     private ASkyBlock plugin;
     private static boolean allowSelling;
     private static String defaultPanelName;
 
-
     /**
      * @param plugin
      */
-    protected ControlPanel(ASkyBlock plugin) {
+    public ControlPanel(ASkyBlock plugin) {
 	this.plugin = plugin;
 	if (Settings.useEconomy) {
 	    loadShop();
@@ -60,36 +65,40 @@ public class ControlPanel implements Listener {
 	loadControlPanel();
     }
 
-
     /**
      * Map of panel contents by name
      */
-    private static HashMap<String, HashMap<Integer,CPItem>> panels = new HashMap<String, HashMap<Integer,CPItem>>();
-    //public static final Inventory challenges = Bukkit.createInventory(null, 9, ChatColor.YELLOW + "Challenges");
+    private static HashMap<String, HashMap<Integer, CPItem>> panels = new HashMap<String, HashMap<Integer, CPItem>>();
+    // public static final Inventory challenges = Bukkit.createInventory(null,
+    // 9, ChatColor.YELLOW + "Challenges");
 
     /**
      * Map of CP inventories by name
      */
-    protected static HashMap<String,Inventory> controlPanel = new HashMap<String,Inventory>();
+    public static HashMap<String, Inventory> controlPanel = new HashMap<String, Inventory>();
 
-    protected static Inventory miniShop;
-    // The first parameter, is the inventory owner. I make it null to let everyone use it.
-    //The second parameter, is the slots in a inventory. Must be a multiple of 9. Can be up to 54.
-    //The third parameter, is the inventory name. This will accept chat colors.
+    public static Inventory miniShop;
 
+    // The first parameter, is the inventory owner. I make it null to let
+    // everyone use it.
+    // The second parameter, is the slots in a inventory. Must be a multiple of
+    // 9. Can be up to 54.
+    // The third parameter, is the inventory name. This will accept chat colors.
 
     /**
      * This loads the minishop from the minishop.yml file
      */
-    protected static void loadShop() {
-	//The first parameter is the Material, then the durability (if wanted), slot, descriptions
+    public static void loadShop() {
+	// The first parameter is the Material, then the durability (if wanted),
+	// slot, descriptions
 	// Minishop
 	store.clear();
-	miniShopFile = ASkyBlock.loadYamlFile("minishop.yml");
+	miniShopFile = Util.loadYamlFile("minishop.yml");
 	allowSelling = miniShopFile.getBoolean("config.allowselling", false);
 	ConfigurationSection items = miniShopFile.getConfigurationSection("items");
 	ASkyBlock plugin = ASkyBlock.getPlugin();
-	//plugin.getLogger().info("DEBUG: loading the shop. items = " + items.toString());
+	// plugin.getLogger().info("DEBUG: loading the shop. items = " +
+	// items.toString());
 	if (items != null) {
 	    // Create the store
 	    // Get how many the store should be
@@ -101,17 +110,17 @@ public class ControlPanel implements Listener {
 	    for (String item : items.getKeys(false)) {
 		try {
 		    String m = items.getString(item + ".material");
-		    //plugin.getLogger().info("Material = " + m);
+		    // plugin.getLogger().info("Material = " + m);
 		    Material material = Material.matchMaterial(m);
 		    int quantity = items.getInt(item + ".quantity", 0);
 		    String extra = items.getString(item + ".extra", "");
-		    double price = items.getDouble(item + ".price",-1D);
-		    double sellPrice = items.getDouble(item + ".sellprice",-1D);
+		    double price = items.getDouble(item + ".price", -1D);
+		    double sellPrice = items.getDouble(item + ".sellprice", -1D);
 		    if (!allowSelling) {
 			sellPrice = -1;
 		    }
 		    String description = items.getString(item + ".description");
-		    MiniShopItem shopItem = new MiniShopItem(material,extra,slot,description,quantity,price,sellPrice);
+		    MiniShopItem shopItem = new MiniShopItem(material, extra, slot, description, quantity, price, sellPrice);
 		    store.put(slot, shopItem);
 		    miniShop.setItem(slot, shopItem.getItem());
 		    slot++;
@@ -122,60 +131,61 @@ public class ControlPanel implements Listener {
 		}
 	    }
 
-	}	
+	}
     }
 
     /**
      * This loads the control panel from the controlpanel.yml file
      */
-    protected static void loadControlPanel() {
+    public static void loadControlPanel() {
 	ASkyBlock plugin = ASkyBlock.getPlugin();
 	// Map of known panel contents by name
 	panels.clear();
 	// Map of panel inventories by name
 	controlPanel.clear();
-	cpFile = ASkyBlock.loadYamlFile("controlpanel.yml");
+	cpFile = Util.loadYamlFile("controlpanel.yml");
 	ConfigurationSection controlPanels = cpFile.getRoot();
 	if (controlPanels == null) {
 	    plugin.getLogger().severe("Controlpanel.yml is corrupted! Delete so it can be regenerated or fix!");
 	    return;
-	}	
+	}
 	// Go through the yml file and create inventories and panel maps
 	for (String panel : controlPanels.getKeys(false)) {
-	    //plugin.getLogger().info("DEBUG: Panel " + panel);
+	    // plugin.getLogger().info("DEBUG: Panel " + panel);
 	    ConfigurationSection panelConf = cpFile.getConfigurationSection(panel);
 	    // New panel map
-	    HashMap<Integer,CPItem> cp = new HashMap<Integer,CPItem>();
-	    String panelName = ChatColor.translateAlternateColorCodes('&',panelConf.getString("panelname", "Commands"));
+	    HashMap<Integer, CPItem> cp = new HashMap<Integer, CPItem>();
+	    String panelName = ChatColor.translateAlternateColorCodes('&', panelConf.getString("panelname", "Commands"));
 	    if (panel.equalsIgnoreCase("default")) {
 		defaultPanelName = panelName;
 	    }
-	    //plugin.getLogger().info("DEBUG: Panel section " + panelName);
-	    //plugin.getLogger().info("DEBUG: putting panel " + newPanel.getName());
+	    // plugin.getLogger().info("DEBUG: Panel section " + panelName);
+	    // plugin.getLogger().info("DEBUG: putting panel " +
+	    // newPanel.getName());
 	    ConfigurationSection buttons = cpFile.getConfigurationSection(panel + ".buttons");
 	    if (buttons != null) {
 		// Get how many buttons can be in the CP
 		int size = buttons.getKeys(false).size() + 8;
 		size -= (size % 9);
 		// Add inventory to map of inventories
-		controlPanel.put(panelName,Bukkit.createInventory(null, size, panelName));
+		controlPanel.put(panelName, Bukkit.createInventory(null, size, panelName));
 		// Run through buttons
 		int slot = 0;
 		for (String item : buttons.getKeys(false)) {
 		    try {
-			String m = buttons.getString(item + ".material","BOOK");
-			//Split off damage
+			String m = buttons.getString(item + ".material", "BOOK");
+			// Split off damage
 			String[] icon = m.split(":");
-			//plugin.getLogger().info("Material = " + m);
+			// plugin.getLogger().info("Material = " + m);
 			Material material = Material.matchMaterial(icon[0]);
-			String description = buttons.getString(item + ".description","");
-			String command = buttons.getString(item + ".command","").replace("[island]", Settings.ISLANDCOMMAND);
-			String nextSection = buttons.getString(item + ".nextsection","");
+			String description = buttons.getString(item + ".description", "");
+			String command = buttons.getString(item + ".command", "").replace("[island]", Settings.ISLANDCOMMAND);
+			String nextSection = buttons.getString(item + ".nextsection", "");
 			ItemStack i = new ItemStack(material);
 			if (icon.length == 2) {
 			    i.setDurability(Short.parseShort(icon[1]));
 			}
-			CPItem cpItem = new CPItem(i,description,command,nextSection);
+			CPItem cpItem = new CPItem(i, description, command, nextSection);
 			cp.put(slot, cpItem);
 			controlPanel.get(panelName).setItem(slot, cpItem.getItem());
 			slot++;
@@ -188,21 +198,22 @@ public class ControlPanel implements Listener {
 		// Add overall control panel
 		panels.put(panelName, cp);
 	    }
-	}	
+	}
     }
-
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
 	// TODO : this needs optimization
-	Player player = (Player) event.getWhoClicked(); // The player that clicked the item
+	Player player = (Player) event.getWhoClicked(); // The player that
+							// clicked the item
 	ItemStack clicked = event.getCurrentItem(); // The item that was clicked
-	Inventory inventory = event.getInventory(); // The inventory that was clicked in
-	//ASkyBlock plugin = ASkyBlock.getPlugin();
+	Inventory inventory = event.getInventory(); // The inventory that was
+						    // clicked in
+	// ASkyBlock plugin = ASkyBlock.getPlugin();
 	int slot = event.getRawSlot();
 	// Settings
-	if (inventory.getName().equalsIgnoreCase("Island Guard Settings")) {
-	    if (event.getSlotType() == SlotType.OUTSIDE) {	
+	if (inventory.getName().equalsIgnoreCase(Locale.igsTitle)) {
+	    if (event.getSlotType() == SlotType.OUTSIDE) {
 		player.closeInventory();
 		return;
 	    }
@@ -212,13 +223,13 @@ public class ControlPanel implements Listener {
 	// Challenges
 	if (inventory.getName().equals(Locale.challengesguiTitle)) {
 	    event.setCancelled(true);
-	    if (event.getSlotType() == SlotType.OUTSIDE) {	
+	    if (event.getSlotType() == SlotType.OUTSIDE) {
 		player.closeInventory();
 		return;
 	    }
-	    
+
 	    // Get the list of items in this inventory
-	    //plugin.getLogger().info("DEBUG: You clicked on slot " + slot);
+	    // plugin.getLogger().info("DEBUG: You clicked on slot " + slot);
 	    List<CPItem> challenges = plugin.getChallenges().getCP(player);
 	    if (challenges == null) {
 		plugin.getLogger().warning("Player was accessing Challenge Inventory, but it had lost state - was server restarted?");
@@ -226,17 +237,22 @@ public class ControlPanel implements Listener {
 		player.performCommand(Settings.CHALLENGECOMMAND);
 		return;
 	    }
-	    //plugin.getLogger().info("DEBUG: Challenges size = " + challenges.size());
-	    if (slot >=0 && slot < challenges.size()) {
+	    // plugin.getLogger().info("DEBUG: Challenges size = " +
+	    // challenges.size());
+	    if (slot >= 0 && slot < challenges.size()) {
 		CPItem item = challenges.get(slot);
-		//plugin.getLogger().info("DEBUG: CP Item is " + item.getItem().toString());
-		//plugin.getLogger().info("DEBUG: Clicked is " + clicked.toString());
+		// plugin.getLogger().info("DEBUG: CP Item is " +
+		// item.getItem().toString());
+		// plugin.getLogger().info("DEBUG: Clicked is " +
+		// clicked.toString());
 		// Check that it is the top items that are being clicked on
 		// These two should be identical because it is made before
 		if (clicked.equals(item.getItem())) {
-		    //plugin.getLogger().info("DEBUG: You clicked on a challenge item");
-		    //plugin.getLogger().info("DEBUG: performing  /" + item.getCommand());
-		    //plugin.getLogger().info("DEBUG: going to " + item.getNextSection());
+		    // plugin.getLogger().info("DEBUG: You clicked on a challenge item");
+		    // plugin.getLogger().info("DEBUG: performing  /" +
+		    // item.getCommand());
+		    // plugin.getLogger().info("DEBUG: going to " +
+		    // item.getNextSection());
 		    // Next section indicates the level of panel to open
 		    if (item.getNextSection() != null) {
 			player.closeInventory();
@@ -251,10 +267,15 @@ public class ControlPanel implements Listener {
 	}
 	/*
 	 * Minishop section
-	 */	
-	if (miniShop != null && inventory.getName().equals(miniShop.getName())) { // The inventory is our custom Inventory
+	 */
+	if (miniShop != null && inventory.getName().equals(miniShop.getName())) { // The
+										  // inventory
+										  // is
+										  // our
+										  // custom
+										  // Inventory
 	    String message = "";
-	    //plugin.getLogger().info("You clicked on slot " + slot);
+	    // plugin.getLogger().info("You clicked on slot " + slot);
 	    event.setCancelled(true); // Don't let them pick it up
 	    if (!Settings.useEconomy || slot == -999) {
 		player.closeInventory();
@@ -270,39 +291,48 @@ public class ControlPanel implements Listener {
 			if (item.getPrice() > 0D) {
 			    // Check they can afford it
 			    if (!VaultHelper.econ.has(player, Settings.worldName, item.getPrice())) {
-				//message = "You cannot afford that item!";
+				// message = "You cannot afford that item!";
 				message = (Locale.minishopYouCannotAfford).replace("[description]", item.getDescription());
 			    } else {
 				EconomyResponse r = VaultHelper.econ.withdrawPlayer(player, Settings.worldName, item.getPrice());
 				if (r.transactionSuccess()) {
-				    //message = "You bought " + item.getQuantity() + " " + item.getDescription() + " for " + VaultHelper.econ.format(item.getPrice());			
+				    // message = "You bought " +
+				    // item.getQuantity() + " " +
+				    // item.getDescription() + " for " +
+				    // VaultHelper.econ.format(item.getPrice());
 				    message = Locale.minishopYouBought.replace("[number]", Integer.toString(item.getQuantity()));
 				    message = message.replace("[description]", item.getDescription());
 				    message = message.replace("[price]", VaultHelper.econ.format(item.getPrice()));
 				    player.getInventory().addItem(item.getItemClean());
 				} else {
-				    //message = "There was a problem puchasing that item: " + r.errorMessage;
+				    // message =
+				    // "There was a problem puchasing that item: "
+				    // + r.errorMessage;
 				    message = (Locale.minishopBuyProblem).replace("[description]", item.getDescription());
 				}
 			    }
 			}
-		    } else if (event.getClick().equals(ClickType.RIGHT) && allowSelling && item.getSellPrice()>0D) {
+		    } else if (event.getClick().equals(ClickType.RIGHT) && allowSelling && item.getSellPrice() > 0D) {
 			// Check if they have the item
-			if (player.getInventory().containsAtLeast(item.getItemClean(),item.getQuantity())) {
+			if (player.getInventory().containsAtLeast(item.getItemClean(), item.getQuantity())) {
 			    player.getInventory().removeItem(item.getItemClean());
 			    VaultHelper.econ.depositPlayer(player, Settings.worldName, item.getSellPrice());
-			    //message = "You sold " + item.getQuantity() + " " + item.getDescription() + " for " + VaultHelper.econ.format(item.getSellPrice());
+			    // message = "You sold " + item.getQuantity() + " "
+			    // + item.getDescription() + " for " +
+			    // VaultHelper.econ.format(item.getSellPrice());
 			    message = Locale.minishopYouSold.replace("[number]", Integer.toString(item.getQuantity()));
 			    message = message.replace("[description]", item.getDescription());
 			    message = message.replace("[price]", VaultHelper.econ.format(item.getSellPrice()));
 			} else {
-			    //message = "You do not have enough of that item to sell it.";
-			    message = (Locale.minishopSellProblem).replace("[description]", item.getDescription());;
+			    // message =
+			    // "You do not have enough of that item to sell it.";
+			    message = (Locale.minishopSellProblem).replace("[description]", item.getDescription());
+			    ;
 			}
 		    }
-		    //player.closeInventory(); // Closes the inventory
+		    // player.closeInventory(); // Closes the inventory
 		    if (!message.isEmpty()) {
-			player.sendMessage(message);	
+			player.sendMessage(message);
 		    }
 		}
 	    }
@@ -310,8 +340,9 @@ public class ControlPanel implements Listener {
 	// Check control panels
 	for (String panelName : controlPanel.keySet()) {
 	    if (inventory.getName().equals(panelName)) {
-		//plugin.getLogger().info("DEBUG: panels length " + panels.size());
-		//plugin.getLogger().info("DEBUG: panel name " + panelName);
+		// plugin.getLogger().info("DEBUG: panels length " +
+		// panels.size());
+		// plugin.getLogger().info("DEBUG: panel name " + panelName);
 		if (slot == -999) {
 		    player.closeInventory();
 		    event.setCancelled(true);
@@ -319,14 +350,15 @@ public class ControlPanel implements Listener {
 		}
 		HashMap<Integer, CPItem> thisPanel = panels.get(panelName);
 		if (slot >= 0 && slot < thisPanel.size()) {
-		    //plugin.getLogger().info("DEBUG: slot is " + slot);
+		    // plugin.getLogger().info("DEBUG: slot is " + slot);
 		    // Do something
 		    String command = thisPanel.get(slot).getCommand();
-		    String nextSection = ChatColor.translateAlternateColorCodes('&',thisPanel.get(slot).getNextSection());
+		    String nextSection = ChatColor.translateAlternateColorCodes('&', thisPanel.get(slot).getNextSection());
 		    if (!command.isEmpty()) {
 			player.closeInventory(); // Closes the inventory
 			event.setCancelled(true);
-			//plugin.getLogger().info("DEBUG: performing command " + command);
+			// plugin.getLogger().info("DEBUG: performing command "
+			// + command);
 			player.performCommand(command);
 			return;
 		    }
@@ -334,9 +366,9 @@ public class ControlPanel implements Listener {
 			player.closeInventory(); // Closes the inventory
 			Inventory next = controlPanel.get(nextSection);
 			if (next == null) {
-			    //plugin.getLogger().info("DEBUG: next panel is null");
+			    // plugin.getLogger().info("DEBUG: next panel is null");
 			}
-			//plugin.getLogger().info("DEBUG: opening next cp "+nextSection);
+			// plugin.getLogger().info("DEBUG: opening next cp "+nextSection);
 			player.openInventory(next);
 			event.setCancelled(true);
 			return;
@@ -352,7 +384,7 @@ public class ControlPanel implements Listener {
     /**
      * @return the defaultPanelName
      */
-    protected static String getDefaultPanelName() {
+    public static String getDefaultPanelName() {
 	return defaultPanelName;
     }
 }

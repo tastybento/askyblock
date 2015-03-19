@@ -14,8 +14,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with ASkyBlock.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-package com.wasteofplastic.askyblock;
-
+package com.wasteofplastic.askyblock.listeners;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -32,22 +31,28 @@ import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
+import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.Locale;
+import com.wasteofplastic.askyblock.Settings;
+import com.wasteofplastic.askyblock.util.VaultHelper;
 
 /**
  * @author tastybento
- * Provides protection to islands - handles newer events that may not exist in older servers
+ *         Provides protection to islands - handles newer events that may not
+ *         exist in older servers
  */
 public class IslandGuardNew implements Listener {
     private final ASkyBlock plugin;
     private final boolean debug = false;
 
-    protected IslandGuardNew(final ASkyBlock plugin) {
+    public IslandGuardNew(final ASkyBlock plugin) {
 	this.plugin = plugin;
 
     }
 
     /**
      * Handle interaction with armor stands V1.8
+     * 
      * @param e
      */
     @EventHandler(priority = EventPriority.LOW)
@@ -55,7 +60,7 @@ public class IslandGuardNew implements Listener {
 	if (debug) {
 	    plugin.getLogger().info(e.getEventName());
 	}
-	if (!e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	if (!IslandGuard.inWorld(e.getPlayer())) {
 	    return;
 	}
 	if (e.getPlayer().isOp()) {
@@ -66,8 +71,8 @@ public class IslandGuardNew implements Listener {
 	    return;
 	}
 	if (e.getRightClicked() != null && e.getRightClicked().getType().equals(EntityType.ARMOR_STAND)
-		&& !plugin.locationIsOnIsland(e.getPlayer(),e.getRightClicked().getLocation())) {
-	    //plugin.getLogger().info("DEBUG: Armor stand clicked off island");
+		&& !plugin.getGrid().locationIsOnIsland(e.getPlayer(), e.getRightClicked().getLocation())) {
+	    // plugin.getLogger().info("DEBUG: Armor stand clicked off island");
 	    if (!Settings.allowArmorStandUse) {
 		e.setCancelled(true);
 		e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
@@ -77,6 +82,7 @@ public class IslandGuardNew implements Listener {
 
     /**
      * Handle V1.8 blocks that need special treatment
+     * 
      * @param e
      */
     @SuppressWarnings("deprecation")
@@ -88,7 +94,7 @@ public class IslandGuardNew implements Listener {
 	if (!e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
 	    return;
 	}
-	if (!e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	if (!IslandGuard.inWorld(e.getPlayer())) {
 	    return;
 	}
 	if (e.getPlayer().isOp()) {
@@ -100,28 +106,28 @@ public class IslandGuardNew implements Listener {
 	}
 	// Prevents tilling of coarse dirt into dirt
 	ItemStack inHand = e.getPlayer().getItemInHand();
-	if (inHand.getType() == Material.WOOD_HOE || inHand.getType() == Material.IRON_HOE
-		|| inHand.getType() == Material.GOLD_HOE || inHand.getType() == Material.DIAMOND_HOE
-		|| inHand.getType() == Material.STONE_HOE) {
-	    //plugin.getLogger().info("DEBUG: hoe in hand");
+	if (inHand.getType() == Material.WOOD_HOE || inHand.getType() == Material.IRON_HOE || inHand.getType() == Material.GOLD_HOE
+		|| inHand.getType() == Material.DIAMOND_HOE || inHand.getType() == Material.STONE_HOE) {
+	    // plugin.getLogger().info("DEBUG: hoe in hand");
 	    Block block = e.getClickedBlock();
-	    //plugin.getLogger().info("DEBUG: block is " + block.getType() + ":" + block.getData());
+	    // plugin.getLogger().info("DEBUG: block is " + block.getType() +
+	    // ":" + block.getData());
 	    // Check if coarse dirt
-	    if (block.getType() == Material.DIRT && block.getData() == (byte)1) {
-		//plugin.getLogger().info("DEBUG: hitting coarse dirt!");
+	    if (block.getType() == Material.DIRT && block.getData() == (byte) 1) {
+		// plugin.getLogger().info("DEBUG: hitting coarse dirt!");
 		e.setCancelled(true);
 	    }
 	}
     }
-    
+
     // Armor stand events
     @EventHandler(priority = EventPriority.LOWEST)
-    void placeArmorStandEvent(PlayerInteractEvent e){
+    void placeArmorStandEvent(PlayerInteractEvent e) {
 	Player p = e.getPlayer();
 	if (debug) {
 	    plugin.getLogger().info(e.getEventName());
 	}
-	if (!p.getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	if (!IslandGuard.inWorld(p)) {
 	    return;
 	}
 	if (p.isOp()) {
@@ -129,13 +135,13 @@ public class IslandGuardNew implements Listener {
 	    return;
 	}
 	// Check if on island
-	if (plugin.playerIsOnIsland(e.getPlayer())) {
+	if (plugin.getGrid().playerIsOnIsland(e.getPlayer())) {
 	    return;
 	}
 	// Check if they are holding armor stand
 	ItemStack inHand = e.getPlayer().getItemInHand();
 	if (inHand != null && inHand.getType().equals(Material.ARMOR_STAND)) {
-	    //plugin.getLogger().info("DEBUG: stand place cancelled");
+	    // plugin.getLogger().info("DEBUG: stand place cancelled");
 	    e.setCancelled(true);
 	    e.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
 	    e.getPlayer().updateInventory();
@@ -144,27 +150,27 @@ public class IslandGuardNew implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOW)
-    public void ArmorStandDestroy(EntityDamageByEntityEvent e){
+    public void ArmorStandDestroy(EntityDamageByEntityEvent e) {
 	if (debug) {
 	    plugin.getLogger().info(e.getEventName());
 	}
 	if (!(e.getEntity() instanceof LivingEntity)) {
 	    return;
 	}
-	if (!e.getEntity().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	if (!IslandGuard.inWorld(e.getEntity())) {
 	    return;
 	}
-	final LivingEntity livingEntity = (LivingEntity)e.getEntity();
-	if(!livingEntity.getType().equals(EntityType.ARMOR_STAND)){
+	final LivingEntity livingEntity = (LivingEntity) e.getEntity();
+	if (!livingEntity.getType().equals(EntityType.ARMOR_STAND)) {
 	    return;
 	}
-	if(e.getDamager() instanceof Player){
+	if (e.getDamager() instanceof Player) {
 	    Player p = (Player) e.getDamager();
 	    if (p.isOp()) {
 		return;
 	    }
 	    // Check if on island
-	    if (plugin.playerIsOnIsland(p)) {
+	    if (plugin.getGrid().playerIsOnIsland(p)) {
 		return;
 	    }
 	    // This permission bypasses protection
@@ -177,5 +183,3 @@ public class IslandGuardNew implements Listener {
     }
 
 }
-
-

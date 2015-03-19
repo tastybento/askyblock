@@ -10,11 +10,13 @@ import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
 
 /**
- * Provides a programming interface to Island
+ * Provides a programming interface
+ * 
  * @author tastybento
  */
 public class ASkyBlockAPI {
     private static ASkyBlockAPI instance = new ASkyBlockAPI(ASkyBlock.getPlugin());
+
     /**
      * @return the instance
      */
@@ -28,18 +30,6 @@ public class ASkyBlockAPI {
 	this.plugin = plugin;
     }
 
-    /*
-     * Get information about (island): Level Owner Party members Rank (Something
-     * with the top-ten ?) Bedrock coordinates Island bounds Biome
-     * 
-     * Playing with challenges would be interesting: Number of completed
-     * challenges Challenge names / list
-     * 
-     * Now, we could be able to: Play with party members (add, kick, set owner)
-     * Change island biome Complete a challenge Send someone to the Welcome Sign
-     * of an island
-     */
-
     /**
      * @param playerUUID
      * @return HashMap of all of the known challenges with a boolean marking
@@ -50,7 +40,7 @@ public class ASkyBlockAPI {
     }
 
     public Location getHomeLocation(UUID playerUUID) {
-	return plugin.getPlayers().getHomeLocation(playerUUID);
+	return plugin.getPlayers().getHomeLocation(playerUUID,1);
     }
 
     /**
@@ -119,7 +109,7 @@ public class ASkyBlockAPI {
      * @return Location of sign or null if one does not exist
      */
     public Location getWarp(UUID playerUUID) {
-	return plugin.getWarp(playerUUID);
+	return WarpSigns.getWarp(playerUUID);
     }
 
     /**
@@ -130,7 +120,7 @@ public class ASkyBlockAPI {
      *         that spot
      */
     public String getWarpOwner(Location location) {
-	return plugin.getWarpOwner(location);
+	return WarpSigns.getWarpOwner(location);
     }
 
     /**
@@ -161,7 +151,7 @@ public class ASkyBlockAPI {
      * @return true if there is an island in that location, false if not
      */
     public boolean islandAtLocation(Location location) {
-	return plugin.islandAtLocation(location);
+	return plugin.getGrid().islandAtLocation(location);
     }
 
     /**
@@ -174,7 +164,7 @@ public class ASkyBlockAPI {
      * @return true if they are on the island otherwise false.
      */
     public boolean isOnIsland(Player owner, Player target) {
-	return plugin.isOnIsland(owner, target);
+	return plugin.getGrid().isOnIsland(owner, target);
     }
 
     /**
@@ -185,7 +175,7 @@ public class ASkyBlockAPI {
      * @return String set of warps
      */
     public Set<UUID> listWarps() {
-	return plugin.listWarps();
+	return WarpSigns.listWarps();
     }
 
     /**
@@ -197,7 +187,7 @@ public class ASkyBlockAPI {
      * @return true if the location is on an island owner by player
      */
     public boolean locationIsOnIsland(final Player player, final Location loc) {
-	return plugin.locationIsOnIsland(player, loc);
+	return plugin.getGrid().locationIsOnIsland(player, loc);
     }
 
     /**
@@ -210,7 +200,7 @@ public class ASkyBlockAPI {
      *         none
      */
     public Location locationIsOnIsland(final Set<Location> islandTestLocations, final Location loc) {
-	return plugin.locationIsOnIsland(islandTestLocations, loc);
+	return plugin.getGrid().locationIsOnIsland(islandTestLocations, loc);
     }
 
     /**
@@ -222,7 +212,7 @@ public class ASkyBlockAPI {
      * @return - true if they are on their island, otherwise false
      */
     public boolean playerIsOnIsland(Player player) {
-	return plugin.playerIsOnIsland(player);
+	return plugin.getGrid().playerIsOnIsland(player);
     }
 
     /**
@@ -233,7 +223,7 @@ public class ASkyBlockAPI {
      * @return true if the setting was successful
      */
     public boolean setIslandBiome(Location islandLoc, Biome biomeType) {
-	return plugin.setIslandBiome(islandLoc, biomeType);
+	return plugin.getBiomes().setIslandBiome(islandLoc, biomeType);
     }
 
     /**
@@ -244,7 +234,7 @@ public class ASkyBlockAPI {
      * @return true if player is offline, false if online
      */
     public boolean setMessage(UUID playerUUID, String message) {
-	return plugin.setMessage(playerUUID, message);
+	return Messages.setMessage(playerUUID, message);
     }
 
     /**
@@ -255,11 +245,12 @@ public class ASkyBlockAPI {
      * @param message
      */
     public void tellOfflineTeam(UUID playerUUID, String message) {
-	plugin.tellOfflineTeam(playerUUID, message);
+	Messages.tellOfflineTeam(playerUUID, message);
     }
 
     /**
      * Player is in a coop or not
+     * 
      * @param player
      * @return true if player is in a coop, otherwise false
      */
@@ -269,15 +260,40 @@ public class ASkyBlockAPI {
 	}
 	return true;
     }
-    
+
     /**
      * Find out which coop islands player is a part of
+     * 
      * @param player
      * @return set of locations of islands or empty if none
      */
     public Set<Location> getCoopIslands(Player player) {
 	return CoopPlay.getInstance().getCoopIslands(player);
     }
+
+    /**
+     * Provides spawn location
+     * @return Location of spawn's central point
+     */
+    public Location getSpawnLocation() {
+	return plugin.getGrid().getSpawn().getCenter();
+    }
     
+    /**
+     * Provides the spawn range
+     * @return
+     */
+    public int getSpawnRange() {
+	return plugin.getGrid().getSpawn().getProtectionSize();
+    }
+    
+    /**
+     * Checks if a location is at spawn or not
+     * @param location
+     * @return true if at spawn
+     */
+    public boolean isAtSpawn(Location location) {
+	return plugin.getGrid().isAtSpawn(location);
+    }
     
 }

@@ -14,7 +14,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with ASkyBlock.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-package com.wasteofplastic.askyblock;
+package com.wasteofplastic.askyblock.util;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -29,6 +29,7 @@ import java.util.Map;
 public class MapUtil {
     /**
      * Sorts map in descending order
+     * 
      * @param map
      * @return
      */
