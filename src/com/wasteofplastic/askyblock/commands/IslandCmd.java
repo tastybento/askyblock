@@ -1459,7 +1459,12 @@ public class IslandCmd implements CommandExecutor {
 			player.sendMessage(ChatColor.RED + Locale.errorUnknownPlayer);
 			return true;
 		    }
+		    // Check if this player has an island or not
+		    if (plugin.getPlayers().hasIsland(targetPlayerUUID) || plugin.getPlayers().inTeam(targetPlayerUUID)) {
 		    calculateIslandLevel(player, targetPlayerUUID);
+		    } else {
+			player.sendMessage(ChatColor.RED + Locale.errorNoIslandOther);
+		    }
 		    return true;
 		} else {
 		    player.sendMessage(ChatColor.RED + Locale.errorNoPermission);
