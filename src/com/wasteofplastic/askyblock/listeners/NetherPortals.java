@@ -166,7 +166,7 @@ public class NetherPortals implements Listener {
 		    return;
 		}
 		if (!GridManager.isSafeLocation(netherHome)) {
-		    netherHome = plugin.getGrid().bigScan(netherHome, playerUUID, 10);
+		    netherHome = plugin.getGrid().bigScan(netherHome, playerUUID, 32);
 		    //plugin.getLogger().info("DEBUG: Found netherhome at " + netherHome);
 		    if (netherHome == null) {
 			plugin.getLogger().info("Could not find a safe spot to port " + event.getPlayer().getName() + " to Nether island");
