@@ -19,6 +19,7 @@ package com.wasteofplastic.askyblock.listeners;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -39,7 +40,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.BlockIterator;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
-import com.wasteofplastic.askyblock.Locale;
 import com.wasteofplastic.askyblock.Settings;
 
 /**
@@ -50,7 +50,7 @@ import com.wasteofplastic.askyblock.Settings;
  */
 public class AcidInventory implements Listener {
     private final ASkyBlock plugin;
-    private ArrayList<String> lore = new ArrayList<String>(Arrays.asList(Locale.acidLore.split("\n")));
+    private List<String> lore = new ArrayList<String>();
 
     public AcidInventory(ASkyBlock aSkyBlock) {
 	plugin = aSkyBlock;
@@ -70,7 +70,7 @@ public class AcidInventory implements Listener {
 		return;
 	    }
 	    // If this is the minishop - forget it
-	    if (inventory.getName() != null && inventory.getName().equalsIgnoreCase(Locale.islandMiniShopTitle)) {
+	    if (inventory.getName() != null && inventory.getName().equalsIgnoreCase(plugin.myLocale(e.getPlayer().getUniqueId()).islandMiniShopTitle)) {
 		return;
 	    }
 	    if (inventory.contains(Material.WATER_BUCKET)) {
@@ -82,7 +82,8 @@ public class AcidInventory implements Listener {
 			if (item.getType() == Material.WATER_BUCKET) {
 			    // plugin.getLogger().info("Found it!");
 			    ItemMeta meta = item.getItemMeta();
-			    meta.setDisplayName(Locale.acidBucket);
+			    meta.setDisplayName(plugin.myLocale(e.getPlayer().getUniqueId()).acidBucket);
+			    lore = Arrays.asList(plugin.myLocale(e.getPlayer().getUniqueId()).acidLore.split("\n"));
 			    meta.setLore(lore);
 			    item.setItemMeta(meta);
 			}
@@ -97,7 +98,7 @@ public class AcidInventory implements Listener {
 			if (item.getType() == Material.POTION && item.getDurability() == 0) {
 			    // plugin.getLogger().info("Found it!");
 			    ItemMeta meta = item.getItemMeta();
-			    meta.setDisplayName(Locale.acidBottle);
+			    meta.setDisplayName(plugin.myLocale(e.getPlayer().getUniqueId()).acidBottle);
 			    meta.setLore(lore);
 			    item.setItemMeta(meta);
 			}
@@ -121,7 +122,7 @@ public class AcidInventory implements Listener {
 		ItemStack item = e.getItemStack();
 		if (item.getType().equals(Material.WATER_BUCKET)) {
 		    ItemMeta meta = item.getItemMeta();
-		    meta.setDisplayName(Locale.acidBucket);
+		    meta.setDisplayName(plugin.myLocale(e.getPlayer().getUniqueId()).acidBucket);
 		    meta.setLore(lore);
 		    item.setItemMeta(meta);
 		}
@@ -142,8 +143,8 @@ public class AcidInventory implements Listener {
 	// e.getItem().getType().toString());
 	if (e.getItem().getType().equals(Material.POTION) && e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    if (e.getItem().getDurability() == 0) {
-		plugin.getLogger().info(e.getPlayer().getName() + " " + Locale.drankAcidAndDied);
-		plugin.getServer().broadcastMessage(e.getPlayer().getDisplayName() + " " + Locale.drankAcid);
+		plugin.getLogger().info(e.getPlayer().getName() + " " + plugin.myLocale().drankAcidAndDied);
+		plugin.getServer().broadcastMessage(e.getPlayer().getDisplayName() + " " + plugin.myLocale().drankAcid);
 		final ItemStack item = new ItemStack(Material.GLASS_BOTTLE);
 		e.getPlayer().setItemInHand(item);
 		e.getPlayer().setHealth(0D);
@@ -224,7 +225,7 @@ public class AcidInventory implements Listener {
 				if (item.getType().equals(Material.POTION) && item.getDurability() == 0) {
 				    // plugin.getLogger().info("Water bottle found!");
 				    ItemMeta meta = item.getItemMeta();
-				    meta.setDisplayName(Locale.acidBottle);
+				    meta.setDisplayName(plugin.myLocale(e.getPlayer().getUniqueId()).acidBottle);
 				    // ArrayList<String> lore = new
 				    // ArrayList<String>(Arrays.asList("Poison",
 				    // "Beware!", "Do not drink!"));

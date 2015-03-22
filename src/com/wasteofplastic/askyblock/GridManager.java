@@ -1016,15 +1016,15 @@ public class GridManager {
 	    if (!player.performCommand(Settings.SPAWNCOMMAND)) {
 		player.teleport(player.getWorld().getSpawnLocation());
 	    }
-	    player.sendMessage(ChatColor.RED + Locale.warpserrorNotSafe);
+	    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorNotSafe);
 	    return true;
 	}
 	//plugin.getLogger().info("DEBUG: home loc = " + home);
 	player.teleport(home.clone().add(new Vector(0.5D,0D,0.5D)));
 	if (number ==1 ) {
-	    player.sendMessage(ChatColor.GREEN + Locale.islandteleport);
+	    player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).islandteleport);
 	} else {
-	    player.sendMessage(ChatColor.GREEN + Locale.islandteleport + " #" + number);
+	    player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).islandteleport + " #" + number);
 	}
 	return true;
 
@@ -1049,19 +1049,19 @@ public class GridManager {
     public void homeSet(Player player, int number) {
 	// Check if player is in overworld
 	if (!player.getWorld().equals(ASkyBlock.getIslandWorld())) {
-	    player.sendMessage(ChatColor.RED + Locale.setHomeerrorNotOnIsland);
+	    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).setHomeerrorNotOnIsland);
 	    return; 
 	}
 	// Check if player is on island
 	if (!plugin.getGrid().playerIsOnIsland(player)) {
-	    player.sendMessage(ChatColor.RED + Locale.setHomeerrorNotOnIsland);
+	    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).setHomeerrorNotOnIsland);
 	    return;
 	}
 	plugin.getPlayers().setHomeLocation(player.getUniqueId(), player.getLocation(), number);
 	if (number == 1) {
-	    player.sendMessage(ChatColor.GREEN + Locale.setHomehomeSet);
+	    player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).setHomehomeSet);
 	} else {
-	    player.sendMessage(ChatColor.GREEN + Locale.setHomehomeSet + " #" + number);
+	    player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).setHomehomeSet + " #" + number);
 	}
     }
 

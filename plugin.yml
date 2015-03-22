@@ -63,6 +63,12 @@ permissions:
           askyblock.island.expel:
             description: Allows expelling of visitors
             default: true
+          askyblock.island.settings:
+            description: Player can see server settings
+            default: true
+          askyblock.island.lang:
+            description: Player can select a language
+            default: true
       askyblock.team.*:
         children:
           askyblock.team.create:

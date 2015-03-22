@@ -171,10 +171,10 @@ public class TopTen {
      * @return - true if successful, false if no Top Ten list exists
      */
     public static boolean topTenShow(final Player player) {
-	player.sendMessage(ChatColor.GOLD + Locale.topTenheader);
+	player.sendMessage(ChatColor.GOLD + plugin.myLocale(player.getUniqueId()).topTenheader);
 	if (topTenList == null) {
 	    topTenCreate();
-	    // player.sendMessage(ChatColor.RED + Locale.topTenerrorNotReady);
+	    // player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).topTenerrorNotReady);
 	    // return true;
 	}
 	int i = 1;
@@ -192,9 +192,9 @@ public class TopTen {
 		    memberList = memberList.substring(0, memberList.length() - 2);
 		}
 		player.sendMessage(ChatColor.AQUA + "#" + i + ": " + plugin.getPlayers().getName(playerUUID) + " (" + memberList + ") - "
-			+ Locale.levelislandLevel + " " + m.getValue());
+			+ plugin.myLocale(player.getUniqueId()).levelislandLevel + " " + m.getValue());
 	    } else {
-		player.sendMessage(ChatColor.AQUA + "#" + i + ": " + plugin.getPlayers().getName(playerUUID) + " - " + Locale.levelislandLevel + " "
+		player.sendMessage(ChatColor.AQUA + "#" + i + ": " + plugin.getPlayers().getName(playerUUID) + " - " + plugin.myLocale(player.getUniqueId()).levelislandLevel + " "
 			+ m.getValue());
 	    }
 	    if (i++ == 10) {

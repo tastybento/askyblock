@@ -116,12 +116,12 @@ public class LevelCalc extends BukkitRunnable {
 		// Tell offline team members the island level increased.
 		if (plugin.getPlayers().getIslandLevel(targetPlayer) > oldLevel) {
 		    // plugin.getLogger().info("DEBUG: telling offline players");
-		    Messages.tellOfflineTeam(targetPlayer, ChatColor.GREEN + Locale.islandislandLevelis + " " + ChatColor.WHITE
+		    Messages.tellOfflineTeam(targetPlayer, ChatColor.GREEN + plugin.myLocale(targetPlayer).islandislandLevelis + " " + ChatColor.WHITE
 			    + plugin.getPlayers().getIslandLevel(targetPlayer));
 		}
 		if (asker.isOnline()) {
 		    // plugin.getLogger().info("DEBUG: updating player GUI");
-		    asker.sendMessage(ChatColor.GREEN + Locale.islandislandLevelis + " " + ChatColor.WHITE + plugin.getPlayers().getIslandLevel(targetPlayer));
+		    asker.sendMessage(ChatColor.GREEN + plugin.myLocale(asker.getUniqueId()).islandislandLevelis + " " + ChatColor.WHITE + plugin.getPlayers().getIslandLevel(targetPlayer));
 		}
 	    }
 	    this.silent = false;

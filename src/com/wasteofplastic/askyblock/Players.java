@@ -55,6 +55,7 @@ public class Players {
     private String playerName;
     private int resetsLeft;
     private HashMap<Location, Date> kickedList;
+    private String locale;
 
     /**
      * @param uuid
@@ -78,6 +79,7 @@ public class Players {
 	this.playerName = "";
 	this.resetsLeft = Settings.resetLimit;
 	this.kickedList = new HashMap<Location, Date>();
+	this.locale = "";
 	load(uuid);
     }
 
@@ -103,6 +105,8 @@ public class Players {
 		playerName = "";
 	    }
 	}
+	// Locale
+	this.locale = playerInfo.getString("locale","");
 	// plugin.getLogger().info("Loading player..." + playerName);
 	this.hasIsland = playerInfo.getBoolean("hasIsland", false);
 	// plugin.getLogger().info("DEBUG: hasIsland load = " + this.hasIsland);
@@ -230,7 +234,8 @@ public class Players {
 	    coolDownTime.setTime(en.getValue());
 	    playerInfo.set("invitecooldown." + coolDownTime.getTimeInMillis(), Util.getStringLocation(en.getKey()));
 	}
-
+	// Locale
+	playerInfo.set("locale", locale);
 	Util.saveYamlFile(playerInfo, "players/" + uuid.toString() + ".yml");
 
     }
@@ -705,5 +710,20 @@ public class Players {
     public void clearHomeLocations() {
 	homeLocations.clear();
     }
+
+    /**
+     * @return the locale
+     */
+    public String getLocale() {
+        return locale;
+    }
+
+    /**
+     * @param locale the locale to set
+     */
+    public void setLocale(String locale) {
+        this.locale = locale;
+    }
+    
 
 }

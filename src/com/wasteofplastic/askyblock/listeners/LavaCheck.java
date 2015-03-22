@@ -96,7 +96,7 @@ public class LavaCheck implements Listener {
 	 * ItemStack inHand = ((Player)entity).getItemInHand();
 	 * if (inHand != null ) {
 	 * //plugin.getLogger().info("DEBUG: in hand = " + inHand.toString());
-	 * ((Player) entity).sendMessage(ChatColor.RED + Locale.lavaTip);
+	 * ((Player) entity).sendMessage(ChatColor.RED + plugin.myLocale().lavaTip);
 	 * }
 	 * }
 	 * }

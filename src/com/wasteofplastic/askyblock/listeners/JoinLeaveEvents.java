@@ -30,11 +30,10 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.CoopPlay;
+import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.LevelCalc;
-import com.wasteofplastic.askyblock.Locale;
 import com.wasteofplastic.askyblock.Messages;
 import com.wasteofplastic.askyblock.PlayerCache;
-import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.Scoreboards;
 import com.wasteofplastic.askyblock.Settings;
 
@@ -69,7 +68,7 @@ public class JoinLeaveEvents implements Listener {
 	    plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
 		@Override
 		public void run() {
-		    event.getPlayer().sendMessage(ChatColor.AQUA + Locale.newsHeadline);
+		    event.getPlayer().sendMessage(ChatColor.AQUA + plugin.myLocale(event.getPlayer().getUniqueId()).newsHeadline);
 		    int i = 1;
 		    for (String message : messages) {
 			event.getPlayer().sendMessage(i++ + ": " + message);

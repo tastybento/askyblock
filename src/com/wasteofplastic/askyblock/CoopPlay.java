@@ -54,16 +54,16 @@ public class CoopPlay {
 	    for (UUID member : plugin.getPlayers().getMembers(leaderUUID)) {
 		// plugin.getLogger().info("DEBUG: " + member.toString());
 		if (!member.equals(requester.getUniqueId())) {
-		    Player online = plugin.getServer().getPlayer(member);
-		    if (online != null) {
-			online.sendMessage(ChatColor.GOLD
-				+ Locale.coopInvited.replace("[name]", requester.getDisplayName()).replace("[player]", newPlayer.getDisplayName()));
-			online.sendMessage(ChatColor.GOLD + Locale.coopUseExpel);
+		    Player player = plugin.getServer().getPlayer(member);
+		    if (player != null) {
+			player.sendMessage(ChatColor.GOLD
+				+ plugin.myLocale(player.getUniqueId()).coopInvited.replace("[name]", requester.getDisplayName()).replace("[player]", newPlayer.getDisplayName()));
+			player.sendMessage(ChatColor.GOLD + plugin.myLocale(player.getUniqueId()).coopUseExpel);
 		    } else {
 			if (member.equals(leaderUUID)) {
 			    // offline - tell leader
 			    Messages.setMessage(leaderUUID,
-				    Locale.coopInvited.replace("[name]", requester.getDisplayName()).replace("[player]", newPlayer.getDisplayName()));
+				    plugin.myLocale(leaderUUID).coopInvited.replace("[name]", requester.getDisplayName()).replace("[player]", newPlayer.getDisplayName()));
 			}
 		    }
 		}

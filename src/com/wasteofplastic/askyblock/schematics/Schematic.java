@@ -45,8 +45,8 @@ import org.jnbt.ShortTag;
 import org.jnbt.StringTag;
 import org.jnbt.Tag;
 
+import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.GridManager;
-import com.wasteofplastic.askyblock.Locale;
 import com.wasteofplastic.askyblock.Settings;
 
 public class Schematic {
@@ -519,10 +519,10 @@ public class Schematic {
 	    blockToChange = welcomeSign.getBlock();
 	    blockToChange.setType(Material.SIGN_POST);
 	    Sign sign = (Sign) blockToChange.getState();
-	    sign.setLine(0, Locale.signLine1.replace("[player]", player.getName()));
-	    sign.setLine(1, Locale.signLine2.replace("[player]", player.getName()));
-	    sign.setLine(2, Locale.signLine3.replace("[player]", player.getName()));
-	    sign.setLine(3, Locale.signLine4.replace("[player]", player.getName()));
+	    sign.setLine(0, ASkyBlock.getPlugin().myLocale(player.getUniqueId()).signLine1.replace("[player]", player.getName()));
+	    sign.setLine(1, ASkyBlock.getPlugin().myLocale(player.getUniqueId()).signLine2.replace("[player]", player.getName()));
+	    sign.setLine(2, ASkyBlock.getPlugin().myLocale(player.getUniqueId()).signLine3.replace("[player]", player.getName()));
+	    sign.setLine(3, ASkyBlock.getPlugin().myLocale(player.getUniqueId()).signLine4.replace("[player]", player.getName()));
 	    // BlockFace direction = ((org.bukkit.material.Sign)
 	    // sign.getData()).getFacing();
 	    ((org.bukkit.material.Sign) sign.getData()).setFacingDirection(BlockFace.NORTH);

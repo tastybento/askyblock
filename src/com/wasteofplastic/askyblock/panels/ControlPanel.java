@@ -36,7 +36,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
-import com.wasteofplastic.askyblock.Locale;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
@@ -104,7 +103,7 @@ public class ControlPanel implements Listener {
 	    // Get how many the store should be
 	    int size = items.getKeys(false).size() + 8;
 	    size -= (size % 9);
-	    miniShop = Bukkit.createInventory(null, size, Locale.islandMiniShopTitle);
+	    miniShop = Bukkit.createInventory(null, size, plugin.myLocale().islandMiniShopTitle);
 	    // Run through items
 	    int slot = 0;
 	    for (String item : items.getKeys(false)) {
@@ -212,7 +211,7 @@ public class ControlPanel implements Listener {
 	// ASkyBlock plugin = ASkyBlock.getPlugin();
 	int slot = event.getRawSlot();
 	// Settings
-	if (inventory.getName().equalsIgnoreCase(Locale.igsTitle)) {
+	if (inventory.getName().equalsIgnoreCase(plugin.myLocale().igsTitle)) {
 	    if (event.getSlotType() == SlotType.OUTSIDE) {
 		player.closeInventory();
 		return;
@@ -221,7 +220,7 @@ public class ControlPanel implements Listener {
 	    return;
 	}
 	// Challenges
-	if (inventory.getName().equals(Locale.challengesguiTitle)) {
+	if (inventory.getName().equals(plugin.myLocale().challengesguiTitle)) {
 	    event.setCancelled(true);
 	    if (event.getSlotType() == SlotType.OUTSIDE) {
 		player.closeInventory();
@@ -292,7 +291,7 @@ public class ControlPanel implements Listener {
 			    // Check they can afford it
 			    if (!VaultHelper.econ.has(player, Settings.worldName, item.getPrice())) {
 				// message = "You cannot afford that item!";
-				message = (Locale.minishopYouCannotAfford).replace("[description]", item.getDescription());
+				message = (plugin.myLocale().minishopYouCannotAfford).replace("[description]", item.getDescription());
 			    } else {
 				EconomyResponse r = VaultHelper.econ.withdrawPlayer(player, Settings.worldName, item.getPrice());
 				if (r.transactionSuccess()) {
@@ -300,7 +299,7 @@ public class ControlPanel implements Listener {
 				    // item.getQuantity() + " " +
 				    // item.getDescription() + " for " +
 				    // VaultHelper.econ.format(item.getPrice());
-				    message = Locale.minishopYouBought.replace("[number]", Integer.toString(item.getQuantity()));
+				    message = plugin.myLocale().minishopYouBought.replace("[number]", Integer.toString(item.getQuantity()));
 				    message = message.replace("[description]", item.getDescription());
 				    message = message.replace("[price]", VaultHelper.econ.format(item.getPrice()));
 				    player.getInventory().addItem(item.getItemClean());
@@ -308,7 +307,7 @@ public class ControlPanel implements Listener {
 				    // message =
 				    // "There was a problem puchasing that item: "
 				    // + r.errorMessage;
-				    message = (Locale.minishopBuyProblem).replace("[description]", item.getDescription());
+				    message = (plugin.myLocale().minishopBuyProblem).replace("[description]", item.getDescription());
 				}
 			    }
 			}
@@ -320,13 +319,13 @@ public class ControlPanel implements Listener {
 			    // message = "You sold " + item.getQuantity() + " "
 			    // + item.getDescription() + " for " +
 			    // VaultHelper.econ.format(item.getSellPrice());
-			    message = Locale.minishopYouSold.replace("[number]", Integer.toString(item.getQuantity()));
+			    message = plugin.myLocale().minishopYouSold.replace("[number]", Integer.toString(item.getQuantity()));
 			    message = message.replace("[description]", item.getDescription());
 			    message = message.replace("[price]", VaultHelper.econ.format(item.getSellPrice()));
 			} else {
 			    // message =
 			    // "You do not have enough of that item to sell it.";
-			    message = (Locale.minishopSellProblem).replace("[description]", item.getDescription());
+			    message = (plugin.myLocale().minishopSellProblem).replace("[description]", item.getDescription());
 			    ;
 			}
 		    }

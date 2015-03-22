@@ -18,7 +18,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
-import com.wasteofplastic.askyblock.Locale;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.util.Pair;
 import com.wasteofplastic.askyblock.util.Util;
@@ -82,14 +81,14 @@ public class Biomes implements Listener {
 	    // Make sure size is a multiple of 9
 	    int size = items.size() + 8;
 	    size -= (size % 9);
-	    Inventory newPanel = Bukkit.createInventory(null, size, Locale.biomePanelTitle);
+	    Inventory newPanel = Bukkit.createInventory(null, size, plugin.myLocale().biomePanelTitle);
 	    // Fill the inventory and return
 	    for (BiomeItem i : items) {
 		newPanel.addItem(i.getItem());
 	    }
 	    return newPanel;
 	} else {
-	    player.sendMessage(ChatColor.RED + Locale.errorCommandNotReady);
+	    player.sendMessage(ChatColor.RED + plugin.myLocale().errorCommandNotReady);
 	    plugin.getLogger().warning("There are no biomes in config.yml so /island biomes will not work!");
 	}
 	return null;
@@ -104,7 +103,7 @@ public class Biomes implements Listener {
 						    // clicked in
 	int slot = event.getRawSlot();
 	// Check this is the right panel
-	if (!inventory.getName().equals(Locale.biomePanelTitle)) {
+	if (!inventory.getName().equals(plugin.myLocale().biomePanelTitle)) {
 	    return;
 	}
 	if (slot == -999) {
@@ -131,11 +130,11 @@ public class Biomes implements Listener {
 		    double cost = thisPanel.get(slot).getPrice();
 		    if (cost > 0D) {
 			if (!VaultHelper.econ.has(player, cost)) {
-			    player.sendMessage(ChatColor.RED + Locale.minishopYouCannotAfford.replace("[description]", VaultHelper.econ.format(cost)));
+			    player.sendMessage(ChatColor.RED + plugin.myLocale().minishopYouCannotAfford.replace("[description]", VaultHelper.econ.format(cost)));
 			    return;
 			} else {
 			    VaultHelper.econ.withdrawPlayer(player, Settings.worldName, cost);
-			    player.sendMessage(ChatColor.GREEN + Locale.biomeYouBought.replace("[cost]", VaultHelper.econ.format(cost)));
+			    player.sendMessage(ChatColor.GREEN + plugin.myLocale().biomeYouBought.replace("[cost]", VaultHelper.econ.format(cost)));
 			}
 		    }
 		}
@@ -147,7 +146,7 @@ public class Biomes implements Listener {
 	    } else {
 		setIslandBiome(plugin.getPlayers().getIslandLocation(player.getUniqueId()), biome);
 	    }
-	    player.sendMessage(ChatColor.GREEN + Locale.biomeSet.replace("[biome]", thisPanel.get(slot).getName()));
+	    player.sendMessage(ChatColor.GREEN + plugin.myLocale().biomeSet.replace("[biome]", thisPanel.get(slot).getName()));
 	}
 	return;
     }
@@ -348,12 +347,14 @@ public class Biomes implements Listener {
 	default:
 	    break;
 	}
-	// Update chunks
+	// Update chunks - does not do anything any more
+	/*
 	for (Pair p : chunks) {
 	    islandLoc.getWorld().refreshChunk(p.getLeft(), p.getRight());
 	    // plugin.getLogger().info("DEBUG: refreshing " + p.getLeft() + ","
 	    // + p.getRight());
 	}
+	*/
 	return true;
     }
 }
