@@ -469,7 +469,7 @@ public class Locale {
      * Reloads the locale file
      */
     public void reloadLocale(String localeName) {
-	plugin.getLogger().info("DEBUG: loading local file " + localeName + ".yml");
+	//plugin.getLogger().info("DEBUG: loading local file " + localeName + ".yml");
 	// Make directory if it doesn't exist
 	File localeDir = new File(plugin.getDataFolder() + File.separator + "locale");
 	if (!localeDir.exists()) {
@@ -479,13 +479,13 @@ public class Locale {
 	    localeFile = new File(plugin.getDataFolder() + File.separator + "locale", localeName + ".yml");
 	}
 	if (localeFile.exists()) {
-	    plugin.getLogger().info("DEBUG: File exists!");
+	    //plugin.getLogger().info("DEBUG: File exists!");
 	    locale = YamlConfiguration.loadConfiguration(localeFile);
 	} else {
 	    // Look for defaults in the jar
 	    InputStream defLocaleStream = plugin.getResource("locale" + File.separator + localeName + ".yml");
 	    if (defLocaleStream != null) {
-		plugin.getLogger().info("DEBUG: Saving from jar");
+		//plugin.getLogger().info("DEBUG: Saving from jar");
 		plugin.saveResource("locale" + File.separator + localeName + ".yml", true);
 		localeFile = new File(plugin.getDataFolder() + File.separator + "locale", localeName + ".yml");
 		locale = YamlConfiguration.loadConfiguration(localeFile);
