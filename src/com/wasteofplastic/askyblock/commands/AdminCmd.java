@@ -438,20 +438,18 @@ public class AdminCmd implements CommandExecutor {
 		    return true;
 		}
 		sender.sendMessage(ChatColor.GREEN + "Warp sign found!");
-		Location closestBedRock = getClosestIsland(((Player) sender).getLocation());
-		if (closestBedRock == null) {
-		    sender.sendMessage(ChatColor.RED + "Sorry, could not find island bedrock. Move closer?");
-		    return true;
-		}
 		// Find out whose island this is
 		// plugin.getLogger().info("DEBUG: closest bedrock: " +
 		// closestBedRock.toString());
-		UUID target = plugin.getPlayers().getPlayerFromIslandLocation(closestBedRock);
+		UUID target = plugin.getPlayers().getPlayerFromIslandLocation(p.getLocation());
 		if (target == null) {
 		    sender.sendMessage(ChatColor.RED + "This island is not owned by anyone right now - recommend that sign is removed.");
 		    return true;
 		}
 		if (WarpSigns.addWarp(target, lastBlock.getLocation())) {
+		    // Change sign color to green
+		    sign.setLine(0, ChatColor.GREEN + plugin.myLocale().warpswelcomeLine);
+		    sign.update();
 		    sender.sendMessage(ChatColor.GREEN + "Warp rescued and assigned to " + plugin.getPlayers().getName(target));
 		    return true;
 		}
