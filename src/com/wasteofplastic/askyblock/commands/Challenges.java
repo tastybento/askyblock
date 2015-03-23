@@ -110,9 +110,6 @@ public class Challenges implements CommandExecutor {
 	    if (cmd[0].equalsIgnoreCase("help") || cmd[0].equalsIgnoreCase("complete") || cmd[0].equalsIgnoreCase("c")) {
 		sender.sendMessage(ChatColor.GOLD + plugin.myLocale(player.getUniqueId()).challengeshelp1);
 		sender.sendMessage(ChatColor.GOLD + plugin.myLocale(player.getUniqueId()).challengeshelp2);
-		sender.sendMessage(ChatColor.GOLD + plugin.myLocale(player.getUniqueId()).challengescolors);
-		sender.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).challengesincomplete + ChatColor.DARK_GREEN + plugin.myLocale(player.getUniqueId()).challengescompleteNotRepeatable
-			+ ChatColor.AQUA + plugin.myLocale(player.getUniqueId()).challengescompleteRepeatable);
 	    } else if (isLevelAvailable(player, getChallengeConfig().getString("challenges.challengeList." + cmd[0].toLowerCase() + ".level"))) {
 		// Provide info on the challenge
 		// Challenge Name
