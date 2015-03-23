@@ -893,7 +893,7 @@ public class IslandCmd implements CommandExecutor {
 		    if (warpList.isEmpty()) {
 			player.sendMessage(ChatColor.YELLOW + plugin.myLocale(player.getUniqueId()).warpserrorNoWarpsYet);
 			if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.addwarp") && plugin.getGrid().playerIsOnIsland(player)) {
-			    player.sendMessage(ChatColor.YELLOW + plugin.myLocale(player.getUniqueId()).warpswarpTip);
+			    player.sendMessage(ChatColor.YELLOW + plugin.myLocale().warpswarpTip);
 			}
 			return true;
 		    } else {
@@ -911,7 +911,7 @@ public class IslandCmd implements CommandExecutor {
 			}
 			player.sendMessage(ChatColor.YELLOW + plugin.myLocale(player.getUniqueId()).warpswarpsAvailable + ": " + ChatColor.WHITE + wlist);
 			if (!hasWarp && (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.addwarp"))) {
-			    player.sendMessage(ChatColor.YELLOW + plugin.myLocale(player.getUniqueId()).warpswarpTip);
+			    player.sendMessage(ChatColor.YELLOW + plugin.myLocale().warpswarpTip);
 			}
 			return true;
 		    }
@@ -1434,7 +1434,7 @@ public class IslandCmd implements CommandExecutor {
 		    if (warpList.isEmpty()) {
 			player.sendMessage(ChatColor.YELLOW + plugin.myLocale(player.getUniqueId()).warpserrorNoWarpsYet);
 			if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.addwarp")) {
-			    player.sendMessage(ChatColor.YELLOW + plugin.myLocale(player.getUniqueId()).warpswarpTip);
+			    player.sendMessage(ChatColor.YELLOW + plugin.myLocale().warpswarpTip);
 			} else {
 			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
 			}

@@ -328,9 +328,9 @@ public class Schematic {
 		    Block block = new Location(world, x, y, z).add(blockLoc).getBlock();
 		    try {
 			// Do not post air
-			if (blocks[index] != 0) {
-			    block.setTypeIdAndData(blocks[index], data[index], Settings.usePhysics);
-			}
+			//if (blocks[index] != 0) {
+			block.setTypeIdAndData(blocks[index], data[index], Settings.usePhysics);
+			//}
 		    } catch (Exception e) {
 			Bukkit.getLogger().info("Could not set (" + x + "," + y + "," + z + ") block ID:" + blocks[index] + " block data = " + data[index]);
 		    }

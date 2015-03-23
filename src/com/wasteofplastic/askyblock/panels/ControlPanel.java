@@ -211,7 +211,7 @@ public class ControlPanel implements Listener {
 	// ASkyBlock plugin = ASkyBlock.getPlugin();
 	int slot = event.getRawSlot();
 	// Settings
-	if (inventory.getName().equalsIgnoreCase(plugin.myLocale().igsTitle)) {
+	if (inventory.getName().equalsIgnoreCase(plugin.myLocale(player.getUniqueId()).igsTitle)) {
 	    if (event.getSlotType() == SlotType.OUTSIDE) {
 		player.closeInventory();
 		return;
@@ -220,7 +220,7 @@ public class ControlPanel implements Listener {
 	    return;
 	}
 	// Challenges
-	if (inventory.getName().equals(plugin.myLocale().challengesguiTitle)) {
+	if (inventory.getName().equals(plugin.myLocale(player.getUniqueId()).challengesguiTitle)) {
 	    event.setCancelled(true);
 	    if (event.getSlotType() == SlotType.OUTSIDE) {
 		player.closeInventory();
