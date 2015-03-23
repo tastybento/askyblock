@@ -42,6 +42,7 @@ import org.bukkit.util.Vector;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.GridManager;
+import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
@@ -154,22 +155,19 @@ public class NetherPortals implements Listener {
 	    UUID playerUUID = event.getPlayer().getUniqueId();
 	    World world = ASkyBlock.getNetherWorld();
 	    if (Settings.newNether) {
-		Location netherHome = null;
-		if (plugin.getPlayers().inTeam(playerUUID)) {
-		    netherHome = plugin.getPlayers().getTeamIslandLocation(playerUUID).toVector().toLocation(world);
-		} else {
-		    netherHome = plugin.getPlayers().getIslandLocation(playerUUID).toVector().toLocation(world);
-		}
-		if (netherHome == null) {
+		// Get location of the island where the player is at
+		Island island = plugin.getGrid().getIslandAt(currentLocation);
+		if (island == null) {
 		    event.setCancelled(true);
 		    return;
 		}
+		Location netherHome = island.getCenter().toVector().toLocation(world);
 		if (!GridManager.isSafeLocation(netherHome)) {
-		    netherHome = plugin.getGrid().bigScan(netherHome, playerUUID, 32);
+		    netherHome = plugin.getGrid().bigScan(netherHome, 32);
 		    //plugin.getLogger().info("DEBUG: Found netherhome at " + netherHome);
 		    if (netherHome == null) {
 			plugin.getLogger().info("Could not find a safe spot to port " + event.getPlayer().getName() + " to Nether island");
-			event.getPlayer().sendMessage(plugin.myLocale(event.getPlayer().getUniqueId()).warpserrorNotSafe);
+			event.getPlayer().sendMessage(plugin.myLocale(playerUUID).warpserrorNotSafe);
 			event.setCancelled(true);
 			return;
 		    }

@@ -928,7 +928,7 @@ public class GridManager {
 	    }
 	}
 	// Try a full protected area scan (-1 = full area scan)
-	l = bigScan(l, p, -1);
+	l = bigScan(l, -1);
 	// Save if it is successful
 	if (l != null) {
 	    plugin.getPlayers().setHomeLocation(p, l, number);
@@ -939,28 +939,34 @@ public class GridManager {
     /**
      * This is a generic scan that can work in the overworld or the nether
      * @param l - location around which to scan
-     * @param p - the player whose island this is
      * @param i - the range to scan for a location < 0 means the full island.
      * @return - safe location, or null if none can be found
      */
-    public Location bigScan(Location l, UUID p, int i) {
-	Island island = plugin.getGrid().getIsland(p);
-	if (island == null) {
-	    return null;
-	}
-	int minX = island.getMinProtectedX();
-	int minZ = island.getMinProtectedZ();
-	int maxX = minX + island.getProtectionSize();
-	int maxZ = minZ + island.getProtectionSize();
-	int height = l.getWorld().getMaxHeight();
-	int depth = 0;
+    public Location bigScan(Location l, int i) {
+	final int minX;
+	final int minZ;
+	final int maxX;
+	final int maxZ;
+	final int height;
+	final int depth;
 	if (i > 0) {
-	    minX = island.getCenter().getBlockX() - i;
-	    minZ = island.getCenter().getBlockZ() - i;
-	    maxX = island.getCenter().getBlockX() + i;
-	    maxZ = island.getCenter().getBlockZ() + i;
-	    height = island.getCenter().getBlockY() + i;
-	    depth = island.getCenter().getBlockY() - i;
+	    minX = l.getBlockX() - i;
+	    minZ = l.getBlockZ() - i;
+	    maxX = l.getBlockX() + i;
+	    maxZ = l.getBlockZ() + i;
+	    height = l.getBlockY() + i;
+	    depth = l.getBlockY() - i;
+	} else {
+	    Island island = plugin.getGrid().getIslandAt(l);
+	    if (island == null) {
+		return null;
+	    }
+	    minX = island.getMinProtectedX();
+	    minZ = island.getMinProtectedZ();
+	    maxX = minX + island.getProtectionSize();
+	    maxZ = minZ + island.getProtectionSize();
+	    height = l.getWorld().getMaxHeight();
+	    depth = 0;
 	}
 
 
@@ -987,6 +993,13 @@ public class GridManager {
 	return null;
     }
 
+    /**
+     * Teleport player to a home location. If one cannot be found a search is done to
+     * find a safe place.
+     * @param player
+     * @param number - home location to do to
+     * @return true if successful, false if not
+     */
     public boolean homeTeleport(final Player player, int number) {
 	Location home = null;
 	home = getSafeHomeLocation(player.getUniqueId(), number);
@@ -1011,6 +1024,7 @@ public class GridManager {
 	}
 	//plugin.getLogger().info("DEBUG: home loc = " + home);
 	player.teleport(home.clone().add(new Vector(0.5D,0D,0.5D)));
+	//player.sendBlockChange(home, Material.GLOWSTONE, (byte)0);
 	if (number ==1 ) {
 	    player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).islandteleport);
 	} else {

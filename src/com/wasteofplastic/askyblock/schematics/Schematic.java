@@ -101,7 +101,7 @@ public class Schematic {
 	    // Combine the AddBlocks data with the first 8-bit block ID
 	    for (int index = 0; index < blockId.length; index++) {
 		if ((index >> 1) >= addId.length) { // No corresponding
-						    // AddBlocks index
+		    // AddBlocks index
 		    blocks[index] = (short) (blockId[index] & 0xFF);
 		} else {
 		    if ((index & 1) == 0) {
@@ -582,5 +582,4 @@ public class Schematic {
 	}
 	return expected.cast(tag);
     }
-
 }
