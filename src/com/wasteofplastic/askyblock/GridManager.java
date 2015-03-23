@@ -856,7 +856,7 @@ public class GridManager {
 	    l = plugin.getPlayers().getHomeLocation(p, number);
 	}
 	// Check if it is safe
-	plugin.getLogger().info("DEBUG: Home location " + l);
+	//plugin.getLogger().info("DEBUG: Home location " + l);
 	if (l != null) {
 	    if (isSafeLocation(l)) {
 		return l;
@@ -905,14 +905,14 @@ public class GridManager {
 	// getLogger().info("DEBUG: If these island locations are not safe, then we need to get creative");
 	// If these island locations are not safe, then we need to get creative
 	// Try the default location
-	plugin.getLogger().info("DEBUG: default");
+	//plugin.getLogger().info("DEBUG: default");
 	Location dl = new Location(l.getWorld(), l.getX() + 0.5D, l.getY() + 5D, l.getZ() + 2.5D, 0F, 30F);
 	if (isSafeLocation(dl)) {
 	    plugin.getPlayers().setHomeLocation(p, dl, number);
 	    return dl;
 	}
 	// Try just above the bedrock
-	plugin.getLogger().info("DEBUG: above bedrock");
+	//plugin.getLogger().info("DEBUG: above bedrock");
 	dl = new Location(l.getWorld(), l.getX() + 0.5D, l.getY() + 5D, l.getZ() + 0.5D, 0F, 30F);
 	if (isSafeLocation(dl)) {
 	    plugin.getPlayers().setHomeLocation(p, dl, number);
