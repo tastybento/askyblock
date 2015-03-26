@@ -1178,12 +1178,12 @@ public class GridManager {
 	if (plugin.getPlayers().hasIsland(player.getUniqueId())) {
 	    islandTestLocations.add(plugin.getPlayers().getIslandLocation(player.getUniqueId()));
 	    // If new Nether
-	    if (Settings.newNether) {
+	    if (Settings.createNether && Settings.newNether) {
 		islandTestLocations.add(netherIsland(plugin.getPlayers().getIslandLocation(player.getUniqueId())));
 	    }
 	} else if (plugin.getPlayers().inTeam(player.getUniqueId())) {
 	    islandTestLocations.add(plugin.getPlayers().getTeamIslandLocation(player.getUniqueId()));
-	    if (Settings.newNether) {
+	    if (Settings.createNether && Settings.newNether) {
 		islandTestLocations.add(netherIsland(plugin.getPlayers().getTeamIslandLocation(player.getUniqueId())));
 	    }
 	}

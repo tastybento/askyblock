@@ -456,6 +456,7 @@ biomes:
   HELL:
     icon: LAVA_BUCKET
     cost: 1000
+    # Note, this permission can be anything you like
     permission: askyblock.biomes.hell
     friendlyname: Nether
     description: Warning - all water, snow and ice will be removed.
@@ -464,6 +465,7 @@ biomes:
     description: Lush jungle. Warning - Ice or snow have to go.
   MUSHROOM_ISLAND:
     icon: RED_MUSHROOM
+    # Note, this permission can be anything you like
     permission: askyblock.biomes.mushoom_island
     description: Mushroom island
   PLAINS:

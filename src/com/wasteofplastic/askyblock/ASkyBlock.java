@@ -1214,7 +1214,7 @@ public class ASkyBlock extends JavaPlugin {
      * @return the netherWorld
      */
     public static World getNetherWorld() {
-	if (netherWorld == null) {
+	if (netherWorld == null && Settings.createNether) {
 	    if (plugin.getServer().getWorld(Settings.worldName + "_nether") == null) {
 		Bukkit.getLogger().info("Creating " + plugin.getName() + "'s Nether...");
 	    }

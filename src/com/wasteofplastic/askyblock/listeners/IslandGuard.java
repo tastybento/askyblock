@@ -125,7 +125,7 @@ public class IslandGuard implements Listener {
 	if (loc.getWorld().equals(ASkyBlock.getIslandWorld())) {
 	    return true;
 	}
-	if (Settings.newNether && loc.getWorld().equals(ASkyBlock.getNetherWorld())) {
+	if (Settings.createNether && Settings.newNether && loc.getWorld().equals(ASkyBlock.getNetherWorld())) {
 	    return true;
 	}
 	return false;
@@ -592,7 +592,7 @@ public class IslandGuard implements Listener {
 	if (debug) {
 	    plugin.getLogger().info(e.getEventName());
 	}
-	if (!inWorld(e.getFrom())) {
+	if (!inWorld(e.getFrom()) || e.getTo() == null) {
 	    return;
 	}
 	// Check if ready
@@ -613,8 +613,8 @@ public class IslandGuard implements Listener {
 		return;
 	    }
 	}
-	// plugin.getLogger().info("DEBUG: From : " + e.getFrom());
-	// plugin.getLogger().info("DEBUG: To : " + e.getTo());
+	//plugin.getLogger().info("DEBUG: From : " + e.getFrom());
+	//plugin.getLogger().info("DEBUG: To : " + e.getTo());
 	// Teleporting to a locked island
 	Island islandTo = plugin.getGrid().getProtectedIslandAt(e.getTo());
 	// Announcement entering
