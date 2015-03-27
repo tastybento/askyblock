@@ -476,17 +476,17 @@ public class Locale {
 	    localeDir.mkdir();
 	}
 	if (localeFile == null) {
-	    localeFile = new File(plugin.getDataFolder() + File.separator + "locale", localeName + ".yml");
+	    localeFile = new File(localeDir.getPath(), localeName + ".yml");
 	}
 	if (localeFile.exists()) {
 	    //plugin.getLogger().info("DEBUG: File exists!");
 	    locale = YamlConfiguration.loadConfiguration(localeFile);
 	} else {
 	    // Look for defaults in the jar
-	    InputStream defLocaleStream = plugin.getResource("locale" + File.separator + localeName + ".yml");
+	    InputStream defLocaleStream = plugin.getResource("locale/" + localeName + ".yml");
 	    if (defLocaleStream != null) {
 		//plugin.getLogger().info("DEBUG: Saving from jar");
-		plugin.saveResource("locale" + File.separator + localeName + ".yml", true);
+		plugin.saveResource("locale/" + localeName + ".yml", true);
 		localeFile = new File(plugin.getDataFolder() + File.separator + "locale", localeName + ".yml");
 		locale = YamlConfiguration.loadConfiguration(localeFile);
 		//locale.setDefaults(defLocale);
@@ -497,9 +497,9 @@ public class Locale {
 		    locale = YamlConfiguration.loadConfiguration(localeFile);
 		} else {
 		    // Look for defaults in the jar
-		    defLocaleStream = plugin.getResource("locale" + File.separator + "locale.yml");
+		    defLocaleStream = plugin.getResource("locale/locale.yml");
 		    if (defLocaleStream != null) {
-			plugin.saveResource("locale" + File.separator + "locale.yml", true);
+			plugin.saveResource("locale/locale.yml", true);
 			localeFile = new File(plugin.getDataFolder() + File.separator + "locale", "locale.yml");
 			locale = YamlConfiguration.loadConfiguration(localeFile);
 		    } else {
