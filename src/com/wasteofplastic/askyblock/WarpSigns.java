@@ -94,7 +94,7 @@ public class WarpSigns implements Listener {
     public void onSignBreak(BlockBreakEvent e) {
 	Block b = e.getBlock();
 	Player player = e.getPlayer();
-	if (b.getWorld().getName().equals(Settings.worldName)) {
+	if (b.getWorld().equals(ASkyBlock.getIslandWorld())) {
 	    if (b.getType().equals(Material.SIGN_POST)) {
 		Sign s = (Sign) b.getState();
 		if (s != null) {
@@ -135,18 +135,18 @@ public class WarpSigns implements Listener {
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
     public void onSignWarpCreate(SignChangeEvent e) {
-	// plugin.plugin.getLogger().info("SignChangeEvent called");
+	//plugin.getLogger().info("DEBUG: SignChangeEvent called");
 	String title = e.getLine(0);
 	Player player = e.getPlayer();
-	if (player.getWorld().getName().equals(Settings.worldName)) {
+	if (player.getWorld().equals(ASkyBlock.getIslandWorld())) {
+	    //plugin.getLogger().info("DEBUG: Correct world");
 	    if (e.getBlock().getType().equals(Material.SIGN_POST)) {
-		// plugin.plugin.getLogger().info("Correct world");
-		// plugin.plugin.getLogger().info("The first line of the sign says "
-		// + title);
+		
+		//plugin.getLogger().info("DEBUG: The first line of the sign says " + title);
 		// Check if someone is changing their own sign
 		// This should never happen !!
 		if (title.equalsIgnoreCase(plugin.myLocale().warpswelcomeLine)) {
-		    // plugin.plugin.getLogger().info("Welcome sign detected");
+		    //plugin.getLogger().info("DEBUG: Welcome sign detected");
 		    // Welcome sign detected - check permissions
 		    if (!(VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.addwarp"))) {
 			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorNoPerm);
@@ -161,7 +161,7 @@ public class WarpSigns implements Listener {
 		    // Check if the player already has a sign
 		    final Location oldSignLoc = getWarp(player.getUniqueId());
 		    if (oldSignLoc == null) {
-			// plugin.plugin.getLogger().info("Player does not have a sign already");
+			//plugin.getLogger().info("DEBUG: Player does not have a sign already");
 			// First time the sign has been placed or this is a new
 			// sign
 			if (addWarp(player.getUniqueId(), e.getBlock().getLocation())) {
@@ -172,19 +172,19 @@ public class WarpSigns implements Listener {
 			    e.setLine(0, ChatColor.RED + plugin.myLocale().warpswelcomeLine);
 			}
 		    } else {
-			// plugin.plugin.getLogger().info("Player already has a Sign");
+			//plugin.getLogger().info("DEBUG: Player already has a Sign");
 			// A sign already exists. Check if it still there and if
 			// so,
 			// deactivate it
 			Block oldSignBlock = oldSignLoc.getBlock();
 			if (oldSignBlock.getType().equals(Material.SIGN_POST)) {
 			    // The block is still a sign
-			    // plugin.plugin.getLogger().info("The block is still a sign");
+			    //plugin.getLogger().info("DEBUG: The block is still a sign");
 			    Sign oldSign = (Sign) oldSignBlock.getState();
 			    if (oldSign != null) {
-				// plugin.plugin.getLogger().info("Sign block is a sign");
+				//plugin.getLogger().info("DEBUG: Sign block is a sign");
 				if (oldSign.getLine(0).equalsIgnoreCase(ChatColor.GREEN + plugin.myLocale().warpswelcomeLine)) {
-				    // plugin.plugin.getLogger().info("Old sign had a green welcome");
+				    //plugin.getLogger().info("DEBUG: Old sign had a green welcome");
 				    oldSign.setLine(0, ChatColor.RED + plugin.myLocale().warpswelcomeLine);
 				    oldSign.update();
 				    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpsdeactivate);
@@ -239,6 +239,7 @@ public class WarpSigns implements Listener {
 	    try {
 		UUID playerUUID = UUID.fromString(s);
 		Location l = Util.getLocationString((String) temp.get(s));
+		plugin.getLogger().info("DEBUG: Loading warp at " + l);
 		Block b = l.getBlock();
 		// Check that a warp sign is still there
 		if (b.getType().equals(Material.SIGN_POST)) {
