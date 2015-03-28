@@ -211,7 +211,7 @@ public class ControlPanel implements Listener {
 	// ASkyBlock plugin = ASkyBlock.getPlugin();
 	int slot = event.getRawSlot();
 	// Settings
-	if (inventory.getName().equalsIgnoreCase(plugin.myLocale(player.getUniqueId()).igsTitle)) {
+	if (inventory.getName().equalsIgnoreCase(plugin.myLocale().igsTitle)) {
 	    if (event.getSlotType() == SlotType.OUTSIDE) {
 		player.closeInventory();
 		return;

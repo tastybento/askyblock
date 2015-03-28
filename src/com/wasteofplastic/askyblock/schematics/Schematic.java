@@ -21,8 +21,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -36,6 +38,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.BlockVector;
+import org.bukkit.util.Vector;
 import org.jnbt.ByteArrayTag;
 import org.jnbt.CompoundTag;
 import org.jnbt.IntTag;
@@ -197,6 +200,14 @@ public class Schematic {
 	return tileEntitiesMap;
     }
 
+    /**
+     * This method pastes a schematic and returns a location where a cow (or other entity)
+     * could be placed. Actually, the location should be that of a grass block.
+     * @param world
+     * @param loc
+     * @param player
+     * @return Location of highest grass block
+     */
     @SuppressWarnings("deprecation")
     public Location pasteSchematic(final World world, final Location loc, Player player) {
 	// See if WorldEdit is loaded
@@ -235,6 +246,7 @@ public class Schematic {
 	Location chest = null;
 	Location welcomeSign = null;
 	Location grass = null;
+	Set<Vector> grassBlocks = new HashSet<Vector>();
 	for (int x = 0; x < width; ++x) {
 	    for (int y = 0; y < height; ++y) {
 		for (int z = 0; z < length; ++z) {
@@ -246,8 +258,7 @@ public class Schematic {
 			// Last bedrock
 			if (bedrock == null || bedrock.getY() < y) {
 			    bedrock = new Location(world, x, y, z);
-			    // Bukkit.getLogger().info("DEBUG higher bedrock found:"
-			    // + bedrock.toString());
+			    //Bukkit.getLogger().info("DEBUG higher bedrock found:" + bedrock.toString());
 			}
 		    } else if (blocks[index] == 54) {
 			// Last chest
@@ -267,24 +278,7 @@ public class Schematic {
 			}
 		    } else if (blocks[index] == 2) {
 			// Grass
-			if (grass == null || grass.getY() < y) {
-			    grass = new Location(world, x, y, z);
-			    // Bukkit.getLogger().info("DEBUG higher grass found:"
-			    // + grass.toString());
-			}
-			// Grass
-			if (grass.getY() == y && grass.getX() < x) {
-			    grass = new Location(world, x, y, z);
-			    // Bukkit.getLogger().info("DEBUG more x found:" +
-			    // grass.toString());
-			}
-			// Grass
-			if (grass.getY() == y || grass.getZ() < z) {
-			    grass = new Location(world, x, y, z);
-			    // Bukkit.getLogger().info("DEBUG more Z found:" +
-			    // grass.toString());
-			}
-
+			grassBlocks.add(new Vector(x,y,z));
 		    }
 		}
 	    }
@@ -305,19 +299,19 @@ public class Schematic {
 	 * return null;
 	 * }
 	 */
-	if (grass == null) {
+	if (grassBlocks.isEmpty()) {
 	    Bukkit.getLogger().severe("Schematic must have at least one grass block in it!");
 	    return null;
 	}
 	// Center on the last bedrock location
-	// Bukkit.getLogger().info("DEBUG bedrock is:" + bedrock.toString());
+	//Bukkit.getLogger().info("DEBUG bedrock is:" + bedrock.toString());
 	// Bukkit.getLogger().info("DEBUG loc is before subtract:" +
 	// loc.toString());
 	Location blockLoc = new Location(world, loc.getX(), loc.getY(), loc.getZ());
 	blockLoc.subtract(bedrock);
 	// Bukkit.getLogger().info("DEBUG loc is after subtract:" +
 	// loc.toString());
-	// Bukkit.getLogger().info("DEBUG blockloc is:" + blockLoc.toString());
+	//Bukkit.getLogger().info("DEBUG blockloc is:" + blockLoc.toString());
 	// Bukkit.getLogger().info("DEBUG there are " + tileEntitiesMap.size() +
 	// " tile entities in the schematic");
 	// Bukkit.getLogger().info("Placing blocks...");
@@ -354,14 +348,14 @@ public class Schematic {
 			// type +=256;
 			// }
 			// Do not post air
-			if (blocks[index] != 0) {
-			    block.setTypeIdAndData(blocks[index], data[index], Settings.usePhysics);
-			    // block.setTypeId(blocks[index]);
-			    // block.setData(data[index]);
-			    // Bukkit.getLogger().info(x + "," + y + "," + z +
-			    // " " + block.getType() + "(" + blocks[index] +
-			    // "):" + data[index]);
-			}
+			//if (blocks[index] != 0) {
+			block.setTypeIdAndData(blocks[index], data[index], Settings.usePhysics);
+			// block.setTypeId(blocks[index]);
+			// block.setData(data[index]);
+			// Bukkit.getLogger().info(x + "," + y + "," + z +
+			// " " + block.getType() + "(" + blocks[index] +
+			// "):" + data[index]);
+			//}
 			// Using this command sometimes doesn't set the data
 			// correctly...
 			// block.setTypeIdAndData(type, blockData[index], true);
@@ -498,13 +492,32 @@ public class Schematic {
 		}
 	    }
 	}
-	grass.subtract(bedrock);
-	grass.add(loc);
-	while (!GridManager.isSafeLocation(grass) && grass.getY() < 250) {
-	    grass.setY(grass.getY() + 1.1D);
+	// Go through all the grass blocks and try to find a safe one
+	// Sort by height
+	List<Vector> sorted = new ArrayList<Vector>();
+	for (Vector v : grassBlocks) {
+	    v.subtract(bedrock.toVector());
+	    v.add(loc.toVector());
+	    v.add(new Vector(0.5D,1.1D,0.5D)); // Center of block
+	    //if (GridManager.isSafeLocation(v.toLocation(world))) {
+		// Add to sorted list
+		boolean inserted = false;
+		for (int i = 0; i < sorted.size(); i++) {
+		    if (v.getBlockY() > sorted.get(i).getBlockY()) {
+			sorted.add(i, v);
+			inserted = true;
+			break;
+		    }
+		}
+		if (!inserted) {
+		    // just add to the end of the list
+		    sorted.add(v);
+		}
+	    //}
 	}
+	grass = sorted.get(0).toLocation(world);
+	//Bukkit.getLogger().info("DEBUG cow location " + grass.toString());
 	Block blockToChange = null;
-	// Bukkit.getLogger().info("DEBUG cow location " + grass.toString());
 	// world.spawnEntity(grass, EntityType.COW);
 	// Place a helpful sign in front of player
 	if (welcomeSign != null) {
