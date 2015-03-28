@@ -239,7 +239,7 @@ public class WarpSigns implements Listener {
 	    try {
 		UUID playerUUID = UUID.fromString(s);
 		Location l = Util.getLocationString((String) temp.get(s));
-		plugin.getLogger().info("DEBUG: Loading warp at " + l);
+		//plugin.getLogger().info("DEBUG: Loading warp at " + l);
 		Block b = l.getBlock();
 		// Check that a warp sign is still there
 		if (b.getType().equals(Material.SIGN_POST)) {
