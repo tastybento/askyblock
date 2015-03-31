@@ -527,6 +527,10 @@ public class AdminCmd implements CommandExecutor {
 		} else {
 		    sender.sendMessage(ChatColor.YELLOW + plugin.myLocale().deleteremoving.replace("[name]", name));
 		    new DeleteIslandChunk(plugin, island.getCenter());
+		    // Delete the new nether island too (if it exists)
+		    if (Settings.createNether && Settings.newNether) {
+			new DeleteIslandChunk(plugin, island.getCenter().toVector().toLocation(ASkyBlock.getNetherWorld()));
+		    }
 		    return true;
 		}
 	    }

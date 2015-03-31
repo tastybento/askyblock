@@ -486,6 +486,10 @@ public class ASkyBlock extends JavaPlugin {
 		    if (islandLoc.getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 			grid.removeMobsFromIsland(islandLoc);
 			new DeleteIslandChunk(this, islandLoc);
+			// Delete the new nether island too (if it exists)
+			if (Settings.createNether && Settings.newNether) {
+			    new DeleteIslandChunk(plugin, islandLoc.toVector().toLocation(ASkyBlock.getNetherWorld()));
+			}
 		    } else {
 			getLogger().severe("Cannot delete island at location " + islandLoc.toString() + " because it is not in the official island world");
 		    }
@@ -604,7 +608,7 @@ public class ASkyBlock extends JavaPlugin {
 	availableLocales.put("pl-PL", new Locale(this,"pl-PL"));
 	availableLocales.put("pt-BR", new Locale(this,"pt-BR"));
 	availableLocales.put("zh-CN", new Locale(this,"zh-CN"));
-	
+
 	// Assign settings
 	// Debug
 	Settings.debug = getConfig().getInt("debug", 0);

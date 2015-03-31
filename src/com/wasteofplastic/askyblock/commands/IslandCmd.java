@@ -772,7 +772,7 @@ public class IslandCmd implements CommandExecutor {
 	    } else if (split[0].equalsIgnoreCase("settings")) {
 		// Show what the plugin settings are
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.lock")) {
-		player.openInventory(SettingsPanel.islandGuardPanel());
+		    player.openInventory(SettingsPanel.islandGuardPanel());
 		} else {
 		    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
 		}
@@ -1000,6 +1000,10 @@ public class IslandCmd implements CommandExecutor {
 			CoopPlay.getInstance().clearAllIslandCoops(oldIsland);
 			// Delete the island itself
 			new DeleteIslandChunk(plugin, oldIsland);
+			// Delete the new nether island too (if it exists)
+			if (Settings.createNether && Settings.newNether) {
+			    new DeleteIslandChunk(plugin, oldIsland.toVector().toLocation(ASkyBlock.getNetherWorld()));
+			}
 		    }
 		    // plugin.restartEvents();
 		    runCommands(Settings.resetCommands, player.getUniqueId());
