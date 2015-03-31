@@ -606,6 +606,8 @@ public class ASkyBlock extends JavaPlugin {
 	availableLocales.put("zh-CN", new Locale(this,"zh-CN"));
 	
 	// Assign settings
+	// Debug
+	Settings.debug = getConfig().getInt("debug", 0);
 	// Load schematics
 	if (getConfig().contains("general.schematics")) {
 	    for (String key : getConfig().getConfigurationSection("general.schematics").getKeys(true)) {

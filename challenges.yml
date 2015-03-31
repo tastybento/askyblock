@@ -27,6 +27,20 @@
 #      - heal [player]
 #      - warp winner_circle [player]
 # If a command fails, it will be noted in the console.
+#
+# The format for POTIONS is as follows:
+#
+# Format POTION:NAME:<LEVEL>:<EXTENDED/NOTEXTENDED>:<SPLASH/NOSPLASH>:QTY
+# LEVEL, EXTENDED and SPLASH are optional. If they are left blank, any is acceptable
+# LEVEL is a number, normally 1 or 2
+# Examples:
+# POTION:STRENGTH:1:EXTENDED:SPLASH:1
+# POTION:JUMP:2:NOTEXTENDED:NOSPLASH:1
+# POTION:WEAKNESS::::1   -  any weakness potion
+# 
+# Valid potion names are:
+# WATER, REGEN, SPEED, FIRE_RESISTANCE, POISON, INSTANT_HEAL, NIGHT_VISION, WEAKNESS,
+# STRENGTH, SLOWNESS, JUMP, INSTANT_DAMAGE, WATER_BREATHING, INVISIBILITY
 ##########################################################################################
 
 challenges:
@@ -45,7 +59,7 @@ challenges:
       type: inventory
       requiredItems: 'GLASS:1'
       takeItems: true
-      itemReward: 'ICE:1'
+      itemReward: 'POTION'
       rewardText: '1 block of ice'
       #rewardcommands:
       moneyReward: 10
@@ -473,7 +487,7 @@ challenges:
       icon: BREWING_STAND_ITEM
       level: 'Advanced'
       type: inventory
-      requiredItems: 'POTION:8195:1 POTION:8202:1 POTION:8194:1 POTION:8197:1 POTION:8204:1 POTION:8206:1 POTION:8201:1 POTION:8193:1'
+      requiredItems: 'POTION:FIRE_RESISTANCE::::1 POTION:SLOWNESS::::1 POTION:SPEED::::1 POTION:INSTANT_HEAL::::1 POTION:INSTANT_DAMAGE::::1 POTION:INVISIBILITY::::1 POTION:STRENGTH::::1 POTION:REGEN::::1'
       takeItems: true
       itemReward: 'ENCHANTMENT_TABLE:1'
       rewardText: 'Enchantment Table'

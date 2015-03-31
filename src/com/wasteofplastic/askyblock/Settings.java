@@ -215,5 +215,6 @@ public class Settings {
     public static boolean immediateTeleport;
     public static boolean makeIslandIfNone;
     public static boolean setTeamName;
+    public static int debug;
 
 }
