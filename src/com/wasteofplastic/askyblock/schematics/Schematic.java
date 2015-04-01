@@ -209,7 +209,8 @@ public class Schematic {
      * @return Location of highest grass block
      */
     @SuppressWarnings("deprecation")
-    public Location pasteSchematic(final World world, final Location loc, Player player) {
+    public Location pasteSchematic(final Location loc, Player player) {
+	World world = loc.getWorld();
 	// See if WorldEdit is loaded
 	/*
 	 * if (Bukkit.getServer().getPluginManager().getPlugin("WorldEdit") !=

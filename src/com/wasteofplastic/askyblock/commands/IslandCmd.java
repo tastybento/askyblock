@@ -208,7 +208,8 @@ public class IslandCmd implements CommandExecutor {
 	// If player is not the leader of their own team
 	if (!player.equals(teamleader)) {
 	    plugin.getPlayers().setLeaveTeam(player);
-	    plugin.getPlayers().setHomeLocation(player, null);
+	    //plugin.getPlayers().setHomeLocation(player, null);
+	    plugin.getPlayers().clearHomeLocations(player);
 	    plugin.getPlayers().setIslandLocation(player, null);
 	    plugin.getPlayers().setTeamIslandLocation(player, null);
 	    runCommands(Settings.leaveCommands, player);
@@ -228,6 +229,7 @@ public class IslandCmd implements CommandExecutor {
      * @return true if successful
      */
     private Location newIsland(final CommandSender sender) {
+	Location cowSpot = null;
 	// Player who is issuing the command
 	final Player player = (Player) sender;
 	final UUID playerUUID = player.getUniqueId();
@@ -235,8 +237,40 @@ public class IslandCmd implements CommandExecutor {
 	Location next = getNextIsland();
 	// plugin.getLogger().info("DEBUG: next location is " +
 	// next.toString());
+	// Sets a flag to temporarily disable cleanstone generation
 	plugin.setNewIsland(true);
-	Location cowSpot = generateIslandBlocks(next.getBlockX(), next.getBlockZ(), player, ASkyBlock.getIslandWorld());
+	// What happens next depends on whether this is AcidIsland or ASkyBlock
+	// Check to see if a baseline schematic is loaded
+	if (!schematics.isEmpty()) {
+	    // This is the same for AcidIsland or ASkyblock
+	    // Find out what level of island this player will get
+	    String mySchematic = "";
+	    for (String perm : schematics.keySet()) {
+		if (VaultHelper.checkPerm(player, perm)) {
+		    mySchematic = perm;
+		}
+	    }
+	    // plugin.getLogger().info("DEBUG: size of schematics = " +
+	    // schematics.size());
+	    // Paste the schematic
+	    cowSpot = schematics.get(mySchematic).pasteSchematic(next, player);
+	    if (cowSpot == null) {
+		next.getBlock().setType(Material.BEDROCK);
+		plugin.getLogger().severe("Schematic loading error - cannot load " + mySchematic);
+		player.sendMessage(ChatColor.RED + "There was a massive problem pasting the new island. Please tell an admin!");
+		cowSpot = next;
+	    }
+	} else {
+	    // No schematic loaded
+	    if (Settings.GAMETYPE.equals(Settings.GameType.ASKYBLOCK)) {
+		next.getBlock().setType(Material.BEDROCK);
+		player.sendMessage(ChatColor.RED + "No schematic!");
+		cowSpot = next;
+	    } else {
+		// Create AcidIsland
+		cowSpot = generateIslandBlocks(next, player);
+	    }
+	}
 	plugin.setNewIsland(false);
 	// plugin.getLogger().info("DEBUG: player ID is: " +
 	// playerUUID.toString());
@@ -252,31 +286,6 @@ public class IslandCmd implements CommandExecutor {
 	// Teleport the player to a safe place
 	// plugin.getGrid().homeTeleport(player);
 	plugin.getPlayers().save(playerUUID);
-	// Remove any mobs if they just so happen to be around in the
-	// vicinity
-	/*
-	 * final Iterator<Entity> ents = player.getNearbyEntities(50.0D, 250.0D,
-	 * 50.0D).iterator();
-	 * int numberOfCows = 0;
-	 * while (ents.hasNext()) {
-	 * final Entity tempent = ents.next();
-	 * // Remove anything except for the player himself and the cow (!)
-	 * if (!(tempent instanceof Player) &&
-	 * !tempent.getType().equals(EntityType.COW)) {
-	 * plugin.getLogger().warning("Removed an " +
-	 * tempent.getType().toString() + " when creating island for " +
-	 * player.getName());
-	 * tempent.remove();
-	 * } else if (tempent.getType().equals(EntityType.COW)) {
-	 * numberOfCows++;
-	 * if (numberOfCows > 1) {
-	 * plugin.getLogger().warning(
-	 * "Removed an extra cow when creating island for " + player.getName());
-	 * tempent.remove();
-	 * }
-	 * }
-	 * }
-	 */
 	// Done
 	return cowSpot;
     }
@@ -424,164 +433,137 @@ public class IslandCmd implements CommandExecutor {
      * @param world
      */
     @SuppressWarnings("deprecation")
-    private Location generateIslandBlocks(final int x, final int z, final Player player, final World world) {
+    private Location generateIslandBlocks(final Location islandLoc, final Player player) {
 	Location cowSpot = null;
-	Location islandLoc = new Location(world, x, Settings.island_level, z);
-	// What happens next depends on whether this is AcidIsland or ASkyBlock
-	// Check to see if a baseline schematic is loaded
-	if (!schematics.isEmpty()) {
-	    // This is the same for AcidIsland or ASkyblock
-	    // Find out what level of island this player will get
-	    String mySchematic = "";
-	    for (String perm : schematics.keySet()) {
-		if (VaultHelper.checkPerm(player, perm)) {
-		    mySchematic = perm;
-		}
-	    }
-	    // plugin.getLogger().info("DEBUG: size of schematics = " +
-	    // schematics.size());
-	    // Paste the schematic
-	    cowSpot = schematics.get(mySchematic).pasteSchematic(world, islandLoc, player);
-	    if (cowSpot == null) {
-		islandLoc.getBlock().setType(Material.BEDROCK);
-		plugin.getLogger().severe("Schematic loading error - cannot load " + mySchematic);
-		player.sendMessage(ChatColor.RED + "There was a massive problem pasting the new island. Please tell an admin!");
-		return islandLoc;
-	    }
-	    return cowSpot;
-	} else {
-	    // No schematic loaded
-	    if (Settings.GAMETYPE.equals(Settings.GameType.ASKYBLOCK)) {
-		islandLoc.getBlock().setType(Material.BEDROCK);
-		player.sendMessage(ChatColor.RED + "No schematic!");
-		return islandLoc;
-	    } else {
-		// AcidIsland
-		// Build island layer by layer
-		// Start from the base
-		// half sandstone; half sand
-		int y = 0;
-		for (int x_space = x - 4; x_space <= x + 4; x_space++) {
-		    for (int z_space = z - 4; z_space <= z + 4; z_space++) {
-			final Block b = world.getBlockAt(x_space, y, z_space);
-			b.setType(Material.BEDROCK);
-		    }
-		}
-		for (y = 1; y < Settings.island_level + 5; y++) {
-		    for (int x_space = x - 4; x_space <= x + 4; x_space++) {
-			for (int z_space = z - 4; z_space <= z + 4; z_space++) {
-			    final Block b = world.getBlockAt(x_space, y, z_space);
-			    if (y < (Settings.island_level / 2)) {
-				b.setType(Material.SANDSTONE);
-			    } else {
-				b.setType(Material.SAND);
-				b.setData((byte) 0);
-			    }
-			}
-		    }
-		}
-		// Then cut off the corners to make it round-ish
-		for (y = 0; y < Settings.island_level + 5; y++) {
-		    for (int x_space = x - 4; x_space <= x + 4; x_space += 8) {
-			for (int z_space = z - 4; z_space <= z + 4; z_space += 8) {
-			    final Block b = world.getBlockAt(x_space, y, z_space);
-			    b.setType(Material.STATIONARY_WATER);
-			}
-		    }
-		}
-		// Add some grass
-		for (y = Settings.island_level + 4; y < Settings.island_level + 5; y++) {
-		    for (int x_space = x - 2; x_space <= x + 2; x_space++) {
-			for (int z_space = z - 2; z_space <= z + 2; z_space++) {
-			    final Block blockToChange = world.getBlockAt(x_space, y, z_space);
-			    blockToChange.setType(Material.GRASS);
-			}
-		    }
-		}
-		// Place bedrock - MUST be there (ensures island are not
-		// overwritten
-		Block b = world.getBlockAt(x, Settings.island_level, z);
+
+	// AcidIsland
+	// Build island layer by layer
+	// Start from the base
+	// half sandstone; half sand
+	int x = islandLoc.getBlockX();
+	int z = islandLoc.getBlockZ();
+	World world = islandLoc.getWorld();
+	int y = 0;
+	for (int x_space = x - 4; x_space <= x + 4; x_space++) {
+	    for (int z_space = z - 4; z_space <= z + 4; z_space++) {
+		final Block b = world.getBlockAt(x_space, y, z_space);
 		b.setType(Material.BEDROCK);
-		// Then add some more dirt in the classic shape
-		y = Settings.island_level + 3;
-		for (int x_space = x - 2; x_space <= x + 2; x_space++) {
-		    for (int z_space = z - 2; z_space <= z + 2; z_space++) {
-			b = world.getBlockAt(x_space, y, z_space);
-			b.setType(Material.DIRT);
-		    }
-		}
-		b = world.getBlockAt(x - 3, y, z);
-		b.setType(Material.DIRT);
-		b = world.getBlockAt(x + 3, y, z);
-		b.setType(Material.DIRT);
-		b = world.getBlockAt(x, y, z - 3);
-		b.setType(Material.DIRT);
-		b = world.getBlockAt(x, y, z + 3);
-		b.setType(Material.DIRT);
-		y = Settings.island_level + 2;
-		for (int x_space = x - 1; x_space <= x + 1; x_space++) {
-		    for (int z_space = z - 1; z_space <= z + 1; z_space++) {
-			b = world.getBlockAt(x_space, y, z_space);
-			b.setType(Material.DIRT);
-		    }
-		}
-		b = world.getBlockAt(x - 2, y, z);
-		b.setType(Material.DIRT);
-		b = world.getBlockAt(x + 2, y, z);
-		b.setType(Material.DIRT);
-		b = world.getBlockAt(x, y, z - 2);
-		b.setType(Material.DIRT);
-		b = world.getBlockAt(x, y, z + 2);
-		b.setType(Material.DIRT);
-		y = Settings.island_level + 1;
-		b = world.getBlockAt(x - 1, y, z);
-		b.setType(Material.DIRT);
-		b = world.getBlockAt(x + 1, y, z);
-		b.setType(Material.DIRT);
-		b = world.getBlockAt(x, y, z - 1);
-		b.setType(Material.DIRT);
-		b = world.getBlockAt(x, y, z + 1);
-		b.setType(Material.DIRT);
-
-		// Add island items
-		y = Settings.island_level;
-		// Add tree (natural)
-		final Location treeLoc = new Location(world, x, y + 5D, z);
-		world.generateTree(treeLoc, TreeType.ACACIA);
-		// Place the cow
-		cowSpot = new Location(world, x, (Settings.island_level + 5), z - 2);
-
-		// Place a helpful sign in front of player
-		Block blockToChange = world.getBlockAt(x, Settings.island_level + 5, z + 3);
-		blockToChange.setType(Material.SIGN_POST);
-		Sign sign = (Sign) blockToChange.getState();
-		sign.setLine(0, plugin.myLocale(player.getUniqueId()).signLine1.replace("[player]", player.getName()));
-		sign.setLine(1, plugin.myLocale(player.getUniqueId()).signLine2.replace("[player]", player.getName()));
-		sign.setLine(2, plugin.myLocale(player.getUniqueId()).signLine3.replace("[player]", player.getName()));
-		sign.setLine(3, plugin.myLocale(player.getUniqueId()).signLine4.replace("[player]", player.getName()));
-		((org.bukkit.material.Sign) sign.getData()).setFacingDirection(BlockFace.NORTH);
-		sign.update();
-		// Place the chest - no need to use the safe spawn function
-		// because we
-		// know what this island looks like
-		blockToChange = world.getBlockAt(x, Settings.island_level + 5, z + 1);
-		blockToChange.setType(Material.CHEST);
-		// Only set if the config has items in it
-		if (Settings.chestItems.length > 0) {
-		    final Chest chest = (Chest) blockToChange.getState();
-		    final Inventory inventory = chest.getInventory();
-		    inventory.clear();
-		    inventory.setContents(Settings.chestItems);
-		    chest.update();
-		}
-		// Fill the chest and orient it correctly (1.8 faces it north!
-		DirectionalContainer dc = (DirectionalContainer) blockToChange.getState().getData();
-		dc.setFacingDirection(BlockFace.SOUTH);
-		blockToChange.setData(dc.getData(), true);
-		return cowSpot;
 	    }
 	}
+	for (y = 1; y < Settings.island_level + 5; y++) {
+	    for (int x_space = x - 4; x_space <= x + 4; x_space++) {
+		for (int z_space = z - 4; z_space <= z + 4; z_space++) {
+		    final Block b = world.getBlockAt(x_space, y, z_space);
+		    if (y < (Settings.island_level / 2)) {
+			b.setType(Material.SANDSTONE);
+		    } else {
+			b.setType(Material.SAND);
+			b.setData((byte) 0);
+		    }
+		}
+	    }
+	}
+	// Then cut off the corners to make it round-ish
+	for (y = 0; y < Settings.island_level + 5; y++) {
+	    for (int x_space = x - 4; x_space <= x + 4; x_space += 8) {
+		for (int z_space = z - 4; z_space <= z + 4; z_space += 8) {
+		    final Block b = world.getBlockAt(x_space, y, z_space);
+		    b.setType(Material.STATIONARY_WATER);
+		}
+	    }
+	}
+	// Add some grass
+	for (y = Settings.island_level + 4; y < Settings.island_level + 5; y++) {
+	    for (int x_space = x - 2; x_space <= x + 2; x_space++) {
+		for (int z_space = z - 2; z_space <= z + 2; z_space++) {
+		    final Block blockToChange = world.getBlockAt(x_space, y, z_space);
+		    blockToChange.setType(Material.GRASS);
+		}
+	    }
+	}
+	// Place bedrock - MUST be there (ensures island are not
+	// overwritten
+	Block b = world.getBlockAt(x, Settings.island_level, z);
+	b.setType(Material.BEDROCK);
+	// Then add some more dirt in the classic shape
+	y = Settings.island_level + 3;
+	for (int x_space = x - 2; x_space <= x + 2; x_space++) {
+	    for (int z_space = z - 2; z_space <= z + 2; z_space++) {
+		b = world.getBlockAt(x_space, y, z_space);
+		b.setType(Material.DIRT);
+	    }
+	}
+	b = world.getBlockAt(x - 3, y, z);
+	b.setType(Material.DIRT);
+	b = world.getBlockAt(x + 3, y, z);
+	b.setType(Material.DIRT);
+	b = world.getBlockAt(x, y, z - 3);
+	b.setType(Material.DIRT);
+	b = world.getBlockAt(x, y, z + 3);
+	b.setType(Material.DIRT);
+	y = Settings.island_level + 2;
+	for (int x_space = x - 1; x_space <= x + 1; x_space++) {
+	    for (int z_space = z - 1; z_space <= z + 1; z_space++) {
+		b = world.getBlockAt(x_space, y, z_space);
+		b.setType(Material.DIRT);
+	    }
+	}
+	b = world.getBlockAt(x - 2, y, z);
+	b.setType(Material.DIRT);
+	b = world.getBlockAt(x + 2, y, z);
+	b.setType(Material.DIRT);
+	b = world.getBlockAt(x, y, z - 2);
+	b.setType(Material.DIRT);
+	b = world.getBlockAt(x, y, z + 2);
+	b.setType(Material.DIRT);
+	y = Settings.island_level + 1;
+	b = world.getBlockAt(x - 1, y, z);
+	b.setType(Material.DIRT);
+	b = world.getBlockAt(x + 1, y, z);
+	b.setType(Material.DIRT);
+	b = world.getBlockAt(x, y, z - 1);
+	b.setType(Material.DIRT);
+	b = world.getBlockAt(x, y, z + 1);
+	b.setType(Material.DIRT);
+
+	// Add island items
+	y = Settings.island_level;
+	// Add tree (natural)
+	final Location treeLoc = new Location(world, x, y + 5D, z);
+	world.generateTree(treeLoc, TreeType.ACACIA);
+	// Place the cow
+	cowSpot = new Location(world, x, (Settings.island_level + 5), z - 2);
+
+	// Place a helpful sign in front of player
+	Block blockToChange = world.getBlockAt(x, Settings.island_level + 5, z + 3);
+	blockToChange.setType(Material.SIGN_POST);
+	Sign sign = (Sign) blockToChange.getState();
+	sign.setLine(0, plugin.myLocale(player.getUniqueId()).signLine1.replace("[player]", player.getName()));
+	sign.setLine(1, plugin.myLocale(player.getUniqueId()).signLine2.replace("[player]", player.getName()));
+	sign.setLine(2, plugin.myLocale(player.getUniqueId()).signLine3.replace("[player]", player.getName()));
+	sign.setLine(3, plugin.myLocale(player.getUniqueId()).signLine4.replace("[player]", player.getName()));
+	((org.bukkit.material.Sign) sign.getData()).setFacingDirection(BlockFace.NORTH);
+	sign.update();
+	// Place the chest - no need to use the safe spawn function
+	// because we
+	// know what this island looks like
+	blockToChange = world.getBlockAt(x, Settings.island_level + 5, z + 1);
+	blockToChange.setType(Material.CHEST);
+	// Only set if the config has items in it
+	if (Settings.chestItems.length > 0) {
+	    final Chest chest = (Chest) blockToChange.getState();
+	    final Inventory inventory = chest.getInventory();
+	    inventory.clear();
+	    inventory.setContents(Settings.chestItems);
+	    chest.update();
+	}
+	// Fill the chest and orient it correctly (1.8 faces it north!
+	DirectionalContainer dc = (DirectionalContainer) blockToChange.getState().getData();
+	dc.setFacingDirection(BlockFace.SOUTH);
+	blockToChange.setData(dc.getData(), true);
+	return cowSpot;
     }
+
 
     /**
      * Finds the next free island spot based off the last known island Uses
@@ -978,7 +960,8 @@ public class IslandCmd implements CommandExecutor {
 		    final Location oldIsland = plugin.getPlayers().getIslandLocation(playerUUID);
 		    // plugin.unregisterEvents();
 		    final Location cowSpot = newIsland(sender);
-		    plugin.getPlayers().setHomeLocation(playerUUID, null);
+		    //plugin.getPlayers().setHomeLocation(playerUUID, null);
+		    plugin.getPlayers().clearHomeLocations(playerUUID);
 		    plugin.getGrid().homeTeleport(player);
 		    plugin.resetPlayer(player);
 		    if (Settings.resetMoney) {
@@ -1263,10 +1246,7 @@ public class IslandCmd implements CommandExecutor {
 			    // their stuff
 			    CoopPlay.getInstance().clearMyInvitedCoops(player);
 			    CoopPlay.getInstance().clearMyCoops(player);
-			    plugin.resetPlayer(player);
-			    if (!player.performCommand(Settings.SPAWNCOMMAND)) {
-				player.teleport(player.getWorld().getSpawnLocation());
-			    }
+			    
 			    // Log the location that this player left so they
 			    // cannot join again before the cool down ends
 			    plugin.getPlayers().startInviteCoolDownTimer(playerUUID, plugin.getPlayers().getTeamIslandLocation(teamLeader));
@@ -1289,6 +1269,12 @@ public class IslandCmd implements CommandExecutor {
 				// plugin.getLogger().info("DEBUG: Party is less than 2 - removing leader from team");
 				removePlayerFromTeam(teamLeader, teamLeader);
 			    }
+			    // Clear all player variables and save
+			    plugin.resetPlayer(player);
+			    if (!player.performCommand(Settings.SPAWNCOMMAND)) {
+				player.teleport(player.getWorld().getSpawnLocation());
+			    }
+			    
 			    return true;
 			} else {
 			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).leaveerrorYouCannotLeaveIsland);

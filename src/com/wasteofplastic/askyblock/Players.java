@@ -190,13 +190,15 @@ public class Players {
      * Saves the player info to the file system
      */
     public void save() {
-	// plugin.getLogger().info("Saving player..." + playerName);
+	plugin.getLogger().info("Saving player..." + playerName);
 	// Save the variables
 	playerInfo.set("playerName", playerName);
 	playerInfo.set("hasIsland", hasIsland);
 	playerInfo.set("islandLocation", islandLocation);
 	playerInfo.set("homeLocation", null);
 	// Only store the new way
+	// Clear any old home locations
+	playerInfo.set("homeLocations",null);
 	for (int num : homeLocations.keySet()) {
 	    playerInfo.set("homeLocations." + num, Util.getStringLocation(homeLocations.get(num)));
 	}
@@ -215,6 +217,7 @@ public class Players {
 	}
 	playerInfo.set("members", temp);
 	// Save the challenges
+	playerInfo.set("challenges",null);
 	for (String challenge : challengeList.keySet()) {
 	    playerInfo.set("challenges.status." + challenge, challengeList.get(challenge));
 	}
