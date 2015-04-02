@@ -37,8 +37,8 @@ lavaTip: "Tip: Falls du kein Obsidian wolltest, führe einen Rechtsklick mit ein
 warps:
    #This is the first line of the sign that determines if the sign is a warp sign or not
    #If you change it, make sure it makes sense. It is case insensitive. Change the tip too.
-   welcomeLine: "[Insel-Warp]"
-   warpTip: "&aErstelle ein Warp-Schild mit &c[Insel-Warp] &ain der obersten Zeile."
+   welcomeLine: "[WELCOME]"
+   warpTip: "&aErstelle ein Warp-Schild mit &c[WELCOME] &ain der obersten Zeile."
    success: "Insel-Warp-Schild erfolgreich erstellt!"
    removed: "Insel-Warp-Schild entfernt!"
    signRemoved: "Dein Insel-Warp-Schild wurde entfernt!"

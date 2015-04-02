@@ -55,13 +55,18 @@ general:
    # then give the player that permission (it can be anything)
    # If the file does not exist, it will not load.
 
-   schematics:
+   # Schematics
    #  Note that in this example, the permission is 'schematic.vip'. It can be anything
    #  you like. For example, an existing permission for a rank of player.
-   # Uncomment the lines after this one after you change them...
+   # Uncomment the lines after this one after you change them and keep the spaces!
+   #schematics:
    #  schematic.vip: vipisland.schematic
    #  schematic.vip2: vip2island.schematic
    #  schematic.jail: jail.schematic 
+
+   # Schematic panel - if more than one schematic is available to the player
+   # Show a panel to choose
+   useschematicspanel: true
 
    #How long a player must wait before they can reset their island again in second
    resetwait: 300

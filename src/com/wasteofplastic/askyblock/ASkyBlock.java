@@ -67,8 +67,9 @@ import com.wasteofplastic.askyblock.listeners.JoinLeaveEvents;
 import com.wasteofplastic.askyblock.listeners.LavaCheck;
 import com.wasteofplastic.askyblock.listeners.NetherPortals;
 import com.wasteofplastic.askyblock.listeners.WorldEnter;
-import com.wasteofplastic.askyblock.panels.Biomes;
+import com.wasteofplastic.askyblock.panels.BiomesPanel;
 import com.wasteofplastic.askyblock.panels.ControlPanel;
+import com.wasteofplastic.askyblock.panels.SchematicsPanel;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
@@ -98,7 +99,7 @@ public class ASkyBlock extends JavaPlugin {
     private Listener lavaListener;
 
     // Biome chooser object
-    private Biomes biomes;
+    private BiomesPanel biomes;
 
     // Island grid manager
     private GridManager grid;
@@ -510,7 +511,7 @@ public class ASkyBlock extends JavaPlugin {
     /**
      * @return the biomes
      */
-    public Biomes getBiomes() {
+    public BiomesPanel getBiomes() {
 	return biomes;
     }
 
@@ -608,6 +609,8 @@ public class ASkyBlock extends JavaPlugin {
 	availableLocales.put("pl-PL", new Locale(this,"pl-PL"));
 	availableLocales.put("pt-BR", new Locale(this,"pt-BR"));
 	availableLocales.put("zh-CN", new Locale(this,"zh-CN"));
+	availableLocales.put("cs-CS", new Locale(this,"cs-CS"));
+	availableLocales.put("sk-SK", new Locale(this,"sk-SK"));
 
 	// Assign settings
 	// Debug
@@ -625,6 +628,7 @@ public class ASkyBlock extends JavaPlugin {
 		}
 	    }
 	}
+	Settings.useSchematicPanel = getConfig().getBoolean("general.useschematicspanel", true);
 	// TEAMSUFFIX as island level
 	Settings.setTeamName = getConfig().getBoolean("general.setteamsuffix", false);
 	// Immediate teleport
@@ -1135,8 +1139,10 @@ public class ASkyBlock extends JavaPlugin {
 	manager.registerEvents(new AcidInventory(this), this);
 	// Biomes
 	// Load Biomes
-	biomes = new Biomes();
+	biomes = new BiomesPanel();
 	manager.registerEvents(biomes, this);
+	// Schematics panel
+	manager.registerEvents(new SchematicsPanel(), this);
 	// Track incoming world teleports
 	manager.registerEvents(new WorldEnter(this), this);
     }

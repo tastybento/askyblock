@@ -42,8 +42,8 @@ lavaTip: "Wskazówka: Jeśli obsydian był nie ruszony, możesz go ponownie zebr
 warps:
    #This is the first line of the sign that determines if the sign is a warp sign or not
    #If you change it, make sure it makes sense. It is case insensitive. Change the tip too.
-   welcomeLine: "[WITAJ]"
-   warpTip: "Stwórz teleport tworząc tabliczke z napisem [WITAJ] na górze."
+   welcomeLine: "[WECOME]"
+   warpTip: "Stwórz teleport tworząc tabliczke z napisem [WELCOME] na górze."
    success: "Tabliczka Witaj została stworzona!"
    removed: "Tabliczka Witaj została usunięta!"
    signRemoved: "Twoja tabliczka Witaj została usunięta!"

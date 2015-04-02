@@ -85,8 +85,8 @@ lavaTip: "Dica: Se a intenção não era fazer obsidian, a lava pode ser recolhida 
 warps:
    #This is the first line of the sign that determines if the sign is a warp sign or not
    #If you change it, make sure it makes sense. It is case insensitive. Change the tip too.
-   welcomeLine: "[Bem-vindo]"
-   warpTip: "Para criar um ponto de warp, basta colocar uma placa com [Bem-vindo] na primeira linha."
+   welcomeLine: "[WELCOME]"
+   warpTip: "Para criar um ponto de warp, basta colocar uma placa com [WELCOME] na primeira linha."
    success: "Placa de boas-vindas colocada com sucesso!"
    removed: "Placa de boas-vindas removida!"
    signRemoved: "Sua placa de boas-vindas foi removida!"

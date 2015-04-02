@@ -23,7 +23,7 @@ import com.wasteofplastic.askyblock.util.Pair;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
-public class Biomes implements Listener {
+public class BiomesPanel implements Listener {
     private static ASkyBlock plugin = ASkyBlock.getPlugin();
     private static HashMap<UUID, List<BiomeItem>> biomeItems = new HashMap<UUID, List<BiomeItem>>();
 

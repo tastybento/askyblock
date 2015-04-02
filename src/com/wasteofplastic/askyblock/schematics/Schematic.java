@@ -24,19 +24,23 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.TreeType;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Sign;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.DirectionalContainer;
 import org.bukkit.util.BlockVector;
 import org.bukkit.util.Vector;
 import org.jnbt.ByteArrayTag;
@@ -49,7 +53,6 @@ import org.jnbt.StringTag;
 import org.jnbt.Tag;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
-import com.wasteofplastic.askyblock.GridManager;
 import com.wasteofplastic.askyblock.Settings;
 
 public class Schematic {
@@ -61,8 +64,15 @@ public class Schematic {
     private short height;
     private Map<BlockVector, Map<String, Tag>> tileEntitiesMap = new HashMap<BlockVector, Map<String, Tag>>();
     private File file;
+    private String name;
+    private String perm;
+    private String description;
 
     public Schematic(File file) {
+	// Initialize
+	name = file.getName();
+	description = "";
+	perm = "";
 	try {
 	    this.file = file;
 	    FileInputStream stream = new FileInputStream(file);
@@ -209,7 +219,7 @@ public class Schematic {
      * @return Location of highest grass block
      */
     @SuppressWarnings("deprecation")
-    public Location pasteSchematic(final Location loc, Player player) {
+    public Location pasteSchematic(final Location loc, final Player player) {
 	World world = loc.getWorld();
 	// See if WorldEdit is loaded
 	/*
@@ -246,7 +256,6 @@ public class Schematic {
 	Location bedrock = null;
 	Location chest = null;
 	Location welcomeSign = null;
-	Location grass = null;
 	Set<Vector> grassBlocks = new HashSet<Vector>();
 	for (int x = 0; x < width; ++x) {
 	    for (int y = 0; y < height; ++y) {
@@ -501,22 +510,22 @@ public class Schematic {
 	    v.add(loc.toVector());
 	    v.add(new Vector(0.5D,1.1D,0.5D)); // Center of block
 	    //if (GridManager.isSafeLocation(v.toLocation(world))) {
-		// Add to sorted list
-		boolean inserted = false;
-		for (int i = 0; i < sorted.size(); i++) {
-		    if (v.getBlockY() > sorted.get(i).getBlockY()) {
-			sorted.add(i, v);
-			inserted = true;
-			break;
-		    }
+	    // Add to sorted list
+	    boolean inserted = false;
+	    for (int i = 0; i < sorted.size(); i++) {
+		if (v.getBlockY() > sorted.get(i).getBlockY()) {
+		    sorted.add(i, v);
+		    inserted = true;
+		    break;
 		}
-		if (!inserted) {
-		    // just add to the end of the list
-		    sorted.add(v);
-		}
+	    }
+	    if (!inserted) {
+		// just add to the end of the list
+		sorted.add(v);
+	    }
 	    //}
 	}
-	grass = sorted.get(0).toLocation(world);
+	final Location grass = sorted.get(0).toLocation(world);
 	//Bukkit.getLogger().info("DEBUG cow location " + grass.toString());
 	Block blockToChange = null;
 	// world.spawnEntity(grass, EntityType.COW);
@@ -562,6 +571,14 @@ public class Schematic {
 		inventory.setContents(Settings.chestItems);
 	    }
 	}
+	if (Settings.islandCompanion != null) {
+	    Bukkit.getServer().getScheduler().runTaskLater(ASkyBlock.getPlugin(), new Runnable() {
+		@Override
+		public void run() {
+		    spawnCompanion(player, grass);
+		}
+	    }, 40L);
+	}
 	return grass;
     }
 
@@ -595,5 +612,210 @@ public class Schematic {
 	    throw new IllegalArgumentException(key + " tag is not of tag type " + expected.getName());
 	}
 	return expected.cast(tag);
+    }
+
+    /**
+     * Spawns a companion for the player at the location given
+     * @param player
+     * @param cowSpot
+     */
+    protected static void spawnCompanion(Player player, Location cowSpot) {
+	// Older versions of the server require custom names to only apply to Living Entities
+	LivingEntity companion = (LivingEntity) player.getWorld().spawnEntity(cowSpot, Settings.islandCompanion);  
+	if (!Settings.companionNames.isEmpty()) {
+	    Random rand = new Random();
+	    int randomNum = rand.nextInt(Settings.companionNames.size());
+	    String name = Settings.companionNames.get(randomNum).replace("[player]", player.getDisplayName());
+	    //plugin.getLogger().info("DEBUG: name is " + name);
+	    companion.setCustomName(name);
+	    companion.setCustomNameVisible(true);
+	} 
+    }
+
+    /**
+     * Creates an island block by block
+     * 
+     * @param x
+     * @param z
+     * @param player
+     * @param world
+     */
+    @SuppressWarnings("deprecation")
+    public static void generateIslandBlocks(final Location islandLoc, final Player player) {
+	// AcidIsland
+	// Build island layer by layer
+	// Start from the base
+	// half sandstone; half sand
+	int x = islandLoc.getBlockX();
+	int z = islandLoc.getBlockZ();
+	World world = islandLoc.getWorld();
+	int y = 0;
+	for (int x_space = x - 4; x_space <= x + 4; x_space++) {
+	    for (int z_space = z - 4; z_space <= z + 4; z_space++) {
+		final Block b = world.getBlockAt(x_space, y, z_space);
+		b.setType(Material.BEDROCK);
+	    }
+	}
+	for (y = 1; y < Settings.island_level + 5; y++) {
+	    for (int x_space = x - 4; x_space <= x + 4; x_space++) {
+		for (int z_space = z - 4; z_space <= z + 4; z_space++) {
+		    final Block b = world.getBlockAt(x_space, y, z_space);
+		    if (y < (Settings.island_level / 2)) {
+			b.setType(Material.SANDSTONE);
+		    } else {
+			b.setType(Material.SAND);
+			b.setData((byte) 0);
+		    }
+		}
+	    }
+	}
+	// Then cut off the corners to make it round-ish
+	for (y = 0; y < Settings.island_level + 5; y++) {
+	    for (int x_space = x - 4; x_space <= x + 4; x_space += 8) {
+		for (int z_space = z - 4; z_space <= z + 4; z_space += 8) {
+		    final Block b = world.getBlockAt(x_space, y, z_space);
+		    b.setType(Material.STATIONARY_WATER);
+		}
+	    }
+	}
+	// Add some grass
+	for (y = Settings.island_level + 4; y < Settings.island_level + 5; y++) {
+	    for (int x_space = x - 2; x_space <= x + 2; x_space++) {
+		for (int z_space = z - 2; z_space <= z + 2; z_space++) {
+		    final Block blockToChange = world.getBlockAt(x_space, y, z_space);
+		    blockToChange.setType(Material.GRASS);
+		}
+	    }
+	}
+	// Place bedrock - MUST be there (ensures island are not
+	// overwritten
+	Block b = world.getBlockAt(x, Settings.island_level, z);
+	b.setType(Material.BEDROCK);
+	// Then add some more dirt in the classic shape
+	y = Settings.island_level + 3;
+	for (int x_space = x - 2; x_space <= x + 2; x_space++) {
+	    for (int z_space = z - 2; z_space <= z + 2; z_space++) {
+		b = world.getBlockAt(x_space, y, z_space);
+		b.setType(Material.DIRT);
+	    }
+	}
+	b = world.getBlockAt(x - 3, y, z);
+	b.setType(Material.DIRT);
+	b = world.getBlockAt(x + 3, y, z);
+	b.setType(Material.DIRT);
+	b = world.getBlockAt(x, y, z - 3);
+	b.setType(Material.DIRT);
+	b = world.getBlockAt(x, y, z + 3);
+	b.setType(Material.DIRT);
+	y = Settings.island_level + 2;
+	for (int x_space = x - 1; x_space <= x + 1; x_space++) {
+	    for (int z_space = z - 1; z_space <= z + 1; z_space++) {
+		b = world.getBlockAt(x_space, y, z_space);
+		b.setType(Material.DIRT);
+	    }
+	}
+	b = world.getBlockAt(x - 2, y, z);
+	b.setType(Material.DIRT);
+	b = world.getBlockAt(x + 2, y, z);
+	b.setType(Material.DIRT);
+	b = world.getBlockAt(x, y, z - 2);
+	b.setType(Material.DIRT);
+	b = world.getBlockAt(x, y, z + 2);
+	b.setType(Material.DIRT);
+	y = Settings.island_level + 1;
+	b = world.getBlockAt(x - 1, y, z);
+	b.setType(Material.DIRT);
+	b = world.getBlockAt(x + 1, y, z);
+	b.setType(Material.DIRT);
+	b = world.getBlockAt(x, y, z - 1);
+	b.setType(Material.DIRT);
+	b = world.getBlockAt(x, y, z + 1);
+	b.setType(Material.DIRT);
+
+	// Add island items
+	y = Settings.island_level;
+	// Add tree (natural)
+	final Location treeLoc = new Location(world, x, y + 5D, z);
+	world.generateTree(treeLoc, TreeType.ACACIA);
+	// Place the cow
+	final Location cowSpot = new Location(world, x, (Settings.island_level + 5), z - 2);
+
+	// Place a helpful sign in front of player
+	Block blockToChange = world.getBlockAt(x, Settings.island_level + 5, z + 3);
+	blockToChange.setType(Material.SIGN_POST);
+	Sign sign = (Sign) blockToChange.getState();
+	sign.setLine(0, ASkyBlock.getPlugin().myLocale(player.getUniqueId()).signLine1.replace("[player]", player.getName()));
+	sign.setLine(1, ASkyBlock.getPlugin().myLocale(player.getUniqueId()).signLine2.replace("[player]", player.getName()));
+	sign.setLine(2, ASkyBlock.getPlugin().myLocale(player.getUniqueId()).signLine3.replace("[player]", player.getName()));
+	sign.setLine(3, ASkyBlock.getPlugin().myLocale(player.getUniqueId()).signLine4.replace("[player]", player.getName()));
+	((org.bukkit.material.Sign) sign.getData()).setFacingDirection(BlockFace.NORTH);
+	sign.update();
+	// Place the chest - no need to use the safe spawn function
+	// because we
+	// know what this island looks like
+	blockToChange = world.getBlockAt(x, Settings.island_level + 5, z + 1);
+	blockToChange.setType(Material.CHEST);
+	// Only set if the config has items in it
+	if (Settings.chestItems.length > 0) {
+	    final Chest chest = (Chest) blockToChange.getState();
+	    final Inventory inventory = chest.getInventory();
+	    inventory.clear();
+	    inventory.setContents(Settings.chestItems);
+	    chest.update();
+	}
+	// Fill the chest and orient it correctly (1.8 faces it north!
+	DirectionalContainer dc = (DirectionalContainer) blockToChange.getState().getData();
+	dc.setFacingDirection(BlockFace.SOUTH);
+	blockToChange.setData(dc.getData(), true);
+	if (Settings.islandCompanion != null) {
+	    Bukkit.getServer().getScheduler().runTaskLater(ASkyBlock.getPlugin(), new Runnable() {
+		@Override
+		public void run() {
+		    spawnCompanion(player, cowSpot);
+		}
+	    }, 40L);
+	}
+    }
+
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * @param description the description to set
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    /**
+     * @return the perm
+     */
+    public String getPerm() {
+        return perm;
+    }
+
+    /**
+     * @param perm the perm to set
+     */
+    public void setPerm(String perm) {
+        this.perm = perm;
     }
 }

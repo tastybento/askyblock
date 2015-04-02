@@ -49,8 +49,8 @@ lavaTip: "温馨提示: 如果岩浆变成了黑曜石,可以使用铁桶右键�
 warps:
    #This is the first line of the sign that determines if the sign is a warp sign or not
    #If you change it, make sure it makes sense. It is case insensitive. Change the tip too.
-   welcomeLine: "[传送点]"
-   warpTip: "放置一个木牌,并且在木牌的第一行输入§b[传送点]§e以设置一个岛屿传送点."
+   welcomeLine: "[WELCOME]"
+   warpTip: "放置一个木牌,并且在木牌的第一行输入§b[WELCOME]§e以设置一个岛屿传送点."
    success: "§b§l空岛传送点成功创建!"
    removed: "§c§l传送点已经移除!"
    signRemoved: "§c§l你的岛屿传送点已经移除!"
