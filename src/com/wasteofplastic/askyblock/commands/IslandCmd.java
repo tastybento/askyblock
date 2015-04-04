@@ -61,6 +61,7 @@ import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.LevelCalc;
 import com.wasteofplastic.askyblock.Messages;
 import com.wasteofplastic.askyblock.Settings;
+import com.wasteofplastic.askyblock.Settings.GameType;
 import com.wasteofplastic.askyblock.TopTen;
 import com.wasteofplastic.askyblock.WarpSigns;
 import com.wasteofplastic.askyblock.listeners.IslandGuard;
@@ -268,19 +269,46 @@ public class IslandCmd implements CommandExecutor {
 	Location next = getNextIsland();
 	// Sets a flag to temporarily disable cleanstone generation
 	plugin.setNewIsland(true);
+	Location result = null;
 	// Create island based on schematic
 	if (schematic != null) {
 	    //plugin.getLogger().info("DEBUG: pasting schematic " + schematic.getName() + " " + schematic.getPerm());
-	    schematic.pasteSchematic(next, player);
+	    result = schematic.pasteSchematic(next, player);
 	} else {
 	    //plugin.getLogger().info("DEBUG: pasting default island");
 	    // Default schematic paste/build
 	    if (Settings.GAMETYPE.equals(Settings.GameType.ASKYBLOCK)) {
-		schematics.get("").pasteSchematic(next, player);
+		result = schematics.get("").pasteSchematic(next, player);
 	    } else {
 		// Create AcidIsland
 		Schematic.generateIslandBlocks(next, player);
 	    }
+	}
+	if (result == null) {
+	    // There was a problem with the schematic pasting
+	    if (name.isEmpty()) {  
+		// Problem was with the default schematic.
+		plugin.getLogger().severe("Could not paste island.schematic. Renaming and using default island");
+		File schematicFile = new File(plugin.getDataFolder(),"island.schematic");
+		File schematicBroke = new File(plugin.getDataFolder(),"island.schematic.broken");
+		schematicFile.renameTo(schematicBroke);
+		if (Settings.GAMETYPE == GameType.ASKYBLOCK) {
+		    plugin.saveResource("island.schematic",true);
+		}
+		loadSchematics();
+		// Try again
+		newIsland(player,"");
+	    } else {
+		// Another schematic
+		plugin.getLogger().severe("Could not paste " + name + ". Renaming and using default island");
+		File schematicFile = schematic.getFile();
+		File schematicBroke = new File(plugin.getDataFolder(),schematic.getFile().getName() + ".broken");
+		boolean moveResult = schematicFile.renameTo(schematicBroke);
+		plugin.getLogger().info("DEBUG: move result = " + moveResult);
+		loadSchematics();
+		// Try again
+		newIsland(player,"");
+	    } 
 	}
 	// Clear the cleanstone flag so events can happen again
 	plugin.setNewIsland(false);

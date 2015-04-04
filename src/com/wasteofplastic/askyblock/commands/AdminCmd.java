@@ -396,6 +396,9 @@ public class AdminCmd implements CommandExecutor {
 		    }
 		    return true;
 		}
+		if (island == null) {
+		    plugin.getLogger().info("Get island at was null" + closestIsland);
+		}
 		UUID target = plugin.getPlayers().getPlayerFromIslandLocation(closestIsland);
 		if (target == null) {
 		    sender.sendMessage(ChatColor.RED + "This island is not owned by anyone right now.");

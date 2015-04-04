@@ -97,7 +97,7 @@ public class JoinLeaveEvents implements Listener {
 	}
 	// Add island to grid if it is not in there already
 	// Add owners to the island grid list as they log in
-
+	// Rationalize any out-of-sync issues, which may occur if the server wasn't shutdown properly, etc.
 	// Leader or solo
 	if (players.hasIsland(playerUUID)) {
 	    loc = players.getIslandLocation(playerUUID);
@@ -107,21 +107,43 @@ public class JoinLeaveEvents implements Listener {
 	    loc = players.getTeamIslandLocation(playerUUID);
 	    leader = players.getTeamLeader(playerUUID);
 	}
-	// If the player has an island of some kind
+	// If the player has an island location of some kind
 	if (loc != null) {
-	    // Check if the island is on the grid by owner (fast)
-	    Island island = plugin.getGrid().getIsland(leader);
+	    // Check if the island location is on the grid
+	    Island island = plugin.getGrid().getIslandAt(loc);
 	    if (island == null) {
-		// Check if the island exists in the grid
-		island = plugin.getGrid().getIslandAt(loc);
+		plugin.getLogger().info("DEBUG: getIslandLoc is null!");
 		// Island isn't in the grid, so add it
-		if (island == null) {
+		// See if this owner is tagged as having an island elsewhere
+		Island islandByOwner = plugin.getGrid().getIsland(leader);
+		if (islandByOwner == null) {
+		    // No previous ownership, so just create the new island in the grid
+		    plugin.getGrid().addIsland(loc.getBlockX(), loc.getBlockZ(), leader);
+		} else {
+		    // We have a mismatch - correct in favor of the player info
+		    plugin.getLogger().info("DEBUG: getIslandLoc is null but there is a player listing");
+		    plugin.getGrid().deleteIsland(islandByOwner.getCenter());
 		    plugin.getGrid().addIsland(loc.getBlockX(), loc.getBlockZ(), leader);
 		}
 	    } else {
-		// Island exists
-		// Assign ownership
-		plugin.getGrid().setIslandOwner(island, leader);
+		// Island at this location exists
+		plugin.getLogger().info("DEBUG: getIslandLoc is not null - island exists");
+		// See if this owner is tagged as having an island elsewhere
+		Island islandByOwner = plugin.getGrid().getIsland(leader);
+		if (islandByOwner == null) {
+		    plugin.getLogger().info("DEBUG: island exists, but is unowned, so set ownership");
+		    // No previous ownership, so just assign ownership
+		    plugin.getGrid().setIslandOwner(island, leader);
+		} else {
+		    if (!islandByOwner.equals(island)) {
+			plugin.getLogger().info("DEBUG: mismatch");
+			// We have a mismatch - correct in favor of the player info
+			plugin.getGrid().deleteIsland(islandByOwner.getCenter());
+			plugin.getGrid().setIslandOwner(island, leader);
+		    } else {
+			plugin.getLogger().info("DEBUG: everything looks good");
+		    }
+		}
 	    }
 	    // Run the level command if it's free to do so
 	    if (Settings.loginLevel) {
