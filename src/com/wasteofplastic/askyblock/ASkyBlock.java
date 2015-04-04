@@ -668,7 +668,7 @@ public class ASkyBlock extends JavaPlugin {
 	}
 
 	String companion = getConfig().getString("island.companion", "COW").toUpperCase();
-	if (companion == "NOTHING") {
+	if (companion.equalsIgnoreCase("NOTHING")) {
 	    Settings.islandCompanion = null;
 	} else {
 	    try {
