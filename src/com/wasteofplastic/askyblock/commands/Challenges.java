@@ -1268,16 +1268,17 @@ public class Challenges implements CommandExecutor {
 	}
 	// Add the missing levels so player can navigate to them
 	int levelDone = 0;
-	for (int i = 0; i < Settings.challengeLevels.size(); i++) {
-	    if (i == 0) {
-		levelDone = 0;
-	    } else {
-		levelDone = checkLevelCompletion(player, Settings.challengeLevels.get(i - 1));
+	for (; levelDone < Settings.challengeLevels.size(); levelDone++) {
+	    if (checkLevelCompletion(player, Settings.challengeLevels.get(levelDone)) > 0) {
+		break;
 	    }
+	}
+	//plugin.getLogger().info("DEBUG: level done = " + levelDone);
+	for (int i = 0; i < Settings.challengeLevels.size(); i++) {
 	    if (!level.equalsIgnoreCase(Settings.challengeLevels.get(i))) {
 		// Add a navigation book
 		List<String> lore = new ArrayList<String>();
-		if (levelDone <= 0) {
+		if (i <= levelDone) {
 		    CPItem item = new CPItem(Material.BOOK_AND_QUILL, ChatColor.GOLD + Settings.challengeLevels.get(i), null, null);
 		    lore = Util.chop(ChatColor.WHITE, plugin.myLocale(player.getUniqueId()).challengesNavigation.replace("[level]", Settings.challengeLevels.get(i)), 25);
 		    item.setNextSection(Settings.challengeLevels.get(i));
@@ -1287,17 +1288,18 @@ public class Challenges implements CommandExecutor {
 		    // Hint at what is to come
 		    CPItem item = new CPItem(Material.BOOK, ChatColor.GOLD + Settings.challengeLevels.get(i), null, null);
 		    // Add the level
+		    int toDo = checkLevelCompletion(player, Settings.challengeLevels.get(i - 1));
 		    lore = Util.chop(
 			    ChatColor.WHITE,
-			    plugin.myLocale(player.getUniqueId()).challengestoComplete.replace("[challengesToDo]", String.valueOf(levelDone)).replace("[thisLevel]",
+			    plugin.myLocale(player.getUniqueId()).challengestoComplete.replace("[challengesToDo]", String.valueOf(toDo)).replace("[thisLevel]",
 				    Settings.challengeLevels.get(i - 1)), 25);
 		    item.setLore(lore);
 		    cp.add(item);
 		}
 	    }
 	}
-	// Add the free challenges if not already shown (which can happen if all of the channges are done!)
-	if (!level.equals("")) {
+	// Add the free challenges if not already shown (which can happen if all of the challenges are done!)
+	if (!level.equals("") && challengeList.containsKey("")) {
 	    for (String freeChallenges: challengeList.get("")) {
 		CPItem item = createItem(freeChallenges, player);
 		if (item != null) {
