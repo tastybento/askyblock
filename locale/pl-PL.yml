@@ -367,3 +367,25 @@ expel:
 
 moblimits:
    error: "Limit potworów ([number]) został osiągnięty!"
+
+coop:
+   help: "temporarily give a player full access to your island"
+   removed: "[name] removed your coop status!"
+   removesuccess: "[name] is no longer a coop player."
+   success: "[name] is now a coop player until they log out or you expel them."
+   madeyoucoopy: "[name] made you a coop player until you log out or they expel you."
+   onyourteam: "Player is already on your team!"
+   invited: "[name] made [player] a coop player!"
+   useexpel: "Use expel to remove."
+
+lock:
+   islandlocked: "Island is locked to visitors"
+   nowentering: "Now entering [name]'s island"
+   nowleaving: "Now leaving [name]'s island"
+   locking: "Locking island"
+   unlocking: "Unlocking island"
+   enteringspawn: "Entering Spawn"
+   leavingspawn: "Leaving Spawn"
+
+schematics:
+   title: "Wybierz wyspa"

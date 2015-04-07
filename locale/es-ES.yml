@@ -446,3 +446,6 @@ lock:
    unlocking: "Isla desbloqueada"
    enteringspawn: "Entrando en el spawn"
    leavingspawn: "Saliendo del Spawn"
+
+schematics:
+   title: "Seleccione una isla"

@@ -357,3 +357,6 @@ lock:
    unlocking: "Ouverture de l'île."
    enteringspawn: "Vous êtes au Spawn."
    leavingspawn: "Vous quittez le Spawn."
+
+schematics:
+   title: "Sélectionner une île"

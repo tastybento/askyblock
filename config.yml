@@ -11,6 +11,10 @@
 #############################################################################
 
 general:
+   # Config.yml version - do not change it is used to tell if
+   # the config matches the plugin. If not a useful config.new.yml will be
+   # provided.
+   version: ${version}
 
    # Check for updates - this will tell Ops and the console if there is a new
    # version available. It contacts dev.bukkit.org to request the latest version
@@ -47,26 +51,7 @@ general:
 
    # Try new island-style nether. Change to true
    # Still in Beta!
-   newnether: false
-
-   # Schematics
-   # The default schematic file (if used) for all players is island.schematic.
-   # To give players other schematics, list a permission and the filename
-   # then give the player that permission (it can be anything)
-   # If the file does not exist, it will not load.
-
-   # Schematics
-   #  Note that in this example, the permission is 'schematic.vip'. It can be anything
-   #  you like. For example, an existing permission for a rank of player.
-   # Uncomment the lines after this one after you change them and keep the spaces!
-   #schematics:
-   #  schematic.vip: vipisland.schematic
-   #  schematic.vip2: vip2island.schematic
-   #  schematic.jail: jail.schematic 
-
-   # Schematic panel - if more than one schematic is available to the player
-   # Show a panel to choose
-   useschematicspanel: true
+   newnether: false    
 
    #How long a player must wait before they can reset their island again in second
    resetwait: 300
@@ -247,6 +232,7 @@ general:
    # If you have other plugins that use scoreboards/teams, this may mess with them
    setteamsuffix: false
 
+
 ##### Island Related Settings #####
 
 island:
@@ -265,7 +251,7 @@ island:
    # The size of the protective region for new islands. Must be at least 16 blocks
    # less than the island distance. Large sizes will slow down island level calculation
    # when players do /is level.
-   #
+   # Value must be an even number.
    # Recommended size is 100 because it gives players a good starting size.
    # Minimum size is 50.
    # Admins can change protection sizes for players individually using 
@@ -313,6 +299,7 @@ island:
    # RABBIT, WOLF or NOTHING. Default is COW.
 
    companion: COW
+
    # This is a list of names, picked at random that will apply to the companion
    # You can add more if you like. If none are listed, the companion will not be
    # named.
@@ -490,3 +477,51 @@ biomes:
   ROOFED_FOREST:
     icon: LOG
     description: Black forest
+
+schematicsection:
+   # All schematics should be put in the schematics folder
+
+   # Schematic panel - if more than one schematic is available to the player
+   # Show a panel to choose. If this is false, no panel is shown and the starter 
+   # island is picked by permission. If a player has more than one permission
+   # the island selected is undefined - the plugin will pick one.
+  useschematicspanel: false
+
+  # Use schematic rating in island level calculations
+  userating: false
+
+  # This section lists all the schematics available
+  # You can add or remove from this list. If this section is missing, only the default
+  # island works.
+  schematics:
+    default:
+      # Icon - if this is missing or wrong, it will be a MAP
+      icon: DIRT
+      # Short name
+      name: The Original
+      # Longer description
+      description: Challenging|starter|island!
+      # How hard this island is to play. Scale is 1 to 100
+      rating: 50
+      # Name of the schematic
+      filename: island.schematic
+      # Use default chest, or if false, use schematic chest contents
+      useDefaultChest: true
+    # The heading name can be anything you like, but must be unique
+    island1:
+      icon: FENCE
+      name: Double Island
+      description: &3A binary island!|Double the fun,|but a little easier.
+      rating: 30
+      filename: double.schematic
+      useDefaultChest: true
+      #permission: any.perm.you.like
+    hard:
+      icon: OBSIDIAN
+      name: Black Diamond
+      description: Experts only, minimal resources
+      rating: 80
+      filename: hard.schematic
+      useDefaultChest: false
+      #permission: any.perm.you.like
+

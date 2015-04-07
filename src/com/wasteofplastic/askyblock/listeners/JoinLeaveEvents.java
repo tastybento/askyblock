@@ -106,13 +106,16 @@ public class JoinLeaveEvents implements Listener {
 	    // Team player
 	    loc = players.getTeamIslandLocation(playerUUID);
 	    leader = players.getTeamLeader(playerUUID);
+	    if (leader == null) {
+		plugin.getLogger().severe("Player "+ event.getPlayer().getName() + " is in a team with no leader! Correct the player's team situation.");
+	    }
 	}
 	// If the player has an island location of some kind
-	if (loc != null) {
+	if (loc != null && leader != null) {
 	    // Check if the island location is on the grid
 	    Island island = plugin.getGrid().getIslandAt(loc);
 	    if (island == null) {
-		plugin.getLogger().info("DEBUG: getIslandLoc is null!");
+		//plugin.getLogger().info("DEBUG: getIslandLoc is null!");
 		// Island isn't in the grid, so add it
 		// See if this owner is tagged as having an island elsewhere
 		Island islandByOwner = plugin.getGrid().getIsland(leader);
@@ -121,38 +124,40 @@ public class JoinLeaveEvents implements Listener {
 		    plugin.getGrid().addIsland(loc.getBlockX(), loc.getBlockZ(), leader);
 		} else {
 		    // We have a mismatch - correct in favor of the player info
-		    plugin.getLogger().info("DEBUG: getIslandLoc is null but there is a player listing");
+		    //plugin.getLogger().info("DEBUG: getIslandLoc is null but there is a player listing");
+		    plugin.getLogger().warning(event.getPlayer().getName() + " login: mismatch - player.yml and islands.yml are out of sync. Fixing...");
 		    plugin.getGrid().deleteIsland(islandByOwner.getCenter());
 		    plugin.getGrid().addIsland(loc.getBlockX(), loc.getBlockZ(), leader);
 		}
 	    } else {
 		// Island at this location exists
-		plugin.getLogger().info("DEBUG: getIslandLoc is not null - island exists");
+		//plugin.getLogger().info("DEBUG: getIslandLoc is not null - island exists");
 		// See if this owner is tagged as having an island elsewhere
 		Island islandByOwner = plugin.getGrid().getIsland(leader);
 		if (islandByOwner == null) {
-		    plugin.getLogger().info("DEBUG: island exists, but is unowned, so set ownership");
+		    plugin.getLogger().warning(event.getPlayer().getName() + " login: has island, but islands.yml says it is unowned, correcting...");
 		    // No previous ownership, so just assign ownership
 		    plugin.getGrid().setIslandOwner(island, leader);
 		} else {
 		    if (!islandByOwner.equals(island)) {
-			plugin.getLogger().info("DEBUG: mismatch");
+			//plugin.getLogger().info("DEBUG: mismatch");
+			plugin.getLogger().warning(event.getPlayer().getName() + " login: mismatch - islands.yml and player.yml are out of sync. Fixing...");
 			// We have a mismatch - correct in favor of the player info
 			plugin.getGrid().deleteIsland(islandByOwner.getCenter());
 			plugin.getGrid().setIslandOwner(island, leader);
 		    } else {
-			plugin.getLogger().info("DEBUG: everything looks good");
+			//plugin.getLogger().info("DEBUG: everything looks good");
 		    }
 		}
 	    }
-	    // Run the level command if it's free to do so
-	    if (Settings.loginLevel) {
-		if (!plugin.isCalculatingLevel()) {
-		    // This flag is true if the command can be used
-		    plugin.setCalculatingLevel(true);
-		    LevelCalc levelCalc = new LevelCalc(plugin, playerUUID, event.getPlayer(), true);
-		    levelCalc.runTaskTimer(plugin, 0L, 10L);
-		}
+	}
+	// Run the level command if it's free to do so
+	if (Settings.loginLevel) {
+	    if (!plugin.isCalculatingLevel()) {
+		// This flag is true if the command can be used
+		plugin.setCalculatingLevel(true);
+		LevelCalc levelCalc = new LevelCalc(plugin, playerUUID, event.getPlayer(), true);
+		levelCalc.runTaskTimer(plugin, 0L, 10L);
 	    }
 	}
 

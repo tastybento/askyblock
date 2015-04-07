@@ -28,16 +28,16 @@
 				</includes>
 			</resource>
 			<resource>
-				<targetPath>.</targetPath>
+				<targetPath>schematics</targetPath>
 				<filtering>false</filtering>
-				<directory>${basedir}</directory>
+				<directory>${basedir}/schematics</directory>
 				<includes>
 					<include>*.schematic</include>
 				</includes>
 			</resource>
 			<resource>
 				<targetPath>locale</targetPath>
-				<filtering>true</filtering>
+				<filtering>false</filtering>
 				<directory>${basedir}/locale</directory>
 				<includes>
 					<include>*.yml</include>

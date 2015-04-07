@@ -1,8 +1,10 @@
 package com.wasteofplastic.askyblock.panels;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -18,6 +20,7 @@ import com.wasteofplastic.askyblock.util.Util;
 public class SPItem {
     private ItemStack item;
     private List<String> description = new ArrayList<String>();
+    private String heading;
     private String name;
     private String perm;
     private int slot;
@@ -33,6 +36,7 @@ public class SPItem {
 	this.slot = slot;
 	this.name = name;
 	this.perm = "";
+	this.heading = "";
 	this.description.clear();
 	item = new ItemStack(material);
 	ItemMeta meta = item.getItemMeta();
@@ -41,7 +45,7 @@ public class SPItem {
 	meta.setLore(this.description);
 	item.setItemMeta(meta);
     }
-    
+
     /**
      * This constructor is for schematics that will do something if chosen
      * @param material
@@ -50,22 +54,19 @@ public class SPItem {
      * @param description
      * @param slot
      */
-    public SPItem(Material material, Schematic schematic, int slot) {
+    public SPItem(Schematic schematic, int slot) {
 	this.slot = slot;
 	this.name = schematic.getName();
 	this.perm = schematic.getPerm();
+	this.heading = schematic.getHeading();
 	this.description.clear();
-	item = new ItemStack(material);
+	this.item = new ItemStack(schematic.getIcon());
 	ItemMeta meta = item.getItemMeta();
 	meta.setDisplayName(name);
-	this.description.addAll(Util.chop(ChatColor.AQUA, schematic.getDescription(), 25));
+	// This neat bit of code makes a list out of the description split by new line character
+	List<String> desc = new ArrayList<String>(Arrays.asList(schematic.getDescription().split("\\|")));
+	this.description.addAll(desc);
 	meta.setLore(this.description);
-	item.setItemMeta(meta);
-    }
-
-    public void setLore(List<String> lore) {
-	ItemMeta meta = item.getItemMeta();
-	meta.setLore(lore);
 	item.setItemMeta(meta);
     }
 
@@ -92,7 +93,14 @@ public class SPItem {
      * @return the perm
      */
     public String getPerm() {
-        return perm;
+	return perm;
+    }
+
+    /**
+     * @return the heading
+     */
+    public String getHeading() {
+        return heading;
     }
 
 

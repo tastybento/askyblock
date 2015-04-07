@@ -391,3 +391,6 @@ lock:
    unlocking: "Insel für Besucher wieder geöffnet"
    enteringspawn: "Du betrittst den Spawn"
    leavingspawn: "Du verlässt den Spawn"
+
+schematics:
+   title: "Wählen Sie Insel"

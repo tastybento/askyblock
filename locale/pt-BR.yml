@@ -8,61 +8,61 @@
 #General Errors#
 ################
 error:
-   #"Erro: Jogador inválido (verifique se escreveu certo)"
-   unknownPlayer: "Esse jogador não está cadastrado."
-   #"Você não tem acesso a esse comando!"
+   #"Erro: Jogador inv√°lido (verifique se escreveu certo)"
+   unknownPlayer: "Esse jogador n√£o est√° cadastrado."
+   #"Voc√™ n√£o tem acesso a esse comando!"
    #"/acid is a command for mods and ops only"
-   noPermission: "Você não tem permissão para usar esse comando!"
-   noIsland: "Você não possui uma ilha!"
-   noIslandOther: "Esse jogador não possui uma ilha!"
-   #notOnIsland: "Você precisa estar na sua ilha para usar esse comando."
-   commandNotReady: "Você não pode usar esse comando no momento."
-   offlinePlayer: "Esse jogador está offline ou não existe."
+   noPermission: "Voc√™ n√£o tem permiss√£o para usar esse comando!"
+   noIsland: "Voc√™ n√£o possui uma ilha!"
+   noIslandOther: "Esse jogador n√£o possui uma ilha!"
+   #notOnIsland: "Voc√™ precisa estar na sua ilha para usar esse comando."
+   commandNotReady: "Voc√™ n√£o pode usar esse comando no momento."
+   offlinePlayer: "Esse jogador est√° offline ou n√£o existe."
    unknownCommand: "Comando desconhecido."
-   noTeam: "Jogador não faz parte de uma equipe."
-   wrongWorld: "Você não pode fazer isso neste mundo."
+   noTeam: "Jogador n√£o faz parte de uma equipe."
+   wrongWorld: "Voc√™ n√£o pode fazer isso neste mundo."
 
 #AcidEffect
-changingObsidiantoLava: "O obsidian será transformado em lava. Cuidado!"
+changingObsidiantoLava: "O obsidian ser√° transformado em lava. Cuidado!"
 
 #AcidInventory
 # The warning that goes on the acid bottles or buckets. Lines are split by \n
-acidLore: "Não\nbeba!\nCuidado!\n"
-acidBucket: "Balde de ácido"
-acidBottle: "Garrafa de ácido"
-drankAcidAndDied: "bebeu ácido e morreu."
-drankAcid: "bebeu ácido."
+acidLore: "N√£o\nbeba!\nCuidado!\n"
+acidBucket: "Balde de √°cido"
+acidBottle: "Garrafa de √°cido"
+drankAcidAndDied: "bebeu √°cido e morreu."
+drankAcid: "bebeu √°cido."
 
 #IslandGuard
 islandProtected: "Ilha protegida."
-targetInPVPArea: "O alvo está em uma área que não permite PVP!"
+targetInPVPArea: "O alvo est√° em uma √°rea que n√£o permite PVP!"
 # The following are strings for the Settings panel
 islandguardsettings:
-  title: "Configurações de proteção de ilhas"
+  title: "Configura√ß√µes de prote√ß√£o de ilhas"
   allowed: "Permitido"
-  disallowed: "Não permitido"
+  disallowed: "N√£o permitido"
   anvil: "Uso de bigornas"
   armorstand: "Uso de suportes de armadura"
   beacon: "Uso de beacons"
   bed: "Uso de camas"
   breakblocks: "Quebrar blocos"
   breeding: "Criar animais"
-  brewingstand: "Preparar poções"
+  brewingstand: "Preparar po√ß√µes"
   bucket: "Usar baldes"
-  chest: "Usar baús"
-  chestdamage: "Dano a baús causado por TNT"
+  chest: "Usar ba√∫s"
+  chestdamage: "Dano a ba√∫s causado por TNT"
   workbench: "Uso de mesas de trabalho"
-  croptrample: "Pisar em plantações"
+  croptrample: "Pisar em planta√ß√µes"
   door: "Usar portas"
   enchantingtable: "Mesa de encantamento"
-  enderpearl: "Uso de pérolas de ender"
+  enderpearl: "Uso de p√©rolas de ender"
   fire: "Fogo"
   furnace: "Uso de fornalhas"
-  gate: "Uso de portões"
+  gate: "Uso de port√µes"
   hurtanimals: "Ferir animais"
   hurtmonsters: "Ferir monstros"
   leash: "Usar coleiras"
-  lever: "Usar botões ou alavancas"
+  lever: "Usar bot√µes ou alavancas"
   spawnegg: "Ovo de spawn"
   jukebox: "Uso de jukeboxes"
   placeblocks: "Colocar blocos"
@@ -79,7 +79,7 @@ islandguardsettings:
 
 
 #LavaCheck
-lavaTip: "Dica: Se a intenção não era fazer obsidian, a lava pode ser recolhida novamente com um balde."
+lavaTip: "Dica: Se a inten√ß√£o n√£o era fazer obsidian, a lava pode ser recolhida novamente com um balde."
 
 #WarpSigns
 warps:
@@ -91,69 +91,69 @@ warps:
    removed: "Placa de boas-vindas removida!"
    signRemoved: "Sua placa de boas-vindas foi removida!"
    deactivate: "Desativando a placa antiga!"
-   errorNoRemove: "Você só pode reomover uma placa de boas-vindas que lhe pertença.!"
-   errorNoPerm: "Você ainda não tem permissão para colocar placas de boas-vindas!"
-   errorNoPlace: "Você deve estar na sua ilha para poder colocar uma placa de boas-vindas!"
-   errorDuplicate: "Desculpe! Já existe uma placa nesse local!"
-   errorDoesNotExist: "Esse ponto de warp não existe!"
-   errorNotReadyYet: "Esse ponto de warp ainda não está pronto. Tente novamente mais tarde."
-   errorNotSafe: "Esse ponto de warp não é seguro no momento. Tente novamente mais tarde."
+   errorNoRemove: "Voc√™ s√≥ pode reomover uma placa de boas-vindas que lhe perten√ßa.!"
+   errorNoPerm: "Voc√™ ainda n√£o tem permiss√£o para colocar placas de boas-vindas!"
+   errorNoPlace: "Voc√™ deve estar na sua ilha para poder colocar uma placa de boas-vindas!"
+   errorDuplicate: "Desculpe! J√° existe uma placa nesse local!"
+   errorDoesNotExist: "Esse ponto de warp n√£o existe!"
+   errorNotReadyYet: "Esse ponto de warp ainda n√£o est√° pronto. Tente novamente mais tarde."
+   errorNotSafe: "Esse ponto de warp n√£o √© seguro no momento. Tente novamente mais tarde."
    #/island warp help
    warpToPlayersSign: "Fazer warp para a placa de boas-vindas do jogador <player>."
-   errorNoWarpsYet: "Ainda não existem pontos de warp disponíveis!"
-   warpsAvailable: "Os seguintes pontos de warp estão disponíveis"
+   errorNoWarpsYet: "Ainda n√£o existem pontos de warp dispon√≠veis!"
+   warpsAvailable: "Os seguintes pontos de warp est√£o dispon√≠veis"
    playerWarped: "[name] &2fez warp para a sua ilha!"
    
 topTen:
-   header: "Essas são as ilhas 'Top 10':"
-   errorNotReady: "A lista de 'Top 10' ainda não foi gerada!"
+   header: "Essas s√£o as ilhas 'Top 10':"
+   errorNotReady: "A lista de 'Top 10' ainda n√£o foi gerada!"
 level:
-   islandLevel: "Nível de ilha"
-   errornotYourIsland: "Só o líder pode fazer isso."
-   calculating: "Calculando o nível da ilha. Isso leverá alguns segundos..."
+   islandLevel: "N√≠vel de ilha"
+   errornotYourIsland: "S√≥ o l√≠der pode fazer isso."
+   calculating: "Calculando o n√≠vel da ilha. Isso lever√° alguns segundos..."
    
 sethome:
-   homeSet: "O seu ponto de 'home' na ilha foi definido para a sua posição atual."
-   errorNotOnIsland: "Você deve estar dentro dos limites da sua ilha para definir o seu ponto de 'home'!"
-   errorNoIsland: "Você não faz parte de uma ilha. Retornando para a área de spawn!"
+   homeSet: "O seu ponto de 'home' na ilha foi definido para a sua posi√ß√£o atual."
+   errorNotOnIsland: "Voc√™ deve estar dentro dos limites da sua ilha para definir o seu ponto de 'home'!"
+   errorNoIsland: "Voc√™ n√£o faz parte de uma ilha. Retornando para a √°rea de spawn!"
    errorNumHomes: "Pode haver de 1 a [max] pontos de 'home'."
 
 #Challenges
 challenges:
-   youHaveCompleted: "Você completou o desafio [challenge]!"
+   youHaveCompleted: "Voc√™ completou o desafio [challenge]!"
    nameHasCompleted: "[name] completou o desafio [challenge]!"
-   youRepeated: "Você repetiu o desafio [challenge]!"
-   toComplete: "Complete mais [challengesToDo] desafios no nível [thisLevel] para desbloquear esse nível!"
-   help1: "Use /c <name> para ver inforamações sobre um desafio."
+   youRepeated: "Voc√™ repetiu o desafio [challenge]!"
+   toComplete: "Complete mais [challengesToDo] desafios no n√≠vel [thisLevel] para desbloquear esse n√≠vel!"
+   help1: "Use /c <name> para ver inforama√ß√µes sobre um desafio."
    help2: "Use /c complete <name> para tentar completar esse desafio."
-   colors: "Desafios terão cores diferentes, dependendo do status:"
+   colors: "Desafios ter√£o cores diferentes, dependendo do status:"
    complete: "Completo"
    incomplete: "Incompleto"
-   completeNotRepeatable: "Completo(não pode ser repetido)"
+   completeNotRepeatable: "Completo(n√£o pode ser repetido)"
    completeRepeatable: "Completo(pode ser repetido)"
    name: "Nome do Desafio"
-   level: "Nível"
-   itemTakeWarning: "Todos os ítens exigidos serão removidos quando você completar esse desafio!"
-   notRepeatable: "Esse desafio não pode ser repetido!"
-   firstTimeRewards: "Prêmio(s) para a primeira vez"
-   repeatRewards: "Prêmios para repetição"
-   expReward: "Prêmio em exp."
-   moneyReward: "Prêmio em dinheiro"
+   level: "N√≠vel"
+   itemTakeWarning: "Todos os √≠tens exigidos ser√£o removidos quando voc√™ completar esse desafio!"
+   notRepeatable: "Esse desafio n√£o pode ser repetido!"
+   firstTimeRewards: "Pr√™mio(s) para a primeira vez"
+   repeatRewards: "Pr√™mios para repeti√ß√£o"
+   expReward: "Pr√™mio em exp."
+   moneyReward: "Pr√™mio em dinheiro"
    toCompleteUse: "Para completar esse desafio, use"
-   invalidChallengeName: "Nome de desafio incorreto! Use /c help para mais informaçÃµes"
-   rewards: "Prêmio(s)"
-   youHaveNotUnlocked: "Você ainda não destravou esse desafio!"
-   unknownChallenge: "Desafio desconhecido (verifique a digitação)!"
-   errorNotEnoughItems: "Você não possui número suficiente do(s) ítem(ns) necessário(s)"
-   errorNotOnIsland: "Você precisa estar na sua ilha para poder fazer isso!"
-   errorNotCloseEnough: "Você deve estar a uma distância máxima de 10 blocos de todos os itens necessários."
-   errorItemsNotThere: "Todos os itens necessários devem estar próximos de você na sua ilha!"
-   errorIslandLevel: "Para completar esse desafio, sua ilha deve ter nível [level]!"
+   invalidChallengeName: "Nome de desafio incorreto! Use /c help para mais informa√ß√É¬µes"
+   rewards: "Pr√™mio(s)"
+   youHaveNotUnlocked: "Voc√™ ainda n√£o destravou esse desafio!"
+   unknownChallenge: "Desafio desconhecido (verifique a digita√ß√£o)!"
+   errorNotEnoughItems: "Voc√™ n√£o possui n√∫mero suficiente do(s) √≠tem(ns) necess√°rio(s)"
+   errorNotOnIsland: "Voc√™ precisa estar na sua ilha para poder fazer isso!"
+   errorNotCloseEnough: "Voc√™ deve estar a uma dist√¢ncia m√°xima de 10 blocos de todos os itens necess√°rios."
+   errorItemsNotThere: "Todos os itens necess√°rios devem estar pr√≥ximos de voc√™ na sua ilha!"
+   errorIslandLevel: "Para completar esse desafio, sua ilha deve ter n√≠vel [level]!"
    guititle: "Desafios aSkyBlock"
    erroryouaremissing: "Faltam"
-   errorRewardProblem: "Houve um erro ao entregar o seu prêmio. Peça ao seu admin para verificar o log!"
-   completedtimes: "Já foi completado [donetimes] vezes, de um máximo de [maxtimes]."
-   maxreached: "O limite de repetição foi alcançado ([donetimes] de [maxtimes])."
+   errorRewardProblem: "Houve um erro ao entregar o seu pr√™mio. Pe√ßa ao seu admin para verificar o log!"
+   completedtimes: "J√° foi completado [donetimes] vezes, de um m√°ximo de [maxtimes]."
+   maxreached: "O limite de repeti√ß√£o foi alcan√ßado ([donetimes] de [maxtimes])."
    
 #/island
 island:
@@ -166,38 +166,38 @@ island:
    donate: "Bem-vindo ao A SkyBlock, por tastybento."
    url: "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZSBJG5J2E3B7U"
 
-   teleport: "Teleportando você para a sua ilha. (/island help para mais informações)"
-   cannotTeleport: "Você não pode se teleportar enquanto está caindo!"
-   new: "Criando uma nova ilha para você..."
-   errorCouldNotCreateIsland: "Não foi possível criar a sua ilha. Por favor, contate um moderador do servidor."
-   errorYouDoNotHavePermission: "Você não tem permissão para usar esse comando!"
+   teleport: "Teleportando voc√™ para a sua ilha. (/island help para mais informa√ß√µes)"
+   cannotTeleport: "Voc√™ n√£o pode se teleportar enquanto est√° caindo!"
+   new: "Criando uma nova ilha para voc√™..."
+   errorCouldNotCreateIsland: "N√£o foi poss√≠vel criar a sua ilha. Por favor, contate um moderador do servidor."
+   errorYouDoNotHavePermission: "Voc√™ n√£o tem permiss√£o para usar esse comando!"
    #/island reset
-   resetOnlyOwner: "Apenas o proprietário pode reinicializar essa ilha. Saia dessa ilha para poder criar a sua (/island leave)."
-   resetMustRemovePlayers: "Você deve retirar todos os jogadores da sua ilha antes de reiniciá-la. (/island kick <jogador>). Veja uma lista de jogadores que atualmente fazem parte da sua ilha com /island team."
-   resetPleaseWait: "Por favor espere. Sua ilha está sendo gerada"
+   resetOnlyOwner: "Apenas o propriet√°rio pode reinicializar essa ilha. Saia dessa ilha para poder criar a sua (/island leave)."
+   resetMustRemovePlayers: "Voc√™ deve retirar todos os jogadores da sua ilha antes de reinici√°-la. (/island kick <jogador>). Veja uma lista de jogadores que atualmente fazem parte da sua ilha com /island team."
+   resetPleaseWait: "Por favor espere. Sua ilha est√° sendo gerada"
    #Cool down warning - [time] is number of seconds left
-   resetWait: "Você precisa esperar [time] segundos antes de fazer isso novamente."
+   resetWait: "Voc√™ precisa esperar [time] segundos antes de fazer isso novamente."
    #Confirm
-   resetConfirm: "Digite /island confirm dentro de 10 segundos para apagar a sua ilha e reiniciá-la!"
-   resetYouHave: "Você pode reinicializar mais [number] vezes."
-   resetNoMore: "Sua ilha não pode ser reinicializada novamente!"
-   resetTo: "O limite de número de reinicializações foi zerado"
+   resetConfirm: "Digite /island confirm dentro de 10 segundos para apagar a sua ilha e reinici√°-la!"
+   resetYouHave: "Voc√™ pode reinicializar mais [number] vezes."
+   resetNoMore: "Sua ilha n√£o pode ser reinicializada novamente!"
+   resetTo: "O limite de n√∫mero de reinicializa√ß√µes foi zerado"
 
    #/island help
    #/island
-   helpIsland: "inicia uma ilha, ou teleporta você para a sua ilha."
-   helpTeleport: "teleporta você para a sua ilha."
+   helpIsland: "inicia uma ilha, ou teleporta voc√™ para a sua ilha."
+   helpTeleport: "teleporta voc√™ para a sua ilha."
    helpIslandSpawn: "ir para o ponto de spawn."
-   helpContolPanel: "abre a interface gráfica da ilha."
+   helpContolPanel: "abre a interface gr√°fica da ilha."
    #/island restart
    helpRestart: "reinicia a sua ilha e apaga a anterior."
    islandDeletedLifeboats: "A ilha foi deletada! Corra para os botes salva-vidas!"
    #/island sethome
    helpSetHome: "define o seu ponto de chegada quando se teleportar com /island."
    #/island level
-   helpLevel: "calcula o nível da sua ilha"
+   helpLevel: "calcula o n√≠vel da sua ilha"
    #/island level <player>
-   helpLevelPlayer: "mostra o nível de ilha de outro jogador."
+   helpLevelPlayer: "mostra o n√≠vel de ilha de outro jogador."
    #/island top:
    helpTop: "mostra as ilhas no topo do ranking."
    #/island warps:
@@ -205,7 +205,7 @@ island:
    #/island warp <player>
    helpWarp: "Faz warp para a placa de boas-vindas do jogador <player>."
    #/island team
-   helpTeam: "mostra informações sobre a sua equipe."
+   helpTeam: "mostra informa√ß√µes sobre a sua equipe."
    #/island invite <player>:
    helpInvite: "convida um jogador a participar de sua ilha."
    #/island leave:
@@ -217,16 +217,16 @@ island:
    #/island makeleader <player>
    helpMakeLeader: "transfere a ilha para o jogador <player>."
    #Level
-   errorLevelNotReady: "Você não pode usar esse comando no momento. Tente novamente em alguns segundos."
-   errorInvalidPlayer: "Esse jogador não é válido, ou não possui uma ilha!"
-   islandLevelis: "O nível de ilha é"
+   errorLevelNotReady: "Voc√™ n√£o pode usar esse comando no momento. Tente novamente em alguns segundos."
+   errorInvalidPlayer: "Esse jogador n√£o √© v√°lido, ou n√£o possui uma ilha!"
+   islandLevelis: "O n√≠vel de ilha √©"
    #/island expel <player>
    helpExpel: "expulsa um jogador da sua ilha."
    helpLock: "Trava sua ilha para nenhum visitante poder entrar."
    # The color that is placed before the /commands in /island help
    # See http://ess.khhq.net/mc/ for a list
    helpColor: "&e"
-   helpSettings: "mostra as configurações do jogo e de proteção das ilhas"
+   helpSettings: "mostra as configura√ß√µes do jogo e de prote√ß√£o das ilhas"
    helpChallenges: "/challenges: &fmostra os desafios"
 
 ###################
@@ -236,38 +236,38 @@ island:
 #invite
 invite:
    help: "Use [/island invite <playername>] para convidar um jogador a participar de sua ilha."
-   youCanInvite: "Você ainda pode convidar [number] jogadores."
-   youCannotInvite: "Você não pode convidar mais jogadores."
-   onlyIslandOwnerCanInvite: "Apenas o líder da ilha pode convidar outros jogadores!"
-   youHaveJoinedAnIsland: "Você agora é membro dessa ilha! Use /island team para ver os outros membros."
-   hasJoinedYourIsland: "[name] agora é membro da sua ilha!"
-   errorCantJoinIsland: "Você não pode se tornar membro da ilha, talvez ela já esteja lotada."
-   errorYouMustHaveIslandToInvite: "Você precisa ter uma ilha para poder convidar outros jogadores!"
-   errorYouCannotInviteYourself: "Você não pode convidar a si mesmo!"
-   removingInvite: "Removendo seu último convite."
+   youCanInvite: "Voc√™ ainda pode convidar [number] jogadores."
+   youCannotInvite: "Voc√™ n√£o pode convidar mais jogadores."
+   onlyIslandOwnerCanInvite: "Apenas o l√≠der da ilha pode convidar outros jogadores!"
+   youHaveJoinedAnIsland: "Voc√™ agora √© membro dessa ilha! Use /island team para ver os outros membros."
+   hasJoinedYourIsland: "[name] agora √© membro da sua ilha!"
+   errorCantJoinIsland: "Voc√™ n√£o pode se tornar membro da ilha, talvez ela j√° esteja lotada."
+   errorYouMustHaveIslandToInvite: "Voc√™ precisa ter uma ilha para poder convidar outros jogadores!"
+   errorYouCannotInviteYourself: "Voc√™ n√£o pode convidar a si mesmo!"
+   removingInvite: "Removendo seu √∫ltimo convite."
    inviteSentTo: "Convite enviado a [name]"
-   nameHasInvitedYou: "[name] convidou você a participar de sua ilha!"
+   nameHasInvitedYou: "[name] convidou voc√™ a participar de sua ilha!"
    toAcceptOrReject: "para aceitar ou rejeitar o convite."
-   warningYouWillLoseIsland: "AVISO: Se você aceitar, perderá sua ilha atual!"
-   errorYourIslandIsFull: "Sua ilha está lotada, você não pode convidar mais pessoas."
+   warningYouWillLoseIsland: "AVISO: Se voc√™ aceitar, perder√° sua ilha atual!"
+   errorYourIslandIsFull: "Sua ilha est√° lotada, voc√™ n√£o pode convidar mais pessoas."
    #"That player is already with a group on an island."
-   errorThatPlayerIsAlreadyInATeam: "Esse jogador já faz parte de uma equipe."
-   errorCoolDown: "Você pode convidar esse jogador novamente em [time] minutos"
+   errorThatPlayerIsAlreadyInATeam: "Esse jogador j√° faz parte de uma equipe."
+   errorCoolDown: "Voc√™ pode convidar esse jogador novamente em [time] minutos"
    
 #reject
 reject:
-   youHaveRejectedInvitation: "Você rejeitou o convite para participar de uma ilha."
+   youHaveRejectedInvitation: "Voc√™ rejeitou o convite para participar de uma ilha."
    nameHasRejectedInvite: "[name] rejeitou seu convite!"
-   youHaveNotBeenInvited: "Você não tinha sido convidado a participar de uma equipe."
+   youHaveNotBeenInvited: "Voc√™ n√£o tinha sido convidado a participar de uma equipe."
 
 #leave
 leave:
-  errorYouAreTheLeader: "Você não pode abandonar esta ilha porque é o líder dela. Transfira a propriedade da ilha para outro jogador antes de deixá-la."
-  youHaveLeftTheIsland: "Você deixou a ilha e retornou ao local de spawn."
+  errorYouAreTheLeader: "Voc√™ n√£o pode abandonar esta ilha porque √© o l√≠der dela. Transfira a propriedade da ilha para outro jogador antes de deix√°-la."
+  youHaveLeftTheIsland: "Voc√™ deixou a ilha e retornou ao local de spawn."
   nameHasLeftYourIsland: "[name] deixou a sua ilha!"
-  errorYouCannotLeaveIsland: "Você não pode deixar a ilha se for a única pessoa nela. Experimente /island restart se você quer uma ilha nova!"
-  errorYouMustBeInWorld: "Você precisa estar no mundo de ilhas para deixar sua equipe!"
-  errorLeadersCannotLeave: "Líderes não podem deixar uma ilha. Primeiro, torne outra pessoa líder antes de deixar a ilha."
+  errorYouCannotLeaveIsland: "Voc√™ n√£o pode deixar a ilha se for a √∫nica pessoa nela. Experimente /island restart se voc√™ quer uma ilha nova!"
+  errorYouMustBeInWorld: "Voc√™ precisa estar no mundo de ilhas para deixar sua equipe!"
+  errorLeadersCannotLeave: "L√≠deres n√£o podem deixar uma ilha. Primeiro, torne outra pessoa l√≠der antes de deixar a ilha."
 
 #team
 team:
@@ -276,35 +276,35 @@ team:
 
 #kick / remove
 kick:
-  errorPlayerNotInTeam: "Esse jogador não está na sua equipe!"
-  nameRemovedYou: "[name] removeu você da sua ilha!"
+  errorPlayerNotInTeam: "Esse jogador n√£o est√° na sua equipe!"
+  nameRemovedYou: "[name] removeu voc√™ da sua ilha!"
   nameRemoved: "[name] foi removido da ilha."
-  errorNotPartOfTeam: "Esse jogador não faz parte da equipe da sua ilha!"
-  errorOnlyLeaderCan: "Só o líder pode remover pessoas da ilha!"
-  errorNoTeam: "Você não possui uma equipe!"
+  errorNotPartOfTeam: "Esse jogador n√£o faz parte da equipe da sua ilha!"
+  errorOnlyLeaderCan: "S√≥ o l√≠der pode remover pessoas da ilha!"
+  errorNoTeam: "Voc√™ n√£o possui uma equipe!"
 
 #makeleader
 makeleader:
-   errorPlayerMustBeOnline: "Esse jogador deve estar online para você poder transfeir a ilha."
-   errorYouMustBeInTeam: "Você deve fazer parte de uma equipe para poder transferir a sua ilha."
-   errorRemoveAllPlayersFirst: "Remova todos os jogadores da sua equipe, exceto o jogador a quem você quer transferir a ilha."
-   youAreNowTheOwner: "Você é o novo proprietário da sua ilha."
-   nameIsNowTheOwner: "[name] é o novo proprietário da sua ilha!"
-   errorThatPlayerIsNotInTeam: "Esse jogador não faz parte da equipe da sua ilha!"
-   errorNotYourIsland: "Essa ilha não lhe pertence, por isso você não pode transferi-la.!"
-   errorGeneralError: "Não foi possível transferir a ilha."
+   errorPlayerMustBeOnline: "Esse jogador deve estar online para voc√™ poder transfeir a ilha."
+   errorYouMustBeInTeam: "Voc√™ deve fazer parte de uma equipe para poder transferir a sua ilha."
+   errorRemoveAllPlayersFirst: "Remova todos os jogadores da sua equipe, exceto o jogador a quem voc√™ quer transferir a ilha."
+   youAreNowTheOwner: "Voc√™ √© o novo propriet√°rio da sua ilha."
+   nameIsNowTheOwner: "[name] √© o novo propriet√°rio da sua ilha!"
+   errorThatPlayerIsNotInTeam: "Esse jogador n√£o faz parte da equipe da sua ilha!"
+   errorNotYourIsland: "Essa ilha n√£o lhe pertence, por isso voc√™ n√£o pode transferi-la.!"
+   errorGeneralError: "N√£o foi poss√≠vel transferir a ilha."
 
 #minishop
 minishop:
    title: "&EMiniShop"
    islandhelpMiniShop: "Abre a miniloja"
-   buy: "Comprar(Clique botão esquerdo)"
-   sell: "Vender(Clique botão direito)"
-   youcannotafford: "Você não tem dinheiro suficiente para comprar [description]!"
-   youbought: "Você comprou [number] [description] por [price]"
-   yousold: "Você vendeu [number] [description] por [price]"
+   buy: "Comprar(Clique bot√£o esquerdo)"
+   sell: "Vender(Clique bot√£o direito)"
+   youcannotafford: "Voc√™ n√£o tem dinheiro suficiente para comprar [description]!"
+   youbought: "Voc√™ comprou [number] [description] por [price]"
+   yousold: "Voc√™ vendeu [number] [description] por [price]"
    buyproblem: "Houve um problema com a compra de [description]"
-   sellproblem: "Você não tem [description] para vender."
+   sellproblem: "Voc√™ n√£o tem [description] para vender."
    outofstock: "Sem estoque"
 
 ################################
@@ -314,7 +314,7 @@ minishop:
 #Help
 adminHelp:
    help: "Comandos de Admin:"
-   reload: "recarrega a o arquivo de configuração."
+   reload: "recarrega a o arquivo de configura√ß√£o."
    topTen: "atualiza a lista de 'Top 10' manualmente"
    register: "define o local atual como sendo a ilha de um jogador"
    unregister: "remove o jogador sem remover os blocos da ilha"
@@ -322,17 +322,17 @@ adminHelp:
    completeChallenge: "marca um desafio como completo"
    resetChallenge: "marca um desafio como incompleto"
    resetAllChallenges: "reinicia todos os desafios do jogador"
-   purge: "apaga ilhas inativas há mais de [dias] dias."
-   purgeholes: "libera os espaços deixados por ilhas apagadas para serem reutilizados."
-   info: "informação sobre o jogador."
-   infoisland: "informação sobre a ilha mais próxima."
+   purge: "apaga ilhas inativas h√° mais de [dias] dias."
+   purgeholes: "libera os espa√ßos deixados por ilhas apagadas para serem reutilizados."
+   info: "informa√ß√£o sobre o jogador."
+   infoisland: "informa√ß√£o sobre a ilha mais pr√≥xima."
    clearreset: "redefine o limite de resets da ilha para o jogador."
-   setspawn: "define o spawn do island world como sendo um local próximo a você."
-   setrange: "muda o alcance do espaço protegido da ilha."
+   setspawn: "define o spawn do island world como sendo um local pr√≥ximo a voc√™."
+   setrange: "muda o alcance do espa√ßo protegido da ilha."
    
 #acid reload
 reload:
-   configReloaded: "O arquivo de configuração foi recarregado."
+   configReloaded: "O arquivo de configura√ß√£o foi recarregado."
 #topten
 adminTopTen:
    generating: "Gerando a lista Top 10"
@@ -341,12 +341,12 @@ adminTopTen:
 #purge
 purge:
    #"A purge is already running, please wait for it to finish!"
-   alreadyRunning: "Um processo de purga já está em andamento; por favor, espere ele terminar!"
+   alreadyRunning: "Um processo de purga j√° est√° em andamento; por favor, espere ele terminar!"
    usage: "Uso: /[label] purge [TimeInDays]"
-   calculating: "Calculando quais ilhas estão inativas há mais de [time] dias."
-   noneFound: "Não há ilhas inativas para remover."
-   thisWillRemove: "Isso irá remover [number] ilhas inativas!"
-   warning: "PERIGO! Não execute essa função com jogadores no servidor! FAÇA UM BACKUP DO MUNDO!"
+   calculating: "Calculando quais ilhas est√£o inativas h√° mais de [time] dias."
+   noneFound: "N√£o h√° ilhas inativas para remover."
+   thisWillRemove: "Isso ir√° remover [number] ilhas inativas!"
+   warning: "PERIGO! N√£o execute essa fun√ß√£o com jogadores no servidor! FA√áA UM BACKUP DO MUNDO!"
    typeConfirm: "Digite /[label] confirm em 10 segundos para continuar"
    purgeCancelled: "Processo de purga cancelado."
    finished: "As ilhas inativas foram removidas."
@@ -362,15 +362,15 @@ delete:
 
 #register
 register:
-   settingIsland: "Definir a ilha mais próxima como pertencendo a [name]."
-   errorBedrockNotFound: "Bedrock não encontrado: não foi possível definir a ilha!"
+   settingIsland: "Definir a ilha mais pr√≥xima como pertencendo a [name]."
+   errorBedrockNotFound: "Bedrock n√£o encontrado: n√£o foi poss√≠vel definir a ilha!"
 
 #info
 adminInfo:
-   islandLocation: "Localização da ilha"
-   errorNotPartOfTeam: "Esse jogador não é membro de uma equipe de ilha."
-   errorNullTeamLeader: "O nome do líder da equipe deveria estar em branco!"
-   errorTeamMembersExist: "O jogador possui membros de equipe, mas não deveria!"
+   islandLocation: "Localiza√ß√£o da ilha"
+   errorNotPartOfTeam: "Esse jogador n√£o √© membro de uma equipe de ilha."
+   errorNullTeamLeader: "O nome do l√≠der da equipe deveria estar em branco!"
+   errorTeamMembersExist: "O jogador possui membros de equipe, mas n√£o deveria!"
 
 #resetallchallenges
 resetallchallenges:
@@ -382,25 +382,25 @@ checkteam:
 
 #completechallenge
 completechallenge:
-   errorChallengeDoesNotExist: "O desafio não existe ou já foi completado"
+   errorChallengeDoesNotExist: "O desafio n√£o existe ou j√° foi completado"
    challangeCompleted: "Desafio: [challengename] foi completado por [name]"
 
 #resetchallenge
 resetchallenge:
-   errorChallengeDoesNotExist: "O desafio não existe ou ainda não foi completado."
+   errorChallengeDoesNotExist: "O desafio n√£o existe ou ainda n√£o foi completado."
    challengeReset: "Desafio: [challengename] foi reinicializado para [name]"
 
 #News
 news:
-   headline: "[A Skyblock News] Enquanto você estava offline..."
+   headline: "[A Skyblock News] Enquanto voc√™ estava offline..."
 
 #Nether
 nether:
-   spawnisprotected: "A área de spawn no Nether é protegida."
+   spawnisprotected: "A √°rea de spawn no Nether √© protegida."
 
 # Ultra safe boats
 boats:
-   warning: "Não é seguro sair do barco no momento..."
+   warning: "N√£o √© seguro sair do barco no momento..."
 
 #Starter sign
 # [player] is replaced with the player's name
@@ -408,40 +408,40 @@ boats:
 sign:
    line1: "&1[A Skyblock]"
    line2: "[player]"
-   line3: "Não caia!"
+   line3: "N√£o caia!"
    line4: "Cuidado!"
 
 biome:
    set: "Bioma da ilha definido como [biome]!"
-   help: "abrir a interface gráfica de biomas."
+   help: "abrir a interface gr√°fica de biomas."
    unknown: "Bioma desconhecido!"
    youbought: "Comprado por [cost]!"
    paneltitle: "Escolha um bioma"
 
 expel:
-   notonisland: "Esse jogador não está invadindo a sua ilha!"
-   success: "Você expulsou [name]!"
-   expelled: "Você foi expulso dessa ilha!"
-   fail: "[name] não pode ser expulso!"
-   notyourself: "Você não pode expulsar a você mesmo!"
+   notonisland: "Esse jogador n√£o est√° invadindo a sua ilha!"
+   success: "Voc√™ expulsou [name]!"
+   expelled: "Voc√™ foi expulso dessa ilha!"
+   fail: "[name] n√£o pode ser expulso!"
+   notyourself: "Voc√™ n√£o pode expulsar a voc√™ mesmo!"
    
 moblimits:
-   error: "O limite de reprodução na ilha ([number]) foi atingido!"
+   error: "O limite de reprodu√ß√£o na ilha ([number]) foi atingido!"
 
 coop:
-   help: "dá a um jogador acesso total (temporário) à sua ilha"
+   help: "d√° a um jogador acesso total (tempor√°rio) √† sua ilha"
    removed: "[name] removeu seu status de coop!"
-   removesuccess: "[name] não é mais um jogador coop."
-   success: "[name] agora é um jogador coop - até se desconectar ou até você expulsá-lo."
-   madeyoucoopy: "[name] tornou você um jogador coop - até você se desconectar ou ser expulso."
-   onyourteam: "Esse jogador já está na sua equipe!"
-   invited: "[name] tornou [player] um jogador coop! Use expel para removê-lo."
+   removesuccess: "[name] n√£o √© mais um jogador coop."
+   success: "[name] agora √© um jogador coop - at√© se desconectar ou at√© voc√™ expuls√°-lo."
+   madeyoucoopy: "[name] tornou voc√™ um jogador coop - at√© voc√™ se desconectar ou ser expulso."
+   onyourteam: "Esse jogador j√° est√° na sua equipe!"
+   invited: "[name] tornou [player] um jogador coop! Use expel para remov√™-lo."
    useexpel: "Use expel para remover o jogador coop."
 
 lock:
-   islandlocked: "Essa ilha está travada para vistantes"
-   nowentering: "Você está entrando na ilha de [name]"
-   nowleaving: "Você está saindo da liha de [name]"
+   islandlocked: "Essa ilha est√° travada para vistantes"
+   nowentering: "Voc√™ est√° entrando na ilha de [name]"
+   nowleaving: "Voc√™ est√° saindo da liha de [name]"
    locking: "Travando a ilha"
    unlocking: "Destravando a ilha"
    enteringspawn: "Entrando no Spawn"

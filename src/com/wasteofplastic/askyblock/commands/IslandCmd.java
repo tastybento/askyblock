@@ -26,7 +26,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 
@@ -37,20 +36,16 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.TreeType;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.Chest;
 import org.bukkit.block.Sign;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.DirectionalContainer;
 import org.bukkit.scheduler.BukkitTask;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
@@ -117,42 +112,119 @@ public class IslandCmd implements CommandExecutor {
      * Loads schematics
      */
     public void loadSchematics() {
+	// Check if there is a default schematic
+	File schematicFolder = new File(plugin.getDataFolder(), "schematics");
+	if (!schematicFolder.exists()) {
+	    schematicFolder.mkdir();
+	}
+
 	// Clear the schematic list
 	schematics.clear();
-	// Check if there is a default schematic
-	File schematicFile = new File(plugin.getDataFolder(), "island.schematic");
+	// Load the default schematic
+	// Set up the default schematic
+	File schematicFile = new File(schematicFolder, "island.schematic");
 	if (!schematicFile.exists()) {
-	    // Load in the ASkyBlock one if required
-	    if (plugin.getResource("island.schematic") != null) {
-		plugin.saveResource("island.schematic", false);
-		schematicFile = new File(plugin.getDataFolder(), "island.schematic");
+	    //plugin.getLogger().info("Default schematic does not exist...");
+	    // Only copy if the default exists
+	    if (plugin.getResource("schematics/island.schematic") != null) {
+		plugin.getLogger().info("Default schematic does not exist, saving it...");
+		plugin.saveResource("schematics/island.schematic", false);
+		// Add it to schematics
+		schematics.put("default",new Schematic(schematicFile));
+		// If this is repeated later due to the schematic config, fine, it will only add info
+		// Doing this covers ASkyBlock, but not AcidIsland
 	    }
+	} else {
+	    // It exists, so load it
+	    schematics.put("default",new Schematic(schematicFile));
 	}
-	if (schematicFile.exists()) {
-	    plugin.getLogger().info("Loading default island schematic...");
-	    Schematic schematic = new Schematic(schematicFile);
-	    schematic.setPerm("");
-	    schematic.setName("Default Island");
-	    schematic.setDescription("Chunk of dirt with a tree");
-	    schematics.put("", schematic);
-	}
-	// Now add any permission-based schematics
-	// TODO: add names and descriptions
-	if (!Settings.schematics.isEmpty()) {
-	    for (String perm : Settings.schematics.keySet()) {
-		schematicFile = new File(plugin.getDataFolder(), Settings.schematics.get(perm));
-		if (schematicFile.exists()) {
-		    Schematic schematic = new Schematic(schematicFile);
-		    plugin.getLogger().info("Loaded schematic for " + perm);
-		    schematic.setPerm(perm);
-		    schematic.setName(perm);
-		    schematic.setDescription(perm);
-		    schematics.put(perm, schematic);
-		} else {
-		    plugin.getLogger().severe("Schematic file '" + Settings.schematics.get(perm) + "' does not exist!");
+	// Load the schematics from config.yml
+	ConfigurationSection schemSection = plugin.getConfig().getConfigurationSection("schematicsection");
+	if (plugin.getConfig().contains("schematicsection") && schemSection != null) {
+	    plugin.getLogger().info("DEBUG: New Schematic section exists");
+	    Settings.useSchematicPanel = schemSection.getBoolean("useschematicspanel", true);
+	    // Section exists, so go through the various sections
+	    for (String key : schemSection.getConfigurationSection("schematics").getKeys(false)) {
+		// Check the file exists
+		//plugin.getLogger().info("DEBUG: schematics." + key + ".filename" );
+		String filename = schemSection.getString("schematics." + key + ".filename","");
+		if (!filename.isEmpty()) {
+		    schematicFile = new File(schematicFolder, filename);
+		    // If this filename exists in the jar, but not in the folder save it
+		    if (plugin.getResource("schematics/"+filename) != null) {
+			if (!schematicFile.exists()) {
+			    plugin.saveResource("schematics/"+filename, false);
+			}
+		    }
+		    // See if the file exists
+		    if (schematicFile.exists()) {
+			Schematic newSchem = new Schematic(schematicFile);
+			// Set the heading
+			newSchem.setHeading(key);
+			// Load the rest of the settings
+			try {   
+			    Material icon = Material.getMaterial(schemSection.getString("schematics." + key + ".icon","MAP").toUpperCase());
+			    newSchem.setIcon(icon);
+			} catch (Exception e) {
+			    newSchem.setIcon(Material.MAP); 
+			}
+			String name = ChatColor.translateAlternateColorCodes('&', schemSection.getString("schematics." + key + ".name",""));
+			newSchem.setName(name);
+			int rating = schemSection.getInt("schematics." + key + ".rating",50);
+			if (rating <1) {
+			    rating = 1;
+			} else if (rating > 100) {
+			    rating = 100;
+			}
+			newSchem.setRating(rating);
+			String description = ChatColor.translateAlternateColorCodes('&', schemSection.getString("schematics." + key + ".description",""));
+			description = description.replace("[rating]",String.valueOf(rating));
+			newSchem.setDescription(description);
+			String perm = schemSection.getString("schematics." + key + ".permisson","");
+			newSchem.setPerm(perm);
+			newSchem.setUseDefaultChest(schemSection.getBoolean("schematics." + key + ".useDefaultChest", true));
+			schematics.put(key, newSchem);
+			plugin.getLogger().info("Loading schematic " + name + " (" + filename + ") for permission " + perm + ", rating " + rating);
+		    } else {
+			plugin.getLogger().warning("Could not find " + filename + " in the schematics folder! Skipping...");
+		    }
 		}
 	    }
+	    if (schematics.isEmpty()) {
+		tip();
+	    }
+	} else {
+	    plugin.getLogger().info("DEBUG: Legacy support");
+	    // Legacy support
+	    if (plugin.getConfig().contains("general.schematics")) {
+		tip();
+		// Load the schematics in this section 
+		int count = 1;
+		for (String perms: plugin.getConfig().getConfigurationSection("general.schematics").getKeys(true)) {
+		    // See if the file exists
+		    String fileName = plugin.getConfig().getString("general.schematics." + perms);
+		    File schem = new File(plugin.getDataFolder(), fileName);
+		    if (schem.exists()) {
+			plugin.getLogger().info("Loading schematic " + fileName + " for permission " + perms);
+			Schematic schematic = new Schematic(schem);
+			schematic.setPerm(perms);
+			schematic.setHeading(perms);
+			schematic.setName("#" + count++);
+			schematics.put(perms, schematic);
+		    } 
+		}	    
+	    } else {
+		plugin.getLogger().info("DEBUG: no schematics section found");
+	    }
 	}
+    }
+
+    private void tip() {
+	// There is no section in config.yml. Save the default schematic anyway
+	plugin.getLogger().warning("***************************************************************");
+	plugin.getLogger().warning("* 'schematics' section in config.yml has been deprecated.     *");
+	plugin.getLogger().warning("* See 'schematicsection' in config.new.yml for replacement.   *");
+	plugin.getLogger().warning("***************************************************************");
     }
 
     /**
@@ -246,14 +318,23 @@ public class IslandCmd implements CommandExecutor {
 	List<Schematic> result = new ArrayList<Schematic>();
 	if (!schematics.isEmpty()) {
 	    // Find out what schematics this player can choose from
-	    for (String perm : schematics.keySet()) {
-		Bukkit.getLogger().info("DEBUG: schematic key is '"+ perm + "'");
-		if (VaultHelper.checkPerm(player, perm)) {
-		    result.add(schematics.get(perm));
+	    for (Schematic schematic : schematics.values()) {
+		Bukkit.getLogger().info("DEBUG: schematic name is '"+ schematic.getName() + "'");
+		if (schematic.getPerm().isEmpty() || VaultHelper.checkPerm(player, schematic.getPerm())) {
+		    Bukkit.getLogger().info("DEBUG: player can use this schematic");
+		    result.add(schematic);
 		}
 	    }
 	}
 	return result;
+    }
+
+    /**
+     * Makes the default island for the player
+     * @param player
+     */
+    public void newIsland(final Player player) {
+	newIsland(player, null);
     }
 
     /**
@@ -262,9 +343,7 @@ public class IslandCmd implements CommandExecutor {
      * @param name - permission name for the schematic
      * @return location where the cow will be placed
      */
-    public void newIsland(final Player player, String name) {
-	//plugin.getLogger().info("DEBUG: name = " + name);
-	Schematic schematic = schematics.get(name);
+    public void newIsland(final Player player, Schematic schematic) {
 	final UUID playerUUID = player.getUniqueId();
 	Location next = getNextIsland();
 	// Sets a flag to temporarily disable cleanstone generation
@@ -274,19 +353,25 @@ public class IslandCmd implements CommandExecutor {
 	if (schematic != null) {
 	    //plugin.getLogger().info("DEBUG: pasting schematic " + schematic.getName() + " " + schematic.getPerm());
 	    result = schematic.pasteSchematic(next, player);
+	    // Record the rating of this schematic out of 10
+	    plugin.getPlayers().setStartIslandRating(playerUUID, schematic.getRating());
 	} else {
-	    //plugin.getLogger().info("DEBUG: pasting default island");
+	    plugin.getLogger().info("DEBUG: pasting default island");
 	    // Default schematic paste/build
 	    if (Settings.GAMETYPE.equals(Settings.GameType.ASKYBLOCK)) {
-		result = schematics.get("").pasteSchematic(next, player);
+		result = schematics.get("default").pasteSchematic(next, player);
+		// Record the rating of this schematic out of 10
+		plugin.getPlayers().setStartIslandRating(playerUUID, schematics.get("default").getRating());
 	    } else {
 		// Create AcidIsland
 		Schematic.generateIslandBlocks(next, player);
+		// Record the rating of this schematic out of 5/10 for default island
+		plugin.getPlayers().setStartIslandRating(playerUUID, 5);
 	    }
 	}
 	if (result == null) {
 	    // There was a problem with the schematic pasting
-	    if (name.isEmpty()) {  
+	    if (schematic == null) {  
 		// Problem was with the default schematic.
 		plugin.getLogger().severe("Could not paste island.schematic. Renaming and using default island");
 		File schematicFile = new File(plugin.getDataFolder(),"island.schematic");
@@ -297,17 +382,18 @@ public class IslandCmd implements CommandExecutor {
 		}
 		loadSchematics();
 		// Try again
-		newIsland(player,"");
+		newIsland(player);
 	    } else {
 		// Another schematic
-		plugin.getLogger().severe("Could not paste " + name + ". Renaming and using default island");
+		plugin.getLogger().severe("Could not paste " + schematic.getName() + ". Renaming and using default island");
 		File schematicFile = schematic.getFile();
 		File schematicBroke = new File(plugin.getDataFolder(),schematic.getFile().getName() + ".broken");
 		boolean moveResult = schematicFile.renameTo(schematicBroke);
-		plugin.getLogger().info("DEBUG: move result = " + moveResult);
+		//plugin.getLogger().info("DEBUG: move result = " + moveResult);
 		loadSchematics();
-		// Try again
-		newIsland(player,"");
+		// Just make the default islands
+		plugin.getLogger().severe("Giving player default island");
+		newIsland(player);
 	    } 
 	}
 	// Clear the cleanstone flag so events can happen again
@@ -614,16 +700,20 @@ public class IslandCmd implements CommandExecutor {
 		player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).islandnew);
 		// Get the schematics that this player is eligible to use
 		List<Schematic> schems = getSchematics(player);
+		plugin.getLogger().info("DEBUG: size of schematics for this player = " + schems.size());
 		if (schems.isEmpty()) {
-		    // No schematics
-		    newIsland(player, "");
+		    // No schematics - use default island
+		    newIsland(player);
+		} else if (schems.size() == 1) {
+		    // Hobson's choice
+		    newIsland(player,schems.get(0));
 		} else {
 		    if (Settings.useSchematicPanel) {
 			pendingNewIslandSelection.add(playerUUID);
 			player.openInventory(SchematicsPanel.getSchematicPanel(player));
 		    } else {
 			// Do the last one in the list
-			newIsland(player, schems.get(schems.size()-1).getPerm());
+			newIsland(player, schems.get(schems.size()-1));
 		    }
 		}
 		return true;
@@ -652,7 +742,7 @@ public class IslandCmd implements CommandExecutor {
 		}
 		pendingNewIslandSelection.remove(playerUUID);
 		Location oldIsland = plugin.getPlayers().getIslandLocation(player.getUniqueId());
-		newIsland(player,null);
+		newIsland(player);
 		if (resettingIsland.contains(playerUUID)) {
 		    resettingIsland.remove(playerUUID);
 		    resetPlayer(player, oldIsland);
@@ -877,19 +967,35 @@ public class IslandCmd implements CommandExecutor {
 		    // Get the schematics that this player is eligible to use
 		    List<Schematic> schems = getSchematics(player);
 		    if (schems.isEmpty()) {
+			plugin.getLogger().info("DEBUG: player is not eligible for any schematics");
 			// No schematics
 			Location oldIsland = plugin.getPlayers().getIslandLocation(player.getUniqueId());
-			newIsland(player, null);
+			// Make default island
+			newIsland(player);
 			resetPlayer(player,oldIsland);
+		    } else if (schems.size() == 1) {
+			plugin.getLogger().info("DEBUG: Only one schematic loaded");
+			// Hobson's choice
+			newIsland(player,schems.get(0));
 		    } else {
 			if (Settings.useSchematicPanel) {
+			    //plugin.getLogger().info("DEBUG: using schematic panel");
 			    pendingNewIslandSelection.add(playerUUID);
 			    resettingIsland.add(player.getUniqueId());
 			    player.openInventory(SchematicsPanel.getSchematicPanel(player));
 			} else {
-			    // Do the last one in the list
+			    //plugin.getLogger().info("DEBUG: no schematic panel");
+			    // Legacy support
+			    // Find out what level of island this player will get
+			    Schematic schematic = null;
+			    for (String perm : schematics.keySet()) {
+				//plugin.getLogger().info("DEBUG: checking " + perm + " that has a perm of " + schematics.get(perm).getPerm());
+				if (!perm.equalsIgnoreCase("default") && VaultHelper.checkPerm(player, schematics.get(perm).getPerm())) {
+				    schematic = schematics.get(perm);
+				}
+			    }
 			    Location oldIsland = plugin.getPlayers().getIslandLocation(player.getUniqueId());
-			    newIsland(player, schems.get(schems.size()-1).getPerm());
+			    newIsland(player, schematic);
 			    resetPlayer(player,oldIsland);
 			}
 		    }
@@ -1233,18 +1339,23 @@ public class IslandCmd implements CommandExecutor {
 		    return false;
 		}
 		pendingNewIslandSelection.remove(playerUUID);
-		// Create a new island using this perm-based schematic
-		// Check perm again
-		if (VaultHelper.checkPerm(player, split[1])) {
-		    Location oldIsland = plugin.getPlayers().getIslandLocation(player.getUniqueId());
-		    newIsland(player,split[1]);
-		    if (resettingIsland.contains(playerUUID)) {
-			resettingIsland.remove(playerUUID);
-			resetPlayer(player, oldIsland);
-		    }
-		    return true;
-		} else {
+		// Create a new island using schematic
+		if (!schematics.containsKey(split[1])) {
 		    return false;
+		} else {
+		    Schematic schematic = schematics.get(split[1]);
+		    // Check perm again
+		    if (schematic.getPerm().isEmpty() || VaultHelper.checkPerm(player, schematic.getPerm())) {
+			Location oldIsland = plugin.getPlayers().getIslandLocation(player.getUniqueId());
+			newIsland(player,schematic);
+			if (resettingIsland.contains(playerUUID)) {
+			    resettingIsland.remove(playerUUID);
+			    resetPlayer(player, oldIsland);
+			}
+			return true;
+		    } else {
+			return false;
+		    }    
 		}
 	    } else 
 		if (split[0].equalsIgnoreCase("lang")) {

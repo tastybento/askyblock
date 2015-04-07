@@ -64,15 +64,24 @@ public class Schematic {
     private short height;
     private Map<BlockVector, Map<String, Tag>> tileEntitiesMap = new HashMap<BlockVector, Map<String, Tag>>();
     private File file;
+    private String heading;
     private String name;
     private String perm;
     private String description;
+    private int rating;
+    private boolean useDefaultChest;
+    private Material icon;
+    
 
     public Schematic(File file) {
 	// Initialize
 	name = file.getName();
+	heading = "";
 	description = "";
 	perm = "";
+	icon = Material.MAP;
+	rating = 5;
+	useDefaultChest = true;
 	try {
 	    this.file = file;
 	    FileInputStream stream = new FileInputStream(file);
@@ -562,7 +571,7 @@ public class Schematic {
 	// Settings.chestItems[0]);
 	// Bukkit.getLogger().info("Chest item settings length = " +
 	// Settings.chestItems.length);
-	if (Settings.chestItems[0] != null) {
+	if (useDefaultChest && Settings.chestItems[0] != null) {
 	    // Fill the chest
 	    if (blockToChange.getType() == Material.CHEST) {
 		final Chest islandChest = (Chest) blockToChange.getState();
@@ -817,5 +826,61 @@ public class Schematic {
      */
     public void setPerm(String perm) {
         this.perm = perm;
+    }
+
+    /**
+     * @return the heading
+     */
+    public String getHeading() {
+        return heading;
+    }
+
+    /**
+     * @param heading the heading to set
+     */
+    public void setHeading(String heading) {
+        this.heading = heading;
+    }
+
+    /**
+     * @return the rating
+     */
+    public int getRating() {
+        return rating;
+    }
+
+    /**
+     * @param rating the rating to set
+     */
+    public void setRating(int rating) {
+        this.rating = rating;
+    }
+
+    /**
+     * @return the useDefaultChest
+     */
+    public boolean isUseDefaultChest() {
+        return useDefaultChest;
+    }
+
+    /**
+     * @param useDefaultChest the useDefaultChest to set
+     */
+    public void setUseDefaultChest(boolean useDefaultChest) {
+        this.useDefaultChest = useDefaultChest;
+    }
+
+    /**
+     * @return the icon
+     */
+    public Material getIcon() {
+        return icon;
+    }
+
+    /**
+     * @param icon the icon to set
+     */
+    public void setIcon(Material icon) {
+        this.icon = icon;
     }
 }

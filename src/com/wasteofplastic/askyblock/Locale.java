@@ -443,6 +443,7 @@ public class Locale {
     public String igsNetherPVP;
     public String igsAnvil;
     public String setHomeerrorNumHomes;
+    public String schematicsTitle;
 
     /**
      * Creates a locale object full of localized strings for a language
@@ -987,6 +988,6 @@ public class Locale {
 	lockPlayerUnlocked = ChatColor.translateAlternateColorCodes('&', locale.getString("lock.playerunlocked", "[name] unlocked the island"));
 	lockEnteringSpawn = ChatColor.translateAlternateColorCodes('&', locale.getString("lock.enteringspawn", "Entering Spawn"));
 	lockLeavingSpawn = ChatColor.translateAlternateColorCodes('&', locale.getString("lock.leavingspawn", "Leaving Spawn"));
-
+	schematicsTitle = ChatColor.translateAlternateColorCodes('&', locale.getString("schematics.title", "Choose island..."));
     }
 }

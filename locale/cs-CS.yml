@@ -447,3 +447,6 @@ lock:
    unlocking: "Ostrov odemknut"
    enteringspawn: "Vstupujete na spawn"
    leavingspawn: "Opoustite spawn"
+
+schematics:
+   title: "Vybrať ostrov"

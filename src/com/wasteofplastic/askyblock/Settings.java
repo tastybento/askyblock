@@ -25,6 +25,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.MaterialData;
 import org.bukkit.potion.PotionEffectType;
 
 /**
@@ -150,8 +151,8 @@ public class Settings {
     public static boolean allowSpawnMobKilling;
 
     // Levels
-    public static HashMap<Material, Integer> blockLimits;
-    public static HashMap<Material, Integer> blockValues;
+    public static HashMap<MaterialData, Integer> blockLimits;
+    public static HashMap<MaterialData, Integer> blockValues;
 
     // Challenge completion broadcast
     public static boolean broadcastMessages;
@@ -185,9 +186,6 @@ public class Settings {
     // Use Economy
     public static boolean useEconomy;
 
-    // Schematic list (permission, filename)
-    public static HashMap<String, String> schematics = new HashMap<String, String>();
-
     // Wait between being invited to same team island
     public static int inviteWait;
 
@@ -217,5 +215,6 @@ public class Settings {
     public static boolean setTeamName;
     public static int debug;
     public static boolean useSchematicPanel;
+    public static double underWaterMultiplier;
 
 }

@@ -45,6 +45,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.MaterialData;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.Potion;
@@ -613,22 +614,28 @@ public class ASkyBlock extends JavaPlugin {
 	availableLocales.put("sk-SK", new Locale(this,"sk-SK"));
 
 	// Assign settings
-	// Debug
-	Settings.debug = getConfig().getInt("debug", 0);
-	// Load schematics
-	if (getConfig().contains("general.schematics")) {
-	    for (String key : getConfig().getConfigurationSection("general.schematics").getKeys(true)) {
-		// getLogger().info(key);
-		// Check the file exists
-		String filename = getConfig().getString("general.schematics." + key);
-		File schematicFile = new File(plugin.getDataFolder(), filename);
-		if (schematicFile.exists()) {
-		    Settings.schematics.put(key, filename);
-		    getLogger().info("Found " + filename + " for perm " + key);
-		}
+	String configVersion = getConfig().getString("general.version", "");
+	if (configVersion.isEmpty() || !configVersion.equalsIgnoreCase(plugin.getDescription().getVersion())) {
+	    // Check to see if this has already been shared
+	    File newConfig = new File(plugin.getDataFolder(),"config.new.yml");
+	    getLogger().warning("***********************************************************");
+	    getLogger().warning("Config file is out of date. See config.new.yml for updates!");
+	    getLogger().warning("config.yml version is '" + configVersion + "'");
+	    getLogger().warning("Latest config version is '" + plugin.getDescription().getVersion() + "'");
+	    getLogger().warning("***********************************************************");
+	    if (!newConfig.exists()) {
+		File oldConfig = new File(plugin.getDataFolder(),"config.yml");
+		File bakConfig = new File(plugin.getDataFolder(),"config.bak");
+		if (oldConfig.renameTo(bakConfig)) {
+		    plugin.saveResource("config.yml", false);
+		    oldConfig.renameTo(newConfig);
+		    bakConfig.renameTo(oldConfig);
+		} 
 	    }
 	}
-	Settings.useSchematicPanel = getConfig().getBoolean("general.useschematicspanel", true);
+	// Debug
+	Settings.debug = getConfig().getInt("debug", 0);
+	//Settings.useSchematicPanel = getConfig().getBoolean("general.useschematicspanel", true);
 	// TEAMSUFFIX as island level
 	Settings.setTeamName = getConfig().getBoolean("general.setteamsuffix", false);
 	// Immediate teleport
@@ -1048,26 +1055,42 @@ public class ASkyBlock extends JavaPlugin {
 	// Levels
 	// Get the blockvalues.yml file
 	YamlConfiguration blockValuesConfig = Util.loadYamlFile("blockvalues.yml");
-	Settings.blockLimits = new HashMap<Material, Integer>();
+	// Get the under water multiplier
+	Settings.underWaterMultiplier = blockValuesConfig.getDouble("underwater", 1D);
+	Settings.blockLimits = new HashMap<MaterialData, Integer>();
 	if (blockValuesConfig.isSet("limits")) {
 	    for (String material : blockValuesConfig.getConfigurationSection("limits").getKeys(false)) {
 		try {
-		    Material mat = Material.valueOf(material);
-		    Settings.blockLimits.put(mat, blockValuesConfig.getInt("limits." + material, 0));
+		    String[] split = material.split(":");
+		    byte data = 0;
+		    if (split.length>1) {
+			data = Byte.valueOf(split[1]);
+		    }
+		    Material mat = Material.valueOf(split[0]);
+		    MaterialData materialData = new MaterialData(mat);
+		    materialData.setData(data);
+		    Settings.blockLimits.put(materialData, blockValuesConfig.getInt("limits." + material, 0));
 		    if (debug) {
-			getLogger().info("Maximum number of " + mat.toString() + " will be " + Settings.blockLimits.get(mat));
+			getLogger().info("Maximum number of " + materialData + " will be " + Settings.blockLimits.get(materialData));
 		    }
 		} catch (Exception e) {
 		    getLogger().warning("Unknown material (" + material + ") in blockvalues.yml Limits section. Skipping...");
 		}
 	    }
 	}
-	Settings.blockValues = new HashMap<Material, Integer>();
+	Settings.blockValues = new HashMap<MaterialData, Integer>();
 	if (blockValuesConfig.isSet("blocks")) {
 	    for (String material : blockValuesConfig.getConfigurationSection("blocks").getKeys(false)) {
 		try {
-		    Material mat = Material.valueOf(material);
-		    Settings.blockValues.put(mat, blockValuesConfig.getInt("blocks." + material, 0));
+		    String[] split = material.split(":");
+		    byte data = 0;
+		    if (split.length>1) {
+			data = Byte.valueOf(split[1]);
+		    }
+		    Material mat = Material.valueOf(split[0]);
+		    MaterialData materialData = new MaterialData(mat);
+		    materialData.setData(data);
+		    Settings.blockValues.put(materialData, blockValuesConfig.getInt("blocks." + material, 0));
 		    if (debug) {
 			getLogger().info(mat.toString() + " value is " + Settings.blockValues.get(mat));
 		    }

@@ -3,7 +3,6 @@ package com.wasteofplastic.askyblock.panels;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -36,10 +35,10 @@ public class SchematicsPanel implements Listener {
 	List<SPItem> items = new ArrayList<SPItem>();
 	List<Schematic> availableSchems = IslandCmd.getSchematics(player);
 	// Add an info icon
-	items.add(new SPItem(Material.MAP,"Choose your island", "Pick from the selection...",slot++));
+	//items.add(new SPItem(Material.MAP,"Choose your island", "Pick from the selection...",slot++));
 	// Generate additional available schematics
 	for (Schematic schematic : availableSchems) {
-	    items.add(new SPItem(Material.EMPTY_MAP, schematic, slot++));
+	    items.add(new SPItem(schematic, slot++));
 	}
 	//plugin.getLogger().info("DEBUG: there are " + items.size() + " in the panel");
 	// Now create the inventory panel
@@ -49,7 +48,7 @@ public class SchematicsPanel implements Listener {
 	    // Make sure size is a multiple of 9
 	    int size = items.size() + 8;
 	    size -= (size % 9);
-	    Inventory newPanel = Bukkit.createInventory(null, size, "Schematics");
+	    Inventory newPanel = Bukkit.createInventory(null, size, plugin.myLocale(player.getUniqueId()).schematicsTitle);
 	    // Fill the inventory and return
 	    for (SPItem i : items) {
 		newPanel.setItem(i.getSlot(), i.getItem());
@@ -73,7 +72,7 @@ public class SchematicsPanel implements Listener {
 	// clicked in
 	int slot = event.getRawSlot();
 	// Check this is the right panel
-	if (!inventory.getName().equals("Schematics")) {
+	if (!inventory.getName().equals(plugin.myLocale(player.getUniqueId()).schematicsTitle)) {
 	    return;
 	}
 	if (slot == -999) {
@@ -95,7 +94,7 @@ public class SchematicsPanel implements Listener {
 	    // Get the item clicked
 	    SPItem item = thisPanel.get(slot);
 	    // Do something
-	    player.performCommand(Settings.ISLANDCOMMAND + " make " + item.getPerm());
+	    player.performCommand(Settings.ISLANDCOMMAND + " make " + item.getHeading());
 	}
 	return;
     }

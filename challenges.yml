@@ -44,7 +44,8 @@
 ##########################################################################################
 
 challenges:
-  # Challenge levels - list as many as you like
+  # Challenge levels - list as many as you like. If a challenge's level is '' it can
+  # be done anytime.
   levels: 'Novice Competent Expert Advanced Elite'
   # The number of undone tasks that can be left on a level before revealing next level
   waiveramount: 1

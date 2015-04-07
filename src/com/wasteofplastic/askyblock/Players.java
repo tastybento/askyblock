@@ -56,6 +56,7 @@ public class Players {
     private int resetsLeft;
     private HashMap<Location, Date> kickedList;
     private String locale;
+    private int startIslandRating;
 
     /**
      * @param uuid
@@ -80,6 +81,7 @@ public class Players {
 	this.resetsLeft = Settings.resetLimit;
 	this.kickedList = new HashMap<Location, Date>();
 	this.locale = "";
+	this.startIslandRating = 50;
 	load(uuid);
     }
 
@@ -105,6 +107,8 @@ public class Players {
 		playerName = "";
 	    }
 	}
+	// Start island rating - how difficult the start island was. Default if 50/100
+	this.startIslandRating = playerInfo.getInt("startIslandRating", 50);
 	// Locale
 	this.locale = playerInfo.getString("locale","");
 	// plugin.getLogger().info("Loading player..." + playerName);
@@ -239,8 +243,11 @@ public class Players {
 	}
 	// Locale
 	playerInfo.set("locale", locale);
+	// Start island rating
+	playerInfo.set("startIslandRating", startIslandRating);
+	
+	// Actually save the file
 	Util.saveYamlFile(playerInfo, "players/" + uuid.toString() + ".yml");
-
     }
 
     /**
@@ -726,6 +733,20 @@ public class Players {
      */
     public void setLocale(String locale) {
         this.locale = locale;
+    }
+
+    /**
+     * @return the startIslandRating
+     */
+    public int getStartIslandRating() {
+        return startIslandRating;
+    }
+
+    /**
+     * @param startIslandRating the startIslandRating to set
+     */
+    public void setStartIslandRating(int startIslandRating) {
+        this.startIslandRating = startIslandRating;
     }
     
 
