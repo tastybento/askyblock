@@ -700,7 +700,7 @@ public class IslandCmd implements CommandExecutor {
 		player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).islandnew);
 		// Get the schematics that this player is eligible to use
 		List<Schematic> schems = getSchematics(player);
-		plugin.getLogger().info("DEBUG: size of schematics for this player = " + schems.size());
+		//plugin.getLogger().info("DEBUG: size of schematics for this player = " + schems.size());
 		if (schems.isEmpty()) {
 		    // No schematics - use default island
 		    newIsland(player);
@@ -765,7 +765,7 @@ public class IslandCmd implements CommandExecutor {
 		    return true;
 		} else if (split[0].equalsIgnoreCase("settings")) {
 		    // Show what the plugin settings are
-		    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.lock")) {
+		    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.settings")) {
 			player.openInventory(SettingsPanel.islandGuardPanel());
 		    } else {
 			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
