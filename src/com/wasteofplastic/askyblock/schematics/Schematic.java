@@ -22,10 +22,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+
+import net.md_5.bungee.api.ChatColor;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -51,6 +56,10 @@ import org.jnbt.NBTInputStream;
 import org.jnbt.ShortTag;
 import org.jnbt.StringTag;
 import org.jnbt.Tag;
+import org.json.simple.JSONValue;
+import org.json.simple.parser.ContainerFactory;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Settings;
@@ -71,7 +80,7 @@ public class Schematic {
     private int rating;
     private boolean useDefaultChest;
     private Material icon;
-    
+
 
     public Schematic(File file) {
 	// Initialize
@@ -430,10 +439,109 @@ public class Schematic {
 			    text.add(((StringTag) tileData.get("Text2")).getValue());
 			    text.add(((StringTag) tileData.get("Text3")).getValue());
 			    text.add(((StringTag) tileData.get("Text4")).getValue());
-			    // Parse sign text
+			    // TODO Parse sign text formatting, colors and ULR's using JSON - this does not work right now
+
+			    JSONParser parser = new JSONParser();
+			    ContainerFactory containerFactory = new ContainerFactory(){
+				public List creatArrayContainer() {
+				    return new LinkedList();
+				}
+
+				public Map createObjectContainer() {
+				    return new LinkedHashMap();
+				}
+
+			    };
+			    /*
 			    for (int line = 0; line < 4; line++) {
 				if (!text.get(line).equals("\"\"")) {
-				    sign.setLine(line, text.get(line).replace("{\"extra\":[\"", "").replace("\"],\"text\":\"\"}", ""));
+				    try{
+					Bukkit.getLogger().info("Text: '" + text.get(line) + "'");
+					Map json = (Map)parser.parse(text.get(line), containerFactory);
+					Iterator iter = json.entrySet().iterator();
+					System.out.println("==iterate result==");
+					while(iter.hasNext()){
+					    Map.Entry entry = (Map.Entry)iter.next();
+					    if (entry.getValue().toString().equals("extra")) {
+						List content = (List)parser.parse(entry)
+					    }
+					    System.out.println(entry.getKey() + "=>" + entry.getValue());
+					}
+
+					System.out.println("==toJSONString()==");
+					System.out.println(JSONValue.toJSONString(json));
+				    }
+				    catch(ParseException pe){
+					System.out.println(pe);
+				    }
+				}
+			     */
+			    // This just removes all the JSON formatting and provides the raw text
+			    for (int line = 0; line < 4; line++) {
+				if (!text.get(line).equals("\"\"")) {
+				    //String lineText = text.get(line).replace("{\"extra\":[\"", "").replace("\"],\"text\":\"\"}", "");
+				    //Bukkit.getLogger().info("DEBUG: sign text = " + text.get(line));
+				    String lineText = "";
+				    try {
+					Map json = (Map)parser.parse(text.get(line), containerFactory);
+					List list = (List) json.get("extra");
+					//System.out.println("DEBUG1:" + JSONValue.toJSONString(list));
+					Iterator iter = list.iterator();
+					while(iter.hasNext()){
+					    Object next = iter.next();
+					    String format = JSONValue.toJSONString(next);
+					    //System.out.println("DEBUG2:" + format);
+					    // This doesn't see right, but appears to be the easiest way to identify this string as JSON...
+					    if (format.startsWith("{")) {
+						// JSON string
+						Map jsonFormat = (Map)parser.parse(format, containerFactory);
+						Iterator formatIter = jsonFormat.entrySet().iterator();
+						while (formatIter.hasNext()) {
+						    Map.Entry entry = (Map.Entry)formatIter.next();
+						    //System.out.println("DEBUG3:" + entry.getKey() + "=>" + entry.getValue());
+						    String key = entry.getKey().toString();
+						    String value = entry.getValue().toString();
+						    if (key.equalsIgnoreCase("color")) {
+							try {
+							    lineText += ChatColor.valueOf(value.toUpperCase());
+							} catch (Exception noColor) {
+							    Bukkit.getLogger().warning("Unknown color " + value +" in sign when pasting schematic, skipping...");
+							}
+						    } else if (key.equalsIgnoreCase("text")) {
+							lineText += value;
+						    } else {
+							// Formatting - usually the value is always true, but check just in case
+							if (key.equalsIgnoreCase("obfuscated") && value.equalsIgnoreCase("true")) {
+							    lineText += ChatColor.MAGIC;
+							} else if (key.equalsIgnoreCase("underlined") && value.equalsIgnoreCase("true")) {
+							    lineText += ChatColor.UNDERLINE;
+							} else {
+							    // The rest of the formats
+							    try {
+								lineText += ChatColor.valueOf(key.toUpperCase());
+							    } catch (Exception noFormat) {
+								// Ignore
+								Bukkit.getLogger().warning("Unknown format " + value +" in sign when pasting schematic, skipping...");
+							    }
+							}
+						    }   
+						}
+					    } else {
+						// This is unformatted text. It is included in "". A reset is required to clear
+						// any previous formatting
+						if (format.length()>1) {
+						    lineText += ChatColor.RESET + format.substring(format.indexOf('"')+1,format.lastIndexOf('"'));
+						}
+					    } 
+					}
+				    } catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				    }
+				    //Bukkit.getLogger().info("Line " + line + " is " + lineText);
+
+				    // Set the line
+				    sign.setLine(line, lineText);
 				}
 			    }
 			    sign.update();
@@ -790,97 +898,97 @@ public class Schematic {
      * @return the name
      */
     public String getName() {
-        return name;
+	return name;
     }
 
     /**
      * @param name the name to set
      */
     public void setName(String name) {
-        this.name = name;
+	this.name = name;
     }
 
     /**
      * @return the description
      */
     public String getDescription() {
-        return description;
+	return description;
     }
 
     /**
      * @param description the description to set
      */
     public void setDescription(String description) {
-        this.description = description;
+	this.description = description;
     }
 
     /**
      * @return the perm
      */
     public String getPerm() {
-        return perm;
+	return perm;
     }
 
     /**
      * @param perm the perm to set
      */
     public void setPerm(String perm) {
-        this.perm = perm;
+	this.perm = perm;
     }
 
     /**
      * @return the heading
      */
     public String getHeading() {
-        return heading;
+	return heading;
     }
 
     /**
      * @param heading the heading to set
      */
     public void setHeading(String heading) {
-        this.heading = heading;
+	this.heading = heading;
     }
 
     /**
      * @return the rating
      */
     public int getRating() {
-        return rating;
+	return rating;
     }
 
     /**
      * @param rating the rating to set
      */
     public void setRating(int rating) {
-        this.rating = rating;
+	this.rating = rating;
     }
 
     /**
      * @return the useDefaultChest
      */
     public boolean isUseDefaultChest() {
-        return useDefaultChest;
+	return useDefaultChest;
     }
 
     /**
      * @param useDefaultChest the useDefaultChest to set
      */
     public void setUseDefaultChest(boolean useDefaultChest) {
-        this.useDefaultChest = useDefaultChest;
+	this.useDefaultChest = useDefaultChest;
     }
 
     /**
      * @return the icon
      */
     public Material getIcon() {
-        return icon;
+	return icon;
     }
 
     /**
      * @param icon the icon to set
      */
     public void setIcon(Material icon) {
-        this.icon = icon;
+	this.icon = icon;
     }
 }
