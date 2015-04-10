@@ -1201,6 +1201,9 @@ public class ASkyBlock extends JavaPlugin {
 	}
 	// Reset the island level
 	players.setIslandLevel(player.getUniqueId(), 0);
+	// Clear the starter island
+	players.clearStartIslandRating(player.getUniqueId());
+	// Save the player
 	players.save(player.getUniqueId());
 	TopTen.topTenAddEntry(player.getUniqueId(), 0);
 	// Update the inventory

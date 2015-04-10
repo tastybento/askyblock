@@ -178,7 +178,7 @@ island:
    #Cool down warning - [time] is number of seconds left
    resetWait: "Tienes que esperar [time] segundos antes que puedas hacer eso de nuevo."
    #Confirm
-   resetConfirm: "Escribe /island confirm en 10 segundos para borrar y resetear tu isla!"
+   resetConfirm: "Escribe /island confirm en [seconds] segundos para borrar y resetear tu isla!"
    resetYouHave: "Te restan [number] reseteos."
    resetNoMore: "No se puede resetear más tu isla!"
    resetTo: "Límite de reseteos limpiado"

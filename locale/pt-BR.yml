@@ -178,7 +178,7 @@ island:
    #Cool down warning - [time] is number of seconds left
    resetWait: "Você precisa esperar [time] segundos antes de fazer isso novamente."
    #Confirm
-   resetConfirm: "Digite /island confirm dentro de 10 segundos para apagar a sua ilha e reiniciá-la!"
+   resetConfirm: "Digite /island confirm dentro de [seconds] segundos para apagar a sua ilha e reiniciá-la!"
    resetYouHave: "Você pode reinicializar mais [number] vezes."
    resetNoMore: "Sua ilha não pode ser reinicializada novamente!"
    resetTo: "O limite de número de reinicializações foi zerado"

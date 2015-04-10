@@ -122,7 +122,7 @@ island:
    #Cool down warning - [time] is number of seconds left
    resetWait: "Vous devez attendre [time] secondes avant de pouvoir faire ça à nouveau."
    #Confirm
-   resetConfirm: "Tapez /island confirm dans les 10 secondes pour supprimer votre île, et la recommencer!"
+   resetConfirm: "Tapez /island confirm dans les [seconds] secondes pour supprimer votre île, et la recommencer!"
    resetYouHave: "Vous avez [number] réinitalisations restantes."
    resetNoMore: "Vous ne pouvez plus réinitaliser votre île!"
    resetTo: "Limite de réinitialisations effacée."

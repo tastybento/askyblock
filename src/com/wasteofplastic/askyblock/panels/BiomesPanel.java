@@ -19,7 +19,6 @@ import org.bukkit.inventory.Inventory;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Settings;
-import com.wasteofplastic.askyblock.util.Pair;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
@@ -157,41 +156,17 @@ public class BiomesPanel implements Listener {
      * @param islandLoc
      * @param biomeType
      */
-    public boolean setIslandBiome(Location islandLoc, Biome biomeType) {
+    public static boolean setIslandBiome(Location islandLoc, Biome biomeType) {
 	final int islandX = islandLoc.getBlockX();
 	final int islandZ = islandLoc.getBlockZ();
 	final World world = islandLoc.getWorld();
 	final int range = (int) Math.round((double) Settings.islandDistance / 2);
-	List<Pair> chunks = new ArrayList<Pair>();
 	try {
 	    // Biomes only work in 2D, so there's no need to set every block in
 	    // the island area
-	    // However, we need to collect the chunks and push them out again
-	    // getLogger().info("DEBUG: Protection range is = " +
-	    // Settings.island_protectionRange);
 	    for (int x = -range; x <= range; x++) {
 		for (int z = -range; z <= range; z++) {
 		    Location l = new Location(world, (islandX + x), 0, (islandZ + z));
-		    final Pair chunkCoords = new Pair(l.getChunk().getX(), l.getChunk().getZ());
-		    if (!chunks.contains(chunkCoords)) {
-			chunks.add(chunkCoords);
-		    }
-		    // getLogger().info("DEBUG: Chunk saving  " +
-		    // l.getChunk().getX() + "," + l.getChunk().getZ());
-		    /*
-		     * // Weird stuff going on here. Sometimes the location does
-		     * not get created.
-		     * if (l.getBlockX() != (islandX +x)) {
-		     * getLogger().info("DEBUG: Setting " + (islandX + x) + ","
-		     * + (islandZ + z));
-		     * getLogger().info("DEBUG: disparity in x");
-		     * }
-		     * if (l.getBlockZ() != (islandZ +z)) {
-		     * getLogger().info("DEBUG: Setting " + (islandX + x) + ","
-		     * + (islandZ + z));
-		     * getLogger().info("DEBUG: disparity in z");
-		     * }
-		     */
 		    l.getBlock().setBiome(biomeType);
 		}
 	    }
@@ -347,14 +322,6 @@ public class BiomesPanel implements Listener {
 	default:
 	    break;
 	}
-	// Update chunks - does not do anything any more
-	/*
-	for (Pair p : chunks) {
-	    islandLoc.getWorld().refreshChunk(p.getLeft(), p.getRight());
-	    // plugin.getLogger().info("DEBUG: refreshing " + p.getLeft() + ","
-	    // + p.getRight());
-	}
-	*/
 	return true;
     }
 }

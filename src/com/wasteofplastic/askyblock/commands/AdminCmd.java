@@ -476,6 +476,7 @@ public class AdminCmd implements CommandExecutor {
 		} else {
 		    plugin.setUpdateCheck(null);
 		}
+		IslandCmd.loadSchematics();
 		sender.sendMessage(ChatColor.YELLOW + plugin.myLocale().reloadconfigReloaded);
 		return true;
 	    } else if (split[0].equalsIgnoreCase("topten")) {

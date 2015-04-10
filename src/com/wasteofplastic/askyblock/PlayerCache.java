@@ -661,4 +661,12 @@ public class PlayerCache {
 	addPlayer(playerUUID);
 	playerCache.get(playerUUID).setStartIslandRating(rating);
     }
+    
+    /**
+     * Clear the starter island rating from the player's record
+     * @param playerUUID
+     */
+    public void clearStartIslandRating(UUID playerUUID) {
+	setStartIslandRating(playerUUID, 0);
+    }
 }

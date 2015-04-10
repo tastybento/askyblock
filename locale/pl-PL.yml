@@ -119,7 +119,7 @@ island:
    #Cool down warning - [time] is number of seconds left
    resetWait: "Musisz poczekać [time] sekund zanim zrobisz to ponownie."
    #Confirm
-   resetConfirm: "Masz 10 sekunda na wpisanie /island confirm żeby potwierdzić usunięcie wyspy i jej reset!"
+   resetConfirm: "Masz [seconds] sekunda na wpisanie /island confirm żeby potwierdzić usunięcie wyspy i jej reset!"
    resetYouHave: "Masz [number] pozostałych resetów."
    resetNoMore: "Nie masz więcej resetów!"
    resetTo: "Wyczyszczono limit resetów"

@@ -244,7 +244,12 @@ public class Players {
 	// Locale
 	playerInfo.set("locale", locale);
 	// Start island rating
-	playerInfo.set("startIslandRating", startIslandRating);
+	if (startIslandRating < 1){
+	    // Remove it if the rating is 0 or less
+	    playerInfo.set("startIslandRating", null);
+	} else {
+	    playerInfo.set("startIslandRating", startIslandRating);
+	}
 	
 	// Actually save the file
 	Util.saveYamlFile(playerInfo, "players/" + uuid.toString() + ".yml");

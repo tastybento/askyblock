@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
-import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
@@ -39,7 +38,17 @@ public class Settings {
     public enum GameType {
 	ASKYBLOCK, ACIDISLAND
     }
-
+    /*
+    public final static GameType GAMETYPE = GameType.ACIDISLAND;
+    // The spawn command (Essentials spawn for example)
+    public final static String SPAWNCOMMAND = "spawn";
+    // Permission prefix
+    public final static String PERMPREFIX = "acidisland.";
+    // The island command
+    public final static String ISLANDCOMMAND = "ai";
+    // The challenge command
+    public static final String CHALLENGECOMMAND = "aic";
+    */
     public final static GameType GAMETYPE = GameType.ASKYBLOCK;
     // Permission prefix
     public final static String PERMPREFIX = "askyblock.";
@@ -50,16 +59,7 @@ public class Settings {
     // The spawn command (Essentials spawn for example)
     public final static String SPAWNCOMMAND = "spawn";
 
-    /*
-     * AcidIsland
-     * // Permission prefix
-     * public final static String PERMPREFIX = "acidisland.";
-     * // The island command
-     * public final static String ISLANDCOMMAND = "ai";
-     * // The challenge command
-     * public static final String CHALLENGECOMMAND = "aic";
-     */
-
+    
     public static Set<String> challengeList;
     public static int waiverAmount;
     public static List<String> challengeLevels;

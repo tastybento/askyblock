@@ -542,7 +542,7 @@ public class GridManager {
 	    // Remove from the ownership map
 	    // If the owner already has been given a new island, then this will
 	    // not be needed
-	    if (ownershipMap.containsKey(owner)) {
+	    if (owner != null && ownershipMap.containsKey(owner)) {
 		if (ownershipMap.get(owner).equals(island)) {
 		    ownershipMap.remove(owner);
 		}

@@ -163,8 +163,8 @@ island:
    title: "Skyblock"
    subtitle: "Zacina sa dobrodruzstvo!"
    # This section is to solicit donations from players. Feel free to set to '' to remove :-)
-   donate: "Chces podporit skyblock? Zakup si VIP kredity! Klikni!"
-   url: "http://minecraftcentrala.sk/vip-skyblock/"
+   donate: "A SkyBlock by tastybento"
+   url: ""
 
    teleport: "Vitaj na svojom ostrove. (Pouzi /island help pre viac info)"
    cannotTeleport: "Nemozes sa portnut ked padas!"

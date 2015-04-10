@@ -37,6 +37,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.TreeType;
 import org.bukkit.World;
+import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
@@ -63,9 +64,10 @@ import org.json.simple.parser.ParseException;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Settings;
+import com.wasteofplastic.askyblock.Settings.GameType;
 
 public class Schematic {
-
+    
     private short[] blocks;
     private byte[] data;
     private short width;
@@ -79,8 +81,23 @@ public class Schematic {
     private String description;
     private int rating;
     private boolean useDefaultChest;
-    private Material icon;
+    private Material icon;    
+    private Biome biome;
+    private boolean usePhysics;
 
+    public Schematic() {
+	// Initialize 
+	name = "";
+	heading = "";
+	description = "Default Island";
+	perm = "";
+	icon = Material.MAP;
+	rating = 50;
+	useDefaultChest = true;	
+	biome = Settings.defaultBiome;
+	usePhysics = Settings.usePhysics;
+	file = null;
+    }
 
     public Schematic(File file) {
 	// Initialize
@@ -89,10 +106,13 @@ public class Schematic {
 	description = "";
 	perm = "";
 	icon = Material.MAP;
-	rating = 5;
+	rating = 50;
 	useDefaultChest = true;
-	try {
-	    this.file = file;
+	biome = Settings.defaultBiome;
+	usePhysics = Settings.usePhysics;
+	this.file = file;
+	// Try to load the file
+	try { 
 	    FileInputStream stream = new FileInputStream(file);
 	    // InputStream is = new DataInputStream(new
 	    // GZIPInputStream(stream));
@@ -187,6 +207,13 @@ public class Schematic {
     }
 
     /**
+     * @return the biome
+     */
+    public Biome getBiome() {
+        return biome;
+    }
+
+    /**
      * @return the blocks
      */
     public short[] getBlocks() {
@@ -201,17 +228,24 @@ public class Schematic {
     }
 
     /**
-     * @return the width
+     * @return the description
      */
-    public short getWidth() {
-	return width;
+    public String getDescription() {
+	return description;
     }
 
     /**
-     * @return the length
+     * @return the file
      */
-    public short getLength() {
-	return length;
+    public File getFile() {
+	return file;
+    }
+
+    /**
+     * @return the heading
+     */
+    public String getHeading() {
+	return heading;
     }
 
     /**
@@ -222,10 +256,66 @@ public class Schematic {
     }
 
     /**
+     * @return the icon
+     */
+    public Material getIcon() {
+	return icon;
+    }
+
+    /**
+     * @return the length
+     */
+    public short getLength() {
+	return length;
+    }
+
+    /**
+     * @return the name
+     */
+    public String getName() {
+	return name;
+    }
+
+    /**
+     * @return the perm
+     */
+    public String getPerm() {
+	return perm;
+    }
+
+    /**
+     * @return the rating
+     */
+    public int getRating() {
+	return rating;
+    }
+
+    /**
      * @return the tileEntitiesMap
      */
     public Map<BlockVector, Map<String, Tag>> getTileEntitiesMap() {
 	return tileEntitiesMap;
+    }
+
+    /**
+     * @return the width
+     */
+    public short getWidth() {
+	return width;
+    }
+
+    /**
+     * @return the useDefaultChest
+     */
+    public boolean isUseDefaultChest() {
+	return useDefaultChest;
+    }
+
+    /**
+     * @return the usePhysics
+     */
+    public boolean isUsePhysics() {
+        return usePhysics;
     }
 
     /**
@@ -237,32 +327,18 @@ public class Schematic {
      * @return Location of highest grass block
      */
     @SuppressWarnings("deprecation")
-    public Location pasteSchematic(final Location loc, final Player player) {
+    public void pasteSchematic(final Location loc, final Player player) {
+	// If this is not a file schematic, paste the default island
+	if (this.file == null) {
+	    if (Settings.GAMETYPE == GameType.ACIDISLAND) {
+		generateIslandBlocks(loc,player);
+	    } else {
+		loc.getBlock().setType(Material.BEDROCK);
+		ASkyBlock.getPlugin().getLogger().severe("Missing schematic - using bedrock block only");
+	    }
+	    return;
+	}
 	World world = loc.getWorld();
-	// See if WorldEdit is loaded
-	/*
-	 * if (Bukkit.getServer().getPluginManager().getPlugin("WorldEdit") !=
-	 * null) {
-	 * Location cowSpot = null;
-	 * try {
-	 * cowSpot = WorldEditFuncs.loadArea(file, world, loc, player);
-	 * } catch (Exception e) {
-	 * Bukkit.getLogger().severe("Error loading schematic!");
-	 * e.printStackTrace();
-	 * cowSpot = null;
-	 * }
-	 * return cowSpot;
-	 * }
-	 */
-	// Bukkit.getLogger().info("blocks size = " + blocks.length);
-	/*
-	 * short[] blocks = this.getBlocks();
-	 * byte[] blockData = this.getData();
-	 * /*
-	 * short length = this.getLength();
-	 * short width = this.getWidth();
-	 * short height = this.getHeight();
-	 */
 	Map<BlockVector, Map<String, Tag>> tileEntitiesMap = this.getTileEntitiesMap();
 	// Bukkit.getLogger().info("World is " + world.getName() +
 	// "and schematic size is " + schematic.getBlocks().length);
@@ -313,11 +389,11 @@ public class Schematic {
 	}
 	if (bedrock == null) {
 	    Bukkit.getLogger().severe("Schematic must have at least one bedrock in it!");
-	    return null;
+	    return;
 	}
 	if (chest == null) {
 	    Bukkit.getLogger().severe("Schematic must have at least one chest in it!");
-	    return null;
+	    return;
 	}
 	/*
 	 * These are now optional
@@ -329,7 +405,7 @@ public class Schematic {
 	 */
 	if (grassBlocks.isEmpty()) {
 	    Bukkit.getLogger().severe("Schematic must have at least one grass block in it!");
-	    return null;
+	    return;
 	}
 	// Center on the last bedrock location
 	//Bukkit.getLogger().info("DEBUG bedrock is:" + bedrock.toString());
@@ -349,10 +425,11 @@ public class Schematic {
 		    int index = y * width * length + z * width + x;
 		    Block block = new Location(world, x, y, z).add(blockLoc).getBlock();
 		    try {
-			// Do not post air
-			//if (blocks[index] != 0) {
-			block.setTypeIdAndData(blocks[index], data[index], Settings.usePhysics);
-			//}
+			// Do not post torches because they fall off every so often
+			// May have to include banners too
+			if (blocks[index] != Material.TORCH.getId()) {
+			    block.setTypeIdAndData(blocks[index], data[index], this.usePhysics);
+			}
 		    } catch (Exception e) {
 			Bukkit.getLogger().info("Could not set (" + x + "," + y + "," + z + ") block ID:" + blocks[index] + " block data = " + data[index]);
 		    }
@@ -377,7 +454,7 @@ public class Schematic {
 			// }
 			// Do not post air
 			//if (blocks[index] != 0) {
-			block.setTypeIdAndData(blocks[index], data[index], Settings.usePhysics);
+			block.setTypeIdAndData(blocks[index], data[index], this.usePhysics);
 			// block.setTypeId(blocks[index]);
 			// block.setData(data[index]);
 			// Bukkit.getLogger().info(x + "," + y + "," + z +
@@ -478,9 +555,9 @@ public class Schematic {
 			     */
 			    // This just removes all the JSON formatting and provides the raw text
 			    for (int line = 0; line < 4; line++) {
-				if (!text.get(line).equals("\"\"")) {
+				if (!text.get(line).equals("\"\"") && !text.get(line).isEmpty()) {
 				    //String lineText = text.get(line).replace("{\"extra\":[\"", "").replace("\"],\"text\":\"\"}", "");
-				    //Bukkit.getLogger().info("DEBUG: sign text = " + text.get(line));
+				    //Bukkit.getLogger().info("DEBUG: sign text = '" + text.get(line) + "'");
 				    String lineText = "";
 				    try {
 					Map json = (Map)parser.parse(text.get(line), containerFactory);
@@ -696,58 +773,71 @@ public class Schematic {
 		}
 	    }, 40L);
 	}
-	return grass;
     }
 
     /**
-     * @return the file
+     * @param biome the biome to set
      */
-    public File getFile() {
-	return file;
+    public void setBiome(Biome biome) {
+        this.biome = biome;
     }
 
     /**
-     * Get child tag of a NBT structure.
-     * 
-     * @param items
-     *            The parent tag map
-     * @param key
-     *            The name of the tag to get
-     * @param expected
-     *            The expected type of the tag
-     * @return child tag casted to the expected type
-     * @throws DataException
-     *             if the tag does not exist or the tag is not of the
-     *             expected type
+     * @param description the description to set
      */
-    private static <T extends Tag> T getChildTag(Map<String, Tag> items, String key, Class<T> expected) throws IllegalArgumentException {
-	if (!items.containsKey(key)) {
-	    throw new IllegalArgumentException("Schematic file is missing a \"" + key + "\" tag");
-	}
-	Tag tag = items.get(key);
-	if (!expected.isInstance(tag)) {
-	    throw new IllegalArgumentException(key + " tag is not of tag type " + expected.getName());
-	}
-	return expected.cast(tag);
+    public void setDescription(String description) {
+	this.description = description;
     }
 
     /**
-     * Spawns a companion for the player at the location given
-     * @param player
-     * @param cowSpot
+     * @param heading the heading to set
      */
-    protected static void spawnCompanion(Player player, Location cowSpot) {
-	// Older versions of the server require custom names to only apply to Living Entities
-	LivingEntity companion = (LivingEntity) player.getWorld().spawnEntity(cowSpot, Settings.islandCompanion);  
-	if (!Settings.companionNames.isEmpty()) {
-	    Random rand = new Random();
-	    int randomNum = rand.nextInt(Settings.companionNames.size());
-	    String name = Settings.companionNames.get(randomNum).replace("[player]", player.getDisplayName());
-	    //plugin.getLogger().info("DEBUG: name is " + name);
-	    companion.setCustomName(name);
-	    companion.setCustomNameVisible(true);
-	} 
+    public void setHeading(String heading) {
+	this.heading = heading;
     }
+
+    /**
+     * @param icon the icon to set
+     */
+    public void setIcon(Material icon) {
+	this.icon = icon;
+    }
+
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+	this.name = name;
+    }
+
+    /**
+     * @param perm the perm to set
+     */
+    public void setPerm(String perm) {
+	this.perm = perm;
+    }
+
+    /**
+     * @param rating the rating to set
+     */
+    public void setRating(int rating) {
+	this.rating = rating;
+    }
+
+    /**
+     * @param useDefaultChest the useDefaultChest to set
+     */
+    public void setUseDefaultChest(boolean useDefaultChest) {
+	this.useDefaultChest = useDefaultChest;
+    }
+
+    /**
+     * @param usePhysics the usePhysics to set
+     */
+    public void setUsePhysics(boolean usePhysics) {
+        this.usePhysics = usePhysics;
+    }
+    
 
     /**
      * Creates an island block by block
@@ -884,6 +974,7 @@ public class Schematic {
 	DirectionalContainer dc = (DirectionalContainer) blockToChange.getState().getData();
 	dc.setFacingDirection(BlockFace.SOUTH);
 	blockToChange.setData(dc.getData(), true);
+	
 	if (Settings.islandCompanion != null) {
 	    Bukkit.getServer().getScheduler().runTaskLater(ASkyBlock.getPlugin(), new Runnable() {
 		@Override
@@ -893,102 +984,45 @@ public class Schematic {
 	    }, 40L);
 	}
     }
-
     /**
-     * @return the name
+     * Get child tag of a NBT structure.
+     * 
+     * @param items
+     *            The parent tag map
+     * @param key
+     *            The name of the tag to get
+     * @param expected
+     *            The expected type of the tag
+     * @return child tag casted to the expected type
+     * @throws DataException
+     *             if the tag does not exist or the tag is not of the
+     *             expected type
      */
-    public String getName() {
-	return name;
+    private static <T extends Tag> T getChildTag(Map<String, Tag> items, String key, Class<T> expected) throws IllegalArgumentException {
+	if (!items.containsKey(key)) {
+	    throw new IllegalArgumentException("Schematic file is missing a \"" + key + "\" tag");
+	}
+	Tag tag = items.get(key);
+	if (!expected.isInstance(tag)) {
+	    throw new IllegalArgumentException(key + " tag is not of tag type " + expected.getName());
+	}
+	return expected.cast(tag);
     }
-
     /**
-     * @param name the name to set
+     * Spawns a companion for the player at the location given
+     * @param player
+     * @param cowSpot
      */
-    public void setName(String name) {
-	this.name = name;
-    }
-
-    /**
-     * @return the description
-     */
-    public String getDescription() {
-	return description;
-    }
-
-    /**
-     * @param description the description to set
-     */
-    public void setDescription(String description) {
-	this.description = description;
-    }
-
-    /**
-     * @return the perm
-     */
-    public String getPerm() {
-	return perm;
-    }
-
-    /**
-     * @param perm the perm to set
-     */
-    public void setPerm(String perm) {
-	this.perm = perm;
-    }
-
-    /**
-     * @return the heading
-     */
-    public String getHeading() {
-	return heading;
-    }
-
-    /**
-     * @param heading the heading to set
-     */
-    public void setHeading(String heading) {
-	this.heading = heading;
-    }
-
-    /**
-     * @return the rating
-     */
-    public int getRating() {
-	return rating;
-    }
-
-    /**
-     * @param rating the rating to set
-     */
-    public void setRating(int rating) {
-	this.rating = rating;
-    }
-
-    /**
-     * @return the useDefaultChest
-     */
-    public boolean isUseDefaultChest() {
-	return useDefaultChest;
-    }
-
-    /**
-     * @param useDefaultChest the useDefaultChest to set
-     */
-    public void setUseDefaultChest(boolean useDefaultChest) {
-	this.useDefaultChest = useDefaultChest;
-    }
-
-    /**
-     * @return the icon
-     */
-    public Material getIcon() {
-	return icon;
-    }
-
-    /**
-     * @param icon the icon to set
-     */
-    public void setIcon(Material icon) {
-	this.icon = icon;
+    protected static void spawnCompanion(Player player, Location cowSpot) {
+	// Older versions of the server require custom names to only apply to Living Entities
+	LivingEntity companion = (LivingEntity) player.getWorld().spawnEntity(cowSpot, Settings.islandCompanion);  
+	if (!Settings.companionNames.isEmpty()) {
+	    Random rand = new Random();
+	    int randomNum = rand.nextInt(Settings.companionNames.size());
+	    String name = Settings.companionNames.get(randomNum).replace("[player]", player.getDisplayName());
+	    //plugin.getLogger().info("DEBUG: name is " + name);
+	    companion.setCustomName(name);
+	    companion.setCustomNameVisible(true);
+	} 
     }
 }
