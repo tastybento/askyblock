@@ -155,3 +155,6 @@ permissions:
           askyblock.admin.setrange:
             description: Allows setting of island protection range
             default: op
+          askyblock.admin.topbreeders:
+            description: Lists most populated islands current loaded
+            default: op

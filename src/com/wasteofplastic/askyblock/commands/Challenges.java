@@ -143,20 +143,20 @@ public class Challenges implements CommandExecutor {
 		    sender.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).challengesnotRepeatable);
 		    return true;
 		}
-		int moneyReward = 0;
+		double moneyReward = 0;
 		int expReward = 0;
 		String rewardText = "";
 
 		if (!players.checkChallenge(player.getUniqueId(), challenge)) {
 		    // First time
-		    moneyReward = getChallengeConfig().getInt("challenges.challengeList." + challenge.toLowerCase() + ".moneyReward", 0);
+		    moneyReward = getChallengeConfig().getDouble("challenges.challengeList." + challenge.toLowerCase() + ".moneyReward", 0D);
 		    rewardText = ChatColor.translateAlternateColorCodes('&',
 			    getChallengeConfig().getString("challenges.challengeList." + challenge.toLowerCase() + ".rewardText", "Goodies!"));
 		    expReward = getChallengeConfig().getInt("challenges.challengeList." + challenge + ".xpReward", 0);
 		    sender.sendMessage(ChatColor.GOLD + plugin.myLocale(player.getUniqueId()).challengesfirstTimeRewards);
 		} else {
 		    // Repeat challenge
-		    moneyReward = getChallengeConfig().getInt("challenges.challengeList." + challenge.toLowerCase() + ".repeatMoneyReward", 0);
+		    moneyReward = getChallengeConfig().getDouble("challenges.challengeList." + challenge.toLowerCase() + ".repeatMoneyReward", 0D);
 		    rewardText = ChatColor.translateAlternateColorCodes('&',
 			    getChallengeConfig().getString("challenges.challengeList." + challenge.toLowerCase() + ".repeatRewardText", "Goodies!"));
 		    expReward = getChallengeConfig().getInt("challenges.challengeList." + challenge + ".repeatExpReward", 0);
@@ -227,7 +227,7 @@ public class Challenges implements CommandExecutor {
 	// Grab the rewards from the config.yml file
 	String[] permList;
 	String[] itemRewards;
-	int moneyReward = 0;
+	double moneyReward = 0;
 	int expReward = 0;
 	String rewardText = "";
 	// If the friendly name is available use it
@@ -246,7 +246,7 @@ public class Challenges implements CommandExecutor {
 	    Messages.tellOfflineTeam(player.getUniqueId(),
 		    ChatColor.GOLD + plugin.myLocale(player.getUniqueId()).challengesnameHasCompleted.replace("[name]", player.getName()).replace("[challenge]", challengeName));
 	    itemRewards = getChallengeConfig().getString("challenges.challengeList." + challenge.toLowerCase() + ".itemReward", "").split(" ");
-	    moneyReward = getChallengeConfig().getInt("challenges.challengeList." + challenge.toLowerCase() + ".moneyReward", 0);
+	    moneyReward = getChallengeConfig().getDouble("challenges.challengeList." + challenge.toLowerCase() + ".moneyReward", 0D);
 	    rewardText = ChatColor.translateAlternateColorCodes('&',
 		    getChallengeConfig().getString("challenges.challengeList." + challenge.toLowerCase() + ".rewardText", "Goodies!"));
 	    expReward = getChallengeConfig().getInt("challenges.challengeList." + challenge + ".expReward", 0);
@@ -254,7 +254,7 @@ public class Challenges implements CommandExecutor {
 	    // Repeat challenge
 	    player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).challengesyouRepeated.replace("[challenge]", challengeName));
 	    itemRewards = getChallengeConfig().getString("challenges.challengeList." + challenge.toLowerCase() + ".repeatItemReward", "").split(" ");
-	    moneyReward = getChallengeConfig().getInt("challenges.challengeList." + challenge.toLowerCase() + ".repeatMoneyReward", 0);
+	    moneyReward = getChallengeConfig().getDouble("challenges.challengeList." + challenge.toLowerCase() + ".repeatMoneyReward", 0);
 	    rewardText = ChatColor.translateAlternateColorCodes('&',
 		    getChallengeConfig().getString("challenges.challengeList." + challenge.toLowerCase() + ".repeatRewardText", "Goodies!"));
 	    expReward = getChallengeConfig().getInt("challenges.challengeList." + challenge + ".repeatExpReward", 0);
@@ -1478,19 +1478,19 @@ public class Challenges implements CommandExecutor {
 	    result.addAll(Util.chop(ChatColor.RED, plugin.myLocale(player.getUniqueId()).challengesnotRepeatable, length));
 	    return result;
 	}
-	int moneyReward = 0;
+	double moneyReward = 0;
 	int expReward = 0;
 	String rewardText = "";
 	if (!players.checkChallenge(player.getUniqueId(), challenge)) {
 	    // First time
-	    moneyReward = getChallengeConfig().getInt("challenges.challengeList." + challenge.toLowerCase() + ".moneyReward", 0);
+	    moneyReward = getChallengeConfig().getDouble("challenges.challengeList." + challenge.toLowerCase() + ".moneyReward", 0);
 	    rewardText = ChatColor.translateAlternateColorCodes('&',
 		    getChallengeConfig().getString("challenges.challengeList." + challenge.toLowerCase() + ".rewardText", "Goodies!"));
 	    expReward = getChallengeConfig().getInt("challenges.challengeList." + challenge + ".xpReward", 0);
 	    result.addAll(Util.chop(ChatColor.GOLD, plugin.myLocale(player.getUniqueId()).challengesfirstTimeRewards, length));
 	} else {
 	    // Repeat challenge
-	    moneyReward = getChallengeConfig().getInt("challenges.challengeList." + challenge.toLowerCase() + ".repeatMoneyReward", 0);
+	    moneyReward = getChallengeConfig().getDouble("challenges.challengeList." + challenge.toLowerCase() + ".repeatMoneyReward", 0);
 	    rewardText = ChatColor.translateAlternateColorCodes('&',
 		    getChallengeConfig().getString("challenges.challengeList." + challenge.toLowerCase() + ".repeatRewardText", "Goodies!"));
 	    expReward = getChallengeConfig().getInt("challenges.challengeList." + challenge + ".repeatExpReward", 0);
