@@ -638,6 +638,7 @@ public class ASkyBlock extends JavaPlugin {
 	//Settings.useSchematicPanel = getConfig().getBoolean("general.useschematicspanel", true);
 	// TEAMSUFFIX as island level
 	Settings.setTeamName = getConfig().getBoolean("general.setteamsuffix", false);
+	Settings.teamSuffix = getConfig().getString("general.teamsuffix","([level])");
 	// Immediate teleport
 	Settings.immediateTeleport = getConfig().getBoolean("general.immediateteleport", false);
 	// Make island automatically

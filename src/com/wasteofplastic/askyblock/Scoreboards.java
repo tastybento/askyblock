@@ -55,7 +55,7 @@ public class Scoreboards {
 	    team = board.registerNewTeam(teamName);
 	}
 	// Add the suffix
-	team.setSuffix("("+level+")");
+	team.setSuffix(Settings.teamSuffix.replace("[level]",String.valueOf(level)));
 	//Adding player to team
 	team.addPlayer(player);
 	// Assign scoreboard to player
@@ -81,7 +81,7 @@ public class Scoreboards {
 	    team = board.registerNewTeam(teamName);
 	}
 	// Add the suffix
-	team.setSuffix(String.valueOf(level));
+	team.setSuffix(Settings.teamSuffix.replace("[level]",String.valueOf(level)));
 	//Adding player to team
 	team.addPlayer(player);
 	// Assign scoreboard to player

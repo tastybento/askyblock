@@ -216,5 +216,6 @@ public class Settings {
     public static int debug;
     public static boolean useSchematicPanel;
     public static double underWaterMultiplier;
+    public static String teamSuffix;
 
 }
