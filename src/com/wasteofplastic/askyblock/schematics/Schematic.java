@@ -30,9 +30,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import net.md_5.bungee.api.ChatColor;
-
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.TreeType;
@@ -67,7 +66,7 @@ import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.Settings.GameType;
 
 public class Schematic {
-    
+
     private short[] blocks;
     private byte[] data;
     private short width;
@@ -210,7 +209,7 @@ public class Schematic {
      * @return the biome
      */
     public Biome getBiome() {
-        return biome;
+	return biome;
     }
 
     /**
@@ -315,7 +314,7 @@ public class Schematic {
      * @return the usePhysics
      */
     public boolean isUsePhysics() {
-        return usePhysics;
+	return usePhysics;
     }
 
     /**
@@ -431,7 +430,13 @@ public class Schematic {
 			    block.setTypeIdAndData(blocks[index], data[index], this.usePhysics);
 			}
 		    } catch (Exception e) {
-			Bukkit.getLogger().info("Could not set (" + x + "," + y + "," + z + ") block ID:" + blocks[index] + " block data = " + data[index]);
+			// Do some 1.7.9 helping for the built-in schematic
+			if (blocks[index] == 179) {
+			    // Red sandstone - use red sand instead
+			    block.setTypeIdAndData(12, (byte)1, this.usePhysics); 
+			} else {
+			    Bukkit.getLogger().info("Could not set (" + x + "," + y + "," + z + ") block ID:" + blocks[index] + " block data = " + data[index]);
+			}
 		    }
 		}
 	    }
@@ -443,56 +448,19 @@ public class Schematic {
 		for (int z = 0; z < length; ++z) {
 		    int index = y * width * length + z * width + x;
 		    Block block = new Location(world, x, y, z).add(blockLoc).getBlock();
-		    // Bukkit.getLogger().info("DEBUG" + x + "," + y + "," + z +
-		    // " block to change is " + block.toString());
-		    // Bukkit.getLogger().info("DEBUG " + index +
-		    // " changing to ID:"+blocks[index] + " data = " +
-		    // blockData[index])
 		    try {
-			// if (type < 0) {
-			// type +=256;
-			// }
-			// Do not post air
-			//if (blocks[index] != 0) {
 			block.setTypeIdAndData(blocks[index], data[index], this.usePhysics);
-			// block.setTypeId(blocks[index]);
-			// block.setData(data[index]);
-			// Bukkit.getLogger().info(x + "," + y + "," + z +
-			// " " + block.getType() + "(" + blocks[index] +
-			// "):" + data[index]);
-			//}
-			// Using this command sometimes doesn't set the data
-			// correctly...
-			// block.setTypeIdAndData(type, blockData[index], true);
-			/*
-			 * if (block.getType() == Material.SIGN_POST) {
-			 * org.bukkit.material.Sign s =
-			 * (org.bukkit.material.Sign)
-			 * block.getState().getData();
-			 * Bukkit.getLogger().info(s.getFacing().toString());
-			 * Bukkit.getLogger().info("SIGN - data type = " + type
-			 * + ":" + blockData[index]);
-			 * Bukkit.getLogger().info("actual block data = " +
-			 * block.getData());
-			 * }
-			 */
 		    } catch (Exception e) {
-			Bukkit.getLogger().info("Could not set (" + x + "," + y + "," + z + ") block ID:" + blocks[index] + " block data = " + data[index]);
+			// Do some 1.7.9 helping for the built-in schematic
+			if (blocks[index] == 179) {
+			    // Red sandstone - use red sand instead
+			    block.setTypeIdAndData(12, (byte)1, this.usePhysics); 
+			} else {
+			    Bukkit.getLogger().info("Could not set (" + x + "," + y + "," + z + ") block ID:" + blocks[index] + " block data = " + data[index]);
+			}
 		    }
 		    if (tileEntitiesMap.containsKey(new BlockVector(x, y, z))) {
-			// Bukkit.getLogger().info("DEBUG: Tile entity at " + x
-			// + "," + y + "," + z);
-			// Block block = new Location(world, x, y,
-			// z).add(blockLoc).getBlock();
-			// TODO: Add support for other tile entities, like
-			// signs...
-			// Bukkit.getLogger().info("DEBUG: " +
-			// Bukkit.getServer().getBukkitVersion());
-
 			String ver = Bukkit.getServer().getBukkitVersion();
-			// Bukkit.getLogger().info("DEBUG " + ver.substring(0,
-			// 1) + " " + ver.substring(ver.indexOf(".") +1 ,
-			// ver.indexOf(".") + 2));
 			int major = Integer.valueOf(ver.substring(0, 1));
 			int minor = Integer.valueOf(ver.substring(ver.indexOf(".") + 1, ver.indexOf(".") + 2));
 			if (major >= 1 && minor >= 8) {
@@ -779,7 +747,7 @@ public class Schematic {
      * @param biome the biome to set
      */
     public void setBiome(Biome biome) {
-        this.biome = biome;
+	this.biome = biome;
     }
 
     /**
@@ -835,9 +803,9 @@ public class Schematic {
      * @param usePhysics the usePhysics to set
      */
     public void setUsePhysics(boolean usePhysics) {
-        this.usePhysics = usePhysics;
+	this.usePhysics = usePhysics;
     }
-    
+
 
     /**
      * Creates an island block by block
@@ -974,7 +942,7 @@ public class Schematic {
 	DirectionalContainer dc = (DirectionalContainer) blockToChange.getState().getData();
 	dc.setFacingDirection(BlockFace.SOUTH);
 	blockToChange.setData(dc.getData(), true);
-	
+
 	if (Settings.islandCompanion != null) {
 	    Bukkit.getServer().getScheduler().runTaskLater(ASkyBlock.getPlugin(), new Runnable() {
 		@Override
