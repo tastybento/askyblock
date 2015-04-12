@@ -1170,6 +1170,7 @@ public class IslandGuard implements Listener {
 			return;
 		    }
 		} else {
+		    // Damaged entity is NOT a player, but player is the shooter
 		    if (!(e.getEntity() instanceof Monster) && !(e.getEntity() instanceof Slime) && !(e.getEntity() instanceof Squid)) {
 			// plugin.getLogger().info("Entity is a non-monster - check if ok to hurt");
 			if (!Settings.allowHurtMobs) {
@@ -1182,9 +1183,8 @@ public class IslandGuard implements Listener {
 			return;
 		    } else {
 			if (!Settings.allowHurtMonsters) {
-			    if (!plugin.getGrid().locationIsOnIsland((Player) e.getDamager(), e.getEntity().getLocation())) {
-				Player player = (Player) e.getDamager();
-				player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).islandProtected);
+			    if (!plugin.getGrid().locationIsOnIsland(shooter, e.getEntity().getLocation())) {
+				shooter.sendMessage(ChatColor.RED + plugin.myLocale(shooter.getUniqueId()).islandProtected);
 				e.setCancelled(true);
 				return;
 			    }

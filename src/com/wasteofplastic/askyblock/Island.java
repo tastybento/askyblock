@@ -147,6 +147,7 @@ public class Island {
      * @param password
      * @param votes
      */
+    /*
     public Island(int x, int z, int protectionRange, Location center, UUID owner, long createdDate, long updatedDate, String password, int votes) {
 	this.minX = x - Settings.islandDistance / 2;
 	this.minZ = z - Settings.islandDistance / 2;
@@ -161,7 +162,7 @@ public class Island {
 	this.updatedDate = updatedDate;
 	this.password = password;
 	this.votes = votes;
-    }
+    }*/
 
     /**
      * Checks if a location is within this island's protected area
@@ -325,6 +326,9 @@ public class Island {
      */
     public void setOwner(UUID owner) {
 	this.owner = owner;
+	//if (owner == null) {
+	//    Bukkit.getLogger().info("DEBUG: island owner set to null for " + center);
+	//}
     }
 
     /**
@@ -408,6 +412,8 @@ public class Island {
 	String ownerString = "null";
 	if (owner != null) {
 	    ownerString = owner.toString();
+	} else {
+	    //Bukkit.getLogger().info("DEBUG: null owner when serializing for " + center);
 	}
 	if (isSpawn) {
 	    // Bukkit.getLogger().info("DEBUG: island is spawn");

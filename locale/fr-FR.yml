@@ -37,8 +37,8 @@ lavaTip: "Astuce: Si vous ne vouliez pas d'obsidienne, vous pouvez récupérer d
 warps:
    #This is the first line of the sign that determines if the sign is a warp sign or not
    #If you change it, make sure it makes sense. It is case insensitive. Change the tip too.
-   welcomeLine: "[BIENVENUE]"
-   warpTip: "Créez un panneau [BIENVENUE] sur la première ligne pour créer un warp."
+   welcomeLine: "[WELCOME]"
+   warpTip: "Créez un panneau [WELCOME] sur la première ligne pour créer un warp."
    success: "Panneau de bienvenue créé !"
    removed: "Panneau de bienvenue supprimé !"
    signRemoved: "Votre panneau de bienvenue a été détruit !"
@@ -122,7 +122,7 @@ island:
    #Cool down warning - [time] is number of seconds left
    resetWait: "Vous devez attendre [time] secondes avant de pouvoir faire ça à nouveau."
    #Confirm
-   resetConfirm: "Tapez /island confirm dans les 10 secondes pour supprimer votre île, et la recommencer!"
+   resetConfirm: "Tapez /island confirm dans les [seconds] secondes pour supprimer votre île, et la recommencer!"
    resetYouHave: "Vous avez [number] réinitalisations restantes."
    resetNoMore: "Vous ne pouvez plus réinitaliser votre île!"
    resetTo: "Limite de réinitialisations effacée."
@@ -357,3 +357,6 @@ lock:
    unlocking: "Ouverture de l'île."
    enteringspawn: "Vous êtes au Spawn."
    leavingspawn: "Vous quittez le Spawn."
+
+schematics:
+   title: "Sélectionner une île"

@@ -7,6 +7,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.material.MaterialData;
 import org.bukkit.scheduler.BukkitRunnable;
 
 /**
@@ -24,8 +25,9 @@ public class LevelCalc extends BukkitRunnable {
     private int px;
     private int pz;
     private int slice;
-    private HashMap<Material, Integer> limitCount = new HashMap<Material, Integer>();
-    private int blockcount;
+    private HashMap<MaterialData, Integer> limitCount = new HashMap<MaterialData, Integer>();
+    private int blockCount;
+    private int underWaterBlockCount;
     private int oldLevel;
     private UUID targetPlayer;
     private Player asker;
@@ -73,12 +75,12 @@ public class LevelCalc extends BukkitRunnable {
 	    this.slice = 1;
 	}
 	// Copy the limits hashmap
-	for (Material m : Settings.blockLimits.keySet()) {
+	for (MaterialData m : Settings.blockLimits.keySet()) {
 	    limitCount.put(m, Settings.blockLimits.get(m));
-	    // plugin.getLogger().info("DEBUG:" + m.toString() + " x " +
-	    // Settings.blockLimits.get(m));
+	    //plugin.getLogger().info("DEBUG:" + m.toString() + " x " + Settings.blockLimits.get(m));
 	}
-	this.blockcount = 0;
+	this.blockCount = 0;
+	this.underWaterBlockCount = 0;
 	oldLevel = plugin.getPlayers().getIslandLevel(targetPlayer);
     }
 
@@ -95,9 +97,19 @@ public class LevelCalc extends BukkitRunnable {
 	//plugin.getLogger().info("DEBUG: timer = " + (System.currentTimeMillis()- lastPoll) + "ms");
 	counter = counter - slice - 1;
 	if (counter <= 0) {
+	    // Calculations are complete
+	    // Add in the under water count
+	    blockCount += (int)((double)underWaterBlockCount * Math.max(Settings.underWaterMultiplier,1D));
+	    // Add a multiplier based on the island rating 50 = normal, 100 = max hard, 1 = max easy
+	    // TODO: Removing this functionality for now as it will be too confusing for players
+	    // Need to get the rating for the LEADER of the island, not the target player
+	    // int multiplier = plugin.getPlayers().getStartIslandRating(leader);
+	    // If not zero then use it.
+	    // blockCount = (blockCount * multiplier) / 5000;
+	    blockCount /= 100;
 	    // plugin.getLogger().info("DEBUG: updating player");
 	    // Update player and team mates
-	    plugin.getPlayers().setIslandLevel(targetPlayer, blockcount / 100);
+	    plugin.getPlayers().setIslandLevel(targetPlayer, blockCount);
 	    // plugin.getLogger().info("DEBUG: set island level, now trying to save player");
 	    plugin.getPlayers().save(targetPlayer);
 	    // plugin.getLogger().info("DEBUG: save player, now looking at team members");
@@ -106,7 +118,7 @@ public class LevelCalc extends BukkitRunnable {
 		// plugin.getLogger().info("DEBUG: player is in team");
 		for (UUID member : plugin.getPlayers().getMembers(targetPlayer)) {
 		    // plugin.getLogger().info("DEBUG: updating team member level too");
-		    plugin.getPlayers().setIslandLevel(member, blockcount / 100);
+		    plugin.getPlayers().setIslandLevel(member, blockCount);
 		    plugin.getPlayers().save(member);
 		}
 	    }
@@ -129,10 +141,10 @@ public class LevelCalc extends BukkitRunnable {
 	    if (plugin.getPlayers().inTeam(targetPlayer)) {
 		UUID leader = plugin.getPlayers().getTeamLeader(targetPlayer);
 		if (leader != null) {
-		    TopTen.topTenAddEntry(leader, blockcount / 100);
+		    TopTen.topTenAddEntry(leader, blockCount);
 		}
 	    } else {
-		TopTen.topTenAddEntry(targetPlayer, blockcount / 100);
+		TopTen.topTenAddEntry(targetPlayer, blockCount);
 	    }
 	    // plugin.getLogger().info("DEBUG: finished updating top ten");
 
@@ -140,12 +152,19 @@ public class LevelCalc extends BukkitRunnable {
 	    // Clear flag
 	    plugin.setCalculatingLevel(false);
 	    // Cancel this task
-	    // plugin.getLogger().info("DEBUG: cancelling task");
+	    // plugin.getLogger().info("DEBUG: canceling task");
 	    this.cancel();
 	    // plugin.getLogger().info("DEBUG: cancelled");
 	}
     }
 
+    /**
+     * This calculates the value of a horizontal slice of island space.
+     * It may be 255 to 0, or it may be smaller. The larger the island area, the smaller the slice.
+     * This keeps the per-tick time low enough not to cause lag.
+     * @param top
+     * @param bottom
+     */
     private void calculateSlice(int top, int bottom) {
 	//plugin.getLogger().info("DEBUG: calculating top = " + top + " bottom = "+ bottom);
 	if (bottom < 0) {
@@ -155,28 +174,55 @@ public class LevelCalc extends BukkitRunnable {
 	//plugin.getLogger().info("DEBUG: range = " + r);
 	for (int y = top; y >= bottom; y--) {
 	    // plugin.getLogger().info("DEBUG: y = " + y);
-	    // plugin.getLogger().info("DEBUG: blockcount = " + blockcount);
+	    //plugin.getLogger().info("DEBUG: blockcount = " + blockCount);
+	    //plugin.getLogger().info("DEBUG: underwater blockcount = " + underWaterBlockCount);
 	    for (int x = px - r; x <= px + r; x++) {
 		for (int z = pz - r; z <= pz + r; z++) {
 		    Material blockType = l.getWorld().getBlockAt(x, y, z).getType();
+		    byte data = l.getWorld().getBlockAt(x, y, z).getData();
+		    MaterialData md = new MaterialData(blockType);
+		    md.setData(data);
+		    MaterialData generic = new MaterialData(blockType);
 		    if (blockType != Material.AIR) {
 			// Total up the values
-			if (Settings.blockValues.containsKey(blockType)) {
-			    if (limitCount.containsKey(blockType)) {
-				int count = limitCount.get(blockType);
-				// plugin.getLogger().info("DEBUG: Count for " +
-				// blockType + " is " + count);
-				if (count > 0) {
-				    limitCount.put(blockType, --count);
-				    blockcount += Settings.blockValues.get(blockType);
+			if (limitCount.containsKey(md) && Settings.blockValues.containsKey(md)) {
+			    int count = limitCount.get(md);
+			    //plugin.getLogger().info("DEBUG: Count for non-generic " + md + " is " + count);
+			    if (count > 0) {
+				limitCount.put(md, --count);
+				if (y<Settings.sea_level) {
+				    underWaterBlockCount += Settings.blockValues.get(md);
+				} else {
+				    blockCount += Settings.blockValues.get(md);
 				}
+			    }
+			} else if (limitCount.containsKey(generic) && Settings.blockValues.containsKey(generic)) {
+			    int count = limitCount.get(generic);
+			    //plugin.getLogger().info("DEBUG: Count for generic " + generic + " is " + count);
+			    if (count > 0) {  
+				limitCount.put(md, --count);
+				if (y<Settings.sea_level) {
+				    underWaterBlockCount += Settings.blockValues.get(generic);
+				} else {
+				    blockCount += Settings.blockValues.get(generic);
+				}
+			    }
+			} else if (Settings.blockValues.containsKey(md)) {
+			    //plugin.getLogger().info("DEBUG: Adding " + md + " = " + Settings.blockValues.get(md));
+			    if (y<Settings.sea_level) {
+				underWaterBlockCount += Settings.blockValues.get(md);
 			    } else {
-				// plugin.getLogger().info("DEBUG: Adding " +
-				// blockType + " = " +
-				// Settings.blockValues.get(blockType));
-				blockcount += Settings.blockValues.get(blockType);
+				blockCount += Settings.blockValues.get(md);
+			    }
+			} else if (Settings.blockValues.containsKey(generic)) {
+			    //plugin.getLogger().info("DEBUG: Adding " + generic + " = " + Settings.blockValues.get(generic));
+			    if (y<Settings.sea_level) {
+				underWaterBlockCount += Settings.blockValues.get(generic);
+			    } else {
+				blockCount += Settings.blockValues.get(generic);
 			    }
 			}
+
 		    }
 		}
 	    }

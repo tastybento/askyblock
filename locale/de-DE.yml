@@ -37,8 +37,8 @@ lavaTip: "Tip: Falls du kein Obsidian wolltest, führe einen Rechtsklick mit ein
 warps:
    #This is the first line of the sign that determines if the sign is a warp sign or not
    #If you change it, make sure it makes sense. It is case insensitive. Change the tip too.
-   welcomeLine: "[Insel-Warp]"
-   warpTip: "&aErstelle ein Warp-Schild mit &c[Insel-Warp] &ain der obersten Zeile."
+   welcomeLine: "[WELCOME]"
+   warpTip: "&aErstelle ein Warp-Schild mit &c[WELCOME] &ain der obersten Zeile."
    success: "Insel-Warp-Schild erfolgreich erstellt!"
    removed: "Insel-Warp-Schild entfernt!"
    signRemoved: "Dein Insel-Warp-Schild wurde entfernt!"
@@ -127,7 +127,7 @@ island:
    #Cool down warning - [time] is number of seconds left
    resetWait: "Du musst [time] Sekunden warten bevor du deine Insel erneut zurücksetzen kannst."
    #Confirm
-   resetConfirm: "&aDeine Insel und alles was du besitzt wird gelöscht. Wenn du das wirklich möchtest dann gib &c/island confirm&a innerhalb von 10 Sekunden ein!"
+   resetConfirm: "&aDeine Insel und alles was du besitzt wird gelöscht. Wenn du das wirklich möchtest dann gib &c/island confirm&a innerhalb von [seconds] Sekunden ein!"
    resetYouHave: "Es sind noch [number] weitere Resets möglich!"
    resetNoMore: "Du hast alle Resets aufgebraucht!"
    resetTo: "Resetlimit zrückgesetzt!"
@@ -391,3 +391,6 @@ lock:
    unlocking: "Insel für Besucher wieder geöffnet"
    enteringspawn: "Du betrittst den Spawn"
    leavingspawn: "Du verlässt den Spawn"
+
+schematics:
+   title: "Wählen Sie Insel"

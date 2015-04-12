@@ -396,6 +396,9 @@ public class AdminCmd implements CommandExecutor {
 		    }
 		    return true;
 		}
+		if (island == null) {
+		    plugin.getLogger().info("Get island at was null" + closestIsland);
+		}
 		UUID target = plugin.getPlayers().getPlayerFromIslandLocation(closestIsland);
 		if (target == null) {
 		    sender.sendMessage(ChatColor.RED + "This island is not owned by anyone right now.");
@@ -473,6 +476,7 @@ public class AdminCmd implements CommandExecutor {
 		} else {
 		    plugin.setUpdateCheck(null);
 		}
+		IslandCmd.loadSchematics();
 		sender.sendMessage(ChatColor.YELLOW + plugin.myLocale().reloadconfigReloaded);
 		return true;
 	    } else if (split[0].equalsIgnoreCase("topten")) {
@@ -527,6 +531,10 @@ public class AdminCmd implements CommandExecutor {
 		} else {
 		    sender.sendMessage(ChatColor.YELLOW + plugin.myLocale().deleteremoving.replace("[name]", name));
 		    new DeleteIslandChunk(plugin, island.getCenter());
+		    // Delete the new nether island too (if it exists)
+		    if (Settings.createNether && Settings.newNether) {
+			new DeleteIslandChunk(plugin, island.getCenter().toVector().toLocation(ASkyBlock.getNetherWorld()));
+		    }
 		    return true;
 		}
 	    }

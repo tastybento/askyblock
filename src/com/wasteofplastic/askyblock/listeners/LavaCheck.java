@@ -74,34 +74,6 @@ public class LavaCheck implements Listener {
 		}
 	    });
 	}
-	/*
-	 * Doesn't work any more in V1.8
-	 * // Do a check to see if Obsidian is being made
-	 * //plugin.getLogger().info("DEBUG: Checking of Obi");
-	 * if (to.getType().equals(Material.OBSIDIAN)) {
-	 * // Look around to see if this is a lone obsidian block
-	 * for (BlockFace face: BlockFace.values()) {
-	 * if (!face.equals(BlockFace.SELF) &&
-	 * to.getRelative(face).getType().equals(Material.OBSIDIAN)) {
-	 * //plugin.getLogger().info("DEBUG: Obsidian is " + face.toString());
-	 * // There is, so get outta here
-	 * return;
-	 * }
-	 * }
-	 * // Check if there is a player nearby
-	 * Chunk chunk = to.getLocation().getChunk();
-	 * for (Entity entity : chunk.getEntities()) {
-	 * if (entity instanceof Player) {
-	 * //plugin.getLogger().info("DEBUG: Player found!");
-	 * ItemStack inHand = ((Player)entity).getItemInHand();
-	 * if (inHand != null ) {
-	 * //plugin.getLogger().info("DEBUG: in hand = " + inHand.toString());
-	 * ((Player) entity).sendMessage(ChatColor.RED + plugin.myLocale().lavaTip);
-	 * }
-	 * }
-	 * }
-	 * }
-	 */
     }
 
     // Failed attempts - remember the pain

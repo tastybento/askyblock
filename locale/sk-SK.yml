@@ -1,0 +1,451 @@
+###########################################################################################
+# This is a YML file. Be careful when editing. Check your edits in a YAML checker like    #
+# the one at http://yaml-online-parser.appspot.com                                        #
+# If this file is deleted, then it will be recreate at the next reload.                   #
+###########################################################################################
+
+################
+#General Errors#
+################
+error:
+   #"Error: Nznamy hrac (skontroluj pismo)"
+   unknownPlayer: "Nepoznam tohto hraca."
+   #"Nemas povolenie na tento prikaz!"
+   #"/acid je prikaz len pre OP"
+   noPermission: "Nemas povolenie na pouzitie tohto prikazu!"
+   noIsland: "Nemas ostrov!"
+   noIslandOther: "Tento hrac nema ostrov!"
+   #notOnIsland: "Musis byt na svojom ostrove aby si mohol pouzit tento prikaz."
+   commandNotReady: "Tento prikaz teraz nemozes pouzit."
+   offlinePlayer: "Hrac je asi offline alebo neexistuje."
+   unknownCommand: "Neznamy prikaz."
+   noTeam: "Hrac nie je v ziadnom teame."
+   wrongWorld: "Toto v tomto svete nefunguje."
+
+#AcidEffect
+changingObsidiantoLava: "Menim obsidian na lavu. Bud opatrny!"
+
+#AcidInventory
+# The warning that goes on the acid bottles or buckets. Lines are split by \n
+acidLore: "Pozor! Nepi to!"
+acidBucket: "Vedro s kyselinou"
+acidBottle: "Flaska s kyselinou"
+drankAcidAndDied: "vypil kyselinu a umrel."
+drankAcid: "vypil kyselinu."
+
+#IslandGuard
+islandProtected: "Ostrov je chraneny."
+targetInPVPArea: "Vas ciel nie je v PVP oblasti!"
+# The following are strings for the Settings panel
+islandguardsettings:
+  title: "Nastavenia ochrany ostrova"
+  allowed: "Povolene"
+  disallowed: "Zakazane"
+  anvil: "Pouzitie kovadliny"
+  armorstand: "Pouzitie stojanu na brnenie"
+  beacon: "Pouzitie beaconu"
+  bed: "Pouzitie postele"
+  breakblocks: "Nicenie blokov"
+  breeding: "Krmenie"
+  brewingstand: "Varenie elixirov"
+  bucket: "pouzitie vedra"
+  chest: "Pouzitie truhlice"
+  chestdamage: "Znicenie truhlice s TNT"
+  workbench: "Pouzitie pracovneho stola"
+  croptrample: "Pošlapanie urody"
+  door: "Pouztie dveri"
+  enchantingtable: "Pouzitie carovneho stola"
+  enderpearl: "Pouzitie perly"
+  fire: "ohen"
+  furnace: "Pouzitie pece"
+  gate: "Pouzitie brany"
+  hurtanimals: "Zabijanie zvierat"
+  hurtmonsters: "Zabijanie priser"
+  leash: "Pouzitie lana"
+  lever: "Pouzitie packy alebo tlacitka"
+  spawnegg: "Pouzitie spawn eggu"
+  jukebox: "Pouzitie jukeboxu"
+  placeblocks: "Pokladanie blokov"
+  portaluse: "Pouzitie portalu"
+  pvp: "PvP utok"
+  netherpvp: "Nether PvP utok"
+  redstone: "Pouzivanie ruditu"
+  shears: "Strihanie"
+  teleportwhenfalling: "Portovanie pocas padu"
+  TNTdamage: "Nicenie s TNT"
+  visitordrop: "Vyhadzovanie itemov navstevnikom"
+  visitorpickup: "Zdvihanie itemov navstevnikom"
+  visitorkeepitems: "Navstevnik nestrati veci pri smrti"
+
+  
+#LavaCheck
+lavaTip: "Tip: Ak sa vym vytvoril obsidian, tak pouzite vedro a zmente ho na lavu."
+
+#WarpSigns
+warps:
+   #This is the first line of the sign that determines if the sign is a warp sign or not
+   #If you change it, make sure it makes sense. It is case insensitive. Change the tip too.
+   welcomeLine: "[WELCOME]"
+   warpTip: "Vytvor si warp pomocou cedulky a textu [WELCOME] na prvom riadku."
+   success: "Uvitacia cedulka bola vytvorena spravne!"
+   removed: "Uvitacia cedulka bola vymazana!"
+   signRemoved: "Vasa uvitacia cedulka bola znicena!"
+   deactivate: "Deaktivujem staru cedulku!"
+   errorNoRemove: "Mozes zrusit len svoju uvitaciu cedulku!"
+   errorNoPerm: "Zatial nemas povolenie na uvitaciu cedulku!"
+   errorNoPlace: "Musis byt na svojom ostrove pre polozenie uvitacej cedulky!"
+   errorDuplicate: "Prepac! Ale tu uz niekde uvitacia cedulka je!"
+   errorDoesNotExist: "Uvitacia cedulka neexistuje!"
+   errorNotReadyYet: "Tento warp zatial nie je pripraveny. Skus neskor."
+   errorNotSafe: "Tento warp nie je bezpecny zatial. Skus neskor."
+   #/island warp help
+   warpToPlayersSign: "Warp k uvitacej cedulke hraca <player>."
+   errorNoWarpsYet: "Tieto warpy zatial nie su povolene!"
+   warpsAvailable: "Nasledovne warpy su povolene"
+   playerWarped: "[name] &2portnuty na ostrov!"
+
+topTen:
+   header: "Toto je TOP 10 ostrovov:"
+   errorNotReady: "TOP 10 zatial nebol vygenerovany!"
+level:
+   islandLevel: "Uroven ostrova"
+   errornotYourIsland: "Toto moze len vlastnik ostrova."
+   calculating: "Pocitam uroven ostrova. Moze to chvilku trvat..."
+   
+sethome:
+   homeSet: "Tvoj domovsky bod bol nastaveny tam kde stojis."
+   errorNotOnIsland: "Musis byt na ostrove aby si nastavil domovsky bod!"
+   errorNoIsland: "Nie si na ostrove! Vrat sa na spawn."
+
+
+#Challenges
+challenges:
+   youHaveCompleted: "Prave si splnil ulohu [challenge]!"
+   nameHasCompleted: "&e[name]&b ma hotovu ulohu &e[challenge]&b!"
+   youRepeated: "Opakujes ulohu [challenge]!"
+   toComplete: "Musis splnit vsetky ulohy z urovne &6[thisLevel] &rpre odomknutie tejto urovne!"
+   help1: "Pouzi /c <nazov> pre zobrazenie informacii o ulohe."
+   help2: "Pouzi /c complete <nazov> pre dokoncenie ulohy."
+   colors: "Ulohy su rozdielne ofarbene ak su:"
+   complete: "Kompletne"
+   incomplete: "Nekompletne"
+   completeNotRepeatable: "Splnene(neopakovatelne)"
+   completeRepeatable: "Splnene(opakovatelne)"
+   name: "Nazov ulohy"
+   level: "Uroven"
+   itemTakeWarning: "Vsetky pozadovane itemy ti vezmem ked splnis ulohu!"
+   notRepeatable: "Tato uloha sa neda opakovat!"
+   firstTimeRewards: "Prva odmena:"
+   repeatRewards: "Odmena pri opakovani:"
+   expReward: "XP Odmena"
+   moneyReward: "Financna odmena"
+   toCompleteUse: "Pre splnenie ulohy pouzi"
+   invalidChallengeName: "Zly nazov ulohy! Pouzi /c help pre viac info"
+   rewards: "Odmeny"
+   youHaveNotUnlocked: "Tuto ulohu zatial nemas odokmnutu!"
+   unknownChallenge: "Neunamy nazov ulohy (skontroluj pismo)!"
+   errorNotEnoughItems: "Zatial nemas pozadovane veci"
+   errorNotOnIsland: "Musis byt na ostrove ak chces vykonat tuto akciu!"
+   errorNotCloseEnough: "Musis stat 10 blokov od pozadovanych veci."
+   errorItemsNotThere: "Vsetky pozadovane veci musia byt na tvojom ostrove!"
+   errorIslandLevel: "Tvoj ostrov musi byt na urovni [level] pre splnenie ulohy!"
+   guititle: "Skyblock ulohy"
+   erroryouaremissing: "Stratil si sa!"
+   errorRewardProblem: "Je problem s odmenou! Nahlas to do bugtrackera na fore!"
+   completedtimes: "Splnene [donetimes] z [maxtimes] moznosti"
+   maxreached: "Dosiahnute [donetimes] z [maxtimes]"
+
+#/island
+island:
+   # Titles for V1.8+ servers only. Set to '' to remove.
+   # Colors are fixed as blue and gold for now.
+   # Only works on 1.8+ servers
+   title: "Skyblock"
+   subtitle: "Zacina sa dobrodruzstvo!"
+   # This section is to solicit donations from players. Feel free to set to '' to remove :-)
+   donate: "A SkyBlock by tastybento"
+   url: ""
+
+   teleport: "Vitaj na svojom ostrove. (Pouzi /island help pre viac info)"
+   cannotTeleport: "Nemozes sa portnut ked padas!"
+   new: "Vytvaram novy ostrov..."
+   errorCouldNotCreateIsland: "Nemozem vytvorit ostrov. Nahlas to do bugtrackera na fore!"
+   errorYouDoNotHavePermission: "Nemas povolenie na tento prikaz!"
+   #/island reset
+   resetOnlyOwner: "Len majitel moze restartnut ostrov."
+   resetMustRemovePlayers: "Pred restartom musis vyhodit vsetkych hracov (/island kick <hrac>). Zoznam hracov pozries cez /island team."
+   resetPleaseWait: "Pockaj. Generujem novy ostrov"
+   #Cool down warning - [time] is number of seconds left
+   resetWait: "musis cakat [time] sekund nez mozes vykonat tuto akciu znovu."
+   #Confirm
+   resetConfirm: "Pouzi /island confirm pocas [seconds] sekund pre pre restart ostrova"
+   resetYouHave: "Ostava ti [number] restartov ostrova."
+   resetNoMore: "Vycerpal si vsetky restarty!"
+   resetTo: "Vycistiny limit restartov"
+
+   #/island help
+   #/island
+   helpIsland: "vytvori ostrov alebo otvori menu"
+   helpTeleport: "port na ostrov"
+   helpIslandSpawn: "nefunguje! pouzi /spawn"
+   helpControlPanel: "otvorit menu SKYBLOCK"
+   #/island restart
+   helpRestart: "vymaze stary a vytvori novy ostrov"
+   islandDeletedLifeboats: "Ostrov vymazany"
+   #/island sethome
+   helpSetHome: "nastavi domovsky bod na ostrove"
+   #/island level
+   helpLevel: "vypocita level tvojho ostrova"
+   #/island level <player>
+   helpLevelPlayer: "vypocita level ineho ostrova"
+   #/island top:
+   helpTop: "ukaze najlepsie ostrovy"
+   #/island warps:
+   helpWarps: "ukaze vsetky dostupne warpy"
+   #/island warp <player>
+   helpWarp: "port na hracov warp"
+   #/island team
+   helpTeam: "ukaze informacie o tvojom teame"
+   #/island invite <player>:
+   helpInvite: "pozvi hraca na svoj ostrov"
+   #/island leave:
+   helpLeave: "opustis ostrov ktory si navstivil"
+   #/island kick <player>
+   helpKick: "odstrani hraca z tvojho teamu"
+   #/island <accept/reject>
+   helpAcceptReject: "akceptovat alebo ignorovat pozvanku na ostrov"
+   #/island makeleader <player>
+   helpMakeLeader: "darovat ostrov inemu hracovi"
+   #Level
+   errorLevelNotReady: "Tento prikaz teraz nemozes pouzit. Skus to neskor"
+   errorInvalidPlayer: "Hrac je zle zadany, alebo nema ostrov"
+   islandLevelis: "Level ostrova je"
+   #/island expel <player>
+   helpExpel: "vyhodit hraca z ostrova"
+   helpLock: "uzamkne ostrov pred navstevami"
+   # The color that is placed before the /commands in /island help
+   # See http://ess.khhq.net/mc/ for a list
+   helpColor: "&e"
+   helpSettings: "pozri ochranu ostrova a nastavenia"
+   helpChallenges: "/challenges: &fukaze ulohy"
+
+###################
+#/island commands #
+###################
+
+#invite
+invite:
+   help: "Pouzi [/island invite <hrac>] pre pozvanie hraca an tvoj ostrov."
+   youCanInvite: "Mozes pozvat este [number] hraca/ov."
+   youCannotInvite: "Nmeozes pozvat dalsich hracov."
+   onlyIslandOwnerCanInvite: "Len majitel moze pozyvat hracov!"
+   youHaveJoinedAnIsland: "Pridal si sa na ostrov! Pouzi /island team pre zobrazenie ostatnych hracov."
+   hasJoinedYourIsland: "[name] sa pridal na tvoj ostrov!"
+   errorCantJoinIsland: "Nemozes sa pridat na ostrov. Asi je plny."
+   errorYouMustHaveIslandToInvite: "Musis mat ostrov aby si mohol pozyvat hracov!"
+   errorYouCannotInviteYourself: "Chces pozvat sam seba? Volajte psychiatra!"
+   removingInvite: "Vymazavam predoslu pozvanku."
+   inviteSentTo: "Pozvanka poslana hracovi [name]"
+   nameHasInvitedYou: "[name] ta pozval na svoj ostrov!"
+   toAcceptOrReject: "pre potvrdenie ale zrusenie pozvanky."
+   warningYouWillLoseIsland: "POZOR: Stratis svoj aktualny ostrov ak potvrdis!"
+   errorYourIslandIsFull: "Tvoj ostrov je plny.Nemozes pozyvat dalsich."
+   #"That player is already with a group on an island."
+   errorThatPlayerIsAlreadyInATeam: "Tento hrac uz je v tvojom teame."
+   errorCoolDown: "Dalsieho hraca mozes pozvat az za [time] minut"
+
+#reject
+reject:
+   youHaveRejectedInvitation: "Nepotvrdil si pozvanku."
+   nameHasRejectedInvite: "[name] nepotvrdil tvoju pozvanku na ostrov!"
+   youHaveNotBeenInvited: "Nebol si pozvany."
+
+#leave
+leave:
+  errorYouAreTheLeader: "Nemozes opustit ostrov lebo si lider. Najprv urob majitela z niekoho ineho"
+  youHaveLeftTheIsland: "Opustil si ostrov."
+  nameHasLeftYourIsland: "[name] opustil tvoj ostrov!"
+  errorYouCannotLeaveIsland: "nemozes opustit ostrov ak si sam. Skus /is restart ak chces novy ostrov!"
+  errorYouMustBeInWorld: "Musis byt na ostrove ak chces opustit svoj team!"
+  errorLeadersCannotLeave: "Majitelia nemozu opustit ostrov. Najprv urob majitela z niekoho ineho"
+
+#team
+team:
+   listingMembers: "Prezeram clenov tvojho ostrova"
+
+
+#kick / remove
+kick:
+  errorPlayerNotInTeam: "Tento hrac nie je v tvojom teame!"
+  nameRemovedYou: "[name] ta vyhodil zo svojho ostrova!"
+  nameRemoved: "[name] bol odstraneny z ostrova."
+  errorNotPartOfTeam: "Tento hrac nie je sucastou tvojho teamu!"
+  errorOnlyLeaderCan: "Len majitelia mozu vyhadzovat hracov!"
+  errorNoTeam: "Nemas team!"
+
+#makeleader
+makeleader:
+   errorPlayerMustBeOnline: "Hrac musi byt online aby si mu mohol dat ostrov."
+   errorYouMustBeInTeam: "Musis byt v teame ak chces darovat ostrov."
+   errorRemoveAllPlayersFirst: "Odstran vsetkych hracov z teamu okrem hraca ktoremu darujes ostrov."
+   youAreNowTheOwner: "Teraz si majitelom ostrova."
+   nameIsNowTheOwner: "[name] je odteraz majitelom tvojho ostrova!"
+   errorThatPlayerIsNotInTeam: "Tento hrac nie je v tvojom teame!"
+   errorNotYourIsland: "Chces darovat cudzi ostrov? Asi nie si v poriadku! :D"
+   errorGeneralError: "Nedaju s menit majitelia."
+
+#minishop
+minishop:
+   title: "&eMiniShop"
+   islandhelpMiniShop: "Otvorit minishop"
+   buy: "Nakup"
+   sell: "Predaj"
+   youcannotafford: "Nemas dost Sco na [description]!"
+   youbought: "Prave si kupil [number] [description] za [price]"
+   yousold: "Predal si [number] [description] za [price]"
+   buyproblem: "Asi nemas dostatok penazi na [description]"
+   sellproblem: "Uz asi nemas [description] na predaj."
+   outofstock: "Nie je tovar"
+
+################################
+#Admin commands that use /acid #
+################################
+
+#Help
+adminHelp:
+   help: "Admin Commands:"
+   reload: "reload configuration from file."
+   topTen: "manually update the top 10 list"
+   register: "set a player's island to your location"
+   unregister: "deletes a player without deleting the island blocks"
+   delete: "delete an island (removes blocks)."
+   completeChallenge: "marks a challenge as complete"
+   resetChallenge: "marks a challenge as incomplete"
+   resetAllChallenges: "resets all of the player's challenges"
+   purge: "delete inactive islands older than [TimeInDays]."
+   purgeholes: "free up island holes for reuse."
+   info: "info for the given player."
+   infoisland: "provide info on the nearest island."
+   clearreset: "resets the island reset limit for player."
+   setspawn: "sets the island world spawn to a location close to you."
+   setrange: "changes the island's protection range."
+
+#acid reload
+reload:
+   configReloaded: "Configuration reloaded from file."
+#topten
+adminTopTen:
+   generating: "Generating the Top Ten list"
+   finished: "Finished generation of the Top Ten list"
+
+#purge
+purge:
+   #"A purge is already running, please wait for it to finish!"
+   alreadyRunning: "Purge is already running, please wait for it to finish!"
+   usage: "Usage: /[label] purge [TimeInDays]"
+   calculating: "Calculating which islands have been inactive for more than [time] days."
+   noneFound: "No inactive islands to remove."
+   thisWillRemove: "This will remove [number] inactive islands!"
+   warning: "DANGER! Do not run this with players on the server! MAKE BACKUP OF WORLD!"
+   typeConfirm: "Type /[label] confirm to proceed within 10 seconds"
+   purgeCancelled: "Purge cancelled."
+   finished: "Finished purging of inactive islands."
+   removingName: "Purge: Removing [name]'s island"
+
+#confirm
+confirm:
+   errorTimeLimitExpired: "Time limit expired! Issue command again."
+
+#delete
+delete:
+   removing: "Removing [name]'s island."
+
+#register
+register:
+   settingIsland: "Set [name]'s island to the nearest island."
+   errorBedrockNotFound: "Could not register the island!"
+
+#info
+adminInfo:
+   islandLocation: "Island Location"
+   errorNotPartOfTeam: "That player is not a member of an island team."
+   errorNullTeamLeader: "Team leader should be null!"
+   errorTeamMembersExist: "Player has team members, but shouldn't!"
+
+#resetallchallenges
+resetallchallenges:
+   success: "[name] has had all challenges reset."
+
+#checkteam
+checkteam:
+   checkingTeam: "Checking Team of [name]"
+
+#completechallenge
+completechallenge:
+   errorChallengeDoesNotExist: "Challenge doesn't exist or is already completed"
+   challangeCompleted: "Challenge: [challengename] has been completed for [name]"
+
+#resetchallenge
+resetchallenge:
+   errorChallengeDoesNotExist: "Challenge doesn't exist or isn't yet completed"
+   challengeReset: "Challenge: [challengename] has been reset for [name]"
+
+#News
+news:
+   headline: "[Skyblock News] Pocas tvojej nepritomnosti..."
+
+#Nether
+nether:
+   spawnisprotected: "The Nether spawn area is protected."
+
+# Ultra safe boats
+boats:
+   warning: "Nie je bezpecne opustat lodku ..."
+
+#Starter sign
+# [player] is replaced with the player's name
+# ChatColors can be used with &
+sign:
+   line1: "&1[Skyblock]"
+   line2: "[player]"
+   line3: "Pozor nespadni!"
+   line4: "Navod je na webe"
+
+biome:
+   set: "Biom na ostrove bol zmeneny na [biome]!"
+   help: "otvorit menu biomov."
+   unknown: "Neznamy biom!"
+   youbought: "Kupit za [cost]!"
+   paneltitle: "Vyber si biom"
+   
+expel:
+   notonisland: "Hrac nie je na tvojom ostrove!"
+   success: "Vyhostil si [name]!"
+   expelled: "Bol si vyhodteny z ostrova!"
+   fail: "[name] nemoze byt vyhosteny!"
+   notyourself: "Chces vyhostit sam seba? Volajte psychiatriu!"
+
+moblimits:
+   error: "Pocet mobov [number] dosiahnuty!"
+
+coop:
+   help: "plny pristup hracovi na tvoj ostrov"
+   removed: "[name] vymazal tvoju kooperaciu!"
+   removesuccess: "[name] uz nie je s tebou v kooperacii."
+   success: "[name] je v kooperacii pokial sa odhlasi alebo ho vyhostis."
+   madeyoucoopy: "[name] ta pridal do kooperacie kym sa odhlasis alebo ta vyhosti."
+   onyourteam: "Hrac uz je v tvojom teame!"
+   invited: "[name] a [player] hraju spolu!"
+   useexpel: "pouzi /is expell pre vyhostenie."
+
+lock:
+   islandlocked: "Ostrov je zamknuty pre navstevnikov"
+   nowentering: "Vstupujes na ostrov hraca [name]"
+   nowleaving: "Opustas ostrov hraca [name]"
+   locking: "Zamykam ostrov"
+   unlocking: "Odomykam ostrov"
+   enteringspawn: "Vtupujes na spawn"
+   leavingspawn: "Opustas spawn"
+
+schematics:
+   title: "Vybrať ostrov"

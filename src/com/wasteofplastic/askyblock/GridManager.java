@@ -542,7 +542,7 @@ public class GridManager {
 	    // Remove from the ownership map
 	    // If the owner already has been given a new island, then this will
 	    // not be needed
-	    if (ownershipMap.containsKey(owner)) {
+	    if (owner != null && ownershipMap.containsKey(owner)) {
 		if (ownershipMap.get(owner).equals(island)) {
 		    ownershipMap.remove(owner);
 		}
@@ -858,8 +858,9 @@ public class GridManager {
 	// Check if it is safe
 	//plugin.getLogger().info("DEBUG: Home location " + l);
 	if (l != null) {
+	    // Homes are stored as integers and need correcting to be more central
 	    if (isSafeLocation(l)) {
-		return l;
+		return l.clone().add(new Vector(0.5D,0,0.5D));
 	    }
 	    // To cover slabs, stairs and other half blocks, try one block above
 	    Location lPlusOne = l.clone();
@@ -868,7 +869,7 @@ public class GridManager {
 		if (isSafeLocation(lPlusOne)) {
 		    // Adjust the home location accordingly
 		    plugin.getPlayers().setHomeLocation(p, lPlusOne, number);
-		    return lPlusOne;
+		    return lPlusOne.clone().add(new Vector(0.5D,0,0.5D));
 		}
 	    }
 	}
@@ -880,14 +881,14 @@ public class GridManager {
 	    l = plugin.getPlayers().getTeamIslandLocation(p);
 	    if (isSafeLocation(l)) {
 		plugin.getPlayers().setHomeLocation(p, l, number);
-		return l;
+		return l.clone().add(new Vector(0.5D,0,0.5D));
 	    } else {
 		// try team leader's home
 		Location tlh = plugin.getPlayers().getHomeLocation(plugin.getPlayers().getTeamLeader(p));
 		if (tlh != null) {
 		    if (isSafeLocation(tlh)) {
 			plugin.getPlayers().setHomeLocation(p, tlh, number);
-			return tlh;
+			return tlh.clone().add(new Vector(0.5D,0,0.5D));
 		    }
 		}
 	    }
@@ -895,14 +896,14 @@ public class GridManager {
 	    l = plugin.getPlayers().getIslandLocation(p);
 	    if (isSafeLocation(l)) {
 		plugin.getPlayers().setHomeLocation(p, l, number);
-		return l;
+		return l.clone().add(new Vector(0.5D,0,0.5D));
 	    }
 	}
 	if (l == null) {
 	    plugin.getLogger().warning(plugin.getPlayers().getName(p) + " player has no island!");
 	    return null;
 	}
-	// getLogger().info("DEBUG: If these island locations are not safe, then we need to get creative");
+	//plugin.getLogger().info("DEBUG: If these island locations are not safe, then we need to get creative");
 	// If these island locations are not safe, then we need to get creative
 	// Try the default location
 	//plugin.getLogger().info("DEBUG: default");
@@ -919,7 +920,7 @@ public class GridManager {
 	    return dl;
 	}
 	// Try all the way up to the sky
-	// getLogger().info("DEBUG: try all the way to the sky");
+	//plugin.getLogger().info("DEBUG: try all the way to the sky");
 	for (int y = l.getBlockY(); y < 255; y++) {
 	    final Location n = new Location(l.getWorld(), l.getX() + 0.5D, y, l.getZ() + 0.5D);
 	    if (isSafeLocation(n)) {
@@ -1023,7 +1024,7 @@ public class GridManager {
 	    return true;
 	}
 	//plugin.getLogger().info("DEBUG: home loc = " + home);
-	player.teleport(home.clone().add(new Vector(0.5D,0D,0.5D)));
+	player.teleport(home);
 	//player.sendBlockChange(home, Material.GLOWSTONE, (byte)0);
 	if (number ==1 ) {
 	    player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).islandteleport);

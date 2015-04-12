@@ -2,16 +2,165 @@
 # Config for A SkyBlock (also playable as AcidIsland)
 # For initial set up you must configure or check at least these settings:
 #
-# 1. islandLevel - the height you want your islands to float
+# 1. distance (in the island section) - the distance between islands
 # 2. resetmoney - set to true so that everyone starts with nothing
-# 3. distance (in the island section) - the distance between islands
+# 3. islandLevel - the height you want your islands to float
 # 4. protectionRange - big a player's island is at the start
 #
-# The plugin will NOT start until #3 is set!!!
+# The plugin will NOT start until #1 is set!!!
 #############################################################################
 
-general:
+##### Island Related Settings #####
 
+island:
+   # Space between islands in blocks - NEVER change this mid-game.
+   # Values for a new world:
+   # 400 - puts players distance enough that they usually cannot see each other
+   # 200 - allows some expansion of the protected zone (recommended)
+   # 110 - for compatibility with established worlds. Cozy.
+   # 50 - minimum - not recommended
+   # IF YOU ARE UPGRADING YOU MUST USE YOUR OLD VALUE EXACTLY, E.G., 110
+   # OR RESET YOUR WORLD
+   # You MUST set this value to start the plugin!
+
+   distance: -1
+
+   # The size of the protective region for new islands.
+   # Large sizes will slow down island level calculation
+   # when players do /is level.
+   # Value MUST be an even number.
+   # Recommended size is 100 because it gives players a good starting size.
+   # Minimum size is 50.
+   # Admins can change protection sizes for players individually using
+   # Value must be at least 16 blocks less than the island distance unless you set
+   # overridelimit: true below.
+
+   protectionRange: 100
+
+   # If you want to have protection range = distance set the following to true.
+   # It may result in incomplete deletion of islands. Not recommended, but not fatal.
+   overridelimit: false
+
+   # Start islands at these coordinates. This is where new islands will start in the
+   # world. These must be a factor of your island distance, but the plugin will auto
+   # calculate the closest location on the grid. Islands develop around this location
+   # both positively and negatively in a square grid.
+   # If none of this makes sense, leave it at 0,0.
+   startx: 0
+   startz: 0
+
+   # Max team size
+   maxteamsize: 4
+   # VIP team size - set by permission askyblock.team.vip
+   vipteamsize: 8
+   # VIP2 team size - set by permission askyblock.team.vip2
+   vip2teamsize: 12
+
+   # Items that will be in the chest when the player starts an island
+   # Must be in Bukkit Materials format. Format is <Material>:<Qty>
+   # or <Material>:<Data>:<Qty>
+   # Use <Data> to set the durability of a item or to select sub-items/colors.
+   # Format for POTION is POTION:<effect>:<qty> or POTION:<effect>:<type>:<qty>
+   # <type> is EXTENDED, SPLASH or EXTENDEDSPLASH. Not all potions can be extended.
+   # Check console for errors and guidance after reloading configuration
+   # Schematics can override this - see schematicsection
+
+   chestItems: 'ICE:2 MELON:1 TORCH:2 BONE:1 LAVA_BUCKET:1 PUMPKIN_SEEDS:1 SUGAR_CANE:1 RED_MUSHROOM:1 BROWN_MUSHROOM:1 CACTUS:1 BREAD:1 WHEAT:1 LEATHER_BOOTS:1 LEATHER_HELMET:1 LEATHER_CHESTPLATE:1 LEATHER_LEGGINGS:1'
+
+   # Your island companion
+   # Options are: COW, PIG, SHEEP, CHICKEN, VILLAGER, HORSE, IRON_GOLEM, OCELOT,
+   # RABBIT, WOLF or NOTHING. Default is COW.
+
+   companion: COW
+
+   # This is a list of names, picked at random that will apply to the companion
+   # You can add more if you like. If none are listed, the companion will not be
+   # named.
+   companionnames:
+   - "&9[player]'s cow"
+   - "&cEmergency &fFood?"
+   - "&aD&6a&di&6s&9y"
+
+   # Island Protection Settings
+
+   # PVP is allowed or not.
+   allowPvP: false
+   allowNetherPvP: false
+   # Other players can break blocks or not or generally damage things
+   allowbreakblocks: false
+   # Other players can place blocks
+   allowplaceblocks: false
+   # Allow players to be able to sleep in beds not on their island
+   allowbeduse: false
+   # Allow players to use buckets, either fill or dump them
+   allowbucketuse: false
+   # Allow players to shear sheep
+   allowshearing: false
+   # Allow players to throw enderpearls and teleport
+   allowenderpearls: false
+   # Allow players to use doors or trapdoors. If a door is operated by a button or redstone, this does not count
+   allowdooruse: false
+   # Allow players to use levers or buttons
+   allowleverbuttonuse: false
+   # Allow players to trample crops
+   allowcroptrample: false
+   # Allow players to access chests of any kind, droppers, dispensers and hoppers
+   allowchestaccess: false
+   # Allow players to access furnaces
+   allowfurnaceuse: false
+   # Allow players to adjust diodes or comparators
+   allowredstone: false
+   # Allow players to use jukeboxes, eject discs and hit note blocks
+   allowmusic: false
+   # Allow players to use crafting benches
+   allowcrafting: true
+   # Allow players to use cauldrons and brewing stands
+   allowbrewing: false
+   # Allow gates to be used
+   allowgateuse: false
+   # Allow friendly mobs to be hurt (cows etc.)
+   allowhurtmobs: false
+   # Allow monsters to be hurt (creepers,slimes, etc.)
+   # Don't change this to false unless you accept that island visitors will not be
+   # able to defend themselves!
+   allowhurtmonsters: true
+   # Allow Enderman Griefing (default is to allow, see next setting)
+   allowendermangriefing: true
+   # Make enderman drop the block he is holding if he dies (recommended)
+   endermandeathdrop: true
+   # Allow creeper explosion damage to block (explosion still hurts)
+   allowcreeperdamage: true
+   # Allow TNT damage to blocks (stops players using TNT to destroy other's islands)
+   allowtntdamage: false
+   # Allow spawn egg use
+   allowspawneggs: true
+   # Allow animal breeding by visitors
+   allowbreeding: false
+   # Allow use of Flint & Steel by visitors
+   allowfire: false
+   # Allow chests to be blown up by creepers or TNT
+   allowchestdamage: false
+   # Allow leash use
+   allowleashuse: false
+   # Allow use of enchanting tables
+   allowenchanting: true
+   # Allow anvil use by visitors
+   allowanviluse: true
+   # Allow item drop by visitors
+   allowvisitoritemdrop: true
+   # Allow item pickup by visitors
+   allowvisitoritempickup: true
+   # Allow visitors to keep their items if they die
+   allowvisitorkeepinvondeath: false
+   # Allow armor stand use by visitors
+   allowarmorstanduse: false
+   # Allow beacon use by visitors
+   allowbeaconaccess: false
+   # Allow portal use by visitors
+   allowportaluse: true
+
+# General Settings
+general:
    # Check for updates - this will tell Ops and the console if there is a new
    # version available. It contacts dev.bukkit.org to request the latest version
    # info. It does not download the latest version or change any files
@@ -47,21 +196,7 @@ general:
 
    # Try new island-style nether. Change to true
    # Still in Beta!
-   newnether: false
-
-   # Schematics
-   # The default schematic file (if used) for all players is island.schematic.
-   # To give players other schematics, list a permission and the filename
-   # then give the player that permission (it can be anything)
-   # If the file does not exist, it will not load.
-
-   schematics:
-   #  Note that in this example, the permission is 'schematic.vip'. It can be anything
-   #  you like. For example, an existing permission for a rank of player.
-   # Uncomment the lines after this one after you change them...
-   #  schematic.vip: vipisland.schematic
-   #  schematic.vip2: vip2island.schematic
-   #  schematic.jail: jail.schematic 
+   newnether: false    
 
    #How long a player must wait before they can reset their island again in second
    resetwait: 300
@@ -116,7 +251,8 @@ general:
    # If you just want these to act, then make the acid damage 0 above
    # Note - these are potion effects and so can be cured by milk
    damagetype:
-
+   #-confusion
+   
    # Removing mobs - this kills all monsters in the vicinity. Benefit is that it helps
    # players return to their island if the island has been overrun by monsters
    # Con is that it kills any mob grinders 
@@ -241,158 +377,13 @@ general:
    # <tastybento> (Level: 223): hi there
    # If you have other plugins that use scoreboards/teams, this may mess with them
    setteamsuffix: false
+   # What you want the suffix to be. [level] is substituted for the player's level
+   teamsuffix: "([level])"
 
-##### Island Related Settings #####
-
-island:
-   # Space between islands in blocks - NEVER change this mid-game.
-   # Values for a new world:
-   # 400 - puts players distance enough that they usually cannot see each other
-   # 200 - allows some expansion of the protected zone (recommended)
-   # 110 - for compatibility with established worlds. Cozy.
-   # 50 - minimum - not recommended
-   # IF YOU ARE UPGRADING YOU MUST USE YOUR OLD VALUE EXACTLY, E.G., 110
-   #
-   # You MUST change this value to something to start the plugin!
-
-   distance: -1
-
-   # The size of the protective region for new islands. Must be at least 16 blocks
-   # less than the island distance. Large sizes will slow down island level calculation
-   # when players do /is level.
-   #
-   # Recommended size is 100 because it gives players a good starting size.
-   # Minimum size is 50.
-   # Admins can change protection sizes for players individually using 
-
-   protectionRange: 100
-
-   # If you want to try to have protection range = distance set the following to true.
-   # It may result is incomplete deletion of islands. Not recommended.
-   overridelimit: false
-
-   # Start islands at these coordinates. This is where new islands will start in the
-   # world. These must be a factor of your island distance, but the plugin will auto
-   # calculate the closest location on the grid. Islands develop around this location
-   # both positively and negatively in a square grid.
-   # If none of this makes sense, leave at 0,0.
-   startx: 0
-   startz: 0
-
-   # Coordinate offset - never change this mid-game and there is no
-   # need to set this. It is for compatibility with IslandWorld maps and set by
-   # BlockConverter.
-   xoffset: 0
-   zoffset: 0
-
-   # Max team size
-   maxteamsize: 4
-   # VIP team size - set by permission askyblock.team.vip
-   vipteamsize: 8
-   # VIP2 team size - set by permission askyblock.team.vip2
-   vip2teamsize: 12
-
-   # Items that will be in the chest when the player starts an island
-   # Must be in Bukkit Materials format. Format is <Material>:<Qty>
-   # or <Material>:<Damage>:<Qty>
-   # Use <Damage> to set the durability of a item or to select sub-items/colors.
-   # Format for POTION is POTION:<effect>:<qty> or POTION:<effect>:<type>:<qty>
-   # <type> is EXTENDED, SPLASH or EXTENDEDSPLASH. Not all potions can be extended.
-   # Check console for errors and guidance after reloading configuration
-   # Set to '' if items are included in the schematic
-
-   chestItems: 'ICE:2 MELON:1 TORCH:2 BONE:1 LAVA_BUCKET:1 PUMPKIN_SEEDS:1 SUGAR_CANE:1 RED_MUSHROOM:1 BROWN_MUSHROOM:1 CACTUS:1 BREAD:1 WHEAT:1 LEATHER_BOOTS:1 LEATHER_HELMET:1 LEATHER_CHESTPLATE:1 LEATHER_LEGGINGS:1'
-
-   # Your island companion
-   # Options are: COW, PIG, SHEEP, CHICKEN, VILLAGER, HORSE, IRON_GOLEM, OCELOT,
-   # RABBIT, WOLF or NOTHING. Default is COW.
-
-   companion: COW
-   # This is a list of names, picked at random that will apply to the companion
-   # You can add more if you like. If none are listed, the companion will not be
-   # named.
-   companionnames:
-   - "&9[player]'s cow"
-   - "&cEmergency &fFood?"
-   - "&aD&6a&di&6s&9y"
-
-   # Island Protection Settings
-
-   # PVP is allowed or not.
-   allowPvP: false
-   allowNetherPvP: false
-   # Other players can break blocks or not or generally damage things
-   allowbreakblocks: false
-   # Other players can place blocks
-   allowplaceblocks: false
-   # Allow players to be able to sleep in beds not on their island
-   allowbeduse: false
-   # Allow players to use buckets, either fill or dump them
-   allowbucketuse: false
-   # Allow players to shear sheep
-   allowshearing: false
-   # Allow players to throw enderpearls and teleport
-   allowenderpearls: false
-   # Allow players to use doors or trapdoors. If a door is operated by a button or redstone, this does not count
-   allowdooruse: false
-   # Allow players to use levers or buttons
-   allowleverbuttonuse: false
-   # Allow players to trample crops
-   allowcroptrample: false
-   # Allow players to access chests of any kind, droppers, dispensers and hoppers
-   allowchestaccess: false
-   # Allow players to access furnaces
-   allowfurnaceuse: false
-   # Allow players to adjust diodes or comparators
-   allowredstone: false
-   # Allow players to use jukeboxes, eject discs and hit note blocks
-   allowmusic: false
-   # Allow players to use crafting benches
-   allowcrafting: true
-   # Allow players to use cauldrons and brewing stands
-   allowbrewing: false
-   # Allow gates to be used
-   allowgateuse: false
-   # Allow friendly mobs to be hurt (cows etc.)
-   allowhurtmobs: false
-   # Allow monsters to be hurt (creepers,slimes, etc.)
-   # Don't change this to false unless you accept that island visitors will not be
-   # able to defend themselves!
-   allowhurtmonsters: true
-   # Allow Enderman Griefing (default is to allow, see next setting)
-   allowendermangriefing: true
-   # Make enderman drop the block he is holding if he dies (recommended)
-   endermandeathdrop: true
-   # Allow creeper explosion damage to block (explosion still hurts)
-   allowcreeperdamage: true
-   # Allow TNT damage to blocks (stops players using TNT to destroy other's islands)
-   allowtntdamage: false
-   # Allow spawn egg use
-   allowspawneggs: true
-   # Allow animal breeding by visitors
-   allowbreeding: false
-   # Allow use of Flint & Steel by visitors
-   allowfire: false
-   # Allow chests to be blown up by creepers or TNT
-   allowchestdamage: false
-   # Allow leash use
-   allowleashuse: false
-   # Allow use of enchanting tables
-   allowenchanting: true
-   # Allow anvil use by visitors
-   allowanviluse: true
-   # Allow item drop by visitors
-   allowvisitoritemdrop: true
-   # Allow item pickup by visitors
-   allowvisitoritempickup: true
-   # Allow visitors to keep their items if they die
-   allowvisitorkeepinvondeath: false
-   # Allow armor stand use by visitors
-   allowarmorstanduse: false
-   # Allow beacon use by visitors
-   allowbeaconaccess: false
-   # Allow portal use by visitors
-   allowportaluse: true
+   # Config.yml version. DO NOT EDIT. This number only changes if the latest
+   # plugin config has been updated. If a new config is detected, it will be
+   # auto-saved to config.new.yml.
+   version: ${version}
 
 # Spawn protection options - different to regular islands
 spawn:
@@ -446,42 +437,100 @@ biomesettings:
 biomes:
   COLD_TAIGA:
     icon: SAPLING
-    description: Snowy and cold. Brrr.
+    description: "Snowy and cold. Brrr."
+    # Perms can be any string you like!
+    #permission: any.perm.you.want
   DESERT:
     icon: DEAD_BUSH
-    description: A dry desert. Warning - Ice or snow have to go.
+    description: "A dry desert. Warning - Ice or snow have to go."
+    #permission: any.perm.you.want
   FLOWER_FOREST:
     icon: RED_ROSE
-    description: The place for flowers!
+    description: "The place for flowers!"
+    #permission: any.perm.you.want
   HELL:
     icon: LAVA_BUCKET
     cost: 1000
     # Note, this permission can be anything you like
     permission: askyblock.biomes.hell
     friendlyname: Nether
-    description: Warning - all water, snow and ice will be removed.
+    description: "Warning - all water, snow and ice will be removed."
+    #permission: any.perm.you.want
   JUNGLE:
     icon: VINE
-    description: Lush jungle. Warning - Ice or snow have to go.
+    description: "Lush jungle. Warning - Ice or snow have to go."
+    #permission: any.perm.you.want
   MUSHROOM_ISLAND:
     icon: RED_MUSHROOM
     # Note, this permission can be anything you like
     permission: askyblock.biomes.mushoom_island
-    description: Mushroom island
+    description: "Mushroom island"
   PLAINS:
     icon: GRASS
     description: Plain plains!
     cost: 0
+    #permission: any.perm.you.want
   SWAMPLAND:
     icon: WATER_LILY
-    description: Swampy. Warning - Ice or snow have to go.
+    description: "Swampy. Warning - Ice or snow have to go."
+    #permission: any.perm.you.want
   MESA:
     icon: HARD_CLAY
-    description: Rare dry, desert biome. Warning - Ice or snow have to go.
+    description: "Rare dry, desert biome. Warning - Ice or snow have to go."
+    #permission: any.perm.you.want
     cost: 500
   SAVANNA:
     icon: LONG_GRASS
-    description: Flat and dry, no rain. Warning - Ice or snow have to go.
+    description: "Flat and dry, no rain. Warning - Ice or snow have to go."
+    #permission: any.perm.you.want
   ROOFED_FOREST:
     icon: LOG
-    description: Black forest
+    description: "Black forest"
+    #permission: any.perm.you.want
+
+schematicsection:
+   # All schematics should be put in the schematics folder
+
+   # Schematic panel - if more than one schematic is available to the player
+   # Show a panel to choose. If this is false, no panel is shown and the starter 
+   # island is picked by permission. If a player has more than one permission
+   # the island selected is undefined - the plugin will pick one.
+  useschematicspanel: true
+
+  # This section lists all the schematics available
+  # You can add or remove from this list. If this section is missing, only the default
+  # island works.
+  schematics:
+    # default heading is required
+    default:
+      # Icon - if this is missing or wrong, it will be a MAP
+      icon: DIRT
+      # Short name - color codes with & okay
+      name: "The Original"
+      # Longer description. Use | for new lines. Color codes okay.
+      description: "Challenging|starter|island!"
+      # Filename of the schematic in the schematic folder
+      filename: island.schematic
+      # Use default chest if true, or use schematic chest contents if false
+      useDefaultChest: true
+    # Additional heading names can be anything you like, but must be unique
+    island1:
+      # Credit to Antal1609 for this schematic!
+      icon: RED_ROSE
+      name: "Island Duo"
+      description: "Two close islands!|Double the fun,|but a little easier.|&a[Credit] Antal1609"
+      filename: double.schematic
+      # Schematics can have biomes set when they are created
+      biome: FLOWER_FOREST
+      useDefaultChest: true
+      #permission: any.perm.you.like
+    extrahard:
+      icon: OBSIDIAN
+      name: "&lBlack &bDiamonds"
+      description: "Experts only!|&aMinimal resources|&awith a few diamonds."
+      filename: hard.schematic
+      useDefaultChest: false
+      # Schematics that require water or lava to hover can prevent physics when pasting
+      usephysics: false
+      #permission: any.perm.you.like
+

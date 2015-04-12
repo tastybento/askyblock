@@ -42,8 +42,8 @@ lavaTip: "유용한 정보: 만약 흑요석을 만들려고 한게 아니면, �
 warps:
    #This is the first line of the sign that determines if the sign is a warp sign or not
    #If you change it, make sure it makes sense. It is case insensitive. Change the tip too.
-   welcomeLine: "[환영합니다]"
-   warpTip: "상단에 [환영합니다]라고 적힌 표지판을 놓아 워프를 만듭니다."
+   welcomeLine: "[WELCOME]"
+   warpTip: "상단에 [WELCOME]라고 적힌 표지판을 놓아 워프를 만듭니다."
    success: "성공적으로 환영 표지판을 놓았습니다!"
    removed: "환영 표지판 제거됨!"
    signRemoved: "당신의 환영 표지판은 제거되었습니다!"
@@ -402,3 +402,6 @@ lock:
    unlocking: "잠겨지지 않은 섬"
    enteringspawn: "소환 지점으로 들어가는 중"
    leavingspawn: "소환 지점에서 떠나는 중"
+
+schematics:
+   title: "섬 선택"

@@ -1,6 +1,6 @@
 name: ASkyBlock
 main: com.wasteofplastic.askyblock.ASkyBlock
-version: 2.9.1.2
+version: ${version}
 description: A SkyBlock Plugin
 author: Tastybento
 depend: [Vault]
@@ -154,4 +154,7 @@ permissions:
             default: op
           askyblock.admin.setrange:
             description: Allows setting of island protection range
+            default: op
+          askyblock.admin.topbreeders:
+            description: Lists most populated islands current loaded
             default: op

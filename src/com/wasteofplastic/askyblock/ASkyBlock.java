@@ -45,6 +45,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.MaterialData;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.Potion;
@@ -67,8 +68,9 @@ import com.wasteofplastic.askyblock.listeners.JoinLeaveEvents;
 import com.wasteofplastic.askyblock.listeners.LavaCheck;
 import com.wasteofplastic.askyblock.listeners.NetherPortals;
 import com.wasteofplastic.askyblock.listeners.WorldEnter;
-import com.wasteofplastic.askyblock.panels.Biomes;
+import com.wasteofplastic.askyblock.panels.BiomesPanel;
 import com.wasteofplastic.askyblock.panels.ControlPanel;
+import com.wasteofplastic.askyblock.panels.SchematicsPanel;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
@@ -98,7 +100,7 @@ public class ASkyBlock extends JavaPlugin {
     private Listener lavaListener;
 
     // Biome chooser object
-    private Biomes biomes;
+    private BiomesPanel biomes;
 
     // Island grid manager
     private GridManager grid;
@@ -486,6 +488,10 @@ public class ASkyBlock extends JavaPlugin {
 		    if (islandLoc.getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 			grid.removeMobsFromIsland(islandLoc);
 			new DeleteIslandChunk(this, islandLoc);
+			// Delete the new nether island too (if it exists)
+			if (Settings.createNether && Settings.newNether) {
+			    new DeleteIslandChunk(plugin, islandLoc.toVector().toLocation(ASkyBlock.getNetherWorld()));
+			}
 		    } else {
 			getLogger().severe("Cannot delete island at location " + islandLoc.toString() + " because it is not in the official island world");
 		    }
@@ -506,7 +512,7 @@ public class ASkyBlock extends JavaPlugin {
     /**
      * @return the biomes
      */
-    public Biomes getBiomes() {
+    public BiomesPanel getBiomes() {
 	return biomes;
     }
 
@@ -604,23 +610,35 @@ public class ASkyBlock extends JavaPlugin {
 	availableLocales.put("pl-PL", new Locale(this,"pl-PL"));
 	availableLocales.put("pt-BR", new Locale(this,"pt-BR"));
 	availableLocales.put("zh-CN", new Locale(this,"zh-CN"));
-	
+	availableLocales.put("cs-CS", new Locale(this,"cs-CS"));
+	availableLocales.put("sk-SK", new Locale(this,"sk-SK"));
+
 	// Assign settings
-	// Load schematics
-	if (getConfig().contains("general.schematics")) {
-	    for (String key : getConfig().getConfigurationSection("general.schematics").getKeys(true)) {
-		// getLogger().info(key);
-		// Check the file exists
-		String filename = getConfig().getString("general.schematics." + key);
-		File schematicFile = new File(plugin.getDataFolder(), filename);
-		if (schematicFile.exists()) {
-		    Settings.schematics.put(key, filename);
-		    getLogger().info("Found " + filename + " for perm " + key);
-		}
+	String configVersion = getConfig().getString("general.version", "");
+	if (configVersion.isEmpty() || !configVersion.equalsIgnoreCase(plugin.getDescription().getVersion())) {
+	    // Check to see if this has already been shared
+	    File newConfig = new File(plugin.getDataFolder(),"config.new.yml");
+	    getLogger().warning("***********************************************************");
+	    getLogger().warning("Config file is out of date. See config.new.yml for updates!");
+	    getLogger().warning("config.yml version is '" + configVersion + "'");
+	    getLogger().warning("Latest config version is '" + plugin.getDescription().getVersion() + "'");
+	    getLogger().warning("***********************************************************");
+	    if (!newConfig.exists()) {
+		File oldConfig = new File(plugin.getDataFolder(),"config.yml");
+		File bakConfig = new File(plugin.getDataFolder(),"config.bak");
+		if (oldConfig.renameTo(bakConfig)) {
+		    plugin.saveResource("config.yml", false);
+		    oldConfig.renameTo(newConfig);
+		    bakConfig.renameTo(oldConfig);
+		} 
 	    }
 	}
+	// Debug
+	Settings.debug = getConfig().getInt("debug", 0);
+	//Settings.useSchematicPanel = getConfig().getBoolean("general.useschematicspanel", true);
 	// TEAMSUFFIX as island level
 	Settings.setTeamName = getConfig().getBoolean("general.setteamsuffix", false);
+	Settings.teamSuffix = getConfig().getString("general.teamsuffix","([level])");
 	// Immediate teleport
 	Settings.immediateTeleport = getConfig().getBoolean("general.immediateteleport", false);
 	// Make island automatically
@@ -658,7 +676,7 @@ public class ASkyBlock extends JavaPlugin {
 	}
 
 	String companion = getConfig().getString("island.companion", "COW").toUpperCase();
-	if (companion == "NOTHING") {
+	if (companion.equalsIgnoreCase("NOTHING")) {
 	    Settings.islandCompanion = null;
 	} else {
 	    try {
@@ -1038,26 +1056,42 @@ public class ASkyBlock extends JavaPlugin {
 	// Levels
 	// Get the blockvalues.yml file
 	YamlConfiguration blockValuesConfig = Util.loadYamlFile("blockvalues.yml");
-	Settings.blockLimits = new HashMap<Material, Integer>();
+	// Get the under water multiplier
+	Settings.underWaterMultiplier = blockValuesConfig.getDouble("underwater", 1D);
+	Settings.blockLimits = new HashMap<MaterialData, Integer>();
 	if (blockValuesConfig.isSet("limits")) {
 	    for (String material : blockValuesConfig.getConfigurationSection("limits").getKeys(false)) {
 		try {
-		    Material mat = Material.valueOf(material);
-		    Settings.blockLimits.put(mat, blockValuesConfig.getInt("limits." + material, 0));
+		    String[] split = material.split(":");
+		    byte data = 0;
+		    if (split.length>1) {
+			data = Byte.valueOf(split[1]);
+		    }
+		    Material mat = Material.valueOf(split[0]);
+		    MaterialData materialData = new MaterialData(mat);
+		    materialData.setData(data);
+		    Settings.blockLimits.put(materialData, blockValuesConfig.getInt("limits." + material, 0));
 		    if (debug) {
-			getLogger().info("Maximum number of " + mat.toString() + " will be " + Settings.blockLimits.get(mat));
+			getLogger().info("Maximum number of " + materialData + " will be " + Settings.blockLimits.get(materialData));
 		    }
 		} catch (Exception e) {
 		    getLogger().warning("Unknown material (" + material + ") in blockvalues.yml Limits section. Skipping...");
 		}
 	    }
 	}
-	Settings.blockValues = new HashMap<Material, Integer>();
+	Settings.blockValues = new HashMap<MaterialData, Integer>();
 	if (blockValuesConfig.isSet("blocks")) {
 	    for (String material : blockValuesConfig.getConfigurationSection("blocks").getKeys(false)) {
 		try {
-		    Material mat = Material.valueOf(material);
-		    Settings.blockValues.put(mat, blockValuesConfig.getInt("blocks." + material, 0));
+		    String[] split = material.split(":");
+		    byte data = 0;
+		    if (split.length>1) {
+			data = Byte.valueOf(split[1]);
+		    }
+		    Material mat = Material.valueOf(split[0]);
+		    MaterialData materialData = new MaterialData(mat);
+		    materialData.setData(data);
+		    Settings.blockValues.put(materialData, blockValuesConfig.getInt("blocks." + material, 0));
 		    if (debug) {
 			getLogger().info(mat.toString() + " value is " + Settings.blockValues.get(mat));
 		    }
@@ -1129,8 +1163,10 @@ public class ASkyBlock extends JavaPlugin {
 	manager.registerEvents(new AcidInventory(this), this);
 	// Biomes
 	// Load Biomes
-	biomes = new Biomes();
+	biomes = new BiomesPanel();
 	manager.registerEvents(biomes, this);
+	// Schematics panel
+	manager.registerEvents(new SchematicsPanel(), this);
 	// Track incoming world teleports
 	manager.registerEvents(new WorldEnter(this), this);
     }
@@ -1166,6 +1202,9 @@ public class ASkyBlock extends JavaPlugin {
 	}
 	// Reset the island level
 	players.setIslandLevel(player.getUniqueId(), 0);
+	// Clear the starter island
+	players.clearStartIslandRating(player.getUniqueId());
+	// Save the player
 	players.save(player.getUniqueId());
 	TopTen.topTenAddEntry(player.getUniqueId(), 0);
 	// Update the inventory
