@@ -621,11 +621,17 @@ public class Schematic {
 						    // Get the material
 						    if (itemType.startsWith("minecraft:")) {
 							String material = itemType.substring(10).toUpperCase();
-							// Special case for
+							// Special case for non-standard material names
 							// REEDS, that is sugar
 							// cane
 							if (material.equalsIgnoreCase("REEDS")) {
 							    material = "SUGAR_CANE";
+							}
+							if (material.equalsIgnoreCase("MYCELIUM")) {
+							    material = "MYCEL";
+							}
+							if (material.equalsIgnoreCase("COOKED_PORKCHOP")) {
+							    material = "GRILLED_PORK";
 							}
 							Material itemMaterial = Material.valueOf(material);
 							short itemDamage = (Short) ((CompoundTag) item).getValue().get("Damage").getValue();
