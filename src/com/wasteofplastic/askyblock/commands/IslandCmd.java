@@ -789,6 +789,28 @@ public class IslandCmd implements CommandExecutor {
 			return true;
 		    } else {
 			if (!island.isLocked()) {
+			    // Remove any visitors
+			    for (Player target : plugin.getServer().getOnlinePlayers()) {
+				// See if target is on this player's island, not a mod, no bypass, and not a coop player
+				if (!player.equals(target) && !target.isOp() && !VaultHelper.checkPerm(target, Settings.PERMPREFIX + "mod.bypassprotect")
+					&& (target.getWorld().equals(ASkyBlock.getIslandWorld()) || target.getWorld().equals(ASkyBlock.getNetherWorld()))
+						&& plugin.getGrid().isOnIsland(player, target)
+						&& !CoopPlay.getInstance().getCoopPlayers(island.getCenter()).contains(target.getUniqueId())) {
+				    // Send them home
+				    if (plugin.getPlayers().inTeam(target.getUniqueId()) || plugin.getPlayers().hasIsland(target.getUniqueId())) {
+					plugin.getGrid().homeTeleport(target);
+				    } else {
+					// Just move target to spawn
+					if (!target.performCommand(Settings.SPAWNCOMMAND)) {
+					    target.teleport(player.getWorld().getSpawnLocation());
+					}
+				    }
+				    target.sendMessage(ChatColor.RED + plugin.myLocale(target.getUniqueId()).expelExpelled);
+				    plugin.getLogger().info(player.getName() + " expelled " + target.getName() + " from their island when locking.");
+				    // Yes they are
+				    player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).expelSuccess.replace("[name]", target.getDisplayName()));
+				}
+			    }
 			    player.sendMessage(ChatColor.GREEN + plugin.myLocale(playerUUID).lockLocking);
 			    Messages.tellOfflineTeam(playerUUID, plugin.myLocale(playerUUID).lockPlayerLocked.replace("[name]", player.getDisplayName()));
 			    Messages.tellTeam(playerUUID, plugin.myLocale(playerUUID).lockPlayerLocked.replace("[name]", player.getDisplayName()));
