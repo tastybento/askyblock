@@ -527,7 +527,10 @@ public class Schematic {
 				    //String lineText = text.get(line).replace("{\"extra\":[\"", "").replace("\"],\"text\":\"\"}", "");
 				    //Bukkit.getLogger().info("DEBUG: sign text = '" + text.get(line) + "'");
 				    String lineText = "";
+				    if (text.get(line).startsWith("{")) {
+					// JSON string
 				    try {
+					
 					Map json = (Map)parser.parse(text.get(line), containerFactory);
 					List list = (List) json.get("extra");
 					//System.out.println("DEBUG1:" + JSONValue.toJSONString(list));
@@ -582,6 +585,15 @@ public class Schematic {
 				    } catch (ParseException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+				    }
+				    } else {
+					// This is unformatted text (not JSON). It is included in "".
+					if (text.get(line).length() > 1) {
+					    lineText = text.get(line).substring(text.get(line).indexOf('"')+1,text.get(line).lastIndexOf('"'));
+					} else {
+					    // ust in case it isn't - show the raw line
+					    lineText = text.get(line);
+					}
 				    }
 				    //Bukkit.getLogger().info("Line " + line + " is " + lineText);
 
