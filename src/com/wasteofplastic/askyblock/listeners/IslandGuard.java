@@ -208,7 +208,6 @@ public class IslandGuard implements Listener {
 	    InventorySave.getInstance().loadPlayerInventory(e.getPlayer());
 	}
     }
-
     /*
      * Prevent item pickup by visitors
      */
