@@ -10,7 +10,7 @@ loadbefore: [Multiverse-Core]
 commands:
     island:
         description: Main player command
-        aliases: [is, island, as]
+        aliases: [is, island]
         usage:  |
              /island help
     asadmin:
