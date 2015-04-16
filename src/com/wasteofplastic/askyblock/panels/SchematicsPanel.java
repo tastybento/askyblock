@@ -32,7 +32,7 @@ public class SchematicsPanel implements Listener {
 	// Go through the available schematics for this player
 	int slot = 0;
 	List<SPItem> items = new ArrayList<SPItem>();
-	List<Schematic> availableSchems = IslandCmd.getSchematics(player);
+	List<Schematic> availableSchems = IslandCmd.getSchematics(player, false);
 	// Add an info icon
 	//items.add(new SPItem(Material.MAP,"Choose your island", "Pick from the selection...",slot++));
 	// Generate additional available schematics

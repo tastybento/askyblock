@@ -495,6 +495,8 @@ schematicsection:
    # Show a panel to choose. If this is false, no panel is shown and the starter 
    # island is picked by permission. If a player has more than one permission
    # the island selected is undefined - the plugin will pick one.
+   # Permissions are taken from the below schematics section even if the GUI is
+   # not used.
   useschematicspanel: true
 
   # This section lists all the schematics available

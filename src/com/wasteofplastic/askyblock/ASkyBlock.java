@@ -615,13 +615,24 @@ public class ASkyBlock extends JavaPlugin {
 
 	// Assign settings
 	String configVersion = getConfig().getString("general.version", "");
-	if (configVersion.isEmpty() || !configVersion.equalsIgnoreCase(plugin.getDescription().getVersion())) {
+	//getLogger().info("DEBUG: config ver length " + configVersion.split("\\.").length);
+	// Ignore last digit if it is 4 digits long
+	if (configVersion.split("\\.").length == 4) {
+	   configVersion = configVersion.substring(0, configVersion.lastIndexOf('.')); 
+	}
+	// Save for plugin version
+	String version = plugin.getDescription().getVersion();
+	//getLogger().info("DEBUG: version length " + version.split("\\.").length);
+	if (version.split("\\.").length == 4) {
+	   version = version.substring(0, version.lastIndexOf('.')); 
+	}
+	if (configVersion.isEmpty() || !configVersion.equalsIgnoreCase(version)) {
 	    // Check to see if this has already been shared
 	    File newConfig = new File(plugin.getDataFolder(),"config.new.yml");
 	    getLogger().warning("***********************************************************");
 	    getLogger().warning("Config file is out of date. See config.new.yml for updates!");
 	    getLogger().warning("config.yml version is '" + configVersion + "'");
-	    getLogger().warning("Latest config version is '" + plugin.getDescription().getVersion() + "'");
+	    getLogger().warning("Latest config version is '" + version + "'");
 	    getLogger().warning("***********************************************************");
 	    if (!newConfig.exists()) {
 		File oldConfig = new File(plugin.getDataFolder(),"config.yml");

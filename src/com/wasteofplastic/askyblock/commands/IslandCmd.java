@@ -145,8 +145,24 @@ public class IslandCmd implements CommandExecutor {
 
 	// Load the schematics from config.yml
 	ConfigurationSection schemSection = plugin.getConfig().getConfigurationSection("schematicsection");
-	if (plugin.getConfig().contains("schematicsection") && schemSection != null) {
-	    //plugin.getLogger().info("DEBUG: New Schematic section exists");
+	if (plugin.getConfig().contains("general.schematics")) {
+	    tip();
+	    // Load the schematics in this section 
+	    int count = 1;
+	    for (String perms: plugin.getConfig().getConfigurationSection("general.schematics").getKeys(true)) {
+		// See if the file exists
+		String fileName = plugin.getConfig().getString("general.schematics." + perms);
+		File schem = new File(plugin.getDataFolder(), fileName);
+		if (schem.exists()) {
+		    plugin.getLogger().info("Loading schematic " + fileName + " for permission " + perms);
+		    Schematic schematic = new Schematic(schem);
+		    schematic.setPerm(perms);
+		    schematic.setHeading(perms);
+		    schematic.setName("#" + count++);
+		    schematics.put(perms, schematic);
+		} // Cannot declare a not-found because get keys gets some additional non-wanted strings
+	    }
+	} else if (plugin.getConfig().contains("schematicsection")) {
 	    Settings.useSchematicPanel = schemSection.getBoolean("useschematicspanel", true);
 	    // Section exists, so go through the various sections
 	    for (String key : schemSection.getConfigurationSection("schematics").getKeys(false)) {
@@ -229,30 +245,7 @@ public class IslandCmd implements CommandExecutor {
 	    if (schematics.isEmpty()) {
 		tip();
 	    }
-	} else {
-	    //plugin.getLogger().info("DEBUG: Legacy support");
-	    // Legacy support
-	    if (plugin.getConfig().contains("general.schematics")) {
-		tip();
-		// Load the schematics in this section 
-		int count = 1;
-		for (String perms: plugin.getConfig().getConfigurationSection("general.schematics").getKeys(true)) {
-		    // See if the file exists
-		    String fileName = plugin.getConfig().getString("general.schematics." + perms);
-		    File schem = new File(plugin.getDataFolder(), fileName);
-		    if (schem.exists()) {
-			plugin.getLogger().info("Loading schematic " + fileName + " for permission " + perms);
-			Schematic schematic = new Schematic(schem);
-			schematic.setPerm(perms);
-			schematic.setHeading(perms);
-			schematic.setName("#" + count++);
-			schematics.put(perms, schematic);
-		    } 
-		}	    
-	    } //else {
-	    //plugin.getLogger().info("DEBUG: no schematics section found");
-	    //}
-	}
+	} 
     }
 
     private static void tip() {
@@ -346,24 +339,26 @@ public class IslandCmd implements CommandExecutor {
     }
 
     /**
-     * Results all the valid schematics for this player in addition to the default one
+     * List schematics this player can access. If @param ignoreNoPermission is true, then only
+     * schematics with a specific permission set will be checked. I.e., no common schematics will
+     * be returned (including the default one).
      * @param player
-     * @return Set of schematics this player can use based on their permission level
+     * @param ignoreNoPermission
+     * @return List of schematics this player can use based on their permission level
      */
-    public static List<Schematic> getSchematics(Player player) {
+    public static List<Schematic> getSchematics(Player player, boolean ignoreNoPermission) {
 	List<Schematic> result = new ArrayList<Schematic>();
-	if (!schematics.isEmpty()) {
-	    // Find out what schematics this player can choose from
-	    //Bukkit.getLogger().info("DEBUG: Checking schematics for " + player.getName());
-	    for (Schematic schematic : schematics.values()) {
-		//Bukkit.getLogger().info("DEBUG: schematic name is '"+ schematic.getName() + "'");
-		//Bukkit.getLogger().info("DEBUG: perm is " + schematic.getPerm());
-		if (schematic.getPerm().isEmpty() || VaultHelper.checkPerm(player, schematic.getPerm())) {
-		    //Bukkit.getLogger().info("DEBUG: player can use this schematic");
-		    result.add(schematic);
-		}
+	// Find out what schematics this player can choose from
+	//Bukkit.getLogger().info("DEBUG: Checking schematics for " + player.getName());
+	for (Schematic schematic : schematics.values()) {
+	    //Bukkit.getLogger().info("DEBUG: schematic name is '"+ schematic.getName() + "'");
+	    //Bukkit.getLogger().info("DEBUG: perm is " + schematic.getPerm());
+	    if ((!ignoreNoPermission && schematic.getPerm().isEmpty()) || VaultHelper.checkPerm(player, schematic.getPerm())) {
+		//Bukkit.getLogger().info("DEBUG: player can use this schematic");
+		result.add(schematic);
 	    }
 	}
+
 	return result;
     }
 
@@ -377,10 +372,10 @@ public class IslandCmd implements CommandExecutor {
     }
 
     /**
-     * Makes an island
+     * Makes an island using schematic. No permission checks are made. They have to be decided
+     * before this method is called.
      * @param player
-     * @param name - permission name for the schematic
-     * @return location where the cow will be placed
+     * @param schematic
      */
     public void newIsland(final Player player, Schematic schematic) {
 	final UUID playerUUID = player.getUniqueId();
@@ -697,24 +692,7 @@ public class IslandCmd implements CommandExecutor {
 	    if (plugin.getPlayers().getIslandLocation(playerUUID) == null && !plugin.getPlayers().inTeam(playerUUID)) {
 		// Create new island for player
 		player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).islandnew);
-		// Get the schematics that this player is eligible to use
-		List<Schematic> schems = getSchematics(player);
-		//plugin.getLogger().info("DEBUG: size of schematics for this player = " + schems.size());
-		if (schems.isEmpty()) {
-		    // No schematics - use default island
-		    newIsland(player);
-		} else if (schems.size() == 1) {
-		    // Hobson's choice
-		    newIsland(player,schems.get(0));
-		} else {
-		    if (Settings.useSchematicPanel) {
-			pendingNewIslandSelection.add(playerUUID);
-			player.openInventory(SchematicsPanel.getSchematicPanel(player));
-		    } else {
-			// Do the last one in the list
-			newIsland(player, schems.get(schems.size()-1));
-		    }
-		}
+		chooseIsland(player);
 		return true;
 	    } else {
 		if (Settings.useControlPanel) {
@@ -789,6 +767,28 @@ public class IslandCmd implements CommandExecutor {
 			return true;
 		    } else {
 			if (!island.isLocked()) {
+			    // Remove any visitors
+			    for (Player target : plugin.getServer().getOnlinePlayers()) {
+				// See if target is on this player's island, not a mod, no bypass, and not a coop player
+				if (!player.equals(target) && !target.isOp() && !VaultHelper.checkPerm(target, Settings.PERMPREFIX + "mod.bypassprotect")
+					&& (target.getWorld().equals(ASkyBlock.getIslandWorld()) || target.getWorld().equals(ASkyBlock.getNetherWorld()))
+					&& plugin.getGrid().isOnIsland(player, target)
+					&& !CoopPlay.getInstance().getCoopPlayers(island.getCenter()).contains(target.getUniqueId())) {
+				    // Send them home
+				    if (plugin.getPlayers().inTeam(target.getUniqueId()) || plugin.getPlayers().hasIsland(target.getUniqueId())) {
+					plugin.getGrid().homeTeleport(target);
+				    } else {
+					// Just move target to spawn
+					if (!target.performCommand(Settings.SPAWNCOMMAND)) {
+					    target.teleport(player.getWorld().getSpawnLocation());
+					}
+				    }
+				    target.sendMessage(ChatColor.RED + plugin.myLocale(target.getUniqueId()).expelExpelled);
+				    plugin.getLogger().info(player.getName() + " expelled " + target.getName() + " from their island when locking.");
+				    // Yes they are
+				    player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).expelSuccess.replace("[name]", target.getDisplayName()));
+				}
+			    }
 			    player.sendMessage(ChatColor.GREEN + plugin.myLocale(playerUUID).lockLocking);
 			    Messages.tellOfflineTeam(playerUUID, plugin.myLocale(playerUUID).lockPlayerLocked.replace("[name]", player.getDisplayName()));
 			    Messages.tellTeam(playerUUID, plugin.myLocale(playerUUID).lockPlayerLocked.replace("[name]", player.getDisplayName()));
@@ -968,37 +968,34 @@ public class IslandCmd implements CommandExecutor {
 		    }
 		    // Show a schematic panel if the player has a choice
 		    // Get the schematics that this player is eligible to use
-		    List<Schematic> schems = getSchematics(player);
+		    List<Schematic> schems = getSchematics(player, false);
+		    //plugin.getLogger().info("DEBUG: size of schematics for this player = " + schems.size());
 		    if (schems.isEmpty()) {
-			//plugin.getLogger().info("DEBUG: player is not eligible for any schematics");
-			// No schematics
+			// No schematics - use default island
 			Location oldIsland = plugin.getPlayers().getIslandLocation(player.getUniqueId());
-			// Make default island
 			newIsland(player);
 			resetPlayer(player,oldIsland);
 		    } else if (schems.size() == 1) {
-			//plugin.getLogger().info("DEBUG: Only one schematic loaded");
 			// Hobson's choice
+			Location oldIsland = plugin.getPlayers().getIslandLocation(player.getUniqueId());
 			newIsland(player,schems.get(0));
+			resetPlayer(player,oldIsland);
 		    } else {
+			// A panel can only be shown if there is >1 viable schematic
 			if (Settings.useSchematicPanel) {
-			    //plugin.getLogger().info("DEBUG: using schematic panel");
 			    pendingNewIslandSelection.add(playerUUID);
-			    resettingIsland.add(player.getUniqueId());
 			    player.openInventory(SchematicsPanel.getSchematicPanel(player));
 			} else {
-			    //plugin.getLogger().info("DEBUG: no schematic panel");
-			    // Legacy support
-			    // Find out what level of island this player will get
-			    Schematic schematic = null;
-			    for (String perm : schematics.keySet()) {
-				//plugin.getLogger().info("DEBUG: checking " + perm + " that has a perm of " + schematics.get(perm).getPerm());
-				if (!perm.equalsIgnoreCase("default") && VaultHelper.checkPerm(player, schematics.get(perm).getPerm())) {
-				    schematic = schematics.get(perm);
-				}
-			    }
+			    // No panel
 			    Location oldIsland = plugin.getPlayers().getIslandLocation(player.getUniqueId());
-			    newIsland(player, schematic);
+			    // Check schematics for specific permission
+			    schems = getSchematics(player,true);
+			    if (schems.isEmpty()) {
+				newIsland(player);
+			    } else {
+				// Do the first one in the list
+				newIsland(player, schems.get(0));
+			    }
 			    resetPlayer(player,oldIsland);
 			}
 		    }
@@ -2010,6 +2007,35 @@ public class IslandCmd implements CommandExecutor {
 	return false;
     }
 
+
+    private void chooseIsland(Player player) {
+	// Get the schematics that this player is eligible to use
+	List<Schematic> schems = getSchematics(player, false);
+	//plugin.getLogger().info("DEBUG: size of schematics for this player = " + schems.size());
+	if (schems.isEmpty()) {
+	    // No schematics - use default island
+	    newIsland(player);
+	} else if (schems.size() == 1) {
+	    // Hobson's choice
+	    newIsland(player,schems.get(0));
+	} else {
+	    // A panel can only be shown if there is >1 viable schematic
+	    if (Settings.useSchematicPanel) {
+		pendingNewIslandSelection.add(player.getUniqueId());
+		player.openInventory(SchematicsPanel.getSchematicPanel(player));
+	    } else {
+		// No panel
+		// Check schematics for specific permission
+		schems = getSchematics(player,true);
+		if (schems.isEmpty()) {
+		    newIsland(player);
+		} else {
+		    // Do the first one in the list
+		    newIsland(player, schems.get(0));
+		}
+	    }
+	}
+    }
 
     private void resetPlayer(Player player, Location oldIsland) {
 	// Clear any coop inventories

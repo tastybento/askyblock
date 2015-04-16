@@ -527,7 +527,10 @@ public class Schematic {
 				    //String lineText = text.get(line).replace("{\"extra\":[\"", "").replace("\"],\"text\":\"\"}", "");
 				    //Bukkit.getLogger().info("DEBUG: sign text = '" + text.get(line) + "'");
 				    String lineText = "";
+				    if (text.get(line).startsWith("{")) {
+					// JSON string
 				    try {
+					
 					Map json = (Map)parser.parse(text.get(line), containerFactory);
 					List list = (List) json.get("extra");
 					//System.out.println("DEBUG1:" + JSONValue.toJSONString(list));
@@ -583,6 +586,15 @@ public class Schematic {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				    }
+				    } else {
+					// This is unformatted text (not JSON). It is included in "".
+					if (text.get(line).length() > 1) {
+					    lineText = text.get(line).substring(text.get(line).indexOf('"')+1,text.get(line).lastIndexOf('"'));
+					} else {
+					    // ust in case it isn't - show the raw line
+					    lineText = text.get(line);
+					}
+				    }
 				    //Bukkit.getLogger().info("Line " + line + " is " + lineText);
 
 				    // Set the line
@@ -621,11 +633,17 @@ public class Schematic {
 						    // Get the material
 						    if (itemType.startsWith("minecraft:")) {
 							String material = itemType.substring(10).toUpperCase();
-							// Special case for
+							// Special case for non-standard material names
 							// REEDS, that is sugar
 							// cane
 							if (material.equalsIgnoreCase("REEDS")) {
 							    material = "SUGAR_CANE";
+							}
+							if (material.equalsIgnoreCase("MYCELIUM")) {
+							    material = "MYCEL";
+							}
+							if (material.equalsIgnoreCase("COOKED_PORKCHOP")) {
+							    material = "GRILLED_PORK";
 							}
 							Material itemMaterial = Material.valueOf(material);
 							short itemDamage = (Short) ((CompoundTag) item).getValue().get("Damage").getValue();
