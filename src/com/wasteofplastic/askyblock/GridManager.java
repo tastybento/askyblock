@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -787,7 +788,7 @@ public class GridManager {
 	// a few other items
 	// isSolid thinks that PLATEs and SIGNS are solid, but they are not
 	if (space1.getType().isSolid()) {
-	    // Bukkit.getLogger().info("DEBUG: space 1 is solid");
+	    //Bukkit.getLogger().info("DEBUG: space 1 is solid");
 	    // Do a few other checks
 	    if (!(space1.getType().equals(Material.SIGN_POST)) && !(space1.getType().equals(Material.WALL_SIGN))) {
 		// Bukkit.getLogger().info("DEBUG: space 1 is a sign post or wall sign");
@@ -826,7 +827,7 @@ public class GridManager {
 	     */
 	}
 	if (space2.getType().isSolid()) {
-	    // Bukkit.getLogger().info("DEBUG: space 2 is solid");
+	    //Bukkit.getLogger().info("DEBUG: space 2 is solid");
 	    // Do a few other checks
 	    if (!(space2.getType().equals(Material.SIGN_POST)) && !(space2.getType().equals(Material.WALL_SIGN))) {
 		// Bukkit.getLogger().info("DEBUG: space 2 is a sign post or wall sign");

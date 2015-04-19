@@ -1494,6 +1494,12 @@ public class IslandCmd implements CommandExecutor {
 				    plugin.getLogger().warning("Null warp found, owned by " + plugin.getPlayers().getName(foundWarp));
 				    return true;
 				}
+				// Find out if island is locked
+				Island island = plugin.getGrid().getIslandAt(warpSpot);
+				if (island != null && island.isLocked()) {
+				    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).lockIslandLocked);
+				    return true;
+				}
 				// Find out which direction the warp is facing
 				Block b = warpSpot.getBlock();
 				if (b.getType().equals(Material.SIGN_POST)) {
