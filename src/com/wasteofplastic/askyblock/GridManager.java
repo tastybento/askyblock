@@ -30,6 +30,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
+import com.wasteofplastic.acidisland.Island;
 import com.wasteofplastic.askyblock.util.Util;
 
 /**
@@ -945,30 +946,19 @@ public class GridManager {
      * @return - safe location, or null if none can be found
      */
     public Location bigScan(Location l, int i) {
-	final int minX;
-	final int minZ;
-	final int maxX;
-	final int maxZ;
 	final int height;
 	final int depth;
 	if (i > 0) {
-	    minX = l.getBlockX() - i;
-	    minZ = l.getBlockZ() - i;
-	    maxX = l.getBlockX() + i;
-	    maxZ = l.getBlockZ() + i;
-	    height = l.getBlockY() + i;
-	    depth = l.getBlockY() - i;
+	    height = i;
+	    depth = i;
 	} else {
 	    Island island = plugin.getGrid().getIslandAt(l);
 	    if (island == null) {
 		return null;
 	    }
-	    minX = island.getMinProtectedX();
-	    minZ = island.getMinProtectedZ();
-	    maxX = minX + island.getProtectionSize();
-	    maxZ = minZ + island.getProtectionSize();
-	    height = l.getWorld().getMaxHeight();
-	    depth = 0;
+	    i = island.getProtectionSize();
+	    height = l.getWorld().getMaxHeight() - l.getBlockY();
+	    depth = l.getBlockY();
 	}
 
 
@@ -977,20 +967,58 @@ public class GridManager {
 	//plugin.getLogger().info("DEBUG: height = " + height);
 	//plugin.getLogger().info("DEBUG: depth = " + depth);
 	//plugin.getLogger().info("DEBUG: trying to find a safe spot at " + l.toString());
-	for (int y = height; y > depth; y--) {
-	    for (int x = minX; x< maxX; x++) {
-		for (int z = minZ; z < maxZ; z++) {
-		    //plugin.getLogger().info("DEBUG: checking " + x + "," + y + "," + z);
-		    Location ultimate = new Location(l.getWorld(), x + 0.5D, y, z + 0.5D);
-		    if (ultimate.getBlock().getRelative(BlockFace.DOWN).getType() != Material.AIR) {
-			if (isSafeLocation(ultimate)) {
-			    //plugin.getLogger().info("DEBUG: Found! " + ultimate);
-			    return ultimate;
+
+	// Work outwards from l until the closest safe location is found.
+	int minXradius = 0;
+	int maxXradius = 0;
+	int minZradius = 0;
+	int maxZradius = 0;
+	int minYradius = 0;
+	int maxYradius = 0;
+
+	do {
+	    int minX = l.getBlockX()-minXradius;
+	    int minZ = l.getBlockZ()-minZradius;
+	    int minY = l.getBlockY()-minYradius;
+	    int maxX = l.getBlockX()+maxXradius;
+	    int maxZ = l.getBlockZ()+maxZradius;
+	    int maxY = l.getBlockY()+maxYradius;
+	    for (int x = minX; x<= maxX; x++) {
+		for (int z = minZ; z <= maxZ; z++) {
+		    for (int y = minY; y <= maxY; y++) {
+			if (!((x > minX && x < maxX) && (z > minZ && z < maxZ) && (y > minY && y < maxY))) {
+			    //plugin.getLogger().info("DEBUG: checking " + x + "," + y + "," + z);
+			    Location ultimate = new Location(l.getWorld(), x + 0.5D, y, z + 0.5D);
+			    if (isSafeLocation(ultimate)) {
+				//plugin.getLogger().info("DEBUG: Found! " + ultimate);
+				return ultimate;
+			    }
 			}
 		    }
 		}
 	    }
-	}	
+	    if (minXradius < i) {
+		minXradius++;
+	    }
+	    if (maxXradius < i) {
+		maxXradius++;
+	    }
+	    if (minZradius < i) {
+		minZradius++;
+	    }
+	    if (maxZradius < i) {
+		maxZradius++;
+	    }
+	    if (minYradius < depth) {
+		minYradius++;
+	    }
+	    if (maxYradius < height) {
+		maxYradius++;
+	    }
+	    //plugin.getLogger().info("DEBUG: Radii " + minXradius + "," + minYradius + "," + minZradius + 
+		//    "," + maxXradius + "," + maxYradius + "," + maxZradius);
+	} while (minXradius < i || maxXradius < i || minZradius < i || maxZradius < i || minYradius < depth 
+		|| maxYradius < height);
 	// Nothing worked
 	return null;
     }
