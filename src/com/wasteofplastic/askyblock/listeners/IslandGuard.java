@@ -582,7 +582,7 @@ public class IslandGuard implements Listener {
     }
 
     /**
-     * Prevents teleporting when falling based on setting
+     * Prevents teleporting when falling based on setting and teleporting to locked islands
      * 
      * @param e
      */
@@ -591,7 +591,7 @@ public class IslandGuard implements Listener {
 	if (debug) {
 	    plugin.getLogger().info(e.getEventName());
 	}
-	if (!inWorld(e.getFrom()) || e.getTo() == null) {
+	if (e.getTo() == null || !inWorld(e.getTo())) {
 	    return;
 	}
 	// Check if ready
