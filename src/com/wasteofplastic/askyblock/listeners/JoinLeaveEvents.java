@@ -178,7 +178,7 @@ public class JoinLeaveEvents implements Listener {
 
 	// Check if they logged in to a locked island and expel them
 	Island currentIsland = plugin.getGrid().getIslandAt(player.getLocation());
-	if (currentIsland.isLocked()) {
+	if (currentIsland != null && currentIsland.isLocked()) {
 	    if (!currentIsland.getMembers().contains(playerUUID) && !player.isOp()
 		    && !VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.bypassprotect")) {
 		player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).lockIslandLocked);

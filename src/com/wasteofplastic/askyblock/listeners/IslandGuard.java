@@ -646,7 +646,7 @@ public class IslandGuard implements Listener {
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onAnimalSpawn(final CreatureSpawnEvent e) {
 	if (debug) {
-	    plugin.getLogger().info("Animal spawn event! " + e.getEventName());
+	    //plugin.getLogger().info("Animal spawn event! " + e.getEventName());
 	    // plugin.getLogger().info(e.getSpawnReason().toString());
 	    // plugin.getLogger().info(e.getCreatureType().toString());
 	}
@@ -737,7 +737,7 @@ public class IslandGuard implements Listener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onMobSpawn(final CreatureSpawnEvent e) {
 	if (debug) {
-	    plugin.getLogger().info(e.getEventName());
+	    //plugin.getLogger().info(e.getEventName());
 	}
 	// If not in the right world, return
 	if (!e.getEntity().getWorld().equals(ASkyBlock.getIslandWorld())) {
@@ -991,6 +991,10 @@ public class IslandGuard implements Listener {
 	if (!inWorld(e.getEntity())) {
 	    return;
 	}
+	boolean inNether = false;
+	if (e.getEntity().getWorld().equals(ASkyBlock.getNetherWorld())) {
+	    inNether = true;
+	}
 	// Stop TNT damage if it is disallowed
 	if (!Settings.allowTNTDamage && e.getDamager().getType().equals(EntityType.PRIMED_TNT)) {
 	    e.setCancelled(true);
@@ -1134,7 +1138,7 @@ public class IslandGuard implements Listener {
 	    } else {
 		// PVP
 		// If PVP is okay then return
-		if (Settings.allowPvP) {
+		if ((inNether && Settings.allowNetherPvP) || (!inNether && Settings.allowPvP)) {
 		    //plugin.getLogger().info("DEBUG: PVP allowed");
 		    return;
 		}
@@ -1162,8 +1166,8 @@ public class IslandGuard implements Listener {
 			return;
 		    }
 		    // Projectile shot by a player at another player
-		    if (!Settings.allowPvP) {
-			// plugin.getLogger().info("Target player is in a no-PVP area!");
+		    if (!((inNether && Settings.allowNetherPvP) || (!inNether && Settings.allowPvP))) {
+			//plugin.getLogger().info("Target player is in a no-PVP area! projected shot by a player at another player");
 			shooter.sendMessage(ChatColor.RED + plugin.myLocale(shooter.getUniqueId()).targetInNoPVPArea);
 			e.setCancelled(true);
 			return;
@@ -1194,7 +1198,7 @@ public class IslandGuard implements Listener {
 	} else if (e.getDamager() instanceof Player) {
 	    //plugin.getLogger().info("DEBUG: Player attack");
 	    // Just a player attack
-	    if (!Settings.allowPvP) {
+	    if (!((inNether && Settings.allowNetherPvP) || (!inNether && Settings.allowPvP))) {
 		Player player = (Player) e.getDamager();
 		player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).targetInNoPVPArea);
 		e.setCancelled(true);
@@ -1804,7 +1808,11 @@ public class IslandGuard implements Listener {
 			return;
 		    } else {
 			// Splash potions are allowed only if PVP is allowed
-			if (!Settings.allowPvP) {
+			boolean inNether = false;
+			if (e.getPlayer().getWorld().equals(ASkyBlock.getNetherWorld())) {
+			    inNether = true;
+			}
+			if (!((inNether && Settings.allowNetherPvP) || (!inNether && Settings.allowPvP))) {
 			    e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
 			    e.setCancelled(true);
 			}

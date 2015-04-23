@@ -25,13 +25,11 @@ import org.bukkit.World;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
@@ -189,7 +187,7 @@ public class NetherPortals implements Listener {
 	    // event.useTravelAgent(true);
 	    // } else {
 	    // Use the portal for now
-	    
+
 	    // }
 	} else {
 	    // Going to the end
@@ -267,30 +265,32 @@ public class NetherPortals implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW)
     public void onPlayerBlockPlace(final BlockPlaceEvent e) {
-	if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_nether")
-		|| e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_the_end")) {
-	    if (VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
-		return;
-	    }
-	    if (!awayFromSpawn(e.getPlayer()) && !e.getPlayer().isOp()) {
-		e.setCancelled(true);
+	if (!Settings.newNether) {
+	    if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_nether")
+		    || e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_the_end")) {
+		if (VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
+		    return;
+		}
+		if (!awayFromSpawn(e.getPlayer()) && !e.getPlayer().isOp()) {
+		    e.setCancelled(true);
+		}
 	    }
 	}
-
     }
 
     @EventHandler(priority = EventPriority.LOW)
     public void onBucketEmpty(final PlayerBucketEmptyEvent e) {
-	if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_nether")
-		|| e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_the_end")) {
-	    if (VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
-		return;
-	    }
-	    if (!awayFromSpawn(e.getPlayer()) && !e.getPlayer().isOp()) {
-		e.setCancelled(true);
+	if (!Settings.newNether) {
+	    if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_nether")
+		    || e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_the_end")) {
+		if (VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
+		    return;
+		}
+		if (!awayFromSpawn(e.getPlayer()) && !e.getPlayer().isOp()) {
+		    e.setCancelled(true);
+		}
 	    }
 	}
-
     }
 
     /**
@@ -299,8 +299,14 @@ public class NetherPortals implements Listener {
      * 
      * @param e
      */
+    /*
     @EventHandler(priority = EventPriority.LOW)
     public void onEntityDamage(final EntityDamageByEntityEvent e) {
+	if (Settings.newNether) {
+	    // Not used in new nether
+	    return;
+	}
+	//
 	// Check world
 	if (!e.getEntity().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_nether")
 		|| e.getEntity().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_the_end")) {
@@ -351,7 +357,7 @@ public class NetherPortals implements Listener {
 	}
 	return;
     }
-
+*/
     /**
      * Prevent the Nether spawn from being blown up
      * 
@@ -359,6 +365,10 @@ public class NetherPortals implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onExplosion(final EntityExplodeEvent e) {
+	if (Settings.newNether) {
+	    // Not used in the new nether
+	    return;
+	}
 	// Find out what is exploding
 	Entity expl = e.getEntity();
 	if (expl == null) {
