@@ -163,8 +163,12 @@ public class JoinLeaveEvents implements Listener {
 	    }
 	}
 
-	// Set the player's name (it may have changed)
-	players.setPlayerName(playerUUID, player.getName());
+	// Set the player's name (it may have changed), but only if it isn't null
+	if (!player.getName().isEmpty()) {
+	    players.setPlayerName(playerUUID, player.getName());
+	} else {
+	    plugin.getLogger().warning("Player that just logged in has no name! " + playerUUID.toString());
+	}
 	players.save(playerUUID);
 	if (Settings.logInRemoveMobs) {
 	    plugin.getGrid().removeMobs(player.getLocation());

@@ -525,7 +525,24 @@ schematicsection:
       # Schematics can have biomes set when they are created
       biome: FLOWER_FOREST
       useDefaultChest: true
+      # You can set the chest items here in this list
+      # Material:Qty, or Material:Data:Qty
+      #chestItems:
+      #- MELON:1
+      #- ICE:1
       #permission: any.perm.you.like
+      # Your island companion. Overrides the default setting. If more than one is
+      # listed, one will be chosen at random.
+      # Options are: COW, PIG, SHEEP, CHICKEN, VILLAGER, HORSE, IRON_GOLEM, OCELOT,
+      # RABBIT, WOLF or NOTHING. Default is COW.
+      companion:
+      - RABBIT
+      # This is a list of names, picked at random that will apply to the companion
+      # You can add more if you like. If none are listed, the companion will not be
+      # named.
+      companionnames:
+      - "&9[player]'s rabbit"
+      - "&cFluffy"
     extrahard:
       icon: OBSIDIAN
       name: "&lBlack &bDiamonds"

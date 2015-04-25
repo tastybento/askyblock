@@ -67,6 +67,7 @@ import com.wasteofplastic.askyblock.listeners.IslandGuardNew;
 import com.wasteofplastic.askyblock.listeners.JoinLeaveEvents;
 import com.wasteofplastic.askyblock.listeners.LavaCheck;
 import com.wasteofplastic.askyblock.listeners.NetherPortals;
+import com.wasteofplastic.askyblock.listeners.PlayerEvents;
 import com.wasteofplastic.askyblock.listeners.WorldEnter;
 import com.wasteofplastic.askyblock.panels.BiomesPanel;
 import com.wasteofplastic.askyblock.panels.ControlPanel;
@@ -1143,6 +1144,8 @@ public class ASkyBlock extends JavaPlugin {
 	manager.registerEvents(new NetherPortals(this), this);
 	// Island Protection events
 	manager.registerEvents(new IslandGuard(this), this);
+	// Player events
+	manager.registerEvents(new PlayerEvents(this), this);
 	// New V1.8 events
 	Class<?> clazz;
 	try {

@@ -44,9 +44,12 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.Potion;
+import org.bukkit.potion.PotionType;
 import org.bukkit.scheduler.BukkitTask;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
@@ -59,7 +62,7 @@ import com.wasteofplastic.askyblock.Messages;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.TopTen;
 import com.wasteofplastic.askyblock.WarpSigns;
-import com.wasteofplastic.askyblock.listeners.IslandGuard;
+import com.wasteofplastic.askyblock.listeners.PlayerEvents;
 import com.wasteofplastic.askyblock.panels.BiomesPanel;
 import com.wasteofplastic.askyblock.panels.ControlPanel;
 import com.wasteofplastic.askyblock.panels.SchematicsPanel;
@@ -230,6 +233,109 @@ public class IslandCmd implements CommandExecutor {
 		    }
 		    // Use physics - overrides default if it exists
 		    newSchem.setUsePhysics(schemSection.getBoolean("schematics." + key + ".usephysics",Settings.usePhysics));
+		    // Island companion
+		    List<String> companion = schemSection.getStringList("schematics." + key + ".companion");
+		    List<EntityType> companionTypes = new ArrayList<EntityType>();
+		    if (!companion.isEmpty()) {
+			for (String companionType : companion) {
+			    companionType = companionType.toUpperCase();
+			    if (companionType.equalsIgnoreCase("NOTHING")) {
+				companionTypes.add(null);
+			    } else {
+				try {
+				    EntityType type = EntityType.valueOf(companionType);
+				    // Limit types
+				    switch (type) {
+				    case BAT:
+				    case CHICKEN:
+				    case COW:
+				    case HORSE:
+				    case IRON_GOLEM:
+				    case MUSHROOM_COW:
+				    case OCELOT:
+				    case PIG:
+				    case RABBIT:
+				    case SHEEP:
+				    case SNOWMAN:
+				    case VILLAGER:
+				    case WOLF:
+					companionTypes.add(type);
+					break;
+				    default:
+					plugin.getLogger()
+					.warning(
+						"Island companion is not recognized in schematic '" + name + "'. Pick from COW, PIG, SHEEP, CHICKEN, VILLAGER, HORSE, IRON_GOLEM, OCELOT, RABBIT, WOLF, SNOWMAN, BAT, MUSHROOM_COW");
+					break;
+				    }
+				} catch (Exception e) {
+				    plugin.getLogger()
+				    .warning(
+					    "Island companion is not recognized in schematic '" + name + "'. Pick from COW, PIG, SHEEP, CHICKEN, VILLAGER, HORSE, IRON_GOLEM, OCELOT, RABBIT, WOLF, BAT, MUSHROOM_COW, SNOWMAN");
+				}
+			    }
+			}
+			newSchem.setIslandCompanion(companionTypes);
+		    }
+		    // Companion names
+		    List<String> companionNames = schemSection.getStringList("schematics." + key + ".companionnames");
+		    if (!companionNames.isEmpty()) {
+			List<String> names = new ArrayList<String>();
+			for (String companionName : companionNames) {
+			    names.add(ChatColor.translateAlternateColorCodes('&', companionName));
+			}
+			newSchem.setCompanionNames(names);
+		    }
+		    // Get chest items
+		    final List<String> chestItems = schemSection.getStringList("schematics." + key + ".chestItems");
+		    if (!chestItems.isEmpty()) {
+			ItemStack[] tempChest = new ItemStack[chestItems.size()];
+			int i = 0;
+			for (String chestItemString : chestItems) {
+			    //plugin.getLogger().info("DEBUG: chest item = " + chestItemString);
+			    try {
+				String[] amountdata = chestItemString.split(":");
+				if (amountdata[0].equals("POTION")) {
+				    if (amountdata.length == 3) {
+					Potion chestPotion = new Potion(PotionType.valueOf(amountdata[1]));
+					tempChest[i++] = chestPotion.toItemStack(Integer.parseInt(amountdata[2]));
+				    } else if (amountdata.length == 4) {
+					// Extended or splash potions
+					if (amountdata[2].equals("EXTENDED")) {
+					    Potion chestPotion = new Potion(PotionType.valueOf(amountdata[1])).extend();
+					    tempChest[i++] = chestPotion.toItemStack(Integer.parseInt(amountdata[3]));
+					} else if (amountdata[2].equals("SPLASH")) {
+					    Potion chestPotion = new Potion(PotionType.valueOf(amountdata[1])).splash();
+					    tempChest[i++] = chestPotion.toItemStack(Integer.parseInt(amountdata[3]));
+					} else if (amountdata[2].equals("EXTENDEDSPLASH")) {
+					    Potion chestPotion = new Potion(PotionType.valueOf(amountdata[1])).extend().splash();
+					    tempChest[i++] = chestPotion.toItemStack(Integer.parseInt(amountdata[3]));
+					}
+				    }
+				} else {
+				    if (amountdata.length == 2) {
+					tempChest[i++] = new ItemStack(Material.getMaterial(amountdata[0]), Integer.parseInt(amountdata[1]));
+				    } else if (amountdata.length == 3) {
+					tempChest[i++] = new ItemStack(Material.getMaterial(amountdata[0]), Integer.parseInt(amountdata[2]), Short.parseShort(amountdata[1]));
+				    }
+				}
+			    } catch (java.lang.IllegalArgumentException ex) {
+				plugin.getLogger().severe("Problem loading chest item for schematic '" + name + "' so skipping it: " + chestItemString);
+				plugin.getLogger().severe("Error is : " + ex.getMessage());
+				plugin.getLogger().info("Potential potion types are: ");
+				for (PotionType c : PotionType.values())
+				    plugin.getLogger().info(c.name());
+			    } catch (Exception e) {
+				plugin.getLogger().severe("Problem loading chest item for schematic '" + name + "' so skipping it: " + chestItemString);
+				plugin.getLogger().info("Potential material types are: ");
+				for (Material c : Material.values())
+				    plugin.getLogger().info(c.name());
+				// e.printStackTrace();
+			    }
+			}
+			// Store it
+			newSchem.setDefaultChestItems(tempChest);
+		    }
+
 		    // Store it
 		    schematics.put(key, newSchem);
 		    if (perm.isEmpty()) {
@@ -452,62 +558,6 @@ public class IslandCmd implements CommandExecutor {
 	return next;
     }
 
-    /*
-     * // Find the next free spot
-     * if (last == null) {
-     * last = new Location(ASkyBlock.getIslandWorld(), Settings.islandXOffset,
-     * Settings.island_level, Settings.islandZOffset);
-     * }
-     * Location next = last.clone();
-     * int x = next.getBlockX();
-     * int y = next.getBlockY();
-     * int z = next.getBlockZ();
-     * // Check all 4 corners of the island
-     * Location one = new Location(ASkyBlock.getIslandWorld(),x -
-     * Settings.islandDistance/2,y,z - Settings.islandDistance/2);
-     * Location two = new Location(ASkyBlock.getIslandWorld(),x +
-     * Settings.islandDistance/2,y,z - Settings.islandDistance/2);
-     * Location three = new Location(ASkyBlock.getIslandWorld(),x -
-     * Settings.islandDistance/2,y,z + Settings.islandDistance/2);
-     * Location four = new Location(ASkyBlock.getIslandWorld(),x +
-     * Settings.islandDistance/2,y,z + Settings.islandDistance/2);
-     * plugin.getLogger().info("DEBUG 1=" + one + " 2 = " + two
-     * + " 3 = "+ three + " 4 = " + four);
-     * plugin.getLogger().info("DEBUG 1=" + plugin.islandAtLocation(one) +
-     * " 2 = " + plugin.islandAtLocation(two)
-     * + " 3 = "+ plugin.islandAtLocation(three) + " 4 = " +
-     * plugin.islandAtLocation(four));
-     * //plugin.getLogger().info("next island starting point " +
-     * last.toString());
-     * while (plugin.islandAtLocation(next) || plugin.islandAtLocation(one) ||
-     * plugin.islandAtLocation(two)
-     * || plugin.islandAtLocation(three) || plugin.islandAtLocation(four)) {
-     * next = nextGridLocation(next);
-     * x = next.getBlockX();
-     * y = next.getBlockY();
-     * z = next.getBlockZ();
-     * // Check all 4 corners of the island
-     * one = new Location(ASkyBlock.getIslandWorld(),x -
-     * Settings.islandDistance/2,y,z - Settings.islandDistance/2);
-     * two = new Location(ASkyBlock.getIslandWorld(),x +
-     * Settings.islandDistance/2,y,z - Settings.islandDistance/2);
-     * three = new Location(ASkyBlock.getIslandWorld(),x -
-     * Settings.islandDistance/2,y,z + Settings.islandDistance/2);
-     * four = new Location(ASkyBlock.getIslandWorld(),x +
-     * Settings.islandDistance/2,y,z + Settings.islandDistance/2);
-     * plugin.getLogger().info("DEBUG 1=" + one + " 2 = " + two
-     * + " 3 = "+ three + " 4 = " + four);
-     * plugin.getLogger().info("DEBUG 1=" + plugin.islandAtLocation(one) +
-     * " 2 = " + plugin.islandAtLocation(two)
-     * + " 3 = "+ plugin.islandAtLocation(three) + " 4 = " +
-     * plugin.islandAtLocation(four));
-     * }
-     * // Make the last next, last
-     * last = next.clone();
-     * return next;
-     * }
-     */
-
     private void resetMoney(Player player) {
 	if (!Settings.useEconomy) {
 	    return;
@@ -699,7 +749,7 @@ public class IslandCmd implements CommandExecutor {
 		    player.performCommand(Settings.ISLANDCOMMAND + " cp");
 		} else {
 		    if (!player.getWorld().getName().equalsIgnoreCase(Settings.worldName) || Settings.allowTeleportWhenFalling
-			    || !IslandGuard.isFalling(playerUUID) || (player.isOp() && !Settings.damageOps)) {
+			    || !PlayerEvents.isFalling(playerUUID) || (player.isOp() && !Settings.damageOps)) {
 			// Teleport home
 			plugin.getGrid().homeTeleport(player);
 			if (Settings.islandRemoveMobs) {
