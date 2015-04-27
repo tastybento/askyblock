@@ -169,7 +169,6 @@ public class IslandCmd implements CommandExecutor {
 		String fileName = plugin.getConfig().getString("general.schematics." + perms);
 		File schem = new File(plugin.getDataFolder(), fileName);
 		if (schem.exists()) {
-		    String showInGUI = "";
 		    plugin.getLogger().info("Loading schematic " + fileName + " for permission " + perms);
 		    Schematic schematic;
 		    try {
@@ -514,7 +513,7 @@ public class IslandCmd implements CommandExecutor {
      * @param player
      * @param schematic
      */
-    public void newIsland(final Player player, Schematic schematic) {
+    public void newIsland(final Player player, final Schematic schematic) {
 	final UUID playerUUID = player.getUniqueId();
 	Location next = getNextIsland();
 	// Sets a flag to temporarily disable cleanstone generation
@@ -529,7 +528,7 @@ public class IslandCmd implements CommandExecutor {
 		// Paste the overworld if it exists
 		if (!schematic.getPartnerName().isEmpty() && schematics.containsKey(schematic.getPartnerName())) {
 		    // A partner schematic is available
-		    schematics.get(schematic.getPartnerName()).pasteSchematic(next, player);
+		    pastePartner(schematics.get(schematic.getPartnerName()),next, player);
 		}
 		// Switch home location to the Nether
 		next = next.toVector().toLocation(ASkyBlock.getNetherWorld());
@@ -540,14 +539,18 @@ public class IslandCmd implements CommandExecutor {
 		schematic.pasteSchematic(next, player);
 		if (Settings.newNether) {
 		    // Paste the other world schematic
-		    Location netherLoc = next.toVector().toLocation(ASkyBlock.getNetherWorld());
+		    final Location netherLoc = next.toVector().toLocation(ASkyBlock.getNetherWorld());
 		    if (schematic.getPartnerName().isEmpty()) {
-			// This will paste a "netherized" version of the over world schematic
-			schematic.pasteSchematic(netherLoc, player);
-		    } else if (!schematic.getPartnerName().isEmpty() && schematics.containsKey(schematic.getPartnerName())) {
-			// A partner schematic is available
-			schematics.get(schematic.getPartnerName()).pasteSchematic(netherLoc, player);
-		    } // TODO: else no island!
+			// This will paste the over world schematic again
+			pastePartner(schematic, netherLoc, player);
+		    } else {
+			if (schematics.containsKey(schematic.getPartnerName())) {
+			    // A partner schematic is available
+			    pastePartner(schematics.get(schematic.getPartnerName()),netherLoc, player);
+			} else {
+			    plugin.getLogger().severe("Partner schematic heading '" + schematic.getPartnerName() + "' does not exist");
+			}
+		    }
 		}
 	    }
 	    // Record the rating of this schematic - not used for anything right now
@@ -622,6 +625,22 @@ public class IslandCmd implements CommandExecutor {
 			    + plugin.myLocale(player.getUniqueId()).islandURL + "\"}}");
 	}
 	// Done
+    }
+
+    /**
+     * Does a delayed pasting of the partner island
+     * @param schematic
+     * @param player
+     */
+    private void pastePartner(final Schematic schematic, final Location loc, final Player player) {
+	plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
+
+	    @Override
+	    public void run() {
+		schematic.pasteSchematic(loc, player);
+		
+	    }}, 60L);
+	
     }
 
     /**

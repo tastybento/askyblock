@@ -114,7 +114,7 @@ public class Schematic {
     private Vector bedrock;
     private Vector chest;
     private Vector welcomeSign;
-    private Set<Vector> grassBlocks;
+    private Vector topGrass;
 
 
     public Schematic() {
@@ -138,8 +138,7 @@ public class Schematic {
 	bedrock = null;
 	chest = null;
 	welcomeSign = null;
-	grassBlocks = new HashSet<Vector>();
-
+	topGrass = null;
     }
 
     public Schematic(File file) throws IOException {
@@ -163,7 +162,7 @@ public class Schematic {
 	bedrock = null;
 	chest = null;
 	welcomeSign = null;
-	grassBlocks = new HashSet<Vector>();
+	topGrass = null;
 
 	// Establish the World Edit to Material look up
 	WEtoM.put("ACACIA_DOOR",Material.ACACIA_DOOR_ITEM);
@@ -474,6 +473,7 @@ public class Schematic {
 	// Find top most bedrock - this is the key stone
 	// Find top most chest
 	// Find top most grass
+	List<Vector> grassBlocks = new ArrayList<Vector>();
 	for (int x = 0; x < width; ++x) {
 	    for (int y = 0; y < height; ++y) {
 		for (int z = 0; z < length; ++z) {
@@ -513,7 +513,31 @@ public class Schematic {
 	if (bedrock == null) {
 	    Bukkit.getLogger().severe("Schematic must have at least one bedrock in it!");
 	    throw new IOException();
-	}	
+	}
+	// Find other key blocks
+	if (!grassBlocks.isEmpty()) {
+	    // Sort by height
+	    List<Vector> sorted = new ArrayList<Vector>();
+	    for (Vector v : grassBlocks) {
+		//if (GridManager.isSafeLocation(v.toLocation(world))) {
+		// Add to sorted list
+		boolean inserted = false;
+		for (int i = 0; i < sorted.size(); i++) {
+		    if (v.getBlockY() > sorted.get(i).getBlockY()) {
+			sorted.add(i, v);
+			inserted = true;
+			break;
+		    }
+		}
+		if (!inserted) {
+		    // just add to the end of the list
+		    sorted.add(v);
+		}
+	    }
+	    topGrass = sorted.get(0);
+	} else {
+	    topGrass = null;
+	}
     }
 
     /**
@@ -1018,33 +1042,15 @@ public class Schematic {
 	// TODO do this on load because it can be pre-processed
 	// Go through all the grass blocks and try to find a safe one
 	final Location grass;
-	if (!grassBlocks.isEmpty()) {
-	    // Sort by height
-	    List<Vector> sorted = new ArrayList<Vector>();
-	    for (Vector v : grassBlocks) {
-		Vector gr = v.clone().subtract(bedrock);
-		gr.add(loc.toVector());
-		gr.add(new Vector(0.5D,1.1D,0.5D)); // Center of block
-		//if (GridManager.isSafeLocation(v.toLocation(world))) {
-		// Add to sorted list
-		boolean inserted = false;
-		for (int i = 0; i < sorted.size(); i++) {
-		    if (gr.getBlockY() > sorted.get(i).getBlockY()) {
-			sorted.add(i, gr);
-			inserted = true;
-			break;
-		    }
-		}
-		if (!inserted) {
-		    // just add to the end of the list
-		    sorted.add(gr);
-		}
-		//}
-	    }
-	    grass = sorted.get(0).toLocation(world);
+	if (topGrass != null) {
+	    Location gr = topGrass.clone().toLocation(loc.getWorld()).subtract(bedrock);
+	    gr.add(loc.toVector());
+	    gr.add(new Vector(0.5D,1.1D,0.5D)); // Center of block and a bit up so the animal drops a bit
+	    grass = gr;
 	} else {
 	    grass = null;
 	}
+	
 	//Bukkit.getLogger().info("DEBUG cow location " + grass);
 	Block blockToChange = null;
 	// world.spawnEntity(grass, EntityType.COW);
