@@ -180,9 +180,9 @@ public class JoinLeaveEvents implements Listener {
 	    Scoreboards.getInstance().setLevel(playerUUID);
 	}
 
-	// Check if they logged in to a locked island and expel them
+	// Check if they logged in to a locked island and expel them or if they are banned
 	Island currentIsland = plugin.getGrid().getIslandAt(player.getLocation());
-	if (currentIsland != null && currentIsland.isLocked()) {
+	if (currentIsland != null && (currentIsland.isLocked() || plugin.getPlayers().isBanned(currentIsland.getOwner(),player.getUniqueId()))) {
 	    if (!currentIsland.getMembers().contains(playerUUID) && !player.isOp()
 		    && !VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.bypassprotect")) {
 		player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).lockIslandLocked);

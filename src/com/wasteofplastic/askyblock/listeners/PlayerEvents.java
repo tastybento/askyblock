@@ -244,7 +244,7 @@ public class PlayerEvents implements Listener {
 	if (islandTo != null && islandTo.getOwner() != null) {
 	    if (islandTo != islandFrom) {
 		// Entering
-		if (islandTo.isLocked()) {
+		if (islandTo.isLocked() || plugin.getPlayers().isBanned(islandTo.getOwner(),e.getPlayer().getUniqueId())) {
 		    e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).lockIslandLocked);
 		    if (!plugin.getGrid().locationIsOnIsland(e.getPlayer(), e.getTo()) && !e.getPlayer().isOp()
 			    && !VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {

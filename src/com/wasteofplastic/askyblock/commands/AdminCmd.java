@@ -1263,6 +1263,23 @@ public class AdminCmd implements CommandExecutor {
 	    } else {
 		sender.sendMessage(ChatColor.YELLOW + "Island is unlocked");
 	    }
+	    List<UUID> banList = plugin.getPlayers().getBanList(playerUUID);
+	    if (!banList.isEmpty()) {
+		sender.sendMessage(ChatColor.YELLOW + "Banned players:");
+		String list = "";
+		for (UUID uuid : banList) {
+		    Player target = plugin.getServer().getPlayer(uuid);
+		    if (target != null) {
+			//online
+			list += target.getDisplayName() + ", ";
+		    } else {
+			list += plugin.getPlayers().getName(uuid) + ", ";
+		    }
+		}
+		if (!list.isEmpty()) {
+		    sender.sendMessage(ChatColor.RED + list.substring(0, list.length()-2));
+		}
+	    }	
 	} else {
 	    sender.sendMessage(ChatColor.RED + plugin.myLocale().errorNoIslandOther);
 	}

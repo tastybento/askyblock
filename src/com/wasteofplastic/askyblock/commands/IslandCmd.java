@@ -1178,6 +1178,10 @@ public class IslandCmd implements CommandExecutor {
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.expel")) {
 		    player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " expel <player>: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpExpel);
 		}
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.ban")) {
+		    player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " ban <player>: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpBan);
+		    player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " unban <player>: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpUnban);
+		}
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "coop")) {
 		    player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " coop: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpCoop);
 		}
@@ -1860,40 +1864,6 @@ public class IslandCmd implements CommandExecutor {
 			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).expelFail.replace("[name]", target.getDisplayName()));
 			return true;
 		    }
-		    /*
-		     * // Find out if the target is in a coop area
-		     * Location coopLocation =
-		     * plugin.locationIsOnIsland(CoopPlay.getInstance
-		     * ().getCoopIslands(target),target.getLocation());
-		     * // Get the expeller's island
-		     * Location expellersIsland = null;
-		     * if (plugin.getPlayers().inTeam(player.getUniqueId())) {
-		     * expellersIsland =
-		     * plugin.getPlayers().getTeamIslandLocation(player
-		     * .getUniqueId());
-		     * } else {
-		     * expellersIsland =
-		     * plugin.getPlayers().getIslandLocation(player.getUniqueId());
-		     * }
-		     * // Return this island inventory to the owner
-		     * CoopPlay.getInstance().returnInventory(target,
-		     * expellersIsland);
-		     * // Mark them as no longer on a coop island
-		     * CoopPlay.getInstance().setOnCoopIsland(targetPlayerUUID,
-		     * null);
-		     * // Find out if this location the same as this player's island
-		     * if (coopLocation != null &&
-		     * coopLocation.equals(expellersIsland)) {
-		     * // They were on the island so return their home inventory
-		     * if (plugin.getPlayers().inTeam(targetPlayerUUID)) {
-		     * InventorySave.getInstance().loadPlayerInventory(player,
-		     * plugin.getPlayers().getTeamIslandLocation(targetPlayerUUID));
-		     * } else {
-		     * InventorySave.getInstance().loadPlayerInventory(player,
-		     * plugin.getPlayers().getIslandLocation(targetPlayerUUID));
-		     * }
-		     * }
-		     */
 		    // Remove them from the coop list
 		    boolean coop = CoopPlay.getInstance().removeCoopPlayer(player, target);
 		    if (coop) {
@@ -1928,6 +1898,97 @@ public class IslandCmd implements CommandExecutor {
 			// No they're not
 			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).expelNotOnIsland);
 		    }
+		    return true;
+		} else if (split[0].equalsIgnoreCase("ban")) {
+		    if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.ban")) {
+			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
+			return true;
+		    }
+		    // Find out who they want to ban
+		    final UUID targetPlayerUUID = plugin.getPlayers().getUUID(split[1]);
+		    // Player must be known
+		    if (targetPlayerUUID == null) {
+			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorUnknownPlayer);
+			return true;
+		    }
+		    // Target should not be themselves
+		    if (targetPlayerUUID.equals(playerUUID)) {
+			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).banNotYourself);
+			return true;
+		    }
+		    // Check that the player is not banned already
+		    if (plugin.getPlayers().isBanned(playerUUID, targetPlayerUUID)) {
+			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).banAlreadyBanned.replace("[name]", split[1]));
+			return true;
+		    }
+		    // Target must be online
+		    Player target = plugin.getServer().getPlayer(targetPlayerUUID);
+		    if (target == null) {
+			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorOfflinePlayer);
+			return true;
+		    }
+		    // Target cannot be op
+		    if (target.isOp() || VaultHelper.checkPerm(target, Settings.PERMPREFIX + "mod.bypassprotect")) {
+			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).banFail.replace("[name]", target.getDisplayName()));
+			return true;
+		    }
+		    // Remove them from the coop list
+		    boolean coop = CoopPlay.getInstance().removeCoopPlayer(player, target);
+		    if (coop) {
+			target.sendMessage(ChatColor.RED + plugin.myLocale(target.getUniqueId()).coopRemoved.replace("[name]", player.getDisplayName()));
+			player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).coopRemoveSuccess.replace("[name]", target.getDisplayName()));
+		    }
+		    // See if target is on this player's island and if so send them away
+		    if (plugin.getGrid().isOnIsland(player, target)) {
+			// Check to see if this player has an island or is just
+			// helping out
+			if (plugin.getPlayers().inTeam(targetPlayerUUID) || plugin.getPlayers().hasIsland(targetPlayerUUID)) {
+			    plugin.getGrid().homeTeleport(target);
+			} else {
+			    // Just move target to spawn
+			    if (!target.performCommand(Settings.SPAWNCOMMAND)) {
+				target.teleport(player.getWorld().getSpawnLocation());
+			    }
+			}
+		    }
+		    target.sendMessage(ChatColor.RED + plugin.myLocale(target.getUniqueId()).banBanned.replace("[name]", player.getDisplayName()));
+		    plugin.getLogger().info(player.getName() + " banned " + target.getName() + " from their island.");
+		    player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).banSuccess.replace("[name]", target.getDisplayName()));
+		    plugin.getPlayers().ban(playerUUID, target.getUniqueId());
+		    return true;
+		} else if (split[0].equalsIgnoreCase("unban")) {
+		    if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.ban")) {
+			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
+			return true;
+		    }
+		    // Find out who they want to unban
+		    final UUID targetPlayerUUID = plugin.getPlayers().getUUID(split[1]);
+		    // Player must be known
+		    if (targetPlayerUUID == null) {
+			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorUnknownPlayer);
+			return true;
+		    }
+		    // Target should not be themselves
+		    if (targetPlayerUUID.equals(playerUUID)) {
+			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).banNotYourself);
+			return true;
+		    }
+		    // Check that the player is actually banned
+		    if (!plugin.getPlayers().isBanned(playerUUID, targetPlayerUUID)) {
+			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).banNotBanned.replace("[name]", split[1]));
+			return true;
+		    }
+		    // Notify
+		    // Online check
+		    Player target = plugin.getServer().getPlayer(targetPlayerUUID);
+		    if (target != null) {
+			target.sendMessage(ChatColor.RED + plugin.myLocale(target.getUniqueId()).banLifted.replace("[name]", player.getDisplayName()));
+		    } else {
+			Messages.setMessage(targetPlayerUUID, ChatColor.RED + plugin.myLocale(targetPlayerUUID).banLifted.replace("[name]", player.getDisplayName()));
+		    }
+		    plugin.getLogger().info(player.getName() + " unbanned " + target.getName() + " from their island.");
+		    player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).banSuccess.replace("[name]", target.getDisplayName()));
+		    plugin.getPlayers().unBan(playerUUID, target.getUniqueId());
 		    return true;
 		} else if (split[0].equalsIgnoreCase("kick") || split[0].equalsIgnoreCase("remove")) {
 		    // PlayerIsland remove command with a player name, or island kick

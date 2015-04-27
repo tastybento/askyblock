@@ -1015,28 +1015,29 @@ public class Schematic {
 		}
 	    }
 	}
+	// TODO do this on load because it can be pre-processed
 	// Go through all the grass blocks and try to find a safe one
 	final Location grass;
 	if (!grassBlocks.isEmpty()) {
 	    // Sort by height
 	    List<Vector> sorted = new ArrayList<Vector>();
 	    for (Vector v : grassBlocks) {
-		v.subtract(bedrock);
-		v.add(loc.toVector());
-		v.add(new Vector(0.5D,1.1D,0.5D)); // Center of block
+		Vector gr = v.clone().subtract(bedrock);
+		gr.add(loc.toVector());
+		gr.add(new Vector(0.5D,1.1D,0.5D)); // Center of block
 		//if (GridManager.isSafeLocation(v.toLocation(world))) {
 		// Add to sorted list
 		boolean inserted = false;
 		for (int i = 0; i < sorted.size(); i++) {
-		    if (v.getBlockY() > sorted.get(i).getBlockY()) {
-			sorted.add(i, v);
+		    if (gr.getBlockY() > sorted.get(i).getBlockY()) {
+			sorted.add(i, gr);
 			inserted = true;
 			break;
 		    }
 		}
 		if (!inserted) {
 		    // just add to the end of the list
-		    sorted.add(v);
+		    sorted.add(gr);
 		}
 		//}
 	    }
@@ -1051,13 +1052,13 @@ public class Schematic {
 	if (welcomeSign != null) {
 	    // Bukkit.getLogger().info("DEBUG welcome sign schematic relative is:"
 	    // + welcomeSign.toString());
-	    welcomeSign.subtract(bedrock);
+	    Vector ws = welcomeSign.clone().subtract(bedrock);
 	    // Bukkit.getLogger().info("DEBUG welcome sign relative to bedrock is:"
 	    // + welcomeSign.toString());
-	    welcomeSign.add(loc.toVector());
+	    ws.add(loc.toVector());
 	    // Bukkit.getLogger().info("DEBUG welcome sign actual position is:"
 	    // + welcomeSign.toString());
-	    blockToChange = welcomeSign.toLocation(world).getBlock();
+	    blockToChange = ws.toLocation(world).getBlock();
 	    blockToChange.setType(Material.SIGN_POST);
 	    Sign sign = (Sign) blockToChange.getState();
 	    sign.setLine(0, ASkyBlock.getPlugin().myLocale(player.getUniqueId()).signLine1.replace("[player]", player.getName()));
@@ -1070,11 +1071,11 @@ public class Schematic {
 	    sign.update();
 	}
 	if (chest != null) {
-	    chest.subtract(bedrock);
-	    chest.add(loc.toVector());
+	    Vector ch = chest.clone().subtract(bedrock);
+	    ch.add(loc.toVector());
 	    // Place the chest - no need to use the safe spawn function because we
 	    // know what this island looks like
-	    blockToChange = chest.toLocation(world).getBlock();
+	    blockToChange = ch.toLocation(world).getBlock();
 	    // Bukkit.getLogger().info("Chest block = " + blockToChange);
 	    // blockToChange.setType(Material.CHEST);
 	    // Bukkit.getLogger().info("Chest item settings = " +

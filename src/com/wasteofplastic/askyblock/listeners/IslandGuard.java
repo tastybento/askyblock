@@ -187,7 +187,7 @@ public class IslandGuard implements Listener {
 	// plugin.getLogger().info("islandFrom = " + islandFrom);
 	if (islandTo != null && (islandTo.getOwner() != null || islandTo.isSpawn())) {
 	    // Lock check
-	    if (islandTo.isLocked()) {
+	    if (islandTo.isLocked() || plugin.getPlayers().isBanned(islandTo.getOwner(),player.getUniqueId())) {
 		if (!islandTo.getMembers().contains(player.getUniqueId()) && !player.isOp()
 			&& !VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.bypassprotect")) {
 		    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).lockIslandLocked);
@@ -324,7 +324,7 @@ public class IslandGuard implements Listener {
 	// plugin.getLogger().info("islandFrom = " + islandFrom);
 	if (islandTo != null && (islandTo.getOwner() != null || islandTo.isSpawn())) {
 	    // Lock check
-	    if (islandTo.isLocked()) {
+	    if (islandTo.isLocked() || plugin.getPlayers().isBanned(islandTo.getOwner(),e.getPlayer().getUniqueId())) {
 		if (!islandTo.getMembers().contains(e.getPlayer().getUniqueId()) && !e.getPlayer().isOp()
 			&& !VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
 		    e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).lockIslandLocked);
@@ -400,7 +400,7 @@ public class IslandGuard implements Listener {
 
 	if (islandTo != null && islandFrom == null && (islandTo.getOwner() != null || islandTo.isSpawn())) {
 	    // Entering
-	    if (islandTo.isLocked()) {
+	    if (islandTo.isLocked() || plugin.getPlayers().isBanned(islandTo.getOwner(),e.getPlayer().getUniqueId())) {
 		e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).lockIslandLocked);
 	    }
 	    if (islandTo.isSpawn()) {

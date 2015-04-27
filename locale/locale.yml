@@ -222,6 +222,8 @@ island:
    islandLevelis: "Island level is"
    #/island expel <player>
    helpExpel: "force a player from your island."
+   helpBan: "ban a player from your island."
+   helpUnban: "un-ban a player from your island"
    helpLock: "Locks island so visitors cannot enter it"
    # The color that is placed before the /commands in /island help
    # See http://ess.khhq.net/mc/ for a list
