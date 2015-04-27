@@ -69,8 +69,6 @@ public class Settings {
     public static int resetWait;
     public static int resetLimit;
     public static int maxTeamSize;
-    public static int maxTeamSizeVIP;
-    public static int maxTeamSizeVIP2;
     public static String worldName;
     public static int monsterSpawnLimit;
     public static int animalSpawnLimit;

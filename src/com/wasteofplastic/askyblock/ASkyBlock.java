@@ -113,7 +113,7 @@ public class ASkyBlock extends JavaPlugin {
 
     // Update object
     private Update updateCheck = null;
-    
+
     // Messages object
     private Messages messages;
 
@@ -690,8 +690,6 @@ public class ASkyBlock extends JavaPlugin {
 	Settings.fallingCommandBlockList = getConfig().getStringList("general.blockingcommands");
 	// Max team size
 	Settings.maxTeamSize = getConfig().getInt("island.maxteamsize", 4);
-	Settings.maxTeamSizeVIP = getConfig().getInt("island.maxteamsizeVIP", 8);
-	Settings.maxTeamSizeVIP2 = getConfig().getInt("island.maxteamsizeVIP2", 12);
 	// Max home number
 	Settings.maxHomes = getConfig().getInt("general.maxhomes",1);
 	if (Settings.maxHomes < 1) {
@@ -887,12 +885,20 @@ public class ASkyBlock extends JavaPlugin {
 	}
 
 	Settings.island_protectionRange = getConfig().getInt("island.protectionRange", 100);
-	if (!getConfig().getBoolean("island.overridelimit", false)) {
-	    if (Settings.island_protectionRange > (Settings.islandDistance - 16)) {
-		Settings.island_protectionRange = Settings.islandDistance - 16;
-		getLogger().warning(
-			"*** Island protection range must be " + (Settings.islandDistance - 16) + " or less, (island range -16). Setting to: "
-				+ Settings.island_protectionRange);
+	if (Settings.island_protectionRange % 2 != 0) {
+	    Settings.island_protectionRange--;
+	    getLogger().warning("Protection range must be even, using " + Settings.island_protectionRange);
+	}
+	if (Settings.island_protectionRange > Settings.islandDistance) {
+	    if (!getConfig().getBoolean("island.overridelimit", false)) {
+		if (Settings.island_protectionRange > (Settings.islandDistance - 16)) {
+		    Settings.island_protectionRange = Settings.islandDistance - 16;
+		    getLogger().warning(
+			    "*** Island protection range must be " + (Settings.islandDistance - 16) + " or less, (island range -16). Setting to: "
+				    + Settings.island_protectionRange);
+		}
+	    } else {
+		Settings.island_protectionRange = Settings.islandDistance;
 	    }
 	}
 	if (Settings.island_protectionRange < 50) {
@@ -1322,6 +1328,6 @@ public class ASkyBlock extends JavaPlugin {
      * @return the messages
      */
     public Messages getMessages() {
-        return messages;
+	return messages;
     }
 }

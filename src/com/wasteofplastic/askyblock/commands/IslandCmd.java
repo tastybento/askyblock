@@ -49,6 +49,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionType;
 import org.bukkit.scheduler.BukkitTask;
@@ -563,7 +564,7 @@ public class IslandCmd implements CommandExecutor {
 	// Set the player's island location to this new spot
 	plugin.getPlayers().setIslandLocation(playerUUID, next);
 	// Add to the grid
-	plugin.getGrid().addIsland(next.getBlockX(), next.getBlockZ(), playerUUID);
+	Island myIsland = plugin.getGrid().addIsland(next.getBlockX(), next.getBlockZ(), playerUUID);
 	// Save the player so that if the server is reset weird things won't happen
 	plugin.getPlayers().save(playerUUID);
 	// Teleport to the new home
@@ -576,6 +577,35 @@ public class IslandCmd implements CommandExecutor {
 	}
 	// Start the reset cooldown
 	setResetWaitTime(player);
+	// Set the custom protection range if appropriate
+	// Dynamic home sizes with permissions
+	int range = Settings.island_protectionRange;
+	for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
+	    if (perms.getPermission().startsWith(Settings.PERMPREFIX + "island.range.")) {
+		range = Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "island.range.")[1]);
+		// Do some sanity checking
+		if (range % 2 != 0) {
+		    range--;
+		    plugin.getLogger().warning("Protection range must be even, using " + range + " for " + player.getName());
+		}
+		if (range > Settings.islandDistance) {
+		    if (!plugin.getConfig().getBoolean("island.overridelimit", false)) {
+			if (range > (Settings.islandDistance - 16)) {
+			    range = Settings.islandDistance - 16;
+			    plugin.getLogger().warning(
+				    "Island protection range must be " + (Settings.islandDistance - 16) + " or less, (island range -16). Setting to: "
+					    + range);
+			}
+		    } else {
+			range = Settings.islandDistance;
+		    }
+		}
+		if (range < 50) {
+		    range = 50;
+		}
+	    }
+	}
+	myIsland.setProtectionSize(range);
 	// Show fancy titles!
 	if (!plugin.myLocale(player.getUniqueId()).islandSubTitle.isEmpty()) {
 	    plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(),
@@ -1124,8 +1154,19 @@ public class IslandCmd implements CommandExecutor {
 		} else {
 		    player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + ": " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpIsland);
 		}
-		if (Settings.maxHomes > 1 && VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.sethome")) {
-		    player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " go <1 - " + Settings.maxHomes + ">: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpTeleport);
+		// Dynamic home sizes with permissions
+		int maxHomes = Settings.maxHomes;
+		for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
+		    if (perms.getPermission().startsWith(Settings.PERMPREFIX + "island.maxhomes.")) {
+			maxHomes = Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "island.maxhomes.")[1]);
+		    }
+		    // Do some sanity checking
+		    if (maxHomes < 1) {
+			maxHomes = 1;
+		    }
+		}
+		if (maxHomes > 1 && VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.sethome")) {
+		    player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " go <1 - " + maxHomes + ">: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpTeleport);
 		} else {
 		    player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " go: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpTeleport);
 		}
@@ -1137,8 +1178,8 @@ public class IslandCmd implements CommandExecutor {
 		}
 		player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " restart: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpRestart);
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.sethome")) {
-		    if (Settings.maxHomes > 1) {
-			player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " sethome <1 - " + Settings.maxHomes + ">: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpSetHome);
+		    if (maxHomes > 1) {
+			player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " sethome <1 - " + maxHomes + ">: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpSetHome);
 		    } else {
 			player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " sethome: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpSetHome);
 		    }
@@ -1275,11 +1316,16 @@ public class IslandCmd implements CommandExecutor {
 			if (teamLeader.equals(playerUUID)) {
 			    // Check to see if the team is already full
 			    int maxSize = Settings.maxTeamSize;
-			    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.vip")) {
-				maxSize = Settings.maxTeamSizeVIP;
-			    }
-			    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.vip2")) {
-				maxSize = Settings.maxTeamSizeVIP2;
+			    // Dynamic team sizes with permissions
+			    for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
+				//plugin.getLogger().info("DEBUG perms: " + perms);
+				if (perms.getPermission().startsWith(Settings.PERMPREFIX + "team.maxsize.")) {
+				    maxSize = Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "team.maxsize.")[1]);
+				}
+				// Do some sanity checking
+				if (maxSize < Settings.maxTeamSize) {
+				    maxSize = Settings.maxTeamSize;
+				}
 			    }
 			    if (teamMembers.size() < maxSize) {
 				player.sendMessage(ChatColor.GREEN
@@ -1410,11 +1456,15 @@ public class IslandCmd implements CommandExecutor {
 		if (plugin.getPlayers().inTeam(playerUUID)) {
 		    if (teamLeader.equals(playerUUID)) {
 			int maxSize = Settings.maxTeamSize;
-			if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.vip")) {
-			    maxSize = Settings.maxTeamSizeVIP;
-			}
-			if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.vip2")) {
-			    maxSize = Settings.maxTeamSizeVIP2;
+			// Dynamic team sizes with permissions
+			for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
+			    if (perms.getPermission().startsWith(Settings.PERMPREFIX + "team.maxsize.")) {
+				maxSize = Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "team.maxsize.")[1]);
+			    }
+			    // Do some sanity checking
+			    if (maxSize < Settings.maxTeamSize) {
+				maxSize = Settings.maxTeamSize;
+			    }
 			}
 			if (teamMembers.size() < maxSize) {
 			    player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).inviteyouCanInvite.replace("[number]", String.valueOf(maxSize - teamMembers.size())));
@@ -1529,9 +1579,20 @@ public class IslandCmd implements CommandExecutor {
 			    if (number < 1) {
 				plugin.getGrid().homeTeleport(player,1);
 			    }
-			    if (number > Settings.maxHomes) {
-				if (Settings.maxHomes > 1) {
-				    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).setHomeerrorNumHomes.replace("[max]",String.valueOf(Settings.maxHomes)));
+			    int maxHomes = Settings.maxHomes;
+			    // Dynamic home sizes with permissions
+			    for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
+				if (perms.getPermission().startsWith(Settings.PERMPREFIX + "island.maxhomes.")) {
+				    maxHomes = Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "island.maxhomes.")[1]);
+				}
+				// Do some sanity checking
+				if (maxHomes < 1) {
+				    maxHomes = 1;
+				}
+			    }
+			    if (number > maxHomes) {
+				if (maxHomes > 1) {
+				    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).setHomeerrorNumHomes.replace("[max]",String.valueOf(maxHomes)));
 				} else {
 				    plugin.getGrid().homeTeleport(player,1);
 				}
@@ -1552,18 +1613,25 @@ public class IslandCmd implements CommandExecutor {
 		    return true;
 		} else if (split[0].equalsIgnoreCase("sethome")) {
 		    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.sethome")) {
-			if (Settings.maxHomes > 1) {
+			int maxHomes = Settings.maxHomes;
+			// Dynamic home sizes with permissions
+			for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
+			    if (perms.getPermission().startsWith(Settings.PERMPREFIX + "island.maxhomes.")) {
+				maxHomes = Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "island.maxhomes.")[1]);
+			    }
+			}
+			if (maxHomes > 1) {
 			    // Check the number given is a number
 			    int number = 0;
 			    try {
 				number = Integer.valueOf(split[1]);
-				if (number < 0 || number > Settings.maxHomes) {
-				    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).setHomeerrorNumHomes.replace("[max]",String.valueOf(Settings.maxHomes)));
+				if (number < 0 || number > maxHomes) {
+				    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).setHomeerrorNumHomes.replace("[max]",String.valueOf(maxHomes)));
 				} else {
 				    plugin.getGrid().homeSet(player, number);
 				}
 			    } catch (Exception e) {
-				player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).setHomeerrorNumHomes.replace("[max]",String.valueOf(Settings.maxHomes)));
+				player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).setHomeerrorNumHomes.replace("[max]",String.valueOf(maxHomes)));
 			    }
 			} else {
 			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
@@ -1718,11 +1786,15 @@ public class IslandCmd implements CommandExecutor {
 				if (!plugin.getPlayers().inTeam(invitedPlayerUUID)) {
 				    // Player has space in their team
 				    int maxSize = Settings.maxTeamSize;
-				    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.vip")) {
-					maxSize = Settings.maxTeamSizeVIP;
-				    }
-				    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.vip2")) {
-					maxSize = Settings.maxTeamSizeVIP2;
+				    // Dynamic team sizes with permissions
+				    for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
+					if (perms.getPermission().startsWith(Settings.PERMPREFIX + "team.maxsize.")) {
+					    maxSize = Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "team.maxsize.")[1]);
+					}
+					// Do some sanity checking
+					if (maxSize < Settings.maxTeamSize) {
+					    maxSize = Settings.maxTeamSize;
+					}
 				    }
 				    if (teamMembers.size() < maxSize) {
 					// If that player already has an invite out
@@ -2011,7 +2083,7 @@ public class IslandCmd implements CommandExecutor {
 		    plugin.getMessages().tellTeam(playerUUID, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).banLiftedSuccess.replace("[name]", target.getDisplayName()));
 		    plugin.getMessages().tellOfflineTeam(playerUUID, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).banLiftedSuccess.replace("[name]", target.getDisplayName()));
 
-		    
+
 		    plugin.getPlayers().unBan(playerUUID, target.getUniqueId());
 		    return true;
 		} else if (split[0].equalsIgnoreCase("kick") || split[0].equalsIgnoreCase("remove")) {
