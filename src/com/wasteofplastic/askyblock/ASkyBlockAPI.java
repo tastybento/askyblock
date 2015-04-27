@@ -9,6 +9,8 @@ import org.bukkit.Location;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
 
+import com.wasteofplastic.askyblock.panels.BiomesPanel;
+
 /**
  * Provides a programming interface
  * 
@@ -223,7 +225,7 @@ public class ASkyBlockAPI {
      * @return true if the setting was successful
      */
     public boolean setIslandBiome(Location islandLoc, Biome biomeType) {
-	return plugin.getBiomes().setIslandBiome(islandLoc, biomeType);
+	return BiomesPanel.setIslandBiome(islandLoc, biomeType);
     }
 
     /**
@@ -234,7 +236,7 @@ public class ASkyBlockAPI {
      * @return true if player is offline, false if online
      */
     public boolean setMessage(UUID playerUUID, String message) {
-	return Messages.setMessage(playerUUID, message);
+	return plugin.getMessages().setMessage(playerUUID, message);
     }
 
     /**
@@ -245,7 +247,7 @@ public class ASkyBlockAPI {
      * @param message
      */
     public void tellOfflineTeam(UUID playerUUID, String message) {
-	Messages.tellOfflineTeam(playerUUID, message);
+	plugin.getMessages().tellOfflineTeam(playerUUID, message);
     }
 
     /**

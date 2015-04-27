@@ -53,6 +53,7 @@ import com.wasteofplastic.askyblock.Messages;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.TopTen;
 import com.wasteofplastic.askyblock.WarpSigns;
+import com.wasteofplastic.askyblock.panels.BiomesPanel;
 import com.wasteofplastic.askyblock.panels.ControlPanel;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
@@ -994,9 +995,11 @@ public class AdminCmd implements CommandExecutor {
 		// Okay clear to set biome
 		// Actually set the biome
 		if (plugin.getPlayers().inTeam(playerUUID) && plugin.getPlayers().getTeamIslandLocation(playerUUID) != null) {
-		    plugin.getBiomes().setIslandBiome(plugin.getPlayers().getTeamIslandLocation(playerUUID), biome);
+		    plugin.getBiomes();
+		    BiomesPanel.setIslandBiome(plugin.getPlayers().getTeamIslandLocation(playerUUID), biome);
 		} else {
-		    plugin.getBiomes().setIslandBiome(plugin.getPlayers().getIslandLocation(playerUUID), biome);
+		    plugin.getBiomes();
+		    BiomesPanel.setIslandBiome(plugin.getPlayers().getIslandLocation(playerUUID), biome);
 		}
 		sender.sendMessage(ChatColor.GREEN + plugin.myLocale().biomeSet.replace("[biome]", biomeName));
 		Player targetPlayer = plugin.getServer().getPlayer(playerUUID);
@@ -1004,7 +1007,7 @@ public class AdminCmd implements CommandExecutor {
 		    // Online
 		    targetPlayer.sendMessage("[Admin] " + ChatColor.GREEN + plugin.myLocale(playerUUID).biomeSet.replace("[biome]", biomeName));
 		} else {
-		    Messages.setMessage(playerUUID, "[Admin] " + ChatColor.GREEN + plugin.myLocale(playerUUID).biomeSet.replace("[biome]", biomeName));
+		    plugin.getMessages().setMessage(playerUUID, "[Admin] " + ChatColor.GREEN + plugin.myLocale(playerUUID).biomeSet.replace("[biome]", biomeName));
 		}
 		return true;
 	    } else

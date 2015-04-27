@@ -368,6 +368,7 @@ public class Locale {
     public String banNotYourself;
     public String banNotBanned;
     public String banAlreadyBanned;
+    public String banLiftedSuccess;
     
     // Mob limits
     public String moblimitsError;
@@ -455,6 +456,7 @@ public class Locale {
     public String schematicsTitle;
     public String islandhelpBan;
     public String islandhelpUnban;
+    public String banNotTeamMember;
 
     /**
      * Creates a locale object full of localized strings for a language
@@ -978,11 +980,13 @@ public class Locale {
 	expelExpelled = ChatColor.translateAlternateColorCodes('&', locale.getString("expel.expelled", "You were expelled from that island!"));
 	expelFail = ChatColor.translateAlternateColorCodes('&', locale.getString("expel.fail", "[name] cannot be expelled!"));
 	expelNotYourself = ChatColor.translateAlternateColorCodes('&', locale.getString("expel.notyourself", "You cannot expel yourself!"));
-	banSuccess = ChatColor.translateAlternateColorCodes('&', locale.getString("ban.success", "Success!"));
+	banSuccess = ChatColor.translateAlternateColorCodes('&', locale.getString("ban.success", "[name] is banned from the island!"));
 	banBanned = ChatColor.translateAlternateColorCodes('&', locale.getString("ban.banned", "You are banned from [name]'s island!"));
-	banLifted = ChatColor.translateAlternateColorCodes('&', locale.getString("ban.banned", "Ban lifted from [name]'s island!"));
+	banLifted = ChatColor.translateAlternateColorCodes('&', locale.getString("ban.lifted", "Ban lifted from [name]'s island!"));
+	banLiftedSuccess = ChatColor.translateAlternateColorCodes('&', locale.getString("ban.liftedsuccess", "Ban lifted for [name]!"));
 	banFail = ChatColor.translateAlternateColorCodes('&', locale.getString("banned.fail", "[name] cannot be banned!"));
 	banNotYourself = ChatColor.translateAlternateColorCodes('&', locale.getString("ban.notyourself", "You cannot do that to yourself!"));
+	banNotTeamMember = ChatColor.translateAlternateColorCodes('&', locale.getString("ban.notteammember", "You cannot ban a team member!"));
 	banNotBanned = ChatColor.translateAlternateColorCodes('&', locale.getString("ban.notbanned", "[name] is not banned!"));
 	banAlreadyBanned = ChatColor.translateAlternateColorCodes('&', locale.getString("ban.alreadybanned", "[name] is already banned!"));
 	moblimitsError = ChatColor.translateAlternateColorCodes('&', locale.getString("moblimits.error", "Island breeding limit of [number] reached!"));

@@ -64,7 +64,7 @@ public class JoinLeaveEvents implements Listener {
 	// Load any messages for the player
 	// plugin.getLogger().info("DEBUG: Checking messages for " +
 	// player.getName());
-	final List<String> messages = Messages.getMessages(playerUUID);
+	final List<String> messages = plugin.getMessages().getMessages(playerUUID);
 	if (messages != null) {
 	    // plugin.getLogger().info("DEBUG: Messages waiting!");
 	    plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
@@ -76,7 +76,7 @@ public class JoinLeaveEvents implements Listener {
 			player.sendMessage(i++ + ": " + message);
 		    }
 		    // Clear the messages
-		    Messages.clearMessages(playerUUID);
+		    plugin.getMessages().clearMessages(playerUUID);
 		}
 	    }, 40L);
 	} // else {

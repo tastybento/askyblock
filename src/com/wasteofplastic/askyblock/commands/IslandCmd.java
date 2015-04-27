@@ -896,13 +896,13 @@ public class IslandCmd implements CommandExecutor {
 				}
 			    }
 			    player.sendMessage(ChatColor.GREEN + plugin.myLocale(playerUUID).lockLocking);
-			    Messages.tellOfflineTeam(playerUUID, plugin.myLocale(playerUUID).lockPlayerLocked.replace("[name]", player.getDisplayName()));
-			    Messages.tellTeam(playerUUID, plugin.myLocale(playerUUID).lockPlayerLocked.replace("[name]", player.getDisplayName()));
+			    plugin.getMessages().tellOfflineTeam(playerUUID, plugin.myLocale(playerUUID).lockPlayerLocked.replace("[name]", player.getDisplayName()));
+			    plugin.getMessages().tellTeam(playerUUID, plugin.myLocale(playerUUID).lockPlayerLocked.replace("[name]", player.getDisplayName()));
 			    island.setLocked(true);
 			} else {
 			    player.sendMessage(ChatColor.GREEN + plugin.myLocale(playerUUID).lockUnlocking);
-			    Messages.tellOfflineTeam(playerUUID, plugin.myLocale(playerUUID).lockPlayerUnlocked.replace("[name]", player.getDisplayName()));
-			    Messages.tellTeam(playerUUID, plugin.myLocale(playerUUID).lockPlayerUnlocked.replace("[name]", player.getDisplayName()));
+			    plugin.getMessages().tellOfflineTeam(playerUUID, plugin.myLocale(playerUUID).lockPlayerUnlocked.replace("[name]", player.getDisplayName()));
+			    plugin.getMessages().tellTeam(playerUUID, plugin.myLocale(playerUUID).lockPlayerUnlocked.replace("[name]", player.getDisplayName()));
 			    island.setLocked(false);
 			}
 			return true;
@@ -1381,7 +1381,7 @@ public class IslandCmd implements CommandExecutor {
 				.sendMessage(ChatColor.RED + plugin.myLocale(teamLeader).leavenameHasLeftYourIsland.replace("[name]", player.getName()));
 			    } else {
 				// Leave them a message
-				Messages.setMessage(teamLeader, ChatColor.RED + plugin.myLocale(teamLeader).leavenameHasLeftYourIsland.replace("[name]", player.getName()));
+				plugin.getMessages().setMessage(teamLeader, ChatColor.RED + plugin.myLocale(teamLeader).leavenameHasLeftYourIsland.replace("[name]", player.getName()));
 			    }
 			    // Check if the size of the team is now 1
 			    // teamMembers.remove(playerUUID);
@@ -1916,15 +1916,23 @@ public class IslandCmd implements CommandExecutor {
 			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).banNotYourself);
 			return true;
 		    }
+		    // Target cannot be on the same team
+		    if (plugin.getPlayers().inTeam(playerUUID) && plugin.getPlayers().inTeam(targetPlayerUUID)) {
+			if (plugin.getPlayers().getTeamLeader(playerUUID).equals(plugin.getPlayers().getTeamLeader(targetPlayerUUID))) {
+			    // Same team!
+			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).banNotTeamMember);
+			    return true;
+			}
+		    }
 		    // Check that the player is not banned already
 		    if (plugin.getPlayers().isBanned(playerUUID, targetPlayerUUID)) {
-			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).banAlreadyBanned.replace("[name]", split[1]));
+			player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).banAlreadyBanned.replace("[name]", split[1]));
 			return true;
 		    }
 		    // Target must be online
 		    Player target = plugin.getServer().getPlayer(targetPlayerUUID);
 		    if (target == null) {
-			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorOfflinePlayer);
+			player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).errorOfflinePlayer);
 			return true;
 		    }
 		    // Target cannot be op
@@ -1951,9 +1959,17 @@ public class IslandCmd implements CommandExecutor {
 			    }
 			}
 		    }
+		    // Notifications
+		    // Target
 		    target.sendMessage(ChatColor.RED + plugin.myLocale(target.getUniqueId()).banBanned.replace("[name]", player.getDisplayName()));
+		    // Console
 		    plugin.getLogger().info(player.getName() + " banned " + target.getName() + " from their island.");
+		    // Player
 		    player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).banSuccess.replace("[name]", target.getDisplayName()));
+		    // Tell team
+		    plugin.getMessages().tellTeam(playerUUID, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).banSuccess.replace("[name]", target.getDisplayName()));
+		    plugin.getMessages().tellOfflineTeam(playerUUID, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).banSuccess.replace("[name]", target.getDisplayName()));
+		    // Ban the sucker
 		    plugin.getPlayers().ban(playerUUID, target.getUniqueId());
 		    return true;
 		} else if (split[0].equalsIgnoreCase("unban")) {
@@ -1978,16 +1994,24 @@ public class IslandCmd implements CommandExecutor {
 			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).banNotBanned.replace("[name]", split[1]));
 			return true;
 		    }
-		    // Notify
+		    // Notifications
 		    // Online check
 		    Player target = plugin.getServer().getPlayer(targetPlayerUUID);
+		    // Target
 		    if (target != null) {
 			target.sendMessage(ChatColor.RED + plugin.myLocale(target.getUniqueId()).banLifted.replace("[name]", player.getDisplayName()));
 		    } else {
-			Messages.setMessage(targetPlayerUUID, ChatColor.RED + plugin.myLocale(targetPlayerUUID).banLifted.replace("[name]", player.getDisplayName()));
+			plugin.getMessages().setMessage(targetPlayerUUID, ChatColor.GREEN + plugin.myLocale(targetPlayerUUID).banLifted.replace("[name]", player.getDisplayName()));
 		    }
+		    // Console
 		    plugin.getLogger().info(player.getName() + " unbanned " + target.getName() + " from their island.");
-		    player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).banSuccess.replace("[name]", target.getDisplayName()));
+		    // Player
+		    player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).banLiftedSuccess.replace("[name]", target.getDisplayName()));
+		    // Tell team
+		    plugin.getMessages().tellTeam(playerUUID, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).banLiftedSuccess.replace("[name]", target.getDisplayName()));
+		    plugin.getMessages().tellOfflineTeam(playerUUID, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).banLiftedSuccess.replace("[name]", target.getDisplayName()));
+
+		    
 		    plugin.getPlayers().unBan(playerUUID, target.getUniqueId());
 		    return true;
 		} else if (split[0].equalsIgnoreCase("kick") || split[0].equalsIgnoreCase("remove")) {
@@ -2089,7 +2113,7 @@ public class IslandCmd implements CommandExecutor {
 				// plugin.getLogger().info("DEBUG: player is offline "
 				// + targetPlayer.toString());
 				// Tell offline player they were kicked
-				Messages.setMessage(targetPlayer, ChatColor.RED + plugin.myLocale(player.getUniqueId()).kicknameRemovedYou.replace("[name]", player.getName()));
+				plugin.getMessages().setMessage(targetPlayer, ChatColor.RED + plugin.myLocale(player.getUniqueId()).kicknameRemovedYou.replace("[name]", player.getName()));
 			    }
 			    // Remove any warps
 			    WarpSigns.removeWarp(targetPlayer);
@@ -2140,7 +2164,7 @@ public class IslandCmd implements CommandExecutor {
 				    if (plugin.getServer().getPlayer(targetPlayer) != null) {
 					plugin.getServer().getPlayer(targetPlayer).sendMessage(ChatColor.GREEN + plugin.myLocale(targetPlayer).makeLeaderyouAreNowTheOwner);
 				    } else {
-					Messages.setMessage(targetPlayer, plugin.myLocale(player.getUniqueId()).makeLeaderyouAreNowTheOwner);
+					plugin.getMessages().setMessage(targetPlayer, plugin.myLocale(player.getUniqueId()).makeLeaderyouAreNowTheOwner);
 					// .makeLeadererrorPlayerMustBeOnline
 				    }
 				    player.sendMessage(ChatColor.GREEN

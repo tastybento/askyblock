@@ -113,6 +113,9 @@ public class ASkyBlock extends JavaPlugin {
 
     // Update object
     private Update updateCheck = null;
+    
+    // Messages object
+    private Messages messages;
 
     /**
      * Returns the World object for the island world named in config.yml.
@@ -187,7 +190,7 @@ public class ASkyBlock extends JavaPlugin {
 		grid.saveGrid();
 	    }
 	    WarpSigns.saveWarpList();
-	    Messages.saveMessages();
+	    messages.saveMessages();
 	    TopTen.topTenSave();
 	} catch (final Exception e) {
 	    getLogger().severe("Something went wrong saving files!");
@@ -260,7 +263,8 @@ public class ASkyBlock extends JavaPlugin {
 	// Register events that this plugin uses
 	// registerEvents();
 	// Load messages
-	Messages.loadMessages();
+	messages = new Messages(this);
+	messages.loadMessages();
 	// Register events
 	registerEvents();
 	// Metrics
@@ -1312,5 +1316,12 @@ public class ASkyBlock extends JavaPlugin {
      */
     public Locale myLocale() {
 	return availableLocales.get("locale");
+    }
+
+    /**
+     * @return the messages
+     */
+    public Messages getMessages() {
+        return messages;
     }
 }

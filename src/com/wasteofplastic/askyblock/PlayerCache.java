@@ -720,6 +720,10 @@ public class PlayerCache {
      * @return true if target is banned from player's island
      */
     public boolean isBanned(UUID playerUUID, UUID targetUUID) {
+	if (playerUUID == null || targetUUID == null) {
+	    // If the island is unowned, then playerUUID could be null
+	    return false;
+	}
 	addPlayer(playerUUID);
 	addPlayer(targetUUID);
 	if (playerCache.get(playerUUID).hasIsland()) {
