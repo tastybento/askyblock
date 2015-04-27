@@ -177,9 +177,12 @@ public class Challenges implements CommandExecutor {
 	    return true;
 	case 2:
 	    if (cmd[0].equalsIgnoreCase("complete") || cmd[0].equalsIgnoreCase("c")) {
-		if (!player.getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
-		    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorWrongWorld);
-		    return true;
+		if (!player.getWorld().equals(ASkyBlock.getIslandWorld())) {
+		    // Check if in new nether
+		    if (!Settings.newNether || !player.getWorld().equals(ASkyBlock.getNetherWorld())) {
+			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorWrongWorld);
+			return true;
+		    }
 		}
 		if (checkIfCanCompleteChallenge(player, cmd[1].toLowerCase())) {
 		    int oldLevel = levelDone(player);
