@@ -49,7 +49,6 @@ import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.CoopPlay;
 import com.wasteofplastic.askyblock.DeleteIslandChunk;
 import com.wasteofplastic.askyblock.Island;
-import com.wasteofplastic.askyblock.Messages;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.TopTen;
 import com.wasteofplastic.askyblock.WarpSigns;
@@ -78,6 +77,8 @@ public class AdminCmd implements CommandExecutor {
     private boolean confirmReq = false;
     private boolean confirmOK = false;
     private int confirmTimer = 0;
+    private boolean purgeUnownedConfirm = false;
+    private List<Island> unowned;
 
     public AdminCmd(ASkyBlock aSkyBlock) {
 	this.plugin = aSkyBlock;
@@ -126,10 +127,7 @@ public class AdminCmd implements CommandExecutor {
 	    }
 	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.purge") || player.isOp()) {
 		player.sendMessage(ChatColor.YELLOW + "/" + label + " purge [TimeInDays]:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelppurge);
-		// player.sendMessage(ChatColor.YELLOW + "/" + label +
-		// " purge holes:" + ChatColor.WHITE + " " +
-		// plugin.myLocale().adminHelppurgeholes);
-
+		player.sendMessage(ChatColor.YELLOW + "/" + label + " purge unowned:" + ChatColor.WHITE + " remove any unowned islands");
 	    }
 	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.topten") || player.isOp()) {
 		player.sendMessage(ChatColor.YELLOW + "/" + label + " topten:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelptopTen);
@@ -194,7 +192,7 @@ public class AdminCmd implements CommandExecutor {
 		if (split[0].equalsIgnoreCase("reload") || split[0].equalsIgnoreCase("register") || split[0].equalsIgnoreCase("delete")
 			|| split[0].equalsIgnoreCase("purge") || split[0].equalsIgnoreCase("confirm") || split[0].equalsIgnoreCase("setspawn")
 			|| split[0].equalsIgnoreCase("deleteisland") || split[0].equalsIgnoreCase("setrange")
-				|| split[0].equalsIgnoreCase("unregister")) {
+			|| split[0].equalsIgnoreCase("unregister")) {
 		    if (!checkAdminPerms(player, split)) {
 			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
 			return true;
@@ -320,9 +318,9 @@ public class AdminCmd implements CommandExecutor {
 		}
 		// Space otherwise occupied - find if anyone owns it
 		if (newSpawn != null && newSpawn.getOwner() != null) {
-			sender.sendMessage(ChatColor.RED + "This island space is owned by " + plugin.getPlayers().getName(newSpawn.getOwner()));
-			sender.sendMessage(ChatColor.RED + "Move further away or unregister the owner.");
-			return true;
+		    sender.sendMessage(ChatColor.RED + "This island space is owned by " + plugin.getPlayers().getName(newSpawn.getOwner()));
+		    sender.sendMessage(ChatColor.RED + "Move further away or unregister the owner.");
+		    return true;
 		}
 		if (oldSpawn != null) {
 		    sender.sendMessage(ChatColor.GOLD + "Changing spawn island location. Warning: old spawn island location at "
@@ -537,29 +535,7 @@ public class AdminCmd implements CommandExecutor {
 		    if (Settings.createNether && Settings.newNether) {
 			new DeleteIslandChunk(plugin, island.getCenter().toVector().toLocation(ASkyBlock.getNetherWorld()));
 		    }*/
-		    if (island.getCenter().getWorld().equals(ASkyBlock.getIslandWorld())) {
-			// Over World start
-			plugin.getGrid().removeMobsFromIsland(island.getCenter());
-			new DeleteIslandChunk(plugin, island.getCenter());
-			// Delete the new nether island too (if it exists)
-			if (Settings.createNether && Settings.newNether) {
-			    Location otherIsland = island.getCenter().toVector().toLocation(ASkyBlock.getNetherWorld());
-			    plugin.getGrid().removeMobsFromIsland(otherIsland);
-			    // Delete island
-			    new DeleteIslandChunk(plugin, otherIsland);  
-			}
-		    } else if (Settings.createNether && Settings.newNether && island.getCenter().getWorld().equals(ASkyBlock.getNetherWorld())) {
-			// Nether World Start
-			plugin.getGrid().removeMobsFromIsland(island.getCenter());
-			new DeleteIslandChunk(plugin, island.getCenter());
-			// Delete the overworld island too
-			Location otherIsland = island.getCenter().toVector().toLocation(ASkyBlock.getIslandWorld());
-			plugin.getGrid().removeMobsFromIsland(otherIsland);
-			// Delete island
-			new DeleteIslandChunk(plugin, otherIsland);  
-		    } else {
-			sender.sendMessage(ChatColor.RED + "Cannot delete island at location " + island.getCenter().toString() + " because it is not in the official island world");
-		    } 
+		    deleteIslands(island, sender);
 		    return true;
 		}
 	    }
@@ -629,15 +605,15 @@ public class AdminCmd implements CommandExecutor {
 		    sender.sendMessage(ChatColor.RED + plugin.myLocale().purgealreadyRunning);
 		    return true;
 		}
+
+		// See if this purge unowned
+
+		if (split[1].equalsIgnoreCase("unowned")) {
+		    purgeUnowned(sender);
+		    return true;
+		}
 		// Set the flag
 		purgeFlag = true;
-		// See if this purge holes
-		/*
-		 * if (split[1].equalsIgnoreCase("holes")) {
-		 * purgeHoles(sender);
-		 * return true;
-		 * }
-		 */
 		// Convert days to hours - no other limit checking?
 		final int time = Integer.parseInt(split[1]) * 24;
 
@@ -902,6 +878,25 @@ public class AdminCmd implements CommandExecutor {
 		return false;
 	    }
 	case 3:
+	    // Confirm purge unowned
+	    if (split[0].equalsIgnoreCase("purge")) {
+		if (purgeFlag) {
+		    sender.sendMessage(ChatColor.RED + plugin.myLocale().purgealreadyRunning);
+		    return true;
+		}
+		// Check if this is purge unowned
+		if (split[1].equalsIgnoreCase("unowned") && split[2].equalsIgnoreCase("confirm")) {
+		    if (!purgeUnownedConfirm) {
+			sender.sendMessage(ChatColor.RED + plugin.myLocale().confirmerrorTimeLimitExpired);
+			return true;
+		    } else {
+			// Purge the unowned islands
+			purgeUnownedIslands(sender);
+			return true;
+		    }
+		}
+
+	    }
 	    // Set protection
 	    if (split[0].equalsIgnoreCase("setrange")) {
 		// Convert name to a UUID
@@ -995,11 +990,9 @@ public class AdminCmd implements CommandExecutor {
 		// Okay clear to set biome
 		// Actually set the biome
 		if (plugin.getPlayers().inTeam(playerUUID) && plugin.getPlayers().getTeamIslandLocation(playerUUID) != null) {
-		    plugin.getBiomes();
-		    BiomesPanel.setIslandBiome(plugin.getPlayers().getTeamIslandLocation(playerUUID), biome);
+		    plugin.getBiomes().setIslandBiome(plugin.getPlayers().getTeamIslandLocation(playerUUID), biome);
 		} else {
-		    plugin.getBiomes();
-		    BiomesPanel.setIslandBiome(plugin.getPlayers().getIslandLocation(playerUUID), biome);
+		    plugin.getBiomes().setIslandBiome(plugin.getPlayers().getIslandLocation(playerUUID), biome);
 		}
 		sender.sendMessage(ChatColor.GREEN + plugin.myLocale().biomeSet.replace("[biome]", biomeName));
 		Player targetPlayer = plugin.getServer().getPlayer(playerUUID);
@@ -1190,6 +1183,83 @@ public class AdminCmd implements CommandExecutor {
 	default:
 	    return false;
 	}
+    }
+
+    /**
+     * Deletes the overworld and nether islands together
+     * @param island
+     * @param sender
+     */
+    private void deleteIslands(Island island, CommandSender sender) {
+	if (island.getCenter().getWorld().equals(ASkyBlock.getIslandWorld())) {
+	    // Over World start
+	    plugin.getGrid().removeMobsFromIsland(island.getCenter());
+	    new DeleteIslandChunk(plugin, island.getCenter());
+	    // Delete the new nether island too (if it exists)
+	    if (Settings.createNether && Settings.newNether) {
+		Location otherIsland = island.getCenter().toVector().toLocation(ASkyBlock.getNetherWorld());
+		plugin.getGrid().removeMobsFromIsland(otherIsland);
+		// Delete island
+		new DeleteIslandChunk(plugin, otherIsland);  
+	    }
+	} else if (Settings.createNether && Settings.newNether && island.getCenter().getWorld().equals(ASkyBlock.getNetherWorld())) {
+	    // Nether World Start
+	    plugin.getGrid().removeMobsFromIsland(island.getCenter());
+	    new DeleteIslandChunk(plugin, island.getCenter());
+	    // Delete the overworld island too
+	    Location otherIsland = island.getCenter().toVector().toLocation(ASkyBlock.getIslandWorld());
+	    plugin.getGrid().removeMobsFromIsland(otherIsland);
+	    // Delete island
+	    new DeleteIslandChunk(plugin, otherIsland);  
+	} else {
+	    sender.sendMessage(ChatColor.RED + "Cannot delete island at location " + island.getCenter().toString() + " because it is not in the official island world");
+	} 
+    }
+
+    /**
+     * Purges the unowned islands upon direction from sender
+     * @param sender
+     */
+    private void purgeUnownedIslands(final CommandSender sender) {
+	purgeFlag = true;
+	final int total = unowned.size();
+	new BukkitRunnable() {
+	    @Override
+	    public void run() {
+		if (unowned.isEmpty()) {
+		    purgeFlag = false;
+		    sender.sendMessage(ChatColor.YELLOW + plugin.myLocale().purgefinished);
+		    this.cancel();
+		}
+		if (unowned.size() > 0) {
+		    sender.sendMessage(ChatColor.YELLOW + "[" + unowned.size() + "/" + total + "] Removing island at location "
+			    + unowned.get(0).getCenter().getWorld().getName() + " " + unowned.get(0).getCenter().getBlockX()
+			    + "," + unowned.get(0).getCenter().getBlockZ());
+		    deleteIslands(unowned.get(0),sender);
+		    unowned.remove(0);
+		}
+		sender.sendMessage("Now waiting...");
+	    }
+	}.runTaskTimer(plugin, 0L, 20L);
+    }
+
+    /**
+     * Removes unowned islands
+     * @param sender
+     */
+    private void purgeUnowned(CommandSender sender) {
+	unowned = plugin.getGrid().getUnownedIslands();
+	sender.sendMessage("There are " + unowned.size() + " unowned islands. Do 'purge unowned confirm' to delete them within 10 seconds.");
+	purgeUnownedConfirm = true;
+	plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
+
+	    @Override
+	    public void run() {
+		if (purgeUnownedConfirm) {
+		    purgeUnownedConfirm = false;
+		    purgeFlag = false;
+		}
+	    }}, 200L);
     }
 
     /**

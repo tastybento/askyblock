@@ -1409,4 +1409,18 @@ public class GridManager {
 	}
     }
 
+    /**
+     * @return a list of unowned islands
+     */
+    public List<Island> getUnownedIslands() {
+	List<Island> result = new ArrayList<Island>();
+	for (Entry<Integer, TreeMap<Integer, Island>> x : islandGrid.entrySet()) {
+	    for (Island island : x.getValue().values()) {
+		if (island.getOwner() == null) {
+		    result.add(island);
+		}
+	    }
+	}
+	return result;
+    }
 }
