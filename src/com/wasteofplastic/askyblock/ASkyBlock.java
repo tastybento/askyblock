@@ -486,13 +486,26 @@ public class ASkyBlock extends JavaPlugin {
 	    Location islandLoc = players.getIslandLocation(player);
 	    if (islandLoc != null) {
 		if (islandLoc.getWorld() != null) {
-		    if (islandLoc.getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+		    if (islandLoc.getWorld().equals(getIslandWorld())) {
+			// Over World start
 			grid.removeMobsFromIsland(islandLoc);
 			new DeleteIslandChunk(this, islandLoc);
 			// Delete the new nether island too (if it exists)
 			if (Settings.createNether && Settings.newNether) {
-			    new DeleteIslandChunk(plugin, islandLoc.toVector().toLocation(ASkyBlock.getNetherWorld()));
+			    Location otherIsland = islandLoc.toVector().toLocation(ASkyBlock.getNetherWorld());
+			    grid.removeMobsFromIsland(otherIsland);
+			    // Delete island
+			    new DeleteIslandChunk(plugin, otherIsland);  
 			}
+		    } else if (Settings.createNether && Settings.newNether && islandLoc.getWorld().equals(getNetherWorld())) {
+			// Nether World Start
+			grid.removeMobsFromIsland(islandLoc);
+			new DeleteIslandChunk(this, islandLoc);
+			// Delete the overworld island too
+			Location otherIsland = islandLoc.toVector().toLocation(ASkyBlock.getIslandWorld());
+			grid.removeMobsFromIsland(otherIsland);
+			// Delete island
+			new DeleteIslandChunk(plugin, otherIsland);  
 		    } else {
 			getLogger().severe("Cannot delete island at location " + islandLoc.toString() + " because it is not in the official island world");
 		    }
@@ -619,13 +632,13 @@ public class ASkyBlock extends JavaPlugin {
 	//getLogger().info("DEBUG: config ver length " + configVersion.split("\\.").length);
 	// Ignore last digit if it is 4 digits long
 	if (configVersion.split("\\.").length == 4) {
-	   configVersion = configVersion.substring(0, configVersion.lastIndexOf('.')); 
+	    configVersion = configVersion.substring(0, configVersion.lastIndexOf('.')); 
 	}
 	// Save for plugin version
 	String version = plugin.getDescription().getVersion();
 	//getLogger().info("DEBUG: version length " + version.split("\\.").length);
 	if (version.split("\\.").length == 4) {
-	   version = version.substring(0, version.lastIndexOf('.')); 
+	    version = version.substring(0, version.lastIndexOf('.')); 
 	}
 	if (configVersion.isEmpty() || !configVersion.equalsIgnoreCase(version)) {
 	    // Check to see if this has already been shared

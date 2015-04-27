@@ -44,7 +44,6 @@ import org.bukkit.block.Chest;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.block.DoubleChest;
 import org.bukkit.block.Sign;
-import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
@@ -65,7 +64,6 @@ import org.bukkit.util.Vector;
 import org.jnbt.ByteArrayTag;
 import org.jnbt.ByteTag;
 import org.jnbt.CompoundTag;
-import org.jnbt.DoubleTag;
 import org.jnbt.IntTag;
 import org.jnbt.ListTag;
 import org.jnbt.NBTInputStream;
@@ -101,12 +99,23 @@ public class Schematic {
     private Material icon;    
     private Biome biome;
     private boolean usePhysics;
+    private boolean pasteEntities;
+    private boolean visible;
+    private int order;
     // These hashmaps enable translation between WorldEdit strings and Bukkit names
     private HashMap<String, Material> WEtoM = new HashMap<String, Material>();
     private HashMap<String, EntityType> WEtoME = new HashMap<String, EntityType>();
     private List<EntityType> islandCompanion;
-    List<String> companionNames;
-    ItemStack[] defaultChestItems;
+    private List<String> companionNames;
+    private ItemStack[] defaultChestItems;
+    // Name of a schematic this one is paired with
+    private String partnerName;
+    // Key blocks
+    private Vector bedrock;
+    private Vector chest;
+    private Vector welcomeSign;
+    private Set<Vector> grassBlocks;
+
 
     public Schematic() {
 	// Initialize 
@@ -124,9 +133,16 @@ public class Schematic {
 	islandCompanion.add(Settings.islandCompanion);
 	companionNames = Settings.companionNames;
 	defaultChestItems = Settings.chestItems;
+	visible = true;
+	order = 0;
+	bedrock = null;
+	chest = null;
+	welcomeSign = null;
+	grassBlocks = new HashSet<Vector>();
+
     }
 
-    public Schematic(File file) {
+    public Schematic(File file) throws IOException {
 	// Initialize
 	name = file.getName();
 	heading = "";
@@ -141,6 +157,14 @@ public class Schematic {
 	islandCompanion.add(Settings.islandCompanion);
 	companionNames = Settings.companionNames;
 	defaultChestItems = Settings.chestItems;
+	pasteEntities = false;
+	visible = true;
+	order = 0;
+	bedrock = null;
+	chest = null;
+	welcomeSign = null;
+	grassBlocks = new HashSet<Vector>();
+
 	// Establish the World Edit to Material look up
 	WEtoM.put("ACACIA_DOOR",Material.ACACIA_DOOR_ITEM);
 	WEtoM.put("BIRCH_DOOR",Material.BIRCH_DOOR_ITEM);
@@ -307,7 +331,6 @@ public class Schematic {
 		}
 	    }
 	    // Entities
-	    HashMap<Location,EntityType> mobs = new HashMap<Location,EntityType>();
 	    List<Tag> entities = getChildTag(schematic, "Entities", ListTag.class).getValue();
 	    for (Tag tag : entities) {
 		if (!(tag instanceof CompoundTag))
@@ -315,7 +338,6 @@ public class Schematic {
 		CompoundTag t = (CompoundTag) tag;
 		//Bukkit.getLogger().info("**************************************");
 		EntityObject ent = new EntityObject();
-		EntityType mobType = null;
 		for (Map.Entry<String, Tag> entry : t.getValue().entrySet()) {
 		    //Bukkit.getLogger().info("DEBUG " + entry.getKey() + ">>>>" + entry.getValue());
 		    //Bukkit.getLogger().info("++++++++++++++++++++++++++++++++++++++++++++++++++");
@@ -328,7 +350,9 @@ public class Schematic {
 			    try {
 				ent.setType(EntityType.valueOf(id));
 			    } catch (Exception ex) {
-				Bukkit.getLogger().warning("MobType " + id + " unknown, skipping");
+				if (!id.equalsIgnoreCase("ITEM")) {
+				    Bukkit.getLogger().warning("MobType " + id + " unknown, skipping");
+				}
 			    }
 			}
 		    }
@@ -442,8 +466,54 @@ public class Schematic {
 	    }
 	} catch (IOException e) {
 	    Bukkit.getLogger().severe("Could not load island schematic! Error in file.");
-	    e.printStackTrace();
+	    //e.printStackTrace();
+	    throw new IOException();
 	}
+
+	// Check for key blocks
+	// Find top most bedrock - this is the key stone
+	// Find top most chest
+	// Find top most grass
+	for (int x = 0; x < width; ++x) {
+	    for (int y = 0; y < height; ++y) {
+		for (int z = 0; z < length; ++z) {
+		    int index = y * width * length + z * width + x;
+		    // Bukkit.getLogger().info("DEBUG " + index +
+		    // " changing to ID:"+blocks[index] + " data = " +
+		    // blockData[index]);
+		    if (blocks[index] == 7) {
+			// Last bedrock
+			if (bedrock == null || bedrock.getY() < y) {
+			    bedrock = new Vector(x, y, z);
+			    //Bukkit.getLogger().info("DEBUG higher bedrock found:" + bedrock.toString());
+			}
+		    } else if (blocks[index] == 54) {
+			// Last chest
+			if (chest == null || chest.getY() < y) {
+			    chest = new Vector(x, y, z);
+			    // Bukkit.getLogger().info("Island loc:" +
+			    // loc.toString());
+			    // Bukkit.getLogger().info("Chest relative location is "
+			    // + chest.toString());
+			}
+		    } else if (blocks[index] == 63) {
+			// Sign
+			if (welcomeSign == null || welcomeSign.getY() < y) {
+			    welcomeSign = new Vector(x, y, z);
+			    // Bukkit.getLogger().info("DEBUG higher sign found:"
+			    // + welcomeSign.toString());
+			}
+		    } else if (blocks[index] == 2) {
+			// Grass
+			grassBlocks.add(new Vector(x,y,z));
+		    }
+		}
+	    }
+	}
+	if (bedrock == null) {
+	    Bukkit.getLogger().severe("Schematic must have at least one bedrock in it!");
+	    throw new IOException();
+	}	
     }
 
     /**
@@ -584,74 +654,7 @@ public class Schematic {
 	// "and schematic size is " + schematic.getBlocks().length);
 	// Bukkit.getLogger().info("DEBUG Location to place island is:" +
 	// loc.toString());
-	// Find top most bedrock - this is the key stone
-	// Find top most chest
-	// Find top most grass
-	Location bedrock = null;
-	Location chest = null;
-	Location welcomeSign = null;
-	Set<Vector> grassBlocks = new HashSet<Vector>();
-	for (int x = 0; x < width; ++x) {
-	    for (int y = 0; y < height; ++y) {
-		for (int z = 0; z < length; ++z) {
-		    int index = y * width * length + z * width + x;
-		    // Bukkit.getLogger().info("DEBUG " + index +
-		    // " changing to ID:"+blocks[index] + " data = " +
-		    // blockData[index]);
-		    if (blocks[index] == 7) {
-			// Last bedrock
-			if (bedrock == null || bedrock.getY() < y) {
-			    bedrock = new Location(world, x, y, z);
-			    //Bukkit.getLogger().info("DEBUG higher bedrock found:" + bedrock.toString());
-			}
-		    } else if (blocks[index] == 54) {
-			// Last chest
-			if (chest == null || chest.getY() < y) {
-			    chest = new Location(world, x, y, z);
-			    // Bukkit.getLogger().info("Island loc:" +
-			    // loc.toString());
-			    // Bukkit.getLogger().info("Chest relative location is "
-			    // + chest.toString());
-			}
-		    } else if (blocks[index] == 63) {
-			// Sign
-			if (welcomeSign == null || welcomeSign.getY() < y) {
-			    welcomeSign = new Location(world, x, y, z);
-			    // Bukkit.getLogger().info("DEBUG higher sign found:"
-			    // + welcomeSign.toString());
-			}
-		    } else if (blocks[index] == 2) {
-			// Grass
-			grassBlocks.add(new Vector(x,y,z));
-		    }
-		}
-	    }
-	}
-	if (bedrock == null) {
-	    Bukkit.getLogger().severe("Schematic must have at least one bedrock in it!");
-	    return;
-	}
-	if (chest == null) {
-	    Bukkit.getLogger().severe("Schematic must have at least one chest in it!");
-	    return;
-	}
-	/*
-	 * These are now optional
-	 * if (welcomeSign == null) {
-	 * Bukkit.getLogger().severe(
-	 * "ASkyBlock: Schematic must have at least one sign post in it!");
-	 * return null;
-	 * }
-	 */
-	if (!islandCompanion.isEmpty()) {
-	    //Bukkit.getLogger().info("DEBUG: size = " + islandCompanion.size());
-	    if (!(islandCompanion.contains(null) && islandCompanion.size() == 1)) {
-		if (grassBlocks.isEmpty()) {
-		    Bukkit.getLogger().severe("Schematic must have at least one grass block in it!");
-		    return;
-		}
-	    }
-	}
+
 	// Center on the last bedrock location
 	//Bukkit.getLogger().info("DEBUG bedrock is:" + bedrock.toString());
 	// Bukkit.getLogger().info("DEBUG loc is before subtract:" +
@@ -957,57 +960,59 @@ public class Schematic {
 	}
 	// PASTE ENTS
 	//Bukkit.getLogger().info("Block loc = " + blockLoc);
-	for (EntityObject ent : entitiesList) {
-	    Location entitySpot = ent.getLocation().toLocation(blockLoc.getWorld()).add(blockLoc.toVector());
-	    entitySpot.setPitch(ent.getPitch());
-	    entitySpot.setYaw(ent.getYaw());
-	    //Bukkit.getLogger().info("Spawning " + ent.getType().toString() + " at " + entitySpot);
-	    Entity spawned = blockLoc.getWorld().spawnEntity(entitySpot, ent.getType());
-	    spawned.setVelocity(ent.getMotion());
-	    if (ent.getType() == EntityType.SHEEP) {
-		Sheep sheep = (Sheep)spawned;
-		if (ent.isSheared()) {   
-		    sheep.setSheared(true);
+	if (pasteEntities) {
+	    for (EntityObject ent : entitiesList) {
+		Location entitySpot = ent.getLocation().toLocation(blockLoc.getWorld()).add(blockLoc.toVector());
+		entitySpot.setPitch(ent.getPitch());
+		entitySpot.setYaw(ent.getYaw());
+		//Bukkit.getLogger().info("Spawning " + ent.getType().toString() + " at " + entitySpot);
+		Entity spawned = blockLoc.getWorld().spawnEntity(entitySpot, ent.getType());
+		spawned.setVelocity(ent.getMotion());
+		if (ent.getType() == EntityType.SHEEP) {
+		    Sheep sheep = (Sheep)spawned;
+		    if (ent.isSheared()) {   
+			sheep.setSheared(true);
+		    }
+		    DyeColor[] set = DyeColor.values();
+		    sheep.setColor(set[ent.getColor()]);
+		    sheep.setAge(ent.getAge());
+		} else if (ent.getType() == EntityType.HORSE) {
+		    Horse horse = (Horse)spawned;
+		    Horse.Color[] set = Horse.Color.values();
+		    horse.setColor(set[ent.getColor()]);
+		    horse.setAge(ent.getAge());
+		    horse.setCarryingChest(ent.isCarryingChest());
+		} else if (ent.getType() == EntityType.VILLAGER) {
+		    Villager villager = (Villager)spawned;
+		    villager.setAge(ent.getAge());
+		    Profession[] proffs = Profession.values();
+		    villager.setProfession(proffs[ent.getProfession()]);
+		} else if (ent.getType() == EntityType.RABBIT) {
+		    Rabbit rabbit = (Rabbit)spawned;
+		    Rabbit.Type[] set = Rabbit.Type.values();
+		    rabbit.setRabbitType(set[ent.getRabbitType()]);
+		    rabbit.setAge(ent.getAge());
+		} else if (ent.getType() == EntityType.OCELOT) {
+		    Ocelot cat = (Ocelot)spawned;
+		    if (ent.isOwned()) {
+			cat.setTamed(true);
+			cat.setOwner(player);
+		    }
+		    Ocelot.Type[] set = Ocelot.Type.values();
+		    cat.setCatType(set[ent.getCatType()]);
+		    cat.setAge(ent.getAge());
+		    cat.setSitting(ent.isSitting());
+		} else if (ent.getType() == EntityType.WOLF) {
+		    Wolf wolf = (Wolf)spawned;
+		    if (ent.isOwned()) {
+			wolf.setTamed(true);
+			wolf.setOwner(player);
+		    }
+		    wolf.setAge(ent.getAge());
+		    wolf.setSitting(ent.isSitting());
+		    DyeColor[] color = DyeColor.values();
+		    wolf.setCollarColor(color[ent.getCollarColor()]);
 		}
-		DyeColor[] set = DyeColor.values();
-		sheep.setColor(set[ent.getColor()]);
-		sheep.setAge(ent.getAge());
-	    } else if (ent.getType() == EntityType.HORSE) {
-		Horse horse = (Horse)spawned;
-		Horse.Color[] set = Horse.Color.values();
-		horse.setColor(set[ent.getColor()]);
-		horse.setAge(ent.getAge());
-		horse.setCarryingChest(ent.isCarryingChest());
-	    } else if (ent.getType() == EntityType.VILLAGER) {
-		Villager villager = (Villager)spawned;
-		villager.setAge(ent.getAge());
-		Profession[] proffs = Profession.values();
-		villager.setProfession(proffs[ent.getProfession()]);
-	    } else if (ent.getType() == EntityType.RABBIT) {
-		Rabbit rabbit = (Rabbit)spawned;
-		Rabbit.Type[] set = Rabbit.Type.values();
-		rabbit.setRabbitType(set[ent.getRabbitType()]);
-		rabbit.setAge(ent.getAge());
-	    } else if (ent.getType() == EntityType.OCELOT) {
-		Ocelot cat = (Ocelot)spawned;
-		if (ent.isOwned()) {
-		    cat.setTamed(true);
-		    cat.setOwner(player);
-		}
-		Ocelot.Type[] set = Ocelot.Type.values();
-		cat.setCatType(set[ent.getCatType()]);
-		cat.setAge(ent.getAge());
-		cat.setSitting(ent.isSitting());
-	    } else if (ent.getType() == EntityType.WOLF) {
-		Wolf wolf = (Wolf)spawned;
-		if (ent.isOwned()) {
-		    wolf.setTamed(true);
-		    wolf.setOwner(player);
-		}
-		wolf.setAge(ent.getAge());
-		wolf.setSitting(ent.isSitting());
-		DyeColor[] color = DyeColor.values();
-		wolf.setCollarColor(color[ent.getCollarColor()]);
 	    }
 	}
 	// Go through all the grass blocks and try to find a safe one
@@ -1016,7 +1021,7 @@ public class Schematic {
 	    // Sort by height
 	    List<Vector> sorted = new ArrayList<Vector>();
 	    for (Vector v : grassBlocks) {
-		v.subtract(bedrock.toVector());
+		v.subtract(bedrock);
 		v.add(loc.toVector());
 		v.add(new Vector(0.5D,1.1D,0.5D)); // Center of block
 		//if (GridManager.isSafeLocation(v.toLocation(world))) {
@@ -1039,7 +1044,7 @@ public class Schematic {
 	} else {
 	    grass = null;
 	}
-	//Bukkit.getLogger().info("DEBUG cow location " + grass.toString());
+	//Bukkit.getLogger().info("DEBUG cow location " + grass);
 	Block blockToChange = null;
 	// world.spawnEntity(grass, EntityType.COW);
 	// Place a helpful sign in front of player
@@ -1049,10 +1054,10 @@ public class Schematic {
 	    welcomeSign.subtract(bedrock);
 	    // Bukkit.getLogger().info("DEBUG welcome sign relative to bedrock is:"
 	    // + welcomeSign.toString());
-	    welcomeSign.add(loc);
+	    welcomeSign.add(loc.toVector());
 	    // Bukkit.getLogger().info("DEBUG welcome sign actual position is:"
 	    // + welcomeSign.toString());
-	    blockToChange = welcomeSign.getBlock();
+	    blockToChange = welcomeSign.toLocation(world).getBlock();
 	    blockToChange.setType(Material.SIGN_POST);
 	    Sign sign = (Sign) blockToChange.getState();
 	    sign.setLine(0, ASkyBlock.getPlugin().myLocale(player.getUniqueId()).signLine1.replace("[player]", player.getName()));
@@ -1064,35 +1069,37 @@ public class Schematic {
 	    ((org.bukkit.material.Sign) sign.getData()).setFacingDirection(BlockFace.NORTH);
 	    sign.update();
 	}
-	chest.subtract(bedrock);
-	chest.add(loc);
-	// Place the chest - no need to use the safe spawn function because we
-	// know what this island looks like
-	blockToChange = chest.getBlock();
-	// Bukkit.getLogger().info("Chest block = " + blockToChange);
-	// blockToChange.setType(Material.CHEST);
-	// Bukkit.getLogger().info("Chest item settings = " +
-	// Settings.chestItems[0]);
-	// Bukkit.getLogger().info("Chest item settings length = " +
-	// Settings.chestItems.length);
-	if (useDefaultChest) {
-	    // Fill the chest
-	    if (blockToChange.getType() == Material.CHEST) {
-		final Chest islandChest = (Chest) blockToChange.getState();
-		DoubleChest doubleChest = null;
-		InventoryHolder iH = islandChest.getInventory().getHolder();
-		if (iH instanceof DoubleChest) {
-		    //Bukkit.getLogger().info("DEBUG: double chest");
-		    doubleChest = (DoubleChest) iH;
-		}
-		if (doubleChest != null) {
-		    Inventory inventory = doubleChest.getInventory();
-		    inventory.clear();
-		    inventory.setContents(defaultChestItems);
-		} else {
-		    Inventory inventory = islandChest.getInventory();
-		    inventory.clear();
-		    inventory.setContents(defaultChestItems);
+	if (chest != null) {
+	    chest.subtract(bedrock);
+	    chest.add(loc.toVector());
+	    // Place the chest - no need to use the safe spawn function because we
+	    // know what this island looks like
+	    blockToChange = chest.toLocation(world).getBlock();
+	    // Bukkit.getLogger().info("Chest block = " + blockToChange);
+	    // blockToChange.setType(Material.CHEST);
+	    // Bukkit.getLogger().info("Chest item settings = " +
+	    // Settings.chestItems[0]);
+	    // Bukkit.getLogger().info("Chest item settings length = " +
+	    // Settings.chestItems.length);
+	    if (useDefaultChest) {
+		// Fill the chest
+		if (blockToChange.getType() == Material.CHEST) {
+		    final Chest islandChest = (Chest) blockToChange.getState();
+		    DoubleChest doubleChest = null;
+		    InventoryHolder iH = islandChest.getInventory().getHolder();
+		    if (iH instanceof DoubleChest) {
+			//Bukkit.getLogger().info("DEBUG: double chest");
+			doubleChest = (DoubleChest) iH;
+		    }
+		    if (doubleChest != null) {
+			Inventory inventory = doubleChest.getInventory();
+			inventory.clear();
+			inventory.setContents(defaultChestItems);
+		    } else {
+			Inventory inventory = islandChest.getInventory();
+			inventory.clear();
+			inventory.setContents(defaultChestItems);
+		    }
 		}
 	    }
 	}
@@ -1345,12 +1352,13 @@ public class Schematic {
      */
     protected void spawnCompanion(Player player, Location location) {
 	// Older versions of the server require custom names to only apply to Living Entities
+	//Bukkit.getLogger().info("DEBUG: spawning compantion at " + location);
 	if (!islandCompanion.isEmpty() && location != null) {
 	    Random rand = new Random();
 	    int randomNum = rand.nextInt(islandCompanion.size());
 	    EntityType type = islandCompanion.get(randomNum);
 	    if (type != null) {
-		LivingEntity companion = (LivingEntity) player.getWorld().spawnEntity(location, type);
+		LivingEntity companion = (LivingEntity) location.getWorld().spawnEntity(location, type);
 		if (!companionNames.isEmpty()) {
 		    randomNum = rand.nextInt(companionNames.size());
 		    String name = companionNames.get(randomNum).replace("[player]", player.getDisplayName());
@@ -1382,4 +1390,72 @@ public class Schematic {
     public void setDefaultChestItems(ItemStack[] defaultChestItems) {
 	this.defaultChestItems = defaultChestItems;
     }
+
+    /**
+     * @return if Biome is HELL, this is true
+     */
+    public boolean isInNether() {
+	if (biome == Biome.HELL) {
+	    return true;
+	}
+	return false;
+    }
+
+    /**
+     * @return the partnerName
+     */
+    public String getPartnerName() {
+	return partnerName;
+    }
+
+    /**
+     * @param partnerName the partnerName to set
+     */
+    public void setPartnerName(String partnerName) {
+	this.partnerName = partnerName;
+    }
+
+    /**
+     * @return the pasteEntities
+     */
+    public boolean isPasteEntities() {
+	return pasteEntities;
+    }
+
+    /**
+     * @param pasteEntities the pasteEntities to set
+     */
+    public void setPasteEntities(boolean pasteEntities) {
+	this.pasteEntities = pasteEntities;
+    }
+
+    /**
+     * @return the visible
+     */
+    public boolean isVisible() {
+	return visible;
+    }
+
+    /**
+     * @param visible the visible to set
+     */
+    public void setVisible(boolean visible) {
+	this.visible = visible;
+    }
+
+    /**
+     * @return the order
+     */
+    public int getOrder() {
+	return order;
+    }
+
+    /**
+     * @param order the order to set
+     */
+    public void setOrder(int order) {
+	this.order = order;
+    }
+
+
 }

@@ -530,11 +530,35 @@ public class AdminCmd implements CommandExecutor {
 		    return true;
 		} else {
 		    sender.sendMessage(ChatColor.YELLOW + plugin.myLocale().deleteremoving.replace("[name]", name));
+		    /*
 		    new DeleteIslandChunk(plugin, island.getCenter());
 		    // Delete the new nether island too (if it exists)
 		    if (Settings.createNether && Settings.newNether) {
 			new DeleteIslandChunk(plugin, island.getCenter().toVector().toLocation(ASkyBlock.getNetherWorld()));
-		    }
+		    }*/
+		    if (island.getCenter().getWorld().equals(ASkyBlock.getIslandWorld())) {
+			// Over World start
+			plugin.getGrid().removeMobsFromIsland(island.getCenter());
+			new DeleteIslandChunk(plugin, island.getCenter());
+			// Delete the new nether island too (if it exists)
+			if (Settings.createNether && Settings.newNether) {
+			    Location otherIsland = island.getCenter().toVector().toLocation(ASkyBlock.getNetherWorld());
+			    plugin.getGrid().removeMobsFromIsland(otherIsland);
+			    // Delete island
+			    new DeleteIslandChunk(plugin, otherIsland);  
+			}
+		    } else if (Settings.createNether && Settings.newNether && island.getCenter().getWorld().equals(ASkyBlock.getNetherWorld())) {
+			// Nether World Start
+			plugin.getGrid().removeMobsFromIsland(island.getCenter());
+			new DeleteIslandChunk(plugin, island.getCenter());
+			// Delete the overworld island too
+			Location otherIsland = island.getCenter().toVector().toLocation(ASkyBlock.getIslandWorld());
+			plugin.getGrid().removeMobsFromIsland(otherIsland);
+			// Delete island
+			new DeleteIslandChunk(plugin, otherIsland);  
+		    } else {
+			sender.sendMessage(ChatColor.RED + "Cannot delete island at location " + island.getCenter().toString() + " because it is not in the official island world");
+		    } 
 		    return true;
 		}
 	    }

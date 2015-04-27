@@ -100,9 +100,10 @@ public class ChunkGeneratorWorld extends ChunkGenerator {
 
     @Override
     public List<BlockPopulator> getDefaultPopulators(final World world) {
+	/*
 	if (world.getEnvironment().equals(World.Environment.NETHER)) {
 	    return Arrays.<BlockPopulator> asList(new NetherPopulator());
-	}
+	}*/
 	return Arrays.asList(new BlockPopulator[0]);
     }
 
@@ -185,6 +186,7 @@ public class ChunkGeneratorWorld extends ChunkGenerator {
 		}
 	    }
 	}
+	/*
 	// Center points of the chunk I'm being given
 	// int actualX = chunkX * 16;
 	// int actualZ = chunkZ * 16;
@@ -270,6 +272,7 @@ public class ChunkGeneratorWorld extends ChunkGenerator {
 	     * }
 	     */
 	    // Make the towers
+	/*
 	    for (int x = 0; x < 11; x++) {
 		for (int z = 0; z < 11; z++) {
 		    int island_height = Settings.island_level + 25;
@@ -342,7 +345,7 @@ public class ChunkGeneratorWorld extends ChunkGenerator {
 	     * }
 	     * }
 	     */
-	}
+    //}
 	return result;
 
     }

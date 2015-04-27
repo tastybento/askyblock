@@ -515,6 +515,26 @@ schematicsection:
       filename: island.schematic
       # Use default chest if true, or use schematic chest contents if false
       useDefaultChest: true
+      # Which schematic will be used in the opposite world if newnether:true
+      # and netherizable: false
+      # If there is no partner, this island will be used in a "netherized state"
+      # E.g., water becomes lava, dirt becomes netherrack, etc.
+      partnerSchematic: nether
+    # This is the default nether island
+    nether:
+      # Show this option to players or not in the GUI
+      # Use this to hide schematics from selection
+      show: false
+      icon: NETHERRACK
+      biome: HELL
+      name: "NetherBlock Island"
+      description: "An island in the nether|overlooked by a mob tower"
+      filename: nether.schematic
+      useDefaultChest: false
+      partnerSchematic: default
+      # Schematics may include entities (mobs) in them and if pasteentities is true,
+      # mobs will be pasted.
+      pasteentities: true
     # Additional heading names can be anything you like, but must be unique
     island1:
       # Credit to Antal1609 for this schematic!
@@ -530,26 +550,36 @@ schematicsection:
       #chestItems:
       #- MELON:1
       #- ICE:1
-      #permission: any.perm.you.like
       # Your island companion. Overrides the default setting. If more than one is
       # listed, one will be chosen at random.
       # Options are: COW, PIG, SHEEP, CHICKEN, VILLAGER, HORSE, IRON_GOLEM, OCELOT,
       # RABBIT, WOLF or NOTHING. Default is COW.
       companion:
-      - RABBIT
+      - RABBIT 
       # This is a list of names, picked at random that will apply to the companion
       # You can add more if you like. If none are listed, the companion will not be
       # named.
       companionnames:
       - "&9[player]'s rabbit"
       - "&cFluffy"
+      partnerSchematic: nether
+      #permission: any.perm.you.like
     extrahard:
       icon: OBSIDIAN
       name: "&lBlack &bDiamonds"
       description: "Experts only!|&aMinimal resources|&awith a few diamonds."
       filename: hard.schematic
       useDefaultChest: false
+      # Chest items can be defined here if useDefaultChest is true
+      # Material:Qty, or Material:Data:Qty
+      #chestItems:
+      #- MELON:1
+      #- ICE:1
       # Schematics that require water or lava to hover can prevent physics when pasting
       usephysics: false
+      # Schematics may include entities (mobs) in them and if pasteentities is true,
+      # mobs will be pasted.
+      # Example: Setting this to true for this schematic will give an extra cow.
+      pasteentities: false
+      partnerSchematic: nether
       #permission: any.perm.you.like
-

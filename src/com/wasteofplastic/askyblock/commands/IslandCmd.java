@@ -17,6 +17,7 @@
 package com.wasteofplastic.askyblock.commands;
 
 import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -134,7 +135,12 @@ public class IslandCmd implements CommandExecutor {
 		plugin.getLogger().info("Default schematic does not exist, saving it...");
 		plugin.saveResource("schematics/island.schematic", false);
 		// Add it to schematics
-		schematics.put("default",new Schematic(schematicFile));
+		try {
+		    schematics.put("default",new Schematic(schematicFile));
+		} catch (IOException e) {
+		    plugin.getLogger().severe("Could not load default schematic!");
+		    e.printStackTrace();
+		}
 		// If this is repeated later due to the schematic config, fine, it will only add info
 	    } else {
 		// No islands.schematic in the jar, so just make the default using 
@@ -143,7 +149,12 @@ public class IslandCmd implements CommandExecutor {
 	    }
 	} else {
 	    // It exists, so load it
-	    schematics.put("default",new Schematic(schematicFile));
+	    try {
+		schematics.put("default",new Schematic(schematicFile));
+	    } catch (IOException e) {
+		plugin.getLogger().severe("Could not load default schematic!");
+		e.printStackTrace();
+	    }
 	}
 
 	// Load the schematics from config.yml
@@ -157,195 +168,214 @@ public class IslandCmd implements CommandExecutor {
 		String fileName = plugin.getConfig().getString("general.schematics." + perms);
 		File schem = new File(plugin.getDataFolder(), fileName);
 		if (schem.exists()) {
+		    String showInGUI = "";
 		    plugin.getLogger().info("Loading schematic " + fileName + " for permission " + perms);
-		    Schematic schematic = new Schematic(schem);
-		    schematic.setPerm(perms);
-		    schematic.setHeading(perms);
-		    schematic.setName("#" + count++);
-		    schematics.put(perms, schematic);
+		    Schematic schematic;
+		    try {
+			schematic = new Schematic(schem);
+			schematic.setPerm(perms);
+			schematic.setHeading(perms);
+			schematic.setName("#" + count++);
+			if (!schematic.isVisible()) {
+			    plugin.getLogger().info("Schematic " + fileName + " will not be shown on the GUI");  
+			}
+			schematics.put(perms, schematic);
+		    } catch (IOException e) {
+			plugin.getLogger().severe("Could not load schematic " + fileName + " due to error. Skipping...");
+		    }
 		} // Cannot declare a not-found because get keys gets some additional non-wanted strings
 	    }
 	} else if (plugin.getConfig().contains("schematicsection")) {
 	    Settings.useSchematicPanel = schemSection.getBoolean("useschematicspanel", true);
 	    // Section exists, so go through the various sections
 	    for (String key : schemSection.getConfigurationSection("schematics").getKeys(false)) {
-		Schematic newSchem = null;
-		// Check the file exists
-		//plugin.getLogger().info("DEBUG: schematics." + key + ".filename" );
-		String filename = schemSection.getString("schematics." + key + ".filename","");
-		if (!filename.isEmpty()) {
-		    //plugin.getLogger().info("DEBUG: filename = " + filename);
-		    // Check if this file exists or if it is in the jar
-		    schematicFile = new File(schematicFolder, filename);
-		    // See if the file exists
-		    if (schematicFile.exists()) {
-			newSchem = new Schematic(schematicFile);
-		    } else if (plugin.getResource("schematics/"+filename) != null) {
-			plugin.saveResource("schematics/"+filename, false);
-			newSchem = new Schematic(schematicFile);
-		    }
-		} else {
-		    //plugin.getLogger().info("DEBUG: filename is empty");
-		    if (key.equalsIgnoreCase("default")) {
-			//Øplugin.getLogger().info("DEBUG: key is default, so use this one");
-			newSchem = schematics.get("default");
+		try {
+		    Schematic newSchem = null;
+		    // Check the file exists
+		    //plugin.getLogger().info("DEBUG: schematics." + key + ".filename" );
+		    String filename = schemSection.getString("schematics." + key + ".filename","");
+		    if (!filename.isEmpty()) {
+			//plugin.getLogger().info("DEBUG: filename = " + filename);
+			// Check if this file exists or if it is in the jar
+			schematicFile = new File(schematicFolder, filename);
+			// See if the file exists
+			if (schematicFile.exists()) {
+			    newSchem = new Schematic(schematicFile);
+			} else if (plugin.getResource("schematics/"+filename) != null) {
+			    plugin.saveResource("schematics/"+filename, false);
+			    newSchem = new Schematic(schematicFile);
+			}
 		    } else {
-			plugin.getLogger().severe("Schematic " + key + " does not have a filename. Skipping!");
+			//plugin.getLogger().info("DEBUG: filename is empty");
+			if (key.equalsIgnoreCase("default")) {
+			    //Øplugin.getLogger().info("DEBUG: key is default, so use this one");
+			    newSchem = schematics.get("default");
+			} else {
+			    plugin.getLogger().severe("Schematic " + key + " does not have a filename. Skipping!");
+			}
 		    }
-		}
-		if (newSchem != null) {   
-		    // Set the heading
-		    newSchem.setHeading(key);
-		    // Load the rest of the settings
-		    // Icon
-		    try {   
-			Material icon = Material.getMaterial(schemSection.getString("schematics." + key + ".icon","MAP").toUpperCase());
-			newSchem.setIcon(icon);
-		    } catch (Exception e) {
-			newSchem.setIcon(Material.MAP); 
-		    }
-		    // Friendly name
-		    String name = ChatColor.translateAlternateColorCodes('&', schemSection.getString("schematics." + key + ".name",""));
-		    newSchem.setName(name);
-		    // Rating - Rating is not used right now
-		    int rating = schemSection.getInt("schematics." + key + ".rating",50);
-		    if (rating <1) {
-			rating = 1;
-		    } else if (rating > 100) {
-			rating = 100;
-		    }
-		    newSchem.setRating(rating);
-		    // Description
-		    String description = ChatColor.translateAlternateColorCodes('&', schemSection.getString("schematics." + key + ".description",""));
-		    description = description.replace("[rating]",String.valueOf(rating));
-		    newSchem.setDescription(description);
-		    // Permission
-		    String perm = schemSection.getString("schematics." + key + ".permission","");
-		    newSchem.setPerm(perm);
-		    // Use default chest
-		    newSchem.setUseDefaultChest(schemSection.getBoolean("schematics." + key + ".useDefaultChest", true));
-		    // Biomes - overrides default if it exists
-		    String biomeString = schemSection.getString("schematics." + key + ".biome",Settings.defaultBiome.toString());
-		    try {
-			newSchem.setBiome(Biome.valueOf(biomeString));
-		    } catch (Exception e) {
-			plugin.getLogger().severe("Could not parse biome " + biomeString + " using default instead.");
-		    }
-		    // Use physics - overrides default if it exists
-		    newSchem.setUsePhysics(schemSection.getBoolean("schematics." + key + ".usephysics",Settings.usePhysics));
-		    // Island companion
-		    List<String> companion = schemSection.getStringList("schematics." + key + ".companion");
-		    List<EntityType> companionTypes = new ArrayList<EntityType>();
-		    if (!companion.isEmpty()) {
-			for (String companionType : companion) {
-			    companionType = companionType.toUpperCase();
-			    if (companionType.equalsIgnoreCase("NOTHING")) {
-				companionTypes.add(null);
-			    } else {
-				try {
-				    EntityType type = EntityType.valueOf(companionType);
-				    // Limit types
-				    switch (type) {
-				    case BAT:
-				    case CHICKEN:
-				    case COW:
-				    case HORSE:
-				    case IRON_GOLEM:
-				    case MUSHROOM_COW:
-				    case OCELOT:
-				    case PIG:
-				    case RABBIT:
-				    case SHEEP:
-				    case SNOWMAN:
-				    case VILLAGER:
-				    case WOLF:
-					companionTypes.add(type);
-					break;
-				    default:
+		    if (newSchem != null) {   
+			// Set the heading
+			newSchem.setHeading(key);
+			// Load the rest of the settings
+			// Icon
+			try {   
+			    Material icon = Material.getMaterial(schemSection.getString("schematics." + key + ".icon","MAP").toUpperCase());
+			    newSchem.setIcon(icon);
+			} catch (Exception e) {
+			    newSchem.setIcon(Material.MAP); 
+			}
+			// Friendly name
+			String name = ChatColor.translateAlternateColorCodes('&', schemSection.getString("schematics." + key + ".name",""));
+			newSchem.setName(name);
+			// Rating - Rating is not used right now
+			int rating = schemSection.getInt("schematics." + key + ".rating",50);
+			if (rating <1) {
+			    rating = 1;
+			} else if (rating > 100) {
+			    rating = 100;
+			}
+			newSchem.setRating(rating);
+			// Description
+			String description = ChatColor.translateAlternateColorCodes('&', schemSection.getString("schematics." + key + ".description",""));
+			description = description.replace("[rating]",String.valueOf(rating));
+			newSchem.setDescription(description);
+			// Permission
+			String perm = schemSection.getString("schematics." + key + ".permission","");
+			newSchem.setPerm(perm);
+			// Use default chest
+			newSchem.setUseDefaultChest(schemSection.getBoolean("schematics." + key + ".useDefaultChest", true));
+			// Biomes - overrides default if it exists
+			String biomeString = schemSection.getString("schematics." + key + ".biome",Settings.defaultBiome.toString());
+			try {
+			    newSchem.setBiome(Biome.valueOf(biomeString));
+			} catch (Exception e) {
+			    plugin.getLogger().severe("Could not parse biome " + biomeString + " using default instead.");
+			}
+			// Use physics - overrides default if it exists
+			newSchem.setUsePhysics(schemSection.getBoolean("schematics." + key + ".usephysics",Settings.usePhysics));	    
+			// Paste Entities or not
+			newSchem.setPasteEntities(schemSection.getBoolean("schematics." + key + ".pasteentities",false));
+			// Visible in GUI or not
+			newSchem.setVisible(schemSection.getBoolean("schematics." + key + ".show",true));
+			// Partner schematic
+			newSchem.setPartnerName(schemSection.getString("schematics." + key + ".partnerSchematic",""));
+			// Island companion
+			List<String> companion = schemSection.getStringList("schematics." + key + ".companion");
+			List<EntityType> companionTypes = new ArrayList<EntityType>();
+			if (!companion.isEmpty()) {
+			    for (String companionType : companion) {
+				companionType = companionType.toUpperCase();
+				if (companionType.equalsIgnoreCase("NOTHING")) {
+				    companionTypes.add(null);
+				} else {
+				    try {
+					EntityType type = EntityType.valueOf(companionType);
+					// Limit types
+					switch (type) {
+					case BAT:
+					case CHICKEN:
+					case COW:
+					case HORSE:
+					case IRON_GOLEM:
+					case MUSHROOM_COW:
+					case OCELOT:
+					case PIG:
+					case RABBIT:
+					case SHEEP:
+					case SNOWMAN:
+					case VILLAGER:
+					case WOLF:
+					    companionTypes.add(type);
+					    break;
+					default:
+					    plugin.getLogger()
+					    .warning(
+						    "Island companion is not recognized in schematic '" + name + "'. Pick from COW, PIG, SHEEP, CHICKEN, VILLAGER, HORSE, IRON_GOLEM, OCELOT, RABBIT, WOLF, SNOWMAN, BAT, MUSHROOM_COW");
+					    break;
+					}
+				    } catch (Exception e) {
 					plugin.getLogger()
 					.warning(
-						"Island companion is not recognized in schematic '" + name + "'. Pick from COW, PIG, SHEEP, CHICKEN, VILLAGER, HORSE, IRON_GOLEM, OCELOT, RABBIT, WOLF, SNOWMAN, BAT, MUSHROOM_COW");
-					break;
+						"Island companion is not recognized in schematic '" + name + "'. Pick from COW, PIG, SHEEP, CHICKEN, VILLAGER, HORSE, IRON_GOLEM, OCELOT, RABBIT, WOLF, BAT, MUSHROOM_COW, SNOWMAN");
 				    }
-				} catch (Exception e) {
-				    plugin.getLogger()
-				    .warning(
-					    "Island companion is not recognized in schematic '" + name + "'. Pick from COW, PIG, SHEEP, CHICKEN, VILLAGER, HORSE, IRON_GOLEM, OCELOT, RABBIT, WOLF, BAT, MUSHROOM_COW, SNOWMAN");
 				}
 			    }
+			    newSchem.setIslandCompanion(companionTypes);
 			}
-			newSchem.setIslandCompanion(companionTypes);
-		    }
-		    // Companion names
-		    List<String> companionNames = schemSection.getStringList("schematics." + key + ".companionnames");
-		    if (!companionNames.isEmpty()) {
-			List<String> names = new ArrayList<String>();
-			for (String companionName : companionNames) {
-			    names.add(ChatColor.translateAlternateColorCodes('&', companionName));
+			// Companion names
+			List<String> companionNames = schemSection.getStringList("schematics." + key + ".companionnames");
+			if (!companionNames.isEmpty()) {
+			    List<String> names = new ArrayList<String>();
+			    for (String companionName : companionNames) {
+				names.add(ChatColor.translateAlternateColorCodes('&', companionName));
+			    }
+			    newSchem.setCompanionNames(names);
 			}
-			newSchem.setCompanionNames(names);
-		    }
-		    // Get chest items
-		    final List<String> chestItems = schemSection.getStringList("schematics." + key + ".chestItems");
-		    if (!chestItems.isEmpty()) {
-			ItemStack[] tempChest = new ItemStack[chestItems.size()];
-			int i = 0;
-			for (String chestItemString : chestItems) {
-			    //plugin.getLogger().info("DEBUG: chest item = " + chestItemString);
-			    try {
-				String[] amountdata = chestItemString.split(":");
-				if (amountdata[0].equals("POTION")) {
-				    if (amountdata.length == 3) {
-					Potion chestPotion = new Potion(PotionType.valueOf(amountdata[1]));
-					tempChest[i++] = chestPotion.toItemStack(Integer.parseInt(amountdata[2]));
-				    } else if (amountdata.length == 4) {
-					// Extended or splash potions
-					if (amountdata[2].equals("EXTENDED")) {
-					    Potion chestPotion = new Potion(PotionType.valueOf(amountdata[1])).extend();
-					    tempChest[i++] = chestPotion.toItemStack(Integer.parseInt(amountdata[3]));
-					} else if (amountdata[2].equals("SPLASH")) {
-					    Potion chestPotion = new Potion(PotionType.valueOf(amountdata[1])).splash();
-					    tempChest[i++] = chestPotion.toItemStack(Integer.parseInt(amountdata[3]));
-					} else if (amountdata[2].equals("EXTENDEDSPLASH")) {
-					    Potion chestPotion = new Potion(PotionType.valueOf(amountdata[1])).extend().splash();
-					    tempChest[i++] = chestPotion.toItemStack(Integer.parseInt(amountdata[3]));
+			// Get chest items
+			final List<String> chestItems = schemSection.getStringList("schematics." + key + ".chestItems");
+			if (!chestItems.isEmpty()) {
+			    ItemStack[] tempChest = new ItemStack[chestItems.size()];
+			    int i = 0;
+			    for (String chestItemString : chestItems) {
+				//plugin.getLogger().info("DEBUG: chest item = " + chestItemString);
+				try {
+				    String[] amountdata = chestItemString.split(":");
+				    if (amountdata[0].equals("POTION")) {
+					if (amountdata.length == 3) {
+					    Potion chestPotion = new Potion(PotionType.valueOf(amountdata[1]));
+					    tempChest[i++] = chestPotion.toItemStack(Integer.parseInt(amountdata[2]));
+					} else if (amountdata.length == 4) {
+					    // Extended or splash potions
+					    if (amountdata[2].equals("EXTENDED")) {
+						Potion chestPotion = new Potion(PotionType.valueOf(amountdata[1])).extend();
+						tempChest[i++] = chestPotion.toItemStack(Integer.parseInt(amountdata[3]));
+					    } else if (amountdata[2].equals("SPLASH")) {
+						Potion chestPotion = new Potion(PotionType.valueOf(amountdata[1])).splash();
+						tempChest[i++] = chestPotion.toItemStack(Integer.parseInt(amountdata[3]));
+					    } else if (amountdata[2].equals("EXTENDEDSPLASH")) {
+						Potion chestPotion = new Potion(PotionType.valueOf(amountdata[1])).extend().splash();
+						tempChest[i++] = chestPotion.toItemStack(Integer.parseInt(amountdata[3]));
+					    }
+					}
+				    } else {
+					if (amountdata.length == 2) {
+					    tempChest[i++] = new ItemStack(Material.getMaterial(amountdata[0]), Integer.parseInt(amountdata[1]));
+					} else if (amountdata.length == 3) {
+					    tempChest[i++] = new ItemStack(Material.getMaterial(amountdata[0]), Integer.parseInt(amountdata[2]), Short.parseShort(amountdata[1]));
 					}
 				    }
-				} else {
-				    if (amountdata.length == 2) {
-					tempChest[i++] = new ItemStack(Material.getMaterial(amountdata[0]), Integer.parseInt(amountdata[1]));
-				    } else if (amountdata.length == 3) {
-					tempChest[i++] = new ItemStack(Material.getMaterial(amountdata[0]), Integer.parseInt(amountdata[2]), Short.parseShort(amountdata[1]));
-				    }
+				} catch (java.lang.IllegalArgumentException ex) {
+				    plugin.getLogger().severe("Problem loading chest item for schematic '" + name + "' so skipping it: " + chestItemString);
+				    plugin.getLogger().severe("Error is : " + ex.getMessage());
+				    plugin.getLogger().info("Potential potion types are: ");
+				    for (PotionType c : PotionType.values())
+					plugin.getLogger().info(c.name());
+				} catch (Exception e) {
+				    plugin.getLogger().severe("Problem loading chest item for schematic '" + name + "' so skipping it: " + chestItemString);
+				    plugin.getLogger().info("Potential material types are: ");
+				    for (Material c : Material.values())
+					plugin.getLogger().info(c.name());
+				    // e.printStackTrace();
 				}
-			    } catch (java.lang.IllegalArgumentException ex) {
-				plugin.getLogger().severe("Problem loading chest item for schematic '" + name + "' so skipping it: " + chestItemString);
-				plugin.getLogger().severe("Error is : " + ex.getMessage());
-				plugin.getLogger().info("Potential potion types are: ");
-				for (PotionType c : PotionType.values())
-				    plugin.getLogger().info(c.name());
-			    } catch (Exception e) {
-				plugin.getLogger().severe("Problem loading chest item for schematic '" + name + "' so skipping it: " + chestItemString);
-				plugin.getLogger().info("Potential material types are: ");
-				for (Material c : Material.values())
-				    plugin.getLogger().info(c.name());
-				// e.printStackTrace();
 			    }
+			    // Store it
+			    newSchem.setDefaultChestItems(tempChest);
 			}
-			// Store it
-			newSchem.setDefaultChestItems(tempChest);
-		    }
 
-		    // Store it
-		    schematics.put(key, newSchem);
-		    if (perm.isEmpty()) {
-			perm = "all players";
+			// Store it
+			schematics.put(key, newSchem);
+			if (perm.isEmpty()) {
+			    perm = "all players";
+			} else {
+			    perm = "player with " + perm + " permission";
+			}
+			plugin.getLogger().info("Loading schematic " + name + " (" + filename + ") for " + perm);
 		    } else {
-			perm = "player with " + perm + " permission";
+			plugin.getLogger().warning("Could not find " + filename + " in the schematics folder! Skipping...");
 		    }
-		    plugin.getLogger().info("Loading schematic " + name + " (" + filename + ") for " + perm);
-		} else {
-		    plugin.getLogger().warning("Could not find " + filename + " in the schematics folder! Skipping...");
+		} catch (IOException e) {
+		    plugin.getLogger().info("Error loading schematic in section " + key + ". Skipping...");
 		}
 	    }
 	    if (schematics.isEmpty()) {
@@ -492,7 +522,33 @@ public class IslandCmd implements CommandExecutor {
 	// Create island based on schematic
 	if (schematic != null) {
 	    //plugin.getLogger().info("DEBUG: pasting schematic " + schematic.getName() + " " + schematic.getPerm());
-	    schematic.pasteSchematic(next, player);
+	    // Paste the starting island. If it is a HELL biome, then we start in the Nether
+	    if (schematic.isInNether() && Settings.newNether) {
+		// Nether start
+		// Paste the overworld if it exists
+		if (!schematic.getPartnerName().isEmpty() && schematics.containsKey(schematic.getPartnerName())) {
+		    // A partner schematic is available
+		    schematics.get(schematic.getPartnerName()).pasteSchematic(next, player);
+		}
+		// Switch home location to the Nether
+		next = next.toVector().toLocation(ASkyBlock.getNetherWorld());
+		// TODO: work through the implications of this!
+		schematic.pasteSchematic(next, player);
+	    } else {
+		// Over world start
+		schematic.pasteSchematic(next, player);
+		if (Settings.newNether) {
+		    // Paste the other world schematic
+		    Location netherLoc = next.toVector().toLocation(ASkyBlock.getNetherWorld());
+		    if (schematic.getPartnerName().isEmpty()) {
+			// This will paste a "netherized" version of the over world schematic
+			schematic.pasteSchematic(netherLoc, player);
+		    } else if (!schematic.getPartnerName().isEmpty() && schematics.containsKey(schematic.getPartnerName())) {
+			// A partner schematic is available
+			schematics.get(schematic.getPartnerName()).pasteSchematic(netherLoc, player);
+		    } // TODO: else no island!
+		}
+	    }
 	    // Record the rating of this schematic - not used for anything right now
 	    plugin.getPlayers().setStartIslandRating(playerUUID, schematic.getRating());
 	    // Set the biome
@@ -1034,6 +1090,7 @@ public class IslandCmd implements CommandExecutor {
 			// A panel can only be shown if there is >1 viable schematic
 			if (Settings.useSchematicPanel) {
 			    pendingNewIslandSelection.add(playerUUID);
+			    resettingIsland.add(playerUUID);
 			    player.openInventory(SchematicsPanel.getSchematicPanel(player));
 			} else {
 			    // No panel
@@ -1920,7 +1977,7 @@ public class IslandCmd implements CommandExecutor {
 				CoopPlay.getInstance().clearMyCoops(target);
 				// Clear the player out and throw their stuff at the
 				// leader
-				if (target.getWorld().getName().equalsIgnoreCase(ASkyBlock.getIslandWorld().getName())) {
+				if (target.getWorld().equals(ASkyBlock.getIslandWorld())) {
 				    for (ItemStack i : target.getInventory().getContents()) {
 					if (i != null) {
 					    try {
@@ -2106,12 +2163,39 @@ public class IslandCmd implements CommandExecutor {
 	if (oldIsland != null) {
 	    // Remove any coops
 	    CoopPlay.getInstance().clearAllIslandCoops(oldIsland);
+	    /*
 	    // Delete the island itself
 	    new DeleteIslandChunk(plugin, oldIsland);
 	    // Delete the new nether island too (if it exists)
 	    if (Settings.createNether && Settings.newNether) {
 		new DeleteIslandChunk(plugin, oldIsland.toVector().toLocation(ASkyBlock.getNetherWorld()));
-	    }
+	    }*/
+	    //plugin.getLogger().info("DEBUG: Resetting island at " + oldIsland);
+	    if (oldIsland.getWorld().equals(ASkyBlock.getIslandWorld())) {
+		// Over World start
+		//plugin.getLogger().info("DEBUG: over world start");
+		plugin.getGrid().removeMobsFromIsland(oldIsland);
+		new DeleteIslandChunk(plugin, oldIsland);
+		// Delete the new nether island too (if it exists)
+		if (Settings.createNether && Settings.newNether) {
+		    Location otherIsland = oldIsland.toVector().toLocation(ASkyBlock.getNetherWorld());
+		    plugin.getGrid().removeMobsFromIsland(otherIsland);
+		    // Delete island
+		    new DeleteIslandChunk(plugin, otherIsland);  
+		}
+	    } else if (Settings.createNether && Settings.newNether && oldIsland.getWorld().equals(ASkyBlock.getNetherWorld())) {
+		//plugin.getLogger().info("DEBUG: nether world start");
+		// Nether World Start
+		plugin.getGrid().removeMobsFromIsland(oldIsland);
+		new DeleteIslandChunk(plugin, oldIsland);
+		// Delete the overworld island too
+		Location otherIsland = oldIsland.toVector().toLocation(ASkyBlock.getIslandWorld());
+		plugin.getGrid().removeMobsFromIsland(otherIsland);
+		// Delete island
+		new DeleteIslandChunk(plugin, otherIsland);  
+	    } else {
+		plugin.getLogger().severe("Cannot delete island at location " + oldIsland.toString() + " because it is not in the official island world");
+	    }   
 	}
 	// Run any commands that need to be run at reset
 	runCommands(Settings.resetCommands, player.getUniqueId());
