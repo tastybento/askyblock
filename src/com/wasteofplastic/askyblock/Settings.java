@@ -215,5 +215,7 @@ public class Settings {
     public static boolean useSchematicPanel;
     public static double underWaterMultiplier;
     public static String teamSuffix;
+    public static int levelCost;
+    public static boolean respawnOnIsland;
 
 }

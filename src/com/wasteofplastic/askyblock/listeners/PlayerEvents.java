@@ -16,7 +16,9 @@
  *******************************************************************************/
 package com.wasteofplastic.askyblock.listeners;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.ChatColor;
@@ -24,7 +26,6 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -51,12 +52,58 @@ public class PlayerEvents implements Listener {
     private final boolean debug = false;
     // A set of falling players
     private static HashSet<UUID> fallingPlayers = new HashSet<UUID>();
+    private List<UUID> respawn;
 
     public PlayerEvents(final ASkyBlock plugin) {
 	this.plugin = plugin;
-
+	respawn = new ArrayList<UUID>();
     }
 
+    /**
+     * Places player back on their island if the setting is true
+     * @param e
+     */
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
+    public void onPlayerRespawn(final PlayerRespawnEvent e) {
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
+	if (!Settings.respawnOnIsland) {
+	    return;
+	}
+	if (respawn.contains(e.getPlayer().getUniqueId())) {
+	    respawn.remove(e.getPlayer().getUniqueId());
+	    Location respawnLocation = plugin.getGrid().getSafeHomeLocation(e.getPlayer().getUniqueId(), 1);
+	    if (respawnLocation != null) {
+		//plugin.getLogger().info("DEBUG: Setting respawn location to " + respawnLocation);
+		e.setRespawnLocation(respawnLocation);
+	    }
+	}
+    }
+
+    /**
+     * Places the player on the island respawn list if they are eligible
+     * @param e
+     */
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = false)
+    public void onPlayerDeath(final PlayerDeathEvent e) {
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
+	if (!Settings.respawnOnIsland) {
+	    return;
+	}
+	// Died in island space?
+	if (!IslandGuard.inWorld(e.getEntity())) {
+	    return;
+	}
+	UUID playerUUID = e.getEntity().getUniqueId();
+	// Check if player has an island
+	if (plugin.getPlayers().hasIsland(playerUUID) || plugin.getPlayers().inTeam(playerUUID)) {
+	    // Add them to the list to be respawned on their island
+	    respawn.add(playerUUID);
+	}
+    } 
 
     /*
      * Prevent dropping items if player dies on another island
@@ -259,7 +306,7 @@ public class PlayerEvents implements Listener {
 
 
 
- 
+
     /**
      * Used to prevent teleporting when falling
      * 

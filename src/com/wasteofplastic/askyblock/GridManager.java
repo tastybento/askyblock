@@ -842,10 +842,9 @@ public class GridManager {
      * Determines a safe teleport spot on player's island or the team island
      * they belong to.
      * 
-     * @param p
-     *            PlayerInfo for active player
-     * @param number 
-     * @return Location of a safe teleport spot
+     * @param p UUID of player
+     * @param number - starting home location e.g., 1
+     * @return Location of a safe teleport spot or null if one cannot be fond
      */
     public Location getSafeHomeLocation(final UUID p, int number) {
 	// Try the numbered home location first

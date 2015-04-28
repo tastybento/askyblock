@@ -910,7 +910,7 @@ public class ASkyBlock extends JavaPlugin {
 	Settings.resetEnderChest = getConfig().getBoolean("general.resetenderchest", false);
 
 	Settings.startingMoney = getConfig().getDouble("general.startingmoney", 0D);
-
+	Settings.respawnOnIsland = getConfig().getBoolean("general.respawnonisland", false);
 	Settings.newNether = getConfig().getBoolean("general.newnether", false);
 	// Nether spawn protection radius
 	Settings.netherSpawnRadius = getConfig().getInt("general.netherspawnradius", 25);
@@ -1093,6 +1093,7 @@ public class ASkyBlock extends JavaPlugin {
 	YamlConfiguration blockValuesConfig = Util.loadYamlFile("blockvalues.yml");
 	// Get the under water multiplier
 	Settings.underWaterMultiplier = blockValuesConfig.getDouble("underwater", 1D);
+	Settings.levelCost = blockValuesConfig.getInt("levelcost", 100);
 	Settings.blockLimits = new HashMap<MaterialData, Integer>();
 	if (blockValuesConfig.isSet("limits")) {
 	    for (String material : blockValuesConfig.getConfigurationSection("limits").getKeys(false)) {

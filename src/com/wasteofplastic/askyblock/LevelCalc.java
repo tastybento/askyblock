@@ -106,7 +106,7 @@ public class LevelCalc extends BukkitRunnable {
 	    // int multiplier = plugin.getPlayers().getStartIslandRating(leader);
 	    // If not zero then use it.
 	    // blockCount = (blockCount * multiplier) / 5000;
-	    blockCount /= 100;
+	    blockCount /= Settings.levelCost;
 	    // plugin.getLogger().info("DEBUG: updating player");
 	    // Update player and team mates
 	    plugin.getPlayers().setIslandLevel(targetPlayer, blockCount);

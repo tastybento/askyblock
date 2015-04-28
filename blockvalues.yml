@@ -3,7 +3,7 @@
 # Underwater block multiplier
 # If blocks are below sea-level, they can have a higher value. e.g. 2x
 # Promotes under-water development if there is a sea. Value can be fractional.
-underwater: 1.0# This section lists the limits for any particular block. Blocks over this amount# are not counted.
+underwater: 1.0# Value of one island level. Default 100. levelcost: 100# This section lists the limits for any particular block. Blocks over this amount# are not counted.
 # Format:
 # MATERIAL: limit or MATERIAL:DATA: limit.
 # If DATA is used, there MUST be a corresponding block:data value in the blocks list.
