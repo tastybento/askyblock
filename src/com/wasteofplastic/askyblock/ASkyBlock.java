@@ -248,11 +248,18 @@ public class ASkyBlock extends JavaPlugin {
 	}
 	// Set up commands for this plugin
 	if (Settings.GAMETYPE.equals(Settings.GameType.ASKYBLOCK)) {
-	    getCommand("island").setExecutor(new IslandCmd(this));
+		IslandCmd islandCmd = new IslandCmd(this);
+		getCommand("island").setExecutor(islandCmd);
+	    getCommand("island").setTabCompleter(islandCmd);
+	    
 	    getCommand("asc").setExecutor(getChallenges());
 	    getCommand("asadmin").setExecutor(new AdminCmd(this));
 	} else {
-	    getCommand("ai").setExecutor(new IslandCmd(this));
+		IslandCmd islandCmd = new IslandCmd(this);
+	    
+		getCommand("ai").setExecutor(islandCmd);
+	    getCommand("ai").setTabCompleter(islandCmd);
+	    
 	    getCommand("aic").setExecutor(getChallenges());
 	    getCommand("acid").setExecutor(new AdminCmd(this));
 	}

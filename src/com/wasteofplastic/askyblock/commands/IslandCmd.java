@@ -20,6 +20,7 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -43,6 +44,7 @@ import org.bukkit.block.Sign;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -68,7 +70,7 @@ import com.wasteofplastic.askyblock.schematics.Schematic;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
-public class IslandCmd implements CommandExecutor {
+public class IslandCmd implements CommandExecutor, TabCompleter {
     public boolean levelCalcFreeFlag = true;
     // private Schematic island = null;
     private static HashMap<String, Schematic> schematics = new HashMap<String, Schematic>();
@@ -2165,4 +2167,44 @@ public class IslandCmd implements CommandExecutor {
 	return 0L;
     }
 
+	@Override
+	public List<String> onTabComplete(final CommandSender sender, final Command command, final String label, final String[] args) {
+	String lastArg = (args.length != 0 ? args[args.length - 1] : "");
+	
+	switch (args.length) {
+	case 0: 
+	case 1: 
+		return tabLimit(Arrays.asList(
+				"go", "spawn", "controlpanel", "cp", "restart", 
+				"sethome", "level", "top", "minishop", "ms", 
+				"warps", "warp", "team", "invite", "leave", 
+				"kick", "accept", "reject", "makeleader", 
+				"biomes", "expel", "coop", "lock", "settings", 
+				"lang")
+			, lastArg);
+	default: return new ArrayList<String>();
+	}
+	}
+	
+	/**
+	 * Returns all of the items that begin with the given start, 
+	 * ignoring case. 
+	 * 
+	 * TODO: May want to move this to a more centralized class, 
+	 * as it is probably going to be re-used a lot.
+	 * 
+	 * @param list
+	 * @param start
+	 * @return
+	 */
+	private List<String> tabLimit(final List<String> list, final String start) {
+	List<String> returned = new ArrayList<String>();
+	for (String s : list) {
+	if (s.toLowerCase().startsWith(start.toLowerCase())) { //Case-insensitive startsWith.
+		returned.add(s);
+	}
+	}
+	
+	return returned;
+	}
 }
