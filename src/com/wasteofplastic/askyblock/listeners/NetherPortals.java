@@ -35,7 +35,6 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
-import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.util.Vector;
 
@@ -88,6 +87,7 @@ public class NetherPortals implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = false)
     public void onPlayerPortal(PlayerPortalEvent event) {
+	//plugin.getLogger().info("Player portal event - reason =" + event.getCause());
 	UUID playerUUID = event.getPlayer().getUniqueId();
 	// If the nether is disabled then quit immediately
 	if (!Settings.createNether) {
@@ -145,6 +145,9 @@ public class NetherPortals implements Listener {
 			return;
 		    }
 		}
+	    } else {
+		event.setCancelled(true);
+		plugin.getGrid().homeTeleport(event.getPlayer());
 	    }
 	    break;
 	case NETHER_PORTAL:
