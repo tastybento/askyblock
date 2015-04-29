@@ -20,7 +20,6 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -2165,25 +2164,88 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 	}
 
 	return 0L;
-    }
+	}
 
 	@Override
 	public List<String> onTabComplete(final CommandSender sender, final Command command, final String label, final String[] args) {
+	if (!(sender instanceof Player)) {
+		return new ArrayList<String>();
+	}
+	final Player player = (Player) sender;
+
+	final List<String> options = new ArrayList<String>();
 	String lastArg = (args.length != 0 ? args[args.length - 1] : "");
-	
+
 	switch (args.length) {
 	case 0: 
 	case 1: 
-		return tabLimit(Arrays.asList(
-				"go", "spawn", "controlpanel", "cp", "restart", 
-				"sethome", "level", "top", "minishop", "ms", 
-				"warps", "warp", "team", "invite", "leave", 
-				"kick", "accept", "reject", "makeleader", 
-				"biomes", "expel", "coop", "lock", "settings", 
-				"lang")
-			, lastArg);
-	default: return new ArrayList<String>();
+		options.add("help");
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.sethome")) {
+		options.add("go");
+		}
+		if (plugin.getGrid() != null && plugin.getGrid().getSpawn() != null) {
+			options.add("spawn");
+		}
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.controlpanel")) {
+			options.add("controlpanel");
+			options.add("cp");
+		}
+		options.add("restart");
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.sethome")) {
+			options.add("sethome");
+		}
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.info")) {
+			options.add("level");
+		}
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.topten")) {
+			options.add("top");
+		}
+		if (Settings.useEconomy && VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.minishop")) {
+			options.add("minishop");
+			options.add("ms");
+		}
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.warp")) {
+			options.add("warp");
+			options.add("warps");
+		}
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.create")) {
+			options.add("team");
+			options.add("invite");
+			options.add("leave");
+		}
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.kick")) {
+			options.add("kick");
+		}
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.join")) {
+			options.add("accept");
+			options.add("reject");
+		}
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.makeleader")) {
+			options.add("makeleader");
+		}
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.biomes")) {
+			options.add("biomes");
+		}
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.expel")) {
+			options.add("expel");
+		}
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "coop")) {
+			options.add("coop");
+		}
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.lock")) {
+			options.add("lock");
+		}
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.settings")) {
+			options.add("settings");
+		}
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.lang")) {
+			options.add("lang");
+		}
+
+		break;
 	}
+
+	return tabLimit(options, lastArg);
 	}
 	
 	/**
