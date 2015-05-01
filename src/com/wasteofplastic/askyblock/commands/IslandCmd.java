@@ -2180,6 +2180,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 	case 0: 
 	case 1: 
 		options.add("help"); //No permission needed.
+		options.add("make"); //No permission needed.
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.sethome")) {
 			options.add("go");
 		}
@@ -2245,6 +2246,9 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 
 		break;
 	case 2: 
+		if (args[0].equalsIgnoreCase("make")) {
+			options.addAll(schematics.keySet());
+		}
 		if (args[0].equalsIgnoreCase("lang")) {
 			options.add("English");
 			options.add("Français");
