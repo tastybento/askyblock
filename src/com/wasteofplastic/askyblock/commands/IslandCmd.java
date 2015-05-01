@@ -57,6 +57,7 @@ import com.wasteofplastic.askyblock.GridManager;
 import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.LevelCalc;
 import com.wasteofplastic.askyblock.Messages;
+import com.wasteofplastic.askyblock.PlayerCache;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.TopTen;
 import com.wasteofplastic.askyblock.WarpSigns;
@@ -2173,6 +2174,13 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 	}
 	final Player player = (Player) sender;
 
+	final UUID playerUUID = player.getUniqueId();
+	final UUID teamLeader = plugin.getPlayers().getTeamLeader(playerUUID);
+	List<UUID> teamMembers = new ArrayList<UUID>();
+	if (teamLeader != null) {
+	    teamMembers = plugin.getPlayers().getMembers(teamLeader);
+	}
+	
 	final List<String> options = new ArrayList<String>();
 	String lastArg = (args.length != 0 ? args[args.length - 1] : "");
 
@@ -2263,6 +2271,57 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 			options.add("Chinese");
 			options.add("Čeština");
 			options.add("Slovenčina");
+		}
+		if (args[0].equalsIgnoreCase("go")) {
+			for (int i = 0; i < Settings.maxHomes; i++) {
+				options.add(Integer.toString(i));
+			}
+		}
+		if (args[0].equalsIgnoreCase("sethome")) {
+			for (int i = 0; i < Settings.maxHomes; i++) {
+				options.add(Integer.toString(i));
+			}
+		}
+		if (args[0].equalsIgnoreCase("warp")) {
+			final Set<UUID> warpList = WarpSigns.listWarps();
+
+			for (UUID warp : warpList) {
+				options.add(plugin.getPlayers().getName(warp));
+			}
+		}
+		if (args[0].equalsIgnoreCase("level")) {
+			final List<Player> players = PlayerCache.getOnlinePlayers();
+			for (Player p : players) {
+				options.add(p.getName());
+			}
+		}
+		if (args[0].equalsIgnoreCase("invite")) {
+			final List<Player> players = PlayerCache.getOnlinePlayers();
+			for (Player p : players) {
+				options.add(p.getName());
+			}
+		}
+		if (args[0].equalsIgnoreCase("coop")) {
+			final List<Player> players = PlayerCache.getOnlinePlayers();
+			for (Player p : players) {
+				options.add(p.getName());
+			}
+		}
+		if (args[0].equalsIgnoreCase("expel")) {
+			final List<Player> players = PlayerCache.getOnlinePlayers();
+			for (Player p : players) {
+				options.add(p.getName());
+			}
+		}
+		if (args[0].equalsIgnoreCase("kick") || args[0].equalsIgnoreCase("remove")) {
+			for (UUID member : teamMembers) {
+			    options.add(plugin.getPlayers().getName(member));
+			}
+		}
+		if (args[0].equalsIgnoreCase("makeleader")) {
+			for (UUID member : teamMembers) {
+			    options.add(plugin.getPlayers().getName(member));
+			}
 		}
 		break;
 	}
