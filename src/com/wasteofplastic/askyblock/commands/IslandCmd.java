@@ -2174,6 +2174,10 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 	}
 	final Player player = (Player) sender;
 
+	if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.create")) {
+		return new ArrayList<String>();
+	}
+	
 	final UUID playerUUID = player.getUniqueId();
 	final UUID teamLeader = plugin.getPlayers().getTeamLeader(playerUUID);
 	List<UUID> teamMembers = new ArrayList<UUID>();
@@ -2257,6 +2261,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 		if (args[0].equalsIgnoreCase("make")) {
 			options.addAll(schematics.keySet());
 		}
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.lang")) {
 		if (args[0].equalsIgnoreCase("lang")) {
 			options.add("English");
 			options.add("Français");
@@ -2272,16 +2277,15 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 			options.add("Čeština");
 			options.add("Slovenčina");
 		}
-		if (args[0].equalsIgnoreCase("go")) {
+		}
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.sethome")) {
+		if (args[0].equalsIgnoreCase("go") || args[0].equalsIgnoreCase("sethome")) {
 			for (int i = 0; i < Settings.maxHomes; i++) {
 				options.add(Integer.toString(i));
 			}
 		}
-		if (args[0].equalsIgnoreCase("sethome")) {
-			for (int i = 0; i < Settings.maxHomes; i++) {
-				options.add(Integer.toString(i));
-			}
 		}
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.warp")) {
 		if (args[0].equalsIgnoreCase("warp")) {
 			final Set<UUID> warpList = WarpSigns.listWarps();
 
@@ -2289,39 +2293,52 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 				options.add(plugin.getPlayers().getName(warp));
 			}
 		}
+		}
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.info")) {
 		if (args[0].equalsIgnoreCase("level")) {
 			final List<Player> players = PlayerCache.getOnlinePlayers();
 			for (Player p : players) {
 				options.add(p.getName());
 			}
 		}
+		}
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.create")) {
 		if (args[0].equalsIgnoreCase("invite")) {
 			final List<Player> players = PlayerCache.getOnlinePlayers();
 			for (Player p : players) {
 				options.add(p.getName());
 			}
 		}
+		}
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "coop")) {
 		if (args[0].equalsIgnoreCase("coop")) {
 			final List<Player> players = PlayerCache.getOnlinePlayers();
 			for (Player p : players) {
 				options.add(p.getName());
 			}
 		}
+		}
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.expel")) {
 		if (args[0].equalsIgnoreCase("expel")) {
 			final List<Player> players = PlayerCache.getOnlinePlayers();
 			for (Player p : players) {
 				options.add(p.getName());
 			}
 		}
+		}
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.kick")) {
 		if (args[0].equalsIgnoreCase("kick") || args[0].equalsIgnoreCase("remove")) {
 			for (UUID member : teamMembers) {
 			    options.add(plugin.getPlayers().getName(member));
 			}
 		}
+		}
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.makeleader")) {
 		if (args[0].equalsIgnoreCase("makeleader")) {
 			for (UUID member : teamMembers) {
 			    options.add(plugin.getPlayers().getName(member));
 			}
+		}
 		}
 		break;
 	}
