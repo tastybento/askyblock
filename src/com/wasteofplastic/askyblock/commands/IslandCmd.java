@@ -2179,10 +2179,11 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 	switch (args.length) {
 	case 0: 
 	case 1: 
-		options.add("help");
+		options.add("help"); //No permission needed.
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.sethome")) {
-		options.add("go");
+			options.add("go");
 		}
+		options.add("about"); //No permission needed.
 		if (plugin.getGrid() != null && plugin.getGrid().getSpawn() != null) {
 			options.add("spawn");
 		}
@@ -2190,7 +2191,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 			options.add("controlpanel");
 			options.add("cp");
 		}
-		options.add("restart");
+		options.add("restart"); //No permission needed.
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.sethome")) {
 			options.add("sethome");
 		}
