@@ -2244,6 +2244,23 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 		}
 
 		break;
+	case 2: 
+		if (args[0].equalsIgnoreCase("lang")) {
+			options.add("English");
+			options.add("Français");
+			options.add("Deutsch");
+			options.add("Español");
+			options.add("Italiano");
+			options.add("한국의");
+			options.add("Korean");
+			options.add("Polski");
+			options.add("Brasil");
+			options.add("中国");
+			options.add("Chinese");
+			options.add("Čeština");
+			options.add("Slovenčina");
+		}
+		break;
 	}
 
 	return tabLimit(options, lastArg);
