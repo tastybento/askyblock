@@ -1,25 +1,22 @@
-/*******************************************************************************
+/**
+ * ****************************************************************************
  * This file is part of ASkyBlock.
- *
- *     ASkyBlock is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     ASkyBlock is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with ASkyBlock.  If not, see <http://www.gnu.org/licenses/>.
- *******************************************************************************/
+ * <p/>
+ * ASkyBlock is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * <p/>
+ * ASkyBlock is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU General Public License
+ * along with ASkyBlock.  If not, see <http://www.gnu.org/licenses/>.
+ * *****************************************************************************
+ */
 package com.wasteofplastic.askyblock;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
 
 import org.bukkit.block.Biome;
 import org.bukkit.entity.EntityType;
@@ -27,17 +24,17 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 import org.bukkit.potion.PotionEffectType;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+
 /**
  * Where all the settings are
- * 
+ *
  * @author tastybento
  */
 public class Settings {
-    // Constants
-    // Game Type ASKYBLOCK or ACIDISLAND
-    public enum GameType {
-	ASKYBLOCK, ACIDISLAND
-    }
     /*
     public final static GameType GAMETYPE = GameType.ACIDISLAND;
     // The spawn command (Essentials spawn for example)
@@ -58,8 +55,6 @@ public class Settings {
     public static final String CHALLENGECOMMAND = "asc";
     // The spawn command (Essentials spawn for example)
     public final static String SPAWNCOMMAND = "spawn";
-
-    
     public static Set<String> challengeList;
     public static int waiverAmount;
     public static List<String> challengeLevels;
@@ -94,7 +89,6 @@ public class Settings {
     public static boolean allowBrewing;
     public static boolean allowGateUse;
     public static boolean allowHurtMobs;
-
     public static ItemStack[] chestItems;
     public static int islandDistance;
     public static int islandXOffset;
@@ -125,7 +119,6 @@ public class Settings {
     public static boolean allowArmorStandUse;
     public static boolean allowBeaconAccess;
     public static boolean allowPortalUse;
-
     // public static boolean ultraSafeBoats;
     public static boolean logInRemoveMobs;
     public static boolean islandRemoveMobs;
@@ -149,11 +142,9 @@ public class Settings {
     public static boolean allowSpawnAnimalSpawn;
     public static boolean allowSpawnAnimalKilling;
     public static boolean allowSpawnMobKilling;
-
     // Levels
     public static HashMap<MaterialData, Integer> blockLimits;
     public static HashMap<MaterialData, Integer> blockValues;
-
     // Challenge completion broadcast
     public static boolean broadcastMessages;
     // Nether world
@@ -166,32 +157,24 @@ public class Settings {
     // Biomes
     public static double biomeCost;
     public static Biome defaultBiome;
-
     // Island reset commands
     public static List<String> resetCommands = new ArrayList<String>();
     // Mob limits
     public static int breedingLimit;
-
     // Challenges - show or remove completed on-time challenges
     public static boolean removeCompleteOntimeChallenges;
     public static boolean addCompletedGlow;
-
     // New nether
     public static boolean newNether;
-
     // Animal Damage
     public static double animalAcidDamage;
     public static boolean damageChickens;
-
     // Use Economy
     public static boolean useEconomy;
-
     // Wait between being invited to same team island
     public static int inviteWait;
-
     // Use physics when pasting schematic blocks
     public static boolean usePhysics;
-
     // Falling blocked commands
     public static List<String> fallingCommandBlockList;
     public static List<String> leaveCommands;
@@ -217,5 +200,10 @@ public class Settings {
     public static boolean useSchematicPanel;
     public static double underWaterMultiplier;
     public static String teamSuffix;
+    // Constants
+    // Game Type ASKYBLOCK or ACIDISLAND
+    public enum GameType {
+        ASKYBLOCK, ACIDISLAND
+    }
 
 }

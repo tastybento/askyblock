@@ -2,9 +2,8 @@ package org.jnbt;
 
 /**
  * The <code>TAG_End</code> tag.
- * 
+ *
  * @author Graham Edgecombe
- * 
  */
 public final class EndTag extends Tag {
 
@@ -12,17 +11,17 @@ public final class EndTag extends Tag {
      * Creates the tag.
      */
     public EndTag() {
-	super("");
+        super("");
     }
 
     @Override
     public Object getValue() {
-	return null;
+        return null;
     }
 
     @Override
     public String toString() {
-	return "TAG_End";
+        return "TAG_End";
     }
 
 }

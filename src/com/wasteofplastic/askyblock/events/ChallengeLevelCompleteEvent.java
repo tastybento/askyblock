@@ -6,9 +6,8 @@ import org.bukkit.event.HandlerList;
 
 /**
  * This event is fired when a player completes a challenge level
- * 
+ *
  * @author tastybento
- * 
  */
 public class ChallengeLevelCompleteEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
@@ -22,38 +21,38 @@ public class ChallengeLevelCompleteEvent extends Event {
      * @param newLevel
      */
     public ChallengeLevelCompleteEvent(Player player, int oldLevel, int newLevel) {
-	this.player = player;
-	this.oldLevel = oldLevel;
-	this.newLevel = newLevel;
+        this.player = player;
+        this.oldLevel = oldLevel;
+        this.newLevel = newLevel;
+    }
+
+    public static HandlerList getHandlerList() {
+        return handlers;
     }
 
     /**
      * @return the player
      */
     public Player getPlayer() {
-	return player;
+        return player;
     }
 
     /**
      * @return the oldLevel
      */
     public int getOldLevel() {
-	return oldLevel;
+        return oldLevel;
     }
 
     /**
      * @return the newLevel
      */
     public int getNewLevel() {
-	return newLevel;
+        return newLevel;
     }
 
     @Override
     public HandlerList getHandlers() {
-	return handlers;
-    }
-
-    public static HandlerList getHandlerList() {
-	return handlers;
+        return handlers;
     }
 }

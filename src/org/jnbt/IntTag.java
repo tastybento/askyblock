@@ -2,9 +2,8 @@ package org.jnbt;
 
 /**
  * The <code>TAG_Int</code> tag.
- * 
+ *
  * @author Graham Edgecombe
- * 
  */
 public final class IntTag extends Tag {
 
@@ -15,30 +14,28 @@ public final class IntTag extends Tag {
 
     /**
      * Creates the tag.
-     * 
-     * @param name
-     *            The name.
-     * @param value
-     *            The value.
+     *
+     * @param name  The name.
+     * @param value The value.
      */
     public IntTag(String name, int value) {
-	super(name);
-	this.value = value;
+        super(name);
+        this.value = value;
     }
 
     @Override
     public Integer getValue() {
-	return value;
+        return value;
     }
 
     @Override
     public String toString() {
-	String name = getName();
-	String append = "";
-	if (name != null && !name.equals("")) {
-	    append = "(\"" + this.getName() + "\")";
-	}
-	return "TAG_Int" + append + ": " + value;
+        String name = getName();
+        String append = "";
+        if (name != null && !name.equals("")) {
+            append = "(\"" + this.getName() + "\")";
+        }
+        return "TAG_Int" + append + ": " + value;
     }
 
 }
