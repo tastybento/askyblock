@@ -57,6 +57,7 @@ import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.TopTen;
 import com.wasteofplastic.askyblock.WarpSigns;
+import com.wasteofplastic.askyblock.panels.BiomesPanel;
 import com.wasteofplastic.askyblock.panels.ControlPanel;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
@@ -1224,6 +1225,8 @@ public class AdminCmd implements CommandExecutor {
 	if (island.getCenter().getWorld().equals(ASkyBlock.getIslandWorld())) {
 	    // Over World start
 	    plugin.getGrid().removeMobsFromIsland(island.getCenter());
+	    // Reset the biome
+	    BiomesPanel.setIslandBiome(island.getCenter(), Settings.defaultBiome);
 	    new DeleteIslandChunk(plugin, island.getCenter());
 	    // Delete the new nether island too (if it exists)
 	    if (Settings.createNether && Settings.newNether) {
@@ -1239,6 +1242,8 @@ public class AdminCmd implements CommandExecutor {
 	    // Delete the overworld island too
 	    Location otherIsland = island.getCenter().toVector().toLocation(ASkyBlock.getIslandWorld());
 	    plugin.getGrid().removeMobsFromIsland(otherIsland);
+	    // Reset the biome
+	    BiomesPanel.setIslandBiome(island.getCenter(), Settings.defaultBiome);
 	    // Delete island
 	    new DeleteIslandChunk(plugin, otherIsland);  
 	} else {
