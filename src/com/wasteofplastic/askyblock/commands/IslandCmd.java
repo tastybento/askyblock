@@ -164,18 +164,22 @@ public class IslandCmd implements CommandExecutor {
 
 		// Add it to schematics
 		try {
-		    schematics.put("nether",new Schematic(netherFile));
+		    Schematic netherIsland = new Schematic(netherFile);
+		    netherIsland.setVisible(false);
+		    schematics.put("nether", netherIsland);
 		} catch (IOException e) {
 		    plugin.getLogger().severe("Could not load default nether schematic!");
 		    e.printStackTrace();
-		}  
+		} 
 	    } else {
 		plugin.getLogger().severe("Could not find default nether schematic!");
 	    }
 	} else {
 	    // It exists, so load it
 	    try {
-		schematics.put("nether",new Schematic(netherFile));
+		Schematic netherIsland = new Schematic(netherFile);
+		netherIsland.setVisible(false);
+		schematics.put("nether", netherIsland);
 	    } catch (IOException e) {
 		plugin.getLogger().severe("Could not load default nether schematic!");
 		e.printStackTrace();
