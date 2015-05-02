@@ -761,8 +761,8 @@ public class Locale {
 	islandhelpLeave = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpLeave", "leave another player's island."));
 	islandhelpKick = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpKick", "remove a team member from your island."));
 	islandhelpExpel = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpExpel", "force a player from your island."));
-	islandhelpBan = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpBan", "ban a player from your island."));
-	islandhelpUnban = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpUnban", "un-ban a player from your island."));
+	islandhelpBan = ChatColor.translateAlternateColorCodes('&', locale.getString("ban.helpBan", "ban a player from your island."));
+	islandhelpUnban = ChatColor.translateAlternateColorCodes('&', locale.getString("ban.helpUnban", "un-ban a player from your island."));
 	islandHelpSettings = ChatColor.translateAlternateColorCodes('&',
 		locale.getString("island.helpSettings", "see island protection and game settings"));
 	islandHelpChallenges = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpChallenges", "/challenges: &fshow challenges"));
