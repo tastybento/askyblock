@@ -190,7 +190,9 @@ public class ASkyBlock extends JavaPlugin {
 		grid.saveGrid();
 	    }
 	    WarpSigns.saveWarpList();
-	    messages.saveMessages();
+	    if (messages != null) {
+		messages.saveMessages();
+	    }
 	    TopTen.topTenSave();
 	} catch (final Exception e) {
 	    getLogger().severe("Something went wrong saving files!");
@@ -630,6 +632,7 @@ public class ASkyBlock extends JavaPlugin {
 	availableLocales.put("zh-CN", new Locale(this,"zh-CN"));
 	availableLocales.put("cs-CS", new Locale(this,"cs-CS"));
 	availableLocales.put("sk-SK", new Locale(this,"sk-SK"));
+	availableLocales.put("zh-TW", new Locale(this,"zh-TW"));
 
 	// Assign settings
 	String configVersion = getConfig().getString("general.version", "");
