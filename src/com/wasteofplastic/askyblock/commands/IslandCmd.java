@@ -128,6 +128,7 @@ public class IslandCmd implements CommandExecutor {
 	// Load the default schematic if it exists
 	// Set up the default schematic
 	File schematicFile = new File(schematicFolder, "island.schematic");
+	File netherFile = new File(schematicFolder, "nether.schematic");
 	if (!schematicFile.exists()) {
 	    //plugin.getLogger().info("Default schematic does not exist...");
 	    // Only copy if the default exists
@@ -153,6 +154,30 @@ public class IslandCmd implements CommandExecutor {
 		schematics.put("default",new Schematic(schematicFile));
 	    } catch (IOException e) {
 		plugin.getLogger().severe("Could not load default schematic!");
+		e.printStackTrace();
+	    }
+	}
+	// Add the nether default too
+	if (!netherFile.exists()) {
+	    if (plugin.getResource("schematics/nether.schematic") != null) {
+		plugin.saveResource("schematics/nether.schematic", false);
+
+		// Add it to schematics
+		try {
+		    schematics.put("nether",new Schematic(netherFile));
+		} catch (IOException e) {
+		    plugin.getLogger().severe("Could not load default nether schematic!");
+		    e.printStackTrace();
+		}  
+	    } else {
+		plugin.getLogger().severe("Could not find default nether schematic!");
+	    }
+	} else {
+	    // It exists, so load it
+	    try {
+		schematics.put("nether",new Schematic(netherFile));
+	    } catch (IOException e) {
+		plugin.getLogger().severe("Could not load default nether schematic!");
 		e.printStackTrace();
 	    }
 	}
@@ -246,8 +271,10 @@ public class IslandCmd implements CommandExecutor {
 			newSchem.setUseDefaultChest(schemSection.getBoolean("schematics." + key + ".useDefaultChest", true));
 			// Biomes - overrides default if it exists
 			String biomeString = schemSection.getString("schematics." + key + ".biome",Settings.defaultBiome.toString());
+			Biome biome = null;
 			try {
-			    newSchem.setBiome(Biome.valueOf(biomeString));
+			    biome = Biome.valueOf(biomeString);
+			    newSchem.setBiome(biome);
 			} catch (Exception e) {
 			    plugin.getLogger().severe("Could not parse biome " + biomeString + " using default instead.");
 			}
@@ -258,7 +285,13 @@ public class IslandCmd implements CommandExecutor {
 			// Visible in GUI or not
 			newSchem.setVisible(schemSection.getBoolean("schematics." + key + ".show",true));
 			// Partner schematic
-			newSchem.setPartnerName(schemSection.getString("schematics." + key + ".partnerSchematic",""));
+			if (biome != null && biome.equals(Biome.HELL)) {
+			    // Default for nether biomes is the default overworld island
+			    newSchem.setPartnerName(schemSection.getString("schematics." + key + ".partnerSchematic","default"));
+			} else {
+			    // Default for overworld biomes is nether island
+			    newSchem.setPartnerName(schemSection.getString("schematics." + key + ".partnerSchematic","nether"));
+			}
 			// Island companion
 			List<String> companion = schemSection.getStringList("schematics." + key + ".companion");
 			List<EntityType> companionTypes = new ArrayList<EntityType>();
@@ -501,7 +534,7 @@ public class IslandCmd implements CommandExecutor {
      * @return the schematics
      */
     public static HashMap<String, Schematic> getSchematics() {
-        return schematics;
+	return schematics;
     }
 
     /**
