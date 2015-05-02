@@ -6,19 +6,18 @@ import org.bukkit.event.HandlerList;
 
 /**
  * This event is fired when a player completes a challenge
- * 
+ *
  * @author tastybento
- * 
  */
 public class ChallengeCompleteEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
     private final Player player;
     private final String challengeName;
-    private String[] permList;
-    private String[] itemRewards;
     private final double moneyReward;
     private final int expReward;
     private final String rewardText;
+    private String[] permList;
+    private String[] itemRewards;
 
     /**
      * @param player
@@ -30,71 +29,71 @@ public class ChallengeCompleteEvent extends Event {
      * @param rewardText
      */
     public ChallengeCompleteEvent(Player player, String challengeName, String[] permList, String[] itemRewards, double moneyReward, int expReward,
-	    String rewardText) {
-	this.player = player;
-	this.challengeName = challengeName;
-	this.permList = permList;
-	this.itemRewards = itemRewards;
-	this.moneyReward = moneyReward;
-	this.expReward = expReward;
-	this.rewardText = rewardText;
+                                  String rewardText) {
+        this.player = player;
+        this.challengeName = challengeName;
+        this.permList = permList;
+        this.itemRewards = itemRewards;
+        this.moneyReward = moneyReward;
+        this.expReward = expReward;
+        this.rewardText = rewardText;
+    }
+
+    public static HandlerList getHandlerList() {
+        return handlers;
     }
 
     /**
      * @return the player
      */
     public Player getPlayer() {
-	return player;
+        return player;
     }
 
     /**
      * @return the challengeName
      */
     public String getChallengeName() {
-	return challengeName;
+        return challengeName;
     }
 
     /**
      * @return the permList
      */
     public String[] getPermList() {
-	return permList;
+        return permList;
     }
 
     /**
      * @return the itemRewards
      */
     public String[] getItemRewards() {
-	return itemRewards;
+        return itemRewards;
     }
 
     /**
      * @return the moneyReward
      */
     public double getMoneyReward() {
-	return moneyReward;
+        return moneyReward;
     }
 
     /**
      * @return the expReward
      */
     public int getExpReward() {
-	return expReward;
+        return expReward;
     }
 
     /**
      * @return the rewardText
      */
     public String getRewardText() {
-	return rewardText;
+        return rewardText;
     }
 
     @Override
     public HandlerList getHandlers() {
-	return handlers;
-    }
-
-    public static HandlerList getHandlerList() {
-	return handlers;
+        return handlers;
     }
 }

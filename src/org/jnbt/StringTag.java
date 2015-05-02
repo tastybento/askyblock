@@ -2,9 +2,8 @@ package org.jnbt;
 
 /**
  * The <code>TAG_String</code> tag.
- * 
+ *
  * @author Graham Edgecombe
- * 
  */
 public final class StringTag extends Tag {
 
@@ -15,30 +14,28 @@ public final class StringTag extends Tag {
 
     /**
      * Creates the tag.
-     * 
-     * @param name
-     *            The name.
-     * @param value
-     *            The value.
+     *
+     * @param name  The name.
+     * @param value The value.
      */
     public StringTag(String name, String value) {
-	super(name);
-	this.value = value;
+        super(name);
+        this.value = value;
     }
 
     @Override
     public String getValue() {
-	return value;
+        return value;
     }
 
     @Override
     public String toString() {
-	String name = getName();
-	String append = "";
-	if (name != null && !name.equals("")) {
-	    append = "(\"" + this.getName() + "\")";
-	}
-	return "TAG_String" + append + ": " + value;
+        String name = getName();
+        String append = "";
+        if (name != null && !name.equals("")) {
+            append = "(\"" + this.getName() + "\")";
+        }
+        return "TAG_String" + append + ": " + value;
     }
 
 }

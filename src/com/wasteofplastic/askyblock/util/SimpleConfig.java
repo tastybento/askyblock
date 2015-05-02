@@ -1,5 +1,10 @@
 package com.wasteofplastic.askyblock.util;
 
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.java.JavaPlugin;
+
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -7,14 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.java.JavaPlugin;
-
 /**
  * @author Log-out & SamThePsychoticLeprechaun
- *
  */
 public class SimpleConfig {
     private int comments;
@@ -24,533 +23,532 @@ public class SimpleConfig {
     private FileConfiguration config;
 
     public SimpleConfig(InputStream configStream, File configFile, int comments, JavaPlugin plugin) {
-	this.comments = comments;
-	this.manager = new SimpleConfigManager(plugin);
+        this.comments = comments;
+        this.manager = new SimpleConfigManager(plugin);
 
-	this.file = configFile;
-	this.config = YamlConfiguration.loadConfiguration(configStream);
+        this.file = configFile;
+        this.config = YamlConfiguration.loadConfiguration(configStream);
     }
 
     public Object get(String path) {
-	return this.config.get(path);
+        return this.config.get(path);
     }
 
     public Object get(String path, Object def) {
-	return this.config.get(path, def);
+        return this.config.get(path, def);
     }
 
     public String getString(String path) {
-	return this.config.getString(path);
+        return this.config.getString(path);
     }
 
     public String getString(String path, String def) {
-	return this.config.getString(path, def);
+        return this.config.getString(path, def);
     }
 
     public int getInt(String path) {
-	return this.config.getInt(path);
+        return this.config.getInt(path);
     }
 
     public int getInt(String path, int def) {
-	return this.config.getInt(path, def);
+        return this.config.getInt(path, def);
     }
 
     public boolean getBoolean(String path) {
-	return this.config.getBoolean(path);
+        return this.config.getBoolean(path);
     }
 
     public boolean getBoolean(String path, boolean def) {
-	return this.config.getBoolean(path, def);
+        return this.config.getBoolean(path, def);
     }
 
     public void createSection(String path) {
-	this.config.createSection(path);
+        this.config.createSection(path);
     }
 
     public ConfigurationSection getConfigurationSection(String path) {
-	return this.config.getConfigurationSection(path);
+        return this.config.getConfigurationSection(path);
     }
 
     public double getDouble(String path) {
-	return this.config.getDouble(path);
+        return this.config.getDouble(path);
     }
 
     public double getDouble(String path, double def) {
-	return this.config.getDouble(path, def);
+        return this.config.getDouble(path, def);
     }
 
     public List<?> getList(String path) {
-	return this.config.getList(path);
+        return this.config.getList(path);
     }
 
     public List<?> getList(String path, List<?> def) {
-	return this.config.getList(path, def);
+        return this.config.getList(path, def);
     }
 
     public List<String> getStringList(String path) {
 
-	List<?> list = getList(path);
+        List<?> list = getList(path);
 
-	if (list == null) {
+        if (list == null) {
 
-	    return new ArrayList<String>(0);
+            return new ArrayList<String>(0);
 
-	}
+        }
 
-	List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<String>();
 
-	for (Object object : list) {
+        for (Object object : list) {
 
-	    if ((object instanceof String) || (isPrimitiveWrapper(object))) {
+            if ((object instanceof String) || (isPrimitiveWrapper(object))) {
 
-		result.add(String.valueOf(object));
-	    }
+                result.add(String.valueOf(object));
+            }
 
-	}
+        }
 
-	return result;
+        return result;
 
     }
 
     public List<Integer> getIntegerList(String path) {
 
-	List<?> list = getList(path);
+        List<?> list = getList(path);
 
-	if (list == null) {
+        if (list == null) {
 
-	    return new ArrayList<Integer>(0);
+            return new ArrayList<Integer>(0);
 
-	}
+        }
 
-	List<Integer> result = new ArrayList<Integer>();
+        List<Integer> result = new ArrayList<Integer>();
 
-	for (Object object : list) {
+        for (Object object : list) {
 
-	    if (object instanceof Integer) {
+            if (object instanceof Integer) {
 
-		result.add((Integer) object);
+                result.add((Integer) object);
 
-	    } else if (object instanceof String) {
+            } else if (object instanceof String) {
 
-		try {
+                try {
 
-		    result.add(Integer.valueOf((String) object));
+                    result.add(Integer.valueOf((String) object));
 
-		} catch (Exception ex) {
+                } catch (Exception ex) {
 
-		}
+                }
 
-	    } else if (object instanceof Character) {
+            } else if (object instanceof Character) {
 
-		result.add((int) ((Character) object).charValue());
+                result.add((int) ((Character) object).charValue());
 
-	    } else if (object instanceof Number) {
+            } else if (object instanceof Number) {
 
-		result.add(((Number) object).intValue());
+                result.add(((Number) object).intValue());
 
-	    }
+            }
 
-	}
+        }
 
-	return result;
+        return result;
 
     }
 
     public List<Boolean> getBooleanList(String path) {
 
-	List<?> list = getList(path);
+        List<?> list = getList(path);
 
-	if (list == null) {
+        if (list == null) {
 
-	    return new ArrayList<Boolean>(0);
+            return new ArrayList<Boolean>(0);
 
-	}
+        }
 
 
-	List<Boolean> result = new ArrayList<Boolean>();
+        List<Boolean> result = new ArrayList<Boolean>();
 
-	for (Object object : list) {
+        for (Object object : list) {
 
-	    if (object instanceof Boolean) {
+            if (object instanceof Boolean) {
 
-		result.add((Boolean) object);
+                result.add((Boolean) object);
 
-	    } else if (object instanceof String) {
+            } else if (object instanceof String) {
 
-		if (Boolean.TRUE.toString().equals(object)) {
+                if (Boolean.TRUE.toString().equals(object)) {
 
-		    result.add(true);
+                    result.add(true);
 
-		} else if (Boolean.FALSE.toString().equals(object)) {
+                } else if (Boolean.FALSE.toString().equals(object)) {
 
-		    result.add(false);
+                    result.add(false);
 
-		}
+                }
 
-	    }
+            }
 
-	}
+        }
 
-	return result;
+        return result;
 
     }
 
 
     public List<Double> getDoubleList(String path) {
 
-	List<?> list = getList(path);
+        List<?> list = getList(path);
 
 
-	if (list == null) {
+        if (list == null) {
 
-	    return new ArrayList<Double>(0);
+            return new ArrayList<Double>(0);
 
-	}
+        }
 
-	List<Double> result = new ArrayList<Double>();
+        List<Double> result = new ArrayList<Double>();
 
-	for (Object object : list) {
+        for (Object object : list) {
 
-	    if (object instanceof Double) {
+            if (object instanceof Double) {
 
-		result.add((Double) object);
+                result.add((Double) object);
 
-	    } else if (object instanceof String) {
+            } else if (object instanceof String) {
 
-		try {
+                try {
 
-		    result.add(Double.valueOf((String) object));
+                    result.add(Double.valueOf((String) object));
 
-		} catch (Exception ex) {
+                } catch (Exception ex) {
 
-		}
+                }
 
-	    } else if (object instanceof Character) {
+            } else if (object instanceof Character) {
 
-		result.add((double) ((Character) object).charValue());
+                result.add((double) ((Character) object).charValue());
 
-	    } else if (object instanceof Number) {
+            } else if (object instanceof Number) {
 
-		result.add(((Number) object).doubleValue());
+                result.add(((Number) object).doubleValue());
 
-	    }
+            }
 
-	}
+        }
 
-	return result;
+        return result;
 
     }
 
     public List<Float> getFloatList(String path) {
 
-	List<?> list = getList(path);
+        List<?> list = getList(path);
 
-	if (list == null) {
+        if (list == null) {
 
-	    return new ArrayList<Float>(0);
+            return new ArrayList<Float>(0);
 
-	}
+        }
 
-	List<Float> result = new ArrayList<Float>();
+        List<Float> result = new ArrayList<Float>();
 
-	for (Object object : list) {
+        for (Object object : list) {
 
-	    if (object instanceof Float) {
+            if (object instanceof Float) {
 
 
-		result.add((Float) object);
+                result.add((Float) object);
 
-	    } else if (object instanceof String) {
+            } else if (object instanceof String) {
 
-		try {
+                try {
 
-		    result.add(Float.valueOf((String) object));
+                    result.add(Float.valueOf((String) object));
 
-		} catch (Exception ex) {
+                } catch (Exception ex) {
 
-		}
+                }
 
-	    } else if (object instanceof Character) {
+            } else if (object instanceof Character) {
 
-		result.add((float) ((Character) object).charValue());
+                result.add((float) ((Character) object).charValue());
 
-	    } else if (object instanceof Number) {
+            } else if (object instanceof Number) {
 
-		result.add(((Number) object).floatValue());
+                result.add(((Number) object).floatValue());
 
-	    }
+            }
 
-	}
+        }
 
-	return result;
+        return result;
 
     }
 
     public List<Long> getLongList(String path) {
 
-	List<?> list = getList(path);
+        List<?> list = getList(path);
 
-	if (list == null) {
+        if (list == null) {
 
-	    return new ArrayList<Long>(0);
+            return new ArrayList<Long>(0);
 
-	}
+        }
 
-	List<Long> result = new ArrayList<Long>();
+        List<Long> result = new ArrayList<Long>();
 
-	for (Object object : list) {
+        for (Object object : list) {
 
-	    if (object instanceof Long) {
+            if (object instanceof Long) {
 
-		result.add((Long) object);
+                result.add((Long) object);
 
-	    } else if (object instanceof String) {
+            } else if (object instanceof String) {
 
-		try {
+                try {
 
-		    result.add(Long.valueOf((String) object));
+                    result.add(Long.valueOf((String) object));
 
-		} catch (Exception ex) {
+                } catch (Exception ex) {
 
-		}
+                }
 
-	    } else if (object instanceof Character) {
+            } else if (object instanceof Character) {
 
-		result.add((long) ((Character) object).charValue());
+                result.add((long) ((Character) object).charValue());
 
-	    } else if (object instanceof Number) {
+            } else if (object instanceof Number) {
 
-		result.add(((Number) object).longValue());
+                result.add(((Number) object).longValue());
 
-	    }
+            }
 
-	}
+        }
 
-	return result;
+        return result;
 
     }
 
     public List<Byte> getByteList(String path) {
 
-	List<?> list = getList(path);
+        List<?> list = getList(path);
 
-	if (list == null) {
+        if (list == null) {
 
-	    return new ArrayList<Byte>(0);
+            return new ArrayList<Byte>(0);
 
-	}
+        }
 
-	List<Byte> result = new ArrayList<Byte>();
+        List<Byte> result = new ArrayList<Byte>();
 
-	for (Object object : list) {
+        for (Object object : list) {
 
-	    if (object instanceof Byte) {
+            if (object instanceof Byte) {
 
-		result.add((Byte) object);
+                result.add((Byte) object);
 
-	    } else if (object instanceof String) {
+            } else if (object instanceof String) {
 
-		try {
+                try {
 
-		    result.add(Byte.valueOf((String) object));
+                    result.add(Byte.valueOf((String) object));
 
-		} catch (Exception ex) {
+                } catch (Exception ex) {
 
-		}
+                }
 
-	    } else if (object instanceof Character) {
+            } else if (object instanceof Character) {
 
-		result.add((byte) ((Character) object).charValue());
+                result.add((byte) ((Character) object).charValue());
 
-	    } else if (object instanceof Number) {
+            } else if (object instanceof Number) {
 
-		result.add(((Number) object).byteValue());
+                result.add(((Number) object).byteValue());
 
-	    }
+            }
 
-	}
+        }
 
-	return result;
+        return result;
 
     }
 
     public List<Character> getCharacterList(String path) {
 
-	List<?> list = getList(path);
+        List<?> list = getList(path);
 
-	if (list == null) {
+        if (list == null) {
 
-	    return new ArrayList<Character>(0);
+            return new ArrayList<Character>(0);
 
-	}
+        }
 
-	List<Character> result = new ArrayList<Character>();
+        List<Character> result = new ArrayList<Character>();
 
-	for (Object object : list) {
+        for (Object object : list) {
 
-	    if (object instanceof Character) {
-
-
-		result.add((Character) object);
-
-	    } else if (object instanceof String) {
-
-		String str = (String) object;
+            if (object instanceof Character) {
 
 
-		if (str.length() == 1) {
+                result.add((Character) object);
 
-		    result.add(str.charAt(0));
+            } else if (object instanceof String) {
 
-		}
+                String str = (String) object;
 
-	    } else if (object instanceof Number) {
 
-		result.add((char) ((Number) object).intValue());
+                if (str.length() == 1) {
 
-	    }
+                    result.add(str.charAt(0));
 
-	}
+                }
 
-	return result;
+            } else if (object instanceof Number) {
+
+                result.add((char) ((Number) object).intValue());
+
+            }
+
+        }
+
+        return result;
 
     }
 
     public List<Short> getShortList(String path) {
 
-	List<?> list = getList(path);
+        List<?> list = getList(path);
 
-	if (list == null) {
+        if (list == null) {
 
-	    return new ArrayList<Short>(0);
+            return new ArrayList<Short>(0);
 
-	}
+        }
 
-	List<Short> result = new ArrayList<Short>();
+        List<Short> result = new ArrayList<Short>();
 
-	for (Object object : list) {
+        for (Object object : list) {
 
-	    if (object instanceof Short) {
+            if (object instanceof Short) {
 
-		result.add((Short) object);
+                result.add((Short) object);
 
-	    } else if (object instanceof String) {
+            } else if (object instanceof String) {
 
-		try {
+                try {
 
-		    result.add(Short.valueOf((String) object));
+                    result.add(Short.valueOf((String) object));
 
-		} catch (Exception ex) {
+                } catch (Exception ex) {
 
-		}
+                }
 
-	    } else if (object instanceof Character) {
+            } else if (object instanceof Character) {
 
-		result.add((short) ((Character) object).charValue());
+                result.add((short) ((Character) object).charValue());
 
-	    } else if (object instanceof Number) {
+            } else if (object instanceof Number) {
 
-		result.add(((Number) object).shortValue());
+                result.add(((Number) object).shortValue());
 
-	    }
+            }
 
-	}
+        }
 
-	return result;
+        return result;
 
     }
 
     public List<Map<?, ?>> getMapList(String path) {
 
-	List<?> list = getList(path);
+        List<?> list = getList(path);
 
-	List<Map<?, ?>> result = new ArrayList<Map<?, ?>>();
+        List<Map<?, ?>> result = new ArrayList<Map<?, ?>>();
 
-	if (list == null) {
+        if (list == null) {
 
-	    return result;
+            return result;
 
-	}
+        }
 
-	for (Object object : list) {
+        for (Object object : list) {
 
-	    if (object instanceof Map) {
+            if (object instanceof Map) {
 
-		result.add((Map<?, ?>) object);
+                result.add((Map<?, ?>) object);
 
-	    }
+            }
 
-	}
+        }
 
-	return result;
+        return result;
 
     }
-
 
 
     public boolean contains(String path) {
-	return this.config.contains(path);
+        return this.config.contains(path);
     }
 
     public void removeKey(String path) {
-	this.config.set(path, null);
+        this.config.set(path, null);
     }
 
     public void set(String path, Object value) {
-	this.config.set(path, value);
+        this.config.set(path, value);
     }
 
     public void set(String path, Object value, String comment) {
-	if(!this.config.contains(path)) {
-	    this.config.set(manager.getPluginName() + "_COMMENT_" + comments, " " + comment);
-	    comments++;
-	}
+        if (!this.config.contains(path)) {
+            this.config.set(manager.getPluginName() + "_COMMENT_" + comments, " " + comment);
+            comments++;
+        }
 
-	this.config.set(path, value);
+        this.config.set(path, value);
 
     }
 
     public void set(String path, Object value, String[] comment) {
 
-	for(String comm : comment) {
+        for (String comm : comment) {
 
-	    if(!this.config.contains(path)) {
-		this.config.set(manager.getPluginName() + "_COMMENT_" + comments, " " + comm);
-		comments++;
-	    }
+            if (!this.config.contains(path)) {
+                this.config.set(manager.getPluginName() + "_COMMENT_" + comments, " " + comm);
+                comments++;
+            }
 
-	}
+        }
 
-	this.config.set(path, value);
+        this.config.set(path, value);
 
     }
 
     public void setHeader(String[] header) {
-	manager.setHeader(this.file, header);
-	this.comments = header.length + 2;
-	this.reloadConfig();
+        manager.setHeader(this.file, header);
+        this.comments = header.length + 2;
+        this.reloadConfig();
     }
 
     public void reloadConfig() {
-	this.config = YamlConfiguration.loadConfiguration(manager.getConfigContent(file));
+        this.config = YamlConfiguration.loadConfiguration(manager.getConfigContent(file));
     }
 
     public void saveConfig() {
-	String config = this.config.saveToString();
-	manager.saveConfig(config, this.file);
+        String config = this.config.saveToString();
+        manager.saveConfig(config, this.file);
 
     }
 
     public Set<String> getKeys() {
-	return this.config.getKeys(false);
+        return this.config.getKeys(false);
     }
 
     protected boolean isPrimitiveWrapper(Object input) {
 
-	return input instanceof Integer || input instanceof Boolean ||
-		input instanceof Character || input instanceof Byte ||
-		input instanceof Short || input instanceof Double ||
-		input instanceof Long || input instanceof Float;
+        return input instanceof Integer || input instanceof Boolean ||
+                input instanceof Character || input instanceof Byte ||
+                input instanceof Short || input instanceof Double ||
+                input instanceof Long || input instanceof Float;
 
     }
 

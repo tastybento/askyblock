@@ -1,36 +1,35 @@
 package com.wasteofplastic.askyblock;
 
+import org.bukkit.Location;
+import org.bukkit.entity.EntityType;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-import org.bukkit.Location;
-import org.bukkit.entity.EntityType;
-
 /**
  * Interface to island.
- * 
- * @author tastybento
  *
+ * @author tastybento
  */
 public interface IslandInterface {
 
     /**
      * Checks if a location is within this island's protected area
-     * 
+     *
      * @param loc
      * @return
      */
-    public boolean onIsland(Location target); 
+    public boolean onIsland(Location target);
 
     /**
      * Checks if location is anywhere in the island space (island distance)
-     * 
+     *
      * @param target
      * @return true if in the area
      */
-    public boolean inIslandSpace(Location target); 
-    
+    public boolean inIslandSpace(Location target);
+
     public boolean inIslandSpace(int x, int z);
 
     /**
@@ -39,21 +38,20 @@ public interface IslandInterface {
     public int getMinX();
 
     /**
-     * @param minX
-     *            the minX to set
+     * @param minX the minX to set
      */
-    public void setMinX(int minX) ;
+    public void setMinX(int minX);
 
     /**
      * @return the z
      */
     public int getMinZ();
+
     /**
-     * @param z
-     *            the z to set
+     * @param z the z to set
      */
     public void setMinZ(int minZ);
-    
+
     /**
      * @return the minprotectedX
      */
@@ -70,30 +68,27 @@ public interface IslandInterface {
     public int getProtectionSize();
 
     /**
-     * @param protectionRange
-     *            the protectionRange to set
+     * @param protectionRange the protectionRange to set
      */
     public void setProtectionSize(int protectionSize);
-    
+
     /**
      * @return the islandDistance
      */
     public int getIslandDistance();
 
     /**
-     * @param islandDistance
-     *            the islandDistance to set
+     * @param islandDistance the islandDistance to set
      */
     public void setIslandDistance(int islandDistance);
-    
+
     /**
      * @return the center
      */
     public Location getCenter();
 
     /**
-     * @param center
-     *            the center to set
+     * @param center the center to set
      */
     public void setCenter(Location center);
 
@@ -103,8 +98,7 @@ public interface IslandInterface {
     public UUID getOwner();
 
     /**
-     * @param owner
-     *            the owner to set
+     * @param owner the owner to set
      */
     public void setOwner(UUID owner);
 
@@ -114,8 +108,7 @@ public interface IslandInterface {
     public long getCreatedDate();
 
     /**
-     * @param createdDate
-     *            the createdDate to set
+     * @param createdDate the createdDate to set
      */
     public void setCreatedDate(long createdDate);
 
@@ -125,8 +118,7 @@ public interface IslandInterface {
     public long getUpdatedDate();
 
     /**
-     * @param updatedDate
-     *            the updatedDate to set
+     * @param updatedDate the updatedDate to set
      */
     public void setUpdatedDate(long updatedDate);
 
@@ -136,18 +128,17 @@ public interface IslandInterface {
     public String getPassword();
 
     /**
-     * @param password
-     *            the password to set
+     * @param password the password to set
      */
     public void setPassword(String password);
+
     /**
      * @return the votes
      */
     public int getVotes();
 
     /**
-     * @param votes
-     *            the votes to set
+     * @param votes the votes to set
      */
     public void setVotes(int votes);
 
@@ -157,8 +148,7 @@ public interface IslandInterface {
     public boolean isLocked();
 
     /**
-     * @param locked
-     *            the locked to set
+     * @param locked the locked to set
      */
     public void setLocked(boolean locked);
 
@@ -167,7 +157,7 @@ public interface IslandInterface {
     /**
      * Provides a list of all the players who are allowed on this island
      * including coop members
-     * 
+     *
      * @return a list of UUIDs that have legitimate access to the island
      */
     public List<UUID> getMembers();
@@ -176,10 +166,9 @@ public interface IslandInterface {
      * @return the isSpawn
      */
     public boolean isSpawn();
-    
+
     /**
-     * @param isSpawn
-     *            the isSpawn to set
+     * @param isSpawn the isSpawn to set
      */
     public void setSpawn(boolean isSpawn);
 
