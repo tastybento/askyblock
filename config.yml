@@ -191,7 +191,9 @@ general:
 
    # Try new island-style nether. Change to true
    # Still in Beta!
-   newnether: false    
+   newnether: false
+   # Nether trees are made if a player grows a tree in the new nether (gravel and glowstone)
+   nethertrees: true  
 
    #How long a player must wait before they can reset their island again in second
    resetwait: 300

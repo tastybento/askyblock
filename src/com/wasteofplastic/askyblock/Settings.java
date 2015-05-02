@@ -217,5 +217,6 @@ public class Settings {
     public static String teamSuffix;
     public static int levelCost;
     public static boolean respawnOnIsland;
+    public static boolean netherTrees;
 
 }

@@ -916,6 +916,7 @@ public class ASkyBlock extends JavaPlugin {
 	Settings.startingMoney = getConfig().getDouble("general.startingmoney", 0D);
 	Settings.respawnOnIsland = getConfig().getBoolean("general.respawnonisland", false);
 	Settings.newNether = getConfig().getBoolean("general.newnether", false);
+	Settings.netherTrees = getConfig().getBoolean("general.nethertrees", true);
 	// Nether spawn protection radius
 	Settings.netherSpawnRadius = getConfig().getInt("general.netherspawnradius", 25);
 	if (Settings.netherSpawnRadius < 0) {

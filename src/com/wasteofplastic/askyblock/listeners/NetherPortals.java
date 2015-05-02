@@ -197,7 +197,7 @@ public class NetherPortals implements Listener {
 		    // Check that there is a nether island there. Due to legacy reasons it may not exist
 		    if (dest.getBlock().getType() != Material.BEDROCK) {
 			// Check to see if there is anything there
-			if (plugin.getGrid().bigScan(dest, -1) == null) {
+			if (plugin.getGrid().bigScan(dest, 20) == null) {
 			    plugin.getLogger().warning("Creating nether island for " + event.getPlayer().getName() + " using default nether schematic");
 			    Schematic nether = IslandCmd.getSchematics().get("nether");
 			    if (nether != null) {
@@ -512,11 +512,11 @@ public class NetherPortals implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onTreeGrow(final StructureGrowEvent e) {
-	if (!Settings.newNether) {
+	if (!Settings.newNether || !Settings.netherTrees) {
 	    return;
 	}
 	// Check world
-	if (!e.getLocation().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_nether")) {
+	if (!e.getLocation().getWorld().equals(ASkyBlock.getNetherWorld())) {
 	    return;
 	}
 	for (BlockState b : e.getBlocks()) {
