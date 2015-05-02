@@ -99,12 +99,12 @@ public class ASkyBlock extends JavaPlugin {
     // Listeners
     private Listener warpSignsListener;
     private Listener lavaListener;
-
     // Biome chooser object
     private BiomesPanel biomes;
-
     // Island grid manager
     private GridManager grid;
+    // Island command object
+    private IslandCmd islandCmd;
 
     private boolean debug = false;
 
@@ -253,12 +253,13 @@ public class ASkyBlock extends JavaPlugin {
 	    playersFolder.mkdir();
 	}
 	// Set up commands for this plugin
+	islandCmd = new IslandCmd(this);
 	if (Settings.GAMETYPE.equals(Settings.GameType.ASKYBLOCK)) {
-	    getCommand("island").setExecutor(new IslandCmd(this));
+	    getCommand("island").setExecutor(islandCmd);
 	    getCommand("asc").setExecutor(getChallenges());
 	    getCommand("asadmin").setExecutor(new AdminCmd(this));
 	} else {
-	    getCommand("ai").setExecutor(new IslandCmd(this));
+	    getCommand("ai").setExecutor(islandCmd);
 	    getCommand("aic").setExecutor(getChallenges());
 	    getCommand("acid").setExecutor(new AdminCmd(this));
 	}
@@ -1333,5 +1334,12 @@ public class ASkyBlock extends JavaPlugin {
      */
     public Messages getMessages() {
 	return messages;
+    }
+
+    /**
+     * @return the islandCmd
+     */
+    public IslandCmd getIslandCmd() {
+        return islandCmd;
     }
 }

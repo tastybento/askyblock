@@ -498,6 +498,13 @@ public class IslandCmd implements CommandExecutor {
     }
 
     /**
+     * @return the schematics
+     */
+    public static HashMap<String, Schematic> getSchematics() {
+        return schematics;
+    }
+
+    /**
      * Makes the default island for the player
      * @param player
      */
@@ -637,9 +644,19 @@ public class IslandCmd implements CommandExecutor {
 	    @Override
 	    public void run() {
 		schematic.pasteSchematic(loc, player);
-		
+
 	    }}, 60L);
-	
+
+    }
+
+    /**
+     * Pastes a schematic at a location for the player
+     * @param schematic
+     * @param loc
+     * @param player
+     */
+    public void pasteSchematic(final Schematic schematic, final Location loc, final Player player) {
+	schematic.pasteSchematic(loc, player);
     }
 
     /**

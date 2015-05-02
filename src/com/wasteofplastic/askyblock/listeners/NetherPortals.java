@@ -42,6 +42,8 @@ import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.GridManager;
 import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.Settings;
+import com.wasteofplastic.askyblock.commands.IslandCmd;
+import com.wasteofplastic.askyblock.schematics.Schematic;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
 public class NetherPortals implements Listener {
@@ -187,10 +189,27 @@ public class NetherPortals implements Listener {
 		    return;
 		}
 		// Can go both ways now
+		// Start with going to the overworld
 		Location dest = island.getCenter().toVector().toLocation(ASkyBlock.getIslandWorld());
 		if (event.getFrom().getWorld().getEnvironment().equals(Environment.NORMAL)) {
 		    // Going to Nether
 		    dest = island.getCenter().toVector().toLocation(ASkyBlock.getNetherWorld());
+		    // Check that there is a nether island there. Due to legacy reasons it may not exist
+		    if (dest.getBlock().getType() != Material.BEDROCK) {
+			// Check to see if there is anything there
+			if (plugin.getGrid().bigScan(dest, -1) == null) {
+			    plugin.getLogger().warning("Creating nether island for " + event.getPlayer().getName() + " using default nether schematic");
+			    Schematic nether = IslandCmd.getSchematics().get("nether");
+			    if (nether != null) {
+				plugin.getIslandCmd().pasteSchematic(nether, dest, event.getPlayer());
+			    } else {
+				plugin.getLogger().severe("Cannot telelport player to nether because there is no nether schematic");
+				event.setCancelled(true);
+				event.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(event.getPlayer().getUniqueId()).warpserrorNotSafe);
+				return;
+			    }
+			}
+		    }
 		}
 		if (!GridManager.isSafeLocation(dest)) {
 		    dest = plugin.getGrid().bigScan(dest, -1);
