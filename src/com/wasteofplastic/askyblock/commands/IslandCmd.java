@@ -1362,6 +1362,18 @@ public class IslandCmd implements CommandExecutor {
 				    maxSize = Settings.maxTeamSize;
 				}
 			    }
+			    // Account for deprecated permissions. These will be zero on new installs
+			    // This avoids these permissions breaking on upgrades
+			    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.vip")) {
+				if (Settings.maxTeamSizeVIP > maxSize) {
+				    maxSize = Settings.maxTeamSizeVIP;
+				}
+			    }
+			    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.vip2")) {
+				if (Settings.maxTeamSizeVIP2 > maxSize) {
+				    maxSize = Settings.maxTeamSizeVIP2;
+				}
+			    }
 			    if (teamMembers.size() < maxSize) {
 				player.sendMessage(ChatColor.GREEN
 					+ plugin.myLocale(player.getUniqueId()).inviteyouCanInvite.replace("[number]", String.valueOf(maxSize - teamMembers.size())));

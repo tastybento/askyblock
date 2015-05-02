@@ -694,6 +694,13 @@ public class ASkyBlock extends JavaPlugin {
 	Settings.fallingCommandBlockList = getConfig().getStringList("general.blockingcommands");
 	// Max team size
 	Settings.maxTeamSize = getConfig().getInt("island.maxteamsize", 4);
+	// Deprecated settings - use permission askyblock.team.maxsize.<number> instead
+	Settings.maxTeamSizeVIP = getConfig().getInt("island.vipteamsize", 0);
+	Settings.maxTeamSizeVIP2 = getConfig().getInt("island.vip2teamsize", 0);
+	if (Settings.maxTeamSizeVIP > 0 || Settings.maxTeamSizeVIP2 > 0) {
+	    getLogger().warning(Settings.PERMPREFIX + "team.vip and " + Settings.PERMPREFIX + "team.vip2 are deprecated!");
+	    getLogger().warning("Use permission " + Settings.PERMPREFIX + "team.maxsize.<number> instead.");
+	}
 	// Max home number
 	Settings.maxHomes = getConfig().getInt("general.maxhomes",1);
 	if (Settings.maxHomes < 1) {

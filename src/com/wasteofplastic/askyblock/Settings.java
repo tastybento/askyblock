@@ -218,5 +218,7 @@ public class Settings {
     public static int levelCost;
     public static boolean respawnOnIsland;
     public static boolean netherTrees;
+    public static int maxTeamSizeVIP;
+    public static int maxTeamSizeVIP2;
 
 }
