@@ -163,17 +163,30 @@ public class Schematic {
 	topGrass = null;
 
 	// Establish the World Edit to Material look up
-	WEtoM.put("ACACIA_DOOR",Material.ACACIA_DOOR_ITEM);
-	WEtoM.put("BIRCH_DOOR",Material.BIRCH_DOOR_ITEM);
-	WEtoM.put("BIRCH_STAIRS",Material.BIRCH_WOOD_STAIRS);
+	// V1.8 items
+	// New V1.8 events
+	Class<?> clazz;
+	try {
+	    clazz = Class.forName("org.bukkit.Material.ACACIA_DOOR_ITEM");
+	} catch (Exception e) {
+	    clazz = null;
+	}
+	if (clazz != null) {
+	    WEtoM.put("ACACIA_DOOR",Material.ACACIA_DOOR_ITEM);
+	    WEtoM.put("BIRCH_DOOR",Material.BIRCH_DOOR_ITEM);
+	    WEtoM.put("BIRCH_STAIRS",Material.BIRCH_WOOD_STAIRS);
+	    WEtoM.put("DARK_OAK_DOOR",Material.DARK_OAK_DOOR_ITEM);
+	    WEtoM.put("JUNGLE_DOOR",Material.JUNGLE_DOOR_ITEM);
+	    WEtoM.put("SLIME",Material.SLIME_BLOCK);
+	    WEtoM.put("SPRUCE_DOOR",Material.SPRUCE_DOOR_ITEM);
+	}
 	WEtoM.put("BREWING_STAND",Material.BREWING_STAND_ITEM);
 	WEtoM.put("CARROT_ON_A_STICK",Material.CARROT_STICK);
 	WEtoM.put("CARROT",Material.CARROT_ITEM);
 	WEtoM.put("CAULDRON", Material.CAULDRON_ITEM);
 	WEtoM.put("COBBLESTONE_WALL",Material.COBBLE_WALL);
 	WEtoM.put("COMPARATOR",Material.REDSTONE_COMPARATOR);
-	WEtoM.put("COOKED_PORKCHOP", Material.GRILLED_PORK);
-	WEtoM.put("DARK_OAK_DOOR",Material.DARK_OAK_DOOR_ITEM);
+	WEtoM.put("COOKED_PORKCHOP", Material.GRILLED_PORK);	
 	WEtoM.put("DIAMOND_HORSE_ARMOR",Material.DIAMOND_BARDING);
 	WEtoM.put("DIAMOND_SHOVEL",Material.DIAMOND_SPADE);
 	WEtoM.put("DYE",Material.INK_SACK);
@@ -201,7 +214,6 @@ public class Schematic {
 	WEtoM.put("IRON_BARS",Material.IRON_FENCE);
 	WEtoM.put("IRON_HORSE_ARMOR",Material.IRON_BARDING);
 	WEtoM.put("IRON_SHOVEL",Material.IRON_SPADE);
-	WEtoM.put("JUNGLE_DOOR",Material.JUNGLE_DOOR_ITEM);
 	WEtoM.put("LEAD",Material.LEASH);
 	WEtoM.put("LEAVES2",Material.LEAVES_2);
 	WEtoM.put("LIGHT_WEIGHTED_PRESSURE_PLATE",Material.IRON_PLATE);
@@ -230,9 +242,7 @@ public class Schematic {
 	WEtoM.put("REEDS",Material.SUGAR_CANE);
 	WEtoM.put("REPEATER",Material.DIODE);
 	WEtoM.put("SKULL", Material.SKULL_ITEM);
-	WEtoM.put("SLIME",Material.SLIME_BLOCK);
 	WEtoM.put("SPAWN_EGG",Material.MONSTER_EGG);
-	WEtoM.put("SPRUCE_DOOR",Material.SPRUCE_DOOR_ITEM);
 	WEtoM.put("STONE_BRICK_STAIRS",Material.BRICK_STAIRS);
 	WEtoM.put("STONE_BRICK_STAIRS",Material.SMOOTH_STAIRS);
 	WEtoM.put("STONE_SHOVEL",Material.STONE_SPADE);
@@ -1048,7 +1058,7 @@ public class Schematic {
 	} else {
 	    grass = null;
 	}
-	
+
 	//Bukkit.getLogger().info("DEBUG cow location " + grass);
 	Block blockToChange = null;
 	// world.spawnEntity(grass, EntityType.COW);
