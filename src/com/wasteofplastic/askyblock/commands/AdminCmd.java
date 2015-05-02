@@ -699,25 +699,13 @@ public class AdminCmd implements CommandExecutor {
 						if (!oldPlayer.getBoolean("hasTeam", false)) {
 						    // plugin.getLogger().info("and is a lone player");
 						    if (oldPlayer.getInt("islandLevel", 0) < Settings.abandonedIslandLevel) {
-							// plugin.getLogger().info("and their island will be removed!");
-							// player.sendMessage("Island level for "
-							// +
-							// plugin.getPlayers().getName(playerUUID)
-							// + " is " +
-							// plugin.getPlayers().getIslandLevel(playerUUID));
-							removeList.add(playerUUID);
-						    } else {
-							// plugin.getLogger().info("but their island level is > "
-							// +
-							// Settings.abandonedIslandLevel
-							// +
-							// " so not deleting");
-						    }
-						} else {
-						    // plugin.getLogger().info("but is in a team");
-						}
-					    } else {
-						// plugin.getLogger().info("but does not have an island.");
+							// Check if the island is purge protected
+							Island island = plugin.getGrid().getIsland(playerUUID);
+							if (island == null || (island != null && !island.isPurgeProtected())) {
+							    removeList.add(playerUUID);
+							}
+						    } 
+						} 
 					    }
 					} catch (Exception e) {
 					    // Just skip it
@@ -784,7 +772,7 @@ public class AdminCmd implements CommandExecutor {
 			}.runTaskTimer(plugin, 0L, 40L);
 		    }
 		});
-		return true;
+							return true;
 	    } else if (split[0].equalsIgnoreCase("clearreset")) {
 		// Convert name to a UUID
 		final UUID playerUUID = plugin.getPlayers().getUUID(split[1]);
@@ -1453,6 +1441,11 @@ public class AdminCmd implements CommandExecutor {
 		sender.sendMessage(ChatColor.YELLOW + "Island is locked");
 	    } else {
 		sender.sendMessage(ChatColor.YELLOW + "Island is unlocked");
+	    }
+	    if (island.isPurgeProtected()) {
+		sender.sendMessage(ChatColor.GREEN + "Island is purge protected");
+	    } else {
+		sender.sendMessage(ChatColor.GREEN + "Island is not purge protected");
 	    }
 	    List<UUID> banList = plugin.getPlayers().getBanList(playerUUID);
 	    if (!banList.isEmpty()) {
