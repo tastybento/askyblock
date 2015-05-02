@@ -55,6 +55,8 @@ public class Players {
     private String playerName;
     private int resetsLeft;
     private HashMap<Location, Date> kickedList;
+    private String locale;
+    private int startIslandRating;
 
     /**
      * @param uuid
@@ -78,6 +80,8 @@ public class Players {
 	this.playerName = "";
 	this.resetsLeft = Settings.resetLimit;
 	this.kickedList = new HashMap<Location, Date>();
+	this.locale = "";
+	this.startIslandRating = 50;
 	load(uuid);
     }
 
@@ -103,6 +107,10 @@ public class Players {
 		playerName = "";
 	    }
 	}
+	// Start island rating - how difficult the start island was. Default if 50/100
+	this.startIslandRating = playerInfo.getInt("startIslandRating", 50);
+	// Locale
+	this.locale = playerInfo.getString("locale","");
 	// plugin.getLogger().info("Loading player..." + playerName);
 	this.hasIsland = playerInfo.getBoolean("hasIsland", false);
 	// plugin.getLogger().info("DEBUG: hasIsland load = " + this.hasIsland);
@@ -186,13 +194,15 @@ public class Players {
      * Saves the player info to the file system
      */
     public void save() {
-	// plugin.getLogger().info("Saving player..." + playerName);
+	//plugin.getLogger().info("Saving player..." + playerName);
 	// Save the variables
 	playerInfo.set("playerName", playerName);
 	playerInfo.set("hasIsland", hasIsland);
 	playerInfo.set("islandLocation", islandLocation);
 	playerInfo.set("homeLocation", null);
 	// Only store the new way
+	// Clear any old home locations
+	playerInfo.set("homeLocations",null);
 	for (int num : homeLocations.keySet()) {
 	    playerInfo.set("homeLocations." + num, Util.getStringLocation(homeLocations.get(num)));
 	}
@@ -211,6 +221,7 @@ public class Players {
 	}
 	playerInfo.set("members", temp);
 	// Save the challenges
+	playerInfo.set("challenges",null);
 	for (String challenge : challengeList.keySet()) {
 	    playerInfo.set("challenges.status." + challenge, challengeList.get(challenge));
 	}
@@ -230,9 +241,18 @@ public class Players {
 	    coolDownTime.setTime(en.getValue());
 	    playerInfo.set("invitecooldown." + coolDownTime.getTimeInMillis(), Util.getStringLocation(en.getKey()));
 	}
-
+	// Locale
+	playerInfo.set("locale", locale);
+	// Start island rating
+	if (startIslandRating < 1){
+	    // Remove it if the rating is 0 or less
+	    playerInfo.set("startIslandRating", null);
+	} else {
+	    playerInfo.set("startIslandRating", startIslandRating);
+	}
+	
+	// Actually save the file
 	Util.saveYamlFile(playerInfo, "players/" + uuid.toString() + ".yml");
-
     }
 
     /**
@@ -705,5 +725,34 @@ public class Players {
     public void clearHomeLocations() {
 	homeLocations.clear();
     }
+
+    /**
+     * @return the locale
+     */
+    public String getLocale() {
+        return locale;
+    }
+
+    /**
+     * @param locale the locale to set
+     */
+    public void setLocale(String locale) {
+        this.locale = locale;
+    }
+
+    /**
+     * @return the startIslandRating
+     */
+    public int getStartIslandRating() {
+        return startIslandRating;
+    }
+
+    /**
+     * @param startIslandRating the startIslandRating to set
+     */
+    public void setStartIslandRating(int startIslandRating) {
+        this.startIslandRating = startIslandRating;
+    }
+    
 
 }

@@ -1,0 +1,362 @@
+###########################################################################################
+# This is a YML file. Be careful when editing. Check your edits in a YAML checker like    #
+# the one at http://yaml-online-parser.appspot.com                                        #
+# If this file is deleted, then it will be recreate at the next reload.                   #
+###########################################################################################
+################
+#General Errors#
+################
+error:
+   #"Error: Invalid Player (check spelling)"
+   unknownPlayer: "Joueur inconnu."
+   #"You can't access that command!"
+   #"/acid is a command for mods and ops only"
+   noPermission: "Vous n'avez pas la permission de faire ça !"
+   noIsland: "Vous n'avez pas d'île !"
+   noIslandOther: "Ce joueur n'a pas d'île !"
+   notOnIsland: "Vous devez être sur votre île pour utiliser cette commande."
+   commandNotReady: "Vous ne pouvez pas utiliser cette commande maintenant."
+   offlinePlayer: "Ce joueur est hors ligne ou n'existe pas."
+   unknownCommand: "Commande inconnue."
+   noTeam: "Ce joueur ne fait pas partie d'un groupe."
+   wrongWorld: "Vous ne pouvez faire ça que dans le monde Skyblock."
+#AcidEffect
+changingObsidiantoLava: "Transformation de l'obsidienne en lave. Faites attention !"
+#AcidInventory
+# The warning that goes on the acid bottles or buckets. Lines are split by \n
+acidLore: "Ne tombez pas !\nFaites attention!\n"
+acidBucket: "Sceau d'acide"
+acidBottle: "Bouteille d'acide"
+drankAcidAndDied: "Vous avez bu de l'acide, et vous êtes mort."
+drankAcid: "a bu de l'acide."
+#IslandGuard
+islandProtected: "Ile protégée"
+#LavaCheck
+lavaTip: "Astuce: Si vous ne vouliez pas d'obsidienne, vous pouvez récupérer de la lave avec un sceau en cliquant sur le bloc."
+#WarpSigns
+warps:
+   #This is the first line of the sign that determines if the sign is a warp sign or not
+   #If you change it, make sure it makes sense. It is case insensitive. Change the tip too.
+   welcomeLine: "[WELCOME]"
+   warpTip: "Créez un panneau [WELCOME] sur la première ligne pour créer un warp."
+   success: "Panneau de bienvenue créé !"
+   removed: "Panneau de bienvenue supprimé !"
+   signRemoved: "Votre panneau de bienvenue a été détruit !"
+   deactivate: "Désactivation de l'ancien panneau."
+   errorNoRemove: "Vous pouvez seulement enlever votre propre panneau!"
+   errorNoPerm: "You do not have permission to place Welcome Signs yet!"
+   errorNoPlace: "Vous devez être sur votre île pour placer un panneau de bienvenue !"
+   errorDuplicate: "Désolé! Il y a déjà un panneau ici!"
+   errorDoesNotExist: "Ce warp n'existe pas!"
+   errorNotReadyYet: "Ce warp n'est pas encore prêt. Réessayez plus tard."
+   errorNotSafe: "Ce warp n'est pas sécurisé. Réessayez plus tard."
+   #/island warp help
+   warpToPlayersSign: "Vous téléporte au panneau de bienvenue du joueur."
+   errorNoWarpsYet: "Aucun warp disponible !"
+   warpsAvailable: "Les warps suivants sont disponibles"
+   playerWarped: "[name] &2s'est téléporté sur votre île!"
+topTen:
+   header: "Top 10 des îles du serveur:"
+   errorNotReady: "Patientez !"
+level:
+   islandLevel: "Niveau de l'île:"
+   errornotYourIsland: "Vous n'êtes pas le propriétaire de cette île !"
+   calculating: "Calcul du niveau de l'île en cours..."
+sethome:
+   homeSet: "Votre home a été défini là où vous êtes."
+   errorNotOnIsland: "Vous devez être dans la zone de votre île !"
+   errorNoIsland: "Vous ne faites partie d'aucune ile. Retour au spawn."
+#Challenges
+challenges:
+   youHaveCompleted: "Vous avez complété le challenge [challenge] !"
+   nameHasCompleted: "[name] a complété le challenge [challenge] !"
+   youRepeated: "Vous avez à nouveau complété le challenge [challenge] !"
+   toComplete: "Complétez [challengesToDo] challenges [thisLevel] pour débloquer ce niveau !"
+   help1: "Utilisez /c <name> pour obtenir les informations de ce challenge."
+   help2: "Utilisez /c complete <name> pour compléter ce challenge.."
+   colors: "Les challenges auront des couleurs différentes si ils sont:"
+   complete: "Complétés"
+   incomplete: "Non réussis"
+   completeNotRepeatable: "Complétés (non répétables)"
+   completeRepeatable: "Complétés (répétables)"
+   name: "Nom du challenge"
+   level: "Niveau"
+   itemTakeWarning: "Les objets requis seront enlevés de votre inventaire !"
+   notRepeatable: "Vous ne pouvez pas recommencer ce challenge !"
+   firstTimeRewards: "Récompense(s):"
+   repeatRewards: "Récompense(s) de répétition:"
+   expReward: "Récompense en XP"
+   moneyReward: "Récompense en $"
+   toCompleteUse: "Pour compléter le challenge, utilisez"
+   invalidChallengeName: "Challenge invalide ! Utilisez /c help pour plus d'informations."
+   rewards: "Récompense(s)"
+   youHaveNotUnlocked: "Vous n'avez pas encore débloqué ce challenge !"
+   unknownChallenge: "Challenge inconnu !"
+   errorNotEnoughItems: "Vous n'avez pas le ou les objets requis !"
+   errorNotOnIsland: "Vous devez être sur votre île pour faire ça !"
+   errorNotCloseEnough: "Vous devez vous tenir à moins de 10 mètres des blocs nécessaires."
+   errorItemsNotThere: "Les objets doivent être proche de vous sur votre île !"
+   errorIslandLevel: "Votre île doit être niveau [level] pour compléter ce challenge !"
+   guititle: "Challenges"
+   erroryouaremissing: "Il vous manque"
+   errorRewardProblem: "Il y a eu un problème en vous donnant votre récompense. Contactez un administrateur !"
+#/island
+island:
+   # Titles for V1.8+ servers only. Set to '' to remove.
+   # Colors are fixed as blue and gold for now.
+   # Only works on 1.8+ servers
+   title: "A Skyblock"
+   subtitle: "par tastybento"
+   # This section is to solicit donations from players. Feel free to set to '' to remove :-)
+   donate: "ASkyblock par tastybento - traduction française par MrSheepSheep"
+   url: "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZSBJG5J2E3B7U"
+   teleport: "Téléportation sur votre île"
+   cannotTeleport: "Vous ne pouvez pas vous téléporter quand vous tombez "
+   new: "Création de l'île en cours..."
+   errorCouldNotCreateIsland: "Impossible de creér une nouvelle île. Contactez un modérateur / administrateur."
+   errorYouDoNotHavePermission: "Vous n'avez pas la permission d'utiliser cette commande !"
+   #/island reset
+   resetOnlyOwner: "Seul le propriétaire peut réinitialiser l'île. Vous pouvez quitter l'île avec /island leave."
+   resetMustRemovePlayers: "Vous devez éjecter les joueurs de votre île pour la réinitialiser (/island kick <joueur>). Utilisez /island team pour la liste des joueurs."
+   resetPleaseWait: "Une nouvelle île est en train d'être générée"
+   #Cool down warning - [time] is number of seconds left
+   resetWait: "Vous devez attendre [time] secondes avant de pouvoir faire ça à nouveau."
+   #Confirm
+   resetConfirm: "Tapez /island confirm dans les [seconds] secondes pour supprimer votre île, et la recommencer!"
+   resetYouHave: "Vous avez [number] réinitalisations restantes."
+   resetNoMore: "Vous ne pouvez plus réinitaliser votre île!"
+   resetTo: "Limite de réinitialisations effacée."
+   #/island help
+   #/island
+   helpIsland: "Commence une île, ou vous y téléporte."
+   helpTeleport: "Vous téléporte sur votre île."
+   helpIslandSpawn: "Vous téléporte au spawn."
+   helpContolPanel: "Ouvre le menu."
+   #/island restart
+   helpRestart: "Réinitialise votre île et en recommence une nouvelle !"
+   islandDeletedLifeboats: "Ile supprimée!"
+   #/island sethome
+   helpSetHome: "Définit le point de téléportation du /island."
+   #/island level
+   helpLevel: "Calcule le niveau de votre île"
+   #/island level <player>
+   helpLevelPlayer: "Affiche le niveau de l'île d'un joueur."
+   #/island top:
+   helpTop: "Affiche le top 10 des îles du serveur."
+   #/island warps:
+   helpWarps: "Affiche tous les warps disponibles."
+   #/island warp <player>
+   helpWarp: "Téléporte au warp d'un joueur."
+   #/island team
+   helpTeam: "Affiche les informations de votre groupe."
+   #/island invite <player>:
+   helpInvite: "Invite un joueur à rejoindre votre île."
+   #/island leave:
+   helpLeave: "Quitte l'île d'un joueur."
+   #/island kick <player>
+   helpKick: "Supprime un joueur de l'île."
+   #/island <accept/reject>
+   helpAcceptReject: "Accepte ou refuse une invitation."
+   #/island makeleader <player>
+   helpMakeLeader: "Transfère l'île à un joueur. Il en sera le propriétaire."
+   #Level
+   errorLevelNotReady: "Vous ne pouvez pas utiliser ça maintenant! Essayez à nouveau dans quelques secondes."
+   errorInvalidPlayer: "Ce joueur est invalide ou n'a pas d'île !"
+   islandLevelis: "Niveau de l'île:"
+   #/island expel <player>
+   helpExpel: "Force un joueur a quitter l'île."
+   helpLock: "Ferme l'île aux visiteurs."
+   # The color that is placed before the /commands in /island help
+   # See http://ess.khhq.net/mc/ for a list
+   helpColor: "&e"
+###################
+#/island commands #
+###################
+#invite
+invite:
+   help: "Utilisez [/island invite <joueur>] pour inviter un joueur sur votre île."
+   youCanInvite: "Vous pouvez encore inviter [number] joueurs."
+   youCannotInvite: "Vous ne pouvez plus inviter de joueurs."
+   onlyIslandOwnerCanInvite: "Seul le propriétaire peut inviter des joueurs !"
+   youHaveJoinedAnIsland: "Vous avez rejoint une île ! Utilisez /island team pour voir les membres de celle-ci."
+   hasJoinedYourIsland: "[name] a rejoint l'île !"
+   errorCantJoinIsland: "Cette île semble ne plus pouvoir inviter de membres."
+   errorYouMustHaveIslandToInvite: "Vous devez avoir une île pour faire ça !"
+   errorYouCannotInviteYourself: "Vous ne pouvez pas vous inviter vous-même !"
+   removingInvite: "Supression de votre ancienne invitation."
+   inviteSentTo: "Invitation envoyée à [name]."
+   nameHasInvitedYou: "[name] vous a invité à rejoindre votre île !"
+   toAcceptOrReject: "pour accepter ou refuser l'invitation."
+   warningYouWillLoseIsland: "ATTENTION: Votre île sera supprimée si vous acceptez !"
+   errorYourIslandIsFull: "Votre île ne peut plus accepter de membres."
+   #"That player is already with a group on an island."
+   errorThatPlayerIsAlreadyInATeam: "Ce joueur est déjà dans un groupe."
+#reject
+reject:
+   youHaveRejectedInvitation: "Vous avez refusé l'invitation."
+   nameHasRejectedInvite: "[name] a refusé votre invitation !"
+   youHaveNotBeenInvited: "Vous n'avez pas été invité à rejoindre une île."
+#leave
+leave:
+  errorYouAreTheLeader: "Vous êtes le propriétaire. Utilisez /island makeleader <joueur> pour transférer l'île à un membre du groupe."
+  youHaveLeftTheIsland: "Vous avez quitté l'île. Retour au spawn."
+  nameHasLeftYourIsland: "[name] a quitté l'île !"
+  errorYouCannotLeaveIsland: "Vous êtes seul. Impossible de quitter l'île. Utilisez /island restart pour en commencer une nouvelle !"
+  errorYouMustBeInWorld: "Vous devez être dans le monde Skyblck pour quitter votre groupe !"
+  errorLeadersCannotLeave: "Les propriétaires ne peuvent pas quitter l'île. Transférez l'île à un membre du groupe avec /island makeleader <joueur>"
+#team
+team:
+   listingMembers: "Membres de l'île:"
+#kick / remove
+kick:
+  errorPlayerNotInTeam: "Ce joueur n'est pas dans votre groupe !"
+  nameRemovedYou: "[name] vous a supprimé de l'île !"
+  nameRemoved: "[name] a été supprimé de l'île."
+  errorNotPartOfTeam: "Ce joueur ne fait pas partie de l'île !"
+  errorOnlyLeaderCan: "Seul le propriétaire peut supprimer des joueurs de l'île !"
+  errorNoTeam: "Vous n'avez pas de groupe !"
+#makeleader
+makeleader:
+   errorPlayerMustBeOnline: "Ce joueur doit être en ligne pour recevoir l'île."
+   errorYouMustBeInTeam: "Vous devez être dans un groupe pour transférer l'île."
+   errorRemoveAllPlayersFirst: "Vous devez supprimer tous les autres joueurs avant."
+   youAreNowTheOwner: "Vous êtes maintenant le propriétaire de l'île."
+   nameIsNowTheOwner: "[name] est le nouveau propriétaire de l'île !"
+   errorThatPlayerIsNotInTeam: "Ce joueur ne fait pas partie de l'île !"
+   errorNotYourIsland: "Ce n'est pas votre île !"
+   errorGeneralError: "Impossible de changer le propriétaire."
+#minishop
+minishop:
+   title: "&eMiniShop"
+   islandhelpMiniShop: "Ouvre le MiniShop"
+   buy: "Acheter (Clic gauche)"
+   sell: "Vendre (Clic droit)"
+   youcannotafford: "Vous ne pouvez pas acquérir [description]!"
+   youbought: "Vous avez acheté [number] [description] pour [price]"
+   yousold: "Vous avez vendu [number] [description] pour [price]"
+   buyproblem: "Il y a eu un problème lors de l'achat de [description]"
+   sellproblem: Vous n'avez pas assez de [description] à vendre."
+   outofstock: "Rupture de Stock"
+################################
+#Admin commands that use /acid #
+################################
+#Help
+adminHelp:
+   help: "Commandes d'Administration:"
+   reload: "recharge la configuration"
+   topTen: "met à jour manuellement le top 10 des îles"
+   register: "définit la position d'une île là où vous êtes"
+   unregister: "supprime un joueur sans supprimer son île"
+   delete: "supprime une île"
+   completeChallenge: "complète un challenge"
+   resetChallenge: "réinitialise un challenge"
+   resetAllChallenges: "réinitialise tous les challenges d'un joueur"
+   purge: "supprime les îles inactives anciennes de [jours] jours"
+   purgeholes: "supprime les emplacements d'îles vides"
+   info: "affiche les informations d'un joueur"
+   infoisland: "affiche les informations de l'île la plus proche"
+   clearreset: "réinitialise le nombre de réinitialisations d'un joueur"
+   setspawn: "définit l'île la plus proche comme le Spawn"
+   setrange: "modifie la distance de protection d'une île"
+#acid reload
+reload:
+   configReloaded: "Configuration rechargée"
+#topten
+adminTopTen:
+   generating: "Génération du top 10 des îles"
+   finished: "Génération du top 10 des îles terminée"
+#purge
+purge:
+   #"A purge is already running, please wait for it to finish!"
+   alreadyRunning: "La vérification est toujours en cours, attendez qu'elle se termine"
+   usage: "Utilisation: /asadmin purge [jours]"
+   calculating: "Calcul du nombre d'îles inactives depuis plus de [time] jours..."
+   noneFound: "Aucune île inactive à supprimer."
+   thisWillRemove: "Cela supprimera [number] îles inactives !"
+   warning: "ATTENTION! Ne faites pas ça si des joueurs sont connectés ! SAUVEGARDEZ VOTRE MONDE, FAITES UN BACKUP!"
+   typeConfirm: "Tapez /asadmin confirm pour confirmer"
+   purgeCancelled: "Suppression annulée."
+   finished: "Suppression des îles inactives terminée."
+   removingName: "Skyblock: Suppression de l'île de [name]"
+#confirm
+confirm:
+   errorTimeLimitExpired: "Limite de temps atteinte ! Retapez la commande."
+#delete
+delete:
+   removing: "Suppression de l'île de [name]"
+#register
+register:
+   settingIsland: "L'île de [name] est maintenant définie sur le bloc de bedrock le plus proche."
+   errorBedrockNotFound: "Bloc de bedrock introuvable: impossible de définir l'île !"
+#info
+adminInfo:
+   islandLocation: "Location de l'île"
+   errorNotPartOfTeam: "Ce joueur n'est pas membre d'une équipe."
+   errorNullTeamLeader: "Le chef d'équipe devrait être nul !"
+   errorTeamMembersExist: "Le joueur a des membres d'équipe, mais il ne devrait pas !"
+#resetallchallenges
+resetallchallenges:
+   success: "Challenges de [name] réinitialisés."
+#checkteam
+checkteam:
+   checkingTeam: "Vérification de l'équipe de [name]"
+#completechallenge
+completechallenge:
+   errorChallengeDoesNotExist: "Ce challenge n'existe pas ou est déjà complété."
+   challangeCompleted: "Challenge: [challengename] complété pour le joueur [name]"
+ 
+#resetchallenge
+resetchallenge:
+   errorChallengeDoesNotExist: "Ce challenge n'existe pas ou n'est pas complété."
+   challengeReset: "Challenge: [challengename] réinitialisé pour le joueur [name]"
+#AcidIsland news
+news:
+   headline: "[SkyBlock] Pendant que vous n'étiez pas là..."
+#Nether
+nether:
+   spawnisprotected: ""
+# Ultra safe boats
+boats:
+   warning: "Vous ne devriez pas sortir du bateau maintenant !"
+#Starter sign
+# [player] is replaced with the player's name
+# ChatColors can be used with &
+sign:
+   line1: "&1ASkyBlock"
+   line2: "[player]"
+   line3: "Voici votre île !"
+   line4: "Ne tombez pas !"
+biome:
+   set: "Biome de l'île défini: [biome] !"
+   help: "Ouvre le menu des biomes."
+   unknown: "Biome inconnu !"
+   youbought: "Biome acheté pour [cost] !"
+   paneltitle: "Choisissez un biome"
+expel:
+   notonisland: "Ce joueur n'est pas sur l'île !"
+   success: "[name] est parti."
+   expelled: "Vous avez été exclu de l'île !"
+   fail: "[name] ne peut pas être exclu !"
+   notyourself: "Vous ne pouvez pas vous exclure vous-même !"
+moblimits:
+   error: "Vous avez plus de [number] animaux sur votre île ! Pour des raisons de performance, vous ne pouvez plus faire de bébés."
+coop:
+   help: "donne un accès temporaire à votre île à un joueur"
+   removed: "[name] a retiré votre statut de COOP!"
+   removesuccess: "[name] n'est plus un joueur COOP."
+   success: "[name] est maintenant un joueur COOP jusqu'à ce qu'il se déconnecte ou qu'il soit éjecté de l'île."
+   madeyoucoopy: "[name] vous a fait devenir un joueur COOP. Vous pouvez l'aider jusqu'à ce que vous vous déconnectiez ou que vous soyiez éjecté de l'île."
+   onyourteam: "Ce joueur est dans votre équipe !"
+   invited: "[name] a invité [player] à l'aider! Utilisez /is expel pour l'éjecter."
+   useexpel: "Utilisez /is expel pour l'éjecter."
+lock:
+   islandlocked: "L'île est désormais fermée."
+   nowentering: "Vous entrez sur l'île de [name]"
+   nowleaving: "Vous quittez l'île de [name]"
+   locking: "Fermeture de l'île."
+   unlocking: "Ouverture de l'île."
+   enteringspawn: "Vous êtes au Spawn."
+   leavingspawn: "Vous quittez le Spawn."
+
+schematics:
+   title: "Sélectionner une île"

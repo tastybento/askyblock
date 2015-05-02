@@ -27,10 +27,25 @@
 #      - heal [player]
 #      - warp winner_circle [player]
 # If a command fails, it will be noted in the console.
+#
+# The format for POTIONS is as follows:
+#
+# Format POTION:NAME:<LEVEL>:<EXTENDED/NOTEXTENDED>:<SPLASH/NOSPLASH>:QTY
+# LEVEL, EXTENDED and SPLASH are optional. If they are left blank, any is acceptable
+# LEVEL is a number, normally 1 or 2
+# Examples:
+# POTION:STRENGTH:1:EXTENDED:SPLASH:1
+# POTION:JUMP:2:NOTEXTENDED:NOSPLASH:1
+# POTION:WEAKNESS::::1   -  any weakness potion
+# 
+# Valid potion names are:
+# WATER, REGEN, SPEED, FIRE_RESISTANCE, POISON, INSTANT_HEAL, NIGHT_VISION, WEAKNESS,
+# STRENGTH, SLOWNESS, JUMP, INSTANT_DAMAGE, WATER_BREATHING, INVISIBILITY
 ##########################################################################################
 
 challenges:
-  # Challenge levels - list as many as you like
+  # Challenge levels - list as many as you like. If a challenge's level is '' it can
+  # be done anytime.
   levels: 'Novice Competent Expert Advanced Elite'
   # The number of undone tasks that can be left on a level before revealing next level
   waiveramount: 1
@@ -473,7 +488,7 @@ challenges:
       icon: BREWING_STAND_ITEM
       level: 'Advanced'
       type: inventory
-      requiredItems: 'POTION:8195:1 POTION:8202:1 POTION:8194:1 POTION:8197:1 POTION:8204:1 POTION:8206:1 POTION:8201:1 POTION:8193:1'
+      requiredItems: 'POTION:FIRE_RESISTANCE::::1 POTION:SLOWNESS::::1 POTION:SPEED::::1 POTION:INSTANT_HEAL::::1 POTION:INSTANT_DAMAGE::::1 POTION:INVISIBILITY::::1 POTION:STRENGTH::::1 POTION:REGEN::::1'
       takeItems: true
       itemReward: 'ENCHANTMENT_TABLE:1'
       rewardText: 'Enchantment Table'
@@ -531,7 +546,9 @@ challenges:
       icon: GOLDEN_APPLE
       level: 'Advanced'
       type: inventory
-      requiredItems: 'BAKED_POTATO:1 BREAD:1 CAKE:1 COOKED_CHICKEN:1 COOKED_FISH:1 GRILLED_PORK:1 COOKIE:1 GOLDEN_APPLE:0:1 GOLDEN_CARROT:1 MUSHROOM_SOUP:1 PUMPKIN_PIE:1 COOKED_BEEF:1' 
+      requiredItems: 'BAKED_POTATO:1 BREAD:1 CAKE:1 COOKED_CHICKEN:1 COOKED_FISH:1 GRILLED_PORK:1 COOKIE:1 GOLDEN_APPLE:0:1 GOLDEN_CARROT:1 MUSHROOM_SOUP:1 PUMPKIN_PIE:1 COOKED_BEEF:1'
+      # If you are running 1.8 change to this:
+      # requiredItems: 'BAKED_POTATO:1 BREAD:1 CAKE:1 COOKED_CHICKEN:1 COOKED_FISH:1 GRILLED_PORK:1 COOKIE:1 GOLDEN_APPLE:0:1 GOLDEN_CARROT:1 MUSHROOM_SOUP:1 PUMPKIN_PIE:1 COOKED_BEEF:1 COOKED_RABBIT:1 RABBIT_STEW:1 COOKED_MUTTON:1'
       takeItems: true
       itemReward: 'GOLD_BLOCK:2 GREEN_RECORD:1 RECORD_3:1 RECORD_5:1 MONSTER_EGG:96:1 EMERALD:5'
       rewardText: '2 gold blocks, 3 music discs, 1 mooshroom spawn egg, and 5 emeralds'

@@ -26,7 +26,6 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionType;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
-import com.wasteofplastic.askyblock.Locale;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
@@ -69,13 +68,13 @@ public class MiniShopItem {
 	    ArrayList<String> Lore = new ArrayList<String>();
 	    // Create prices for buying and selling
 	    if (price > 0D) {
-		Lore.add(Locale.minishopBuy + " " + quantity + " @ " + VaultHelper.econ.format(price));
+		Lore.add(ASkyBlock.getPlugin().myLocale().minishopBuy + " " + quantity + " @ " + VaultHelper.econ.format(price));
 	    }
 	    if (sellPrice > 0D) {
-		Lore.add(Locale.minishopSell + " " + quantity + " @ " + VaultHelper.econ.format(sellPrice));
+		Lore.add(ASkyBlock.getPlugin().myLocale().minishopSell + " " + quantity + " @ " + VaultHelper.econ.format(sellPrice));
 	    }
 	    if (price < 0D && sellPrice < 0D) {
-		Lore.add(Locale.minishopOutOfStock);
+		Lore.add(ASkyBlock.getPlugin().myLocale().minishopOutOfStock);
 	    }
 	    meta.setLore(Lore);
 	    item.setItemMeta(meta);

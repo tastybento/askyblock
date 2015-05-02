@@ -226,7 +226,7 @@ public class Util {
      * @return
      */
     static public String getStringLocation(final Location l) {
-	if (l == null) {
+	if (l == null || l.getWorld() == null) {
 	    return "";
 	}
 	return l.getWorld().getName() + ":" + l.getBlockX() + ":" + l.getBlockY() + ":" + l.getBlockZ();

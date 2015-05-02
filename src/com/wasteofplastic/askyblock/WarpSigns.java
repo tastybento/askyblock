@@ -94,11 +94,11 @@ public class WarpSigns implements Listener {
     public void onSignBreak(BlockBreakEvent e) {
 	Block b = e.getBlock();
 	Player player = e.getPlayer();
-	if (b.getWorld().getName().equals(Settings.worldName)) {
+	if (b.getWorld().equals(ASkyBlock.getIslandWorld())) {
 	    if (b.getType().equals(Material.SIGN_POST)) {
 		Sign s = (Sign) b.getState();
 		if (s != null) {
-		    if (s.getLine(0).equalsIgnoreCase(ChatColor.GREEN + Locale.warpswelcomeLine)) {
+		    if (s.getLine(0).equalsIgnoreCase(ChatColor.GREEN + plugin.myLocale().warpswelcomeLine)) {
 			// Do a quick check to see if this sign location is in
 			// the list of warp signs
 			if (checkWarp(s.getLocation())) {
@@ -109,16 +109,16 @@ public class WarpSigns implements Listener {
 				if (playerSignLoc.equals(s.getLocation())) {
 				    // This is the player's sign, so allow it to
 				    // be destroyed
-				    player.sendMessage(ChatColor.GREEN + Locale.warpssignRemoved);
+				    player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).warpssignRemoved);
 				    removeWarp(player.getUniqueId());
 				} else {
-				    player.sendMessage(ChatColor.RED + Locale.warpserrorNoRemove);
+				    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorNoRemove);
 				    e.setCancelled(true);
 				}
 			    } else {
 				// Someone else's sign because this player has
 				// none registered
-				player.sendMessage(ChatColor.RED + Locale.warpserrorNoRemove);
+				player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorNoRemove);
 				e.setCancelled(true);
 			    }
 			}
@@ -135,70 +135,70 @@ public class WarpSigns implements Listener {
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
     public void onSignWarpCreate(SignChangeEvent e) {
-	// plugin.plugin.getLogger().info("SignChangeEvent called");
+	//plugin.getLogger().info("DEBUG: SignChangeEvent called");
 	String title = e.getLine(0);
 	Player player = e.getPlayer();
-	if (player.getWorld().getName().equals(Settings.worldName)) {
+	if (player.getWorld().equals(ASkyBlock.getIslandWorld())) {
+	    //plugin.getLogger().info("DEBUG: Correct world");
 	    if (e.getBlock().getType().equals(Material.SIGN_POST)) {
-		// plugin.plugin.getLogger().info("Correct world");
-		// plugin.plugin.getLogger().info("The first line of the sign says "
-		// + title);
+		
+		//plugin.getLogger().info("DEBUG: The first line of the sign says " + title);
 		// Check if someone is changing their own sign
 		// This should never happen !!
-		if (title.equalsIgnoreCase(Locale.warpswelcomeLine)) {
-		    // plugin.plugin.getLogger().info("Welcome sign detected");
+		if (title.equalsIgnoreCase(plugin.myLocale().warpswelcomeLine)) {
+		    //plugin.getLogger().info("DEBUG: Welcome sign detected");
 		    // Welcome sign detected - check permissions
 		    if (!(VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.addwarp"))) {
-			player.sendMessage(ChatColor.RED + Locale.warpserrorNoPerm);
+			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorNoPerm);
 			return;
 		    }
 		    // Check that the player is on their island
 		    if (!(plugin.getGrid().playerIsOnIsland(player))) {
-			player.sendMessage(ChatColor.RED + Locale.warpserrorNoPlace);
-			e.setLine(0, ChatColor.RED + Locale.warpswelcomeLine);
+			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorNoPlace);
+			e.setLine(0, ChatColor.RED + plugin.myLocale().warpswelcomeLine);
 			return;
 		    }
 		    // Check if the player already has a sign
 		    final Location oldSignLoc = getWarp(player.getUniqueId());
 		    if (oldSignLoc == null) {
-			// plugin.plugin.getLogger().info("Player does not have a sign already");
+			//plugin.getLogger().info("DEBUG: Player does not have a sign already");
 			// First time the sign has been placed or this is a new
 			// sign
 			if (addWarp(player.getUniqueId(), e.getBlock().getLocation())) {
-			    player.sendMessage(ChatColor.GREEN + Locale.warpssuccess);
-			    e.setLine(0, ChatColor.GREEN + Locale.warpswelcomeLine);
+			    player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).warpssuccess);
+			    e.setLine(0, ChatColor.GREEN + plugin.myLocale().warpswelcomeLine);
 			} else {
-			    player.sendMessage(ChatColor.RED + Locale.warpserrorDuplicate);
-			    e.setLine(0, ChatColor.RED + Locale.warpswelcomeLine);
+			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorDuplicate);
+			    e.setLine(0, ChatColor.RED + plugin.myLocale().warpswelcomeLine);
 			}
 		    } else {
-			// plugin.plugin.getLogger().info("Player already has a Sign");
+			//plugin.getLogger().info("DEBUG: Player already has a Sign");
 			// A sign already exists. Check if it still there and if
 			// so,
 			// deactivate it
 			Block oldSignBlock = oldSignLoc.getBlock();
 			if (oldSignBlock.getType().equals(Material.SIGN_POST)) {
 			    // The block is still a sign
-			    // plugin.plugin.getLogger().info("The block is still a sign");
+			    //plugin.getLogger().info("DEBUG: The block is still a sign");
 			    Sign oldSign = (Sign) oldSignBlock.getState();
 			    if (oldSign != null) {
-				// plugin.plugin.getLogger().info("Sign block is a sign");
-				if (oldSign.getLine(0).equalsIgnoreCase(ChatColor.GREEN + Locale.warpswelcomeLine)) {
-				    // plugin.plugin.getLogger().info("Old sign had a green welcome");
-				    oldSign.setLine(0, ChatColor.RED + Locale.warpswelcomeLine);
+				//plugin.getLogger().info("DEBUG: Sign block is a sign");
+				if (oldSign.getLine(0).equalsIgnoreCase(ChatColor.GREEN + plugin.myLocale().warpswelcomeLine)) {
+				    //plugin.getLogger().info("DEBUG: Old sign had a green welcome");
+				    oldSign.setLine(0, ChatColor.RED + plugin.myLocale().warpswelcomeLine);
 				    oldSign.update();
-				    player.sendMessage(ChatColor.RED + Locale.warpsdeactivate);
+				    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpsdeactivate);
 				    removeWarp(player.getUniqueId());
 				}
 			    }
 			}
 			// Set up the warp
 			if (addWarp(player.getUniqueId(), e.getBlock().getLocation())) {
-			    player.sendMessage(ChatColor.GREEN + Locale.warpssuccess);
-			    e.setLine(0, ChatColor.GREEN + Locale.warpswelcomeLine);
+			    player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).warpssuccess);
+			    e.setLine(0, ChatColor.GREEN + plugin.myLocale().warpswelcomeLine);
 			} else {
-			    player.sendMessage(ChatColor.RED + Locale.warpserrorDuplicate);
-			    e.setLine(0, ChatColor.RED + Locale.warpswelcomeLine);
+			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorDuplicate);
+			    e.setLine(0, ChatColor.RED + plugin.myLocale().warpswelcomeLine);
 			}
 		    }
 		}
@@ -239,6 +239,7 @@ public class WarpSigns implements Listener {
 	    try {
 		UUID playerUUID = UUID.fromString(s);
 		Location l = Util.getLocationString((String) temp.get(s));
+		//plugin.getLogger().info("DEBUG: Loading warp at " + l);
 		Block b = l.getBlock();
 		// Check that a warp sign is still there
 		if (b.getType().equals(Material.SIGN_POST)) {
@@ -292,8 +293,8 @@ public class WarpSigns implements Listener {
 	if (b.getType().equals(Material.SIGN_POST)) {
 	    Sign s = (Sign) b.getState();
 	    if (s != null) {
-		if (s.getLine(0).equalsIgnoreCase(ChatColor.GREEN + Locale.warpswelcomeLine)) {
-		    s.setLine(0, ChatColor.RED + Locale.warpswelcomeLine);
+		if (s.getLine(0).equalsIgnoreCase(ChatColor.GREEN + plugin.myLocale().warpswelcomeLine)) {
+		    s.setLine(0, ChatColor.RED + plugin.myLocale().warpswelcomeLine);
 		    s.update();
 		}
 	    }
@@ -322,7 +323,7 @@ public class WarpSigns implements Listener {
 		final Player p = plugin.getServer().getPlayer(rp);
 		if (p != null) {
 		    // Inform the player
-		    p.sendMessage(ChatColor.RED + Locale.warpssignRemoved);
+		    p.sendMessage(ChatColor.RED + plugin.myLocale(p.getUniqueId()).warpssignRemoved);
 		}
 		plugin.getLogger().warning(rp.toString() + "'s welcome sign at " + loc.toString() + " was removed by something.");
 	    }

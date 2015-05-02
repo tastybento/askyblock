@@ -50,7 +50,6 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
-import com.wasteofplastic.askyblock.Locale;
 import com.wasteofplastic.askyblock.Messages;
 import com.wasteofplastic.askyblock.PlayerCache;
 import com.wasteofplastic.askyblock.Settings;
@@ -72,6 +71,14 @@ public class Challenges implements CommandExecutor {
     // Where challenges are stored
     private static FileConfiguration challengeFile = null;
     private static File challengeConfigFile = null;
+    // Potion constants
+    private static final int EXTENDED_BIT = 0x40;
+    private static final int POTION_BIT = 0xF;
+    private static final int SPLASH_BIT = 0x4000;
+    private static final int TIER_BIT = 0x20;
+    private static final int TIER_SHIFT = 5;
+    private static final int NAME_BIT = 0x3F;
+
 
     public Challenges(PlayerCache players) {
 	this.players = players;
@@ -92,13 +99,13 @@ public class Challenges implements CommandExecutor {
 	/*
 	 * if
 	 * (!player.getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
-	 * player.sendMessage(ChatColor.RED + Locale.errorWrongWorld);
+	 * player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorWrongWorld);
 	 * return true;
 	 * }
 	 */
 	// Check permissions
 	if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.challenges")) {
-	    player.sendMessage(ChatColor.RED + Locale.errorNoPermission);
+	    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
 	    return true;
 	}
 	switch (cmd.length) {
@@ -109,11 +116,8 @@ public class Challenges implements CommandExecutor {
 	    return true;
 	case 1:
 	    if (cmd[0].equalsIgnoreCase("help") || cmd[0].equalsIgnoreCase("complete") || cmd[0].equalsIgnoreCase("c")) {
-		sender.sendMessage(ChatColor.GOLD + Locale.challengeshelp1);
-		sender.sendMessage(ChatColor.GOLD + Locale.challengeshelp2);
-		sender.sendMessage(ChatColor.GOLD + Locale.challengescolors);
-		sender.sendMessage(ChatColor.GREEN + Locale.challengesincomplete + ChatColor.DARK_GREEN + Locale.challengescompleteNotRepeatable
-			+ ChatColor.AQUA + Locale.challengescompleteRepeatable);
+		sender.sendMessage(ChatColor.GOLD + plugin.myLocale(player.getUniqueId()).challengeshelp1);
+		sender.sendMessage(ChatColor.GOLD + plugin.myLocale(player.getUniqueId()).challengeshelp2);
 	    } else if (isLevelAvailable(player, getChallengeConfig().getString("challenges.challengeList." + cmd[0].toLowerCase() + ".level"))) {
 		// Provide info on the challenge
 		// Challenge Name
@@ -122,59 +126,59 @@ public class Challenges implements CommandExecutor {
 		// Items taken or not
 		// island or not
 		final String challenge = cmd[0].toLowerCase();
-		sender.sendMessage(ChatColor.GOLD + Locale.challengesname + ": " + ChatColor.WHITE + challenge);
-		sender.sendMessage(ChatColor.WHITE + Locale.challengeslevel + ": " + ChatColor.GOLD
+		sender.sendMessage(ChatColor.GOLD + plugin.myLocale(player.getUniqueId()).challengesname + ": " + ChatColor.WHITE + challenge);
+		sender.sendMessage(ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).challengeslevel + ": " + ChatColor.GOLD
 			+ getChallengeConfig().getString("challenges.challengeList." + challenge + ".level", ""));
 		sender.sendMessage(ChatColor.GOLD + getChallengeConfig().getString("challenges.challengeList." + challenge + ".description", ""));
 		final String type = getChallengeConfig().getString("challenges.challengeList." + challenge + ".type", "").toLowerCase();
 		if (type.equals("inventory")) {
 		    if (getChallengeConfig().getBoolean("challenges.challengeList." + cmd[0].toLowerCase() + ".takeItems")) {
-			sender.sendMessage(ChatColor.RED + Locale.challengesitemTakeWarning);
+			sender.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).challengesitemTakeWarning);
 		    }
 		} else if (type.equals("island")) {
-		    sender.sendMessage(ChatColor.RED + Locale.challengeserrorItemsNotThere);
+		    sender.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).challengeserrorItemsNotThere);
 		}
 		if (players.checkChallenge(player.getUniqueId(), challenge)
 			&& (!type.equals("inventory") || !getChallengeConfig().getBoolean("challenges.challengeList." + challenge + ".repeatable", false))) {
-		    sender.sendMessage(ChatColor.RED + Locale.challengesnotRepeatable);
+		    sender.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).challengesnotRepeatable);
 		    return true;
 		}
-		int moneyReward = 0;
+		double moneyReward = 0;
 		int expReward = 0;
 		String rewardText = "";
 
 		if (!players.checkChallenge(player.getUniqueId(), challenge)) {
 		    // First time
-		    moneyReward = getChallengeConfig().getInt("challenges.challengeList." + challenge.toLowerCase() + ".moneyReward", 0);
+		    moneyReward = getChallengeConfig().getDouble("challenges.challengeList." + challenge.toLowerCase() + ".moneyReward", 0D);
 		    rewardText = ChatColor.translateAlternateColorCodes('&',
 			    getChallengeConfig().getString("challenges.challengeList." + challenge.toLowerCase() + ".rewardText", "Goodies!"));
 		    expReward = getChallengeConfig().getInt("challenges.challengeList." + challenge + ".xpReward", 0);
-		    sender.sendMessage(ChatColor.GOLD + Locale.challengesfirstTimeRewards);
+		    sender.sendMessage(ChatColor.GOLD + plugin.myLocale(player.getUniqueId()).challengesfirstTimeRewards);
 		} else {
 		    // Repeat challenge
-		    moneyReward = getChallengeConfig().getInt("challenges.challengeList." + challenge.toLowerCase() + ".repeatMoneyReward", 0);
+		    moneyReward = getChallengeConfig().getDouble("challenges.challengeList." + challenge.toLowerCase() + ".repeatMoneyReward", 0D);
 		    rewardText = ChatColor.translateAlternateColorCodes('&',
 			    getChallengeConfig().getString("challenges.challengeList." + challenge.toLowerCase() + ".repeatRewardText", "Goodies!"));
 		    expReward = getChallengeConfig().getInt("challenges.challengeList." + challenge + ".repeatExpReward", 0);
-		    sender.sendMessage(ChatColor.GOLD + Locale.challengesrepeatRewards);
+		    sender.sendMessage(ChatColor.GOLD + plugin.myLocale(player.getUniqueId()).challengesrepeatRewards);
 
 		}
 		sender.sendMessage(ChatColor.WHITE + rewardText);
 		if (expReward > 0) {
-		    sender.sendMessage(ChatColor.GOLD + Locale.challengesexpReward + ": " + ChatColor.WHITE + expReward);
+		    sender.sendMessage(ChatColor.GOLD + plugin.myLocale(player.getUniqueId()).challengesexpReward + ": " + ChatColor.WHITE + expReward);
 		}
 		if (Settings.useEconomy && moneyReward > 0) {
-		    sender.sendMessage(ChatColor.GOLD + Locale.challengesmoneyReward + ": " + ChatColor.WHITE + VaultHelper.econ.format(moneyReward));
+		    sender.sendMessage(ChatColor.GOLD + plugin.myLocale(player.getUniqueId()).challengesmoneyReward + ": " + ChatColor.WHITE + VaultHelper.econ.format(moneyReward));
 		}
-		sender.sendMessage(ChatColor.GOLD + Locale.challengestoCompleteUse + ChatColor.WHITE + " /" + label + " c " + challenge);
+		sender.sendMessage(ChatColor.GOLD + plugin.myLocale(player.getUniqueId()).challengestoCompleteUse + ChatColor.WHITE + " /" + label + " c " + challenge);
 	    } else {
-		sender.sendMessage(ChatColor.RED + Locale.challengesinvalidChallengeName);
+		sender.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).challengesinvalidChallengeName);
 	    }
 	    return true;
 	case 2:
 	    if (cmd[0].equalsIgnoreCase("complete") || cmd[0].equalsIgnoreCase("c")) {
 		if (!player.getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
-		    player.sendMessage(ChatColor.RED + Locale.errorWrongWorld);
+		    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorWrongWorld);
 		    return true;
 		}
 		if (checkIfCanCompleteChallenge(player, cmd[1].toLowerCase())) {
@@ -223,7 +227,7 @@ public class Challenges implements CommandExecutor {
 	// Grab the rewards from the config.yml file
 	String[] permList;
 	String[] itemRewards;
-	int moneyReward = 0;
+	double moneyReward = 0;
 	int expReward = 0;
 	String rewardText = "";
 	// If the friendly name is available use it
@@ -234,38 +238,38 @@ public class Challenges implements CommandExecutor {
 	// If player has done a challenge already, the rewards are different
 	if (!players.checkChallenge(player.getUniqueId(), challenge)) {
 	    // First time
-	    player.sendMessage(ChatColor.GREEN + Locale.challengesyouHaveCompleted.replace("[challenge]", challengeName));
+	    player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).challengesyouHaveCompleted.replace("[challenge]", challengeName));
 	    if (Settings.broadcastMessages) {
 		plugin.getServer().broadcastMessage(
-			ChatColor.GOLD + Locale.challengesnameHasCompleted.replace("[name]", player.getName()).replace("[challenge]", challengeName));
+			ChatColor.GOLD + plugin.myLocale(player.getUniqueId()).challengesnameHasCompleted.replace("[name]", player.getName()).replace("[challenge]", challengeName));
 	    }
 	    Messages.tellOfflineTeam(player.getUniqueId(),
-		    ChatColor.GOLD + Locale.challengesnameHasCompleted.replace("[name]", player.getName()).replace("[challenge]", challengeName));
+		    ChatColor.GOLD + plugin.myLocale(player.getUniqueId()).challengesnameHasCompleted.replace("[name]", player.getName()).replace("[challenge]", challengeName));
 	    itemRewards = getChallengeConfig().getString("challenges.challengeList." + challenge.toLowerCase() + ".itemReward", "").split(" ");
-	    moneyReward = getChallengeConfig().getInt("challenges.challengeList." + challenge.toLowerCase() + ".moneyReward", 0);
+	    moneyReward = getChallengeConfig().getDouble("challenges.challengeList." + challenge.toLowerCase() + ".moneyReward", 0D);
 	    rewardText = ChatColor.translateAlternateColorCodes('&',
 		    getChallengeConfig().getString("challenges.challengeList." + challenge.toLowerCase() + ".rewardText", "Goodies!"));
 	    expReward = getChallengeConfig().getInt("challenges.challengeList." + challenge + ".expReward", 0);
 	} else {
 	    // Repeat challenge
-	    player.sendMessage(ChatColor.GREEN + Locale.challengesyouRepeated.replace("[challenge]", challengeName));
+	    player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).challengesyouRepeated.replace("[challenge]", challengeName));
 	    itemRewards = getChallengeConfig().getString("challenges.challengeList." + challenge.toLowerCase() + ".repeatItemReward", "").split(" ");
-	    moneyReward = getChallengeConfig().getInt("challenges.challengeList." + challenge.toLowerCase() + ".repeatMoneyReward", 0);
+	    moneyReward = getChallengeConfig().getDouble("challenges.challengeList." + challenge.toLowerCase() + ".repeatMoneyReward", 0);
 	    rewardText = ChatColor.translateAlternateColorCodes('&',
 		    getChallengeConfig().getString("challenges.challengeList." + challenge.toLowerCase() + ".repeatRewardText", "Goodies!"));
 	    expReward = getChallengeConfig().getInt("challenges.challengeList." + challenge + ".repeatExpReward", 0);
 	}
 	// Report the rewards and give out exp, money and permissions if
 	// appropriate
-	player.sendMessage(ChatColor.GOLD + Locale.challengesrewards + ": " + ChatColor.WHITE + rewardText);
+	player.sendMessage(ChatColor.GOLD + plugin.myLocale(player.getUniqueId()).challengesrewards + ": " + ChatColor.WHITE + rewardText);
 	if (expReward > 0) {
-	    player.sendMessage(ChatColor.GOLD + Locale.challengesexpReward + ": " + ChatColor.WHITE + expReward);
+	    player.sendMessage(ChatColor.GOLD + plugin.myLocale(player.getUniqueId()).challengesexpReward + ": " + ChatColor.WHITE + expReward);
 	    player.giveExp(expReward);
 	}
 	if (Settings.useEconomy && moneyReward > 0 && (VaultHelper.econ != null)) {
 	    EconomyResponse e = VaultHelper.econ.depositPlayer(player, Settings.worldName, moneyReward);
 	    if (e.transactionSuccess()) {
-		player.sendMessage(ChatColor.GOLD + Locale.challengesmoneyReward + ": " + ChatColor.WHITE + VaultHelper.econ.format(moneyReward));
+		player.sendMessage(ChatColor.GOLD + plugin.myLocale(player.getUniqueId()).challengesmoneyReward + ": " + ChatColor.WHITE + VaultHelper.econ.format(moneyReward));
 	    } else {
 		plugin.getLogger().severe("Error giving player " + player.getUniqueId() + " challenge money:" + e.errorMessage);
 		plugin.getLogger().severe("Reward was $" + moneyReward);
@@ -297,7 +301,7 @@ public class Challenges implements CommandExecutor {
 		    }
 		    player.getWorld().playSound(player.getLocation(), Sound.ITEM_PICKUP, 1F, 1F);
 		} catch (Exception e) {
-		    player.sendMessage(ChatColor.RED + Locale.challengeserrorRewardProblem);
+		    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).challengeserrorRewardProblem);
 		    plugin.getLogger().severe("Could not give " + element[0] + ":" + element[1] + " to " + player.getName() + " for challenge reward!");
 		    String materialList = "";
 		    boolean hint = false;
@@ -376,6 +380,62 @@ public class Challenges implements CommandExecutor {
 			    plugin.getLogger().severe(materialList.substring(0, materialList.length() - 1));
 			}
 		    }
+		    return false;
+		}
+	    } else if (element.length == 6) {
+		//plugin.getLogger().info("DEBUG: 6 element reward");
+		// Potion format = POTION:name:level:extended:splash:qty
+		try {
+		    rewardItem = Material.getMaterial(element[0]);
+		    rewardQty = Integer.parseInt(element[5]);
+		    // Check for POTION
+		    if (rewardItem.equals(Material.POTION)) {
+			// Add the effect of the potion
+			final PotionType potionType = PotionType.valueOf(element[1]);
+			if (potionType == null) {
+			    plugin.getLogger().severe("Reward potion effect type in config.yml challenges is unknown - skipping!");
+			} else {
+			    final Potion rewPotion = new Potion(potionType);
+			    // Add extended, splash, level etc.
+			    rewPotion.setLevel(Integer.valueOf(element[2]));
+			    //plugin.getLogger().info("DEBUG: level = " + Integer.valueOf(element[2]));
+			    if (element[3].equalsIgnoreCase("EXTENDED")) {
+				//plugin.getLogger().info("DEBUG: Extended");
+				if (potionType != PotionType.INSTANT_DAMAGE && potionType != PotionType.INSTANT_HEAL) {
+				    // Instant potions cannot be extended
+				    rewPotion.setHasExtendedDuration(true);
+				} else {
+				    plugin.getLogger().warning("Reward potion is an instant potion and cannot be extended!");
+				}
+			    }
+			    if (element[4].equalsIgnoreCase("SPLASH")) {
+				//plugin.getLogger().info("DEBUG: splash");
+				rewPotion.setSplash(true);
+			    }
+			    //plugin.getLogger().info("DEBUG: adding items!");
+			    final HashMap<Integer, ItemStack> leftOvers = player.getInventory().addItem(new ItemStack[] { rewPotion.toItemStack(rewardQty) });
+			    if (!leftOvers.isEmpty()) {
+				player.getWorld().dropItemNaturally(player.getLocation(), leftOvers.get(0));
+			    }
+			}
+		    }
+		} catch (Exception e) {
+		    player.sendMessage(ChatColor.RED + "There was a problem giving your reward. Ask Admin to check log!");
+		    plugin.getLogger().severe("Problem with reward potion: " + s);
+		    plugin.getLogger().severe("Format POTION:NAME:<LEVEL>:<EXTENDED/NOTEXTENDED>:<SPLASH/NOSPLASH>:QTY");
+		    plugin.getLogger().severe("LEVEL, EXTENDED and SPLASH are optional");
+		    plugin.getLogger().severe("LEVEL is a number");
+		    plugin.getLogger().severe("Examples:");
+		    plugin.getLogger().severe("POTION:STRENGTH:1:EXTENDED:SPLASH:1");
+		    plugin.getLogger().severe("POTION:JUMP:2:NOTEXTENDED:NOSPLASH:1");
+		    plugin.getLogger().severe("POTION:WEAKNESS::::1   -  any weakness potion");
+		    plugin.getLogger().severe("Available names are:");
+		    String potionNames = "";
+		    for (PotionType p : PotionType.values()) {
+			potionNames += p.toString() + ", ";
+		    }
+		    plugin.getLogger().severe(potionNames.substring(0, potionNames.length()-2));
+		    return false;
 		}
 	    }
 	}
@@ -495,7 +555,7 @@ public class Challenges implements CommandExecutor {
 	// plugin.getLogger().info("DEBUG: 1");
 	// Check if the challenge exists
 	if (!players.challengeExists(player.getUniqueId(), challenge)) {
-	    player.sendMessage(ChatColor.RED + Locale.challengesunknownChallenge);
+	    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).challengesunknownChallenge);
 	    return false;
 	}
 	// Check if this challenge level is available
@@ -503,7 +563,7 @@ public class Challenges implements CommandExecutor {
 	// Only check if the challenge has a level, otherwise it's a free level
 	if (!level.isEmpty()) {
 	    if (!isLevelAvailable(player, level)) {
-		player.sendMessage(ChatColor.RED + Locale.challengesyouHaveNotUnlocked);
+		player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).challengesyouHaveNotUnlocked);
 		return false;
 	    }
 	}
@@ -513,7 +573,7 @@ public class Challenges implements CommandExecutor {
 	    if (maxTimes > 0) {
 		// There is a limit
 		if (plugin.getPlayers().checkChallengeTimes(player.getUniqueId(), challenge) >= maxTimes) {
-		    player.sendMessage(ChatColor.RED + Locale.challengesnotRepeatable);
+		    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).challengesnotRepeatable);
 		    return false;
 		}
 	    }
@@ -522,7 +582,7 @@ public class Challenges implements CommandExecutor {
 	// Check if it is repeatable
 	if (players.checkChallenge(player.getUniqueId(), challenge)
 		&& !getChallengeConfig().getBoolean("challenges.challengeList." + challenge + ".repeatable")) {
-	    player.sendMessage(ChatColor.RED + Locale.challengesnotRepeatable);
+	    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).challengesnotRepeatable);
 	    return false;
 	}
 	// plugin.getLogger().info("DEBUG: 3");
@@ -530,7 +590,7 @@ public class Challenges implements CommandExecutor {
 	// not repeatable
 	if (players.checkChallenge(player.getUniqueId(), challenge)
 		&& getChallengeConfig().getString("challenges.challengeList." + challenge + ".type").equalsIgnoreCase("island")) {
-	    player.sendMessage(ChatColor.RED + Locale.challengesnotRepeatable);
+	    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).challengesnotRepeatable);
 	    return false;
 	}
 	// plugin.getLogger().info("DEBUG: 4");
@@ -538,7 +598,7 @@ public class Challenges implements CommandExecutor {
 	if (getChallengeConfig().getString("challenges.challengeList." + challenge + ".type").equalsIgnoreCase("inventory")) {
 	    // Check if the player has the required items
 	    if (!hasRequired(player, challenge, "inventory")) {
-		player.sendMessage(ChatColor.RED + Locale.challengeserrorNotEnoughItems);
+		player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).challengeserrorNotEnoughItems);
 		player.sendMessage(ChatColor.RED + getChallengeConfig().getString("challenges.challengeList." + challenge + ".description"));
 		return false;
 	    }
@@ -549,11 +609,11 @@ public class Challenges implements CommandExecutor {
 	if (getChallengeConfig().getString("challenges.challengeList." + challenge + ".type").equalsIgnoreCase("island")) {
 	    // plugin.getLogger().info("DEBUG: 6");
 	    if (!plugin.getGrid().playerIsOnIsland(player)) {
-		player.sendMessage(ChatColor.RED + Locale.challengeserrorNotOnIsland);
+		player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).challengeserrorNotOnIsland);
 		return false;
 	    }
 	    if (!hasRequired(player, challenge, "island")) {
-		player.sendMessage(ChatColor.RED + Locale.challengeserrorNotCloseEnough);
+		player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).challengeserrorNotCloseEnough);
 		player.sendMessage(ChatColor.RED + getChallengeConfig().getString("challenges.challengeList." + challenge + ".description"));
 		return false;
 	    }
@@ -567,11 +627,11 @@ public class Challenges implements CommandExecutor {
 	    }
 
 	    player.sendMessage(ChatColor.RED
-		    + Locale.challengeserrorIslandLevel.replace("[level]",
+		    + plugin.myLocale(player.getUniqueId()).challengeserrorIslandLevel.replace("[level]",
 			    String.valueOf(getChallengeConfig().getInt("challenges.challengeList." + challenge + ".requiredItems"))));
 	    return false;
 	}
-	player.sendMessage(ChatColor.RED + Locale.errorCommandNotReady);
+	player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorCommandNotReady);
 	plugin.getLogger().severe(
 		"The challenge " + challenge + " is of an unknown type " + getChallengeConfig().getString("challenges.challengeList." + challenge + ".type"));
 	plugin.getLogger().severe("Types should be 'island', 'inventory' or 'level'");
@@ -609,7 +669,7 @@ public class Challenges implements CommandExecutor {
      * @param type
      * @return true if the player has everything required
      */
-    // @SuppressWarnings("deprecation")
+
     @SuppressWarnings("deprecation")
     public boolean hasRequired(final Player player, final String challenge, final String type) {
 	final String[] reqList = getChallengeConfig().getString("challenges.challengeList." + challenge + ".requiredItems").split(" ");
@@ -640,6 +700,7 @@ public class Challenges implements CommandExecutor {
 			} else if (part[0].equalsIgnoreCase("skull")) {
 			    part[0] = "SKULL_ITEM";
 			}
+			// TODO: add netherwart vs. netherstalk?
 			reqItem = Material.getMaterial(part[0]);
 			reqAmount = Integer.parseInt(part[1]);
 			ItemStack item = new ItemStack(reqItem);
@@ -718,28 +779,9 @@ public class Challenges implements CommandExecutor {
 				return false;
 			    }
 			}
-
-			/*
-			 * if
-			 * (!player.getInventory().containsAtLeast(item,reqAmount
-			 * )){ // MAP is a special case - the durability
-			 * increments with every one
-			 * plugin.getLogger().info("DEBUG: not enough in inventory"
-			 * );
-			 * for (ItemStack i :
-			 * player.getInventory().getContents()) { if (i != null)
-			 * { plugin.getLogger().info("DEBUG: material "+
-			 * i.getType());
-			 * plugin.getLogger().info("DEBUG: amount "+
-			 * i.getAmount());
-			 * plugin.getLogger().info("DEBUG: durability "+
-			 * i.getDurability()); } } return false; }
-			 */
-			// item.setAmount(reqAmount);
-			// toBeRemoved.add(item);
 		    } catch (Exception e) {
 			plugin.getLogger().severe("Problem with " + s + " in challenges.yml!");
-			player.sendMessage(ChatColor.RED + Locale.errorCommandNotReady);
+			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorCommandNotReady);
 			String materialList = "";
 			boolean hint = false;
 			for (Material m : Material.values()) {
@@ -773,8 +815,8 @@ public class Challenges implements CommandExecutor {
 			    part[0] = "SKULL_ITEM";
 			}
 			reqItem = Material.getMaterial(part[0]);
-			int reqDurability = Integer.parseInt(part[1]);
 			reqAmount = Integer.parseInt(part[2]);
+			int reqDurability = Integer.parseInt(part[1]);
 			int count = reqAmount;
 			// plugin.getLogger().info("DEBUG: 3 part " +
 			// reqItem.toString() + ":" + reqDurability + " x " +
@@ -782,13 +824,16 @@ public class Challenges implements CommandExecutor {
 			ItemStack item = new ItemStack(reqItem);
 			// Check for potions
 			if (reqItem.equals(Material.POTION)) {
-			    // plugin.getLogger().info("DEBUG: Potion");
+			    //Logger.logger(2,"DEBUG: Potion");
 			    // Contains at least does not work for potions
 			    ItemStack[] playerInv = player.getInventory().getContents();
 			    for (ItemStack i : playerInv) {
 				if (i != null && i.getType().equals(Material.POTION)) {
 				    // plugin.getLogger().info("DEBUG: Potion found, durability = "+
 				    // i.getDurability());
+
+				    // Potion type was given by number
+				    // Only included for backward compatibility
 				    if (i.getDurability() == reqDurability) {
 					item = i.clone();
 					if (item.getAmount() > reqAmount) {
@@ -804,7 +849,7 @@ public class Challenges implements CommandExecutor {
 					// item.getDurability() + " x " +
 					// item.getAmount());
 					toBeRemoved.add(item);
-				    }
+				    } 
 				}
 				if (count == 0) {
 				    break;
@@ -896,7 +941,7 @@ public class Challenges implements CommandExecutor {
 			// toBeRemoved.add(item);
 		    } catch (Exception e) {
 			plugin.getLogger().severe("Problem with " + s + " in challenges.yml!");
-			player.sendMessage(ChatColor.RED + Locale.errorCommandNotReady);
+			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorCommandNotReady);
 			if (part[0].equalsIgnoreCase("POTION")) {
 			    plugin.getLogger().severe("Format POTION:TYPE:QTY where TYPE is the number of the following:");
 			    for (PotionType p : PotionType.values()) {
@@ -922,8 +967,91 @@ public class Challenges implements CommandExecutor {
 			}
 			return false;
 		    }
+		} else if (part.length == 6) {
+		    //plugin.getLogger().info("DEBUG:6 part potion check!");
+		    // POTION:Name:Level:Extended:Splash:Qty
+		    try {
+			reqItem = Material.getMaterial(part[0]);
+
+			reqAmount = Integer.parseInt(part[5]);
+			ItemStack item = new ItemStack(reqItem);
+			int count = reqAmount;
+			// Compare
+			if (reqItem == Material.POTION) {
+			    //plugin.getLogger().info("DEBUG: required item is a potion");
+			    ItemStack[] playerInv = player.getInventory().getContents();
+			    for (ItemStack i : playerInv) {
+				if (i != null && i.getType().equals(Material.POTION)) {
+				    //plugin.getLogger().info("DEBUG: Item in inventory = " + i.toString());
+				    Potion p = fromDamage(i.getDurability());
+				    // Check type
+				    //Potion p = Potion.fromItemStack(i);
+
+				    //plugin.getLogger().info("DEBUG: " + p.getType() + ":" + p.getLevel() + ":" + p.hasExtendedDuration() + ":" + p.isSplash() );
+				    // Check type
+				    PotionType typeCheck = PotionType.valueOf(part[1].toUpperCase());
+				    //plugin.getLogger().info("DEBUG: potion type is:" + p.getType().toString() + " desired is:" + part[1].toUpperCase());
+				    //if (p.getType().toString().equalsIgnoreCase(part[1].toUpperCase())) {
+				    if (p.getType().equals(typeCheck)) {
+					//plugin.getLogger().info("DEBUG: potion type is the same");
+					// Check level
+					//plugin.getLogger().info("DEBUG: check level " + part[2] + " = " + p.getLevel());
+					if (part[2].isEmpty() || p.getLevel() == Integer.valueOf(part[2])) {
+					    //plugin.getLogger().info("DEBUG: level is ok ");
+					    //plugin.getLogger().info("DEBUG: check splash = " + part[4] + " = " + p.isSplash());
+					    if (part[4].isEmpty() || (p.isSplash() && part[4].equalsIgnoreCase("SPLASH")) 
+						    || (!p.isSplash() && part[4].equalsIgnoreCase("NOSPLASH"))) {
+						//plugin.getLogger().info("DEBUG: splash is ok = " + part[4] + " = " + p.isSplash());
+						//plugin.getLogger().info("DEBUG: check extended = " + part[4] + " = " + p.hasExtendedDuration());
+						if (part[3].isEmpty() || (p.hasExtendedDuration() && part[3].equalsIgnoreCase("EXTENDED"))
+							|| (!p.hasExtendedDuration() && part[3].equalsIgnoreCase("NOTEXTENDED"))) {
+						    //plugin.getLogger().info("DEBUG: Everything is matching");
+						    item = i.clone();
+						    if (item.getAmount() > reqAmount) {
+							item.setAmount(reqAmount);
+						    }
+						    count = count - item.getAmount();
+						    toBeRemoved.add(item);
+						}
+					    }
+					}
+				    }
+				}
+				if (count <= 0) {
+				    break;
+				}
+			    }
+			    if (count > 0) {
+				return false;
+			    }
+			} else {
+			    plugin.getLogger().severe("Problem with " + s + " in challenges.yml!");
+			}
+		    } catch (Exception e) {
+			plugin.getLogger().severe("Problem with " + s + " in challenges.yml!");
+			//e.printStackTrace();
+			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorCommandNotReady);
+			if (part[0].equalsIgnoreCase("POTION")) {
+			    plugin.getLogger().severe("Format POTION:NAME:<LEVEL>:<EXTENDED/NOTEXTENDED>:<SPLASH/NOSPLASH>:QTY");
+			    plugin.getLogger().severe("LEVEL, EXTENDED and SPLASH are optional");
+			    plugin.getLogger().severe("LEVEL is a number");
+			    plugin.getLogger().severe("Examples:");
+			    plugin.getLogger().severe("POTION:STRENGTH:1:EXTENDED:SPLASH:1");
+			    plugin.getLogger().severe("POTION:JUMP:2:NOTEXTENDED:NOSPLASH:1");
+			    plugin.getLogger().severe("POTION:WEAKNESS::::1   -  any weakness potion");
+			    plugin.getLogger().severe("Available names are:");
+			    String potionNames = "";
+			    for (PotionType p : PotionType.values()) {
+				potionNames += p.toString() + ", ";
+			    }
+			    plugin.getLogger().severe(potionNames.substring(0, potionNames.length()-2));
+			} 
+			return false;
+		    }
+
 		}
-	    }
+
+	    } 
 	    // Build up the items in the inventory and remove them if they are
 	    // all there.
 
@@ -1021,7 +1149,7 @@ public class Challenges implements CommandExecutor {
 	    if (!neededItem.isEmpty()) {
 		// plugin.getLogger().info("DEBUG: Insufficient items around");
 		for (Material missing : neededItem.keySet()) {
-		    player.sendMessage(ChatColor.RED + Locale.challengeserrorYouAreMissing + " " + neededItem.get(missing) + " x "
+		    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).challengeserrorYouAreMissing + " " + neededItem.get(missing) + " x "
 			    + Util.prettifyText(missing.toString()));
 		}
 		return false;
@@ -1048,7 +1176,7 @@ public class Challenges implements CommandExecutor {
 		    return true;
 		} else {
 		    for (EntityType missing : neededEntities.keySet()) {
-			player.sendMessage(ChatColor.RED + Locale.challengeserrorYouAreMissing + " " + neededEntities.get(missing) + " x "
+			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).challengeserrorYouAreMissing + " " + neededEntities.get(missing) + " x "
 				+ Util.prettifyText(missing.toString()));
 		    }
 		    return false;
@@ -1093,7 +1221,6 @@ public class Challenges implements CommandExecutor {
      * @return inventory
      */
     public Inventory challengePanel(Player player) {
-	// Get the highest level the player has achieved
 	String maxLevel = "";
 	for (String level : Settings.challengeLevels) {
 	    if (checkLevelCompletion(player, level) > 0) {
@@ -1113,6 +1240,7 @@ public class Challenges implements CommandExecutor {
      * @return inventory
      */
     public Inventory challengePanel(Player player, String level) {
+	//plugin.getLogger().info("DEBUG: level requested = " + level);
 	// Create the challenges control panel
 	// New panel map
 	List<CPItem> cp = new ArrayList<CPItem>();
@@ -1120,108 +1248,39 @@ public class Challenges implements CommandExecutor {
 	// Do some checking
 	// plugin.getLogger().severe("DEBUG: Opening level " + level);
 
-	// If there are not free challenges, show the first level
 	if (level.isEmpty() && !challengeList.containsKey("")) {
 	    if (!Settings.challengeLevels.isEmpty()) {
 		level = Settings.challengeLevels.get(0);
 	    } else {
 		// We have no challenges!
 		plugin.getLogger().severe("There are no challenges to show!");
-		Inventory error = Bukkit.createInventory(null, 9, Locale.challengesguiTitle);
-		player.sendMessage(ChatColor.RED + Locale.errorCommandNotReady);
+		Inventory error = Bukkit.createInventory(null, 9, plugin.myLocale(player.getUniqueId()).challengesguiTitle);
+		player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorCommandNotReady);
 		return error;
 	    }
 	}
 	// Only show a control panel for the level requested.
 	for (String challengeName : challengeList.get(level)) {
-	    // Get the icon
-	    ItemStack icon = null;
-	    String iconName = getChallengeConfig().getString("challenges.challengeList." + challengeName + ".icon", "");
-	    if (!iconName.isEmpty()) {
-		try {
-		    // Split if required
-		    String[] split = iconName.split(":");
-		    if (split.length == 1) {
-			// Some material does not show in the inventory
-			if (iconName.equalsIgnoreCase("potato")) {
-			    iconName = "POTATO_ITEM";
-			} else if (iconName.equalsIgnoreCase("brewing_stand")) {
-			    iconName = "BREWING_STAND_ITEM";
-			} else if (iconName.equalsIgnoreCase("carrot")) {
-			    iconName = "CARROT_ITEM";
-			} else if (iconName.equalsIgnoreCase("cauldron")) {
-			    iconName = "CAULDRON_ITEM";
-			} else if (iconName.equalsIgnoreCase("lava") || iconName.equalsIgnoreCase("stationary_lava")) {
-			    iconName = "LAVA_BUCKET";
-			} else if (iconName.equalsIgnoreCase("water") || iconName.equalsIgnoreCase("stationary_water")) {
-			    iconName = "WATER_BUCKET";
-			} else if (iconName.equalsIgnoreCase("portal")) {
-			    iconName = "OBSIDIAN";
-			} else if (iconName.equalsIgnoreCase("PUMPKIN_STEM")) {
-			    iconName = "PUMPKIN";
-			} else if (iconName.equalsIgnoreCase("skull")) {
-			    iconName = "SKULL_ITEM";
-			}
-			icon = new ItemStack(Material.valueOf(iconName));
-		    } else if (split.length == 2) {
-			icon = new ItemStack(Material.valueOf(split[0]));
-			icon.setDurability(Integer.valueOf(split[1]).shortValue());
-		    }
-		} catch (Exception e) {
-		    // Icon was not well formatted
-		    plugin.getLogger().warning("Error in challenges.yml - icon format is incorrect for " + challengeName + ":" + iconName);
-		    plugin.getLogger().warning("Format should be 'icon: MaterialType:Damage' where Damage is optional");
-		}
-	    }
-	    if (icon == null) {
-		icon = new ItemStack(Material.PAPER);
-	    }
-	    String description = ChatColor.GREEN
-		    + getChallengeConfig().getString("challenges.challengeList." + challengeName + ".friendlyname",
-			    challengeName.substring(0, 1).toUpperCase() + challengeName.substring(1));
-
-	    // Check if completed or not
-	    boolean complete = false;
-	    if (Settings.addCompletedGlow && players.checkChallenge(player.getUniqueId(), challengeName)) {
-		// Complete! Make the icon glow
-		ItemMeta im = icon.getItemMeta();
-		im.addEnchant(Enchantment.ARROW_DAMAGE, 0, true);
-		icon.setItemMeta(im);
-		icon.removeEnchantment(Enchantment.ARROW_DAMAGE);
-		complete = true;
-	    }
-	    boolean repeatable = false;
-	    if (getChallengeConfig().getBoolean("challenges.challengeList." + challengeName + ".repeatable", false)) {
-		// Repeatable
-		repeatable = true;
-	    }
-	    // Only show this challenge if it is not done or repeatable if the
-	    // setting Settings.removeCompleteOntimeChallenges
-	    if (!complete || ((complete && repeatable) || !Settings.removeCompleteOntimeChallenges)) {
-		// Store the challenge panel item and the command that will be
-		// called if it is activated.
-		CPItem item = new CPItem(icon, description, Settings.CHALLENGECOMMAND + " c " + challengeName, null);
-		// Get the challenge description, that changes depending on
-		// whether the challenge is complete or not.
-		List<String> lore = challengeDescription(challengeName, player);
-		item.setLore(lore);
+	    CPItem item = createItem(challengeName, player);
+	    if (item != null) {
 		cp.add(item);
 	    }
 	}
 	// Add the missing levels so player can navigate to them
 	int levelDone = 0;
-	for (int i = 0; i < Settings.challengeLevels.size(); i++) {
-	    if (i == 0) {
-		levelDone = 0;
-	    } else {
-		levelDone = checkLevelCompletion(player, Settings.challengeLevels.get(i - 1));
+	for (; levelDone < Settings.challengeLevels.size(); levelDone++) {
+	    if (checkLevelCompletion(player, Settings.challengeLevels.get(levelDone)) > 0) {
+		break;
 	    }
+	}
+	//plugin.getLogger().info("DEBUG: level done = " + levelDone);
+	for (int i = 0; i < Settings.challengeLevels.size(); i++) {
 	    if (!level.equalsIgnoreCase(Settings.challengeLevels.get(i))) {
 		// Add a navigation book
 		List<String> lore = new ArrayList<String>();
-		if (levelDone <= 0) {
+		if (i <= levelDone) {
 		    CPItem item = new CPItem(Material.BOOK_AND_QUILL, ChatColor.GOLD + Settings.challengeLevels.get(i), null, null);
-		    lore = Util.chop(ChatColor.WHITE, Locale.challengesNavigation.replace("[level]", Settings.challengeLevels.get(i)), 25);
+		    lore = Util.chop(ChatColor.WHITE, plugin.myLocale(player.getUniqueId()).challengesNavigation.replace("[level]", Settings.challengeLevels.get(i)), 25);
 		    item.setNextSection(Settings.challengeLevels.get(i));
 		    item.setLore(lore);
 		    cp.add(item);
@@ -1229,231 +1288,31 @@ public class Challenges implements CommandExecutor {
 		    // Hint at what is to come
 		    CPItem item = new CPItem(Material.BOOK, ChatColor.GOLD + Settings.challengeLevels.get(i), null, null);
 		    // Add the level
+		    int toDo = checkLevelCompletion(player, Settings.challengeLevels.get(i - 1));
 		    lore = Util.chop(
 			    ChatColor.WHITE,
-			    Locale.challengestoComplete.replace("[challengesToDo]", String.valueOf(levelDone)).replace("[thisLevel]",
+			    plugin.myLocale(player.getUniqueId()).challengestoComplete.replace("[challengesToDo]", String.valueOf(toDo)).replace("[thisLevel]",
 				    Settings.challengeLevels.get(i - 1)), 25);
 		    item.setLore(lore);
 		    cp.add(item);
 		}
 	    }
 	}
-
-	/*
-	 * // Do the free challenges (available any time and do not count
-	 * towards levels)
-	 * if (challengeList.containsKey("")) {
-	 * for (String challengeName : challengeList.get("")) {
-	 * // Get the icon
-	 * ItemStack icon = null;
-	 * String iconName =
-	 * getChallengeConfig().getString("challenges.challengeList." +
-	 * challengeName + ".icon", "");
-	 * if (!iconName.isEmpty()) {
-	 * try {
-	 * // Split if required
-	 * String[] split = iconName.split(":");
-	 * if (split.length == 1) {
-	 * // Some material does not show in the inventory
-	 * if (iconName.equalsIgnoreCase("potato")) {
-	 * iconName = "POTATO_ITEM";
-	 * } else if (iconName.equalsIgnoreCase("brewing_stand")) {
-	 * iconName = "BREWING_STAND_ITEM";
-	 * } else if (iconName.equalsIgnoreCase("carrot")) {
-	 * iconName = "CARROT_ITEM";
-	 * } else if (iconName.equalsIgnoreCase("cauldron")) {
-	 * iconName = "CAULDRON_ITEM";
-	 * } else if (iconName.equalsIgnoreCase("lava") ||
-	 * iconName.equalsIgnoreCase("stationary_lava")) {
-	 * iconName = "LAVA_BUCKET";
-	 * } else if (iconName.equalsIgnoreCase("water") ||
-	 * iconName.equalsIgnoreCase("stationary_water")) {
-	 * iconName = "WATER_BUCKET";
-	 * } else if (iconName.equalsIgnoreCase("portal")) {
-	 * iconName = "OBSIDIAN";
-	 * } else if (iconName.equalsIgnoreCase("PUMPKIN_STEM")) {
-	 * iconName = "PUMPKIN";
-	 * } else if (iconName.equalsIgnoreCase("skull")) {
-	 * iconName = "SKULL_ITEM";
-	 * }
-	 * icon = new ItemStack(Material.valueOf(iconName));
-	 * } else if (split.length == 2) {
-	 * icon = new ItemStack(Material.valueOf(split[0]));
-	 * icon.setDurability(Integer.valueOf(split[1]).shortValue());
-	 * }
-	 * } catch (Exception e) {
-	 * // Icon was not well formatted
-	 * plugin.getLogger().warning(
-	 * "Error in challenges.yml - icon format is incorrect for " +
-	 * challengeName + ":" + iconName);
-	 * plugin.getLogger().warning(
-	 * "Format should be 'icon: MaterialType:Damage' where Damage is optional"
-	 * );
-	 * }
-	 * }
-	 * if (icon == null) {
-	 * icon = new ItemStack(Material.PAPER);
-	 * }
-	 * String description = ChatColor.GREEN
-	 * + getChallengeConfig().getString("challenges.challengeList." +
-	 * challengeName + ".friendlyname",
-	 * challengeName.substring(0, 1).toUpperCase() +
-	 * challengeName.substring(1));
-	 * // Check if completed or not
-	 * boolean complete = false;
-	 * if (Settings.addCompletedGlow &&
-	 * players.checkChallenge(player.getUniqueId(),challengeName)) {
-	 * // Complete! Make the icon glow
-	 * ItemMeta im = icon.getItemMeta();
-	 * im.addEnchant(Enchantment.ARROW_DAMAGE, 0, true);
-	 * icon.setItemMeta(im);
-	 * icon.removeEnchantment(Enchantment.ARROW_DAMAGE);
-	 * complete = true;
-	 * }
-	 * boolean repeatable = false;
-	 * if (getChallengeConfig().getBoolean("challenges.challengeList." +
-	 * challengeName + ".repeatable", false)) {
-	 * // Repeatable
-	 * repeatable = true;
-	 * }
-	 * // Only show this challenge if it is not done or repeatable if the
-	 * setting Settings.removeCompleteOntimeChallenges
-	 * if (!complete || ((complete && repeatable) ||
-	 * !Settings.removeCompleteOntimeChallenges)) {
-	 * // Store the challenge panel item and the command that will be called
-	 * if it is activated.
-	 * CPItem item = new CPItem(icon, description, Settings.CHALLENGECOMMAND
-	 * + " c " + challengeName, null);
-	 * // Get the challenge description, that changes depending on whether
-	 * the challenge is complete or not.
-	 * List<String> lore = challengeDescription(challengeName, player);
-	 * item.setLore(lore);
-	 * cp.add(item);
-	 * }
-	 * }
-	 * }
-	 * // Do the level-based challenges
-	 * int levelDone = 0;
-	 * for (int i = 0; i < Settings.challengeLevels.size(); i++) {
-	 * if (i == 0) {
-	 * levelDone = 0;
-	 * } else {
-	 * levelDone = checkLevelCompletion(player,
-	 * Settings.challengeLevels.get(i - 1));
-	 * }
-	 * if (levelDone <= 0) {
-	 * // Loop through challenges for this player
-	 * for (String challengeName :
-	 * challengeList.get(Settings.challengeLevels.get(i))) {
-	 * // Get the icon
-	 * ItemStack icon = null;
-	 * String iconName =
-	 * getChallengeConfig().getString("challenges.challengeList." +
-	 * challengeName + ".icon", "");
-	 * if (!iconName.isEmpty()) {
-	 * try {
-	 * // Split if required
-	 * String[] split = iconName.split(":");
-	 * if (split.length == 1) {
-	 * // Some material does not show in the inventory
-	 * if (iconName.equalsIgnoreCase("potato")) {
-	 * iconName = "POTATO_ITEM";
-	 * } else if (iconName.equalsIgnoreCase("brewing_stand")) {
-	 * iconName = "BREWING_STAND_ITEM";
-	 * } else if (iconName.equalsIgnoreCase("carrot")) {
-	 * iconName = "CARROT_ITEM";
-	 * } else if (iconName.equalsIgnoreCase("cauldron")) {
-	 * iconName = "CAULDRON_ITEM";
-	 * } else if (iconName.equalsIgnoreCase("lava") ||
-	 * iconName.equalsIgnoreCase("stationary_lava")) {
-	 * iconName = "LAVA_BUCKET";
-	 * } else if (iconName.equalsIgnoreCase("water") ||
-	 * iconName.equalsIgnoreCase("stationary_water")) {
-	 * iconName = "WATER_BUCKET";
-	 * } else if (iconName.equalsIgnoreCase("portal")) {
-	 * iconName = "OBSIDIAN";
-	 * } else if (iconName.equalsIgnoreCase("PUMPKIN_STEM")) {
-	 * iconName = "PUMPKIN";
-	 * } else if (iconName.equalsIgnoreCase("skull")) {
-	 * iconName = "SKULL_ITEM";
-	 * }
-	 * icon = new ItemStack(Material.valueOf(iconName));
-	 * } else if (split.length == 2) {
-	 * icon = new ItemStack(Material.valueOf(split[0]));
-	 * icon.setDurability(Integer.valueOf(split[1]).shortValue());
-	 * }
-	 * } catch (Exception e) {
-	 * // Icon was not well formatted
-	 * plugin.getLogger().warning(
-	 * "Error in challenges.yml - icon format is incorrect for " +
-	 * challengeName + ":" + iconName);
-	 * plugin.getLogger().warning(
-	 * "Format should be 'icon: MaterialType:Damage' where Damage is optional"
-	 * );
-	 * }
-	 * }
-	 * if (icon == null) {
-	 * icon = new ItemStack(Material.PAPER);
-	 * }
-	 * String description = ChatColor.GREEN
-	 * + getChallengeConfig().getString("challenges.challengeList." +
-	 * challengeName + ".friendlyname",
-	 * challengeName.substring(0, 1).toUpperCase() +
-	 * challengeName.substring(1));
-	 * // Check if completed or not
-	 * boolean complete = false;
-	 * if (Settings.addCompletedGlow &&
-	 * players.checkChallenge(player.getUniqueId(),challengeName)) {
-	 * // Complete! Make the icon glow
-	 * ItemMeta im = icon.getItemMeta();
-	 * im.addEnchant(Enchantment.ARROW_DAMAGE, 0, true);
-	 * icon.setItemMeta(im);
-	 * icon.removeEnchantment(Enchantment.ARROW_DAMAGE);
-	 * complete = true;
-	 * }
-	 * boolean repeatable = false;
-	 * if (getChallengeConfig().getBoolean("challenges.challengeList." +
-	 * challengeName + ".repeatable", false)) {
-	 * // Repeatable
-	 * repeatable = true;
-	 * }
-	 * // Only show this challenge if it is not done or repeatable if the
-	 * setting Settings.removeCompleteOntimeChallenges
-	 * if (!complete || ((complete && repeatable) ||
-	 * !Settings.removeCompleteOntimeChallenges)) {
-	 * // Store the challenge panel item and the command that will be called
-	 * if it is activated.
-	 * CPItem item = new CPItem(icon, description, Settings.CHALLENGECOMMAND
-	 * + " c " + challengeName, null);
-	 * // Get the challenge description, that changes depending on whether
-	 * the challenge is complete or not.
-	 * List<String> lore = challengeDescription(challengeName, player);
-	 * item.setLore(lore);
-	 * cp.add(item);
-	 * }
-	 * }
-	 * } else {
-	 * // Hint at what is to come
-	 * CPItem item = new CPItem(Material.BOOK, ChatColor.GOLD +
-	 * Settings.challengeLevels.get(i), null, null);
-	 * List<String> lore = new ArrayList<String>();
-	 * // Add the level
-	 * lore = Util.chop(
-	 * ChatColor.WHITE,
-	 * Locale.challengestoComplete.replace("[challengesToDo]",
-	 * String.valueOf(levelDone)).replace("[thisLevel]",
-	 * Settings.challengeLevels.get(i - 1)), 25);
-	 * // TODO Add other info here..
-	 * item.setLore(lore);
-	 * cp.add(item);
-	 * }
-	 * }
-	 */
+	// Add the free challenges if not already shown (which can happen if all of the challenges are done!)
+	if (!level.equals("") && challengeList.containsKey("")) {
+	    for (String freeChallenges: challengeList.get("")) {
+		CPItem item = createItem(freeChallenges, player);
+		if (item != null) {
+		    cp.add(item);
+		} 
+	    }
+	}
+	// Create the panel
 	if (cp.size() > 0) {
 	    // Make sure size is a multiple of 9
 	    int size = cp.size() + 8;
 	    size -= (size % 9);
-	    Inventory newPanel = Bukkit.createInventory(null, size, Locale.challengesguiTitle);
+	    Inventory newPanel = Bukkit.createInventory(null, size, plugin.myLocale(player.getUniqueId()).challengesguiTitle);
 	    // Store the panel details for retrieval later
 	    playerChallengeGUI.put(player.getUniqueId(), cp);
 	    // Fill the inventory and return
@@ -1463,6 +1322,89 @@ public class Challenges implements CommandExecutor {
 	    return newPanel;
 	}
 	return null;
+    }
+
+    /**
+     * Creates an inventory item for the challenge
+     * @param challengeName
+     * @param player
+     * @return Control Panel item
+     */
+    private CPItem createItem(String challengeName, Player player) {
+	CPItem item = null;
+	// Get the icon
+	ItemStack icon = null;
+	String iconName = getChallengeConfig().getString("challenges.challengeList." + challengeName + ".icon", "");
+	if (!iconName.isEmpty()) {
+	    try {
+		// Split if required
+		String[] split = iconName.split(":");
+		if (split.length == 1) {
+		    // Some material does not show in the inventory
+		    if (iconName.equalsIgnoreCase("potato")) {
+			iconName = "POTATO_ITEM";
+		    } else if (iconName.equalsIgnoreCase("brewing_stand")) {
+			iconName = "BREWING_STAND_ITEM";
+		    } else if (iconName.equalsIgnoreCase("carrot")) {
+			iconName = "CARROT_ITEM";
+		    } else if (iconName.equalsIgnoreCase("cauldron")) {
+			iconName = "CAULDRON_ITEM";
+		    } else if (iconName.equalsIgnoreCase("lava") || iconName.equalsIgnoreCase("stationary_lava")) {
+			iconName = "LAVA_BUCKET";
+		    } else if (iconName.equalsIgnoreCase("water") || iconName.equalsIgnoreCase("stationary_water")) {
+			iconName = "WATER_BUCKET";
+		    } else if (iconName.equalsIgnoreCase("portal")) {
+			iconName = "OBSIDIAN";
+		    } else if (iconName.equalsIgnoreCase("PUMPKIN_STEM")) {
+			iconName = "PUMPKIN";
+		    } else if (iconName.equalsIgnoreCase("skull")) {
+			iconName = "SKULL_ITEM";
+		    }
+		    icon = new ItemStack(Material.valueOf(iconName));
+		} else if (split.length == 2) {
+		    icon = new ItemStack(Material.valueOf(split[0]));
+		    icon.setDurability(Integer.valueOf(split[1]).shortValue());
+		}
+	    } catch (Exception e) {
+		// Icon was not well formatted
+		plugin.getLogger().warning("Error in challenges.yml - icon format is incorrect for " + challengeName + ":" + iconName);
+		plugin.getLogger().warning("Format should be 'icon: MaterialType:Damage' where Damage is optional");
+	    }
+	}
+	if (icon == null) {
+	    icon = new ItemStack(Material.PAPER);
+	}
+	String description = ChatColor.GREEN
+		+ getChallengeConfig().getString("challenges.challengeList." + challengeName + ".friendlyname",
+			challengeName.substring(0, 1).toUpperCase() + challengeName.substring(1));
+
+	// Check if completed or not
+	boolean complete = false;
+	if (Settings.addCompletedGlow && players.checkChallenge(player.getUniqueId(), challengeName)) {
+	    // Complete! Make the icon glow
+	    ItemMeta im = icon.getItemMeta();
+	    im.addEnchant(Enchantment.ARROW_DAMAGE, 0, true);
+	    icon.setItemMeta(im);
+	    icon.removeEnchantment(Enchantment.ARROW_DAMAGE);
+	    complete = true;
+	}
+	boolean repeatable = false;
+	if (getChallengeConfig().getBoolean("challenges.challengeList." + challengeName + ".repeatable", false)) {
+	    // Repeatable
+	    repeatable = true;
+	}
+	// Only show this challenge if it is not done or repeatable if the
+	// setting Settings.removeCompleteOntimeChallenges
+	if (!complete || ((complete && repeatable) || !Settings.removeCompleteOntimeChallenges)) {
+	    // Store the challenge panel item and the command that will be
+	    // called if it is activated.
+	    item = new CPItem(icon, description, Settings.CHALLENGECOMMAND + " c " + challengeName, null);
+	    // Get the challenge description, that changes depending on
+	    // whether the challenge is complete or not.
+	    List<String> lore = challengeDescription(challengeName, player);
+	    item.setLore(lore);
+	}
+	return item;
     }
 
     public List<CPItem> getCP(Player player) {
@@ -1486,7 +1428,7 @@ public class Challenges implements CommandExecutor {
 	// + challenge + ".level"));
 	String level = getChallengeConfig().getString("challenges.challengeList." + challenge + ".level", "");
 	if (!level.isEmpty()) {
-	    result.addAll(Util.chop(ChatColor.WHITE, Locale.challengeslevel + ": " + level, length));
+	    result.addAll(Util.chop(ChatColor.WHITE, plugin.myLocale(player.getUniqueId()).challengeslevel + ": " + level, length));
 	}
 	// Check if completed or not
 	boolean complete = false;
@@ -1494,7 +1436,7 @@ public class Challenges implements CommandExecutor {
 	int doneTimes = plugin.getPlayers().checkChallengeTimes(player.getUniqueId(), challenge);
 	if (players.checkChallenge(player.getUniqueId(), challenge)) {
 	    // Complete!
-	    // result.add(ChatColor.AQUA + Locale.challengescomplete);
+	    // result.add(ChatColor.AQUA + plugin.myLocale(player.getUniqueId()).challengescomplete);
 	    complete = true;
 	}
 	boolean repeatable = false;
@@ -1505,20 +1447,20 @@ public class Challenges implements CommandExecutor {
 	if (repeatable) {
 	    if (maxTimes == 0) {
 		if (complete) {
-		    result.add(ChatColor.AQUA + Locale.challengescomplete);
+		    result.add(ChatColor.AQUA + plugin.myLocale(player.getUniqueId()).challengescomplete);
 		}
 	    } else {
 		// Check if the player has maxed out the challenge
 		if (doneTimes < maxTimes) {
-		    result.add(Locale.challengescompletedtimes.replace("[donetimes]", String.valueOf(doneTimes))
+		    result.add(plugin.myLocale(player.getUniqueId()).challengescompletedtimes.replace("[donetimes]", String.valueOf(doneTimes))
 			    .replace("[maxtimes]", String.valueOf(maxTimes)));
 		} else {
 		    repeatable = false;
-		    result.add(Locale.challengesmaxreached.replace("[donetimes]", String.valueOf(doneTimes)).replace("[maxtimes]", String.valueOf(maxTimes)));
+		    result.add(plugin.myLocale(player.getUniqueId()).challengesmaxreached.replace("[donetimes]", String.valueOf(doneTimes)).replace("[maxtimes]", String.valueOf(maxTimes)));
 		}
 	    }
 	} else if (complete) {
-	    result.add(ChatColor.AQUA + Locale.challengescomplete);
+	    result.add(ChatColor.AQUA + plugin.myLocale(player.getUniqueId()).challengescomplete);
 	}
 
 	final String type = getChallengeConfig().getString("challenges.challengeList." + challenge + ".type", "").toLowerCase();
@@ -1526,41 +1468,41 @@ public class Challenges implements CommandExecutor {
 	    result.addAll(Util.chop(ChatColor.GOLD, getChallengeConfig().getString("challenges.challengeList." + challenge + ".description", ""), length));
 	    if (type.equals("inventory")) {
 		if (getChallengeConfig().getBoolean("challenges.challengeList." + challenge.toLowerCase() + ".takeItems")) {
-		    result.addAll(Util.chop(ChatColor.RED, Locale.challengesitemTakeWarning, length));
+		    result.addAll(Util.chop(ChatColor.RED, plugin.myLocale(player.getUniqueId()).challengesitemTakeWarning, length));
 		}
 	    } else if (type.equals("island")) {
-		result.addAll(Util.chop(ChatColor.RED, Locale.challengeserrorItemsNotThere, length));
+		result.addAll(Util.chop(ChatColor.RED, plugin.myLocale(player.getUniqueId()).challengeserrorItemsNotThere, length));
 	    }
 	}
 	if (complete && (!type.equals("inventory") || !repeatable)) {
-	    result.addAll(Util.chop(ChatColor.RED, Locale.challengesnotRepeatable, length));
+	    result.addAll(Util.chop(ChatColor.RED, plugin.myLocale(player.getUniqueId()).challengesnotRepeatable, length));
 	    return result;
 	}
-	int moneyReward = 0;
+	double moneyReward = 0;
 	int expReward = 0;
 	String rewardText = "";
 	if (!players.checkChallenge(player.getUniqueId(), challenge)) {
 	    // First time
-	    moneyReward = getChallengeConfig().getInt("challenges.challengeList." + challenge.toLowerCase() + ".moneyReward", 0);
+	    moneyReward = getChallengeConfig().getDouble("challenges.challengeList." + challenge.toLowerCase() + ".moneyReward", 0);
 	    rewardText = ChatColor.translateAlternateColorCodes('&',
 		    getChallengeConfig().getString("challenges.challengeList." + challenge.toLowerCase() + ".rewardText", "Goodies!"));
 	    expReward = getChallengeConfig().getInt("challenges.challengeList." + challenge + ".xpReward", 0);
-	    result.addAll(Util.chop(ChatColor.GOLD, Locale.challengesfirstTimeRewards, length));
+	    result.addAll(Util.chop(ChatColor.GOLD, plugin.myLocale(player.getUniqueId()).challengesfirstTimeRewards, length));
 	} else {
 	    // Repeat challenge
-	    moneyReward = getChallengeConfig().getInt("challenges.challengeList." + challenge.toLowerCase() + ".repeatMoneyReward", 0);
+	    moneyReward = getChallengeConfig().getDouble("challenges.challengeList." + challenge.toLowerCase() + ".repeatMoneyReward", 0);
 	    rewardText = ChatColor.translateAlternateColorCodes('&',
 		    getChallengeConfig().getString("challenges.challengeList." + challenge.toLowerCase() + ".repeatRewardText", "Goodies!"));
 	    expReward = getChallengeConfig().getInt("challenges.challengeList." + challenge + ".repeatExpReward", 0);
-	    result.addAll(Util.chop(ChatColor.GOLD, Locale.challengesrepeatRewards, length));
+	    result.addAll(Util.chop(ChatColor.GOLD, plugin.myLocale(player.getUniqueId()).challengesrepeatRewards, length));
 
 	}
 	result.addAll(Util.chop(ChatColor.WHITE, rewardText, length));
 	if (expReward > 0) {
-	    result.addAll(Util.chop(ChatColor.GOLD, Locale.challengesexpReward + ": " + ChatColor.WHITE + expReward, length));
+	    result.addAll(Util.chop(ChatColor.GOLD, plugin.myLocale(player.getUniqueId()).challengesexpReward + ": " + ChatColor.WHITE + expReward, length));
 	}
 	if (Settings.useEconomy && moneyReward > 0) {
-	    result.addAll(Util.chop(ChatColor.GOLD, Locale.challengesmoneyReward + ": " + ChatColor.WHITE + VaultHelper.econ.format(moneyReward), length));
+	    result.addAll(Util.chop(ChatColor.GOLD, plugin.myLocale(player.getUniqueId()).challengesmoneyReward + ": " + ChatColor.WHITE + VaultHelper.econ.format(moneyReward), length));
 	}
 	return result;
     }
@@ -1618,6 +1560,33 @@ public class Challenges implements CommandExecutor {
 	} catch (IOException ex) {
 	    plugin.getLogger().severe("Could not save config to " + challengeConfigFile);
 	}
+    }
+
+    /**
+     * Returns a potion based on a damage value
+     * @param damage
+     * @return
+     */
+    @SuppressWarnings("deprecation")
+    public static Potion fromDamage(int damage) {
+	PotionType type = PotionType.getByDamageValue(damage & POTION_BIT);
+	Potion potion;
+	if (type == null || (type == PotionType.WATER && damage != 0)) {
+	    potion = new Potion(damage & NAME_BIT);
+	} else {
+	    int level = (damage & TIER_BIT) >> TIER_SHIFT;
+	level++;
+	potion = new Potion(type, level);
+	}
+	if ((damage & SPLASH_BIT) > 0) {
+	    potion = potion.splash();
+	}
+	if (type != PotionType.INSTANT_DAMAGE && type != PotionType.INSTANT_HEAL) {
+	    if ((damage & EXTENDED_BIT) > 0) {
+		potion = potion.extend();
+	    }
+	}
+	return potion;
     }
 
 }

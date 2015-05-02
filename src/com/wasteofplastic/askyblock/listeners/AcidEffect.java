@@ -45,7 +45,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
-import com.wasteofplastic.askyblock.Locale;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
@@ -352,7 +351,7 @@ public class AcidEffect implements Listener {
 		    }
 		}
 		if (!otherOb) {
-		    e.getPlayer().sendMessage(ChatColor.YELLOW + Locale.changingObsidiantoLava);
+		    e.getPlayer().sendMessage(ChatColor.YELLOW + plugin.myLocale(e.getPlayer().getUniqueId()).changingObsidiantoLava);
 		    e.getPlayer().getInventory().setItemInHand(null);
 		    // e.getPlayer().getInventory().removeItem(new
 		    // ItemStack(Material.BUCKET, 1));

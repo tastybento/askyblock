@@ -18,13 +18,11 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
-import com.wasteofplastic.askyblock.Locale;
 import com.wasteofplastic.askyblock.Settings;
-import com.wasteofplastic.askyblock.util.Pair;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
-public class Biomes implements Listener {
+public class BiomesPanel implements Listener {
     private static ASkyBlock plugin = ASkyBlock.getPlugin();
     private static HashMap<UUID, List<BiomeItem>> biomeItems = new HashMap<UUID, List<BiomeItem>>();
 
@@ -82,14 +80,14 @@ public class Biomes implements Listener {
 	    // Make sure size is a multiple of 9
 	    int size = items.size() + 8;
 	    size -= (size % 9);
-	    Inventory newPanel = Bukkit.createInventory(null, size, Locale.biomePanelTitle);
+	    Inventory newPanel = Bukkit.createInventory(null, size, plugin.myLocale().biomePanelTitle);
 	    // Fill the inventory and return
 	    for (BiomeItem i : items) {
 		newPanel.addItem(i.getItem());
 	    }
 	    return newPanel;
 	} else {
-	    player.sendMessage(ChatColor.RED + Locale.errorCommandNotReady);
+	    player.sendMessage(ChatColor.RED + plugin.myLocale().errorCommandNotReady);
 	    plugin.getLogger().warning("There are no biomes in config.yml so /island biomes will not work!");
 	}
 	return null;
@@ -104,7 +102,7 @@ public class Biomes implements Listener {
 						    // clicked in
 	int slot = event.getRawSlot();
 	// Check this is the right panel
-	if (!inventory.getName().equals(Locale.biomePanelTitle)) {
+	if (!inventory.getName().equals(plugin.myLocale().biomePanelTitle)) {
 	    return;
 	}
 	if (slot == -999) {
@@ -131,11 +129,11 @@ public class Biomes implements Listener {
 		    double cost = thisPanel.get(slot).getPrice();
 		    if (cost > 0D) {
 			if (!VaultHelper.econ.has(player, cost)) {
-			    player.sendMessage(ChatColor.RED + Locale.minishopYouCannotAfford.replace("[description]", VaultHelper.econ.format(cost)));
+			    player.sendMessage(ChatColor.RED + plugin.myLocale().minishopYouCannotAfford.replace("[description]", VaultHelper.econ.format(cost)));
 			    return;
 			} else {
 			    VaultHelper.econ.withdrawPlayer(player, Settings.worldName, cost);
-			    player.sendMessage(ChatColor.GREEN + Locale.biomeYouBought.replace("[cost]", VaultHelper.econ.format(cost)));
+			    player.sendMessage(ChatColor.GREEN + plugin.myLocale().biomeYouBought.replace("[cost]", VaultHelper.econ.format(cost)));
 			}
 		    }
 		}
@@ -147,7 +145,7 @@ public class Biomes implements Listener {
 	    } else {
 		setIslandBiome(plugin.getPlayers().getIslandLocation(player.getUniqueId()), biome);
 	    }
-	    player.sendMessage(ChatColor.GREEN + Locale.biomeSet.replace("[biome]", thisPanel.get(slot).getName()));
+	    player.sendMessage(ChatColor.GREEN + plugin.myLocale().biomeSet.replace("[biome]", thisPanel.get(slot).getName()));
 	}
 	return;
     }
@@ -158,41 +156,17 @@ public class Biomes implements Listener {
      * @param islandLoc
      * @param biomeType
      */
-    public boolean setIslandBiome(Location islandLoc, Biome biomeType) {
+    public static boolean setIslandBiome(Location islandLoc, Biome biomeType) {
 	final int islandX = islandLoc.getBlockX();
 	final int islandZ = islandLoc.getBlockZ();
 	final World world = islandLoc.getWorld();
 	final int range = (int) Math.round((double) Settings.islandDistance / 2);
-	List<Pair> chunks = new ArrayList<Pair>();
 	try {
 	    // Biomes only work in 2D, so there's no need to set every block in
 	    // the island area
-	    // However, we need to collect the chunks and push them out again
-	    // getLogger().info("DEBUG: Protection range is = " +
-	    // Settings.island_protectionRange);
 	    for (int x = -range; x <= range; x++) {
 		for (int z = -range; z <= range; z++) {
 		    Location l = new Location(world, (islandX + x), 0, (islandZ + z));
-		    final Pair chunkCoords = new Pair(l.getChunk().getX(), l.getChunk().getZ());
-		    if (!chunks.contains(chunkCoords)) {
-			chunks.add(chunkCoords);
-		    }
-		    // getLogger().info("DEBUG: Chunk saving  " +
-		    // l.getChunk().getX() + "," + l.getChunk().getZ());
-		    /*
-		     * // Weird stuff going on here. Sometimes the location does
-		     * not get created.
-		     * if (l.getBlockX() != (islandX +x)) {
-		     * getLogger().info("DEBUG: Setting " + (islandX + x) + ","
-		     * + (islandZ + z));
-		     * getLogger().info("DEBUG: disparity in x");
-		     * }
-		     * if (l.getBlockZ() != (islandZ +z)) {
-		     * getLogger().info("DEBUG: Setting " + (islandX + x) + ","
-		     * + (islandZ + z));
-		     * getLogger().info("DEBUG: disparity in z");
-		     * }
-		     */
 		    l.getBlock().setBiome(biomeType);
 		}
 	    }
@@ -347,12 +321,6 @@ public class Biomes implements Listener {
 	    break;
 	default:
 	    break;
-	}
-	// Update chunks
-	for (Pair p : chunks) {
-	    islandLoc.getWorld().refreshChunk(p.getLeft(), p.getRight());
-	    // plugin.getLogger().info("DEBUG: refreshing " + p.getLeft() + ","
-	    // + p.getRight());
 	}
 	return true;
     }

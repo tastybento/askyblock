@@ -542,7 +542,7 @@ public class GridManager {
 	    // Remove from the ownership map
 	    // If the owner already has been given a new island, then this will
 	    // not be needed
-	    if (ownershipMap.containsKey(owner)) {
+	    if (owner != null && ownershipMap.containsKey(owner)) {
 		if (ownershipMap.get(owner).equals(island)) {
 		    ownershipMap.remove(owner);
 		}
@@ -856,10 +856,11 @@ public class GridManager {
 	    l = plugin.getPlayers().getHomeLocation(p, number);
 	}
 	// Check if it is safe
-	// getLogger().info("DEBUG: Home location " + l.toString());
+	//plugin.getLogger().info("DEBUG: Home location " + l);
 	if (l != null) {
+	    // Homes are stored as integers and need correcting to be more central
 	    if (isSafeLocation(l)) {
-		return l;
+		return l.clone().add(new Vector(0.5D,0,0.5D));
 	    }
 	    // To cover slabs, stairs and other half blocks, try one block above
 	    Location lPlusOne = l.clone();
@@ -868,7 +869,7 @@ public class GridManager {
 		if (isSafeLocation(lPlusOne)) {
 		    // Adjust the home location accordingly
 		    plugin.getPlayers().setHomeLocation(p, lPlusOne, number);
-		    return lPlusOne;
+		    return lPlusOne.clone().add(new Vector(0.5D,0,0.5D));
 		}
 	    }
 	}
@@ -880,14 +881,14 @@ public class GridManager {
 	    l = plugin.getPlayers().getTeamIslandLocation(p);
 	    if (isSafeLocation(l)) {
 		plugin.getPlayers().setHomeLocation(p, l, number);
-		return l;
+		return l.clone().add(new Vector(0.5D,0,0.5D));
 	    } else {
 		// try team leader's home
 		Location tlh = plugin.getPlayers().getHomeLocation(plugin.getPlayers().getTeamLeader(p));
 		if (tlh != null) {
 		    if (isSafeLocation(tlh)) {
 			plugin.getPlayers().setHomeLocation(p, tlh, number);
-			return tlh;
+			return tlh.clone().add(new Vector(0.5D,0,0.5D));
 		    }
 		}
 	    }
@@ -895,41 +896,31 @@ public class GridManager {
 	    l = plugin.getPlayers().getIslandLocation(p);
 	    if (isSafeLocation(l)) {
 		plugin.getPlayers().setHomeLocation(p, l, number);
-		return l;
+		return l.clone().add(new Vector(0.5D,0,0.5D));
 	    }
 	}
 	if (l == null) {
 	    plugin.getLogger().warning(plugin.getPlayers().getName(p) + " player has no island!");
 	    return null;
 	}
-	// getLogger().info("DEBUG: If these island locations are not safe, then we need to get creative");
+	//plugin.getLogger().info("DEBUG: If these island locations are not safe, then we need to get creative");
 	// If these island locations are not safe, then we need to get creative
 	// Try the default location
-	// getLogger().info("DEBUG: default");
+	//plugin.getLogger().info("DEBUG: default");
 	Location dl = new Location(l.getWorld(), l.getX() + 0.5D, l.getY() + 5D, l.getZ() + 2.5D, 0F, 30F);
 	if (isSafeLocation(dl)) {
 	    plugin.getPlayers().setHomeLocation(p, dl, number);
 	    return dl;
 	}
 	// Try just above the bedrock
-	// getLogger().info("DEBUG: above bedrock");
+	//plugin.getLogger().info("DEBUG: above bedrock");
 	dl = new Location(l.getWorld(), l.getX() + 0.5D, l.getY() + 5D, l.getZ() + 0.5D, 0F, 30F);
 	if (isSafeLocation(dl)) {
 	    plugin.getPlayers().setHomeLocation(p, dl, number);
 	    return dl;
 	}
-
-	// Try higher up - 25 blocks high and then move down
-	// getLogger().info("DEBUG: Try higher up");
-	for (int y = l.getBlockY() + 25; y > 0; y--) {
-	    final Location n = new Location(l.getWorld(), l.getX() + 0.5D, y, l.getZ() + 0.5D);
-	    if (isSafeLocation(n)) {
-		plugin.getPlayers().setHomeLocation(p, n, number);
-		return n;
-	    }
-	}
 	// Try all the way up to the sky
-	// getLogger().info("DEBUG: try all the way to the sky");
+	//plugin.getLogger().info("DEBUG: try all the way to the sky");
 	for (int y = l.getBlockY(); y < 255; y++) {
 	    final Location n = new Location(l.getWorld(), l.getX() + 0.5D, y, l.getZ() + 0.5D);
 	    if (isSafeLocation(n)) {
@@ -938,7 +929,7 @@ public class GridManager {
 	    }
 	}
 	// Try a full protected area scan (-1 = full area scan)
-	l = bigScan(l, p, -1);
+	l = bigScan(l, -1);
 	// Save if it is successful
 	if (l != null) {
 	    plugin.getPlayers().setHomeLocation(p, l, number);
@@ -949,28 +940,34 @@ public class GridManager {
     /**
      * This is a generic scan that can work in the overworld or the nether
      * @param l - location around which to scan
-     * @param p - the player whose island this is
      * @param i - the range to scan for a location < 0 means the full island.
      * @return - safe location, or null if none can be found
      */
-    public Location bigScan(Location l, UUID p, int i) {
-	Island island = plugin.getGrid().getIsland(p);
-	if (island == null) {
-	    return null;
-	}
-	int minX = island.getMinProtectedX();
-	int minZ = island.getMinProtectedZ();
-	int maxX = minX + island.getProtectionSize();
-	int maxZ = minZ + island.getProtectionSize();
-	int height = l.getWorld().getMaxHeight();
-	int depth = 0;
+    public Location bigScan(Location l, int i) {
+	final int minX;
+	final int minZ;
+	final int maxX;
+	final int maxZ;
+	final int height;
+	final int depth;
 	if (i > 0) {
-	    minX = island.getCenter().getBlockX() - i;
-	    minZ = island.getCenter().getBlockZ() - i;
-	    maxX = island.getCenter().getBlockX() + i;
-	    maxZ = island.getCenter().getBlockZ() + i;
-	    height = island.getCenter().getBlockY() + i;
-	    depth = island.getCenter().getBlockY() - i;
+	    minX = l.getBlockX() - i;
+	    minZ = l.getBlockZ() - i;
+	    maxX = l.getBlockX() + i;
+	    maxZ = l.getBlockZ() + i;
+	    height = l.getBlockY() + i;
+	    depth = l.getBlockY() - i;
+	} else {
+	    Island island = plugin.getGrid().getIslandAt(l);
+	    if (island == null) {
+		return null;
+	    }
+	    minX = island.getMinProtectedX();
+	    minZ = island.getMinProtectedZ();
+	    maxX = minX + island.getProtectionSize();
+	    maxZ = minZ + island.getProtectionSize();
+	    height = l.getWorld().getMaxHeight();
+	    depth = 0;
 	}
 
 
@@ -997,6 +994,13 @@ public class GridManager {
 	return null;
     }
 
+    /**
+     * Teleport player to a home location. If one cannot be found a search is done to
+     * find a safe place.
+     * @param player
+     * @param number - home location to do to
+     * @return true if successful, false if not
+     */
     public boolean homeTeleport(final Player player, int number) {
 	Location home = null;
 	home = getSafeHomeLocation(player.getUniqueId(), number);
@@ -1016,15 +1020,16 @@ public class GridManager {
 	    if (!player.performCommand(Settings.SPAWNCOMMAND)) {
 		player.teleport(player.getWorld().getSpawnLocation());
 	    }
-	    player.sendMessage(ChatColor.RED + Locale.warpserrorNotSafe);
+	    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorNotSafe);
 	    return true;
 	}
 	//plugin.getLogger().info("DEBUG: home loc = " + home);
-	player.teleport(home.clone().add(new Vector(0.5D,0D,0.5D)));
+	player.teleport(home);
+	//player.sendBlockChange(home, Material.GLOWSTONE, (byte)0);
 	if (number ==1 ) {
-	    player.sendMessage(ChatColor.GREEN + Locale.islandteleport);
+	    player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).islandteleport);
 	} else {
-	    player.sendMessage(ChatColor.GREEN + Locale.islandteleport + " #" + number);
+	    player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).islandteleport + " #" + number);
 	}
 	return true;
 
@@ -1049,19 +1054,19 @@ public class GridManager {
     public void homeSet(Player player, int number) {
 	// Check if player is in overworld
 	if (!player.getWorld().equals(ASkyBlock.getIslandWorld())) {
-	    player.sendMessage(ChatColor.RED + Locale.setHomeerrorNotOnIsland);
+	    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).setHomeerrorNotOnIsland);
 	    return; 
 	}
 	// Check if player is on island
 	if (!plugin.getGrid().playerIsOnIsland(player)) {
-	    player.sendMessage(ChatColor.RED + Locale.setHomeerrorNotOnIsland);
+	    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).setHomeerrorNotOnIsland);
 	    return;
 	}
 	plugin.getPlayers().setHomeLocation(player.getUniqueId(), player.getLocation(), number);
 	if (number == 1) {
-	    player.sendMessage(ChatColor.GREEN + Locale.setHomehomeSet);
+	    player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).setHomehomeSet);
 	} else {
-	    player.sendMessage(ChatColor.GREEN + Locale.setHomehomeSet + " #" + number);
+	    player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).setHomehomeSet + " #" + number);
 	}
     }
 
@@ -1174,12 +1179,12 @@ public class GridManager {
 	if (plugin.getPlayers().hasIsland(player.getUniqueId())) {
 	    islandTestLocations.add(plugin.getPlayers().getIslandLocation(player.getUniqueId()));
 	    // If new Nether
-	    if (Settings.newNether) {
+	    if (Settings.createNether && Settings.newNether) {
 		islandTestLocations.add(netherIsland(plugin.getPlayers().getIslandLocation(player.getUniqueId())));
 	    }
 	} else if (plugin.getPlayers().inTeam(player.getUniqueId())) {
 	    islandTestLocations.add(plugin.getPlayers().getTeamIslandLocation(player.getUniqueId()));
-	    if (Settings.newNether) {
+	    if (Settings.createNether && Settings.newNether) {
 		islandTestLocations.add(netherIsland(plugin.getPlayers().getTeamIslandLocation(player.getUniqueId())));
 	    }
 	}

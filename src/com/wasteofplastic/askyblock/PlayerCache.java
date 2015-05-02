@@ -620,4 +620,53 @@ public class PlayerCache {
 	playerCache.get(playerUUID).startInviteCoolDownTimer(location);
     }
 
+    /**
+     * Returns the locale for this player. If missing, will return nothing
+     * @param playerUUID
+     * @return name of the locale this player uses
+     */
+    public String getLocale(UUID playerUUID) {
+	addPlayer(playerUUID);
+	if (playerUUID == null) {
+	    return "";
+	}
+	return playerCache.get(playerUUID).getLocale();
+    }
+
+    /**
+     * Sets the locale this player wants to use
+     * @param playerUUID
+     * @param localeName
+     */
+    public void setLocale(UUID playerUUID, String localeName) {
+	playerCache.get(playerUUID).setLocale(localeName);
+    }
+    
+    /**
+     * The rating of the initial starter island out of 100. Default is 50
+     * @param playerUUID
+     * @return rating
+     */
+    public int getStartIslandRating(UUID playerUUID) {
+	addPlayer(playerUUID);
+	return playerCache.get(playerUUID).getStartIslandRating();
+    }
+    
+    /**
+     * Record the island rating that the player started with
+     * @param playerUUID
+     * @param rating
+     */
+    public void setStartIslandRating(UUID playerUUID, int rating) {
+	addPlayer(playerUUID);
+	playerCache.get(playerUUID).setStartIslandRating(rating);
+    }
+    
+    /**
+     * Clear the starter island rating from the player's record
+     * @param playerUUID
+     */
+    public void clearStartIslandRating(UUID playerUUID) {
+	setStartIslandRating(playerUUID, 0);
+    }
 }

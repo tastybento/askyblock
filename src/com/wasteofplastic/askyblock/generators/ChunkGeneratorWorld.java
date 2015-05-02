@@ -254,7 +254,11 @@ public class ChunkGeneratorWorld extends ChunkGenerator {
 
 	    }
 	    // Monster island towers
-	} else if (Math.abs(chunkX % chunkDist) == 2 && Math.abs(chunkZ % chunkDist) == 2) {
+	    // (a % b + b) % b is required to make Java % always give positive remainders
+	} else if (((chunkX % chunkDist) + chunkDist) % chunkDist == 2 && ((chunkZ % chunkDist) + chunkDist) % chunkDist == 2) {
+	    //Bukkit.getLogger().info("chunk x  = " + chunkX + " chunk z = " + chunkZ);
+	    //Bukkit.getLogger().info("Math.abs(chunkX) % chunkDist = " + (Math.abs(chunkX) % chunkDist));
+	    //Bukkit.getLogger().info("Math.abs(chunkZ) % chunkDist = " + (Math.abs(chunkZ) % chunkDist));
 	    // Fill the area with lava first
 	    /*
 	     * for (int x = 0; x < 16; x++) {

@@ -7,6 +7,7 @@ import org.bukkit.Material;
 import org.bukkit.TreeType;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.entity.EntityType;
@@ -91,7 +92,7 @@ public class NetherPopulator extends BlockPopulator {
 			    } else if (choice < 40) {
 				chestInv.setItem(slot, new ItemStack(Material.FLINT_AND_STEEL, 1));
 			    } else if (choice < 45) {
-				chestInv.setItem(slot, new ItemStack(Material.NETHER_WARTS, random.nextInt(4) + 3));
+				chestInv.setItem(slot, new ItemStack(Material.NETHER_STALK, random.nextInt(4) + 3));
 			    } else if (choice < 55) {
 				chestInv.setItem(slot, new ItemStack(Material.SADDLE, 1));
 			    } else if (choice < 63) {
@@ -110,6 +111,12 @@ public class NetherPopulator extends BlockPopulator {
 		    } else if (b.getType().equals(Material.DIRT)) {
 			world.generateTree(source.getBlock(x, y + 1, z).getLocation(), TreeType.BROWN_MUSHROOM);
 			b.setType(Material.SOUL_SAND);
+		    } else if (b.getType().equals(Material.SOUL_SAND) && b.getRelative(BlockFace.UP).getType().equals(Material.AIR)) {
+			//Bukkit.getLogger().info("DEBUG: soul sand found!");
+			if (random.nextInt(9) == 1) {
+			    //Bukkit.getLogger().info("DEBUG: Setting to NETHER_WARTS");
+			    b.getRelative(BlockFace.UP).setType(Material.NETHER_WARTS);
+			}
 		    }
 		    // Mob spawn
 		    /*

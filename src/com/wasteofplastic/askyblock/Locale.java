@@ -16,419 +16,978 @@
  *******************************************************************************/
 package com.wasteofplastic.askyblock;
 
+import java.io.File;
+import java.io.InputStream;
+
+import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+
 
 /**
  * All the text strings in the game sent to players
+ * This version enables different players to have different locales.
  * 
  * @author tastybento
  */
 public class Locale {
-    public static String changingObsidiantoLava;
-    public static String acidLore;
-    public static String acidBucket;
-    public static String acidBottle;
-    public static String drankAcidAndDied;
-    public static String drankAcid;
+    // Localization Strings
+    private FileConfiguration locale = null;
+    private File localeFile = null;
+    private ASkyBlock plugin;
+
+    public String changingObsidiantoLava;
+    public String acidLore;
+    public String acidBucket;
+    public String acidBottle;
+    public String drankAcidAndDied;
+    public String drankAcid;
     // Errors
-    public static String errorUnknownPlayer;
-    public static String errorNoPermission;
-    public static String errorNoIsland;
-    public static String errorNoIslandOther;
-    public static String errorCommandNotReady;
-    public static String errorOfflinePlayer;
-    public static String errorUnknownCommand;
-    public static String errorNoTeam;
+    public String errorUnknownPlayer;
+    public String errorNoPermission;
+    public String errorNoIsland;
+    public String errorNoIslandOther;
+    public String errorCommandNotReady;
+    public String errorOfflinePlayer;
+    public String errorUnknownCommand;
+    public String errorNoTeam;
 
     // IslandGuard
-    public static String islandProtected;
+    public String islandProtected;
 
     // LavaCheck
-    public static String lavaTip;
+    public String lavaTip;
 
     // WarpSigns
-    public static String warpswelcomeLine;
-    public static String warpswarpTip;
-    public static String warpssuccess;
-    public static String warpsremoved;
-    public static String warpssignRemoved;
-    public static String warpsdeactivate;
-    public static String warpserrorNoRemove;
-    public static String warpserrorNoPerm;
-    public static String warpserrorNoPlace;
-    public static String warpserrorDuplicate;
-    public static String warpserrorDoesNotExist;
-    public static String warpserrorNotReadyYet;
-    public static String warpserrorNotSafe;
+    public String warpswelcomeLine;
+    public String warpswarpTip;
+    public String warpssuccess;
+    public String warpsremoved;
+    public String warpssignRemoved;
+    public String warpsdeactivate;
+    public String warpserrorNoRemove;
+    public String warpserrorNoPerm;
+    public String warpserrorNoPlace;
+    public String warpserrorDuplicate;
+    public String warpserrorDoesNotExist;
+    public String warpserrorNotReadyYet;
+    public String warpserrorNotSafe;
     // island warp help
-    public static String warpswarpToPlayersSign;
-    public static String warpserrorNoWarpsYet;
-    public static String warpswarpsAvailable;
-    public static String warpsPlayerWarped;
+    public String warpswarpToPlayersSign;
+    public String warpserrorNoWarpsYet;
+    public String warpswarpsAvailable;
+    public String warpsPlayerWarped;
 
     // ASkyBlock
-    public static String topTenheader;
-    public static String topTenerrorNotReady;
-    public static String levelislandLevel;
-    public static String levelerrornotYourIsland;
+    public String topTenheader;
+    public String topTenerrorNotReady;
+    public String levelislandLevel;
+    public String levelerrornotYourIsland;
     // sethome
-    public static String setHomehomeSet;
-    public static String setHomeerrorNotOnIsland;
-    public static String setHomeerrorNoIsland;
+    public String setHomehomeSet;
+    public String setHomeerrorNotOnIsland;
+    public String setHomeerrorNoIsland;
 
     // Challenges
-    public static String challengesyouHaveCompleted;
-    public static String challengesnameHasCompleted;
-    public static String challengesyouRepeated;
-    public static String challengestoComplete;
-    public static String challengeshelp1;
-    public static String challengeshelp2;
-    public static String challengescolors;
-    public static String challengescomplete;
-    public static String challengesincomplete;
-    public static String challengescompleteNotRepeatable;
-    public static String challengescompleteRepeatable;
-    public static String challengesname;
-    public static String challengeslevel;
-    public static String challengesitemTakeWarning;
-    public static String challengesnotRepeatable;
-    public static String challengesfirstTimeRewards;
-    public static String challengesrepeatRewards;
-    public static String challengesexpReward;
-    public static String challengesmoneyReward;
-    public static String challengestoCompleteUse;
-    public static String challengesinvalidChallengeName;
-    public static String challengesrewards;
-    public static String challengesyouHaveNotUnlocked;
-    public static String challengesunknownChallenge;
-    public static String challengeserrorNotEnoughItems;
-    public static String challengeserrorNotOnIsland;
-    public static String challengeserrorNotCloseEnough;
-    public static String challengeserrorItemsNotThere;
-    public static String challengeserrorIslandLevel;
-    public static String challengeserrorYouAreMissing;
+    public String challengesyouHaveCompleted;
+    public String challengesnameHasCompleted;
+    public String challengesyouRepeated;
+    public String challengestoComplete;
+    public String challengeshelp1;
+    public String challengeshelp2;
+    public String challengescolors;
+    public String challengescomplete;
+    public String challengesincomplete;
+    public String challengescompleteNotRepeatable;
+    public String challengescompleteRepeatable;
+    public String challengesname;
+    public String challengeslevel;
+    public String challengesitemTakeWarning;
+    public String challengesnotRepeatable;
+    public String challengesfirstTimeRewards;
+    public String challengesrepeatRewards;
+    public String challengesexpReward;
+    public String challengesmoneyReward;
+    public String challengestoCompleteUse;
+    public String challengesinvalidChallengeName;
+    public String challengesrewards;
+    public String challengesyouHaveNotUnlocked;
+    public String challengesunknownChallenge;
+    public String challengeserrorNotEnoughItems;
+    public String challengeserrorNotOnIsland;
+    public String challengeserrorNotCloseEnough;
+    public String challengeserrorItemsNotThere;
+    public String challengeserrorIslandLevel;
+    public String challengeserrorYouAreMissing;
 
     // /island
-    public static String islandteleport;
-    public static String islandnew;
-    public static String islanderrorCouldNotCreateIsland;
-    public static String islanderrorYouDoNotHavePermission;
+    public String islandteleport;
+    public String islandnew;
+    public String islanderrorCouldNotCreateIsland;
+    public String islanderrorYouDoNotHavePermission;
 
     // /island reset
-    public static String islandresetOnlyOwner;
-    public static String islandresetMustRemovePlayers;
-    public static String islandresetPleaseWait;
-    public static String islandresetConfirm;
-    public static String resetYouHave;
-    public static String islandResetNoMore;
+    public String islandresetOnlyOwner;
+    public String islandresetMustRemovePlayers;
+    public String islandresetPleaseWait;
+    public String islandresetConfirm;
+    public String resetYouHave;
+    public String islandResetNoMore;
     // Cool down warning - [time] is number of seconds left
-    public static String islandresetWait;
+    public String islandresetWait;
     // /island help
     // /island
-    public static String islandhelpIsland;
+    public String islandhelpIsland;
     // island cp
-    public static String islandhelpControlPanel;
+    public String islandhelpControlPanel;
     // /island restart
-    public static String islandhelpRestart;
-    public static String islandDeletedLifeboats;
+    public String islandhelpRestart;
+    public String islandDeletedLifeboats;
     // /island sethome
-    public static String islandhelpSetHome;
+    public String islandhelpSetHome;
     // /island level
-    public static String islandhelpLevel;
+    public String islandhelpLevel;
     // /island level <player>
-    public static String islandhelpLevelPlayer;
+    public String islandhelpLevelPlayer;
     // /island top;
-    public static String islandhelpTop;
+    public String islandhelpTop;
     // /island warps;
-    public static String islandhelpWarps;
+    public String islandhelpWarps;
     // /island warp <player>
-    public static String islandhelpWarp;
+    public String islandhelpWarp;
     // /island team
-    public static String islandhelpTeam;
+    public String islandhelpTeam;
     // /island invite <player>;
-    public static String islandhelpInvite;
+    public String islandhelpInvite;
     // /island leave;
-    public static String islandhelpLeave;
+    public String islandhelpLeave;
     // /island kick <player>
-    public static String islandhelpKick;
+    public String islandhelpKick;
     // /island <accept/reject>
-    public static String islandhelpAcceptReject;
+    public String islandhelpAcceptReject;
     // /island makeLeader<player>
-    public static String islandhelpMakeLeader;
+    public String islandhelpMakeLeader;
     // Level
-    public static String islanderrorLevelNotReady;
-    public static String islanderrorInvalidPlayer;
-    public static String islandislandLevelis;
+    public String islanderrorLevelNotReady;
+    public String islanderrorInvalidPlayer;
+    public String islandislandLevelis;
     // Spawn
-    public static String islandhelpSpawn;
+    public String islandhelpSpawn;
     // Teleport go
-    public static String islandhelpTeleport;
+    public String islandhelpTeleport;
     // Expel
-    public static String islandhelpExpel;
+    public String islandhelpExpel;
 
     // ////////////////////////////////////
     // /island commands //
     // ////////////////////////////////////
 
     // invite
-    public static String invitehelp;
-    public static String inviteyouCanInvite;
-    public static String inviteyouCannotInvite;
+    public String invitehelp;
+    public String inviteyouCanInvite;
+    public String inviteyouCannotInvite;
     // "Only the island's owner may invite new players."
-    public static String inviteonlyIslandOwnerCanInvite;
-    public static String inviteyouHaveJoinedAnIsland;
-    public static String invitehasJoinedYourIsland;
-    public static String inviteerrorCantJoinIsland;
-    public static String inviteerrorYouMustHaveIslandToInvite;
-    public static String inviteerrorYouCannotInviteYourself;
-    public static String inviteremovingInvite;
-    public static String inviteinviteSentTo;
-    public static String invitenameHasInvitedYou;
-    public static String invitetoAcceptOrReject;
-    public static String invitewarningYouWillLoseIsland;
-    public static String inviteerrorYourIslandIsFull;
+    public String inviteonlyIslandOwnerCanInvite;
+    public String inviteyouHaveJoinedAnIsland;
+    public String invitehasJoinedYourIsland;
+    public String inviteerrorCantJoinIsland;
+    public String inviteerrorYouMustHaveIslandToInvite;
+    public String inviteerrorYouCannotInviteYourself;
+    public String inviteremovingInvite;
+    public String inviteinviteSentTo;
+    public String invitenameHasInvitedYou;
+    public String invitetoAcceptOrReject;
+    public String invitewarningYouWillLoseIsland;
+    public String inviteerrorYourIslandIsFull;
     // "That player is already with a group on an island."
-    public static String inviteerrorThatPlayerIsAlreadyInATeam;
-    public static String inviteerrorCoolDown;
+    public String inviteerrorThatPlayerIsAlreadyInATeam;
+    public String inviteerrorCoolDown;
 
     // reject
-    public static String rejectyouHaveRejectedInvitation;
-    public static String rejectnameHasRejectedInvite;
-    public static String rejectyouHaveNotBeenInvited;
+    public String rejectyouHaveRejectedInvitation;
+    public String rejectnameHasRejectedInvite;
+    public String rejectyouHaveNotBeenInvited;
 
     // leave
-    public static String leaveerrorYouAreTheLeader;
-    public static String leaveyouHaveLeftTheIsland;
-    public static String leavenameHasLeftYourIsland;
-    public static String leaveerrorYouCannotLeaveIsland;
-    public static String leaveerrorYouMustBeInWorld;
-    public static String leaveerrorLeadersCannotLeave;
+    public String leaveerrorYouAreTheLeader;
+    public String leaveyouHaveLeftTheIsland;
+    public String leavenameHasLeftYourIsland;
+    public String leaveerrorYouCannotLeaveIsland;
+    public String leaveerrorYouMustBeInWorld;
+    public String leaveerrorLeadersCannotLeave;
 
     // team
-    public static String teamlistingMembers;
+    public String teamlistingMembers;
 
     // kick / remove
-    public static String kickerrorPlayerNotInTeam;
-    public static String kicknameRemovedYou;
-    public static String kicknameRemoved;
-    public static String kickerrorNotPartOfTeam;
-    public static String kickerrorOnlyLeaderCan;
-    public static String kickerrorNoTeam;
+    public String kickerrorPlayerNotInTeam;
+    public String kicknameRemovedYou;
+    public String kicknameRemoved;
+    public String kickerrorNotPartOfTeam;
+    public String kickerrorOnlyLeaderCan;
+    public String kickerrorNoTeam;
 
     // makeleader
-    public static String makeLeadererrorPlayerMustBeOnline;
-    public static String makeLeadererrorYouMustBeInTeam;
-    public static String makeLeadererrorRemoveAllPlayersFirst;
-    public static String makeLeaderyouAreNowTheOwner;
-    public static String makeLeadernameIsNowTheOwner;
-    public static String makeLeadererrorThatPlayerIsNotInTeam;
-    public static String makeLeadererrorNotYourIsland;
-    public static String makeLeadererrorGeneralError;
+    public String makeLeadererrorPlayerMustBeOnline;
+    public String makeLeadererrorYouMustBeInTeam;
+    public String makeLeadererrorRemoveAllPlayersFirst;
+    public String makeLeaderyouAreNowTheOwner;
+    public String makeLeadernameIsNowTheOwner;
+    public String makeLeadererrorThatPlayerIsNotInTeam;
+    public String makeLeadererrorNotYourIsland;
+    public String makeLeadererrorGeneralError;
 
     // //////////////////////////////////////////////////////////////
     // Admin commands that use /acid //
     // //////////////////////////////////////////////////////////////
 
     // Help
-    public static String adminHelpHelp;
-    public static String adminHelpreload;
+    public String adminHelpHelp;
+    public String adminHelpreload;
     // /acid top ten;
-    public static String adminHelptopTen;
+    public String adminHelptopTen;
     // /acid register <player>;
-    public static String adminHelpregister;
+    public String adminHelpregister;
     // /acid delete <player>;
-    public static String adminHelpdelete;
+    public String adminHelpdelete;
     // /acid completechallenge <challengename> <player>
-    public static String adminHelpcompleteChallenge;
+    public String adminHelpcompleteChallenge;
     // /acid resetchallenge <challengename> <player>
-    public static String adminHelpresetChallenge;
+    public String adminHelpresetChallenge;
     // /acid resetallchallenges <player>;
-    public static String adminHelpresetAllChallenges;
+    public String adminHelpresetAllChallenges;
     // /acid purge [TimeInDays];
-    public static String adminHelppurge;
+    public String adminHelppurge;
     // /acid info <player>;
-    public static String adminHelpinfo;
-    public static String adminHelpclearReset;
+    public String adminHelpinfo;
+    public String adminHelpclearReset;
 
-    public static String adminHelptp;
+    public String adminHelptp;
 
     // acid reload
-    public static String reloadconfigReloaded;
+    public String reloadconfigReloaded;
     // topten
-    public static String adminTopTengenerating;
-    public static String adminTopTenfinished;
+    public String adminTopTengenerating;
+    public String adminTopTenfinished;
 
     // purge
-    public static String purgealreadyRunning;
-    public static String purgeusage;
-    public static String purgecalculating;
-    public static String purgenoneFound;
-    public static String purgethisWillRemove;
-    public static String purgewarning;
-    public static String purgetypeConfirm;
-    public static String purgepurgeCancelled;
-    public static String purgefinished;
-    public static String purgeremovingName;
-    public static String adminHelppurgeholes;
+    public String purgealreadyRunning;
+    public String purgeusage;
+    public String purgecalculating;
+    public String purgenoneFound;
+    public String purgethisWillRemove;
+    public String purgewarning;
+    public String purgetypeConfirm;
+    public String purgepurgeCancelled;
+    public String purgefinished;
+    public String purgeremovingName;
+    public String adminHelppurgeholes;
 
     // confirm
-    public static String confirmerrorTimeLimitExpired;
+    public String confirmerrorTimeLimitExpired;
 
     // delete
-    public static String deleteremoving;
+    public String deleteremoving;
 
     // register
-    public static String registersettingIsland;
-    public static String registererrorBedrockNotFound;
+    public String registersettingIsland;
+    public String registererrorBedrockNotFound;
 
     // info
-    public static String adminInfoislandLocation;
-    public static String adminInfoerrorNotPartOfTeam;
-    public static String adminInfoerrorNullTeamLeader;
-    public static String adminInfoerrorTeamMembersExist;
-    public static String adminHelpinfoIsland;
-    public static String adminHelpSetSpawn;
+    public String adminInfoislandLocation;
+    public String adminInfoerrorNotPartOfTeam;
+    public String adminInfoerrorNullTeamLeader;
+    public String adminInfoerrorTeamMembersExist;
+    public String adminHelpinfoIsland;
+    public String adminHelpSetSpawn;
 
     // resetallchallenges
-    public static String resetChallengessuccess;
+    public String resetChallengessuccess;
 
     // checkteam
-    public static String checkTeamcheckingTeam;
+    public String checkTeamcheckingTeam;
 
     // completechallenge
-    public static String completeChallengeerrorChallengeDoesNotExist;
-    public static String completeChallengechallangeCompleted;
+    public String completeChallengeerrorChallengeDoesNotExist;
+    public String completeChallengechallangeCompleted;
 
     // resetchallenge
-    public static String resetChallengeerrorChallengeDoesNotExist;
-    public static String resetChallengechallengeReset;
+    public String resetChallengeerrorChallengeDoesNotExist;
+    public String resetChallengechallengeReset;
 
     // ASkyBlock news
-    public static String newsHeadline;
+    public String newsHeadline;
 
     // Nether
-    public static String netherSpawnIsProtected;
+    public String netherSpawnIsProtected;
 
     // Minishop & other Control Panels
-    public static String islandhelpMiniShop;
-    public static String islandMiniShopTitle;
-    public static String controlPanelTitle;
-    public static String challengesguiTitle;
-    public static String minishopBuy;
-    public static String minishopSell;
-    public static String minishopOutOfStock;
+    public String islandhelpMiniShop;
+    public String islandMiniShopTitle;
+    public String controlPanelTitle;
+    public String challengesguiTitle;
+    public String minishopBuy;
+    public String minishopSell;
+    public String minishopOutOfStock;
 
     // Ultra safe boats
-    public static String boatWarningItIsUnsafe;
-    public static String clearedResetLimit;
+    public String boatWarningItIsUnsafe;
+    public String clearedResetLimit;
 
-    public static String minishopYouBought;
-    public static String minishopSellProblem;
-    public static String minishopYouSold;
-    public static String minishopBuyProblem;
-    public static String minishopYouCannotAfford;
+    public String minishopYouBought;
+    public String minishopSellProblem;
+    public String minishopYouSold;
+    public String minishopBuyProblem;
+    public String minishopYouCannotAfford;
 
     // Sign
-    public static String signLine1;
-    public static String signLine2;
-    public static String signLine3;
-    public static String signLine4;
+    public String signLine1;
+    public String signLine2;
+    public String signLine3;
+    public String signLine4;
 
     // Biomes
-    public static String islandhelpBiome;
-    public static String biomeSet;
-    public static String biomeUnknown;
-    public static String biomeYouBought;
-    public static String biomePanelTitle;
+    public String islandhelpBiome;
+    public String biomeSet;
+    public String biomeUnknown;
+    public String biomeYouBought;
+    public String biomePanelTitle;
 
     // Expel
-    public static String expelSuccess;
-    public static String expelNotOnIsland;
-    public static String expelExpelled;
-    public static String expelFail;
-    public static String expelNotYourself;
+    public String expelSuccess;
+    public String expelNotOnIsland;
+    public String expelExpelled;
+    public String expelFail;
+    public String expelNotYourself;
 
     // Mob limits
-    public static String moblimitsError;
+    public String moblimitsError;
 
     // Coop
-    public static String coopRemoved;
-    public static String coopSuccess;
-    public static String coopRemoveSuccess;
-    public static String coopMadeYouCoop;
-    public static String coopOnYourTeam;
-    public static String islandhelpCoop;
-    public static String coopInvited;
-    public static String coopUseExpel;
+    public String coopRemoved;
+    public String coopSuccess;
+    public String coopRemoveSuccess;
+    public String coopMadeYouCoop;
+    public String coopOnYourTeam;
+    public String islandhelpCoop;
+    public String coopInvited;
+    public String coopUseExpel;
 
-    public static String errorWrongWorld;
-    public static String islandcannotTeleport;
-    public static String levelCalculating;
-    public static String prefix;
+    public String errorWrongWorld;
+    public String islandcannotTeleport;
+    public String levelCalculating;
+    public String prefix;
     // Lock
-    public static String lockIslandLocked;
-    public static String lockNowEntering;
-    public static String lockNowLeaving;
-    public static String lockLocking;
-    public static String lockUnlocking;
-    public static String islandHelpLock;
-    public static String helpColor;
-    public static String lockPlayerLocked;
-    public static String lockPlayerUnlocked;
-    public static String lockEnteringSpawn;
-    public static String lockLeavingSpawn;
+    public String lockIslandLocked;
+    public String lockNowEntering;
+    public String lockNowLeaving;
+    public String lockLocking;
+    public String lockUnlocking;
+    public String islandHelpLock;
+    public String helpColor;
+    public String lockPlayerLocked;
+    public String lockPlayerUnlocked;
+    public String lockEnteringSpawn;
+    public String lockLeavingSpawn;
     // Titles
-    public static String islandSubTitle;
-    public static String islandTitle;
-    public static String islandDonate;
-    public static String islandURL;
-    public static String adminHelpunregister;
-    public static String adminHelpSetRange;
-    public static String challengeserrorRewardProblem;
-    public static String challengesNavigation;
-    public static String islandHelpSettings;
-    public static String islandHelpChallenges;
-    public static String challengesmaxreached;
-    public static String challengescompletedtimes;
-    public static String targetInNoPVPArea;
+    public String islandSubTitle;
+    public String islandTitle;
+    public String islandDonate;
+    public String islandURL;
+    public String adminHelpunregister;
+    public String adminHelpSetRange;
+    public String challengeserrorRewardProblem;
+    public String challengesNavigation;
+    public String islandHelpSettings;
+    public String islandHelpChallenges;
+    public String challengesmaxreached;
+    public String challengescompletedtimes;
+    public String targetInNoPVPArea;
     // Island Guard Settings
-    public static String igsTitle;
-    public static String igsAllowed;
-    public static String igsDisallowed;
-    public static String igsArmorStand;
-    public static String igsBeacon;
-    public static String igsBed;
-    public static String igsBreakBlocks;
-    public static String igsBreeding;
-    public static String igsBrewing;
-    public static String igsBucket;
-    public static String igsChest;
-    public static String igsChestDamage;
-    public static String igsWorkbench;
-    public static String igsCropTrampling;
-    public static String igsDoor;
-    public static String igsEnchanting;
-    public static String igsEnderPearl;
-    public static String igsFire;
-    public static String igsFurnace;
-    public static String igsGate;
-    public static String igsHurtAnimals;
-    public static String igsHurtMobs;
-    public static String igsLeash;
-    public static String igsLever;
-    public static String igsSpawnEgg;
-    public static String igsJukebox;
-    public static String igsPlaceBlocks;
-    public static String igsPortalUse;
-    public static String igsPVP;
-    public static String igsRedstone;
-    public static String igsShears;
-    public static String igsTeleport;
-    public static String igsTNT;
-    public static String igsVisitorDrop;
-    public static String igsVisitorPickUp;
-    public static String igsVisitorKeep;
-    public static String igsNetherPVP;
-    public static String igsAnvil;
-    public static String setHomeerrorNumHomes;
+    public String igsTitle;
+    public String igsAllowed;
+    public String igsDisallowed;
+    public String igsArmorStand;
+    public String igsBeacon;
+    public String igsBed;
+    public String igsBreakBlocks;
+    public String igsBreeding;
+    public String igsBrewing;
+    public String igsBucket;
+    public String igsChest;
+    public String igsChestDamage;
+    public String igsWorkbench;
+    public String igsCropTrampling;
+    public String igsDoor;
+    public String igsEnchanting;
+    public String igsEnderPearl;
+    public String igsFire;
+    public String igsFurnace;
+    public String igsGate;
+    public String igsHurtAnimals;
+    public String igsHurtMobs;
+    public String igsLeash;
+    public String igsLever;
+    public String igsSpawnEgg;
+    public String igsJukebox;
+    public String igsPlaceBlocks;
+    public String igsPortalUse;
+    public String igsPVP;
+    public String igsRedstone;
+    public String igsShears;
+    public String igsTeleport;
+    public String igsTNT;
+    public String igsVisitorDrop;
+    public String igsVisitorPickUp;
+    public String igsVisitorKeep;
+    public String igsNetherPVP;
+    public String igsAnvil;
+    public String setHomeerrorNumHomes;
+    public String schematicsTitle;
 
+    /**
+     * Creates a locale object full of localized strings for a language
+     * @param plugin
+     * @param localeName - name of the yml file that will be used
+     */
+    public Locale(ASkyBlock plugin, String localeName) {
+	this.plugin = plugin;
+	getLocale(localeName);
+	loadLocale();
+    }
+
+    /**
+     * @return locale FileConfiguration object
+     */
+    public FileConfiguration getLocale(String localeName) {
+	if (this.locale == null) {
+	    reloadLocale(localeName);
+	}
+	return locale;
+    }
+
+    /**
+     * Reloads the locale file
+     */
+    public void reloadLocale(String localeName) {
+	//plugin.getLogger().info("DEBUG: loading local file " + localeName + ".yml");
+	// Make directory if it doesn't exist
+	File localeDir = new File(plugin.getDataFolder() + File.separator + "locale");
+	if (!localeDir.exists()) {
+	    localeDir.mkdir();
+	}
+	if (localeFile == null) {
+	    localeFile = new File(localeDir.getPath(), localeName + ".yml");
+	}
+	if (localeFile.exists()) {
+	    //plugin.getLogger().info("DEBUG: File exists!");
+	    locale = YamlConfiguration.loadConfiguration(localeFile);
+	} else {
+	    // Look for defaults in the jar
+	    InputStream defLocaleStream = plugin.getResource("locale/" + localeName + ".yml");
+	    if (defLocaleStream != null) {
+		//plugin.getLogger().info("DEBUG: Saving from jar");
+		plugin.saveResource("locale/" + localeName + ".yml", true);
+		localeFile = new File(plugin.getDataFolder() + File.separator + "locale", localeName + ".yml");
+		locale = YamlConfiguration.loadConfiguration(localeFile);
+		//locale.setDefaults(defLocale);
+	    } else {
+		// Use the default file
+		localeFile = new File(plugin.getDataFolder() + File.separator + "locale", "locale.yml");
+		if (localeFile.exists()) {
+		    locale = YamlConfiguration.loadConfiguration(localeFile);
+		} else {
+		    // Look for defaults in the jar
+		    defLocaleStream = plugin.getResource("locale/locale.yml");
+		    if (defLocaleStream != null) {
+			plugin.saveResource("locale/locale.yml", true);
+			localeFile = new File(plugin.getDataFolder() + File.separator + "locale", "locale.yml");
+			locale = YamlConfiguration.loadConfiguration(localeFile);
+		    } else {
+			plugin.getLogger().severe("Could not find any locale file!");
+		    }
+		}
+	    }
+	}
+    }
+
+    public void loadLocale() {
+	// Localization Locale Setting
+	// Command prefix - can be added to the beginning of any message
+	prefix = ChatColor.translateAlternateColorCodes('&', ChatColor.translateAlternateColorCodes('&', locale.getString("prefix", "")));
+
+	if (Settings.GAMETYPE.equals(Settings.GameType.ASKYBLOCK)) {
+	    signLine1 = ChatColor.translateAlternateColorCodes('&', locale.getString("sign.line1", "&1[A Skyblock]"));
+	    signLine2 = ChatColor.translateAlternateColorCodes('&', locale.getString("sign.line2", "[player]"));
+	    signLine3 = ChatColor.translateAlternateColorCodes('&', locale.getString("sign.line3", "Do not fall!"));
+	    signLine4 = ChatColor.translateAlternateColorCodes('&', locale.getString("sign.line4", "Beware!"));
+	    islandhelpSpawn = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpIslandSpawn", "go to ASkyBlock spawn."));
+	    newsHeadline = ChatColor.translateAlternateColorCodes('&', locale.getString("news.headline", "[ASkyBlock News] While you were offline..."));
+
+	} else {
+	    // AcidIsland
+	    signLine1 = ChatColor.translateAlternateColorCodes('&', locale.getString("sign.line1", "&1[Acid Island]"));
+	    signLine2 = ChatColor.translateAlternateColorCodes('&', locale.getString("sign.line2", "[player]"));
+	    signLine3 = ChatColor.translateAlternateColorCodes('&', locale.getString("sign.line3", "Water is acid!"));
+	    signLine4 = ChatColor.translateAlternateColorCodes('&', locale.getString("sign.line4", "Beware!"));
+	    islandhelpSpawn = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpIslandSpawn", "go to AcidIsland spawn."));
+	    newsHeadline = ChatColor.translateAlternateColorCodes('&', locale.getString("news.headline", "[AcidIsland News] While you were offline..."));
+
+	}
+	changingObsidiantoLava = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("changingObsidiantoLava", "Changing obsidian back into lava. Be careful!"));
+	acidLore = ChatColor.translateAlternateColorCodes('&', locale.getString("acidLore", "Poison!\nBeware!\nDo not drink!"));
+	acidBucket = ChatColor.translateAlternateColorCodes('&', locale.getString("acidBucket", "Acid Bucket"));
+	acidBottle = ChatColor.translateAlternateColorCodes('&', locale.getString("acidBottle", "Bottle O' Acid"));
+	drankAcidAndDied = ChatColor.translateAlternateColorCodes('&', locale.getString("drankAcidAndDied", "drank acid and died."));
+	drankAcid = ChatColor.translateAlternateColorCodes('&', locale.getString("drankAcid", "drank acid."));
+	errorUnknownPlayer = ChatColor.translateAlternateColorCodes('&', locale.getString("error.unknownPlayer", "That player is unknown."));
+	errorNoPermission = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("error.noPermission", "You don't have permission to use that command!"));
+	errorNoIsland = ChatColor.translateAlternateColorCodes('&', locale.getString("error.noIsland", "You do not have an island!"));
+	errorNoIslandOther = ChatColor
+		.translateAlternateColorCodes('&', locale.getString("error.noIslandOther", "That player does not have an island!"));
+	// "You must be on your island to use this command."
+	errorCommandNotReady = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("error.commandNotReady", "You can't use that command right now."));
+	errorOfflinePlayer = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("error.offlinePlayer", "That player is offline or doesn't exist."));
+	errorUnknownCommand = ChatColor.translateAlternateColorCodes('&', locale.getString("error.unknownCommand", "Unknown command."));
+	errorNoTeam = ChatColor.translateAlternateColorCodes('&', locale.getString("error.noTeam", "That player is not in a team."));
+	errorWrongWorld = ChatColor.translateAlternateColorCodes('&', locale.getString("error.wrongWorld", "You cannot do that in this world."));
+	islandProtected = ChatColor.translateAlternateColorCodes('&', locale.getString("islandProtected", "Island protected."));
+	targetInNoPVPArea = ChatColor.translateAlternateColorCodes('&', locale.getString("targetInPVPArea", "Target is in a no-PVP area!"));
+	igsTitle = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.title", "Island Guard Settings"));
+	igsAnvil = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.anvil", "Anvil Use"));
+	igsAllowed = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.allowed", "Allowed"));
+	igsDisallowed = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.disallowed", "Disallowed"));
+	igsArmorStand = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.armorstand", "Armor Stand use"));
+	igsBeacon = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.beacon", "Beacon use"));
+	igsBed = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.bed", "Bed use"));
+	igsBreakBlocks = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.breakblocks", "Break blocks"));
+	igsBreeding = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.breeding", "Breeding"));
+	igsBrewing = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.brewingstand", "Potion Brewing"));
+	igsBucket = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.bucket", "Bucket use"));
+	igsChest = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.chest", "Chest use"));
+	igsChestDamage = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.chestdamage", "Chest damage by TNT"));
+	igsWorkbench = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.workbench", "Workbench use"));
+	igsCropTrampling = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.croptrample", "Crop trampling"));
+	igsDoor = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.door", "Door use"));
+	igsEnchanting = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.enchantingtable", "Enchanting table use"));
+	igsEnderPearl = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.enderpearl", "Enderpearl use"));
+	igsFire = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.fire", "Fire"));
+	igsFurnace = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.furnace", "Furnace use"));
+	igsGate = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.gate", "Gate use"));
+	igsHurtAnimals = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.hurtanimals", "Hurting animals"));
+	igsHurtMobs = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.hurtmonsters", "Hurting monsters"));
+	igsLeash = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.leash", "Leash use"));
+	igsLever = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.lever", "Lever or Button Use"));
+	igsSpawnEgg = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.spawnegg", "Spawn egg use"));
+	igsJukebox = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.jukebox", "Jukebox use"));
+	igsPlaceBlocks = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.placeblocks", "Place blocks"));
+	igsPortalUse = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.portaluse", "Portal use"));
+	igsPVP = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.pvp", "PvP"));
+	igsNetherPVP = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.netherpvp", "Nether PvP"));
+	igsRedstone = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.redstone", "Redstone use"));
+	igsShears = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.shears", "Shears use"));
+	igsTeleport = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.teleportwhenfalling", "Teleport when falling"));
+	igsTNT = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.TNTdamage", "TNT Damage"));
+	igsVisitorDrop = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.visitordrop", "Visitor item dropping"));
+	igsVisitorPickUp = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.visitorpickup", "Visitor item pick-up"));
+	igsVisitorKeep = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.visitorkeepitems", "Visitor keep item on death"));	
+	lavaTip = ChatColor.translateAlternateColorCodes('&', locale.getString("lavaTip", "Changing obsidian back into lava. Be careful!"));
+	warpswelcomeLine = ChatColor.translateAlternateColorCodes('&', locale.getString("warps.welcomeLine", "[WELCOME]"));
+	warpswarpTip = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("warps.warpTip", "Create a warp by placing a sign with [WELCOME] at the top."));
+	warpssuccess = ChatColor.translateAlternateColorCodes('&', locale.getString("warps.success", "Welcome sign placed successfully!"));
+	warpsremoved = ChatColor.translateAlternateColorCodes('&', locale.getString("warps.removed", "Welcome sign removed!"));
+	warpssignRemoved = ChatColor.translateAlternateColorCodes('&', locale.getString("warps.signRemoved", "Your welcome sign was removed!"));
+	warpsdeactivate = ChatColor.translateAlternateColorCodes('&', locale.getString("warps.deactivate", "Deactivating old sign!"));
+	warpserrorNoRemove = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("warps.errorNoRemove", "You can only remove your own Welcome Sign!"));
+	warpserrorNoPerm = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("warps.errorNoPerm", "You do not have permission to place Welcome Signs yet!"));
+	warpserrorNoPlace = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("warps.errorNoPlace", "You must be on your island to place a Welcome Sign!"));
+	warpserrorDuplicate = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("warps.errorDuplicate", "Sorry! There is a sign already in that location!"));
+	warpserrorDoesNotExist = ChatColor.translateAlternateColorCodes('&', locale.getString("warps.errorDoesNotExist", "That warp doesn't exist!"));
+	warpserrorNotReadyYet = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("warps.errorNotReadyYet", "That warp is not ready yet. Try again later."));
+	warpserrorNotSafe = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("warps.errorNotSafe", "That warp is not safe right now. Try again later."));
+	warpswarpToPlayersSign = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("warps.warpToPlayersSign", "Warp to <player>'s welcome sign."));
+	warpserrorNoWarpsYet = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("warps.errorNoWarpsYet", "There are no warps available yet!"));
+	warpswarpsAvailable = ChatColor.translateAlternateColorCodes('&', locale.getString("warps.warpsAvailable", "The following warps are available"));
+	warpsPlayerWarped = ChatColor.translateAlternateColorCodes('&', locale.getString("warps.playerWarped", "[name] &2warped to your island!"));
+	topTenheader = ChatColor.translateAlternateColorCodes('&', locale.getString("topTen.header", "These are the Top 10 islands:"));
+	topTenerrorNotReady = ChatColor.translateAlternateColorCodes('&', locale.getString("topTen.errorNotReady", "Top ten list not generated yet!"));
+	levelislandLevel = ChatColor.translateAlternateColorCodes('&', locale.getString("level.islandLevel", "Island level"));
+	levelerrornotYourIsland = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("level.errornotYourIsland", "Only the island owner can do that."));
+	levelCalculating = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("level.calculating", "Calculating island level. This will take a few seconds..."));
+	setHomehomeSet = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("sethome.homeSet", "Your island home has been set to your current location."));
+	setHomeerrorNotOnIsland = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("sethome.errorNotOnIsland", "You must be within your island boundaries to set home!"));
+	setHomeerrorNumHomes = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("sethome.errorNumHomes", "Homes can be 1 to [max]"));
+	setHomeerrorNoIsland = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("sethome.errorNoIsland", "You are not part of an island. Returning you the spawn area!"));
+	challengesyouHaveCompleted = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("challenges.youHaveCompleted", "You have completed the [challenge] challenge!"));
+	challengesnameHasCompleted = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("challenges.nameHasCompleted", "[name] has completed the [challenge] challenge!"));
+	challengesyouRepeated = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("challenges.youRepeated", "You repeated the [challenge] challenge!"));
+	challengestoComplete = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("challenges.toComplete", "Complete [challengesToDo] more [thisLevel] challenges to unlock this level!"));
+	challengeshelp1 = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("challenges.help1", "Use /c <name> to view information about a challenge."));
+	challengeshelp2 = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("challenges.help2", "Use /c complete <name> to attempt to complete that challenge."));
+	challengescolors = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("challenges.colors", "Challenges will have different colors depending on if they are:"));
+	challengescomplete = ChatColor.translateAlternateColorCodes('&', locale.getString("challenges.complete", "Complete"));
+	challengesincomplete = ChatColor.translateAlternateColorCodes('&', locale.getString("challenges.incomplete", "Incomplete"));
+	challengescompleteNotRepeatable = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("challenges.completeNotRepeatable", "Completed(not repeatable)"));
+	challengescompleteRepeatable = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("challenges.completeRepeatable", "Completed(repeatable)"));
+	challengesname = ChatColor.translateAlternateColorCodes('&', locale.getString("challenges.name", "Challenge Name"));
+	challengeslevel = ChatColor.translateAlternateColorCodes('&', locale.getString("challenges.level", "Level"));
+	challengesitemTakeWarning = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("challenges.itemTakeWarning", "All required items are taken when you complete this challenge!"));
+	challengesnotRepeatable = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("challenges.notRepeatable", "This Challenge is not repeatable!"));
+	challengesfirstTimeRewards = ChatColor
+		.translateAlternateColorCodes('&', locale.getString("challenges.firstTimeRewards", "First time reward(s)"));
+	challengesrepeatRewards = ChatColor.translateAlternateColorCodes('&', locale.getString("challenges.repeatRewards", "Repeat reward(s)"));
+	challengesexpReward = ChatColor.translateAlternateColorCodes('&', locale.getString("challenges.expReward", "Exp reward"));
+	challengesmoneyReward = ChatColor.translateAlternateColorCodes('&', locale.getString("challenges.moneyReward", "Money reward"));
+	challengestoCompleteUse = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("challenges.toCompleteUse", "To complete this challenge, use"));
+	challengesinvalidChallengeName = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("challenges.invalidChallengeName", "Invalid challenge name! Use /c help for more information"));
+	challengesrewards = ChatColor.translateAlternateColorCodes('&', locale.getString("challenges.rewards", "Reward(s)"));
+	challengesyouHaveNotUnlocked = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("challenges.youHaveNotUnlocked", "You have not unlocked this challenge yet!"));
+	challengesunknownChallenge = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("challenges.unknownChallenge", "Unknown challenge name (check spelling)!"));
+	challengeserrorNotEnoughItems = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("challenges.errorNotEnoughItems", "You do not have enough of the required item(s)"));
+	challengeserrorNotOnIsland = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("challenges.errorNotOnIsland", "You must be on your island to do that!"));
+	challengeserrorNotCloseEnough = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("challenges.errorNotCloseEnough", "You must be standing within 10 blocks of all required items."));
+	challengeserrorItemsNotThere = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("challenges.errorItemsNotThere", "All required items must be close to you on your island!"));
+	challengeserrorIslandLevel = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("challenges.errorIslandLevel", "Your island must be level [level] to complete this challenge!"));
+	challengeserrorRewardProblem = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("challenges.errorRewardProblem", "There was a problem giving your reward. Ask Admin to check log!"));
+	challengesguiTitle = ChatColor.translateAlternateColorCodes('&', locale.getString("challenges.guititle", "Challenges"));
+	challengeserrorYouAreMissing = ChatColor.translateAlternateColorCodes('&', locale.getString("challenges.erroryouaremissing", "You are missing"));
+	challengesNavigation = ChatColor
+		.translateAlternateColorCodes('&', locale.getString("challenges.navigation", "Click to see [level] challenges!"));
+	challengescompletedtimes = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("challenges.completedtimes", "Completed [donetimes] out of [maxtimes]"));
+	challengesmaxreached = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("challenges.maxreached", "Max reached [donetimes] out of [maxtimes]"));
+	islandteleport = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("island.teleport", "Teleporting you to your island. (/island help for more info)"));
+	islandcannotTeleport = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("island.cannotTeleport", "You cannot teleport when falling!"));
+	islandnew = ChatColor.translateAlternateColorCodes('&', locale.getString("island.new", "Creating a new island for you..."));
+	islandSubTitle = locale.getString("island.subtitle", "by tastybento");
+	islandDonate = locale.getString("island.donate", "ASkyBlock by tastybento, click here to donate via PayPal!");
+	islandTitle = locale.getString("island.title", "A SkyBlock");
+	islandURL = locale.getString("island.url", "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZSBJG5J2E3B7U");
+	islanderrorCouldNotCreateIsland = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("island.errorCouldNotCreateIsland", "Could not create your Island. Please contact a server moderator."));
+	islanderrorYouDoNotHavePermission = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("island.errorYouDoNotHavePermission", "You do not have permission to use that command!"));
+	islandresetOnlyOwner = ChatColor.translateAlternateColorCodes('&', locale.getString("island.resetOnlyOwner",
+		"Only the owner may restart this island. Leave this island in order to start your own (/island leave)."));
+	islandresetMustRemovePlayers = ChatColor
+		.translateAlternateColorCodes(
+			'&',
+			locale.getString(
+				"island.resetMustRemovePlayers",
+				"You must remove all players from your island before you can restart it (/island kick <player>). See a list of players currently part of your island using /island team."));
+	islandresetPleaseWait = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("island.resetPleaseWait", "Please wait, generating new island"));
+	islandresetWait = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("island.resetWait", "You have to wait [time] seconds before you can do that again."));
+	islandresetConfirm = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("island.resetConfirm", "Type /island confirm within [seconds] seconds to delete your island and restart!"));
+	islandhelpIsland = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("island.helpIsland", "start an island, or teleport to your island."));
+	islandhelpTeleport = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpTeleport", "teleport to your island."));
+	islandhelpControlPanel = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpControlPanel", "open the island GUI."));
+	islandhelpRestart = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("island.helpRestart", "restart your island and remove the old one."));
+	islandDeletedLifeboats = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("island.islandDeletedLifeboats", "Island deleted! Head to the lifeboats!"));
+	islandhelpSetHome = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpSetHome", "set your teleport point for /island."));
+	islandhelpLevel = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpLevel", "calculate your island level"));
+	islandhelpLevelPlayer = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("island.helpLevelPlayer", "see another player's island level."));
+	islandhelpTop = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpTop", "see the top ranked islands."));
+	islandhelpWarps = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpWarps", "Lists all available welcome-sign warps."));
+	islandhelpWarp = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpWarp", "Warp to <player>'s welcome sign."));
+	islandhelpTeam = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpTeam", "view your team information."));
+	islandhelpInvite = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpInvite", "invite a player to join your island."));
+	islandhelpLeave = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpLeave", "leave another player's island."));
+	islandhelpKick = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpKick", "remove a team member from your island."));
+	islandhelpExpel = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpExpel", "force a player from your island."));
+	islandHelpSettings = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("island.helpSettings", "see island protection and game settings"));
+	islandHelpChallenges = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpChallenges", "/challenges: &fshow challenges"));
+	adminHelpHelp = ChatColor.translateAlternateColorCodes('&', locale.getString("adminHelp.help", "Acid Admin Commands:"));
+	islandhelpAcceptReject = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("island.helpAcceptReject", "accept or reject an invitation."));
+	islandhelpMakeLeader = ChatColor
+		.translateAlternateColorCodes('&', locale.getString("island.helpMakeLeader", "transfer the island to <player>."));
+	islanderrorLevelNotReady = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("island.errorLevelNotReady", "Can't use that command right now! Try again in a few seconds."));
+	islanderrorInvalidPlayer = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("island.errorInvalidPlayer", "That player is invalid or does not have an island!"));
+	islandislandLevelis = ChatColor.translateAlternateColorCodes('&', locale.getString("island.islandLevelis", "Island level is"));
+	invitehelp = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("invite.help", "Use [/island invite <playername>] to invite a player to your island."));
+	inviteyouCanInvite = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("invite.youCanInvite", "You can invite [number] more players."));
+	inviteyouCannotInvite = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("invite.youCannotInvite", "You can't invite any more players."));
+	inviteonlyIslandOwnerCanInvite = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("invite.onlyIslandOwnerCanInvite", "Only the island's owner can invite!"));
+	inviteyouHaveJoinedAnIsland = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("invite.youHaveJoinedAnIsland", "You have joined an island! Use /island team to see the other members."));
+	invitehasJoinedYourIsland = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("invite.hasJoinedYourIsland", "[name] has joined your island!"));
+	inviteerrorCantJoinIsland = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("invite.errorCantJoinIsland", "You couldn't join the island, maybe it's full."));
+	inviteerrorYouMustHaveIslandToInvite = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("invite.errorYouMustHaveIslandToInvite", "You must have an island in order to invite people to it!"));
+	inviteerrorYouCannotInviteYourself = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("invite.errorYouCannotInviteYourself", "You can not invite yourself!"));
+	inviteremovingInvite = ChatColor.translateAlternateColorCodes('&', locale.getString("invite.removingInvite", "Removing your previous invite."));
+	inviteinviteSentTo = ChatColor.translateAlternateColorCodes('&', locale.getString("invite.inviteSentTo", "Invite sent to [name]"));
+	invitenameHasInvitedYou = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("invite.nameHasInvitedYou", "[name] has invited you to join their island!"));
+	invitetoAcceptOrReject = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("invite.toAcceptOrReject", "to accept or reject the invite."));
+	invitewarningYouWillLoseIsland = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("invite.warningYouWillLoseIsland", "WARNING: You will lose your current island if you accept!"));
+	inviteerrorYourIslandIsFull = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("invite.errorYourIslandIsFull", "Your island is full, you can't invite anyone else."));
+	inviteerrorThatPlayerIsAlreadyInATeam = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("invite.errorThatPlayerIsAlreadyInATeam", "That player is already in a team."));
+	inviteerrorCoolDown = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("invite.errorCoolDown", "You can invite that player again in [time] minutes"));
+	rejectyouHaveRejectedInvitation = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("reject.youHaveRejectedInvitation", "You have rejected the invitation to join an island."));
+	rejectnameHasRejectedInvite = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("reject.nameHasRejectedInvite", "[name] has rejected your island invite!"));
+	rejectyouHaveNotBeenInvited = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("reject.youHaveNotBeenInvited", "You had not been invited to join a team."));
+	leaveerrorYouAreTheLeader = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("leave.errorYouAreTheLeader", "You are the leader, use /island remove <player> instead."));
+	leaveyouHaveLeftTheIsland = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("leave.youHaveLeftTheIsland", "You have left the island and returned to the player spawn."));
+	leavenameHasLeftYourIsland = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("leave.nameHasLeftYourIsland", "[name] has left your island!"));
+	leaveerrorYouCannotLeaveIsland = ChatColor.translateAlternateColorCodes('&', locale.getString("leave.errorYouCannotLeaveIsland",
+		"You can't leave your island if you are the only person. Try using /island restart if you want a new one!"));
+	leaveerrorYouMustBeInWorld = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("leave.errorYouMustBeInWorld", "You must be in the island world to leave your team!"));
+	leaveerrorLeadersCannotLeave = ChatColor.translateAlternateColorCodes('&', locale.getString("leave.errorLeadersCannotLeave",
+		"Leaders cannot leave an island. Make someone else the leader fist using /island makeleader <player>"));
+	teamlistingMembers = ChatColor.translateAlternateColorCodes('&', locale.getString("team.listingMembers", "Listing your island members"));
+	kickerrorPlayerNotInTeam = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("kick.errorPlayerNotInTeam", "That player is not in your team!"));
+	kicknameRemovedYou = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("kick.nameRemovedYou", "[name] has removed you from their island!"));
+	kicknameRemoved = ChatColor.translateAlternateColorCodes('&', locale.getString("kick.nameRemoved", "[name] has been removed from the island."));
+	kickerrorNotPartOfTeam = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("kick.errorNotPartOfTeam", "That player is not part of your island team!"));
+	kickerrorOnlyLeaderCan = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("kick.errorOnlyLeaderCan", "Only the island's owner may remove people from the island!"));
+	kickerrorNoTeam = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("kick.errorNoTeam", "No one else is on your island, are you seeing things?"));
+	makeLeadererrorPlayerMustBeOnline = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("makeleader.errorPlayerMustBeOnline", "That player must be online to transfer the island."));
+	makeLeadererrorYouMustBeInTeam = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("makeleader.errorYouMustBeInTeam", "You must be in a team to transfer your island."));
+	makeLeadererrorRemoveAllPlayersFirst = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("makeleader.errorRemoveAllPlayersFirst", "Remove all players from your team other than the player you are transferring to."));
+	makeLeaderyouAreNowTheOwner = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("makeleader.youAreNowTheOwner", "You are now the owner of your island."));
+	makeLeadernameIsNowTheOwner = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("makeleader.nameIsNowTheOwner", "[name] is now the owner of your island!"));
+	makeLeadererrorThatPlayerIsNotInTeam = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("makeleader.errorThatPlayerIsNotInTeam", "That player is not part of your island team!"));
+	makeLeadererrorNotYourIsland = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("makeleader.errorNotYourIsland", "This isn't your island, so you can't give it away!"));
+	makeLeadererrorGeneralError = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("makeleader.errorGeneralError", "Could not make leader!"));
+	adminHelpHelp = ChatColor.translateAlternateColorCodes('&', locale.getString("adminHelp.help", "Could not change leaders."));
+	adminHelpreload = ChatColor.translateAlternateColorCodes('&', locale.getString("adminHelp.reload", "reload configuration from file."));
+	adminHelptopTen = ChatColor.translateAlternateColorCodes('&', locale.getString("adminHelp.topTen", "manually update the top 10 list"));
+	adminHelpregister = ChatColor
+		.translateAlternateColorCodes('&', locale.getString("adminHelp.register", "set a player's island to your location"));
+	adminHelpunregister = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("adminHelp.unregister", "deletes a player without deleting the island blocks"));
+	adminHelpdelete = ChatColor.translateAlternateColorCodes('&', locale.getString("adminHelp.delete", "delete an island (removes blocks)."));
+	adminHelpcompleteChallenge = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("adminHelp.completeChallenge", "marks a challenge as complete"));
+	adminHelpresetChallenge = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("adminHelp.resetChallenge", "marks a challenge as incomplete"));
+	adminHelpresetAllChallenges = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("adminHelp.resetAllChallenges", "resets all of the player's challenges"));
+	adminHelppurge = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("adminHelp.purge", "delete inactive islands older than [TimeInDays]."));
+	adminHelppurgeholes = ChatColor.translateAlternateColorCodes('&', locale.getString("adminHelp.purgeholes", "free up island holes for reuse."));
+	adminHelpinfo = ChatColor.translateAlternateColorCodes('&', locale.getString("adminHelp.info", "check information on the given player."));
+	adminHelpSetSpawn = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("adminHelp.setspawn", "sets the island world spawn to a location close to you."));
+	adminHelpSetRange = ChatColor
+		.translateAlternateColorCodes('&', locale.getString("adminHelp.setrange", "changes the island's protection range."));
+	adminHelpinfoIsland = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("adminHelp.infoisland", "provide info on the nearest island."));
+	adminHelptp = ChatColor.translateAlternateColorCodes('&', locale.getString("adminHelp.tp", "Teleport to a player's island."));
+	reloadconfigReloaded = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("reload.configReloaded", "Configuration reloaded from file."));
+	adminTopTengenerating = ChatColor.translateAlternateColorCodes('&', locale.getString("adminTopTen.generating", "Generating the Top Ten list"));
+	adminTopTenfinished = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("adminTopTen.finished", "Finished generation of the Top Ten list"));
+	purgealreadyRunning = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("purge.alreadyRunning", "Purge is already running, please wait for it to finish!"));
+	purgeusage = ChatColor.translateAlternateColorCodes('&', locale.getString("purge.usage", "Usage: /[label] purge [TimeInDays]"));
+	purgecalculating = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("purge.calculating", "Calculating which islands have been inactive for more than [time] days."));
+	purgenoneFound = ChatColor.translateAlternateColorCodes('&', locale.getString("purge.noneFound", "No inactive islands to remove."));
+	purgethisWillRemove = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("purge.thisWillRemove", "This will remove [number] inactive islands!"));
+	purgewarning = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("purge.warning", "DANGER! Do not run this with players on the server! MAKE BACKUP OF WORLD!"));
+	purgetypeConfirm = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("purge.typeConfirm", "Type [label] confirm to proceed within 10 seconds"));
+	purgepurgeCancelled = ChatColor.translateAlternateColorCodes('&', locale.getString("purge.purgeCancelled", "Purge cancelled."));
+	purgefinished = ChatColor.translateAlternateColorCodes('&', locale.getString("purge.finished", "Finished purging of inactive islands."));
+	purgeremovingName = ChatColor.translateAlternateColorCodes('&', locale.getString("purge.removingName", "Purge: Removing [name]'s island"));
+	confirmerrorTimeLimitExpired = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("confirm.errorTimeLimitExpired", "Time limit expired! Issue command again."));
+	deleteremoving = ChatColor.translateAlternateColorCodes('&', locale.getString("delete.removing", "Removing [name]'s island."));
+	registersettingIsland = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("register.settingIsland", "Set [name]'s island to the bedrock nearest you."));
+	registererrorBedrockNotFound = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("register.errorBedrockNotFound", "Error: unable to set the island!"));
+	adminInfoislandLocation = ChatColor.translateAlternateColorCodes('&', locale.getString("adminInfo.islandLocation", "Island Location"));
+	adminInfoerrorNotPartOfTeam = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("adminInfo.errorNotPartOfTeam", "That player is not a member of an island team."));
+	adminInfoerrorNullTeamLeader = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("adminInfo.errorNullTeamLeader", "Team leader should be null!"));
+	adminInfoerrorTeamMembersExist = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("adminInfo.errorTeamMembersExist", "Player has team members, but shouldn't!"));
+	resetChallengessuccess = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("resetallchallenges.success", "[name] has had all challenges reset."));
+	checkTeamcheckingTeam = ChatColor.translateAlternateColorCodes('&', locale.getString("checkTeam.checkingTeam", "Checking Team of [name]"));
+	completeChallengeerrorChallengeDoesNotExist = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("completechallenge.errorChallengeDoesNotExist", "Challenge doesn't exist or is already completed"));
+	completeChallengechallangeCompleted = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("completechallenge.challangeCompleted", "[challengename] has been completed for [name]"));
+	resetChallengeerrorChallengeDoesNotExist = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("resetchallenge.errorChallengeDoesNotExist", "[challengename] has been reset for [name]"));
+	confirmerrorTimeLimitExpired = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("confirm.errorTimeLimitExpired", "Time limit expired! Issue command again."));
+	deleteremoving = ChatColor.translateAlternateColorCodes('&', locale.getString("delete.removing", "Removing [name]'s island."));
+	registersettingIsland = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("register.settingIsland", "Set [name]'s island to the bedrock nearest you."));
+	registererrorBedrockNotFound = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("register.errorBedrockNotFound", "Error: unable to set the island!"));
+	adminInfoislandLocation = ChatColor.translateAlternateColorCodes('&', locale.getString("adminInfo.islandLocation", "Island Location"));
+	adminInfoerrorNotPartOfTeam = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("adminInfo.errorNotPartOfTeam", "That player is not a member of an island team."));
+	adminInfoerrorNullTeamLeader = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("adminInfo.errorNullTeamLeader", "Team leader should be null!"));
+	adminInfoerrorTeamMembersExist = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("adminInfo.errorTeamMembersExist", "Player has team members, but shouldn't!"));
+	resetChallengessuccess = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("resetallchallenges.success", "[name] has had all challenges reset."));
+	checkTeamcheckingTeam = ChatColor.translateAlternateColorCodes('&', locale.getString("checkTeam.checkingTeam", "Checking Team of [name]"));
+	completeChallengeerrorChallengeDoesNotExist = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("completechallenge.errorChallengeDoesNotExist", "Challenge doesn't exist or is already completed"));
+	completeChallengechallangeCompleted = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("completechallenge.challangeCompleted", "[challengename] has been completed for [name]"));
+	resetChallengeerrorChallengeDoesNotExist = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("resetchallenge.errorChallengeDoesNotExist", "Challenge doesn't exist or isn't yet completed"));
+	resetChallengechallengeReset = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("resetchallenge.challengeReset", "[challengename] has been reset for [name]"));
+	netherSpawnIsProtected = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("nether.spawnisprotected", "The Nether spawn area is protected."));
+	islandhelpMiniShop = ChatColor.translateAlternateColorCodes('&', locale.getString("minishop.islandhelpMiniShop", "Opens the MiniShop"));
+	islandMiniShopTitle = ChatColor.translateAlternateColorCodes('&', locale.getString("minishop.title", "MiniShop"));
+	minishopBuy = ChatColor.translateAlternateColorCodes('&', locale.getString("minishop.buy", "Buy(Left Click)"));
+	minishopSell = ChatColor.translateAlternateColorCodes('&', locale.getString("minishop.sell", "Sell(Right Click)"));
+	minishopYouBought = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("minishop.youbought", "You bought [number] [description] for [price]"));
+	minishopSellProblem = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("minishop.sellproblem", "You do not have enough [description] to sell."));
+	minishopYouSold = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("minishop.yousold", "You sold [number] [description] for [price]"));
+	minishopBuyProblem = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("minishop.buyproblem", "There was a problem purchasing [description]"));
+	minishopYouCannotAfford = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("minishop.youcannotafford", "You cannot afford [description]!"));
+	minishopOutOfStock = ChatColor.translateAlternateColorCodes('&', locale.getString("minishop.outofstock", "Out Of Stock"));
+	boatWarningItIsUnsafe = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("boats.warning", "It's unsafe to exit the boat right now..."));
+	adminHelpclearReset = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("general.clearreset", "resets the island reset limit for player."));
+	resetYouHave = ChatColor.translateAlternateColorCodes('&', locale.getString("island.resetYouHave", "You have [number] resets left."));
+	islandResetNoMore = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("island.resetNoMore", "No more resets are allowed for your island!"));
+	clearedResetLimit = ChatColor.translateAlternateColorCodes('&', locale.getString("resetTo", "Cleared reset limit"));
+
+	islandhelpBiome = ChatColor.translateAlternateColorCodes('&', locale.getString("biome.help", "open the biome GUI."));
+	biomeSet = ChatColor.translateAlternateColorCodes('&', locale.getString("biome.set", "Island biome set to [biome]!"));
+	biomeUnknown = ChatColor.translateAlternateColorCodes('&', locale.getString("biome.unknown", "Unknown biome!"));
+	biomeYouBought = ChatColor.translateAlternateColorCodes('&', locale.getString("biome.youbought", "Purchased for [cost]!"));
+	biomePanelTitle = ChatColor.translateAlternateColorCodes('&', locale.getString("biome.paneltitle", "Select A Biome"));
+	expelNotOnIsland = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("expel.notonisland", "Player is not trespassing on your island!"));
+	expelSuccess = ChatColor.translateAlternateColorCodes('&', locale.getString("expel.success", "You expelled [name]!"));
+	expelExpelled = ChatColor.translateAlternateColorCodes('&', locale.getString("expel.expelled", "You were expelled from that island!"));
+	expelFail = ChatColor.translateAlternateColorCodes('&', locale.getString("expel.fail", "[name] cannot be expelled!"));
+	expelNotYourself = ChatColor.translateAlternateColorCodes('&', locale.getString("expel.notyourself", "You cannot expel yourself!"));
+	moblimitsError = ChatColor.translateAlternateColorCodes('&', locale.getString("moblimits.error", "Island breeding limit of [number] reached!"));
+	coopRemoved = ChatColor.translateAlternateColorCodes('&', locale.getString("coop.removed", "[name] remove your coop status!"));
+	coopRemoveSuccess = ChatColor.translateAlternateColorCodes('&', locale.getString("coop.removesuccess", "[name] is no longer a coop player."));
+	coopSuccess = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("coop.success", "[name] is now a coop player until they log out or you expel them."));
+	coopMadeYouCoop = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("coop.madeyoucoopy", "[name] made you a coop player until you log out or they expel you."));
+	coopOnYourTeam = ChatColor.translateAlternateColorCodes('&', locale.getString("coop.onyourteam", "Player is already on your team!"));
+	islandhelpCoop = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("coop.help", "temporarily give a player full access to your island"));
+	coopInvited = ChatColor.translateAlternateColorCodes('&', locale.getString("coop.invited", "[name] made [player] a coop player!"));
+	coopUseExpel = ChatColor.translateAlternateColorCodes('&', locale.getString("coop.useexpel", "Use expel to remove."));
+	lockIslandLocked = ChatColor.translateAlternateColorCodes('&', locale.getString("lock.islandlocked", "Island is locked to visitors"));
+	lockNowEntering = ChatColor.translateAlternateColorCodes('&', locale.getString("lock.nowentering", "Now entering [name]'s island"));
+	lockNowLeaving = ChatColor.translateAlternateColorCodes('&', locale.getString("lock.nowleaving", "Now leaving [name]'s island"));
+	lockLocking = ChatColor.translateAlternateColorCodes('&', locale.getString("lock.locking", "Locking island"));
+	lockUnlocking = ChatColor.translateAlternateColorCodes('&', locale.getString("lock.unlocking", "Unlocking island"));
+	islandHelpLock = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpLock", "Locks island so visitors cannot enter it"));
+	helpColor = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpColor", "&e"));
+	lockPlayerLocked = ChatColor.translateAlternateColorCodes('&', locale.getString("lock.playerlocked", "[name] locked the island"));
+	lockPlayerUnlocked = ChatColor.translateAlternateColorCodes('&', locale.getString("lock.playerunlocked", "[name] unlocked the island"));
+	lockEnteringSpawn = ChatColor.translateAlternateColorCodes('&', locale.getString("lock.enteringspawn", "Entering Spawn"));
+	lockLeavingSpawn = ChatColor.translateAlternateColorCodes('&', locale.getString("lock.leavingspawn", "Leaving Spawn"));
+	schematicsTitle = ChatColor.translateAlternateColorCodes('&', locale.getString("schematics.title", "Choose island..."));
+    }
 }

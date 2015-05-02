@@ -42,7 +42,7 @@ import org.bukkit.util.Vector;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.GridManager;
-import com.wasteofplastic.askyblock.Locale;
+import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
@@ -111,7 +111,7 @@ public class NetherPortals implements Listener {
 		// Portals use is always allowed around the spawn
 		if (!plugin.getGrid().locationIsOnIsland(event.getPlayer(), event.getPlayer().getLocation())
 			&& !plugin.getGrid().isAtSpawn(event.getPlayer().getLocation())) {
-		    event.getPlayer().sendMessage(ChatColor.RED + Locale.islandProtected);
+		    event.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(event.getPlayer().getUniqueId()).islandProtected);
 		    event.setCancelled(true);
 		    return;
 		}
@@ -143,7 +143,7 @@ public class NetherPortals implements Listener {
 			// end_place.getBlock().getType(),end_place.getBlock().getData());
 			return;
 		    } else {
-			event.getPlayer().sendMessage(ChatColor.RED + Locale.warpserrorNotSafe);
+			event.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(event.getPlayer().getUniqueId()).warpserrorNotSafe);
 			plugin.getGrid().homeTeleport(event.getPlayer());
 			return;
 		    }
@@ -155,22 +155,19 @@ public class NetherPortals implements Listener {
 	    UUID playerUUID = event.getPlayer().getUniqueId();
 	    World world = ASkyBlock.getNetherWorld();
 	    if (Settings.newNether) {
-		Location netherHome = null;
-		if (plugin.getPlayers().inTeam(playerUUID)) {
-		    netherHome = plugin.getPlayers().getTeamIslandLocation(playerUUID).toVector().toLocation(world);
-		} else {
-		    netherHome = plugin.getPlayers().getIslandLocation(playerUUID).toVector().toLocation(world);
-		}
-		if (netherHome == null) {
+		// Get location of the island where the player is at
+		Island island = plugin.getGrid().getIslandAt(currentLocation);
+		if (island == null) {
 		    event.setCancelled(true);
 		    return;
 		}
+		Location netherHome = island.getCenter().toVector().toLocation(world);
 		if (!GridManager.isSafeLocation(netherHome)) {
-		    netherHome = plugin.getGrid().bigScan(netherHome, playerUUID, 10);
+		    netherHome = plugin.getGrid().bigScan(netherHome, 32);
 		    //plugin.getLogger().info("DEBUG: Found netherhome at " + netherHome);
 		    if (netherHome == null) {
 			plugin.getLogger().info("Could not find a safe spot to port " + event.getPlayer().getName() + " to Nether island");
-			event.getPlayer().sendMessage(Locale.warpserrorNotSafe);
+			event.getPlayer().sendMessage(plugin.myLocale(playerUUID).warpserrorNotSafe);
 			event.setCancelled(true);
 			return;
 		    }
@@ -209,7 +206,7 @@ public class NetherPortals implements Listener {
 			// end_place.getBlock().getType(),end_place.getBlock().getData());
 			return;
 		    } else {
-			event.getPlayer().sendMessage(ChatColor.RED + Locale.warpserrorNotSafe);
+			event.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(event.getPlayer().getUniqueId()).warpserrorNotSafe);
 			plugin.getGrid().homeTeleport(event.getPlayer());
 			return;
 		    }
@@ -255,7 +252,7 @@ public class NetherPortals implements Listener {
 	    }
 	    // plugin.getLogger().info("Block break in acid island nether");
 	    if (!awayFromSpawn(e.getPlayer()) && !e.getPlayer().isOp()) {
-		e.getPlayer().sendMessage(Locale.netherSpawnIsProtected);
+		e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).netherSpawnIsProtected);
 		e.setCancelled(true);
 	    }
 	}
@@ -328,13 +325,14 @@ public class NetherPortals implements Listener {
 	    Projectile arrow = (Projectile) e.getDamager();
 	    // It really is an Projectile
 	    if (arrow.getShooter() instanceof Player) {
+		Player shooter = (Player) arrow.getShooter();
 		// Arrow shot by a player at another player
 		if (Settings.allowNetherPvP) {
 		    return;
 		} else {
 		    if (!Settings.allowNetherPvP) {
-			// plugin.getLogger().info("Target player is in a no-PVP area!");
-			((Player) arrow.getShooter()).sendMessage(Locale.targetInNoPVPArea);
+			// plugin.getLogger().info("Target player is in a no-PVP area!");]
+			shooter.sendMessage(plugin.myLocale(shooter.getUniqueId()).targetInNoPVPArea);
 			e.setCancelled(true);
 			return;
 		    }
@@ -345,7 +343,7 @@ public class NetherPortals implements Listener {
 	    //plugin.getLogger().info("DEBUG: Player attack");
 	    // Just a player attack
 	    if (!Settings.allowNetherPvP) {
-		((Player) e.getDamager()).sendMessage(Locale.targetInNoPVPArea);
+		((Player) e.getDamager()).sendMessage(plugin.myLocale(((Player) e.getDamager()).getUniqueId()).targetInNoPVPArea);
 		e.setCancelled(true);
 		return;
 	    }
