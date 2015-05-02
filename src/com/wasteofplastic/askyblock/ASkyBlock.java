@@ -253,6 +253,8 @@ public class ASkyBlock extends JavaPlugin {
 	    getCommand("island").setTabCompleter(islandCmd);
 	    
 	    getCommand("asc").setExecutor(getChallenges());
+	    getCommand("asc").setTabCompleter(getChallenges());
+	    
 	    getCommand("asadmin").setExecutor(new AdminCmd(this));
 	} else {
 		IslandCmd islandCmd = new IslandCmd(this);
@@ -261,6 +263,8 @@ public class ASkyBlock extends JavaPlugin {
 	    getCommand("ai").setTabCompleter(islandCmd);
 	    
 	    getCommand("aic").setExecutor(getChallenges());
+	    getCommand("aic").setTabCompleter(getChallenges());
+	    
 	    getCommand("acid").setExecutor(new AdminCmd(this));
 	}
 	// Register events that this plugin uses
