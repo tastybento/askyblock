@@ -18,11 +18,15 @@
 package com.wasteofplastic.askyblock.commands;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Scanner;
 import java.util.TreeMap;
 import java.util.UUID;
 
@@ -43,6 +47,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.BlockIterator;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
@@ -52,7 +57,6 @@ import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.TopTen;
 import com.wasteofplastic.askyblock.WarpSigns;
-import com.wasteofplastic.askyblock.panels.BiomesPanel;
 import com.wasteofplastic.askyblock.panels.ControlPanel;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
@@ -78,7 +82,10 @@ public class AdminCmd implements CommandExecutor {
     private boolean confirmOK = false;
     private int confirmTimer = 0;
     private boolean purgeUnownedConfirm = false;
-    private List<Island> unowned;
+    private HashMap<String, Island> unowned = new HashMap<String,Island>();
+    private boolean asyncPending = false;
+    private BukkitTask asyncCheck;
+
 
     public AdminCmd(ASkyBlock aSkyBlock) {
 	this.plugin = aSkyBlock;
@@ -127,7 +134,8 @@ public class AdminCmd implements CommandExecutor {
 	    }
 	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.purge") || player.isOp()) {
 		player.sendMessage(ChatColor.YELLOW + "/" + label + " purge [TimeInDays]:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelppurge);
-		player.sendMessage(ChatColor.YELLOW + "/" + label + " purge unowned:" + ChatColor.WHITE + " remove any unowned islands");
+		player.sendMessage(ChatColor.YELLOW + "/" + label + " purge unowned:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelppurgeUnowned);
+		player.sendMessage(ChatColor.YELLOW + "/" + label + " purge allow/disallow:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelppurgeAllowDisallow);
 	    }
 	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.topten") || player.isOp()) {
 		player.sendMessage(ChatColor.YELLOW + "/" + label + " topten:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelptopTen);
@@ -294,6 +302,7 @@ public class AdminCmd implements CommandExecutor {
 			+ " to delete the island you are on.");
 		return true;
 	    }
+	    // Set spawn
 	    if (split[0].equalsIgnoreCase("setspawn")) {
 		// Find the closest island
 		if (!(sender instanceof Player)) {
@@ -307,7 +316,7 @@ public class AdminCmd implements CommandExecutor {
 		    return true;
 		}
 		// The island location is calculated based on the grid
-		Location closestIsland = getClosestIsland(((Player) sender).getLocation());
+		Location closestIsland = getClosestIsland(p.getLocation());
 		Island oldSpawn = plugin.getGrid().getSpawn();
 		Island newSpawn = plugin.getGrid().getIslandAt(closestIsland);
 		if (newSpawn != null && newSpawn.isSpawn()) {
@@ -599,6 +608,38 @@ public class AdminCmd implements CommandExecutor {
 	    }
 	    if (split[0].equalsIgnoreCase("purge")) {
 		// PURGE Command
+		// Check for "allow" or "disallow" flags
+		// Protect island from purging
+		if (split[1].equalsIgnoreCase("allow") || split[1].equalsIgnoreCase("disallow")) {
+		    // Find the closest island
+		    if (!(sender instanceof Player)) {
+			sender.sendMessage(ChatColor.RED + "This command must be used in-game.");
+			return true;
+		    }
+		    Player p = (Player) sender;
+		    // Island spawn must be in the island world
+		    if (!p.getLocation().getWorld().equals(ASkyBlock.getIslandWorld()) && !p.getLocation().getWorld().equals(ASkyBlock.getNetherWorld())) {
+			p.sendMessage(ChatColor.RED + plugin.myLocale(p.getUniqueId()).errorWrongWorld);
+			return true;
+		    }
+		    Island island = plugin.getGrid().getIslandAt(p.getLocation());
+		    if (island == null) {
+			p.sendMessage(ChatColor.RED + plugin.myLocale(p.getUniqueId()).errorNoIslandOther);
+			return true;
+		    }
+		    if (split[1].equalsIgnoreCase("allow")) {
+			island.setPurgeProtected(true);
+		    } else {
+			island.setPurgeProtected(false);
+		    }
+		    if (island.isPurgeProtected()) {
+			p.sendMessage(ChatColor.GREEN + plugin.myLocale(p.getUniqueId()).adminAllowPurge);
+		    } else {
+			p.sendMessage(ChatColor.GREEN + plugin.myLocale(p.getUniqueId()).adminPreventPurge);  
+		    }
+		    return true;
+		}
+
 		// Purge runs in the background so if one is already running
 		// this flag stops a repeat
 		if (purgeFlag) {
@@ -606,14 +647,14 @@ public class AdminCmd implements CommandExecutor {
 		    return true;
 		}
 
-		// See if this purge unowned
-
 		if (split[1].equalsIgnoreCase("unowned")) {
-		    purgeUnowned(sender);
+		    countUnowned(sender);
 		    return true;
 		}
 		// Set the flag
 		purgeFlag = true;
+		// See if this purge unowned
+
 		// Convert days to hours - no other limit checking?
 		final int time = Integer.parseInt(split[1]) * 24;
 
@@ -890,6 +931,7 @@ public class AdminCmd implements CommandExecutor {
 			sender.sendMessage(ChatColor.RED + plugin.myLocale().confirmerrorTimeLimitExpired);
 			return true;
 		    } else {
+			purgeUnownedConfirm = false;
 			// Purge the unowned islands
 			purgeUnownedIslands(sender);
 			return true;
@@ -1232,11 +1274,15 @@ public class AdminCmd implements CommandExecutor {
 		    this.cancel();
 		}
 		if (unowned.size() > 0) {
-		    sender.sendMessage(ChatColor.YELLOW + "[" + unowned.size() + "/" + total + "] Removing island at location "
-			    + unowned.get(0).getCenter().getWorld().getName() + " " + unowned.get(0).getCenter().getBlockX()
-			    + "," + unowned.get(0).getCenter().getBlockZ());
-		    deleteIslands(unowned.get(0),sender);
-		    unowned.remove(0);
+		    Iterator<Entry<String, Island>> it = unowned.entrySet().iterator();
+		    Entry<String,Island> entry = it.next();
+
+		    sender.sendMessage(ChatColor.YELLOW + "[" + (total - unowned.size() + 1) + "/" + total + "] Removing island at location "
+			    + entry.getValue().getCenter().getWorld().getName() + " " + entry.getValue().getCenter().getBlockX()
+			    + "," + entry.getValue().getCenter().getBlockZ());
+		    deleteIslands(entry.getValue(),sender);
+		    // Remove from the list
+		    it.remove();
 		}
 		sender.sendMessage("Now waiting...");
 	    }
@@ -1244,22 +1290,94 @@ public class AdminCmd implements CommandExecutor {
     }
 
     /**
-     * Removes unowned islands
+     * Counts unowned islands
      * @param sender
      */
-    private void purgeUnowned(CommandSender sender) {
+    private void countUnowned(final CommandSender sender) {
 	unowned = plugin.getGrid().getUnownedIslands();
-	sender.sendMessage("There are " + unowned.size() + " unowned islands. Do 'purge unowned confirm' to delete them within 10 seconds.");
-	purgeUnownedConfirm = true;
-	plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
+	if (!unowned.isEmpty()) {
+	    purgeFlag = true;
+	    sender.sendMessage("Counting unowned islands and checking player files. This could take some time...");
+	    // Prepare for the async check - make final
+	    final File playerFolder = plugin.getPlayersFolder();
+	    // Set the pending flag
+	    asyncPending = true;
+	    // Check against player files
+	    plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
 
-	    @Override
-	    public void run() {
-		if (purgeUnownedConfirm) {
-		    purgeUnownedConfirm = false;
-		    purgeFlag = false;
+		@Override
+		public void run() {
+		    //System.out.println("DEBUG: Running async task");
+		    // Check files against potentialUnowned
+		    FilenameFilter ymlFilter = new FilenameFilter() {
+			public boolean accept(File dir, String name) {
+			    String lowercaseName = name.toLowerCase();
+			    if (lowercaseName.endsWith(".yml")) {
+				return true;
+			    } else {
+				return false;
+			    }
+			}
+		    };
+		    for (File file: playerFolder.listFiles(ymlFilter)) {
+			try {
+			    Scanner scanner = new Scanner(file);
+			    while (scanner.hasNextLine()) {
+				final String lineFromFile = scanner.nextLine();
+				if (lineFromFile.contains("islandLocation:")) { 
+				    // Check against potentialUnowned list
+				    String loc = lineFromFile.substring(lineFromFile.indexOf(' ')).trim();
+				    //System.out.println("DEBUG: Location in player file is " + loc);
+				    if (unowned.containsKey(loc)) {
+					//System.out.println("DEBUG: Location found in player file - do not delete");
+					unowned.remove(loc);
+				    }
+				}
+			    }
+			    scanner.close();
+			} catch (FileNotFoundException e) {
+			    e.printStackTrace();
+			}
+		    }
+		    //System.out.println("DEBUG: scanning done");
+		    asyncPending = false;
+		}});
+	    // Create a repeating task to check if the async task has completed
+
+	    new BukkitRunnable() {
+
+		@Override
+		public void run() {
+		    if (asyncPending) {
+			// Still waiting
+			sender.sendMessage("Still checking player files...");
+		    } else {
+			// Done
+			if (unowned.size() > 0) {
+			    sender.sendMessage("There are " + unowned.size() + " unowned islands. Do 'purge unowned confirm' to delete them within 20 seconds.");
+			    purgeUnownedConfirm = true;
+			    purgeFlag = false;
+			    plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
+
+				@Override
+				public void run() {
+				    if (purgeUnownedConfirm) {
+					purgeUnownedConfirm = false;
+					sender.sendMessage(plugin.myLocale().purgepurgeCancelled);
+				    }
+				}}, 400L);
+			} else {
+			    sender.sendMessage(plugin.myLocale().purgenoneFound);
+			    purgeFlag = false;
+			}
+			this.cancel();
+		    }
+
 		}
-	    }}, 200L);
+	    }.runTaskTimer(plugin,20L,20L);
+	} else {
+	    sender.sendMessage(plugin.myLocale().purgenoneFound);
+	}
     }
 
     /**

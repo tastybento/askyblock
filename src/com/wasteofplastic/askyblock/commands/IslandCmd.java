@@ -60,7 +60,6 @@ import com.wasteofplastic.askyblock.DeleteIslandChunk;
 import com.wasteofplastic.askyblock.GridManager;
 import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.LevelCalc;
-import com.wasteofplastic.askyblock.Messages;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.TopTen;
 import com.wasteofplastic.askyblock.WarpSigns;
@@ -892,9 +891,10 @@ public class IslandCmd implements CommandExecutor {
 			player.sendMessage("한국의 / Korean");
 			player.sendMessage("Polski");
 			player.sendMessage("Brasil");
-			player.sendMessage("中国 / Chinese");
+			player.sendMessage("中国 / SimplifiedChinese");
 			player.sendMessage("Čeština");
 			player.sendMessage("Slovenčina");
+			player.sendMessage("繁體中文 / TraditionalChinese");
 		    } else {
 			player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).errorNoPermission);
 		    }
@@ -969,8 +969,6 @@ public class IslandCmd implements CommandExecutor {
 		    }
 		    return true;
 		} else if (split[0].equalsIgnoreCase("about")) {
-		    player.sendMessage("");
-		    player.sendMessage(ChatColor.GOLD + "(c) 2014 - 2015 by tastybento");
 		    player.sendMessage(ChatColor.GOLD + "This plugin is free software: you can redistribute");
 		    player.sendMessage(ChatColor.GOLD + "it and/or modify it under the terms of the GNU");
 		    player.sendMessage(ChatColor.GOLD + "General Public License as published by the Free");
@@ -985,6 +983,7 @@ public class IslandCmd implements CommandExecutor {
 		    player.sendMessage(ChatColor.GOLD + "General Public License along with this plugin.");
 		    player.sendMessage(ChatColor.GOLD + "If not, see <http://www.gnu.org/licenses/>.");
 		    player.sendMessage(ChatColor.GOLD + "Souce code is available on GitHub.");
+		    player.sendMessage(ChatColor.GOLD + "(c) 2014 - 2015 by tastybento");
 		    return true;
 		    // Spawn enderman
 		    // Enderman enderman = (Enderman)
@@ -1555,12 +1554,14 @@ public class IslandCmd implements CommandExecutor {
 			plugin.getPlayers().setLocale(playerUUID, "pl-PL");  
 		    } else if (split[1].equalsIgnoreCase("Brasil")) {
 			plugin.getPlayers().setLocale(playerUUID, "pt-BR");  
-		    } else if (split[1].equalsIgnoreCase("Chinese") || split[1].equalsIgnoreCase("中国")) {
+		    } else if (split[1].equalsIgnoreCase("SimplifiedChinese") || split[1].equalsIgnoreCase("中国")) {
 			plugin.getPlayers().setLocale(playerUUID, "zh-CN");  
 		    } else if (split[1].equalsIgnoreCase("Čeština") || split[1].equalsIgnoreCase("Cestina")) {
 			plugin.getPlayers().setLocale(playerUUID, "cs-CS");  
 		    } else if (split[1].equalsIgnoreCase("Slovenčina") || split[1].equalsIgnoreCase("Slovencina")) {
 			plugin.getPlayers().setLocale(playerUUID, "sk-SK");  
+		    } else if (split[1].equalsIgnoreCase("TraditionalChinese") || split[1].equalsIgnoreCase("繁體中文")) {
+			plugin.getPlayers().setLocale(playerUUID, "zh-TW");  
 		    } else {
 			// Typed it in wrong
 			player.sendMessage("/" + label + " lang <locale>");
@@ -1572,9 +1573,10 @@ public class IslandCmd implements CommandExecutor {
 			player.sendMessage("한국의 / Korean");
 			player.sendMessage("Polski");
 			player.sendMessage("Brasil");
-			player.sendMessage("中国 / Chinese");
+			player.sendMessage("中国 / SimplifiedChinese");
 			player.sendMessage("Čeština");
 			player.sendMessage("Slovenčina");
+			player.sendMessage("繁體中文 / TraditionalChinese");
 			return true;
 		    }
 		    player.sendMessage("OK!");

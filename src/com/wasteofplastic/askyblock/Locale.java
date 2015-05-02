@@ -258,6 +258,8 @@ public class Locale {
     public String adminHelpresetAllChallenges;
     // /acid purge [TimeInDays];
     public String adminHelppurge;
+    public String adminHelppurgeAllowDisallow;
+    public String adminHelppurgeUnowned;
     // /acid info <player>;
     public String adminHelpinfo;
     public String adminHelpclearReset;
@@ -282,6 +284,8 @@ public class Locale {
     public String purgefinished;
     public String purgeremovingName;
     public String adminHelppurgeholes;
+    public String adminAllowPurge;
+    public String adminPreventPurge;
 
     // confirm
     public String confirmerrorTimeLimitExpired;
@@ -866,6 +870,10 @@ public class Locale {
 		locale.getString("adminHelp.resetAllChallenges", "resets all of the player's challenges"));
 	adminHelppurge = ChatColor.translateAlternateColorCodes('&',
 		locale.getString("adminHelp.purge", "delete inactive islands older than [TimeInDays]."));
+	adminHelppurgeAllowDisallow = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("adminHelp.purgeallowdisallow", "allow/disallow island to be purged if it meets purge criteria"));
+	adminHelppurgeUnowned = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("adminHelp.purgeunowned", "remove unowned islands"));
 	adminHelppurgeholes = ChatColor.translateAlternateColorCodes('&', locale.getString("adminHelp.purgeholes", "free up island holes for reuse."));
 	adminHelpinfo = ChatColor.translateAlternateColorCodes('&', locale.getString("adminHelp.info", "check information on the given player."));
 	adminHelpSetSpawn = ChatColor.translateAlternateColorCodes('&',
@@ -895,6 +903,8 @@ public class Locale {
 	purgepurgeCancelled = ChatColor.translateAlternateColorCodes('&', locale.getString("purge.purgeCancelled", "Purge cancelled."));
 	purgefinished = ChatColor.translateAlternateColorCodes('&', locale.getString("purge.finished", "Finished purging of inactive islands."));
 	purgeremovingName = ChatColor.translateAlternateColorCodes('&', locale.getString("purge.removingName", "Purge: Removing [name]'s island"));
+	adminAllowPurge = ChatColor.translateAlternateColorCodes('&', locale.getString("purge.preventName", "Purge protection removed"));
+	adminPreventPurge = ChatColor.translateAlternateColorCodes('&', locale.getString("purge.allowName", "Island is protected from purging"));
 	confirmerrorTimeLimitExpired = ChatColor.translateAlternateColorCodes('&',
 		locale.getString("confirm.errorTimeLimitExpired", "Time limit expired! Issue command again."));
 	deleteremoving = ChatColor.translateAlternateColorCodes('&', locale.getString("delete.removing", "Removing [name]'s island."));

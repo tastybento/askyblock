@@ -41,6 +41,10 @@
 # Valid potion names are:
 # WATER, REGEN, SPEED, FIRE_RESISTANCE, POISON, INSTANT_HEAL, NIGHT_VISION, WEAKNESS,
 # STRENGTH, SLOWNESS, JUMP, INSTANT_DAMAGE, WATER_BREATHING, INVISIBILITY
+#
+# Worlds: You can specify which worlds the challenge should be available in
+# If no worlds are listed, it'll be available in the island and island_nether worlds only
+# Only applies to inventory challenges. 
 ##########################################################################################
 
 challenges:
@@ -73,7 +77,7 @@ challenges:
       repeatExpReward: 10
       #repeatrewardcommands:
       # Max times limits how many times a challenge can be done. Comment out to make unlimited
-      maxtimes: 100
+      maxtimes: 2
     breadmaker:
       friendlyname: 'Bread Maker'
       description: 'Bake 21 loaves of bread'
@@ -688,4 +692,3 @@ challenges:
       repeatRewardText: ''
       repeatMoneyReward: 0
       repeatExpReward: 0
-

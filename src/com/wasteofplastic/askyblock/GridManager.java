@@ -1411,12 +1411,15 @@ public class GridManager {
     /**
      * @return a list of unowned islands
      */
-    public List<Island> getUnownedIslands() {
-	List<Island> result = new ArrayList<Island>();
+    public HashMap<String, Island> getUnownedIslands() {
+	HashMap<String, Island> result = new HashMap<String,Island>();
 	for (Entry<Integer, TreeMap<Integer, Island>> x : islandGrid.entrySet()) {
 	    for (Island island : x.getValue().values()) {
-		if (island.getOwner() == null) {
-		    result.add(island);
+		//plugin.getLogger().info("DEBUG: checking island at " + island.getCenter());
+		if (island.getOwner() == null && !island.isSpawn() && !island.isPurgeProtected()) {
+		    Location center = island.getCenter();
+		    String serialized = island.getCenter().getWorld().getName() + ":" + center.getBlockX() + ":" + center.getBlockY() + ":" + center.getBlockZ();
+		    result.put(serialized,island);
 		}
 	    }
 	}

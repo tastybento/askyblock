@@ -353,6 +353,8 @@ purge:
    purgeCancelled: "Purge cancelled."
    finished: "Finished purging of inactive islands."
    removingName: "Purge: Removing [name]'s island"
+   preventPurge: "Island is protected from purging"
+   allowPurge: "Purge protection removed"
 
 #confirm
 confirm:

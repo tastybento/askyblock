@@ -16,6 +16,9 @@
  *******************************************************************************/
 package com.wasteofplastic.askyblock.listeners;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,7 +35,6 @@ import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.CoopPlay;
 import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.LevelCalc;
-import com.wasteofplastic.askyblock.Messages;
 import com.wasteofplastic.askyblock.PlayerCache;
 import com.wasteofplastic.askyblock.Scoreboards;
 import com.wasteofplastic.askyblock.Settings;
@@ -53,11 +55,21 @@ public class JoinLeaveEvents implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerJoin(final PlayerJoinEvent event) {
 	final Player player = event.getPlayer();
+	final UUID playerUUID = player.getUniqueId();
+	// Get language
+	String language = getLanguage(player);
+	//plugin.getLogger().info("DEBUG: language = " + language);
+	// Check if we have this language
+	if (plugin.getResource("locale/" + language + ".yml") != null) {
+	    if (plugin.getPlayers().getLocale(playerUUID).isEmpty()) {
+		plugin.getPlayers().setLocale(playerUUID, language);
+	    }
+	}
 	// Check updates
 	if (player.isOp() && plugin.getUpdateCheck() != null) {
 	    plugin.checkUpdatesNotify(player);
 	}
-	final UUID playerUUID = player.getUniqueId();
+
 	if (players == null) {
 	    plugin.getLogger().severe("players is NULL");
 	}
@@ -201,4 +213,33 @@ public class JoinLeaveEvents implements Listener {
 	// "Hello! This is a test. You logged out");
 	players.removeOnlinePlayer(event.getPlayer().getUniqueId());
     }
+
+    /**
+     * Attempts to get the player's language
+     * @param p
+     * @return language or empty string
+     */
+    public String getLanguage(Player p){
+	Object ep;
+	try {
+	    ep = getMethod("getHandle", p.getClass()).invoke(p, (Object[]) null);
+	    Field f = ep.getClass().getDeclaredField("locale");
+	    f.setAccessible(true);
+	    String language = (String) f.get(ep);
+	    language.replace('_', '-');
+	    return language;
+	} catch (Exception e) {
+	    //nothing
+	}
+	return "en-US";
+    }
+
+    private Method getMethod(String name, Class<?> clazz) {
+	for (Method m : clazz.getDeclaredMethods()) {
+	    if (m.getName().equals(name))
+		return m;
+	}
+	return null;
+    }
+
 }
