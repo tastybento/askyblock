@@ -120,6 +120,9 @@ permissions:
           askyblock.mod.tp:
             description: Allows teleport to an island
             default: op
+          askyblock.mod.tpnether:
+            description: Allows teleport to a nether island
+            default: op
           askyblock.mod.bypassprotect:
             description: Allow moderator to bypass island protection
             default: op

@@ -170,6 +170,10 @@ public class AdminCmd implements CommandExecutor {
 	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.tp") || player.isOp()) {
 		player.sendMessage(ChatColor.YELLOW + "/" + label + " tp <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelptp);
 	    }
+	    if (Settings.newNether && VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.tpnether") || player.isOp()) {
+		player.sendMessage(ChatColor.YELLOW + "/" + label + " tpnether <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelptp + "(Nether)");
+	    }
+
 	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.setbiome") || player.isOp()) {
 		sender.sendMessage(ChatColor.YELLOW + "/" + label + " setbiome <leader> <biome>:" + ChatColor.WHITE + " Sets leader's island biome.");
 	    }
@@ -657,8 +661,14 @@ public class AdminCmd implements CommandExecutor {
 		// See if this purge unowned
 
 		// Convert days to hours - no other limit checking?
-		final int time = Integer.parseInt(split[1]) * 24;
-
+		final int time;
+		try {
+		    time = Integer.parseInt(split[1]) * 24;
+		} catch (Exception e) {
+		    sender.sendMessage(ChatColor.RED + plugin.myLocale().purgeusage.replace("[label]", label));
+		    purgeFlag = false;
+		    return true;
+		}
 		sender.sendMessage(ChatColor.YELLOW + plugin.myLocale().purgecalculating.replace("[time]", split[1]));
 		// Kick off task
 		plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
@@ -773,7 +783,7 @@ public class AdminCmd implements CommandExecutor {
 			}.runTaskTimer(plugin, 0L, 40L);
 		    }
 		});
-							return true;
+		return true;
 	    } else if (split[0].equalsIgnoreCase("clearreset")) {
 		// Convert name to a UUID
 		final UUID playerUUID = plugin.getPlayers().getUUID(split[1]);
@@ -798,6 +808,44 @@ public class AdminCmd implements CommandExecutor {
 		} else {
 		    if (plugin.getPlayers().getIslandLocation(playerUUID) != null) {
 			Location safeSpot = plugin.getGrid().getSafeHomeLocation(playerUUID,1);
+			if (safeSpot != null) {
+			    // This next line should help players with long ping
+			    // times
+			    ((Player) sender).teleport(safeSpot);
+			    // ((Player)sender).sendBlockChange(safeSpot,safeSpot.getBlock().getType(),safeSpot.getBlock().getData());
+			} else {
+			    sender.sendMessage(ChatColor.RED + plugin.myLocale().warpserrorNotSafe);
+			    Location warpSpot = plugin.getPlayers().getIslandLocation(playerUUID);
+			    sender.sendMessage(ChatColor.RED + "Manually warp to somewhere near " + warpSpot.getBlockX() + " " + warpSpot.getBlockY() + " "
+				    + warpSpot.getBlockZ());
+			}
+			return true;
+		    }
+		    sender.sendMessage(plugin.myLocale().errorNoIslandOther);
+		    return true;
+		}
+	    } else if (split[0].equalsIgnoreCase("tpnether")) {
+		if (!Settings.newNether) {
+		    return false;
+		}
+		if (!(sender instanceof Player)) {
+		    sender.sendMessage(ChatColor.RED + plugin.myLocale().errorUnknownCommand);
+		    return true;
+		}
+		// Convert name to a UUID
+		final UUID playerUUID = plugin.getPlayers().getUUID(split[1]);
+		if (!plugin.getPlayers().isAKnownPlayer(playerUUID)) {
+		    sender.sendMessage(ChatColor.RED + plugin.myLocale().errorUnknownPlayer);
+		    return true;
+		} else {
+		    Location islandLoc = plugin.getPlayers().getIslandLocation(playerUUID);
+		    if (islandLoc != null) {
+			Location safeSpot = null;
+			if (islandLoc.getWorld().equals(ASkyBlock.getNetherWorld())) {
+			    safeSpot = plugin.getGrid().getSafeHomeLocation(playerUUID,1);
+			} else {
+			    safeSpot = plugin.getGrid().bigScan(islandLoc.toVector().toLocation(ASkyBlock.getNetherWorld()), -1);
+			}
 			if (safeSpot != null) {
 			    // This next line should help players with long ping
 			    // times
