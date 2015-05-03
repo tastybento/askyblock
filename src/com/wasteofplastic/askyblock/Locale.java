@@ -258,6 +258,8 @@ public class Locale {
     public String adminHelpresetAllChallenges;
     // /acid purge [TimeInDays];
     public String adminHelppurge;
+    public String adminHelppurgeAllowDisallow;
+    public String adminHelppurgeUnowned;
     // /acid info <player>;
     public String adminHelpinfo;
     public String adminHelpclearReset;
@@ -282,6 +284,8 @@ public class Locale {
     public String purgefinished;
     public String purgeremovingName;
     public String adminHelppurgeholes;
+    public String adminAllowPurge;
+    public String adminPreventPurge;
 
     // confirm
     public String confirmerrorTimeLimitExpired;
@@ -360,6 +364,16 @@ public class Locale {
     public String expelFail;
     public String expelNotYourself;
 
+    // Ban
+    public String banSuccess;
+    public String banLifted;
+    public String banBanned;
+    public String banFail;
+    public String banNotYourself;
+    public String banNotBanned;
+    public String banAlreadyBanned;
+    public String banLiftedSuccess;
+    
     // Mob limits
     public String moblimitsError;
 
@@ -444,6 +458,9 @@ public class Locale {
     public String igsAnvil;
     public String setHomeerrorNumHomes;
     public String schematicsTitle;
+    public String islandhelpBan;
+    public String islandhelpUnban;
+    public String banNotTeamMember;
 
     /**
      * Creates a locale object full of localized strings for a language
@@ -744,6 +761,8 @@ public class Locale {
 	islandhelpLeave = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpLeave", "leave another player's island."));
 	islandhelpKick = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpKick", "remove a team member from your island."));
 	islandhelpExpel = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpExpel", "force a player from your island."));
+	islandhelpBan = ChatColor.translateAlternateColorCodes('&', locale.getString("ban.helpBan", "ban a player from your island."));
+	islandhelpUnban = ChatColor.translateAlternateColorCodes('&', locale.getString("ban.helpUnban", "un-ban a player from your island."));
 	islandHelpSettings = ChatColor.translateAlternateColorCodes('&',
 		locale.getString("island.helpSettings", "see island protection and game settings"));
 	islandHelpChallenges = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpChallenges", "/challenges: &fshow challenges"));
@@ -851,6 +870,10 @@ public class Locale {
 		locale.getString("adminHelp.resetAllChallenges", "resets all of the player's challenges"));
 	adminHelppurge = ChatColor.translateAlternateColorCodes('&',
 		locale.getString("adminHelp.purge", "delete inactive islands older than [TimeInDays]."));
+	adminHelppurgeAllowDisallow = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("adminHelp.purgeallowdisallow", "allow/disallow island to be purged if it meets purge criteria"));
+	adminHelppurgeUnowned = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("adminHelp.purgeunowned", "remove unowned islands"));
 	adminHelppurgeholes = ChatColor.translateAlternateColorCodes('&', locale.getString("adminHelp.purgeholes", "free up island holes for reuse."));
 	adminHelpinfo = ChatColor.translateAlternateColorCodes('&', locale.getString("adminHelp.info", "check information on the given player."));
 	adminHelpSetSpawn = ChatColor.translateAlternateColorCodes('&',
@@ -880,6 +903,8 @@ public class Locale {
 	purgepurgeCancelled = ChatColor.translateAlternateColorCodes('&', locale.getString("purge.purgeCancelled", "Purge cancelled."));
 	purgefinished = ChatColor.translateAlternateColorCodes('&', locale.getString("purge.finished", "Finished purging of inactive islands."));
 	purgeremovingName = ChatColor.translateAlternateColorCodes('&', locale.getString("purge.removingName", "Purge: Removing [name]'s island"));
+	adminAllowPurge = ChatColor.translateAlternateColorCodes('&', locale.getString("purge.preventName", "Purge protection removed"));
+	adminPreventPurge = ChatColor.translateAlternateColorCodes('&', locale.getString("purge.allowName", "Island is protected from purging"));
 	confirmerrorTimeLimitExpired = ChatColor.translateAlternateColorCodes('&',
 		locale.getString("confirm.errorTimeLimitExpired", "Time limit expired! Issue command again."));
 	deleteremoving = ChatColor.translateAlternateColorCodes('&', locale.getString("delete.removing", "Removing [name]'s island."));
@@ -965,6 +990,15 @@ public class Locale {
 	expelExpelled = ChatColor.translateAlternateColorCodes('&', locale.getString("expel.expelled", "You were expelled from that island!"));
 	expelFail = ChatColor.translateAlternateColorCodes('&', locale.getString("expel.fail", "[name] cannot be expelled!"));
 	expelNotYourself = ChatColor.translateAlternateColorCodes('&', locale.getString("expel.notyourself", "You cannot expel yourself!"));
+	banSuccess = ChatColor.translateAlternateColorCodes('&', locale.getString("ban.success", "[name] is banned from the island!"));
+	banBanned = ChatColor.translateAlternateColorCodes('&', locale.getString("ban.banned", "You are banned from [name]'s island!"));
+	banLifted = ChatColor.translateAlternateColorCodes('&', locale.getString("ban.lifted", "Ban lifted from [name]'s island!"));
+	banLiftedSuccess = ChatColor.translateAlternateColorCodes('&', locale.getString("ban.liftedsuccess", "Ban lifted for [name]!"));
+	banFail = ChatColor.translateAlternateColorCodes('&', locale.getString("banned.fail", "[name] cannot be banned!"));
+	banNotYourself = ChatColor.translateAlternateColorCodes('&', locale.getString("ban.notyourself", "You cannot do that to yourself!"));
+	banNotTeamMember = ChatColor.translateAlternateColorCodes('&', locale.getString("ban.notteammember", "You cannot ban a team member!"));
+	banNotBanned = ChatColor.translateAlternateColorCodes('&', locale.getString("ban.notbanned", "[name] is not banned!"));
+	banAlreadyBanned = ChatColor.translateAlternateColorCodes('&', locale.getString("ban.alreadybanned", "[name] is already banned!"));
 	moblimitsError = ChatColor.translateAlternateColorCodes('&', locale.getString("moblimits.error", "Island breeding limit of [number] reached!"));
 	coopRemoved = ChatColor.translateAlternateColorCodes('&', locale.getString("coop.removed", "[name] remove your coop status!"));
 	coopRemoveSuccess = ChatColor.translateAlternateColorCodes('&', locale.getString("coop.removesuccess", "[name] is no longer a coop player."));

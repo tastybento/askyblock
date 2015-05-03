@@ -22,21 +22,19 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.World.Environment;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
-import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.util.Vector;
 
@@ -44,6 +42,8 @@ import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.GridManager;
 import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.Settings;
+import com.wasteofplastic.askyblock.commands.IslandCmd;
+import com.wasteofplastic.askyblock.schematics.Schematic;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
 public class NetherPortals implements Listener {
@@ -89,6 +89,8 @@ public class NetherPortals implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = false)
     public void onPlayerPortal(PlayerPortalEvent event) {
+	//plugin.getLogger().info("Player portal event - reason =" + event.getCause());
+	UUID playerUUID = event.getPlayer().getUniqueId();
 	// If the nether is disabled then quit immediately
 	if (!Settings.createNether) {
 	    return;
@@ -103,8 +105,16 @@ public class NetherPortals implements Listener {
 		&& !currentWorld.equalsIgnoreCase(Settings.worldName + "_the_end")) {
 	    return;
 	}
+	// Check if this player is an island player
+	if (!plugin.getPlayers().hasIsland(playerUUID) && !plugin.getPlayers().inTeam(playerUUID)) {
+	    event.getPlayer().sendMessage(ChatColor.YELLOW + "Type /" + Settings.ISLANDCOMMAND + " to start an island.");
+	    event.setCancelled(true);
+	    return;
+	}
+
+
 	// Check if player has permission
-	if (!Settings.allowPortalUse && currentWorld.equalsIgnoreCase(Settings.worldName)) {
+	if (!Settings.allowPortalUse) {
 	    // Portal use is disallowed for visitors, but okay for ops or bypass
 	    // mods
 	    if (!event.getPlayer().isOp() && !VaultHelper.checkPerm(event.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
@@ -117,6 +127,113 @@ public class NetherPortals implements Listener {
 		}
 	    }
 	}
+	// Determine what portal it is
+	switch (event.getCause()) {
+	case END_PORTAL:
+	    // Same action for all worlds except the end itself
+	    if (!event.getFrom().getWorld().getEnvironment().equals(Environment.THE_END)) {
+		if (plugin.getServer().getWorld(Settings.worldName + "_the_end") != null) {
+		    // The end exists
+		    event.setCancelled(true);
+		    Location end_place = plugin.getServer().getWorld(Settings.worldName + "_the_end").getSpawnLocation();
+		    if (GridManager.isSafeLocation(end_place)) {
+			event.getPlayer().teleport(end_place);
+			// event.getPlayer().sendBlockChange(end_place,
+			// end_place.getBlock().getType(),end_place.getBlock().getData());
+			return;
+		    } else {
+			event.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(event.getPlayer().getUniqueId()).warpserrorNotSafe);
+			plugin.getGrid().homeTeleport(event.getPlayer());
+			return;
+		    }
+		}
+	    } else {
+		event.setCancelled(true);
+		plugin.getGrid().homeTeleport(event.getPlayer());
+	    }
+	    break;
+	case NETHER_PORTAL:
+	    // Get the home world of this player
+	    World homeWorld = plugin.getPlayers().getHomeLocation(event.getPlayer().getUniqueId()).getWorld();
+	    if (!Settings.newNether) {
+		// Legacy action
+		if (event.getFrom().getWorld().getEnvironment().equals(Environment.NORMAL)) {
+		    // Going to Nether
+		    if (homeWorld.getEnvironment().equals(Environment.NORMAL)) {
+			// Home world is over world
+			event.setTo(ASkyBlock.getNetherWorld().getSpawnLocation());
+			event.useTravelAgent(true); 
+		    } else {
+			// Home world is nether - going home
+			event.setTo(plugin.getGrid().getSafeHomeLocation(playerUUID,1));
+			event.useTravelAgent(false);
+		    }
+		} else {
+		    // Going to Over world
+		    if (homeWorld.getEnvironment().equals(Environment.NORMAL)) {
+			// Home world is over world
+			event.setTo(plugin.getGrid().getSafeHomeLocation(playerUUID,1));
+			event.useTravelAgent(false);
+		    } else {
+			// Home world is nether 
+			event.setTo(ASkyBlock.getIslandWorld().getSpawnLocation());
+			event.useTravelAgent(true); 
+		    }
+		}
+	    } else {
+		// New Nether
+		// Get location of the island where the player is at
+		Island island = plugin.getGrid().getIslandAt(currentLocation);
+		if (island == null) {
+		    event.setCancelled(true);
+		    return;
+		}
+		// Can go both ways now
+		// Start with going to the overworld
+		Location dest = island.getCenter().toVector().toLocation(ASkyBlock.getIslandWorld());
+		if (event.getFrom().getWorld().getEnvironment().equals(Environment.NORMAL)) {
+		    // Going to Nether
+		    dest = island.getCenter().toVector().toLocation(ASkyBlock.getNetherWorld());
+		    // Check that there is a nether island there. Due to legacy reasons it may not exist
+		    if (dest.getBlock().getType() != Material.BEDROCK) {
+			// Check to see if there is anything there
+			if (plugin.getGrid().bigScan(dest, 20) == null) {
+			    plugin.getLogger().warning("Creating nether island for " + event.getPlayer().getName() + " using default nether schematic");
+			    Schematic nether = IslandCmd.getSchematics().get("nether");
+			    if (nether != null) {
+				plugin.getIslandCmd().pasteSchematic(nether, dest, event.getPlayer());
+			    } else {
+				plugin.getLogger().severe("Cannot telelport player to nether because there is no nether schematic");
+				event.setCancelled(true);
+				event.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(event.getPlayer().getUniqueId()).warpserrorNotSafe);
+				return;
+			    }
+			}
+		    }
+		}
+		if (!GridManager.isSafeLocation(dest)) {
+		    dest = plugin.getGrid().bigScan(dest, -1);
+		    //plugin.getLogger().info("DEBUG: Found netherhome at " + netherHome);
+		    if (dest == null) {
+			plugin.getLogger().info("Could not find a safe spot to port " + event.getPlayer().getName() + " to Nether island");
+			event.getPlayer().sendMessage(plugin.myLocale(playerUUID).warpserrorNotSafe);
+			event.setCancelled(true);
+			return;
+		    }
+		}
+		// Go!
+		event.getPlayer().teleport(dest);
+		event.setCancelled(true);
+	    }
+	    break;
+	default:
+	    break;
+	}
+    }
+    /*
+
+
+
 	// plugin.getLogger().info(event.getCause().toString());
 	// plugin.getLogger().info("Get from is " + currentLocation.toString());
 	// Check that we know this player (they could have come from another
@@ -162,8 +279,9 @@ public class NetherPortals implements Listener {
 		    return;
 		}
 		Location netherHome = island.getCenter().toVector().toLocation(world);
+		//plugin.getLogger().info("DBEUG: initial location:" + netherHome);
 		if (!GridManager.isSafeLocation(netherHome)) {
-		    netherHome = plugin.getGrid().bigScan(netherHome, 32);
+		    netherHome = plugin.getGrid().bigScan(netherHome, -1);
 		    //plugin.getLogger().info("DEBUG: Found netherhome at " + netherHome);
 		    if (netherHome == null) {
 			plugin.getLogger().info("Could not find a safe spot to port " + event.getPlayer().getName() + " to Nether island");
@@ -188,7 +306,7 @@ public class NetherPortals implements Listener {
 	    // event.useTravelAgent(true);
 	    // } else {
 	    // Use the portal for now
-	    
+
 	    // }
 	} else {
 	    // Going to the end
@@ -217,7 +335,7 @@ public class NetherPortals implements Listener {
 	    event.setTo(destination);
 	    event.useTravelAgent(false);
 	}
-    }
+    }*/
 
     // Nether portal spawn protection
 
@@ -266,30 +384,32 @@ public class NetherPortals implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW)
     public void onPlayerBlockPlace(final BlockPlaceEvent e) {
-	if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_nether")
-		|| e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_the_end")) {
-	    if (VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
-		return;
-	    }
-	    if (!awayFromSpawn(e.getPlayer()) && !e.getPlayer().isOp()) {
-		e.setCancelled(true);
+	if (!Settings.newNether) {
+	    if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_nether")
+		    || e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_the_end")) {
+		if (VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
+		    return;
+		}
+		if (!awayFromSpawn(e.getPlayer()) && !e.getPlayer().isOp()) {
+		    e.setCancelled(true);
+		}
 	    }
 	}
-
     }
 
     @EventHandler(priority = EventPriority.LOW)
     public void onBucketEmpty(final PlayerBucketEmptyEvent e) {
-	if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_nether")
-		|| e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_the_end")) {
-	    if (VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
-		return;
-	    }
-	    if (!awayFromSpawn(e.getPlayer()) && !e.getPlayer().isOp()) {
-		e.setCancelled(true);
+	if (!Settings.newNether) {
+	    if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_nether")
+		    || e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_the_end")) {
+		if (VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
+		    return;
+		}
+		if (!awayFromSpawn(e.getPlayer()) && !e.getPlayer().isOp()) {
+		    e.setCancelled(true);
+		}
 	    }
 	}
-
     }
 
     /**
@@ -298,8 +418,14 @@ public class NetherPortals implements Listener {
      * 
      * @param e
      */
+    /*
     @EventHandler(priority = EventPriority.LOW)
     public void onEntityDamage(final EntityDamageByEntityEvent e) {
+	if (Settings.newNether) {
+	    // Not used in new nether
+	    return;
+	}
+	//
 	// Check world
 	if (!e.getEntity().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_nether")
 		|| e.getEntity().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_the_end")) {
@@ -350,7 +476,7 @@ public class NetherPortals implements Listener {
 	}
 	return;
     }
-
+     */
     /**
      * Prevent the Nether spawn from being blown up
      * 
@@ -358,6 +484,10 @@ public class NetherPortals implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onExplosion(final EntityExplodeEvent e) {
+	if (Settings.newNether) {
+	    // Not used in the new nether
+	    return;
+	}
 	// Find out what is exploding
 	Entity expl = e.getEntity();
 	if (expl == null) {
@@ -382,11 +512,11 @@ public class NetherPortals implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onTreeGrow(final StructureGrowEvent e) {
-	if (!Settings.newNether) {
+	if (!Settings.newNether || !Settings.netherTrees) {
 	    return;
 	}
 	// Check world
-	if (!e.getLocation().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_nether")) {
+	if (!e.getLocation().getWorld().equals(ASkyBlock.getNetherWorld())) {
 	    return;
 	}
 	for (BlockState b : e.getBlocks()) {

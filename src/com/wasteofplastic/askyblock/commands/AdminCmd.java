@@ -18,11 +18,15 @@
 package com.wasteofplastic.askyblock.commands;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Scanner;
 import java.util.TreeMap;
 import java.util.UUID;
 
@@ -43,16 +47,17 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.BlockIterator;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.CoopPlay;
 import com.wasteofplastic.askyblock.DeleteIslandChunk;
 import com.wasteofplastic.askyblock.Island;
-import com.wasteofplastic.askyblock.Messages;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.TopTen;
 import com.wasteofplastic.askyblock.WarpSigns;
+import com.wasteofplastic.askyblock.panels.BiomesPanel;
 import com.wasteofplastic.askyblock.panels.ControlPanel;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
@@ -77,6 +82,11 @@ public class AdminCmd implements CommandExecutor {
     private boolean confirmReq = false;
     private boolean confirmOK = false;
     private int confirmTimer = 0;
+    private boolean purgeUnownedConfirm = false;
+    private HashMap<String, Island> unowned = new HashMap<String,Island>();
+    private boolean asyncPending = false;
+    private BukkitTask asyncCheck;
+
 
     public AdminCmd(ASkyBlock aSkyBlock) {
 	this.plugin = aSkyBlock;
@@ -125,10 +135,8 @@ public class AdminCmd implements CommandExecutor {
 	    }
 	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.purge") || player.isOp()) {
 		player.sendMessage(ChatColor.YELLOW + "/" + label + " purge [TimeInDays]:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelppurge);
-		// player.sendMessage(ChatColor.YELLOW + "/" + label +
-		// " purge holes:" + ChatColor.WHITE + " " +
-		// plugin.myLocale().adminHelppurgeholes);
-
+		player.sendMessage(ChatColor.YELLOW + "/" + label + " purge unowned:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelppurgeUnowned);
+		player.sendMessage(ChatColor.YELLOW + "/" + label + " purge allow/disallow:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelppurgeAllowDisallow);
 	    }
 	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.topten") || player.isOp()) {
 		player.sendMessage(ChatColor.YELLOW + "/" + label + " topten:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelptopTen);
@@ -162,6 +170,10 @@ public class AdminCmd implements CommandExecutor {
 	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.tp") || player.isOp()) {
 		player.sendMessage(ChatColor.YELLOW + "/" + label + " tp <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelptp);
 	    }
+	    if (Settings.newNether && VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.tpnether") || player.isOp()) {
+		player.sendMessage(ChatColor.YELLOW + "/" + label + " tpnether <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelptp + "(Nether)");
+	    }
+
 	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.setbiome") || player.isOp()) {
 		sender.sendMessage(ChatColor.YELLOW + "/" + label + " setbiome <leader> <biome>:" + ChatColor.WHITE + " Sets leader's island biome.");
 	    }
@@ -193,7 +205,7 @@ public class AdminCmd implements CommandExecutor {
 		if (split[0].equalsIgnoreCase("reload") || split[0].equalsIgnoreCase("register") || split[0].equalsIgnoreCase("delete")
 			|| split[0].equalsIgnoreCase("purge") || split[0].equalsIgnoreCase("confirm") || split[0].equalsIgnoreCase("setspawn")
 			|| split[0].equalsIgnoreCase("deleteisland") || split[0].equalsIgnoreCase("setrange")
-				|| split[0].equalsIgnoreCase("unregister")) {
+			|| split[0].equalsIgnoreCase("unregister")) {
 		    if (!checkAdminPerms(player, split)) {
 			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
 			return true;
@@ -295,6 +307,7 @@ public class AdminCmd implements CommandExecutor {
 			+ " to delete the island you are on.");
 		return true;
 	    }
+	    // Set spawn
 	    if (split[0].equalsIgnoreCase("setspawn")) {
 		// Find the closest island
 		if (!(sender instanceof Player)) {
@@ -308,7 +321,7 @@ public class AdminCmd implements CommandExecutor {
 		    return true;
 		}
 		// The island location is calculated based on the grid
-		Location closestIsland = getClosestIsland(((Player) sender).getLocation());
+		Location closestIsland = getClosestIsland(p.getLocation());
 		Island oldSpawn = plugin.getGrid().getSpawn();
 		Island newSpawn = plugin.getGrid().getIslandAt(closestIsland);
 		if (newSpawn != null && newSpawn.isSpawn()) {
@@ -319,9 +332,9 @@ public class AdminCmd implements CommandExecutor {
 		}
 		// Space otherwise occupied - find if anyone owns it
 		if (newSpawn != null && newSpawn.getOwner() != null) {
-			sender.sendMessage(ChatColor.RED + "This island space is owned by " + plugin.getPlayers().getName(newSpawn.getOwner()));
-			sender.sendMessage(ChatColor.RED + "Move further away or unregister the owner.");
-			return true;
+		    sender.sendMessage(ChatColor.RED + "This island space is owned by " + plugin.getPlayers().getName(newSpawn.getOwner()));
+		    sender.sendMessage(ChatColor.RED + "Move further away or unregister the owner.");
+		    return true;
 		}
 		if (oldSpawn != null) {
 		    sender.sendMessage(ChatColor.GOLD + "Changing spawn island location. Warning: old spawn island location at "
@@ -530,11 +543,13 @@ public class AdminCmd implements CommandExecutor {
 		    return true;
 		} else {
 		    sender.sendMessage(ChatColor.YELLOW + plugin.myLocale().deleteremoving.replace("[name]", name));
+		    /*
 		    new DeleteIslandChunk(plugin, island.getCenter());
 		    // Delete the new nether island too (if it exists)
 		    if (Settings.createNether && Settings.newNether) {
 			new DeleteIslandChunk(plugin, island.getCenter().toVector().toLocation(ASkyBlock.getNetherWorld()));
-		    }
+		    }*/
+		    deleteIslands(island, sender);
 		    return true;
 		}
 	    }
@@ -598,24 +613,62 @@ public class AdminCmd implements CommandExecutor {
 	    }
 	    if (split[0].equalsIgnoreCase("purge")) {
 		// PURGE Command
+		// Check for "allow" or "disallow" flags
+		// Protect island from purging
+		if (split[1].equalsIgnoreCase("allow") || split[1].equalsIgnoreCase("disallow")) {
+		    // Find the closest island
+		    if (!(sender instanceof Player)) {
+			sender.sendMessage(ChatColor.RED + "This command must be used in-game.");
+			return true;
+		    }
+		    Player p = (Player) sender;
+		    // Island spawn must be in the island world
+		    if (!p.getLocation().getWorld().equals(ASkyBlock.getIslandWorld()) && !p.getLocation().getWorld().equals(ASkyBlock.getNetherWorld())) {
+			p.sendMessage(ChatColor.RED + plugin.myLocale(p.getUniqueId()).errorWrongWorld);
+			return true;
+		    }
+		    Island island = plugin.getGrid().getIslandAt(p.getLocation());
+		    if (island == null) {
+			p.sendMessage(ChatColor.RED + plugin.myLocale(p.getUniqueId()).errorNoIslandOther);
+			return true;
+		    }
+		    if (split[1].equalsIgnoreCase("allow")) {
+			island.setPurgeProtected(true);
+		    } else {
+			island.setPurgeProtected(false);
+		    }
+		    if (island.isPurgeProtected()) {
+			p.sendMessage(ChatColor.GREEN + plugin.myLocale(p.getUniqueId()).adminAllowPurge);
+		    } else {
+			p.sendMessage(ChatColor.GREEN + plugin.myLocale(p.getUniqueId()).adminPreventPurge);  
+		    }
+		    return true;
+		}
+
 		// Purge runs in the background so if one is already running
 		// this flag stops a repeat
 		if (purgeFlag) {
 		    sender.sendMessage(ChatColor.RED + plugin.myLocale().purgealreadyRunning);
 		    return true;
 		}
+
+		if (split[1].equalsIgnoreCase("unowned")) {
+		    countUnowned(sender);
+		    return true;
+		}
 		// Set the flag
 		purgeFlag = true;
-		// See if this purge holes
-		/*
-		 * if (split[1].equalsIgnoreCase("holes")) {
-		 * purgeHoles(sender);
-		 * return true;
-		 * }
-		 */
-		// Convert days to hours - no other limit checking?
-		final int time = Integer.parseInt(split[1]) * 24;
+		// See if this purge unowned
 
+		// Convert days to hours - no other limit checking?
+		final int time;
+		try {
+		    time = Integer.parseInt(split[1]) * 24;
+		} catch (Exception e) {
+		    sender.sendMessage(ChatColor.RED + plugin.myLocale().purgeusage.replace("[label]", label));
+		    purgeFlag = false;
+		    return true;
+		}
 		sender.sendMessage(ChatColor.YELLOW + plugin.myLocale().purgecalculating.replace("[time]", split[1]));
 		// Kick off task
 		plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
@@ -657,25 +710,13 @@ public class AdminCmd implements CommandExecutor {
 						if (!oldPlayer.getBoolean("hasTeam", false)) {
 						    // plugin.getLogger().info("and is a lone player");
 						    if (oldPlayer.getInt("islandLevel", 0) < Settings.abandonedIslandLevel) {
-							// plugin.getLogger().info("and their island will be removed!");
-							// player.sendMessage("Island level for "
-							// +
-							// plugin.getPlayers().getName(playerUUID)
-							// + " is " +
-							// plugin.getPlayers().getIslandLevel(playerUUID));
-							removeList.add(playerUUID);
-						    } else {
-							// plugin.getLogger().info("but their island level is > "
-							// +
-							// Settings.abandonedIslandLevel
-							// +
-							// " so not deleting");
-						    }
-						} else {
-						    // plugin.getLogger().info("but is in a team");
-						}
-					    } else {
-						// plugin.getLogger().info("but does not have an island.");
+							// Check if the island is purge protected
+							Island island = plugin.getGrid().getIsland(playerUUID);
+							if (island == null || (island != null && !island.isPurgeProtected())) {
+							    removeList.add(playerUUID);
+							}
+						    } 
+						} 
 					    }
 					} catch (Exception e) {
 					    // Just skip it
@@ -767,6 +808,44 @@ public class AdminCmd implements CommandExecutor {
 		} else {
 		    if (plugin.getPlayers().getIslandLocation(playerUUID) != null) {
 			Location safeSpot = plugin.getGrid().getSafeHomeLocation(playerUUID,1);
+			if (safeSpot != null) {
+			    // This next line should help players with long ping
+			    // times
+			    ((Player) sender).teleport(safeSpot);
+			    // ((Player)sender).sendBlockChange(safeSpot,safeSpot.getBlock().getType(),safeSpot.getBlock().getData());
+			} else {
+			    sender.sendMessage(ChatColor.RED + plugin.myLocale().warpserrorNotSafe);
+			    Location warpSpot = plugin.getPlayers().getIslandLocation(playerUUID);
+			    sender.sendMessage(ChatColor.RED + "Manually warp to somewhere near " + warpSpot.getBlockX() + " " + warpSpot.getBlockY() + " "
+				    + warpSpot.getBlockZ());
+			}
+			return true;
+		    }
+		    sender.sendMessage(plugin.myLocale().errorNoIslandOther);
+		    return true;
+		}
+	    } else if (split[0].equalsIgnoreCase("tpnether")) {
+		if (!Settings.newNether) {
+		    return false;
+		}
+		if (!(sender instanceof Player)) {
+		    sender.sendMessage(ChatColor.RED + plugin.myLocale().errorUnknownCommand);
+		    return true;
+		}
+		// Convert name to a UUID
+		final UUID playerUUID = plugin.getPlayers().getUUID(split[1]);
+		if (!plugin.getPlayers().isAKnownPlayer(playerUUID)) {
+		    sender.sendMessage(ChatColor.RED + plugin.myLocale().errorUnknownPlayer);
+		    return true;
+		} else {
+		    Location islandLoc = plugin.getPlayers().getIslandLocation(playerUUID);
+		    if (islandLoc != null) {
+			Location safeSpot = null;
+			if (islandLoc.getWorld().equals(ASkyBlock.getNetherWorld())) {
+			    safeSpot = plugin.getGrid().getSafeHomeLocation(playerUUID,1);
+			} else {
+			    safeSpot = plugin.getGrid().bigScan(islandLoc.toVector().toLocation(ASkyBlock.getNetherWorld()), 30);
+			}
 			if (safeSpot != null) {
 			    // This next line should help players with long ping
 			    // times
@@ -877,6 +956,26 @@ public class AdminCmd implements CommandExecutor {
 		return false;
 	    }
 	case 3:
+	    // Confirm purge unowned
+	    if (split[0].equalsIgnoreCase("purge")) {
+		if (purgeFlag) {
+		    sender.sendMessage(ChatColor.RED + plugin.myLocale().purgealreadyRunning);
+		    return true;
+		}
+		// Check if this is purge unowned
+		if (split[1].equalsIgnoreCase("unowned") && split[2].equalsIgnoreCase("confirm")) {
+		    if (!purgeUnownedConfirm) {
+			sender.sendMessage(ChatColor.RED + plugin.myLocale().confirmerrorTimeLimitExpired);
+			return true;
+		    } else {
+			purgeUnownedConfirm = false;
+			// Purge the unowned islands
+			purgeUnownedIslands(sender);
+			return true;
+		    }
+		}
+
+	    }
 	    // Set protection
 	    if (split[0].equalsIgnoreCase("setrange")) {
 		// Convert name to a UUID
@@ -980,7 +1079,7 @@ public class AdminCmd implements CommandExecutor {
 		    // Online
 		    targetPlayer.sendMessage("[Admin] " + ChatColor.GREEN + plugin.myLocale(playerUUID).biomeSet.replace("[biome]", biomeName));
 		} else {
-		    Messages.setMessage(playerUUID, "[Admin] " + ChatColor.GREEN + plugin.myLocale(playerUUID).biomeSet.replace("[biome]", biomeName));
+		    plugin.getMessages().setMessage(playerUUID, "[Admin] " + ChatColor.GREEN + plugin.myLocale(playerUUID).biomeSet.replace("[biome]", biomeName));
 		}
 		return true;
 	    } else
@@ -1166,6 +1265,163 @@ public class AdminCmd implements CommandExecutor {
     }
 
     /**
+     * Deletes the overworld and nether islands together
+     * @param island
+     * @param sender
+     */
+    private void deleteIslands(Island island, CommandSender sender) {
+	if (island.getCenter().getWorld().equals(ASkyBlock.getIslandWorld())) {
+	    // Over World start
+	    plugin.getGrid().removeMobsFromIsland(island.getCenter());
+	    // Reset the biome
+	    BiomesPanel.setIslandBiome(island.getCenter(), Settings.defaultBiome);
+	    new DeleteIslandChunk(plugin, island.getCenter());
+	    // Delete the new nether island too (if it exists)
+	    if (Settings.createNether && Settings.newNether) {
+		Location otherIsland = island.getCenter().toVector().toLocation(ASkyBlock.getNetherWorld());
+		plugin.getGrid().removeMobsFromIsland(otherIsland);
+		// Delete island
+		new DeleteIslandChunk(plugin, otherIsland);  
+	    }
+	} else if (Settings.createNether && Settings.newNether && island.getCenter().getWorld().equals(ASkyBlock.getNetherWorld())) {
+	    // Nether World Start
+	    plugin.getGrid().removeMobsFromIsland(island.getCenter());
+	    new DeleteIslandChunk(plugin, island.getCenter());
+	    // Delete the overworld island too
+	    Location otherIsland = island.getCenter().toVector().toLocation(ASkyBlock.getIslandWorld());
+	    plugin.getGrid().removeMobsFromIsland(otherIsland);
+	    // Reset the biome
+	    BiomesPanel.setIslandBiome(island.getCenter(), Settings.defaultBiome);
+	    // Delete island
+	    new DeleteIslandChunk(plugin, otherIsland);  
+	} else {
+	    sender.sendMessage(ChatColor.RED + "Cannot delete island at location " + island.getCenter().toString() + " because it is not in the official island world");
+	} 
+    }
+
+    /**
+     * Purges the unowned islands upon direction from sender
+     * @param sender
+     */
+    private void purgeUnownedIslands(final CommandSender sender) {
+	purgeFlag = true;
+	final int total = unowned.size();
+	new BukkitRunnable() {
+	    @Override
+	    public void run() {
+		if (unowned.isEmpty()) {
+		    purgeFlag = false;
+		    sender.sendMessage(ChatColor.YELLOW + plugin.myLocale().purgefinished);
+		    this.cancel();
+		}
+		if (unowned.size() > 0) {
+		    Iterator<Entry<String, Island>> it = unowned.entrySet().iterator();
+		    Entry<String,Island> entry = it.next();
+
+		    sender.sendMessage(ChatColor.YELLOW + "[" + (total - unowned.size() + 1) + "/" + total + "] Removing island at location "
+			    + entry.getValue().getCenter().getWorld().getName() + " " + entry.getValue().getCenter().getBlockX()
+			    + "," + entry.getValue().getCenter().getBlockZ());
+		    deleteIslands(entry.getValue(),sender);
+		    // Remove from the list
+		    it.remove();
+		}
+		sender.sendMessage("Now waiting...");
+	    }
+	}.runTaskTimer(plugin, 0L, 20L);
+    }
+
+    /**
+     * Counts unowned islands
+     * @param sender
+     */
+    private void countUnowned(final CommandSender sender) {
+	unowned = plugin.getGrid().getUnownedIslands();
+	if (!unowned.isEmpty()) {
+	    purgeFlag = true;
+	    sender.sendMessage("Counting unowned islands and checking player files. This could take some time...");
+	    // Prepare for the async check - make final
+	    final File playerFolder = plugin.getPlayersFolder();
+	    // Set the pending flag
+	    asyncPending = true;
+	    // Check against player files
+	    plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+
+		@Override
+		public void run() {
+		    //System.out.println("DEBUG: Running async task");
+		    // Check files against potentialUnowned
+		    FilenameFilter ymlFilter = new FilenameFilter() {
+			public boolean accept(File dir, String name) {
+			    String lowercaseName = name.toLowerCase();
+			    if (lowercaseName.endsWith(".yml")) {
+				return true;
+			    } else {
+				return false;
+			    }
+			}
+		    };
+		    for (File file: playerFolder.listFiles(ymlFilter)) {
+			try {
+			    Scanner scanner = new Scanner(file);
+			    while (scanner.hasNextLine()) {
+				final String lineFromFile = scanner.nextLine();
+				if (lineFromFile.contains("islandLocation:")) { 
+				    // Check against potentialUnowned list
+				    String loc = lineFromFile.substring(lineFromFile.indexOf(' ')).trim();
+				    //System.out.println("DEBUG: Location in player file is " + loc);
+				    if (unowned.containsKey(loc)) {
+					//System.out.println("DEBUG: Location found in player file - do not delete");
+					unowned.remove(loc);
+				    }
+				}
+			    }
+			    scanner.close();
+			} catch (FileNotFoundException e) {
+			    e.printStackTrace();
+			}
+		    }
+		    //System.out.println("DEBUG: scanning done");
+		    asyncPending = false;
+		}});
+	    // Create a repeating task to check if the async task has completed
+
+	    new BukkitRunnable() {
+
+		@Override
+		public void run() {
+		    if (asyncPending) {
+			// Still waiting
+			sender.sendMessage("Still checking player files...");
+		    } else {
+			// Done
+			if (unowned.size() > 0) {
+			    sender.sendMessage("There are " + unowned.size() + " unowned islands. Do 'purge unowned confirm' to delete them within 20 seconds.");
+			    purgeUnownedConfirm = true;
+			    purgeFlag = false;
+			    plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
+
+				@Override
+				public void run() {
+				    if (purgeUnownedConfirm) {
+					purgeUnownedConfirm = false;
+					sender.sendMessage(plugin.myLocale().purgepurgeCancelled);
+				    }
+				}}, 400L);
+			} else {
+			    sender.sendMessage(plugin.myLocale().purgenoneFound);
+			    purgeFlag = false;
+			}
+			this.cancel();
+		    }
+
+		}
+	    }.runTaskTimer(plugin,20L,20L);
+	} else {
+	    sender.sendMessage(plugin.myLocale().purgenoneFound);
+	}
+    }
+
+    /**
      * This returns the coordinate of where an island should be on the grid.
      * 
      * @param location
@@ -1239,6 +1495,28 @@ public class AdminCmd implements CommandExecutor {
 	    } else {
 		sender.sendMessage(ChatColor.YELLOW + "Island is unlocked");
 	    }
+	    if (island.isPurgeProtected()) {
+		sender.sendMessage(ChatColor.GREEN + "Island is purge protected");
+	    } else {
+		sender.sendMessage(ChatColor.GREEN + "Island is not purge protected");
+	    }
+	    List<UUID> banList = plugin.getPlayers().getBanList(playerUUID);
+	    if (!banList.isEmpty()) {
+		sender.sendMessage(ChatColor.YELLOW + "Banned players:");
+		String list = "";
+		for (UUID uuid : banList) {
+		    Player target = plugin.getServer().getPlayer(uuid);
+		    if (target != null) {
+			//online
+			list += target.getDisplayName() + ", ";
+		    } else {
+			list += plugin.getPlayers().getName(uuid) + ", ";
+		    }
+		}
+		if (!list.isEmpty()) {
+		    sender.sendMessage(ChatColor.RED + list.substring(0, list.length()-2));
+		}
+	    }	
 	} else {
 	    sender.sendMessage(ChatColor.RED + plugin.myLocale().errorNoIslandOther);
 	}

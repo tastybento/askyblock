@@ -22,19 +22,16 @@ island:
    # IF YOU ARE UPGRADING YOU MUST USE YOUR OLD VALUE EXACTLY, E.G., 110
    # OR RESET YOUR WORLD
    # You MUST set this value to start the plugin!
+   # Value must be an even number
 
    distance: -1
 
-   # The size of the protective region for new islands.
-   # Large sizes will slow down island level calculation
-   # when players do /is level.
-   # Value MUST be an even number.
-   # Recommended size is 100 because it gives players a good starting size.
-   # Minimum size is 50.
-   # Admins can change protection sizes for players individually using
+   # Default protection range (even number). Min = 50, Recommended = 100
    # Value must be at least 16 blocks less than the island distance unless you set
    # overridelimit: true below.
-
+   # Use this permission to set for different groups: askyblock.island.range.<number>
+   # Larger values will take longer to calculate the island level
+   # Admins can change protection sizes for players individually using /asadmin setrange
    protectionRange: 100
 
    # If you want to have protection range = distance set the following to true.
@@ -49,12 +46,10 @@ island:
    startx: 0
    startz: 0
 
-   # Max team size
+   # Default max team size
+   # Use this permission to set for specific user groups: askyblock.team.maxsize.<number> 
+   # Permission size cannot be less than the default. 
    maxteamsize: 4
-   # VIP team size - set by permission askyblock.team.vip
-   vipteamsize: 8
-   # VIP2 team size - set by permission askyblock.team.vip2
-   vip2teamsize: 12
 
    # Items that will be in the chest when the player starts an island
    # Must be in Bukkit Materials format. Format is <Material>:<Qty>
@@ -67,22 +62,22 @@ island:
 
    chestItems: 'ICE:2 MELON:1 TORCH:2 BONE:1 LAVA_BUCKET:1 PUMPKIN_SEEDS:1 SUGAR_CANE:1 RED_MUSHROOM:1 BROWN_MUSHROOM:1 CACTUS:1 BREAD:1 WHEAT:1 LEATHER_BOOTS:1 LEATHER_HELMET:1 LEATHER_CHESTPLATE:1 LEATHER_LEGGINGS:1'
 
-   # Your island companion
+   # Default island companion. Set schematic-specific companions in the schematicsection
    # Options are: COW, PIG, SHEEP, CHICKEN, VILLAGER, HORSE, IRON_GOLEM, OCELOT,
    # RABBIT, WOLF or NOTHING. Default is COW.
 
    companion: COW
 
-   # This is a list of names, picked at random that will apply to the companion
+   # Default list of names, picked at random that will apply to the companion
    # You can add more if you like. If none are listed, the companion will not be
    # named.
+   # Set schematic-specific companion names in the schematicsection
    companionnames:
    - "&9[player]'s cow"
    - "&cEmergency &fFood?"
    - "&aD&6a&di&6s&9y"
 
    # Island Protection Settings
-
    # PVP is allowed or not.
    allowPvP: false
    allowNetherPvP: false
@@ -196,7 +191,9 @@ general:
 
    # Try new island-style nether. Change to true
    # Still in Beta!
-   newnether: false    
+   newnether: false
+   # Nether trees are made if a player grows a tree in the new nether (gravel and glowstone)
+   nethertrees: true  
 
    #How long a player must wait before they can reset their island again in second
    resetwait: 300
@@ -351,6 +348,7 @@ general:
 
    # Use physics when pasting schematic blocks. If this is false, then blocks
    # like water will not flow from the schematic
+   # Set schematic-specific options in the schematicsection
    usephysics: false
    
    # Calculate level on login
@@ -358,8 +356,9 @@ general:
    # If the command is busy, it will fail silently
    loginlevel: false
 
-   # Maximum number of homes a player can have
+   # Default maximum number of homes a player can have. Min = 1
    # Accessed via sethome <number> or go <number>
+   # Use this permission to set for specific user groups: askyblock.island.maxhomes.<number>  
    maxhomes: 1
 
    # Make island if player teleports to the island world and does not have one
@@ -379,6 +378,9 @@ general:
    setteamsuffix: false
    # What you want the suffix to be. [level] is substituted for the player's level
    teamsuffix: "([level])"
+   
+   # Have player's respawn on their island if they die
+   respawnonisland: false
 
    # Config.yml version. DO NOT EDIT. This number only changes if the latest
    # plugin config has been updated. If a new config is detected, it will be
@@ -515,6 +517,29 @@ schematicsection:
       filename: island.schematic
       # Use default chest if true, or use schematic chest contents if false
       useDefaultChest: true
+      # Which schematic will be used in the opposite world if newnether:true
+      # If there is no partner, this island will be used
+      partnerSchematic: nether
+    # This is the default nether island - do not remove this section!
+    nether:
+      # Hide or show this schematic to players in the GUI
+      show: false
+      icon: NETHERRACK
+      # If the biome is HELL it is assumed this island goes in the Nether
+      biome: HELL
+      name: "NetherBlock Island"
+      description: "An island in the nether|overlooked by a mob tower"
+      filename: nether.schematic
+      # Nether schematics should generally use the schematic chest contents
+      useDefaultChest: false
+      # The partner to this schematic is the default island
+      partnerSchematic: default
+      # Schematics can include entities (mobs) in them and if pasteentities is true,
+      # mobs will be pasted. 
+      pasteentities: true
+      # Usephysics causes lava or water to flow after being pasted. Change to false
+      # if it lags
+      usephysics: true    
     # Additional heading names can be anything you like, but must be unique
     island1:
       # Credit to Antal1609 for this schematic!
@@ -525,14 +550,47 @@ schematicsection:
       # Schematics can have biomes set when they are created
       biome: FLOWER_FOREST
       useDefaultChest: true
+      # You can set the chest items here in this list
+      # Material:Qty, or Material:Data:Qty
+      #chestItems:
+      #- MELON:1
+      #- ICE:1
+      # Your island companion. Overrides the default setting. If more than one is
+      # listed, one will be chosen at random.
+      # Options are: COW, PIG, SHEEP, CHICKEN, VILLAGER, HORSE, IRON_GOLEM, OCELOT,
+      # RABBIT, WOLF or NOTHING. Default is COW.
+      companion:
+      - RABBIT 
+      # This is a list of names, picked at random that will apply to the companion
+      # You can add more if you like. If none are listed, the companion will not be
+      # named.
+      companionnames:
+      - "&9[player]'s rabbit"
+      - "&cFluffy"
+      partnerSchematic: nether
       #permission: any.perm.you.like
+    # New snowy schematic
     extrahard:
       icon: OBSIDIAN
+      # Ski theme - a black diamond run is hard.
       name: "&lBlack &bDiamonds"
       description: "Experts only!|&aMinimal resources|&awith a few diamonds."
-      filename: hard.schematic
+      filename: harder.schematic
+      biome: COLD_TAIGA
       useDefaultChest: false
+      # Chest items can be defined here if useDefaultChest is true
+      # Material:Qty, or Material:Data:Qty
+      #chestItems:
+      #- MELON:1
+      #- ICE:1
       # Schematics that require water or lava to hover can prevent physics when pasting
       usephysics: false
+      # Schematics may include entities (mobs) in them and if pasteentities is true,
+      # mobs will be pasted.
+      # Example: Setting this to true for this schematic will give a wolf.
+      pasteentities: false
+      partnerSchematic: nether
       #permission: any.perm.you.like
-
+      # This optional block determines where the player will spawn. It must be unique in
+      # the schematic and will be replaced by air when pasted.
+      #spawnblock: SPONGE
