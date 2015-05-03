@@ -113,7 +113,8 @@ public class Schematic {
     private Vector chest;
     private Vector welcomeSign;
     private Vector topGrass;
-
+    private Vector playerSpawn;
+    private Material playerSpawnBlock;
 
     public Schematic() {
 	// Initialize 
@@ -137,6 +138,8 @@ public class Schematic {
 	chest = null;
 	welcomeSign = null;
 	topGrass = null;
+	playerSpawn = null;
+	playerSpawnBlock = null;
     }
 
     public Schematic(File file) throws IOException {
@@ -161,7 +164,8 @@ public class Schematic {
 	chest = null;
 	welcomeSign = null;
 	topGrass = null;
-
+	playerSpawn = null;
+	playerSpawnBlock = null;
 	// Establish the World Edit to Material look up
 	// V1.8 items
 	// New V1.8 events
@@ -514,7 +518,7 @@ public class Schematic {
 		    } else if (blocks[index] == 2) {
 			// Grass
 			grassBlocks.add(new Vector(x,y,z));
-		    }
+		    } 
 		}
 	    }
 	}
@@ -1057,7 +1061,7 @@ public class Schematic {
 	    grass = gr;
 	} else {
 	    grass = null;
-	}
+	}	
 
 	//Bukkit.getLogger().info("DEBUG cow location " + grass);
 	Block blockToChange = null;
@@ -1470,6 +1474,61 @@ public class Schematic {
      */
     public void setOrder(int order) {
 	this.order = order;
+    }
+
+
+    /**
+     * @return true if player spawn exists in this schematic
+     */
+    public boolean isPlayerSpawn() {
+	if (playerSpawn == null) {
+	    return false;
+	}
+	return true;
+    }
+
+    /**
+     * @return the playerSpawn Location given a paste location
+     */
+    public Location getPlayerSpawn(Location pasteLocation) {
+	return pasteLocation.clone().add(playerSpawn);
+    }
+
+    /**
+     * @param playerSpawnBlock the playerSpawnBlock to set
+     * @return true if block is found otherwise false
+     */
+    public boolean setPlayerSpawnBlock(Material playerSpawnBlock) {
+	// Run through the schematic and try and find the spawnBlock
+	playerSpawn = null;
+	int playerSpawnIndex = 0;
+	int blockCount = 0;
+	for (int x = 0; x < width; ++x) {
+	    for (int y = 0; y < height; ++y) {
+		for (int z = 0; z < length; ++z) {
+		    int index = y * width * length + z * width + x;
+		    if (playerSpawnBlock != null && blocks[index] == playerSpawnBlock.getId()) {
+			// Where the player should spawn
+			playerSpawn = new Vector(x, y, z);
+			playerSpawnIndex = index;
+			blockCount++;
+		    }
+		}
+	    }
+	}
+	if (blockCount > 1) {
+	    // Block has to be unique
+	    return false;
+	}
+	// Remove the player spawn block if it exists
+	if (playerSpawn != null && bedrock != null) {
+	    // Set to air
+	    blocks[playerSpawnIndex] = 0;
+	    // Correct spawn location block for use later. Just need to add the pasting location
+	    playerSpawn.subtract(bedrock).add(new Vector(0.5D,0D,0.5D));
+	    return true;
+	}
+	return false;
     }
 
 

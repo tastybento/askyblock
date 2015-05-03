@@ -170,7 +170,7 @@ public class IslandCmd implements CommandExecutor {
 		} catch (IOException e) {
 		    plugin.getLogger().severe("Could not load default nether schematic!");
 		    e.printStackTrace();
-		} 
+		}  
 	    } else {
 		plugin.getLogger().severe("Could not find default nether schematic!");
 	    }
@@ -395,10 +395,27 @@ public class IslandCmd implements CommandExecutor {
 				    // e.printStackTrace();
 				}
 			    }
+
 			    // Store it
 			    newSchem.setDefaultChestItems(tempChest);
 			}
-
+			// Player spawn block
+			String spawnBlock = schemSection.getString("schematics." + key + ".spawnblock");
+			if (spawnBlock != null) {
+			    // Check to see if this block is a valid material
+			    try {
+				Material playerSpawnBlock = Material.valueOf(spawnBlock.toUpperCase());
+				if (newSchem.setPlayerSpawnBlock(playerSpawnBlock)) {
+				    plugin.getLogger().info("Player will spawn at the " + playerSpawnBlock.toString());
+				} else {
+				    plugin.getLogger().severe("Problem with schematic '" + name + "'. Spawn block '" + spawnBlock + "' not found in schematic or there is more than one. Skipping...");
+				}
+			    } catch (Exception e) {
+				plugin.getLogger().severe("Problem with schematic '" + name + "'. Spawn block '" + spawnBlock + "' is unknown. Skipping...");
+			    }
+			} else {
+			    plugin.getLogger().info("No spawn block found");
+			}
 			// Store it
 			schematics.put(key, newSchem);
 			if (perm.isEmpty()) {
@@ -614,7 +631,13 @@ public class IslandCmd implements CommandExecutor {
 	// Save the player so that if the server is reset weird things won't happen
 	plugin.getPlayers().save(playerUUID);
 	// Teleport to the new home
-	plugin.getGrid().homeTeleport(player);
+	if (schematic.isPlayerSpawn()) {
+	    // Set home and teleport
+	    plugin.getPlayers().setHomeLocation(playerUUID, schematic.getPlayerSpawn(next), 1);
+	    player.teleport(schematic.getPlayerSpawn(next));
+	} else {
+	    plugin.getGrid().homeTeleport(player);
+	}
 	// Reset any inventory, etc. This is done AFTER the teleport because other plugins may switch out inventory based on world
 	plugin.resetPlayer(player);
 	// Reset money if required

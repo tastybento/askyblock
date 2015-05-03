@@ -844,7 +844,7 @@ public class AdminCmd implements CommandExecutor {
 			if (islandLoc.getWorld().equals(ASkyBlock.getNetherWorld())) {
 			    safeSpot = plugin.getGrid().getSafeHomeLocation(playerUUID,1);
 			} else {
-			    safeSpot = plugin.getGrid().bigScan(islandLoc.toVector().toLocation(ASkyBlock.getNetherWorld()), -1);
+			    safeSpot = plugin.getGrid().bigScan(islandLoc.toVector().toLocation(ASkyBlock.getNetherWorld()), 30);
 			}
 			if (safeSpot != null) {
 			    // This next line should help players with long ping

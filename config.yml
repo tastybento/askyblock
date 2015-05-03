@@ -539,8 +539,7 @@ schematicsection:
       pasteentities: true
       # Usephysics causes lava or water to flow after being pasted. Change to false
       # if it lags
-      usephysics: true
-    
+      usephysics: true    
     # Additional heading names can be anything you like, but must be unique
     island1:
       # Credit to Antal1609 for this schematic!
@@ -592,3 +591,6 @@ schematicsection:
       pasteentities: false
       partnerSchematic: nether
       #permission: any.perm.you.like
+      # This optional block determines where the player will spawn. It must be unique in
+      # the schematic and will be replaced by air when pasted.
+      #spawnblock: SPONGE
