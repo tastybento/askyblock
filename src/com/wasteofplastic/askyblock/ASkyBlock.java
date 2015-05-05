@@ -256,15 +256,19 @@ public class ASkyBlock extends JavaPlugin {
 	islandCmd = new IslandCmd(this);
 	if (Settings.GAMETYPE.equals(Settings.GameType.ASKYBLOCK)) {
 		IslandCmd islandCmd = new IslandCmd(this);
+		AdminCmd adminCmd = new AdminCmd(this);
+		
 		getCommand("island").setExecutor(islandCmd);
 	    getCommand("island").setTabCompleter(islandCmd);
 	    
 	    getCommand("asc").setExecutor(getChallenges());
 	    getCommand("asc").setTabCompleter(getChallenges());
 	    
-	    getCommand("asadmin").setExecutor(new AdminCmd(this));
+	    getCommand("asadmin").setExecutor(adminCmd);
+	    getCommand("asadmin").setTabCompleter(adminCmd);
 	} else {
 		IslandCmd islandCmd = new IslandCmd(this);
+		AdminCmd adminCmd = new AdminCmd(this);
 	    
 		getCommand("ai").setExecutor(islandCmd);
 	    getCommand("ai").setTabCompleter(islandCmd);
@@ -272,7 +276,8 @@ public class ASkyBlock extends JavaPlugin {
 	    getCommand("aic").setExecutor(getChallenges());
 	    getCommand("aic").setTabCompleter(getChallenges());
 	    
-	    getCommand("acid").setExecutor(new AdminCmd(this));
+	    getCommand("acid").setExecutor(adminCmd);
+	    getCommand("acid").setTabCompleter(adminCmd);
 	}
 	// Register events that this plugin uses
 	// registerEvents();

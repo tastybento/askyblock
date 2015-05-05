@@ -41,6 +41,7 @@ import org.bukkit.block.Sign;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
@@ -75,7 +76,7 @@ import com.wasteofplastic.askyblock.util.VaultHelper;
  * This class handles admin commands
  * 
  */
-public class AdminCmd implements CommandExecutor {
+public class AdminCmd implements CommandExecutor, TabCompleter {
     private ASkyBlock plugin;
     private List<UUID> removeList = new ArrayList<UUID>();
     private boolean purgeFlag = false;
@@ -1633,4 +1634,106 @@ public class AdminCmd implements CommandExecutor {
 	    return false;
 	}
     }
+    
+    @Override
+	public List<String> onTabComplete(final CommandSender sender, final Command command, final String label, final String[] args) {
+    final List<String> options = new ArrayList<String>();
+	String lastArg = (args.length != 0 ? args[args.length - 1] : "");
+    
+	if (!(sender instanceof Player)) {
+		//Server console or something else; doesn't have
+		//permission checking.
+		
+		//TODO: Not implemented.
+		return options;
+	}
+	final Player player = (Player) sender;
+
+	switch (args.length) {
+	case 0: 
+	case 1: 
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.reload") || player.isOp()) {
+	    	options.add("reload");
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.register") || player.isOp()) {
+	    	options.add("register");
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.unregister") || player.isOp()) {
+	    	options.add("unregister");
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.delete") || player.isOp()) {
+	    	options.add("delete");
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.deleteisland") || player.isOp()) {
+	    	options.add("deleteisland");
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.purge") || player.isOp()) {
+	    	options.add("purge");
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.topten") || player.isOp()) {
+	    	options.add("topten");
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.topbreeders") || player.isOp()) {
+	    	options.add("topbreeders");
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.challenges") || player.isOp()) {
+	    	options.add("completechallenge");
+			options.add("resetchallenge");
+			options.add("resetallchallenges");
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.info") || player.isOp()) {
+	    	options.add("info");
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.clearreset") || player.isOp()) {
+	    	options.add("clearreset");
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.setspawn") || player.isOp()) {
+	    	options.add("setspawn");
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.setrange") || player.isOp()) {
+	    	options.add("setrange");
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.tp") || player.isOp()) {
+	    	options.add("tp");
+	    }
+	    if (Settings.newNether && VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.tpnether") || player.isOp()) {
+	    	options.add("tpnether");
+	    }
+
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.setbiome") || player.isOp()) {
+	    	options.add("setbiome");
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.team") || player.isOp()) {
+	    	options.add("team");
+	    }
+		break;
+	case 2: 
+		
+		break;
+	}
+
+	return tabLimit(options, lastArg);
+	}
+    
+    /**
+	 * Returns all of the items that begin with the given start, 
+	 * ignoring case. 
+	 * 
+	 * TODO: May want to move this to a more centralized class, 
+	 * as it is probably going to be re-used a lot.
+	 * 
+	 * @param list
+	 * @param start
+	 * @return
+	 */
+	private List<String> tabLimit(final List<String> list, final String start) {
+	List<String> returned = new ArrayList<String>();
+	for (String s : list) {
+	if (s.toLowerCase().startsWith(start.toLowerCase())) { //Case-insensitive startsWith.
+		returned.add(s);
+	}
+	}
+	
+	return returned;
+	}
 }
