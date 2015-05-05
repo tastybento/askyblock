@@ -55,6 +55,7 @@ import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.CoopPlay;
 import com.wasteofplastic.askyblock.DeleteIslandChunk;
 import com.wasteofplastic.askyblock.Island;
+import com.wasteofplastic.askyblock.PlayerCache;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.TopTen;
 import com.wasteofplastic.askyblock.WarpSigns;
@@ -1707,9 +1708,101 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 	    	options.add("team");
 	    }
 		break;
-	case 2: 
-		
+	case 2:
+		if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.unregister") || player.isOp())
+				&& args[0].equalsIgnoreCase("unregister")) {
+		//TODO this is really repetitive -- move the players online code to a shared function.
+			final List<Player> players = PlayerCache.getOnlinePlayers();
+			for (Player p : players) {
+				options.add(p.getName());
+			}
+		}
+		if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.delete") || player.isOp())
+				&& args[0].equalsIgnoreCase("delete")) {
+			final List<Player> players = PlayerCache.getOnlinePlayers();
+			for (Player p : players) {
+				options.add(p.getName());
+			}
+		}
+		if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.challenges") || player.isOp())
+				&& (args[0].equalsIgnoreCase("completechallenge") || args[0].equalsIgnoreCase("resetchallenge"))) {
+			options.addAll(plugin.getChallenges().getAllChallenges());
+		}
+		if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.challenges") || player.isOp())
+				&& args[0].equalsIgnoreCase("resetallchallenges")) {
+			final List<Player> players = PlayerCache.getOnlinePlayers();
+			for (Player p : players) {
+				options.add(p.getName());
+			}
+		}
+		if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.info") || player.isOp())
+				&& args[0].equalsIgnoreCase("info")) {
+			options.add("challenges");
+			final List<Player> players = PlayerCache.getOnlinePlayers();
+			for (Player p : players) {
+				options.add(p.getName());
+			}
+		}
+		if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.clearreset") || player.isOp())
+				&& args[0].equalsIgnoreCase("clearreset")) {
+			final List<Player> players = PlayerCache.getOnlinePlayers();
+			for (Player p : players) {
+				options.add(p.getName());
+			}
+		}
+		if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.tp") || player.isOp())
+				&& (args[0].equalsIgnoreCase("tp") || args[0].equalsIgnoreCase("tpnether"))) {
+			final List<Player> players = PlayerCache.getOnlinePlayers();
+			for (Player p : players) {
+				options.add(p.getName());
+			}
+		}
+		if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.setbiome") || player.isOp())
+				&& args[0].equalsIgnoreCase("setbiome")) {
+			final List<Player> players = PlayerCache.getOnlinePlayers();
+			for (Player p : players) {
+				options.add(p.getName());
+			}
+		}
+		if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.team") || player.isOp())
+				&& args[0].equalsIgnoreCase("team")) {
+	    	options.add("kick");
+	    	options.add("add");
+	    }
 		break;
+	case 3: 
+		if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.challenges") || player.isOp())
+				&& (args[0].equalsIgnoreCase("completechallenge") || args[0].equalsIgnoreCase("resetchallenge"))) {
+			options.addAll(plugin.getChallenges().getAllChallenges());
+		}
+		if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.setbiome") || player.isOp())
+				&& args[0].equalsIgnoreCase("setbiome")) {
+			final Biome[] biomes = Biome.values();
+			for (Biome b : biomes) {
+				if (plugin.getConfig().contains("biomes." + b.name())) {
+				options.add(b.name());
+				}
+			}
+		}
+		if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.team") || player.isOp())
+				&& args[0].equalsIgnoreCase("team")
+					&& (args[1].equalsIgnoreCase("add")
+					|| args[1].equalsIgnoreCase("kick"))) {
+			final List<Player> players = PlayerCache.getOnlinePlayers();
+			for (Player p : players) {
+				options.add(p.getName());
+			}
+		}
+		break;
+	case 4:
+		if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.team") || player.isOp())
+				&& args[0].equalsIgnoreCase("team")
+				&& args[1].equalsIgnoreCase("add")) {
+			final List<Player> players = PlayerCache.getOnlinePlayers();
+			for (Player p : players) {
+				options.add(p.getName());
+			}
+		}
 	}
 
 	return tabLimit(options, lastArg);

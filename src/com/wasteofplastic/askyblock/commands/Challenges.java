@@ -1593,6 +1593,17 @@ public class Challenges implements CommandExecutor, TabCompleter {
 	return potion;
 	}
 
+    /**
+	 * Gets a list of all challenges in existence.
+	 */
+	public List<String> getAllChallenges() {
+	List<String> returned = new ArrayList<String>();
+	for (List<String> challenges : challengeList.values()) {
+		returned.addAll(challenges);
+	}
+	return returned;
+	}
+    
 	/**
 	 * Creates a list of challenges that the specified player is able to complete.
 	 * @param player
