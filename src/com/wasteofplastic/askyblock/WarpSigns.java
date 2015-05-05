@@ -51,45 +51,10 @@ public class WarpSigns implements Listener {
     // Where warps are stored
     private static YamlConfiguration welcomeWarps;
 
-    /*
-     * @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
-     * public void onSignPopped(BlockPhysicsEvent e) {
-     * Block b = e.getBlock();
-     * if (!(b.getWorld()).getName().equals(Settings.worldName)) {
-     * // Wrong world
-     * return;
-     * }
-     * if (!plugin.checkWarp(b.getLocation())) {
-     * return;
-     * }
-     * // Block b = e.getBlock().getRelative(BlockFace.UP);
-     * if (!(b.getState() instanceof Sign)) {
-     * return;
-     * }
-     * if (!plugin.checkWarp(b.getLocation())) {
-     * return;
-     * }
-     * //plugin.plugin.getLogger().info("DEBUG: Known warp location! " +
-     * b.getLocation().toString());
-     * // This is the sign block - check to see if it is still a sign
-     * //if (b.getType().equals(Material.SIGN_POST)) {
-     * // Check to see if it is still attached
-     * MaterialData m = b.getState().getData();
-     * BlockFace face = BlockFace.DOWN; // Most of the time it's going
-     * // to be down
-     * if (m instanceof Attachable) {
-     * face = ((Attachable) m).getAttachedFace();
-     * }
-     * if (b.getRelative(face).getType().isSolid()) {
-     * //plugin.plugin.getLogger().info("Attached to some solid block");
-     * } else {
-     * plugin.removeWarp(b.getLocation());
-     * //plugin.plugin.getLogger().info("Warp removed");
-     * }
-     * //}
-     * }
+    /**
+     * Checks to see if a sign has been broken
+     * @param e
      */
-
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
     public void onSignBreak(BlockBreakEvent e) {
 	Block b = e.getBlock();
@@ -363,7 +328,7 @@ public class WarpSigns implements Listener {
     }
 
     /**
-     * Provides the location of the warp for player
+     * Provides the location of the warp for player or null if one is not found
      * 
      * @param player
      *            - the warp requested

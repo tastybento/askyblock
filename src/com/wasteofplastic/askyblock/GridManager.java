@@ -787,7 +787,7 @@ public class GridManager {
 	// a few other items
 	// isSolid thinks that PLATEs and SIGNS are solid, but they are not
 	if (space1.getType().isSolid()) {
-	    // Bukkit.getLogger().info("DEBUG: space 1 is solid");
+	    //Bukkit.getLogger().info("DEBUG: space 1 is solid");
 	    // Do a few other checks
 	    if (!(space1.getType().equals(Material.SIGN_POST)) && !(space1.getType().equals(Material.WALL_SIGN))) {
 		// Bukkit.getLogger().info("DEBUG: space 1 is a sign post or wall sign");
@@ -826,7 +826,7 @@ public class GridManager {
 	     */
 	}
 	if (space2.getType().isSolid()) {
-	    // Bukkit.getLogger().info("DEBUG: space 2 is solid");
+	    //Bukkit.getLogger().info("DEBUG: space 2 is solid");
 	    // Do a few other checks
 	    if (!(space2.getType().equals(Material.SIGN_POST)) && !(space2.getType().equals(Material.WALL_SIGN))) {
 		// Bukkit.getLogger().info("DEBUG: space 2 is a sign post or wall sign");
@@ -842,10 +842,9 @@ public class GridManager {
      * Determines a safe teleport spot on player's island or the team island
      * they belong to.
      * 
-     * @param p
-     *            PlayerInfo for active player
-     * @param number 
-     * @return Location of a safe teleport spot
+     * @param p UUID of player
+     * @param number - starting home location e.g., 1
+     * @return Location of a safe teleport spot or null if one cannot be fond
      */
     public Location getSafeHomeLocation(final UUID p, int number) {
 	// Try the numbered home location first
@@ -944,30 +943,19 @@ public class GridManager {
      * @return - safe location, or null if none can be found
      */
     public Location bigScan(Location l, int i) {
-	final int minX;
-	final int minZ;
-	final int maxX;
-	final int maxZ;
 	final int height;
 	final int depth;
 	if (i > 0) {
-	    minX = l.getBlockX() - i;
-	    minZ = l.getBlockZ() - i;
-	    maxX = l.getBlockX() + i;
-	    maxZ = l.getBlockZ() + i;
-	    height = l.getBlockY() + i;
-	    depth = l.getBlockY() - i;
+	    height = i;
+	    depth = i;
 	} else {
 	    Island island = plugin.getGrid().getIslandAt(l);
 	    if (island == null) {
 		return null;
 	    }
-	    minX = island.getMinProtectedX();
-	    minZ = island.getMinProtectedZ();
-	    maxX = minX + island.getProtectionSize();
-	    maxZ = minZ + island.getProtectionSize();
-	    height = l.getWorld().getMaxHeight();
-	    depth = 0;
+	    i = island.getProtectionSize();
+	    height = l.getWorld().getMaxHeight() - l.getBlockY();
+	    depth = l.getBlockY();
 	}
 
 
@@ -976,20 +964,58 @@ public class GridManager {
 	//plugin.getLogger().info("DEBUG: height = " + height);
 	//plugin.getLogger().info("DEBUG: depth = " + depth);
 	//plugin.getLogger().info("DEBUG: trying to find a safe spot at " + l.toString());
-	for (int y = height; y > depth; y--) {
-	    for (int x = minX; x< maxX; x++) {
-		for (int z = minZ; z < maxZ; z++) {
-		    //plugin.getLogger().info("DEBUG: checking " + x + "," + y + "," + z);
-		    Location ultimate = new Location(l.getWorld(), x + 0.5D, y, z + 0.5D);
-		    if (ultimate.getBlock().getRelative(BlockFace.DOWN).getType() != Material.AIR) {
-			if (isSafeLocation(ultimate)) {
-			    //plugin.getLogger().info("DEBUG: Found! " + ultimate);
-			    return ultimate;
+
+	// Work outwards from l until the closest safe location is found.
+	int minXradius = 0;
+	int maxXradius = 0;
+	int minZradius = 0;
+	int maxZradius = 0;
+	int minYradius = 0;
+	int maxYradius = 0;
+
+	do {
+	    int minX = l.getBlockX()-minXradius;
+	    int minZ = l.getBlockZ()-minZradius;
+	    int minY = l.getBlockY()-minYradius;
+	    int maxX = l.getBlockX()+maxXradius;
+	    int maxZ = l.getBlockZ()+maxZradius;
+	    int maxY = l.getBlockY()+maxYradius;
+	    for (int x = minX; x<= maxX; x++) {
+		for (int z = minZ; z <= maxZ; z++) {
+		    for (int y = minY; y <= maxY; y++) {
+			if (!((x > minX && x < maxX) && (z > minZ && z < maxZ) && (y > minY && y < maxY))) {
+			    //plugin.getLogger().info("DEBUG: checking " + x + "," + y + "," + z);
+			    Location ultimate = new Location(l.getWorld(), x + 0.5D, y, z + 0.5D);
+			    if (isSafeLocation(ultimate)) {
+				//plugin.getLogger().info("DEBUG: Found! " + ultimate);
+				return ultimate;
+			    }
 			}
 		    }
 		}
 	    }
-	}	
+	    if (minXradius < i) {
+		minXradius++;
+	    }
+	    if (maxXradius < i) {
+		maxXradius++;
+	    }
+	    if (minZradius < i) {
+		minZradius++;
+	    }
+	    if (maxZradius < i) {
+		maxZradius++;
+	    }
+	    if (minYradius < depth) {
+		minYradius++;
+	    }
+	    if (maxYradius < height) {
+		maxYradius++;
+	    }
+	    //plugin.getLogger().info("DEBUG: Radii " + minXradius + "," + minYradius + "," + minZradius + 
+		//    "," + maxXradius + "," + maxYradius + "," + maxZradius);
+	} while (minXradius < i || maxXradius < i || minZradius < i || maxZradius < i || minYradius < depth 
+		|| maxYradius < height);
 	// Nothing worked
 	return null;
     }
@@ -1382,4 +1408,21 @@ public class GridManager {
 	}
     }
 
+    /**
+     * @return a list of unowned islands
+     */
+    public HashMap<String, Island> getUnownedIslands() {
+	HashMap<String, Island> result = new HashMap<String,Island>();
+	for (Entry<Integer, TreeMap<Integer, Island>> x : islandGrid.entrySet()) {
+	    for (Island island : x.getValue().values()) {
+		//plugin.getLogger().info("DEBUG: checking island at " + island.getCenter());
+		if (island.getOwner() == null && !island.isSpawn() && !island.isPurgeProtected()) {
+		    Location center = island.getCenter();
+		    String serialized = island.getCenter().getWorld().getName() + ":" + center.getBlockX() + ":" + center.getBlockY() + ":" + center.getBlockZ();
+		    result.put(serialized,island);
+		}
+	    }
+	}
+	return result;
+    }
 }

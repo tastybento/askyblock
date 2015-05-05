@@ -37,7 +37,9 @@ public class SchematicsPanel implements Listener {
 	//items.add(new SPItem(Material.MAP,"Choose your island", "Pick from the selection...",slot++));
 	// Generate additional available schematics
 	for (Schematic schematic : availableSchems) {
-	    items.add(new SPItem(schematic, slot++));
+	    if (schematic.isVisible()) {
+		items.add(new SPItem(schematic, slot++));
+	    }
 	}
 	//plugin.getLogger().info("DEBUG: there are " + items.size() + " in the panel");
 	// Now create the inventory panel

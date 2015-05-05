@@ -41,6 +41,7 @@
 # Valid potion names are:
 # WATER, REGEN, SPEED, FIRE_RESISTANCE, POISON, INSTANT_HEAL, NIGHT_VISION, WEAKNESS,
 # STRENGTH, SLOWNESS, JUMP, INSTANT_DAMAGE, WATER_BREATHING, INVISIBILITY
+#
 ##########################################################################################
 
 challenges:
@@ -73,7 +74,7 @@ challenges:
       repeatExpReward: 10
       #repeatrewardcommands:
       # Max times limits how many times a challenge can be done. Comment out to make unlimited
-      maxtimes: 100
+      maxtimes: 2
     breadmaker:
       friendlyname: 'Bread Maker'
       description: 'Bake 21 loaves of bread'
@@ -688,4 +689,3 @@ challenges:
       repeatRewardText: ''
       repeatMoneyReward: 0
       repeatExpReward: 0
-

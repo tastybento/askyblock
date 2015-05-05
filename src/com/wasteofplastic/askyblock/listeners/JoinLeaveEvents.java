@@ -16,6 +16,8 @@
  *******************************************************************************/
 package com.wasteofplastic.askyblock.listeners;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,10 +34,10 @@ import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.CoopPlay;
 import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.LevelCalc;
-import com.wasteofplastic.askyblock.Messages;
 import com.wasteofplastic.askyblock.PlayerCache;
 import com.wasteofplastic.askyblock.Scoreboards;
 import com.wasteofplastic.askyblock.Settings;
+import com.wasteofplastic.askyblock.util.VaultHelper;
 
 public class JoinLeaveEvents implements Listener {
     private ASkyBlock plugin;
@@ -51,30 +53,41 @@ public class JoinLeaveEvents implements Listener {
      */
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerJoin(final PlayerJoinEvent event) {
-	// Check updates
-	if (event.getPlayer().isOp() && plugin.getUpdateCheck() != null) {
-	    plugin.checkUpdatesNotify((Player)event.getPlayer());
+	final Player player = event.getPlayer();
+	final UUID playerUUID = player.getUniqueId();
+	// Get language
+	String language = getLanguage(player);
+	//plugin.getLogger().info("DEBUG: language = " + language);
+	// Check if we have this language
+	if (plugin.getResource("locale/" + language + ".yml") != null) {
+	    if (plugin.getPlayers().getLocale(playerUUID).isEmpty()) {
+		plugin.getPlayers().setLocale(playerUUID, language);
+	    }
 	}
-	final UUID playerUUID = event.getPlayer().getUniqueId();
+	// Check updates
+	if (player.isOp() && plugin.getUpdateCheck() != null) {
+	    plugin.checkUpdatesNotify(player);
+	}
+
 	if (players == null) {
 	    plugin.getLogger().severe("players is NULL");
 	}
 	// Load any messages for the player
 	// plugin.getLogger().info("DEBUG: Checking messages for " +
-	// event.getPlayer().getName());
-	final List<String> messages = Messages.getMessages(playerUUID);
+	// player.getName());
+	final List<String> messages = plugin.getMessages().getMessages(playerUUID);
 	if (messages != null) {
 	    // plugin.getLogger().info("DEBUG: Messages waiting!");
 	    plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
 		@Override
 		public void run() {
-		    event.getPlayer().sendMessage(ChatColor.AQUA + plugin.myLocale(event.getPlayer().getUniqueId()).newsHeadline);
+		    player.sendMessage(ChatColor.AQUA + plugin.myLocale(playerUUID).newsHeadline);
 		    int i = 1;
 		    for (String message : messages) {
-			event.getPlayer().sendMessage(i++ + ": " + message);
+			player.sendMessage(i++ + ": " + message);
 		    }
 		    // Clear the messages
-		    Messages.clearMessages(playerUUID);
+		    plugin.getMessages().clearMessages(playerUUID);
 		}
 	    }, 40L);
 	} // else {
@@ -107,7 +120,7 @@ public class JoinLeaveEvents implements Listener {
 	    loc = players.getTeamIslandLocation(playerUUID);
 	    leader = players.getTeamLeader(playerUUID);
 	    if (leader == null) {
-		plugin.getLogger().severe("Player "+ event.getPlayer().getName() + " is in a team but leader's UUID is missing.");
+		plugin.getLogger().severe("Player "+ player.getName() + " is in a team but leader's UUID is missing.");
 	    }
 	}
 	// If the player has an island location of some kind
@@ -125,7 +138,7 @@ public class JoinLeaveEvents implements Listener {
 		} else {
 		    // We have a mismatch - correct in favor of the player info
 		    //plugin.getLogger().info("DEBUG: getIslandLoc is null but there is a player listing");
-		    plugin.getLogger().warning(event.getPlayer().getName() + " login: mismatch - player.yml and islands.yml are out of sync. Fixing...");
+		    plugin.getLogger().warning(player.getName() + " login: mismatch - player.yml and islands.yml are out of sync. Fixing...");
 		    plugin.getGrid().deleteIsland(islandByOwner.getCenter());
 		    plugin.getGrid().addIsland(loc.getBlockX(), loc.getBlockZ(), leader);
 		}
@@ -135,13 +148,13 @@ public class JoinLeaveEvents implements Listener {
 		// See if this owner is tagged as having an island elsewhere
 		Island islandByOwner = plugin.getGrid().getIsland(leader);
 		if (islandByOwner == null) {
-		    plugin.getLogger().warning(event.getPlayer().getName() + " login: has island, but islands.yml says it is unowned, correcting...");
+		    plugin.getLogger().warning(player.getName() + " login: has island, but islands.yml says it is unowned, correcting...");
 		    // No previous ownership, so just assign ownership
 		    plugin.getGrid().setIslandOwner(island, leader);
 		} else {
 		    if (!islandByOwner.equals(island)) {
 			//plugin.getLogger().info("DEBUG: mismatch");
-			plugin.getLogger().warning(event.getPlayer().getName() + " login: mismatch - islands.yml and player.yml are out of sync. Fixing...");
+			plugin.getLogger().warning(player.getName() + " login: mismatch - islands.yml and player.yml are out of sync. Fixing...");
 			// We have a mismatch - correct in favor of the player info
 			plugin.getGrid().deleteIsland(islandByOwner.getCenter());
 			plugin.getGrid().setIslandOwner(island, leader);
@@ -156,22 +169,36 @@ public class JoinLeaveEvents implements Listener {
 	    if (!plugin.isCalculatingLevel()) {
 		// This flag is true if the command can be used
 		plugin.setCalculatingLevel(true);
-		LevelCalc levelCalc = new LevelCalc(plugin, playerUUID, event.getPlayer(), true);
+		LevelCalc levelCalc = new LevelCalc(plugin, playerUUID, player, true);
 		levelCalc.runTaskTimer(plugin, 0L, 10L);
 	    }
 	}
 
-	// Set the player's name (it may have changed)
-	players.setPlayerName(playerUUID, event.getPlayer().getName());
+	// Set the player's name (it may have changed), but only if it isn't null
+	if (!player.getName().isEmpty()) {
+	    players.setPlayerName(playerUUID, player.getName());
+	} else {
+	    plugin.getLogger().warning("Player that just logged in has no name! " + playerUUID.toString());
+	}
 	players.save(playerUUID);
 	if (Settings.logInRemoveMobs) {
-	    plugin.getGrid().removeMobs(event.getPlayer().getLocation());
+	    plugin.getGrid().removeMobs(player.getLocation());
 	}
-	// plugin.getLogger().info("Cached " + event.getPlayer().getName());
+	// plugin.getLogger().info("Cached " + player.getName());
 
 	// Set the TEAMNAME and TEAMSUFFIX variable if required
 	if (Settings.setTeamName) {
-	    Scoreboards.getInstance().setLevel(event.getPlayer().getUniqueId());
+	    Scoreboards.getInstance().setLevel(playerUUID);
+	}
+
+	// Check if they logged in to a locked island and expel them or if they are banned
+	Island currentIsland = plugin.getGrid().getIslandAt(player.getLocation());
+	if (currentIsland != null && (currentIsland.isLocked() || plugin.getPlayers().isBanned(currentIsland.getOwner(),player.getUniqueId()))) {
+	    if (!currentIsland.getMembers().contains(playerUUID) && !player.isOp()
+		    && !VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.bypassprotect")) {
+		player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).lockIslandLocked);
+		plugin.getGrid().homeTeleport(player);
+	    }
 	}
     }
 
@@ -185,4 +212,33 @@ public class JoinLeaveEvents implements Listener {
 	// "Hello! This is a test. You logged out");
 	players.removeOnlinePlayer(event.getPlayer().getUniqueId());
     }
+
+    /**
+     * Attempts to get the player's language
+     * @param p
+     * @return language or empty string
+     */
+    public String getLanguage(Player p){
+	Object ep;
+	try {
+	    ep = getMethod("getHandle", p.getClass()).invoke(p, (Object[]) null);
+	    Field f = ep.getClass().getDeclaredField("locale");
+	    f.setAccessible(true);
+	    String language = (String) f.get(ep);
+	    language.replace('_', '-');
+	    return language;
+	} catch (Exception e) {
+	    //nothing
+	}
+	return "en-US";
+    }
+
+    private Method getMethod(String name, Class<?> clazz) {
+	for (Method m : clazz.getDeclaredMethods()) {
+	    if (m.getName().equals(name))
+		return m;
+	}
+	return null;
+    }
+
 }

@@ -48,6 +48,8 @@ public class Island {
     private boolean isSpawn = false;
     // Stats variables
     private HashMap<EntityType, Integer> entities = new HashMap<EntityType, Integer>();
+    // Protection against deletion or not
+    private boolean purgeProtected;
 
     public Island(String serial) {
 	// Bukkit.getLogger().info("DEBUG: adding serialized island to grid ");
@@ -82,6 +84,16 @@ public class Island {
 		// Bukkit.getLogger().info("DEBUG: " + locked);
 	    } else {
 		this.locked = false;
+	    }
+	    // Check if deletable
+	    if (split.length > 7) {
+		if (split[7].equalsIgnoreCase("true")) {
+		    this.purgeProtected = true;
+		} else {
+		    this.purgeProtected = false;
+		}
+	    } else {
+		this.purgeProtected = false;
 	    }
 	    if (!split[5].equals("null")) {
 		if (split[5].equals("spawn")) {
@@ -420,7 +432,7 @@ public class Island {
 	    ownerString = "spawn";
 	}
 	return center.getBlockX() + ":" + center.getBlockY() + ":" + center.getBlockZ() + ":" + protectionRange + ":" + islandDistance + ":" + ownerString
-		+ ":" + locked;
+		+ ":" + locked + ":" + purgeProtected;
     }
 
     /**
@@ -482,5 +494,19 @@ public class Island {
 
     public void clearStats() {
 	this.entities.clear();
+    }
+
+    /**
+     * @return the islandDeletable
+     */
+    public boolean isPurgeProtected() {
+        return purgeProtected;
+    }
+
+    /**
+     * @param purgeProtected the islandDeletable to set
+     */
+    public void setPurgeProtected(boolean purgeProtected) {
+        this.purgeProtected = purgeProtected;
     }
 }

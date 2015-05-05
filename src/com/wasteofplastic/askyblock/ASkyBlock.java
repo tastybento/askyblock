@@ -67,6 +67,7 @@ import com.wasteofplastic.askyblock.listeners.IslandGuardNew;
 import com.wasteofplastic.askyblock.listeners.JoinLeaveEvents;
 import com.wasteofplastic.askyblock.listeners.LavaCheck;
 import com.wasteofplastic.askyblock.listeners.NetherPortals;
+import com.wasteofplastic.askyblock.listeners.PlayerEvents;
 import com.wasteofplastic.askyblock.listeners.WorldEnter;
 import com.wasteofplastic.askyblock.panels.BiomesPanel;
 import com.wasteofplastic.askyblock.panels.ControlPanel;
@@ -98,12 +99,12 @@ public class ASkyBlock extends JavaPlugin {
     // Listeners
     private Listener warpSignsListener;
     private Listener lavaListener;
-
     // Biome chooser object
     private BiomesPanel biomes;
-
     // Island grid manager
     private GridManager grid;
+    // Island command object
+    private IslandCmd islandCmd;
 
     private boolean debug = false;
 
@@ -112,6 +113,9 @@ public class ASkyBlock extends JavaPlugin {
 
     // Update object
     private Update updateCheck = null;
+
+    // Messages object
+    private Messages messages;
 
     /**
      * Returns the World object for the island world named in config.yml.
@@ -186,7 +190,9 @@ public class ASkyBlock extends JavaPlugin {
 		grid.saveGrid();
 	    }
 	    WarpSigns.saveWarpList();
-	    Messages.saveMessages();
+	    if (messages != null) {
+		messages.saveMessages();
+	    }
 	    TopTen.topTenSave();
 	} catch (final Exception e) {
 	    getLogger().severe("Something went wrong saving files!");
@@ -247,6 +253,7 @@ public class ASkyBlock extends JavaPlugin {
 	    playersFolder.mkdir();
 	}
 	// Set up commands for this plugin
+	islandCmd = new IslandCmd(this);
 	if (Settings.GAMETYPE.equals(Settings.GameType.ASKYBLOCK)) {
 		IslandCmd islandCmd = new IslandCmd(this);
 		getCommand("island").setExecutor(islandCmd);
@@ -270,7 +277,8 @@ public class ASkyBlock extends JavaPlugin {
 	// Register events that this plugin uses
 	// registerEvents();
 	// Load messages
-	Messages.loadMessages();
+	messages = new Messages(this);
+	messages.loadMessages();
 	// Register events
 	registerEvents();
 	// Metrics
@@ -496,13 +504,26 @@ public class ASkyBlock extends JavaPlugin {
 	    Location islandLoc = players.getIslandLocation(player);
 	    if (islandLoc != null) {
 		if (islandLoc.getWorld() != null) {
-		    if (islandLoc.getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+		    if (islandLoc.getWorld().equals(getIslandWorld())) {
+			// Over World start
 			grid.removeMobsFromIsland(islandLoc);
 			new DeleteIslandChunk(this, islandLoc);
 			// Delete the new nether island too (if it exists)
 			if (Settings.createNether && Settings.newNether) {
-			    new DeleteIslandChunk(plugin, islandLoc.toVector().toLocation(ASkyBlock.getNetherWorld()));
+			    Location otherIsland = islandLoc.toVector().toLocation(ASkyBlock.getNetherWorld());
+			    grid.removeMobsFromIsland(otherIsland);
+			    // Delete island
+			    new DeleteIslandChunk(plugin, otherIsland);  
 			}
+		    } else if (Settings.createNether && Settings.newNether && islandLoc.getWorld().equals(getNetherWorld())) {
+			// Nether World Start
+			grid.removeMobsFromIsland(islandLoc);
+			new DeleteIslandChunk(this, islandLoc);
+			// Delete the overworld island too
+			Location otherIsland = islandLoc.toVector().toLocation(ASkyBlock.getIslandWorld());
+			grid.removeMobsFromIsland(otherIsland);
+			// Delete island
+			new DeleteIslandChunk(plugin, otherIsland);  
 		    } else {
 			getLogger().severe("Cannot delete island at location " + islandLoc.toString() + " because it is not in the official island world");
 		    }
@@ -623,19 +644,20 @@ public class ASkyBlock extends JavaPlugin {
 	availableLocales.put("zh-CN", new Locale(this,"zh-CN"));
 	availableLocales.put("cs-CS", new Locale(this,"cs-CS"));
 	availableLocales.put("sk-SK", new Locale(this,"sk-SK"));
+	availableLocales.put("zh-TW", new Locale(this,"zh-TW"));
 
 	// Assign settings
 	String configVersion = getConfig().getString("general.version", "");
 	//getLogger().info("DEBUG: config ver length " + configVersion.split("\\.").length);
 	// Ignore last digit if it is 4 digits long
 	if (configVersion.split("\\.").length == 4) {
-	   configVersion = configVersion.substring(0, configVersion.lastIndexOf('.')); 
+	    configVersion = configVersion.substring(0, configVersion.lastIndexOf('.')); 
 	}
 	// Save for plugin version
 	String version = plugin.getDescription().getVersion();
 	//getLogger().info("DEBUG: version length " + version.split("\\.").length);
 	if (version.split("\\.").length == 4) {
-	   version = version.substring(0, version.lastIndexOf('.')); 
+	    version = version.substring(0, version.lastIndexOf('.')); 
 	}
 	if (configVersion.isEmpty() || !configVersion.equalsIgnoreCase(version)) {
 	    // Check to see if this has already been shared
@@ -683,8 +705,13 @@ public class ASkyBlock extends JavaPlugin {
 	Settings.fallingCommandBlockList = getConfig().getStringList("general.blockingcommands");
 	// Max team size
 	Settings.maxTeamSize = getConfig().getInt("island.maxteamsize", 4);
-	Settings.maxTeamSizeVIP = getConfig().getInt("island.maxteamsizeVIP", 8);
-	Settings.maxTeamSizeVIP2 = getConfig().getInt("island.maxteamsizeVIP2", 12);
+	// Deprecated settings - use permission askyblock.team.maxsize.<number> instead
+	Settings.maxTeamSizeVIP = getConfig().getInt("island.vipteamsize", 0);
+	Settings.maxTeamSizeVIP2 = getConfig().getInt("island.vip2teamsize", 0);
+	if (Settings.maxTeamSizeVIP > 0 || Settings.maxTeamSizeVIP2 > 0) {
+	    getLogger().warning(Settings.PERMPREFIX + "team.vip and " + Settings.PERMPREFIX + "team.vip2 are deprecated!");
+	    getLogger().warning("Use permission " + Settings.PERMPREFIX + "team.maxsize.<number> instead.");
+	}
 	// Max home number
 	Settings.maxHomes = getConfig().getInt("general.maxhomes",1);
 	if (Settings.maxHomes < 1) {
@@ -880,12 +907,20 @@ public class ASkyBlock extends JavaPlugin {
 	}
 
 	Settings.island_protectionRange = getConfig().getInt("island.protectionRange", 100);
-	if (!getConfig().getBoolean("island.overridelimit", false)) {
-	    if (Settings.island_protectionRange > (Settings.islandDistance - 16)) {
-		Settings.island_protectionRange = Settings.islandDistance - 16;
-		getLogger().warning(
-			"*** Island protection range must be " + (Settings.islandDistance - 16) + " or less, (island range -16). Setting to: "
-				+ Settings.island_protectionRange);
+	if (Settings.island_protectionRange % 2 != 0) {
+	    Settings.island_protectionRange--;
+	    getLogger().warning("Protection range must be even, using " + Settings.island_protectionRange);
+	}
+	if (Settings.island_protectionRange > Settings.islandDistance) {
+	    if (!getConfig().getBoolean("island.overridelimit", false)) {
+		if (Settings.island_protectionRange > (Settings.islandDistance - 16)) {
+		    Settings.island_protectionRange = Settings.islandDistance - 16;
+		    getLogger().warning(
+			    "*** Island protection range must be " + (Settings.islandDistance - 16) + " or less, (island range -16). Setting to: "
+				    + Settings.island_protectionRange);
+		}
+	    } else {
+		Settings.island_protectionRange = Settings.islandDistance;
 	    }
 	}
 	if (Settings.island_protectionRange < 50) {
@@ -897,8 +932,9 @@ public class ASkyBlock extends JavaPlugin {
 	Settings.resetEnderChest = getConfig().getBoolean("general.resetenderchest", false);
 
 	Settings.startingMoney = getConfig().getDouble("general.startingmoney", 0D);
-
+	Settings.respawnOnIsland = getConfig().getBoolean("general.respawnonisland", false);
 	Settings.newNether = getConfig().getBoolean("general.newnether", false);
+	Settings.netherTrees = getConfig().getBoolean("general.nethertrees", true);
 	// Nether spawn protection radius
 	Settings.netherSpawnRadius = getConfig().getInt("general.netherspawnradius", 25);
 	if (Settings.netherSpawnRadius < 0) {
@@ -1080,6 +1116,7 @@ public class ASkyBlock extends JavaPlugin {
 	YamlConfiguration blockValuesConfig = Util.loadYamlFile("blockvalues.yml");
 	// Get the under water multiplier
 	Settings.underWaterMultiplier = blockValuesConfig.getDouble("underwater", 1D);
+	Settings.levelCost = blockValuesConfig.getInt("levelcost", 100);
 	Settings.blockLimits = new HashMap<MaterialData, Integer>();
 	if (blockValuesConfig.isSet("limits")) {
 	    for (String material : blockValuesConfig.getConfigurationSection("limits").getKeys(false)) {
@@ -1154,6 +1191,8 @@ public class ASkyBlock extends JavaPlugin {
 	manager.registerEvents(new NetherPortals(this), this);
 	// Island Protection events
 	manager.registerEvents(new IslandGuard(this), this);
+	// Player events
+	manager.registerEvents(new PlayerEvents(this), this);
 	// New V1.8 events
 	Class<?> clazz;
 	try {
@@ -1307,5 +1346,19 @@ public class ASkyBlock extends JavaPlugin {
      */
     public Locale myLocale() {
 	return availableLocales.get("locale");
+    }
+
+    /**
+     * @return the messages
+     */
+    public Messages getMessages() {
+	return messages;
+    }
+
+    /**
+     * @return the islandCmd
+     */
+    public IslandCmd getIslandCmd() {
+        return islandCmd;
     }
 }

@@ -106,7 +106,7 @@ public class LevelCalc extends BukkitRunnable {
 	    // int multiplier = plugin.getPlayers().getStartIslandRating(leader);
 	    // If not zero then use it.
 	    // blockCount = (blockCount * multiplier) / 5000;
-	    blockCount /= 100;
+	    blockCount /= Settings.levelCost;
 	    // plugin.getLogger().info("DEBUG: updating player");
 	    // Update player and team mates
 	    plugin.getPlayers().setIslandLevel(targetPlayer, blockCount);
@@ -128,7 +128,7 @@ public class LevelCalc extends BukkitRunnable {
 		// Tell offline team members the island level increased.
 		if (plugin.getPlayers().getIslandLevel(targetPlayer) > oldLevel) {
 		    // plugin.getLogger().info("DEBUG: telling offline players");
-		    Messages.tellOfflineTeam(targetPlayer, ChatColor.GREEN + plugin.myLocale(targetPlayer).islandislandLevelis + " " + ChatColor.WHITE
+		    plugin.getMessages().tellOfflineTeam(targetPlayer, ChatColor.GREEN + plugin.myLocale(targetPlayer).islandislandLevelis + " " + ChatColor.WHITE
 			    + plugin.getPlayers().getIslandLevel(targetPlayer));
 		}
 		if (asker.isOnline()) {

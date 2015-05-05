@@ -669,4 +669,83 @@ public class PlayerCache {
     public void clearStartIslandRating(UUID playerUUID) {
 	setStartIslandRating(playerUUID, 0);
     }
+    
+    /**
+     * Ban target from a player's island
+     * @param playerUUID
+     * @param targetUUID
+     */
+    public void ban(UUID playerUUID, UUID targetUUID) {
+	addPlayer(playerUUID);
+	addPlayer(targetUUID);
+	if (playerCache.get(playerUUID).hasIsland()) {
+	    // Player has island
+	    playerCache.get(playerUUID).addToBanList(targetUUID);
+	} else if (playerCache.get(playerUUID).inTeam()) {
+	    // Try to get the leader's 
+	    UUID leader = playerCache.get(playerUUID).getTeamLeader();
+	    if (leader != null) {
+		addPlayer(leader);
+		playerCache.get(leader).addToBanList(targetUUID);
+		playerCache.get(leader).save();
+	    }
+	}
+    }
+    
+    /**
+     * Unban target from player's island
+     * @param playerUUID
+     * @param targetUUID
+     */
+    public void unBan(UUID playerUUID, UUID targetUUID) {
+	addPlayer(playerUUID);
+	addPlayer(targetUUID);
+	if (playerCache.get(playerUUID).hasIsland()) {
+	    // Player has island
+	    playerCache.get(playerUUID).unBan(targetUUID);
+	} else if (playerCache.get(playerUUID).inTeam()) {
+	    // Try to get the leader's 
+	    UUID leader = playerCache.get(playerUUID).getTeamLeader();
+	    if (leader != null) {
+		addPlayer(leader);
+		playerCache.get(leader).unBan(targetUUID);
+		playerCache.get(leader).save();
+	    }
+	}
+    }
+    
+    /**
+     * @param playerUUID
+     * @param targetUUID
+     * @return true if target is banned from player's island
+     */
+    public boolean isBanned(UUID playerUUID, UUID targetUUID) {
+	if (playerUUID == null || targetUUID == null) {
+	    // If the island is unowned, then playerUUID could be null
+	    return false;
+	}
+	addPlayer(playerUUID);
+	addPlayer(targetUUID);
+	if (playerCache.get(playerUUID).hasIsland()) {
+	    // Player has island
+	    return playerCache.get(playerUUID).isBanned(targetUUID);
+	} else if (playerCache.get(playerUUID).inTeam()) {
+	    // Try to get the leader's 
+	    UUID leader = playerCache.get(playerUUID).getTeamLeader();
+	    if (leader != null) {
+		addPlayer(leader);
+		return playerCache.get(leader).isBanned(targetUUID);
+	    }
+	}
+	return false;
+    }
+    
+    /**
+     * @param playerUUID
+     * @return ban list for player
+     */
+    public List<UUID> getBanList(UUID playerUUID) {
+	addPlayer(playerUUID);
+	return playerCache.get(playerUUID).getBanList();
+    }
 }

@@ -351,6 +351,8 @@ purge:
    purgeCancelled: "Purge cancelled."
    finished: "Finished purging of inactive islands."
    removingName: "Purge: Removing [name]'s island"
+   preventPurge: "Island is protected from purging"
+   allowPurge: "Purge protection removed"
 
 #confirm
 confirm:
@@ -449,3 +451,16 @@ lock:
 
 schematics:
    title: "Select island..."
+
+ban:
+   success: "[name] is banned from the island!"
+   banned: "You are banned from [name]'s island!"
+   lifted: "Ban lifted from [name]'s island!"
+   liftedsuccess: "Ban lifted for [name]!"
+   fail: "[name] cannot be banned!"
+   notyourself: "You cannot do that to yourself!"
+   notteammember: "You cannot ban a team member!"
+   notbanned: "[name] is not banned!"
+   alreadybanned: "[name] is already banned!"
+   helpBan: "ban a player from your island."
+   helpUnban: "un-ban a player from your island"

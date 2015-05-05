@@ -55,6 +55,7 @@ public class Players {
     private String playerName;
     private int resetsLeft;
     private HashMap<Location, Date> kickedList;
+    private List<UUID> banList;
     private String locale;
     private int startIslandRating;
 
@@ -82,6 +83,7 @@ public class Players {
 	this.kickedList = new HashMap<Location, Date>();
 	this.locale = "";
 	this.startIslandRating = 50;
+	this.banList = new ArrayList<UUID>();
 	load(uuid);
     }
 
@@ -111,6 +113,13 @@ public class Players {
 	this.startIslandRating = playerInfo.getInt("startIslandRating", 50);
 	// Locale
 	this.locale = playerInfo.getString("locale","");
+	// Ban list
+	List<String> banListString = playerInfo.getStringList("banList");
+	for (String uuidString : banListString) {
+	    try {
+		banList.add(UUID.fromString(uuidString));
+	    } catch (Exception e) {}
+	}
 	// plugin.getLogger().info("Loading player..." + playerName);
 	this.hasIsland = playerInfo.getBoolean("hasIsland", false);
 	// plugin.getLogger().info("DEBUG: hasIsland load = " + this.hasIsland);
@@ -198,6 +207,16 @@ public class Players {
 	// Save the variables
 	playerInfo.set("playerName", playerName);
 	playerInfo.set("hasIsland", hasIsland);
+	if (hasIsland && !banList.isEmpty()) {
+	    List<String> banListString = new ArrayList<String>();
+	    for (UUID bannedUUID : banList) {
+		banListString.add(bannedUUID.toString());
+	    }
+	    playerInfo.set("banList", banListString);
+	} else {
+	    // Clear
+	    playerInfo.set("banList", null);
+	}
 	playerInfo.set("islandLocation", islandLocation);
 	playerInfo.set("homeLocation", null);
 	// Only store the new way
@@ -753,6 +772,35 @@ public class Players {
     public void setStartIslandRating(int startIslandRating) {
         this.startIslandRating = startIslandRating;
     }
-    
 
+    /**
+     * @return the banList
+     */
+    public List<UUID> getBanList() {
+        return banList;
+    }
+
+    /**
+     * Ban a player
+     * @param banned player's UUID
+     */
+    public void addToBanList(UUID banned) {
+        this.banList.add(banned);
+    }
+    
+    /**
+     * Un ban a player
+     * @param unbanned
+     */
+    public void unBan(UUID unbanned) {
+        this.banList.remove(unbanned);
+    }
+
+    /**
+     * @param targetUUID
+     * @return true if this player is banned
+     */
+    public boolean isBanned(UUID targetUUID) {
+	return this.banList.contains(targetUUID);
+    }
 }

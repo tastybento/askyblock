@@ -52,7 +52,6 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
-import com.wasteofplastic.askyblock.Messages;
 import com.wasteofplastic.askyblock.PlayerCache;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.events.ChallengeCompleteEvent;
@@ -179,9 +178,12 @@ public class Challenges implements CommandExecutor, TabCompleter {
 	    return true;
 	case 2:
 	    if (cmd[0].equalsIgnoreCase("complete") || cmd[0].equalsIgnoreCase("c")) {
-		if (!player.getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
-		    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorWrongWorld);
-		    return true;
+		if (!player.getWorld().equals(ASkyBlock.getIslandWorld())) {
+		    // Check if in new nether
+		    if (!Settings.newNether || !player.getWorld().equals(ASkyBlock.getNetherWorld())) {
+			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorWrongWorld);
+			return true;
+		    }
 		}
 		if (checkIfCanCompleteChallenge(player, cmd[1].toLowerCase())) {
 		    int oldLevel = levelDone(player);
@@ -245,7 +247,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
 		plugin.getServer().broadcastMessage(
 			ChatColor.GOLD + plugin.myLocale(player.getUniqueId()).challengesnameHasCompleted.replace("[name]", player.getName()).replace("[challenge]", challengeName));
 	    }
-	    Messages.tellOfflineTeam(player.getUniqueId(),
+	    plugin.getMessages().tellOfflineTeam(player.getUniqueId(),
 		    ChatColor.GOLD + plugin.myLocale(player.getUniqueId()).challengesnameHasCompleted.replace("[name]", player.getName()).replace("[challenge]", challengeName));
 	    itemRewards = getChallengeConfig().getString("challenges.challengeList." + challenge.toLowerCase() + ".itemReward", "").split(" ");
 	    moneyReward = getChallengeConfig().getDouble("challenges.challengeList." + challenge.toLowerCase() + ".moneyReward", 0D);
