@@ -1637,28 +1637,6 @@ public class Challenges implements CommandExecutor, TabCompleter {
 		break;
 	}
 	
-	return tabLimit(options, args.length != 0 ? args[args.length - 1] : "");
-	}
-	
-	/**
-	 * Returns all of the items that begin with the given start, 
-	 * ignoring case. 
-	 * 
-	 * TODO: May want to move this to a more centralized class, 
-	 * as it is probably going to be re-used a lot.
-	 * 
-	 * @param list
-	 * @param start
-	 * @return
-	 */
-	private List<String> tabLimit(final List<String> list, final String start) {
-	List<String> returned = new ArrayList<String>();
-	for (String s : list) {
-	if (s.toLowerCase().startsWith(start.toLowerCase())) { //Case-insensitive startsWith.
-		returned.add(s);
-	}
-	}
-	
-	return returned;
+	return Util.tabLimit(options, args.length != 0 ? args[args.length - 1] : "");
 	}
 }

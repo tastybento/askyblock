@@ -1656,46 +1656,28 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 		break;
 	case 2:
 		if (args[0].equalsIgnoreCase("unregister")) {
-			final List<Player> players = PlayerCache.getOnlinePlayers();
-			for (Player p : players) {
-				options.add(p.getName());
-			}
+			options.addAll(Util.getOnlinePlayerList());
 		}
 		if (args[0].equalsIgnoreCase("delete")) {
-			final List<Player> players = PlayerCache.getOnlinePlayers();
-			for (Player p : players) {
-				options.add(p.getName());
-			}
+			options.addAll(Util.getOnlinePlayerList());
 		}
 		if (args[0].equalsIgnoreCase("completechallenge")
 				|| args[0].equalsIgnoreCase("resetchallenge")) {
 			options.addAll(plugin.getChallenges().getAllChallenges());
 		}
 		if (args[0].equalsIgnoreCase("resetallchallenges")) {
-			final List<Player> players = PlayerCache.getOnlinePlayers();
-			for (Player p : players) {
-				options.add(p.getName());
-			}
+			options.addAll(Util.getOnlinePlayerList());
 		}
 		if (args[0].equalsIgnoreCase("info")) {
 			options.add("challenges");
 			
-			final List<Player> players = PlayerCache.getOnlinePlayers();
-			for (Player p : players) {
-				options.add(p.getName());
-			}
+			options.addAll(Util.getOnlinePlayerList());
 		}
 		if (args[0].equalsIgnoreCase("clearreset")) {
-			final List<Player> players = PlayerCache.getOnlinePlayers();
-			for (Player p : players) {
-				options.add(p.getName());
-			}
+			options.addAll(Util.getOnlinePlayerList());
 		}
 		if (args[0].equalsIgnoreCase("setbiome")) {
-			final List<Player> players = PlayerCache.getOnlinePlayers();
-			for (Player p : players) {
-				options.add(p.getName());
-			}
+			options.addAll(Util.getOnlinePlayerList());
 		}
 		if (args[0].equalsIgnoreCase("team")) {
 			options.add("add");
@@ -1705,17 +1687,11 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 	case 3: 
 		if (args[0].equalsIgnoreCase("completechallenge")
 				|| args[0].equalsIgnoreCase("resetchallenge")) {
-			final List<Player> players = PlayerCache.getOnlinePlayers();
-			for (Player p : players) {
-				options.add(p.getName());
-			}
+			options.addAll(Util.getOnlinePlayerList());
 		}
 		if (args[0].equalsIgnoreCase("info")
 				&& args[1].equalsIgnoreCase("challenges")) {
-			final List<Player> players = PlayerCache.getOnlinePlayers();
-			for (Player p : players) {
-				options.add(p.getName());
-			}
+			options.addAll(Util.getOnlinePlayerList());
 		}
 		if (args[0].equalsIgnoreCase("setbiome")) {
 			final Biome[] biomes = Biome.values();
@@ -1728,18 +1704,12 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 		if (args[0].equalsIgnoreCase("team")
 				&& (args[1].equalsIgnoreCase("add")
 				|| args[1].equalsIgnoreCase("kick"))) {
-			final List<Player> players = PlayerCache.getOnlinePlayers();
-			for (Player p : players) {
-				options.add(p.getName());
-			}
+			options.addAll(Util.getOnlinePlayerList());
 		}
 		break;
 	case 4:
 		if (args[0].equalsIgnoreCase("team") && args[1].equalsIgnoreCase("add")) {
-			final List<Player> players = PlayerCache.getOnlinePlayers();
-			for (Player p : players) {
-				options.add(p.getName());
-			}
+			options.addAll(Util.getOnlinePlayerList());
 		}
 	}
 	} else {
@@ -1806,18 +1776,11 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 	case 2:
 		if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.unregister") || player.isOp())
 				&& args[0].equalsIgnoreCase("unregister")) {
-		//TODO this is really repetitive -- move the players online code to a shared function.
-			final List<Player> players = PlayerCache.getOnlinePlayers();
-			for (Player p : players) {
-				options.add(p.getName());
-			}
+			options.addAll(Util.getOnlinePlayerList());
 		}
 		if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.delete") || player.isOp())
 				&& args[0].equalsIgnoreCase("delete")) {
-			final List<Player> players = PlayerCache.getOnlinePlayers();
-			for (Player p : players) {
-				options.add(p.getName());
-			}
+			options.addAll(Util.getOnlinePlayerList());
 		}
 		if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.challenges") || player.isOp())
 				&& (args[0].equalsIgnoreCase("completechallenge") || args[0].equalsIgnoreCase("resetchallenge"))) {
@@ -1825,39 +1788,25 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 		}
 		if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.challenges") || player.isOp())
 				&& args[0].equalsIgnoreCase("resetallchallenges")) {
-			final List<Player> players = PlayerCache.getOnlinePlayers();
-			for (Player p : players) {
-				options.add(p.getName());
-			}
+			options.addAll(Util.getOnlinePlayerList());
 		}
 		if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.info") || player.isOp())
 				&& args[0].equalsIgnoreCase("info")) {
 			options.add("challenges");
-			final List<Player> players = PlayerCache.getOnlinePlayers();
-			for (Player p : players) {
-				options.add(p.getName());
-			}
+			
+			options.addAll(Util.getOnlinePlayerList());
 		}
 		if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.clearreset") || player.isOp())
 				&& args[0].equalsIgnoreCase("clearreset")) {
-			final List<Player> players = PlayerCache.getOnlinePlayers();
-			for (Player p : players) {
-				options.add(p.getName());
-			}
+			options.addAll(Util.getOnlinePlayerList());
 		}
 		if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.tp") || player.isOp())
 				&& (args[0].equalsIgnoreCase("tp") || args[0].equalsIgnoreCase("tpnether"))) {
-			final List<Player> players = PlayerCache.getOnlinePlayers();
-			for (Player p : players) {
-				options.add(p.getName());
-			}
+			options.addAll(Util.getOnlinePlayerList());
 		}
 		if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.setbiome") || player.isOp())
 				&& args[0].equalsIgnoreCase("setbiome")) {
-			final List<Player> players = PlayerCache.getOnlinePlayers();
-			for (Player p : players) {
-				options.add(p.getName());
-			}
+			options.addAll(Util.getOnlinePlayerList());
 		}
 		if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.team") || player.isOp())
 				&& args[0].equalsIgnoreCase("team")) {
@@ -1868,18 +1817,12 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 	case 3: 
 		if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.challenges") || player.isOp())
 				&& (args[0].equalsIgnoreCase("completechallenge") || args[0].equalsIgnoreCase("resetchallenge"))) {
-			final List<Player> players = PlayerCache.getOnlinePlayers();
-			for (Player p : players) {
-				options.add(p.getName());
-			}
+			options.addAll(Util.getOnlinePlayerList());
 		}
 		if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.info") || player.isOp())
 				&& args[0].equalsIgnoreCase("info")
 				&& args[1].equalsIgnoreCase("challenges")) {
-			final List<Player> players = PlayerCache.getOnlinePlayers();
-			for (Player p : players) {
-				options.add(p.getName());
-			}
+			options.addAll(Util.getOnlinePlayerList());
 		}
 		if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.setbiome") || player.isOp())
 				&& args[0].equalsIgnoreCase("setbiome")) {
@@ -1894,10 +1837,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 				&& args[0].equalsIgnoreCase("team")
 					&& (args[1].equalsIgnoreCase("add")
 					|| args[1].equalsIgnoreCase("kick"))) {
-			final List<Player> players = PlayerCache.getOnlinePlayers();
-			for (Player p : players) {
-				options.add(p.getName());
-			}
+			options.addAll(Util.getOnlinePlayerList());
 		}
 		break;
 	case 4:
@@ -1912,28 +1852,6 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 	}
 	}
 
-	return tabLimit(options, lastArg);
-	}
-    
-    /**
-	 * Returns all of the items that begin with the given start, 
-	 * ignoring case. 
-	 * 
-	 * TODO: May want to move this to a more centralized class, 
-	 * as it is probably going to be re-used a lot.
-	 * 
-	 * @param list
-	 * @param start
-	 * @return
-	 */
-	private List<String> tabLimit(final List<String> list, final String start) {
-	List<String> returned = new ArrayList<String>();
-	for (String s : list) {
-	if (s.toLowerCase().startsWith(start.toLowerCase())) { //Case-insensitive startsWith.
-		returned.add(s);
-	}
-	}
-	
-	return returned;
+	return Util.tabLimit(options, lastArg);
 	}
 }

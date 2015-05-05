@@ -61,7 +61,6 @@ import com.wasteofplastic.askyblock.DeleteIslandChunk;
 import com.wasteofplastic.askyblock.GridManager;
 import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.LevelCalc;
-import com.wasteofplastic.askyblock.PlayerCache;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.TopTen;
 import com.wasteofplastic.askyblock.WarpSigns;
@@ -2692,86 +2691,45 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 			}
 		}
 		}
-		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.warp")) {
-		if (args[0].equalsIgnoreCase("warp")) {
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.warp")
+					&& args[0].equalsIgnoreCase("warp")) {
 			final Set<UUID> warpList = WarpSigns.listWarps();
 
 			for (UUID warp : warpList) {
 				options.add(plugin.getPlayers().getName(warp));
 			}
 		}
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.info")
+				&& args[0].equalsIgnoreCase("level")) {
+			options.addAll(Util.getOnlinePlayerList());
 		}
-		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.info")) {
-		if (args[0].equalsIgnoreCase("level")) {
-			final List<Player> players = PlayerCache.getOnlinePlayers();
-			for (Player p : players) {
-				options.add(p.getName());
-			}
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.create")
+				&& args[0].equalsIgnoreCase("invite")) {
+			options.addAll(Util.getOnlinePlayerList());
 		}
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "coop")
+				&& args[0].equalsIgnoreCase("coop")) {
+			options.addAll(Util.getOnlinePlayerList());
 		}
-		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.create")) {
-		if (args[0].equalsIgnoreCase("invite")) {
-			final List<Player> players = PlayerCache.getOnlinePlayers();
-			for (Player p : players) {
-				options.add(p.getName());
-			}
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.expel")
+				&& args[0].equalsIgnoreCase("expel")) {
+			options.addAll(Util.getOnlinePlayerList());
 		}
-		}
-		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "coop")) {
-		if (args[0].equalsIgnoreCase("coop")) {
-			final List<Player> players = PlayerCache.getOnlinePlayers();
-			for (Player p : players) {
-				options.add(p.getName());
-			}
-		}
-		}
-		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.expel")) {
-		if (args[0].equalsIgnoreCase("expel")) {
-			final List<Player> players = PlayerCache.getOnlinePlayers();
-			for (Player p : players) {
-				options.add(p.getName());
-			}
-		}
-		}
-		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.kick")) {
-		if (args[0].equalsIgnoreCase("kick") || args[0].equalsIgnoreCase("remove")) {
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.kick") 
+				&& (args[0].equalsIgnoreCase("kick") || args[0].equalsIgnoreCase("remove"))) {
 			for (UUID member : teamMembers) {
 			    options.add(plugin.getPlayers().getName(member));
 			}
 		}
-		}
-		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.makeleader")) {
-		if (args[0].equalsIgnoreCase("makeleader")) {
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.makeleader")
+				&& args[0].equalsIgnoreCase("makeleader")) {
 			for (UUID member : teamMembers) {
 			    options.add(plugin.getPlayers().getName(member));
 			}
-		}
 		}
 		break;
 	}
 
-	return tabLimit(options, lastArg);
-	}
-	
-	/**
-	 * Returns all of the items that begin with the given start, 
-	 * ignoring case. 
-	 * 
-	 * TODO: May want to move this to a more centralized class, 
-	 * as it is probably going to be re-used a lot.
-	 * 
-	 * @param list
-	 * @param start
-	 * @return
-	 */
-	private List<String> tabLimit(final List<String> list, final String start) {
-	List<String> returned = new ArrayList<String>();
-	for (String s : list) {
-	if (s.toLowerCase().startsWith(start.toLowerCase())) { //Case-insensitive startsWith.
-		returned.add(s);
-	}
-	}
-	
-	return returned;
+	return Util.tabLimit(options, lastArg);
 	}
 }
