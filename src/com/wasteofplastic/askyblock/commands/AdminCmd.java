@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -1642,12 +1643,106 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 	String lastArg = (args.length != 0 ? args[args.length - 1] : "");
     
 	if (!(sender instanceof Player)) {
-		//Server console or something else; doesn't have
-		//permission checking.
-		
-		//TODO: Not implemented.
-		return options;
+	//Server console or something else; doesn't have
+	//permission checking.
+	
+	switch (args.length) {
+	case 0: 
+	case 1:
+		options.addAll(Arrays.asList("reload", "topten", "unregister",
+				"delete", "completechallenge", "resetchallenge",
+				"resetallchallenges", "purge", "info", "info", "info",
+				"clearreset", "setbiome", "topbreeders", "team", "team"));
+		break;
+	case 2:
+		if (args[0].equalsIgnoreCase("unregister")) {
+			final List<Player> players = PlayerCache.getOnlinePlayers();
+			for (Player p : players) {
+				options.add(p.getName());
+			}
+		}
+		if (args[0].equalsIgnoreCase("delete")) {
+			final List<Player> players = PlayerCache.getOnlinePlayers();
+			for (Player p : players) {
+				options.add(p.getName());
+			}
+		}
+		if (args[0].equalsIgnoreCase("completechallenge")
+				|| args[0].equalsIgnoreCase("resetchallenge")) {
+			options.addAll(plugin.getChallenges().getAllChallenges());
+		}
+		if (args[0].equalsIgnoreCase("resetallchallenges")) {
+			final List<Player> players = PlayerCache.getOnlinePlayers();
+			for (Player p : players) {
+				options.add(p.getName());
+			}
+		}
+		if (args[0].equalsIgnoreCase("info")) {
+			options.add("challenges");
+			
+			final List<Player> players = PlayerCache.getOnlinePlayers();
+			for (Player p : players) {
+				options.add(p.getName());
+			}
+		}
+		if (args[0].equalsIgnoreCase("clearreset")) {
+			final List<Player> players = PlayerCache.getOnlinePlayers();
+			for (Player p : players) {
+				options.add(p.getName());
+			}
+		}
+		if (args[0].equalsIgnoreCase("setbiome")) {
+			final List<Player> players = PlayerCache.getOnlinePlayers();
+			for (Player p : players) {
+				options.add(p.getName());
+			}
+		}
+		if (args[0].equalsIgnoreCase("team")) {
+			options.add("add");
+			options.add("kick");
+		}
+		break;
+	case 3: 
+		if (args[0].equalsIgnoreCase("completechallenge")
+				|| args[0].equalsIgnoreCase("resetchallenge")) {
+			final List<Player> players = PlayerCache.getOnlinePlayers();
+			for (Player p : players) {
+				options.add(p.getName());
+			}
+		}
+		if (args[0].equalsIgnoreCase("info")
+				&& args[1].equalsIgnoreCase("challenges")) {
+			final List<Player> players = PlayerCache.getOnlinePlayers();
+			for (Player p : players) {
+				options.add(p.getName());
+			}
+		}
+		if (args[0].equalsIgnoreCase("setbiome")) {
+			final Biome[] biomes = Biome.values();
+			for (Biome b : biomes) {
+				if (plugin.getConfig().contains("biomes." + b.name())) {
+				options.add(b.name());
+				}
+			}
+		}
+		if (args[0].equalsIgnoreCase("team")
+				&& (args[1].equalsIgnoreCase("add")
+				|| args[1].equalsIgnoreCase("kick"))) {
+			final List<Player> players = PlayerCache.getOnlinePlayers();
+			for (Player p : players) {
+				options.add(p.getName());
+			}
+		}
+		break;
+	case 4:
+		if (args[0].equalsIgnoreCase("team") && args[1].equalsIgnoreCase("add")) {
+			final List<Player> players = PlayerCache.getOnlinePlayers();
+			for (Player p : players) {
+				options.add(p.getName());
+			}
+		}
 	}
+	} else {
 	final Player player = (Player) sender;
 
 	switch (args.length) {
@@ -1773,7 +1868,18 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 	case 3: 
 		if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.challenges") || player.isOp())
 				&& (args[0].equalsIgnoreCase("completechallenge") || args[0].equalsIgnoreCase("resetchallenge"))) {
-			options.addAll(plugin.getChallenges().getAllChallenges());
+			final List<Player> players = PlayerCache.getOnlinePlayers();
+			for (Player p : players) {
+				options.add(p.getName());
+			}
+		}
+		if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.info") || player.isOp())
+				&& args[0].equalsIgnoreCase("info")
+				&& args[1].equalsIgnoreCase("challenges")) {
+			final List<Player> players = PlayerCache.getOnlinePlayers();
+			for (Player p : players) {
+				options.add(p.getName());
+			}
 		}
 		if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.setbiome") || player.isOp())
 				&& args[0].equalsIgnoreCase("setbiome")) {
@@ -1803,6 +1909,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 				options.add(p.getName());
 			}
 		}
+	}
 	}
 
 	return tabLimit(options, lastArg);
