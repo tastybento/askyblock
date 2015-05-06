@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 
@@ -36,6 +37,7 @@ import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
@@ -61,7 +63,7 @@ import com.wasteofplastic.askyblock.util.VaultHelper;
 /**
  * Handles challenge commands and related methods
  */
-public class Challenges implements CommandExecutor {
+public class Challenges implements CommandExecutor, TabCompleter {
     private static ASkyBlock plugin = ASkyBlock.getPlugin();
     // Database of challenges
     private static LinkedHashMap<String, List<String>> challengeList = new LinkedHashMap<String, List<String>>();
@@ -1574,21 +1576,67 @@ public class Challenges implements CommandExecutor {
 	PotionType type = PotionType.getByDamageValue(damage & POTION_BIT);
 	Potion potion;
 	if (type == null || (type == PotionType.WATER && damage != 0)) {
-	    potion = new Potion(damage & NAME_BIT);
+		potion = new Potion(damage & NAME_BIT);
 	} else {
-	    int level = (damage & TIER_BIT) >> TIER_SHIFT;
+		int level = (damage & TIER_BIT) >> TIER_SHIFT;
 	level++;
 	potion = new Potion(type, level);
 	}
 	if ((damage & SPLASH_BIT) > 0) {
-	    potion = potion.splash();
+		potion = potion.splash();
 	}
 	if (type != PotionType.INSTANT_DAMAGE && type != PotionType.INSTANT_HEAL) {
-	    if ((damage & EXTENDED_BIT) > 0) {
+		if ((damage & EXTENDED_BIT) > 0) {
 		potion = potion.extend();
-	    }
+		}
 	}
 	return potion;
-    }
+	}
 
+    /**
+	 * Gets a list of all challenges in existence.
+	 */
+	public List<String> getAllChallenges() {
+	List<String> returned = new ArrayList<String>();
+	for (List<String> challenges : challengeList.values()) {
+		returned.addAll(challenges);
+	}
+	return returned;
+	}
+    
+	/**
+	 * Creates a list of challenges that the specified player is able to complete.
+	 * @param player
+	 * @return
+	 */
+	public List<String> getAvailableChallenges(Player player) {
+	List<String> returned = new ArrayList<String>();
+	for (Map.Entry<String, List<String>> e : challengeList.entrySet())
+	if (isLevelAvailable(player, e.getKey())) {
+		returned.addAll(e.getValue());
+	}
+	return returned;
+	}
+	
+	@Override
+	public List<String> onTabComplete(final CommandSender sender, final Command command, final String label, final String[] args) {
+	if (!(sender instanceof Player)) {
+		return new ArrayList<String>();
+	}
+	Player player = (Player) sender;
+	
+	List<String> options = new ArrayList<String>();
+	
+	switch (args.length) {
+	case 0: 
+	case 1:
+		options.add("complete");
+		//Fall through
+	case 2:
+		options.addAll(getAvailableChallenges(player));
+		break;
+	}
+	
+	return Util.tabLimit(options, args.length != 0 ? args[args.length - 1] : "");
+	}
 }

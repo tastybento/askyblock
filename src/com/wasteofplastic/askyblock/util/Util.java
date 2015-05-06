@@ -10,8 +10,10 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.PlayerCache;
 
 /**
  * A set of utility methods
@@ -232,4 +234,36 @@ public class Util {
 	return l.getWorld().getName() + ":" + l.getBlockX() + ":" + l.getBlockY() + ":" + l.getBlockZ();
     }
 
+    /**
+	 * Returns all of the items that begin with the given start, 
+	 * ignoring case.  Intended for tabcompletion. 
+	 * 
+	 * @param list
+	 * @param start
+	 * @return
+	 */
+	public static List<String> tabLimit(final List<String> list, final String start) {
+	final List<String> returned = new ArrayList<String>();
+	for (String s : list) {
+	if (s.toLowerCase().startsWith(start.toLowerCase())) {
+		returned.add(s);
+	}
+	}
+	
+	return returned;
+	}
+	
+	/**
+	 * Gets a list of all players who are currently online.
+	 * 
+	 * @return
+	 */
+	public static List<String> getOnlinePlayerList() {
+	final List<String> returned = new ArrayList<String>();
+	final List<Player> players = PlayerCache.getOnlinePlayers();
+	for (Player p : players) {
+		returned.add(p.getName());
+	}
+	return returned;
+	}
 }

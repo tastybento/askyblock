@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -41,6 +42,7 @@ import org.bukkit.block.Sign;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
@@ -54,6 +56,7 @@ import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.CoopPlay;
 import com.wasteofplastic.askyblock.DeleteIslandChunk;
 import com.wasteofplastic.askyblock.Island;
+import com.wasteofplastic.askyblock.PlayerCache;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.TopTen;
 import com.wasteofplastic.askyblock.WarpSigns;
@@ -75,7 +78,7 @@ import com.wasteofplastic.askyblock.util.VaultHelper;
  * This class handles admin commands
  * 
  */
-public class AdminCmd implements CommandExecutor {
+public class AdminCmd implements CommandExecutor, TabCompleter {
     private ASkyBlock plugin;
     private List<UUID> removeList = new ArrayList<UUID>();
     private boolean purgeFlag = false;
@@ -1633,4 +1636,222 @@ public class AdminCmd implements CommandExecutor {
 	    return false;
 	}
     }
+    
+    @Override
+	public List<String> onTabComplete(final CommandSender sender, final Command command, final String label, final String[] args) {
+    final List<String> options = new ArrayList<String>();
+	String lastArg = (args.length != 0 ? args[args.length - 1] : "");
+    
+	if (!(sender instanceof Player)) {
+	//Server console or something else; doesn't have
+	//permission checking.
+	
+	switch (args.length) {
+	case 0: 
+	case 1:
+		options.addAll(Arrays.asList("reload", "topten", "unregister",
+				"delete", "completechallenge", "resetchallenge",
+				"resetallchallenges", "purge", "info", "info", "info",
+				"clearreset", "setbiome", "topbreeders", "team", "team"));
+		break;
+	case 2:
+		if (args[0].equalsIgnoreCase("unregister")) {
+			options.addAll(Util.getOnlinePlayerList());
+		}
+		if (args[0].equalsIgnoreCase("delete")) {
+			options.addAll(Util.getOnlinePlayerList());
+		}
+		if (args[0].equalsIgnoreCase("completechallenge")
+				|| args[0].equalsIgnoreCase("resetchallenge")) {
+			options.addAll(plugin.getChallenges().getAllChallenges());
+		}
+		if (args[0].equalsIgnoreCase("resetallchallenges")) {
+			options.addAll(Util.getOnlinePlayerList());
+		}
+		if (args[0].equalsIgnoreCase("info")) {
+			options.add("challenges");
+			
+			options.addAll(Util.getOnlinePlayerList());
+		}
+		if (args[0].equalsIgnoreCase("clearreset")) {
+			options.addAll(Util.getOnlinePlayerList());
+		}
+		if (args[0].equalsIgnoreCase("setbiome")) {
+			options.addAll(Util.getOnlinePlayerList());
+		}
+		if (args[0].equalsIgnoreCase("team")) {
+			options.add("add");
+			options.add("kick");
+		}
+		break;
+	case 3: 
+		if (args[0].equalsIgnoreCase("completechallenge")
+				|| args[0].equalsIgnoreCase("resetchallenge")) {
+			options.addAll(Util.getOnlinePlayerList());
+		}
+		if (args[0].equalsIgnoreCase("info")
+				&& args[1].equalsIgnoreCase("challenges")) {
+			options.addAll(Util.getOnlinePlayerList());
+		}
+		if (args[0].equalsIgnoreCase("setbiome")) {
+			final Biome[] biomes = Biome.values();
+			for (Biome b : biomes) {
+				if (plugin.getConfig().contains("biomes." + b.name())) {
+				options.add(b.name());
+				}
+			}
+		}
+		if (args[0].equalsIgnoreCase("team")
+				&& (args[1].equalsIgnoreCase("add")
+				|| args[1].equalsIgnoreCase("kick"))) {
+			options.addAll(Util.getOnlinePlayerList());
+		}
+		break;
+	case 4:
+		if (args[0].equalsIgnoreCase("team") && args[1].equalsIgnoreCase("add")) {
+			options.addAll(Util.getOnlinePlayerList());
+		}
+	}
+	} else {
+	final Player player = (Player) sender;
+
+	switch (args.length) {
+	case 0: 
+	case 1: 
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.reload") || player.isOp()) {
+	    	options.add("reload");
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.register") || player.isOp()) {
+	    	options.add("register");
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.unregister") || player.isOp()) {
+	    	options.add("unregister");
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.delete") || player.isOp()) {
+	    	options.add("delete");
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.deleteisland") || player.isOp()) {
+	    	options.add("deleteisland");
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.purge") || player.isOp()) {
+	    	options.add("purge");
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.topten") || player.isOp()) {
+	    	options.add("topten");
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.topbreeders") || player.isOp()) {
+	    	options.add("topbreeders");
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.challenges") || player.isOp()) {
+	    	options.add("completechallenge");
+			options.add("resetchallenge");
+			options.add("resetallchallenges");
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.info") || player.isOp()) {
+	    	options.add("info");
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.clearreset") || player.isOp()) {
+	    	options.add("clearreset");
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.setspawn") || player.isOp()) {
+	    	options.add("setspawn");
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.setrange") || player.isOp()) {
+	    	options.add("setrange");
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.tp") || player.isOp()) {
+	    	options.add("tp");
+	    }
+	    if (Settings.newNether && VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.tpnether") || player.isOp()) {
+	    	options.add("tpnether");
+	    }
+
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.setbiome") || player.isOp()) {
+	    	options.add("setbiome");
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.team") || player.isOp()) {
+	    	options.add("team");
+	    }
+		break;
+	case 2:
+		if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.unregister") || player.isOp())
+				&& args[0].equalsIgnoreCase("unregister")) {
+			options.addAll(Util.getOnlinePlayerList());
+		}
+		if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.delete") || player.isOp())
+				&& args[0].equalsIgnoreCase("delete")) {
+			options.addAll(Util.getOnlinePlayerList());
+		}
+		if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.challenges") || player.isOp())
+				&& (args[0].equalsIgnoreCase("completechallenge") || args[0].equalsIgnoreCase("resetchallenge"))) {
+			options.addAll(plugin.getChallenges().getAllChallenges());
+		}
+		if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.challenges") || player.isOp())
+				&& args[0].equalsIgnoreCase("resetallchallenges")) {
+			options.addAll(Util.getOnlinePlayerList());
+		}
+		if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.info") || player.isOp())
+				&& args[0].equalsIgnoreCase("info")) {
+			options.add("challenges");
+			
+			options.addAll(Util.getOnlinePlayerList());
+		}
+		if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.clearreset") || player.isOp())
+				&& args[0].equalsIgnoreCase("clearreset")) {
+			options.addAll(Util.getOnlinePlayerList());
+		}
+		if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.tp") || player.isOp())
+				&& (args[0].equalsIgnoreCase("tp") || args[0].equalsIgnoreCase("tpnether"))) {
+			options.addAll(Util.getOnlinePlayerList());
+		}
+		if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.setbiome") || player.isOp())
+				&& args[0].equalsIgnoreCase("setbiome")) {
+			options.addAll(Util.getOnlinePlayerList());
+		}
+		if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.team") || player.isOp())
+				&& args[0].equalsIgnoreCase("team")) {
+	    	options.add("kick");
+	    	options.add("add");
+	    }
+		break;
+	case 3: 
+		if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.challenges") || player.isOp())
+				&& (args[0].equalsIgnoreCase("completechallenge") || args[0].equalsIgnoreCase("resetchallenge"))) {
+			options.addAll(Util.getOnlinePlayerList());
+		}
+		if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.info") || player.isOp())
+				&& args[0].equalsIgnoreCase("info")
+				&& args[1].equalsIgnoreCase("challenges")) {
+			options.addAll(Util.getOnlinePlayerList());
+		}
+		if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.setbiome") || player.isOp())
+				&& args[0].equalsIgnoreCase("setbiome")) {
+			final Biome[] biomes = Biome.values();
+			for (Biome b : biomes) {
+				if (plugin.getConfig().contains("biomes." + b.name())) {
+				options.add(b.name());
+				}
+			}
+		}
+		if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.team") || player.isOp())
+				&& args[0].equalsIgnoreCase("team")
+					&& (args[1].equalsIgnoreCase("add")
+					|| args[1].equalsIgnoreCase("kick"))) {
+			options.addAll(Util.getOnlinePlayerList());
+		}
+		break;
+	case 4:
+		if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.team") || player.isOp())
+				&& args[0].equalsIgnoreCase("team")
+				&& args[1].equalsIgnoreCase("add")) {
+			final List<Player> players = PlayerCache.getOnlinePlayers();
+			for (Player p : players) {
+				options.add(p.getName());
+			}
+		}
+	}
+	}
+
+	return Util.tabLimit(options, lastArg);
+	}
 }
