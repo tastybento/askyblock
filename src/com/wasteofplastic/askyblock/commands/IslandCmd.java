@@ -2598,11 +2598,11 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 	case 0: 
 	case 1: 
 		options.add("help"); //No permission needed.
-		options.add("make"); //No permission needed.
+		//options.add("make"); //Make is currently a private command never accessible to the player
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.sethome")) {
 			options.add("go");
 		}
-		options.add("about"); //No permission needed.
+		options.add("about"); //No permission needed. :-) Indeed.
 		if (plugin.getGrid() != null && plugin.getGrid().getSpawn() != null) {
 			options.add("spawn");
 		}
