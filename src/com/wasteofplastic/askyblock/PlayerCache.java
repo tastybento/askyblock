@@ -17,10 +17,15 @@
 package com.wasteofplastic.askyblock;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+
+import jdbm.PrimaryTreeMap;
+import jdbm.RecordManager;
+import jdbm.RecordManagerFactory;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -235,7 +240,7 @@ public class PlayerCache {
 	addPlayer(playerUUID);
 	playerCache.get(playerUUID).setHomeLocation(location,number);
     }
-    
+
     /**
      * Set the default home location for player
      * @param playerUUID
@@ -245,7 +250,7 @@ public class PlayerCache {
 	addPlayer(playerUUID);
 	playerCache.get(playerUUID).setHomeLocation(location,1);
     }
-    
+
     /**
      * Clears any home locations for player
      * @param playerUUID
@@ -254,7 +259,7 @@ public class PlayerCache {
 	addPlayer(playerUUID);
 	playerCache.get(playerUUID).clearHomeLocations();
     }
-    
+
     /**
      * Returns the home location, or null if none
      * 
@@ -276,7 +281,7 @@ public class PlayerCache {
 	addPlayer(playerUUID);
 	return playerCache.get(playerUUID).getHomeLocation(1);
     }
-    
+
     /**
      * Provides all home locations for player
      * @param playerUUID
@@ -286,7 +291,7 @@ public class PlayerCache {
 	addPlayer(playerUUID);
 	return playerCache.get(playerUUID).getHomeLocations();
     }
-    
+
     /**
      * Returns the player's island location.
      * Returns an island location OR a team island location
@@ -444,8 +449,12 @@ public class PlayerCache {
      */
     public void save(UUID playerUUID) {
 	playerCache.get(playerUUID).save();
+	// Save the name + UUID in the database if it ready
+	if (plugin.getTinyDB().isDbReady()) {
+	    plugin.getTinyDB().savePlayerName(playerCache.get(playerUUID).getPlayerName(), playerUUID);
+	}
     }
-
+    
     public void completeChallenge(UUID playerUUID, String challenge) {
 	addPlayer(playerUUID);
 	playerCache.get(playerUUID).completeChallenge(challenge);
@@ -470,7 +479,14 @@ public class PlayerCache {
 		return id;
 	    }
 	}
-	// Look in the file system
+	// Look in the database if it ready
+	if (plugin.getTinyDB().isDbReady()) {
+	    return plugin.getTinyDB().getPlayerUUID(string);
+	}
+
+	// Look in the file system <-- this does not work well if the number of players is very large
+	// i.e., server with >115,000 players can crash
+	/*
 	for (final File f : plugin.getPlayersFolder().listFiles()) {
 	    // Need to remove the .yml suffix
 	    String fileName = f.getName();
@@ -483,7 +499,7 @@ public class PlayerCache {
 		} catch (Exception e) {
 		}
 	    }
-	}
+	}*/
 	return null;
     }
 
@@ -641,7 +657,7 @@ public class PlayerCache {
     public void setLocale(UUID playerUUID, String localeName) {
 	playerCache.get(playerUUID).setLocale(localeName);
     }
-    
+
     /**
      * The rating of the initial starter island out of 100. Default is 50
      * @param playerUUID
@@ -651,7 +667,7 @@ public class PlayerCache {
 	addPlayer(playerUUID);
 	return playerCache.get(playerUUID).getStartIslandRating();
     }
-    
+
     /**
      * Record the island rating that the player started with
      * @param playerUUID
@@ -661,7 +677,7 @@ public class PlayerCache {
 	addPlayer(playerUUID);
 	playerCache.get(playerUUID).setStartIslandRating(rating);
     }
-    
+
     /**
      * Clear the starter island rating from the player's record
      * @param playerUUID
@@ -669,7 +685,7 @@ public class PlayerCache {
     public void clearStartIslandRating(UUID playerUUID) {
 	setStartIslandRating(playerUUID, 0);
     }
-    
+
     /**
      * Ban target from a player's island
      * @param playerUUID
@@ -691,7 +707,7 @@ public class PlayerCache {
 	    }
 	}
     }
-    
+
     /**
      * Unban target from player's island
      * @param playerUUID
@@ -713,7 +729,7 @@ public class PlayerCache {
 	    }
 	}
     }
-    
+
     /**
      * @param playerUUID
      * @param targetUUID
@@ -739,7 +755,7 @@ public class PlayerCache {
 	}
 	return false;
     }
-    
+
     /**
      * @param playerUUID
      * @return ban list for player

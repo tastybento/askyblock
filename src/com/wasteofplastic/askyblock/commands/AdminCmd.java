@@ -1376,6 +1376,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 					//System.out.println("DEBUG: Location found in player file - do not delete");
 					unowned.remove(loc);
 				    }
+				    break;
 				}
 			    }
 			    scanner.close();

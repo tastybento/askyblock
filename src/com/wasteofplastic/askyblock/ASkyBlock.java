@@ -18,13 +18,20 @@
 package com.wasteofplastic.askyblock;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.UUID;
+
+import jdbm.PrimaryTreeMap;
+import jdbm.RecordManager;
+import jdbm.RecordManagerFactory;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -105,6 +112,8 @@ public class ASkyBlock extends JavaPlugin {
     private GridManager grid;
     // Island command object
     private IslandCmd islandCmd;
+    // Database
+    private TinyDB tinyDB;
 
     private boolean debug = false;
 
@@ -194,6 +203,10 @@ public class ASkyBlock extends JavaPlugin {
 		messages.saveMessages();
 	    }
 	    TopTen.topTenSave();
+	    // Close the name database
+	    if (tinyDB != null) {
+		tinyDB.closeDB();
+	    }
 	} catch (final Exception e) {
 	    getLogger().severe("Something went wrong saving files!");
 	    e.printStackTrace();
@@ -255,27 +268,27 @@ public class ASkyBlock extends JavaPlugin {
 	// Set up commands for this plugin
 	islandCmd = new IslandCmd(this);
 	if (Settings.GAMETYPE.equals(Settings.GameType.ASKYBLOCK)) {
-		IslandCmd islandCmd = new IslandCmd(this);
-		AdminCmd adminCmd = new AdminCmd(this);
-		
-		getCommand("island").setExecutor(islandCmd);
+	    IslandCmd islandCmd = new IslandCmd(this);
+	    AdminCmd adminCmd = new AdminCmd(this);
+
+	    getCommand("island").setExecutor(islandCmd);
 	    getCommand("island").setTabCompleter(islandCmd);
-	    
+
 	    getCommand("asc").setExecutor(getChallenges());
 	    getCommand("asc").setTabCompleter(getChallenges());
-	    
+
 	    getCommand("asadmin").setExecutor(adminCmd);
 	    getCommand("asadmin").setTabCompleter(adminCmd);
 	} else {
-		IslandCmd islandCmd = new IslandCmd(this);
-		AdminCmd adminCmd = new AdminCmd(this);
-	    
-		getCommand("ai").setExecutor(islandCmd);
+	    IslandCmd islandCmd = new IslandCmd(this);
+	    AdminCmd adminCmd = new AdminCmd(this);
+
+	    getCommand("ai").setExecutor(islandCmd);
 	    getCommand("ai").setTabCompleter(islandCmd);
-	    
+
 	    getCommand("aic").setExecutor(getChallenges());
 	    getCommand("aic").setTabCompleter(getChallenges());
-	    
+
 	    getCommand("acid").setExecutor(adminCmd);
 	    getCommand("acid").setTabCompleter(adminCmd);
 	}
@@ -333,6 +346,8 @@ public class ASkyBlock extends JavaPlugin {
 			// Load grid
 			grid = new GridManager(plugin);
 			TopTen.topTenLoad();
+			tinyDB = new TinyDB(plugin);
+
 			getLogger().info("All files loaded. Ready to play...");
 		    }
 		});
@@ -1364,6 +1379,13 @@ public class ASkyBlock extends JavaPlugin {
      * @return the islandCmd
      */
     public IslandCmd getIslandCmd() {
-        return islandCmd;
+	return islandCmd;
+    }
+
+    /**
+     * @return the nameDB
+     */
+    public TinyDB getTinyDB() {
+        return tinyDB;
     }
 }

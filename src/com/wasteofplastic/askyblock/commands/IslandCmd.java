@@ -415,7 +415,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 				plugin.getLogger().severe("Problem with schematic '" + name + "'. Spawn block '" + spawnBlock + "' is unknown. Skipping...");
 			    }
 			} else {
-			    plugin.getLogger().info("No spawn block found");
+			   // plugin.getLogger().info("No spawn block found");
 			}
 			// Store it
 			schematics.put(key, newSchem);
