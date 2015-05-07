@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.Scanner;
 import java.util.UUID;
 
-import jdbm.PrimaryTreeMap;
+import jdbm.PrimaryHashMap;
 import jdbm.RecordManager;
 import jdbm.RecordManagerFactory;
 
@@ -19,7 +19,7 @@ import jdbm.RecordManagerFactory;
 public class TinyDB {
     private ASkyBlock plugin;
     private RecordManager recMan;
-    private PrimaryTreeMap<String,UUID> treeMap;
+    private PrimaryHashMap<String,UUID> treeMap;
     private String fileName = "nameUUIDdb";
     private File dbFolder;
     private File name2UUID;
@@ -50,7 +50,7 @@ public class TinyDB {
 	    try {
 		recMan = RecordManagerFactory.createRecordManager(name2UUID.getAbsolutePath());
 		String recordName = "nameToUUID";
-		treeMap = recMan.treeMap(recordName);
+		treeMap = recMan.hashMap(recordName);
 		dbReady = true;
 	    } catch (IOException e) {
 		dbReady = false;
@@ -81,7 +81,7 @@ public class TinyDB {
 	try {
 	    recMan = RecordManagerFactory.createRecordManager(name2UUID.getAbsolutePath());
 	    String recordName = "nameToUUID";
-	    treeMap = recMan.treeMap(recordName);
+	    treeMap = recMan.hashMap(recordName);
 	    // Load all the files from the player folder
 	    FilenameFilter ymlFilter = new FilenameFilter() {
 		public boolean accept(File dir, String name) {
