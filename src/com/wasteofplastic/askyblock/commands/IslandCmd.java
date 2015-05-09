@@ -1070,18 +1070,6 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 		    // enderman.setCustomName("TastyBento's Ghost");
 		    // enderman.setCarriedMaterial(new
 		    // MaterialData(Material.GRASS));
-		    /*
-		     * final Hologram h = new Hologram(plugin, ChatColor.GOLD + "" +
-		     * ChatColor.BOLD + "ASkyBlock", "(c)2014 TastyBento");
-		     * h.show(player.getLocation());
-		     * plugin.getServer().getScheduler().runTaskLater(plugin, new
-		     * Runnable() {
-		     * @Override
-		     * public void run() {
-		     * h.destroy();
-		     * }}, 40L);
-		     */
-
 		}
 
 	    if (split[0].equalsIgnoreCase("controlpanel") || split[0].equalsIgnoreCase("cp")) {
@@ -1190,7 +1178,6 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 		if (confirm.containsKey(playerUUID) && confirm.get(playerUUID)) {
 		    // Actually RESET the island
 		    player.sendMessage(ChatColor.YELLOW + plugin.myLocale(player.getUniqueId()).islandresetPleaseWait);
-		    plugin.getPlayers().setResetsLeft(playerUUID, plugin.getPlayers().getResetsLeft(playerUUID) - 1);
 		    if (plugin.getPlayers().getResetsLeft(playerUUID) == 0) {
 			player.sendMessage(ChatColor.YELLOW + plugin.myLocale(player.getUniqueId()).islandResetNoMore);
 		    }
@@ -2419,6 +2406,8 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
     }
 
     private void resetPlayer(Player player, Location oldIsland) {
+	// Deduct the reset
+	plugin.getPlayers().setResetsLeft(player.getUniqueId(), plugin.getPlayers().getResetsLeft(player.getUniqueId()) - 1);
 	// Clear any coop inventories
 	// CoopPlay.getInstance().returnAllInventories(player);
 	// Remove any coop invitees and grab their stuff
