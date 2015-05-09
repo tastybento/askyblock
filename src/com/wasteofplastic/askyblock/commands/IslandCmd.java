@@ -36,6 +36,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
@@ -415,7 +416,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 				plugin.getLogger().severe("Problem with schematic '" + name + "'. Spawn block '" + spawnBlock + "' is unknown. Skipping...");
 			    }
 			} else {
-			   // plugin.getLogger().info("No spawn block found");
+			    // plugin.getLogger().info("No spawn block found");
 			}
 			// Store it
 			schematics.put(key, newSchem);
@@ -2099,48 +2100,51 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 			player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).banAlreadyBanned.replace("[name]", split[1]));
 			return true;
 		    }
-		    // Target must be online
+		    // Check online/offline status
 		    Player target = plugin.getServer().getPlayer(targetPlayerUUID);
-		    if (target == null) {
-			player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).errorOfflinePlayer);
-			return true;
-		    }
+		    // Get offline player
+		    OfflinePlayer offlineTarget = plugin.getServer().getOfflinePlayer(targetPlayerUUID);
 		    // Target cannot be op
-		    if (target.isOp() || VaultHelper.checkPerm(target, Settings.PERMPREFIX + "mod.bypassprotect")) {
-			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).banFail.replace("[name]", target.getDisplayName()));
+		    if (offlineTarget.isOp()) {
+			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).banFail.replace("[name]", offlineTarget.getName()));
 			return true;
 		    }
-		    // Remove them from the coop list
-		    boolean coop = CoopPlay.getInstance().removeCoopPlayer(player, target);
-		    if (coop) {
-			target.sendMessage(ChatColor.RED + plugin.myLocale(target.getUniqueId()).coopRemoved.replace("[name]", player.getDisplayName()));
-			player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).coopRemoveSuccess.replace("[name]", target.getDisplayName()));
-		    }
-		    // See if target is on this player's island and if so send them away
-		    if (plugin.getGrid().isOnIsland(player, target)) {
-			// Check to see if this player has an island or is just
-			// helping out
-			if (plugin.getPlayers().inTeam(targetPlayerUUID) || plugin.getPlayers().hasIsland(targetPlayerUUID)) {
-			    plugin.getGrid().homeTeleport(target);
-			} else {
-			    // Just move target to spawn
-			    if (!target.performCommand(Settings.SPAWNCOMMAND)) {
-				target.teleport(player.getWorld().getSpawnLocation());
+		    if (target != null) {
+			// Remove them from the coop list
+			boolean coop = CoopPlay.getInstance().removeCoopPlayer(player, target);
+			if (coop) {
+			    target.sendMessage(ChatColor.RED + plugin.myLocale(target.getUniqueId()).coopRemoved.replace("[name]", player.getDisplayName()));
+			    player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).coopRemoveSuccess.replace("[name]", target.getDisplayName()));
+			}
+			// See if target is on this player's island and if so send them away
+			if (plugin.getGrid().isOnIsland(player, target)) {
+			    // Check to see if this player has an island or is just
+			    // helping out
+			    if (plugin.getPlayers().inTeam(targetPlayerUUID) || plugin.getPlayers().hasIsland(targetPlayerUUID)) {
+				plugin.getGrid().homeTeleport(target);
+			    } else {
+				// Just move target to spawn
+				if (!target.performCommand(Settings.SPAWNCOMMAND)) {
+				    target.teleport(player.getWorld().getSpawnLocation());
+				}
 			    }
 			}
+			// Notifications
+			// Target
+			target.sendMessage(ChatColor.RED + plugin.myLocale(targetPlayerUUID).banBanned.replace("[name]", player.getDisplayName()));
+		    } else {
+			// Offline notification
+			plugin.getMessages().setMessage(targetPlayerUUID, ChatColor.RED + plugin.myLocale(targetPlayerUUID).banBanned.replace("[name]", player.getDisplayName()));
 		    }
-		    // Notifications
-		    // Target
-		    target.sendMessage(ChatColor.RED + plugin.myLocale(target.getUniqueId()).banBanned.replace("[name]", player.getDisplayName()));
 		    // Console
-		    plugin.getLogger().info(player.getName() + " banned " + target.getName() + " from their island.");
+		    plugin.getLogger().info(player.getName() + " banned " + offlineTarget.getName() + " from their island.");
 		    // Player
-		    player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).banSuccess.replace("[name]", target.getDisplayName()));
+		    player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).banSuccess.replace("[name]", offlineTarget.getName()));
 		    // Tell team
-		    plugin.getMessages().tellTeam(playerUUID, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).banSuccess.replace("[name]", target.getDisplayName()));
-		    plugin.getMessages().tellOfflineTeam(playerUUID, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).banSuccess.replace("[name]", target.getDisplayName()));
+		    plugin.getMessages().tellTeam(playerUUID, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).banSuccess.replace("[name]", offlineTarget.getName()));
+		    plugin.getMessages().tellOfflineTeam(playerUUID, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).banSuccess.replace("[name]", offlineTarget.getName()));
 		    // Ban the sucker
-		    plugin.getPlayers().ban(playerUUID, target.getUniqueId());
+		    plugin.getPlayers().ban(playerUUID, targetPlayerUUID);
 		    return true;
 		} else if (split[0].equalsIgnoreCase("unban")) {
 		    if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.ban")) {
@@ -2169,20 +2173,21 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 		    Player target = plugin.getServer().getPlayer(targetPlayerUUID);
 		    // Target
 		    if (target != null) {
+			// Online
 			target.sendMessage(ChatColor.RED + plugin.myLocale(target.getUniqueId()).banLifted.replace("[name]", player.getDisplayName()));
 		    } else {
 			plugin.getMessages().setMessage(targetPlayerUUID, ChatColor.GREEN + plugin.myLocale(targetPlayerUUID).banLifted.replace("[name]", player.getDisplayName()));
 		    }
-		    // Console
-		    plugin.getLogger().info(player.getName() + " unbanned " + target.getName() + " from their island.");
+		    OfflinePlayer offlineTarget = plugin.getServer().getOfflinePlayer(targetPlayerUUID);
 		    // Player
-		    player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).banLiftedSuccess.replace("[name]", target.getDisplayName()));
+		    player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).banLiftedSuccess.replace("[name]", offlineTarget.getName()));
+		    // Console
+		    plugin.getLogger().info(player.getName() + " unbanned " + offlineTarget.getName() + " from their island.");
 		    // Tell team
-		    plugin.getMessages().tellTeam(playerUUID, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).banLiftedSuccess.replace("[name]", target.getDisplayName()));
-		    plugin.getMessages().tellOfflineTeam(playerUUID, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).banLiftedSuccess.replace("[name]", target.getDisplayName()));
-
-
-		    plugin.getPlayers().unBan(playerUUID, target.getUniqueId());
+		    plugin.getMessages().tellTeam(playerUUID, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).banLiftedSuccess.replace("[name]", offlineTarget.getName()));
+		    plugin.getMessages().tellOfflineTeam(playerUUID, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).banLiftedSuccess.replace("[name]", offlineTarget.getName()));
+		    // Unban the redeemed one
+		    plugin.getPlayers().unBan(playerUUID, targetPlayerUUID);
 		    return true;
 		} else if (split[0].equalsIgnoreCase("kick") || split[0].equalsIgnoreCase("remove")) {
 		    // PlayerIsland remove command with a player name, or island kick
@@ -2560,165 +2565,165 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 	}
 
 	return 0L;
-	}
+    }
 
-	@Override
-	public List<String> onTabComplete(final CommandSender sender, final Command command, final String label, final String[] args) {
+    @Override
+    public List<String> onTabComplete(final CommandSender sender, final Command command, final String label, final String[] args) {
 	if (!(sender instanceof Player)) {
-		return new ArrayList<String>();
+	    return new ArrayList<String>();
 	}
 	final Player player = (Player) sender;
 
 	if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.create")) {
-		return new ArrayList<String>();
+	    return new ArrayList<String>();
 	}
-	
+
 	final UUID playerUUID = player.getUniqueId();
 	final UUID teamLeader = plugin.getPlayers().getTeamLeader(playerUUID);
 	List<UUID> teamMembers = new ArrayList<UUID>();
 	if (teamLeader != null) {
 	    teamMembers = plugin.getPlayers().getMembers(teamLeader);
 	}
-	
+
 	final List<String> options = new ArrayList<String>();
 	String lastArg = (args.length != 0 ? args[args.length - 1] : "");
 
 	switch (args.length) {
 	case 0: 
 	case 1: 
-		options.add("help"); //No permission needed.
-		//options.add("make"); //Make is currently a private command never accessible to the player
-		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.sethome")) {
-			options.add("go");
-		}
-		options.add("about"); //No permission needed. :-) Indeed.
-		if (plugin.getGrid() != null && plugin.getGrid().getSpawn() != null) {
-			options.add("spawn");
-		}
-		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.controlpanel")) {
-			options.add("controlpanel");
-			options.add("cp");
-		}
-		options.add("restart"); //No permission needed.
-		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.sethome")) {
-			options.add("sethome");
-		}
-		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.info")) {
-			options.add("level");
-		}
-		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.topten")) {
-			options.add("top");
-		}
-		if (Settings.useEconomy && VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.minishop")) {
-			options.add("minishop");
-			options.add("ms");
-		}
-		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.warp")) {
-			options.add("warp");
-			options.add("warps");
-		}
-		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.create")) {
-			options.add("team");
-			options.add("invite");
-			options.add("leave");
-		}
-		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.kick")) {
-			options.add("kick");
-		}
-		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.join")) {
-			options.add("accept");
-			options.add("reject");
-		}
-		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.makeleader")) {
-			options.add("makeleader");
-		}
-		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.biomes")) {
-			options.add("biomes");
-		}
-		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.expel")) {
-			options.add("expel");
-		}
-		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "coop")) {
-			options.add("coop");
-		}
-		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.lock")) {
-			options.add("lock");
-		}
-		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.settings")) {
-			options.add("settings");
-		}
-		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.lang")) {
-			options.add("lang");
-		}
+	    options.add("help"); //No permission needed.
+	    //options.add("make"); //Make is currently a private command never accessible to the player
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.sethome")) {
+		options.add("go");
+	    }
+	    options.add("about"); //No permission needed. :-) Indeed.
+	    if (plugin.getGrid() != null && plugin.getGrid().getSpawn() != null) {
+		options.add("spawn");
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.controlpanel")) {
+		options.add("controlpanel");
+		options.add("cp");
+	    }
+	    options.add("restart"); //No permission needed.
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.sethome")) {
+		options.add("sethome");
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.info")) {
+		options.add("level");
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.topten")) {
+		options.add("top");
+	    }
+	    if (Settings.useEconomy && VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.minishop")) {
+		options.add("minishop");
+		options.add("ms");
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.warp")) {
+		options.add("warp");
+		options.add("warps");
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.create")) {
+		options.add("team");
+		options.add("invite");
+		options.add("leave");
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.kick")) {
+		options.add("kick");
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.join")) {
+		options.add("accept");
+		options.add("reject");
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.makeleader")) {
+		options.add("makeleader");
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.biomes")) {
+		options.add("biomes");
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.expel")) {
+		options.add("expel");
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "coop")) {
+		options.add("coop");
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.lock")) {
+		options.add("lock");
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.settings")) {
+		options.add("settings");
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.lang")) {
+		options.add("lang");
+	    }
 
-		break;
+	    break;
 	case 2: 
-		if (args[0].equalsIgnoreCase("make")) {
-			options.addAll(schematics.keySet());
-		}
-		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.lang")) {
+	    if (args[0].equalsIgnoreCase("make")) {
+		options.addAll(schematics.keySet());
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.lang")) {
 		if (args[0].equalsIgnoreCase("lang")) {
-			options.add("English");
-			options.add("Français");
-			options.add("Deutsch");
-			options.add("Español");
-			options.add("Italiano");
-			options.add("한국의");
-			options.add("Korean");
-			options.add("Polski");
-			options.add("Brasil");
-			options.add("中国");
-			options.add("Chinese");
-			options.add("Čeština");
-			options.add("Slovenčina");
+		    options.add("English");
+		    options.add("Français");
+		    options.add("Deutsch");
+		    options.add("Español");
+		    options.add("Italiano");
+		    options.add("한국의");
+		    options.add("Korean");
+		    options.add("Polski");
+		    options.add("Brasil");
+		    options.add("中国");
+		    options.add("Chinese");
+		    options.add("Čeština");
+		    options.add("Slovenčina");
 		}
-		}
-		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.sethome")) {
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.sethome")) {
 		if (args[0].equalsIgnoreCase("go") || args[0].equalsIgnoreCase("sethome")) {
-			for (int i = 0; i < Settings.maxHomes; i++) {
-				options.add(Integer.toString(i));
-			}
+		    for (int i = 0; i < Settings.maxHomes; i++) {
+			options.add(Integer.toString(i));
+		    }
 		}
-		}
-		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.warp")
-					&& args[0].equalsIgnoreCase("warp")) {
-			final Set<UUID> warpList = WarpSigns.listWarps();
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.warp")
+		    && args[0].equalsIgnoreCase("warp")) {
+		final Set<UUID> warpList = WarpSigns.listWarps();
 
-			for (UUID warp : warpList) {
-				options.add(plugin.getPlayers().getName(warp));
-			}
+		for (UUID warp : warpList) {
+		    options.add(plugin.getPlayers().getName(warp));
 		}
-		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.info")
-				&& args[0].equalsIgnoreCase("level")) {
-			options.addAll(Util.getOnlinePlayerList());
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.info")
+		    && args[0].equalsIgnoreCase("level")) {
+		options.addAll(Util.getOnlinePlayerList());
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.create")
+		    && args[0].equalsIgnoreCase("invite")) {
+		options.addAll(Util.getOnlinePlayerList());
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "coop")
+		    && args[0].equalsIgnoreCase("coop")) {
+		options.addAll(Util.getOnlinePlayerList());
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.expel")
+		    && args[0].equalsIgnoreCase("expel")) {
+		options.addAll(Util.getOnlinePlayerList());
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.kick") 
+		    && (args[0].equalsIgnoreCase("kick") || args[0].equalsIgnoreCase("remove"))) {
+		for (UUID member : teamMembers) {
+		    options.add(plugin.getPlayers().getName(member));
 		}
-		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.create")
-				&& args[0].equalsIgnoreCase("invite")) {
-			options.addAll(Util.getOnlinePlayerList());
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.makeleader")
+		    && args[0].equalsIgnoreCase("makeleader")) {
+		for (UUID member : teamMembers) {
+		    options.add(plugin.getPlayers().getName(member));
 		}
-		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "coop")
-				&& args[0].equalsIgnoreCase("coop")) {
-			options.addAll(Util.getOnlinePlayerList());
-		}
-		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.expel")
-				&& args[0].equalsIgnoreCase("expel")) {
-			options.addAll(Util.getOnlinePlayerList());
-		}
-		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.kick") 
-				&& (args[0].equalsIgnoreCase("kick") || args[0].equalsIgnoreCase("remove"))) {
-			for (UUID member : teamMembers) {
-			    options.add(plugin.getPlayers().getName(member));
-			}
-		}
-		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.makeleader")
-				&& args[0].equalsIgnoreCase("makeleader")) {
-			for (UUID member : teamMembers) {
-			    options.add(plugin.getPlayers().getName(member));
-			}
-		}
-		break;
+	    }
+	    break;
 	}
 
 	return Util.tabLimit(options, lastArg);
-	}
+    }
 }

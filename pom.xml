@@ -14,7 +14,7 @@
 	</properties>
 
 	<build>
-		<defaultGoal>clean package install</defaultGoal>
+		<defaultGoal>package install</defaultGoal>
 		<finalName>askyblock</finalName>
 		<sourceDirectory>${basedir}/src/</sourceDirectory>
 		<resources>
