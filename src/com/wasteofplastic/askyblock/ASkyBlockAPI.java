@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
 
@@ -296,6 +297,30 @@ public class ASkyBlockAPI {
      */
     public boolean isAtSpawn(Location location) {
 	return plugin.getGrid().isAtSpawn(location);
+    }
+    
+    /**
+     * Get the island overworld
+     * @return the island overworld
+     */
+    public World getIslandWorld() {
+	return ASkyBlock.getIslandWorld();
+    }
+    
+    /**
+     * Get the nether world
+     * @return the nether world
+     */
+    public World getNetherWorld() {
+	return ASkyBlock.getNetherWorld();
+    }
+    
+    /**
+     * Whether the new nether is being used or not
+     * @return true if new nether is being used
+     */
+    public boolean isNewNether() {
+	return Settings.newNether;
     }
     
 }

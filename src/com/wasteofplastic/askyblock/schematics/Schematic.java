@@ -107,7 +107,7 @@ public class Schematic {
     private List<String> companionNames;
     private ItemStack[] defaultChestItems;
     // Name of a schematic this one is paired with
-    private String partnerName;
+    private String partnerName = "";
     // Key blocks
     private Vector bedrock;
     private Vector chest;
@@ -140,6 +140,7 @@ public class Schematic {
 	topGrass = null;
 	playerSpawn = null;
 	playerSpawnBlock = null;
+	partnerName = "";
     }
 
     public Schematic(File file) throws IOException {
@@ -166,6 +167,7 @@ public class Schematic {
 	topGrass = null;
 	playerSpawn = null;
 	playerSpawnBlock = null;
+	partnerName = "";
 	// Establish the World Edit to Material look up
 	// V1.8 items
 	// New V1.8 events
