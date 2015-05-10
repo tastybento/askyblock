@@ -196,6 +196,8 @@ public class PlayerEvents implements Listener {
 	 * }
 	 */
 	if (!IslandGuard.inWorld(e.getPlayer())) {
+	    // If the player is not in the right world, then cancel any falling flags
+	    unsetFalling(e.getPlayer().getUniqueId());
 	    return;
 	}
 	if (Settings.allowTeleportWhenFalling) {
@@ -223,7 +225,7 @@ public class PlayerEvents implements Listener {
      * 
      * @param e
      */
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
     public void onPlayerTeleport(final PlayerCommandPreprocessEvent e) {
 	if (debug) {
 	    plugin.getLogger().info(e.getEventName());
@@ -247,12 +249,13 @@ public class PlayerEvents implements Listener {
      * 
      * @param e
      */
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
     public void onPlayerTeleport(final PlayerTeleportEvent e) {
 	if (debug) {
 	    plugin.getLogger().info(e.getEventName());
 	}
-	if (e.getTo() == null || !IslandGuard.inWorld(e.getTo())) {
+	// We only check if the player is teleporting from an Island world and to is not null
+	if (e.getTo() == null || !IslandGuard.inWorld(e.getFrom())) {
 	    return;
 	}
 	// Check if ready
@@ -261,7 +264,9 @@ public class PlayerEvents implements Listener {
 	}
 	// Teleporting while falling check
 	if (!Settings.allowTeleportWhenFalling && e.getPlayer().getGameMode().equals(GameMode.SURVIVAL) && !e.getPlayer().isOp()) {
+	    //plugin.getLogger().info("DEBUG: teleport when falling is not allowed - check if falling");
 	    if (isFalling(e.getPlayer().getUniqueId())) {
+		//plugin.getLogger().info("DEBUG: player is falling");
 		// Sorry you are going to die
 		e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).islandcannotTeleport);
 		e.setCancelled(true);
@@ -327,7 +332,7 @@ public class PlayerEvents implements Listener {
     }
 
     /**
-     * Used to prevent teleporting when falling
+     * Unset the falling flag
      * 
      * @param uniqueId
      */

@@ -945,7 +945,15 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 		return true;
 	    }
 	case 1:
-	    if (split[0].equalsIgnoreCase("make")) {
+	    if (split[0].equalsIgnoreCase("ban") && VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.ban")) {
+		// Just show ban help
+		player.sendMessage(plugin.myLocale(playerUUID).helpColor + "/" + label + " ban <player>: " + ChatColor.WHITE + plugin.myLocale(playerUUID).islandhelpBan);
+		return true;
+	    } else if (split[0].equalsIgnoreCase("unban") && VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.ban")) {
+		// Just show ban help
+		player.sendMessage(plugin.myLocale(playerUUID).helpColor + "/" + label + " unban <player>: " + ChatColor.WHITE + plugin.myLocale(playerUUID).islandhelpUnban);
+		return true;
+	    } else if (split[0].equalsIgnoreCase("make")) {
 		//plugin.getLogger().info("DEBUG: /is make called");
 		if (!pendingNewIslandSelection.contains(playerUUID)) {
 		    return false;
