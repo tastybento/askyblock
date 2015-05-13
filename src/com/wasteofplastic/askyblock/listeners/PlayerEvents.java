@@ -249,7 +249,7 @@ public class PlayerEvents implements Listener {
      * 
      * @param e
      */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = false)
     public void onPlayerTeleport(final PlayerTeleportEvent e) {
 	if (debug) {
 	    plugin.getLogger().info(e.getEventName());
