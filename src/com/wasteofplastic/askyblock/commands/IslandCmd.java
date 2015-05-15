@@ -187,6 +187,29 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 		e.printStackTrace();
 	    }
 	}
+	// Set up some basic settings just in case the schematics section is missing
+	if (schematics.containsKey("default")) {
+	    schematics.get("nether").setName("Island");
+	    schematics.get("default").setDescription("");
+	    schematics.get("default").setPartnerName("nether");
+	    schematics.get("nether").setBiome(Settings.defaultBiome);
+	    schematics.get("nether").setIcon(Material.GRASS);
+	    if (Settings.chestItems.length == 0) {
+		schematics.get("default").setUseDefaultChest(false);
+	    }
+	}
+	if (schematics.containsKey("nether")) {
+	    schematics.get("nether").setName("NetherBlock Island");
+	    schematics.get("nether").setDescription("Nether Island");
+	    schematics.get("nether").setPartnerName("default");
+	    schematics.get("nether").setBiome(Biome.HELL);
+	    schematics.get("nether").setIcon(Material.NETHERRACK);
+	    schematics.get("nether").setVisible(false);
+	    schematics.get("nether").setPasteEntities(true);
+	    if (Settings.chestItems.length == 0) {
+		schematics.get("nether").setUseDefaultChest(false);
+	    }
+	}
 
 	// Load the schematics from config.yml
 	ConfigurationSection schemSection = plugin.getConfig().getConfigurationSection("schematicsection");
@@ -216,7 +239,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 		} // Cannot declare a not-found because get keys gets some additional non-wanted strings
 	    }
 	} else if (plugin.getConfig().contains("schematicsection")) {
-	    Settings.useSchematicPanel = schemSection.getBoolean("useschematicspanel", true);
+	    Settings.useSchematicPanel = schemSection.getBoolean("useschematicspanel", false);
 	    // Section exists, so go through the various sections
 	    for (String key : schemSection.getConfigurationSection("schematics").getKeys(false)) {
 		try {

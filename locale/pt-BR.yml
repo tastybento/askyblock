@@ -1,7 +1,7 @@
 ###########################################################################################
 # This is a YML file. Be careful when editing. Check your edits in a YAML checker like    #
 # the one at http://yaml-online-parser.appspot.com                                        #
-# If this file is deleted, then it will be recreated at the next reload.                   #
+# If this file is deleted, then it will be recreated at the next reload.                  #
 ###########################################################################################
 
 ################
@@ -152,7 +152,7 @@ challenges:
    guititle: "Desafios aSkyBlock"
    erroryouaremissing: "Faltam"
    errorRewardProblem: "Houve um erro ao entregar o seu prêmio. Peça ao seu admin para verificar o log!"
-   completedtimes: "Já foi completado [donetimes] vezes, de um máximo de [maxtimes]."
+   completedtimes: "Completado [donetimes] de [maxtimes] vezes."
    maxreached: "O limite de repetição foi alcançado ([donetimes] de [maxtimes])."
    
 #/island
@@ -164,7 +164,7 @@ island:
    subtitle: "por tastybento"
    # This section is to solicit donations from players. Feel free to set to '' to remove :-)
    donate: "Bem-vindo ao A SkyBlock, por tastybento."
-   url: "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZSBJG5J2E3B7U"
+   url: ""
 
    teleport: "Teleportando você para a sua ilha. (/island help para mais informações)"
    cannotTeleport: "Você não pode se teleportar enquanto está caindo!"
@@ -178,7 +178,7 @@ island:
    #Cool down warning - [time] is number of seconds left
    resetWait: "Você precisa esperar [time] segundos antes de fazer isso novamente."
    #Confirm
-   resetConfirm: "Digite /island confirm dentro de [seconds] segundos para apagar a sua ilha e reiniciá-la!"
+   resetConfirm: "Digite /island confirm dentro de 10 segundos para apagar a sua ilha e reiniciá-la!"
    resetYouHave: "Você pode reinicializar mais [number] vezes."
    resetNoMore: "Sua ilha não pode ser reinicializada novamente!"
    resetTo: "O limite de número de reinicializações foi zerado"
@@ -188,7 +188,7 @@ island:
    helpIsland: "inicia uma ilha, ou teleporta você para a sua ilha."
    helpTeleport: "teleporta você para a sua ilha."
    helpIslandSpawn: "ir para o ponto de spawn."
-   helpContolPanel: "abre a interface gráfica da ilha."
+   helpControlPanel: "abre a interface gráfica da ilha."
    #/island restart
    helpRestart: "reinicia a sua ilha e apaga a anterior."
    islandDeletedLifeboats: "A ilha foi deletada! Corra para os botes salva-vidas!"
@@ -351,6 +351,8 @@ purge:
    purgeCancelled: "Processo de purga cancelado."
    finished: "As ilhas inativas foram removidas."
    removingName: "Purga: Apagando a ilha de [name]"
+   preventPurge: "Esta ilha está protegida contra purga"
+   allowPurge: "A proteção contra purga foi removida"
 
 #confirm
 confirm:
@@ -446,3 +448,20 @@ lock:
    unlocking: "Destravando a ilha"
    enteringspawn: "Entrando no Spawn"
    leavingspawn: "Saindo do Spawn"
+
+schematics:
+   title: "Selecione a ilha..."
+
+ban:
+   success: "[name] está banido desta ilha!"
+   banned: "Você foi banido da ilha de [name]!"
+   lifted: "Você não está mais banido da ilha de [name]!"
+   liftedsuccess: "[name] não está mais banido desta ilha!"
+   fail: "[name] não pode ser banido!"
+   notyourself: "Você não pode fazer isso a si mesmo!"
+   notteammember: "Você não pode bandir um membro de sua equipe!"
+   notbanned: "[name] não foi banido!"
+   alreadybanned: "[name] já está banido!"
+   helpBan: "bane um jogador da sua ilha."
+   helpUnban: "permite que um jogador banido retorne à sua ilha"
+   

@@ -1451,6 +1451,7 @@ public class Schematic {
     }
 
     /**
+     * Whether the schematic is visible or not
      * @return the visible
      */
     public boolean isVisible() {
@@ -1458,6 +1459,7 @@ public class Schematic {
     }
 
     /**
+     * Sets if the schematic can be seen in the schematics GUI or not by the player
      * @param visible the visible to set
      */
     public void setVisible(boolean visible) {
