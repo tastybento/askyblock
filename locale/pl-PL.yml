@@ -129,7 +129,7 @@ island:
    helpIsland: "stwórz swoją wyspę lub teleporuj się do niej."
    helpTeleport: "teleport na twoją wyspę."
    helpIslandSpawn: "Idź na spawn."
-   helpContolPanel: "otwórz GUI wyspy."
+   helpControlPanel: "otwórz GUI wyspy."
    #/island restart
    helpRestart: "zresetuj swoją wyspę i usuń starą."
    islandDeletedLifeboats: "Wyspa usunięta! Głowa do góry!"

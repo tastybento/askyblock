@@ -194,7 +194,7 @@ island:
    helpIsland: "&b開始島嶼生涯,&e或者回到你的島嶼."
    helpTeleport: "傳送到你的島嶼."
    helpIslandSpawn: "回到島嶼出生點."
-   helpContolPanel: "&6打開島嶼幫助界面."
+   helpControlPanel: "&6打開島嶼幫助界面."
    #/island restart
    helpRestart: "&c&l重新開始&6的你島嶼生涯."
    islandDeletedLifeboats: "&c島嶼已&4&l刪除!"

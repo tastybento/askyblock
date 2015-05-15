@@ -194,7 +194,7 @@ island:
    helpIsland: "§b开始岛屿生涯,§e或者回到你的岛屿."
    helpTeleport: "传送到你的岛屿."
    helpIslandSpawn: "回到岛屿出生点."
-   helpContolPanel: "§6打开岛屿帮助界面."
+   helpControlPanel: "§6打开岛屿帮助界面."
    #/island restart
    helpRestart: "§c§l重新开始§6的你岛屿生涯."
    islandDeletedLifeboats: "§c岛屿已§4§l删除!"

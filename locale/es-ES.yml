@@ -188,7 +188,7 @@ island:
    helpIsland: "Inicia una isla, o te teletransporta a tu isla."
    helpTeleport: "Te teletransportarte a tu isla."
    helpIslandSpawn: "Vas al spawn."
-   helpContolPanel: "Abre el GUI de islas."
+   helpControlPanel: "Abre el GUI de islas."
    #/island restart
    helpRestart: "Reinicia tu isla y elimina la vieja."
    islandDeletedLifeboats: "Isla eliminada! Regresando al Spawn...!"
