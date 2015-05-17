@@ -483,29 +483,20 @@ public class PlayerCache {
 	if (plugin.getTinyDB().isDbReady()) {
 	    return plugin.getTinyDB().getPlayerUUID(string);
 	}
-
-	// Look in the file system <-- this does not work well if the number of players is very large
-	// i.e., server with >115,000 players can crash
-	/*
-	for (final File f : plugin.getPlayersFolder().listFiles()) {
-	    // Need to remove the .yml suffix
-	    String fileName = f.getName();
-	    if (fileName.endsWith(".yml")) {
-		try {
-		    final UUID playerUUID = UUID.fromString(fileName.substring(0, fileName.length() - 4));
-		    if (plugin.getServer().getOfflinePlayer(playerUUID).getName().equalsIgnoreCase(string)) {
-			return playerUUID;
-		    }
-		} catch (Exception e) {
-		}
-	    }
-	}*/
 	return null;
     }
 
+    /**
+     * Sets the player's name and updates the name>UUID database is up to date
+     * @param uniqueId
+     * @param name
+     */
     public void setPlayerName(UUID uniqueId, String name) {
 	addPlayer(uniqueId);
 	playerCache.get(uniqueId).setPlayerN(name);
+	// Save the name in the name database. Note that the old name will still work until someone takes it
+	// This feature enables admins to locate 'fugitive' players even if they change their name
+	plugin.getTinyDB().savePlayerName(name, uniqueId);
     }
 
     /**
