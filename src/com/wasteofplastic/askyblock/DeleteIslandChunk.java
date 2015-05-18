@@ -40,6 +40,8 @@ public class DeleteIslandChunk {
 	    return;
 	//plugin.getLogger().info("DEBUG: Deleting island " + loc);
 	World world = loc.getWorld();
+	if (world == null)
+	    return;
 	int range = Settings.island_protectionRange / 2 * +1;
 	this.plugin = plugin;
 	int minx = (loc.getBlockX() - range);

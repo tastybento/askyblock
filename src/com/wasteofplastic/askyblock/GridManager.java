@@ -1222,7 +1222,8 @@ public class GridManager {
 	// Run through all the locations
 	for (Location islandTestLocation : islandTestLocations) {
 	    // Must be in the same world as the locations being checked
-	    if (islandTestLocation != null && islandTestLocation.getWorld().equals(player.getWorld())) {
+	    // Note that getWorld can return null if a world has been deleted on the server
+	    if (islandTestLocation != null && islandTestLocation.getWorld() != null && islandTestLocation.getWorld().equals(player.getWorld())) {
 		int protectionRange = Settings.island_protectionRange;
 		if (getIslandAt(islandTestLocation) != null) {
 		    // Get the protection range for this location if possible
