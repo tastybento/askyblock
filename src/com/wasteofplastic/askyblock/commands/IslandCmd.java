@@ -65,6 +65,10 @@ import com.wasteofplastic.askyblock.LevelCalc;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.TopTen;
 import com.wasteofplastic.askyblock.WarpSigns;
+import com.wasteofplastic.askyblock.events.IslandJoinEvent;
+import com.wasteofplastic.askyblock.events.IslandLeaveEvent;
+import com.wasteofplastic.askyblock.events.IslandNewEvent;
+import com.wasteofplastic.askyblock.events.IslandResetEvent;
 import com.wasteofplastic.askyblock.listeners.PlayerEvents;
 import com.wasteofplastic.askyblock.panels.BiomesPanel;
 import com.wasteofplastic.askyblock.panels.ControlPanel;
@@ -478,23 +482,6 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
      * @return
      */
     public boolean addPlayertoTeam(final UUID playerUUID, final UUID teamLeader) {
-	// Only add online players
-	/*
-	 * if (!plugin.getServer().getPlayer(playerUUID).isOnline() ||
-	 * !plugin.getServer().getPlayer(teamLeader).isOnline()) {
-	 * plugin.getLogger().info(
-	 * "Can only add player to a team if both player and leader are online."
-	 * );
-	 * return false;
-	 * }
-	 */
-	// plugin.getLogger().info("Adding player: " + playerUUID +
-	// " to team with leader: " + teamLeader);
-	// plugin.getLogger().info("The team island location is: " +
-	// plugin.getPlayers().getIslandLocation(teamLeader));
-	// plugin.getLogger().info("The leader's home location is: " +
-	// plugin.getPlayers().getHomeLocation(teamLeader) +
-	// " (may be different or null)");
 	// Set the player's team giving the team leader's name and the team's
 	// island
 	// location
@@ -522,6 +509,9 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 	    if (!plugin.getPlayers().getMembers(teamLeader).contains(teamLeader)) {
 		plugin.getPlayers().addTeamMember(teamLeader, teamLeader);
 	    }
+	    // Fire event
+	    final IslandJoinEvent event = new IslandJoinEvent(plugin, playerUUID, teamLeader);
+	    plugin.getServer().getPluginManager().callEvent(event);
 	}
 	return true;
     }
@@ -529,25 +519,28 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
     /**
      * Removes a player from a team run by teamleader
      * 
-     * @param player
-     * @param teamleader
+     * @param playerUUID
+     * @param teamLeader
      */
-    public void removePlayerFromTeam(final UUID player, final UUID teamleader) {
+    public void removePlayerFromTeam(final UUID playerUUID, final UUID teamLeader) {
 	// Remove player from the team
-	plugin.getPlayers().removeMember(teamleader, player);
+	plugin.getPlayers().removeMember(teamLeader, playerUUID);
 	// If player is online
 	// If player is not the leader of their own team
-	if (!player.equals(teamleader)) {
-	    plugin.getPlayers().setLeaveTeam(player);
+	if (!playerUUID.equals(teamLeader)) {
+	    plugin.getPlayers().setLeaveTeam(playerUUID);
 	    //plugin.getPlayers().setHomeLocation(player, null);
-	    plugin.getPlayers().clearHomeLocations(player);
-	    plugin.getPlayers().setIslandLocation(player, null);
-	    plugin.getPlayers().setTeamIslandLocation(player, null);
-	    runCommands(Settings.leaveCommands, player);
+	    plugin.getPlayers().clearHomeLocations(playerUUID);
+	    plugin.getPlayers().setIslandLocation(playerUUID, null);
+	    plugin.getPlayers().setTeamIslandLocation(playerUUID, null);
+	    runCommands(Settings.leaveCommands, playerUUID);
+	    // Fire event
+	    final IslandLeaveEvent event = new IslandLeaveEvent(plugin, playerUUID, teamLeader);
+	    plugin.getServer().getPluginManager().callEvent(event);
 	} else {
 	    // Ex-Leaders keeps their island, but the rest of the team items are
 	    // removed
-	    plugin.getPlayers().setLeaveTeam(player);
+	    plugin.getPlayers().setLeaveTeam(playerUUID);
 	}
 
     }
@@ -715,7 +708,9 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 		    "tellraw " + player.getName() + " {text:\"" + plugin.myLocale(player.getUniqueId()).islandDonate + "\",color:aqua" + ",clickEvent:{action:open_url,value:\""
 			    + plugin.myLocale(player.getUniqueId()).islandURL + "\"}}");
 	}
-	// Done
+	// Done - fire event
+	final IslandNewEvent event = new IslandNewEvent(player,schematic, myIsland);
+	plugin.getServer().getPluginManager().callEvent(event);
     }
 
     /**
@@ -2492,6 +2487,9 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 	}
 	// Run any commands that need to be run at reset
 	runCommands(Settings.resetCommands, player.getUniqueId());
+	// Fire event
+	final IslandResetEvent event = new IslandResetEvent(player, oldIsland);
+	plugin.getServer().getPluginManager().callEvent(event);
     }
 
     /**
