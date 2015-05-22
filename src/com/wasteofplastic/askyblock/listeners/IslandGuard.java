@@ -804,7 +804,7 @@ public class IslandGuard implements Listener {
 	}
 	// Check to see if it's an item frame
 	if (e.getEntity() instanceof ItemFrame) {
-	    // plugin.getLogger().info("Item frame being damaged");
+	    //plugin.getLogger().info("DEBUG: Item frame being damaged");
 	    if (!Settings.allowSpawnBreakBlocks && plugin.getGrid().isAtSpawn(e.getEntity().getLocation())) {
 		Player player = (Player) e.getDamager();
 		player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).islandProtected);
@@ -814,8 +814,7 @@ public class IslandGuard implements Listener {
 	    if (Settings.allowBreakBlocks || (Settings.allowSpawnBreakBlocks && plugin.getGrid().isAtSpawn(e.getEntity().getLocation()))) {
 		return;
 	    }
-	    // plugin.getLogger().info("Damager is = " +
-	    // e.getDamager().toString());
+	    //plugin.getLogger().info("DEBUG: Damager is = " + e.getDamager().toString());
 	    if (e.getDamager() instanceof Player) {
 		if (!plugin.getGrid().locationIsOnIsland((Player) e.getDamager(), e.getEntity().getLocation())) {
 		    Player player = (Player) e.getDamager();
@@ -826,8 +825,7 @@ public class IslandGuard implements Listener {
 	    } else if (e.getDamager() instanceof Projectile) {
 		// Find out who fired the arrow
 		Projectile p = (Projectile) e.getDamager();
-		// plugin.getLogger().info("Shooter is " +
-		// p.getShooter().toString());
+		//plugin.getLogger().info("DEBUG: Shooter is " + p.getShooter().toString());
 		if (p.getShooter() instanceof Player) {
 		    // Is the item frame on the shooter's island?
 		    if (!plugin.getGrid().locationIsOnIsland((Player) p.getShooter(), e.getEntity().getLocation())) {

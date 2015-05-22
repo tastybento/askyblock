@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -27,6 +28,9 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.MaterialData;
+import org.bukkit.material.SimpleAttachableMaterialData;
+import org.bukkit.material.TrapDoor;
 import org.bukkit.util.Vector;
 
 import com.wasteofplastic.askyblock.util.Util;
@@ -776,8 +780,22 @@ public class GridManager {
 		return false;
 	    }
 	}
+	MaterialData md = ground.getState().getData();
+	if (md instanceof SimpleAttachableMaterialData) {
+	    Bukkit.getLogger().info("DEBUG: trapdoor/button/tripwire hook etc.");
+	    if (md instanceof TrapDoor) {
+		TrapDoor trapDoor = (TrapDoor)md;
+		if (trapDoor.isOpen()) {
+		    //Bukkit.getLogger().info("DEBUG: trapdoor open");
+		    return false;
+		}
+	    } else {
+		return false;
+	    }
+	    //Bukkit.getLogger().info("DEBUG: trapdoor closed");
+	}
 	if (ground.getType().equals(Material.CACTUS) || ground.getType().equals(Material.BOAT) || ground.getType().equals(Material.FENCE)
-		|| ground.getType().equals(Material.NETHER_FENCE)) {
+		|| ground.getType().equals(Material.NETHER_FENCE) || ground.getType().equals(Material.SIGN_POST) || ground.getType().equals(Material.WALL_SIGN)) {
 	    // Bukkit.getLogger().info("DEBUG: cactus");
 	    return false;
 	}
@@ -1013,7 +1031,7 @@ public class GridManager {
 		maxYradius++;
 	    }
 	    //plugin.getLogger().info("DEBUG: Radii " + minXradius + "," + minYradius + "," + minZradius + 
-		//    "," + maxXradius + "," + maxYradius + "," + maxZradius);
+	    //    "," + maxXradius + "," + maxYradius + "," + maxZradius);
 	} while (minXradius < i || maxXradius < i || minZradius < i || maxZradius < i || minYradius < depth 
 		|| maxYradius < height);
 	// Nothing worked

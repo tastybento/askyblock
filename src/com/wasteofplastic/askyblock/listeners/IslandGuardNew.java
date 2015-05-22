@@ -151,7 +151,7 @@ public class IslandGuardNew implements Listener {
     @EventHandler(priority = EventPriority.LOW)
     public void ArmorStandDestroy(EntityDamageByEntityEvent e) {
 	if (debug) {
-	    plugin.getLogger().info(e.getEventName());
+	    plugin.getLogger().info("IslandGuard New " + e.getEventName());
 	}
 	if (!(e.getEntity() instanceof LivingEntity)) {
 	    return;
