@@ -171,13 +171,7 @@ public class Schematic {
 	// Establish the World Edit to Material look up
 	// V1.8 items
 	// New V1.8 events
-	Class<?> clazz;
-	try {
-	    clazz = Class.forName("org.bukkit.Material.ACACIA_DOOR_ITEM");
-	} catch (Exception e) {
-	    clazz = null;
-	}
-	if (clazz != null) {
+	if (!Bukkit.getServer().getVersion().contains("(MC: 1.7")) {
 	    WEtoM.put("ACACIA_DOOR",Material.ACACIA_DOOR_ITEM);
 	    WEtoM.put("BIRCH_DOOR",Material.BIRCH_DOOR_ITEM);
 	    WEtoM.put("BIRCH_STAIRS",Material.BIRCH_WOOD_STAIRS);
