@@ -649,6 +649,7 @@ public class PlayerCache {
      * @param localeName
      */
     public void setLocale(UUID playerUUID, String localeName) {
+	addPlayer(playerUUID);
 	playerCache.get(playerUUID).setLocale(localeName);
     }
 

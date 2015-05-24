@@ -55,14 +55,20 @@ public class JoinLeaveEvents implements Listener {
     public void onPlayerJoin(final PlayerJoinEvent event) {
 	final Player player = event.getPlayer();
 	final UUID playerUUID = player.getUniqueId();
-	// Get language
-	String language = getLanguage(player);
-	//plugin.getLogger().info("DEBUG: language = " + language);
-	// Check if we have this language
-	if (plugin.getResource("locale/" + language + ".yml") != null) {
-	    if (plugin.getPlayers().getLocale(playerUUID).isEmpty()) {
-		plugin.getPlayers().setLocale(playerUUID, language);
+	// Check language permission
+	if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.lang")) {
+	    // Get language
+	    String language = getLanguage(player);
+	    //plugin.getLogger().info("DEBUG: language = " + language);
+	    // Check if we have this language
+	    if (plugin.getResource("locale/" + language + ".yml") != null) {
+		if (plugin.getPlayers().getLocale(playerUUID).isEmpty()) {
+		    plugin.getPlayers().setLocale(playerUUID, language);
+		}
 	    }
+	} else {
+	    // Default locale
+	    plugin.getPlayers().setLocale(playerUUID,"");
 	}
 	// Check updates
 	if (player.isOp() && plugin.getUpdateCheck() != null) {
