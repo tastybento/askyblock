@@ -18,9 +18,13 @@ package jdbm.helper;
 import java.io.IOException;
 import java.util.AbstractMap;
 import java.util.Comparator;
-import java.util.Map;
 
-import jdbm.*;
+import jdbm.InverseHashView;
+import jdbm.PrimaryHashMap;
+import jdbm.SecondaryHashMap;
+import jdbm.SecondaryKeyExtractor;
+import jdbm.SecondaryTreeMap;
+import jdbm.Serializer;
 
 public abstract class AbstractPrimaryMap<K, V> extends AbstractMap<K,V> implements PrimaryHashMap<K, V>{
 

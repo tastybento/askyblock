@@ -20,8 +20,8 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import jdbm.helper.Serialization;
 import jdbm.helper.LongPacker;
+import jdbm.helper.Serialization;
 
 /**
  * 

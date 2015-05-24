@@ -17,13 +17,10 @@
 package jdbm.recman;
 
 import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOError;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.channels.FileLock;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +30,6 @@ import java.util.zip.DeflaterOutputStream;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 
-import jdbm.RecordManager;
 import jdbm.Serializer;
 import jdbm.SerializerInput;
 import jdbm.SerializerOutput;
