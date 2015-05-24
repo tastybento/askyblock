@@ -1005,12 +1005,13 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 			}
 		    } else {
 			player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).teamChatNoTeam);
+			return true;
 		    }
 		} else {
 		    player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).errorNoPermission); 
 		}
-		return true;
 	    }
+
 	    if (split[0].equalsIgnoreCase("ban")) {
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.ban")) {
 		    // Just show ban help
