@@ -464,3 +464,11 @@ ban:
    alreadybanned: "[name] is already banned!"
    helpBan: "ban a player from your island."
    helpUnban: "un-ban a player from your island"
+
+teamchat:
+   prefix: "[Team Chat]<{ISLAND_PLAYER}> "
+   helpChat: "turn on/off team chat"
+   statusOn: "Team chat is on"
+   statusOff: "Team chat is off"
+   noTeamAround: "None of your team are online!"
+   

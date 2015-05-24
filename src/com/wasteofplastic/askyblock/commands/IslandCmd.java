@@ -62,6 +62,7 @@ import com.wasteofplastic.askyblock.DeleteIslandChunk;
 import com.wasteofplastic.askyblock.GridManager;
 import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.LevelCalc;
+import com.wasteofplastic.askyblock.LevelCalcByChunk;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.TopTen;
 import com.wasteofplastic.askyblock.WarpSigns;
@@ -870,21 +871,31 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 	    asker.sendMessage(ChatColor.RED + plugin.myLocale(asker.getUniqueId()).islanderrorLevelNotReady);
 	    return false;
 	}
-	// This flag is true if the command can be used
-	plugin.setCalculatingLevel(true);
-	if (asker.getUniqueId().equals(targetPlayer) || asker.isOp()) {
-	    if (!onLevelWaitTime(asker) || Settings.levelWait <= 0 || asker.isOp()) {
-		asker.sendMessage(ChatColor.GREEN + plugin.myLocale(asker.getUniqueId()).levelCalculating);
-		LevelCalc levelCalc = new LevelCalc(plugin, targetPlayer, asker);
-		levelCalc.runTaskTimer(plugin, 0L, 5L);
-		setLevelWaitTime(asker);
+	// Player asking for their own island calc
+	if (asker.getUniqueId().equals(targetPlayer) || asker.isOp() || VaultHelper.checkPerm(asker, Settings.PERMPREFIX + "mod.info")) {
+	    // Newer better system - uses chunks
+	    if (Settings.fastLevelCalc) {
+		if (!onLevelWaitTime(asker) || Settings.levelWait <= 0 || asker.isOp() || VaultHelper.checkPerm(asker, Settings.PERMPREFIX + "mod.info")) {
+		    asker.sendMessage(ChatColor.GREEN + plugin.myLocale(asker.getUniqueId()).levelCalculating);
+		    setLevelWaitTime(asker);
+		    new LevelCalcByChunk(plugin, targetPlayer, asker);
+		}
 	    } else {
-		asker.sendMessage(ChatColor.YELLOW + plugin.myLocale(asker.getUniqueId()).islandresetWait.replace("[time]", String.valueOf(getLevelWaitTime(asker))));
-		plugin.setCalculatingLevel(false);
+		// Legacy support - maybe some people still want the old way (shrug)
+		plugin.setCalculatingLevel(true);
+		if (!onLevelWaitTime(asker) || Settings.levelWait <= 0 || asker.isOp() || VaultHelper.checkPerm(asker, Settings.PERMPREFIX + "mod.info")) {
+		    asker.sendMessage(ChatColor.GREEN + plugin.myLocale(asker.getUniqueId()).levelCalculating);
+		    LevelCalc levelCalc = new LevelCalc(plugin, targetPlayer, asker);
+		    levelCalc.runTaskTimer(plugin, 0L, 5L);
+		    setLevelWaitTime(asker);
+		} else {
+		    asker.sendMessage(ChatColor.YELLOW + plugin.myLocale(asker.getUniqueId()).islandresetWait.replace("[time]", String.valueOf(getLevelWaitTime(asker))));
+		    plugin.setCalculatingLevel(false);
+		}
 	    }
 	} else {
+	    // Asking for the level of another player
 	    asker.sendMessage(ChatColor.GREEN + plugin.myLocale(asker.getUniqueId()).islandislandLevelis + " " + ChatColor.WHITE + plugin.getPlayers().getIslandLevel(targetPlayer));
-	    plugin.setCalculatingLevel(false);
 	}
 
 	return true;
@@ -963,13 +974,58 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 		return true;
 	    }
 	case 1:
-	    if (split[0].equalsIgnoreCase("ban") && VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.ban")) {
-		// Just show ban help
-		player.sendMessage(plugin.myLocale(playerUUID).helpColor + "/" + label + " ban <player>: " + ChatColor.WHITE + plugin.myLocale(playerUUID).islandhelpBan);
+	    if (split[0].equalsIgnoreCase("teamchat")) {
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.chat")) {
+		    // Check if this command is on or not
+		    if (!Settings.teamChat) {
+			return false;
+		    }
+		    // Check if in team
+		    if (plugin.getPlayers().inTeam(playerUUID)) {
+			// Check if team members are online
+			boolean online = false;
+			for (UUID teamMember : plugin.getPlayers().getMembers(playerUUID)) {
+			    if (!teamMember.equals(playerUUID) && plugin.getServer().getPlayer(teamMember) != null) {
+				online = true;
+			    }
+			}
+			if (!online) {
+			    player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).teamChatNoTeamAround);
+			    player.sendMessage(ChatColor.GREEN + plugin.myLocale(playerUUID).teamChatStatusOff);
+			    plugin.getChatListener().unSetPlayer(playerUUID);
+			    return true;
+			}
+			if (plugin.getChatListener().isTeamChat(playerUUID)) {
+			    // Toggle
+			    player.sendMessage(ChatColor.GREEN + plugin.myLocale(playerUUID).teamChatStatusOff);
+			    plugin.getChatListener().unSetPlayer(playerUUID);
+			} else {
+			    player.sendMessage(ChatColor.GREEN + plugin.myLocale(playerUUID).teamChatStatusOn);
+			    plugin.getChatListener().setPlayer(playerUUID);
+			}
+		    } else {
+			player.sendMessage(plugin.myLocale(playerUUID).errorNoTeam);
+		    }
+		} else {
+		    player.sendMessage(plugin.myLocale(playerUUID).errorNoPermission); 
+		}
+		return true;
+	    }
+	    if (split[0].equalsIgnoreCase("ban")) {
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.ban")) {
+		    // Just show ban help
+		    player.sendMessage(plugin.myLocale(playerUUID).helpColor + "/" + label + " ban <player>: " + ChatColor.WHITE + plugin.myLocale(playerUUID).islandhelpBan);
+		} else {
+		    player.sendMessage(plugin.myLocale(playerUUID).errorNoPermission);
+		}
 		return true;
 	    } else if (split[0].equalsIgnoreCase("unban") && VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.ban")) {
-		// Just show ban help
-		player.sendMessage(plugin.myLocale(playerUUID).helpColor + "/" + label + " unban <player>: " + ChatColor.WHITE + plugin.myLocale(playerUUID).islandhelpUnban);
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.ban")) {
+		    // Just show unban help
+		    player.sendMessage(plugin.myLocale(playerUUID).helpColor + "/" + label + " unban <player>: " + ChatColor.WHITE + plugin.myLocale(playerUUID).islandhelpUnban);
+		} else {
+		    player.sendMessage(plugin.myLocale(playerUUID).errorNoPermission);
+		}
 		return true;
 	    } else if (split[0].equalsIgnoreCase("make")) {
 		//plugin.getLogger().info("DEBUG: /is make called");
@@ -1402,6 +1458,11 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 		return false;
 	    } else if (split[0].equalsIgnoreCase("level")) {
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.info")) {
+		    if (Settings.fastLevelCalc) {
+			calculateIslandLevel(player, playerUUID);
+			return true;
+		    }
+		    // Legacy - forces player to be on island to reduce frivolous calculations
 		    if (plugin.getGrid().playerIsOnIsland(player)) {
 			if (!plugin.getPlayers().inTeam(playerUUID) && !plugin.getPlayers().hasIsland(playerUUID)) {
 			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoIsland);
@@ -2665,6 +2726,9 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 	    }
 	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.makeleader")) {
 		options.add("makeleader");
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.chat")) {
+		options.add("teamchat");
 	    }
 	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.biomes")) {
 		options.add("biomes");

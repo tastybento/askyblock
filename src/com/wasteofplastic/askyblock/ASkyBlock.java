@@ -62,6 +62,7 @@ import com.wasteofplastic.askyblock.commands.IslandCmd;
 import com.wasteofplastic.askyblock.generators.ChunkGeneratorWorld;
 import com.wasteofplastic.askyblock.listeners.AcidEffect;
 import com.wasteofplastic.askyblock.listeners.AcidInventory;
+import com.wasteofplastic.askyblock.listeners.ChatListener;
 import com.wasteofplastic.askyblock.listeners.IslandGuard;
 import com.wasteofplastic.askyblock.listeners.IslandGuardNew;
 import com.wasteofplastic.askyblock.listeners.JoinLeaveEvents;
@@ -118,6 +119,9 @@ public class ASkyBlock extends JavaPlugin {
 
     // Messages object
     private Messages messages;
+    
+    // Team chat listened
+    private ChatListener chatListener;
 
     /**
      * Returns the World object for the island world named in config.yml.
@@ -692,7 +696,10 @@ public class ASkyBlock extends JavaPlugin {
 	}
 	// Debug
 	Settings.debug = getConfig().getInt("debug", 0);
-	//Settings.useSchematicPanel = getConfig().getBoolean("general.useschematicspanel", true);
+	// Fast level calculation (this is really fast)
+	Settings.fastLevelCalc = getConfig().getBoolean("general.fastlevelcalc", true);
+	// Team chat
+	Settings.teamChat = getConfig().getBoolean("general.teamchat", true);
 	// TEAMSUFFIX as island level
 	Settings.setTeamName = getConfig().getBoolean("general.setteamsuffix", false);
 	Settings.teamSuffix = getConfig().getString("general.teamsuffix","([level])");
@@ -1243,6 +1250,9 @@ public class ASkyBlock extends JavaPlugin {
 	manager.registerEvents(new SchematicsPanel(), this);
 	// Track incoming world teleports
 	manager.registerEvents(new WorldEnter(this), this);
+	// Team chat
+	chatListener = new ChatListener(this);
+	manager.registerEvents(chatListener, this);
     }
 
 
@@ -1380,5 +1390,9 @@ public class ASkyBlock extends JavaPlugin {
      */
     public TinyDB getTinyDB() {
         return tinyDB;
+    }
+
+    public ChatListener getChatListener() {
+	return chatListener;	
     }
 }

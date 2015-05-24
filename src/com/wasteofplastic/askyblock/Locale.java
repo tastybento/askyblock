@@ -461,6 +461,11 @@ public class Locale {
     public String islandhelpBan;
     public String islandhelpUnban;
     public String banNotTeamMember;
+    public String teamChatPrefix;
+    public String teamChatHelp;
+    public String teamChatStatusOff;
+    public String teamChatStatusOn;
+    public String teamChatNoTeamAround;
 
     /**
      * Creates a locale object full of localized strings for a language
@@ -1023,5 +1028,10 @@ public class Locale {
 	lockEnteringSpawn = ChatColor.translateAlternateColorCodes('&', locale.getString("lock.enteringspawn", "Entering Spawn"));
 	lockLeavingSpawn = ChatColor.translateAlternateColorCodes('&', locale.getString("lock.leavingspawn", "Leaving Spawn"));
 	schematicsTitle = ChatColor.translateAlternateColorCodes('&', locale.getString("schematics.title", "Choose island..."));
+	teamChatPrefix = ChatColor.translateAlternateColorCodes('&', locale.getString("teamchat.prefix", "[Team Chat]<{ISLAND_PLAYER}> "));
+	teamChatHelp = ChatColor.translateAlternateColorCodes('&', locale.getString("teamchat.helpChat", "turn on/off team chat"));
+	teamChatStatusOff = ChatColor.translateAlternateColorCodes('&', locale.getString("teamchat.statusOff", "Team chat is off"));
+	teamChatStatusOn = ChatColor.translateAlternateColorCodes('&', locale.getString("teamchat.statusOn", "Team chat is on"));
+	teamChatNoTeamAround = ChatColor.translateAlternateColorCodes('&', locale.getString("teamchat.noTeamAround", "None of your team are online!"));
     }
 }

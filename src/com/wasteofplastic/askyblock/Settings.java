@@ -151,6 +151,7 @@ public class Settings {
     // Levels
     public static HashMap<MaterialData, Integer> blockLimits;
     public static HashMap<MaterialData, Integer> blockValues;
+    public static boolean fastLevelCalc;
 
     // Challenge completion broadcast
     public static boolean broadcastMessages;
@@ -220,5 +221,6 @@ public class Settings {
     public static boolean netherTrees;
     public static int maxTeamSizeVIP;
     public static int maxTeamSizeVIP2;
+    public static boolean teamChat;
 
 }
