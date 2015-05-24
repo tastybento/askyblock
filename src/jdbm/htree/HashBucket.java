@@ -16,8 +16,9 @@
 
 package jdbm.htree;
 
-import java.awt.image.Kernel;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import jdbm.SerializerInput;

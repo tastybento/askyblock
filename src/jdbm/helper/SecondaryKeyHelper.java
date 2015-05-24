@@ -22,7 +22,12 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-import jdbm.*;
+import jdbm.InverseHashView;
+import jdbm.RecordListener;
+import jdbm.SecondaryHashMap;
+import jdbm.SecondaryKeyExtractor;
+import jdbm.SecondaryTreeMap;
+import jdbm.Serializer;
 import jdbm.btree.BTree;
 import jdbm.btree.BTreeSecondarySortedMap;
 import jdbm.htree.HTree;

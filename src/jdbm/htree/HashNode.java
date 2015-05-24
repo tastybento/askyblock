@@ -16,14 +16,6 @@
 
 package jdbm.htree;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-
-import jdbm.Serializer;
-import jdbm.SerializerInput;
-import jdbm.SerializerOutput;
-import jdbm.helper.Serialization;
 
 /**
  *  Abstract class for Hashtable directory nodes

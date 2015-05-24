@@ -21,7 +21,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import jdbm.*;
+import jdbm.RecordListener;
+import jdbm.RecordManager;
+import jdbm.Serializer;
+import jdbm.SerializerInput;
+import jdbm.SerializerOutput;
 import jdbm.helper.JdbmBase;
 import jdbm.helper.Serialization;
 

@@ -15,7 +15,6 @@
  ******************************************************************************/
 package jdbm;
 
-import java.util.Map;
 
 /**
  * Primary map which stores references to storage entries.
