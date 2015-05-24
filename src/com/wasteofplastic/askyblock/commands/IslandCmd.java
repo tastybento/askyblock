@@ -883,6 +883,8 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 		    asker.sendMessage(ChatColor.GREEN + plugin.myLocale(asker.getUniqueId()).levelCalculating);
 		    setLevelWaitTime(asker);
 		    new LevelCalcByChunk(plugin, targetPlayer, asker);
+		} else {
+		    asker.sendMessage(ChatColor.YELLOW + plugin.myLocale(asker.getUniqueId()).islandresetWait.replace("[time]", String.valueOf(getLevelWaitTime(asker))));
 		}
 	    } else {
 		// Legacy support - maybe some people still want the old way (shrug)
