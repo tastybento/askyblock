@@ -28,10 +28,19 @@ public class InventorySave {
      * @param player
      */
     public void savePlayerInventory(Player player) {
+	//plugin.getLogger().info("DEBUG: Saving inventory");
 	// Save the player's armor and things
 	inventories.put(player.getUniqueId(),new InventoryStore(player.getInventory().getContents(), player.getInventory().getArmorContents()));
     }
 
+    /**
+     * Clears any saved inventory
+     * @param player
+     */
+    public void clearSavedInventory(Player player) {
+	//plugin.getLogger().info("DEBUG: Clearing inventory");
+	inventories.remove(player.getUniqueId());
+    }
     /**
      * Load the player's inventory
      * 
