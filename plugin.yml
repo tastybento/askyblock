@@ -86,12 +86,9 @@ permissions:
           askyblock.team.join:
             description: Let a player join another player's team
             default: true
-          askyblock.team.vip:
-            description: Allows a bigger team size
-            default: false
-          askyblock.team.vip2:
-            description: Allows a bigger team size
-            default: false
+          askyblock.team.chat:
+            description: Allow player to use team chat
+            default: true
       askyblock.coop:
         description: Allows player to use the coop command
         default: false    
