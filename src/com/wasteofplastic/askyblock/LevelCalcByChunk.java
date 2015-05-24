@@ -12,9 +12,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.material.MaterialData;
 
 /**
- * A class that calculates the level of an island. Runs through all the island
- * blocks
- * Designed to run repeatedly until the calculation is done.
+ * A class that calculates the level of an island very quickly by copying island
+ * chunks to a list and then processing asynchronously.
+ * Players may gain a little extra credit at the edges of their island if the
+ * protection zone is very close to an adjacent player. It depends on where the chunk
+ * boundary is, and it won't make much difference.
  * 
  * @author tastybento
  * 
