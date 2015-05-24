@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 
@@ -100,6 +101,8 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 
     // Level calc checker
     BukkitTask checker = null;
+    // To choose an island randomly
+    private final Random random = new Random();
 
     /**
      * Constructor
@@ -1245,8 +1248,8 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 			    if (schems.isEmpty()) {
 				newIsland(player);
 			    } else {
-				// Do the first one in the list
-				newIsland(player, schems.get(0));
+				// Choose an island randomly from the list
+				newIsland(player, schems.get(random.nextInt(schems.size())));
 			    }
 			    resetPlayer(player,oldIsland);
 			}
@@ -2434,8 +2437,8 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 		if (schems.isEmpty()) {
 		    newIsland(player);
 		} else {
-		    // Do the first one in the list
-		    newIsland(player, schems.get(0));
+			// Choose an island randomly from the list
+		    newIsland(player, schems.get(random.nextInt(schems.size())));
 		}
 	    }
 	}
