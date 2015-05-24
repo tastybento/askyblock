@@ -1008,10 +1008,10 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 			    plugin.getChatListener().setPlayer(playerUUID);
 			}
 		    } else {
-			player.sendMessage(plugin.myLocale(playerUUID).errorNoTeam);
+			player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).teamChatNoTeam);
 		    }
 		} else {
-		    player.sendMessage(plugin.myLocale(playerUUID).errorNoPermission); 
+		    player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).errorNoPermission); 
 		}
 		return true;
 	    }
@@ -1384,6 +1384,10 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 		}
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.makeleader")) {
 		    player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " makeleader <player>: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpMakeLeader);
+		}
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.chat")
+			&& plugin.getPlayers().inTeam(playerUUID)) {
+		    player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " teamchat: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).teamChatHelp);
 		}
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.biomes")) {
 		    player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " biomes: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpBiome);

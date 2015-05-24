@@ -471,4 +471,5 @@ teamchat:
    statusOn: "Team chat is on"
    statusOff: "Team chat is off"
    noTeamAround: "None of your team are online!"
+   noTeam: "You are not in a team!"
    
