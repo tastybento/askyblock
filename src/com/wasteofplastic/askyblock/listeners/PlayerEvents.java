@@ -140,6 +140,7 @@ public class PlayerEvents implements Listener {
 	// This will override any global settings
 	if (Settings.allowVisitorKeepInvOnDeath) {
 	    InventorySave.getInstance().loadPlayerInventory(e.getPlayer());
+	    InventorySave.getInstance().clearSavedInventory(e.getPlayer());
 	}
     }
     /*
