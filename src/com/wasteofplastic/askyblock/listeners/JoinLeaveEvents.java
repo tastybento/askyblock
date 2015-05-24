@@ -207,6 +207,7 @@ public class JoinLeaveEvents implements Listener {
 	// Remove from coop list
 	CoopPlay.getInstance().clearMyCoops(event.getPlayer());
 	CoopPlay.getInstance().clearMyInvitedCoops(event.getPlayer());
+	plugin.getChatListener().unSetPlayer(event.getPlayer().getUniqueId());
 	// CoopPlay.getInstance().returnAllInventories(event.getPlayer());
 	// plugin.setMessage(event.getPlayer().getUniqueId(),
 	// "Hello! This is a test. You logged out");
