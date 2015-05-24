@@ -1011,7 +1011,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 			player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).teamChatNoTeam);
 		    }
 		} else {
-		    player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).errorNoPermission); 
+		    player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).errorNoPermission);
 		}
 		return true;
 	    }
