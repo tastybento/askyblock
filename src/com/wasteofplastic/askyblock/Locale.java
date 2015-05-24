@@ -466,6 +466,7 @@ public class Locale {
     public String teamChatStatusOff;
     public String teamChatStatusOn;
     public String teamChatNoTeamAround;
+    public String teamChatNoTeam;
 
     /**
      * Creates a locale object full of localized strings for a language
@@ -1033,5 +1034,6 @@ public class Locale {
 	teamChatStatusOff = ChatColor.translateAlternateColorCodes('&', locale.getString("teamchat.statusOff", "Team chat is off"));
 	teamChatStatusOn = ChatColor.translateAlternateColorCodes('&', locale.getString("teamchat.statusOn", "Team chat is on"));
 	teamChatNoTeamAround = ChatColor.translateAlternateColorCodes('&', locale.getString("teamchat.noTeamAround", "None of your team are online!"));
+	teamChatNoTeam = ChatColor.translateAlternateColorCodes('&', locale.getString("teamchat.noTeam", "You are not in a team!"));
     }
 }
