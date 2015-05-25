@@ -284,7 +284,7 @@ public class ASkyBlockAPI {
     
     /**
      * Provides the spawn range
-     * @return
+     * @return spawn range
      */
     public int getSpawnRange() {
 	return plugin.getGrid().getSpawn().getProtectionSize();
