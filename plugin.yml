@@ -129,6 +129,9 @@ permissions:
           askyblock.mod.topbreeders:
             description: Lists most populated islands current loaded
             default: op
+          askyblock.mod.lock:
+            description: Locks or unlocks an island
+            default: op 
       askyblock.admin.*:
         children:
           askyblock.admin.reload:
