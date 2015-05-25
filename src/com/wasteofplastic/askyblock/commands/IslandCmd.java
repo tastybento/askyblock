@@ -594,6 +594,10 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
      */
     public void newIsland(final Player player, final Schematic schematic) {
 	final UUID playerUUID = player.getUniqueId();
+	boolean firstTime = false;
+	if (!plugin.getPlayers().hasIsland(playerUUID)) {
+	    firstTime = true;
+	}
 	Location next = getNextIsland();
 	// Sets a flag to temporarily disable cleanstone generation
 	plugin.setNewIsland(true);
@@ -709,9 +713,14 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 		    "tellraw " + player.getName() + " {text:\"" + plugin.myLocale(player.getUniqueId()).islandDonate + "\",color:aqua" + ",clickEvent:{action:open_url,value:\""
 			    + plugin.myLocale(player.getUniqueId()).islandURL + "\"}}");
 	}
+	// Run any commands that need to be run at the start
+	if (firstTime) {
+	    runCommands(Settings.startCommands, player.getUniqueId());
+	}
 	// Done - fire event
 	final IslandNewEvent event = new IslandNewEvent(player,schematic, myIsland);
 	plugin.getServer().getPluginManager().callEvent(event);
+
     }
 
     /**
@@ -2475,6 +2484,10 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
     }
 
 
+    /**
+     * Only run when a new island is created for the first time
+     * @param player
+     */
     private void chooseIsland(Player player) {
 	// Get the schematics that this player is eligible to use
 	List<Schematic> schems = getSchematics(player, false);

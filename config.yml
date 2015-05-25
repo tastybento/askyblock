@@ -234,6 +234,12 @@ general:
    # the console if the commands doesn't make sense
    leavecommands:
    #- kit tools [player]
+   #- some other command
+
+   # Commands to execute when a player starts a new island for the first time - NOT a reset
+   startcommands:
+   #- asadmin lock [player]
+   #- some other command
 
    # Ops receive damage from acid (Set to true if you want Ops to play properly)
    damageops: false

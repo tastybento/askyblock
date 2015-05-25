@@ -223,5 +223,6 @@ public class Settings {
     public static int maxTeamSizeVIP2;
     public static boolean teamChat;
     public static boolean restrictWither;
+    public static List<String> startCommands;
 
 }
