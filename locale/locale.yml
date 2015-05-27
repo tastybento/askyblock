@@ -99,7 +99,7 @@ warps:
    errorNotReadyYet: "That warp is not ready yet. Try again later."
    errorNotSafe: "That warp is not safe right now. Try again later."
    #/island warp help
-   warpToPlayersSign: "Warp to <player>'s welcome sign."
+   warpToPlayersSign: "Warping to <player>'s welcome sign."
    errorNoWarpsYet: "There are no warps available yet!"
    warpsAvailable: "The following warps are available"
    playerWarped: "[name] &2warped to your island!"

@@ -59,6 +59,13 @@ public class CPItem {
 	// meta.setLore(null);
 	item.setItemMeta(meta);
     }
+    
+    // For warps
+    public CPItem(ItemStack itemStack, String command) {
+	this.command = command;
+	this.nextSection = "";
+	this.item = itemStack;
+    }    
 
     public void setLore(List<String> lore) {
 	ItemMeta meta = item.getItemMeta();

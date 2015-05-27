@@ -74,6 +74,7 @@ import com.wasteofplastic.askyblock.listeners.WorldEnter;
 import com.wasteofplastic.askyblock.panels.BiomesPanel;
 import com.wasteofplastic.askyblock.panels.ControlPanel;
 import com.wasteofplastic.askyblock.panels.SchematicsPanel;
+import com.wasteofplastic.askyblock.panels.WarpPanel;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
@@ -99,8 +100,8 @@ public class ASkyBlock extends JavaPlugin {
     // Players object
     private PlayerCache players;
     // Listeners
-    private Listener warpSignsListener;
-    private Listener lavaListener;
+    private WarpSigns warpSignsListener;
+    private LavaCheck lavaListener;
     // Biome chooser object
     private BiomesPanel biomes;
     // Island grid manager
@@ -109,6 +110,8 @@ public class ASkyBlock extends JavaPlugin {
     private IslandCmd islandCmd;
     // Database
     private TinyDB tinyDB;
+    // Warp panel
+    private WarpPanel warpPanel;
 
     private boolean debug = false;
 
@@ -196,7 +199,7 @@ public class ASkyBlock extends JavaPlugin {
 	    if (grid != null) {
 		grid.saveGrid();
 	    }
-	    WarpSigns.saveWarpList();
+	    getWarpSignsListener().saveWarpList();
 	    if (messages != null) {
 		messages.saveMessages();
 	    }
@@ -313,7 +316,10 @@ public class ASkyBlock extends JavaPlugin {
 		// server starts.
 		getIslandWorld();
 		// Load warps
-		WarpSigns.loadWarpList();
+		getWarpSignsListener().loadWarpList();
+		// Load the warp panel
+		warpPanel = new WarpPanel(plugin);
+		getServer().getPluginManager().registerEvents(warpPanel, plugin);
 		// Minishop - must wait for economy to load before we can use
 		// econ
 		getServer().getPluginManager().registerEvents(new ControlPanel(plugin), plugin);
@@ -515,7 +521,7 @@ public class ASkyBlock extends JavaPlugin {
 	// Removes the island
 	// getLogger().info("DEBUG: deleting player island");
 	CoopPlay.getInstance().clearAllIslandCoops(player);
-	WarpSigns.removeWarp(player);
+	getWarpSignsListener().removeWarp(player);
 	if (removeBlocks) {
 	    // Check that the player's island location exists and is in the
 	    // island world
@@ -1240,7 +1246,7 @@ public class ASkyBlock extends JavaPlugin {
 	    manager.registerEvents(new SafeBoat(this), this);
 	}
 	// Enables warp signs in ASkyBlock
-	warpSignsListener = new WarpSigns();
+	warpSignsListener = new WarpSigns(this);
 	manager.registerEvents(warpSignsListener, this);
 	// Control panel - for future use
 	// manager.registerEvents(new ControlPanel(), this);
@@ -1316,7 +1322,7 @@ public class ASkyBlock extends JavaPlugin {
 	lavaListener = new LavaCheck(this);
 	manager.registerEvents(lavaListener, this);
 	// Enables warp signs in ASkyBlock
-	warpSignsListener = new WarpSigns();
+	warpSignsListener = new WarpSigns(this);
 	manager.registerEvents(warpSignsListener, this);
     }
 
@@ -1402,5 +1408,19 @@ public class ASkyBlock extends JavaPlugin {
 
     public ChatListener getChatListener() {
 	return chatListener;	
+    }
+
+    /**
+     * @return the warpSignsListener
+     */
+    public WarpSigns getWarpSignsListener() {
+        return warpSignsListener;
+    }
+
+    /**
+     * @return the warpPanel
+     */
+    public WarpPanel getWarpPanel() {
+        return warpPanel;
     }
 }

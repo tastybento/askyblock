@@ -640,7 +640,7 @@ public class Locale {
 	warpserrorNotSafe = ChatColor.translateAlternateColorCodes('&',
 		locale.getString("warps.errorNotSafe", "That warp is not safe right now. Try again later."));
 	warpswarpToPlayersSign = ChatColor.translateAlternateColorCodes('&',
-		locale.getString("warps.warpToPlayersSign", "Warp to <player>'s welcome sign."));
+		locale.getString("warps.warpToPlayersSign", "Warping to <player>'s welcome sign."));
 	warpserrorNoWarpsYet = ChatColor.translateAlternateColorCodes('&',
 		locale.getString("warps.errorNoWarpsYet", "There are no warps available yet!"));
 	warpswarpsAvailable = ChatColor.translateAlternateColorCodes('&', locale.getString("warps.warpsAvailable", "The following warps are available"));

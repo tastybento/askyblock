@@ -502,7 +502,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 		    sender.sendMessage(ChatColor.RED + "This island is not owned by anyone right now - recommend that sign is removed.");
 		    return true;
 		}
-		if (WarpSigns.addWarp(target, lastBlock.getLocation())) {
+		if (plugin.getWarpSignsListener().addWarp(target, lastBlock.getLocation())) {
 		    // Change sign color to green
 		    sign.setLine(0, ChatColor.GREEN + plugin.myLocale().warpswelcomeLine);
 		    sign.update();
@@ -510,7 +510,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 		    return true;
 		}
 		// Warp already exists
-		sender.sendMessage(ChatColor.RED + "That warp sign is already active and owned by " + WarpSigns.getWarpOwner(lastBlock.getLocation()));
+		sender.sendMessage(ChatColor.RED + "That warp sign is already active and owned by " + plugin.getWarpSignsListener().getWarpOwner(lastBlock.getLocation()));
 		return true;
 
 	    } else if (split[0].equalsIgnoreCase("reload")) {
@@ -1183,7 +1183,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 				plugin.getPlayers().setLeaveTeam(teamLeader);
 			    }
 			    // Remove any warps
-			    WarpSigns.removeWarp(playerUUID);
+			    plugin.getWarpSignsListener().removeWarp(playerUUID);
 			    sender.sendMessage(ChatColor.RED + plugin.myLocale().kicknameRemoved.replace("[name]", split[2]));
 			    // If target is online -- do not tell target
 			    /*

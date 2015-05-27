@@ -1204,7 +1204,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 	    } else if (split[0].equalsIgnoreCase("warps")) {
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.warp")) {
 		    // Step through warp table
-		    Set<UUID> warpList = WarpSigns.listWarps();
+		    Set<UUID> warpList = plugin.getWarpSignsListener().listWarps();
 		    if (warpList.isEmpty()) {
 			player.sendMessage(ChatColor.YELLOW + plugin.myLocale(player.getUniqueId()).warpserrorNoWarpsYet);
 			if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.addwarp") && plugin.getGrid().playerIsOnIsland(player)) {
@@ -1212,6 +1212,8 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 			}
 			return true;
 		    } else {
+			// Try the warp panel
+			player.openInventory(plugin.getWarpPanel().getWarpPanel(0));
 			Boolean hasWarp = false;
 			String wlist = "";
 			for (UUID w : warpList) {
@@ -1624,7 +1626,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 			    // Remove from team
 			    removePlayerFromTeam(playerUUID, teamLeader);
 			    // Remove any warps
-			    WarpSigns.removeWarp(playerUUID);
+			    plugin.getWarpSignsListener().removeWarp(playerUUID);
 			    player.sendMessage(ChatColor.YELLOW + plugin.myLocale(player.getUniqueId()).leaveyouHaveLeftTheIsland);
 			    // Tell the leader if they are online
 			    if (plugin.getServer().getPlayer(teamLeader) != null) {
@@ -1699,6 +1701,29 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 	     * Commands that have two parameters
 	     */
 	case 2:
+	    if (split[0].equalsIgnoreCase("warps")) {
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.warp")) {
+		    // Step through warp table
+		    Set<UUID> warpList = plugin.getWarpSignsListener().listWarps();
+		    if (warpList.isEmpty()) {
+			player.sendMessage(ChatColor.YELLOW + plugin.myLocale(player.getUniqueId()).warpserrorNoWarpsYet);
+			if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.addwarp") && plugin.getGrid().playerIsOnIsland(player)) {
+			    player.sendMessage(ChatColor.YELLOW + plugin.myLocale().warpswarpTip);
+			}
+			return true;
+		    } else {
+			// Try the warp panel
+			int panelNum = 0;
+			try {
+			    panelNum = Integer.valueOf(split[1]) - 1;
+			} catch (Exception e) {
+			    panelNum = 0;
+			}
+			player.openInventory(plugin.getWarpPanel().getWarpPanel(panelNum));
+			return true;
+		    }
+		}
+	    } else
 	    if (split[0].equalsIgnoreCase("make")) {
 		//plugin.getLogger().info("DEBUG: /is make '" + split[1] + "' called");
 		if (!pendingNewIslandSelection.contains(playerUUID)) {
@@ -1851,7 +1876,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 		} else if (split[0].equalsIgnoreCase("warp")) {
 		    // Warp somewhere command
 		    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.warp")) {
-			final Set<UUID> warpList = WarpSigns.listWarps();
+			final Set<UUID> warpList = plugin.getWarpSignsListener().listWarps();
 			if (warpList.isEmpty()) {
 			    player.sendMessage(ChatColor.YELLOW + plugin.myLocale(player.getUniqueId()).warpserrorNoWarpsYet);
 			    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.addwarp")) {
@@ -1874,7 +1899,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 				return true;
 			    } else {
 				// Warp exists!
-				final Location warpSpot = WarpSigns.getWarp(foundWarp);
+				final Location warpSpot = plugin.getWarpSignsListener().getWarp(foundWarp);
 				// Check if the warp spot is safe
 				if (warpSpot == null) {
 				    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorNotReadyYet);
@@ -1910,7 +1935,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 				} else {
 				    // Warp has been removed
 				    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorDoesNotExist);
-				    WarpSigns.removeWarp(warpSpot);
+				    plugin.getWarpSignsListener().removeWarp(warpSpot);
 				    return true;
 				}
 				if (!(GridManager.isSafeLocation(warpSpot))) {
@@ -2400,7 +2425,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 				plugin.getMessages().setMessage(targetPlayer, ChatColor.RED + plugin.myLocale(player.getUniqueId()).kicknameRemovedYou.replace("[name]", player.getName()));
 			    }
 			    // Remove any warps
-			    WarpSigns.removeWarp(targetPlayer);
+			    plugin.getWarpSignsListener().removeWarp(targetPlayer);
 			    // Tell leader they removed the player
 			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).kicknameRemoved.replace("[name]", split[1]));
 			    removePlayerFromTeam(targetPlayer, teamLeader);
@@ -2536,7 +2561,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 	CoopPlay.getInstance().clearMyCoops(player);
 	// plugin.getLogger().info("DEBUG Reset command issued!");
 	// Remove any warps
-	WarpSigns.removeWarp(player.getUniqueId());
+	plugin.getWarpSignsListener().removeWarp(player.getUniqueId());
 	// Delete the old island, if it exists
 	if (oldIsland != null) {
 	    // Remove any coops
@@ -2809,7 +2834,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 	    }
 	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.warp")
 		    && args[0].equalsIgnoreCase("warp")) {
-		final Set<UUID> warpList = WarpSigns.listWarps();
+		final Set<UUID> warpList = plugin.getWarpSignsListener().listWarps();
 
 		for (UUID warp : warpList) {
 		    options.add(plugin.getPlayers().getName(warp));
