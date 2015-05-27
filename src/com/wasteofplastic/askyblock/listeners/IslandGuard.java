@@ -687,18 +687,18 @@ public class IslandGuard implements Listener {
 	if (debug) {
 	    plugin.getLogger().info(e.getEventName());
 	}
+	if (!(e.getEntity() instanceof Enderman)) {
+	    return;
+	}
 	if (!inWorld(e.getEntity())) {
 	    return;
 	}
-	// prevent at spawn
-	if (plugin.getGrid().isAtSpawn(e.getEntity().getLocation())) {
+	// Prevent Enderman griefing at spawn
+	if (plugin.getGrid() != null && plugin.getGrid().isAtSpawn(e.getEntity().getLocation())) {
 	    e.setCancelled(true);
 	}
 	if (Settings.allowEndermanGriefing)
 	    return;
-	if (!(e.getEntity() instanceof Enderman)) {
-	    return;
-	}
 	// Stop the Enderman from griefing
 	// plugin.getLogger().info("Enderman stopped from griefing");
 	e.setCancelled(true);

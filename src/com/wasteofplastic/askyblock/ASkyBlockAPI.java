@@ -112,7 +112,7 @@ public class ASkyBlockAPI {
      * @return Location of sign or null if one does not exist
      */
     public Location getWarp(UUID playerUUID) {
-	return WarpSigns.getWarp(playerUUID);
+	return plugin.getWarpSignsListener().getWarp(playerUUID);
     }
 
     /**
@@ -123,7 +123,7 @@ public class ASkyBlockAPI {
      *         that spot
      */
     public String getWarpOwner(Location location) {
-	return WarpSigns.getWarpOwner(location);
+	return plugin.getWarpSignsListener().getWarpOwner(location);
     }
 
     /**
@@ -178,7 +178,7 @@ public class ASkyBlockAPI {
      * @return String set of warps
      */
     public Set<UUID> listWarps() {
-	return WarpSigns.listWarps();
+	return plugin.getWarpSignsListener().listWarps();
     }
 
     /**
