@@ -467,6 +467,9 @@ public class Locale {
     public String teamChatStatusOn;
     public String teamChatNoTeamAround;
     public String teamChatNoTeam;
+    public String warpsPrevious;
+    public String warpsNext;
+    public String warpsTitle;
 
     /**
      * Creates a locale object full of localized strings for a language
@@ -645,6 +648,9 @@ public class Locale {
 		locale.getString("warps.errorNoWarpsYet", "There are no warps available yet!"));
 	warpswarpsAvailable = ChatColor.translateAlternateColorCodes('&', locale.getString("warps.warpsAvailable", "The following warps are available"));
 	warpsPlayerWarped = ChatColor.translateAlternateColorCodes('&', locale.getString("warps.playerWarped", "[name] &2warped to your island!"));
+	warpsPrevious = ChatColor.translateAlternateColorCodes('&', locale.getString("warps.previous", "Previous"));
+	warpsNext = ChatColor.translateAlternateColorCodes('&', locale.getString("warps.next", "Next"));
+	warpsTitle = ChatColor.translateAlternateColorCodes('&', locale.getString("warps.title", "Island warps"));
 	topTenheader = ChatColor.translateAlternateColorCodes('&', locale.getString("topTen.header", "These are the Top 10 islands:"));
 	topTenerrorNotReady = ChatColor.translateAlternateColorCodes('&', locale.getString("topTen.errorNotReady", "Top ten list not generated yet!"));
 	levelislandLevel = ChatColor.translateAlternateColorCodes('&', locale.getString("level.islandLevel", "Island level"));
