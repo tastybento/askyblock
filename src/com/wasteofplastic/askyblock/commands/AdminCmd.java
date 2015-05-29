@@ -516,8 +516,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 	    } else if (split[0].equalsIgnoreCase("reload")) {
 		plugin.reloadConfig();
 		plugin.loadPluginConfig();
-		Challenges.reloadChallengeConfig();
-		plugin.getChallenges();
+		plugin.getChallenges().reloadChallengeConfig();
 		if (Settings.useEconomy && VaultHelper.setupEconomy()) {
 		    ControlPanel.loadShop();
 		} else {
