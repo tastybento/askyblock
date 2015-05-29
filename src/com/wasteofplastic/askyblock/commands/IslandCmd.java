@@ -243,6 +243,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 	    }
 	} else if (plugin.getConfig().contains("schematicsection")) {
 	    Settings.useSchematicPanel = schemSection.getBoolean("useschematicspanel", false);
+	    Settings.chooseIslandRandomly = schemSection.getBoolean("chooseislandrandomly", false);
 	    // Section exists, so go through the various sections
 	    for (String key : schemSection.getConfigurationSection("schematics").getKeys(false)) {
 		try {
@@ -1247,9 +1248,12 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 			    schems = getSchematics(player,true);
 			    if (schems.isEmpty()) {
 				newIsland(player);
-			    } else {
+			    } else if (Settings.chooseIslandRandomly) {
 				// Choose an island randomly from the list
 				newIsland(player, schems.get(random.nextInt(schems.size())));
+			    } else {
+				// Do the first one in the list
+				newIsland(player, schems.get(0));
 			    }
 			    resetPlayer(player,oldIsland);
 			}
@@ -2436,9 +2440,12 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 		schems = getSchematics(player,true);
 		if (schems.isEmpty()) {
 		    newIsland(player);
-		} else {
+		} else if (Settings.chooseIslandRandomly) {
 			// Choose an island randomly from the list
 		    newIsland(player, schems.get(random.nextInt(schems.size())));
+		} else {
+			// Do the first one in the list
+			newIsland(player, schems.get(0));
 		}
 	    }
 	}
