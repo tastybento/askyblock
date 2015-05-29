@@ -226,5 +226,6 @@ public class Settings {
     public static boolean restrictWither;
     public static List<String> startCommands;
     public static boolean useWarpPanel;
+    public static List<EntityType> mobWhiteList = new ArrayList<EntityType>();
 
 }
