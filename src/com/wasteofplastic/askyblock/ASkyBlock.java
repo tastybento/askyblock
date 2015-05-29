@@ -199,7 +199,8 @@ public class ASkyBlock extends JavaPlugin {
 	    if (grid != null) {
 		grid.saveGrid();
 	    }
-	    getWarpSignsListener().saveWarpList();
+	    // Save the warps and do not reload the panel
+	    getWarpSignsListener().saveWarpList(false);
 	    if (messages != null) {
 		messages.saveMessages();
 	    }
