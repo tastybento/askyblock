@@ -116,6 +116,11 @@ challenges:
       level: 'Novice'
       type: inventory
       requiredItems: 'GLASS:1'
+      # You can require the player has a certain amount of money for inventory challenges.
+      # Remember to mention it in the description!
+      # If takeItems is true, the money will be removed, so you may want to give it
+      # back in the reward.
+      #requiredMoney: 10
       takeItems: true
       itemReward: 'ICE:1'
       rewardText: '1 block of ice'

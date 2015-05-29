@@ -270,8 +270,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
     }
 
     /**
-     * Gives the reward for completing the challenge Uses the same format as
-     * uSkyblock config.yml
+     * Gives the reward for completing the challenge 
      * 
      * @param player
      * @param challenge
@@ -715,7 +714,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
 
     /**
      * Checks if a player has enough for a challenge. Supports two types of
-     * checks, inventory and island
+     * checks, inventory and island. Removes items if required.
      * 
      * @param player
      * @param challenge
@@ -725,6 +724,18 @@ public class Challenges implements CommandExecutor, TabCompleter {
 
     @SuppressWarnings("deprecation")
     public boolean hasRequired(final Player player, final String challenge, final String type) {
+	// Check money
+	double moneyReq = 0D;
+	if (Settings.useEconomy) {
+	    moneyReq = getChallengeConfig().getDouble("challenges.challengeList." + challenge + ".requiredMoney", 0D);
+	    if (moneyReq > 0D) {
+		if (!VaultHelper.econ.has(player, moneyReq)) {
+		    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).challengeserrorNotEnoughItems);
+		    player.sendMessage(ChatColor.RED + getChallengeConfig().getString("challenges.challengeList." + challenge + ".description"));
+		    return false;
+		}
+	    }
+	}
 	final String[] reqList = getChallengeConfig().getString("challenges.challengeList." + challenge + ".requiredItems").split(" ");
 	// The format of the requiredItems is as follows:
 	// Material:Qty
@@ -1124,6 +1135,16 @@ public class Challenges implements CommandExecutor, TabCompleter {
 			    plugin.getLogger().info(left.toString());
 			}
 			return false;
+		    }
+		}
+		// Remove money
+		if (moneyReq > 0D) {
+		    EconomyResponse er = VaultHelper.econ.withdrawPlayer(player, moneyReq);
+		    if (!er.transactionSuccess()) {
+			plugin.getLogger().warning(
+				"Exploit? Could not remove " + VaultHelper.econ.format(moneyReq) + " from " + player.getName()
+				+ " in challenge " + challenge);
+			plugin.getLogger().warning("Player's balance is " + VaultHelper.econ.format(VaultHelper.econ.getBalance(player)));
 		    }
 		}
 		// plugin.getLogger().info("DEBUG: total = " + qty);
