@@ -85,7 +85,7 @@ import com.wasteofplastic.askyblock.util.VaultHelper;
  */
 public class IslandGuard implements Listener {
     private final ASkyBlock plugin;
-    private final boolean debug = false;
+    private final boolean debug = true;
 
     public IslandGuard(final ASkyBlock plugin) {
 	this.plugin = plugin;
@@ -804,13 +804,6 @@ public class IslandGuard implements Listener {
 	}
 	// Check to see if it's an item frame
 	if (e.getEntity() instanceof ItemFrame) {
-	    //plugin.getLogger().info("DEBUG: Item frame being damaged");
-	    if (!Settings.allowSpawnBreakBlocks && plugin.getGrid().isAtSpawn(e.getEntity().getLocation())) {
-		Player player = (Player) e.getDamager();
-		player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).islandProtected);
-		e.setCancelled(true);
-		return;
-	    }
 	    if (Settings.allowBreakBlocks || (Settings.allowSpawnBreakBlocks && plugin.getGrid().isAtSpawn(e.getEntity().getLocation()))) {
 		return;
 	    }

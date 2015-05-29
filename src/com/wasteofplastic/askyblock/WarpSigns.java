@@ -50,7 +50,7 @@ public class WarpSigns implements Listener {
     private HashMap<UUID, Object> warpList = new HashMap<UUID, Object>();
     // Where warps are stored
     private YamlConfiguration welcomeWarps;
-  
+
     /**
      * @param plugin
      */
@@ -114,7 +114,7 @@ public class WarpSigns implements Listener {
 	if (player.getWorld().equals(ASkyBlock.getIslandWorld())) {
 	    //plugin.getLogger().info("DEBUG: Correct world");
 	    if (e.getBlock().getType().equals(Material.SIGN_POST)) {
-		
+
 		//plugin.getLogger().info("DEBUG: The first line of the sign says " + title);
 		// Check if someone is changing their own sign
 		// This should never happen !!
@@ -182,7 +182,7 @@ public class WarpSigns implements Listener {
     /**
      * Saves the warp lists to file
      */
-    public void saveWarpList() {
+    public void saveWarpList(boolean reloadPanel) {
 	if (warpList == null || welcomeWarps == null) {
 	    return;
 	}
@@ -195,14 +195,17 @@ public class WarpSigns implements Listener {
 	Util.saveYamlFile(welcomeWarps, "warps.yml");
 	// Update the warp panel - needs to be done 1 tick later so that the sign
 	// text will be updated.
-	plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
+	if (reloadPanel) {
+	    // This is not done on shutdown
+	    plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
 
-	    @Override
-	    public void run() {
-		plugin.getWarpPanel().updatePanel();
-		
-	    }});
-	
+		@Override
+		public void run() {
+		    plugin.getWarpPanel().updatePanel();
+
+		}});
+	}
+
     }
 
     /**
@@ -225,16 +228,11 @@ public class WarpSigns implements Listener {
 		//plugin.getLogger().info("DEBUG: Loading warp at " + l);
 		Block b = l.getBlock();
 		// Check that a warp sign is still there
-		plugin.getLogger().info("DEBUG: REMOVE THE HACK TO ALLOW NON_REAL WARPS!");
-		// TODO DEBUG HACK
-		warpList.put(playerUUID, temp.get(s));
-		/* TEMP REMOVE TODO
 		if (b.getType().equals(Material.SIGN_POST)) {
 		    warpList.put(playerUUID, temp.get(s));
 		} else {
 		    plugin.getLogger().warning("Warp at location " + (String) temp.get(s) + " has no sign - removing.");
 		}
-		*/
 	    } catch (Exception e) {
 		plugin.getLogger().severe("Problem loading warp at location " + (String) temp.get(s) + " - removing.");
 	    }
@@ -258,7 +256,7 @@ public class WarpSigns implements Listener {
 	    warpList.remove(player);
 	}
 	warpList.put(player, locS);
-	saveWarpList();
+	saveWarpList(true);
 	return true;
     }
 
@@ -273,7 +271,7 @@ public class WarpSigns implements Listener {
 	    popSign(Util.getLocationString((String) warpList.get(uuid)));
 	    warpList.remove(uuid);
 	}
-	saveWarpList();
+	saveWarpList(true);
     }
 
     private void popSign(Location loc) {
@@ -322,7 +320,7 @@ public class WarpSigns implements Listener {
 	    }
 
 	}
-	saveWarpList();
+	saveWarpList(true);
     }
 
     /**
