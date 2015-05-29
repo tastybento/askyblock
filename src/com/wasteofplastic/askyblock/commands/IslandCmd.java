@@ -1209,23 +1209,26 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 			}
 			return true;
 		    } else {
-			// Try the warp panel
-			player.openInventory(plugin.getWarpPanel().getWarpPanel(0));
-			Boolean hasWarp = false;
-			String wlist = "";
-			for (UUID w : warpList) {
-			    if (wlist.isEmpty()) {
-				wlist = plugin.getPlayers().getName(w);
-			    } else {
-				wlist += ", " + plugin.getPlayers().getName(w);
+			if (Settings.useWarpPanel) {
+			    // Try the warp panel
+			    player.openInventory(plugin.getWarpPanel().getWarpPanel(0));
+			} else {
+			    Boolean hasWarp = false;
+			    String wlist = "";
+			    for (UUID w : warpList) {
+				if (wlist.isEmpty()) {
+				    wlist = plugin.getPlayers().getName(w);
+				} else {
+				    wlist += ", " + plugin.getPlayers().getName(w);
+				}
+				if (w.equals(playerUUID)) {
+				    hasWarp = true;
+				}
 			    }
-			    if (w.equals(playerUUID)) {
-				hasWarp = true;
+			    player.sendMessage(ChatColor.YELLOW + plugin.myLocale(player.getUniqueId()).warpswarpsAvailable + ": " + ChatColor.WHITE + wlist);
+			    if (!hasWarp && (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.addwarp"))) {
+				player.sendMessage(ChatColor.YELLOW + plugin.myLocale().warpswarpTip);
 			    }
-			}
-			player.sendMessage(ChatColor.YELLOW + plugin.myLocale(player.getUniqueId()).warpswarpsAvailable + ": " + ChatColor.WHITE + wlist);
-			if (!hasWarp && (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.addwarp"))) {
-			    player.sendMessage(ChatColor.YELLOW + plugin.myLocale().warpswarpTip);
 			}
 			return true;
 		    }
@@ -1696,555 +1699,486 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 	     */
 	case 2:
 	    if (split[0].equalsIgnoreCase("warps")) {
-		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.warp")) {
-		    // Step through warp table
-		    Set<UUID> warpList = plugin.getWarpSignsListener().listWarps();
-		    if (warpList.isEmpty()) {
-			player.sendMessage(ChatColor.YELLOW + plugin.myLocale(player.getUniqueId()).warpserrorNoWarpsYet);
-			if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.addwarp") && plugin.getGrid().playerIsOnIsland(player)) {
-			    player.sendMessage(ChatColor.YELLOW + plugin.myLocale().warpswarpTip);
+		if (Settings.useWarpPanel) {
+		    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.warp")) {
+			// Step through warp table
+			Set<UUID> warpList = plugin.getWarpSignsListener().listWarps();
+			if (warpList.isEmpty()) {
+			    player.sendMessage(ChatColor.YELLOW + plugin.myLocale(player.getUniqueId()).warpserrorNoWarpsYet);
+			    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.addwarp") && plugin.getGrid().playerIsOnIsland(player)) {
+				player.sendMessage(ChatColor.YELLOW + plugin.myLocale().warpswarpTip);
+			    }
+			    return true;
+			} else {
+			    // Try the warp panel
+			    int panelNum = 0;
+			    try {
+				panelNum = Integer.valueOf(split[1]) - 1;
+			    } catch (Exception e) {
+				panelNum = 0;
+			    }
+			    player.openInventory(plugin.getWarpPanel().getWarpPanel(panelNum));
+			    return true;
 			}
-			return true;
 		    } else {
-			// Try the warp panel
-			int panelNum = 0;
-			try {
-			    panelNum = Integer.valueOf(split[1]) - 1;
-			} catch (Exception e) {
-			    panelNum = 0;
-			}
-			player.openInventory(plugin.getWarpPanel().getWarpPanel(panelNum));
-			return true;
+			player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).errorNoPermission);
 		    }
+		} else {
+		    return false;
 		}
 	    } else
-	    if (split[0].equalsIgnoreCase("make")) {
-		//plugin.getLogger().info("DEBUG: /is make '" + split[1] + "' called");
-		if (!pendingNewIslandSelection.contains(playerUUID)) {
-		    return false;
-		}
-		pendingNewIslandSelection.remove(playerUUID);
-		// Create a new island using schematic
-		if (!schematics.containsKey(split[1])) {
-		    return false;
-		} else {
-		    Schematic schematic = schematics.get(split[1]);
-		    // Check perm again
-		    if (schematic.getPerm().isEmpty() || VaultHelper.checkPerm(player, schematic.getPerm())) {
-			Location oldIsland = plugin.getPlayers().getIslandLocation(player.getUniqueId());
-			newIsland(player,schematic);
-			if (resettingIsland.contains(playerUUID)) {
-			    resettingIsland.remove(playerUUID);
-			    resetPlayer(player, oldIsland);
-			}
-			return true;
-		    } else {
+		if (split[0].equalsIgnoreCase("make")) {
+		    //plugin.getLogger().info("DEBUG: /is make '" + split[1] + "' called");
+		    if (!pendingNewIslandSelection.contains(playerUUID)) {
 			return false;
-		    }    
-		}
-	    } else if (split[0].equalsIgnoreCase("lang")) {
-		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.lang")) {
-		    if (split[1].equalsIgnoreCase("english")) {
-			plugin.getPlayers().setLocale(playerUUID, "en-US"); 
-		    } else if (split[1].equalsIgnoreCase("Français") || split[1].equalsIgnoreCase("Francais")) {
-			plugin.getPlayers().setLocale(playerUUID, "fr-FR"); 
-		    } else if (split[1].equalsIgnoreCase("Deutsch")) {
-			plugin.getPlayers().setLocale(playerUUID, "de-DE");  
-		    } else if (split[1].equalsIgnoreCase("español") || split[1].equalsIgnoreCase("espanol")) {
-			plugin.getPlayers().setLocale(playerUUID, "es-ES");  
-		    } else if (split[1].equalsIgnoreCase("italiano")) {
-			plugin.getPlayers().setLocale(playerUUID, "it-IT");  
-		    } else if (split[1].equalsIgnoreCase("Korean") || split[1].equalsIgnoreCase("한국의")) {
-			plugin.getPlayers().setLocale(playerUUID, "ko-KR");  
-		    } else if (split[1].equalsIgnoreCase("polski")) {
-			plugin.getPlayers().setLocale(playerUUID, "pl-PL");  
-		    } else if (split[1].equalsIgnoreCase("Brasil")) {
-			plugin.getPlayers().setLocale(playerUUID, "pt-BR");  
-		    } else if (split[1].equalsIgnoreCase("SimplifiedChinese") || split[1].equalsIgnoreCase("中国")) {
-			plugin.getPlayers().setLocale(playerUUID, "zh-CN");  
-		    } else if (split[1].equalsIgnoreCase("Čeština") || split[1].equalsIgnoreCase("Cestina")) {
-			plugin.getPlayers().setLocale(playerUUID, "cs-CS");  
-		    } else if (split[1].equalsIgnoreCase("Slovenčina") || split[1].equalsIgnoreCase("Slovencina")) {
-			plugin.getPlayers().setLocale(playerUUID, "sk-SK");  
-		    } else if (split[1].equalsIgnoreCase("TraditionalChinese") || split[1].equalsIgnoreCase("繁體中文")) {
-			plugin.getPlayers().setLocale(playerUUID, "zh-TW");  
+		    }
+		    pendingNewIslandSelection.remove(playerUUID);
+		    // Create a new island using schematic
+		    if (!schematics.containsKey(split[1])) {
+			return false;
 		    } else {
-			// Typed it in wrong
-			player.sendMessage("/" + label + " lang <locale>");
-			player.sendMessage("English");
-			player.sendMessage("Français");
-			player.sendMessage("Deutsch");
-			player.sendMessage("Español");
-			player.sendMessage("Italiano");
-			player.sendMessage("한국의 / Korean");
-			player.sendMessage("Polski");
-			player.sendMessage("Brasil");
-			player.sendMessage("中国 / SimplifiedChinese");
-			player.sendMessage("Čeština");
-			player.sendMessage("Slovenčina");
-			player.sendMessage("繁體中文 / TraditionalChinese");
+			Schematic schematic = schematics.get(split[1]);
+			// Check perm again
+			if (schematic.getPerm().isEmpty() || VaultHelper.checkPerm(player, schematic.getPerm())) {
+			    Location oldIsland = plugin.getPlayers().getIslandLocation(player.getUniqueId());
+			    newIsland(player,schematic);
+			    if (resettingIsland.contains(playerUUID)) {
+				resettingIsland.remove(playerUUID);
+				resetPlayer(player, oldIsland);
+			    }
+			    return true;
+			} else {
+			    return false;
+			}    
+		    }
+		} else if (split[0].equalsIgnoreCase("lang")) {
+		    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.lang")) {
+			if (split[1].equalsIgnoreCase("english")) {
+			    plugin.getPlayers().setLocale(playerUUID, "en-US"); 
+			} else if (split[1].equalsIgnoreCase("Français") || split[1].equalsIgnoreCase("Francais")) {
+			    plugin.getPlayers().setLocale(playerUUID, "fr-FR"); 
+			} else if (split[1].equalsIgnoreCase("Deutsch")) {
+			    plugin.getPlayers().setLocale(playerUUID, "de-DE");  
+			} else if (split[1].equalsIgnoreCase("español") || split[1].equalsIgnoreCase("espanol")) {
+			    plugin.getPlayers().setLocale(playerUUID, "es-ES");  
+			} else if (split[1].equalsIgnoreCase("italiano")) {
+			    plugin.getPlayers().setLocale(playerUUID, "it-IT");  
+			} else if (split[1].equalsIgnoreCase("Korean") || split[1].equalsIgnoreCase("한국의")) {
+			    plugin.getPlayers().setLocale(playerUUID, "ko-KR");  
+			} else if (split[1].equalsIgnoreCase("polski")) {
+			    plugin.getPlayers().setLocale(playerUUID, "pl-PL");  
+			} else if (split[1].equalsIgnoreCase("Brasil")) {
+			    plugin.getPlayers().setLocale(playerUUID, "pt-BR");  
+			} else if (split[1].equalsIgnoreCase("SimplifiedChinese") || split[1].equalsIgnoreCase("中国")) {
+			    plugin.getPlayers().setLocale(playerUUID, "zh-CN");  
+			} else if (split[1].equalsIgnoreCase("Čeština") || split[1].equalsIgnoreCase("Cestina")) {
+			    plugin.getPlayers().setLocale(playerUUID, "cs-CS");  
+			} else if (split[1].equalsIgnoreCase("Slovenčina") || split[1].equalsIgnoreCase("Slovencina")) {
+			    plugin.getPlayers().setLocale(playerUUID, "sk-SK");  
+			} else if (split[1].equalsIgnoreCase("TraditionalChinese") || split[1].equalsIgnoreCase("繁體中文")) {
+			    plugin.getPlayers().setLocale(playerUUID, "zh-TW");  
+			} else {
+			    // Typed it in wrong
+			    player.sendMessage("/" + label + " lang <locale>");
+			    player.sendMessage("English");
+			    player.sendMessage("Français");
+			    player.sendMessage("Deutsch");
+			    player.sendMessage("Español");
+			    player.sendMessage("Italiano");
+			    player.sendMessage("한국의 / Korean");
+			    player.sendMessage("Polski");
+			    player.sendMessage("Brasil");
+			    player.sendMessage("中国 / SimplifiedChinese");
+			    player.sendMessage("Čeština");
+			    player.sendMessage("Slovenčina");
+			    player.sendMessage("繁體中文 / TraditionalChinese");
+			    return true;
+			}
+			player.sendMessage("OK!");
+			return true;
+		    } else {
+			player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).errorNoPermission);
 			return true;
 		    }
-		    player.sendMessage("OK!");
-		    return true;
-		} else {
-		    player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).errorNoPermission);
-		    return true;
-		}
-	    } else 
-		// Multi home
-		if (split[0].equalsIgnoreCase("go")) {
-		    if (!plugin.getPlayers().hasIsland(playerUUID) && !plugin.getPlayers().inTeam(playerUUID)) {
-			// Player has no island
-			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoIsland);
-			return true;
-		    }
-		    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.sethome")) {
-			int number = 1;
-			try {
-			    number = Integer.valueOf(split[1]);
-			    if (number < 1) {
+		} else 
+		    // Multi home
+		    if (split[0].equalsIgnoreCase("go")) {
+			if (!plugin.getPlayers().hasIsland(playerUUID) && !plugin.getPlayers().inTeam(playerUUID)) {
+			    // Player has no island
+			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoIsland);
+			    return true;
+			}
+			if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.sethome")) {
+			    int number = 1;
+			    try {
+				number = Integer.valueOf(split[1]);
+				if (number < 1) {
+				    plugin.getGrid().homeTeleport(player,1);
+				}
+				int maxHomes = Settings.maxHomes;
+				// Dynamic home sizes with permissions
+				for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
+				    if (perms.getPermission().startsWith(Settings.PERMPREFIX + "island.maxhomes.")) {
+					maxHomes = Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "island.maxhomes.")[1]);
+				    }
+				    // Do some sanity checking
+				    if (maxHomes < 1) {
+					maxHomes = 1;
+				    }
+				}
+				if (number > maxHomes) {
+				    if (maxHomes > 1) {
+					player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).setHomeerrorNumHomes.replace("[max]",String.valueOf(maxHomes)));
+				    } else {
+					plugin.getGrid().homeTeleport(player,1);
+				    }
+				} else {
+				    // Teleport home
+				    plugin.getGrid().homeTeleport(player,number);
+				}
+			    } catch (Exception e) {
+				// Teleport home
 				plugin.getGrid().homeTeleport(player,1);
 			    }
+			    if (Settings.islandRemoveMobs) {
+				plugin.getGrid().removeMobs(player.getLocation());
+			    }
+			} else {
+			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission); 
+			}
+			return true;
+		    } else if (split[0].equalsIgnoreCase("sethome")) {
+			if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.sethome")) {
 			    int maxHomes = Settings.maxHomes;
 			    // Dynamic home sizes with permissions
 			    for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
 				if (perms.getPermission().startsWith(Settings.PERMPREFIX + "island.maxhomes.")) {
 				    maxHomes = Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "island.maxhomes.")[1]);
 				}
-				// Do some sanity checking
-				if (maxHomes < 1) {
-				    maxHomes = 1;
-				}
 			    }
-			    if (number > maxHomes) {
-				if (maxHomes > 1) {
+			    if (maxHomes > 1) {
+				// Check the number given is a number
+				int number = 0;
+				try {
+				    number = Integer.valueOf(split[1]);
+				    if (number < 0 || number > maxHomes) {
+					player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).setHomeerrorNumHomes.replace("[max]",String.valueOf(maxHomes)));
+				    } else {
+					plugin.getGrid().homeSet(player, number);
+				    }
+				} catch (Exception e) {
 				    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).setHomeerrorNumHomes.replace("[max]",String.valueOf(maxHomes)));
-				} else {
-				    plugin.getGrid().homeTeleport(player,1);
 				}
-			    } else {
-				// Teleport home
-				plugin.getGrid().homeTeleport(player,number);
-			    }
-			} catch (Exception e) {
-			    // Teleport home
-			    plugin.getGrid().homeTeleport(player,1);
-			}
-			if (Settings.islandRemoveMobs) {
-			    plugin.getGrid().removeMobs(player.getLocation());
-			}
-		    } else {
-			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission); 
-		    }
-		    return true;
-		} else if (split[0].equalsIgnoreCase("sethome")) {
-		    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.sethome")) {
-			int maxHomes = Settings.maxHomes;
-			// Dynamic home sizes with permissions
-			for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
-			    if (perms.getPermission().startsWith(Settings.PERMPREFIX + "island.maxhomes.")) {
-				maxHomes = Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "island.maxhomes.")[1]);
-			    }
-			}
-			if (maxHomes > 1) {
-			    // Check the number given is a number
-			    int number = 0;
-			    try {
-				number = Integer.valueOf(split[1]);
-				if (number < 0 || number > maxHomes) {
-				    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).setHomeerrorNumHomes.replace("[max]",String.valueOf(maxHomes)));
-				} else {
-				    plugin.getGrid().homeSet(player, number);
-				}
-			    } catch (Exception e) {
-				player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).setHomeerrorNumHomes.replace("[max]",String.valueOf(maxHomes)));
-			    }
-			} else {
-			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
-			}
-			return true;
-		    }
-		    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
-		    return true;
-		} else if (split[0].equalsIgnoreCase("warp")) {
-		    // Warp somewhere command
-		    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.warp")) {
-			final Set<UUID> warpList = plugin.getWarpSignsListener().listWarps();
-			if (warpList.isEmpty()) {
-			    player.sendMessage(ChatColor.YELLOW + plugin.myLocale(player.getUniqueId()).warpserrorNoWarpsYet);
-			    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.addwarp")) {
-				player.sendMessage(ChatColor.YELLOW + plugin.myLocale().warpswarpTip);
 			    } else {
 				player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
 			    }
 			    return true;
-			} else {
-			    // Check if this is part of a name
-			    UUID foundWarp = null;
-			    for (UUID warp : warpList) {
-				if (plugin.getPlayers().getName(warp).toLowerCase().startsWith(split[1].toLowerCase())) {
-				    foundWarp = warp;
-				    break;
+			}
+			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
+			return true;
+		    } else if (split[0].equalsIgnoreCase("warp")) {
+			// Warp somewhere command
+			if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.warp")) {
+			    final Set<UUID> warpList = plugin.getWarpSignsListener().listWarps();
+			    if (warpList.isEmpty()) {
+				player.sendMessage(ChatColor.YELLOW + plugin.myLocale(player.getUniqueId()).warpserrorNoWarpsYet);
+				if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.addwarp")) {
+				    player.sendMessage(ChatColor.YELLOW + plugin.myLocale().warpswarpTip);
+				} else {
+				    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
 				}
-			    }
-			    if (foundWarp == null) {
-				player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorDoesNotExist);
 				return true;
 			    } else {
-				// Warp exists!
-				final Location warpSpot = plugin.getWarpSignsListener().getWarp(foundWarp);
-				// Check if the warp spot is safe
-				if (warpSpot == null) {
-				    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorNotReadyYet);
-				    plugin.getLogger().warning("Null warp found, owned by " + plugin.getPlayers().getName(foundWarp));
-				    return true;
+				// Check if this is part of a name
+				UUID foundWarp = null;
+				for (UUID warp : warpList) {
+				    if (plugin.getPlayers().getName(warp).toLowerCase().startsWith(split[1].toLowerCase())) {
+					foundWarp = warp;
+					break;
+				    }
 				}
-				// Find out if island is locked
-				Island island = plugin.getGrid().getIslandAt(warpSpot);
-				if (island != null && island.isLocked()) {
-				    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).lockIslandLocked);
+				if (foundWarp == null) {
+				    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorDoesNotExist);
 				    return true;
-				}
-				// Find out which direction the warp is facing
-				Block b = warpSpot.getBlock();
-				if (b.getType().equals(Material.SIGN_POST)) {
-				    Sign sign = (Sign) b.getState();
-				    org.bukkit.material.Sign s = (org.bukkit.material.Sign) sign.getData();
-				    BlockFace directionFacing = s.getFacing();
-				    Location inFront = b.getRelative(directionFacing).getLocation();
-				    if ((GridManager.isSafeLocation(inFront))) {
-					// convert blockface to angle
-					float yaw = Util.blockFaceToFloat(directionFacing);
-					final Location actualWarp = new Location(inFront.getWorld(), inFront.getBlockX() + 0.5D, inFront.getBlockY(),
-						inFront.getBlockZ() + 0.5D, yaw, 30F);
-					player.teleport(actualWarp);
-					player.getWorld().playSound(player.getLocation(), Sound.BAT_TAKEOFF, 1F, 1F);
-					Player warpOwner = plugin.getServer().getPlayer(foundWarp);
-					if (warpOwner != null) {
-					    warpOwner.sendMessage(plugin.myLocale(foundWarp).warpsPlayerWarped.replace("[name]", player.getDisplayName()));
-					}
+				} else {
+				    // Warp exists!
+				    final Location warpSpot = plugin.getWarpSignsListener().getWarp(foundWarp);
+				    // Check if the warp spot is safe
+				    if (warpSpot == null) {
+					player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorNotReadyYet);
+					plugin.getLogger().warning("Null warp found, owned by " + plugin.getPlayers().getName(foundWarp));
 					return true;
 				    }
-				} else {
-				    // Warp has been removed
-				    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorDoesNotExist);
-				    plugin.getWarpSignsListener().removeWarp(warpSpot);
-				    return true;
-				}
-				if (!(GridManager.isSafeLocation(warpSpot))) {
-				    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorNotSafe);
-				    plugin.getLogger().warning(
-					    "Unsafe warp found at " + warpSpot.toString() + " owned by " + plugin.getPlayers().getName(foundWarp));
-				    return true;
-				} else {
-				    final Location actualWarp = new Location(warpSpot.getWorld(), warpSpot.getBlockX() + 0.5D, warpSpot.getBlockY(),
-					    warpSpot.getBlockZ() + 0.5D);
-				    player.teleport(actualWarp);
-				    player.getWorld().playSound(player.getLocation(), Sound.BAT_TAKEOFF, 1F, 1F);
-				    return true;
-				}
-			    }
-			}
-		    } else {
-			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
-			return false;
-		    }
-		} else if (split[0].equalsIgnoreCase("level")) {
-		    // island level <name> command
-		    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.info")) {
-			// Find out if the target has an island
-			final UUID targetPlayerUUID = plugin.getPlayers().getUUID(split[1]);
-			// Invited player must be known
-			if (targetPlayerUUID == null) {
-			    // plugin.getLogger().info("DEBUG: unknown player");
-			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorUnknownPlayer);
-			    return true;
-			}
-			// Check if this player has an island or not
-			if (plugin.getPlayers().hasIsland(targetPlayerUUID) || plugin.getPlayers().inTeam(targetPlayerUUID)) {
-			    calculateIslandLevel(player, targetPlayerUUID);
-			} else {
-			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoIslandOther);
-			}
-			return true;
-		    } else {
-			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
-		    }
-		    return false;
-		} else if (split[0].equalsIgnoreCase("invite")) {
-		    // Team invite a player command
-		    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.create")) {
-			// May return null if not known
-			final UUID invitedPlayerUUID = plugin.getPlayers().getUUID(split[1]);
-			// Invited player must be known
-			if (invitedPlayerUUID == null) {
-			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorUnknownPlayer);
-			    return true;
-			}
-			// Player must be online
-			if (plugin.getServer().getPlayer(invitedPlayerUUID) == null) {
-			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorOfflinePlayer);
-			    return true;
-			}
-			// Player issuing the command must have an island
-			if (!plugin.getPlayers().hasIsland(player.getUniqueId())) {
-			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).inviteerrorYouMustHaveIslandToInvite);
-			    return true;
-			}
-			// Player cannot invite themselves
-			if (player.getName().equalsIgnoreCase(split[1])) {
-			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).inviteerrorYouCannotInviteYourself);
-			    return true;
-			}
-			// Check if this player can be invited to this island, or
-			// whether they are still on cooldown
-			long time = plugin.getPlayers().getInviteCoolDownTime(invitedPlayerUUID, plugin.getPlayers().getIslandLocation(playerUUID));
-			if (time > 0 && !player.isOp()) {
-			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).inviteerrorCoolDown.replace("[time]", String.valueOf(time)));
-			    return true;
-			}
-			// If the player already has a team then check that they are
-			// the leader, etc
-			if (plugin.getPlayers().inTeam(player.getUniqueId())) {
-			    // Leader?
-			    if (teamLeader.equals(player.getUniqueId())) {
-				// Invited player is free and not in a team
-				if (!plugin.getPlayers().inTeam(invitedPlayerUUID)) {
-				    // Player has space in their team
-				    int maxSize = Settings.maxTeamSize;
-				    // Dynamic team sizes with permissions
-				    for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
-					if (perms.getPermission().startsWith(Settings.PERMPREFIX + "team.maxsize.")) {
-					    maxSize = Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "team.maxsize.")[1]);
-					}
-					// Do some sanity checking
-					if (maxSize < Settings.maxTeamSize) {
-					    maxSize = Settings.maxTeamSize;
-					}
+				    // Find out if island is locked
+				    Island island = plugin.getGrid().getIslandAt(warpSpot);
+				    if (island != null && island.isLocked()) {
+					player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).lockIslandLocked);
+					return true;
 				    }
-				    if (teamMembers.size() < maxSize) {
-					// If that player already has an invite out
-					// then retract it.
-					// Players can only have one invite out at a
-					// time - interesting
-					if (inviteList.containsValue(playerUUID)) {
-					    inviteList.remove(getKeyByValue(inviteList, player.getUniqueId()));
-					    player.sendMessage(ChatColor.YELLOW + plugin.myLocale(player.getUniqueId()).inviteremovingInvite);
-					}
-					// Put the invited player (key) onto the
-					// list with inviter (value)
-					// If someone else has invited a player,
-					// then this invite will overwrite the
-					// previous invite!
-					inviteList.put(invitedPlayerUUID, player.getUniqueId());
-					player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).inviteinviteSentTo.replace("[name]", split[1]));
-					// Send message to online player
-					Bukkit.getPlayer(invitedPlayerUUID).sendMessage(plugin.myLocale(invitedPlayerUUID).invitenameHasInvitedYou.replace("[name]", player.getName()));
-					Bukkit.getPlayer(invitedPlayerUUID).sendMessage(
-						ChatColor.WHITE + "/" + label + " [accept/reject]" + ChatColor.YELLOW + " " + plugin.myLocale(invitedPlayerUUID).invitetoAcceptOrReject);
-					if (plugin.getPlayers().hasIsland(invitedPlayerUUID)) {
-					    Bukkit.getPlayer(invitedPlayerUUID).sendMessage(ChatColor.RED + plugin.myLocale(invitedPlayerUUID).invitewarningYouWillLoseIsland);
+				    // Find out which direction the warp is facing
+				    Block b = warpSpot.getBlock();
+				    if (b.getType().equals(Material.SIGN_POST)) {
+					Sign sign = (Sign) b.getState();
+					org.bukkit.material.Sign s = (org.bukkit.material.Sign) sign.getData();
+					BlockFace directionFacing = s.getFacing();
+					Location inFront = b.getRelative(directionFacing).getLocation();
+					if ((GridManager.isSafeLocation(inFront))) {
+					    // convert blockface to angle
+					    float yaw = Util.blockFaceToFloat(directionFacing);
+					    final Location actualWarp = new Location(inFront.getWorld(), inFront.getBlockX() + 0.5D, inFront.getBlockY(),
+						    inFront.getBlockZ() + 0.5D, yaw, 30F);
+					    player.teleport(actualWarp);
+					    player.getWorld().playSound(player.getLocation(), Sound.BAT_TAKEOFF, 1F, 1F);
+					    Player warpOwner = plugin.getServer().getPlayer(foundWarp);
+					    if (warpOwner != null) {
+						warpOwner.sendMessage(plugin.myLocale(foundWarp).warpsPlayerWarped.replace("[name]", player.getDisplayName()));
+					    }
+					    return true;
 					}
 				    } else {
-					player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).inviteerrorYourIslandIsFull);
+					// Warp has been removed
+					player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorDoesNotExist);
+					plugin.getWarpSignsListener().removeWarp(warpSpot);
+					return true;
+				    }
+				    if (!(GridManager.isSafeLocation(warpSpot))) {
+					player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorNotSafe);
+					plugin.getLogger().warning(
+						"Unsafe warp found at " + warpSpot.toString() + " owned by " + plugin.getPlayers().getName(foundWarp));
+					return true;
+				    } else {
+					final Location actualWarp = new Location(warpSpot.getWorld(), warpSpot.getBlockX() + 0.5D, warpSpot.getBlockY(),
+						warpSpot.getBlockZ() + 0.5D);
+					player.teleport(actualWarp);
+					player.getWorld().playSound(player.getLocation(), Sound.BAT_TAKEOFF, 1F, 1F);
+					return true;
+				    }
+				}
+			    }
+			} else {
+			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
+			    return false;
+			}
+		    } else if (split[0].equalsIgnoreCase("level")) {
+			// island level <name> command
+			if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.info")) {
+			    // Find out if the target has an island
+			    final UUID targetPlayerUUID = plugin.getPlayers().getUUID(split[1]);
+			    // Invited player must be known
+			    if (targetPlayerUUID == null) {
+				// plugin.getLogger().info("DEBUG: unknown player");
+				player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorUnknownPlayer);
+				return true;
+			    }
+			    // Check if this player has an island or not
+			    if (plugin.getPlayers().hasIsland(targetPlayerUUID) || plugin.getPlayers().inTeam(targetPlayerUUID)) {
+				calculateIslandLevel(player, targetPlayerUUID);
+			    } else {
+				player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoIslandOther);
+			    }
+			    return true;
+			} else {
+			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
+			}
+			return false;
+		    } else if (split[0].equalsIgnoreCase("invite")) {
+			// Team invite a player command
+			if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.create")) {
+			    // May return null if not known
+			    final UUID invitedPlayerUUID = plugin.getPlayers().getUUID(split[1]);
+			    // Invited player must be known
+			    if (invitedPlayerUUID == null) {
+				player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorUnknownPlayer);
+				return true;
+			    }
+			    // Player must be online
+			    if (plugin.getServer().getPlayer(invitedPlayerUUID) == null) {
+				player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorOfflinePlayer);
+				return true;
+			    }
+			    // Player issuing the command must have an island
+			    if (!plugin.getPlayers().hasIsland(player.getUniqueId())) {
+				player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).inviteerrorYouMustHaveIslandToInvite);
+				return true;
+			    }
+			    // Player cannot invite themselves
+			    if (player.getName().equalsIgnoreCase(split[1])) {
+				player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).inviteerrorYouCannotInviteYourself);
+				return true;
+			    }
+			    // Check if this player can be invited to this island, or
+			    // whether they are still on cooldown
+			    long time = plugin.getPlayers().getInviteCoolDownTime(invitedPlayerUUID, plugin.getPlayers().getIslandLocation(playerUUID));
+			    if (time > 0 && !player.isOp()) {
+				player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).inviteerrorCoolDown.replace("[time]", String.valueOf(time)));
+				return true;
+			    }
+			    // If the player already has a team then check that they are
+			    // the leader, etc
+			    if (plugin.getPlayers().inTeam(player.getUniqueId())) {
+				// Leader?
+				if (teamLeader.equals(player.getUniqueId())) {
+				    // Invited player is free and not in a team
+				    if (!plugin.getPlayers().inTeam(invitedPlayerUUID)) {
+					// Player has space in their team
+					int maxSize = Settings.maxTeamSize;
+					// Dynamic team sizes with permissions
+					for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
+					    if (perms.getPermission().startsWith(Settings.PERMPREFIX + "team.maxsize.")) {
+						maxSize = Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "team.maxsize.")[1]);
+					    }
+					    // Do some sanity checking
+					    if (maxSize < Settings.maxTeamSize) {
+						maxSize = Settings.maxTeamSize;
+					    }
+					}
+					if (teamMembers.size() < maxSize) {
+					    // If that player already has an invite out
+					    // then retract it.
+					    // Players can only have one invite out at a
+					    // time - interesting
+					    if (inviteList.containsValue(playerUUID)) {
+						inviteList.remove(getKeyByValue(inviteList, player.getUniqueId()));
+						player.sendMessage(ChatColor.YELLOW + plugin.myLocale(player.getUniqueId()).inviteremovingInvite);
+					    }
+					    // Put the invited player (key) onto the
+					    // list with inviter (value)
+					    // If someone else has invited a player,
+					    // then this invite will overwrite the
+					    // previous invite!
+					    inviteList.put(invitedPlayerUUID, player.getUniqueId());
+					    player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).inviteinviteSentTo.replace("[name]", split[1]));
+					    // Send message to online player
+					    Bukkit.getPlayer(invitedPlayerUUID).sendMessage(plugin.myLocale(invitedPlayerUUID).invitenameHasInvitedYou.replace("[name]", player.getName()));
+					    Bukkit.getPlayer(invitedPlayerUUID).sendMessage(
+						    ChatColor.WHITE + "/" + label + " [accept/reject]" + ChatColor.YELLOW + " " + plugin.myLocale(invitedPlayerUUID).invitetoAcceptOrReject);
+					    if (plugin.getPlayers().hasIsland(invitedPlayerUUID)) {
+						Bukkit.getPlayer(invitedPlayerUUID).sendMessage(ChatColor.RED + plugin.myLocale(invitedPlayerUUID).invitewarningYouWillLoseIsland);
+					    }
+					} else {
+					    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).inviteerrorYourIslandIsFull);
+					}
+				    } else {
+					player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).inviteerrorThatPlayerIsAlreadyInATeam);
+				    }
+				} else {
+				    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).inviteerrorYouMustHaveIslandToInvite);
+				}
+			    } else {
+				// First-time invite player does not have a team
+				// Check if invitee is in a team or not
+				if (!plugin.getPlayers().inTeam(invitedPlayerUUID)) {
+				    // If the inviter already has an invite out, remove
+				    // it
+				    if (inviteList.containsValue(playerUUID)) {
+					inviteList.remove(getKeyByValue(inviteList, player.getUniqueId()));
+					player.sendMessage(ChatColor.YELLOW + plugin.myLocale(player.getUniqueId()).inviteremovingInvite);
+				    }
+				    // Place the player and invitee on the invite list
+				    inviteList.put(invitedPlayerUUID, player.getUniqueId());
+
+				    player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).inviteinviteSentTo.replace("[name]", split[1]));
+				    Bukkit.getPlayer(invitedPlayerUUID).sendMessage(plugin.myLocale(invitedPlayerUUID).invitenameHasInvitedYou.replace("[name]", player.getName()));
+				    Bukkit.getPlayer(invitedPlayerUUID).sendMessage(
+					    ChatColor.WHITE + "/" + label + " [accept/reject]" + ChatColor.YELLOW + " " + plugin.myLocale(invitedPlayerUUID).invitetoAcceptOrReject);
+				    // Check if the player has an island and warn
+				    // accordingly
+				    // plugin.getLogger().info("DEBUG: invited player = "
+				    // + invitedPlayerUUID.toString());
+				    if (plugin.getPlayers().hasIsland(invitedPlayerUUID)) {
+					// plugin.getLogger().info("DEBUG: invited player has island");
+					Bukkit.getPlayer(invitedPlayerUUID).sendMessage(ChatColor.RED + plugin.myLocale(invitedPlayerUUID).invitewarningYouWillLoseIsland);
 				    }
 				} else {
 				    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).inviteerrorThatPlayerIsAlreadyInATeam);
 				}
-			    } else {
-				player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).inviteerrorYouMustHaveIslandToInvite);
 			    }
+			    return true;
 			} else {
-			    // First-time invite player does not have a team
-			    // Check if invitee is in a team or not
-			    if (!plugin.getPlayers().inTeam(invitedPlayerUUID)) {
-				// If the inviter already has an invite out, remove
-				// it
-				if (inviteList.containsValue(playerUUID)) {
-				    inviteList.remove(getKeyByValue(inviteList, player.getUniqueId()));
-				    player.sendMessage(ChatColor.YELLOW + plugin.myLocale(player.getUniqueId()).inviteremovingInvite);
-				}
-				// Place the player and invitee on the invite list
-				inviteList.put(invitedPlayerUUID, player.getUniqueId());
-
-				player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).inviteinviteSentTo.replace("[name]", split[1]));
-				Bukkit.getPlayer(invitedPlayerUUID).sendMessage(plugin.myLocale(invitedPlayerUUID).invitenameHasInvitedYou.replace("[name]", player.getName()));
-				Bukkit.getPlayer(invitedPlayerUUID).sendMessage(
-					ChatColor.WHITE + "/" + label + " [accept/reject]" + ChatColor.YELLOW + " " + plugin.myLocale(invitedPlayerUUID).invitetoAcceptOrReject);
-				// Check if the player has an island and warn
-				// accordingly
-				// plugin.getLogger().info("DEBUG: invited player = "
-				// + invitedPlayerUUID.toString());
-				if (plugin.getPlayers().hasIsland(invitedPlayerUUID)) {
-				    // plugin.getLogger().info("DEBUG: invited player has island");
-				    Bukkit.getPlayer(invitedPlayerUUID).sendMessage(ChatColor.RED + plugin.myLocale(invitedPlayerUUID).invitewarningYouWillLoseIsland);
-				}
-			    } else {
-				player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).inviteerrorThatPlayerIsAlreadyInATeam);
-			    }
+			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
+			    return false;
 			}
-			return true;
-		    } else {
-			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
-			return false;
-		    }
-		} else if (split[0].equalsIgnoreCase("coop")) {
-		    // Give a player coop privileges
-		    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "coop")) {
-			// May return null if not known
-			final UUID invitedPlayerUUID = plugin.getPlayers().getUUID(split[1]);
-			// Invited player must be known
-			if (invitedPlayerUUID == null) {
+		    } else if (split[0].equalsIgnoreCase("coop")) {
+			// Give a player coop privileges
+			if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "coop")) {
+			    // May return null if not known
+			    final UUID invitedPlayerUUID = plugin.getPlayers().getUUID(split[1]);
+			    // Invited player must be known
+			    if (invitedPlayerUUID == null) {
+				player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorUnknownPlayer);
+				return true;
+			    }
+			    // Player must be online
+			    Player newPlayer = plugin.getServer().getPlayer(invitedPlayerUUID);
+			    if (newPlayer == null) {
+				player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorOfflinePlayer);
+				return true;
+			    }
+			    // Player issuing the command must have an island
+			    if (!plugin.getPlayers().hasIsland(playerUUID) && !plugin.getPlayers().inTeam(playerUUID)) {
+				player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).inviteerrorYouMustHaveIslandToInvite);
+				return true;
+			    }
+			    // Player cannot invite themselves
+			    if (player.getName().equalsIgnoreCase(split[1])) {
+				player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).inviteerrorYouCannotInviteYourself);
+				return true;
+			    }
+			    // If target player is already on the team ignore
+			    if (plugin.getPlayers().getMembers(playerUUID).contains(invitedPlayerUUID)) {
+				player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).coopOnYourTeam);
+				return true;
+			    }
+			    // Target has to have an island
+			    if (!plugin.getPlayers().inTeam(invitedPlayerUUID)) {
+				if (!plugin.getPlayers().hasIsland(invitedPlayerUUID)) {
+				    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoIslandOther);
+				    return true;
+				}
+			    }
+			    // Add target to coop list
+			    CoopPlay.getInstance().addCoopPlayer(player, newPlayer);
+			    // Tell everyone what happened
+			    player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).coopSuccess.replace("[name]", newPlayer.getDisplayName()));
+			    newPlayer.sendMessage(ChatColor.GREEN + plugin.myLocale(newPlayer.getUniqueId()).coopMadeYouCoop.replace("[name]", player.getDisplayName()));
+			    return true;
+
+			}
+		    } else if (split[0].equalsIgnoreCase("expel")) {
+			if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.expel")) {
+			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
+			    return true;
+			}
+			// Find out who they want to expel
+			final UUID targetPlayerUUID = plugin.getPlayers().getUUID(split[1]);
+			// Player must be known
+			if (targetPlayerUUID == null) {
 			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorUnknownPlayer);
 			    return true;
 			}
-			// Player must be online
-			Player newPlayer = plugin.getServer().getPlayer(invitedPlayerUUID);
-			if (newPlayer == null) {
+			// Target should not be themselves
+			if (targetPlayerUUID.equals(playerUUID)) {
+			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).expelNotYourself);
+			    return true;
+			}
+			// Target must be online
+			Player target = plugin.getServer().getPlayer(targetPlayerUUID);
+			if (target == null) {
 			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorOfflinePlayer);
 			    return true;
 			}
-			// Player issuing the command must have an island
-			if (!plugin.getPlayers().hasIsland(playerUUID) && !plugin.getPlayers().inTeam(playerUUID)) {
-			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).inviteerrorYouMustHaveIslandToInvite);
+			// Target cannot be op
+			if (target.isOp() || VaultHelper.checkPerm(target, Settings.PERMPREFIX + "mod.bypassprotect")) {
+			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).expelFail.replace("[name]", target.getDisplayName()));
 			    return true;
 			}
-			// Player cannot invite themselves
-			if (player.getName().equalsIgnoreCase(split[1])) {
-			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).inviteerrorYouCannotInviteYourself);
-			    return true;
-			}
-			// If target player is already on the team ignore
-			if (plugin.getPlayers().getMembers(playerUUID).contains(invitedPlayerUUID)) {
-			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).coopOnYourTeam);
-			    return true;
-			}
-			// Target has to have an island
-			if (!plugin.getPlayers().inTeam(invitedPlayerUUID)) {
-			    if (!plugin.getPlayers().hasIsland(invitedPlayerUUID)) {
-				player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoIslandOther);
-				return true;
-			    }
-			}
-			// Add target to coop list
-			CoopPlay.getInstance().addCoopPlayer(player, newPlayer);
-			// Tell everyone what happened
-			player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).coopSuccess.replace("[name]", newPlayer.getDisplayName()));
-			newPlayer.sendMessage(ChatColor.GREEN + plugin.myLocale(newPlayer.getUniqueId()).coopMadeYouCoop.replace("[name]", player.getDisplayName()));
-			return true;
-
-		    }
-		} else if (split[0].equalsIgnoreCase("expel")) {
-		    if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.expel")) {
-			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
-			return true;
-		    }
-		    // Find out who they want to expel
-		    final UUID targetPlayerUUID = plugin.getPlayers().getUUID(split[1]);
-		    // Player must be known
-		    if (targetPlayerUUID == null) {
-			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorUnknownPlayer);
-			return true;
-		    }
-		    // Target should not be themselves
-		    if (targetPlayerUUID.equals(playerUUID)) {
-			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).expelNotYourself);
-			return true;
-		    }
-		    // Target must be online
-		    Player target = plugin.getServer().getPlayer(targetPlayerUUID);
-		    if (target == null) {
-			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorOfflinePlayer);
-			return true;
-		    }
-		    // Target cannot be op
-		    if (target.isOp() || VaultHelper.checkPerm(target, Settings.PERMPREFIX + "mod.bypassprotect")) {
-			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).expelFail.replace("[name]", target.getDisplayName()));
-			return true;
-		    }
-		    // Remove them from the coop list
-		    boolean coop = CoopPlay.getInstance().removeCoopPlayer(player, target);
-		    if (coop) {
-			target.sendMessage(ChatColor.RED + plugin.myLocale(target.getUniqueId()).coopRemoved.replace("[name]", player.getDisplayName()));
-			player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).coopRemoveSuccess.replace("[name]", target.getDisplayName()));
-		    }
-		    // See if target is on this player's island
-		    if (plugin.getGrid().isOnIsland(player, target)) {
-			// Check to see if this player has an island or is just
-			// helping out
-			if (plugin.getPlayers().inTeam(targetPlayerUUID) || plugin.getPlayers().hasIsland(targetPlayerUUID)) {
-			    plugin.getGrid().homeTeleport(target);
-			} else {
-			    // Just move target to spawn
-			    if (!target.performCommand(Settings.SPAWNCOMMAND)) {
-				target.teleport(player.getWorld().getSpawnLocation());
-				/*
-				 * target.sendBlockChange(target.getWorld().
-				 * getSpawnLocation()
-				 * ,target.getWorld().getSpawnLocation().getBlock().
-				 * getType()
-				 * ,target.getWorld().getSpawnLocation().getBlock().
-				 * getData());
-				 */
-			    }
-			}
-			target.sendMessage(ChatColor.RED + plugin.myLocale(target.getUniqueId()).expelExpelled);
-			plugin.getLogger().info(player.getName() + " expelled " + target.getName() + " from their island.");
-			// Yes they are
-			player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).expelSuccess.replace("[name]", target.getDisplayName()));
-		    } else if (!coop) {
-			// No they're not
-			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).expelNotOnIsland);
-		    }
-		    return true;
-		} else if (split[0].equalsIgnoreCase("ban")) {
-		    if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.ban")) {
-			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
-			return true;
-		    }
-		    // Find out who they want to ban
-		    final UUID targetPlayerUUID = plugin.getPlayers().getUUID(split[1]);
-		    // Player must be known
-		    if (targetPlayerUUID == null) {
-			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorUnknownPlayer);
-			return true;
-		    }
-		    // Target should not be themselves
-		    if (targetPlayerUUID.equals(playerUUID)) {
-			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).banNotYourself);
-			return true;
-		    }
-		    // Target cannot be on the same team
-		    if (plugin.getPlayers().inTeam(playerUUID) && plugin.getPlayers().inTeam(targetPlayerUUID)) {
-			if (plugin.getPlayers().getTeamLeader(playerUUID).equals(plugin.getPlayers().getTeamLeader(targetPlayerUUID))) {
-			    // Same team!
-			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).banNotTeamMember);
-			    return true;
-			}
-		    }
-		    // Check that the player is not banned already
-		    if (plugin.getPlayers().isBanned(playerUUID, targetPlayerUUID)) {
-			player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).banAlreadyBanned.replace("[name]", split[1]));
-			return true;
-		    }
-		    // Check online/offline status
-		    Player target = plugin.getServer().getPlayer(targetPlayerUUID);
-		    // Get offline player
-		    OfflinePlayer offlineTarget = plugin.getServer().getOfflinePlayer(targetPlayerUUID);
-		    // Target cannot be op
-		    if (offlineTarget.isOp()) {
-			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).banFail.replace("[name]", offlineTarget.getName()));
-			return true;
-		    }
-		    if (target != null) {
 			// Remove them from the coop list
 			boolean coop = CoopPlay.getInstance().removeCoopPlayer(player, target);
 			if (coop) {
 			    target.sendMessage(ChatColor.RED + plugin.myLocale(target.getUniqueId()).coopRemoved.replace("[name]", player.getDisplayName()));
 			    player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).coopRemoveSuccess.replace("[name]", target.getDisplayName()));
 			}
-			// See if target is on this player's island and if so send them away
+			// See if target is on this player's island
 			if (plugin.getGrid().isOnIsland(player, target)) {
 			    // Check to see if this player has an island or is just
 			    // helping out
@@ -2254,256 +2188,331 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 				// Just move target to spawn
 				if (!target.performCommand(Settings.SPAWNCOMMAND)) {
 				    target.teleport(player.getWorld().getSpawnLocation());
+				    /*
+				     * target.sendBlockChange(target.getWorld().
+				     * getSpawnLocation()
+				     * ,target.getWorld().getSpawnLocation().getBlock().
+				     * getType()
+				     * ,target.getWorld().getSpawnLocation().getBlock().
+				     * getData());
+				     */
 				}
 			    }
+			    target.sendMessage(ChatColor.RED + plugin.myLocale(target.getUniqueId()).expelExpelled);
+			    plugin.getLogger().info(player.getName() + " expelled " + target.getName() + " from their island.");
+			    // Yes they are
+			    player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).expelSuccess.replace("[name]", target.getDisplayName()));
+			} else if (!coop) {
+			    // No they're not
+			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).expelNotOnIsland);
 			}
-			// Notifications
-			// Target
-			target.sendMessage(ChatColor.RED + plugin.myLocale(targetPlayerUUID).banBanned.replace("[name]", player.getDisplayName()));
-		    } else {
-			// Offline notification
-			plugin.getMessages().setMessage(targetPlayerUUID, ChatColor.RED + plugin.myLocale(targetPlayerUUID).banBanned.replace("[name]", player.getDisplayName()));
-		    }
-		    // Console
-		    plugin.getLogger().info(player.getName() + " banned " + offlineTarget.getName() + " from their island.");
-		    // Player
-		    player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).banSuccess.replace("[name]", offlineTarget.getName()));
-		    // Tell team
-		    plugin.getMessages().tellTeam(playerUUID, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).banSuccess.replace("[name]", offlineTarget.getName()));
-		    plugin.getMessages().tellOfflineTeam(playerUUID, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).banSuccess.replace("[name]", offlineTarget.getName()));
-		    // Ban the sucker
-		    plugin.getPlayers().ban(playerUUID, targetPlayerUUID);
-		    return true;
-		} else if (split[0].equalsIgnoreCase("unban")) {
-		    if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.ban")) {
-			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
 			return true;
-		    }
-		    // Find out who they want to unban
-		    final UUID targetPlayerUUID = plugin.getPlayers().getUUID(split[1]);
-		    // Player must be known
-		    if (targetPlayerUUID == null) {
-			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorUnknownPlayer);
-			return true;
-		    }
-		    // Target should not be themselves
-		    if (targetPlayerUUID.equals(playerUUID)) {
-			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).banNotYourself);
-			return true;
-		    }
-		    // Check that the player is actually banned
-		    if (!plugin.getPlayers().isBanned(playerUUID, targetPlayerUUID)) {
-			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).banNotBanned.replace("[name]", split[1]));
-			return true;
-		    }
-		    // Notifications
-		    // Online check
-		    Player target = plugin.getServer().getPlayer(targetPlayerUUID);
-		    // Target
-		    if (target != null) {
-			// Online
-			target.sendMessage(ChatColor.RED + plugin.myLocale(target.getUniqueId()).banLifted.replace("[name]", player.getDisplayName()));
-		    } else {
-			plugin.getMessages().setMessage(targetPlayerUUID, ChatColor.GREEN + plugin.myLocale(targetPlayerUUID).banLifted.replace("[name]", player.getDisplayName()));
-		    }
-		    OfflinePlayer offlineTarget = plugin.getServer().getOfflinePlayer(targetPlayerUUID);
-		    // Player
-		    player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).banLiftedSuccess.replace("[name]", offlineTarget.getName()));
-		    // Console
-		    plugin.getLogger().info(player.getName() + " unbanned " + offlineTarget.getName() + " from their island.");
-		    // Tell team
-		    plugin.getMessages().tellTeam(playerUUID, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).banLiftedSuccess.replace("[name]", offlineTarget.getName()));
-		    plugin.getMessages().tellOfflineTeam(playerUUID, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).banLiftedSuccess.replace("[name]", offlineTarget.getName()));
-		    // Unban the redeemed one
-		    plugin.getPlayers().unBan(playerUUID, targetPlayerUUID);
-		    return true;
-		} else if (split[0].equalsIgnoreCase("kick") || split[0].equalsIgnoreCase("remove")) {
-		    // PlayerIsland remove command with a player name, or island kick
-		    // command
-		    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.kick")) {
-			if (!plugin.getPlayers().inTeam(playerUUID)) {
-			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).kickerrorNoTeam);
+		    } else if (split[0].equalsIgnoreCase("ban")) {
+			if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.ban")) {
+			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
 			    return true;
 			}
-			// Only leaders can kick
-			if (teamLeader != null && !teamLeader.equals(playerUUID)) {
-			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).kickerrorOnlyLeaderCan);
-			    return true;
-			}
-			// The main thing to do is check if the player name to kick
-			// is in the list of players in the team.
-			targetPlayer = null;
-			for (UUID member : teamMembers) {
-			    if (plugin.getPlayers().getName(member).equalsIgnoreCase(split[1])) {
-				targetPlayer = member;
-			    }
-			}
-			if (targetPlayer == null) {
-			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).kickerrorNotPartOfTeam);
-			    return true;
-			}
-			if (teamMembers.contains(targetPlayer)) {
-			    // If the player leader tries to kick or remove
-			    // themselves
-			    if (player.getUniqueId().equals(targetPlayer)) {
-				player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).leaveerrorLeadersCannotLeave);
-				return true;
-			    }
-			    // If target is online
-			    Player target = plugin.getServer().getPlayer(targetPlayer);
-			    if (target != null) {
-				// plugin.getLogger().info("DEBUG: player is online");
-				target.sendMessage(ChatColor.RED + plugin.myLocale(targetPlayer).kicknameRemovedYou.replace("[name]", player.getName()));
-				// Log the location that this player left so they
-				// cannot join again before the cool down ends
-				plugin.getPlayers().startInviteCoolDownTimer(targetPlayer, plugin.getPlayers().getIslandLocation(playerUUID));
-				// Clear any coop inventories
-				// CoopPlay.getInstance().returnAllInventories(target);
-				// Remove any of the target's coop invitees and
-				// anyone they invited
-				CoopPlay.getInstance().clearMyInvitedCoops(target);
-				CoopPlay.getInstance().clearMyCoops(target);
-				// Clear the player out and throw their stuff at the
-				// leader
-				if (target.getWorld().equals(ASkyBlock.getIslandWorld())) {
-				    for (ItemStack i : target.getInventory().getContents()) {
-					if (i != null) {
-					    try {
-						player.getWorld().dropItemNaturally(player.getLocation(), i);
-					    } catch (Exception e) {
-					    }
-					}
-				    }
-				    for (ItemStack i : target.getEquipment().getArmorContents()) {
-					if (i != null) {
-					    try {
-						player.getWorld().dropItemNaturally(player.getLocation(), i);
-					    } catch (Exception e) {
-					    }
-					}
-				    }
-				    // plugin.resetPlayer(target); <- no good if
-				    // reset inventory is false
-				    // Clear their inventory and equipment and set
-				    // them as survival
-				    target.getInventory().clear(); // Javadocs are
-				    // wrong - this
-				    // does not
-				    // clear armor slots! So...
-				    // plugin.getLogger().info("DEBUG: Clearing kicked player's inventory");
-				    target.getInventory().setArmorContents(null);
-				    target.getInventory().setHelmet(null);
-				    target.getInventory().setChestplate(null);
-				    target.getInventory().setLeggings(null);
-				    target.getInventory().setBoots(null);
-				    target.getEquipment().clear();
-				    if (Settings.resetChallenges) {
-					// Reset the player's challenge status
-					plugin.getPlayers().resetAllChallenges(target.getUniqueId());
-				    }
-				    // Reset the island level
-				    plugin.getPlayers().setIslandLevel(target.getUniqueId(), 0);
-				    plugin.getPlayers().save(target.getUniqueId());
-				    TopTen.topTenAddEntry(playerUUID, 0);
-				    // Update the inventory
-				    target.updateInventory();
-				}
-				if (!target.performCommand(Settings.SPAWNCOMMAND)) {
-				    target.teleport(ASkyBlock.getIslandWorld().getSpawnLocation());
-				}
-			    } else {
-				// Offline
-				// plugin.getLogger().info("DEBUG: player is offline "
-				// + targetPlayer.toString());
-				// Tell offline player they were kicked
-				plugin.getMessages().setMessage(targetPlayer, ChatColor.RED + plugin.myLocale(player.getUniqueId()).kicknameRemovedYou.replace("[name]", player.getName()));
-			    }
-			    // Remove any warps
-			    plugin.getWarpSignsListener().removeWarp(targetPlayer);
-			    // Tell leader they removed the player
-			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).kicknameRemoved.replace("[name]", split[1]));
-			    removePlayerFromTeam(targetPlayer, teamLeader);
-			    teamMembers.remove(targetPlayer);
-			    if (teamMembers.size() < 2) {
-				removePlayerFromTeam(player.getUniqueId(), teamLeader);
-			    }
-			    plugin.getPlayers().save(targetPlayer);
-			} else {
-			    plugin.getLogger().warning("Player " + player.getName() + " failed to remove " + plugin.getPlayers().getName(targetPlayer));
-			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).kickerrorNotPartOfTeam);
-			}
-			return true;
-		    } else {
-			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
-			return false;
-		    }
-		} else if (split[0].equalsIgnoreCase("makeleader")) {
-		    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.makeleader")) {
-			targetPlayer = plugin.getPlayers().getUUID(split[1]);
-			if (targetPlayer == null) {
+			// Find out who they want to ban
+			final UUID targetPlayerUUID = plugin.getPlayers().getUUID(split[1]);
+			// Player must be known
+			if (targetPlayerUUID == null) {
 			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorUnknownPlayer);
 			    return true;
 			}
-			if (targetPlayer.equals(playerUUID)) {
-			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).makeLeadererrorGeneralError);
+			// Target should not be themselves
+			if (targetPlayerUUID.equals(playerUUID)) {
+			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).banNotYourself);
 			    return true;
 			}
-			if (!plugin.getPlayers().inTeam(player.getUniqueId())) {
-			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).makeLeadererrorYouMustBeInTeam);
+			// Target cannot be on the same team
+			if (plugin.getPlayers().inTeam(playerUUID) && plugin.getPlayers().inTeam(targetPlayerUUID)) {
+			    if (plugin.getPlayers().getTeamLeader(playerUUID).equals(plugin.getPlayers().getTeamLeader(targetPlayerUUID))) {
+				// Same team!
+				player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).banNotTeamMember);
+				return true;
+			    }
+			}
+			// Check that the player is not banned already
+			if (plugin.getPlayers().isBanned(playerUUID, targetPlayerUUID)) {
+			    player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).banAlreadyBanned.replace("[name]", split[1]));
 			    return true;
 			}
-
-			if (plugin.getPlayers().getMembers(player.getUniqueId()).size() > 2) {
-			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).makeLeadererrorRemoveAllPlayersFirst);
-			    plugin.getLogger().info(player.getName() + " tried to transfer his island, but failed because >2 people in a team");
+			// Check online/offline status
+			Player target = plugin.getServer().getPlayer(targetPlayerUUID);
+			// Get offline player
+			OfflinePlayer offlineTarget = plugin.getServer().getOfflinePlayer(targetPlayerUUID);
+			// Target cannot be op
+			if (offlineTarget.isOp()) {
+			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).banFail.replace("[name]", offlineTarget.getName()));
 			    return true;
 			}
-
-			if (plugin.getPlayers().inTeam(player.getUniqueId())) {
-			    if (teamLeader.equals(player.getUniqueId())) {
-				if (teamMembers.contains(targetPlayer)) {
-
-				    // Check if online
-				    if (plugin.getServer().getPlayer(targetPlayer) != null) {
-					plugin.getServer().getPlayer(targetPlayer).sendMessage(ChatColor.GREEN + plugin.myLocale(targetPlayer).makeLeaderyouAreNowTheOwner);
-				    } else {
-					plugin.getMessages().setMessage(targetPlayer, plugin.myLocale(player.getUniqueId()).makeLeaderyouAreNowTheOwner);
-					// .makeLeadererrorPlayerMustBeOnline
+			if (target != null) {
+			    // Remove them from the coop list
+			    boolean coop = CoopPlay.getInstance().removeCoopPlayer(player, target);
+			    if (coop) {
+				target.sendMessage(ChatColor.RED + plugin.myLocale(target.getUniqueId()).coopRemoved.replace("[name]", player.getDisplayName()));
+				player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).coopRemoveSuccess.replace("[name]", target.getDisplayName()));
+			    }
+			    // See if target is on this player's island and if so send them away
+			    if (plugin.getGrid().isOnIsland(player, target)) {
+				// Check to see if this player has an island or is just
+				// helping out
+				if (plugin.getPlayers().inTeam(targetPlayerUUID) || plugin.getPlayers().hasIsland(targetPlayerUUID)) {
+				    plugin.getGrid().homeTeleport(target);
+				} else {
+				    // Just move target to spawn
+				    if (!target.performCommand(Settings.SPAWNCOMMAND)) {
+					target.teleport(player.getWorld().getSpawnLocation());
 				    }
-				    player.sendMessage(ChatColor.GREEN
-					    + plugin.myLocale(player.getUniqueId()).makeLeadernameIsNowTheOwner.replace("[name]", plugin.getPlayers().getName(targetPlayer)));
-				    // targetPlayer is the new leader
-				    // plugin.getLogger().info("DEBUG: " +
-				    // plugin.getPlayers().getIslandLevel(teamLeader));
-				    // Remove the target player from the team
-				    removePlayerFromTeam(targetPlayer, teamLeader);
-				    // Remove the leader from the team
-				    removePlayerFromTeam(teamLeader, teamLeader);
-				    // plugin.getLogger().info("DEBUG: " +
-				    // plugin.getPlayers().getIslandLevel(teamLeader));
-				    // Transfer the data from the old leader to the
-				    // new one
-				    plugin.getGrid().transferIsland(player.getUniqueId(), targetPlayer);
-				    // Create a new team with
-				    addPlayertoTeam(player.getUniqueId(), targetPlayer);
-				    addPlayertoTeam(targetPlayer, targetPlayer);
+				}
+			    }
+			    // Notifications
+			    // Target
+			    target.sendMessage(ChatColor.RED + plugin.myLocale(targetPlayerUUID).banBanned.replace("[name]", player.getDisplayName()));
+			} else {
+			    // Offline notification
+			    plugin.getMessages().setMessage(targetPlayerUUID, ChatColor.RED + plugin.myLocale(targetPlayerUUID).banBanned.replace("[name]", player.getDisplayName()));
+			}
+			// Console
+			plugin.getLogger().info(player.getName() + " banned " + offlineTarget.getName() + " from their island.");
+			// Player
+			player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).banSuccess.replace("[name]", offlineTarget.getName()));
+			// Tell team
+			plugin.getMessages().tellTeam(playerUUID, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).banSuccess.replace("[name]", offlineTarget.getName()));
+			plugin.getMessages().tellOfflineTeam(playerUUID, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).banSuccess.replace("[name]", offlineTarget.getName()));
+			// Ban the sucker
+			plugin.getPlayers().ban(playerUUID, targetPlayerUUID);
+			return true;
+		    } else if (split[0].equalsIgnoreCase("unban")) {
+			if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.ban")) {
+			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
+			    return true;
+			}
+			// Find out who they want to unban
+			final UUID targetPlayerUUID = plugin.getPlayers().getUUID(split[1]);
+			// Player must be known
+			if (targetPlayerUUID == null) {
+			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorUnknownPlayer);
+			    return true;
+			}
+			// Target should not be themselves
+			if (targetPlayerUUID.equals(playerUUID)) {
+			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).banNotYourself);
+			    return true;
+			}
+			// Check that the player is actually banned
+			if (!plugin.getPlayers().isBanned(playerUUID, targetPlayerUUID)) {
+			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).banNotBanned.replace("[name]", split[1]));
+			    return true;
+			}
+			// Notifications
+			// Online check
+			Player target = plugin.getServer().getPlayer(targetPlayerUUID);
+			// Target
+			if (target != null) {
+			    // Online
+			    target.sendMessage(ChatColor.RED + plugin.myLocale(target.getUniqueId()).banLifted.replace("[name]", player.getDisplayName()));
+			} else {
+			    plugin.getMessages().setMessage(targetPlayerUUID, ChatColor.GREEN + plugin.myLocale(targetPlayerUUID).banLifted.replace("[name]", player.getDisplayName()));
+			}
+			OfflinePlayer offlineTarget = plugin.getServer().getOfflinePlayer(targetPlayerUUID);
+			// Player
+			player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).banLiftedSuccess.replace("[name]", offlineTarget.getName()));
+			// Console
+			plugin.getLogger().info(player.getName() + " unbanned " + offlineTarget.getName() + " from their island.");
+			// Tell team
+			plugin.getMessages().tellTeam(playerUUID, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).banLiftedSuccess.replace("[name]", offlineTarget.getName()));
+			plugin.getMessages().tellOfflineTeam(playerUUID, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).banLiftedSuccess.replace("[name]", offlineTarget.getName()));
+			// Unban the redeemed one
+			plugin.getPlayers().unBan(playerUUID, targetPlayerUUID);
+			return true;
+		    } else if (split[0].equalsIgnoreCase("kick") || split[0].equalsIgnoreCase("remove")) {
+			// PlayerIsland remove command with a player name, or island kick
+			// command
+			if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.kick")) {
+			    if (!plugin.getPlayers().inTeam(playerUUID)) {
+				player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).kickerrorNoTeam);
+				return true;
+			    }
+			    // Only leaders can kick
+			    if (teamLeader != null && !teamLeader.equals(playerUUID)) {
+				player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).kickerrorOnlyLeaderCan);
+				return true;
+			    }
+			    // The main thing to do is check if the player name to kick
+			    // is in the list of players in the team.
+			    targetPlayer = null;
+			    for (UUID member : teamMembers) {
+				if (plugin.getPlayers().getName(member).equalsIgnoreCase(split[1])) {
+				    targetPlayer = member;
+				}
+			    }
+			    if (targetPlayer == null) {
+				player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).kickerrorNotPartOfTeam);
+				return true;
+			    }
+			    if (teamMembers.contains(targetPlayer)) {
+				// If the player leader tries to kick or remove
+				// themselves
+				if (player.getUniqueId().equals(targetPlayer)) {
+				    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).leaveerrorLeadersCannotLeave);
 				    return true;
 				}
-				player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).makeLeadererrorThatPlayerIsNotInTeam);
+				// If target is online
+				Player target = plugin.getServer().getPlayer(targetPlayer);
+				if (target != null) {
+				    // plugin.getLogger().info("DEBUG: player is online");
+				    target.sendMessage(ChatColor.RED + plugin.myLocale(targetPlayer).kicknameRemovedYou.replace("[name]", player.getName()));
+				    // Log the location that this player left so they
+				    // cannot join again before the cool down ends
+				    plugin.getPlayers().startInviteCoolDownTimer(targetPlayer, plugin.getPlayers().getIslandLocation(playerUUID));
+				    // Clear any coop inventories
+				    // CoopPlay.getInstance().returnAllInventories(target);
+				    // Remove any of the target's coop invitees and
+				    // anyone they invited
+				    CoopPlay.getInstance().clearMyInvitedCoops(target);
+				    CoopPlay.getInstance().clearMyCoops(target);
+				    // Clear the player out and throw their stuff at the
+				    // leader
+				    if (target.getWorld().equals(ASkyBlock.getIslandWorld())) {
+					for (ItemStack i : target.getInventory().getContents()) {
+					    if (i != null) {
+						try {
+						    player.getWorld().dropItemNaturally(player.getLocation(), i);
+						} catch (Exception e) {
+						}
+					    }
+					}
+					for (ItemStack i : target.getEquipment().getArmorContents()) {
+					    if (i != null) {
+						try {
+						    player.getWorld().dropItemNaturally(player.getLocation(), i);
+						} catch (Exception e) {
+						}
+					    }
+					}
+					// plugin.resetPlayer(target); <- no good if
+					// reset inventory is false
+					// Clear their inventory and equipment and set
+					// them as survival
+					target.getInventory().clear(); // Javadocs are
+					// wrong - this
+					// does not
+					// clear armor slots! So...
+					// plugin.getLogger().info("DEBUG: Clearing kicked player's inventory");
+					target.getInventory().setArmorContents(null);
+					target.getInventory().setHelmet(null);
+					target.getInventory().setChestplate(null);
+					target.getInventory().setLeggings(null);
+					target.getInventory().setBoots(null);
+					target.getEquipment().clear();
+					if (Settings.resetChallenges) {
+					    // Reset the player's challenge status
+					    plugin.getPlayers().resetAllChallenges(target.getUniqueId());
+					}
+					// Reset the island level
+					plugin.getPlayers().setIslandLevel(target.getUniqueId(), 0);
+					plugin.getPlayers().save(target.getUniqueId());
+					TopTen.topTenAddEntry(playerUUID, 0);
+					// Update the inventory
+					target.updateInventory();
+				    }
+				    if (!target.performCommand(Settings.SPAWNCOMMAND)) {
+					target.teleport(ASkyBlock.getIslandWorld().getSpawnLocation());
+				    }
+				} else {
+				    // Offline
+				    // plugin.getLogger().info("DEBUG: player is offline "
+				    // + targetPlayer.toString());
+				    // Tell offline player they were kicked
+				    plugin.getMessages().setMessage(targetPlayer, ChatColor.RED + plugin.myLocale(player.getUniqueId()).kicknameRemovedYou.replace("[name]", player.getName()));
+				}
+				// Remove any warps
+				plugin.getWarpSignsListener().removeWarp(targetPlayer);
+				// Tell leader they removed the player
+				player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).kicknameRemoved.replace("[name]", split[1]));
+				removePlayerFromTeam(targetPlayer, teamLeader);
+				teamMembers.remove(targetPlayer);
+				if (teamMembers.size() < 2) {
+				    removePlayerFromTeam(player.getUniqueId(), teamLeader);
+				}
+				plugin.getPlayers().save(targetPlayer);
 			    } else {
-				player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).makeLeadererrorNotYourIsland);
+				plugin.getLogger().warning("Player " + player.getName() + " failed to remove " + plugin.getPlayers().getName(targetPlayer));
+				player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).kickerrorNotPartOfTeam);
 			    }
+			    return true;
 			} else {
-			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).makeLeadererrorGeneralError);
+			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
+			    return false;
 			}
-			return true;
+		    } else if (split[0].equalsIgnoreCase("makeleader")) {
+			if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.makeleader")) {
+			    targetPlayer = plugin.getPlayers().getUUID(split[1]);
+			    if (targetPlayer == null) {
+				player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorUnknownPlayer);
+				return true;
+			    }
+			    if (targetPlayer.equals(playerUUID)) {
+				player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).makeLeadererrorGeneralError);
+				return true;
+			    }
+			    if (!plugin.getPlayers().inTeam(player.getUniqueId())) {
+				player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).makeLeadererrorYouMustBeInTeam);
+				return true;
+			    }
+
+			    if (plugin.getPlayers().getMembers(player.getUniqueId()).size() > 2) {
+				player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).makeLeadererrorRemoveAllPlayersFirst);
+				plugin.getLogger().info(player.getName() + " tried to transfer his island, but failed because >2 people in a team");
+				return true;
+			    }
+
+			    if (plugin.getPlayers().inTeam(player.getUniqueId())) {
+				if (teamLeader.equals(player.getUniqueId())) {
+				    if (teamMembers.contains(targetPlayer)) {
+
+					// Check if online
+					if (plugin.getServer().getPlayer(targetPlayer) != null) {
+					    plugin.getServer().getPlayer(targetPlayer).sendMessage(ChatColor.GREEN + plugin.myLocale(targetPlayer).makeLeaderyouAreNowTheOwner);
+					} else {
+					    plugin.getMessages().setMessage(targetPlayer, plugin.myLocale(player.getUniqueId()).makeLeaderyouAreNowTheOwner);
+					    // .makeLeadererrorPlayerMustBeOnline
+					}
+					player.sendMessage(ChatColor.GREEN
+						+ plugin.myLocale(player.getUniqueId()).makeLeadernameIsNowTheOwner.replace("[name]", plugin.getPlayers().getName(targetPlayer)));
+					// targetPlayer is the new leader
+					// plugin.getLogger().info("DEBUG: " +
+					// plugin.getPlayers().getIslandLevel(teamLeader));
+					// Remove the target player from the team
+					removePlayerFromTeam(targetPlayer, teamLeader);
+					// Remove the leader from the team
+					removePlayerFromTeam(teamLeader, teamLeader);
+					// plugin.getLogger().info("DEBUG: " +
+					// plugin.getPlayers().getIslandLevel(teamLeader));
+					// Transfer the data from the old leader to the
+					// new one
+					plugin.getGrid().transferIsland(player.getUniqueId(), targetPlayer);
+					// Create a new team with
+					addPlayertoTeam(player.getUniqueId(), targetPlayer);
+					addPlayertoTeam(targetPlayer, targetPlayer);
+					return true;
+				    }
+				    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).makeLeadererrorThatPlayerIsNotInTeam);
+				} else {
+				    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).makeLeadererrorNotYourIsland);
+				}
+			    } else {
+				player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).makeLeadererrorGeneralError);
+			    }
+			    return true;
+			} else {
+			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
+			    return false;
+			}
 		    } else {
-			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
 			return false;
 		    }
-		} else {
-		    return false;
-		}
 	}
 	return false;
     }

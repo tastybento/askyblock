@@ -224,5 +224,6 @@ public class Settings {
     public static boolean teamChat;
     public static boolean restrictWither;
     public static List<String> startCommands;
+    public static boolean useWarpPanel;
 
 }

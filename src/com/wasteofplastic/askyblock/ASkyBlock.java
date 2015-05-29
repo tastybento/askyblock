@@ -319,8 +319,10 @@ public class ASkyBlock extends JavaPlugin {
 		// Load warps
 		getWarpSignsListener().loadWarpList();
 		// Load the warp panel
-		warpPanel = new WarpPanel(plugin);
-		getServer().getPluginManager().registerEvents(warpPanel, plugin);
+		if (Settings.useWarpPanel) {
+		    warpPanel = new WarpPanel(plugin);
+		    getServer().getPluginManager().registerEvents(warpPanel, plugin);
+		}
 		// Minishop - must wait for economy to load before we can use
 		// econ
 		getServer().getPluginManager().registerEvents(new ControlPanel(plugin), plugin);
@@ -704,6 +706,8 @@ public class ASkyBlock extends JavaPlugin {
 	}
 	// Debug
 	Settings.debug = getConfig().getInt("debug", 0);
+	// Warp panel
+	Settings.useWarpPanel = getConfig().getBoolean("general.usewarppanel", true);
 	// Fast level calculation (this is really fast)
 	Settings.fastLevelCalc = getConfig().getBoolean("general.fastlevelcalc", true);
 	// Restrict wither
@@ -1415,13 +1419,13 @@ public class ASkyBlock extends JavaPlugin {
      * @return the warpSignsListener
      */
     public WarpSigns getWarpSignsListener() {
-        return warpSignsListener;
+	return warpSignsListener;
     }
 
     /**
      * @return the warpPanel
      */
     public WarpPanel getWarpPanel() {
-        return warpPanel;
+	return warpPanel;
     }
 }
