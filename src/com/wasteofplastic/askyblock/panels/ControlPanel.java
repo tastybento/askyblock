@@ -119,6 +119,9 @@ public class ControlPanel implements Listener {
 			sellPrice = -1;
 		    }
 		    String description = items.getString(item + ".description");
+		    if (description != null) {
+			description = ChatColor.translateAlternateColorCodes('&', description);
+		    }
 		    MiniShopItem shopItem = new MiniShopItem(material, extra, slot, description, quantity, price, sellPrice);
 		    store.put(slot, shopItem);
 		    miniShop.setItem(slot, shopItem.getItem());
