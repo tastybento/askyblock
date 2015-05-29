@@ -103,6 +103,9 @@ warps:
    errorNoWarpsYet: "There are no warps available yet!"
    warpsAvailable: "The following warps are available"
    playerWarped: "[name] &2warped to your island!"
+   next: "Next"
+   previous: "Previous"
+   title: "Island warps"
 
 topTen:
    header: "These are the Top 10 islands:"

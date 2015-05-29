@@ -193,8 +193,16 @@ public class WarpSigns implements Listener {
 	}
 	welcomeWarps.set("warps", warps);
 	Util.saveYamlFile(welcomeWarps, "warps.yml");
-	// Update the warp panel
-	plugin.getWarpPanel().updatePanel();
+	// Update the warp panel - needs to be done 1 tick later so that the sign
+	// text will be updated.
+	plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
+
+	    @Override
+	    public void run() {
+		plugin.getWarpPanel().updatePanel();
+		
+	    }});
+	
     }
 
     /**
@@ -217,6 +225,8 @@ public class WarpSigns implements Listener {
 		//plugin.getLogger().info("DEBUG: Loading warp at " + l);
 		Block b = l.getBlock();
 		// Check that a warp sign is still there
+		plugin.getLogger().info("DEBUG: REMOVE THE HACK TO ALLOW NON_REAL WARPS!");
+		// TODO DEBUG HACK
 		warpList.put(playerUUID, temp.get(s));
 		/* TEMP REMOVE TODO
 		if (b.getType().equals(Material.SIGN_POST)) {
