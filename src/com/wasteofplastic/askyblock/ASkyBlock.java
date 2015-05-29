@@ -200,7 +200,9 @@ public class ASkyBlock extends JavaPlugin {
 		grid.saveGrid();
 	    }
 	    // Save the warps and do not reload the panel
-	    getWarpSignsListener().saveWarpList(false);
+	    if (warpSignsListener != null) {
+		warpSignsListener.saveWarpList(false);
+	    }
 	    if (messages != null) {
 		messages.saveMessages();
 	    }
@@ -224,7 +226,6 @@ public class ASkyBlock extends JavaPlugin {
 	// instance of this plugin
 	plugin = this;
 	saveDefaultConfig();
-	Challenges.saveDefaultChallengeConfig();
 	// Check to see if island distance is set or not
 	if (getConfig().getInt("island.distance", -1) < 1) {
 	    getLogger().severe("+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
@@ -580,7 +581,7 @@ public class ASkyBlock extends JavaPlugin {
      */
     public Challenges getChallenges() {
 	if (challenges == null) {
-	    challenges = new Challenges(getPlayers());
+	    challenges = new Challenges(this);
 	}
 	return challenges;
     }
@@ -653,8 +654,6 @@ public class ASkyBlock extends JavaPlugin {
 	    e.printStackTrace();
 	}
 	//CompareConfigs.compareConfigs();
-	// Get the challenges
-	Challenges.getChallengeConfig();
 	// Get the localization strings
 	//getLocale();
 	// Add this to the config
@@ -1136,13 +1135,7 @@ public class ASkyBlock extends JavaPlugin {
 	Settings.allowSpawnAnvilUse = getConfig().getBoolean("spawn.allowanviluse", true);
 	Settings.allowSpawnBeaconAccess = getConfig().getBoolean("spawn.allowbeaconaccess", false);
 	// Challenges
-	final Set<String> challengeList = Challenges.getChallengeConfig().getConfigurationSection("challenges.challengeList").getKeys(false);
-	Settings.challengeList = challengeList;
-	Settings.challengeLevels = Arrays.asList(Challenges.getChallengeConfig().getString("challenges.levels").split(" "));
-	Settings.waiverAmount = Challenges.getChallengeConfig().getInt("challenges.waiveramount", 1);
-	if (Settings.waiverAmount < 0) {
-	    Settings.waiverAmount = 0;
-	}
+	getChallenges();
 	// Challenge completion
 	Settings.broadcastMessages = getConfig().getBoolean("general.broadcastmessages", true);
 

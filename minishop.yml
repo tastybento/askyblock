@@ -15,12 +15,13 @@ items:
       price: 100
       sellprice: 10
    # You can add a user-friendly description to the item if you like
+   # Use & for color codes.
    item3:
       material: IRON_INGOT
       quantity: 3
       price: 100
       sellprice: 30
-      description: Iron bars
+      description: '&bIron bars'
    item4:
       material: GRASS
       quantity: 1

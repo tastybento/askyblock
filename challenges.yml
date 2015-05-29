@@ -48,8 +48,64 @@ challenges:
   # Challenge levels - list as many as you like. If a challenge's level is '' it can
   # be done anytime.
   levels: 'Novice Competent Expert Advanced Elite'
-  # The number of undone tasks that can be left on a level before revealing next level
+    
+  # The number of undone tasks that can be left on a level before unlocking next level
   waiveramount: 1
+  
+  # This section determines what happens when a player unlocks a new level
+  # The subname should correspond to the levels listed above
+  # Note that there is no section for the first level as it is automatically unlocked
+  levelUnlock:
+    Competent:
+      # What additional message to send player
+      message: 'Congratulations - you unlocked the &9Competent level!'
+      rewardDesc: 'A diamond!'
+      itemReward: 'DIAMOND:1'
+      moneyReward: 100
+      expReward: 100
+      # List permissions separated by spaces
+      permissionReward: ''
+      # Commands to run on this player. Use [player] for their name.
+      commands:
+      #- kit tools [player]
+      #- some other command
+    Expert:
+      # What additional message to send player
+      message: 'Congratulations - you unlocked the &aExpert level!'
+      rewardDesc: '3 diamonds!'
+      itemReward: 'DIAMOND:3'
+      moneyReward: 100
+      expReward: 100
+      permissionReward: ''
+      # Commands to run on this player. Use [player] for their name.
+      commands:
+      #- kit tools [player]
+      #- some other command
+    Advanced:
+      # What additional message to send player
+      message: 'Congratulations - you unlocked the &bAdvanced level!'
+      rewardDesc: '5 diamonds!'
+      itemReward: 'DIAMOND:5'
+      moneyReward: 100
+      expReward: 100
+      permissionReward: ''
+      # Commands to run on this player. Use [player] for their name.
+      commands:
+      #- kit tools [player]
+      #- some other command
+    Elite:
+      # What additional message to send player
+      message: 'Congratulations - you unlocked the &dElite level!'
+      rewardDesc: '7 diamonds!'
+      itemReward: 'DIAMOND:7'
+      moneyReward: 100
+      expReward: 100
+      permissionReward: ''
+      # Commands to run on this player. Use [player] for their name.
+      commands:
+      #- kit tools [player]
+      #- some other command
+      
   # Challenge list
   # Challenge names must be in lowercase.
   challengeList:
@@ -64,6 +120,7 @@ challenges:
       itemReward: 'ICE:1'
       rewardText: '1 block of ice'
       #rewardcommands:
+      #- kit tools [player]
       moneyReward: 10
       expReward: 30
       permissionReward: ''
