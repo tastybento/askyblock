@@ -352,10 +352,13 @@ public class ASkyBlock extends JavaPlugin {
 			// load the list - order matters - grid first, then top
 			// ten to optimize upgrades
 			// Load grid
-			grid = new GridManager(plugin);
+			if (grid == null) {
+			    grid = new GridManager(plugin);
+			}
 			TopTen.topTenLoad();
-			tinyDB = new TinyDB(plugin);
-
+			if (tinyDB == null) {
+			    tinyDB = new TinyDB(plugin);
+			}
 			getLogger().info("All files loaded. Ready to play...");
 		    }
 		});
@@ -595,6 +598,9 @@ public class ASkyBlock extends JavaPlugin {
      * @return the grid
      */
     public GridManager getGrid() {
+	if (grid == null) {
+	    grid = new GridManager(this);
+	}
 	return grid;
     }
 
