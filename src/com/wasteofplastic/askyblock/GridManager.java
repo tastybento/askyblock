@@ -1365,7 +1365,7 @@ public class GridManager {
 	    for (int z = -1; z <= 1; z++) {
 		final Chunk c = l.getWorld().getChunkAt(new Location(l.getWorld(), px + x * 16, py, pz + z * 16));
 		for (final Entity e : c.getEntities()) {
-		    if (e instanceof Monster) {
+		    if (e instanceof Monster && !Settings.mobWhiteList.contains(e.getType())) {
 			e.remove();
 		    }
 		}

@@ -271,8 +271,16 @@ general:
    # Remove mobs when logging in
    loginremovemobs: true
 
-   # Remove mobs when /island
+   # Remove mobs when /island.
    islandremovemobs: false
+   
+   # Mob white list - these mobs will NOT be removed when logging in or doing /island
+   # Options are: Blaze, Cave_Spider, Creeper, Enderman, Endermite, Giant, Guardian,
+   # Pig_Zombie, Silverfish, Skeleton, Spider, Witch, Wither, Zombie
+   mobwhitelist:
+   - Wither
+   - Enderman
+   - Pig_Zombie
 
    # Sets the limit for number of monsters that can spawn in a chunk in this world. 
    # Note: If set to a negative number the world will use the server-wide spawn limit instead.

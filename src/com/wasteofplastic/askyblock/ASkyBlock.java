@@ -1009,7 +1009,26 @@ public class ASkyBlock extends JavaPlugin {
 	// getConfig().getBoolean("general.ultrasafeboats", true);
 	Settings.logInRemoveMobs = getConfig().getBoolean("general.loginremovemobs", true);
 	Settings.islandRemoveMobs = getConfig().getBoolean("general.islandremovemobs", false);
-
+	List<String> mobWhiteList = getConfig().getStringList("general.mobwhitelist");
+	Settings.mobWhiteList.clear();
+	String valid = "BLAZE, CREEPER, SKELETON, SPIDER, GIANT, ZOMBIE, GHAST, PIG_ZOMBIE, "
+		+ "ENDERMAN, CAVE_SPIDER, SILVERFISH,  WITHER, WITCH, ENDERMITE,"
+		+ " GUARDIAN";
+	for (String mobName : mobWhiteList) {
+	    if (valid.contains(mobName.toUpperCase())) {
+		try {
+		    Settings.mobWhiteList.add(EntityType.valueOf(mobName.toUpperCase()));
+		} catch (Exception e) {
+		    plugin.getLogger().severe("Error in config.yml, mobwhitelist value '" + mobName + "' is invalid.");
+		    plugin.getLogger().severe("Possible values are : Blaze, Cave_Spider, Creeper, Enderman, Endermite, Giant, Guardian, "
+			    + "Pig_Zombie, Silverfish, Skeleton, Spider, Witch, Wither, Zombie");
+		}
+	    } else {
+		plugin.getLogger().severe("Error in config.yml, mobwhitelist value '" + mobName + "' is invalid.");
+		plugin.getLogger().severe("Possible values are : Blaze, Cave_Spider, Creeper, Enderman, Endermite, Giant, Guardian, "
+			+ "Pig_Zombie, Silverfish, Skeleton, Spider, Witch, Wither, Zombie");
+	    }
+	}
 	// getLogger().info("DEBUG: island level is " + Settings.island_level);
 	// Get chest items
 	final String[] chestItemString = getConfig().getString("island.chestItems").split(" ");
