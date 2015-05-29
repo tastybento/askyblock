@@ -117,7 +117,7 @@ public class WarpPanel implements Listener {
 		slot = 0;
 	    } 
 	}
-	if (remainder != 0) {
+	if (remainder != 0 && panelNumber > 0) {
 	    warpPanel.get(panelNumber).setItem(slot++, new CPItem(Material.SIGN,plugin.myLocale().warpsPrevious,"warps " + (panelNumber-1),"").getItem());
 	}
     }
@@ -147,9 +147,9 @@ public class WarpPanel implements Listener {
 	    return;
 	}
 	ItemStack clicked = event.getCurrentItem(); // The item that was clicked
-	plugin.getLogger().info("DEBUG: inventory size = " + inventory.getSize());
-	plugin.getLogger().info("DEBUG: clicked = " + clicked);
-	plugin.getLogger().info("DEBUG: rawslot = " + event.getRawSlot());
+	//plugin.getLogger().info("DEBUG: inventory size = " + inventory.getSize());
+	//plugin.getLogger().info("DEBUG: clicked = " + clicked);
+	//plugin.getLogger().info("DEBUG: rawslot = " + event.getRawSlot());
 	if (event.getRawSlot() >= event.getInventory().getSize() || clicked.getType() == Material.AIR) {
 	    return;
 	}
@@ -160,7 +160,7 @@ public class WarpPanel implements Listener {
 	    panelNumber = 0;
 	}
 	String command = clicked.getItemMeta().getDisplayName();
-	plugin.getLogger().info("DEBUG: command = " + command);
+	//plugin.getLogger().info("DEBUG: command = " + command);
 	if (command != null) {
 	    if (command.equalsIgnoreCase(plugin.myLocale().warpsNext)) {
 		player.closeInventory();

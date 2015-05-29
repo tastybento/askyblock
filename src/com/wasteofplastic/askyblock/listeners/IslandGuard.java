@@ -85,7 +85,7 @@ import com.wasteofplastic.askyblock.util.VaultHelper;
  */
 public class IslandGuard implements Listener {
     private final ASkyBlock plugin;
-    private final boolean debug = true;
+    private final boolean debug = false;
 
     public IslandGuard(final ASkyBlock plugin) {
 	this.plugin = plugin;
