@@ -945,8 +945,6 @@ public class GridManager {
 		return n;
 	    }
 	}
-	// Try a full protected area scan (-1 = full area scan)
-	l = bigScan(l, -1);
 	// Save if it is successful
 	if (l != null) {
 	    plugin.getPlayers().setHomeLocation(p, l, number);
@@ -1060,11 +1058,8 @@ public class GridManager {
 	    }
 	}
 	if (home == null) {
-	    // The home is not safe
-	    if (!player.performCommand(Settings.SPAWNCOMMAND)) {
-		player.teleport(player.getWorld().getSpawnLocation());
-	    }
-	    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorNotSafe);
+	    // Try to fix this teleport location and teleport the player if possible
+	    new SafeSpotTeleport(plugin, player, plugin.getPlayers().getHomeLocation(player.getUniqueId(), number), number);
 	    return true;
 	}
 	//plugin.getLogger().info("DEBUG: home loc = " + home);

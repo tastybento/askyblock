@@ -56,6 +56,7 @@ import com.wasteofplastic.askyblock.CoopPlay;
 import com.wasteofplastic.askyblock.DeleteIslandChunk;
 import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.PlayerCache;
+import com.wasteofplastic.askyblock.SafeSpotTeleport;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.Settings.GameType;
 import com.wasteofplastic.askyblock.TopTen;
@@ -883,10 +884,10 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 			    ((Player) sender).teleport(safeSpot);
 			    // ((Player)sender).sendBlockChange(safeSpot,safeSpot.getBlock().getType(),safeSpot.getBlock().getData());
 			} else {
-			    sender.sendMessage(ChatColor.RED + plugin.myLocale().warpserrorNotSafe);
 			    Location warpSpot = plugin.getPlayers().getIslandLocation(playerUUID);
-			    sender.sendMessage(ChatColor.RED + "Manually warp to somewhere near " + warpSpot.getBlockX() + " " + warpSpot.getBlockY() + " "
-				    + warpSpot.getBlockZ());
+			    String failureMessage = ChatColor.RED + "Manually warp to somewhere near " + warpSpot.getBlockX() + " " + warpSpot.getBlockY() + " "
+				    + warpSpot.getBlockZ();
+			    new SafeSpotTeleport(plugin, (Player)sender, warpSpot, failureMessage);
 			}
 			return true;
 		    }
