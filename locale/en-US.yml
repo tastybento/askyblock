@@ -99,10 +99,13 @@ warps:
    errorNotReadyYet: "That warp is not ready yet. Try again later."
    errorNotSafe: "That warp is not safe right now. Try again later."
    #/island warp help
-   warpToPlayersSign: "Warp to <player>'s welcome sign."
+   warpToPlayersSign: "Warping to <player>'s welcome sign."
    errorNoWarpsYet: "There are no warps available yet!"
    warpsAvailable: "The following warps are available"
    playerWarped: "[name] &2warped to your island!"
+   next: "Next"
+   previous: "Previous"
+   title: "Island warps"
 
 topTen:
    header: "These are the Top 10 islands:"
@@ -428,7 +431,8 @@ expel:
    notyourself: "You cannot expel yourself!"
 
 moblimits:
-   error: "Island breeding limit of [number] reached!"
+   error: "Island animal breeding limit of [number] reached!"
+   villager: "Island villager breeding limit of [number] reached!"
 
 coop:
    help: "temporarily give a player full access to your island"
@@ -464,3 +468,11 @@ ban:
    alreadybanned: "[name] is already banned!"
    helpBan: "ban a player from your island."
    helpUnban: "un-ban a player from your island"
+
+teamchat:
+   prefix: "[Team Chat]<{ISLAND_PLAYER}> "
+   helpChat: "turn on/off team chat"
+   statusOn: "Team chat is on"
+   statusOff: "Team chat is off"
+   noTeamAround: "None of your team are online!"
+   noTeam: "You are not in a team!"

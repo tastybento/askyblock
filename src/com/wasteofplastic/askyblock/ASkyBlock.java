@@ -1224,7 +1224,8 @@ public class ASkyBlock extends JavaPlugin {
 	    Settings.defaultBiome = Biome.PLAINS;
 	}
 	Settings.breedingLimit = getConfig().getInt("general.breedinglimit", 0);
-
+	Settings.villagerLimit = getConfig().getInt("general.villagerlimit", 0);
+	Settings.mobLimit = getConfig().getInt("general.moblimit", 0);
 	Settings.removeCompleteOntimeChallenges = getConfig().getBoolean("general.removecompleteonetimechallenges", false);
 	Settings.addCompletedGlow = getConfig().getBoolean("general.addcompletedglow", true);
     }
