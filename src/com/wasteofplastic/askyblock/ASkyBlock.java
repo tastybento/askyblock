@@ -20,10 +20,8 @@ package com.wasteofplastic.askyblock;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -42,7 +40,6 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
-import org.bukkit.event.Listener;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
@@ -271,7 +268,6 @@ public class ASkyBlock extends JavaPlugin {
 	// Set up commands for this plugin
 	islandCmd = new IslandCmd(this);
 	if (Settings.GAMETYPE.equals(Settings.GameType.ASKYBLOCK)) {
-	    IslandCmd islandCmd = new IslandCmd(this);
 	    AdminCmd adminCmd = new AdminCmd(this);
 
 	    getCommand("island").setExecutor(islandCmd);
@@ -283,7 +279,6 @@ public class ASkyBlock extends JavaPlugin {
 	    getCommand("asadmin").setExecutor(adminCmd);
 	    getCommand("asadmin").setTabCompleter(adminCmd);
 	} else {
-	    IslandCmd islandCmd = new IslandCmd(this);
 	    AdminCmd adminCmd = new AdminCmd(this);
 
 	    getCommand("ai").setExecutor(islandCmd);

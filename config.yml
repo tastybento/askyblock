@@ -535,6 +535,8 @@ schematicsection:
     default:
       # Icon - if this is missing or wrong, it will be a MAP
       icon: DIRT
+      # Order of preference in listing
+      order: 1
       # Short name - color codes with & okay
       name: "The Original"
       # Longer description. Use | for new lines. Color codes okay.
@@ -570,6 +572,7 @@ schematicsection:
     island1:
       # Credit to Antal1609 for this schematic!
       icon: RED_ROSE
+      order: 2
       name: "Island Duo"
       description: "Two close islands!|Double the fun,|but a little easier.|&a[Credit] Antal1609"
       filename: double.schematic
@@ -598,6 +601,7 @@ schematicsection:
     # New snowy schematic
     extrahard:
       icon: OBSIDIAN
+      order: 3
       # Ski theme - a black diamond run is hard.
       name: "&lBlack &bDiamonds"
       description: "Experts only!|&aMinimal resources|&awith a few diamonds."
