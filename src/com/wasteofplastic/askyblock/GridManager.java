@@ -14,7 +14,6 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Location;

@@ -431,7 +431,8 @@ expel:
    notyourself: "You cannot expel yourself!"
 
 moblimits:
-   error: "Island breeding limit of [number] reached!"
+   error: "Island animal breeding limit of [number] reached!"
+   villager: "Island villager breeding limit of [number] reached!"
 
 coop:
    help: "temporarily give a player full access to your island"

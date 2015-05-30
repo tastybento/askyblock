@@ -55,7 +55,7 @@ public class SafeSpotTeleport {
      * @param islandLoc
      */
     public SafeSpotTeleport(final ASkyBlock plugin, final Player player, final Location islandLoc) {
-	plugin.getLogger().info("DEBUG: running safe spot");
+	//plugin.getLogger().info("DEBUG: running safe spot");
 	// Get island
 	Island island = plugin.getGrid().getIslandAt(islandLoc);
 	if (island != null) {
