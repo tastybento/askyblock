@@ -22,6 +22,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -66,7 +68,6 @@ import com.wasteofplastic.askyblock.LevelCalc;
 import com.wasteofplastic.askyblock.LevelCalcByChunk;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.TopTen;
-import com.wasteofplastic.askyblock.WarpSigns;
 import com.wasteofplastic.askyblock.events.IslandJoinEvent;
 import com.wasteofplastic.askyblock.events.IslandLeaveEvent;
 import com.wasteofplastic.askyblock.events.IslandNewEvent;
@@ -82,9 +83,7 @@ import com.wasteofplastic.askyblock.util.VaultHelper;
 
 public class IslandCmd implements CommandExecutor, TabCompleter {
     public boolean levelCalcFreeFlag = true;
-    // private Schematic island = null;
     private static HashMap<String, Schematic> schematics = new HashMap<String, Schematic>();
-    // private Location Islandlocation;
     private ASkyBlock plugin;
     // The island reset confirmation
     private HashMap<UUID, Boolean> confirm = new HashMap<UUID, Boolean>();
@@ -197,14 +196,15 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 	}
 	// Set up some basic settings just in case the schematics section is missing
 	if (schematics.containsKey("default")) {
-	    schematics.get("nether").setName("Island");
+	    schematics.get("default").setName("Island");
 	    schematics.get("default").setDescription("");
 	    schematics.get("default").setPartnerName("nether");
-	    schematics.get("nether").setBiome(Settings.defaultBiome);
-	    schematics.get("nether").setIcon(Material.GRASS);
+	    schematics.get("default").setBiome(Settings.defaultBiome);
+	    schematics.get("default").setIcon(Material.GRASS);
 	    if (Settings.chestItems.length == 0) {
 		schematics.get("default").setUseDefaultChest(false);
 	    }
+	    schematics.get("default").setOrder(0);
 	}
 	if (schematics.containsKey("nether")) {
 	    schematics.get("nether").setName("NetherBlock Island");
@@ -279,6 +279,8 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 		    if (newSchem != null) {   
 			// Set the heading
 			newSchem.setHeading(key);
+			// Order
+			newSchem.setOrder(schemSection.getInt("schematics." + key + ".order", 0));
 			// Load the rest of the settings
 			// Icon
 			try {   
@@ -457,7 +459,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 			} else {
 			    perm = "player with " + perm + " permission";
 			}
-			plugin.getLogger().info("Loading schematic " + name + " (" + filename + ") for " + perm);
+			plugin.getLogger().info("Loading schematic " + name + " (" + filename + ") for " + perm + ", order " + newSchem.getOrder());
 		    } else {
 			plugin.getLogger().warning("Could not find " + filename + " in the schematics folder! Skipping...");
 		    }
@@ -570,7 +572,15 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 		result.add(schematic);
 	    }
 	}
+	// Sort according to order
+        Collections.sort(result, new Comparator<Schematic>() {
 
+	    @Override
+	    public int compare(Schematic o1, Schematic o2) {
+		return ((o2.getOrder() < o1.getOrder()) ? 1 : -1);
+	    }
+             
+        });
 	return result;
     }
 
