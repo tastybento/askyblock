@@ -471,6 +471,7 @@ public class Locale {
     public String warpsNext;
     public String warpsTitle;
     public String villagerLimitError;
+    public String hopperLimit;
 
     /**
      * Creates a locale object full of localized strings for a language
@@ -1013,7 +1014,8 @@ public class Locale {
 	banNotBanned = ChatColor.translateAlternateColorCodes('&', locale.getString("ban.notbanned", "[name] is not banned!"));
 	banAlreadyBanned = ChatColor.translateAlternateColorCodes('&', locale.getString("ban.alreadybanned", "[name] is already banned!"));
 	moblimitsError = ChatColor.translateAlternateColorCodes('&', locale.getString("moblimits.error", "Island animal breeding limit of [number] reached!"));
-	villagerLimitError = ChatColor.translateAlternateColorCodes('&', locale.getString("moblimits.error", "Island villager breeding limit of [number] reached!"));
+	villagerLimitError = ChatColor.translateAlternateColorCodes('&', locale.getString("moblimits.villager", "Island villager breeding limit of [number] reached!"));
+	hopperLimit = ChatColor.translateAlternateColorCodes('&', locale.getString("moblimits.hopper", "Island hopper limit of [number] reached!"));
 	coopRemoved = ChatColor.translateAlternateColorCodes('&', locale.getString("coop.removed", "[name] remove your coop status!"));
 	coopRemoveSuccess = ChatColor.translateAlternateColorCodes('&', locale.getString("coop.removesuccess", "[name] is no longer a coop player."));
 	coopSuccess = ChatColor.translateAlternateColorCodes('&',

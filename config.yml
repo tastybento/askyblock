@@ -292,13 +292,6 @@ general:
    # Max is 100
    animalspawnlimit: 15
    
-   # Max monsters per island.
-   # Makes the game fairer for everyone and reduces lag
-   # This caps the number of mobs on an island at any one time.
-   # Mobs will not spawn after this point for any reason until they are killed.
-   # Max is this value x # of team members so an island of 4 will have 4x this number
-   moblimit: 20
-
    # Animal breeding limits - if this is set to more than 0, then players will not be able
    # to breed more animals than that number on their island. A value of zero means no
    # limit. Note that animals will not be killed or reduced to this limit.
@@ -307,9 +300,12 @@ general:
    breedinglimit: 0
 
    # Villager limit - this is per team player, so an island of 4 will have 4x this number
-   # Note that 10 villagers minimum are required to create an iron farm
+   # Note that 10 villagers minimum are required to create an iron farm. Zero is unlimited.
    villagerlimit: 11
    
+   # Hopper limit - max number of island hoppers. If exceeded, players will not be able
+   # to place a hopper block. Zero is unlimited. Excessive hoppers can add to lag.
+   hopperlimit: 0
 
    #[integer] Sets the limit for number of water animals [squid] that can spawn in a chunk in this world. 
    # Note: If set to a negative number the world will use the server-wide spawn limit instead.

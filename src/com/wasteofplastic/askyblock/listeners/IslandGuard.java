@@ -1070,6 +1070,19 @@ public class IslandGuard implements Listener {
 	    } else if (!Settings.allowPlaceBlocks && !plugin.getGrid().locationIsOnIsland(e.getPlayer(), e.getBlock().getLocation())) {
 		e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
 		e.setCancelled(true);
+	    } else {
+		// Check if it's a hopper
+		if (Settings.hopperLimit > 0 && e.getBlock().getType() == Material.HOPPER) {
+		    Island island = plugin.getGrid().getIslandAt(e.getBlock().getLocation());
+		    if (island != null) {
+			// Check island limit
+			if (island.getHopperCount() >= Settings.hopperLimit) {
+			    e.getPlayer().sendMessage(ChatColor.RED 
+				    + (plugin.myLocale(e.getPlayer().getUniqueId()).hopperLimit).replace("[number]",String.valueOf(Settings.hopperLimit)));
+			    e.setCancelled(true);
+			}
+		    }
+		}
 	    }
 	}
     }

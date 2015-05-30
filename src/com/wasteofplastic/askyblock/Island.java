@@ -4,17 +4,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.Hopper;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Villager;
-import org.bukkit.inventory.InventoryHolder;
 
 /**
  * Stores all the info about an island
@@ -492,19 +490,15 @@ public class Island {
     }
     
     /**
-     * @return Map of inventory holders and their count on the island
+     * @return number of hoppers on the island
      */
-    public Map<Material, Integer> getInventoryHolders() {
-	Map<Material, Integer> result = new HashMap<Material, Integer>();	
+    public int getHopperCount() {
+	int result = 0;	
 	for (int x = getMinProtectedX() /16; x <= (getMinProtectedX() + getProtectionSize() - 1)/16; x++) {
 		for (int z = getMinProtectedZ() /16; z <= (getMinProtectedZ() + getProtectionSize() - 1)/16; z++) {
 		    for (BlockState holder : world.getChunkAt(x, z).getTileEntities()) {
-			if (holder instanceof InventoryHolder) {
-			    Integer i = result.get(holder.getType());
-			    if (i == null) {
-				i = 0;
-			    }
-			    result.put(holder.getType(), i+1);
+			if (holder instanceof Hopper) {
+			    result++;
 			}
 		    }
 		}  

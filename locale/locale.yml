@@ -433,6 +433,7 @@ expel:
 moblimits:
    error: "Island animal breeding limit of [number] reached!"
    villager: "Island villager breeding limit of [number] reached!"
+   hopper: "Island hopper limit of [number] reached!"
 
 coop:
    help: "temporarily give a player full access to your island"

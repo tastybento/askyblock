@@ -228,5 +228,6 @@ public class Settings {
     public static List<EntityType> mobWhiteList = new ArrayList<EntityType>();
     public static int villagerLimit;
     public static int mobLimit;
+    public static int hopperLimit;
 
 }
