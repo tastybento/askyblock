@@ -125,7 +125,7 @@ public class SafeSpotTeleport {
 			    @Override
 			    public void run() {
 				Location destination = spot.toLocation(islandLoc.getWorld());
-				//plugin.getLogger().info("DEBUG: safe spot found = " + destination);
+				plugin.getLogger().info("DEBUG: safe spot found = " + destination);
 				// Check that the destination is actually inside the player's island
 				player.teleport(destination);
 				if (setHome) {

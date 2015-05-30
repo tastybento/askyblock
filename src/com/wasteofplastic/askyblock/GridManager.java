@@ -782,7 +782,7 @@ public class GridManager {
 	}
 	MaterialData md = ground.getState().getData();
 	if (md instanceof SimpleAttachableMaterialData) {
-	    Bukkit.getLogger().info("DEBUG: trapdoor/button/tripwire hook etc.");
+	    //Bukkit.getLogger().info("DEBUG: trapdoor/button/tripwire hook etc.");
 	    if (md instanceof TrapDoor) {
 		TrapDoor trapDoor = (TrapDoor)md;
 		if (trapDoor.isOpen()) {
@@ -804,52 +804,11 @@ public class GridManager {
 	// check
 	// a few other items
 	// isSolid thinks that PLATEs and SIGNS are solid, but they are not
-	if (space1.getType().isSolid()) {
-	    //Bukkit.getLogger().info("DEBUG: space 1 is solid");
-	    // Do a few other checks
-	    if (!(space1.getType().equals(Material.SIGN_POST)) && !(space1.getType().equals(Material.WALL_SIGN))) {
-		// Bukkit.getLogger().info("DEBUG: space 1 is a sign post or wall sign");
-		return false;
-	    }
-	    /*
-	     * switch (space1.getType()) {
-	     * case ACACIA_STAIRS:
-	     * case BIRCH_WOOD_STAIRS:
-	     * case BRICK_STAIRS:
-	     * case COBBLESTONE_STAIRS:
-	     * case DARK_OAK_STAIRS:
-	     * case IRON_PLATE:
-	     * case JUNGLE_WOOD_STAIRS:
-	     * case NETHER_BRICK_STAIRS:
-	     * case PORTAL:
-	     * case QUARTZ_STAIRS:
-	     * case RED_SANDSTONE_STAIRS:
-	     * case SANDSTONE_STAIRS:
-	     * case SIGN_POST:
-	     * case SMOOTH_STAIRS:
-	     * case SPRUCE_WOOD_STAIRS:
-	     * case STEP:
-	     * case STONE_PLATE:
-	     * case STONE_SLAB2:
-	     * case WOOD_DOUBLE_STEP:
-	     * case WOOD_PLATE:
-	     * case WOOD_STAIRS:
-	     * case WOOD_STEP:
-	     * Bukkit.getLogger().info("DEBUG: not solid");
-	     * break;
-	     * default:
-	     * Bukkit.getLogger().info("DEBUG: solid");
-	     * return false;
-	     * }
-	     */
+	if (space1.getType().isSolid() && !space1.getType().equals(Material.SIGN_POST) && !space1.getType().equals(Material.WALL_SIGN)) {
+	    return false;
 	}
-	if (space2.getType().isSolid()) {
-	    //Bukkit.getLogger().info("DEBUG: space 2 is solid");
-	    // Do a few other checks
-	    if (!(space2.getType().equals(Material.SIGN_POST)) && !(space2.getType().equals(Material.WALL_SIGN))) {
-		// Bukkit.getLogger().info("DEBUG: space 2 is a sign post or wall sign");
-		return false;
-	    }
+	if (space2.getType().isSolid()&& !space2.getType().equals(Material.SIGN_POST) && !space2.getType().equals(Material.WALL_SIGN)) {
+	    return false;
 	}
 	// Safe
 	//Bukkit.getLogger().info("DEBUG: safe!");
@@ -891,7 +850,7 @@ public class GridManager {
 	    }
 	}
 
-	// getLogger().info("DEBUG: Home location either isn't safe, or does not exist so try the island");
+	plugin.getLogger().info("DEBUG: Home location either isn't safe, or does not exist so try the island");
 	// Home location either isn't safe, or does not exist so try the island
 	// location
 	if (plugin.getPlayers().inTeam(p)) {
@@ -920,7 +879,7 @@ public class GridManager {
 	    plugin.getLogger().warning(plugin.getPlayers().getName(p) + " player has no island!");
 	    return null;
 	}
-	//plugin.getLogger().info("DEBUG: If these island locations are not safe, then we need to get creative");
+	plugin.getLogger().info("DEBUG: If these island locations are not safe, then we need to get creative");
 	// If these island locations are not safe, then we need to get creative
 	// Try the default location
 	//plugin.getLogger().info("DEBUG: default");
@@ -930,14 +889,14 @@ public class GridManager {
 	    return dl;
 	}
 	// Try just above the bedrock
-	//plugin.getLogger().info("DEBUG: above bedrock");
+	plugin.getLogger().info("DEBUG: above bedrock");
 	dl = new Location(l.getWorld(), l.getX() + 0.5D, l.getY() + 5D, l.getZ() + 0.5D, 0F, 30F);
 	if (isSafeLocation(dl)) {
 	    plugin.getPlayers().setHomeLocation(p, dl, number);
 	    return dl;
 	}
 	// Try all the way up to the sky
-	//plugin.getLogger().info("DEBUG: try all the way to the sky");
+	plugin.getLogger().info("DEBUG: try all the way to the sky");
 	for (int y = l.getBlockY(); y < 255; y++) {
 	    final Location n = new Location(l.getWorld(), l.getX() + 0.5D, y, l.getZ() + 0.5D);
 	    if (isSafeLocation(n)) {
@@ -945,11 +904,8 @@ public class GridManager {
 		return n;
 	    }
 	}
-	// Save if it is successful
-	if (l != null) {
-	    plugin.getPlayers().setHomeLocation(p, l, number);
-	}
-	return l;
+	// Unsuccessful
+	return null;
     }
 
     /**
@@ -1062,7 +1018,7 @@ public class GridManager {
 	    new SafeSpotTeleport(plugin, player, plugin.getPlayers().getHomeLocation(player.getUniqueId(), number), number);
 	    return true;
 	}
-	//plugin.getLogger().info("DEBUG: home loc = " + home);
+	plugin.getLogger().info("DEBUG: home loc = " + home);
 	player.teleport(home);
 	//player.sendBlockChange(home, Material.GLOWSTONE, (byte)0);
 	if (number ==1 ) {
