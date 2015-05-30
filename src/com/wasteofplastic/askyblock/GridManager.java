@@ -879,7 +879,7 @@ public class GridManager {
 	    plugin.getLogger().warning(plugin.getPlayers().getName(p) + " player has no island!");
 	    return null;
 	}
-	plugin.getLogger().info("DEBUG: If these island locations are not safe, then we need to get creative");
+	//plugin.getLogger().info("DEBUG: If these island locations are not safe, then we need to get creative");
 	// If these island locations are not safe, then we need to get creative
 	// Try the default location
 	//plugin.getLogger().info("DEBUG: default");
@@ -889,14 +889,14 @@ public class GridManager {
 	    return dl;
 	}
 	// Try just above the bedrock
-	plugin.getLogger().info("DEBUG: above bedrock");
+	//plugin.getLogger().info("DEBUG: above bedrock");
 	dl = new Location(l.getWorld(), l.getX() + 0.5D, l.getY() + 5D, l.getZ() + 0.5D, 0F, 30F);
 	if (isSafeLocation(dl)) {
 	    plugin.getPlayers().setHomeLocation(p, dl, number);
 	    return dl;
 	}
 	// Try all the way up to the sky
-	plugin.getLogger().info("DEBUG: try all the way to the sky");
+	//plugin.getLogger().info("DEBUG: try all the way to the sky");
 	for (int y = l.getBlockY(); y < 255; y++) {
 	    final Location n = new Location(l.getWorld(), l.getX() + 0.5D, y, l.getZ() + 0.5D);
 	    if (isSafeLocation(n)) {
@@ -904,6 +904,7 @@ public class GridManager {
 		return n;
 	    }
 	}
+	//plugin.getLogger().info("DEBUG: unsuccessful");
 	// Unsuccessful
 	return null;
     }

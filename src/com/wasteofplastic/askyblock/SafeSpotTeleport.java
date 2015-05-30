@@ -55,7 +55,7 @@ public class SafeSpotTeleport {
      * @param islandLoc
      */
     public SafeSpotTeleport(final ASkyBlock plugin, final Player player, final Location islandLoc) {
-	//plugin.getLogger().info("DEBUG: running safe spot");
+	plugin.getLogger().info("DEBUG: running safe spot");
 	// Get island
 	Island island = plugin.getGrid().getIslandAt(islandLoc);
 	if (island != null) {
@@ -118,14 +118,14 @@ public class SafeSpotTeleport {
 		    // End search
 		    //System.out.print("Seconds = " + ((System.nanoTime() - time) * 0.000000001));
 		    if (currentChunk != null && safeSpotFound) {
-			final Vector spot = new Vector((16 *currentChunk.getX()) + x + 0.5D, y, (16 * currentChunk.getZ()) + z + 0.5D);
+			final Vector spot = new Vector((16 *currentChunk.getX()) + x + 0.5D, y +1, (16 * currentChunk.getZ()) + z + 0.5D);
 			// Return to main thread and teleport the player
 			plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
 
 			    @Override
 			    public void run() {
 				Location destination = spot.toLocation(islandLoc.getWorld());
-				plugin.getLogger().info("DEBUG: safe spot found = " + destination);
+				//plugin.getLogger().info("DEBUG: safe spot found = " + destination);
 				// Check that the destination is actually inside the player's island
 				player.teleport(destination);
 				if (setHome) {
@@ -194,7 +194,7 @@ public class SafeSpotTeleport {
 				    break;
 				default:
 				    // Safe
-				    //System.out.println("Block is safe " + mat.toString());
+				   // System.out.println("Block is safe " + mat.toString());
 				    return true;
 				}
 			    }
