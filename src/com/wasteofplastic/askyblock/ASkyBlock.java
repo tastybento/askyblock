@@ -69,6 +69,7 @@ import com.wasteofplastic.askyblock.listeners.JoinLeaveEvents;
 import com.wasteofplastic.askyblock.listeners.LavaCheck;
 import com.wasteofplastic.askyblock.listeners.NetherPortals;
 import com.wasteofplastic.askyblock.listeners.PlayerEvents;
+import com.wasteofplastic.askyblock.listeners.WitherEvents;
 import com.wasteofplastic.askyblock.listeners.WorldEnter;
 import com.wasteofplastic.askyblock.panels.BiomesPanel;
 import com.wasteofplastic.askyblock.panels.ControlPanel;
@@ -119,7 +120,7 @@ public class ASkyBlock extends JavaPlugin {
 
     // Messages object
     private Messages messages;
-    
+
     // Team chat listened
     private ChatListener chatListener;
 
@@ -698,6 +699,8 @@ public class ASkyBlock extends JavaPlugin {
 	Settings.debug = getConfig().getInt("debug", 0);
 	// Fast level calculation (this is really fast)
 	Settings.fastLevelCalc = getConfig().getBoolean("general.fastlevelcalc", true);
+	// Restrict wither
+	Settings.restrictWither = getConfig().getBoolean("general.restrictwither", true);
 	// Team chat
 	Settings.teamChat = getConfig().getBoolean("general.teamchat", true);
 	// TEAMSUFFIX as island level
@@ -1253,6 +1256,10 @@ public class ASkyBlock extends JavaPlugin {
 	// Team chat
 	chatListener = new ChatListener(this);
 	manager.registerEvents(chatListener, this);
+	// Wither
+	if (Settings.restrictWither) {
+	    manager.registerEvents(new WitherEvents(this), this);
+	}
     }
 
 
@@ -1389,7 +1396,7 @@ public class ASkyBlock extends JavaPlugin {
      * @return the nameDB
      */
     public TinyDB getTinyDB() {
-        return tinyDB;
+	return tinyDB;
     }
 
     public ChatListener getChatListener() {
