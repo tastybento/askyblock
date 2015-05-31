@@ -213,6 +213,7 @@ public class Settings {
     public static boolean setTeamName;
     public static int debug;
     public static boolean useSchematicPanel;
+    public static boolean chooseIslandRandomly;
     public static double underWaterMultiplier;
     public static String teamSuffix;
     public static int levelCost;

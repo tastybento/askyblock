@@ -501,6 +501,12 @@ schematicsection:
    # not used.
   useschematicspanel: true
 
+   # Random island, only apply when useschematicspanel is false - if set to false
+   # the plugin will choose the first island it found with the user permissions
+   # to generate a new island. If set to true, the plugin will generate an island
+   # randomly from the list of all islands available to the player.
+  chooseislandrandomly: false
+
   # This section lists all the schematics available
   # You can add or remove from this list. If this section is missing, only the default
   # island works.
