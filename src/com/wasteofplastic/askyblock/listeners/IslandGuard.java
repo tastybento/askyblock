@@ -464,12 +464,15 @@ public class IslandGuard implements Listener {
 	    return;
 	}
 	int limit = Settings.villagerLimit * Math.max(1,plugin.getPlayers().getMembers(island.getOwner()).size());
-	plugin.getLogger().info("DEBUG: villager limit = " + limit);
-	long time = System.nanoTime();
+	//plugin.getLogger().info("DEBUG: villager limit = " + limit);
+	//long time = System.nanoTime();
 	int pop = island.getPopulation();
-	plugin.getLogger().info("DEBUG: time = " + ((System.nanoTime() - time)*0.000000001));
+	//plugin.getLogger().info("DEBUG: time = " + ((System.nanoTime() - time)*0.000000001));
 	if (pop >= limit) {
-	    plugin.getLogger().info("DEBUG: stopped a villager spawning!");
+	    plugin.getLogger().warning(
+			"Island at " + island.getCenter().getBlockX() + "," + island.getCenter().getBlockZ() + " hit the island villager limit of "
+				+ limit);
+	    //plugin.getLogger().info("Stopped villager spawning on island " + island.getCenter());
 	    // Get all players in the area
 	    List<Entity> players = e.getEntity().getNearbyEntities(10,10,10);
 	    for (Entity player: players) {

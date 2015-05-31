@@ -301,7 +301,7 @@ general:
 
    # Villager limit - this is per team player, so an island of 4 will have 4x this number
    # Note that 10 villagers minimum are required to create an iron farm. Zero is unlimited.
-   villagerlimit: 11
+   villagerlimit: 0
    
    # Hopper limit - max number of island hoppers. If exceeded, players will not be able
    # to place a hopper block. Zero is unlimited. Excessive hoppers can add to lag.

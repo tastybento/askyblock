@@ -849,7 +849,7 @@ public class GridManager {
 	    }
 	}
 
-	plugin.getLogger().info("DEBUG: Home location either isn't safe, or does not exist so try the island");
+	//plugin.getLogger().info("DEBUG: Home location either isn't safe, or does not exist so try the island");
 	// Home location either isn't safe, or does not exist so try the island
 	// location
 	if (plugin.getPlayers().inTeam(p)) {
@@ -1018,7 +1018,7 @@ public class GridManager {
 	    new SafeSpotTeleport(plugin, player, plugin.getPlayers().getHomeLocation(player.getUniqueId(), number), number);
 	    return true;
 	}
-	plugin.getLogger().info("DEBUG: home loc = " + home);
+	//plugin.getLogger().info("DEBUG: home loc = " + home);
 	player.teleport(home);
 	//player.sendBlockChange(home, Material.GLOWSTONE, (byte)0);
 	if (number ==1 ) {
