@@ -1036,6 +1036,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 		}
 		return true;
 	    }
+
 	    if (split[0].equalsIgnoreCase("ban")) {
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.ban")) {
 		    // Just show ban help
