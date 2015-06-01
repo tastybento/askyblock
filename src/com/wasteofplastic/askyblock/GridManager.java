@@ -26,6 +26,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Villager;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 import org.bukkit.material.SimpleAttachableMaterialData;
@@ -1315,9 +1316,11 @@ public class GridManager {
 	for (int x = -1; x <= 1; x++) {
 	    for (int z = -1; z <= 1; z++) {
 		final Chunk c = l.getWorld().getChunkAt(new Location(l.getWorld(), px + x * 16, py, pz + z * 16));
-		for (final Entity e : c.getEntities()) {
-		    if (e instanceof Monster && !Settings.mobWhiteList.contains(e.getType())) {
-			e.remove();
+		if (c.isLoaded()) {
+		    for (final Entity e : c.getEntities()) {
+			if (e instanceof Monster && !Settings.mobWhiteList.contains(e.getType())) {
+			    e.remove();
+			}
 		    }
 		}
 	    }
@@ -1325,55 +1328,49 @@ public class GridManager {
     }
 
     /**
-     * This removes mobs from an island
+     * This removes mobs from an island - used when reseting or deleting an island
      * 
      * @param loc
      *            - a Location
      */
     public void removeMobsFromIsland(final Location loc) {
-	// getLogger().info("DEBUG: removeIsland");
 	if (loc != null) {
-	    // Place a temporary entity
-	    // final World world = getIslandWorld();
-	    // Check to see if this world exists or not
-	    if (loc.getWorld() == null) {
-		return;
-	    }
-	    Entity snowBall = loc.getWorld().spawnEntity(loc, EntityType.SNOWBALL);
-	    // Remove any mobs if they just so happen to be around in the
-	    // vicinity
-	    final Iterator<Entity> ents = snowBall.getNearbyEntities((Settings.island_protectionRange / 2.0), 110.0D, (Settings.island_protectionRange / 2.0))
-		    .iterator();
-	    while (ents.hasNext()) {
-		final Entity tempent = ents.next();
-		// Remove anything except for a players
-		if (tempent instanceof Player) {
-		    // Player
-		    Player pl = (Player) tempent;
-		    if (pl.isInsideVehicle()) {
-			pl.leaveVehicle();
-		    }
-		    if (!pl.isFlying()) {
-			// Move player to spawn
-			Island spawn = getSpawn();
-			if (spawn != null) {
-			    // go to island spawn
-			    pl.teleport(ASkyBlock.getIslandWorld().getSpawnLocation());
-			    plugin.getLogger().warning("During island deletion player " + pl.getName() + " sent to spawn.");
-			} else {
-			    if (!pl.performCommand(Settings.SPAWNCOMMAND)) {
-				plugin.getLogger().warning(
-					"During island deletion player " + pl.getName() + " could not be sent to spawn so was dropped, sorry.");
+	    Island island = getIslandAt(loc);
+	    if (island != null) {
+		for (int x = island.getMinX() /16; x <= (island.getMinX() + island.getIslandDistance() - 1)/16; x++) {
+		    for (int z = island.getMinZ() /16; z <= (island.getMinZ() + island.getIslandDistance() - 1)/16; z++) {
+			for (Entity tempent : loc.getWorld().getChunkAt(x, z).getEntities()) {
+			    if (!(tempent instanceof Player)) {
+				tempent.remove();
 			    } else {
-				plugin.getLogger().warning("During island deletion player " + pl.getName() + " sent to spawn using /spawn.");
+				// Teleport them back home if they are visitors
+				Player player = (Player) tempent;
+				UUID owner = island.getOwner();
+				if (!player.getUniqueId().equals(owner)) {
+				    // See if this player is in the game
+				    if (plugin.getPlayers().hasIsland(player.getUniqueId()) || plugin.getPlayers().inTeam(player.getUniqueId())) {
+					homeTeleport(player);
+				    } else {
+					// Move player to spawn
+					Island spawn = getSpawn();
+					if (spawn != null) {
+					    // go to island spawn
+					    player.teleport(ASkyBlock.getIslandWorld().getSpawnLocation());
+					    plugin.getLogger().warning("During island deletion player " + player.getName() + " sent to spawn.");
+					} else {
+					    if (!player.performCommand(Settings.SPAWNCOMMAND)) {
+						plugin.getLogger().warning(
+							"During island deletion player " + player.getName() + " could not be sent to spawn so was dropped, sorry.");
+					    } else {
+						plugin.getLogger().warning("During island deletion player " + player.getName() + " sent to spawn using /spawn.");
+					    }
+					}
+				    }
+				}
 			    }
 			}
-		    } else {
-			plugin.getLogger().warning("Not moving player " + pl.getName() + " because they are flying");
 		    }
-		} else {
-		    tempent.remove();
-		}
+		}  
 	    }
 	}
     }

@@ -45,7 +45,7 @@ import com.wasteofplastic.askyblock.util.VaultHelper;
  * 
  */
 public class WarpSigns implements Listener {
-    private final  ASkyBlock plugin;
+    private final ASkyBlock plugin;
     // Map of all warps stored as player, warp sign Location
     private HashMap<UUID, Object> warpList = new HashMap<UUID, Object>();
     // Where warps are stored
@@ -197,15 +197,16 @@ public class WarpSigns implements Listener {
 	// text will be updated.
 	if (reloadPanel) {
 	    // This is not done on shutdown
-	    plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
+	    if (Settings.useWarpPanel && plugin.getWarpPanel() != null) {
+		plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
 
-		@Override
-		public void run() {
-		    plugin.getWarpPanel().updatePanel();
-
-		}});
+		    @Override
+		    public void run() {
+			plugin.getWarpPanel().updatePanel();
+		    }});
+	    }
 	}
-
+	plugin.getLogger().info("End of saving warps");
     }
 
     /**
