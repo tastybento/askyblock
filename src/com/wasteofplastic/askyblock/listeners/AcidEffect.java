@@ -345,7 +345,8 @@ public class AcidEffect implements Listener {
     public void onPlayerInteract(final PlayerInteractEvent e) {
 	if (plugin.getGrid().playerIsOnIsland(e.getPlayer())) {
 	    boolean otherOb = false;
-	    if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK) && e.getPlayer().getItemInHand().getType().equals(Material.BUCKET)
+	    ItemStack inHand = e.getPlayer().getItemInHand();
+	    if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK) && inHand.getType().equals(Material.BUCKET)
 		    && e.getClickedBlock().getType().equals(Material.OBSIDIAN)) {
 		// Look around to see if this is a lone obsidian block
 		Block b = e.getClickedBlock();
@@ -365,6 +366,9 @@ public class AcidEffect implements Listener {
 		    // e.getPlayer().getInventory().removeItem(new
 		    // ItemStack(Material.BUCKET, 1));
 		    e.getPlayer().getInventory().addItem(new ItemStack(Material.LAVA_BUCKET, 1));
+		    if (inHand.getAmount() > 1) {
+			e.getPlayer().getInventory().addItem(new ItemStack(Material.BUCKET, inHand.getAmount()-1));
+		    }
 		    e.getPlayer().updateInventory();
 		    e.getClickedBlock().setType(Material.AIR);
 		    e.setCancelled(true);

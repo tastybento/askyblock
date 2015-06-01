@@ -893,7 +893,7 @@ public class Schematic {
 						lineText = text.get(line);
 					    }
 					} else {
-					    // ust in case it isn't - show the raw line
+					    // just in case it isn't - show the raw line
 					    lineText = text.get(line);
 					}
 				    }
