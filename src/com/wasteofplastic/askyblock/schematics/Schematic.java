@@ -886,7 +886,12 @@ public class Schematic {
 				    } else {
 					// This is unformatted text (not JSON). It is included in "".
 					if (text.get(line).length() > 1) {
+					    try {
 					    lineText = text.get(line).substring(text.get(line).indexOf('"')+1,text.get(line).lastIndexOf('"'));
+					    } catch (Exception e) {
+						//There may not be those "'s, so just use the raw line
+						lineText = text.get(line);
+					    }
 					} else {
 					    // ust in case it isn't - show the raw line
 					    lineText = text.get(line);
