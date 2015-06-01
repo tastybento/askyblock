@@ -190,7 +190,8 @@ public class IslandGuard implements Listener {
 	    // Lock check
 	    if (islandTo.isLocked() || plugin.getPlayers().isBanned(islandTo.getOwner(),player.getUniqueId())) {
 		if (!islandTo.getMembers().contains(player.getUniqueId()) && !player.isOp()
-			&& !VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.bypassprotect")) {
+			&& !VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.bypassprotect")
+			&& !VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.bypasslock")) {
 		    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).lockIslandLocked);
 		    // Get the closest border
 		    // plugin.getLogger().info("DEBUG: minx = " +
@@ -327,7 +328,8 @@ public class IslandGuard implements Listener {
 	    // Lock check
 	    if (islandTo.isLocked() || plugin.getPlayers().isBanned(islandTo.getOwner(),e.getPlayer().getUniqueId())) {
 		if (!islandTo.getMembers().contains(e.getPlayer().getUniqueId()) && !e.getPlayer().isOp()
-			&& !VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
+			&& !VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
+			&& !VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypasslock")) {
 		    e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).lockIslandLocked);
 		    // Get the closest border
 		    // plugin.getLogger().info("DEBUG: minx = " +
@@ -478,7 +480,7 @@ public class IslandGuard implements Listener {
 	    for (Entity player: players) {
 		if (player instanceof Player) {
 		    Player p = (Player) player;
-		    p.sendMessage(ChatColor.RED + plugin.myLocale(island.getOwner()).moblimitsError.replace("[number]", String.valueOf(Settings.villagerLimit)));
+		    p.sendMessage(ChatColor.RED + plugin.myLocale(island.getOwner()).villagerLimitError.replace("[number]", String.valueOf(Settings.villagerLimit)));
 		}
 	    }
 	    plugin.getMessages().tellTeam(island.getOwner(), ChatColor.RED + plugin.myLocale(island.getOwner()).villagerLimitError.replace("[number]", String.valueOf(Settings.villagerLimit)));

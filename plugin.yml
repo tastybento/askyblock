@@ -131,7 +131,10 @@ permissions:
             default: op
           askyblock.mod.lock:
             description: Locks or unlocks an island
-            default: op 
+            default: op
+          askyblock.mod.bypasslock:
+            description: Bypasses an island lock
+            default: op
       askyblock.admin.*:
         children:
           askyblock.admin.reload:
