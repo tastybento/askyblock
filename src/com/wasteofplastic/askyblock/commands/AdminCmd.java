@@ -33,6 +33,7 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -264,82 +265,76 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 		    return true;
 		}
 	    } else
-	    // Find farms
-	    if (split[0].equalsIgnoreCase("topbreeders")) {
-		// Go through each island and find how many farms there are
-		sender.sendMessage("Finding top breeders...");
-		TreeMap<Integer, List<UUID>> topEntityIslands = new TreeMap<Integer, List<UUID>>();
-		// Generate the stats
-		sender.sendMessage("Checking " + plugin.getGrid().getOwnershipMap().size() + " islands...");
-		for (Island island : plugin.getGrid().getOwnershipMap().values()) {
-		    if (!island.isSpawn()) {
-			Location islandLoc = new Location(island.getCenter().getWorld(), island.getCenter().getBlockX(), 128, island.getCenter().getBlockZ());
-			Entity snowball = islandLoc.getWorld().spawnEntity(islandLoc, EntityType.SNOWBALL);
-			if (snowball == null) {
-			    sender.sendMessage("Problem checking island " + island.getCenter().toString());
-			} else {
+		// Find farms
+		if (split[0].equalsIgnoreCase("topbreeders")) {
+		    // Go through each island and find how many farms there are
+		    sender.sendMessage("Finding top breeders...");
+		    TreeMap<Integer, List<UUID>> topEntityIslands = new TreeMap<Integer, List<UUID>>();
+		    // Generate the stats
+		    sender.sendMessage("Checking " + plugin.getGrid().getOwnershipMap().size() + " islands...");
+		    for (Island island : plugin.getGrid().getOwnershipMap().values()) {
+			if (!island.isSpawn()) {
 			    // Clear stats
 			    island.clearStats();
-			    // All of the island space is checked
-			    List<Entity> islandEntities = snowball.getNearbyEntities(Settings.islandDistance / 2, 128, Settings.islandDistance / 2);
-			    snowball.remove();
-			    if (islandEntities.size() > 2) {
-				int numOfEntities = 0;
-				for (Entity entity : islandEntities) {
-				    if (entity instanceof Creature && !(entity instanceof Player)) {
-					numOfEntities++;
-					island.addEntity(entity.getType());
+			    int numOfEntities = 0;
+			    for (int x = island.getMinProtectedX() /16; x <= (island.getMinProtectedX() + island.getProtectionSize() - 1)/16; x++) {
+				for (int z = island.getMinProtectedZ() /16; z <= (island.getMinProtectedZ() + island.getProtectionSize() - 1)/16; z++) {
+				    Chunk chunk = island.getCenter().getWorld().getChunkAt(x, z);
+				    for (Entity entity : chunk.getEntities()) {
+					if (entity instanceof Creature && !(entity instanceof Player)) {
+					    numOfEntities++;
+					    island.addEntity(entity.getType());
+					}
 				    }
 				}
-				// Store the gross number
-				List<UUID> players = new ArrayList<UUID>();
-				if (topEntityIslands.containsKey(numOfEntities)) {
-				    // Get the previous values
-				    players = topEntityIslands.get(numOfEntities);
+			    }
+			    // Store the gross number
+			    List<UUID> players = new ArrayList<UUID>();
+			    if (topEntityIslands.containsKey(numOfEntities)) {
+				// Get the previous values
+				players = topEntityIslands.get(numOfEntities);
+			    }
+			    players.add(island.getOwner());
+			    topEntityIslands.put(numOfEntities, players);
+			}
+		    }
+		    // sender.sendMessage("Done");
+		    // Display the stats
+		    int rank = 1;
+		    for (int numOfEntities : topEntityIslands.descendingKeySet()) {
+			if (numOfEntities > 0) {
+			    List<UUID> owners = topEntityIslands.get(numOfEntities);
+			    for (UUID owner : owners) {
+				sender.sendMessage("#" + rank + " " + plugin.getPlayers().getName(owner) + " total " + numOfEntities);
+				String content = "";
+				for (Entry<EntityType, Integer> entry : plugin.getGrid().getIsland(owner).getEntities().entrySet()) {
+				    int num = entry.getValue();
+				    String color = ChatColor.GREEN.toString();
+				    if (num > 10 && num <= 20) {
+					color = ChatColor.YELLOW.toString();
+				    } else if (num > 20 && num <= 40) {
+					color = ChatColor.GOLD.toString();
+				    } else if (num > 40) {
+					color = ChatColor.RED.toString();
+				    }
+				    content += Util.prettifyText(entry.getKey().toString()) + " x " + color + entry.getValue() + ChatColor.WHITE + ", ";
 				}
-				players.add(island.getOwner());
-				topEntityIslands.put(numOfEntities, players);
+				int lastComma = content.lastIndexOf(",");
+				// plugin.getLogger().info("DEBUG: last comma " +
+				// lastComma);
+				if (lastComma > 0) {
+				    content = content.substring(0, lastComma);
+				}
+				sender.sendMessage("  " + content);
+			    }
+			    rank++;
+			    if (rank > 10) {
+				break;
 			    }
 			}
 		    }
+		    return true;
 		}
-		// sender.sendMessage("Done");
-		// Display the stats
-		int rank = 1;
-		for (int numOfEntities : topEntityIslands.descendingKeySet()) {
-		    if (numOfEntities > 0) {
-			List<UUID> owners = topEntityIslands.get(numOfEntities);
-			for (UUID owner : owners) {
-			    sender.sendMessage("#" + rank + " " + plugin.getPlayers().getName(owner) + " total " + numOfEntities);
-			    String content = "";
-			    for (Entry<EntityType, Integer> entry : plugin.getGrid().getIsland(owner).getEntities().entrySet()) {
-				int num = entry.getValue();
-				String color = ChatColor.GREEN.toString();
-				if (num > 10 && num <= 20) {
-				    color = ChatColor.YELLOW.toString();
-				} else if (num > 20 && num <= 40) {
-				    color = ChatColor.GOLD.toString();
-				} else if (num > 40) {
-				    color = ChatColor.RED.toString();
-				}
-				content += Util.prettifyText(entry.getKey().toString()) + " x " + color + entry.getValue() + ChatColor.WHITE + ", ";
-			    }
-			    int lastComma = content.lastIndexOf(",");
-			    // plugin.getLogger().info("DEBUG: last comma " +
-			    // lastComma);
-			    if (lastComma > 0) {
-				content = content.substring(0, lastComma);
-			    }
-			    sender.sendMessage("  " + content);
-			}
-			rank++;
-			if (rank > 10) {
-			    break;
-			}
-		    }
-		}
-		return true;
-	    }
 	    // Delete island
 	    if (split[0].equalsIgnoreCase("deleteisland")) {
 		sender.sendMessage(ChatColor.RED + "Use " + ChatColor.BOLD + "deleteisland confirm" + ChatColor.RESET + "" + ChatColor.RED
