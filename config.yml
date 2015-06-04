@@ -1,14 +1,13 @@
 #############################################################################
-# Config for A SkyBlock (also playable as AcidIsland)
-# For initial set up you must configure or check at least these settings:
+# Config for ASkyblock
+# It is recommended that you check at least these settings:
 #
-# 1. distance (in the island section) - the distance between islands
-# 2. resetmoney - set to true so that everyone starts with nothing
-# 3. islandLevel - the height you want your islands to float
-# 4. protectionRange - big a player's island is at the start
+# 1. island distance - the distance between islands. If upgrading set to what you had.
+# 2. resetmoney (general section) - set to true so that everyone starts with nothing
+# 3. islandLevel (general section) - the height you want your islands to float
+# 4. protectionRange - how big a player's island is at the start
 #
-# The plugin will NOT start until #1 is set!!!
-#############################################################################
+##############################################################################
 
 ##### Island Related Settings #####
 
@@ -21,10 +20,9 @@ island:
    # 50 - minimum - not recommended
    # IF YOU ARE UPGRADING YOU MUST USE YOUR OLD VALUE EXACTLY, E.G., 110
    # OR RESET YOUR WORLD
-   # You MUST set this value to start the plugin!
    # Value must be an even number
 
-   distance: -1
+   distance: 200
 
    # Default protection range (even number). Min = 50, Recommended = 100
    # Value must be at least 16 blocks less than the island distance unless you set
@@ -189,9 +187,8 @@ general:
    # portal will return them back to their islands.
    createnether: true
 
-   # Try new island-style nether. Change to true
-   # Still in Beta!
-   newnether: false
+   # New island-style nether. Change to false for standard nether
+   newnether: true
    # Nether trees are made if a player grows a tree in the new nether (gravel and glowstone)
    nethertrees: true  
 
@@ -283,11 +280,12 @@ general:
    - Pig_Zombie
 
    # Sets the limit for number of monsters that can spawn in a chunk in this world. 
+   # Note: this does not limit the number of monsters, just how many spawn naturally.
    # Note: If set to a negative number the world will use the server-wide spawn limit instead.
    # Max is 100
    monsterspawnlimit: 70
    
-   #[integer] Sets the limit for number of animals that can spawn in a chunk in this world. 
+   # Sets the limit for number of animals that can spawn in a chunk in this world. 
    # Note: If set to a negative number the world will use the server-wide spawn limit instead.
    # Max is 100
    animalspawnlimit: 15
@@ -307,12 +305,12 @@ general:
    # to place a hopper block. Zero is unlimited. Excessive hoppers can add to lag.
    hopperlimit: 0
 
-   #[integer] Sets the limit for number of water animals [squid] that can spawn in a chunk in this world. 
+   # Sets the limit for number of water animals [squid] that can spawn in a chunk in this world. 
    # Note: If set to a negative number the world will use the server-wide spawn limit instead.
    # Max is 100
    wateranimalspawnlimit: 15
 
-   #[integer] Island below this level will be removed if they are abandoned and admins issue the purge command
+   # Islands below this level will be removed if they are abandoned and admins issue the purge command
    abandonedislandlevel: 10
 
 
@@ -345,7 +343,7 @@ general:
 
    # Reset Ender Chest - if true, the player's Ender Chest will be cleared when they
    # start or restart their island. Default is false.
-   # NOTE: Ender Chests spawn worlds, so it will clear ALL chests. In general,
+   # NOTE: Ender Chests span worlds, so it will clear ALL chests. In general,
    # Enderchests should not be allowed in ASkyblock unless you only run the ASkyblock
    # world. Ender Chest crafting and use is governed by the askyblock.craft.enderchest
    # permission.
@@ -394,9 +392,6 @@ general:
    # entering the world
    immediateteleport: false
 
-   # Use the variable "{ISLAND_LEVEL}" in chat prefixes in other plugins and it will
-   # be replaced by the player's island level.
-   
    # Have player's respawn on their island if they die
    respawnonisland: false
 
@@ -406,6 +401,9 @@ general:
    # The prefix [Team Chat] that goes in front of team chats is in the locale files
    teamchat: true
 
+   # Use the variable "{ISLAND_LEVEL}" in chat prefixes in other plugins and it will
+   # be replaced by the player's island level.
+   
    # Restrict Wither
    # This allows the Wither to only damage the island where it is spawned.
    # Damage to any islands or players will not occur.
