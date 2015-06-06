@@ -76,7 +76,9 @@ islandguardsettings:
   visitordrop: "Visitor item dropping"
   visitorpickup: "Visitor item pick-up"
   visitorkeepitems: "Visitor keep item on death"
-
+  creeperdamage: "Creeper damage"
+  creepergriefing: "Creeper griefing"
+  withergriefing: "Wither griefing"
   
 #LavaCheck
 lavaTip: "Tip: If obsidian was not intended, it can be scooped back up again with a bucket."

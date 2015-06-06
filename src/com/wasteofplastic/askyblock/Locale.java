@@ -611,7 +611,7 @@ public class Locale {
 	igsGate = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.gate", "Gate use"));
 	igsHurtAnimals = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.hurtanimals", "Hurting animals"));
 	igsHurtMobs = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.hurtmonsters", "Hurting monsters"));
-	igsCreeperDamage = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.creeperdamage", "Creeper explosions"));
+	igsCreeperDamage = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.creeperdamage", "Creeper damage"));
 	igsCreeperGriefing = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.creepergriefing", "Creeper griefing"));
 	igsWitherDamage = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.withergriefing", "Wither griefing"));
 	igsLeash = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.leash", "Leash use"));
