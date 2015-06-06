@@ -517,52 +517,24 @@ public class ASkyBlock extends JavaPlugin {
      * @param player
      *            - player name String
      * @param removeBlocks
-     *            - true to remove the siland blocks
+     *            - true to remove the island blocks
      */
     public void deletePlayerIsland(final UUID player, boolean removeBlocks) {
 	// Removes the island
 	// getLogger().info("DEBUG: deleting player island");
 	CoopPlay.getInstance().clearAllIslandCoops(player);
 	getWarpSignsListener().removeWarp(player);
-	if (removeBlocks) {
-	    // Check that the player's island location exists and is in the
-	    // island world
-	    Location islandLoc = players.getIslandLocation(player);
-	    if (islandLoc != null) {
-		if (islandLoc.getWorld() != null) {
-		    if (islandLoc.getWorld().equals(getIslandWorld())) {
-			// Over World start
-			grid.removeMobsFromIsland(islandLoc);
-			new DeleteIslandChunk(this, islandLoc);
-			// Delete the new nether island too (if it exists)
-			if (Settings.createNether && Settings.newNether) {
-			    Location otherIsland = islandLoc.toVector().toLocation(ASkyBlock.getNetherWorld());
-			    grid.removeMobsFromIsland(otherIsland);
-			    // Delete island
-			    new DeleteIslandChunk(plugin, otherIsland);  
-			}
-		    } else if (Settings.createNether && Settings.newNether && islandLoc.getWorld().equals(getNetherWorld())) {
-			// Nether World Start
-			grid.removeMobsFromIsland(islandLoc);
-			new DeleteIslandChunk(this, islandLoc);
-			// Delete the overworld island too
-			Location otherIsland = islandLoc.toVector().toLocation(ASkyBlock.getIslandWorld());
-			grid.removeMobsFromIsland(otherIsland);
-			// Delete island
-			new DeleteIslandChunk(plugin, otherIsland);  
-		    } else {
-			getLogger().severe("Cannot delete island at location " + islandLoc.toString() + " because it is not in the official island world");
-		    }
-		} else {
-		    getLogger().severe("Cannot delete island at location " + islandLoc.toString() + " because the world is unknown");
-		}
-	    }
-	} else {
-	    Island island = grid.getIsland(player);
-	    if (island != null) {
+	Island island = grid.getIsland(player);
+	if (island != null) {
+	    if (removeBlocks) {
+		grid.removeMobsFromIsland(island);
+		new DeleteIslandChunk(this, island);
+	    } else {
 		island.setLocked(false);
 		grid.setIslandOwner(island, null);
 	    }
+	} else {
+	    getLogger().severe("Could not delete player: " + player.toString() + " island!");
 	}
 	players.zeroPlayerData(player);
     }

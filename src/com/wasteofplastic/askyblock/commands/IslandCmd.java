@@ -620,7 +620,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 	// Sets a flag to temporarily disable cleanstone generation
 	plugin.setNewIsland(true);
 	//plugin.getBiomes();
-	
+
 	// Create island based on schematic
 	if (schematic != null) {
 	    //plugin.getLogger().info("DEBUG: pasting schematic " + schematic.getName() + " " + schematic.getPerm());
@@ -1070,7 +1070,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 		    return false;
 		}
 		pendingNewIslandSelection.remove(playerUUID);
-		Location oldIsland = plugin.getPlayers().getIslandLocation(player.getUniqueId());
+		Island oldIsland = plugin.getGrid().getIsland(player.getUniqueId());
 		newIsland(player);
 		if (resettingIsland.contains(playerUUID)) {
 		    resettingIsland.remove(playerUUID);
@@ -1314,14 +1314,13 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 		    // Get the schematics that this player is eligible to use
 		    List<Schematic> schems = getSchematics(player, false);
 		    //plugin.getLogger().info("DEBUG: size of schematics for this player = " + schems.size());
+		    Island oldIsland = plugin.getGrid().getIsland(player.getUniqueId());
 		    if (schems.isEmpty()) {
 			// No schematics - use default island
-			Location oldIsland = plugin.getPlayers().getIslandLocation(player.getUniqueId());
 			newIsland(player);
 			resetPlayer(player,oldIsland);
 		    } else if (schems.size() == 1) {
 			// Hobson's choice
-			Location oldIsland = plugin.getPlayers().getIslandLocation(player.getUniqueId());
 			newIsland(player,schems.get(0));
 			resetPlayer(player,oldIsland);
 		    } else {
@@ -1332,7 +1331,6 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 			    player.openInventory(SchematicsPanel.getSchematicPanel(player));
 			} else {
 			    // No panel
-			    Location oldIsland = plugin.getPlayers().getIslandLocation(player.getUniqueId());
 			    // Check schematics for specific permission
 			    schems = getSchematics(player,true);
 			    if (schems.isEmpty()) {
@@ -1775,7 +1773,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 			Schematic schematic = schematics.get(split[1]);
 			// Check perm again
 			if (schematic.getPerm().isEmpty() || VaultHelper.checkPerm(player, schematic.getPerm())) {
-			    Location oldIsland = plugin.getPlayers().getIslandLocation(player.getUniqueId());
+			    Island oldIsland = plugin.getGrid().getIsland(player.getUniqueId());
 			    newIsland(player,schematic);
 			    if (resettingIsland.contains(playerUUID)) {
 				resettingIsland.remove(playerUUID);
@@ -2589,7 +2587,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 	}
     }
 
-    private void resetPlayer(Player player, Location oldIsland) {
+    private void resetPlayer(Player player, Island oldIsland) {
 	// Deduct the reset
 	plugin.getPlayers().setResetsLeft(player.getUniqueId(), plugin.getPlayers().getResetsLeft(player.getUniqueId()) - 1);
 	// Clear any coop inventories
@@ -2601,47 +2599,14 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 	// Remove any warps
 	plugin.getWarpSignsListener().removeWarp(player.getUniqueId());
 	// Delete the old island, if it exists
-	if (oldIsland != null) {
-	    // Remove any coops
-	    CoopPlay.getInstance().clearAllIslandCoops(oldIsland);
-	    /*
-	    // Delete the island itself
-	    new DeleteIslandChunk(plugin, oldIsland);
-	    // Delete the new nether island too (if it exists)
-	    if (Settings.createNether && Settings.newNether) {
-		new DeleteIslandChunk(plugin, oldIsland.toVector().toLocation(ASkyBlock.getNetherWorld()));
-	    }*/
-	    //plugin.getLogger().info("DEBUG: Resetting island at " + oldIsland);
-	    if (oldIsland.getWorld().equals(ASkyBlock.getIslandWorld())) {
-		// Over World start
-		//plugin.getLogger().info("DEBUG: over world start");
-		plugin.getGrid().removeMobsFromIsland(oldIsland);
-		new DeleteIslandChunk(plugin, oldIsland);
-		// Delete the new nether island too (if it exists)
-		if (Settings.createNether && Settings.newNether) {
-		    Location otherIsland = oldIsland.toVector().toLocation(ASkyBlock.getNetherWorld());
-		    plugin.getGrid().removeMobsFromIsland(otherIsland);
-		    // Delete island
-		    new DeleteIslandChunk(plugin, otherIsland);  
-		}
-	    } else if (Settings.createNether && Settings.newNether && oldIsland.getWorld().equals(ASkyBlock.getNetherWorld())) {
-		//plugin.getLogger().info("DEBUG: nether world start");
-		// Nether World Start
-		plugin.getGrid().removeMobsFromIsland(oldIsland);
-		new DeleteIslandChunk(plugin, oldIsland);
-		// Delete the overworld island too
-		Location otherIsland = oldIsland.toVector().toLocation(ASkyBlock.getIslandWorld());
-		plugin.getGrid().removeMobsFromIsland(otherIsland);
-		// Delete island
-		new DeleteIslandChunk(plugin, otherIsland);  
-	    } else {
-		plugin.getLogger().severe("Cannot delete island at location " + oldIsland.toString() + " because it is not in the official island world");
-	    }   
-	}
+	// Remove any coops
+	CoopPlay.getInstance().clearAllIslandCoops(oldIsland.getCenter());
+	plugin.getGrid().removeMobsFromIsland(oldIsland);
+	new DeleteIslandChunk(plugin, oldIsland);
 	// Run any commands that need to be run at reset
 	runCommands(Settings.resetCommands, player.getUniqueId());
 	// Fire event
-	final IslandResetEvent event = new IslandResetEvent(player, oldIsland);
+	final IslandResetEvent event = new IslandResetEvent(player, oldIsland.getCenter());
 	plugin.getServer().getPluginManager().callEvent(event);
     }
 

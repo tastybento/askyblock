@@ -35,6 +35,7 @@ public class DeleteIslandChunk {
      * @param plugin
      * @param loc
      */
+    /*
     public DeleteIslandChunk(ASkyBlock plugin, final Location loc) {
 	if (loc == null)
 	    return;
@@ -71,6 +72,7 @@ public class DeleteIslandChunk {
 	for (int x = minChunk.getX(); x <= maxChunk.getX(); x++) {
 	    for (int z = minChunk.getZ(); z <= maxChunk.getZ(); z++) {
 		boolean regen = true;
+		
 		if (loc.getWorld().getChunkAt(x, z).getBlock(0, 0, 0).getX() < minxX) {
 		    // plugin.getLogger().info("DEBUG: min x coord is less than absolute min! "
 		    // + minxX);
@@ -98,5 +100,24 @@ public class DeleteIslandChunk {
 	}
 	// Remove from grid
 	plugin.getGrid().deleteIsland(loc);
+    }
+*/
+    /**
+     * Deletes overworld island and nether island if it exists
+     * @param plugin
+     * @param island
+     */
+    public DeleteIslandChunk(ASkyBlock plugin, Island island) {
+	// Delete using island
+	for (int x = island.getMinProtectedX() / 16; x <= (island.getMinProtectedX() + island.getProtectionSize()) / 16; x++) {
+	    for (int z = island.getMinProtectedZ() / 16; z <= (island.getMinProtectedZ() + island.getProtectionSize()) /16; z++) {
+		ASkyBlock.getIslandWorld().regenerateChunk(x, z);
+		if (Settings.createNether && Settings.newNether) {
+		    ASkyBlock.getNetherWorld().regenerateChunk(x, z);
+		}
+	    }
+	}
+	// Remove from grid
+	plugin.getGrid().deleteIsland(island.getCenter());
     }
 }

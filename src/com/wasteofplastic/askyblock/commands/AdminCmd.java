@@ -1335,33 +1335,10 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
      * @param sender
      */
     private void deleteIslands(Island island, CommandSender sender) {
-	if (island.getCenter().getWorld().equals(ASkyBlock.getIslandWorld())) {
-	    // Over World start
-	    plugin.getGrid().removeMobsFromIsland(island.getCenter());
-	    // Reset the biome
-	    BiomesPanel.setIslandBiome(island.getCenter(), Settings.defaultBiome);
-	    new DeleteIslandChunk(plugin, island.getCenter());
-	    // Delete the new nether island too (if it exists)
-	    if (Settings.createNether && Settings.newNether) {
-		Location otherIsland = island.getCenter().toVector().toLocation(ASkyBlock.getNetherWorld());
-		plugin.getGrid().removeMobsFromIsland(otherIsland);
-		// Delete island
-		new DeleteIslandChunk(plugin, otherIsland);  
-	    }
-	} else if (Settings.createNether && Settings.newNether && island.getCenter().getWorld().equals(ASkyBlock.getNetherWorld())) {
-	    // Nether World Start
-	    plugin.getGrid().removeMobsFromIsland(island.getCenter());
-	    new DeleteIslandChunk(plugin, island.getCenter());
-	    // Delete the overworld island too
-	    Location otherIsland = island.getCenter().toVector().toLocation(ASkyBlock.getIslandWorld());
-	    plugin.getGrid().removeMobsFromIsland(otherIsland);
-	    // Reset the biome
-	    BiomesPanel.setIslandBiome(island.getCenter(), Settings.defaultBiome);
-	    // Delete island
-	    new DeleteIslandChunk(plugin, otherIsland);  
-	} else {
-	    sender.sendMessage(ChatColor.RED + "Cannot delete island at location " + island.getCenter().toString() + " because it is not in the official island world");
-	} 
+	plugin.getGrid().removeMobsFromIsland(island);
+	// Reset the biome
+	BiomesPanel.setIslandBiome(island.getCenter(), Settings.defaultBiome);
+	new DeleteIslandChunk(plugin, island);
     }
 
     /**

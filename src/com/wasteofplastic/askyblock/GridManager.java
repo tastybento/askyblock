@@ -1327,11 +1327,42 @@ public class GridManager {
     }
 
     /**
-     * This removes mobs from an island - used when reseting or deleting an island
+     * This removes mobs from an island overworld and nether - used when reseting or deleting an island
      * 
      * @param loc
      *            - a Location
      */
+    public void removeMobsFromIsland(final Island island) {
+	// Teleport players away
+	for (Player player : plugin.getServer().getOnlinePlayers()) {
+	    if (player.getWorld().equals(ASkyBlock.getIslandWorld()) || player.getWorld().equals(ASkyBlock.getNetherWorld())) {
+		if (island != null && island.inIslandSpace(player.getLocation())) {
+		    //if (!player.getUniqueId().equals(island.getOwner())) {
+			// Teleport island players to their island home
+			if (!player.getUniqueId().equals(island.getOwner()) && (plugin.getPlayers().hasIsland(player.getUniqueId()) || plugin.getPlayers().inTeam(player.getUniqueId()))) {
+			    homeTeleport(player);
+			} else {
+			    // Move player to spawn
+			    Island spawn = getSpawn();
+			    if (spawn != null) {
+				// go to island spawn
+				player.teleport(ASkyBlock.getIslandWorld().getSpawnLocation());
+				plugin.getLogger().warning("During island deletion player " + player.getName() + " sent to spawn.");
+			    } else {
+				if (!player.performCommand(Settings.SPAWNCOMMAND)) {
+				    plugin.getLogger().warning(
+					    "During island deletion player " + player.getName() + " could not be sent to spawn so was dropped, sorry.");
+				} else {
+				    plugin.getLogger().warning("During island deletion player " + player.getName() + " sent to spawn using /spawn.");
+				}
+			    }
+			}
+		    //}
+		}
+	    }
+	}
+    }
+    /*
     public void removeMobsFromIsland(final Location loc) {
 	if (loc != null) {
 	    Island island = getIslandAt(loc);
@@ -1372,7 +1403,7 @@ public class GridManager {
 		}  
 	    }
 	}
-    }
+    }*/
 
     /**
      * @return a list of unowned islands
