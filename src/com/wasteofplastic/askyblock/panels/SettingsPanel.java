@@ -43,6 +43,9 @@ public class SettingsPanel {
 	ip.add(new IPItem(Settings.allowGateUse, Material.FENCE_GATE, ASkyBlock.getPlugin().myLocale().igsGate));
 	ip.add(new IPItem(Settings.allowHurtMobs, Material.EGG, ASkyBlock.getPlugin().myLocale().igsHurtAnimals));
 	ip.add(new IPItem(Settings.allowHurtMonsters, Material.SKULL_ITEM, ASkyBlock.getPlugin().myLocale().igsHurtMobs));
+	ip.add(new IPItem(Settings.allowCreeperDamage, Material.SKULL_ITEM, 4, ASkyBlock.getPlugin().myLocale().igsCreeperDamage));
+	ip.add(new IPItem(Settings.allowCreeperGriefing, Material.SKULL_ITEM, 4, ASkyBlock.getPlugin().myLocale().igsCreeperGriefing));
+	ip.add(new IPItem(!Settings.restrictWither, Material.SKULL_ITEM, 1, ASkyBlock.getPlugin().myLocale().igsWitherDamage));
 	ip.add(new IPItem(Settings.allowLeashUse, Material.LEASH, ASkyBlock.getPlugin().myLocale().igsLeash));
 	ip.add(new IPItem(Settings.allowLeverButtonUse, Material.LEVER, ASkyBlock.getPlugin().myLocale().igsLever));
 	ip.add(new IPItem(Settings.allowMonsterEggs, Material.MONSTER_EGG, ASkyBlock.getPlugin().myLocale().igsSpawnEgg));

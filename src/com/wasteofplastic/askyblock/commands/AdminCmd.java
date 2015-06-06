@@ -59,8 +59,8 @@ import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.PlayerCache;
 import com.wasteofplastic.askyblock.SafeSpotTeleport;
 import com.wasteofplastic.askyblock.Settings;
-import com.wasteofplastic.askyblock.Settings.GameType;
 import com.wasteofplastic.askyblock.TopTen;
+import com.wasteofplastic.askyblock.Settings.GameType;
 import com.wasteofplastic.askyblock.panels.BiomesPanel;
 import com.wasteofplastic.askyblock.panels.ControlPanel;
 import com.wasteofplastic.askyblock.util.Util;
@@ -871,7 +871,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 		    sender.sendMessage(ChatColor.RED + plugin.myLocale().errorUnknownPlayer);
 		    return true;
 		} else {
-		    if (plugin.getPlayers().getIslandLocation(playerUUID) != null) {
+		    if (plugin.getPlayers().hasIsland(playerUUID) || plugin.getPlayers().inTeam(playerUUID)) {
 			Location safeSpot = plugin.getGrid().getSafeHomeLocation(playerUUID,1);
 			if (safeSpot != null) {
 			    // This next line should help players with long ping
@@ -1511,7 +1511,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
      * @param sender
      */
     private void showInfo(UUID playerUUID, CommandSender sender) {
-	sender.sendMessage("Owner: " + ChatColor.GREEN + plugin.getPlayers().getName(playerUUID));
+	sender.sendMessage("Player: " + ChatColor.GREEN + plugin.getPlayers().getName(playerUUID));
 	sender.sendMessage(ChatColor.WHITE + "UUID: " + playerUUID.toString());
 	// Display island level
 	sender.sendMessage(ChatColor.GREEN + plugin.myLocale().levelislandLevel + ": " + plugin.getPlayers().getIslandLevel(playerUUID));
@@ -1526,9 +1526,12 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 	if (plugin.getPlayers().inTeam(playerUUID)) {
 	    final UUID leader = plugin.getPlayers().getTeamLeader(playerUUID);
 	    final List<UUID> pList = plugin.getPlayers().getMembers(leader);
-	    sender.sendMessage(ChatColor.GREEN + plugin.getPlayers().getName(leader));
+	    sender.sendMessage(ChatColor.GREEN + "Team Leader: " + plugin.getPlayers().getName(leader));
+	    sender.sendMessage(ChatColor.GREEN + "Team Members:");
 	    for (UUID member : pList) {
-		sender.sendMessage(ChatColor.WHITE + " - " + plugin.getPlayers().getName(member));
+		if (!member.equals(leader)) {
+		    sender.sendMessage(ChatColor.WHITE + " - " + plugin.getPlayers().getName(member));
+		}
 	    }
 	    islandLoc = plugin.getPlayers().getTeamIslandLocation(playerUUID);
 	} else {

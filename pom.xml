@@ -68,6 +68,49 @@
 			<artifactId>VaultAPI</artifactId>
 			<version>1.5</version>
 		</dependency>
+				<dependency>
+			<groupId>bukkit.org</groupId>
+			<artifactId>craftbukkit</artifactId>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/serverJars/craftbukkit-1.7.9-R0.3-20140705.002733-4.jar</systemPath>
+			<version>1.7.9</version>
+		</dependency>
+		<dependency>
+			<groupId>spigotmc.org</groupId>
+			<artifactId>spigot-1.8</artifactId>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/serverJars/spigot-1.8.jar</systemPath>
+			<version>1.8</version>
+		</dependency>
+		<dependency>
+			<groupId>spigotmc.org</groupId>
+			<artifactId>spigot.1.8.3</artifactId>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/serverJars/spigot-1.8.3.jar</systemPath>
+			<version>1.8.3</version>
+		</dependency>
+		<dependency>
+			<groupId>spigotmc.org</groupId>
+			<artifactId>spigot.1.8.4</artifactId>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/serverJars/spigot-1.8.4.jar</systemPath>
+			<version>1.8.4</version>
+		</dependency>
+		<dependency>
+			<groupId>spigotmc.org</groupId>
+			<artifactId>spigot.1.8.6</artifactId>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/serverJars/spigot-1.8.6.jar</systemPath>
+			<version>1.8.6</version>
+		</dependency>
+		<dependency>
+			<groupId>spigotmc.org</groupId>
+			<artifactId>spigot-1649</artifactId>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/serverJars/spigot-1649.jar</systemPath>
+			<version>1.7.10</version>
+		</dependency>
+		
 	</dependencies>
 	<repositories>
 		<repository>

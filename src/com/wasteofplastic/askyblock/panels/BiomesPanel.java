@@ -3,21 +3,28 @@ package com.wasteofplastic.askyblock.panels;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.ChunkSnapshot;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.util.Vector;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
@@ -96,10 +103,10 @@ public class BiomesPanel implements Listener {
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
 	Player player = (Player) event.getWhoClicked(); // The player that
-							// clicked the item
+	// clicked the item
 	UUID playerUUID = player.getUniqueId();
 	Inventory inventory = event.getInventory(); // The inventory that was
-						    // clicked in
+	// clicked in
 	int slot = event.getRawSlot();
 	// Check this is the right panel
 	if (!inventory.getName().equals(plugin.myLocale().biomePanelTitle)) {
@@ -150,178 +157,118 @@ public class BiomesPanel implements Listener {
 	return;
     }
 
+
     /**
      * Sets all blocks in an island to a specified biome type
      * 
      * @param islandLoc
      * @param biomeType
      */
-    public static boolean setIslandBiome(Location islandLoc, Biome biomeType) {
-	final int islandX = islandLoc.getBlockX();
-	final int islandZ = islandLoc.getBlockZ();
-	final World world = islandLoc.getWorld();
-	final int range = (int) Math.round((double) Settings.islandDistance / 2);
-	try {
-	    // Biomes only work in 2D, so there's no need to set every block in
-	    // the island area
-	    for (int x = -range; x <= range; x++) {
-		for (int z = -range; z <= range; z++) {
-		    Location l = new Location(world, (islandX + x), 0, (islandZ + z));
-		    l.getBlock().setBiome(biomeType);
+    public static boolean setIslandBiome(final Location islandLoc, final Biome biomeType) {
+	final Island island = plugin.getGrid().getIslandAt(islandLoc);
+	if (island != null) {
+	    island.getCenter().getBlock().setBiome(biomeType);
+	    // Get a snapshot of the island
+	    final World world = island.getCenter().getWorld();
+	    // If the biome is dry, then we need to remove the water, ice, snow, etc.
+	    switch (biomeType) {
+	    case MESA:
+	    case MESA_BRYCE:
+	    case DESERT:
+	    case JUNGLE:
+	    case SAVANNA:
+	    case SAVANNA_MOUNTAINS:
+	    case SAVANNA_PLATEAU:
+	    case SAVANNA_PLATEAU_MOUNTAINS:
+	    case SWAMPLAND:
+	    case HELL:
+		// Get the chunks
+		//plugin.getLogger().info("DEBUG: get the chunks");
+		List<ChunkSnapshot> chunkSnapshot = new ArrayList<ChunkSnapshot>();
+		for (int x = island.getMinProtectedX() /16; x <= (island.getMinProtectedX() + island.getProtectionSize() - 1)/16; x++) {
+		    for (int z = island.getMinProtectedZ() /16; z <= (island.getMinProtectedZ() + island.getProtectionSize() - 1)/16; z++) {
+			chunkSnapshot.add(world.getChunkAt(x, z).getChunkSnapshot());
+		    }  
 		}
-	    }
-	} catch (Exception noBiome) {
-	    return false;
-	}
-	// Now do some adjustments based on the Biome
-	switch (biomeType) {
-	case MESA:
-	case MESA_BRYCE:
-	case DESERT:
-	case JUNGLE:
-	case SAVANNA:
-	case SAVANNA_MOUNTAINS:
-	case SAVANNA_PLATEAU:
-	case SAVANNA_PLATEAU_MOUNTAINS:
-	case SWAMPLAND:
-	    // No ice or snow allowed
-	    for (int y = islandLoc.getWorld().getMaxHeight(); y >= Settings.sea_level; y--) {
-		for (int x = islandX - range; x <= islandX + range; x++) {
-		    for (int z = islandZ - range; z <= islandZ + range; z++) {
-			switch (world.getBlockAt(x, y, z).getType()) {
-			case ICE:
-			case SNOW:
-			    world.getBlockAt(x, y, z).setType(Material.AIR);
-			    break;
-			default:
+		//plugin.getLogger().info("DEBUG: size of chunk ss = " + chunkSnapshot.size());
+		final List<ChunkSnapshot> finalChunk = chunkSnapshot;
+		plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+
+		    @SuppressWarnings("deprecation")
+		    @Override
+		    public void run() {
+			//System.out.println("DEBUG: running async task");
+			HashMap<Vector,Integer> blocksToRemove = new HashMap<Vector, Integer>();
+			// Go through island space and find the offending columns
+			for (ChunkSnapshot chunk: finalChunk) {
+			    for (int x = 0; x< 16; x++) {
+				for (int z = 0; z < 16; z++) {
+				    // Check if it is snow, ice or water
+				    for (int yy = world.getMaxHeight()-1; yy >= Settings.sea_level; yy--) {
+					int type = chunk.getBlockTypeId(x, yy, z);
+					if (type == Material.ICE.getId() || type == Material.SNOW.getId() || type == Material.SNOW_BLOCK.getId()
+						|| type == Material.WATER.getId() || type == Material.STATIONARY_WATER.getId()) {
+					    //System.out.println("DEBUG: offending block found " + Material.getMaterial(type) + " @ " + (chunk.getX()*16 + x) + " " + yy + " " + (chunk.getZ()*16 + z));
+					    blocksToRemove.put(new Vector(chunk.getX()*16 + x,yy,chunk.getZ()*16 + z), type);
+					} else if (type != Material.AIR.getId()){
+					    // Hit a non-offending block so break and store this column of vectors
+					    break;
+					}
+				    }
+				}
+			    }
 			}
-		    }
-		}
-	    }
-	    break;
-	case HELL:
-	    // No water or ice allowed
-	    for (int y = islandLoc.getWorld().getMaxHeight(); y >= Settings.sea_level; y--) {
-		for (int x = islandX - range; x <= islandX + range; x++) {
-		    for (int z = islandZ - range; z <= islandZ + range; z++) {
-			switch (world.getBlockAt(x, y, z).getType()) {
-			case ICE:
-			case WATER:
-			case STATIONARY_WATER:
-			case SNOW:
-			    world.getBlockAt(x, y, z).setType(Material.AIR);
-			    break;
-			default:
+			// Now get rid of the blocks
+			if (!blocksToRemove.isEmpty()) {
+			    final HashMap<Vector, Integer> blocks = blocksToRemove;
+			    // Kick of a sync task
+			    plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
+
+				@Override
+				public void run() {
+				    //plugin.getLogger().info("DEBUG: Running sync task");
+				    for (Entry<Vector, Integer> entry: blocks.entrySet()) {
+					if (entry.getValue() == Material.WATER.getId() || entry.getValue() == Material.STATIONARY_WATER.getId()) {
+					    if (biomeType.equals(Biome.HELL)) {
+						// Remove water from Hell	
+						entry.getKey().toLocation(world).getBlock().setType(Material.AIR);
+					    }
+					} else {
+					    entry.getKey().toLocation(world).getBlock().setType(Material.AIR);
+					}
+				    }
+				}});
 			}
-		    }
-		}
+		    }});
+	    default:
 	    }
-	    break;
-	case BEACH:
-	    break;
-	case BIRCH_FOREST:
-	    break;
-	case BIRCH_FOREST_HILLS:
-	    break;
-	case BIRCH_FOREST_HILLS_MOUNTAINS:
-	    break;
-	case BIRCH_FOREST_MOUNTAINS:
-	    break;
-	case COLD_BEACH:
-	    break;
-	case COLD_TAIGA:
-	    break;
-	case COLD_TAIGA_HILLS:
-	    break;
-	case COLD_TAIGA_MOUNTAINS:
-	    break;
-	case DEEP_OCEAN:
-	    break;
-	case DESERT_HILLS:
-	    break;
-	case DESERT_MOUNTAINS:
-	    break;
-	case EXTREME_HILLS:
-	    break;
-	case EXTREME_HILLS_MOUNTAINS:
-	    break;
-	case EXTREME_HILLS_PLUS:
-	    break;
-	case EXTREME_HILLS_PLUS_MOUNTAINS:
-	    break;
-	case FLOWER_FOREST:
-	    break;
-	case FOREST:
-	    break;
-	case FOREST_HILLS:
-	    break;
-	case FROZEN_OCEAN:
-	    break;
-	case FROZEN_RIVER:
-	    break;
-	case ICE_MOUNTAINS:
-	    break;
-	case ICE_PLAINS:
-	    break;
-	case ICE_PLAINS_SPIKES:
-	    break;
-	case JUNGLE_EDGE:
-	    break;
-	case JUNGLE_EDGE_MOUNTAINS:
-	    break;
-	case JUNGLE_HILLS:
-	    break;
-	case JUNGLE_MOUNTAINS:
-	    break;
-	case MEGA_SPRUCE_TAIGA:
-	    break;
-	case MEGA_SPRUCE_TAIGA_HILLS:
-	    break;
-	case MEGA_TAIGA:
-	    break;
-	case MEGA_TAIGA_HILLS:
-	    break;
-	case MUSHROOM_ISLAND:
-	    break;
-	case MUSHROOM_SHORE:
-	    break;
-	case OCEAN:
-	    break;
-	case PLAINS:
-	    break;
-	case RIVER:
-	    break;
-	case ROOFED_FOREST:
-	    break;
-	case ROOFED_FOREST_MOUNTAINS:
-	    break;
-	case SKY:
-	    break;
-	case SMALL_MOUNTAINS:
-	    break;
-	case STONE_BEACH:
-	    break;
-	case SUNFLOWER_PLAINS:
-	    break;
-	case SWAMPLAND_MOUNTAINS:
-	    break;
-	case TAIGA:
-	    break;
-	case TAIGA_HILLS:
-	    break;
-	case TAIGA_MOUNTAINS:
-	    break;
-	case MESA_PLATEAU:
-	    break;
-	case MESA_PLATEAU_FOREST:
-	    break;
-	case MESA_PLATEAU_FOREST_MOUNTAINS:
-	    break;
-	case MESA_PLATEAU_MOUNTAINS:
-	    break;
-	default:
-	    break;
+	    return true;
+	} else {
+	    return false; 
 	}
-	return true;
     }
+
+    /**
+     * Ensures that any block when loaded will match the biome of the center column of the island
+     * if it exists. Does not apply to spawn.
+     * @param e
+     */
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = false)
+    public void onChunkLoad(ChunkLoadEvent e) {
+	// Only affects overworld
+	if (!e.getWorld().equals(ASkyBlock.getIslandWorld())) {
+	    return;
+	}
+	Island island = plugin.getGrid().getIslandAt(e.getChunk().getX()*16, e.getChunk().getZ()*16);
+	if (island != null && !island.isSpawn()) {
+	    Biome biome = island.getCenter().getBlock().getBiome();
+	    for (int x = 0; x< 16; x++) {
+		for (int z = 0; z< 16; z++) {
+		    // Set biome
+		    e.getChunk().getBlock(x, 0, z).setBiome(biome);
+		}
+	    }
+	}
+    }
+
 }

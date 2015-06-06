@@ -140,9 +140,15 @@ public class WarpSigns implements Listener {
 			if (addWarp(player.getUniqueId(), e.getBlock().getLocation())) {
 			    player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).warpssuccess);
 			    e.setLine(0, ChatColor.GREEN + plugin.myLocale().warpswelcomeLine);
+			    for (int i = 1; i<4; i++) {
+				e.setLine(i, ChatColor.translateAlternateColorCodes('&', e.getLine(i)));
+			    }
 			} else {
 			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorDuplicate);
 			    e.setLine(0, ChatColor.RED + plugin.myLocale().warpswelcomeLine);
+			    for (int i = 1; i<4; i++) {
+				e.setLine(i, ChatColor.translateAlternateColorCodes('&', e.getLine(i)));
+			    }
 			}
 		    } else {
 			//plugin.getLogger().info("DEBUG: Player already has a Sign");

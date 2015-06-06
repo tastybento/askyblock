@@ -43,20 +43,29 @@ public class IPItem {
     }
 
     public IPItem(boolean flagValue, Material material) {
-	createToggleableItem(flagValue, material, Util.prettifyText(material.toString()) + " use");
+	createToggleableItem(flagValue, material, 0, Util.prettifyText(material.toString()) + " use");
+    }
+    
+    public IPItem(boolean flagValue, Material material, int durability) {
+	createToggleableItem(flagValue, material, durability, Util.prettifyText(material.toString()) + " use");
     }
 
     public IPItem(boolean flagValue, Material material, String name) {
-	createToggleableItem(flagValue, material, name);
+	createToggleableItem(flagValue, material, 0, name);
+    }
+    
+    public IPItem(boolean flagValue, Material material, int durability, String name) {
+	createToggleableItem(flagValue, material, durability, name);
     }
 
-    private void createToggleableItem(boolean flagValue, Material material, String name) {
+    private void createToggleableItem(boolean flagValue, Material material, int durability, String name) {
 	this.flagValue = flagValue;
 	this.slot = -1;
 	this.name = name;
 	this.type = Type.TOGGLE;
 	description.clear();
 	item = new ItemStack(material);
+	item.setDurability((short)durability);
 	ItemMeta meta = item.getItemMeta();
 	meta.setDisplayName(name);
 	if (flagValue) {

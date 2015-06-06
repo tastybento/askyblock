@@ -123,6 +123,8 @@ island:
    endermandeathdrop: true
    # Allow creeper explosion damage to block (explosion still hurts)
    allowcreeperdamage: true
+   # Allow visitors to use creeper explosions to grief islands
+   allowcreepergriefing: false 
    # Allow TNT damage to blocks (stops players using TNT to destroy other's islands)
    allowtntdamage: false
    # Allow spawn egg use

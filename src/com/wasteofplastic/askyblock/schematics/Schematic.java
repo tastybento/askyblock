@@ -19,14 +19,17 @@ package com.wasteofplastic.askyblock.schematics;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -56,6 +59,7 @@ import org.bukkit.entity.Wolf;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.Attachable;
 import org.bukkit.material.DirectionalContainer;
 import org.bukkit.util.BlockVector;
 import org.bukkit.util.Vector;
@@ -76,9 +80,10 @@ import org.json.simple.parser.ParseException;
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.Settings.GameType;
+import com.wasteofplastic.askyblock.nms.NMSAbstraction;
 
 public class Schematic {
-
+    private ASkyBlock plugin;
     private short[] blocks;
     private byte[] data;
     private short width;
@@ -115,8 +120,11 @@ public class Schematic {
     private Vector topGrass;
     private Vector playerSpawn;
     private Material playerSpawnBlock;
+    private NMSAbstraction nms;
+    private Set<Material> attachable = new HashSet<Material>();
 
-    public Schematic() {
+    public Schematic(ASkyBlock plugin) {
+	this.plugin = plugin;
 	// Initialize 
 	name = "";
 	heading = "";
@@ -143,7 +151,8 @@ public class Schematic {
 	partnerName = "";
     }
 
-    public Schematic(File file) throws IOException {
+    public Schematic(ASkyBlock plugin, File file) throws IOException {
+	this.plugin = plugin;
 	// Initialize
 	name = file.getName();
 	heading = "";
@@ -168,10 +177,30 @@ public class Schematic {
 	playerSpawn = null;
 	playerSpawnBlock = null;
 	partnerName = "";
+
+	attachable.add(Material.STONE_BUTTON);
+	attachable.add(Material.WOOD_BUTTON);
+	attachable.add(Material.COCOA);
+	attachable.add(Material.LADDER);
+	attachable.add(Material.LEVER);
+	attachable.add(Material.PISTON_EXTENSION);
+	attachable.add(Material.REDSTONE_TORCH_OFF);
+	attachable.add(Material.REDSTONE_TORCH_ON);
+	attachable.add(Material.WALL_SIGN);
+	attachable.add(Material.TORCH);
+	attachable.add(Material.TRAP_DOOR);
+	attachable.add(Material.TRIPWIRE_HOOK);
+	try {
+	    nms = checkVersion();
+	} catch (Exception e) {
+	    e.printStackTrace();
+	}
 	// Establish the World Edit to Material look up
 	// V1.8 items
-	// New V1.8 events
 	if (!Bukkit.getServer().getVersion().contains("(MC: 1.7")) {
+	    attachable.add(Material.IRON_TRAPDOOR);
+	    attachable.add(Material.WALL_BANNER);
+
 	    WEtoM.put("ACACIA_DOOR",Material.ACACIA_DOOR_ITEM);
 	    WEtoM.put("BIRCH_DOOR",Material.BIRCH_DOOR_ITEM);
 	    WEtoM.put("BIRCH_STAIRS",Material.BIRCH_WOOD_STAIRS);
@@ -682,8 +711,8 @@ public class Schematic {
 	}
 	World world = loc.getWorld();
 	Map<BlockVector, Map<String, Tag>> tileEntitiesMap = this.getTileEntitiesMap();
-	// Bukkit.getLogger().info("World is " + world.getName() +
-	// "and schematic size is " + schematic.getBlocks().length);
+	//Bukkit.getLogger().info("World is " + world.getName() + "and schematic size is " + width + " x " + height + " x " + length);
+
 	// Bukkit.getLogger().info("DEBUG Location to place island is:" +
 	// loc.toString());
 
@@ -704,41 +733,42 @@ public class Schematic {
 		for (int z = 0; z < length; ++z) {
 		    int index = y * width * length + z * width + x;
 		    Block block = new Location(world, x, y, z).add(blockLoc).getBlock();
+		    block.setBiome(biome);
 		    try {
 			// Do not post torches because they fall off every so often
 			// May have to include banners too
-			if (blocks[index] != Material.TORCH.getId()) {
-			    block.setTypeIdAndData(blocks[index], data[index], this.usePhysics);
+			//if (blocks[index] != Material.TORCH.getId()) {
+			Material blockMat = Material.getMaterial(blocks[index]);
+			if (blockMat != null && !attachable.contains(blockMat)) {    
+			    //block.setTypeIdAndData(blocks[index], data[index], this.usePhysics);
+			    nms.setBlockSuperFast(block, blocks[index], data[index], this.usePhysics);
+			} else if (blocks[index] == 179) {
+			    // Red sandstone - use red sand instead
+			    //block.setTypeIdAndData(12, (byte)1, this.usePhysics);
+			    nms.setBlockSuperFast(block, 12, (byte)1, this.usePhysics);
 			}
 		    } catch (Exception e) {
-			// Do some 1.7.9 helping for the built-in schematic
-			if (blocks[index] == 179) {
-			    // Red sandstone - use red sand instead
-			    block.setTypeIdAndData(12, (byte)1, this.usePhysics); 
-			} else {
-			    Bukkit.getLogger().info("Could not set (" + x + "," + y + "," + z + ") block ID:" + blocks[index] + " block data = " + data[index]);
-			}
+			e.printStackTrace();
+			plugin.getLogger().info("Could not set (" + x + "," + y + "," + z + ") block ID:" + blocks[index] + " block data = " + data[index]);
 		    }
 		}
 	    }
 	}
 
-	// Second pass
+	// Second pass - just paste attachables and deal with chests etc.
 	for (int x = 0; x < width; ++x) {
 	    for (int y = 0; y < height; ++y) {
 		for (int z = 0; z < length; ++z) {
 		    int index = y * width * length + z * width + x;
 		    Block block = new Location(world, x, y, z).add(blockLoc).getBlock();
 		    try {
-			block.setTypeIdAndData(blocks[index], data[index], this.usePhysics);
-		    } catch (Exception e) {
-			// Do some 1.7.9 helping for the built-in schematic
-			if (blocks[index] == 179) {
-			    // Red sandstone - use red sand instead
-			    block.setTypeIdAndData(12, (byte)1, this.usePhysics); 
-			} else {
-			    Bukkit.getLogger().info("Could not set (" + x + "," + y + "," + z + ") block ID:" + blocks[index] + " block data = " + data[index]);
+			Material blockMat = Material.getMaterial(blocks[index]);
+			if (blockMat != null && attachable.contains(blockMat)) {   
+			    nms.setBlockSuperFast(block, blocks[index], data[index], this.usePhysics);
 			}
+			//block.setTypeIdAndData(blocks[index], data[index], this.usePhysics);
+		    } catch (Exception e) {
+			plugin.getLogger().info("Could not set (" + x + "," + y + "," + z + ") block ID:" + blocks[index] + " block data = " + data[index]);
 		    }
 		    // Tile Entities
 		    if (tileEntitiesMap.containsKey(new BlockVector(x, y, z))) {
@@ -887,7 +917,7 @@ public class Schematic {
 					// This is unformatted text (not JSON). It is included in "".
 					if (text.get(line).length() > 1) {
 					    try {
-					    lineText = text.get(line).substring(text.get(line).indexOf('"')+1,text.get(line).lastIndexOf('"'));
+						lineText = text.get(line).substring(text.get(line).indexOf('"')+1,text.get(line).lastIndexOf('"'));
 					    } catch (Exception e) {
 						//There may not be those "'s, so just use the raw line
 						lineText = text.get(line);
@@ -1219,6 +1249,7 @@ public class Schematic {
 	    for (int z_space = z - 4; z_space <= z + 4; z_space++) {
 		final Block b = world.getBlockAt(x_space, y, z_space);
 		b.setType(Material.BEDROCK);
+		b.setBiome(biome);
 	    }
 	}
 	for (y = 1; y < Settings.island_level + 5; y++) {
@@ -1534,5 +1565,39 @@ public class Schematic {
 	return false;
     }
 
+    /**
+     * Checks what version the server is running and picks the appropriate NMS handler, or fallback
+     * @return NMSAbstraction class
+     * @throws ClassNotFoundException
+     * @throws IllegalArgumentException
+     * @throws SecurityException
+     * @throws InstantiationException
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     * @throws NoSuchMethodException
+     */
+    private NMSAbstraction checkVersion() throws ClassNotFoundException, IllegalArgumentException,
+    SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException,
+    NoSuchMethodException {
+	String serverPackageName = plugin.getServer().getClass().getPackage().getName();
+	String pluginPackageName = plugin.getClass().getPackage().getName();
+	String version = serverPackageName.substring(serverPackageName.lastIndexOf('.') + 1);
+	Class<?> clazz;
+	try {
+	    //plugin.getLogger().info("DEBUG: Trying " + pluginPackageName + ".nms." + version + ".NMSHandler");
+	    clazz = Class.forName(pluginPackageName + ".nms." + version + ".NMSHandler");
+	} catch (Exception e) {
+	    plugin.getLogger().info("No NMS Handler found, falling back to Bukkit API.");
+	    clazz = Class.forName(pluginPackageName + ".nms.fallback.NMSHandler");
+	}
+	//plugin.getLogger().info("DEBUG: " + serverPackageName);
+	//plugin.getLogger().info("DEBUG: " + pluginPackageName);
+	// Check if we have a NMSAbstraction implementing class at that location.
+	if (NMSAbstraction.class.isAssignableFrom(clazz)) {
+	    return (NMSAbstraction) clazz.getConstructor().newInstance();
+	} else {
+	    throw new IllegalStateException("Class " + clazz.getName() + " does not implement NMSAbstraction");
+	}
+    }
 
 }

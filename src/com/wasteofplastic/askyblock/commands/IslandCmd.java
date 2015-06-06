@@ -41,6 +41,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
+import org.bukkit.World.Environment;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -146,7 +147,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 		plugin.saveResource("schematics/island.schematic", false);
 		// Add it to schematics
 		try {
-		    schematics.put("default",new Schematic(schematicFile));
+		    schematics.put("default",new Schematic(plugin, schematicFile));
 		} catch (IOException e) {
 		    plugin.getLogger().severe("Could not load default schematic!");
 		    e.printStackTrace();
@@ -155,12 +156,12 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 	    } else {
 		// No islands.schematic in the jar, so just make the default using 
 		// built-in island generation
-		schematics.put("default",new Schematic());
+		schematics.put("default",new Schematic(plugin));
 	    }
 	} else {
 	    // It exists, so load it
 	    try {
-		schematics.put("default",new Schematic(schematicFile));
+		schematics.put("default",new Schematic(plugin, schematicFile));
 	    } catch (IOException e) {
 		plugin.getLogger().severe("Could not load default schematic!");
 		e.printStackTrace();
@@ -173,7 +174,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 
 		// Add it to schematics
 		try {
-		    Schematic netherIsland = new Schematic(netherFile);
+		    Schematic netherIsland = new Schematic(plugin, netherFile);
 		    netherIsland.setVisible(false);
 		    schematics.put("nether", netherIsland);
 		} catch (IOException e) {
@@ -186,7 +187,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 	} else {
 	    // It exists, so load it
 	    try {
-		Schematic netherIsland = new Schematic(netherFile);
+		Schematic netherIsland = new Schematic(plugin, netherFile);
 		netherIsland.setVisible(false);
 		schematics.put("nether", netherIsland);
 	    } catch (IOException e) {
@@ -233,7 +234,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 		    plugin.getLogger().info("Loading schematic " + fileName + " for permission " + perms);
 		    Schematic schematic;
 		    try {
-			schematic = new Schematic(schem);
+			schematic = new Schematic(plugin, schem);
 			schematic.setPerm(perms);
 			schematic.setHeading(perms);
 			schematic.setName("#" + count++);
@@ -262,10 +263,10 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 			schematicFile = new File(schematicFolder, filename);
 			// See if the file exists
 			if (schematicFile.exists()) {
-			    newSchem = new Schematic(schematicFile);
+			    newSchem = new Schematic(plugin, schematicFile);
 			} else if (plugin.getResource("schematics/"+filename) != null) {
 			    plugin.saveResource("schematics/"+filename, false);
-			    newSchem = new Schematic(schematicFile);
+			    newSchem = new Schematic(plugin, schematicFile);
 			}
 		    } else {
 			//plugin.getLogger().info("DEBUG: filename is empty");
@@ -573,14 +574,14 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 	    }
 	}
 	// Sort according to order
-        Collections.sort(result, new Comparator<Schematic>() {
+	Collections.sort(result, new Comparator<Schematic>() {
 
 	    @Override
 	    public int compare(Schematic o1, Schematic o2) {
 		return ((o2.getOrder() < o1.getOrder()) ? 1 : -1);
 	    }
-             
-        });
+
+	});
 	return result;
     }
 
@@ -607,15 +608,19 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
      * @param schematic
      */
     public void newIsland(final Player player, final Schematic schematic) {
+	//long time = System.nanoTime();
 	final UUID playerUUID = player.getUniqueId();
 	boolean firstTime = false;
 	if (!plugin.getPlayers().hasIsland(playerUUID)) {
 	    firstTime = true;
 	}
+	//plugin.getLogger().info("DEBUG: finding island location");
 	Location next = getNextIsland();
+	//plugin.getLogger().info("DEBUG: found " + next);
 	// Sets a flag to temporarily disable cleanstone generation
 	plugin.setNewIsland(true);
-	plugin.getBiomes();
+	//plugin.getBiomes();
+	
 	// Create island based on schematic
 	if (schematic != null) {
 	    //plugin.getLogger().info("DEBUG: pasting schematic " + schematic.getName() + " " + schematic.getPerm());
@@ -633,15 +638,20 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 		schematic.pasteSchematic(next, player);
 	    } else {
 		// Over world start
+		//plugin.getLogger().info("DEBUG: pasting");
 		schematic.pasteSchematic(next, player);
+		//plugin.getLogger().info("DEBUG: pasted overworld");
 		if (Settings.newNether) {
 		    // Paste the other world schematic
 		    final Location netherLoc = next.toVector().toLocation(ASkyBlock.getNetherWorld());
 		    if (schematic.getPartnerName().isEmpty()) {
 			// This will paste the over world schematic again
+			//plugin.getLogger().info("DEBUG: pasting nether");
 			pastePartner(schematic, netherLoc, player);
+			//plugin.getLogger().info("DEBUG: pasted nether");
 		    } else {
 			if (schematics.containsKey(schematic.getPartnerName())) {
+			    //plugin.getLogger().info("DEBUG: pasting partner");
 			    // A partner schematic is available
 			    pastePartner(schematics.get(schematic.getPartnerName()),netherLoc, player);
 			} else {
@@ -652,8 +662,6 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 	    }
 	    // Record the rating of this schematic - not used for anything right now
 	    plugin.getPlayers().setStartIslandRating(playerUUID, schematic.getRating());
-	    // Set the biome
-	    BiomesPanel.setIslandBiome(next, schematic.getBiome());
 	} 
 	// Clear the cleanstone flag so events can happen again
 	plugin.setNewIsland(false);
@@ -667,12 +675,15 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 	Island myIsland = plugin.getGrid().addIsland(next.getBlockX(), next.getBlockZ(), playerUUID);
 	// Save the player so that if the server is reset weird things won't happen
 	plugin.getPlayers().save(playerUUID);
+	// Set the biome
+	//BiomesPanel.setIslandBiome(next, schematic.getBiome());
 	// Teleport to the new home
 	if (schematic.isPlayerSpawn()) {
 	    // Set home and teleport
 	    plugin.getPlayers().setHomeLocation(playerUUID, schematic.getPlayerSpawn(next), 1);
 	    player.teleport(schematic.getPlayerSpawn(next));
 	} else {
+	    //plugin.getLogger().info("DEBUG: teleporting to home location");
 	    plugin.getGrid().homeTeleport(player);
 	}
 	// Reset any inventory, etc. This is done AFTER the teleport because other plugins may switch out inventory based on world
@@ -734,7 +745,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 	// Done - fire event
 	final IslandNewEvent event = new IslandNewEvent(player,schematic, myIsland);
 	plugin.getServer().getPluginManager().callEvent(event);
-
+	//plugin.getLogger().info("DEBUG: Done! " + (System.nanoTime()- time) * 0.000001);
     }
 
     /**
@@ -1459,6 +1470,11 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).challengeserrorNotOnIsland);
 			return true;
 		    }
+		    // Not allowed in the nether
+		    if (plugin.getPlayers().getIslandLocation(playerUUID).getWorld().getEnvironment().equals(Environment.NETHER)) {
+			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorWrongWorld);
+			return true;
+		    }
 		    // player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "[Biomes]");
 		    Inventory inv = BiomesPanel.getBiomePanel(player);
 		    if (inv != null) {
@@ -1496,21 +1512,23 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 		return false;
 	    } else if (split[0].equalsIgnoreCase("level")) {
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.info")) {
-		    if (Settings.fastLevelCalc) {
-			calculateIslandLevel(player, playerUUID);
+		    if (!plugin.getPlayers().inTeam(playerUUID) && !plugin.getPlayers().hasIsland(playerUUID)) {
+			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoIsland);
 			return true;
-		    }
-		    // Legacy - forces player to be on island to reduce frivolous calculations
-		    if (plugin.getGrid().playerIsOnIsland(player)) {
-			if (!plugin.getPlayers().inTeam(playerUUID) && !plugin.getPlayers().hasIsland(playerUUID)) {
-			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoIsland);
-			} else {
+		    } else {
+			if (Settings.fastLevelCalc) {
 			    calculateIslandLevel(player, playerUUID);
+			    return true;
+			} else {
+			    // Legacy - forces player to be on island to reduce frivolous calculations
+			    if (plugin.getGrid().playerIsOnIsland(player)) {
+				calculateIslandLevel(player, playerUUID);
+			    } else {
+				player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).challengeserrorNotOnIsland);
+			    }
+			    return true;
 			}
-			return true;
 		    }
-		    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).challengeserrorNotOnIsland);
-		    return true;
 		}
 		return false;
 	    } else if (split[0].equalsIgnoreCase("invite")) {
@@ -2561,11 +2579,11 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 		if (schems.isEmpty()) {
 		    newIsland(player);
 		} else if (Settings.chooseIslandRandomly) {
-			// Choose an island randomly from the list
+		    // Choose an island randomly from the list
 		    newIsland(player, schems.get(random.nextInt(schems.size())));
 		} else {
-			// Do the first one in the list
-			newIsland(player, schems.get(0));
+		    // Do the first one in the list
+		    newIsland(player, schems.get(0));
 		}
 	    }
 	}

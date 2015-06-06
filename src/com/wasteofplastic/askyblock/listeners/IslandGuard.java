@@ -674,6 +674,20 @@ public class IslandGuard implements Listener {
 		// plugin.getLogger().info("Creeper block damage prevented");
 		e.blockList().clear();
 	    } else {
+		// Check if creeper griefing is allowed
+		if (!Settings.allowCreeperGriefing) {
+		    // Find out who the creeper was targeting
+		    Creeper creeper = (Creeper)e.getEntity();
+		    if (creeper.getTarget() instanceof Player) {
+			Player target = (Player)creeper.getTarget();
+			// Check if the target is on their own island or not
+			if (!plugin.getGrid().locationIsOnIsland(target, e.getLocation())) {
+			    // They are a visitor tsk tsk
+			    // Stop the blocks from being damaged, but allow hurt still
+			    e.blockList().clear();
+			}
+		    }
+		}
 		if (!Settings.allowChestDamage) {
 		    List<Block> toberemoved = new ArrayList<Block>();
 		    // Save the chest blocks in a list

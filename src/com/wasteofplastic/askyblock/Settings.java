@@ -230,5 +230,6 @@ public class Settings {
     public static int villagerLimit;
     public static int mobLimit;
     public static int hopperLimit;
+    public static boolean allowCreeperGriefing;
 
 }

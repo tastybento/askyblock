@@ -440,6 +440,9 @@ public class Locale {
     public String igsGate;
     public String igsHurtAnimals;
     public String igsHurtMobs;
+    public String igsCreeperDamage;
+    public String igsCreeperGriefing;
+    public String igsWitherDamage;
     public String igsLeash;
     public String igsLever;
     public String igsSpawnEgg;
@@ -608,6 +611,9 @@ public class Locale {
 	igsGate = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.gate", "Gate use"));
 	igsHurtAnimals = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.hurtanimals", "Hurting animals"));
 	igsHurtMobs = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.hurtmonsters", "Hurting monsters"));
+	igsCreeperDamage = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.creeperdamage", "Creeper explosions"));
+	igsCreeperGriefing = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.creepergriefing", "Creeper griefing"));
+	igsWitherDamage = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.withergriefing", "Wither griefing"));
 	igsLeash = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.leash", "Leash use"));
 	igsLever = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.lever", "Lever or Button Use"));
 	igsSpawnEgg = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.spawnegg", "Spawn egg use"));

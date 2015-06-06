@@ -1117,6 +1117,7 @@ public class ASkyBlock extends JavaPlugin {
 	Settings.endermanDeathDrop = getConfig().getBoolean("island.endermandeathdrop", true);
 	Settings.allowEndermanGriefing = getConfig().getBoolean("island.allowendermangriefing", true);
 	Settings.allowCreeperDamage = getConfig().getBoolean("island.allowcreeperdamage", true);
+	Settings.allowCreeperGriefing = getConfig().getBoolean("island.allowcreepergriefing", false);
 	Settings.allowTNTDamage = getConfig().getBoolean("island.allowtntdamage", false);
 	Settings.allowMonsterEggs = getConfig().getBoolean("island.allowspawneggs", false);
 	Settings.allowBreeding = getConfig().getBoolean("island.allowbreeding", false);
@@ -1248,7 +1249,7 @@ public class ASkyBlock extends JavaPlugin {
 	try {
 	    clazz = Class.forName("org.bukkit.event.player.PlayerInteractAtEntityEvent");
 	} catch (Exception e) {
-	    getLogger().info("No PlayerInteractAtEntityEvent found.");
+	    //getLogger().info("No PlayerInteractAtEntityEvent found.");
 	    clazz = null;
 	}
 	if (clazz != null) {
@@ -1441,6 +1442,11 @@ public class ASkyBlock extends JavaPlugin {
      * @return the warpPanel
      */
     public WarpPanel getWarpPanel() {
+	if (warpPanel == null) {
+	    // Probably due to a reload
+	    warpPanel = new WarpPanel(this);
+	    getServer().getPluginManager().registerEvents(warpPanel, plugin);
+	}
 	return warpPanel;
     }
 }

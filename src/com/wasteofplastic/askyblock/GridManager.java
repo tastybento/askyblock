@@ -7,7 +7,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -23,10 +22,8 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Boat;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Villager;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 import org.bukkit.material.SimpleAttachableMaterialData;
@@ -994,6 +991,16 @@ public class GridManager {
     }
 
     /**
+     * This teleports player to their island. If not safe place can be found
+     * then the player is sent to spawn via /spawn command
+     * 
+     * @param player
+     * @return
+     */
+    public boolean homeTeleport(final Player player) {
+	return homeTeleport(player, 1);
+    }
+    /**
      * Teleport player to a home location. If one cannot be found a search is done to
      * find a safe place.
      * @param player
@@ -1002,7 +1009,9 @@ public class GridManager {
      */
     public boolean homeTeleport(final Player player, int number) {
 	Location home = null;
+	//plugin.getLogger().info("home teleport called for #" + number);
 	home = getSafeHomeLocation(player.getUniqueId(), number);
+	//plugin.getLogger().info("home get safe loc = " + home);
 	// Check if the player is a passenger in a boat
 	if (player.isInsideVehicle()) {
 	    Entity boat = player.getVehicle();
@@ -1015,11 +1024,12 @@ public class GridManager {
 	    }
 	}
 	if (home == null) {
+	    //plugin.getLogger().info("Fixing home location using safe spot teleport");
 	    // Try to fix this teleport location and teleport the player if possible
 	    new SafeSpotTeleport(plugin, player, plugin.getPlayers().getHomeLocation(player.getUniqueId(), number), number);
 	    return true;
 	}
-	//plugin.getLogger().info("DEBUG: home loc = " + home);
+	//plugin.getLogger().info("DEBUG: home loc = " + home + " teleporting");
 	player.teleport(home);
 	//player.sendBlockChange(home, Material.GLOWSTONE, (byte)0);
 	if (number ==1 ) {
@@ -1029,17 +1039,6 @@ public class GridManager {
 	}
 	return true;
 
-    }
-
-    /**
-     * This teleports player to their island. If not safe place can be found
-     * then the player is sent to spawn via /spawn command
-     * 
-     * @param player
-     * @return
-     */
-    public boolean homeTeleport(final Player player) {
-	return homeTeleport(player, 1);
     }
 
     /**
