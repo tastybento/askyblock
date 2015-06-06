@@ -1335,7 +1335,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
      * @param sender
      */
     private void deleteIslands(Island island, CommandSender sender) {
-	plugin.getGrid().removeMobsFromIsland(island);
+	plugin.getGrid().removePlayersFromIsland(island);
 	// Reset the biome
 	BiomesPanel.setIslandBiome(island.getCenter(), Settings.defaultBiome);
 	new DeleteIslandChunk(plugin, island);

@@ -32,3 +32,5 @@
 *.ipr
 *.iws
 .idea/
+/serverJars
+/.gitignore

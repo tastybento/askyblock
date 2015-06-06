@@ -527,7 +527,7 @@ public class ASkyBlock extends JavaPlugin {
 	Island island = grid.getIsland(player);
 	if (island != null) {
 	    if (removeBlocks) {
-		grid.removeMobsFromIsland(island);
+		grid.removePlayersFromIsland(island);
 		new DeleteIslandChunk(this, island);
 	    } else {
 		island.setLocked(false);

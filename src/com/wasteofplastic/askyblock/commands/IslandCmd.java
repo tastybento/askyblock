@@ -2601,7 +2601,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 	// Delete the old island, if it exists
 	// Remove any coops
 	CoopPlay.getInstance().clearAllIslandCoops(oldIsland.getCenter());
-	plugin.getGrid().removeMobsFromIsland(oldIsland);
+	plugin.getGrid().removePlayersFromIsland(oldIsland);
 	new DeleteIslandChunk(plugin, oldIsland);
 	// Run any commands that need to be run at reset
 	runCommands(Settings.resetCommands, player.getUniqueId());

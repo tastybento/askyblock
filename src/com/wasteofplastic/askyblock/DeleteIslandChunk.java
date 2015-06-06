@@ -17,8 +17,8 @@
 package com.wasteofplastic.askyblock;
 
 import org.bukkit.Chunk;
-import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 
 /**
  * Deletes islands fast using chunk regeneration
@@ -27,7 +27,6 @@ import org.bukkit.World;
  * 
  */
 public class DeleteIslandChunk {
-    private ASkyBlock plugin;
 
     /**
      * Class dedicated to deleting islands
@@ -35,32 +34,27 @@ public class DeleteIslandChunk {
      * @param plugin
      * @param loc
      */
-    /*
-    public DeleteIslandChunk(ASkyBlock plugin, final Location loc) {
-	if (loc == null)
-	    return;
-	//plugin.getLogger().info("DEBUG: Deleting island " + loc);
-	World world = loc.getWorld();
+    public DeleteIslandChunk(ASkyBlock plugin, final Island island) {
+	World world = island.getCenter().getWorld();
 	if (world == null)
 	    return;
-	int range = Settings.island_protectionRange / 2 * +1;
-	this.plugin = plugin;
-	int minx = (loc.getBlockX() - range);
-	int minz = (loc.getBlockZ() - range);
-	int maxx = (loc.getBlockX() + range);
-	int maxz = (loc.getBlockZ() + range);
+	int range = island.getProtectionSize() / 2 * +1;
+	int minx = island.getMinProtectedX();
+	int minz = island.getMinProtectedZ();
+	int maxx = island.getMinProtectedX() + island.getProtectionSize();
+	int maxz = island.getMinProtectedZ() + island.getProtectionSize();
 	// plugin.getLogger().info("DEBUG: protection limits are: " + minx +
 	// ", " + minz + " to " + maxx + ", " + maxz );
-	int islandSpacing = Settings.islandDistance - Settings.island_protectionRange;
-	int minxX = (loc.getBlockX() - range - islandSpacing);
-	int minzZ = (loc.getBlockZ() - range - islandSpacing);
-	int maxxX = (loc.getBlockX() + range + islandSpacing);
-	int maxzZ = (loc.getBlockZ() + range + islandSpacing);
+	int islandSpacing = Settings.islandDistance - island.getProtectionSize();
+	int minxX = (island.getCenter().getBlockX() - range - islandSpacing);
+	int minzZ = (island.getCenter().getBlockZ() - range - islandSpacing);
+	int maxxX = (island.getCenter().getBlockX() + range + islandSpacing);
+	int maxzZ = (island.getCenter().getBlockZ() + range + islandSpacing);
 	// plugin.getLogger().info("DEBUG: absolute max limits are: " + minxX +
 	// ", " + minzZ + " to " + maxxX + ", " + maxzZ );
 	// get the chunks for these locations
-	final Chunk minChunk = loc.getWorld().getChunkAt(new Location(world, minx, 0, minz));
-	final Chunk maxChunk = loc.getWorld().getChunkAt(new Location(world, maxx, 0, maxz));
+	final Chunk minChunk = world.getBlockAt(minx,0,minz).getChunk();
+	final Chunk maxChunk = world.getBlockAt(maxx, 0, maxz).getChunk();
 
 	// Find out what chunks are within the island protection range
 	// plugin.getLogger().info("DEBUG: chunk limits are: " +
@@ -73,47 +67,28 @@ public class DeleteIslandChunk {
 	    for (int z = minChunk.getZ(); z <= maxChunk.getZ(); z++) {
 		boolean regen = true;
 		
-		if (loc.getWorld().getChunkAt(x, z).getBlock(0, 0, 0).getX() < minxX) {
+		if (world.getChunkAt(x, z).getBlock(0, 0, 0).getX() < minxX) {
 		    // plugin.getLogger().info("DEBUG: min x coord is less than absolute min! "
 		    // + minxX);
 		    regen = false;
 		}
-		if (loc.getWorld().getChunkAt(x, z).getBlock(0, 0, 0).getZ() < minzZ) {
+		if (world.getChunkAt(x, z).getBlock(0, 0, 0).getZ() < minzZ) {
 		    // plugin.getLogger().info("DEBUG: min z coord is less than absolute min! "
 		    // + minzZ);
 		    regen = false;
 		}
-		if (loc.getWorld().getChunkAt(x, z).getBlock(15, 0, 15).getX() > maxxX) {
+		if (world.getChunkAt(x, z).getBlock(15, 0, 15).getX() > maxxX) {
 		    // plugin.getLogger().info("DEBUG: max x coord is more than absolute max! "
 		    // + maxxX);
 		    regen = false;
 		}
-		if (loc.getWorld().getChunkAt(x, z).getBlock(15, 0, 15).getZ() > maxzZ) {
+		if (world.getChunkAt(x, z).getBlock(15, 0, 15).getZ() > maxzZ) {
 		    // plugin.getLogger().info("DEBUG: max z coord in chunk is more than absolute max! "
 		    // + maxzZ);
 		    regen = false;
 		}
 		if (regen) {
-		    loc.getWorld().regenerateChunk(x, z);
-		}
-	    }
-	}
-	// Remove from grid
-	plugin.getGrid().deleteIsland(loc);
-    }
-*/
-    /**
-     * Deletes overworld island and nether island if it exists
-     * @param plugin
-     * @param island
-     */
-    public DeleteIslandChunk(ASkyBlock plugin, Island island) {
-	// Delete using island
-	for (int x = island.getMinProtectedX() / 16; x <= (island.getMinProtectedX() + island.getProtectionSize()) / 16; x++) {
-	    for (int z = island.getMinProtectedZ() / 16; z <= (island.getMinProtectedZ() + island.getProtectionSize()) /16; z++) {
-		ASkyBlock.getIslandWorld().regenerateChunk(x, z);
-		if (Settings.createNether && Settings.newNether) {
-		    ASkyBlock.getNetherWorld().regenerateChunk(x, z);
+		    world.regenerateChunk(x, z);
 		}
 	    }
 	}
