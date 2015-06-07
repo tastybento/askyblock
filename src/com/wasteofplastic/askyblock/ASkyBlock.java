@@ -27,7 +27,6 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
@@ -710,6 +709,8 @@ public class ASkyBlock extends JavaPlugin {
 	// Check if /island command is allowed when falling
 	Settings.allowTeleportWhenFalling = getConfig().getBoolean("general.allowfallingteleport", true);
 	Settings.fallingCommandBlockList = getConfig().getStringList("general.blockingcommands");
+	// Visitor command banned list
+	Settings.visitorCommandBlockList = getConfig().getStringList("general.visitorbannedcommands");
 	// Max team size
 	Settings.maxTeamSize = getConfig().getInt("island.maxteamsize", 4);
 	// Deprecated settings - use permission askyblock.team.maxsize.<number> instead

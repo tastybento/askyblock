@@ -231,5 +231,6 @@ public class Settings {
     public static int mobLimit;
     public static int hopperLimit;
     public static boolean allowCreeperGriefing;
+    public static List<String> visitorCommandBlockList;
 
 }

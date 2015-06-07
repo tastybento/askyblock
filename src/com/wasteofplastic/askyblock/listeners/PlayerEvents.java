@@ -341,4 +341,28 @@ public class PlayerEvents implements Listener {
 	// getLogger().info("DEBUG: unset falling");
 	fallingPlayers.remove(uniqueId);
     }
+    
+    /**
+     * Prevents visitors from using commands on islands, like /spawner
+     * @param e
+     */
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
+    public void onVisitorCommand(final PlayerCommandPreprocessEvent e) {
+	if (debug) {
+	    plugin.getLogger().info("Visitor command " + e.getEventName() + ": " + e.getMessage());
+	}
+	if (!IslandGuard.inWorld(e.getPlayer()) || e.getPlayer().isOp()
+		|| VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
+		|| plugin.getGrid().locationIsOnIsland(e.getPlayer(), e.getPlayer().getLocation())) {
+	    //plugin.getLogger().info("player is not in world or op etc.");
+	    return;
+	}
+	// Check banned commands
+	//plugin.getLogger().info(Settings.visitorCommandBlockList.toString());
+	if (Settings.visitorCommandBlockList.contains(e.getMessage().substring(1).toLowerCase())) {
+	    e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
+	    e.setCancelled(true);
+	}
+    }
+
 }

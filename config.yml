@@ -240,6 +240,11 @@ general:
    #- asadmin lock [player]
    #- some other command
 
+   # Visitor banned commands: Visitors to islands cannot use these commands
+   visitorbannedcommands:
+   - spawner
+   - spawnmob
+
    # Ops receive damage from acid (Set to true if you want Ops to play properly)
    damageops: false
 

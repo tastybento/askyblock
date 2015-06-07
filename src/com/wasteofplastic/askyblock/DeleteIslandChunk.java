@@ -18,7 +18,6 @@ package com.wasteofplastic.askyblock;
 
 import org.bukkit.Chunk;
 import org.bukkit.World;
-import org.bukkit.block.Block;
 
 /**
  * Deletes islands fast using chunk regeneration
