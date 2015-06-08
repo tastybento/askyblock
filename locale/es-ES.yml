@@ -76,7 +76,9 @@ islandguardsettings:
   visitordrop: "El visitante puede soltar items"
   visitorpickup: "El visitante puede regoger items"
   visitorkeepitems: "El visitante mantiene los items al morir"
-
+  creeperdamage: "Daño de creeper"
+  creepergriefing: "Destrucción por Creeper"
+  withergriefing: "Destrucción por Wither"
 
 #LavaCheck
 lavaTip: "Consejo: Si produciste obsidiana por error, puede ser revertido con un balde."
@@ -104,6 +106,10 @@ warps:
    warpsAvailable: "Los siguentes warps están disponibles"
    playerWarped: "[name] &2ha haparecido en tu isla!"
 
+   next: "Siguiente"
+   previous: "Anterior"
+   title: "Warps de Isla"   
+   
 topTen:
    header: "Este es el top 10 de islas:"
    errorNotReady: "Top 10 de islas no generado aun!"
@@ -351,6 +357,8 @@ purge:
    purgeCancelled: "Limpieza cancelada."
    finished: "Limpieza de islas inactivas finalizada."
    removingName: "Limpieza: eliminando isla de [name]"
+   preventPurge: "Isla protegida de ser eliminada"
+   allowPurge: "Deshabilitar proteccion de ser eliminado"
 
 #confirm
 confirm:
@@ -390,7 +398,7 @@ resetchallenge:
    errorChallengeDoesNotExist: "El reto no existe o aún no está completado"
    challengeReset: "Reto: [challengename] se ha reseteado para [name]"
 
-#AcidIsland news
+#News
 news:
    headline: "[Noticias de A Skyblock] Mientras estabas desconectado..."
 
@@ -427,6 +435,8 @@ expel:
 
 moblimits:
    error: "Has llegado al límite de [number] mobs en la isla!"
+   villager: "El limite de reproduccion de aldeanos es de [number]!"
+   hopper: "El limite de tolvas es de [number]!"
 
 coop:
    help: "Dar temporalmente permisos a un jugador a tu isla."
@@ -448,4 +458,25 @@ lock:
    leavingspawn: "Saliendo del Spawn"
 
 schematics:
-   title: "Seleccione una isla"
+   title: "Seleccione una Isla"
+
+ban:
+   success: "[name] está baneado de la isla!"
+   banned: "Tu estás baneado de la isla de [name]!"
+   lifted: "Dejas de estar baneado de la isla de [name]!"
+   liftedsuccess: "Dejas de estar baneado por [name]!"
+   fail: "[name] no fue baneado!"
+   notyourself: "No se puede hacer eso a ti mismo!"
+   notteammember: "No se puede prohibir a un miembro del equipo!"
+   notbanned: "[name] no está baneado!"
+   alreadybanned: "[name] ya está prohibido!"
+   helpBan: "banea a un jugador de tu isla."
+   helpUnban: "desbanea a un jugador de tu isla."
+
+teamchat:
+   prefix: "[Equipo de Chat]<{ISLAND_PLAYER}> "
+   helpChat: "activa/desactiva el chat de equipo"
+   statusOn: "Equipo de chat está activo."
+   statusOff: "Equipo de chat está desactivo."
+   noTeamAround: "Ningun miembro de tu equipo está online!"
+   noTeam: "Tu no estás en ningun equipo!"
