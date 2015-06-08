@@ -359,7 +359,8 @@ public class PlayerEvents implements Listener {
 	}
 	// Check banned commands
 	//plugin.getLogger().info(Settings.visitorCommandBlockList.toString());
-	if (Settings.visitorCommandBlockList.contains(e.getMessage().substring(1).toLowerCase())) {
+	String[] args = e.getMessage().substring(1).toLowerCase().split(" ");
+	if (Settings.visitorCommandBlockList.contains(args[0])) {
 	    e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
 	    e.setCancelled(true);
 	}
