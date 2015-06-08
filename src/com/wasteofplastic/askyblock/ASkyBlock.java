@@ -59,6 +59,7 @@ import com.wasteofplastic.askyblock.generators.ChunkGeneratorWorld;
 import com.wasteofplastic.askyblock.listeners.AcidEffect;
 import com.wasteofplastic.askyblock.listeners.AcidInventory;
 import com.wasteofplastic.askyblock.listeners.ChatListener;
+import com.wasteofplastic.askyblock.listeners.HeroChatListener;
 import com.wasteofplastic.askyblock.listeners.IslandGuard;
 import com.wasteofplastic.askyblock.listeners.IslandGuardNew;
 import com.wasteofplastic.askyblock.listeners.JoinLeaveEvents;
@@ -321,6 +322,10 @@ public class ASkyBlock extends JavaPlugin {
 		// Minishop - must wait for economy to load before we can use
 		// econ
 		getServer().getPluginManager().registerEvents(new ControlPanel(plugin), plugin);
+		// Try to register Herochat
+		if (Bukkit.getServer().getPluginManager().isPluginEnabled("Herochat")) {
+		    getServer().getPluginManager().registerEvents(new HeroChatListener(plugin), plugin);
+		}
 		if (getServer().getWorld(Settings.worldName).getGenerator() == null) {
 		    // Check if the world generator is registered correctly
 		    getLogger().severe("********* The Generator for " + plugin.getName() + " is not registered so the plugin cannot start ********");

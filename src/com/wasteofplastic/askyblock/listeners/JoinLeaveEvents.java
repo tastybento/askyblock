@@ -206,6 +206,8 @@ public class JoinLeaveEvents implements Listener {
 		plugin.getGrid().homeTeleport(player);
 	    }
 	}
+	// Set the player's level
+	plugin.getChatListener().setPlayerLevel(playerUUID, plugin.getPlayers().getIslandLevel(player.getUniqueId()));
     }
 
     @EventHandler(priority = EventPriority.NORMAL)

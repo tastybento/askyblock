@@ -408,16 +408,9 @@ general:
    # The prefix [Team Chat] that goes in front of team chats is in the locale files
    teamchat: true
 
-   # Set TEAMSUFFIX variable to player's island level
-   # If true, this will set the server TEAMNAME variable to the player's name and
-   # TEAMSUFFIX to the player's island level.
-   # Use in chat. e.g., for essentials chat, the format could be:
-   #   format: '<{DISPLAYNAME}> (Level {TEAMSUFFIX}): {MESSAGE}'
-   # <tastybento> (Level: 223): hi there
-   # If you have other plugins that use scoreboards/teams, this may mess with them
-   setteamsuffix: false
-   # What you want the suffix to be. [level] is substituted for the player's level
-   teamsuffix: "([level])"
+   # Use the variable "{ISLAND_LEVEL}" in chat prefixes in other plugins and it will
+   # be replaced by the player's island level.
+   # Confirmed to work with Essentials Chat, Multiverse Core and Herochat.
    
    # Restrict Wither
    # This allows the Wither to only damage the island where it is spawned.

@@ -4,7 +4,7 @@ version: ${version}
 description: A SkyBlock Plugin
 author: Tastybento
 depend: [Vault]
-softdepend: [WorldEdit]
+softdepend: [Herochat]
 load: startup
 loadbefore: [Multiverse-Core]
 commands:

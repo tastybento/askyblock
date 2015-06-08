@@ -4,9 +4,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-import net.md_5.bungee.api.ChatColor;
-
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -49,17 +48,15 @@ public class ChatListener implements Listener {
 	}
     }
 
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onChat(final AsyncPlayerChatEvent event) {
-	final String oldMessage = event.getMessage();
-	//Bukkit.getLogger().info("DEBUG: pre: " + oldMessage);
 	// Substitute variable - thread safe
 	String level = "";
 	if (playerLevels.containsKey(event.getPlayer().getUniqueId())) {
 	    level = String.valueOf(playerLevels.get(event.getPlayer().getUniqueId()));
 	}
-	final String message = oldMessage.replace("{ISLAND_LEVEL}", level);
-	event.setMessage(message);
+	event.setFormat(event.getFormat().replace("{ISLAND_LEVEL}", level));
 	// Team chat
 	if (Settings.teamChat && teamChatUsers.containsKey(event.getPlayer().getUniqueId())) {
 	    // Cancel the event
@@ -69,7 +66,7 @@ public class ChatListener implements Listener {
 	    Bukkit.getScheduler().runTask(plugin, new Runnable() {
 		@Override
 		public void run() {
-		    teamChat(event,message);
+		    teamChat(event,event.getMessage());
 		}});
 	}
     }
@@ -139,5 +136,14 @@ public class ChatListener implements Listener {
     public void setPlayerLevel(UUID playerUUID, int level) {
 	//plugin.getLogger().info("DEBUG: putting " + playerUUID.toString() + " Level " + level);
 	playerLevels.put(playerUUID, level);
+    }
+    
+    /**
+     * Return the player's level for use in chat - async safe
+     * @param playerUUID
+     * @return
+     */
+    public int getPlayerLevel(UUID playerUUID) {
+	return playerLevels.get(playerUUID);
     }
 }
