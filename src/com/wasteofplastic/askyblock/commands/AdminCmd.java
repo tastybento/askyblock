@@ -24,10 +24,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
 
@@ -37,6 +40,7 @@ import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
@@ -52,6 +56,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BlockIterator;
 
+import com.google.common.collect.HashMultiset;
+import com.google.common.collect.Multiset;
+import com.google.common.collect.TreeMultiset;
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.CoopPlay;
 import com.wasteofplastic.askyblock.DeleteIslandChunk;
@@ -269,70 +276,104 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 		if (split[0].equalsIgnoreCase("topbreeders")) {
 		    // Go through each island and find how many farms there are
 		    sender.sendMessage("Finding top breeders...");
-		    TreeMap<Integer, List<UUID>> topEntityIslands = new TreeMap<Integer, List<UUID>>();
+		    //TreeMap<Integer, List<UUID>> topEntityIslands = new TreeMap<Integer, List<UUID>>();
 		    // Generate the stats
 		    sender.sendMessage("Checking " + plugin.getGrid().getOwnershipMap().size() + " islands...");
-		    for (Island island : plugin.getGrid().getOwnershipMap().values()) {
-			if (!island.isSpawn()) {
-			    // Clear stats
-			    island.clearStats();
-			    int numOfEntities = 0;
-			    for (int x = island.getMinProtectedX() /16; x <= (island.getMinProtectedX() + island.getProtectionSize() - 1)/16; x++) {
-				for (int z = island.getMinProtectedZ() /16; z <= (island.getMinProtectedZ() + island.getProtectionSize() - 1)/16; z++) {
-				    Chunk chunk = island.getCenter().getWorld().getChunkAt(x, z);
-				    for (Entity entity : chunk.getEntities()) {
-					if (entity instanceof Creature && !(entity instanceof Player)) {
-					    numOfEntities++;
-					    island.addEntity(entity.getType());
+		    // Try just finding every entity
+		    final List<Entity> allEntities = ASkyBlock.getIslandWorld().getEntities();
+		    final World islandWorld = ASkyBlock.getIslandWorld();
+		    final World netherWorld = ASkyBlock.getNetherWorld();
+		    plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+
+			@Override
+			public void run() {
+			    Map<UUID, Multiset<EntityType>> result = new HashMap<UUID, Multiset<EntityType>>();
+			    // Find out where the entities are
+			    for (Entity entity: allEntities) {
+				//System.out.println("DEBUG " + entity.getType().toString());
+				if (entity.getLocation().getWorld().equals(islandWorld) || entity.getLocation().getWorld().equals(netherWorld)) {
+				    //System.out.println("DEBUG in world");
+				    if (entity instanceof Creature && !(entity instanceof Player)) {
+					//System.out.println("DEBUG creature");
+					// Find out where it is
+					Island island = plugin.getGrid().getIslandAt(entity.getLocation());
+					if (island != null && !island.isSpawn()) {
+					    //System.out.println("DEBUG on island");
+					    // Add to result
+					    UUID owner = island.getOwner();
+					    Multiset<EntityType> count = result.get(owner);
+					    if (count == null) {
+						// New entry for owner
+						//System.out.println("DEBUG new entry for owner");
+						count = HashMultiset.create();
+					    }
+					    count.add(entity.getType());
+					    result.put(owner, count);
 					}
 				    }
 				}
 			    }
-			    // Store the gross number
-			    List<UUID> players = new ArrayList<UUID>();
-			    if (topEntityIslands.containsKey(numOfEntities)) {
-				// Get the previous values
-				players = topEntityIslands.get(numOfEntities);
+			    // Sort by the number of entities on each island
+			    TreeMap<Integer, List<UUID>> topEntityIslands = new TreeMap<Integer, List<UUID>>();
+			    for (Entry<UUID, Multiset<EntityType>> entry : result.entrySet()) {
+				int numOfEntities = entry.getValue().size();
+				List<UUID> players = topEntityIslands.get(numOfEntities);
+				if (players == null) {
+				    players = new ArrayList<UUID>();
+				} 
+				players.add(entry.getKey());
+				topEntityIslands.put(numOfEntities, players);
 			    }
-			    players.add(island.getOwner());
-			    topEntityIslands.put(numOfEntities, players);
-			}
-		    }
-		    // sender.sendMessage("Done");
-		    // Display the stats
-		    int rank = 1;
-		    for (int numOfEntities : topEntityIslands.descendingKeySet()) {
-			if (numOfEntities > 0) {
-			    List<UUID> owners = topEntityIslands.get(numOfEntities);
-			    for (UUID owner : owners) {
-				sender.sendMessage("#" + rank + " " + plugin.getPlayers().getName(owner) + " total " + numOfEntities);
-				String content = "";
-				for (Entry<EntityType, Integer> entry : plugin.getGrid().getIsland(owner).getEntities().entrySet()) {
-				    int num = entry.getValue();
-				    String color = ChatColor.GREEN.toString();
-				    if (num > 10 && num <= 20) {
-					color = ChatColor.YELLOW.toString();
-				    } else if (num > 20 && num <= 40) {
-					color = ChatColor.GOLD.toString();
-				    } else if (num > 40) {
-					color = ChatColor.RED.toString();
+			    final TreeMap<Integer, List<UUID>> topBreeders = topEntityIslands;
+			    final Map<UUID, Multiset<EntityType>> finalResult = result;
+			    // Now display results in sync thread
+			    plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
+
+				@Override
+				public void run() {
+				    int rank = 1;
+				    // Display, largest first
+				    for (int numOfEntities : topBreeders.descendingKeySet()) {
+					if (numOfEntities > 0) {
+					    // There can be multiple owners in the same position
+					    List<UUID> owners = topBreeders.get(numOfEntities);
+					    // Go through the owners one by one
+					    for (UUID owner : owners) {
+						sender.sendMessage("#" + rank + " " + plugin.getPlayers().getName(owner) + " total " + numOfEntities);
+						String content = "";
+						Multiset<EntityType> entityCount = finalResult.get(owner);
+						for (EntityType entity: entityCount.elementSet()) {
+						    int num = entityCount.count(entity);
+						    String color = ChatColor.GREEN.toString();
+						    if (num > 10 && num <= 20) {
+							color = ChatColor.YELLOW.toString();
+						    } else if (num > 20 && num <= 40) {
+							color = ChatColor.GOLD.toString();
+						    } else if (num > 40) {
+							color = ChatColor.RED.toString();
+						    }
+						    content += Util.prettifyText(entity.toString()) + " x " + color + num + ChatColor.WHITE + ", ";
+						}
+						int lastComma = content.lastIndexOf(",");
+						// plugin.getLogger().info("DEBUG: last comma " +
+						// lastComma);
+						if (lastComma > 0) {
+						    content = content.substring(0, lastComma);
+						}
+						sender.sendMessage("  " + content);
+
+					    }
+					    rank++;
+					    if (rank > 10) {
+						break;
+					    }
+					}
 				    }
-				    content += Util.prettifyText(entry.getKey().toString()) + " x " + color + entry.getValue() + ChatColor.WHITE + ", ";
-				}
-				int lastComma = content.lastIndexOf(",");
-				// plugin.getLogger().info("DEBUG: last comma " +
-				// lastComma);
-				if (lastComma > 0) {
-				    content = content.substring(0, lastComma);
-				}
-				sender.sendMessage("  " + content);
-			    }
-			    rank++;
-			    if (rank > 10) {
-				break;
-			    }
-			}
-		    }
+
+				    
+				}});
+
+			}});
 		    return true;
 		}
 	    // Delete island
@@ -1566,7 +1607,9 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 		if (!list.isEmpty()) {
 		    sender.sendMessage(ChatColor.RED + list.substring(0, list.length()-2));
 		}
-	    }	
+	    }
+	    // Number of hoppers
+	    sender.sendMessage(ChatColor.YELLOW + "Island has " + island.getHopperCount() + " hoppers.");
 	} else {
 	    sender.sendMessage(ChatColor.RED + plugin.myLocale().errorNoIslandOther);
 	}
