@@ -669,7 +669,7 @@ challenges:
       type: island
       requiredItems: 'IRON_GOLEM:1'
       takeItems: false
-      itemReward: 'NAME_TAG:1 ANVIL:1 CAULDRON:1 IRON_BLOCK:2'
+      itemReward: 'NAME_TAG:1 ANVIL:1 CAULDRON_ITEM:1 IRON_BLOCK:2'
       rewardText: 'A name tag, an anvil, a cauldron and 2 iron blocks'
       moneyReward: 300
       expReward: 300
