@@ -570,7 +570,18 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 	    //Bukkit.getLogger().info("DEBUG: perm is " + schematic.getPerm());
 	    if ((!ignoreNoPermission && schematic.getPerm().isEmpty()) || VaultHelper.checkPerm(player, schematic.getPerm())) {
 		//Bukkit.getLogger().info("DEBUG: player can use this schematic");
-		result.add(schematic);
+		// Only add if it's visible
+		if (schematic.isVisible()) {
+		    // Check if it's a nether island, but the nether is not enables
+		    if (schematic.getBiome().equals(Biome.HELL)) {
+			if (Settings.createNether && Settings.newNether) {
+			    result.add(schematic);
+			}
+		    } else {
+			result.add(schematic);
+		    }
+		}
+		    
 	    }
 	}
 	// Sort according to order
@@ -625,7 +636,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 	if (schematic != null) {
 	    //plugin.getLogger().info("DEBUG: pasting schematic " + schematic.getName() + " " + schematic.getPerm());
 	    // Paste the starting island. If it is a HELL biome, then we start in the Nether
-	    if (schematic.isInNether() && Settings.newNether) {
+	    if (Settings.createNether && schematic.isInNether() && Settings.newNether) {
 		// Nether start
 		// Paste the overworld if it exists
 		if (!schematic.getPartnerName().isEmpty() && schematics.containsKey(schematic.getPartnerName())) {
@@ -641,7 +652,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 		//plugin.getLogger().info("DEBUG: pasting");
 		schematic.pasteSchematic(next, player);
 		//plugin.getLogger().info("DEBUG: pasted overworld");
-		if (Settings.newNether) {
+		if (Settings.createNether && Settings.newNether) {
 		    // Paste the other world schematic
 		    final Location netherLoc = next.toVector().toLocation(ASkyBlock.getNetherWorld());
 		    if (schematic.getPartnerName().isEmpty()) {
