@@ -16,7 +16,7 @@ import org.bukkit.command.CommandSender;
 public class NotSetup implements CommandExecutor {
 
     public enum Reason {
-	DISTANCE, GENERATOR
+	DISTANCE, GENERATOR, WORLD_NAME
     };
 
     private Reason reason;
@@ -48,6 +48,11 @@ public class NotSetup implements CommandExecutor {
 		sender.sendMessage(ChatColor.RED + "  3. Your Multiverse plugin is out of date. Upgrade to the latest version.");
 	    }
 	    break;
+	case WORLD_NAME:
+	    sender.sendMessage(ChatColor.RED + "The world name in config.yml is different to the world name in islands.yml.");
+	    sender.sendMessage(ChatColor.RED + "If this is intentional, I assume you are doing a full reset. If so,");
+	    sender.sendMessage(ChatColor.RED + "delete islands.yml and the previous world. If not, correct the world name in");
+	    sender.sendMessage(ChatColor.RED + "config.yml and restart. This is probably the case if you are upgrading.");
 	default:
 	    break;
 	}
