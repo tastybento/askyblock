@@ -501,6 +501,7 @@ adminLock:
 adminTopBreeders:
    finding: "Finding top breeders..."
    checking: "Checking [number] islands..."
+   nothing: "No creatures found."
 
 adminDeleteIsland:
    error: "Use &ldeleteisland confirm &r&cto delete the island you are on."
