@@ -269,7 +269,7 @@ public class Players {
 	} else {
 	    playerInfo.set("startIslandRating", startIslandRating);
 	}
-	
+
 	// Actually save the file
 	Util.saveYamlFile(playerInfo, "players/" + uuid.toString() + ".yml");
     }
@@ -479,10 +479,9 @@ public class Players {
      * @return the location of the player's island in Location form
      */
     public Location getIslandLocation() {
-	// TODO: Enable this, but check the implications
-	// if (islandLocation.isEmpty() && inTeam) {
-	// return getLocationString(teamIslandLocation);
-	// }
+	if (islandLocation.isEmpty() && inTeam) {
+	    return Util.getLocationString(teamIslandLocation);
+	}
 	return Util.getLocationString(islandLocation);
     }
 
@@ -749,35 +748,35 @@ public class Players {
      * @return the locale
      */
     public String getLocale() {
-        return locale;
+	return locale;
     }
 
     /**
      * @param locale the locale to set
      */
     public void setLocale(String locale) {
-        this.locale = locale;
+	this.locale = locale;
     }
 
     /**
      * @return the startIslandRating
      */
     public int getStartIslandRating() {
-        return startIslandRating;
+	return startIslandRating;
     }
 
     /**
      * @param startIslandRating the startIslandRating to set
      */
     public void setStartIslandRating(int startIslandRating) {
-        this.startIslandRating = startIslandRating;
+	this.startIslandRating = startIslandRating;
     }
 
     /**
      * @return the banList
      */
     public List<UUID> getBanList() {
-        return banList;
+	return banList;
     }
 
     /**
@@ -785,15 +784,15 @@ public class Players {
      * @param banned player's UUID
      */
     public void addToBanList(UUID banned) {
-        this.banList.add(banned);
+	this.banList.add(banned);
     }
-    
+
     /**
      * Un ban a player
      * @param unbanned
      */
     public void unBan(UUID unbanned) {
-        this.banList.remove(unbanned);
+	this.banList.remove(unbanned);
     }
 
     /**

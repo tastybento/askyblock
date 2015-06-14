@@ -29,8 +29,16 @@ import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
 public class BiomesPanel implements Listener {
-    private static ASkyBlock plugin = ASkyBlock.getPlugin();
-    private static HashMap<UUID, List<BiomeItem>> biomeItems = new HashMap<UUID, List<BiomeItem>>();
+    private ASkyBlock plugin;
+    private HashMap<UUID, List<BiomeItem>> biomeItems = new HashMap<UUID, List<BiomeItem>>();
+
+    
+    /**
+     * @param plugin
+     */
+    public BiomesPanel(ASkyBlock plugin) {
+	this.plugin = plugin;
+    }
 
     /**
      * Returns a customized panel of available Biomes for the player
@@ -38,7 +46,7 @@ public class BiomesPanel implements Listener {
      * @param player
      * @return custom Inventory object
      */
-    public static Inventory getBiomePanel(Player player) {
+    public Inventory getBiomePanel(Player player) {
 	// Go through the available biomes and check permission
 
 	int slot = 0;
@@ -163,7 +171,7 @@ public class BiomesPanel implements Listener {
      * @param islandLoc
      * @param biomeType
      */
-    public static boolean setIslandBiome(final Location islandLoc, final Biome biomeType) {
+    public boolean setIslandBiome(final Location islandLoc, final Biome biomeType) {
 	final Island island = plugin.getGrid().getIslandAt(islandLoc);
 	if (island != null) {
 	    island.getCenter().getBlock().setBiome(biomeType);

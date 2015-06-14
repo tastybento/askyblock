@@ -19,10 +19,6 @@ import org.bukkit.util.Vector;
  */
 public class SafeSpotTeleport {
 
-    private boolean setHome = false;
-    private int homeNumber = 1;
-    private String failureMessage = "";
-
     /**
      * Teleport to a safe place and if it fails, show a failure message
      * @param plugin
@@ -31,8 +27,7 @@ public class SafeSpotTeleport {
      * @param failureMessage
      */
     public SafeSpotTeleport(final ASkyBlock plugin, final Player player, final Location l, final String failureMessage) {
-	this.failureMessage = failureMessage;
-	new SafeSpotTeleport(plugin, player, l);
+	new SafeSpotTeleport(plugin, player, l, 1, failureMessage, false);
     }
 
     /**
@@ -43,10 +38,18 @@ public class SafeSpotTeleport {
      * @param setHome
      */
     public SafeSpotTeleport(final ASkyBlock plugin, final Player player, final Location l, final int number) {
-	this.setHome = true;
-	this.homeNumber = number;
-	new SafeSpotTeleport(plugin, player, l);
+	new SafeSpotTeleport(plugin, player, l, number, "", true);
     }
+    
+    /**
+     * Teleport to a safe spot on an island
+     * @param plugin
+     * @param player
+     * @param l
+     */
+    public SafeSpotTeleport(final ASkyBlock plugin, final Player player, final Location l) {
+	new SafeSpotTeleport(plugin, player, l, 1, "", false);
+    } 
     /**
      * Teleport to a safe spot on an island
 
@@ -54,7 +57,7 @@ public class SafeSpotTeleport {
      * @param player
      * @param islandLoc
      */
-    public SafeSpotTeleport(final ASkyBlock plugin, final Player player, final Location islandLoc) {
+    public SafeSpotTeleport(final ASkyBlock plugin, final Player player, final Location islandLoc, final int homeNumber, final String failureMessage, final boolean setHome) {
 	//plugin.getLogger().info("DEBUG: running safe spot");
 	// Get island
 	Island island = plugin.getGrid().getIslandAt(islandLoc);
@@ -139,10 +142,10 @@ public class SafeSpotTeleport {
 			    @Override
 			    public void run() {
 				//plugin.getLogger().info("DEBUG: safe spot not found");
-				player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorNotSafe);
-				// Send additional message
 				if (!failureMessage.isEmpty()) {
 				    player.sendMessage(failureMessage);
+				} else {
+				    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorNotSafe);
 				}
 			    }});
 		    }
@@ -194,7 +197,7 @@ public class SafeSpotTeleport {
 				    break;
 				default:
 				    // Safe
-				   // System.out.println("Block is safe " + mat.toString());
+				    // System.out.println("Block is safe " + mat.toString());
 				    return true;
 				}
 			    }

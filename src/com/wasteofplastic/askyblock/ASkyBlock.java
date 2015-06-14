@@ -121,8 +121,11 @@ public class ASkyBlock extends JavaPlugin {
     // Messages object
     private Messages messages;
 
-    // Team chat listened
+    // Team chat listener
     private ChatListener chatListener;
+    
+    // Schematics panel object
+    private SchematicsPanel schematicsPanel;
 
     /**
      * Returns the World object for the island world named in config.yml.
@@ -977,7 +980,7 @@ public class ASkyBlock extends JavaPlugin {
 
 	Settings.startingMoney = getConfig().getDouble("general.startingmoney", 0D);
 	Settings.respawnOnIsland = getConfig().getBoolean("general.respawnonisland", false);
-	Settings.newNether = getConfig().getBoolean("general.newnether", false);
+	Settings.newNether = getConfig().getBoolean("general.newnether", true);
 	Settings.netherTrees = getConfig().getBoolean("general.nethertrees", true);
 	// Nether spawn protection radius
 	Settings.netherSpawnRadius = getConfig().getInt("general.netherspawnradius", 25);
@@ -1286,10 +1289,11 @@ public class ASkyBlock extends JavaPlugin {
 	manager.registerEvents(new AcidInventory(this), this);
 	// Biomes
 	// Load Biomes
-	biomes = new BiomesPanel();
+	biomes = new BiomesPanel(this);
 	manager.registerEvents(biomes, this);
 	// Schematics panel
-	manager.registerEvents(new SchematicsPanel(), this);
+	schematicsPanel = new SchematicsPanel(this);
+	manager.registerEvents(schematicsPanel, this);
 	// Track incoming world teleports
 	manager.registerEvents(new WorldEnter(this), this);
 	// Team chat
@@ -1459,5 +1463,12 @@ public class ASkyBlock extends JavaPlugin {
 	    getServer().getPluginManager().registerEvents(warpPanel, plugin);
 	}
 	return warpPanel;
+    }
+
+    /**
+     * @return the schematicsPanel
+     */
+    public SchematicsPanel getSchematicsPanel() {
+        return schematicsPanel;
     }
 }

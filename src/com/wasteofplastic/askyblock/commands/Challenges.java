@@ -190,7 +190,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
 	    if (cmd[0].equalsIgnoreCase("complete") || cmd[0].equalsIgnoreCase("c")) {
 		if (!player.getWorld().equals(ASkyBlock.getIslandWorld())) {
 		    // Check if in new nether
-		    if (!Settings.newNether || !player.getWorld().equals(ASkyBlock.getNetherWorld())) {
+		    if (!Settings.createNether || !Settings.newNether || !player.getWorld().equals(ASkyBlock.getNetherWorld())) {
 			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorWrongWorld);
 			return true;
 		    }

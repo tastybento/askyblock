@@ -19,8 +19,15 @@ import com.wasteofplastic.askyblock.commands.IslandCmd;
 import com.wasteofplastic.askyblock.schematics.Schematic;
 
 public class SchematicsPanel implements Listener {
-    private static ASkyBlock plugin = ASkyBlock.getPlugin();
-    private static HashMap<UUID, List<SPItem>> schematicItems = new HashMap<UUID, List<SPItem>>();
+    private ASkyBlock plugin;
+    private HashMap<UUID, List<SPItem>> schematicItems = new HashMap<UUID, List<SPItem>>();
+
+    /**
+     * @param plugin
+     */
+    public SchematicsPanel(ASkyBlock plugin) {
+	this.plugin = plugin;
+    }
 
     /**
      * Returns a customized panel of available Schematics for the player
@@ -28,11 +35,11 @@ public class SchematicsPanel implements Listener {
      * @param player
      * @return custom Inventory object
      */
-    public static Inventory getSchematicPanel(Player player) {
+    public Inventory getPanel(Player player) {
 	// Go through the available schematics for this player
 	int slot = 0;
 	List<SPItem> items = new ArrayList<SPItem>();
-	List<Schematic> availableSchems = IslandCmd.getSchematics(player, false);
+	List<Schematic> availableSchems = plugin.getIslandCmd().getSchematics(player, false);
 	// Add an info icon
 	//items.add(new SPItem(Material.MAP,"Choose your island", "Pick from the selection...",slot++));
 	// Generate additional available schematics

@@ -126,8 +126,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
      * Loads schematics from the config.yml file. If the default
      * island is not included, it will be made up
      */
-    public static void loadSchematics() {
-	ASkyBlock plugin = ASkyBlock.getPlugin();
+    public void loadSchematics() {
 	// Check if there is a schematic folder and make it if it does not exist
 	File schematicFolder = new File(plugin.getDataFolder(), "schematics");
 	if (!schematicFolder.exists()) {
@@ -474,12 +473,12 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 	} 
     }
 
-    private static void tip() {
+    private void tip() {
 	// There is no section in config.yml. Save the default schematic anyway
-	ASkyBlock.getPlugin().getLogger().warning("***************************************************************");
-	ASkyBlock.getPlugin().getLogger().warning("* 'schematics' section in config.yml has been deprecated.     *");
-	ASkyBlock.getPlugin().getLogger().warning("* See 'schematicsection' in config.new.yml for replacement.   *");
-	ASkyBlock.getPlugin().getLogger().warning("***************************************************************");
+	plugin.getLogger().warning("***************************************************************");
+	plugin.getLogger().warning("* 'schematics' section in config.yml has been deprecated.     *");
+	plugin.getLogger().warning("* See 'schematicsection' in config.new.yml for replacement.   *");
+	plugin.getLogger().warning("***************************************************************");
     }
 
     /**
@@ -561,7 +560,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
      * @param ignoreNoPermission
      * @return List of schematics this player can use based on their permission level
      */
-    public static List<Schematic> getSchematics(Player player, boolean ignoreNoPermission) {
+    public List<Schematic> getSchematics(Player player, boolean ignoreNoPermission) {
 	List<Schematic> result = new ArrayList<Schematic>();
 	// Find out what schematics this player can choose from
 	//Bukkit.getLogger().info("DEBUG: Checking schematics for " + player.getName());
@@ -1339,7 +1338,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 			if (Settings.useSchematicPanel) {
 			    pendingNewIslandSelection.add(playerUUID);
 			    resettingIsland.add(playerUUID);
-			    player.openInventory(SchematicsPanel.getSchematicPanel(player));
+			    player.openInventory(plugin.getSchematicsPanel().getPanel(player));
 			} else {
 			    // No panel
 			    // Check schematics for specific permission
@@ -1485,7 +1484,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 			return true;
 		    }
 		    // player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "[Biomes]");
-		    Inventory inv = BiomesPanel.getBiomePanel(player);
+		    Inventory inv = plugin.getBiomes().getBiomePanel(player);
 		    if (inv != null) {
 			player.openInventory(inv);
 		    }
@@ -2580,7 +2579,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 	    // A panel can only be shown if there is >1 viable schematic
 	    if (Settings.useSchematicPanel) {
 		pendingNewIslandSelection.add(player.getUniqueId());
-		player.openInventory(SchematicsPanel.getSchematicPanel(player));
+		player.openInventory(plugin.getSchematicsPanel().getPanel(player));
 	    } else {
 		// No panel
 		// Check schematics for specific permission

@@ -8,19 +8,17 @@
 #General Errors#
 ################
 error:
-   #"Error: Invalid Player (check spelling)"
    unknownPlayer: "That player is unknown."
-   #"You can't access that command!"
-   #"/acid is a command for mods and ops only"
    noPermission: "You don't have permission to use that command!"
    noIsland: "You do not have an island!"
    noIslandOther: "That player does not have an island!"
-   #notOnIsland: "You must be on your island to use this command."
    commandNotReady: "You can't use that command right now."
    offlinePlayer: "That player is offline or doesn't exist."
    unknownCommand: "Unknown command."
    noTeam: "Player is not in a team."
    wrongWorld: "You cannot do that in this world."
+   notOnIsland: "You are not in an island space!"
+   useInGame: "This command must be used in-game."
 
 #AcidEffect
 changingObsidiantoLava: "Changing obsidian back into lava. Be careful!"
@@ -328,12 +326,21 @@ adminHelp:
    resetChallenge: "marks a challenge as incomplete"
    resetAllChallenges: "resets all of the player's challenges"
    purge: "delete inactive islands older than [TimeInDays]."
-   purgeholes: "free up island holes for reuse."
-   info: "info for the given player."
-   infoisland: "provide info on the nearest island."
-   clearreset: "resets the island reset limit for player."
-   setspawn: "sets the island world spawn to a location close to you."
-   setrange: "changes the island's protection range."
+   purgeholes: "free up island holes for reuse"
+   purgeunowned: "remove unowned islands"
+   purgeallowdisallow: "allow/disallow island to be purged if it meets purge criteria"
+   info: "info for the given player"
+   infoisland: "provide info on the nearest island"
+   clearreset: "resets the island reset limit for player"
+   setspawn: "sets the island world spawn to a location close to you"
+   setrange: "changes the island's protection range"
+   setbiome: "sets leader's island biome"
+   topbreeders: "lists most populated islands currently loaded"
+   lock: "locks/unlocks player's island"
+   kick: "removes player from any team"
+   add: "adds player to leader's team"
+   tp: "Teleport to a player's island"
+   tpnether: "Teleport to a player's nether island"
 
 #acid reload
 reload:
@@ -358,6 +365,12 @@ purge:
    removingName: "Purge: Removing [name]'s island"
    preventPurge: "Island is protected from purging"
    allowPurge: "Purge protection removed"
+   removingAt: "Removing island at location [location]"
+   nowWaiting: "Now waiting..."
+   countingUnowned: "Counting unowned islands and checking player files. This could take some time..."
+   stillChecking: "Still checking player files..."
+   skyblockFound: "There are [number] unowned islands. Do '/asadmin purge unowned confirm' to delete them within 20 seconds."
+   acidFound: "There are [number] unowned islands. Do '/acid purge unowned confirm' to delete them within 20 seconds."
 
 #confirm
 confirm:
@@ -479,3 +492,87 @@ teamchat:
    statusOff: "Team chat is off"
    noTeamAround: "None of your team are online!"
    noTeam: "You are not in a team!"
+
+adminLock:
+   errorInGame: "Must use command in-game while on an island!"
+   adminLockedIsland: "Admin locked your island"
+   adminUnlockedIsland: "Admin unlocked your island"
+
+adminTopBreeders:
+   finding: "Finding top breeders..."
+   checking: "Checking [number] islands..."
+
+adminDeleteIsland:
+   error: "Use &ldeleteisland confirm &r&cto delete the island you are on."
+   noid: "Cannot identify island."
+   use: "Use &ldelete [name] &r&cto delete the player instead."
+
+adminSetSpawn:
+   set: "Set island spawn to your location."
+   ownedBy: "This island space is owned by [name]"
+   move: "Move further away or unregister the owner."
+   setting: "Setting island spawn to your location [location]"
+   center: "Island center [location]"
+   limits: "Island limits [min] to [max]"
+   range: "Protection range = [number]"
+   coords: "Protection coords [min] to [max]"
+   locked: "Spawn is locked!"
+
+adminInfo:
+   title: "This is spawn island"
+   unowned: "This island is not owned by anyone right now."
+   player: "Player"
+   lastLogin: "Last login"
+   teamLeader: "Team Leader"
+   teamMembers: "Team Members"
+   maxSize: "Island max size (distance)"
+   isSpawn: "Island is spawn"
+   isLocked: "Island is locked"
+   isUnlocked: "Island is unlocked"
+   isProtected: "Island is purge protected"
+   isUnprotected: "Island is not purge protected"
+   bannedPlayers: "Banned players"
+   hoppers: "Island has [number] hoppers"
+     
+adminSetHome:
+   notSafe: "That location is not safe"
+   noneFound: "No safe location found!"
+   homeSet: "Home set to [location]"
+   notOnPlayersIsland: "You are not on the player's island"
+   
+adminResetSign:
+   noSign: "You must be looking at a sign post to run this command."
+   found: "Warp sign found!"
+   rescued: "Warp sign rescued and assigned to [name]"
+   errorExists: "That warp sign is already active and owned by [name]"
+   
+adminSetRange:
+   invalid: "Invalid range!"
+   tip: "Use 10 to [max]"
+   set: "Set new range to [number]"
+   warning: "Warning - range is greater than island range [max]"
+   warning2: "Overlapped islands will act like spawn!"
+   
+adminTp:
+   manualWarp: "No safe spot found. Manually warp to somewhere near [location]."  
+
+adminUnregister:
+   onTeam: "Player is in a team - disband it first."
+   keepBlocks: "Removing player from world, but keeping island at [location]"
+
+adminTeam:
+   kickLeader: "That player is a team leader. Remove team members first. Use '/[label] info [name]' to find team members."
+   addLeaderToOwn: "Cannot add a leader to their own team."
+   addLeaderNoIsland: "Team leader does not have their own island so cannot have a team!"
+   addedLeader: "Added the leader to this team!"
+   nowUnowned: "[name] had an island at [location] that will become unowned now. You may want to delete it manually." 
+   settingHome: "Setting player's home to the leader's home location"
+   addingPlayer: "Adding player to team."
+   alreadyOnTeam: "Player was already on this team!"
+   
+adminRegister:
+   notSpawn: "You cannot take ownership of spawn!"
+   leadsTeam: "[name] leads a team. Kick players from it first."
+   taking: "Taking ownership away from [name]"
+   hadIsland: "[name] had an island at [location]"
+   noIsland: "There is no known island in this area!"

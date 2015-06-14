@@ -22,7 +22,7 @@ import org.bukkit.entity.Villager;
  * 
  */
 public class Island {
-
+    ASkyBlock plugin;
     // Coordinates of the island area
     private int minX;
     private int minZ;
@@ -55,7 +55,8 @@ public class Island {
     // Protection against deletion or not
     private boolean purgeProtected;
 
-    public Island(String serial) {
+    public Island(ASkyBlock plugin, String serial) {
+	this.plugin = plugin;
 	// Bukkit.getLogger().info("DEBUG: adding serialized island to grid ");
 	// Deserialize
 	// Format:
@@ -117,7 +118,8 @@ public class Island {
      * @param minX
      * @param minZ
      */
-    public Island(int x, int z) {
+    public Island(ASkyBlock plugin, int x, int z) {
+	this.plugin = plugin;
 	// Calculate min minX and z
 	this.minX = x - Settings.islandDistance / 2;
 	this.minZ = z - Settings.islandDistance / 2;
@@ -134,7 +136,8 @@ public class Island {
 	this.votes = 0;
     }
 
-    public Island(int x, int z, UUID owner) {
+    public Island(ASkyBlock plugin, int x, int z, UUID owner) {
+	this.plugin = plugin;
 	// Calculate min minX and z
 	this.minX = x - Settings.islandDistance / 2;
 	this.minZ = z - Settings.islandDistance / 2;
@@ -412,7 +415,7 @@ public class Island {
 	}
 	result.add(owner);
 	// Add any team members
-	result.addAll(ASkyBlock.getPlugin().getPlayers().getMembers(owner));
+	result.addAll(plugin.getPlayers().getMembers(owner));
 	return result;
     }
 
