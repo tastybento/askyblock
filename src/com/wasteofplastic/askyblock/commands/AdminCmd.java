@@ -346,7 +346,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 				@Override
 				public void run() {
 				    if (topBreeders.isEmpty()) {
-					sender.sendMessage("No entities found.");
+					sender.sendMessage(plugin.myLocale().adminTopBreedersNothing);
 					return;
 				    }
 				    int rank = 1;

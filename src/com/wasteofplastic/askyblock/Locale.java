@@ -550,6 +550,7 @@ public class Locale {
     public String adminRegisterTaking;
     public String adminRegisterHadIsland;
     public String adminRegisterNoIsland;
+    public String adminTopBreedersNothing;
 
     /**
      * Creates a locale object full of localized strings for a language
@@ -1152,6 +1153,7 @@ public class Locale {
 	adminLockadminLockedIsland = ChatColor.translateAlternateColorCodes('&', locale.getString("adminLock.adminLockedIsland", "Admin locked your island"));
 	adminTopBreedersFinding = ChatColor.translateAlternateColorCodes('&', locale.getString("adminTopBreeders.finding", "Finding top breeders..."));
 	adminTopBreedersChecking = ChatColor.translateAlternateColorCodes('&', locale.getString("adminTopBreeders.checking", "Checking [number] islands..."));
+	adminTopBreedersNothing = ChatColor.translateAlternateColorCodes('&', locale.getString("adminTopBreeders.nothing", "No creatures found."));
 	adminDeleteIslandError = ChatColor.translateAlternateColorCodes('&', locale.getString("adminDeleteIsland.error", "Use &ldeleteisland confirm &r&cto delete the island you are on."));
 	adminDeleteIslandnoid = ChatColor.translateAlternateColorCodes('&', locale.getString("adminDeleteIsland.noid", "Cannot identify island."));
 	adminDeleteIslanduse = ChatColor.translateAlternateColorCodes('&', locale.getString("adminDeleteIsland.use", "Use &ldelete [name] &r&cto delete the player instead."));
