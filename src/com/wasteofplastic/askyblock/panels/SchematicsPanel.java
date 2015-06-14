@@ -15,7 +15,6 @@ import org.bukkit.inventory.Inventory;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Settings;
-import com.wasteofplastic.askyblock.commands.IslandCmd;
 import com.wasteofplastic.askyblock.schematics.Schematic;
 
 public class SchematicsPanel implements Listener {

@@ -10,8 +10,6 @@ import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
 
-import com.wasteofplastic.askyblock.panels.BiomesPanel;
-
 /**
  * Provides a programming interface
  * 

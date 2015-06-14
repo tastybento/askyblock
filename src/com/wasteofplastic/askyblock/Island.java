@@ -109,7 +109,7 @@ public class Island {
 		    isSpawn = true;
 		    // Try to get the spawn point
 		    if (split.length > 8) {
-			plugin.getLogger().info("DEBUG: " + serial.substring(serial.indexOf(":SP:") + 4));
+			//plugin.getLogger().info("DEBUG: " + serial.substring(serial.indexOf(":SP:") + 4));
 			spawnPoint = Util.getLocationString(serial.substring(serial.indexOf(":SP:") + 4));
 		    }
 		} else {
