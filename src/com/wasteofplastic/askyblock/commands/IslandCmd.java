@@ -59,6 +59,7 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionType;
 import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.util.Vector;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.CoopPlay;
@@ -74,9 +75,7 @@ import com.wasteofplastic.askyblock.events.IslandLeaveEvent;
 import com.wasteofplastic.askyblock.events.IslandNewEvent;
 import com.wasteofplastic.askyblock.events.IslandResetEvent;
 import com.wasteofplastic.askyblock.listeners.PlayerEvents;
-import com.wasteofplastic.askyblock.panels.BiomesPanel;
 import com.wasteofplastic.askyblock.panels.ControlPanel;
-import com.wasteofplastic.askyblock.panels.SchematicsPanel;
 import com.wasteofplastic.askyblock.panels.SettingsPanel;
 import com.wasteofplastic.askyblock.schematics.Schematic;
 import com.wasteofplastic.askyblock.util.Util;
@@ -1495,22 +1494,13 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 		}
 	    } else if (split[0].equalsIgnoreCase("spawn") && plugin.getGrid().getSpawn() != null) {
 		// go to spawn
-		// plugin.getLogger().info("Debug: getSpawn" +
-		// plugin.getSpawn().toString() );
-		// plugin.getLogger().info("Debug: getSpawn loc" +
-		// plugin.getSpawn().getSpawnLoc().toString() );
-		player.teleport(ASkyBlock.getIslandWorld().getSpawnLocation());
-		/*
-		 * player.sendBlockChange(plugin.getSpawn().getSpawnLoc()
-		 * ,plugin.getSpawn().getSpawnLoc().getBlock().getType()
-		 * ,plugin.getSpawn().getSpawnLoc().getBlock().getData());
-		 * player.sendBlockChange(plugin.getSpawn().getSpawnLoc().getBlock
-		 * ().getRelative(BlockFace.DOWN).getLocation()
-		 * ,plugin.getSpawn().getSpawnLoc().getBlock().getRelative(BlockFace
-		 * .DOWN).getType()
-		 * ,plugin.getSpawn().getSpawnLoc().getBlock().getRelative(BlockFace
-		 * .DOWN).getData());
-		 */
+		Location l = ASkyBlock.getIslandWorld().getSpawnLocation();
+		l.add(new Vector(0.5,0,0.5));
+		Island spawn = plugin.getGrid().getSpawn();
+		if (spawn != null && spawn.getSpawnPoint() != null) {
+		    l = spawn.getSpawnPoint();
+		}	
+		player.teleport(l);
 		return true;
 	    } else if (split[0].equalsIgnoreCase("top")) {
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.topten")) {

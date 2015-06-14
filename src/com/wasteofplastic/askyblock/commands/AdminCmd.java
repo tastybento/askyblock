@@ -406,19 +406,20 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 		    sender.sendMessage(ChatColor.RED + plugin.myLocale().errorUseInGame);
 		    return true;
 		}
-		Player p = (Player) sender;
+		player = (Player) sender;
 		// Island spawn must be in the island world
-		if (!p.getLocation().getWorld().getName().equals(Settings.worldName)) {
-		    p.sendMessage(ChatColor.RED + plugin.myLocale(p.getUniqueId()).errorWrongWorld);
+		if (!player.getLocation().getWorld().getName().equals(Settings.worldName)) {
+		    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorWrongWorld);
 		    return true;
 		}
 		// The island location is calculated based on the grid
-		Location closestIsland = getClosestIsland(p.getLocation());
+		Location closestIsland = getClosestIsland(player.getLocation());
 		Island oldSpawn = plugin.getGrid().getSpawn();
 		Island newSpawn = plugin.getGrid().getIslandAt(closestIsland);
 		if (newSpawn != null && newSpawn.isSpawn()) {
 		    // Already spawn, so just set the world spawn coords
-		    ASkyBlock.getIslandWorld().setSpawnLocation(p.getLocation().getBlockX(), p.getLocation().getBlockY(), p.getLocation().getBlockZ());
+		    plugin.getGrid().setSpawnPoint(player.getLocation());
+		    //ASkyBlock.getIslandWorld().setSpawnLocation(player.getLocation().getBlockX(), player.getLocation().getBlockY(), player.getLocation().getBlockZ());
 		    sender.sendMessage(ChatColor.GREEN + plugin.myLocale().adminSetSpawnset);
 		    return true;
 		}
@@ -440,17 +441,18 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 		    newSpawn = plugin.getGrid().addIsland(closestIsland.getBlockX(), closestIsland.getBlockZ());
 		}
 		plugin.getGrid().setSpawn(newSpawn);
-		ASkyBlock.getIslandWorld().setSpawnLocation(p.getLocation().getBlockX(), p.getLocation().getBlockY(), p.getLocation().getBlockZ());
-		sender.sendMessage(ChatColor.GREEN + plugin.myLocale().adminSetSpawnsetting.replace("[location]", p.getLocation().getBlockX() + "," + p.getLocation().getBlockZ()));
-		sender.sendMessage(ChatColor.YELLOW + plugin.myLocale().adminSetSpawncenter.replace("[location]", newSpawn.getCenter().getBlockX() + "," + newSpawn.getCenter().getBlockZ()));
-		sender.sendMessage(ChatColor.YELLOW + (plugin.myLocale().adminSetSpawnlimits.replace("[min]", newSpawn.getMinX() + "," + newSpawn.getMinZ())).replace("[max]",
+		plugin.getGrid().setSpawnPoint(player.getLocation());
+		//ASkyBlock.getIslandWorld().setSpawnLocation(player.getLocation().getBlockX(), player.getLocation().getBlockY(), player.getLocation().getBlockZ());
+		player.sendMessage(ChatColor.GREEN + plugin.myLocale().adminSetSpawnsetting.replace("[location]", player.getLocation().getBlockX() + "," + player.getLocation().getBlockZ()));
+		player.sendMessage(ChatColor.YELLOW + plugin.myLocale().adminSetSpawncenter.replace("[location]", newSpawn.getCenter().getBlockX() + "," + newSpawn.getCenter().getBlockZ()));
+		player.sendMessage(ChatColor.YELLOW + (plugin.myLocale().adminSetSpawnlimits.replace("[min]", newSpawn.getMinX() + "," + newSpawn.getMinZ())).replace("[max]",
 			(newSpawn.getMinX() + newSpawn.getIslandDistance() - 1) + "," + (newSpawn.getMinZ() + newSpawn.getIslandDistance() - 1)));
-		sender.sendMessage(ChatColor.YELLOW + plugin.myLocale().adminSetSpawnrange.replace("[number]",String.valueOf(newSpawn.getProtectionSize())));
-		sender.sendMessage(ChatColor.YELLOW + (plugin.myLocale().adminSetSpawncoords.replace("[min]",  newSpawn.getMinProtectedX() + ", " + newSpawn.getMinProtectedZ())).replace("[max]",
+		player.sendMessage(ChatColor.YELLOW + plugin.myLocale().adminSetSpawnrange.replace("[number]",String.valueOf(newSpawn.getProtectionSize())));
+		player.sendMessage(ChatColor.YELLOW + (plugin.myLocale().adminSetSpawncoords.replace("[min]",  newSpawn.getMinProtectedX() + ", " + newSpawn.getMinProtectedZ())).replace("[max]",
 			+ (newSpawn.getMinProtectedX() + newSpawn.getProtectionSize() - 1) + ", "
 				+ (newSpawn.getMinProtectedZ() + newSpawn.getProtectionSize() - 1)));
 		if (newSpawn.isLocked()) {
-		    sender.sendMessage(ChatColor.RED + plugin.myLocale().adminSetSpawnlocked);
+		    player.sendMessage(ChatColor.RED + plugin.myLocale().adminSetSpawnlocked);
 		}
 		return true;
 	    } else if (split[0].equalsIgnoreCase("info") || split[0].equalsIgnoreCase("setrange")) {
@@ -495,14 +497,14 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 		    sender.sendMessage(ChatColor.RED + plugin.myLocale().errorUseInGame);
 		    return true;
 		}
-		Player p = (Player) sender;
-		if (!VaultHelper.checkPerm(p, Settings.PERMPREFIX + "mod.signadmin") && !p.isOp()) {
-		    p.sendMessage(ChatColor.RED + plugin.myLocale(p.getUniqueId()).errorNoPermission);
+		player = (Player) sender;
+		if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.signadmin") && !player.isOp()) {
+		    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
 		    return true;
 		}
 		// Find out whether the player is looking at a warp sign
 		// Look at what the player was looking at
-		BlockIterator iter = new BlockIterator(p, 10);
+		BlockIterator iter = new BlockIterator(player, 10);
 		Block lastBlock = iter.next();
 		while (iter.hasNext()) {
 		    lastBlock = iter.next();
@@ -511,29 +513,29 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 		    break;
 		}
 		if (!lastBlock.getType().equals(Material.SIGN_POST)) {
-		    sender.sendMessage(ChatColor.RED + plugin.myLocale(p.getUniqueId()).adminResetSignNoSign);
+		    sender.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).adminResetSignNoSign);
 		    return true;
 		}
 		// Check if it is a warp sign
 		Sign sign = (Sign) lastBlock.getState();
-		sender.sendMessage(ChatColor.GREEN + plugin.myLocale(p.getUniqueId()).adminResetSignFound);
+		sender.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).adminResetSignFound);
 		// Find out whose island this is
 		// plugin.getLogger().info("DEBUG: closest bedrock: " +
 		// closestBedRock.toString());
-		UUID target = plugin.getPlayers().getPlayerFromIslandLocation(p.getLocation());
+		UUID target = plugin.getPlayers().getPlayerFromIslandLocation(player.getLocation());
 		if (target == null) {
-		    sender.sendMessage(ChatColor.RED + plugin.myLocale(p.getUniqueId()).adminInfounowned);
+		    sender.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).adminInfounowned);
 		    return true;
 		}
 		if (plugin.getWarpSignsListener().addWarp(target, lastBlock.getLocation())) {
 		    // Change sign color to green
 		    sign.setLine(0, ChatColor.GREEN + plugin.myLocale().warpswelcomeLine);
 		    sign.update();
-		    sender.sendMessage(ChatColor.GREEN + plugin.myLocale(p.getUniqueId()).adminResetSignRescued.replace("[name]", plugin.getPlayers().getName(target)));
+		    sender.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).adminResetSignRescued.replace("[name]", plugin.getPlayers().getName(target)));
 		    return true;
 		}
 		// Warp already exists
-		sender.sendMessage(ChatColor.RED + plugin.myLocale(p.getUniqueId()).adminResetSignErrorExists.replace("[name]", plugin.getWarpSignsListener().getWarpOwner(lastBlock.getLocation())));
+		sender.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).adminResetSignErrorExists.replace("[name]", plugin.getWarpSignsListener().getWarpOwner(lastBlock.getLocation())));
 		return true;
 
 	    } else if (split[0].equalsIgnoreCase("reload")) {

@@ -601,7 +601,8 @@ public class Players {
 	if (location == null) {
 	    homeLocations.clear();
 	} else {
-	    homeLocations.put(number, new Location(location.getWorld(),location.getBlockX(),location.getBlockY(),location.getBlockZ()));
+	    // Make the location x,y,z integer, but keep the yaw and pitch
+	    homeLocations.put(number, new Location(location.getWorld(),location.getBlockX(),location.getBlockY(),location.getBlockZ(),location.getYaw(), location.getPitch()));
 	}
     }
 

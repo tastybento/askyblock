@@ -1369,49 +1369,6 @@ public class GridManager {
 	}
     }
 
-
-    /*
-    public void removeMobsFromIsland(final Location loc) {
-	if (loc != null) {
-	    Island island = getIslandAt(loc);
-	    if (island != null) {
-		for (int x = island.getMinX() /16; x <= (island.getMinX() + island.getIslandDistance() - 1)/16; x++) {
-		    for (int z = island.getMinZ() /16; z <= (island.getMinZ() + island.getIslandDistance() - 1)/16; z++) {
-			for (Entity tempent : loc.getWorld().getChunkAt(x, z).getEntities()) {
-			    if (!(tempent instanceof Player)) {
-				tempent.remove();
-			    } else {
-				// Teleport them back home if they are visitors
-				Player player = (Player) tempent;
-				UUID owner = island.getOwner();
-				if (!player.getUniqueId().equals(owner)) {
-				    // See if this player is in the game
-				    if (plugin.getPlayers().hasIsland(player.getUniqueId()) || plugin.getPlayers().inTeam(player.getUniqueId())) {
-					homeTeleport(player);
-				    } else {
-					// Move player to spawn
-					Island spawn = getSpawn();
-					if (spawn != null) {
-					    // go to island spawn
-					    player.teleport(ASkyBlock.getIslandWorld().getSpawnLocation());
-					    plugin.getLogger().warning("During island deletion player " + player.getName() + " sent to spawn.");
-					} else {
-					    if (!player.performCommand(Settings.SPAWNCOMMAND)) {
-						plugin.getLogger().warning(
-							"During island deletion player " + player.getName() + " could not be sent to spawn so was dropped, sorry.");
-					    } else {
-						plugin.getLogger().warning("During island deletion player " + player.getName() + " sent to spawn using /spawn.");
-					    }
-					}
-				    }
-				}
-			    }
-			}
-		    }
-		}  
-	    }
-	}
-    }*/
     /**
      * @return a list of unowned islands
      */
@@ -1428,5 +1385,23 @@ public class GridManager {
 	    }
 	}
 	return result;
+    }
+
+    /**
+     * Set the spawn point for the island world
+     * @param location
+     */
+    public void setSpawnPoint(Location location) {
+	ASkyBlock.getIslandWorld().setSpawnLocation(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+	//plugin.getLogger().info("DEBUG: setting spawn point to " + location);
+	spawn.setSpawnPoint(location);
+    }
+
+    /**
+     * @return the spawnPoint
+     */
+    public Location getSpawnPoint() {
+	//plugin.getLogger().info("DEBUG: getting spawn point : " + spawn.getSpawnPoint());
+        return spawn.getSpawnPoint();
     }
 }
