@@ -63,7 +63,7 @@ public class WitherEvents implements Listener {
 	    plugin.getLogger().info(e.getEventName());
 	}
 	// Only cover withers in the island world
-	if (!IslandGuard.inWorld(e.getEntity()) || e.getEntity() == null) {
+	if (e.getEntity() == null || !IslandGuard.inWorld(e.getEntity())) {
 	    return;
 	}
 	// The wither or wither skulls can both blow up
