@@ -6,7 +6,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 /**
- * This event is fired when a player starts a new island
+ * This event is fired when a player resets an island
  * 
  * @author tastybento
  * 
