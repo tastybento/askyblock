@@ -846,119 +846,83 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 		    return true;
 		}
 		sender.sendMessage(ChatColor.YELLOW + plugin.myLocale().purgecalculating.replace("[time]", split[1]));
-		// Kick off task
-		plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
-		    public void run() {
-			final File directoryPlayers = new File(plugin.getDataFolder() + File.separator + "players");
-
-			long offlineTime = 0L;
-			// Go through the player directory and build the purge
-			// list of filenames
-			for (final File playerFile : directoryPlayers.listFiles()) {
-			    if (playerFile.getName().endsWith(".yml")) {
-				final UUID playerUUID = UUID.fromString(playerFile.getName().substring(0, playerFile.getName().length() - 4));
-				// Only bother if the player is offline (by
-				// definition)
-				if (Bukkit.getPlayer(playerUUID) == null) {
-				    final OfflinePlayer oplayer = Bukkit.getOfflinePlayer(playerUUID);
-				    offlineTime = oplayer.getLastPlayed();
-				    // Calculate the number of hours the player
-				    // has
-				    // been offline
-				    offlineTime = (System.currentTimeMillis() - offlineTime) / 3600000L;
-				    // plugin.getLogger().info(plugin.getPlayers().getName(playerUUID)
-				    // + " has been offline " + offlineTime +
-				    // " hours. Required = " + time);
-				    if (offlineTime > time) {
-					// plugin.getLogger().info(plugin.getPlayers().getName(playerUUID)
-					// +
-					// " has not logged on recently enough");
-					// Do the rest without loading the
-					// player file
-					YamlConfiguration oldPlayer = new YamlConfiguration();
-					try {
-					    oldPlayer.load(playerFile);
-					    // Check if this player has an
-					    // island - if not skip
-					    if (oldPlayer.getBoolean("hasIsland", false)) {
-						// If the player is in a team
-						// then ignore
-						if (!oldPlayer.getBoolean("hasTeam", false)) {
-						    // plugin.getLogger().info("and is a lone player");
-						    if (oldPlayer.getInt("islandLevel", 0) < Settings.abandonedIslandLevel) {
-							// Check if the island is purge protected
-							Island island = plugin.getGrid().getIsland(playerUUID);
-							if (island == null || (island != null && !island.isPurgeProtected())) {
-							    removeList.add(playerUUID);
-							}
-						    } 
-						} 
-					    }
-					} catch (Exception e) {
-					    // Just skip it
-					    plugin.getLogger().severe("Error trying to load player file " + playerFile.getName() + " skipping...");
-					}
-				    }
-				}
+		// Check who has not been online since the time
+		for (Entry<UUID, Island> entry: plugin.getGrid().getOwnershipMap().entrySet()) {
+		    //plugin.getLogger().info("UUID = " + entry.getKey());
+		    // Only do this if it isn't protected
+		    if (entry.getKey() != null && !entry.getValue().isPurgeProtected()) {
+			if (Bukkit.getOfflinePlayer(entry.getKey()).hasPlayedBefore()) {
+			    long offlineTime = Bukkit.getOfflinePlayer(entry.getKey()).getLastPlayed();
+			    offlineTime = (System.currentTimeMillis() - offlineTime) / 3600000L;
+			    if (offlineTime > time) {
+				//if (plugin.getPlayers().getIslandLevel(entry.getKey()) < Settings.abandonedIslandLevel) {
+				// Check level later
+				removeList.add(entry.getKey());
+				//}
 			    }
+			} else {
+			    removeList.add(entry.getKey());
 			}
-			if (removeList.isEmpty()) {
-			    sender.sendMessage(ChatColor.YELLOW + plugin.myLocale().purgenoneFound);
-			    purgeFlag = false;
-			    return;
-			}
-			sender.sendMessage(ChatColor.YELLOW + plugin.myLocale().purgethisWillRemove.replace("[number]", String.valueOf(removeList.size())));
-			sender.sendMessage(ChatColor.RED + plugin.myLocale().purgewarning);
-			sender.sendMessage(ChatColor.RED + plugin.myLocale().purgetypeConfirm.replace("[label]", label));
-			confirmReq = true;
-			confirmOK = false;
-			confirmTimer = 0;
-			new BukkitRunnable() {
-			    @Override
-			    public void run() {
-				// This waits for 10 seconds and if no
-				// confirmation received, then it
-				// cancels
-				if (confirmTimer++ > 10) {
-				    // Ten seconds is up!
-				    confirmReq = false;
-				    confirmOK = false;
-				    purgeFlag = false;
-				    removeList.clear();
-				    sender.sendMessage(ChatColor.YELLOW + plugin.myLocale().purgepurgeCancelled);
-				    this.cancel();
-				} else if (confirmOK) {
-				    // Set up a repeating task to run every 2
-				    // seconds to remove
-				    // islands one by one and then cancel when
-				    // done
-				    final int total = removeList.size();
-				    new BukkitRunnable() {
-					@Override
-					public void run() {
-					    if (removeList.isEmpty() && purgeFlag) {
-						purgeFlag = false;
-						sender.sendMessage(ChatColor.YELLOW + plugin.myLocale().purgefinished);
-						this.cancel();
-					    }
-
-					    if (removeList.size() > 0 && purgeFlag) {
-						plugin.deletePlayerIsland(removeList.get(0), true);
-						sender.sendMessage(ChatColor.YELLOW + "[" + removeList.size() + "/" + total + "] "
-							+ plugin.myLocale().purgeremovingName.replace("[name]", plugin.getPlayers().getName(removeList.get(0))));
-						removeList.remove(0);
-					    }
-					    sender.sendMessage("Now waiting...");
-					}
-				    }.runTaskTimer(plugin, 0L, 20L);
-				    confirmReq = false;
-				    confirmOK = false;
-				    this.cancel();
-				}
-			    }
-			}.runTaskTimer(plugin, 0L, 40L);
 		    }
-		});
+		}
+		if (removeList.isEmpty()) {
+		    sender.sendMessage(ChatColor.YELLOW + plugin.myLocale().purgenoneFound);
+		    purgeFlag = false;
+		    return true;
+		}
+		sender.sendMessage(ChatColor.YELLOW + plugin.myLocale().purgethisWillRemove.replace("[number]", String.valueOf(removeList.size())).replace("[level]", String.valueOf(Settings.abandonedIslandLevel)));
+		sender.sendMessage(ChatColor.RED + plugin.myLocale().purgewarning);
+		sender.sendMessage(ChatColor.RED + plugin.myLocale().purgetypeConfirm.replace("[label]", label));
+		confirmReq = true;
+		confirmOK = false;
+		confirmTimer = 0;
+		new BukkitRunnable() {
+		    @Override
+		    public void run() {
+			// This waits for 10 seconds and if no
+			// confirmation received, then it
+			// cancels
+			if (confirmTimer++ > 10) {
+			    // Ten seconds is up!
+			    confirmReq = false;
+			    confirmOK = false;
+			    purgeFlag = false;
+			    removeList.clear();
+			    sender.sendMessage(ChatColor.YELLOW + plugin.myLocale().purgepurgeCancelled);
+			    this.cancel();
+			} else if (confirmOK) {
+			    // Set up a repeating task to run every 2
+			    // seconds to remove
+			    // islands one by one and then cancel when
+			    // done
+			    final int total = removeList.size();
+			    new BukkitRunnable() {
+				@Override
+				public void run() {
+				    if (removeList.isEmpty() && purgeFlag) {
+					purgeFlag = false;
+					sender.sendMessage(ChatColor.YELLOW + plugin.myLocale().purgefinished);
+					this.cancel();
+				    }
+
+				    if (removeList.size() > 0 && purgeFlag) {
+					// Check the level
+					if (plugin.getPlayers().getIslandLevel(removeList.get(0)) < Settings.abandonedIslandLevel) {
+					    sender.sendMessage(ChatColor.YELLOW + "[" + (total - removeList.size() + 1) + "/" + total + "] "
+							+ plugin.myLocale().purgeremovingName.replace("[name]", plugin.getPlayers().getName(removeList.get(0))));
+					    plugin.deletePlayerIsland(removeList.get(0), true);
+					} 
+					removeList.remove(0);
+				    }
+				    //sender.sendMessage("Now waiting...");
+				}
+			    }.runTaskTimer(plugin, 0L, 20L);
+			    confirmReq = false;
+			    confirmOK = false;
+			    this.cancel();
+			}
+		    }
+		}.runTaskTimer(plugin, 0L, 40L);
 		return true;
 	    } else if (split[0].equalsIgnoreCase("lock")) {
 		// Convert name to a UUID
@@ -1774,7 +1738,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 	    Island playersIsland = plugin.getGrid().getIsland(newOwner);
 	    if (playersIsland != null) {
 		sender.sendMessage(ChatColor.RED + (plugin.myLocale().adminRegisterHadIsland.replace("[name]", plugin.getPlayers().getName(playersIsland.getOwner())).replace("[location]",
-		playersIsland.getCenter().getBlockX() + "," + playersIsland.getCenter().getBlockZ())));
+			playersIsland.getCenter().getBlockX() + "," + playersIsland.getCenter().getBlockZ())));
 		plugin.getGrid().setIslandOwner(playersIsland, null);
 	    }
 

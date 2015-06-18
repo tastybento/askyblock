@@ -192,7 +192,7 @@ public class WarpSigns implements Listener {
 	if (warpList == null || welcomeWarps == null) {
 	    return;
 	}
-	plugin.getLogger().info("Saving warps...");
+	//plugin.getLogger().info("Saving warps...");
 	final HashMap<String, Object> warps = new HashMap<String, Object>();
 	for (UUID p : warpList.keySet()) {
 	    warps.put(p.toString(), warpList.get(p));
@@ -212,7 +212,7 @@ public class WarpSigns implements Listener {
 		    }});
 	    }
 	}
-	plugin.getLogger().info("End of saving warps");
+	//plugin.getLogger().info("End of saving warps");
     }
 
     /**

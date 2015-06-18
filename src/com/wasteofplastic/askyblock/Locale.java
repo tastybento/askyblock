@@ -1005,7 +1005,7 @@ public class Locale {
 		locale.getString("purge.calculating", "Calculating which islands have been inactive for more than [time] days."));
 	purgenoneFound = ChatColor.translateAlternateColorCodes('&', locale.getString("purge.noneFound", "No inactive islands to remove."));
 	purgethisWillRemove = ChatColor.translateAlternateColorCodes('&',
-		locale.getString("purge.thisWillRemove", "This will remove [number] inactive islands!"));
+		locale.getString("purge.thisWillRemove", "[number] inactive islands found. Islands with level < [level] will be removed."));
 	purgewarning = ChatColor.translateAlternateColorCodes('&',
 		locale.getString("purge.warning", "DANGER! Do not run this with players on the server! MAKE BACKUP OF WORLD!"));
 	purgetypeConfirm = ChatColor.translateAlternateColorCodes('&',

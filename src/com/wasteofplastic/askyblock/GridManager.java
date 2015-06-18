@@ -187,73 +187,79 @@ public class GridManager {
 			    } else {
 				// Location exists
 				Location islandLoc = Util.getLocationString(islandLocation);
-				// Check to see if this island is already loaded
-				Island island = getIslandAt(islandLoc);
-				if (island != null) {
-				    // PlayerIsland exists, compare creation dates
-				    plugin.getLogger().severe("Problem with " + fileName);
-				    plugin.getLogger().severe("Owner :" + playerFile.getString("playerName", "Unknown"));
-				    plugin.getLogger().severe("This island location already exists and is already imported");
-				    if (island.getUpdatedDate() > f.lastModified()) {
-					plugin.getLogger().severe("Previous file is more recent so keeping it.");
-					// Original file is more recent
-					// Move to quarantine
-					if (!quarantineFolder.exists()) {
-					    quarantineFolder.mkdir();
-					}
-					plugin.getLogger().severe(
-						"Moving " + (playerFile.getString("playerName", "Unknown")) + "'s file (" + f.getName() + ") to "
-							+ quarantineFolder.getName());
-					File rename = new File(quarantineFolder, f.getName());
-					f.renameTo(rename);
-				    } else {
-					// New file is more recent
-					plugin.getLogger().severe(playerFile.getString("playerName", "Unknown") + "'s file is more recent");
-					File oldFile = new File(playerFolder, island.getOwner().toString() + ".yml");
-					File rename = new File(quarantineFolder, oldFile.getName());
-					// Move to quarantine
-					if (!quarantineFolder.exists()) {
-					    quarantineFolder.mkdir();
-					}
-					plugin.getLogger().severe("Moving previous file (" + oldFile.getName() + ") to " + quarantineFolder.getName());
-					oldFile.renameTo(rename);
-					deleteIsland(islandLoc);
-					island = null;
-				    }
-				}
-				if (island == null) {
-				    if (!onGrid(islandLoc)) {
+				if (islandLoc != null) {
+				    // Check to see if this island is already loaded
+				    Island island = getIslandAt(islandLoc);
+				    if (island != null) {
+					// PlayerIsland exists, compare creation dates
 					plugin.getLogger().severe("Problem with " + fileName);
 					plugin.getLogger().severe("Owner :" + playerFile.getString("playerName", "Unknown"));
-					plugin.getLogger().severe("Island is not on grid lines! " + islandLoc);
+					plugin.getLogger().severe("This island location already exists and is already imported");
+					if (island.getUpdatedDate() > f.lastModified()) {
+					    plugin.getLogger().severe("Previous file is more recent so keeping it.");
+					    // Original file is more recent
+					    // Move to quarantine
+					    if (!quarantineFolder.exists()) {
+						quarantineFolder.mkdir();
+					    }
+					    plugin.getLogger().severe(
+						    "Moving " + (playerFile.getString("playerName", "Unknown")) + "'s file (" + f.getName() + ") to "
+							    + quarantineFolder.getName());
+					    File rename = new File(quarantineFolder, f.getName());
+					    f.renameTo(rename);
+					} else {
+					    // New file is more recent
+					    plugin.getLogger().severe(playerFile.getString("playerName", "Unknown") + "'s file is more recent");
+					    File oldFile = new File(playerFolder, island.getOwner().toString() + ".yml");
+					    File rename = new File(quarantineFolder, oldFile.getName());
+					    // Move to quarantine
+					    if (!quarantineFolder.exists()) {
+						quarantineFolder.mkdir();
+					    }
+					    plugin.getLogger().severe("Moving previous file (" + oldFile.getName() + ") to " + quarantineFolder.getName());
+					    oldFile.renameTo(rename);
+					    deleteIsland(islandLoc);
+					    island = null;
+					}
 				    }
-				    String ownerString = fileName.substring(0, fileName.length() - 4);
-				    // Add the island
-				    UUID owner = UUID.fromString(ownerString);
-				    Island newIsland = addIsland(islandLoc.getBlockX(), islandLoc.getBlockZ(), owner);
-				    ownershipMap.put(owner, newIsland);
-				    // Grab when this was last updated
-				    newIsland.setUpdatedDate(f.lastModified());
+				    if (island == null) {
+					if (!onGrid(islandLoc)) {
+					    plugin.getLogger().severe("Problem with " + fileName);
+					    plugin.getLogger().severe("Owner :" + playerFile.getString("playerName", "Unknown"));
+					    plugin.getLogger().severe("Island is not on grid lines! " + islandLoc);
+					}
+					String ownerString = fileName.substring(0, fileName.length() - 4);
+					// Add the island
+					UUID owner = UUID.fromString(ownerString);
+					Island newIsland = addIsland(islandLoc.getBlockX(), islandLoc.getBlockZ(), owner);
+					ownershipMap.put(owner, newIsland);
+					// Grab when this was last updated
+					newIsland.setUpdatedDate(f.lastModified());
 
-				    if ((count) % 1000 == 0) {
-					plugin.getLogger().info("Converted " + count + " islands");
-				    }
-				    count++;
-				    // plugin.getLogger().info("Converted island at "
-				    // + islandLoc);
-				    // Top ten
+					if ((count) % 1000 == 0) {
+					    plugin.getLogger().info("Converted " + count + " islands");
+					}
+					count++;
+					// plugin.getLogger().info("Converted island at "
+					// + islandLoc);
+					// Top ten
 
-				    int islandLevel = playerFile.getInt("islandLevel", 0);
-				    String teamLeaderUUID = playerFile.getString("teamLeader", "");
-				    if (islandLevel > 0) {
-					if (!playerFile.getBoolean("hasTeam")) {
-					    TopTen.topTenAddEntry(owner, islandLevel);
-					} else if (!teamLeaderUUID.isEmpty()) {
-					    if (teamLeaderUUID.equals(ownerString)) {
+					int islandLevel = playerFile.getInt("islandLevel", 0);
+					String teamLeaderUUID = playerFile.getString("teamLeader", "");
+					if (islandLevel > 0) {
+					    if (!playerFile.getBoolean("hasTeam")) {
 						TopTen.topTenAddEntry(owner, islandLevel);
+					    } else if (!teamLeaderUUID.isEmpty()) {
+						if (teamLeaderUUID.equals(ownerString)) {
+						    TopTen.topTenAddEntry(owner, islandLevel);
+						}
 					    }
 					}
 				    }
+				} else {
+				    plugin.getLogger().severe("Problem with " + fileName);
+				    plugin.getLogger().severe("Owner :" + playerFile.getString("playerName", "Unknown"));
+				    plugin.getLogger().severe("The world for this file does not exist!");
 				}
 			    }
 			} else {
@@ -345,6 +351,9 @@ public class GridManager {
      * @return PlayerIsland object
      */
     public Island getIslandAt(Location location) {
+	if (location == null) {
+	    return null;
+	}
 	// Check if it is spawn
 	if (spawn != null && spawn.onIsland(location)) {
 	    return spawn;
@@ -1169,7 +1178,7 @@ public class GridManager {
     public boolean playerIsOnIsland(final Player player) {
 	return playerIsOnIsland(player, true);
     }
-    
+
     /**
      * Checks if an online player is on their island, on a team island or on a
      * coop island
@@ -1402,6 +1411,6 @@ public class GridManager {
      */
     public Location getSpawnPoint() {
 	//plugin.getLogger().info("DEBUG: getting spawn point : " + spawn.getSpawnPoint());
-        return spawn.getSpawnPoint();
+	return spawn.getSpawnPoint();
     }
 }
