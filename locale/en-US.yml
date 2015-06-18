@@ -357,7 +357,7 @@ purge:
    usage: "Usage: /[label] purge [TimeInDays]"
    calculating: "Calculating which islands have been inactive for more than [time] days."
    noneFound: "No inactive islands to remove."
-   thisWillRemove: "This will remove [number] inactive islands!"
+   thisWillRemove: "[number] inactive islands found. Islands with level < [level] will be removed."
    warning: "DANGER! Do not run this with players on the server! MAKE BACKUP OF WORLD!"
    typeConfirm: "Type /[label] confirm to proceed within 10 seconds"
    purgeCancelled: "Purge cancelled."
@@ -501,6 +501,7 @@ adminLock:
 adminTopBreeders:
    finding: "Finding top breeders..."
    checking: "Checking [number] islands..."
+   nothing: "No creatures found."
 
 adminDeleteIsland:
    error: "Use &ldeleteisland confirm &r&cto delete the island you are on."
