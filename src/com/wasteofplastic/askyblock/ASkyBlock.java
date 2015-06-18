@@ -970,8 +970,8 @@ public class ASkyBlock extends JavaPlugin {
 		Settings.island_protectionRange = Settings.islandDistance;
 	    }
 	}
-	if (Settings.island_protectionRange < 50) {
-	    Settings.island_protectionRange = 50;
+	if (Settings.island_protectionRange < 0) {
+	    Settings.island_protectionRange = 0;
 	}
 	Settings.resetChallenges = getConfig().getBoolean("general.resetchallenges", true);
 	Settings.resetMoney = getConfig().getBoolean("general.resetmoney", true);
