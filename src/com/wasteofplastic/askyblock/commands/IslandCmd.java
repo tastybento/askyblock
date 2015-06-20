@@ -1533,8 +1533,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 		// Invite label with no name, i.e., /island invite - tells the
 		// player how many more people they can invite
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.create")) {
-		    player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "Use" + ChatColor.WHITE + " /" + label + " invite <playername> " + plugin.myLocale(player.getUniqueId()).helpColor
-			    + plugin.myLocale(player.getUniqueId()).islandhelpInvite);
+		    player.sendMessage(plugin.myLocale(player.getUniqueId()).invitehelp);
 		    // If the player who is doing the inviting has a team
 		    if (plugin.getPlayers().inTeam(playerUUID)) {
 			// Check to see if the player is the leader
