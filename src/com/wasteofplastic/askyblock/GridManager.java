@@ -1187,6 +1187,18 @@ public class GridManager {
      * @return true if on valid island, false if not
      */
     public boolean playerIsOnIsland(final Player player, boolean coop) {
+	return locationIsAtHome(player, coop, player.getLocation());
+    }
+    
+    
+    /**
+     * Checks if a location is within the home boundaries of a player. If coop is true, this check includes coop players.
+     * @param player
+     * @param coop
+     * @param loc
+     * @return true if the location is within home boundaries
+     */
+    public boolean locationIsAtHome(final Player player, boolean coop, Location loc) {
 	// Make a list of test locations and test them
 	Set<Location> islandTestLocations = new HashSet<Location>();
 	if (plugin.getPlayers().hasIsland(player.getUniqueId())) {
@@ -1212,7 +1224,7 @@ public class GridManager {
 	for (Location islandTestLocation : islandTestLocations) {
 	    // Must be in the same world as the locations being checked
 	    // Note that getWorld can return null if a world has been deleted on the server
-	    if (islandTestLocation != null && islandTestLocation.getWorld() != null && islandTestLocation.getWorld().equals(player.getWorld())) {
+	    if (islandTestLocation != null && islandTestLocation.getWorld() != null && islandTestLocation.getWorld().equals(loc.getWorld())) {
 		int protectionRange = Settings.island_protectionRange;
 		if (getIslandAt(islandTestLocation) != null) {
 		    // Get the protection range for this location if possible
@@ -1222,10 +1234,10 @@ public class GridManager {
 			protectionRange = island.getProtectionSize();
 		    }
 		}
-		if (player.getLocation().getX() > islandTestLocation.getX() - protectionRange / 2
-			&& player.getLocation().getX() < islandTestLocation.getX() + protectionRange / 2
-			&& player.getLocation().getZ() > islandTestLocation.getZ() - protectionRange / 2
-			&& player.getLocation().getZ() < islandTestLocation.getZ() + protectionRange / 2) {
+		if (loc.getX() > islandTestLocation.getX() - protectionRange / 2
+			&& loc.getX() < islandTestLocation.getX() + protectionRange / 2
+			&& loc.getZ() > islandTestLocation.getZ() - protectionRange / 2
+			&& loc.getZ() < islandTestLocation.getZ() + protectionRange / 2) {
 		    return true;
 		}
 	    }

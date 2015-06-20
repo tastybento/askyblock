@@ -1946,9 +1946,15 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 				    }
 				    // Find out if island is locked
 				    Island island = plugin.getGrid().getIslandAt(warpSpot);
-				    if (island != null && island.isLocked()) {
+				    if (island != null && island.isLocked() && !player.isOp() && !VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.bypasslock") 
+					    && !VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.bypassprotect")) {
+					// Always inform that the island is locked
 					player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).lockIslandLocked);
-					return true;
+					// Check if this is the owner, team member or coop
+					if (!plugin.getGrid().locationIsAtHome(player, true, warpSpot)) {
+					    //plugin.getLogger().info("DEBUG: not at home");
+					    return true;
+					}
 				    }
 				    // Find out which direction the warp is facing
 				    Block b = warpSpot.getBlock();
@@ -1965,7 +1971,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 					    player.teleport(actualWarp);
 					    player.getWorld().playSound(player.getLocation(), Sound.BAT_TAKEOFF, 1F, 1F);
 					    Player warpOwner = plugin.getServer().getPlayer(foundWarp);
-					    if (warpOwner != null) {
+					    if (warpOwner != null && !warpOwner.equals(player)) {
 						warpOwner.sendMessage(plugin.myLocale(foundWarp).warpsPlayerWarped.replace("[name]", player.getDisplayName()));
 					    }
 					    return true;
