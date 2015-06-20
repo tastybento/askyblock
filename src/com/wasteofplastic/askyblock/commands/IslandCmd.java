@@ -579,7 +579,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 			result.add(schematic);
 		    }
 		}
-		    
+
 	    }
 	}
 	// Sort according to order
@@ -1845,29 +1845,31 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 			    int number = 1;
 			    try {
 				number = Integer.valueOf(split[1]);
+				//plugin.getLogger().info("DEBUG: number = " + number);
 				if (number < 1) {
 				    plugin.getGrid().homeTeleport(player,1);
-				}
-				int maxHomes = Settings.maxHomes;
-				// Dynamic home sizes with permissions
-				for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
-				    if (perms.getPermission().startsWith(Settings.PERMPREFIX + "island.maxhomes.")) {
-					maxHomes = Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "island.maxhomes.")[1]);
-				    }
-				    // Do some sanity checking
-				    if (maxHomes < 1) {
-					maxHomes = 1;
-				    }
-				}
-				if (number > maxHomes) {
-				    if (maxHomes > 1) {
-					player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).setHomeerrorNumHomes.replace("[max]",String.valueOf(maxHomes)));
-				    } else {
-					plugin.getGrid().homeTeleport(player,1);
-				    }
 				} else {
-				    // Teleport home
-				    plugin.getGrid().homeTeleport(player,number);
+				    int maxHomes = Settings.maxHomes;
+				    // Dynamic home sizes with permissions
+				    for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
+					if (perms.getPermission().startsWith(Settings.PERMPREFIX + "island.maxhomes.")) {
+					    maxHomes = Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "island.maxhomes.")[1]);
+					}
+					// Do some sanity checking
+					if (maxHomes < 1) {
+					    maxHomes = 1;
+					}
+				    }
+				    if (number > maxHomes) {
+					if (maxHomes > 1) {
+					    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).setHomeerrorNumHomes.replace("[max]",String.valueOf(maxHomes)));
+					} else {
+					    plugin.getGrid().homeTeleport(player,1);
+					}
+				    } else {
+					// Teleport home
+					plugin.getGrid().homeTeleport(player,number);
+				    }
 				}
 			    } catch (Exception e) {
 				// Teleport home
@@ -1894,7 +1896,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 				int number = 0;
 				try {
 				    number = Integer.valueOf(split[1]);
-				    if (number < 0 || number > maxHomes) {
+				    if (number < 1 || number > maxHomes) {
 					player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).setHomeerrorNumHomes.replace("[max]",String.valueOf(maxHomes)));
 				    } else {
 					plugin.getGrid().homeSet(player, number);
