@@ -83,7 +83,7 @@ lavaTip: "Astuce: Si vous ne vouliez pas d'obsidienne, vous pouvez récupérer d
  
 #WarpSigns
 warps:
-  #This is the first line of the sign that determines if the sign is a warp sign or not
+ #This is the first line of the sign that determines if the sign is a warp sign or not
    #If you change it, make sure it makes sense. It is case insensitive. Change the tip too.
    welcomeLine: "[WELCOME]"
    warpTip: "Créez un panneau [WELCOME] sur la première ligne pour créer un warp. Placez du texte en dessous pour une description."
@@ -160,13 +160,13 @@ challenges:
    
 #/island
 island:
-  # Titles for V1.8+ servers only. Set to '' to remove.
+ # Titles for V1.8+ servers only. Set to '' to remove.
    # Colors are fixed as blue and gold for now.
    # Only works on 1.8+ servers
    title: "Bonne chance"
    subtitle: "Ne tombez pas !"
    # This section is to solicit donations from players. Feel free to set to '' to remove :-)
-   donate: ""
+   donate: "Bienvenue sur ASkyblock par Tastybento - traduction par MrSheepSheep"
    url: ""
    
    teleport: "Téléportation sur votre île"
@@ -341,6 +341,7 @@ adminHelp:
   add: "ajoute un joueur à une équipe"
   tp: "téléporte sur l'île d'un joueur"
   tpnether: "téléporte sur l'île nether d'un joueur"
+  resetsign: "Réinitialise le panneau ue vous regardez au propriétaire de l'île"
  
 #acid reload
 reload:
@@ -352,12 +353,12 @@ adminTopTen:
  
 #purge
 purge:
-  #"A purge is already running, please wait for it to finish!"
+ #"A purge is already running, please wait for it to finish!"
   alreadyRunning: "La vérification est toujours en cours, attendez qu'elle se termine"
   usage: "Utilisation: /asadmin purge [jours]"
   calculating: "Calcul du nombre d'îles inactives depuis plus de [time] jours..."
   noneFound: "Aucune île inactive à supprimer."
-  thisWillRemove: "Cela supprimera [number] îles inactives !"
+  thisWillRemove: "[number] îles inactives trouvées. Les îles de niveau < [level] seront supprimées."
   warning: "ATTENTION! Ne faites pas ça si des joueurs sont connectés ! SAUVEGARDEZ VOTRE MONDE, FAITES UN BACKUP!"
   typeConfirm: "Tapez /asadmin confirm pour confirmer"
   purgeCancelled: "Suppression annulée."
