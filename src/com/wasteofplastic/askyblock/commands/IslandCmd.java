@@ -74,7 +74,6 @@ import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.TopTen;
 import com.wasteofplastic.askyblock.events.IslandJoinEvent;
 import com.wasteofplastic.askyblock.events.IslandLeaveEvent;
-import com.wasteofplastic.askyblock.events.IslandLevelEvent;
 import com.wasteofplastic.askyblock.events.IslandNewEvent;
 import com.wasteofplastic.askyblock.events.IslandResetEvent;
 import com.wasteofplastic.askyblock.listeners.PlayerEvents;

@@ -37,7 +37,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
 
-import com.wasteofplastic.askyblock.events.IslandNewEvent;
 import com.wasteofplastic.askyblock.events.WarpListEvent;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;

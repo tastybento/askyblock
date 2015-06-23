@@ -31,7 +31,6 @@ import java.util.UUID;
 
 import net.milkbowl.vault.economy.EconomyResponse;
 
-import org.apache.commons.lang.NumberUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
