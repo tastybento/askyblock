@@ -341,6 +341,7 @@ adminHelp:
    add: "adds player to leader's team"
    tp: "Teleport to a player's island"
    tpnether: "Teleport to a player's nether island"
+   resetsign: "Resets the sign you are looking at to the island owner"
 
 #acid reload
 reload:
