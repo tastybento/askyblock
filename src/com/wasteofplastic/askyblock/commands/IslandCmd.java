@@ -1234,8 +1234,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 
 	    if (split[0].equalsIgnoreCase("minishop") || split[0].equalsIgnoreCase("ms")) {
 		if (Settings.useEconomy) {
-		    if (player.getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
-
+		    if (player.getWorld().equals(ASkyBlock.getIslandWorld()) || player.getWorld().equals(ASkyBlock.getNetherWorld())) {	
 			if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.minishop")) {
 			    player.openInventory(ControlPanel.miniShop);
 			    return true;
