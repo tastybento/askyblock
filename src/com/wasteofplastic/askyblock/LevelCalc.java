@@ -10,6 +10,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.material.MaterialData;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import com.wasteofplastic.askyblock.events.IslandLevelEvent;
+
 /**
  * A class that calculates the level of an island. Runs through all the island
  * blocks
@@ -147,6 +149,9 @@ public class LevelCalc extends BukkitRunnable {
 	    } else {
 		TopTen.topTenAddEntry(targetPlayer, blockCount);
 	    }
+	    // Fire the level event
+	    final IslandLevelEvent event = new IslandLevelEvent(plugin, targetPlayer, blockCount);
+	    plugin.getServer().getPluginManager().callEvent(event);
 	    // plugin.getLogger().info("DEBUG: finished updating top ten");
 
 	    // plugin.getLogger().info("DEBUG: clearing flag");

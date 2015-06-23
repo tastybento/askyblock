@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -123,7 +124,7 @@ public class ASkyBlock extends JavaPlugin {
 
     // Team chat listener
     private ChatListener chatListener;
-    
+
     // Schematics panel object
     private SchematicsPanel schematicsPanel;
 
@@ -638,6 +639,7 @@ public class ASkyBlock extends JavaPlugin {
     /**
      * Loads the various settings from the config.yml file into the plugin
      */
+    @SuppressWarnings("deprecation")
     public boolean loadPluginConfig() {
 	// getLogger().info("*********************************************");
 	try {
@@ -754,7 +756,7 @@ public class ASkyBlock extends JavaPlugin {
 	    try {
 		islandYaml.load(islandFile);
 		if (!islandYaml.contains(Settings.worldName)) {
-		   // Bad news, stop everything and tell the admin
+		    // Bad news, stop everything and tell the admin
 		    getLogger().severe("+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
 		    getLogger().severe("More set up is required. Go to config.yml and edit it.");
 		    getLogger().severe("");
@@ -1086,10 +1088,16 @@ public class ASkyBlock extends JavaPlugin {
 			}
 		    }
 		} else {
+		    Material mat;
+		    if (StringUtils.isNumeric(amountdata[0])) {
+			mat = Material.getMaterial(Integer.parseInt(amountdata[0]));
+		    } else {
+			mat = Material.getMaterial(amountdata[0].toUpperCase());
+		    }
 		    if (amountdata.length == 2) {
-			tempChest[i] = new ItemStack(Material.getMaterial(amountdata[0]), Integer.parseInt(amountdata[1]));
+			tempChest[i] = new ItemStack(mat, Integer.parseInt(amountdata[1]));
 		    } else if (amountdata.length == 3) {
-			tempChest[i] = new ItemStack(Material.getMaterial(amountdata[0]), Integer.parseInt(amountdata[2]), Short.parseShort(amountdata[1]));
+			tempChest[i] = new ItemStack(mat, Integer.parseInt(amountdata[2]), Short.parseShort(amountdata[1]));
 		    }
 		}
 	    } catch (java.lang.IllegalArgumentException ex) {
@@ -1187,7 +1195,12 @@ public class ASkyBlock extends JavaPlugin {
 		    if (split.length>1) {
 			data = Byte.valueOf(split[1]);
 		    }
-		    Material mat = Material.valueOf(split[0]);
+		    Material mat;
+		    if (StringUtils.isNumeric(split[0])) {
+			mat = Material.getMaterial(Integer.parseInt(split[0]));
+		    } else {
+			mat = Material.valueOf(split[0].toUpperCase());
+		    }
 		    MaterialData materialData = new MaterialData(mat);
 		    materialData.setData(data);
 		    Settings.blockLimits.put(materialData, blockValuesConfig.getInt("limits." + material, 0));
@@ -1208,7 +1221,12 @@ public class ASkyBlock extends JavaPlugin {
 		    if (split.length>1) {
 			data = Byte.valueOf(split[1]);
 		    }
-		    Material mat = Material.valueOf(split[0]);
+		    Material mat;
+		    if (StringUtils.isNumeric(split[0])) {
+			mat = Material.getMaterial(Integer.parseInt(split[0]));
+		    } else {
+			mat = Material.valueOf(split[0].toUpperCase());
+		    }
 		    MaterialData materialData = new MaterialData(mat);
 		    materialData.setData(data);
 		    Settings.blockValues.put(materialData, blockValuesConfig.getInt("blocks." + material, 0));
@@ -1469,6 +1487,6 @@ public class ASkyBlock extends JavaPlugin {
      * @return the schematicsPanel
      */
     public SchematicsPanel getSchematicsPanel() {
-        return schematicsPanel;
+	return schematicsPanel;
     }
 }

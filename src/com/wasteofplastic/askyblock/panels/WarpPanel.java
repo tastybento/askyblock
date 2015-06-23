@@ -2,8 +2,8 @@ package com.wasteofplastic.askyblock.panels;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -43,7 +43,7 @@ public class WarpPanel implements Listener {
 	warpPanel.clear();
 	int panelSize = 45; // Must be a multiple of 9
 	// Create the warp panels
-	Set<UUID> warps = plugin.getWarpSignsListener().listWarps();
+	Collection<UUID> warps = plugin.getWarpSignsListener().listSortedWarps();
 	//plugin.getLogger().info("DEBUG: warps size = " + warps.size());
 	int panelNumber = warps.size() / (panelSize-2);
 	int remainder = (warps.size() % (panelSize-2)) + 8 + 2;

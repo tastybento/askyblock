@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -35,6 +36,7 @@ import java.util.UUID;
 
 import net.milkbowl.vault.economy.EconomyResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -72,6 +74,7 @@ import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.TopTen;
 import com.wasteofplastic.askyblock.events.IslandJoinEvent;
 import com.wasteofplastic.askyblock.events.IslandLeaveEvent;
+import com.wasteofplastic.askyblock.events.IslandLevelEvent;
 import com.wasteofplastic.askyblock.events.IslandNewEvent;
 import com.wasteofplastic.askyblock.events.IslandResetEvent;
 import com.wasteofplastic.askyblock.listeners.PlayerEvents;
@@ -282,8 +285,14 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 			newSchem.setOrder(schemSection.getInt("schematics." + key + ".order", 0));
 			// Load the rest of the settings
 			// Icon
-			try {   
-			    Material icon = Material.getMaterial(schemSection.getString("schematics." + key + ".icon","MAP").toUpperCase());
+			try { 
+			    Material icon;
+			    String iconString = schemSection.getString("schematics." + key + ".icon","MAP").toUpperCase();
+			    if (StringUtils.isNumeric(iconString)) {
+				icon = Material.getMaterial(Integer.parseInt(iconString));
+			    } else {
+				icon = Material.valueOf(iconString);
+			    }
 			    newSchem.setIcon(icon);
 			} catch (Exception e) {
 			    newSchem.setIcon(Material.MAP); 
@@ -410,10 +419,16 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 					    }
 					}
 				    } else {
+					Material mat;
+					if (StringUtils.isNumeric(amountdata[0])) {
+					    mat = Material.getMaterial(Integer.parseInt(amountdata[0]));
+					} else {
+					    mat = Material.getMaterial(amountdata[0].toUpperCase());
+					}
 					if (amountdata.length == 2) {
-					    tempChest[i++] = new ItemStack(Material.getMaterial(amountdata[0]), Integer.parseInt(amountdata[1]));
+					    tempChest[i++] = new ItemStack(mat, Integer.parseInt(amountdata[1]));
 					} else if (amountdata.length == 3) {
-					    tempChest[i++] = new ItemStack(Material.getMaterial(amountdata[0]), Integer.parseInt(amountdata[2]), Short.parseShort(amountdata[1]));
+					    tempChest[i++] = new ItemStack(mat, Integer.parseInt(amountdata[2]), Short.parseShort(amountdata[1]));
 					}
 				    }
 				} catch (java.lang.IllegalArgumentException ex) {
@@ -439,7 +454,12 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 			if (spawnBlock != null) {
 			    // Check to see if this block is a valid material
 			    try {
-				Material playerSpawnBlock = Material.valueOf(spawnBlock.toUpperCase());
+				Material playerSpawnBlock;
+				if (StringUtils.isNumeric(spawnBlock)) {
+				    playerSpawnBlock = Material.getMaterial(Integer.parseInt(spawnBlock));
+				} else {
+				    playerSpawnBlock = Material.valueOf(spawnBlock.toUpperCase());
+				}
 				if (newSchem.setPlayerSpawnBlock(playerSpawnBlock)) {
 				    plugin.getLogger().info("Player will spawn at the " + playerSpawnBlock.toString());
 				} else {
@@ -1235,7 +1255,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 	    } else if (split[0].equalsIgnoreCase("warps")) {
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.warp")) {
 		    // Step through warp table
-		    Set<UUID> warpList = plugin.getWarpSignsListener().listWarps();
+		    Collection<UUID> warpList = plugin.getWarpSignsListener().listWarps();
 		    if (warpList.isEmpty()) {
 			player.sendMessage(ChatColor.YELLOW + plugin.myLocale(player.getUniqueId()).warpserrorNoWarpsYet);
 			if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.addwarp") && plugin.getGrid().playerIsOnIsland(player)) {

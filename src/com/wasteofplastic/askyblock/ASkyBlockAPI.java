@@ -2,6 +2,7 @@ package com.wasteofplastic.askyblock;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -180,6 +181,14 @@ public class ASkyBlockAPI {
     }
 
     /**
+     * Forces the warp panel to update and the warp list event to fire so that
+     * the warps can be sorted how you like.
+     */
+    public void updateWarpPanel() {
+	plugin.getWarpPanel().updatePanel();
+    }
+    
+    /**
      * Checks if a specific location is within the protected range of an island
      * owned by the player
      * 
@@ -319,6 +328,14 @@ public class ASkyBlockAPI {
      */
     public boolean isNewNether() {
 	return Settings.newNether;
+    }
+    
+    /**
+     * Get the top ten list
+     * @return Top ten list
+     */
+    public Map<UUID, Integer> getTopTen() {
+	return TopTen.getTopTenList();
     }
     
 }

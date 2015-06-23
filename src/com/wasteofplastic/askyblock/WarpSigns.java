@@ -17,9 +17,11 @@
 package com.wasteofplastic.askyblock;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.UUID;
 
 import org.bukkit.ChatColor;
@@ -35,6 +37,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
 
+import com.wasteofplastic.askyblock.events.IslandNewEvent;
+import com.wasteofplastic.askyblock.events.WarpListEvent;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
@@ -350,11 +354,26 @@ public class WarpSigns implements Listener {
      * @return String set of warps
      */
     public Set<UUID> listWarps() {
-	// plugin.getLogger().info("DEBUG Warp list count = " +
-	// warpList.size());
 	return warpList.keySet();
     }
 
+    /**
+     * @return Sorted list of warps with most recent players listed first
+     */
+    public Collection<UUID> listSortedWarps() {
+	// Bigger value of time means a more recent login
+	TreeMap<Long, UUID> map = new TreeMap<Long, UUID>();
+	for (UUID uuid : warpList.keySet()) {
+	    map.put(plugin.getServer().getOfflinePlayer(uuid).getLastPlayed(), uuid);
+	}
+	Collection<UUID> result = map.descendingMap().values();
+	// Fire event
+	WarpListEvent event = new WarpListEvent(plugin, result);
+	plugin.getServer().getPluginManager().callEvent(event);
+	// Get the result of any changes by listeners
+	result = event.getWarps();
+	return result;
+    }
     /**
      * Provides the location of the warp for player or null if one is not found
      * 

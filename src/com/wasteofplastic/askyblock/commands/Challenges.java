@@ -31,6 +31,8 @@ import java.util.UUID;
 
 import net.milkbowl.vault.economy.EconomyResponse;
 
+import org.apache.commons.lang.NumberUtils;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -388,7 +390,11 @@ public class Challenges implements CommandExecutor, TabCompleter {
 	    final String[] element = s.split(":");
 	    if (element.length == 2) {
 		try {
-		    rewardItem = Material.getMaterial(element[0].toUpperCase());
+		    if (StringUtils.isNumeric(element[0])) {
+			rewardItem = Material.getMaterial(Integer.parseInt(element[0]));
+		    } else {
+			rewardItem = Material.getMaterial(element[0].toUpperCase());
+		    }
 		    rewardQty = Integer.parseInt(element[1]);
 		    final HashMap<Integer, ItemStack> leftOvers = player.getInventory().addItem(new ItemStack[] { new ItemStack(rewardItem, rewardQty) });
 		    if (!leftOvers.isEmpty()) {
@@ -416,7 +422,11 @@ public class Challenges implements CommandExecutor, TabCompleter {
 		}
 	    } else if (element.length == 3) {
 		try {
-		    rewardItem = Material.getMaterial(element[0]);
+		    if (StringUtils.isNumeric(element[0])) {
+			rewardItem = Material.getMaterial(Integer.parseInt(element[0]));
+		    } else {
+			rewardItem = Material.getMaterial(element[0].toUpperCase());
+		    }
 		    rewardQty = Integer.parseInt(element[2]);
 		    // Check for POTION
 		    if (rewardItem.equals(Material.POTION)) {
@@ -481,7 +491,11 @@ public class Challenges implements CommandExecutor, TabCompleter {
 		//plugin.getLogger().info("DEBUG: 6 element reward");
 		// Potion format = POTION:name:level:extended:splash:qty
 		try {
-		    rewardItem = Material.getMaterial(element[0]);
+		    if (StringUtils.isNumeric(element[0])) {
+			rewardItem = Material.getMaterial(Integer.parseInt(element[0]));
+		    } else {
+			rewardItem = Material.getMaterial(element[0].toUpperCase());
+		    }
 		    rewardQty = Integer.parseInt(element[5]);
 		    // Check for POTION
 		    if (rewardItem.equals(Material.POTION)) {
@@ -764,7 +778,11 @@ public class Challenges implements CommandExecutor, TabCompleter {
 			    part[0] = "SKULL_ITEM";
 			}
 			// TODO: add netherwart vs. netherstalk?
-			reqItem = Material.getMaterial(part[0]);
+			if (StringUtils.isNumeric(part[0])) {
+			    reqItem = Material.getMaterial(Integer.parseInt(part[0]));
+			} else {
+			    reqItem = Material.getMaterial(part[0].toUpperCase());
+			}
 			reqAmount = Integer.parseInt(part[1]);
 			ItemStack item = new ItemStack(reqItem);
 			// plugin.getLogger().info("DEBUG: required item = " +
@@ -877,7 +895,11 @@ public class Challenges implements CommandExecutor, TabCompleter {
 			} else if (part[0].equalsIgnoreCase("skull")) {
 			    part[0] = "SKULL_ITEM";
 			}
-			reqItem = Material.getMaterial(part[0]);
+			if (StringUtils.isNumeric(part[0])) {
+			    reqItem = Material.getMaterial(Integer.parseInt(part[0]));
+			} else {
+			    reqItem = Material.getMaterial(part[0].toUpperCase());
+			}
 			reqAmount = Integer.parseInt(part[2]);
 			int reqDurability = Integer.parseInt(part[1]);
 			int count = reqAmount;
@@ -1034,8 +1056,11 @@ public class Challenges implements CommandExecutor, TabCompleter {
 		    //plugin.getLogger().info("DEBUG:6 part potion check!");
 		    // POTION:Name:Level:Extended:Splash:Qty
 		    try {
-			reqItem = Material.getMaterial(part[0]);
-
+			if (StringUtils.isNumeric(part[0])) {
+			    reqItem = Material.getMaterial(Integer.parseInt(part[0]));
+			} else {
+			    reqItem = Material.getMaterial(part[0].toUpperCase());
+			}
 			reqAmount = Integer.parseInt(part[5]);
 			ItemStack item = new ItemStack(reqItem);
 			int count = reqAmount;
@@ -1176,8 +1201,13 @@ public class Challenges implements CommandExecutor, TabCompleter {
 			    // + Integer.parseInt(sPart[1]) + " x " +
 			    // EntityType.valueOf(sPart[0].toUpperCase()).toString());
 			}
-		    } else {
-			Material item = Material.getMaterial(sPart[0].toUpperCase());
+		    } else {	
+			Material item;
+			if (StringUtils.isNumeric(sPart[0])) {
+			    item = Material.getMaterial(Integer.parseInt(sPart[0]));
+			} else {
+			    item = Material.getMaterial(sPart[0].toUpperCase());
+			}
 			if (item != null) {
 			    neededItem.put(item, qty);
 			    // plugin.getLogger().info("DEBUG: Needed item is "
@@ -1403,6 +1433,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
      * @param player
      * @return Control Panel item
      */
+    @SuppressWarnings("deprecation")
     private CPItem createItem(String challengeName, Player player) {
 	CPItem item = null;
 	// Get the icon
@@ -1433,9 +1464,17 @@ public class Challenges implements CommandExecutor, TabCompleter {
 		    } else if (iconName.equalsIgnoreCase("skull")) {
 			iconName = "SKULL_ITEM";
 		    }
-		    icon = new ItemStack(Material.valueOf(iconName));
+		    if (StringUtils.isNumeric(iconName)) {
+			icon = new ItemStack(Integer.parseInt(iconName));
+		    } else {
+			icon = new ItemStack(Material.valueOf(iconName));
+		    }
 		} else if (split.length == 2) {
-		    icon = new ItemStack(Material.valueOf(split[0]));
+		    if (StringUtils.isNumeric(split[0])) {
+			icon = new ItemStack(Integer.parseInt(split[0]));
+		    } else {
+			icon = new ItemStack(Material.valueOf(split[0]));
+		    }
 		    icon.setDurability(Integer.valueOf(split[1]).shortValue());
 		}
 	    } catch (Exception e) {
@@ -1444,7 +1483,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
 		plugin.getLogger().warning("Format should be 'icon: MaterialType:Damage' where Damage is optional");
 	    }
 	}
-	if (icon == null) {
+	if (icon == null || icon.equals(Material.AIR)) {
 	    icon = new ItemStack(Material.PAPER);
 	}
 	String description = ChatColor.GREEN

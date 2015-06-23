@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.UUID;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.ChunkSnapshot;
@@ -32,7 +33,7 @@ public class BiomesPanel implements Listener {
     private ASkyBlock plugin;
     private HashMap<UUID, List<BiomeItem>> biomeItems = new HashMap<UUID, List<BiomeItem>>();
 
-    
+
     /**
      * @param plugin
      */
@@ -63,7 +64,11 @@ public class BiomesPanel implements Listener {
 		    String icon = plugin.getConfig().getString("biomes." + biomeName + ".icon", "SAPLING");
 		    Material material = null;
 		    try {
-			material = Material.valueOf(icon);
+			if (StringUtils.isNumeric(icon)) {
+			    material = Material.getMaterial(Integer.parseInt(icon));
+			} else {
+			    material = Material.valueOf(icon.toUpperCase());
+			}
 		    } catch (Exception e) {
 			plugin.getLogger().warning("Error parsing biome icon value " + icon + ". Using default SAPLING.");
 			material = Material.SAPLING;

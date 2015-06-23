@@ -207,4 +207,12 @@ public class TopTen {
     static void remove(UUID owner) {
 	topTenList.remove(owner);
     }
+
+    /**
+     * Get a sorted descending map of the top players
+     * @return the topTenList - may be more or less than ten
+     */
+    public static Map<UUID, Integer> getTopTenList() {
+        return topTenList;
+    }
 }

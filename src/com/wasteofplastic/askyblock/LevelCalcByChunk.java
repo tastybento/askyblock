@@ -11,6 +11,8 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.material.MaterialData;
 
+import com.wasteofplastic.askyblock.events.IslandLevelEvent;
+
 /**
  * A class that calculates the level of an island very quickly by copying island
  * chunks to a list and then processing asynchronously.
@@ -118,7 +120,7 @@ public class LevelCalcByChunk {
 		    blockCount += (int)((double)underWaterBlockCount * Math.max(Settings.underWaterMultiplier,1D));
 		    //System.out.println("block count = "+blockCount);
 		    final int score = blockCount / Settings.levelCost;
-    
+
 		    // Return to main thread
 		    plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
 
@@ -162,7 +164,9 @@ public class LevelCalcByChunk {
 			    } else {
 				TopTen.topTenAddEntry(targetPlayer, score);
 			    }
-	    
+			    // Fire the level event
+			    final IslandLevelEvent event = new IslandLevelEvent(plugin, targetPlayer, score);
+			    plugin.getServer().getPluginManager().callEvent(event);
 			}});
 		}});
 	}
