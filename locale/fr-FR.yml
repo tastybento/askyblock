@@ -307,8 +307,8 @@ minishop:
    youbought: "Vous avez acheté [number] [description] pour [price]"
    yousold: "Vous avez vendu [number] [description] pour [price]"
    buyproblem: "Il y a eu un problème lors de l'achat de [description]"
-   sellproblem: Vous n'avez pas assez de [description] à vendre."
-  outofstock: "Rupture de Stock"
+   sellproblem: "Vous n'avez pas assez de [description] à vendre."
+   outofstock: "Rupture de Stock"
  
 ################################
 #Admin commands that use /acid #
