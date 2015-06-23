@@ -85,8 +85,8 @@ lavaTip: "Astuce: Si vous ne vouliez pas d'obsidienne, vous pouvez récupérer d
 warps:
   #This is the first line of the sign that determines if the sign is a warp sign or not
    #If you change it, make sure it makes sense. It is case insensitive. Change the tip too.
-   welcomeLine: "[BIENVENUE]"
-   warpTip: "Créez un panneau [BIENVENUE] sur la première ligne pour créer un warp. Placez du texte en dessous pour une description."
+   welcomeLine: "[WELCOME]"
+   warpTip: "Créez un panneau [WELCOME] sur la première ligne pour créer un warp. Placez du texte en dessous pour une description."
    success: "Panneau de bienvenue créé !"
    removed: "Panneau de bienvenue supprimé !"
    signRemoved: "Votre panneau de bienvenue a été détruit !"
