@@ -1429,9 +1429,10 @@ public class IslandGuard implements Listener {
 		    return;
 		}
 		break;
+	    case ENDER_CHEST:
+		break;
 	    case CHEST:
 	    case TRAPPED_CHEST:
-	    case ENDER_CHEST:
 	    case DISPENSER:
 	    case DROPPER:
 	    case HOPPER:
