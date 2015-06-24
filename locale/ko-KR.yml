@@ -4,404 +4,286 @@
 # 만약 이 파일이 삭제되면, 다음에 다시 불러올 떄 재 생성 될겁니다.                        #
 ###########################################################################################
  
-###############
-#일반적인 호류#
-###############
-error:
-   #"호류: 잘못된 플레이어 (맞춤법 검사)"
-   unknownPlayer: "그 플레이어는 알 수 없습니다."
-   #"당신은 그 명령어를 접근할 수 없습니다!"
-   #"/섬관리 명령어는 오직 op들이나 관리자들을 위한 명령어입니다"
-   noPermission: "당신은 그 명령어를 사용할 권한을 가지고 있지 않습니다!"
-   noIsland: "당신은 섬을 가지고 있지 않습니다!"
-   noIslandOther: "그 플레이어는 섬을 가지고 있지 않습니다!"
-   #notOnIsland: "당신은 반드시 이 명령어를 당신의 섬에서 사용해야 합니다."
-   commandNotReady: "당신은 그 명령어를 즉시 사용할 수 없습니다."
-   offlinePlayer: "그 플레이어는 접속중이지 않거나 존재하지 않습니다."
-   unknownCommand: "알 수 없는 명령어."
-   noTeam: "플레이어는 팀 안에 없습니다."
- 
-#AcidEffect
-changingObsidiantoLava: "흑요석을 다시 용암으로 변경중입니다. 조심하세요!"
- 
-#AcidInventory
-# The warning that goes on the acid bottles or buckets. Lines are split by \n
-acidLore: "Do\nnot drink!\nBeware!\n"
-acidBucket: "Acid Bucket"
+--- 
 acidBottle: "Acid Bottle"
-drankAcidAndDied: "just drank acid and died."
+acidBucket: "Acid Bucket"
+acidLore: |
+    Do
+    not drink!
+    Beware!
+adminHelp: 
+  clearreset: "플레이어의 섬 초기화 제한을 초기화합니다."
+  completeChallenge: "완료된 도전 과제를 표시합니다."
+  delete: "섬을 삭제합니다 (블록들이 제거됩니다)."
+  help: "관리자 명령어:"
+  info: "주어진 플레이어의 정보를 열람합니다."
+  infoisland: "가장 가까이에 있는 섬의 정보를 제공합니다."
+  purge: "[날짜] 보다 오래된 활동 중이지 않은 섬들을 삭제합니다."
+  purgeholes: "재 사용할 섬의 구멍이 남게 됩니다."
+  register: "당신의 위치를 플레이어의 섬으로 설정합니다."
+  reload: "파일로부터 설정을 다시 불러옵니다."
+  resetAllChallenges: "플레이어의 도전 과제를 전부 초기화합니다."
+  resetChallenge: "완료되지 않은 도전 과제를 표시합니다."
+  setrange: "섬의 보호 범위를 변경합니다."
+  setspawn: "근접한 위치를 섬 세계의 소환 지점으로 설정합니다."
+  topTen: "상위 10 목록을 수동적으로 갱신합니다."
+  unregister: "섬 블록의 삭제없이 플레이어를 제거합니다"
+adminInfo: 
+  errorNotPartOfTeam: "그 플레이어는 섬 텀의 구성원이 아닙니다."
+  errorNullTeamLeader: "팀 리더가 없습니다!"
+  errorTeamMembersExist: "플레이어는 팀 구성원입니다, 하지만 못합니다!"
+  islandLocation: "섬 위치"
+adminTopTen: 
+  finished: "상위 10 목록 생성을 완료했습니다."
+  generating: "상위 10 목록을 생성 중입니다."
+biome: 
+  help: "자연 환경 GUI를 엽니다."
+  paneltitle: "자연 환경을 선택하세요."
+  set: "섬의 자연 환경을 [biome]로 설정합니다!"
+  unknown: "알 수 없는 자연 환경!"
+  youbought: "[cost] 가격에 구매했습니다!"
+boats: 
+  warning: "지금 보트에서 나가는 건 안전하지 않습니다..."
+challenges: 
+  colors: "종류 별로 도전과제는 다른 색상들로 되어있을 겁니다:"
+  complete: "완료"
+  completeNotRepeatable: "완료됨(반복 불가능함)"
+  completeRepeatable: "완료됨(반복 가능함)"
+  errorIslandLevel: "당신의 섬 레벨이 [level] 정도는 되야 이 도전 과제가 완료될 수 있습니다!"
+  errorItemsNotThere: "모든 요구된 아이템들은 당신의 섬에서 당신과 가까워야 합니다!"
+  errorNotCloseEnough: "당신은 반드시 요구된 모든 아이템들의 10 블록 이내에 같이 서있어야만 합니다."
+  errorNotEnoughItems: "요구된 아이템(들)을 충분히 가지고 있지 않습니다."
+  errorNotOnIsland: "당신은 반드시 당신의 섬에서 그것을 해야 합니다!"
+  errorRewardProblem: "당신에게 보상을 주는 데 문제가 있습니다. 관리자에게 기록을 확인해달라고 요청하세요!"
+  erroryouaremissing: "당신은 손실되었습니다"
+  expReward: "경험치 보상"
+  firstTimeRewards: "첫번째 보상(들)"
+  guititle: "스카이블록 도전과제"
+  help1: "/도전과제 <이름>을 사용하여 도전 과제에 대한 정보를 봅니다."
+  help2: "/도전과제 완료 <이름>을 사용하여 도전과제 완료를 시도합니다."
+  incomplete: "미완료"
+  invalidChallengeName: "잘못된 도전 과제 이름입니다! 사용 /c 더 많은 정보"
+  itemTakeWarning: "이 도전과제를 완료할 때 모든 요구된 아이템을 가져갑니다!"
+  level: "레벨"
+  moneyReward: "돈 보상"
+  name: "도전과제 이름"
+  nameHasCompleted: "[name]님이 [challenge] 도전과제를 완료했습니다!"
+  notRepeatable: "이 도전과제는 반복 가능하지 않습니다!"
+  repeatRewards: "반복 보상(들)"
+  rewards: 보상(s)
+  toComplete: "이 레벨을 잠금 해제하려면 [challengesToDo] 도전과제를 완료하고 레벨이 [thisLevel] 이상이여합니다!"
+  toCompleteUse: "이 도전 과제를 완료하려면, 사용하세요"
+  unknownChallenge: "알 수 없는 도전 과제 이름 (맞춤법을 검사하세요)!"
+  youHaveCompleted: "당신은 [challenge] 도전과제를 완료했습니다!"
+  youHaveNotUnlocked: "당신은 아직 이 도전 과제를 잠금 해제하지 못합니다!"
+  youRepeated: "당신은 [challenge] 도전과제를 반복했습니다!"
+changingObsidiantoLava: "흑요석을 다시 용암으로 변경중입니다. 조심하세요!"
+checkteam: 
+  checkingTeam: "[name]님의 팀을 확인 중 입니다."
+completechallenge: 
+  challangeCompleted: "도전 과제: [challengename]는 [name]님에 의해서 완료되었습니다"
+  errorChallengeDoesNotExist: "도전 과제가 존재하지 않거나, 이미 완료되었습니다."
+confirm: 
+  errorTimeLimitExpired: "시간 제한 초과됨! 명령어를 다시 치세요."
+coop: 
+  help: "일시적으로 플레이어에게 당신의 섬의 모든 권한을 줍니다"
+  invited: "[name]님이 [player]님을 조합원으로 만들었습니다!"
+  madeyoucoopy: "[name]님은 당신을 내쫒아지거나 로그아웃할 때까지 조합원으로 만들었습니다."
+  onyourteam: "플레이어는 이미 당신의 팀에 있습니다!"
+  removed: "[name]님은 당신의 조합원 상태를 제거합니다!"
+  removesuccess: "[name]님은 더 이상 조합원 상태가 아닙니다."
+  success: "[name]님은 이제 당신이 그를 내쫒거나 그가 로그아웃할 때까지 조합원입니다."
+  useexpel: "제거하려면 내쫒으세요."
+delete: 
+  removing: "[name]님의 섬을 제거 중 입니다."
 drankAcid: "drank acid."
- 
-#IslandGuard
+drankAcidAndDied: "just drank acid and died."
+error: 
+  commandNotReady: "당신은 그 명령어를 즉시 사용할 수 없습니다."
+  noIsland: "당신은 섬을 가지고 있지 않습니다!"
+  noIslandOther: "그 플레이어는 섬을 가지고 있지 않습니다!"
+  noPermission: "당신은 그 명령어를 사용할 권한을 가지고 있지 않습니다!"
+  noTeam: "플레이어는 팀 안에 없습니다."
+  offlinePlayer: "그 플레이어는 접속중이지 않거나 존재하지 않습니다."
+  unknownCommand: "알 수 없는 명령어."
+  unknownPlayer: "그 플레이어는 알 수 없습니다."
+expel: 
+  expelled: "당신은 그 섬으로부터 내쫒아졌습니다!"
+  fail: "[name]님을 내쫒을 수 없습니다!"
+  notonisland: "플레이어는 당신의 섬에 불법 침입 중이지 않습니다!"
+  notyourself: "자기 자신을 내쫒을 수 없습니다!"
+  success: "당신은 [name]님을 내쫒았습니다!"
+invite: 
+  errorCantJoinIsland: "당신은 그 섬에 가입할 수 없었습니다, 아마 가득차서 그럴 겁니다."
+  errorCoolDown: "당신은 그 플레이어를 [time]분에 다시 초대할 수 있습니다"
+  errorThatPlayerIsAlreadyInATeam: "그 플레이어는 이미 팀에 있습니다."
+  errorYouCannotInviteYourself: "당신은 자기 자신을 초대할 수 없습니다!"
+  errorYouMustHaveIslandToInvite: "사람을 초대하려할 떄 당신은 반드시 섬에 있어야만 합니다!"
+  errorYourIslandIsFull: "당신의 섬이 가득 찼습니다, 당신은 다른 이들을 초대할 수 없습니다."
+  hasJoinedYourIsland: "[name]님이 당신의 섬에 가입했습니다!"
+  help: "[/섬 초대 <플레이어이름>]를 사용하여 플레이어를 당신의 섬으로 초대합니다."
+  inviteSentTo: "[name]님에게 초대를 보냈습니다."
+  nameHasInvitedYou: "[name]님은 그들의 섬에 가입하라고 초대했습니다!"
+  onlyIslandOwnerCanInvite: "오직 리더만 초대할 수 있습니다!"
+  removingInvite: "당신의 이전 방문을 제거 중입니다."
+  toAcceptOrReject: "초대를 수락하거나 거절합니다."
+  warningYouWillLoseIsland: "경고: 만약 당신이 수락한다면 당신의 현재 섬은 잃게 될 것입니다!"
+  youCanInvite: "당신은 [number]만큼의 플레이어를 더 초대할 수 있습니다."
+  youCannotInvite: "당신은 플레이어를 더 이상 초대할 수 없습니다."
+  youHaveJoinedAnIsland: "당신은 섬에 가입되었습니다! /섬 팀 으로 다른 구성원들을 보세요."
+island: 
+  donate: "tastybento에게 PayPal로 후원을 하려면 이곳을 클릭하세요"
+  errorCouldNotCreateIsland: "당신을 섬을 만들 수 없습니다. 서버 관리자에게 문의해주세요."
+  errorInvalidPlayer: "그 플레이어는 잘못되었거나 섬을 가지고 있지 않습니다!"
+  errorLevelNotReady: "그 명령어를 즉시 사용할 수 없습니다! 몇 초안에 다시 시도해주세요."
+  errorYouDoNotHavePermission: "당신은 그 명령어를 사용할 권한을 가지고 있지 않습니다!"
+  helpAcceptReject: "초대를 수락하거나 거절합니다."
+  helpColor: "&e"
+  helpControlPanel: "섬 GUI를 엽니다."
+  helpExpel: "강제로 플레이어를 섬으로부터 내쫒습니다."
+  helpInvite: "플레이어를 당신의 섬으로 가입하라고 초대합니다."
+  helpIsland: "섬을 시작하거나, 당신의 섬으로 순간이동합니다."
+  helpIslandSpawn: "소환지점으로 이동합니다."
+  helpKick: "당신의 섬으로부터 팀 플레이어를 제거합니다."
+  helpLeave: "다른 플레이어의 섬을 떠납니다."
+  helpLevel: "당신의 섬 레벨을 계산합니다."
+  helpLevelPlayer: "다른 플레이어의 섬 레벨을 봅니다."
+  helpLock: "섬을 잠궈서 방문자들이 들어올 수 없게합니다"
+  helpMakeLeader: "섬을 <플레이어>에게 이전합니다."
+  helpRestart: "당신의 섬을 재 시작하고 기존의 것을 제거합니다."
+  helpSetHome: "/섬 명령어의 순간이동 지점을 설정합니다."
+  helpTeam: "당신의 팀 정보를 봅니다."
+  helpTeleport: "당신의 섬으로 순간이동합니다."
+  helpTop: "상위에 등록된 섬들을 봅니다."
+  helpWarp: "<플레이어>의 환영 표지판으로 워프합니다."
+  helpWarps: "사용가능한 모든 환영-표지판 워프를 나열합니다."
+  islandDeletedLifeboats: "섬 제거됨! 생명의 보트를 향하여!"
+  islandLevelis: "섬의 레벨은"
+  new: "당신을 위한 새로운 섬을 생성하는 중 입니다..."
+  resetConfirm: "타입 /섬 수락 을 [seconds]초 안에 치면 당신의 섬이 삭제되고 재 시작 될 것입니다!"
+  resetMustRemovePlayers: "당신은 재 시작하기 전에 반드시 모든 플레이어를 당신의 섬으로부터 제거해야합니다 (/섬 추방 <플레이어>). 당신의 섬을 사용중인 현재 구성원들의 목록을 보려면 /섬 팀 을 치세요."
+  resetNoMore: "더 이상 당신의 섬을 위한 초기화가 허용되지 않습니다!"
+  resetOnlyOwner: "오직 주인만이 이 섬을 초기화 할 수 있습니다. 스스로 시작하려면 이 섬을 떠나세요 (/섬 떠나기)."
+  resetPleaseWait: "기다려주세요, 새로운 섬을 생성 중 입니다."
+  resetTo: "초기화 제한이 청소되었습니다."
+  resetWait: "당신이 먼저 [time]초를 기다려야 그것을 다시 할 수 있습니다."
+  resetYouHave: "당신의 초기화는 [number]번 남았습니다."
+  subtitle: "by tastybento"
+  teleport: "당신의 섬으로 순간이동 중 입니다. (/섬 도움말 에 더 많은 정보가 있습니다)"
+  title: "A SkyBlock"
+  url: "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZSBJG5J2E3B7U"
 islandProtected: "섬 보호됨."
- 
-#LavaCheck
-lavaTip: "유용한 정보: 만약 흑요석을 만들려고 한게 아니면, 양동이로 다시 퍼낼 수 있습니다."
- 
-#WarpSigns
-warps:
-   #This is the first line of the sign that determines if the sign is a warp sign or not
-   #If you change it, make sure it makes sense. It is case insensitive. Change the tip too.
-   welcomeLine: "[WELCOME]"
-   warpTip: "상단에 [WELCOME]라고 적힌 표지판을 놓아 워프를 만듭니다."
-   success: "성공적으로 환영 표지판을 놓았습니다!"
-   removed: "환영 표지판 제거됨!"
-   signRemoved: "당신의 환영 표지판은 제거되었습니다!"
-   deactivate: "기존 표지판을 비활성화 중입니다!"
-   errorNoRemove: "당신은 자기 자신의 환영 표지판만 제거할 수 있습니다!"
-   errorNoPerm: "당신은 아직 환영 표지판을 놓을 권한을 가지고 있지 않습니다!"
-   errorNoPlace: "당신은 반드시 환영 표지판을 당신의 섬에 놓아야합니다!"
-   errorDuplicate: "안타깝게도 그 위치에는 이미 표지판이 있습니다!"
-   errorDoesNotExist: "그 워프는 존재하지 않습니다!"
-   errorNotReadyYet: "그 워프는 아직 준비되지 않았습니다. 나중에 다시 시도해주세요."
-   errorNotSafe: "그 워프는 지금 안전하지 않습니다. 나중에 다시 시도해주세요."
-   #/island warp help
-   warpToPlayersSign: "<플레이어>의 환영 표지판으로 워프합니다."
-   errorNoWarpsYet: "사용가능한 워프가 아직 없습니다!"
-   warpsAvailable: "아래의 워프는 사용가능합니다."
-   playerWarped: "[name]&2님이 당신의 섬으로 워프했습니다!"
- 
-topTen:
-   header: "상위 10개의 섬들입니다:"
-   errorNotReady: "상위 10 목록이 아직 생성되지 않았습니다!"
-level:
-   islandLevel: "섬 레벨"
-   errornotYourIsland: "오직 리더만 그것을 할 수 있습니다."
-   calculating: "섬 레벨 계산중. 몇 초 소요됩니다..."
-   
-sethome:
-   homeSet: "당신 섬의 집은 당신의 현재 위치로 지정되었습니다."
-   errorNotOnIsland: "당신은 반드시 집을 지정할 당신의 섬 구역에 있어야 합니다!"
-   errorNoIsland: "당신은 섬의 구성원이 아닙니다. 스폰 지점으로 되돌아가는 중!"
- 
- 
-#Challenges
-challenges:
-   youHaveCompleted: "당신은 [challenge] 도전과제를 완료했습니다!"
-   nameHasCompleted: "[name]님이 [challenge] 도전과제를 완료했습니다!"
-   youRepeated: "당신은 [challenge] 도전과제를 반복했습니다!"
-   toComplete: "이 레벨을 잠금 해제하려면 [challengesToDo] 도전과제를 완료하고 레벨이 [thisLevel] 이상이여합니다!"
-   help1: "/도전과제 <이름>을 사용하여 도전 과제에 대한 정보를 봅니다."
-   help2: "/도전과제 완료 <이름>을 사용하여 도전과제 완료를 시도합니다."
-   colors: "종류 별로 도전과제는 다른 색상들로 되어있을 겁니다:"
-   complete: "완료"
-   incomplete: "미완료"
-   completeNotRepeatable: "완료됨(반복 불가능함)"
-   completeRepeatable: "완료됨(반복 가능함)"
-   name: "도전과제 이름"
-   level: "레벨"
-   itemTakeWarning: "이 도전과제를 완료할 때 모든 요구된 아이템을 가져갑니다!"
-   notRepeatable: "이 도전과제는 반복 가능하지 않습니다!"
-   firstTimeRewards: "첫번째 보상(들)"
-   repeatRewards: "반복 보상(들)"
-   expReward: "경험치 보상"
-   moneyReward: "돈 보상"
-   toCompleteUse: "이 도전 과제를 완료하려면, 사용하세요"
-   invalidChallengeName: "잘못된 도전 과제 이름입니다! 사용 /c 더 많은 정보"
-   rewards: "보상(s)"
-   youHaveNotUnlocked: "당신은 아직 이 도전 과제를 잠금 해제하지 못합니다!"
-   unknownChallenge: "알 수 없는 도전 과제 이름 (맞춤법을 검사하세요)!"
-   errorNotEnoughItems: "요구된 아이템(들)을 충분히 가지고 있지 않습니다."
-   errorNotOnIsland: "당신은 반드시 당신의 섬에서 그것을 해야 합니다!"
-   errorNotCloseEnough: "당신은 반드시 요구된 모든 아이템들의 10 블록 이내에 같이 서있어야만 합니다."
-   errorItemsNotThere: "모든 요구된 아이템들은 당신의 섬에서 당신과 가까워야 합니다!"
-   errorIslandLevel: "당신의 섬 레벨이 [level] 정도는 되야 이 도전 과제가 완료될 수 있습니다!"
-   guititle: "스카이블록 도전과제"
-   erroryouaremissing: "당신은 손실되었습니다"
-   errorRewardProblem: "당신에게 보상을 주는 데 문제가 있습니다. 관리자에게 기록을 확인해달라고 요청하세요!"
-#/island
-island:
-   # Titles for V1.8+ servers only. Set to '' to remove.
-   # Colors are fixed as blue and gold for now.
-   # Only works on 1.8+ servers
-   title: "A SkyBlock"
-   subtitle: "by tastybento"
-   # This section is to solicit donations from players. Feel free to set to '' to remove :-)
-   # Only works on 1.8+ servers
-   donate: "tastybento에게 PayPal로 후원을 하려면 이곳을 클릭하세요"
-   url: "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZSBJG5J2E3B7U"
- 
-   teleport: "당신의 섬으로 순간이동 중 입니다. (/섬 도움말 에 더 많은 정보가 있습니다)"
-   new: "당신을 위한 새로운 섬을 생성하는 중 입니다..."
-   errorCouldNotCreateIsland: "당신을 섬을 만들 수 없습니다. 서버 관리자에게 문의해주세요."
-   errorYouDoNotHavePermission: "당신은 그 명령어를 사용할 권한을 가지고 있지 않습니다!"
-   #/island reset
-   resetOnlyOwner: "오직 주인만이 이 섬을 초기화 할 수 있습니다. 스스로 시작하려면 이 섬을 떠나세요 (/섬 떠나기)."
-   resetMustRemovePlayers: "당신은 재 시작하기 전에 반드시 모든 플레이어를 당신의 섬으로부터 제거해야합니다 (/섬 추방 <플레이어>). 당신의 섬을 사용중인 현재 구성원들의 목록을 보려면 /섬 팀 을 치세요."
-   resetPleaseWait: "기다려주세요, 새로운 섬을 생성 중 입니다."
-   #Cool down warning - [time] is number of seconds left
-   resetWait: "당신이 먼저 [time]초를 기다려야 그것을 다시 할 수 있습니다."
-   #Confirm
-   resetConfirm: "타입 /섬 수락 을 [seconds]초 안에 치면 당신의 섬이 삭제되고 재 시작 될 것입니다!"
-   resetYouHave: "당신의 초기화는 [number]번 남았습니다."
-   resetNoMore: "더 이상 당신의 섬을 위한 초기화가 허용되지 않습니다!"
-   resetTo: "초기화 제한이 청소되었습니다."
- 
-   #/island help
-   #/island
-   helpIsland: "섬을 시작하거나, 당신의 섬으로 순간이동합니다."
-   helpTeleport: "당신의 섬으로 순간이동합니다."
-   helpIslandSpawn: "소환지점으로 이동합니다."
-   helpControlPanel: "섬 GUI를 엽니다."
-   #/island restart
-   helpRestart: "당신의 섬을 재 시작하고 기존의 것을 제거합니다."
-   islandDeletedLifeboats: "섬 제거됨! 생명의 보트를 향하여!"
-   #/island sethome
-   helpSetHome: "/섬 명령어의 순간이동 지점을 설정합니다."
-   #/island level
-   helpLevel: "당신의 섬 레벨을 계산합니다."
-   #/island level <player>
-   helpLevelPlayer: "다른 플레이어의 섬 레벨을 봅니다."
-   #/island top:
-   helpTop: "상위에 등록된 섬들을 봅니다."
-   #/island warps:
-   helpWarps: "사용가능한 모든 환영-표지판 워프를 나열합니다."
-   #/island warp <player>
-   helpWarp: "<플레이어>의 환영 표지판으로 워프합니다."
-   #/island team
-   helpTeam: "당신의 팀 정보를 봅니다."
-   #/island invite <player>:
-   helpInvite: "플레이어를 당신의 섬으로 가입하라고 초대합니다."
-   #/island leave:
-   helpLeave: "다른 플레이어의 섬을 떠납니다."
-   #/island kick <player>
-   helpKick: "당신의 섬으로부터 팀 플레이어를 제거합니다."
-   #/island <accept/reject>
-   helpAcceptReject: "초대를 수락하거나 거절합니다."
-   #/island makeleader <player>
-   helpMakeLeader: "섬을 <플레이어>에게 이전합니다."
-   #Level
-   errorLevelNotReady: "그 명령어를 즉시 사용할 수 없습니다! 몇 초안에 다시 시도해주세요."
-   errorInvalidPlayer: "그 플레이어는 잘못되었거나 섬을 가지고 있지 않습니다!"
-   islandLevelis: "섬의 레벨은"
-   #/island expel <player>
-   helpExpel: "강제로 플레이어를 섬으로부터 내쫒습니다."
-   helpLock: "섬을 잠궈서 방문자들이 들어올 수 없게합니다"
-   # The color that is placed before the /commands in /island help
-   # See http://ess.khhq.net/mc/ for a list
-   helpColor: "&e"
- 
-###################
-#/island commands #
-###################
- 
-#invite
-invite:
-   help: "[/섬 초대 <플레이어이름>]를 사용하여 플레이어를 당신의 섬으로 초대합니다."
-   youCanInvite: "당신은 [number]만큼의 플레이어를 더 초대할 수 있습니다."
-   youCannotInvite: "당신은 플레이어를 더 이상 초대할 수 없습니다."
-   onlyIslandOwnerCanInvite: "오직 리더만 초대할 수 있습니다!"
-   youHaveJoinedAnIsland: "당신은 섬에 가입되었습니다! /섬 팀 으로 다른 구성원들을 보세요."
-   hasJoinedYourIsland: "[name]님이 당신의 섬에 가입했습니다!"
-   errorCantJoinIsland: "당신은 그 섬에 가입할 수 없었습니다, 아마 가득차서 그럴 겁니다."
-   errorYouMustHaveIslandToInvite: "사람을 초대하려할 떄 당신은 반드시 섬에 있어야만 합니다!"
-   errorYouCannotInviteYourself: "당신은 자기 자신을 초대할 수 없습니다!"
-   removingInvite: "당신의 이전 방문을 제거 중입니다."
-   inviteSentTo: "[name]님에게 초대를 보냈습니다."
-   nameHasInvitedYou: "[name]님은 그들의 섬에 가입하라고 초대했습니다!"
-   toAcceptOrReject: "초대를 수락하거나 거절합니다."
-   warningYouWillLoseIsland: "경고: 만약 당신이 수락한다면 당신의 현재 섬은 잃게 될 것입니다!"
-   errorYourIslandIsFull: "당신의 섬이 가득 찼습니다, 당신은 다른 이들을 초대할 수 없습니다."
-   #"That player is already with a group on an island."
-   errorThatPlayerIsAlreadyInATeam: "그 플레이어는 이미 팀에 있습니다."
-   errorCoolDown: "당신은 그 플레이어를 [time]분에 다시 초대할 수 있습니다"
- 
-#reject
-reject:
-   youHaveRejectedInvitation: "당신은 섬에 가입하라는 초대를 거절했습니다."
-   nameHasRejectedInvite: "[name]님은 당신의 섬 초대를 거절했습니다!"
-   youHaveNotBeenInvited: "당신은 팀 가입을 초대받은 적이 없습니다."
- 
-#leave
-leave:
-  errorYouAreTheLeader: "당신은 리더이기 때문에 떠날 수 없습니다, /섬 리더주기 <플레이어>를 사용하여 먼저 섬을 이전하세요."
-  youHaveLeftTheIsland: "당신은 섬을 떠나고 플레이어 소환지점으로 되돌아갑니다."
-  nameHasLeftYourIsland: "[name]님은 당신의 섬을 떠났습니다!"
-  errorYouCannotLeaveIsland: "당신이 단 한 사람이였다면 당신은 섬을 떠날 수 없습니다. 만약 당신이 새로운 것을 원한다면 /섬 재시작 을 사용하세요!"
-  errorYouMustBeInWorld: "당신은 당신으 팀을 떠날려면 반드시 스카이블록 세계에 있어야합니다!"
-  errorLeadersCannotLeave: "리더는 섬을 떠날 수 없습니다. 누군가가 리더를 대신하게 만들려면 먼저 /섬 리더주기 <플레이어>를 사용해주세요"
- 
-#team
-team:
-   listingMembers: "당신의 섬 구성원 목록"
- 
- 
-#kick / remove
-kick:
-  errorPlayerNotInTeam: "그 플레이어는 당신의 팀에 없습니다!"
-  nameRemovedYou: "[name]님은 그들의 섬으로부터 제거당했습니다!"
-  nameRemoved: "[name]님은 섬으로부터 제거당했습니다."
+kick: 
+  errorNoTeam: "당신은 팀을 가지고 있지 않습니다!"
   errorNotPartOfTeam: "그 플레이어는 당신의 섬 팀 중 한 명이 아닙니다!"
   errorOnlyLeaderCan: "오직 리더는 섬에서 사람을 추방할 수 있습니다!"
-  errorNoTeam: "당신은 팀을 가지고 있지 않습니다!"
+  errorPlayerNotInTeam: "그 플레이어는 당신의 팀에 없습니다!"
+  nameRemoved: "[name]님은 섬으로부터 제거당했습니다."
+  nameRemovedYou: "[name]님은 그들의 섬으로부터 제거당했습니다!"
   wrongWorld: "당신은 이 세계에서 그것을 할 수 없습니다."
- 
-#makeleader
-makeleader:
-   errorPlayerMustBeOnline: "그 플레이어가 반드시 접속중이여야 섬을 이전됩니다."
-   errorYouMustBeInTeam: "당신은 반드시 당신의 섬을 이전할 팀 안에 있어야합니다."
-   errorRemoveAllPlayersFirst: "당신이 이전할 플레이어를 제외한 모든 플레이어를 당신의 팀으로부터 제거합니다."
-   youAreNowTheOwner: "당신은 이제 당신의 섬의 주인입니다."
-   nameIsNowTheOwner: "[name]님이 이제 당신의 섬의 주인입니다!"
-   errorThatPlayerIsNotInTeam: "그 플레이어는 당신의 섬 팀의 일부가 아닙니다!"
-   errorNotYourIsland: "이것은 당신의 섬이 아닙니다, 그래서 당신은 그것을 어디에도 줄 수 없습니다!"
-   errorGeneralError: "리더를 바꿀 수 없습니다."
- 
-#minishop
-minishop:
-   title: "&E간이상점"
-   islandhelpMiniShop: "간이상점을 엽니다."
-   buy: "구매(좌 클릭)"
-   sell: "판매(우 클릭)"
-   youcannotafford: "당신은 [description] 의 여유가 없습니다!"
-   youbought: "당신은 [number] [description]을/를 [price]에 구매했습니다"
-   yousold: "당신은 [number] [description] 을/를 [price]에 판매했습니다"
-   buyproblem: "[description]를 구매하는 데 문제가 있습니다"
-   sellproblem: "당신은 [description]을/를 판매하기에 충분히 가지고 있지 않습니다."
-   outofstock: "재고가 없습니다."
- 
-################################
-#Admin commands that use /acid #
-################################
- 
-#Help
-adminHelp:
-   help: "관리자 명령어:"
-   reload: "파일로부터 설정을 다시 불러옵니다."
-   topTen: "상위 10 목록을 수동적으로 갱신합니다."
-   register: "당신의 위치를 플레이어의 섬으로 설정합니다."
-   unregister: "섬 블록의 삭제없이 플레이어를 제거합니다"
-   delete: "섬을 삭제합니다 (블록들이 제거됩니다)."
-   completeChallenge: "완료된 도전 과제를 표시합니다."
-   resetChallenge: "완료되지 않은 도전 과제를 표시합니다."
-   resetAllChallenges: "플레이어의 도전 과제를 전부 초기화합니다."
-   purge: "[날짜] 보다 오래된 활동 중이지 않은 섬들을 삭제합니다."
-   purgeholes: "재 사용할 섬의 구멍이 남게 됩니다."
-   info: "주어진 플레이어의 정보를 열람합니다."
-   infoisland: "가장 가까이에 있는 섬의 정보를 제공합니다."
-   clearreset: "플레이어의 섬 초기화 제한을 초기화합니다."
-   setspawn: "근접한 위치를 섬 세계의 소환 지점으로 설정합니다."
-   setrange: "섬의 보호 범위를 변경합니다."
- 
-#acid reload
-reload:
-   configReloaded: "파일으로부터 설정이 다시 불러와졌습니다."
-#topten
-adminTopTen:
-   generating: "상위 10 목록을 생성 중입니다."
-   finished: "상위 10 목록 생성을 완료했습니다."
- 
-#purge
-purge:
-   #"A purge is already running, please wait for it to finish!"
-   alreadyRunning: "초기화는 이미 구동 중 입니다, 완료되기를 기다려주세요!"
-   usage: "사용법: /[label] 초기화 [날짜]"
-   calculating: "[time] 일보다 오래된 활동중이지 않은 섬들을 계산 중 입니다."
-   noneFound: "제거할 활동 중이지 않은 섬들이 없습니다."
-   thisWillRemove: "[number] 개의 활동 중이지 않은 섬들이 제거될 것입니다!"
-   warning: "위험! 이것을 서버에 플레이어가 있는 동안에 구동하지 마세요! 세계의 백업을 만드세요!"
-   typeConfirm: "종류 /[label] 확인 을 10초내에 치면 처리됩니다."
-   purgeCancelled: "초기화 취소됨."
-   finished: "활동 중이지 않은 섬들의 초기화가 끝났습니다."
-   removingName: "초기화: [name]님의 섬을 초기화 중"
- 
-#confirm
-confirm:
-   errorTimeLimitExpired: "시간 제한 초과됨! 명령어를 다시 치세요."
- 
-#delete
-delete:
-   removing: "[name]님의 섬을 제거 중 입니다."
- 
-#register
-register:
-   settingIsland: "가장 가까운 섬을 [name]님의 섬으로 설정합니다."
-   errorBedrockNotFound: "섬에 등록이 가능하지 않습니다!"
- 
-#info
-adminInfo:
-   islandLocation: "섬 위치"
-   errorNotPartOfTeam: "그 플레이어는 섬 텀의 구성원이 아닙니다."
-   errorNullTeamLeader: "팀 리더가 없습니다!"
-   errorTeamMembersExist: "플레이어는 팀 구성원입니다, 하지만 못합니다!"
- 
-#resetallchallenges
-resetallchallenges:
-   success: "[name]님의 모든 도전 과제가 초기화 되었습니다."
- 
-#checkteam
-checkteam:
-   checkingTeam: "[name]님의 팀을 확인 중 입니다."
- 
-#completechallenge
-completechallenge:
-   errorChallengeDoesNotExist: "도전 과제가 존재하지 않거나, 이미 완료되었습니다."
-   challangeCompleted: "도전 과제: [challengename]는 [name]님에 의해서 완료되었습니다"
- 
-#resetchallenge
-resetchallenge:
-   errorChallengeDoesNotExist: "도전 과제가 존재하지 않거나, 이미 완료되었습니다."
-   challengeReset: "도전 과제: [challengename]는 [name]님에 의해서 초기화되었습니다."
- 
-#News
-news:
-   headline: "[스카이블록 소식] 당신이 접속중이지 않을 동안..."
- 
- 
- 
- 
-#Nether
-nether:
-   spawnisprotected: "지옥 소환 지점은 보호되어 있습니다."
- 
-# Ultra safe boats
-boats:
-   warning: "지금 보트에서 나가는 건 안전하지 않습니다..."
- 
-#Starter sign
-# [player] is replaced with the player's name
-# ChatColors can be used with &
-sign:
-   line1: "&1[A Skyblock]"
-   line2: "[player]"
-   line3: "Do not fall!"
-   line4: "Beware!"
- 
-biome:
-   set: "섬의 자연 환경을 [biome]로 설정합니다!"
-   help: "자연 환경 GUI를 엽니다."
-   unknown: "알 수 없는 자연 환경!"
-   youbought: "[cost] 가격에 구매했습니다!"
-   paneltitle: "자연 환경을 선택하세요."
-   
-expel:
-   notonisland: "플레이어는 당신의 섬에 불법 침입 중이지 않습니다!"
-   success: "당신은 [name]님을 내쫒았습니다!"
-   expelled: "당신은 그 섬으로부터 내쫒아졌습니다!"
-   fail: "[name]님을 내쫒을 수 없습니다!"
-   notyourself: "자기 자신을 내쫒을 수 없습니다!"
- 
-moblimits:
-   error: "섬의 출산이 제한인 [number]에 도달하였습니다!"
- 
-coop:
-   help: "일시적으로 플레이어에게 당신의 섬의 모든 권한을 줍니다"
-   removed: "[name]님은 당신의 조합원 상태를 제거합니다!"
-   removesuccess: "[name]님은 더 이상 조합원 상태가 아닙니다."
-   success: "[name]님은 이제 당신이 그를 내쫒거나 그가 로그아웃할 때까지 조합원입니다."
-   madeyoucoopy: "[name]님은 당신을 내쫒아지거나 로그아웃할 때까지 조합원으로 만들었습니다."
-   onyourteam: "플레이어는 이미 당신의 팀에 있습니다!"
-   invited: "[name]님이 [player]님을 조합원으로 만들었습니다!"
-   useexpel: "제거하려면 내쫒으세요."
- 
-lock:
-   islandlocked: "섬이 방문자들에게 잠겼습니다"
-   nowentering: "이제 [name]님의 섬으로 들어갑니다"
-   nowleaving: "이제 [name]님의 섬에서 나갑니다"
-   locking: "잠겨진 섬"
-   unlocking: "잠겨지지 않은 섬"
-   enteringspawn: "소환 지점으로 들어가는 중"
-   leavingspawn: "소환 지점에서 떠나는 중"
+lavaTip: "유용한 정보: 만약 흑요석을 만들려고 한게 아니면, 양동이로 다시 퍼낼 수 있습니다."
+leave: 
+  errorLeadersCannotLeave: "리더는 섬을 떠날 수 없습니다. 누군가가 리더를 대신하게 만들려면 먼저 /섬 리더주기 <플레이어>를 사용해주세요"
+  errorYouAreTheLeader: "당신은 리더이기 때문에 떠날 수 없습니다, /섬 리더주기 <플레이어>를 사용하여 먼저 섬을 이전하세요."
+  errorYouCannotLeaveIsland: "당신이 단 한 사람이였다면 당신은 섬을 떠날 수 없습니다. 만약 당신이 새로운 것을 원한다면 /섬 재시작 을 사용하세요!"
+  errorYouMustBeInWorld: "당신은 당신으 팀을 떠날려면 반드시 스카이블록 세계에 있어야합니다!"
+  nameHasLeftYourIsland: "[name]님은 당신의 섬을 떠났습니다!"
+  youHaveLeftTheIsland: "당신은 섬을 떠나고 플레이어 소환지점으로 되돌아갑니다."
+level: 
+  calculating: "섬 레벨 계산중. 몇 초 소요됩니다..."
+  errornotYourIsland: "오직 리더만 그것을 할 수 있습니다."
+  islandLevel: "섬 레벨"
+lock: 
+  enteringspawn: "소환 지점으로 들어가는 중"
+  islandlocked: "섬이 방문자들에게 잠겼습니다"
+  leavingspawn: "소환 지점에서 떠나는 중"
+  locking: "잠겨진 섬"
+  nowentering: "이제 [name]님의 섬으로 들어갑니다"
+  nowleaving: "이제 [name]님의 섬에서 나갑니다"
+  unlocking: "잠겨지지 않은 섬"
+makeleader: 
+  errorGeneralError: "리더를 바꿀 수 없습니다."
+  errorNotYourIsland: "이것은 당신의 섬이 아닙니다, 그래서 당신은 그것을 어디에도 줄 수 없습니다!"
+  errorPlayerMustBeOnline: "그 플레이어가 반드시 접속중이여야 섬을 이전됩니다."
+  errorRemoveAllPlayersFirst: "당신이 이전할 플레이어를 제외한 모든 플레이어를 당신의 팀으로부터 제거합니다."
+  errorThatPlayerIsNotInTeam: "그 플레이어는 당신의 섬 팀의 일부가 아닙니다!"
+  errorYouMustBeInTeam: "당신은 반드시 당신의 섬을 이전할 팀 안에 있어야합니다."
+  nameIsNowTheOwner: "[name]님이 이제 당신의 섬의 주인입니다!"
+  youAreNowTheOwner: "당신은 이제 당신의 섬의 주인입니다."
+minishop: 
+  buy: "구매(좌 클릭)"
+  buyproblem: "[description]를 구매하는 데 문제가 있습니다"
+  islandhelpMiniShop: "간이상점을 엽니다."
+  outofstock: "재고가 없습니다."
+  sell: "판매(우 클릭)"
+  sellproblem: "당신은 [description]을/를 판매하기에 충분히 가지고 있지 않습니다."
+  title: "&E간이상점"
+  youbought: "당신은 [number] [description]을/를 [price]에 구매했습니다"
+  youcannotafford: "당신은 [description] 의 여유가 없습니다!"
+  yousold: "당신은 [number] [description] 을/를 [price]에 판매했습니다"
+moblimits: 
+  error: "섬의 출산이 제한인 [number]에 도달하였습니다!"
+nether: 
+  spawnisprotected: "지옥 소환 지점은 보호되어 있습니다."
+news: 
+  headline: "[스카이블록 소식] 당신이 접속중이지 않을 동안..."
+purge: 
+  alreadyRunning: "초기화는 이미 구동 중 입니다, 완료되기를 기다려주세요!"
+  calculating: "[time] 일보다 오래된 활동중이지 않은 섬들을 계산 중 입니다."
+  finished: "활동 중이지 않은 섬들의 초기화가 끝났습니다."
+  noneFound: "제거할 활동 중이지 않은 섬들이 없습니다."
+  purgeCancelled: "초기화 취소됨."
+  removingName: "초기화: [name]님의 섬을 초기화 중"
+  thisWillRemove: "[number] 개의 활동 중이지 않은 섬들이 제거될 것입니다!"
+  typeConfirm: "종류 /[label] 확인 을 10초내에 치면 처리됩니다."
+  usage: "사용법: /[label] 초기화 [날짜]"
+  warning: "위험! 이것을 서버에 플레이어가 있는 동안에 구동하지 마세요! 세계의 백업을 만드세요!"
+register: 
+  errorBedrockNotFound: "섬에 등록이 가능하지 않습니다!"
+  settingIsland: "가장 가까운 섬을 [name]님의 섬으로 설정합니다."
+reject: 
+  nameHasRejectedInvite: "[name]님은 당신의 섬 초대를 거절했습니다!"
+  youHaveNotBeenInvited: "당신은 팀 가입을 초대받은 적이 없습니다."
+  youHaveRejectedInvitation: "당신은 섬에 가입하라는 초대를 거절했습니다."
+reload: 
+  configReloaded: "파일으로부터 설정이 다시 불러와졌습니다."
+resetallchallenges: 
+  success: "[name]님의 모든 도전 과제가 초기화 되었습니다."
+resetchallenge: 
+  challengeReset: "도전 과제: [challengename]는 [name]님에 의해서 초기화되었습니다."
+  errorChallengeDoesNotExist: "도전 과제가 존재하지 않거나, 이미 완료되었습니다."
+schematics: 
+  title: "섬 선택"
+sethome: 
+  errorNoIsland: "당신은 섬의 구성원이 아닙니다. 스폰 지점으로 되돌아가는 중!"
+  errorNotOnIsland: "당신은 반드시 집을 지정할 당신의 섬 구역에 있어야 합니다!"
+  homeSet: "당신 섬의 집은 당신의 현재 위치로 지정되었습니다."
+sign: 
+  line1: "&1[A Skyblock]"
+  line2: "[player]"
+  line3: "Do not fall!"
+  line4: "Beware!"
+team: 
+  listingMembers: "당신의 섬 구성원 목록"
+topTen: 
+  errorNotReady: "상위 10 목록이 아직 생성되지 않았습니다!"
+  header: "상위 10개의 섬들입니다:"
+warps: 
+  deactivate: "기존 표지판을 비활성화 중입니다!"
+  errorDoesNotExist: "그 워프는 존재하지 않습니다!"
+  errorDuplicate: "안타깝게도 그 위치에는 이미 표지판이 있습니다!"
+  errorNoPerm: "당신은 아직 환영 표지판을 놓을 권한을 가지고 있지 않습니다!"
+  errorNoPlace: "당신은 반드시 환영 표지판을 당신의 섬에 놓아야합니다!"
+  errorNoRemove: "당신은 자기 자신의 환영 표지판만 제거할 수 있습니다!"
+  errorNoWarpsYet: "사용가능한 워프가 아직 없습니다!"
+  errorNotReadyYet: "그 워프는 아직 준비되지 않았습니다. 나중에 다시 시도해주세요."
+  errorNotSafe: "그 워프는 지금 안전하지 않습니다. 나중에 다시 시도해주세요."
+  playerWarped: "[name]&2님이 당신의 섬으로 워프했습니다!"
+  removed: "환영 표지판 제거됨!"
+  signRemoved: "당신의 환영 표지판은 제거되었습니다!"
+  success: "성공적으로 환영 표지판을 놓았습니다!"
+  warpTip: "상단에 [WELCOME]라고 적힌 표지판을 놓아 워프를 만듭니다."
+  warpToPlayersSign: "<플레이어>의 환영 표지판으로 워프합니다."
+  warpsAvailable: "아래의 워프는 사용가능합니다."
+  welcomeLine: "[WELCOME]"
 
-schematics:
-   title: "섬 선택"

@@ -186,7 +186,9 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.setrange") || player.isOp()) {
 		player.sendMessage(ChatColor.YELLOW + "/" + label + " setrange:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpSetRange);
 	    }
-
+	    if (Settings.teamChat && VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.teamchatspy") || player.isOp()) {
+		player.sendMessage(ChatColor.YELLOW + "/" + label + " spy:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpTeamChatSpy);
+	    }
 	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.team") || player.isOp()) {
 		sender.sendMessage(ChatColor.YELLOW + "/" + label + " team kick <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpkick);
 		sender.sendMessage(ChatColor.YELLOW + "/" + label + " team add <player> <leader>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpadd);
@@ -250,7 +252,21 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 	    help(sender, label);
 	    return true;
 	case 1:
-	    if (split[0].equalsIgnoreCase("lock")) {
+	    if (Settings.teamChat && split[0].equalsIgnoreCase("spy")) {
+		if (!(sender instanceof Player)) {
+		    sender.sendMessage(ChatColor.RED + plugin.myLocale().adminLockerrorInGame);
+		    return true;
+		}
+		player = (Player) sender;
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.teamchatspy") || player.isOp()) {
+		    if (plugin.getChatListener().toggleSpy(player.getUniqueId())) {
+			sender.sendMessage(ChatColor.GREEN + plugin.myLocale().teamChatStatusOn);
+		    } else {
+			sender.sendMessage(ChatColor.GREEN + plugin.myLocale().teamChatStatusOff);
+		    }
+		    return true;
+		}
+	    } else if (split[0].equalsIgnoreCase("lock")) {
 		// Just /asadmin lock
 		if (!(sender instanceof Player)) {
 		    sender.sendMessage(ChatColor.RED + plugin.myLocale().adminLockerrorInGame);
@@ -907,7 +923,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 					// Check the level
 					if (plugin.getPlayers().getIslandLevel(removeList.get(0)) < Settings.abandonedIslandLevel) {
 					    sender.sendMessage(ChatColor.YELLOW + "[" + (total - removeList.size() + 1) + "/" + total + "] "
-							+ plugin.myLocale().purgeremovingName.replace("[name]", plugin.getPlayers().getName(removeList.get(0))));
+						    + plugin.myLocale().purgeremovingName.replace("[name]", plugin.getPlayers().getName(removeList.get(0))));
 					    plugin.deletePlayerIsland(removeList.get(0), true);
 					} 
 					removeList.remove(0);
@@ -1898,6 +1914,9 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 		}
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.signadmin") || player.isOp()) {
 		    options.add("resetsign");
+		}
+		if (Settings.teamChat && VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.teamchatspy") || player.isOp()) {
+		    options.add("spy");
 		}
 		break;
 	    case 2:

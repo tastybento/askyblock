@@ -33,480 +33,361 @@
 #                      翻译错误反馈                           #
 # 发送邮件反馈给我,邮件地址: admin@915mc.com                  #
 ###############################################################
-
-################
-#General Errors#
-################
-error:
-   #"Error: Invalid Player (check spelling)"
-   unknownPlayer: "§c未知玩家."
-   #"You can't access that command!"
-   #"/acid is a command for mods and ops only"
-   noPermission: "§c你没有权限那样做!"
-   noIsland: "§c你还没有获得一个岛屿!"
-   noIslandOther: "§c玩家未拥有岛屿!"
-   notOnIsland: "§c你必须在你的岛屿上使用这个指令."
-   commandNotReady: "§c你现在不能使用此命令."
-   offlinePlayer: "§c玩家不在线或不存在."
-   unknownCommand: "§c未知指令."
-   noTeam: "§c玩家不再团队中."
-   wrongWorld: "§c你无法在当前世界这样操作,请返回你的岛屿."
-
-#AcidEffect
-changingObsidiantoLava: "§a成功将黑曜石变为岩浆,§c请当心!"
-
-#AcidInventory
-# The warning that goes on the acid bottles or buckets. Lines are split by \n
-acidLore: "§b海水受到了§c核污染!\n!\n§c一切水源无法饮用!"
-acidBucket: "§5污染的水桶"
+--- 
 acidBottle: "§5受到辐射的水瓶"
-drankAcidAndDied: "§e饮用受到辐射的水而死亡."
-drankAcid: "§e饮用辐射水源."
-
-#IslandGuard
-islandProtected: "岛屿保护."
-targetInPVPArea: "目标处于禁止PVP区域!"
-# The following are strings for the Settings panel
-islandguardsettings:
-  title: "§e岛屿保护设置"
-  allowed: "§a允许"
-  disallowed: "§c不允许"
-  anvil: "§6是否使用铁毡"
-  armorstand: "§6是否使用盔甲架"
-  beacon: "§6是否允许使用信标"
-  bed: "§6是否允许使用床"
-  breakblocks: "§6是否允许破坏"
-  breeding: "§6是否允许喂养"
-  brewingstand: "§6是否允许酿造药水"
-  bucket: "§6是否允许使用桶"
-  chest: "§6是否允许使用箱子"
-  chestdamage: "§6TNT能否破坏箱子"
-  workbench: "§6是否允许使用合成台"
-  croptrample: "§6是否允许践踏农作物"
-  door: "§6是否允许使用门"
-  enchantingtable: "§6是否允许使用附魔台"
-  enderpearl: "§6是否允许使用末影珍珠"
-  fire: "§6是否允许使用打火石"
-  furnace: "§6是否允许使用熔炉"
-  gate: "§6是否允许使用栅栏门"
-  hurtanimals: "§6是否允许攻击动物"
-  hurtmonsters: "§6是否允许攻击怪物"
-  leash: "§6是否允许使用栓绳"
-  lever: "§6是否允许使用开关按钮"
-  spawnegg: "§6是否允许使用刷怪蛋"
-  jukebox: "§6是否允许使用唱片机"
-  placeblocks: "§6是否允许放置方块"
-  portaluse: "§6是否允许使用传送门"
-  pvp: "§6是否允许PVP"
-  netherpvp: "§6是否允许地狱PVP"
-  redstone: "§6是否允许使用红石"
-  shears: "§6是否允许使用剪刀"
-  teleportwhenfalling: "§6下落时是否允许传送"
-  TNTdamage: "§6是否开启TNT爆炸伤害"
-  visitordrop: "§6是否允许访问者掉落物品"
-  visitorpickup: "§6是否允许访问者捡起物品"
-  visitorkeepitems: "§6访问者死亡是否保存背包"
-  creeperdamage: "§6苦力怕伤害"
-  creepergriefing: "§6苦力怕破坏"
-  withergriefing: "§6凋零破坏"
-
-#LavaCheck
-lavaTip: "§a§l温馨提示: §c如果岩浆变成了黑曜石,可以使用铁桶右键变回岩浆."
-
-#WarpSigns
-warps:
-   #This is the first line of the sign that determines if the sign is a warp sign or not
-   #If you change it, make sure it makes sense. It is case insensitive. Change the tip too.
-   welcomeLine: "[传送点]"
-   warpTip: "§e放置一个木牌,并且在木牌的第一行输入§b[传送点]§e以设置一个岛屿传送点."
-   success: "§a空岛传送点成功创建!"
-   removed: "§c传送点已经移除!"
-   signRemoved: "§c你的岛屿传送点已经移除!"
-   deactivate: "§b旧的传送点被替换!"
-   errorNoRemove: "§c你只能移除你自己的传送点!"
-   errorNoPerm: "§c你没有权限创建岛屿传送点!"
-   errorNoPlace: "§c你只能够在你的岛屿上创建传送点!"
-   errorDuplicate: "§6当前位置已经存在传送点!"
-   errorDoesNotExist: "§c传送点不存在!"
-   errorNotReadyYet: "§c传送点未准备好.请稍后再试."
-   errorNotSafe: "§c传送点不安全.请稍后再试."
-   #/island warp help
-   warpToPlayersSign: "§e传送到玩家: §b<player>§e的岛屿传送点."
-   errorNoWarpsYet: "§c没有任何传送点!"
-   warpsAvailable: "§a以下的传送点可用"
-   playerWarped: "§e[name] &e传送到了你的岛屿!"
-   next: "§a下一页"
-   previous: "§a上一页"
-   title: "§b岛屿传送点"
-
-#AcidIsland
-topTen:
-   header: "§e排名前10的岛屿:"
-   errorNotReady: "§c前十名单未生成!"
-level:
-   islandLevel: "§e岛屿等级"
-   errornotYourIsland: "§c只有岛屿主人才能使用."
-   calculating: "§c正在计算岛屿等级,需要等待一段时间.请稍后..."
-   
-sethome:
-   homeSet: "§a已经设置家在你当前位置."
-   errorNotOnIsland: "§c你只能在你的岛屿范围内设置!"
-   errorNoIsland: "§c你不是岛屿的一员. 请返回你的岛屿!"
-   errorNumHomes: "§c家只能设置§e1- [max]"
-
-#Challenges
-challenges:
-   youHaveCompleted: "§6你完成了§e [challenge] §6挑战!"
-   nameHasCompleted: "§6恭喜玩家§e§l [name] §6完成了 §e[challenge] §6挑战!"
-   youRepeated: "§6你重复完成了§e§l [challenge] §6挑战!"
-   toComplete: "§a请至少再完成§e§l [challengesToDo] §a个等级为§c§l [thisLevel] §a的挑战来解锁当前等级挑战!"
-   help1: "§6输入§e /c §b<挑战名字> §6来查询一个挑战的信息."
-   help2: "§6输入§e /c complete §b<挑战名字> §6完成一个挑战."
-   colors: "§a任务将根据不同难度显示不同颜色:"
-   complete: "§a已完成"
-   incomplete: "§c未完成"
-   completeNotRepeatable: "§e已完成§4(不可重复)"
-   completeRepeatable: "§e已完成§a(可重复)"
-   name: "§a挑战名称"
-   level: "§6等级§d"
-   itemTakeWarning: "§c当你完成挑战的时候所有挑战所需物品将会§e§l消失!"
-   notRepeatable: "§c这个挑战不可重复!"
-   firstTimeRewards: "§b首次完成奖励"
-   repeatRewards: "§b重复奖励"
-   expReward: "§b经验奖励"
-   moneyReward: "§b经济奖励"
-   toCompleteUse: "§b完成这个挑战,输入"
-   invalidChallengeName: "§c未知挑战名! 输入 §e/c help §c获取更多信息"
-   rewards: "§b奖励"
-   youHaveNotUnlocked: "§c你还没有解锁当前挑战!"
-   unknownChallenge: "§c未知挑战名 §b(请检查拼写)!"
-   errorNotEnoughItems: "§c你没有足够的所需物品"
-   errorNotOnIsland: "§c你只能够在你的岛屿上那样做!"
-   errorNotCloseEnough: "§c任务所需物品必须在你十格范围内."
-   errorItemsNotThere: "§c所有任务所需物品必须在你的岛上!"
-   errorIslandLevel: "§c你的岛屿等级必须达到 §e[level]级§c才能够完成这个任务!"
-   guititle: "§e挑战"
-   erroryouaremissing: "§c未找到你的信息"
-   errorRewardProblem: "§c奖励你物品的时候发生了未知错误,请联系管理员!"
-   completedtimes: "§a完成次数§e [donetimes] §a/§6 [maxtimes]"
-   maxreached: "§c最大完成§e [donetimes] §c/§6 [maxtimes]"
-
-#/island
-island:
-   # Titles for V1.8+ servers only. Set to '' to remove.
-   # Colors are fixed as blue and gold for now.
-   # Only works on 1.8+ servers
-   title: "§c§l欢迎加入末日岛屿"
-   subtitle: "§a§l请务必努力生存下去"
-   # This section is to solicit donations from players. Feel free to set to '' to remove :-)
-   donate: "§a本汉化由§e§l梦之地§a提供"
-   url: "§b§lwww.915mc.com"
-
-   teleport: "§b[岛屿娘]:§6欢饮回来~我的主人. §e(输入§c/island help §e获取更多帮助)"
-   cannotTeleport: "§c你无法在下落过程中进行传送!"
-   new: "§b正在为你创建一个新的岛屿..."
-   errorCouldNotCreateIsland: "§c无法为你创建岛屿. 请联系管理员."
-   errorYouDoNotHavePermission: "§c你没有权限那样做!"
-   #/island reset
-   resetOnlyOwner: "§c只有岛屿的主人才能那样做. 请输入§e/island leave§c离开当前团队,然后重新你的岛屿生涯."
-   resetMustRemovePlayers: "§c你只有将岛屿§4所有成员§e踢出§c才能重新开始 §b(/island kick §c<玩家ID>§b). §a输入§e/island team §a可以查询成员列表."
-   resetPleaseWait: "§b请稍等,正在创建新的岛屿"
-   #Cool down warning - [time] is number of seconds left
-   resetWait: "§c你需要等待 §e[time] 秒§c才能那样做."
-   #Confirm
-   resetConfirm: "§c请在§e[seconds]§c秒内输入§e/island confirm §c来确认你的操作,然后重新开始!"
-   resetYouHave: "§6你还有§b [number] §6次重新开始的机会."
-   resetNoMore: "§c你无法再重新开始了!"
-   resetTo: "§c清除重新开始限制"
-
-   #/island help
-   #/island
-   helpIsland: "§a开始岛屿生涯,§e或者回到你的岛屿."
-   helpTeleport: "§a传送到你的岛屿."
-   helpIslandSpawn: "§a回到岛屿出生点."
-   helpControlPanel: "§a打开岛屿帮助界面."
-   #/island restart
-   helpRestart: "§c重新开始你的岛屿生涯."
-   islandDeletedLifeboats: "§c岛屿已§4删除!"
-   #/island sethome
-   helpSetHome: "§a设置返回岛屿的传送坐标§7(§e需要在自己岛屿内设置§7)§a."
-   #/island level
-   helpLevel: "§a计算你的岛屿等级"
-   #/island level <player>
-   helpLevelPlayer: "§a查询玩家的岛屿等级."
-   #/island top:
-   helpTop: "§a查询岛屿等级排行榜."
-   #/island warps:
-   helpWarps: "§a列出所有可用的传送点."
-   #/island warp <player>
-   helpWarp: "§a传送到玩家的传送点."
-   #/island team
-   helpTeam: "§a显示你团队的信息."
-   #/island invite <player>:
-   helpInvite: "§e邀请玩家加入你的岛屿."
-   #/island leave:
-   helpLeave: "§c离开了当前岛屿."
-   #/island kick <player>
-   helpKick: "§c将玩家从你的岛屿移除."
-   #/island <accept/reject>
-   helpAcceptReject: "§a接受§e或者§c拒绝§e别人的邀请."
-   #/island makeleader <player>
-   helpMakeLeader: "§c§l将岛屿赠送给玩家."
-   #Level
-   errorLevelNotReady: "§c请稍等数秒后再输入此指令!."
-   errorInvalidPlayer: "§c玩家不存在或者他不曾拥有一个岛屿!"
-   islandLevelis: "§6岛屿等级为§e§l"
-   #/island expel <player>
-   helpExpel: "§c强制从你的岛屿上请走一个玩家."
-   helpLock: "§c岛屿已锁定,非岛屿成员无法传送至岛屿上"
-   # The color that is placed before the /commands in /island help
-   # See http://ess.khhq.net/mc/ for a list
-   helpColor: "&a"
-   helpSettings: "§c查看岛屿保护和游戏设置"
-   helpChallenges: "§a输入指令§e§l/challenges: &7显示挑战任务"
-
-###################
-#/island commands #
-###################
-
-#invite
-invite:
-   help: "§6输入§e/island invite §b<玩家ID> §6邀请玩家加入你的岛屿."
-   youCanInvite: "§b你还能邀请 §e[number] §b个玩家."
-   youCannotInvite: "§c你无法邀请更多的玩家了."
-   onlyIslandOwnerCanInvite: "§c只有岛屿主人才能邀请其他玩家!"
-   youHaveJoinedAnIsland: "§a你加入了一个岛屿! 使用 §e/island team §a来查看其他成员."
-   hasJoinedYourIsland: "§b[name] §a加入了你的岛屿!"
-   errorCantJoinIsland: "§c你不能加入这个岛屿, 可能岛屿已满员."
-   errorYouMustHaveIslandToInvite: "§c你必须拥有一个岛屿, 才能邀请其他玩家入住!"
-   errorYouCannotInviteYourself: "§c你不能邀请你自己入住!"
-   removingInvite: "§c移除了你之前邀请的玩家."
-   inviteSentTo: "§a邀请已发送给§b [name]"
-   nameHasInvitedYou: "§b[name] §2邀请§a你入住他的岛屿!"
-   toAcceptOrReject: "§e来§2接受§e或§4拒绝§e岛屿入住邀请."
-   warningYouWillLoseIsland: "§4警告: §c如果你§2接受§c, 你将§4失去§c当前这个岛屿!"
-   errorYourIslandIsFull: "§c你的岛屿住满了人, 你没办法再邀请其他玩家了."
-   #"That player is already with a group on an island."
-   errorThatPlayerIsAlreadyInATeam: "§c这个玩家已经被被其他岛屿邀请了, 或者已经拥有自己的岛屿."
-   errorCoolDown: "§c你需要等待§e§l [time] §c分钟后才能再次邀请那个玩家"
-
-#reject
-reject:
-   youHaveRejectedInvitation: "§c你§4拒绝§c了岛屿入住邀请."
-   nameHasRejectedInvite: "§b[name] §4拒绝了§c你的岛屿入驻邀请!"
-   youHaveNotBeenInvited: "§e你没有收到任何岛屿入住邀请."
-
-#leave
-leave:
-  errorYouAreTheLeader: "§c因为你是岛屿主人所以不能离开, 使用§b /island makeleader <玩家> §e来改变岛屿主人."
-  youHaveLeftTheIsland: "§c你离开了岛屿, 并返回到了玩家出生地."
-  nameHasLeftYourIsland: "§b[name] §c离开了你的岛屿!"
-  errorYouCannotLeaveIsland: "§c你无法离开岛屿当只剩下你一个人的时候.如果你想重新开始,请输入 §e/island restart!"
-  errorYouMustBeInWorld: "§c你只能够在你的岛屿上这样做!"
-  errorLeadersCannotLeave: "§c空岛主人无法离开岛屿.请输入 §b/island makeleader <玩家ID> 来转让岛屿"
-
-#team
-team:
-   listingMembers: "§e显示你岛屿的成员"
-
-
-#kick / remove
-kick:
-  errorPlayerNotInTeam: "§c这个玩家不在你的岛屿团队中!"
-  nameRemovedYou: "§b[name] §c将你§4驱逐§c出了他的岛屿!"
+acidBucket: "§5污染的水桶"
+acidLore: |-
+    §b海水受到了§c核污染!
+    !
+    §c一切水源无法饮用!
+adminHelp: 
+  clearreset: "§c重置一个玩家的初始信息."
+  completeChallenge: "§e标记一个挑战为已完成"
+  delete: "§c删除一个玩家的岛屿 (移除方块)."
+  help: "§b管理员指令:"
+  info: "§a显示指定玩家信息."
+  infoisland: "§e显示离你最近的岛屿信息."
+  purge: "§c删除超过 [TimeInDays] 天的不活跃岛屿."
+  purgeholes: "§c重置空余的岛屿,以便重复使用."
+  register: "§a设置玩家的岛屿在你的位置"
+  reload: "§a配置重读."
+  resetAllChallenges: "§c重置该玩家的的所有挑战"
+  resetChallenge: "§e标记一个挑战为未完成"
+  setrange: "§c改变岛屿的保护范围."
+  setspawn: "§e设置岛屿世界的重生点在你的附近."
+  topTen: "§a手动更新前十列表"
+  unregister: "§c删除一个玩家的岛屿信息,但不清楚岛屿内方块"
+adminInfo: 
+  errorNotPartOfTeam: "§c玩家不是岛屿的一员."
+  errorNullTeamLeader: "§c团队领导必须为空!"
+  errorTeamMembersExist: "§c玩家拥有团队成员,但不应该!"
+  islandLocation: §a岛屿坐标
+adminTopTen: 
+  finished: §e已生成前十名单列表
+  generating: §a生成前十名单列表
+ban: 
+  alreadybanned: "§e[name]§c早就列入了黑名单!"
+  banned: "§c你被列入§e[name]§c的岛屿的黑名单!"
+  fail: "§e[name]§c无法被列入黑名单!"
+  helpBan: §c将一个玩家列入岛屿黑名单.
+  helpUnban: §c将一个玩家从岛屿黑名单中移除
+  lifted: "§c被从§e[name]§c的岛屿黑名单中解除!"
+  liftedsuccess: "§c被§e[name]§c解除黑名单!"
+  notbanned: "§e[name]§c未被列入黑名单!"
+  notteammember: §c你无法将岛屿成员列入黑名单!
+  notyourself: §c你不能那样对自己做!
+  success: "§e[name] §c被岛屿列入黑名单!"
+biome: 
+  help: §a打开生物群系界面.
+  paneltitle: §a选择一个生物群系
+  set: "§c岛屿生物群系设置为:[biome]!"
+  unknown: §c未知生物群系!
+  youbought: "§c购买花费:§e[cost]!"
+boats: 
+  warning: §c现在离开船是一件危险的事情...
+challenges: 
+  colors: "§a任务将根据不同难度显示不同颜色:"
+  complete: §a已完成
+  completeNotRepeatable: §e已完成§4(不可重复)
+  completeRepeatable: §e已完成§a(可重复)
+  completedtimes: "§a完成次数§e [donetimes] §a/§6 [maxtimes]"
+  errorIslandLevel: "§c你的岛屿等级必须达到 §e[level]级§c才能够完成这个任务!"
+  errorItemsNotThere: §c所有任务所需物品必须在你的岛上!
+  errorNotCloseEnough: §c任务所需物品必须在你十格范围内.
+  errorNotEnoughItems: §c你没有足够的所需物品
+  errorNotOnIsland: §c你只能够在你的岛屿上那样做!
+  errorRewardProblem: "§c奖励你物品的时候发生了未知错误,请联系管理员!"
+  erroryouaremissing: §c未找到你的信息
+  expReward: §b经验奖励
+  firstTimeRewards: §b首次完成奖励
+  guititle: §e挑战
+  help1: "§6输入§e /c §b<挑战名字> §6来查询一个挑战的信息."
+  help2: "§6输入§e /c complete §b<挑战名字> §6完成一个挑战."
+  incomplete: §c未完成
+  invalidChallengeName: "§c未知挑战名! 输入 §e/c help §c获取更多信息"
+  itemTakeWarning: §c当你完成挑战的时候所有挑战所需物品将会§e§l消失!
+  level: §6等级§d
+  maxreached: "§c最大完成§e [donetimes] §c/§6 [maxtimes]"
+  moneyReward: §b经济奖励
+  name: §a挑战名称
+  nameHasCompleted: "§6恭喜玩家§e§l [name] §6完成了 §e[challenge] §6挑战!"
+  notRepeatable: §c这个挑战不可重复!
+  repeatRewards: §b重复奖励
+  rewards: §b奖励
+  toComplete: "§a请至少再完成§e§l [challengesToDo] §a个等级为§c§l [thisLevel] §a的挑战来解锁当前等级挑战!"
+  toCompleteUse: "§b完成这个挑战,输入"
+  unknownChallenge: "§c未知挑战名 §b(请检查拼写)!"
+  youHaveCompleted: "§6你完成了§e [challenge] §6挑战!"
+  youHaveNotUnlocked: §c你还没有解锁当前挑战!
+  youRepeated: "§6你重复完成了§e§l [challenge] §6挑战!"
+changingObsidiantoLava: "§a成功将黑曜石变为岩浆,§c请当心!"
+checkteam: 
+  checkingTeam: "§c检查§a [name] §c的团队"
+completechallenge: 
+  challangeCompleted: "§7[§6§l挑战系统§7]: §e[name] §a完成了§6 [challengename]  "
+  errorChallengeDoesNotExist: §c挑战不存在或者已经完成
+confirm: 
+  errorTimeLimitExpired: "§c超时,请重新运行指令."
+coop: 
+  help: §c暂时允许玩家完全访问你的岛屿
+  invited: "§e[name] §c囚禁了§e [player] !"
+  madeyoucoopy: "§e[name] §c把你囚禁了,直到你下线或者他们驱逐你."
+  onyourteam: §c玩家早就在你的团队中了!
+  removed: "§e[name] §c取消了你的锁定状态!"
+  removesuccess: "§e[name] §c不再是一个囚禁玩家."
+  success: "§e[name] §c现在被你囚禁了,直到他们下线或者你驱逐他们."
+  useexpel: "§c输入 §e/expel §c移除."
+delete: 
+  removing: "§c移除了§e [name] §c的岛屿."
+drankAcid: §e饮用辐射水源.
+drankAcidAndDied: §e饮用受到辐射的水而死亡.
+error: 
+  commandNotReady: §c你现在不能使用此命令.
+  noIsland: §c你还没有获得一个岛屿!
+  noIslandOther: §c玩家未拥有岛屿!
+  noPermission: §c你没有权限那样做!
+  noTeam: §c玩家不再团队中.
+  notOnIsland: §c你必须在你的岛屿上使用这个指令.
+  offlinePlayer: §c玩家不在线或不存在.
+  unknownCommand: §c未知指令.
+  unknownPlayer: §c未知玩家.
+  wrongWorld: "§c你无法在当前世界这样操作,请返回你的岛屿."
+expel: 
+  expelled: §c你被驱逐出了岛屿!
+  fail: "§e[name] §c无法被驱逐!"
+  notonisland: §c玩家没有入侵你的岛屿!
+  notyourself: §c你无法驱逐你自己!
+  success: "§c你驱逐了玩家:[name]!"
+invite: 
+  errorCantJoinIsland: "§c你不能加入这个岛屿, 可能岛屿已满员."
+  errorCoolDown: "§c你需要等待§e§l [time] §c分钟后才能再次邀请那个玩家"
+  errorThatPlayerIsAlreadyInATeam: "§c这个玩家已经被被其他岛屿邀请了, 或者已经拥有自己的岛屿."
+  errorYouCannotInviteYourself: §c你不能邀请你自己入住!
+  errorYouMustHaveIslandToInvite: "§c你必须拥有一个岛屿, 才能邀请其他玩家入住!"
+  errorYourIslandIsFull: "§c你的岛屿住满了人, 你没办法再邀请其他玩家了."
+  hasJoinedYourIsland: "§b[name] §a加入了你的岛屿!"
+  help: "§6输入§e/island invite §b<玩家ID> §6邀请玩家加入你的岛屿."
+  inviteSentTo: "§a邀请已发送给§b [name]"
+  nameHasInvitedYou: "§b[name] §2邀请§a你入住他的岛屿!"
+  onlyIslandOwnerCanInvite: §c只有岛屿主人才能邀请其他玩家!
+  removingInvite: §c移除了你之前邀请的玩家.
+  toAcceptOrReject: §e来§2接受§e或§4拒绝§e岛屿入住邀请.
+  warningYouWillLoseIsland: "§4警告: §c如果你§2接受§c, 你将§4失去§c当前这个岛屿!"
+  youCanInvite: "§b你还能邀请 §e[number] §b个玩家."
+  youCannotInvite: §c你无法邀请更多的玩家了.
+  youHaveJoinedAnIsland: "§a你加入了一个岛屿! 使用 §e/island team §a来查看其他成员."
+island: 
+  cannotTeleport: §c你无法在下落过程中进行传送!
+  donate: §a本汉化由§e§l梦之地§a提供
+  errorCouldNotCreateIsland: "§c无法为你创建岛屿. 请联系管理员."
+  errorInvalidPlayer: §c玩家不存在或者他不曾拥有一个岛屿!
+  errorLevelNotReady: §c请稍等数秒后再输入此指令!.
+  errorYouDoNotHavePermission: §c你没有权限那样做!
+  helpAcceptReject: §a接受§e或者§c拒绝§e别人的邀请.
+  helpChallenges: "§a输入指令§e§l/challenges: &7显示挑战任务"
+  helpColor: "&a"
+  helpControlPanel: §a打开岛屿帮助界面.
+  helpExpel: §c强制从你的岛屿上请走一个玩家.
+  helpInvite: §e邀请玩家加入你的岛屿.
+  helpIsland: "§a开始岛屿生涯,§e或者回到你的岛屿."
+  helpIslandSpawn: §a回到岛屿出生点.
+  helpKick: §c将玩家从你的岛屿移除.
+  helpLeave: §c离开了当前岛屿.
+  helpLevel: §a计算你的岛屿等级
+  helpLevelPlayer: §a查询玩家的岛屿等级.
+  helpLock: "§c岛屿已锁定,非岛屿成员无法传送至岛屿上"
+  helpMakeLeader: §c§l将岛屿赠送给玩家.
+  helpRestart: §c重新开始你的岛屿生涯.
+  helpSetHome: §a设置返回岛屿的传送坐标§7(§e需要在自己岛屿内设置§7)§a.
+  helpSettings: §c查看岛屿保护和游戏设置
+  helpTeam: §a显示你团队的信息.
+  helpTeleport: §a传送到你的岛屿.
+  helpTop: §a查询岛屿等级排行榜.
+  helpWarp: §a传送到玩家的传送点.
+  helpWarps: §a列出所有可用的传送点.
+  islandDeletedLifeboats: §c岛屿已§4删除!
+  islandLevelis: §6岛屿等级为§e§l
+  new: §b正在为你创建一个新的岛屿...
+  resetConfirm: "§c请在§e[seconds]§c秒内输入§e/island confirm §c来确认你的操作,然后重新开始!"
+  resetMustRemovePlayers: "§c你只有将岛屿§4所有成员§e踢出§c才能重新开始 §b(/island kick §c<玩家ID>§b). §a输入§e/island team §a可以查询成员列表."
+  resetNoMore: §c你无法再重新开始了!
+  resetOnlyOwner: "§c只有岛屿的主人才能那样做. 请输入§e/island leave§c离开当前团队,然后重新你的岛屿生涯."
+  resetPleaseWait: "§b请稍等,正在创建新的岛屿"
+  resetTo: §c清除重新开始限制
+  resetWait: "§c你需要等待 §e[time] 秒§c才能那样做."
+  resetYouHave: "§6你还有§b [number] §6次重新开始的机会."
+  subtitle: §a§l请务必努力生存下去
+  teleport: "§b[岛屿娘]:§6欢饮回来~我的主人. §e(输入§c/island help §e获取更多帮助)"
+  title: §c§l欢迎加入末日岛屿
+  url: §b§lwww.915mc.com
+islandProtected: 岛屿保护.
+islandguardsettings: 
+  TNTdamage: §6是否开启TNT爆炸伤害
+  allowed: §a允许
+  anvil: §6是否使用铁毡
+  armorstand: §6是否使用盔甲架
+  beacon: §6是否允许使用信标
+  bed: §6是否允许使用床
+  breakblocks: §6是否允许破坏
+  breeding: §6是否允许喂养
+  brewingstand: §6是否允许酿造药水
+  bucket: §6是否允许使用桶
+  chest: §6是否允许使用箱子
+  chestdamage: §6TNT能否破坏箱子
+  creeperdamage: §6苦力怕伤害
+  creepergriefing: §6苦力怕破坏
+  croptrample: §6是否允许践踏农作物
+  disallowed: §c不允许
+  door: §6是否允许使用门
+  enchantingtable: §6是否允许使用附魔台
+  enderpearl: §6是否允许使用末影珍珠
+  fire: §6是否允许使用打火石
+  furnace: §6是否允许使用熔炉
+  gate: §6是否允许使用栅栏门
+  hurtanimals: §6是否允许攻击动物
+  hurtmonsters: §6是否允许攻击怪物
+  jukebox: §6是否允许使用唱片机
+  leash: §6是否允许使用栓绳
+  lever: §6是否允许使用开关按钮
+  netherpvp: §6是否允许地狱PVP
+  placeblocks: §6是否允许放置方块
+  portaluse: §6是否允许使用传送门
+  pvp: §6是否允许PVP
+  redstone: §6是否允许使用红石
+  shears: §6是否允许使用剪刀
+  spawnegg: §6是否允许使用刷怪蛋
+  teleportwhenfalling: §6下落时是否允许传送
+  title: §e岛屿保护设置
+  visitordrop: §6是否允许访问者掉落物品
+  visitorkeepitems: §6访问者死亡是否保存背包
+  visitorpickup: §6是否允许访问者捡起物品
+  withergriefing: §6凋零破坏
+  workbench: §6是否允许使用合成台
+kick: 
+  errorNoTeam: §c你没有加入任何岛屿的团队!
+  errorNotPartOfTeam: §c这个玩家不是你的岛屿成员之一!
+  errorOnlyLeaderCan: §c只有岛屿主人才能踢人!
+  errorPlayerNotInTeam: §c这个玩家不在你的岛屿团队中!
   nameRemoved: "§b[name] §才已被§4驱逐§c出岛."
-  errorNotPartOfTeam: "§c这个玩家不是你的岛屿成员之一!"
-  errorOnlyLeaderCan: "§c只有岛屿主人才能踢人!"
-  errorNoTeam: "§c你没有加入任何岛屿的团队!"
-
-#makeleader
-makeleader:
-   errorPlayerMustBeOnline: "§c玩家只有在线才能接受你的岛屿."
-   errorYouMustBeInTeam: "§c你必须在一个团队中才能转让岛屿."
-   errorRemoveAllPlayersFirst: "§c将所有玩家踢出团队,才能进行团队转让."
-   youAreNowTheOwner: "§e你现在是岛屿主人了."
-   nameIsNowTheOwner: "§b[name] §a现在是你的岛屿主人了!"
-   errorThatPlayerIsNotInTeam: "§c这个玩家不是你的岛屿成员之一!"
-   errorNotYourIsland: "§c这不是你的岛屿, 所以你没有权限!"
-   errorGeneralError: "§c不能改变岛屿主人."
-
-#minishop
-minishop:
-   title: "§5迷你商店§e-§d左键购买§c右键出售"
-   islandhelpMiniShop: "§a打开迷你商店"
-   buy: "§b购买§e"
-   sell: "§c出售§e"
-   youcannotafford: "§c余额不足!"
-   youbought: "§a你购买了§e[number]§a个§6[description]§a花费了§b[price]"
-   yousold: "§a你出售了§e[number]§a个[description]§a获得了§b[price]"
-   buyproblem: "§c购买出错"
-   sellproblem: "§c你没有足够的物品."
-   outofstock: "§c物品卖完了哟"
-
-################################
-#Admin commands that use /acid #
-################################
-
-#Help
-adminHelp:
-   help: "§b管理员指令:"
-   reload: "§a配置重读."
-   topTen: "§a手动更新前十列表"
-   register: "§a设置玩家的岛屿在你的位置"
-   unregister: "§c删除一个玩家的岛屿信息,但不清楚岛屿内方块"
-   delete: "§c删除一个玩家的岛屿 (移除方块)."
-   completeChallenge: "§e标记一个挑战为已完成"
-   resetChallenge: "§e标记一个挑战为未完成"
-   resetAllChallenges: "§c重置该玩家的的所有挑战"
-   purge: "§c删除超过 [TimeInDays] 天的不活跃岛屿."
-   purgeholes: "§c重置空余的岛屿,以便重复使用."
-   info: "§a显示指定玩家信息."
-   infoisland: "§e显示离你最近的岛屿信息."
-   clearreset: "§c重置一个玩家的初始信息."
-   setspawn: "§e设置岛屿世界的重生点在你的附近."
-   setrange: "§c改变岛屿的保护范围."
-
-#acid reload
-reload:
-   configReloaded: "§c配置重读."
-#topten
-adminTopTen:
-   generating: "§a生成前十名单列表"
-   finished: "§e已生成前十名单列表"
-
-#purge
-purge:
-   #"A purge is already running, please wait for it to finish!"
-   alreadyRunning: "§c正在清理中,请等待清理完毕!"
-   usage: "§a使用方式:§e /acid purge [TimeInDays]"
-   calculating: "§c计算不活跃天数超过§e [time] 天§c的岛屿."
-   noneFound: "§c没有不活跃的岛屿被移除."
-   thisWillRemove: "§c这将会移除 [number] 个不活跃的岛屿!"
-   warning: "§c危险! 当服务器内还有玩家的时候请不要运行这个命令! 请将你的服务器进行备份！！！"
-   typeConfirm: "§c请在10秒内输入§e§l /acid confirm 进行确定"
-   purgeCancelled: "§a取消清理."
-   finished: "§a清理不活跃岛屿完成."
-   removingName: "§c清理: 移除了§e [name] §c的岛屿"
-   preventPurge: "§c岛是免受清除的"
-   allowPurge: "§c清楚保护已移除"
-
-#confirm
-confirm:
-   errorTimeLimitExpired: "§c超时,请重新运行指令."
-
-#delete
-delete:
-   removing: "§c移除了§e [name] §c的岛屿."
-
-#register
-register:
-   settingIsland: "§a设置§el [name] §a岛屿的基岩在你当前位置."
-   errorBedrockNotFound: "§c基岩未找到: 无法设置岛屿!"
-
-#info
-adminInfo:
-   islandLocation: "§a岛屿坐标"
-   errorNotPartOfTeam: "§c玩家不是岛屿的一员."
-   errorNullTeamLeader: "§c团队领导必须为空!"
-   errorTeamMembersExist: "§c玩家拥有团队成员,但不应该!"
-
-#resetallchallenges
-resetallchallenges:
-   success: "§e[name] §c的所有挑战已经重置."
-
-#checkteam
-checkteam:
-   checkingTeam: "§c检查§a [name] §c的团队"
-
-#completechallenge
-completechallenge:
-   errorChallengeDoesNotExist: "§c挑战不存在或者已经完成"
-   challangeCompleted: "§7[§6§l挑战系统§7]: §e[name] §a完成了§6 [challengename]  "
-
-#resetchallenge
-resetchallenge:
-   errorChallengeDoesNotExist: "§c挑战不存在或尚未完成"
-   challengeReset: "§7[§6§l挑战系统§7]: §e[name] §c的挑战:§6 [challengename] §c已经重置"
-
-#News
-news:
-   headline: "§7[§6岛屿快讯§7]: §e你离线的时候发生了..."
-
-#Nether
-nether:
-   spawnisprotected: "§c当前位置为地狱保护区,请勿破坏."
-
-# Ultra safe boats
-boats:
-   warning: "§c现在离开船是一件危险的事情..."
-
-#Starter sign
-# [player] is replaced with the player's name
-# ChatColors can be used with &
-sign:
-   line1: "&7[&c末日岛屿&7]"
-   line2: "&a[player]"
-   line3: "&c千万要当心!"
-   line4: "&c努力活下去吧！"
-
-biome:
-   set: "§c岛屿生物群系设置为:[biome]!"
-   help: "§a打开生物群系界面."
-   unknown: "§c未知生物群系!"
-   youbought: "§c购买花费:§e[cost]!"
-   paneltitle: "§a选择一个生物群系"
-   
-expel:
-   notonisland: "§c玩家没有入侵你的岛屿!"
-   success: "§c你驱逐了玩家:[name]!"
-   expelled: "§c你被驱逐出了岛屿!"
-   fail: "§e[name] §c无法被驱逐!"
-   notyourself: "§c你无法驱逐你自己!"
-
-moblimits:
-   error: "§c岛屿繁殖数量§e [number] §c达到极限!"
-   villager: "§c岛屿村民繁殖数量§e [number] §c达到极限!"
-   hopper: "§c岛屿漏斗放置数量§e [number] §c达到极限!"
-
-coop:
-   help: "§c暂时允许玩家完全访问你的岛屿"
-   removed: "§e[name] §c取消了你的锁定状态!"
-   removesuccess: "§e[name] §c不再是一个囚禁玩家."
-   success: "§e[name] §c现在被你囚禁了,直到他们下线或者你驱逐他们."
-   madeyoucoopy: "§e[name] §c把你囚禁了,直到你下线或者他们驱逐你."
-   onyourteam: "§c玩家早就在你的团队中了!"
-   invited: "§e[name] §c囚禁了§e [player] !"
-   useexpel: "§c输入 §e/expel §c移除."
-
-lock:
-   islandlocked: "§c岛屿禁止游客访问"
-   nowentering: "§a您所访问的是§e [name]§a的岛屿"
-   nowleaving: "§c你已经离开了§e [name]§c的岛屿"
-   locking: "§c锁定岛屿"
-   unlocking: "§c解锁岛屿"
-   enteringspawn: "§c进入出生点"
-   leavingspawn: "§c离开出生点"
-
-schematics:
-   title: "§a§l请选择你想要的岛屿..."
-
-ban:
-   success: "§e[name] §c被岛屿列入黑名单!"
-   banned: "§c你被列入§e[name]§c的岛屿的黑名单!"
-   lifted: "§c被从§e[name]§c的岛屿黑名单中解除!"
-   liftedsuccess: "§c被§e[name]§c解除黑名单!"
-   fail: "§e[name]§c无法被列入黑名单!"
-   notyourself: "§c你不能那样对自己做!"
-   notteammember: "§c你无法将岛屿成员列入黑名单!"
-   notbanned: "§e[name]§c未被列入黑名单!"
-   alreadybanned: "§e[name]§c早就列入了黑名单!"
-   helpBan: "§c将一个玩家列入岛屿黑名单."
-   helpUnban: "§c将一个玩家从岛屿黑名单中移除"
-
-teamchat:
-   prefix: "§7[§a团队聊天§7]<{ISLAND_PLAYER}> "
-   helpChat: "§a开启§e/§c关闭§e团队聊天"
-   statusOn: "§a团队聊天已经开启"
-   statusOff: "§c团队聊天已经关闭"
-   noTeamAround: "§c没有一个团队成员在线!"
-   noTeam: "§c你不在一个团队中!"
+  nameRemovedYou: "§b[name] §c将你§4驱逐§c出了他的岛屿!"
+lavaTip: "§a§l温馨提示: §c如果岩浆变成了黑曜石,可以使用铁桶右键变回岩浆."
+leave: 
+  errorLeadersCannotLeave: "§c空岛主人无法离开岛屿.请输入 §b/island makeleader <玩家ID> 来转让岛屿"
+  errorYouAreTheLeader: "§c因为你是岛屿主人所以不能离开, 使用§b /island makeleader <玩家> §e来改变岛屿主人."
+  errorYouCannotLeaveIsland: "§c你无法离开岛屿当只剩下你一个人的时候.如果你想重新开始,请输入 §e/island restart!"
+  errorYouMustBeInWorld: §c你只能够在你的岛屿上这样做!
+  nameHasLeftYourIsland: "§b[name] §c离开了你的岛屿!"
+  youHaveLeftTheIsland: "§c你离开了岛屿, 并返回到了玩家出生地."
+level: 
+  calculating: "§c正在计算岛屿等级,需要等待一段时间.请稍后..."
+  errornotYourIsland: §c只有岛屿主人才能使用.
+  islandLevel: §e岛屿等级
+lock: 
+  enteringspawn: §c进入出生点
+  islandlocked: §c岛屿禁止游客访问
+  leavingspawn: §c离开出生点
+  locking: §c锁定岛屿
+  nowentering: "§a您所访问的是§e [name]§a的岛屿"
+  nowleaving: "§c你已经离开了§e [name]§c的岛屿"
+  unlocking: §c解锁岛屿
+makeleader: 
+  errorGeneralError: §c不能改变岛屿主人.
+  errorNotYourIsland: "§c这不是你的岛屿, 所以你没有权限!"
+  errorPlayerMustBeOnline: §c玩家只有在线才能接受你的岛屿.
+  errorRemoveAllPlayersFirst: "§c将所有玩家踢出团队,才能进行团队转让."
+  errorThatPlayerIsNotInTeam: §c这个玩家不是你的岛屿成员之一!
+  errorYouMustBeInTeam: §c你必须在一个团队中才能转让岛屿.
+  nameIsNowTheOwner: "§b[name] §a现在是你的岛屿主人了!"
+  youAreNowTheOwner: §e你现在是岛屿主人了.
+minishop: 
+  buy: §b购买§e
+  buyproblem: §c购买出错
+  islandhelpMiniShop: §a打开迷你商店
+  outofstock: §c物品卖完了哟
+  sell: §c出售§e
+  sellproblem: §c你没有足够的物品.
+  title: §5迷你商店§e-§d左键购买§c右键出售
+  youbought: "§a你购买了§e[number]§a个§6[description]§a花费了§b[price]"
+  youcannotafford: §c余额不足!
+  yousold: "§a你出售了§e[number]§a个[description]§a获得了§b[price]"
+moblimits: 
+  error: "§c岛屿繁殖数量§e [number] §c达到极限!"
+  hopper: "§c岛屿漏斗放置数量§e [number] §c达到极限!"
+  villager: "§c岛屿村民繁殖数量§e [number] §c达到极限!"
+nether: 
+  spawnisprotected: "§c当前位置为地狱保护区,请勿破坏."
+news: 
+  headline: "§7[§6岛屿快讯§7]: §e你离线的时候发生了..."
+purge: 
+  allowPurge: §c清楚保护已移除
+  alreadyRunning: "§c正在清理中,请等待清理完毕!"
+  calculating: "§c计算不活跃天数超过§e [time] 天§c的岛屿."
+  finished: §a清理不活跃岛屿完成.
+  noneFound: §c没有不活跃的岛屿被移除.
+  preventPurge: §c岛是免受清除的
+  purgeCancelled: §a取消清理.
+  removingName: "§c清理: 移除了§e [name] §c的岛屿"
+  thisWillRemove: "§c这将会移除 [number] 个不活跃的岛屿!"
+  typeConfirm: "§c请在10秒内输入§e§l /acid confirm 进行确定"
+  usage: "§a使用方式:§e /acid purge [TimeInDays]"
+  warning: "§c危险! 当服务器内还有玩家的时候请不要运行这个命令! 请将你的服务器进行备份！！！"
+register: 
+  errorBedrockNotFound: "§c基岩未找到: 无法设置岛屿!"
+  settingIsland: "§a设置§el [name] §a岛屿的基岩在你当前位置."
+reject: 
+  nameHasRejectedInvite: "§b[name] §4拒绝了§c你的岛屿入驻邀请!"
+  youHaveNotBeenInvited: §e你没有收到任何岛屿入住邀请.
+  youHaveRejectedInvitation: §c你§4拒绝§c了岛屿入住邀请.
+reload: 
+  configReloaded: §c配置重读.
+resetallchallenges: 
+  success: "§e[name] §c的所有挑战已经重置."
+resetchallenge: 
+  challengeReset: "§7[§6§l挑战系统§7]: §e[name] §c的挑战:§6 [challengename] §c已经重置"
+  errorChallengeDoesNotExist: §c挑战不存在或尚未完成
+schematics: 
+  title: §a§l请选择你想要的岛屿...
+sethome: 
+  errorNoIsland: "§c你不是岛屿的一员. 请返回你的岛屿!"
+  errorNotOnIsland: §c你只能在你的岛屿范围内设置!
+  errorNumHomes: "§c家只能设置§e1- [max]"
+  homeSet: §a已经设置家在你当前位置.
+sign: 
+  line1: "&7[&c末日岛屿&7]"
+  line2: "&a[player]"
+  line3: "&c千万要当心!"
+  line4: "&c努力活下去吧！"
+targetInPVPArea: 目标处于禁止PVP区域!
+team: 
+  listingMembers: §e显示你岛屿的成员
+teamchat: 
+  helpChat: §a开启§e/§c关闭§e团队聊天
+  noTeam: §c你不在一个团队中!
+  noTeamAround: §c没有一个团队成员在线!
+  prefix: "§7[§a团队聊天§7]<{ISLAND_PLAYER}> "
+  statusOff: §c团队聊天已经关闭
+  statusOn: §a团队聊天已经开启
+topTen: 
+  errorNotReady: §c前十名单未生成!
+  header: "§e排名前10的岛屿:"
+warps: 
+  deactivate: §b旧的传送点被替换!
+  errorDoesNotExist: §c传送点不存在!
+  errorDuplicate: §6当前位置已经存在传送点!
+  errorNoPerm: §c你没有权限创建岛屿传送点!
+  errorNoPlace: §c你只能够在你的岛屿上创建传送点!
+  errorNoRemove: §c你只能移除你自己的传送点!
+  errorNoWarpsYet: §c没有任何传送点!
+  errorNotReadyYet: §c传送点未准备好.请稍后再试.
+  errorNotSafe: §c传送点不安全.请稍后再试.
+  next: §a下一页
+  playerWarped: "§e[name] &e传送到了你的岛屿!"
+  previous: §a上一页
+  removed: §c传送点已经移除!
+  signRemoved: §c你的岛屿传送点已经移除!
+  success: §a空岛传送点成功创建!
+  title: §b岛屿传送点
+  warpTip: "§e放置一个木牌,并且在木牌的第一行输入§b[传送点]§e以设置一个岛屿传送点."
+  warpToPlayersSign: "§e传送到玩家: §b<player>§e的岛屿传送点."
+  warpsAvailable: §a以下的传送点可用
+  welcomeLine: "[传送点]"

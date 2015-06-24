@@ -551,6 +551,7 @@ public class Locale {
     public String adminRegisterHadIsland;
     public String adminRegisterNoIsland;
     public String adminTopBreedersNothing;
+    public String adminHelpTeamChatSpy;
 
     /**
      * Creates a locale object full of localized strings for a language
@@ -1211,6 +1212,6 @@ public class Locale {
 	adminRegisterTaking = ChatColor.translateAlternateColorCodes('&', locale.getString("adminRegister.taking", "Taking ownership away from [name]"));
 	adminRegisterHadIsland = ChatColor.translateAlternateColorCodes('&', locale.getString("adminRegister.hadIsland", "[name] had an island at [location]"));
 	adminRegisterNoIsland = ChatColor.translateAlternateColorCodes('&', locale.getString("adminRegister.noIsland", "There is no known island in this area!"));
-
+	adminHelpTeamChatSpy = ChatColor.translateAlternateColorCodes('&', locale.getString("adminHelp.teamChatSpy", "Spy on team chats (on/off)"));
     }
 }

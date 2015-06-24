@@ -1,6 +1,8 @@
 package com.wasteofplastic.askyblock.listeners;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -33,6 +35,8 @@ public class ChatListener implements Listener {
     private ASkyBlock plugin;
     private ConcurrentHashMap<UUID,Boolean> teamChatUsers;
     private ConcurrentHashMap<UUID,Integer> playerLevels;
+    // List of which admins are spying or not on team chat
+    private Set<UUID> spies;
 
     /**
      * @param plugin
@@ -46,6 +50,8 @@ public class ChatListener implements Listener {
 	for (Player player : plugin.getServer().getOnlinePlayers()) {
 	    playerLevels.put(player.getUniqueId(), plugin.getPlayers().getIslandLevel(player.getUniqueId()));
 	}
+	// Initialize spies
+	spies = new HashSet<UUID>();
     }
 
     
@@ -71,7 +77,7 @@ public class ChatListener implements Listener {
 	}
     }
 
-    private void teamChat(final AsyncPlayerChatEvent event, final String message) {
+    private void teamChat(final AsyncPlayerChatEvent event, String message) {
 	Player player = event.getPlayer();
 	UUID playerUUID = player.getUniqueId();
 	//Bukkit.getLogger().info("DEBUG: post: " + message);
@@ -82,12 +88,21 @@ public class ChatListener implements Listener {
 	    List<UUID> teamMembers = plugin.getPlayers().getMembers(player.getUniqueId());
 	    // Tell only the team members if they are online
 	    boolean onLine = false;
+	    message = plugin.myLocale(playerUUID).teamChatPrefix.replace("{ISLAND_PLAYER}",player.getDisplayName()) + message;
 	    for (UUID teamMember : teamMembers) {
 		Player teamPlayer = plugin.getServer().getPlayer(teamMember);
 		if (teamPlayer != null) {
-		    teamPlayer.sendMessage(plugin.myLocale(playerUUID).teamChatPrefix.replace("{ISLAND_PLAYER}",player.getDisplayName()) + message);
+		    teamPlayer.sendMessage(message);
 		    if (!teamMember.equals(playerUUID)) {
 			onLine = true;
+		    }
+		}
+	    }
+	    // Spy function
+	    if (onLine) {
+		for (Player onlinePlayer: plugin.getServer().getOnlinePlayers()) {
+		    if (spies.contains(onlinePlayer.getUniqueId()) && onlinePlayer.hasPermission(Settings.PERMPREFIX + "mod.teamchatspy")) {
+			onlinePlayer.sendMessage(ChatColor.RED + "[TCSpy] " + ChatColor.WHITE + message);
 		    }
 		}
 	    }
@@ -145,5 +160,20 @@ public class ChatListener implements Listener {
      */
     public int getPlayerLevel(UUID playerUUID) {
 	return playerLevels.get(playerUUID);
+    }
+    
+    /**
+     * Toggles team chat spy. Spy must also have the spy permission to see chats
+     * @param playerUUID
+     * @return true if toggled on, false if toggled off
+     */
+    public boolean toggleSpy(UUID playerUUID) {
+	if (spies.contains(playerUUID)) {
+	    spies.remove(playerUUID);
+	    return false;
+	} else {
+	    spies.add(playerUUID);
+	    return true;
+	}
     }
 }
