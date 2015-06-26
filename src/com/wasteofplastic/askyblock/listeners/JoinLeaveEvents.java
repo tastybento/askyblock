@@ -180,9 +180,11 @@ public class JoinLeaveEvents implements Listener {
 	    }
 	}
 
-	// Set the player's name (it may have changed), but only if it isn't null
+	// Set the player's name (it may have changed), but only if it isn't empty
 	if (!player.getName().isEmpty()) {
 	    players.setPlayerName(playerUUID, player.getName());
+	    // Add to tinyDB
+	    plugin.getTinyDB().savePlayerName(player.getName(), playerUUID);
 	} else {
 	    plugin.getLogger().warning("Player that just logged in has no name! " + playerUUID.toString());
 	}

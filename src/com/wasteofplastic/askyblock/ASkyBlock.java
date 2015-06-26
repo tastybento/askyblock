@@ -374,6 +374,10 @@ public class ASkyBlock extends JavaPlugin {
 			if (tinyDB == null) {
 			    tinyDB = new TinyDB(plugin);
 			}
+			// Add any online players to the DB
+			for (Player onlinePlayer : plugin.getServer().getOnlinePlayers()) {
+			    tinyDB.savePlayerName(onlinePlayer.getName(), onlinePlayer.getUniqueId());
+			}
 			getLogger().info("All files loaded. Ready to play...");
 		    }
 		});

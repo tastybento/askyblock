@@ -1975,22 +1975,18 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 				    }
 				    // Find out which direction the warp is facing
 				    Block b = warpSpot.getBlock();
-				    if (b.getType().equals(Material.SIGN_POST)) {
+				    if (b.getType().equals(Material.SIGN_POST) || b.getType().equals(Material.WALL_SIGN)) {
 					Sign sign = (Sign) b.getState();
 					org.bukkit.material.Sign s = (org.bukkit.material.Sign) sign.getData();
 					BlockFace directionFacing = s.getFacing();
 					Location inFront = b.getRelative(directionFacing).getLocation();
+					Location oneDown = b.getRelative(directionFacing).getRelative(BlockFace.DOWN).getLocation();
 					if ((GridManager.isSafeLocation(inFront))) {
-					    // convert blockface to angle
-					    float yaw = Util.blockFaceToFloat(directionFacing);
-					    final Location actualWarp = new Location(inFront.getWorld(), inFront.getBlockX() + 0.5D, inFront.getBlockY(),
-						    inFront.getBlockZ() + 0.5D, yaw, 30F);
-					    player.teleport(actualWarp);
-					    player.getWorld().playSound(player.getLocation(), Sound.BAT_TAKEOFF, 1F, 1F);
-					    Player warpOwner = plugin.getServer().getPlayer(foundWarp);
-					    if (warpOwner != null && !warpOwner.equals(player)) {
-						warpOwner.sendMessage(plugin.myLocale(foundWarp).warpsPlayerWarped.replace("[name]", player.getDisplayName()));
-					    }
+					    warpPlayer(player, inFront, foundWarp, directionFacing);
+					    return true;
+					} else if (b.getType().equals(Material.WALL_SIGN) && GridManager.isSafeLocation(oneDown)) {
+					    // Try one block down if this is a wall sign
+					    warpPlayer(player, oneDown, foundWarp, directionFacing);
 					    return true;
 					}
 				    } else {
@@ -2001,8 +1997,12 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 				    }
 				    if (!(GridManager.isSafeLocation(warpSpot))) {
 					player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorNotSafe);
-					plugin.getLogger().warning(
-						"Unsafe warp found at " + warpSpot.toString() + " owned by " + plugin.getPlayers().getName(foundWarp));
+					// WALL_SIGN's will always be unsafe if the place in front is obscured.
+					if (b.getType().equals(Material.SIGN_POST)) {
+					    plugin.getLogger().warning(
+						    "Unsafe warp found at " + warpSpot.toString() + " owned by " + plugin.getPlayers().getName(foundWarp));
+
+					}
 					return true;
 				    } else {
 					final Location actualWarp = new Location(warpSpot.getWorld(), warpSpot.getBlockX() + 0.5D, warpSpot.getBlockY(),
@@ -2575,6 +2575,26 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 	return false;
     }
 
+
+    /**
+     * Warps a player to a spot in front of a sign
+     * @param player
+     * @param inFront
+     * @param foundWarp
+     * @param directionFacing
+     */
+    private void warpPlayer(Player player, Location inFront, UUID foundWarp, BlockFace directionFacing) {
+	// convert blockface to angle
+	    float yaw = Util.blockFaceToFloat(directionFacing);
+	    final Location actualWarp = new Location(inFront.getWorld(), inFront.getBlockX() + 0.5D, inFront.getBlockY(),
+		    inFront.getBlockZ() + 0.5D, yaw, 30F);
+	    player.teleport(actualWarp);
+	    player.getWorld().playSound(player.getLocation(), Sound.BAT_TAKEOFF, 1F, 1F);
+	    Player warpOwner = plugin.getServer().getPlayer(foundWarp);
+	    if (warpOwner != null && !warpOwner.equals(player)) {
+		warpOwner.sendMessage(plugin.myLocale(foundWarp).warpsPlayerWarped.replace("[name]", player.getDisplayName()));
+	    }
+    }
 
     /**
      * Only run when a new island is created for the first time
