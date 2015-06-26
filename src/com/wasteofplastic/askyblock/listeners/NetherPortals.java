@@ -26,10 +26,12 @@ import org.bukkit.World.Environment;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Vehicle;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityPortalEvent;
@@ -62,30 +64,37 @@ public class NetherPortals implements Listener {
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
     public void onEntityPortal(EntityPortalEvent event) {
-	Location currentLocation = event.getFrom().clone();
-	String currentWorld = currentLocation.getWorld().getName();
-	// Only operate if this is Island territory
-	if (!currentWorld.equalsIgnoreCase(Settings.worldName) && !currentWorld.equalsIgnoreCase(Settings.worldName + "_nether")
-		&& !currentWorld.equalsIgnoreCase(Settings.worldName + "_the_end")) {
-	    return;
-	}
 	// If the nether is disabled then quit immediately
 	if (!Settings.createNether) {
 	    return;
 	}
-
-	if (event.getEntityType() != null) {
-	    // plugin.getLogger().info("DEBUG : Entity going through portal " +
-	    // event.getEntityType());
-	    // plugin.getLogger().info("DEBUG: From : " + event.getFrom());
-	    // plugin.getLogger().info("DEBUG: To : " + event.getTo());
-	    if (!(event.getEntity() instanceof Player)) {
-		// This event should never be called as a player, but just in
-		// case
-		// Cancel the event because entities cannot go through portals
-		event.setCancelled(true);
-	    }
+	if (event.getEntity() == null) {
+	    return;
 	}
+	Location currentLocation = event.getFrom().clone();
+	String currentWorld = currentLocation.getWorld().getName();
+	// Only operate if this is Island territory
+	if (!currentWorld.equalsIgnoreCase(Settings.worldName) && !currentWorld.equalsIgnoreCase(Settings.worldName + "_nether")) {
+	    return;
+	}
+	// No entities may pass with the old nether
+	if (!Settings.newNether) {
+	    event.setCancelled(true);
+	    return;
+	}
+	// New nether
+	// Entities can pass only if there are adjoining portals
+	Location dest = event.getFrom().toVector().toLocation(ASkyBlock.getIslandWorld());
+	if (event.getFrom().getWorld().getEnvironment().equals(Environment.NORMAL)) {
+	    dest = event.getFrom().toVector().toLocation(ASkyBlock.getNetherWorld());
+	}
+	// Vehicles
+	if (event.getEntity() instanceof Vehicle) {
+	    Vehicle vehicle = (Vehicle)event.getEntity();   
+	    vehicle.eject();
+	}
+	new SafeSpotTeleport(plugin, event.getEntity(), dest);
+	event.setCancelled(true);
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = false)
@@ -202,13 +211,13 @@ public class NetherPortals implements Listener {
 		    return;
 		}
 		// Can go both ways now
-		// Start with going to the overworld
-		Location dest = island.getCenter().toVector().toLocation(ASkyBlock.getIslandWorld());
+		//Location dest = island.getCenter().toVector().toLocation(ASkyBlock.getIslandWorld());
+		Location dest = event.getFrom().toVector().toLocation(ASkyBlock.getIslandWorld());
 		if (event.getFrom().getWorld().getEnvironment().equals(Environment.NORMAL)) {
 		    // Going to Nether
-		    dest = island.getCenter().toVector().toLocation(ASkyBlock.getNetherWorld());
+		    dest = event.getFrom().toVector().toLocation(ASkyBlock.getNetherWorld());
 		    // Check that there is a nether island there. Due to legacy reasons it may not exist
-		    if (dest.getBlock().getType() != Material.BEDROCK) {
+		    if (island.getCenter().toVector().toLocation(ASkyBlock.getNetherWorld()).getBlock().getType() != Material.BEDROCK) {
 			// Check to see if there is anything there
 			if (plugin.getGrid().bigScan(dest, 20) == null) {
 			    plugin.getLogger().warning("Creating nether island for " + event.getPlayer().getName() + " using default nether schematic");
@@ -223,15 +232,11 @@ public class NetherPortals implements Listener {
 			    }
 			}
 		    }
+		    //plugin.getLogger().info("DEBUG: Teleporting to " + event.getFrom().toVector().toLocation(ASkyBlock.getNetherWorld()));
 		}
 		event.setCancelled(true);
-		if (!GridManager.isSafeLocation(dest)) {
-		    // Teleport using the new safeSpot teleport
-		    new SafeSpotTeleport(plugin, event.getPlayer(), dest);
-		} else {
-		    // Go!
-		    event.getPlayer().teleport(dest);
-		}
+		// Teleport using the new safeSpot teleport
+		new SafeSpotTeleport(plugin, event.getPlayer(), dest);
 	    }
 	    break;
 	default:
@@ -535,4 +540,21 @@ public class NetherPortals implements Listener {
 	    }
 	}
     }
+
+    /**
+     * Allows portal blocks to be made in SafeSpotTeleport to the nether
+     * @param event
+     */
+    /*
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onBlockPhysics(BlockPhysicsEvent event){
+	// Only do this in the new nether
+	if (!Settings.newNether && !event.getBlock().getWorld().equals(ASkyBlock.getNetherWorld())) {
+	    return;
+	}
+	if(event.getChangedType() == Material.PORTAL){
+	    event.setCancelled(true);
+	}
+    }*/
+
 }
