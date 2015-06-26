@@ -124,8 +124,8 @@ public class SafeSpotTeleport {
 				    // Work down from the entry point up
 				    for (y = Math.min(chunk.getHighestBlockYAt(x, z), worldHeight); y >= 0; y--) {
 					//System.out.println("Trying " + (16 * chunk.getX() + x) + " " + y + " " + (16 * chunk.getZ() + z));
-					// Check for portal
-					if (chunk.getBlockTypeId(x, y, z) == Material.PORTAL.getId()) {
+					// Check for portal - only if this is not a safe home search
+					if (!setHome && chunk.getBlockTypeId(x, y, z) == Material.PORTAL.getId()) {
 					    if (portalPart == null || (distance > islandLoc.toVector().distanceSquared(new Vector(x,y,z)))) {
 						// First one found or a closer one, save the chunk the position and the distance
 						portalChunk = chunk;
@@ -148,7 +148,7 @@ public class SafeSpotTeleport {
 			    } // end x
 			    //if (safeSpotFound) {
 				//System.out.print("DEBUG: safe spot found " + safeSpotInChunk.toString());
-				//	break search;
+				//break search;
 			    //}
 			}
 		    // End search
