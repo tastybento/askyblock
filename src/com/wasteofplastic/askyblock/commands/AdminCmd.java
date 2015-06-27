@@ -366,7 +366,8 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 				    int rank = 1;
 				    // Display, largest first
 				    for (int numOfEntities : topBreeders.descendingKeySet()) {
-					if (numOfEntities > 0) {
+					// Only bother if there's more that 5 animals
+					if (numOfEntities > 5) {
 					    // There can be multiple owners in the same position
 					    List<UUID> owners = topBreeders.get(numOfEntities);
 					    // Go through the owners one by one
