@@ -108,6 +108,7 @@ public class PlayerEvents implements Listener {
     /*
      * Prevent dropping items if player dies on another island
      * This option helps reduce the down side of dying due to traps, etc.
+     * Also handles muting of death messages
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = false)
     public void onVistorDeath(final PlayerDeathEvent e) {
@@ -116,6 +117,10 @@ public class PlayerEvents implements Listener {
 	}
 	if (!IslandGuard.inWorld(e.getEntity())) {
 	    return;
+	}
+	// Mute death messages
+	if (Settings.muteDeathMessages) {
+	    e.setDeathMessage(null);
 	}
 	// If the player is on their island then they die and lose everything -
 	// sorry :-(

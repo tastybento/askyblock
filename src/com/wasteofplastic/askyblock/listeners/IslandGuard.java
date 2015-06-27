@@ -45,9 +45,11 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.block.BlockMultiPlaceEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
@@ -94,13 +96,22 @@ public class IslandGuard implements Listener {
     }
 
     /**
-     * Determines if the player is in the island world or not or
+     * Determines if an entity is in the island world or not or
      * in the new nether if it is activated
      * @param player
      * @return
      */
     protected static boolean inWorld(Entity entity) {
 	return inWorld(entity.getLocation());
+    }
+    
+    /**
+     * Determines if a block is in the island world or not
+     * @param block
+     * @return
+     */
+    protected static boolean inWorld(Block block) {
+	return inWorld(block.getLocation());
     }
 
     /**
@@ -902,8 +913,8 @@ public class IslandGuard implements Listener {
 	if (!(e.getDamager() instanceof Player) && !(e.getDamager() instanceof Projectile)) {
 	    return;
 	}
-
-	// plugin.getLogger().info("Entity is " + e.getEntity().toString());
+	if (debug)
+	    plugin.getLogger().info("DEBUG: Entity is " + e.getEntity().toString());
 	// Check for player initiated damage
 	if (e.getDamager() instanceof Player) {
 	    // plugin.getLogger().info("Damager is " +
@@ -914,7 +925,8 @@ public class IslandGuard implements Listener {
 		Location targetLoc = e.getEntity().getLocation();
 		// Check monsters
 		if (e.getEntity() instanceof Monster || e.getEntity() instanceof Slime || e.getEntity() instanceof Squid) {
-		    // plugin.getLogger().info("Entity is a monster - ok to hurt");
+		    if (debug)
+			plugin.getLogger().info("Entity is a monster - ok to hurt");
 		    // At spawn?
 		    if (plugin.getGrid().isAtSpawn(targetLoc)) {
 			if (!Settings.allowSpawnMobKilling) {
@@ -982,11 +994,11 @@ public class IslandGuard implements Listener {
 	    } else {
 		// PVP
 		// If PVP is okay then return
-		if ((inNether && Settings.allowNetherPvP) || (!inNether && Settings.allowPvP)) {
-		    //plugin.getLogger().info("DEBUG: PVP allowed");
+		if ((inNether && Settings.allowNetherPvP) || (!inNether && Settings.allowPvP) || (Settings.allowSpawnPVP && plugin.getGrid().isAtSpawn(e.getEntity().getLocation()))) {
+		    if (debug) plugin.getLogger().info("DEBUG: PVP allowed");
 		    return;
 		}
-		//plugin.getLogger().info("PVP not allowed");
+		if (debug) plugin.getLogger().info("PVP not allowed");
 
 	    }
 
@@ -996,22 +1008,23 @@ public class IslandGuard implements Listener {
 	// Only damagers who are players or arrows are left
 	// Handle splash potions separately.
 	if (e.getDamager() instanceof Projectile) {
-	    //plugin.getLogger().info("DEBUG: Projectile attack");
+	    if (debug) plugin.getLogger().info("DEBUG: Projectile attack");
 	    Projectile projectile = (Projectile) e.getDamager();
 	    // It really is a projectile
 	    if (projectile.getShooter() instanceof Player) {
 		Player shooter = (Player) projectile.getShooter();
-		// plugin.getLogger().info("Player arrow attack");
+		if (debug) plugin.getLogger().info("Player arrow attack");
 		if (e.getEntity() instanceof Player) {
-		    // plugin.getLogger().info("Player vs Player!");
+		    if (debug) plugin.getLogger().info("Player vs Player!");
 		    // If this is self-inflicted damage, e.g., harming thrown potions then it is ok
 		    if (shooter.equals((Player)e.getEntity())) {
-			//plugin.getLogger().info("Self damage!");
+			if (debug) plugin.getLogger().info("Self damage!");
 			return;
 		    }
 		    // Projectile shot by a player at another player
-		    if (!((inNether && Settings.allowNetherPvP) || (!inNether && Settings.allowPvP))) {
-			//plugin.getLogger().info("Target player is in a no-PVP area! projected shot by a player at another player");
+		    if (!((inNether && Settings.allowNetherPvP) || (!inNether && Settings.allowPvP) 
+			    || (Settings.allowSpawnPVP && plugin.getGrid().isAtSpawn(e.getEntity().getLocation())))) {
+			if (debug) plugin.getLogger().info("Target player is in a no-PVP area! projected shot by a player at another player");
 			shooter.sendMessage(ChatColor.RED + plugin.myLocale(shooter.getUniqueId()).targetInNoPVPArea);
 			e.setCancelled(true);
 			return;
@@ -1019,7 +1032,7 @@ public class IslandGuard implements Listener {
 		} else {
 		    // Damaged entity is NOT a player, but player is the shooter
 		    if (!(e.getEntity() instanceof Monster) && !(e.getEntity() instanceof Slime) && !(e.getEntity() instanceof Squid)) {
-			// plugin.getLogger().info("Entity is a non-monster - check if ok to hurt");
+			if (debug) plugin.getLogger().info("Entity is a non-monster - check if ok to hurt");
 			if (!Settings.allowHurtMobs) {
 			    if (!plugin.getGrid().locationIsOnIsland((Player) projectile.getShooter(), e.getEntity().getLocation())) {
 				shooter.sendMessage(ChatColor.RED + plugin.myLocale(shooter.getUniqueId()).islandProtected);
@@ -1040,9 +1053,10 @@ public class IslandGuard implements Listener {
 		}
 	    }
 	} else if (e.getDamager() instanceof Player) {
-	    //plugin.getLogger().info("DEBUG: Player attack");
+	    if (debug) plugin.getLogger().info("DEBUG: Player attack");
 	    // Just a player attack
-	    if (!((inNether && Settings.allowNetherPvP) || (!inNether && Settings.allowPvP))) {
+	    if (!((inNether && Settings.allowNetherPvP) || (!inNether && Settings.allowPvP)
+		    || (Settings.allowSpawnPVP && plugin.getGrid().isAtSpawn(e.getEntity().getLocation())))) {
 		Player player = (Player) e.getDamager();
 		player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).targetInNoPVPArea);
 		e.setCancelled(true);
@@ -1767,4 +1781,40 @@ public class IslandGuard implements Listener {
 	    }
 	}
     }
+    
+    /**
+     * Prevents fire spread
+     * @param e
+     */
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onBlockBurn(BlockBurnEvent e) {
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
+	if (Settings.allowFireSpread || !inWorld(e.getBlock())) {
+	    //plugin.getLogger().info("DEBUG: Not in world");
+	    return;
+	}
+        e.setCancelled(true);
+    }
+
+    /**
+     * Prevent fire spread
+     * @param e
+     */
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onBlockSpread(BlockSpreadEvent e) {
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	    plugin.getLogger().info(e.getSource().getType().toString());
+	}
+	if (Settings.allowFireSpread || !inWorld(e.getBlock())) {
+	    //plugin.getLogger().info("DEBUG: Not in world");
+	    return;
+	}
+        if (e.getSource().getType() == Material.FIRE) {
+          e.setCancelled(true);
+      }
+    }
+    
 }

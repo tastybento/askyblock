@@ -232,5 +232,8 @@ public class Settings {
     public static int hopperLimit;
     public static boolean allowCreeperGriefing;
     public static List<String> visitorCommandBlockList;
+    public static boolean muteDeathMessages;
+    public static boolean allowFireSpread;
+    public static boolean allowSpawnPVP;
 
 }

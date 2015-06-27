@@ -201,18 +201,20 @@ public class Challenges implements CommandExecutor, TabCompleter {
 		    giveReward(player, cmd[1].toLowerCase());
 		    int newLevel = levelDone(player);
 		    // Fire an event if they are different
-		    // plugin.getLogger().info("DEBUG: " + oldLevel + " " +
-		    // newLevel);
+		    //plugin.getLogger().info("DEBUG: " + oldLevel + " " + newLevel);
 		    if (oldLevel < newLevel) {
 			ChallengeLevelCompleteEvent event = new ChallengeLevelCompleteEvent(player, oldLevel, newLevel);
 			plugin.getServer().getPluginManager().callEvent(event);
 			// Run commands and give rewards
+			//plugin.getLogger().info("DEBUG: old level = " + oldLevel + " new level = " + newLevel);
 			String level = Settings.challengeLevels.get(newLevel);
 			if (!level.isEmpty()) {
+			    //plugin.getLogger().info("DEBUG: level name = " + level);
 			    String message = ChatColor.translateAlternateColorCodes('&', getChallengeConfig().getString("challenges.levelUnlock." + level + ".message", ""));
 			    if (!message.isEmpty()) {
 				player.sendMessage(ChatColor.GREEN + message);
 			    }
+
 			    String[] itemReward = getChallengeConfig().getString("challenges.levelUnlock." + level + ".itemReward", "").split(" ");
 			    String rewardDesc = getChallengeConfig().getString("challenges.levelUnlock." + level + ".rewardDesc", "");
 			    if (!rewardDesc.isEmpty()) {
@@ -254,17 +256,19 @@ public class Challenges implements CommandExecutor, TabCompleter {
 	}
     }
 
+    /**
+     * Checks the highest level this player has achieved
+     * @param player
+     * @return level number
+     */
     private int levelDone(Player player) {
 	int level = 0;
-	int toBeDone = 0;
-	if (!Settings.challengeLevels.isEmpty()) {
-	    for (int i = 1; i < Settings.challengeLevels.size(); i++) {
-		toBeDone = checkLevelCompletion(player, Settings.challengeLevels.get(i - 1));
-		if (toBeDone <= 0) {
-		    level = i;
-		    break;
-		}
+	int done = 0;
+	for (String levelName : Settings.challengeLevels) {
+	    if (checkLevelCompletion(player, levelName) <= 0) {
+		level = (done + 1);
 	    }
+	    done++;
 	}
 	return level;
     }
@@ -595,13 +599,18 @@ public class Challenges implements CommandExecutor, TabCompleter {
     public int checkLevelCompletion(final Player player, final String level) {
 	int challengesCompleted = 0;
 	List<String> levelChallengeList = challengeList.get(level);
+	int waiver = Settings.waiverAmount;
 	if (levelChallengeList != null) {
 	    for (String challenge : levelChallengeList) {
 		if (plugin.getPlayers().checkChallenge(player.getUniqueId(), challenge)) {
 		    challengesCompleted++;
 		}
 	    }
-	    return levelChallengeList.size() - Settings.waiverAmount - challengesCompleted;
+	    // If the number of challenges in a level is below the waiver amount, then they all need to be done
+	    if (levelChallengeList.size() <= Settings.waiverAmount) {
+		waiver = 0;
+	    }
+	    return levelChallengeList.size() - waiver - challengesCompleted;
 	}
 	return 0;
     }

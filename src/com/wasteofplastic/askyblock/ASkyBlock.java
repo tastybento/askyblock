@@ -37,6 +37,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Guardian;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
@@ -110,6 +111,8 @@ public class ASkyBlock extends JavaPlugin {
     private TinyDB tinyDB;
     // Warp panel
     private WarpPanel warpPanel;
+    // V1.8 or later
+    private boolean onePointEight;
 
     private boolean debug = false;
 
@@ -226,6 +229,17 @@ public class ASkyBlock extends JavaPlugin {
     public void onEnable() {
 	// instance of this plugin
 	plugin = this;
+	// Check server version - check for a class that only 1.8 has
+	Class<?> clazz;
+	try {
+	    clazz = Class.forName("org.bukkit.event.player.PlayerInteractAtEntityEvent");
+	} catch (Exception e) {
+	    //getLogger().info("No PlayerInteractAtEntityEvent found.");
+	    clazz = null;
+	}
+	if (clazz != null) {
+	    onePointEight = true;
+	}
 	saveDefaultConfig();
 	// Check to see if island distance is set or not
 	if (getConfig().getInt("island.distance", -1) < 1) {
@@ -414,6 +428,10 @@ public class ASkyBlock extends JavaPlugin {
 			public void run() {
 			    List<Entity> entList = islandWorld.getEntities();
 			    for (Entity current : entList) {
+				if (plugin.isOnePointEight() && current instanceof Guardian) {
+				    // Guardians are immune to acid too
+				    continue;
+				}
 				if ((current instanceof Monster) && Settings.mobAcidDamage > 0D) {
 				    if ((current.getLocation().getBlock().getType() == Material.WATER)
 					    || (current.getLocation().getBlock().getType() == Material.STATIONARY_WATER)) {
@@ -703,6 +721,8 @@ public class ASkyBlock extends JavaPlugin {
 	}
 	// Debug
 	Settings.debug = getConfig().getInt("debug", 0);
+	// Mute death messages
+	Settings.muteDeathMessages = getConfig().getBoolean("general.mutedeathmessages", false);
 	// Warp panel
 	Settings.useWarpPanel = getConfig().getBoolean("general.usewarppanel", true);
 	// Fast level calculation (this is really fast)
@@ -1146,6 +1166,7 @@ public class ASkyBlock extends JavaPlugin {
 	Settings.allowMonsterEggs = getConfig().getBoolean("island.allowspawneggs", false);
 	Settings.allowBreeding = getConfig().getBoolean("island.allowbreeding", false);
 	Settings.allowFire = getConfig().getBoolean("island.allowfire", false);
+	Settings.allowFireSpread = getConfig().getBoolean("island.allowfirespread", false);
 	Settings.allowChestDamage = getConfig().getBoolean("island.allowchestdamage", false);
 	Settings.allowLeashUse = getConfig().getBoolean("island.allowleashuse", false);
 	Settings.allowHurtMonsters = getConfig().getBoolean("island.allowhurtmonsters", true);
@@ -1179,6 +1200,7 @@ public class ASkyBlock extends JavaPlugin {
 	Settings.allowSpawnEnchanting = getConfig().getBoolean("spawn.allowenchanting", true);
 	Settings.allowSpawnAnvilUse = getConfig().getBoolean("spawn.allowanviluse", true);
 	Settings.allowSpawnBeaconAccess = getConfig().getBoolean("spawn.allowbeaconaccess", false);
+	Settings.allowSpawnPVP = getConfig().getBoolean("spawn.allowPVP", false);
 	// Challenges
 	getChallenges();
 	// Challenge completion
@@ -1281,14 +1303,7 @@ public class ASkyBlock extends JavaPlugin {
 	// Player events
 	manager.registerEvents(new PlayerEvents(this), this);
 	// New V1.8 events
-	Class<?> clazz;
-	try {
-	    clazz = Class.forName("org.bukkit.event.player.PlayerInteractAtEntityEvent");
-	} catch (Exception e) {
-	    //getLogger().info("No PlayerInteractAtEntityEvent found.");
-	    clazz = null;
-	}
-	if (clazz != null) {
+	if (onePointEight) {
 	    manager.registerEvents(new IslandGuardNew(this), this);
 	}
 	// Events for when a player joins or leaves the server
@@ -1492,5 +1507,12 @@ public class ASkyBlock extends JavaPlugin {
      */
     public SchematicsPanel getSchematicsPanel() {
 	return schematicsPanel;
+    }
+
+    /**
+     * @return the onePointEight
+     */
+    public boolean isOnePointEight() {
+        return onePointEight;
     }
 }
