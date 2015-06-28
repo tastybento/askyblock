@@ -16,6 +16,8 @@
  *******************************************************************************/
 package com.wasteofplastic.askyblock.panels;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.bukkit.Material;
@@ -46,7 +48,13 @@ public class CPItem {
 	this.nextSection = nextSection;
 	item = new ItemStack(material);
 	ItemMeta meta = item.getItemMeta();
-	meta.setDisplayName(name);
+	// Handle multi line names (split by |)
+	List<String> desc = new ArrayList<String>(Arrays.asList(name.split("\\|")));
+	meta.setDisplayName(desc.get(0));
+	if (desc.size() > 1) {
+	    desc.remove(0); // Remove the name
+	    meta.setLore(desc);
+	}
 	item.setItemMeta(meta);
     }
 
@@ -55,11 +63,16 @@ public class CPItem {
 	this.nextSection = nextSection;
 	this.item = itemStack;
 	ItemMeta meta = item.getItemMeta();
-	meta.setDisplayName(name);
-	// meta.setLore(null);
+	// Handle multi line names (split by |)
+	List<String> desc = new ArrayList<String>(Arrays.asList(name.split("\\|")));
+	meta.setDisplayName(desc.get(0));
+	if (desc.size() > 1) {
+	    desc.remove(0); // Remove the name
+	    meta.setLore(desc);
+	}
 	item.setItemMeta(meta);
     }
-    
+
     // For warps
     public CPItem(ItemStack itemStack, String command) {
 	this.command = command;

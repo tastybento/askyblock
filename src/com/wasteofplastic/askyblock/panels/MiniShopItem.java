@@ -17,6 +17,8 @@
 package com.wasteofplastic.askyblock.panels;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -64,19 +66,25 @@ public class MiniShopItem {
 	    item.setAmount(quantity);
 	    // Set the description and price
 	    ItemMeta meta = item.getItemMeta();
-	    meta.setDisplayName(description);
-	    ArrayList<String> Lore = new ArrayList<String>();
+	    // Split up the description
+	    List<String> desc = new ArrayList<String>(Arrays.asList(description.split("\\|")));
+	    meta.setDisplayName(desc.get(0));
+	    ArrayList<String> buyAndSell = new ArrayList<String>();
+	    if (desc.size() > 1) {
+		desc.remove(0);// Remove the name
+		buyAndSell.addAll(desc); // Add the rest to the description
+	    }
 	    // Create prices for buying and selling
 	    if (price > 0D) {
-		Lore.add(ASkyBlock.getPlugin().myLocale().minishopBuy + " " + quantity + " @ " + VaultHelper.econ.format(price));
+		buyAndSell.add(ASkyBlock.getPlugin().myLocale().minishopBuy + " " + quantity + " @ " + VaultHelper.econ.format(price));
 	    }
 	    if (sellPrice > 0D) {
-		Lore.add(ASkyBlock.getPlugin().myLocale().minishopSell + " " + quantity + " @ " + VaultHelper.econ.format(sellPrice));
+		buyAndSell.add(ASkyBlock.getPlugin().myLocale().minishopSell + " " + quantity + " @ " + VaultHelper.econ.format(sellPrice));
 	    }
 	    if (price < 0D && sellPrice < 0D) {
-		Lore.add(ASkyBlock.getPlugin().myLocale().minishopOutOfStock);
+		buyAndSell.add(ASkyBlock.getPlugin().myLocale().minishopOutOfStock);
 	    }
-	    meta.setLore(Lore);
+	    meta.setLore(buyAndSell);
 	    item.setItemMeta(meta);
 	    // Deal with extras
 	    if (!extra.isEmpty()) {
