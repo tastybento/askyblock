@@ -1233,6 +1233,11 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 
 	    if (split[0].equalsIgnoreCase("minishop") || split[0].equalsIgnoreCase("ms")) {
 		if (Settings.useEconomy) {
+		    // Check island
+		    if (plugin.getGrid().getIsland(player.getUniqueId()) == null) {
+			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoIsland);
+			return true;
+		    }
 		    if (player.getWorld().equals(ASkyBlock.getIslandWorld()) || player.getWorld().equals(ASkyBlock.getNetherWorld())) {	
 			if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.minishop")) {
 			    player.openInventory(ControlPanel.miniShop);
@@ -1379,6 +1384,11 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 		}
 	    } else if (split[0].equalsIgnoreCase("sethome")) {
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.sethome")) {
+		    // Check island
+		    if (plugin.getGrid().getIsland(player.getUniqueId()) == null) {
+			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoIsland);
+			return true;
+		    }
 		    plugin.getGrid().homeSet(player);
 		    return true;
 		}
@@ -1901,6 +1911,13 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 			return true;
 		    } else if (split[0].equalsIgnoreCase("sethome")) {
 			if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.sethome")) {
+			    Island island = plugin.getGrid().getIsland(playerUUID);
+			    if (island == null) {
+				// plugin.getLogger().info("DEBUG: player has no island in grid");
+				// Player has no island in the grid
+				player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoIsland);
+				return true;
+			    }
 			    int maxHomes = Settings.maxHomes;
 			    // Dynamic home sizes with permissions
 			    for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
@@ -2585,15 +2602,15 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
      */
     private void warpPlayer(Player player, Location inFront, UUID foundWarp, BlockFace directionFacing) {
 	// convert blockface to angle
-	    float yaw = Util.blockFaceToFloat(directionFacing);
-	    final Location actualWarp = new Location(inFront.getWorld(), inFront.getBlockX() + 0.5D, inFront.getBlockY(),
-		    inFront.getBlockZ() + 0.5D, yaw, 30F);
-	    player.teleport(actualWarp);
-	    player.getWorld().playSound(player.getLocation(), Sound.BAT_TAKEOFF, 1F, 1F);
-	    Player warpOwner = plugin.getServer().getPlayer(foundWarp);
-	    if (warpOwner != null && !warpOwner.equals(player)) {
-		warpOwner.sendMessage(plugin.myLocale(foundWarp).warpsPlayerWarped.replace("[name]", player.getDisplayName()));
-	    }
+	float yaw = Util.blockFaceToFloat(directionFacing);
+	final Location actualWarp = new Location(inFront.getWorld(), inFront.getBlockX() + 0.5D, inFront.getBlockY(),
+		inFront.getBlockZ() + 0.5D, yaw, 30F);
+	player.teleport(actualWarp);
+	player.getWorld().playSound(player.getLocation(), Sound.BAT_TAKEOFF, 1F, 1F);
+	Player warpOwner = plugin.getServer().getPlayer(foundWarp);
+	if (warpOwner != null && !warpOwner.equals(player)) {
+	    warpOwner.sendMessage(plugin.myLocale(foundWarp).warpsPlayerWarped.replace("[name]", player.getDisplayName()));
+	}
     }
 
     /**

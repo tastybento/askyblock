@@ -55,6 +55,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.events.ChallengeCompleteEvent;
 import com.wasteofplastic.askyblock.events.ChallengeLevelCompleteEvent;
@@ -120,9 +121,13 @@ public class Challenges implements CommandExecutor, TabCompleter {
 	    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
 	    return true;
 	}
+	// Check island
+	if (plugin.getGrid().getIsland(player.getUniqueId()) == null) {
+	    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoIsland);
+	    return true;
+	}
 	switch (cmd.length) {
 	case 0:
-	    // User typed /c or /challenge
 	    // Display panel
 	    player.openInventory(challengePanel(player));
 	    return true;
