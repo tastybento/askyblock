@@ -1201,6 +1201,9 @@ public class ASkyBlock extends JavaPlugin {
 	Settings.allowSpawnAnvilUse = getConfig().getBoolean("spawn.allowanviluse", true);
 	Settings.allowSpawnBeaconAccess = getConfig().getBoolean("spawn.allowbeaconaccess", false);
 	Settings.allowSpawnPVP = getConfig().getBoolean("spawn.allowPVP", false);
+	Settings.allowSpawnMilking = getConfig().getBoolean("spawn.allowmilking", false);
+	Settings.allowSpawnLavaCollection = getConfig().getBoolean("spawn.allowlavacollection", false);
+	Settings.allowSpawnWaterCollection = getConfig().getBoolean("spawn.allowwatercollection", false);
 	// Challenges
 	getChallenges();
 	// Challenge completion

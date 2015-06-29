@@ -307,6 +307,11 @@ sign:
   line2: "[player]"
   line3: "Nespadni!"
   line4: "Davej pozor!"
+sign-acidisland:
+  line1: "&1[AcidIsland]"
+  line2: "[player]"
+  line3: "Voda je kyselina!"
+  line4: "Pozor!"
 targetInPVPArea: "Cil je mimo PVP oblast!"
 team: 
   listingMembers: "Seznam clenu tveho ostrova"

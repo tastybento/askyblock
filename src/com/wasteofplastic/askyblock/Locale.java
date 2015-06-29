@@ -634,10 +634,10 @@ public class Locale {
 
 	} else {
 	    // AcidIsland
-	    signLine1 = ChatColor.translateAlternateColorCodes('&', locale.getString("sign.line1", "&1[Acid Island]"));
-	    signLine2 = ChatColor.translateAlternateColorCodes('&', locale.getString("sign.line2", "[player]"));
-	    signLine3 = ChatColor.translateAlternateColorCodes('&', locale.getString("sign.line3", "Water is acid!"));
-	    signLine4 = ChatColor.translateAlternateColorCodes('&', locale.getString("sign.line4", "Beware!"));
+	    signLine1 = ChatColor.translateAlternateColorCodes('&', locale.getString("sign-acidisland.line1", "&1[Acid Island]"));
+	    signLine2 = ChatColor.translateAlternateColorCodes('&', locale.getString("sign-acidisland.line2", "[player]"));
+	    signLine3 = ChatColor.translateAlternateColorCodes('&', locale.getString("sign-acidisland.line3", "Water is acid!"));
+	    signLine4 = ChatColor.translateAlternateColorCodes('&', locale.getString("sign-acidisland.line4", "Beware!"));
 	    islandhelpSpawn = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpIslandSpawn", "go to AcidIsland spawn."));
 	    newsHeadline = ChatColor.translateAlternateColorCodes('&', locale.getString("news.headline", "[AcidIsland News] While you were offline..."));
 

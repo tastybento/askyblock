@@ -326,6 +326,11 @@ sign:
   line2: "[player]"
   line3: "Fall nicht!"
   line4: "Pass auf!"
+sign-acidisland:
+  line1: "&1[Acid Island]"
+  line2: "[player]"
+  line3: "Wasser ist Säure!!"
+  line4: "Pass auf!"
 targetInPVPArea: "Ziel befindet sich in einer PvP freien Zone!"
 team: 
   listingMembers: "Liste deiner Insel-Mitglieder"

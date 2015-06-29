@@ -1332,6 +1332,18 @@ public class IslandGuard implements Listener {
 	    if (VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
 		return;
 	    }
+	    // Spawn check
+	    if (plugin.getGrid().isAtSpawn(e.getBlockClicked().getLocation())) {
+		if (Settings.allowSpawnLavaCollection && e.getItemStack().getType().equals(Material.LAVA_BUCKET)) {
+		    return;
+		}
+		if (Settings.allowSpawnWaterCollection && e.getItemStack().getType().equals(Material.WATER_BUCKET)) {
+		    return;
+		}
+		if (Settings.allowSpawnMilking && e.getItemStack().getType().equals(Material.MILK_BUCKET)) {
+		    return;
+		}
+	    }
 	    if (!Settings.allowBucketUse) {
 		if (!plugin.getGrid().locationIsOnIsland(e.getPlayer(), e.getBlockClicked().getLocation()) && !e.getPlayer().isOp()) {
 		    e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);

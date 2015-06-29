@@ -248,6 +248,11 @@ sign:
   line2: "[player]"
   line3: "Nie spadnij!"
   line4: "Uważaj!"
+sign-acidisland:
+  line1: "&1[AcidIsland]"
+  line2: "[player]"
+  line3: "Woda jest kwas!"
+  line4: "Uważaj!"
 team: 
   listingMembers: "Lista graczy w drużynie"
 topTen: 

@@ -264,6 +264,11 @@ sign:
   line2: "[player]"
   line3: "Non cadere!"
   line4: "Attento!"
+sign-acidisland:
+  line1: "&1[AcidIsland]"
+  line2: "[player]"
+  line3: "L'acqua è l'acido!"
+  line4: "Attento!"
 team: 
   listingMembers: "Lista dei membri della tua isola"
 topTen: 

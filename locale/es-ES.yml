@@ -326,6 +326,11 @@ sign:
   line2: "[player]"
   line3: "No caigas!"
   line4: "Cuidado!"
+sign-acidisland:
+  line1: "&1[AcidIsland]"
+  line2: "[player]"
+  line3: "El agua es ácido!"
+  line4: "Cuidado!"
 targetInPVPArea: "Estas en una zona no-PVP!"
 team: 
   listingMembers: "Creando una isla con los miembros de tu isla"

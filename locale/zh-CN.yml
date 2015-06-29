@@ -357,6 +357,11 @@ sign:
   line2: "&a[player]"
   line3: "&c千万要当心!"
   line4: "&c努力活下去吧！"
+sign-acidisland:
+  line1: "&7[&c末日岛屿&7]"
+  line2: "&a[player]"
+  line3: "&c千万要当心!"
+  line4: "&c努力活下去吧！"
 targetInPVPArea: 目标处于禁止PVP区域!
 team: 
   listingMembers: §e显示你岛屿的成员

@@ -263,6 +263,11 @@ sign:
   line2: "[player]"
   line3: "Do not fall!"
   line4: "Beware!"
+sign-acidisland:
+  line1: "&1[Acid Island]"
+  line2: "[player]"
+  line3: "Water Is Acid!"
+  line4: "Beware!"
 team: 
   listingMembers: "당신의 섬 구성원 목록"
 topTen: 

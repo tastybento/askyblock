@@ -460,6 +460,9 @@ spawn:
   # The following stops water above sea level from being acid at spawn if acid is active
   allowspawnnoacidwater: false
   allowPVP: false
+  allowmilking: false
+  allowlavacollection: false
+  allowwatercollection: false
 
 # This section contains the biomes that can be bought or used
 biomesettings:

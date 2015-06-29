@@ -311,8 +311,13 @@ sethome:
 sign: 
   line1: "&1&l[島嶼生存]"
   line2: "[player]"
-  line3: 千萬要當心!
-  line4: 不要掉下去!
+  line3: "千萬要當心!"
+  line4: "不要掉下去!"
+sign-acidisland:
+   line1: "&1&l[島嶼生存]"
+   line2: "[player]"
+   line3: "千萬要當心!"
+   line4: "不要喝！"
 targetInPVPArea: 目標在非PVP區域中!
 team: 
   listingMembers: 顯示你島嶼的成員

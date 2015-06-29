@@ -48,6 +48,8 @@ public class Settings {
     public final static String ISLANDCOMMAND = "ai";
     // The challenge command
     public static final String CHALLENGECOMMAND = "aic";
+    // Admin command
+    public static final String ADMINCOMMAND = "acid";
     */
     public final static GameType GAMETYPE = GameType.ASKYBLOCK;
     // Permission prefix
@@ -58,8 +60,9 @@ public class Settings {
     public static final String CHALLENGECOMMAND = "asc";
     // The spawn command (Essentials spawn for example)
     public final static String SPAWNCOMMAND = "spawn";
-
-    
+    // Admin command
+    public static final String ADMINCOMMAND = "asadmin";
+   
     public static Set<String> challengeList;
     public static int waiverAmount;
     public static List<String> challengeLevels;
@@ -147,6 +150,7 @@ public class Settings {
     public static boolean allowSpawnAnimalSpawn;
     public static boolean allowSpawnAnimalKilling;
     public static boolean allowSpawnMobKilling;
+    public static boolean allowSpawnMilking;
 
     // Levels
     public static HashMap<MaterialData, Integer> blockLimits;
@@ -235,5 +239,7 @@ public class Settings {
     public static boolean muteDeathMessages;
     public static boolean allowFireSpread;
     public static boolean allowSpawnPVP;
+    public static boolean allowSpawnLavaCollection;
+    public static boolean allowSpawnWaterCollection;
 
 }
