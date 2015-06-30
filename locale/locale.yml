@@ -181,12 +181,14 @@ confirm:
 coop: 
   help: "temporarily give a player full access to your island"
   invited: "[name] made [player] a coop player!"
-  madeyoucoopy: "[name] made you a coop player until you log out or they expel you."
+  madeyoucoopy: "[name] made you a coop player!"
+  notincoop: "[name] is not in your coop!"
   onyourteam: "Player is already on your team!"
   removed: "[name] removed your coop status!"
   removesuccess: "[name] is no longer a coop player."
-  success: "[name] is now a coop player until they log out or you expel them."
-  useexpel: "Use expel to remove."
+  success: "[name] is now a coop player until they log out or you uncoop or expel them."
+  uncoop: "remove full island access from player"
+  useexpel: "Use expel or uncoop to remove."
 delete: 
   removing: "Removing [name]'s island."
 drankAcid: "drank acid."

@@ -1475,6 +1475,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 		}
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "coop")) {
 		    player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " coop: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpCoop);
+		    player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " uncoop: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpUnCoop);
 		}
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.lock")) {
 		    player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " lock: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandHelpLock);
@@ -2282,6 +2283,38 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).expelNotOnIsland);
 			}
 			return true;
+		    } else if (split[0].equalsIgnoreCase("uncoop")) {
+			if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "coop")) {
+			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
+			    return true;
+			}
+			// Find out who they want to uncoop
+			final UUID targetPlayerUUID = plugin.getPlayers().getUUID(split[1]);
+			// Player must be known
+			if (targetPlayerUUID == null) {
+			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorUnknownPlayer);
+			    return true;
+			}
+			// Target should not be themselves
+			if (targetPlayerUUID.equals(playerUUID)) {
+			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).banNotYourself);
+			    return true;
+			}
+			// Target must be online
+			Player target = plugin.getServer().getPlayer(targetPlayerUUID);
+			if (target == null) {
+			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorOfflinePlayer);
+			    return true;
+			}
+			// Remove them from the coop list
+			boolean coop = CoopPlay.getInstance().removeCoopPlayer(player, target);
+			if (coop) {
+			    target.sendMessage(ChatColor.RED + plugin.myLocale(target.getUniqueId()).coopRemoved.replace("[name]", player.getDisplayName()));
+			    player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).coopRemoveSuccess.replace("[name]", target.getDisplayName()));
+			} else {
+			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).coopNotInCoop.replace("[name]", target.getDisplayName()));
+			}
+			return true;
 		    } else if (split[0].equalsIgnoreCase("ban")) {
 			if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.ban")) {
 			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
@@ -2857,6 +2890,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 	    }
 	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "coop")) {
 		options.add("coop");
+		options.add("uncoop");
 	    }
 	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.lock")) {
 		options.add("lock");
@@ -2915,6 +2949,10 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 	    }
 	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "coop")
 		    && args[0].equalsIgnoreCase("coop")) {
+		options.addAll(Util.getOnlinePlayerList());
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "coop")
+		    && args[0].equalsIgnoreCase("uncoop")) {
 		options.addAll(Util.getOnlinePlayerList());
 	    }
 	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.expel")
