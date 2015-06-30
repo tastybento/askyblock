@@ -147,7 +147,7 @@ public class BiomesPanel implements Listener {
 		    // Check cost
 		    double cost = thisPanel.get(slot).getPrice();
 		    if (cost > 0D) {
-			if (!VaultHelper.econ.has(player, cost)) {
+			if (!VaultHelper.econ.has(player, Settings.worldName, cost)) {
 			    player.sendMessage(ChatColor.RED + plugin.myLocale().minishopYouCannotAfford.replace("[description]", VaultHelper.econ.format(cost)));
 			    return;
 			} else {

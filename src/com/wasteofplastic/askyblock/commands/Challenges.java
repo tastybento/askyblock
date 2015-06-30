@@ -754,7 +754,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
 	if (Settings.useEconomy) {
 	    moneyReq = getChallengeConfig().getDouble("challenges.challengeList." + challenge + ".requiredMoney", 0D);
 	    if (moneyReq > 0D) {
-		if (!VaultHelper.econ.has(player, moneyReq)) {
+		if (!VaultHelper.econ.has(player, Settings.worldName, moneyReq)) {
 		    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).challengeserrorNotEnoughItems);
 		    player.sendMessage(ChatColor.RED + getChallengeConfig().getString("challenges.challengeList." + challenge + ".description"));
 		    return false;
