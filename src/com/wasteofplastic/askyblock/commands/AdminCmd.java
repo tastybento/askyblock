@@ -402,7 +402,10 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 					    }
 					}
 				    }
-
+				    // If we didn't show anything say so
+				    if (rank == 1) {
+					sender.sendMessage(plugin.myLocale().adminTopBreedersNothing);
+				    }
 
 				}});
 
