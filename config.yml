@@ -623,8 +623,8 @@ schematicsection:
       # You can add more if you like. If none are listed, the companion will not be
       # named.
       companionnames:
-      - "&9[player]'s rabbit"
-      - "&cFluffy"
+      - "&9[player]'s chicken"
+      - "&dFree-Range Eggs"
       partnerSchematic: nether
       #permission: any.perm.you.like
     # New snowy schematic
