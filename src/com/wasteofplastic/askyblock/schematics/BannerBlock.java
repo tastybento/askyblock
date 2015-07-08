@@ -23,6 +23,9 @@ import org.jnbt.Tag;
  * 
  */
 public class BannerBlock {
+    private DyeColor bannerBaseColor;
+    private List<Pattern> bannerPattern;
+
     private static HashMap<String, PatternType> patternKey;
     // bs, mc, cr, drs, dls, hhb, mr, hh, sc, gru, ss, gra, ts, ms, tt
     // bts, tr, tts, sku, cre, tl, vhr, vh, bo, cbo, bri
@@ -71,8 +74,16 @@ public class BannerBlock {
 	patternKey.put("tts", PatternType.TRIANGLES_TOP);
     }
 
+    public boolean set(Block block) {
+	Banner banner = (Banner) block.getState();
+	    banner.setBaseColor(bannerBaseColor);
+	    banner.setPatterns(bannerPattern);
+	    banner.update();
+	return true;
+    }
+    
     @SuppressWarnings("deprecation")
-    public static boolean set(Block block, Map<String, Tag> tileData) {
+    public boolean prep(Map<String, Tag> tileData) {
 	// Format for banner is:
 	// Patterns = List of patterns
 	// id = String "BannerBlock"
@@ -81,23 +92,15 @@ public class BannerBlock {
 	// z = Int
 	// y = Int
 	// x = Int
-	// //ASkyBlock.getPlugin().getLogger().info("DEBUG: standing banner");
-	Banner banner = (Banner) block.getState();
-	// //ASkyBlock.getPlugin().getLogger().info(tileData.toString());
-	// for (String key : tileData.keySet()) {
-	// //ASkyBlock.getPlugin().getLogger().info(key + " - " +
-	// tileData.get(key));
-	// }
 	try {
 	    // Do the base color
 	    int baseColor = 15 - ((IntTag) tileData.get("Base")).getValue();
 	    // //ASkyBlock.getPlugin().getLogger().info("Base value = " +
 	    // baseColor);
 	    // baseColor green = 10
-
-	    banner.setBaseColor(DyeColor.getByData((byte) baseColor));
+	    bannerBaseColor = DyeColor.getByData((byte) baseColor);
 	    // Do the patterns (no idea if this will work or not)
-	    List<Pattern> bannerPattern = new ArrayList<Pattern>();
+	    bannerPattern = new ArrayList<Pattern>();
 	    ListTag patterns = (ListTag) tileData.get("Patterns");
 	    if (patterns != null) {
 		for (Tag pattern : patterns.getValue()) {
@@ -125,12 +128,11 @@ public class BannerBlock {
 		    }
 		}
 	    }
-	    banner.setPatterns(bannerPattern);
-	    banner.update();
 	} catch (Exception e) {
 	    e.printStackTrace();
 	}
 
 	return true;
     }
+    
 }

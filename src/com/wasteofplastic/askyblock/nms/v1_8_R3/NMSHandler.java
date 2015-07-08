@@ -1,7 +1,10 @@
 package com.wasteofplastic.askyblock.nms.v1_8_R3;
 
 import net.minecraft.server.v1_8_R3.BlockPosition;
+import net.minecraft.server.v1_8_R3.EnumSkyBlock;
 import net.minecraft.server.v1_8_R3.IBlockData;
+//import net.minecraft.server.v1_8_R3.EnumSkyBlock;
+
 
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
@@ -21,7 +24,11 @@ public class NMSHandler implements NMSAbstraction {
         if (applyPhysics) {
             net.minecraft.server.v1_8_R3.Block block = chunk.getType(bp);
             w.update(bp, block);
-        }      
+        } 
+        // Recalculate lighting
+        //w.c(bp,true);
+        //w.c(EnumSkyBlock.SKY, bp);
+        //w.c(bp);
     }
 
 }

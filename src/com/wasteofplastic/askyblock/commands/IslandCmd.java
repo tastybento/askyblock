@@ -329,6 +329,8 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 			newSchem.setUsePhysics(schemSection.getBoolean("schematics." + key + ".usephysics",Settings.usePhysics));	    
 			// Paste Entities or not
 			newSchem.setPasteEntities(schemSection.getBoolean("schematics." + key + ".pasteentities",false));
+			// Paste air or not. Default is false - huge performance savings!
+			newSchem.setPasteAir(schemSection.getBoolean("schematics." + key + ".pasteair",false));	    
 			// Visible in GUI or not
 			newSchem.setVisible(schemSection.getBoolean("schematics." + key + ".show",true));
 			// Partner schematic
@@ -666,8 +668,11 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 		schematic.pasteSchematic(next, player);
 	    } else {
 		// Over world start
-		//plugin.getLogger().info("DEBUG: pasting");
+		plugin.getLogger().info("DEBUG: pasting");
+		long timer = System.nanoTime();
 		schematic.pasteSchematic(next, player);
+		double diff = (System.nanoTime() - timer)/1000000;
+		plugin.getLogger().info("DEBUG: nano time = " + diff + " ms");
 		//plugin.getLogger().info("DEBUG: pasted overworld");
 		if (Settings.createNether && Settings.newNether) {
 		    // Paste the other world schematic
@@ -709,11 +714,8 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 	if (schematic.isPlayerSpawn()) {
 	    // Set home and teleport
 	    plugin.getPlayers().setHomeLocation(playerUUID, schematic.getPlayerSpawn(next), 1);
-	    player.teleport(schematic.getPlayerSpawn(next));
-	} else {
-	    //plugin.getLogger().info("DEBUG: teleporting to home location");
-	    plugin.getGrid().homeTeleport(player);
 	}
+	plugin.getGrid().homeTeleport(player);	
 	// Reset any inventory, etc. This is done AFTER the teleport because other plugins may switch out inventory based on world
 	plugin.resetPlayer(player);
 	// Reset money if required

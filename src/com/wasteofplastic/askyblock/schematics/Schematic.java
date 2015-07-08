@@ -30,6 +30,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -60,6 +62,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.DirectionalContainer;
+import org.bukkit.material.MaterialData;
 import org.bukkit.util.BlockVector;
 import org.bukkit.util.Vector;
 import org.jnbt.ByteArrayTag;
@@ -76,6 +79,10 @@ import org.json.simple.parser.ContainerFactory;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import com.sk89q.worldedit.CuboidClipboard;
+import com.sk89q.worldedit.EditSession;
+import com.sk89q.worldedit.bukkit.BukkitWorld;
+import com.sk89q.worldedit.data.DataException;
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.Settings.GameType;
@@ -83,8 +90,8 @@ import com.wasteofplastic.askyblock.nms.NMSAbstraction;
 
 public class Schematic {
     private ASkyBlock plugin;
-    private short[] blocks;
-    private byte[] data;
+    //private short[] blocks;
+    //private byte[] data;
     private short width;
     private short length;
     private short height;
@@ -105,7 +112,6 @@ public class Schematic {
     private boolean visible;
     private int order;
     // These hashmaps enable translation between WorldEdit strings and Bukkit names
-    private HashMap<String, Material> WEtoM = new HashMap<String, Material>();
     private HashMap<String, EntityType> WEtoME = new HashMap<String, EntityType>();
     private List<EntityType> islandCompanion;
     private List<String> companionNames;
@@ -120,7 +126,9 @@ public class Schematic {
     private Vector playerSpawn;
     private Material playerSpawnBlock;
     private NMSAbstraction nms;
-    private Set<Material> attachable = new HashSet<Material>();
+    private Set<Integer> attachable = new HashSet<Integer>();
+    private List<IslandBlock> islandBlocks;
+    private boolean pasteAir;
 
     public Schematic(ASkyBlock plugin) {
 	this.plugin = plugin;
@@ -153,6 +161,8 @@ public class Schematic {
     public Schematic(ASkyBlock plugin, File file) throws IOException {
 	this.plugin = plugin;
 	// Initialize
+	short[] blocks;
+	byte[] data;
 	name = file.getName();
 	heading = "";
 	description = "";
@@ -177,18 +187,24 @@ public class Schematic {
 	playerSpawnBlock = null;
 	partnerName = "";
 
-	attachable.add(Material.STONE_BUTTON);
-	attachable.add(Material.WOOD_BUTTON);
-	attachable.add(Material.COCOA);
-	attachable.add(Material.LADDER);
-	attachable.add(Material.LEVER);
-	attachable.add(Material.PISTON_EXTENSION);
-	attachable.add(Material.REDSTONE_TORCH_OFF);
-	attachable.add(Material.REDSTONE_TORCH_ON);
-	attachable.add(Material.WALL_SIGN);
-	attachable.add(Material.TORCH);
-	attachable.add(Material.TRAP_DOOR);
-	attachable.add(Material.TRIPWIRE_HOOK);
+	attachable.add(Material.STONE_BUTTON.getId());
+	attachable.add(Material.WOOD_BUTTON.getId());
+	attachable.add(Material.COCOA.getId());
+	attachable.add(Material.LADDER.getId());
+	attachable.add(Material.LEVER.getId());
+	attachable.add(Material.PISTON_EXTENSION.getId());
+	attachable.add(Material.REDSTONE_TORCH_OFF.getId());
+	attachable.add(Material.REDSTONE_TORCH_ON.getId());
+	attachable.add(Material.WALL_SIGN.getId());
+	attachable.add(Material.TORCH.getId());
+	attachable.add(Material.TRAP_DOOR.getId());
+	attachable.add(Material.TRIPWIRE_HOOK.getId());
+	attachable.add(Material.VINE.getId());
+	attachable.add(Material.WOODEN_DOOR.getId());
+	attachable.add(Material.IRON_DOOR.getId());
+	attachable.add(Material.RED_MUSHROOM.getId());
+	attachable.add(Material.BROWN_MUSHROOM.getId());
+	attachable.add(Material.PORTAL.getId());
 	try {
 	    nms = checkVersion();
 	} catch (Exception e) {
@@ -197,96 +213,15 @@ public class Schematic {
 	// Establish the World Edit to Material look up
 	// V1.8 items
 	if (!Bukkit.getServer().getVersion().contains("(MC: 1.7")) {
-	    attachable.add(Material.IRON_TRAPDOOR);
-	    attachable.add(Material.WALL_BANNER);
-
-	    WEtoM.put("ACACIA_DOOR",Material.ACACIA_DOOR_ITEM);
-	    WEtoM.put("BIRCH_DOOR",Material.BIRCH_DOOR_ITEM);
-	    WEtoM.put("BIRCH_STAIRS",Material.BIRCH_WOOD_STAIRS);
-	    WEtoM.put("DARK_OAK_DOOR",Material.DARK_OAK_DOOR_ITEM);
-	    WEtoM.put("JUNGLE_DOOR",Material.JUNGLE_DOOR_ITEM);
-	    WEtoM.put("SLIME",Material.SLIME_BLOCK);
-	    WEtoM.put("SPRUCE_DOOR",Material.SPRUCE_DOOR_ITEM);
+	    attachable.add(Material.IRON_TRAPDOOR.getId());
+	    attachable.add(Material.WALL_BANNER.getId());
+	    attachable.add(Material.ACACIA_DOOR.getId());
+	    attachable.add(Material.BIRCH_DOOR.getId());
+	    attachable.add(Material.SPRUCE_DOOR.getId());
+	    attachable.add(Material.DARK_OAK_DOOR.getId());
+	    attachable.add(Material.JUNGLE_DOOR.getId());  
 	}
-	WEtoM.put("BREWING_STAND",Material.BREWING_STAND_ITEM);
-	WEtoM.put("CARROT_ON_A_STICK",Material.CARROT_STICK);
-	WEtoM.put("CARROT",Material.CARROT_ITEM);
-	WEtoM.put("CAULDRON", Material.CAULDRON_ITEM);
-	WEtoM.put("COBBLESTONE_WALL",Material.COBBLE_WALL);
-	WEtoM.put("COMPARATOR",Material.REDSTONE_COMPARATOR);
-	WEtoM.put("COOKED_PORKCHOP", Material.GRILLED_PORK);	
-	WEtoM.put("DIAMOND_HORSE_ARMOR",Material.DIAMOND_BARDING);
-	WEtoM.put("DIAMOND_SHOVEL",Material.DIAMOND_SPADE);
-	WEtoM.put("DYE",Material.INK_SACK);
-	WEtoM.put("END_PORTAL_FRAME",Material.ENDER_PORTAL_FRAME);
-	WEtoM.put("END_STONE",Material.ENDER_STONE);
-	WEtoM.put("EXPERIENCE_BOTTLE",Material.EXP_BOTTLE);
-	WEtoM.put("FILLED_MAP",Material.MAP);
-	WEtoM.put("FIRE_CHARGE",Material.FIREBALL);
-	WEtoM.put("FIREWORKS",Material.FIREWORK);
-	WEtoM.put("FLOWER_POT", Material.FLOWER_POT_ITEM);
-	WEtoM.put("GLASS_PANE",Material.THIN_GLASS);
-	WEtoM.put("GOLDEN_CHESTPLATE",Material.GOLD_CHESTPLATE);
-	WEtoM.put("GOLDEN_HORSE_ARMOR",Material.GOLD_BARDING);
-	WEtoM.put("GOLDEN_LEGGINGS",Material.GOLD_LEGGINGS);
-	WEtoM.put("GOLDEN_PICKAXE",Material.GOLD_PICKAXE);
-	WEtoM.put("GOLDEN_RAIL",Material.POWERED_RAIL);
-	WEtoM.put("GOLDEN_SHOVEL",Material.GOLD_SPADE);
-	WEtoM.put("GOLDEN_SWORD", Material.GOLD_SWORD);
-	WEtoM.put("GOLDEN_HELMET", Material.GOLD_HELMET);
-	WEtoM.put("GOLDEN_HOE", Material.GOLD_HOE);
-	WEtoM.put("GOLDEN_AXE", Material.GOLD_AXE);
-	WEtoM.put("GOLDEN_BOOTS", Material.GOLD_BOOTS);
-	WEtoM.put("HARDENED_CLAY",Material.HARD_CLAY);
-	WEtoM.put("HEAVY_WEIGHTED_PRESSURE_PLATE",Material.GOLD_PLATE);
-	WEtoM.put("IRON_BARS",Material.IRON_FENCE);
-	WEtoM.put("IRON_HORSE_ARMOR",Material.IRON_BARDING);
-	WEtoM.put("IRON_SHOVEL",Material.IRON_SPADE);
-	WEtoM.put("LEAD",Material.LEASH);
-	WEtoM.put("LEAVES2",Material.LEAVES_2);
-	WEtoM.put("LIGHT_WEIGHTED_PRESSURE_PLATE",Material.IRON_PLATE);
-	WEtoM.put("LOG2",Material.LOG_2);
-	WEtoM.put("MAP",Material.EMPTY_MAP);
-	WEtoM.put("MYCELIUM", Material.MYCEL);
-	WEtoM.put("NETHER_BRICK_FENCE",Material.NETHER_FENCE);
-	WEtoM.put("NETHER_WART",Material.NETHER_STALK);
-	WEtoM.put("NETHERBRICK",Material.NETHER_BRICK_ITEM);
-	WEtoM.put("OAK_STAIRS",Material.WOOD_STAIRS);
-	WEtoM.put("POTATO", Material.POTATO_ITEM);
-	WEtoM.put("RAIL",Material.RAILS);
-	WEtoM.put("RECORD_11",Material.RECORD_11);
-	WEtoM.put("RECORD_13",Material.GOLD_RECORD);
-	WEtoM.put("RECORD_BLOCKS",Material.RECORD_3);
-	WEtoM.put("RECORD_CAT",Material.GREEN_RECORD);
-	WEtoM.put("RECORD_CHIRP",Material.RECORD_4);
-	WEtoM.put("RECORD_FAR",Material.RECORD_5);
-	WEtoM.put("RECORD_MALL",Material.RECORD_6);
-	WEtoM.put("RECORD_MELLOHI",Material.RECORD_7);
-	WEtoM.put("RECORD_STAL",Material.RECORD_8);
-	WEtoM.put("RECORD_STRAD",Material.RECORD_9);
-	WEtoM.put("RECORD_WAIT",Material.RECORD_12);
-	WEtoM.put("RECORD_WARD",Material.RECORD_10);
-	WEtoM.put("RED_FLOWER",Material.RED_ROSE);
-	WEtoM.put("REEDS",Material.SUGAR_CANE);
-	WEtoM.put("REPEATER",Material.DIODE);
-	WEtoM.put("SKULL", Material.SKULL_ITEM);
-	WEtoM.put("SPAWN_EGG",Material.MONSTER_EGG);
-	WEtoM.put("STONE_BRICK_STAIRS",Material.BRICK_STAIRS);
-	WEtoM.put("STONE_BRICK_STAIRS",Material.SMOOTH_STAIRS);
-	WEtoM.put("STONE_SHOVEL",Material.STONE_SPADE);
-	WEtoM.put("STONE_SLAB",Material.STEP);
-	WEtoM.put("STONE_STAIRS",Material.COBBLESTONE_STAIRS);
-	WEtoM.put("TNT_MINECART",Material.EXPLOSIVE_MINECART);
-	WEtoM.put("WATERLILY",Material.WATER_LILY);
-	WEtoM.put("WOODEN_AXE",Material.WOOD_AXE);
-	WEtoM.put("WOODEN_BUTTON",Material.WOOD_BUTTON);
-	WEtoM.put("WOODEN_DOOR",Material.WOOD_DOOR);
-	WEtoM.put("WOODEN_HOE",Material.WOOD_HOE);
-	WEtoM.put("WOODEN_PICKAXE",Material.WOOD_PICKAXE);
-	WEtoM.put("WOODEN_PRESSURE_PLATE",Material.WOOD_PLATE);
-	WEtoM.put("WOODEN_SHOVEL",Material.WOOD_SPADE);
-	WEtoM.put("WOODEN_SLAB",Material.WOOD_STEP);
-	WEtoM.put("WOODEN_SWORD",Material.WOOD_SWORD);
+
 	// Entities
 	WEtoME.put("LAVASLIME", EntityType.MAGMA_CUBE);
 	WEtoME.put("ENTITYHORSE", EntityType.HORSE);
@@ -574,6 +509,9 @@ public class Schematic {
 	} else {
 	    topGrass = null;
 	}
+
+	// Preload the blocks
+	prePasteSchematic(blocks, data);
     }
 
     /**
@@ -581,20 +519,6 @@ public class Schematic {
      */
     public Biome getBiome() {
 	return biome;
-    }
-
-    /**
-     * @return the blocks
-     */
-    public short[] getBlocks() {
-	return blocks;
-    }
-
-    /**
-     * @return the data
-     */
-    public byte[] getData() {
-	return data;
     }
 
     /**
@@ -688,15 +612,26 @@ public class Schematic {
 	return usePhysics;
     }
 
+    /*
+     * This function pastes using World Edit - problem is that because it reads a file, it's slow.
+    @SuppressWarnings("deprecation")
+    public void pasteSchematic2(final Location loc, final Player player)  {
+	plugin.getLogger().info("WE Pasting");
+	com.sk89q.worldedit.Vector WEorigin = new com.sk89q.worldedit.Vector(loc.getBlockX(),loc.getBlockY(),loc.getBlockZ());
+        EditSession es = new EditSession(new BukkitWorld(loc.getWorld()), 999999999);
+        try {
+        CuboidClipboard cc = CuboidClipboard.loadSchematic(file);
+        cc.paste(es, WEorigin, false);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }   
+     */
     /**
-     * This method pastes a schematic and returns a location where a cow (or other entity)
-     * could be placed. Actually, the location should be that of a grass block.
-     * @param world
+     * This method pastes a schematic.
      * @param loc
      * @param player
-     * @return Location of highest grass block
      */
-    @SuppressWarnings("deprecation")
     public void pasteSchematic(final Location loc, final Player player) {
 	// If this is not a file schematic, paste the default island
 	if (this.file == null) {
@@ -709,320 +644,13 @@ public class Schematic {
 	    return;
 	}
 	World world = loc.getWorld();
-	Map<BlockVector, Map<String, Tag>> tileEntitiesMap = this.getTileEntitiesMap();
-	//Bukkit.getLogger().info("World is " + world.getName() + "and schematic size is " + width + " x " + height + " x " + length);
-
-	// Bukkit.getLogger().info("DEBUG Location to place island is:" +
-	// loc.toString());
-
-	// Center on the last bedrock location
-	//Bukkit.getLogger().info("DEBUG bedrock is:" + bedrock.toString());
-	// Bukkit.getLogger().info("DEBUG loc is before subtract:" +
-	// loc.toString());
 	Location blockLoc = new Location(world, loc.getX(), loc.getY(), loc.getZ());
 	blockLoc.subtract(bedrock);
-	//Bukkit.getLogger().info("DEBUG loc is after subtract:" +
-	// loc.toString());
-	//Bukkit.getLogger().info("DEBUG blockloc is:" + blockLoc.toString());
-	// Bukkit.getLogger().info("DEBUG there are " + tileEntitiesMap.size() +
-	// " tile entities in the schematic");
-	// Bukkit.getLogger().info("Placing blocks...");
-	for (int x = 0; x < width; ++x) {
-	    for (int y = 0; y < height; ++y) {
-		for (int z = 0; z < length; ++z) {
-		    int index = y * width * length + z * width + x;
-		    Block block = new Location(world, x, y, z).add(blockLoc).getBlock();
-		    block.setBiome(biome);
-		    try {
-			// Do not post torches because they fall off every so often
-			// May have to include banners too
-			//if (blocks[index] != Material.TORCH.getId()) {
-			Material blockMat = Material.getMaterial(blocks[index]);
-			if (blockMat != null && !attachable.contains(blockMat)) {    
-			    //block.setTypeIdAndData(blocks[index], data[index], this.usePhysics);
-			    nms.setBlockSuperFast(block, blocks[index], data[index], this.usePhysics);
-			} else if (blocks[index] == 179) {
-			    // Red sandstone - use red sand instead
-			    //block.setTypeIdAndData(12, (byte)1, this.usePhysics);
-			    nms.setBlockSuperFast(block, 12, (byte)1, this.usePhysics);
-			}
-		    } catch (Exception e) {
-			e.printStackTrace();
-			plugin.getLogger().info("Could not set (" + x + "," + y + "," + z + ") block ID:" + blocks[index] + " block data = " + data[index]);
-		    }
-		}
-	    }
-	}
-
-	// Second pass - just paste attachables and deal with chests etc.
-	for (int x = 0; x < width; ++x) {
-	    for (int y = 0; y < height; ++y) {
-		for (int z = 0; z < length; ++z) {
-		    int index = y * width * length + z * width + x;
-		    Block block = new Location(world, x, y, z).add(blockLoc).getBlock();
-		    try {
-			Material blockMat = Material.getMaterial(blocks[index]);
-			if (blockMat != null && attachable.contains(blockMat)) {   
-			    nms.setBlockSuperFast(block, blocks[index], data[index], this.usePhysics);
-			}
-			//block.setTypeIdAndData(blocks[index], data[index], this.usePhysics);
-		    } catch (Exception e) {
-			plugin.getLogger().info("Could not set (" + x + "," + y + "," + z + ") block ID:" + blocks[index] + " block data = " + data[index]);
-		    }
-		    // Tile Entities
-		    if (tileEntitiesMap.containsKey(new BlockVector(x, y, z))) {
-			String ver = Bukkit.getServer().getBukkitVersion();
-			int major = Integer.valueOf(ver.substring(0, 1));
-			int minor = Integer.valueOf(ver.substring(ver.indexOf(".") + 1, ver.indexOf(".") + 2));
-			if (major >= 1 && minor >= 8) {
-			    if (block.getType() == Material.STANDING_BANNER || block.getType() == Material.WALL_BANNER) {
-				BannerBlock.set(block, tileEntitiesMap.get(new BlockVector(x, y, z)));
-			    }
-			}
-			// Monster spawner blocks
-			if (block.getType() == Material.MOB_SPAWNER) {
-			    Map<String, Tag> tileData = tileEntitiesMap.get(new BlockVector(x, y, z));
-			    CreatureSpawner cs = (CreatureSpawner)block.getState();
-			    String creatureType = ((StringTag) tileData.get("EntityId")).getValue().toUpperCase();
-			    EntityType et = null;
-			    if (WEtoME.containsKey(creatureType)) {
-				et = WEtoME.get(creatureType);
-			    } else {
-				et = EntityType.valueOf(creatureType);
-			    }
-			    cs.setSpawnedType(et);
-
-			    //Bukkit.getLogger().info("DEBUG: " + tileData);
-			    /*
-			    for (String key : tileData.keySet()) {
-				Bukkit.getLogger().info("DEBUG: key = " + key + " : " + tileData.get(key));
-				StringTag st = (StringTag) tileData.get(key);
-				Bukkit.getLogger().info("DEBUG: key = " + key + " : " + st.getName() + " " + st.getValue());
-			    }
-			     */
-			}
-			// Signs
-			if ((block.getType() == Material.SIGN_POST) || (block.getType() == Material.WALL_SIGN)) {
-			    Sign sign = (Sign) block.getState();
-			    Map<String, Tag> tileData = tileEntitiesMap.get(new BlockVector(x, y, z));
-			    List<String> text = new ArrayList<String>();
-			    text.add(((StringTag) tileData.get("Text1")).getValue());
-			    text.add(((StringTag) tileData.get("Text2")).getValue());
-			    text.add(((StringTag) tileData.get("Text3")).getValue());
-			    text.add(((StringTag) tileData.get("Text4")).getValue());
-			    // TODO Parse sign text formatting, colors and ULR's using JSON - this does not work right now
-
-			    JSONParser parser = new JSONParser();
-			    ContainerFactory containerFactory = new ContainerFactory(){
-				public List creatArrayContainer() {
-				    return new LinkedList();
-				}
-
-				public Map createObjectContainer() {
-				    return new LinkedHashMap();
-				}
-
-			    };
-			    /*
-			    for (int line = 0; line < 4; line++) {
-				if (!text.get(line).equals("\"\"")) {
-				    try{
-					Bukkit.getLogger().info("Text: '" + text.get(line) + "'");
-					Map json = (Map)parser.parse(text.get(line), containerFactory);
-					Iterator iter = json.entrySet().iterator();
-					System.out.println("==iterate result==");
-					while(iter.hasNext()){
-					    Map.Entry entry = (Map.Entry)iter.next();
-					    if (entry.getValue().toString().equals("extra")) {
-						List content = (List)parser.parse(entry)
-					    }
-					    System.out.println(entry.getKey() + "=>" + entry.getValue());
-					}
-
-					System.out.println("==toJSONString()==");
-					System.out.println(JSONValue.toJSONString(json));
-				    }
-				    catch(ParseException pe){
-					System.out.println(pe);
-				    }
-				}
-			     */
-			    // This just removes all the JSON formatting and provides the raw text
-			    for (int line = 0; line < 4; line++) {
-				if (!text.get(line).equals("\"\"") && !text.get(line).isEmpty()) {
-				    //String lineText = text.get(line).replace("{\"extra\":[\"", "").replace("\"],\"text\":\"\"}", "");
-				    //Bukkit.getLogger().info("DEBUG: sign text = '" + text.get(line) + "'");
-				    String lineText = "";
-				    if (text.get(line).startsWith("{")) {
-					// JSON string
-					try {
-
-					    Map json = (Map)parser.parse(text.get(line), containerFactory);
-					    List list = (List) json.get("extra");
-					    //System.out.println("DEBUG1:" + JSONValue.toJSONString(list));
-					    Iterator iter = list.iterator();
-					    while(iter.hasNext()){
-						Object next = iter.next();
-						String format = JSONValue.toJSONString(next);
-						//System.out.println("DEBUG2:" + format);
-						// This doesn't see right, but appears to be the easiest way to identify this string as JSON...
-						if (format.startsWith("{")) {
-						    // JSON string
-						    Map jsonFormat = (Map)parser.parse(format, containerFactory);
-						    Iterator formatIter = jsonFormat.entrySet().iterator();
-						    while (formatIter.hasNext()) {
-							Map.Entry entry = (Map.Entry)formatIter.next();
-							//System.out.println("DEBUG3:" + entry.getKey() + "=>" + entry.getValue());
-							String key = entry.getKey().toString();
-							String value = entry.getValue().toString();
-							if (key.equalsIgnoreCase("color")) {
-							    try {
-								lineText += ChatColor.valueOf(value.toUpperCase());
-							    } catch (Exception noColor) {
-								Bukkit.getLogger().warning("Unknown color " + value +" in sign when pasting schematic, skipping...");
-							    }
-							} else if (key.equalsIgnoreCase("text")) {
-							    lineText += value;
-							} else {
-							    // Formatting - usually the value is always true, but check just in case
-							    if (key.equalsIgnoreCase("obfuscated") && value.equalsIgnoreCase("true")) {
-								lineText += ChatColor.MAGIC;
-							    } else if (key.equalsIgnoreCase("underlined") && value.equalsIgnoreCase("true")) {
-								lineText += ChatColor.UNDERLINE;
-							    } else {
-								// The rest of the formats
-								try {
-								    lineText += ChatColor.valueOf(key.toUpperCase());
-								} catch (Exception noFormat) {
-								    // Ignore
-								    Bukkit.getLogger().warning("Unknown format " + value +" in sign when pasting schematic, skipping...");
-								}
-							    }
-							}   
-						    }
-						} else {
-						    // This is unformatted text. It is included in "". A reset is required to clear
-						    // any previous formatting
-						    if (format.length()>1) {
-							lineText += ChatColor.RESET + format.substring(format.indexOf('"')+1,format.lastIndexOf('"'));
-						    }
-						} 
-					    }
-					} catch (ParseException e) {
-					    // TODO Auto-generated catch block
-					    e.printStackTrace();
-					}
-				    } else {
-					// This is unformatted text (not JSON). It is included in "".
-					if (text.get(line).length() > 1) {
-					    try {
-						lineText = text.get(line).substring(text.get(line).indexOf('"')+1,text.get(line).lastIndexOf('"'));
-					    } catch (Exception e) {
-						//There may not be those "'s, so just use the raw line
-						lineText = text.get(line);
-					    }
-					} else {
-					    // just in case it isn't - show the raw line
-					    lineText = text.get(line);
-					}
-				    }
-				    //Bukkit.getLogger().info("Line " + line + " is " + lineText);
-
-				    // Set the line
-				    sign.setLine(line, lineText);
-				}
-			    }
-			    sign.update();
-			}
-			if (block.getType().equals(Material.CHEST)) {
-			    // Check if there is another chest around (double chest)
-			    Chest chestBlock = (Chest) block.getState();
-			    DoubleChest doubleChest = null;
-			    InventoryHolder iH = chestBlock.getInventory().getHolder();
-			    if (iH instanceof DoubleChest) {
-				//Bukkit.getLogger().info("DEBUG: double chest");
-				doubleChest = (DoubleChest) iH;
-			    }
-			    //Bukkit.getLogger().info("Chest tile entity found at " + x + " " + y + " " + z);
-			    Map<String, Tag> tileData = tileEntitiesMap.get(new BlockVector(x, y, z));
-			    try {
-				ListTag chestItems = (ListTag) tileData.get("Items");
-				if (chestItems != null) {
-				    //int number = 0;
-				    for (Tag item : chestItems.getValue()) {
-					// Format for chest items is:
-					// id = short value of item id
-					// Damage = short value of item damage
-					// Count = the number of items
-					// Slot = the slot in the chest
-					// inventory
-
-					if (item instanceof CompoundTag) {
-					    try {
-						// Id is a number
-						short itemType = (Short) ((CompoundTag) item).getValue().get("id").getValue();
-						short itemDamage = (Short) ((CompoundTag) item).getValue().get("Damage").getValue();
-						byte itemAmount = (Byte) ((CompoundTag) item).getValue().get("Count").getValue();
-						byte itemSlot = (Byte) ((CompoundTag) item).getValue().get("Slot").getValue();
-						ItemStack chestItem = new ItemStack(itemType, itemAmount, itemDamage);
-						chestBlock.getInventory().setItem(itemSlot, chestItem);
-					    } catch (ClassCastException ex) {
-						// Id is a material
-						String itemType = (String) ((CompoundTag) item).getValue().get("id").getValue();
-						try {
-						    // Get the material
-						    if (itemType.startsWith("minecraft:")) {
-							String material = itemType.substring(10).toUpperCase();
-							// Special case for non-standard material names
-							Material itemMaterial;
-
-							//Bukkit.getLogger().info("DEBUG: " + material);
-
-							if (WEtoM.containsKey(material)) {
-							    //Bukkit.getLogger().info("DEBUG: Found in hashmap");
-							    itemMaterial = WEtoM.get(material);
-							} else {
-							    //Bukkit.getLogger().info("DEBUG: Not in hashmap");
-							    itemMaterial = Material.valueOf(material);
-							}
-							short itemDamage = (Short) ((CompoundTag) item).getValue().get("Damage").getValue();
-							byte itemAmount = (Byte) ((CompoundTag) item).getValue().get("Count").getValue();
-							byte itemSlot = (Byte) ((CompoundTag) item).getValue().get("Slot").getValue();
-							ItemStack chestItem = new ItemStack(itemMaterial, itemAmount, itemDamage);
-							if (doubleChest != null) {
-							    // This does not respect the original order so gaps won't be there.
-							    doubleChest.getInventory().addItem(chestItem);
-							} else {
-							    chestBlock.getInventory().setItem(itemSlot, chestItem);
-							}
-							//number++;
-						    }
-						} catch (Exception exx) {
-						    // Bukkit.getLogger().info(item.toString());
-						    // Bukkit.getLogger().info(((CompoundTag)item).getValue().get("id").getName());
-						    Bukkit.getLogger().severe(
-							    "Could not parse item [" + itemType.substring(10).toUpperCase() + "] in schematic - skipping!");
-						    // Bukkit.getLogger().severe(item.toString());
-						    //exx.printStackTrace();
-						}
-
-					    }
-
-					    // Bukkit.getLogger().info("Set chest inventory slot "
-					    // + itemSlot + " to " +
-					    // chestItem.toString());
-					}
-				    }
-				    //Bukkit.getLogger().info("Added " + number + " items to chest");
-				}
-			    } catch (Exception e) {
-				Bukkit.getLogger().severe("Could not parse schematic file item, skipping!");
-				// e.printStackTrace();
-			    }
-			}
-		    }
-		}
-	    }
+	//plugin.getLogger().info("DEBUG: blockloc = " + blockLoc);
+	// Paste the island blocks
+	//plugin.getLogger().info("DEBUG: islandBlock size (paste) = " + islandBlocks.size());
+	for (IslandBlock b : islandBlocks) {
+	    b.paste(nms, blockLoc, this.usePhysics, biome);
 	}
 	// PASTE ENTS
 	//Bukkit.getLogger().info("Block loc = " + blockLoc);
@@ -1081,8 +709,7 @@ public class Schematic {
 		}
 	    }
 	}
-	// TODO do this on load because it can be pre-processed
-	// Go through all the grass blocks and try to find a safe one
+	// Find the grass spot
 	final Location grass;
 	if (topGrass != null) {
 	    Location gr = topGrass.clone().toLocation(loc.getWorld()).subtract(bedrock);
@@ -1163,6 +790,88 @@ public class Schematic {
     }
 
     /**
+     * This method prepares to pastes a schematic.
+     * @param blocks 
+     * @param data 
+     * @param loc
+     * @param player
+     */
+    @SuppressWarnings("deprecation")
+    public void prePasteSchematic(short[] blocks, byte[] data) {
+	//plugin.getLogger().info("DEBUG: prepaste ");
+	islandBlocks = new ArrayList<IslandBlock>();
+	Map<BlockVector, Map<String, Tag>> tileEntitiesMap = this.getTileEntitiesMap();
+	// Start with non-attached blocks
+	//plugin.getLogger().info("DEBUG: attachable size = " + attachable.size());
+	//plugin.getLogger().info("DEBUG: torch = " + Material.TORCH.getId());
+	//plugin.getLogger().info("DEBUG: non attachable");
+	for (int x = 0; x < width; ++x) {
+	    for (int y = 0; y < height; ++y) {
+		for (int z = 0; z < length; ++z) {
+		    int index = y * width * length + z * width + x;
+		    IslandBlock block = new IslandBlock(x, y, z);
+		    if (!attachable.contains((int)blocks[index]) || blocks[index] == 179) {
+			if (blocks[index] == 179) {
+			    // Red sandstone - use red sand instead
+			    block.setBlock(12, (byte)1);
+			} else {
+			    block.setBlock(blocks[index], data[index]);
+			}
+			// Tile Entities
+			if (tileEntitiesMap.containsKey(new BlockVector(x, y, z))) {
+			    if (plugin.isOnePointEight()) {
+				if (block.getTypeId() == Material.STANDING_BANNER.getId()) {
+				    block.setBanner(tileEntitiesMap.get(new BlockVector(x, y, z)));
+				}
+			    }
+			    // Monster spawner blocks
+			    if (block.getTypeId() == Material.MOB_SPAWNER.getId()) {
+				block.setSpawnerType(tileEntitiesMap.get(new BlockVector(x, y, z)));
+			    }
+			    // Signs
+			    if ((block.getTypeId() == Material.SIGN_POST.getId())) {
+				block.setSign(tileEntitiesMap.get(new BlockVector(x, y, z)));
+			    }
+			    if (block.getTypeId() == Material.CHEST.getId()) {
+				block.setChest(tileEntitiesMap.get(new BlockVector(x, y, z)));
+			    }
+			}
+			islandBlocks.add(block);
+		    }
+		}
+	    }
+	}
+	//plugin.getLogger().info("Attachable blocks");
+	// Second pass - just paste attachables and deal with chests etc.
+
+	for (int x = 0; x < width; ++x) {
+	    for (int y = 0; y < height; ++y) {
+		for (int z = 0; z < length; ++z) {
+		    int index = y * width * length + z * width + x;
+		    IslandBlock block = new IslandBlock(x, y, z);
+		    if (attachable.contains((int)blocks[index])) {
+			block.setBlock(blocks[index], data[index]);
+			// Tile Entities
+			if (tileEntitiesMap.containsKey(new BlockVector(x, y, z))) {
+			    if (plugin.isOnePointEight()) {
+				if (block.getTypeId() == Material.WALL_BANNER.getId()) {
+				    block.setBanner(tileEntitiesMap.get(new BlockVector(x, y, z)));
+				}
+			    }
+			    // Wall Sign
+			    if (block.getTypeId() == Material.WALL_SIGN.getId()) {
+				block.setSign(tileEntitiesMap.get(new BlockVector(x, y, z)));
+			    }
+			}
+			islandBlocks.add(block);
+		    }  
+		}
+	    }
+	}
+	plugin.getLogger().info("DEBUG: islandBlocks size = " + islandBlocks.size());
+    }
+
+    /**
      * @param biome the biome to set
      */
     public void setBiome(Biome biome) {
@@ -1225,6 +934,22 @@ public class Schematic {
 	this.usePhysics = usePhysics;
     }
 
+
+    /**
+     * Removes all the air blocks if they are not to be pasted.
+     * @param pasteAir the pasteAir to set
+     */
+    public void setPasteAir(boolean pasteAir) {
+	if (!pasteAir) {
+	    Iterator<IslandBlock> it = islandBlocks.iterator();
+	    while (it.hasNext()) {
+		if (it.next().getTypeId() == 0) {
+		    it.remove();
+		}
+	    }
+	}
+	plugin.getLogger().info("DEBUG: islandBlocks after removing air blocks = " + islandBlocks.size());
+    }
 
     /**
      * Creates an island block by block
@@ -1532,34 +1257,18 @@ public class Schematic {
      * @return true if block is found otherwise false
      */
     public boolean setPlayerSpawnBlock(Material playerSpawnBlock) {
-	// Run through the schematic and try and find the spawnBlock
-	playerSpawn = null;
-	int playerSpawnIndex = 0;
-	int blockCount = 0;
-	for (int x = 0; x < width; ++x) {
-	    for (int y = 0; y < height; ++y) {
-		for (int z = 0; z < length; ++z) {
-		    int index = y * width * length + z * width + x;
-		    if (playerSpawnBlock != null && blocks[index] == playerSpawnBlock.getId()) {
-			// Where the player should spawn
-			playerSpawn = new Vector(x, y, z);
-			playerSpawnIndex = index;
-			blockCount++;
-		    }
-		}
-	    }
-	}
-	if (blockCount > 1) {
-	    // Block has to be unique
+	if (bedrock == null) {
 	    return false;
 	}
-	// Remove the player spawn block if it exists
-	if (playerSpawn != null && bedrock != null) {
-	    // Set to air
-	    blocks[playerSpawnIndex] = 0;
-	    // Correct spawn location block for use later. Just need to add the pasting location
-	    playerSpawn.subtract(bedrock).add(new Vector(0.5D,0D,0.5D));
-	    return true;
+	playerSpawn = null;
+	// Run through the schematic and try and find the spawnBlock
+	for (IslandBlock islandBlock : islandBlocks) {
+	    if (islandBlock.getTypeId() == playerSpawnBlock.getId()) {
+		playerSpawn = islandBlock.getVector().subtract(bedrock).add(new Vector(0.5D,0D,0.5D));
+		// Set the block to air
+		islandBlock.setTypeId((short)0);
+		return true;
+	    }
 	}
 	return false;
     }
@@ -1583,14 +1292,14 @@ public class Schematic {
 	String version = serverPackageName.substring(serverPackageName.lastIndexOf('.') + 1);
 	Class<?> clazz;
 	try {
-	    //plugin.getLogger().info("DEBUG: Trying " + pluginPackageName + ".nms." + version + ".NMSHandler");
+	    plugin.getLogger().info("DEBUG: Trying " + pluginPackageName + ".nms." + version + ".NMSHandler");
 	    clazz = Class.forName(pluginPackageName + ".nms." + version + ".NMSHandler");
 	} catch (Exception e) {
 	    plugin.getLogger().info("No NMS Handler found, falling back to Bukkit API.");
 	    clazz = Class.forName(pluginPackageName + ".nms.fallback.NMSHandler");
 	}
-	//plugin.getLogger().info("DEBUG: " + serverPackageName);
-	//plugin.getLogger().info("DEBUG: " + pluginPackageName);
+	plugin.getLogger().info("DEBUG: " + serverPackageName);
+	plugin.getLogger().info("DEBUG: " + pluginPackageName);
 	// Check if we have a NMSAbstraction implementing class at that location.
 	if (NMSAbstraction.class.isAssignableFrom(clazz)) {
 	    return (NMSAbstraction) clazz.getConstructor().newInstance();

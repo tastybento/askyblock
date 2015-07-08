@@ -557,6 +557,23 @@ schematicsection:
   chooseislandrandomly: false
 
   # This section lists all the schematics available
+  # Settings are:
+  # show - whether this island will show in the GUI or not. Typically used for partner
+  #        schematics, but can be used to temporarily hide schematics.
+  # icon - the icon to show in the GUI. It must be a known Material
+  # order - the priority for showing in the GUI. Lower numbers are shown first.
+  # name - a friendly short name for the schematic. Color codes okay.
+  # description - a longer description. Use | to split lines. Color codes okay.
+  # filename - the filename of the schematic in the schematic folder
+  # useDefaultChest - fill a chest on the island with the items in this config. If false
+  #                   the contents will come from the schematic.
+  # partnerSchematic - the island that will be pasted in the Nether.
+  # biome - the biome this island should have. All pasted blocks will have this biome.
+  # These next settings may cause lag if true. Default is false. Use judiciously.
+  # pasteentities - if the schematic has entities in it (mobs) this will paste them.
+  # usephysics - if true, causes lava or water to flow after being pasted.
+  # pasteair - Only set to true if you need to paste below sea level.
+  
   # You can add or remove from this list. If this section is missing, only the default
   # island works.
   schematics:
@@ -653,3 +670,4 @@ schematicsection:
       # This optional block determines where the player will spawn. It must be unique in
       # the schematic and will be replaced by air when pasted.
       #spawnblock: SPONGE
+      
