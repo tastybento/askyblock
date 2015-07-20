@@ -1264,6 +1264,18 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 			    return true;
 			}
 			UUID teamLeader = plugin.getPlayers().getTeamLeader(playerUUID);
+			if (teamLeader == null) {
+			    // Player is apparently in a team, but there is no team leader
+			    // Remove their team status
+			    // Clear the player of all team-related items
+			    plugin.getPlayers().setLeaveTeam(playerUUID);
+			    plugin.getPlayers().setHomeLocation(playerUUID, null);
+			    plugin.getPlayers().setIslandLocation(playerUUID, null);
+			    // Remove any warps
+			    plugin.getWarpSignsListener().removeWarp(playerUUID);
+			    sender.sendMessage(ChatColor.RED + plugin.myLocale().kicknameRemoved.replace("[name]", split[2]));
+			    return true;
+			}
 			// Payer is not a team leader
 			if (!teamLeader.equals(playerUUID)) {
 			    // Clear the player of all team-related items
@@ -1421,7 +1433,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
      * @param sender
      */
     private void deleteIslands(Island island, CommandSender sender) {
-	plugin.getGrid().removePlayersFromIsland(island);
+	plugin.getGrid().removePlayersFromIsland(island,null);
 	// Reset the biome
 	plugin.getBiomes().setIslandBiome(island.getCenter(), Settings.defaultBiome);
 	new DeleteIslandChunk(plugin, island);
