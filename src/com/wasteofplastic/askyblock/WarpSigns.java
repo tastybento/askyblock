@@ -238,7 +238,7 @@ public class WarpSigns implements Listener {
 		//plugin.getLogger().info("DEBUG: Loading warp at " + l);
 		Block b = l.getBlock();
 		// Check that a warp sign is still there
-		if (b.getType().equals(Material.SIGN_POST)) {
+		if (b.getType().equals(Material.SIGN_POST) || b.getType().equals(Material.WALL_SIGN)) {
 		    warpList.put(playerUUID, temp.get(s));
 		} else {
 		    plugin.getLogger().warning("Warp at location " + (String) temp.get(s) + " has no sign - removing.");

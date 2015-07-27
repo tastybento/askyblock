@@ -239,6 +239,7 @@ public class IslandBlock {
      * @param tileData
      */
     public void setSign(Map<String, Tag> tileData) {
+	signText = new ArrayList<String>();
 	List<String> text = new ArrayList<String>();
 	text.add(((StringTag) tileData.get("Text1")).getValue());
 	text.add(((StringTag) tileData.get("Text2")).getValue());
@@ -258,10 +259,10 @@ public class IslandBlock {
 	};
 	// This just removes all the JSON formatting and provides the raw text
 	for (int line = 0; line < 4; line++) {
+	    String lineText = "";
 	    if (!text.get(line).equals("\"\"") && !text.get(line).isEmpty()) {
 		//String lineText = text.get(line).replace("{\"extra\":[\"", "").replace("\"],\"text\":\"\"}", "");
 		//Bukkit.getLogger().info("DEBUG: sign text = '" + text.get(line) + "'");
-		String lineText = "";
 		if (text.get(line).startsWith("{")) {
 		    // JSON string
 		    try {
@@ -336,10 +337,8 @@ public class IslandBlock {
 		    }
 		}
 		//Bukkit.getLogger().info("Line " + line + " is " + lineText);
-
-		// Set the line
-		signText.set(line, lineText);
 	    }
+	    signText.add(lineText);
 	}
     }
 
@@ -423,15 +422,19 @@ public class IslandBlock {
      */
     public void paste(NMSAbstraction nms, Location blockLoc, boolean usePhysics, Biome biome) {
 	// Only paste air if it is below the sea level and in the overworld
-	if (this.typeId == 0 
-		&& (blockLoc.getBlockY() > Settings.sea_level 
-			|| !blockLoc.getWorld().getEnvironment().equals(Environment.NORMAL))) {
-	    return;
-	}
+	//if (this.typeId == 0 
+	//	&& (blockLoc.getBlockY() > Settings.sea_level 
+	//		|| !blockLoc.getWorld().getEnvironment().equals(Environment.NORMAL))) {
+	//    return;
+	//}
+	//Bukkit.getLogger().info("DEBUG: " + x + " " + y + " " + z);
 	Block block = new Location(blockLoc.getWorld(), x, y, z).add(blockLoc).getBlock();
+	//Bukkit.getLogger().info("DEBUG: " + block.getLocation().getBlockY());
 	block.setBiome(biome);
 	//if (typeId != 0) {
 	nms.setBlockSuperFast(block, typeId, data, usePhysics);
+	//block.setTypeIdAndData(typeId, (byte)data, usePhysics);
+	
 	//}
 	//if (typeId != 0 && block.getWorld().getEnvironment().equals(Environment.NORMAL)) {
 	//    Bukkit.getLogger().info("Debug: " + Material.getMaterial(typeId) + "("+ typeId +":" + data + ") " + block.getLocation());

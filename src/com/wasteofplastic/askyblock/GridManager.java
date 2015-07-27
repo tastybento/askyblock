@@ -1039,6 +1039,7 @@ public class GridManager {
 	    return true;
 	}
 	//plugin.getLogger().info("DEBUG: home loc = " + home + " teleporting");
+	//home.getChunk().load();
 	player.teleport(home);
 	//player.sendBlockChange(home, Material.GLOWSTONE, (byte)0);
 	if (number ==1 ) {
@@ -1362,27 +1363,26 @@ public class GridManager {
      * This removes players from an island overworld and nether - used when reseting or deleting an island
      * Mobs are killed when the chunks are refreshed.
      * @param island to remove players from
+     * @param uuid 
      */
-    public void removePlayersFromIsland(final Island island) {
+    public void removePlayersFromIsland(final Island island, UUID uuid) {
 	// Teleport players away
 	for (Player player : plugin.getServer().getOnlinePlayers()) {
 	    if (island.inIslandSpace(player.getLocation())) {
 		// Teleport island players to their island home
-		if (!player.getUniqueId().equals(island.getOwner()) && (plugin.getPlayers().hasIsland(player.getUniqueId()) || plugin.getPlayers().inTeam(player.getUniqueId()))) {
+		if (!player.getUniqueId().equals(uuid) && (plugin.getPlayers().hasIsland(player.getUniqueId()) || plugin.getPlayers().inTeam(player.getUniqueId()))) {
 		    homeTeleport(player);
-		} else {
+		} else if (!player.getUniqueId().equals(uuid)) {
 		    // Move player to spawn
 		    Island spawn = getSpawn();
 		    if (spawn != null) {
 			// go to island spawn
 			player.teleport(ASkyBlock.getIslandWorld().getSpawnLocation());
-			plugin.getLogger().warning("During island deletion player " + player.getName() + " sent to spawn.");
+			//plugin.getLogger().warning("During island deletion player " + player.getName() + " sent to spawn.");
 		    } else {
 			if (!player.performCommand(Settings.SPAWNCOMMAND)) {
 			    plugin.getLogger().warning(
 				    "During island deletion player " + player.getName() + " could not be sent to spawn so was dropped, sorry.");
-			} else {
-			    plugin.getLogger().warning("During island deletion player " + player.getName() + " sent to spawn using /spawn.");
 			}
 		    }
 		}

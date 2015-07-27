@@ -569,7 +569,7 @@ public class ASkyBlock extends JavaPlugin {
 	Island island = grid.getIsland(player);
 	if (island != null) {
 	    if (removeBlocks) {
-		grid.removePlayersFromIsland(island);
+		grid.removePlayersFromIsland(island, player);
 		new DeleteIslandChunk(this, island);
 	    } else {
 		island.setLocked(false);
@@ -1479,6 +1479,9 @@ public class ASkyBlock extends JavaPlugin {
      * @return the nameDB
      */
     public TinyDB getTinyDB() {
+	if (tinyDB == null) {
+	    tinyDB = new TinyDB(this);
+	}
 	return tinyDB;
     }
 

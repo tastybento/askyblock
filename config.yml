@@ -654,7 +654,7 @@ schematicsection:
       filename: harder.schematic
       biome: COLD_TAIGA
       useDefaultChest: false
-      # Chest items can be defined here if useDefaultChest is true
+      # Chest items can be defined here if useDefaultChest is false
       # Material:Qty, or Material:Data:Qty
       #chestItems:
       #- MELON:1

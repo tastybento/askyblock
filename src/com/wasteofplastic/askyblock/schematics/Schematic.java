@@ -24,17 +24,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -44,7 +39,6 @@ import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
-import org.bukkit.block.CreatureSpawner;
 import org.bukkit.block.DoubleChest;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Entity;
@@ -62,7 +56,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.DirectionalContainer;
-import org.bukkit.material.MaterialData;
 import org.bukkit.util.BlockVector;
 import org.bukkit.util.Vector;
 import org.jnbt.ByteArrayTag;
@@ -74,14 +67,7 @@ import org.jnbt.NBTInputStream;
 import org.jnbt.ShortTag;
 import org.jnbt.StringTag;
 import org.jnbt.Tag;
-import org.json.simple.JSONValue;
-import org.json.simple.parser.ContainerFactory;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
-import com.sk89q.worldedit.CuboidClipboard;
-import com.sk89q.worldedit.EditSession;
-import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.data.DataException;
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Settings;
@@ -644,7 +630,8 @@ public class Schematic {
 	    return;
 	}
 	World world = loc.getWorld();
-	Location blockLoc = new Location(world, loc.getX(), loc.getY(), loc.getZ());
+	//Location blockLoc = new Location(world, loc.getX(), loc.getY(), loc.getZ());
+	Location blockLoc = new Location(world, loc.getX(), Settings.island_level, loc.getZ());
 	blockLoc.subtract(bedrock);
 	//plugin.getLogger().info("DEBUG: blockloc = " + blockLoc);
 	// Paste the island blocks
@@ -779,6 +766,7 @@ public class Schematic {
 		}
 	    }
 	}
+	plugin.getGrid().homeTeleport(player);
 	if (!islandCompanion.isEmpty() && grass != null) {
 	    Bukkit.getServer().getScheduler().runTaskLater(ASkyBlock.getPlugin(), new Runnable() {
 		@Override
@@ -805,38 +793,48 @@ public class Schematic {
 	//plugin.getLogger().info("DEBUG: attachable size = " + attachable.size());
 	//plugin.getLogger().info("DEBUG: torch = " + Material.TORCH.getId());
 	//plugin.getLogger().info("DEBUG: non attachable");
+	//plugin.getLogger().info("DEBUG: bedrock y = " + bedrock.getBlockY());
+	int count = 0;
 	for (int x = 0; x < width; ++x) {
 	    for (int y = 0; y < height; ++y) {
 		for (int z = 0; z < length; ++z) {
 		    int index = y * width * length + z * width + x;
-		    IslandBlock block = new IslandBlock(x, y, z);
-		    if (!attachable.contains((int)blocks[index]) || blocks[index] == 179) {
-			if (blocks[index] == 179) {
-			    // Red sandstone - use red sand instead
-			    block.setBlock(12, (byte)1);
-			} else {
-			    block.setBlock(blocks[index], data[index]);
-			}
-			// Tile Entities
-			if (tileEntitiesMap.containsKey(new BlockVector(x, y, z))) {
-			    if (plugin.isOnePointEight()) {
-				if (block.getTypeId() == Material.STANDING_BANNER.getId()) {
-				    block.setBanner(tileEntitiesMap.get(new BlockVector(x, y, z)));
+		    // Only bother if this block is above ground zero and 
+		    // only bother with air if it is below sea level
+		    // TODO: need to check max world height too?
+		    int h = Settings.island_level + y - bedrock.getBlockY();
+		    if (h >= 0 && h < 255 && (blocks[index] != 0 || h < Settings.sea_level)){
+			// Only bother if the schematic blocks are within the range that y can be
+			//plugin.getLogger().info("DEBUG: height " + (count++) + ":" +h);
+			IslandBlock block = new IslandBlock(x, y, z);
+			if (!attachable.contains((int)blocks[index]) || blocks[index] == 179) {
+			    if (blocks[index] == 179) {
+				// Red sandstone - use red sand instead
+				block.setBlock(12, (byte)1);
+			    } else {
+				block.setBlock(blocks[index], data[index]);
+			    }
+			    // Tile Entities
+			    if (tileEntitiesMap.containsKey(new BlockVector(x, y, z))) {
+				if (plugin.isOnePointEight()) {
+				    if (block.getTypeId() == Material.STANDING_BANNER.getId()) {
+					block.setBanner(tileEntitiesMap.get(new BlockVector(x, y, z)));
+				    }
+				}
+				// Monster spawner blocks
+				if (block.getTypeId() == Material.MOB_SPAWNER.getId()) {
+				    block.setSpawnerType(tileEntitiesMap.get(new BlockVector(x, y, z)));
+				}
+				// Signs
+				if ((block.getTypeId() == Material.SIGN_POST.getId())) {
+				    block.setSign(tileEntitiesMap.get(new BlockVector(x, y, z)));
+				}
+				if (block.getTypeId() == Material.CHEST.getId()) {
+				    block.setChest(tileEntitiesMap.get(new BlockVector(x, y, z)));
 				}
 			    }
-			    // Monster spawner blocks
-			    if (block.getTypeId() == Material.MOB_SPAWNER.getId()) {
-				block.setSpawnerType(tileEntitiesMap.get(new BlockVector(x, y, z)));
-			    }
-			    // Signs
-			    if ((block.getTypeId() == Material.SIGN_POST.getId())) {
-				block.setSign(tileEntitiesMap.get(new BlockVector(x, y, z)));
-			    }
-			    if (block.getTypeId() == Material.CHEST.getId()) {
-				block.setChest(tileEntitiesMap.get(new BlockVector(x, y, z)));
-			    }
+			    islandBlocks.add(block);
 			}
-			islandBlocks.add(block);
 		    }
 		}
 	    }
@@ -847,24 +845,27 @@ public class Schematic {
 	for (int x = 0; x < width; ++x) {
 	    for (int y = 0; y < height; ++y) {
 		for (int z = 0; z < length; ++z) {
-		    int index = y * width * length + z * width + x;
-		    IslandBlock block = new IslandBlock(x, y, z);
-		    if (attachable.contains((int)blocks[index])) {
-			block.setBlock(blocks[index], data[index]);
-			// Tile Entities
-			if (tileEntitiesMap.containsKey(new BlockVector(x, y, z))) {
-			    if (plugin.isOnePointEight()) {
-				if (block.getTypeId() == Material.WALL_BANNER.getId()) {
-				    block.setBanner(tileEntitiesMap.get(new BlockVector(x, y, z)));
+		    int h = Settings.island_level + y - bedrock.getBlockY();
+		    if (h >= 0 && h < 255){
+			int index = y * width * length + z * width + x;
+			IslandBlock block = new IslandBlock(x, y, z);
+			if (attachable.contains((int)blocks[index])) {
+			    block.setBlock(blocks[index], data[index]);
+			    // Tile Entities
+			    if (tileEntitiesMap.containsKey(new BlockVector(x, y, z))) {
+				if (plugin.isOnePointEight()) {
+				    if (block.getTypeId() == Material.WALL_BANNER.getId()) {
+					block.setBanner(tileEntitiesMap.get(new BlockVector(x, y, z)));
+				    }
+				}
+				// Wall Sign
+				if (block.getTypeId() == Material.WALL_SIGN.getId()) {
+				    block.setSign(tileEntitiesMap.get(new BlockVector(x, y, z)));
 				}
 			    }
-			    // Wall Sign
-			    if (block.getTypeId() == Material.WALL_SIGN.getId()) {
-				block.setSign(tileEntitiesMap.get(new BlockVector(x, y, z)));
-			    }
+			    islandBlocks.add(block);
 			}
-			islandBlocks.add(block);
-		    }  
+		    }
 		}
 	    }
 	}
