@@ -9,20 +9,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import net.minecraft.server.v1_8_R3.NBTTagCompound;
+import net.minecraft.server.v1_8_R3.NBTTagList;
+import net.minecraft.server.v1_8_R3.NBTTagString;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World.Environment;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.block.DoubleChest;
 import org.bukkit.block.Sign;
+import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
 import org.jnbt.CompoundTag;
 import org.jnbt.ListTag;
@@ -33,7 +38,7 @@ import org.json.simple.parser.ContainerFactory;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import com.wasteofplastic.askyblock.Settings;
+import com.sk89q.worldedit.data.DataException;
 import com.wasteofplastic.askyblock.nms.NMSAbstraction;
 
 public class IslandBlock {
@@ -342,8 +347,13 @@ public class IslandBlock {
 	}
     }
 
+    public void setBook(Map<String, Tag> tileData) {
+	Bukkit.getLogger().info("DEBUG: Book data ");
+	Bukkit.getLogger().info(tileData.toString());
+    }
+    
     @SuppressWarnings("deprecation")
-    public void setChest(Map<String, Tag> tileData) {
+    public void setChest(NMSAbstraction nms, Map<String, Tag> tileData) {
 	try {
 	    ListTag chestItems = (ListTag) tileData.get("Items");
 	    if (chestItems != null) {
@@ -388,6 +398,9 @@ public class IslandBlock {
 				    byte itemAmount = (Byte) ((CompoundTag) item).getValue().get("Count").getValue();
 				    byte itemSlot = (Byte) ((CompoundTag) item).getValue().get("Slot").getValue();
 				    ItemStack chestItem = new ItemStack(itemMaterial, itemAmount, itemDamage);
+				    if (itemMaterial.equals(Material.WRITTEN_BOOK)) {
+					chestItem = nms.setBook(item);
+				    }
 				    chestContents.put(itemSlot, chestItem);
 				}
 			    } catch (Exception exx) {
@@ -396,7 +409,7 @@ public class IslandBlock {
 				Bukkit.getLogger().severe(
 					"Could not parse item [" + itemType.substring(10).toUpperCase() + "] in schematic - skipping!");
 				// Bukkit.getLogger().severe(item.toString());
-				//exx.printStackTrace();
+				exx.printStackTrace();
 			    }
 
 			}

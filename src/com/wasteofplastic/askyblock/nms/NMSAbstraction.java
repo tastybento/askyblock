@@ -1,6 +1,8 @@
 package com.wasteofplastic.askyblock.nms;
 
 import org.bukkit.block.Block;
+import org.bukkit.inventory.ItemStack;
+import org.jnbt.Tag;
 
 public interface NMSAbstraction {
 
@@ -11,4 +13,6 @@ public interface NMSAbstraction {
      * @param mat - material to change it into
      */
     public void setBlockSuperFast(Block b, int blockId, byte data, boolean applyPhysics);
+
+    public ItemStack setBook(Tag item);
 }

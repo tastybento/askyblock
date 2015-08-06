@@ -218,8 +218,8 @@ island:
   resetYouHave: "§6你还有§b [number] §6次重新开始的机会."
   subtitle: §a§l请务必努力生存下去
   teleport: "§b[岛屿娘]:§6欢饮回来~我的主人. §e(输入§c/island help §e获取更多帮助)"
-  title: §c§l欢迎加入末日岛屿
-  url: §b§lwww.915mc.com
+  title: §c§lASkyBlock
+  url: ""
 islandProtected: 岛屿保护.
 islandguardsettings: 
   TNTdamage: §6是否开启TNT爆炸伤害

@@ -824,14 +824,11 @@ public class Schematic {
 				// Monster spawner blocks
 				if (block.getTypeId() == Material.MOB_SPAWNER.getId()) {
 				    block.setSpawnerType(tileEntitiesMap.get(new BlockVector(x, y, z)));
-				}
-				// Signs
-				if ((block.getTypeId() == Material.SIGN_POST.getId())) {
+				} else if ((block.getTypeId() == Material.SIGN_POST.getId())) {
 				    block.setSign(tileEntitiesMap.get(new BlockVector(x, y, z)));
-				}
-				if (block.getTypeId() == Material.CHEST.getId()) {
-				    block.setChest(tileEntitiesMap.get(new BlockVector(x, y, z)));
-				}
+				} else if (block.getTypeId() == Material.CHEST.getId()) {
+				    block.setChest(nms, tileEntitiesMap.get(new BlockVector(x, y, z)));
+				}   
 			    }
 			    islandBlocks.add(block);
 			}
@@ -1299,8 +1296,8 @@ public class Schematic {
 	    plugin.getLogger().info("No NMS Handler found, falling back to Bukkit API.");
 	    clazz = Class.forName(pluginPackageName + ".nms.fallback.NMSHandler");
 	}
-	plugin.getLogger().info("DEBUG: " + serverPackageName);
-	plugin.getLogger().info("DEBUG: " + pluginPackageName);
+	//plugin.getLogger().info("DEBUG: " + serverPackageName);
+	//plugin.getLogger().info("DEBUG: " + pluginPackageName);
 	// Check if we have a NMSAbstraction implementing class at that location.
 	if (NMSAbstraction.class.isAssignableFrom(clazz)) {
 	    return (NMSAbstraction) clazz.getConstructor().newInstance();

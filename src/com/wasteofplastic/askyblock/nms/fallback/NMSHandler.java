@@ -1,6 +1,9 @@
 package com.wasteofplastic.askyblock.nms.fallback;
 
+import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.inventory.ItemStack;
+import org.jnbt.Tag;
 
 import com.wasteofplastic.askyblock.nms.NMSAbstraction;
 
@@ -19,4 +22,8 @@ public class NMSHandler implements NMSAbstraction {
 	b.setData(data);
     }
 
+    @Override
+    public ItemStack setBook(Tag item) {
+	return new ItemStack(Material.WRITTEN_BOOK);
+    }
 }
