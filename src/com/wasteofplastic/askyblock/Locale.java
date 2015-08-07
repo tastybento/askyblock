@@ -554,6 +554,7 @@ public class Locale {
     public String adminHelpTeamChatSpy;
     public String coopNotInCoop;
     public String islandhelpUnCoop;
+    public String errorMaxIslands;
 
     /**
      * Creates a locale object full of localized strings for a language
@@ -1216,5 +1217,6 @@ public class Locale {
 	adminRegisterHadIsland = ChatColor.translateAlternateColorCodes('&', locale.getString("adminRegister.hadIsland", "[name] had an island at [location]"));
 	adminRegisterNoIsland = ChatColor.translateAlternateColorCodes('&', locale.getString("adminRegister.noIsland", "There is no known island in this area!"));
 	adminHelpTeamChatSpy = ChatColor.translateAlternateColorCodes('&', locale.getString("adminHelp.teamChatSpy", "Spy on team chats (on/off)"));
+	errorMaxIslands = ChatColor.translateAlternateColorCodes('&', locale.getString("error.maxIslands", "The sky is full of islands! Try again later!"));
     }
 }

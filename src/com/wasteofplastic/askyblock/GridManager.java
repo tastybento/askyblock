@@ -1425,4 +1425,11 @@ public class GridManager {
 	//plugin.getLogger().info("DEBUG: getting spawn point : " + spawn.getSpawnPoint());
 	return spawn.getSpawnPoint();
     }
+
+    /**
+     * @return how many islands are in the grid
+     */
+    public int getIslandCount() {
+	return ownershipMap.size();
+    }
 }

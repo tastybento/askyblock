@@ -241,5 +241,6 @@ public class Settings {
     public static boolean allowSpawnPVP;
     public static boolean allowSpawnLavaCollection;
     public static boolean allowSpawnWaterCollection;
+    public static int maxIslands;
 
 }

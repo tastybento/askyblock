@@ -178,6 +178,11 @@ general:
    # Name of the world - if it does not exist then it will be generated
    worldName: ASkyBlock
 
+   # Maximum number of islands. Set to 0 for unlimited. 
+   # If the number of islands is greater than this number, no new islands will be
+   # allowed
+   maxIslands: 0 
+   
    # Use the control panel as the default display for /island
    # /island will always create an island if one does not exist
    # If the control panel is not used, then /island will teleport the player home

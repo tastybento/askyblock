@@ -721,6 +721,8 @@ public class ASkyBlock extends JavaPlugin {
 	}
 	// Debug
 	Settings.debug = getConfig().getInt("debug", 0);
+	// Max Islands
+	Settings.maxIslands = getConfig().getInt("general.maxIslands",0);
 	// Mute death messages
 	Settings.muteDeathMessages = getConfig().getBoolean("general.mutedeathmessages", false);
 	// Warp panel

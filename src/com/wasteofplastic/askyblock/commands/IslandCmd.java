@@ -1042,6 +1042,11 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 	case 0:
 	    // New island
 	    if (plugin.getPlayers().getIslandLocation(playerUUID) == null && !plugin.getPlayers().inTeam(playerUUID)) {
+		// Check if the max number of islands is made already
+		if (Settings.maxIslands > 0 && plugin.getGrid().getIslandCount() > Settings.maxIslands) {
+		    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorMaxIslands);
+		    return true;
+		}
 		// Create new island for player
 		player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).islandnew);
 		chooseIsland(player);
