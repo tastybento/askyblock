@@ -10,7 +10,6 @@ import net.minecraft.server.v1_8_R1.NBTTagCompound;
 import net.minecraft.server.v1_8_R1.NBTTagList;
 import net.minecraft.server.v1_8_R1.NBTTagString;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_8_R1.CraftWorld;
@@ -50,7 +49,7 @@ public class NMSHandler implements NMSAbstraction {
 	Map<String,Tag> contents = (Map<String,Tag>) ((CompoundTag) item).getValue().get("tag").getValue();
 	//BookMeta bookMeta = (BookMeta) chestItem.getItemMeta();
 	String author = ((StringTag)contents.get("author")).getValue();
-	Bukkit.getLogger().info("Author: " + author);
+	//Bukkit.getLogger().info("Author: " + author);
 	//bookMeta.setAuthor(author);
 	String title = ((StringTag)contents.get("title")).getValue();
 	//Bukkit.getLogger().info("Title: " + title);

@@ -618,7 +618,7 @@ public class Schematic {
      * @param loc
      * @param player
      */
-    public void pasteSchematic(final Location loc, final Player player) {
+    public void pasteSchematic(final Location loc, final Player player, boolean teleport) {
 	// If this is not a file schematic, paste the default island
 	if (this.file == null) {
 	    if (Settings.GAMETYPE == GameType.ACIDISLAND) {
@@ -766,7 +766,9 @@ public class Schematic {
 		}
 	    }
 	}
-	plugin.getGrid().homeTeleport(player);
+	if (teleport) {
+	    plugin.getGrid().homeTeleport(player);
+	}
 	if (!islandCompanion.isEmpty() && grass != null) {
 	    Bukkit.getServer().getScheduler().runTaskLater(ASkyBlock.getPlugin(), new Runnable() {
 		@Override
@@ -866,7 +868,7 @@ public class Schematic {
 		}
 	    }
 	}
-	plugin.getLogger().info("DEBUG: islandBlocks size = " + islandBlocks.size());
+	//plugin.getLogger().info("DEBUG: islandBlocks size = " + islandBlocks.size());
     }
 
     /**
@@ -1290,7 +1292,7 @@ public class Schematic {
 	String version = serverPackageName.substring(serverPackageName.lastIndexOf('.') + 1);
 	Class<?> clazz;
 	try {
-	    plugin.getLogger().info("DEBUG: Trying " + pluginPackageName + ".nms." + version + ".NMSHandler");
+	    //plugin.getLogger().info("DEBUG: Trying " + pluginPackageName + ".nms." + version + ".NMSHandler");
 	    clazz = Class.forName(pluginPackageName + ".nms." + version + ".NMSHandler");
 	} catch (Exception e) {
 	    plugin.getLogger().info("No NMS Handler found, falling back to Bukkit API.");

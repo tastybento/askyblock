@@ -647,6 +647,21 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 	//plugin.getLogger().info("DEBUG: finding island location");
 	Location next = getNextIsland();
 	//plugin.getLogger().info("DEBUG: found " + next);
+	// Set the player's parameters to this island
+	plugin.getPlayers().setHasIsland(playerUUID, true);
+	// Clear any old home locations (they should be clear, but just in case)
+	plugin.getPlayers().clearHomeLocations(playerUUID);
+	// Set the player's island location to this new spot
+	plugin.getPlayers().setIslandLocation(playerUUID, next);
+
+	// Set the biome
+	//BiomesPanel.setIslandBiome(next, schematic.getBiome());
+	// Teleport to the new home
+	if (schematic.isPlayerSpawn()) {
+	    // Set home and teleport
+	    plugin.getPlayers().setHomeLocation(playerUUID, schematic.getPlayerSpawn(next), 1);
+	}
+
 	// Sets a flag to temporarily disable cleanstone generation
 	plugin.setNewIsland(true);
 	//plugin.getBiomes();
@@ -664,15 +679,18 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 		}
 		// Switch home location to the Nether
 		next = next.toVector().toLocation(ASkyBlock.getNetherWorld());
+		// Set the player's island location to this new spot
+		plugin.getPlayers().setIslandLocation(playerUUID, next);
 		// TODO: work through the implications of this!
-		schematic.pasteSchematic(next, player);
+		schematic.pasteSchematic(next, player, true);
 	    } else {
 		// Over world start
 		//plugin.getLogger().info("DEBUG: pasting");
-		long timer = System.nanoTime();
-		schematic.pasteSchematic(next, player);
-		double diff = (System.nanoTime() - timer)/1000000;
-		plugin.getLogger().info("DEBUG: nano time = " + diff + " ms");
+		//long timer = System.nanoTime();
+		// Paste the island and teleport the player home
+		schematic.pasteSchematic(next, player, true);
+		//double diff = (System.nanoTime() - timer)/1000000;
+		//plugin.getLogger().info("DEBUG: nano time = " + diff + " ms");
 		//plugin.getLogger().info("DEBUG: pasted overworld");
 		if (Settings.createNether && Settings.newNether) {
 		    // Paste the other world schematic
@@ -698,25 +716,17 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 	} 
 	// Clear the cleanstone flag so events can happen again
 	plugin.setNewIsland(false);
-	// Set the player's parameters to this island
-	plugin.getPlayers().setHasIsland(playerUUID, true);
-	// Clear any old home locations (they should be clear, but just in case)
-	plugin.getPlayers().clearHomeLocations(playerUUID);
-	// Set the player's island location to this new spot
-	plugin.getPlayers().setIslandLocation(playerUUID, next);
 	// Add to the grid
 	Island myIsland = plugin.getGrid().addIsland(next.getBlockX(), next.getBlockZ(), playerUUID);
+
 	// Save the player so that if the server is reset weird things won't happen
 	plugin.getPlayers().save(playerUUID);
-	// Set the biome
-	//BiomesPanel.setIslandBiome(next, schematic.getBiome());
-	// Teleport to the new home
-	if (schematic.isPlayerSpawn()) {
-	    // Set home and teleport
-	    plugin.getPlayers().setHomeLocation(playerUUID, schematic.getPlayerSpawn(next), 1);
-	}
-	plugin.getGrid().homeTeleport(player);
-	
+	/*
+	if (firstTime) {
+	    plugin.getLogger().info("First time teleport");
+	    plugin.getGrid().homeTeleport(player);
+	}*/
+
 	// Delayed teleport so that the island pasting can be completed.
 	/*
 	plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
@@ -725,9 +735,9 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 	    public void run() {
 		// New island teleport
 		plugin.getGrid().homeTeleport(player);
-		
+
 	    }}, 40L);
-	*/
+	 */
 	// Reset any inventory, etc. This is done AFTER the teleport because other plugins may switch out inventory based on world
 	plugin.resetPlayer(player);
 	// Reset money if required
@@ -735,7 +745,9 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 	    resetMoney(player);
 	}
 	// Start the reset cooldown
-	setResetWaitTime(player);
+	if (!firstTime) {
+	    setResetWaitTime(player);
+	}
 	// Set the custom protection range if appropriate
 	// Dynamic home sizes with permissions
 	int range = Settings.island_protectionRange;
@@ -800,7 +812,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 
 	    @Override
 	    public void run() {
-		schematic.pasteSchematic(loc, player);
+		schematic.pasteSchematic(loc, player, false);
 
 	    }}, 60L);
 
@@ -813,7 +825,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
      * @param player
      */
     public void pasteSchematic(final Schematic schematic, final Location loc, final Player player) {
-	schematic.pasteSchematic(loc, player);
+	schematic.pasteSchematic(loc, player, false);
     }
 
     /**
@@ -1197,6 +1209,10 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 			return true;
 		    }
 		} else if (split[0].equalsIgnoreCase("go")) {
+		    if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.go")) {
+			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
+			return true;
+		    }
 		    if (!plugin.getPlayers().hasIsland(playerUUID) && !plugin.getPlayers().inTeam(playerUUID)) {
 			// Player has no island
 			player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).errorNoIsland);

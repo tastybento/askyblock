@@ -27,6 +27,9 @@ permissions:
     children:
       askyblock.island.*:
         children:
+          askyblock.island.go:
+            description: Allow teleporting to player island
+            default: true
           askyblock.island.create:
             description: Let the player use the /island command
             default: true
