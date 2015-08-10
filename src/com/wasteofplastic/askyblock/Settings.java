@@ -244,5 +244,6 @@ public class Settings {
     public static int maxIslands;
     public static boolean allowPressurePlate;
     public static boolean allowSpawnPressurePlate;
+    public static boolean allowPistonPush;
 
 }

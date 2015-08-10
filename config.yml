@@ -157,6 +157,8 @@ island:
    allowportaluse: true
    # Allow pressure plate activation by visitors (players only)
    allowpressureplates: true
+   # Allow pistons to push outside of the protected area (maybe to make bridges)
+   allowpistonpush: true
 
 # General Settings
 general:

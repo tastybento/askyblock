@@ -1181,6 +1181,7 @@ public class ASkyBlock extends JavaPlugin {
 	Settings.allowBeaconAccess = getConfig().getBoolean("island.allowbeaconaccess", false);
 	Settings.allowPortalUse = getConfig().getBoolean("island.allowportaluse", true);
 	Settings.allowPressurePlate = getConfig().getBoolean("island.allowpressureplates", true);
+	Settings.allowPistonPush = getConfig().getBoolean("island.allowpistonpush", true);
 	// Spawn Settings
 	Settings.allowSpawnPressurePlate = getConfig().getBoolean("spawn.allowpressureplates", true);
 	Settings.allowSpawnDoorUse = getConfig().getBoolean("spawn.allowdooruse", true);

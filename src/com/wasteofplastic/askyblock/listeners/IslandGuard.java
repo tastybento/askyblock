@@ -50,6 +50,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.block.BlockMultiPlaceEvent;
+import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
@@ -1872,4 +1873,30 @@ public class IslandGuard implements Listener {
 	    onPlate.remove(e.getPlayer().getUniqueId());
 	}
     }
+    
+    @EventHandler(priority = EventPriority.LOW)
+    public void onPistonExtend(BlockPistonExtendEvent e) {
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
+	Location pistonLoc = e.getBlock().getLocation();
+	if (Settings.allowPistonPush || !inWorld(pistonLoc)) {
+	    //plugin.getLogger().info("DEBUG: Not in world");
+	    return;
+	}
+	Island island = plugin.getGrid().getIslandAt(pistonLoc);
+	if (island == null || !island.onIsland(pistonLoc)) {
+	    //plugin.getLogger().info("DEBUG: Not on is island protection zone");
+	    return;
+	}
+	// We need to check where the blocks are going to go, not where they are
+	for (Block b : e.getBlocks()) {
+	    if (!island.onIsland(b.getRelative(e.getDirection()).getLocation())) {
+		//plugin.getLogger().info("DEBUG: Block is outside protected area");
+		e.setCancelled(true);
+		return;
+	    }
+	}
+    }
+    
 }
