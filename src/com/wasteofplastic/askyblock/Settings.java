@@ -242,5 +242,7 @@ public class Settings {
     public static boolean allowSpawnLavaCollection;
     public static boolean allowSpawnWaterCollection;
     public static int maxIslands;
+    public static boolean allowPressurePlate;
+    public static boolean allowSpawnPressurePlate;
 
 }

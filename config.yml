@@ -155,6 +155,8 @@ island:
    allowbeaconaccess: false
    # Allow portal use by visitors
    allowportaluse: true
+   # Allow pressure plate activation by visitors (players only)
+   allowpressureplates: true
 
 # General Settings
 general:
@@ -452,6 +454,7 @@ spawn:
   allowmobkilling: true
   allowenchanting: true
   allowanviluse: true
+  allowpressureplates: true
 
   # The following are recommended to be false at spawn, but you can change
   allowbreakblocks: false

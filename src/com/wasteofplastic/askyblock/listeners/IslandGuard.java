@@ -17,7 +17,9 @@
 package com.wasteofplastic.askyblock.listeners;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -89,6 +91,7 @@ import com.wasteofplastic.askyblock.util.VaultHelper;
 public class IslandGuard implements Listener {
     private final ASkyBlock plugin;
     private final boolean debug = false;
+    private HashMap<UUID,Vector> onPlate = new HashMap<UUID,Vector>();
 
     public IslandGuard(final ASkyBlock plugin) {
 	this.plugin = plugin;
@@ -104,7 +107,7 @@ public class IslandGuard implements Listener {
     protected static boolean inWorld(Entity entity) {
 	return inWorld(entity.getLocation());
     }
-    
+
     /**
      * Determines if a block is in the island world or not
      * @param block
@@ -572,7 +575,7 @@ public class IslandGuard implements Listener {
 		for (Player player : culprits) {
 		    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).moblimitsError.replace("[number]", String.valueOf(Settings.breedingLimit)));
 		    plugin.getLogger().warning(player.getName() + " was trying to use a " + Util.prettifyText(player.getItemInHand().getType().toString()));
-		    
+
 		}
 	    }
 	}
@@ -1413,9 +1416,8 @@ public class IslandGuard implements Listener {
 
 	// Check for disallowed clicked blocks
 	if (e.getClickedBlock() != null) {
-	    // plugin.getLogger().info("DEBUG: clicked block " +
-	    // e.getClickedBlock());
-	    // plugin.getLogger().info("DEBUG: Material " + e.getMaterial());
+	    plugin.getLogger().info("DEBUG: clicked block " + e.getClickedBlock());
+	    plugin.getLogger().info("DEBUG: Material " + e.getMaterial());
 
 	    switch (e.getClickedBlock().getType()) {
 	    case WOODEN_DOOR:
@@ -1793,7 +1795,7 @@ public class IslandGuard implements Listener {
 	    }
 	}
     }
-    
+
     /**
      * Prevents fire spread
      * @param e
@@ -1807,7 +1809,7 @@ public class IslandGuard implements Listener {
 	    //plugin.getLogger().info("DEBUG: Not in world");
 	    return;
 	}
-        e.setCancelled(true);
+	e.setCancelled(true);
     }
 
     /**
@@ -1824,9 +1826,50 @@ public class IslandGuard implements Listener {
 	    //plugin.getLogger().info("DEBUG: Not in world");
 	    return;
 	}
-        if (e.getSource().getType() == Material.FIRE) {
-          e.setCancelled(true);
-      }
+	if (e.getSource().getType() == Material.FIRE) {
+	    e.setCancelled(true);
+	}
+    }
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void onPlateStep(PlayerInteractEvent e) {
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
+	if (Settings.allowPressurePlate || !inWorld(e.getPlayer()) || !e.getAction().equals(Action.PHYSICAL)
+		|| e.getPlayer().isOp() || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
+		|| plugin.getGrid().playerIsOnIsland(e.getPlayer())) {
+	    //plugin.getLogger().info("DEBUG: Not in world");
+	    return;
+	}
+	// Check for spawn
+	//plugin.getLogger().info("DEBUG: " + Settings.allowSpawnPressurePlate);
+	//plugin.getLogger().info("DEBUG: " + plugin.getGrid().isAtSpawn(e.getPlayer().getLocation()));
+	if (Settings.allowSpawnPressurePlate && plugin.getGrid().isAtSpawn(e.getPlayer().getLocation())) {
+	    return;
+	}
+	UUID playerUUID = e.getPlayer().getUniqueId();
+	if (!onPlate.containsKey(playerUUID)) {
+	    e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).islandProtected);
+	    Vector v = e.getPlayer().getLocation().toVector();
+	    onPlate.put(playerUUID, new Vector(v.getBlockX(), v.getBlockY(), v.getBlockZ()));
+	}
+	e.setCancelled(true);
+	return;
     }
     
+    /**
+     * Removes the player from the plate map
+     * @param e
+     */
+    @EventHandler(priority = EventPriority.LOW)
+    public void onStepOffPlate(PlayerMoveEvent e) {
+	if (!onPlate.containsKey(e.getPlayer().getUniqueId())) {
+	    return;
+	}
+	Vector v = e.getPlayer().getLocation().toVector();
+	if (!(new Vector(v.getBlockX(), v.getBlockY(), v.getBlockZ())).equals(onPlate.get(e.getPlayer().getUniqueId()))) {
+	    onPlate.remove(e.getPlayer().getUniqueId());
+	}
+    }
 }

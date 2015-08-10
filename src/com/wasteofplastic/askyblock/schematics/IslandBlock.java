@@ -27,6 +27,7 @@ import org.jnbt.CompoundTag;
 import org.jnbt.ListTag;
 import org.jnbt.StringTag;
 import org.jnbt.Tag;
+import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.json.simple.parser.ContainerFactory;
 import org.json.simple.parser.JSONParser;
@@ -303,6 +304,7 @@ public class IslandBlock {
 						lineText += ChatColor.valueOf(key.toUpperCase());
 					    } catch (Exception noFormat) {
 						// Ignore
+						//System.out.println("DEBUG3:" + key + "=>" + value);
 						Bukkit.getLogger().warning("Unknown format " + value +" in sign when pasting schematic, skipping...");
 					    }
 					}
