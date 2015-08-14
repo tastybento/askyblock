@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 
 import com.wasteofplastic.askyblock.util.MapUtil;
 import com.wasteofplastic.askyblock.util.Util;
+import com.wasteofplastic.askyblock.util.VaultHelper;
 
 /**
  * Handles all Top Ten List functions
@@ -84,10 +85,12 @@ public class TopTen {
 		    String teamLeaderUUID = player.getString("teamLeader", "");
 		    if (islandLevel > 0) {
 			if (!player.getBoolean("hasTeam")) {
-			    topTenAddEntry(playerUUID, islandLevel);
+				if(!VaultHelper.checkPerm(plugin.getServer().getPlayer(playerUUID), Settings.PERMPREFIX + "mod.excludetopten"))
+					topTenAddEntry(playerUUID, islandLevel);
 			} else if (!teamLeaderUUID.isEmpty()) {
 			    if (teamLeaderUUID.equals(playerUUIDString)) {
-				topTenAddEntry(playerUUID, islandLevel);
+			    	if(!VaultHelper.checkPerm(plugin.getServer().getPlayer(playerUUID), Settings.PERMPREFIX + "mod.excludetopten"))
+			    		topTenAddEntry(playerUUID, islandLevel);
 			    }
 			}
 		    }
