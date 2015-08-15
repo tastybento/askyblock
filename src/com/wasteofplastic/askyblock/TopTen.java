@@ -43,8 +43,8 @@ public class TopTen {
 	}
 	if(!VaultHelper.checkPerm(plugin.getServer().getPlayer(ownerUUID), Settings.PERMPREFIX + "mod.excludetopten")) {
 	    topTenList.put(ownerUUID, level);
-	    topTenList = MapUtil.sortByValue(topTenList);
 	}
+	topTenList = MapUtil.sortByValue(topTenList);
     }
 
     /**
