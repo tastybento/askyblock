@@ -1,0 +1,19 @@
+# This file lists the values for various blocks that are used to calculate the# island level. Level = total of all blocks in island boundary / 100.
+
+# Underwater block multiplier
+# If blocks are below sea-level, they can have a higher value. e.g. 2x
+# Promotes under-water development if there is a sea. Value can be fractional.
+underwater: 1.0# Value of one island level. Default 100. levelcost: 100# This section lists the limits for any particular block. Blocks over this amount# are not counted.
+# Format:
+# MATERIAL: limit or MATERIAL:DATA: limit.
+# If DATA is used, there MUST be a corresponding block:data value in the blocks list.
+# For example, if you limit Jungle Logs LOG:3, then there must be a value for LOG:3
+# in the blocks section. If there is not, then LOG:3 would have no value.limits:  COBBLESTONE: 10000  NETHERRACK: 1000
+  #LOG:3: 10
+
+# This section lists the value of a block. Value must be an integer.
+# Any blocks not listed will have a value of zero.
+# Format is MATERIAL: value or MATERIAL:DATA: value.blocks:
+  ACACIA_STAIRS: 1  ACTIVATOR_RAIL: 10  AIR: 0  ANVIL: 10  BEACON: 100  BED_BLOCK: 1  BEDROCK: 0  BIRCH_WOOD_STAIRS: 1  BOAT: 2  BOOKSHELF: 5  BREWING_STAND: 20  BRICK: 5  BRICK_STAIRS: 5  BURNING_FURNACE: 10  CACTUS: 1  CAKE_BLOCK: 1  CARPET: 1  CAULDRON: 10  CHEST: 2  CLAY: 2  COAL_BLOCK: 9  COAL_ORE: 0  COBBLE_WALL: 1  COBBLESTONE: 1  COBBLESTONE_STAIRS: 1  DARK_OAK_STAIRS: 1  DAYLIGHT_DETECTOR: 10  DEAD_BUSH: 1  DETECTOR_RAIL: 10  DIAMOND_BLOCK: 300  DIODE: 5  DIODE_BLOCK_OFF: 5  DIODE_BLOCK_ON: 5  DIRT: 2  DISPENSER: 5  DOUBLE_PLANT: 2  DOUBLE_STEP: 1  DRAGON_EGG: 150  DROPPER: 5  EMERALD_BLOCK: 150  EMERALD_ORE: 0  ENCHANTMENT_TABLE: 150  ENDER_CHEST: 150  ENDER_PORTAL_FRAME: 0  ENDER_PORTAL: 0  ENDER_STONE: 2  EXPLOSIVE_MINECART: 10  FENCE: 1  FENCE_GATE: 1  FIRE: 0  FLOWER_POT: 5  FURNACE: 10  GLASS: 2  GLOWSTONE: 1  GOLD_BLOCK: 150  GOLD_ORE: 0  GRASS: 5  GRAVEL: 1  HARD_CLAY: 2  HAY_BLOCK: 2  HOPPER: 10  HOPPER_MINECART: 20  HUGE_MUSHROOM_1: 1  HUGE_MUSHROOM_2: 1  ICE: 5  IRON_BLOCK: 10  IRON_DOOR_BLOCK: 5  IRON_FENCE: 5  IRON_ORE: 0  IRON_PLATE: 5  ITEM_FRAME: 2  JACK_O_LANTERN: 1  JUKEBOX: 10  JUNGLE_WOOD_STAIRS: 1  LADDER: 1  LAPIS_BLOCK: 10  LAPIS_ORE: 0  LAVA: 0  LEAVES_2: 1  LEAVES: 1  LEVER: 1  LOG: 1
+  #Other log types - examples
+  #LOG:3: 2  LOG_2: 1  LONG_GRASS: 1  MELON_BLOCK: 1  MELON_STEM: 1  MINECART: 10  MOB_SPAWNER: 0  MOSSY_COBBLESTONE: 2  MYCEL: 5  NETHER_BRICK: 2  NETHER_BRICK_STAIRS: 2  NETHER_FENCE: 2  NETHER_STALK: 1  NETHERRACK: 1  NOTE_BLOCK: 10  OBSIDIAN: 10  PACKED_ICE: 5  PAINTING: 2  PISTON_BASE: 2  PISTON_STICKY_BASE: 2  PORTAL: 0  POWERED_MINECART: 10  POWERED_RAIL: 10  PUMPKIN_STEM: 1  PUMPKIN: 1  QUARTZ_BLOCK: 1  QUARTZ_ORE: 0  QUARTZ_STAIRS: 1  QUARTZ: 1  RAILS: 1  RED_ROSE: 1  REDSTONE_BLOCK: 10  REDSTONE_COMPARATOR_OFF: 10  REDSTONE_COMPARATOR_ON: 10  REDSTONE_COMPARATOR: 10  REDSTONE_LAMP_OFF: 10  REDSTONE_LAMP_ON: 10  REDSTONE_ORE: 0  REDSTONE_TORCH_OFF: 5  REDSTONE_TORCH_ON: 5  REDSTONE_WIRE: 1  SAND: 1  SANDSTONE: 1  SANDSTONE_STAIRS: 1  SIGN_POST: 1  SKULL: 10  SMOOTH_BRICK: 2  SMOOTH_STAIRS: 2  SNOW_BLOCK: 1  SOIL: 2  SOUL_SAND: 2  SPONGE: 10  SPRUCE_WOOD_STAIRS: 1  STAINED_CLAY: 2  STAINED_GLASS: 2  STAINED_GLASS_PANE: 1  STATIONARY_LAVA: 0  STATIONARY_WATER: 0  STEP: 1  STONE: 1  STONE_BUTTON: 1  STONE_PLATE: 2  STORAGE_MINECART: 10  SUGAR_CANE_BLOCK: 1  THIN_GLASS: 1  TNT: 5  TORCH: 2  TRAP_DOOR: 5  TRAPPED_CHEST: 10  TRIPWIRE_HOOK: 2  TRIPWIRE: 2  VINE: 1  WALL_SIGN: 1  WATER_LILY: 5  WEB: 10  WOOD: 1  WOOD_BUTTON: 1  WOOD_DOOR: 1  WOOD_DOUBLE_STEP: 1  WOOD_PLATE: 1  WOOD_STAIRS: 1  WOOD_STEP: 1  WOODEN_DOOR: 1  WOOL: 1  WORKBENCH: 1  YELLOW_FLOWER: 1

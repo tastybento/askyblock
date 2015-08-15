@@ -1,0 +1,59 @@
+# Control panel file
+# For colors in panel name use &. Note client must restart if changes made as it caches inventory.
+# [island] refers to the island command, e.g., /island
+# material format is MATERIAL:DURABILITY where DURABILITY is optional
+# description can include color codes using & and new lines using |
+
+default:
+  panelname: '&1Commands'
+  buttons:
+    0:
+      material: GRASS
+      description: 'Go to your island'
+      command: '[island] go'
+      nextsection: ''
+    1:
+      material: LAVA_BUCKET
+      description: 'Open the minishop'
+      command: '[island] ms'
+      nextsection: ''
+    2:
+      material: SKULL_ITEM
+      description: 'List team members'
+      command: '[island] team'
+      nextsection:
+    3:
+      material: BED
+      description: 'Set your home here'
+      command: '[island] sethome'
+      nextsection:
+    4:
+      material: ACACIA_STAIRS
+      description: 'Island level'
+      command: '[island] level'
+      nextsection:
+    5:
+      material: BOOK
+      description: 'List the Top 10 islands'
+      command: '[island] top'
+      nextsection:
+    6:
+      material: SIGN
+      description: 'List warps available'
+      command: '[island] warps'
+      nextsection:
+    7:
+      material: BEDROCK
+      description: 'Go to world spawn'
+      command: '[island] spawn'
+      nextsection:
+    8:
+      material: SAPLING
+      description: 'Change biome'
+      command: '[island] biomes'
+      nextsection: ''
+    9:
+      material: ENCHANTMENT_TABLE
+      description: 'Challenges'
+      command: 'asc'
+      nextsection: ''
