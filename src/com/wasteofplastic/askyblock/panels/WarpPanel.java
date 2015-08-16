@@ -13,6 +13,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType.SlotType;
@@ -132,7 +133,7 @@ public class WarpPanel implements Listener {
 	return warpPanel.get(panelNumber);
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onInventoryClick(InventoryClickEvent event) {
 	Inventory inventory = event.getInventory(); // The inventory that was clicked in
 	String title = inventory.getTitle();

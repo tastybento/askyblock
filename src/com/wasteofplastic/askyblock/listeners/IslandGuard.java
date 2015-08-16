@@ -1098,15 +1098,26 @@ public class IslandGuard implements Listener {
 		e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
 		e.setCancelled(true);
 	    } else {
-		// Check if it's a hopper
-		if (Settings.hopperLimit > 0 && e.getBlock().getType() == Material.HOPPER) {
-		    Island island = plugin.getGrid().getIslandAt(e.getBlock().getLocation());
-		    if (island != null) {
-			// Check island limit
-			if (island.getHopperCount() >= Settings.hopperLimit) {
-			    e.getPlayer().sendMessage(ChatColor.RED 
-				    + (plugin.myLocale(e.getPlayer().getUniqueId()).hopperLimit).replace("[number]",String.valueOf(Settings.hopperLimit)));
+		// Check how many placed
+		//plugin.getLogger().info("DEBUG: block placed " + e.getBlock().getType());
+		String type = e.getBlock().getType().toString();
+		if (!e.getBlock().getState().getClass().getName().endsWith("CraftBlockState") 
+			// Not all blocks have that type of class, so we have to do some explicit checking...
+			|| e.getBlock().getType().equals(Material.REDSTONE_COMPARATOR_OFF) 
+			|| type.endsWith("BANNER") // Avoids V1.7 issues
+			|| e.getBlock().getType().equals(Material.ENDER_CHEST)
+			|| e.getBlock().getType().equals(Material.ENCHANTMENT_TABLE)
+			|| e.getBlock().getType().equals(Material.DAYLIGHT_DETECTOR)
+			|| e.getBlock().getType().equals(Material.FLOWER_POT)){
+		    // tile entity placed
+		    if (Settings.limitedBlocks.containsKey(type) && Settings.limitedBlocks.get(type) > -1) {
+			Island island = plugin.getGrid().getIslandAt(e.getBlock().getLocation());
+			int count = island.getTileEntityCount(e.getBlock().getType());
+			if (Settings.limitedBlocks.get(type) <= count) {
+			    e.getPlayer().sendMessage(ChatColor.RED + (plugin.myLocale(e.getPlayer().getUniqueId()).entityLimitReached.replace("[entity]",
+				    Util.prettifyText(type))).replace("[number]", String.valueOf(Settings.limitedBlocks.get(type))));
 			    e.setCancelled(true);
+			    return;
 			}
 		    }
 		}
@@ -1156,6 +1167,21 @@ public class IslandGuard implements Listener {
 	    } else if (!Settings.allowPlaceBlocks && !plugin.getGrid().locationIsOnIsland(e.getPlayer(), e.getBlock().getLocation())) {
 		e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
 		e.setCancelled(true);
+	    }
+	    // Check how many placed
+	    if (!e.getEntity().getClass().getName().endsWith("CraftBlockState")){
+		// entity placed
+		String type = e.getEntity().getType().toString();
+		if (Settings.limitedBlocks.containsKey(type) && Settings.limitedBlocks.get(type) > -1) {
+		    Island island = plugin.getGrid().getIslandAt(e.getEntity().getLocation());
+		    int count = island.getEntityCount(e.getEntity().getType());
+		    if (Settings.limitedBlocks.get(type) <= count) {
+			e.getPlayer().sendMessage(ChatColor.RED + (plugin.myLocale(e.getPlayer().getUniqueId()).entityLimitReached.replace("[entity]",
+				Util.prettifyText(type))).replace("[number]", String.valueOf(Settings.limitedBlocks.get(type))));
+			e.setCancelled(true);
+			return;
+		    }
+		}
 	    }
 	}
     }
@@ -1858,7 +1884,7 @@ public class IslandGuard implements Listener {
 	e.setCancelled(true);
 	return;
     }
-    
+
     /**
      * Removes the player from the plate map
      * @param e
@@ -1873,7 +1899,7 @@ public class IslandGuard implements Listener {
 	    onPlate.remove(e.getPlayer().getUniqueId());
 	}
     }
-    
+
     @EventHandler(priority = EventPriority.LOW)
     public void onPistonExtend(BlockPistonExtendEvent e) {
 	if (debug) {
@@ -1898,5 +1924,6 @@ public class IslandGuard implements Listener {
 	    }
 	}
     }
-    
+
+
 }

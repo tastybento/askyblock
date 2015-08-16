@@ -33,6 +33,7 @@ import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.WorldType;
 import org.bukkit.block.Biome;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Entity;
@@ -1290,7 +1291,40 @@ public class ASkyBlock extends JavaPlugin {
 	}
 	Settings.breedingLimit = getConfig().getInt("general.breedinglimit", 0);
 	Settings.villagerLimit = getConfig().getInt("general.villagerlimit", 0);
-	Settings.hopperLimit = getConfig().getInt("general.hopperlimit", 0);
+	Settings.limitedBlocks = new HashMap<String,Integer>();
+	ConfigurationSection entityLimits = getConfig().getConfigurationSection("general.entitylimits");
+	if (entityLimits != null) {
+	    for (String entity: entityLimits.getKeys(false)) {
+		int limit = entityLimits.getInt(entity.toUpperCase(), -1);
+		if (limit > 0) {
+		    getLogger().info(entity.toUpperCase() + " will be limited to " + limit);
+		}
+		if (Material.getMaterial(entity.toUpperCase()) == null) {
+		    getLogger().warning("general.entitylimits section has unknown entity type: " + entity.toUpperCase() + " skipping...");
+		} else if (limit > -1) {
+		    Settings.limitedBlocks.put(entity.toUpperCase(), limit);
+		    if (entity.equalsIgnoreCase("REDSTONE_COMPARATOR")) {
+			// Player can only ever place a redstone comparator in the OFF state
+			Settings.limitedBlocks.put("REDSTONE_COMPARATOR_OFF", limit);
+		    } else if (entity.equalsIgnoreCase("BANNER")) {
+			// To simplify banners, the banner is allowed and automatically made wall and standing banner
+			Settings.limitedBlocks.put("WALL_BANNER", limit);
+			Settings.limitedBlocks.put("STANDING_BANNER", limit);
+		    } else if (entity.equalsIgnoreCase("SIGN")) {
+			// To simplify signs, the sign is allowed and automatically made wall and standing signs
+			Settings.limitedBlocks.put("WALL_SIGN", limit);
+			Settings.limitedBlocks.put("SIGN_POST", limit);
+		    }
+		}
+	    }
+	}
+	// Legacy setting support for hopper limiting
+	if (Settings.limitedBlocks.isEmpty()) {
+	    Settings.hopperLimit = getConfig().getInt("general.hopperlimit", -1);
+	    if (Settings.hopperLimit > 0) {
+		Settings.limitedBlocks.put("HOPPER", Settings.hopperLimit);
+	    }
+	}
 	Settings.mobLimit = getConfig().getInt("general.moblimit", 0);
 	Settings.removeCompleteOntimeChallenges = getConfig().getBoolean("general.removecompleteonetimechallenges", false);
 	Settings.addCompletedGlow = getConfig().getBoolean("general.addcompletedglow", true);
@@ -1524,6 +1558,6 @@ public class ASkyBlock extends JavaPlugin {
      * @return the onePointEight
      */
     public boolean isOnePointEight() {
-        return onePointEight;
+	return onePointEight;
     }
 }

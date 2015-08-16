@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Hopper;
@@ -14,6 +15,8 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Villager;
 
+import com.google.common.collect.HashMultiset;
+import com.google.common.collect.Multiset;
 import com.wasteofplastic.askyblock.util.Util;
 
 /**
@@ -58,6 +61,9 @@ public class Island {
     private boolean purgeProtected;
     // The spawn point 
     private Location spawnPoint;
+    // Tile entities
+    private Multiset<Material> tileEntityCount = HashMultiset.create();
+    
 
     public Island(ASkyBlock plugin, String serial) {
 	this.plugin = plugin;
@@ -509,6 +515,7 @@ public class Island {
      * @return number of hoppers on the island
      */
     public int getHopperCount() {
+	tileEntityCount.clear();
 	int result = 0;	
 	for (int x = getMinProtectedX() /16; x <= (getMinProtectedX() + getProtectionSize() - 1)/16; x++) {
 	    for (int z = getMinProtectedZ() /16; z <= (getMinProtectedZ() + getProtectionSize() - 1)/16; z++) {
@@ -520,7 +527,57 @@ public class Island {
 	    }  
 	}
 	return result;
-
+    }
+    
+    /**
+     * @param mat
+     * @return count of how many tile entities of type mat are on the island at last count. Counts are done when a player places
+     * a tile entity.
+     */
+    public int getTileEntityCount(Material material) {
+	int result = 0;	
+	for (int x = getMinProtectedX() /16; x <= (getMinProtectedX() + getProtectionSize() - 1)/16; x++) {
+	    for (int z = getMinProtectedZ() /16; z <= (getMinProtectedZ() + getProtectionSize() - 1)/16; z++) {
+		for (BlockState holder : world.getChunkAt(x, z).getTileEntities()) {
+		    plugin.getLogger().info("DEBUG: entity: " + holder.getType());
+		    if (holder.getType() == material) {
+			result++;
+		    } else if (material.equals(Material.REDSTONE_COMPARATOR_OFF)) {
+			if (holder.getType().equals(Material.REDSTONE_COMPARATOR_ON)) {
+			    result++;
+			}
+		    } else if (material.equals(Material.FURNACE)) {
+			if (holder.getType().equals(Material.BURNING_FURNACE)) {
+			    result++;
+			}
+		    } else if (material.equals(Material.BANNER)) {
+			if (holder.getType().equals(Material.WALL_BANNER) || holder.getType().equals(Material.STANDING_BANNER)) {
+			    result++;
+			}
+		    } else if (material.equals(Material.WALL_SIGN) || material.equals(Material.SIGN_POST)) {
+			if (holder.getType().equals(Material.WALL_SIGN) || holder.getType().equals(Material.SIGN_POST)) {
+			    result++;
+			}
+		    }
+		}
+	    }  
+	}
+	return result;
+    }
+    
+    public int getEntityCount(EntityType et) {
+	int result = 0;	
+	for (int x = getMinProtectedX() /16; x <= (getMinProtectedX() + getProtectionSize() - 1)/16; x++) {
+	    for (int z = getMinProtectedZ() /16; z <= (getMinProtectedZ() + getProtectionSize() - 1)/16; z++) {
+		for (Entity holder : world.getChunkAt(x, z).getEntities()) {
+		    plugin.getLogger().info("DEBUG: entity: " + holder.getType());
+		    if (holder.getType() == et) {
+			result++;
+		    }
+		}
+	    }  
+	}
+	return result;
     }
 
     public void setSpawnPoint(Location location) {
