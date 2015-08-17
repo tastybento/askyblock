@@ -147,7 +147,7 @@ public class IslandGuard implements Listener {
 	    return;
 	}
 	if (!(event.getInventory().getHolder() instanceof Horse)) {
-	    plugin.getLogger().info("DEBUG: not a horse!");
+	    //plugin.getLogger().info("DEBUG: not a horse!");
 	    return;
 	}
 	/*

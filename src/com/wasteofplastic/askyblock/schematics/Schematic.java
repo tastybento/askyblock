@@ -68,7 +68,6 @@ import org.jnbt.ShortTag;
 import org.jnbt.StringTag;
 import org.jnbt.Tag;
 
-import com.sk89q.worldedit.data.DataException;
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.Settings.GameType;
@@ -1087,6 +1086,8 @@ public class Schematic {
 	DirectionalContainer dc = (DirectionalContainer) blockToChange.getState().getData();
 	dc.setFacingDirection(BlockFace.SOUTH);
 	blockToChange.setData(dc.getData(), true);
+	// Teleport player
+	plugin.getGrid().homeTeleport(player);
 	if (!islandCompanion.isEmpty()) {
 	    Bukkit.getServer().getScheduler().runTaskLater(ASkyBlock.getPlugin(), new Runnable() {
 		@Override
@@ -1106,9 +1107,6 @@ public class Schematic {
      * @param expected
      *            The expected type of the tag
      * @return child tag casted to the expected type
-     * @throws DataException
-     *             if the tag does not exist or the tag is not of the
-     *             expected type
      */
     private static <T extends Tag> T getChildTag(Map<String, Tag> items, String key, Class<T> expected) throws IllegalArgumentException {
 	if (!items.containsKey(key)) {

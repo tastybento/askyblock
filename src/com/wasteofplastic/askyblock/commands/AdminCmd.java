@@ -1001,6 +1001,14 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 			Location warpSpot = plugin.getPlayers().getIslandLocation(targetUUID).toVector().toLocation(ASkyBlock.getIslandWorld());
 			String failureMessage = ChatColor.RED + plugin.myLocale(player.getUniqueId()).adminTpManualWarp.replace("[location]", warpSpot.getBlockX() + " " + warpSpot.getBlockY() + " "
 				+ warpSpot.getBlockZ());
+			// Try the player's home first
+			Location home = plugin.getPlayers().getHomeLocation(targetUUID);
+			plugin.getGrid();
+			if (home.getWorld().equals(ASkyBlock.getIslandWorld()) && GridManager.isSafeLocation(home)) {
+			    player.teleport(home);
+			    return true;
+			}
+			// Other wise, go to a safe spot
 			new SafeSpotTeleport(plugin, player, warpSpot, failureMessage);
 			return true;
 		    }
@@ -1027,6 +1035,13 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 			Location warpSpot = plugin.getPlayers().getIslandLocation(targetUUID).toVector().toLocation(ASkyBlock.getNetherWorld());
 			String failureMessage = ChatColor.RED + plugin.myLocale(player.getUniqueId()).adminTpManualWarp.replace("[location]", warpSpot.getBlockX() + " " + warpSpot.getBlockY() + " "
 				+ warpSpot.getBlockZ());
+			// Try the player's home first
+			Location home = plugin.getPlayers().getHomeLocation(targetUUID);
+			plugin.getGrid();
+			if (home.getWorld().equals(ASkyBlock.getNetherWorld()) && GridManager.isSafeLocation(home)) {
+			    player.teleport(home);
+			    return true;
+			}
 			new SafeSpotTeleport(plugin, player, warpSpot, failureMessage);
 			return true;
 		    }
