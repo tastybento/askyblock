@@ -246,5 +246,9 @@ public class Settings {
     public static boolean allowSpawnPressurePlate;
     public static boolean allowPistonPush;
     public static HashMap<String,Integer> limitedBlocks;
+    public static boolean allowHorseRiding;
+    public static boolean allowSpawnHorseRiding;
+    public static boolean allowSpawnHorseInvAccess;
+    public static boolean allowHorseInvAccess;
 
 }

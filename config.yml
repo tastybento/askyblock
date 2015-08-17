@@ -159,6 +159,10 @@ island:
    allowpressureplates: true
    # Allow pistons to push outside of the protected area (maybe to make bridges)
    allowpistonpush: true
+   # Allow visitors to ride horses
+   allowhorseriding: false
+   # Allow visitors access to horse inventories
+   allowhorseinventoryaccess: false
 
 # General Settings
 general:
@@ -320,8 +324,9 @@ general:
    villagerlimit: 0
       
    # General entity limiting
-   # Use this section to limit how many entities can be added to an island
+   # Use this section to limit how many entities can be added to an island.
    # 0 means the item will be blocked from placement completely.
+   # Uncomment to set the limit. The numbers are just suggested values.
    entitylimits:
      #BANNER: 20
      #ITEM_FRAME: 30
@@ -401,11 +406,13 @@ general:
    # Allow /island teleport when falling. If set to false, all teleporting is
    # disabled until death from the void or until you hit something.
    # See commands that this will block too
+   # Using * will block ALL commands when falling
    allowfallingteleport: true
    blockingcommands:
    - home
    #- anotherCommand
    #- andAnotherOne
+   #- *
 
    # Remove non-repeatable challenges from the challenge GUI when complete
    removecompleteonetimechallenges: false
@@ -494,6 +501,8 @@ spawn:
   allowmilking: false
   allowlavacollection: false
   allowwatercollection: false
+  allowhorseriding: false
+  allowhorseinventoryaccess: false
 
 # This section contains the biomes that can be bought or used
 biomesettings:

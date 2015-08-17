@@ -61,6 +61,9 @@ public class SettingsPanel {
 	ip.add(new IPItem(Settings.allowVisitorItemDrop, Material.GOLD_INGOT, ASkyBlock.getPlugin().myLocale().igsVisitorDrop));
 	ip.add(new IPItem(Settings.allowVisitorItemPickup, Material.DIAMOND, ASkyBlock.getPlugin().myLocale().igsVisitorPickUp));
 	ip.add(new IPItem(Settings.allowVisitorKeepInvOnDeath, Material.IRON_CHESTPLATE, ASkyBlock.getPlugin().myLocale().igsVisitorKeep));
+	ip.add(new IPItem(Settings.allowHorseRiding, Material.DIAMOND_BARDING, ASkyBlock.getPlugin().myLocale().igsHorseRiding));
+	ip.add(new IPItem(Settings.allowHorseInvAccess, Material.GOLD_BARDING, ASkyBlock.getPlugin().myLocale().igsHorseInvAccess));
+
 	if (ip.size() > 0) {
 	    // Make sure size is a multiple of 9
 	    int size = ip.size() + 8;

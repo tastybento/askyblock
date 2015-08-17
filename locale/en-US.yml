@@ -200,6 +200,7 @@ error:
   noPermission: "You don't have permission to use that command!"
   noTeam: "Player is not in a team."
   notOnIsland: "You are not in an island space!"
+  maxIslands: "The sky is full of islands! Try again later!"
   offlinePlayer: "That player is offline or doesn't exist."
   unknownCommand: "Unknown command."
   unknownPlayer: "That player is unknown."
@@ -297,6 +298,8 @@ islandguardsettings:
   fire: Fire
   furnace: "Furnace use"
   gate: "Gate use"
+  horseinventoryaccess: "Visitor horse inventory access"
+  horseriding: "Visitor horse riding"
   hurtanimals: "Hurting animals"
   hurtmonsters: "Hurting monsters"
   jukebox: "Jukebox use"

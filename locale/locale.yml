@@ -298,6 +298,8 @@ islandguardsettings:
   fire: Fire
   furnace: "Furnace use"
   gate: "Gate use"
+  horseinventoryaccess: "Visitor horse inventory access"
+  horseriding: "Visitor horse riding"
   hurtanimals: "Hurting animals"
   hurtmonsters: "Hurting monsters"
   jukebox: "Jukebox use"

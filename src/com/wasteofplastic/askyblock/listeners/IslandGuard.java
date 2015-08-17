@@ -34,6 +34,7 @@ import org.bukkit.entity.EnderPearl;
 import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Horse;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
@@ -63,6 +64,7 @@ import org.bukkit.event.entity.PlayerLeashEntityEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
@@ -134,6 +136,49 @@ public class IslandGuard implements Listener {
 	return false;
     }
 
+    /**
+     * Prevents visitors picking items from riding horses or other inventories
+     * @param event
+     */
+    @EventHandler(priority = EventPriority.LOW)
+    public void onInventoryClick(InventoryClickEvent event) {
+	if (!inWorld(event.getWhoClicked()) || event.getWhoClicked().isOp() 
+		|| VaultHelper.checkPerm((Player)event.getWhoClicked(), Settings.PERMPREFIX + "mod.bypassprotect")) {
+	    return;
+	}
+	if (!(event.getInventory().getHolder() instanceof Horse)) {
+	    plugin.getLogger().info("DEBUG: not a horse!");
+	    return;
+	}
+	/*
+	plugin.getLogger().info("DEBUG: control panel inv click event");
+	plugin.getLogger().info("DEBUG: Action " + event.getAction().toString());
+	plugin.getLogger().info("DEBUG: click " + event.getClick().toString());
+	plugin.getLogger().info("DEBUG: type " + event.getClickedInventory().getType());
+	plugin.getLogger().info("DEBUG: slot type " + event.getSlotType());
+	plugin.getLogger().info("DEBUG: cursor " + event.getCursor());
+	plugin.getLogger().info("DEBUG: result " + event.getResult());
+	plugin.getLogger().info("DEBUG: shift click " + event.isShiftClick());
+	plugin.getLogger().info("DEBUG: right click " + event.isRightClick());
+	plugin.getLogger().info("DEBUG: left click " + event.isLeftClick());
+	*/
+	boolean playerAtSpawn = false;
+	if (plugin.getGrid().isAtSpawn(event.getWhoClicked().getLocation())) {
+	    // plugin.getLogger().info("DEBUG: Player is at spawn");
+	    playerAtSpawn = true;
+	}
+	if (playerAtSpawn) {
+	    if (!Settings.allowSpawnHorseInvAccess) {
+		event.getWhoClicked().sendMessage(ChatColor.RED + plugin.myLocale(event.getWhoClicked().getUniqueId()).islandProtected);
+		event.setCancelled(true);
+		return;
+	    }
+	} else if (!Settings.allowHorseInvAccess) {
+	    event.getWhoClicked().sendMessage(ChatColor.RED + plugin.myLocale(event.getWhoClicked().getUniqueId()).islandProtected);
+		event.setCancelled(true);
+	    return;
+	}
+    }
     /*
      * For testing only
      * @EventHandler()
@@ -1808,6 +1853,13 @@ public class IslandGuard implements Listener {
 	    // e.getRightClicked().getType().toString());
 	    switch (e.getRightClicked().getType()) {
 	    case HORSE:
+		if (plugin.getGrid().isAtSpawn(e.getPlayer().getLocation())) {
+		    if (Settings.allowSpawnHorseRiding) {
+			return;
+		    }
+		} else if (Settings.allowHorseRiding) {
+		    return;
+		}
 	    case ITEM_FRAME:
 	    case MINECART_CHEST:
 	    case MINECART_FURNACE:

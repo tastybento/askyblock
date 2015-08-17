@@ -31,6 +31,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
  * @author tastybento
  */
 public class Locale {
+    
     // Localization Strings
     private FileConfiguration locale = null;
     private File localeFile = null;
@@ -459,6 +460,8 @@ public class Locale {
     public String igsVisitorKeep;
     public String igsNetherPVP;
     public String igsAnvil;
+    public String igsHorseRiding;
+    public String igsHorseInvAccess;
     public String setHomeerrorNumHomes;
     public String schematicsTitle;
     public String islandhelpBan;
@@ -710,6 +713,8 @@ public class Locale {
 	igsVisitorDrop = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.visitordrop", "Visitor item dropping"));
 	igsVisitorPickUp = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.visitorpickup", "Visitor item pick-up"));
 	igsVisitorKeep = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.visitorkeepitems", "Visitor keep item on death"));	
+	igsHorseRiding = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.horseriding", "Visitor horse riding"));	
+	igsHorseInvAccess = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.horseinventoryaccess", "Visitor horse inventory access"));	
 	lavaTip = ChatColor.translateAlternateColorCodes('&', locale.getString("lavaTip", "Changing obsidian back into lava. Be careful!"));
 	warpswelcomeLine = ChatColor.translateAlternateColorCodes('&', locale.getString("warps.welcomeLine", "[WELCOME]"));
 	warpswarpTip = ChatColor.translateAlternateColorCodes('&',

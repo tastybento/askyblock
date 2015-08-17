@@ -243,7 +243,7 @@ public class PlayerEvents implements Listener {
 	// Check commands
 	// plugin.getLogger().info("DEBUG: falling command: '" +
 	// e.getMessage().substring(1).toLowerCase() + "'");
-	if (isFalling(e.getPlayer().getUniqueId()) && Settings.fallingCommandBlockList.contains(e.getMessage().substring(1).toLowerCase())) {
+	if (isFalling(e.getPlayer().getUniqueId()) && (Settings.fallingCommandBlockList.contains("*") || Settings.fallingCommandBlockList.contains(e.getMessage().substring(1).toLowerCase()))) {
 	    // Sorry you are going to die
 	    e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).islandcannotTeleport);
 	    e.setCancelled(true);
