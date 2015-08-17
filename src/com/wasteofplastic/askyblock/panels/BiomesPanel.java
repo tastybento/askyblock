@@ -112,7 +112,7 @@ public class BiomesPanel implements Listener {
 	return null;
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onInventoryClick(InventoryClickEvent event) {
 	Player player = (Player) event.getWhoClicked(); // The player that
 	// clicked the item

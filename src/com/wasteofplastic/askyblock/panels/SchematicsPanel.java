@@ -9,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
@@ -71,7 +72,7 @@ public class SchematicsPanel implements Listener {
      * Handles when the schematics panel is actually clicked
      * @param event
      */
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onInventoryClick(InventoryClickEvent event) {
 	Player player = (Player) event.getWhoClicked(); // The player that
 	// clicked the item

@@ -133,7 +133,7 @@ public class WarpPanel implements Listener {
 	return warpPanel.get(panelNumber);
     }
 
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled=true)
     public void onInventoryClick(InventoryClickEvent event) {
 	Inventory inventory = event.getInventory(); // The inventory that was clicked in
 	String title = inventory.getTitle();
