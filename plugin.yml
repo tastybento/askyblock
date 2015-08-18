@@ -144,7 +144,7 @@ permissions:
           askyblock.mod.signadmin:
             description: Enables warp sign admin commands
             default: op
-          askyblock.mod.teamchatspy:
+          askyblock.mod.spy:
             description: Spy on team chats
             default: false
           askyblock.mod.excludetopten:

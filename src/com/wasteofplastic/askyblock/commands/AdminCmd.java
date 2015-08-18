@@ -186,7 +186,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.setrange") || player.isOp()) {
 		player.sendMessage(ChatColor.YELLOW + "/" + label + " setrange:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpSetRange);
 	    }
-	    if (Settings.teamChat && VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.teamchatspy") || player.isOp()) {
+	    if (Settings.teamChat && VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.spy") || player.isOp()) {
 		player.sendMessage(ChatColor.YELLOW + "/" + label + " spy:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpTeamChatSpy);
 	    }
 	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.team") || player.isOp()) {
@@ -258,7 +258,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 		    return true;
 		}
 		player = (Player) sender;
-		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.teamchatspy") || player.isOp()) {
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.spy") || player.isOp()) {
 		    if (plugin.getChatListener().toggleSpy(player.getUniqueId())) {
 			sender.sendMessage(ChatColor.GREEN + plugin.myLocale().teamChatStatusOn);
 		    } else {
@@ -1945,7 +1945,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.signadmin") || player.isOp()) {
 		    options.add("resetsign");
 		}
-		if (Settings.teamChat && VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.teamchatspy") || player.isOp()) {
+		if (Settings.teamChat && VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.spy") || player.isOp()) {
 		    options.add("spy");
 		}
 		break;

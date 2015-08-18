@@ -101,7 +101,7 @@ public class ChatListener implements Listener {
 	    // Spy function
 	    if (onLine) {
 		for (Player onlinePlayer: plugin.getServer().getOnlinePlayers()) {
-		    if (spies.contains(onlinePlayer.getUniqueId()) && onlinePlayer.hasPermission(Settings.PERMPREFIX + "mod.teamchatspy")) {
+		    if (spies.contains(onlinePlayer.getUniqueId()) && onlinePlayer.hasPermission(Settings.PERMPREFIX + "mod.spy")) {
 			onlinePlayer.sendMessage(ChatColor.RED + "[TCSpy] " + ChatColor.WHITE + message);
 		    }
 		}
