@@ -1873,7 +1873,9 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 			} else if (split[1].equalsIgnoreCase("Slovenčina") || split[1].equalsIgnoreCase("Slovencina")) {
 			    plugin.getPlayers().setLocale(playerUUID, "sk-SK");  
 			} else if (split[1].equalsIgnoreCase("TraditionalChinese") || split[1].equalsIgnoreCase("繁體中文")) {
-			    plugin.getPlayers().setLocale(playerUUID, "zh-TW");  
+			    plugin.getPlayers().setLocale(playerUUID, "nl-NL");  
+			} else if (split[1].equalsIgnoreCase("Nederlands") || split[1].equalsIgnoreCase("Dutch")) {
+			    plugin.getPlayers().setLocale(playerUUID, "nl-NL");  
 			} else {
 			    // Typed it in wrong
 			    player.sendMessage("/" + label + " lang <locale>");
@@ -1889,6 +1891,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 			    player.sendMessage("Čeština");
 			    player.sendMessage("Slovenčina");
 			    player.sendMessage("繁體中文 / TraditionalChinese");
+			    player.sendMessage("Nederlands");
 			    return true;
 			}
 			player.sendMessage("OK!");

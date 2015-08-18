@@ -688,6 +688,7 @@ public class ASkyBlock extends JavaPlugin {
 	availableLocales.put("cs-CS", new Locale(this,"cs-CS"));
 	availableLocales.put("sk-SK", new Locale(this,"sk-SK"));
 	availableLocales.put("zh-TW", new Locale(this,"zh-TW"));
+	availableLocales.put("nl-NL", new Locale(this,"nl-NL"));
 
 	// Assign settings
 	String configVersion = getConfig().getString("general.version", "");
