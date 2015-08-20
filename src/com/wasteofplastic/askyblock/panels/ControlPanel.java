@@ -201,7 +201,7 @@ public class ControlPanel implements Listener {
 	}
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled=false)
     public void onInventoryClick(InventoryClickEvent event) {
 	// TODO : this needs optimization
 	Player player = (Player) event.getWhoClicked(); // The player that

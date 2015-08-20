@@ -1610,7 +1610,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
 	    moneyReward = getChallengeConfig().getDouble("challenges.challengeList." + challenge.toLowerCase() + ".moneyReward", 0);
 	    rewardText = ChatColor.translateAlternateColorCodes('&',
 		    getChallengeConfig().getString("challenges.challengeList." + challenge.toLowerCase() + ".rewardText", "Goodies!"));
-	    expReward = getChallengeConfig().getInt("challenges.challengeList." + challenge + ".xpReward", 0);
+	    expReward = getChallengeConfig().getInt("challenges.challengeList." + challenge + ".expReward", 0);
 	    result.addAll(Util.chop(ChatColor.GOLD, plugin.myLocale(player.getUniqueId()).challengesfirstTimeRewards, length));
 	} else {
 	    // Repeat challenge
