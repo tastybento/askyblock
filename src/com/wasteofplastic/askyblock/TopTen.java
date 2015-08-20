@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -41,9 +42,7 @@ public class TopTen {
 	    }
 	    return;
 	}
-	if(!VaultHelper.checkPerm(plugin.getServer().getPlayer(ownerUUID), Settings.PERMPREFIX + "mod.excludetopten")) {
-	    topTenList.put(ownerUUID, level);
-	}
+	topTenList.put(ownerUUID, level);
 	topTenList = MapUtil.sortByValue(topTenList);
     }
 
@@ -64,6 +63,12 @@ public class TopTen {
 	topTenCreate(null);
     }
 
+    /**
+     * Creates the top ten list from scratch. Does not get the level of each island. Just
+     * takes the level from the player's file.
+     * Runs asynchronously from the main thread.
+     * @param sender
+     */
     public static void topTenCreate(final CommandSender sender) {
 	plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
 
@@ -71,7 +76,7 @@ public class TopTen {
 	    public void run() {
 		// This map is a list of owner and island level
 		YamlConfiguration player = new YamlConfiguration();
-		int index = 1;
+		int index = 0;
 		for (final File f : plugin.getPlayersFolder().listFiles()) {
 		    // Need to remove the .yml suffix
 		    String fileName = f.getName();
@@ -93,13 +98,9 @@ public class TopTen {
 			    String teamLeaderUUID = player.getString("teamLeader", "");
 			    if (islandLevel > 0) {
 				if (!player.getBoolean("hasTeam")) {
-				    if(!VaultHelper.checkPerm(plugin.getServer().getPlayer(playerUUID), Settings.PERMPREFIX + "mod.excludetopten"))
-					topTenAddEntry(playerUUID, islandLevel);
-				} else if (!teamLeaderUUID.isEmpty()) {
-				    if (teamLeaderUUID.equals(playerUUIDString)) {
-					if(!VaultHelper.checkPerm(plugin.getServer().getPlayer(playerUUID), Settings.PERMPREFIX + "mod.excludetopten"))
-					    topTenAddEntry(playerUUID, islandLevel);
-				    }
+				    topTenAddEntry(playerUUID, islandLevel);
+				} else if (!teamLeaderUUID.isEmpty()) {    
+				    topTenAddEntry(playerUUID, islandLevel);
 				}
 			    }
 			} catch (Exception e) {

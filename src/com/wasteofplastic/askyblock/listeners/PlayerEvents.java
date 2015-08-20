@@ -245,6 +245,7 @@ public class PlayerEvents implements Listener {
 	// e.getMessage().substring(1).toLowerCase() + "'");
 	if (isFalling(e.getPlayer().getUniqueId()) && (Settings.fallingCommandBlockList.contains("*") || Settings.fallingCommandBlockList.contains(e.getMessage().substring(1).toLowerCase()))) {
 	    // Sorry you are going to die
+	    e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).errorNoPermission); 
 	    e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).islandcannotTeleport);
 	    e.setCancelled(true);
 	}
@@ -347,7 +348,7 @@ public class PlayerEvents implements Listener {
 	// getLogger().info("DEBUG: unset falling");
 	fallingPlayers.remove(uniqueId);
     }
-    
+
     /**
      * Prevents visitors from using commands on islands, like /spawner
      * @param e

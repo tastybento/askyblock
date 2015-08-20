@@ -2020,6 +2020,14 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 				    }
 				    // Find out if island is locked
 				    Island island = plugin.getGrid().getIslandAt(warpSpot);
+				    // Check bans
+				    if (island != null && plugin.getPlayers().isBanned(island.getOwner(), playerUUID)) {
+					player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).banBanned.replace("[name]", plugin.getPlayers().getName(island.getOwner())));
+					if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.bypassprotect")
+						&& !VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.bypasslock")) {
+					    return true;
+					}
+				    }
 				    if (island != null && island.isLocked() && !player.isOp() && !VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.bypasslock") 
 					    && !VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.bypassprotect")) {
 					// Always inform that the island is locked
