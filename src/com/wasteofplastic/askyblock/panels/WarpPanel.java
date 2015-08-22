@@ -22,6 +22,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.Island;
+import com.wasteofplastic.askyblock.Island.Flags;
 import com.wasteofplastic.askyblock.Settings;
 
 public class WarpPanel implements Listener {
@@ -77,7 +79,16 @@ public class WarpPanel implements Listener {
 		//plugin.getLogger().info("DEBUG: " + playerName + ": block type = " + signLocation.getBlock().getType());
 		if (signLocation.getBlock().getType().equals(Material.SIGN_POST) || signLocation.getBlock().getType().equals(Material.WALL_SIGN)) {
 		    Sign sign = (Sign)signLocation.getBlock().getState();
-		    List<String> lines = Arrays.asList(sign.getLines());
+		    List<String> lines = new ArrayList<String>(Arrays.asList(sign.getLines()));
+		    // Check for PVP and add warning
+		    Island island = plugin.getGrid().getIsland(playerUUID);
+		    if (island != null) {
+			if ((signLocation.getWorld().equals(ASkyBlock.getIslandWorld()) && island.getIgsFlag(Flags.allowPvP))
+				|| (signLocation.getWorld().equals(ASkyBlock.getNetherWorld()) && island.getIgsFlag(Flags.allowNetherPvP))) {
+			    //plugin.getLogger().info("DEBUG: pvp warning added");
+			    lines.add(ChatColor.RED + plugin.myLocale().igsPVP);
+			}
+		    }
 		    meta.setLore(lines);
 		    //plugin.getLogger().info("DEBUG: " + playerName + ": lines = " + lines);
 		} 
@@ -91,6 +102,7 @@ public class WarpPanel implements Listener {
 			}
 			sign.update();
 		    }*/
+
 		playerSkull.setItemMeta(meta);
 		// Add item to the panel
 		//plugin.getLogger().info("DEBUG: adding item to panel number = " + panelNumber + " slot = " + slot);

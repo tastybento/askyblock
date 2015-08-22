@@ -100,6 +100,95 @@ permissions:
           askyblock.craft.enderchest:
             description: Allow crafting and use of enderchests in askyblock
             default: false
+      skyblock.settings.*:
+        children:
+          askyblock.settings.allowAnvilUse:
+            description: Allow player to change this island guard setting
+            default: false
+          askyblock.settings.allowArmorStandUse:
+            description: Allow player to change this island guard setting
+            default: false
+          askyblock.settings.allowBeaconAccess:
+            description: Allow player to change this island guard setting
+            default: false
+          askyblock.settings.allowBedUse:
+            description: Allow player to change this island guard setting
+            default: false
+          askyblock.settings.allowBreakBlocks:
+            description: Allow player to change this island guard setting
+            default: false
+          askyblock.settings.allowBreeding:
+            description: Allow player to change this island guard setting
+            default: false
+          askyblock.settings.allowBrewing:
+            description: Allow player to change this island guard setting
+            default: false
+          askyblock.settings.allowBucketUse:
+            description: Allow player to change this island guard setting
+            default: false
+          askyblock.settings.allowChestAccess:
+            description: Allow player to change this island guard setting
+            default: false
+          askyblock.settings.allowCrafting:
+            description: Allow player to change this island guard setting
+            default: false
+          askyblock.settings.allowCropTrample:
+            description: Allow player to change this island guard setting
+            default: false
+          askyblock.settings.allowDoorUse:
+            description: Allow player to change this island guard setting
+            default: false
+          askyblock.settings.allowEnchanting:
+            description: Allow player to change this island guard setting
+            default: false
+          askyblock.settings.allowEnderPearls:
+            description: Allow player to change this island guard setting
+            default: false
+          askyblock.settings.allowFurnaceUse:
+            description: Allow player to change this island guard setting
+            default: false
+          askyblock.settings.allowGateUse:
+            description: Allow player to change this island guard setting
+            default: false
+          askyblock.settings.allowHorseInvAccess:
+            description: Allow player to change this island guard setting
+            default: false
+          askyblock.settings.allowHorseRiding:
+            description: Allow player to change this island guard setting
+            default: false
+          askyblock.settings.allowHurtMobs:
+            description: Allow player to change this island guard setting
+            default: false
+          askyblock.settings.allowLeashUse:
+            description: Allow player to change this island guard setting
+            default: false
+          askyblock.settings.allowLeverButtonUse:
+            description: Allow player to change this island guard setting
+            default: false
+          askyblock.settings.allowMusic:
+            description: Allow player to change this island guard setting
+            default: false
+          askyblock.settings.allowPlaceBlocks:
+            description: Allow player to change this island guard setting
+            default: false
+          askyblock.settings.allowPortalUse:
+            description: Allow player to change this island guard setting
+            default: false
+          askyblock.settings.allowPressurePlate:
+            description: Allow player to change this island guard setting
+            default: false
+          askyblock.settings.allowPvP:
+            description: Allow player to change this island guard setting
+            default: false
+          askyblock.settings.allowNetherPvP:
+            description: Allow player to change this island guard setting
+            default: false
+          askyblock.settings.allowRedStone:
+            description: Allow player to change this island guard setting
+            default: false
+          askyblock.settings.allowShearing:
+            description: Allow player to change this island guard setting
+            default: false
       askyblock.mod.*:
         children:
           askyblock.mod.topten:

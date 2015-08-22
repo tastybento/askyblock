@@ -277,13 +277,13 @@ island:
 islandProtected: "Island protected."
 islandguardsettings: 
   TNTdamage: "TNT Damage"
-  allowed: Allowed
+  allowed: "Allowed"
   anvil: "Anvil use"
   armorstand: "Armor Stand use"
   beacon: "Beacon use"
   bed: "Bed use"
   breakblocks: "Break blocks"
-  breeding: Breeding
+  breeding: "Breeding"
   brewingstand: "Potion Brewing"
   bucket: "Bucket use"
   chest: "Chest use"
@@ -295,7 +295,7 @@ islandguardsettings:
   door: "Door use"
   enchantingtable: "Enchanting table use"
   enderpearl: "Enderpearl use"
-  fire: Fire
+  fire: "Fire"
   furnace: "Furnace use"
   gate: "Gate use"
   horseinventoryaccess: "Visitor horse inventory access"
@@ -308,8 +308,15 @@ islandguardsettings:
   netherpvp: "Nether PvP"
   placeblocks: "Place blocks"
   portaluse: "Portal use"
-  pvp: PvP
+  pressureplate: "Visitors activate pressure plates"
+  pvp: "PvP"
   redstone: "Redstone use"
+  settingsgeneraltitle: "General Island World Settings"
+  settingsgeneraldesc: "General Island World Settings"
+  settingsislandtitle: "Island Settings"
+  settingsislanddesc: "These rules apply to visitors on this island"
+  settingsspawntitle: "Spawn Settings"
+  settingsspawndesc: "These rules apply at spawn."
   shears: "Shears use"
   spawnegg: "Spawn egg use"
   teleportwhenfalling: "Teleport when falling"

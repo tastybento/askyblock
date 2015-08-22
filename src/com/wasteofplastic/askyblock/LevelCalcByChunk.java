@@ -12,7 +12,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.material.MaterialData;
 
 import com.wasteofplastic.askyblock.events.IslandLevelEvent;
-import com.wasteofplastic.askyblock.util.VaultHelper;
 
 /**
  * A class that calculates the level of an island very quickly by copying island

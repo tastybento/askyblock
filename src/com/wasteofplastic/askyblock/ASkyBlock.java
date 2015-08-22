@@ -74,6 +74,7 @@ import com.wasteofplastic.askyblock.listeners.WorldEnter;
 import com.wasteofplastic.askyblock.panels.BiomesPanel;
 import com.wasteofplastic.askyblock.panels.ControlPanel;
 import com.wasteofplastic.askyblock.panels.SchematicsPanel;
+import com.wasteofplastic.askyblock.panels.SettingsPanel;
 import com.wasteofplastic.askyblock.panels.WarpPanel;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
@@ -131,6 +132,9 @@ public class ASkyBlock extends JavaPlugin {
 
     // Schematics panel object
     private SchematicsPanel schematicsPanel;
+
+    // Settings panel object
+    private SettingsPanel settingsPanel;
 
     /**
      * Returns the World object for the island world named in config.yml.
@@ -353,6 +357,9 @@ public class ASkyBlock extends JavaPlugin {
 		// Minishop - must wait for economy to load before we can use
 		// econ
 		getServer().getPluginManager().registerEvents(new ControlPanel(plugin), plugin);
+		// Settings
+		settingsPanel = new SettingsPanel(plugin);
+		getServer().getPluginManager().registerEvents(settingsPanel, plugin);
 		// Try to register Herochat
 		if (Bukkit.getServer().getPluginManager().isPluginEnabled("Herochat")) {
 		    getServer().getPluginManager().registerEvents(new HeroChatListener(plugin), plugin);
@@ -723,6 +730,8 @@ public class ASkyBlock extends JavaPlugin {
 	}
 	// Debug
 	Settings.debug = getConfig().getInt("debug", 0);
+	// How long a player has to wait after deactivating PVP until they can activate PVP again
+	Settings.pvpRestartCooldown = getConfig().getLong("general.pvpcooldown",60);
 	// Max Islands
 	Settings.maxIslands = getConfig().getInt("general.maxIslands",0);
 	// Mute death messages
@@ -1564,5 +1573,12 @@ public class ASkyBlock extends JavaPlugin {
      */
     public boolean isOnePointEight() {
 	return onePointEight;
+    }
+
+    /**
+     * @return the settingsPanel
+     */
+    public SettingsPanel getSettingsPanel() {
+	return settingsPanel;
     }
 }

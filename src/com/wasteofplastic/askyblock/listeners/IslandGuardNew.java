@@ -32,6 +32,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.Island;
+import com.wasteofplastic.askyblock.Island.Flags;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
@@ -69,13 +71,15 @@ public class IslandGuardNew implements Listener {
 	if (VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
 	    return;
 	}
-	if (e.getRightClicked() != null && e.getRightClicked().getType().equals(EntityType.ARMOR_STAND)
-		&& !plugin.getGrid().locationIsOnIsland(e.getPlayer(), e.getRightClicked().getLocation())) {
-	    // plugin.getLogger().info("DEBUG: Armor stand clicked off island");
-	    if (!Settings.allowArmorStandUse) {
-		e.setCancelled(true);
-		e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
+	if (e.getRightClicked() != null && e.getRightClicked().getType().equals(EntityType.ARMOR_STAND)) {
+	    // Check island
+	    Island island = plugin.getGrid().getIslandAt(e.getRightClicked().getLocation());
+	    if ((island == null && Settings.allowArmorStandUse) || (island !=null && island.getIgsFlag(Flags.allowArmorStandUse))) {
+		return;
 	    }
+	    // plugin.getLogger().info("DEBUG: Armor stand clicked off island");
+	    e.setCancelled(true);
+	    e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
 	}
     }
 
@@ -129,7 +133,7 @@ public class IslandGuardNew implements Listener {
 	if (!IslandGuard.inWorld(p)) {
 	    return;
 	}
-	if (p.isOp()) {
+	if (p.isOp() || VaultHelper.checkPerm(p, Settings.PERMPREFIX + "mod.bypassprotect")) {
 	    // You can do anything if you are Op
 	    return;
 	}
@@ -140,6 +144,11 @@ public class IslandGuardNew implements Listener {
 	// Check if they are holding armor stand
 	ItemStack inHand = e.getPlayer().getItemInHand();
 	if (inHand != null && inHand.getType().equals(Material.ARMOR_STAND)) {
+	    // Check island
+	    Island island = plugin.getGrid().getIslandAt(e.getPlayer().getLocation());
+	    if ((island == null && Settings.allowPlaceBlocks) || (island !=null && island.getIgsFlag(Flags.allowPlaceBlocks))) {
+		return;
+	    }
 	    // plugin.getLogger().info("DEBUG: stand place cancelled");
 	    e.setCancelled(true);
 	    e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
@@ -174,6 +183,11 @@ public class IslandGuardNew implements Listener {
 	    }
 	    // This permission bypasses protection
 	    if (VaultHelper.checkPerm(p, Settings.PERMPREFIX + "mod.bypassprotect")) {
+		return;
+	    }
+	    // Check island
+	    Island island = plugin.getGrid().getIslandAt(e.getEntity().getLocation());
+	    if ((island == null && Settings.allowBreakBlocks) || (island !=null && island.getIgsFlag(Flags.allowBreakBlocks))) {
 		return;
 	    }
 	    p.sendMessage(ChatColor.RED + plugin.myLocale(p.getUniqueId()).islandProtected);

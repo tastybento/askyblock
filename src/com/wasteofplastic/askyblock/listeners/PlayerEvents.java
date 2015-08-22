@@ -22,9 +22,11 @@ import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Effect;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.BlockFace;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -261,8 +263,15 @@ public class PlayerEvents implements Listener {
 	if (debug) {
 	    plugin.getLogger().info(e.getEventName());
 	}
-	// We only check if the player is teleporting from an Island world and to is not null
-	if (e.getTo() == null || !IslandGuard.inWorld(e.getFrom())) {
+	// Options - 
+	// Player is in an island world and trying to teleport out - handle
+	// Player is in an island world and trying to teleport within - handle
+	// Player is not in an island world and trying to teleport in - handle
+	// Player is not in an island world and teleporting not in - skip
+	if (e.getTo() == null || e.getFrom() == null) {
+	    return;
+	}
+	if (!IslandGuard.inWorld(e.getTo()) && !IslandGuard.inWorld(e.getFrom())) {
 	    return;
 	}
 	// Check if ready

@@ -42,6 +42,7 @@ import org.bukkit.util.Vector;
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.GridManager;
 import com.wasteofplastic.askyblock.Island;
+import com.wasteofplastic.askyblock.Island.Flags;
 import com.wasteofplastic.askyblock.SafeSpotTeleport;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.commands.IslandCmd;
@@ -96,16 +97,12 @@ public class NetherPortals implements Listener {
 	event.setCancelled(true);
     }
 
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = false)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerPortal(PlayerPortalEvent event) {
 	//plugin.getLogger().info("Player portal event - reason =" + event.getCause());
 	UUID playerUUID = event.getPlayer().getUniqueId();
 	// If the nether is disabled then quit immediately
 	if (!Settings.createNether) {
-	    return;
-	}
-	if (event.isCancelled()) {
-	    // plugin.getLogger().info("PlayerPortalEvent was cancelled! ASkyBlock NOT teleporting!");
 	    return;
 	}
 	Location currentLocation = event.getFrom().clone();
@@ -114,16 +111,9 @@ public class NetherPortals implements Listener {
 		&& !currentWorld.equalsIgnoreCase(Settings.worldName + "_the_end")) {
 	    return;
 	}
-	// Check if this player is an island player
-	if (!plugin.getPlayers().hasIsland(playerUUID) && !plugin.getPlayers().inTeam(playerUUID)) {
-	    event.getPlayer().sendMessage(ChatColor.YELLOW + "Type /" + Settings.ISLANDCOMMAND + " to start an island.");
-	    event.setCancelled(true);
-	    return;
-	}
-
-
 	// Check if player has permission
-	if (!Settings.allowPortalUse) {
+	Island island = plugin.getGrid().getIslandAt(currentLocation);
+	if ((island == null && !Settings.allowPortalUse) || (island != null && !island.getIgsFlag(Flags.allowPortalUse))) {
 	    // Portal use is disallowed for visitors, but okay for ops or bypass
 	    // mods
 	    if (!event.getPlayer().isOp() && !VaultHelper.checkPerm(event.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
@@ -204,7 +194,6 @@ public class NetherPortals implements Listener {
 	    } else {
 		// New Nether
 		// Get location of the island where the player is at
-		Island island = plugin.getGrid().getIslandAt(currentLocation);
 		if (island == null) {
 		    event.setCancelled(true);
 		    return;
@@ -242,113 +231,6 @@ public class NetherPortals implements Listener {
 	    break;
 	}
     }
-    /*
-
-
-
-	// plugin.getLogger().info(event.getCause().toString());
-	// plugin.getLogger().info("Get from is " + currentLocation.toString());
-	// Check that we know this player (they could have come from another
-	// world)
-	Location destination = plugin.getGrid().getSafeHomeLocation(event.getPlayer().getUniqueId(),1);
-	if (destination == null) {
-	    event.getPlayer().sendMessage(ChatColor.YELLOW + "Type /" + Settings.ISLANDCOMMAND + " to start an island.");
-	    event.setCancelled(true);
-	    return;
-	}
-	if (currentWorld.equalsIgnoreCase(Settings.worldName)) {
-	    // Going to the end
-	    // TODO Need safe teleport and protection around the end spawn point
-	    if (plugin.getServer().getWorld(Settings.worldName + "_the_end") != null) {
-		// plugin.getLogger().info("End world exists");
-		if (event.getCause().equals(TeleportCause.END_PORTAL)) {
-		    // plugin.getLogger().info("PlayerPortalEvent End Portal!");
-		    // event.useTravelAgent(true);
-		    event.setCancelled(true);
-		    Location end_place = plugin.getServer().getWorld(Settings.worldName + "_the_end").getSpawnLocation();
-		    if (GridManager.isSafeLocation(end_place)) {
-			event.getPlayer().teleport(end_place);
-			// event.getPlayer().sendBlockChange(end_place,
-			// end_place.getBlock().getType(),end_place.getBlock().getData());
-			return;
-		    } else {
-			event.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(event.getPlayer().getUniqueId()).warpserrorNotSafe);
-			plugin.getGrid().homeTeleport(event.getPlayer());
-			return;
-		    }
-		}
-	    }
-	    // Going to the nether
-	    // event.setTo(plugin.getServer().getWorld(Settings.worldName +
-	    // "_nether").getSpawnLocation());
-	    UUID playerUUID = event.getPlayer().getUniqueId();
-	    World world = ASkyBlock.getNetherWorld();
-	    if (Settings.newNether) {
-		// Get location of the island where the player is at
-		Island island = plugin.getGrid().getIslandAt(currentLocation);
-		if (island == null) {
-		    event.setCancelled(true);
-		    return;
-		}
-		Location netherHome = island.getCenter().toVector().toLocation(world);
-		//plugin.getLogger().info("DBEUG: initial location:" + netherHome);
-		if (!GridManager.isSafeLocation(netherHome)) {
-		    netherHome = plugin.getGrid().bigScan(netherHome, -1);
-		    //plugin.getLogger().info("DEBUG: Found netherhome at " + netherHome);
-		    if (netherHome == null) {
-			plugin.getLogger().info("Could not find a safe spot to port " + event.getPlayer().getName() + " to Nether island");
-			event.getPlayer().sendMessage(plugin.myLocale(playerUUID).warpserrorNotSafe);
-			event.setCancelled(true);
-			return;
-		    }
-		}
-		event.getPlayer().teleport(netherHome);
-		event.setCancelled(true);
-		return;
-		//event.setTo(netherHome);
-		//event.useTravelAgent(false);
-	    } else {
-		// plugin.getLogger().info("DEBUG: transporting to nether spawn : "
-		// + plugin.getServer().getWorld(Settings.worldName +
-		// "_nether").getSpawnLocation().toString());
-		event.setTo(plugin.getServer().getWorld(Settings.worldName + "_nether").getSpawnLocation());
-		event.useTravelAgent(true);
-	    }
-	    // if (!Settings.newNether) {
-	    // event.useTravelAgent(true);
-	    // } else {
-	    // Use the portal for now
-
-	    // }
-	} else {
-	    // Going to the end
-	    // TODO Need safe teleport and protection around the end spawn point
-	    if (plugin.getServer().getWorld(Settings.worldName + "_the_end") != null) {
-		// plugin.getLogger().info("End world exists");
-		if (event.getCause().equals(TeleportCause.END_PORTAL)) {
-		    // plugin.getLogger().info("PlayerPortalEvent End Portal!");
-		    // event.useTravelAgent(true);
-		    event.setCancelled(true);
-		    Location end_place = plugin.getServer().getWorld(Settings.worldName + "_the_end").getSpawnLocation();
-		    if (GridManager.isSafeLocation(end_place)) {
-			event.getPlayer().teleport(end_place);
-			// event.getPlayer().sendBlockChange(end_place,
-			// end_place.getBlock().getType(),end_place.getBlock().getData());
-			return;
-		    } else {
-			event.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(event.getPlayer().getUniqueId()).warpserrorNotSafe);
-			plugin.getGrid().homeTeleport(event.getPlayer());
-			return;
-		    }
-		}
-	    }
-
-	    // Returning to island
-	    event.setTo(destination);
-	    event.useTravelAgent(false);
-	}
-    }*/
-
     // Nether portal spawn protection
 
     /**
@@ -425,71 +307,6 @@ public class NetherPortals implements Listener {
     }
 
     /**
-     * This method protects players from PVP if it is not allowed and from
-     * arrows fired by other players
-     * 
-     * @param e
-     */
-    /*
-    @EventHandler(priority = EventPriority.LOW)
-    public void onEntityDamage(final EntityDamageByEntityEvent e) {
-	if (Settings.newNether) {
-	    // Not used in new nether
-	    return;
-	}
-	//
-	// Check world
-	if (!e.getEntity().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_nether")
-		|| e.getEntity().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_the_end")) {
-	    return;
-	}
-	// If the target is not a player return
-	if (!(e.getEntity() instanceof Player)) {
-	    return;
-	}
-	// If PVP is okay then return
-	if (Settings.allowNetherPvP) {
-	    return;
-	}
-	// If the attacker is non-human and not an arrow then everything is okay
-	if (!(e.getDamager() instanceof Player) && !(e.getDamager() instanceof Projectile)) {
-	    return;
-	}
-	// Only damagers who are players or arrows are left
-	// If the projectile is anything else than an arrow don't worry about it
-	// in this listener
-	// Handle splash potions separately.
-	if (e.getDamager() instanceof Projectile) {
-	    Projectile arrow = (Projectile) e.getDamager();
-	    // It really is an Projectile
-	    if (arrow.getShooter() instanceof Player) {
-		Player shooter = (Player) arrow.getShooter();
-		// Arrow shot by a player at another player
-		if (Settings.allowNetherPvP) {
-		    return;
-		} else {
-		    if (!Settings.allowNetherPvP) {
-			// plugin.getLogger().info("Target player is in a no-PVP area!");]
-			shooter.sendMessage(plugin.myLocale(shooter.getUniqueId()).targetInNoPVPArea);
-			e.setCancelled(true);
-			return;
-		    }
-		    return;
-		}
-	    }
-	} else if (e.getDamager() instanceof Player) {
-	    //plugin.getLogger().info("DEBUG: Player attack");
-	    // Just a player attack
-	    if (!Settings.allowNetherPvP) {
-		((Player) e.getDamager()).sendMessage(plugin.myLocale(((Player) e.getDamager()).getUniqueId()).targetInNoPVPArea);
-		e.setCancelled(true);
-		return;
-	    }
-	}
-	return;
-    }
-     */
-    /**
      * Prevent the Nether spawn from being blown up
      * 
      * @param e
@@ -539,21 +356,4 @@ public class NetherPortals implements Listener {
 	    }
 	}
     }
-
-    /**
-     * Allows portal blocks to be made in SafeSpotTeleport to the nether
-     * @param event
-     */
-    /*
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onBlockPhysics(BlockPhysicsEvent event){
-	// Only do this in the new nether
-	if (!Settings.newNether && !event.getBlock().getWorld().equals(ASkyBlock.getNetherWorld())) {
-	    return;
-	}
-	if(event.getChangedType() == Material.PORTAL){
-	    event.setCancelled(true);
-	}
-    }*/
-
 }

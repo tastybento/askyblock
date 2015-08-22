@@ -68,6 +68,7 @@ import com.wasteofplastic.askyblock.CoopPlay;
 import com.wasteofplastic.askyblock.DeleteIslandChunk;
 import com.wasteofplastic.askyblock.GridManager;
 import com.wasteofplastic.askyblock.Island;
+import com.wasteofplastic.askyblock.Island.Flags;
 import com.wasteofplastic.askyblock.LevelCalc;
 import com.wasteofplastic.askyblock.LevelCalcByChunk;
 import com.wasteofplastic.askyblock.Settings;
@@ -78,7 +79,6 @@ import com.wasteofplastic.askyblock.events.IslandNewEvent;
 import com.wasteofplastic.askyblock.events.IslandResetEvent;
 import com.wasteofplastic.askyblock.listeners.PlayerEvents;
 import com.wasteofplastic.askyblock.panels.ControlPanel;
-import com.wasteofplastic.askyblock.panels.SettingsPanel;
 import com.wasteofplastic.askyblock.schematics.Schematic;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
@@ -1159,7 +1159,11 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 		} else if (split[0].equalsIgnoreCase("settings")) {
 		    // Show what the plugin settings are
 		    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.settings")) {
-			player.openInventory(SettingsPanel.islandGuardPanel());
+			try {
+			    player.openInventory(plugin.getSettingsPanel().islandGuardPanel(player));
+			} catch (Exception e) {
+			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorCommandNotReady);
+			}
 		    } else {
 			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
 		    }
@@ -2038,6 +2042,11 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 					    return true;
 					}
 				    }
+				    boolean pvp = false;
+				    if ((warpSpot.getWorld().equals(ASkyBlock.getIslandWorld()) && island.getIgsFlag(Flags.allowPvP)) 
+					    || (warpSpot.getWorld().equals(ASkyBlock.getNetherWorld()) && island.getIgsFlag(Flags.allowNetherPvP))) {
+					pvp = true;
+				    }
 				    // Find out which direction the warp is facing
 				    Block b = warpSpot.getBlock();
 				    if (b.getType().equals(Material.SIGN_POST) || b.getType().equals(Material.WALL_SIGN)) {
@@ -2047,11 +2056,11 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 					Location inFront = b.getRelative(directionFacing).getLocation();
 					Location oneDown = b.getRelative(directionFacing).getRelative(BlockFace.DOWN).getLocation();
 					if ((GridManager.isSafeLocation(inFront))) {
-					    warpPlayer(player, inFront, foundWarp, directionFacing);
+					    warpPlayer(player, inFront, foundWarp, directionFacing, pvp);
 					    return true;
 					} else if (b.getType().equals(Material.WALL_SIGN) && GridManager.isSafeLocation(oneDown)) {
 					    // Try one block down if this is a wall sign
-					    warpPlayer(player, oneDown, foundWarp, directionFacing);
+					    warpPlayer(player, oneDown, foundWarp, directionFacing, pvp);
 					    return true;
 					}
 				    } else {
@@ -2073,7 +2082,12 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 					final Location actualWarp = new Location(warpSpot.getWorld(), warpSpot.getBlockX() + 0.5D, warpSpot.getBlockY(),
 						warpSpot.getBlockZ() + 0.5D);
 					player.teleport(actualWarp);
-					player.getWorld().playSound(player.getLocation(), Sound.BAT_TAKEOFF, 1F, 1F);
+					if (pvp) {
+					    player.sendMessage(ChatColor.BOLD + "" + ChatColor.RED + plugin.myLocale(player.getUniqueId()).igsPVP + " " + plugin.myLocale(player.getUniqueId()).igsAllowed);
+					    player.getWorld().playSound(player.getLocation(), Sound.ARROW_HIT, 1F, 1F);
+					} else {
+					    player.getWorld().playSound(player.getLocation(), Sound.BAT_TAKEOFF, 1F, 1F);
+					}
 					return true;
 				    }
 				}
@@ -2680,13 +2694,18 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
      * @param foundWarp
      * @param directionFacing
      */
-    private void warpPlayer(Player player, Location inFront, UUID foundWarp, BlockFace directionFacing) {
+    private void warpPlayer(Player player, Location inFront, UUID foundWarp, BlockFace directionFacing, boolean pvp) {
 	// convert blockface to angle
 	float yaw = Util.blockFaceToFloat(directionFacing);
 	final Location actualWarp = new Location(inFront.getWorld(), inFront.getBlockX() + 0.5D, inFront.getBlockY(),
 		inFront.getBlockZ() + 0.5D, yaw, 30F);
 	player.teleport(actualWarp);
-	player.getWorld().playSound(player.getLocation(), Sound.BAT_TAKEOFF, 1F, 1F);
+	if (pvp) {
+	    player.sendMessage(ChatColor.BOLD + "" + ChatColor.RED + plugin.myLocale(player.getUniqueId()).igsPVP + " " + plugin.myLocale(player.getUniqueId()).igsAllowed);
+	    player.getWorld().playSound(player.getLocation(), Sound.ARROW_HIT, 1F, 1F);
+	} else {
+	    player.getWorld().playSound(player.getLocation(), Sound.BAT_TAKEOFF, 1F, 1F);
+	}
 	Player warpOwner = plugin.getServer().getPlayer(foundWarp);
 	if (warpOwner != null && !warpOwner.equals(player)) {
 	    warpOwner.sendMessage(plugin.myLocale(foundWarp).warpsPlayerWarped.replace("[name]", player.getDisplayName()));

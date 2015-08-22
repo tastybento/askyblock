@@ -28,6 +28,12 @@ public class IPItem {
     };
 
     // Info icons
+    /**
+     * Constructor for info icon - no toggle
+     * @param material
+     * @param name
+     * @param description
+     */
     public IPItem(Material material, String name, String description) {
 	this.flagValue = false;
 	this.slot = -1;
@@ -42,18 +48,39 @@ public class IPItem {
 	item.setItemMeta(meta);
     }
 
+    /**
+     * Item with a toggle settings. Description will be MATERIAL + "use"
+     * @param flagValue
+     * @param material
+     */
     public IPItem(boolean flagValue, Material material) {
 	createToggleableItem(flagValue, material, 0, Util.prettifyText(material.toString()) + " use");
     }
     
+    /**
+     * @param flagValue
+     * @param material
+     * @param durability
+     */
     public IPItem(boolean flagValue, Material material, int durability) {
 	createToggleableItem(flagValue, material, durability, Util.prettifyText(material.toString()) + " use");
     }
 
+    /**
+     * @param flagValue
+     * @param material
+     * @param name
+     */
     public IPItem(boolean flagValue, Material material, String name) {
 	createToggleableItem(flagValue, material, 0, name);
     }
     
+    /**
+     * @param flagValue
+     * @param material
+     * @param durability
+     * @param name
+     */
     public IPItem(boolean flagValue, Material material, int durability, String name) {
 	createToggleableItem(flagValue, material, durability, name);
     }

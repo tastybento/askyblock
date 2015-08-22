@@ -31,7 +31,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
  * @author tastybento
  */
 public class Locale {
-    
+
     // Localization Strings
     private FileConfiguration locale = null;
     private File localeFile = null;
@@ -462,6 +462,16 @@ public class Locale {
     public String igsAnvil;
     public String igsHorseRiding;
     public String igsHorseInvAccess;
+    public String igsPressurePlate;
+    public String igsPistonPush;
+    public String igsSettingsGeneralTitle;
+    public String igsSettingsGeneralDesc;
+    public String igsSettingsIslandTitle;
+    public String igsSettingsIslandDesc;
+    public String igsSettingsSpawnTitle;
+    public String igsSettingsSpawnDesc;
+
+
     public String setHomeerrorNumHomes;
     public String schematicsTitle;
     public String islandhelpBan;
@@ -559,6 +569,7 @@ public class Locale {
     public String islandhelpUnCoop;
     public String errorMaxIslands;
     public String entityLimitReached;
+
 
     /**
      * Creates a locale object full of localized strings for a language
@@ -708,13 +719,22 @@ public class Locale {
 	igsNetherPVP = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.netherpvp", "Nether PvP"));
 	igsRedstone = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.redstone", "Redstone use"));
 	igsShears = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.shears", "Shears use"));
+	igsSettingsGeneralTitle = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.settingsgeneraltitle", "General Island World Settings"));
+	igsSettingsGeneralDesc = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.settingsgeneraldesc", "General Island World Settings"));
+	igsSettingsIslandTitle = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.settingsislandtitle", "Island Settings"));
+	igsSettingsIslandDesc = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.settingsislanddesc", "These rules apply to visitors on this island"));
+	igsSettingsSpawnTitle = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.settingsspawntitle", "Spawn Settings"));
+	igsSettingsSpawnDesc = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.settingsspawndesc", "These rules apply at spawn."));
 	igsTeleport = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.teleportwhenfalling", "Teleport when falling"));
 	igsTNT = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.TNTdamage", "TNT Damage"));
 	igsVisitorDrop = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.visitordrop", "Visitor item dropping"));
 	igsVisitorPickUp = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.visitorpickup", "Visitor item pick-up"));
 	igsVisitorKeep = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.visitorkeepitems", "Visitor keep item on death"));	
-	igsHorseRiding = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.horseriding", "Visitor horse riding"));	
-	igsHorseInvAccess = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.horseinventoryaccess", "Visitor horse inventory access"));	
+	igsHorseRiding = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.horseriding", "Horse riding"));	
+	igsHorseInvAccess = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.horseinventoryaccess", "Horse inv access when riding"));	
+	igsPressurePlate = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.pressureplate", "Activate pressure plates"));	
+	igsPistonPush = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.pistonpush", "Pistons can push blocks outside island area"));	
+
 	lavaTip = ChatColor.translateAlternateColorCodes('&', locale.getString("lavaTip", "Changing obsidian back into lava. Be careful!"));
 	warpswelcomeLine = ChatColor.translateAlternateColorCodes('&', locale.getString("warps.welcomeLine", "[WELCOME]"));
 	warpswarpTip = ChatColor.translateAlternateColorCodes('&',

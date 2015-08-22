@@ -75,44 +75,83 @@ island:
    - "&cEmergency &fFood?"
    - "&aD&6a&di&6s&9y"
 
-   # Island Protection Settings
-   # PVP is allowed or not.
-   allowPvP: false
-   allowNetherPvP: false
-   # Other players can break blocks or not or generally damage things
-   allowbreakblocks: false
-   # Other players can place blocks
-   allowplaceblocks: false
+   # Island Protection Settings for Visitors
+   # Players can be given the ability to change all setting using /island settings with the
+   # askyblock.settings.* permission.
+   # Individual permissions can also be given, e.g., askyblock.settings.allowPvP
+   # Full list is:
+   # allowAnvilUse, allowArmorStandUse, allowBeaconAccess, allowBedUse, allowBreakBlocks, 
+   # allowBreeding, allowBrewing, allowBucketUse, allowChestAccess, allowCrafting,
+   # allowCropTrample, allowDoorUse, allowEnchanting, allowEnderPearls, allowFurnaceUse, 
+   # allowGateUse, allowHorseInvAccess, allowHorseRiding, allowHurtMobs, allowLeashUse,
+   # allowLeverButtonUse, allowMusic, allowPlaceBlocks, allowPortalUse, allowPressurePlate,
+   # allowPvP, allowNetherPvP, allowRedStone, allowShearing
+   # Permissions are CASE SENSITIVE!
+   
+   # Default settings
+   # Allow anvil use by visitors
+   allowanviluse: true
+   # Allow armor stand use by visitors (1.8+ only)
+   allowarmorstanduse: false
+   # Allow beacon use by visitors
+   allowbeaconaccess: false
    # Allow players to be able to sleep in beds not on their island
    allowbeduse: false
-   # Allow players to use buckets, either fill or dump them
-   allowbucketuse: false
-   # Allow players to shear sheep
-   allowshearing: false
-   # Allow players to throw enderpearls and teleport
-   allowenderpearls: false
-   # Allow players to use doors or trapdoors. If a door is operated by a button or redstone, this does not count
-   allowdooruse: false
-   # Allow players to use levers or buttons
-   allowleverbuttonuse: false
-   # Allow players to trample crops
-   allowcroptrample: false
-   # Allow players to access chests of any kind, droppers, dispensers and hoppers
-   allowchestaccess: false
-   # Allow players to access furnaces
-   allowfurnaceuse: false
-   # Allow players to adjust diodes or comparators
-   allowredstone: false
-   # Allow players to use jukeboxes, eject discs and hit note blocks
-   allowmusic: false
-   # Allow players to use crafting benches
-   allowcrafting: true
+   # Other players can break blocks or not or generally damage things
+   allowbreakblocks: false
+   # Allow animal breeding by visitors
+   allowbreeding: false
    # Allow players to use cauldrons and brewing stands
    allowbrewing: false
+   # Allow players to use buckets, either fill or dump them
+   allowbucketuse: false
+   # Allow players to access chests of any kind, droppers, dispensers and hoppers
+   allowchestaccess: false
+   # Allow players to use crafting benches
+   allowcrafting: true
+   # Allow players to trample crops
+   allowcroptrample: false
+   # Allow players to use doors or trapdoors. If a door is operated by a button or redstone, this does not count
+   allowdooruse: false
+   # Allow use of enchanting tables
+   allowenchanting: true
+   # Allow players to throw enderpearls and teleport
+   allowenderpearls: false
+   # Allow players to access furnaces
+   allowfurnaceuse: false
    # Allow gates to be used
    allowgateuse: false
+   # Allow visitors to ride horses
+   allowhorseriding: false
+   # Allow visitors access to horse inventories - only works when riding is enabled
+   allowhorseinventoryaccess: false
    # Allow friendly mobs to be hurt (cows etc.)
    allowhurtmobs: false
+   # Allow leash use
+   allowleashuse: false
+   # Allow players to use levers or buttons
+   allowleverbuttonuse: false
+   # Allow players to use jukeboxes, eject discs and hit note blocks
+   allowmusic: false
+   # Other players can place blocks
+   allowplaceblocks: false
+   # Allow portal use by visitors
+   allowportaluse: true
+   # Allow pressure plate activation by visitors (players only)
+   allowpressureplates: true
+   # PVP is allowed or not.
+   # If a player sets PVP, everyone on the island is given a warning
+   allowPvP: false
+   allowNetherPvP: false
+   # PVP cooldown in seconds. Players cannot toggle PVP off and on until this timeout
+   pvpcooldown: 60
+   # Allow players to adjust diodes or comparators
+   allowredstone: false
+   # Allow players to shear sheep
+   allowshearing: false
+  
+   # System settings - these cannot be changed by players, only viewed
+   
    # Allow monsters to be hurt (creepers,slimes, etc.)
    # Don't change this to false unless you accept that island visitors will not be
    # able to defend themselves!
@@ -129,40 +168,20 @@ island:
    allowtntdamage: false
    # Allow spawn egg use
    allowspawneggs: true
-   # Allow animal breeding by visitors
-   allowbreeding: false
    # Allow use of Flint & Steel by visitors
    allowfire: false
    # Allow fire spread (global - not just for visitors)
    allowfirespread: false
    # Allow chests to be blown up by creepers or TNT
    allowchestdamage: false
-   # Allow leash use
-   allowleashuse: false
-   # Allow use of enchanting tables
-   allowenchanting: true
-   # Allow anvil use by visitors
-   allowanviluse: true
    # Allow item drop by visitors
    allowvisitoritemdrop: true
    # Allow item pickup by visitors
    allowvisitoritempickup: true
    # Allow visitors to keep their items if they die
    allowvisitorkeepinvondeath: false
-   # Allow armor stand use by visitors
-   allowarmorstanduse: false
-   # Allow beacon use by visitors
-   allowbeaconaccess: false
-   # Allow portal use by visitors
-   allowportaluse: true
-   # Allow pressure plate activation by visitors (players only)
-   allowpressureplates: true
    # Allow pistons to push outside of the protected area (maybe to make bridges)
    allowpistonpush: true
-   # Allow visitors to ride horses
-   allowhorseriding: false
-   # Allow visitors access to horse inventories
-   allowhorseinventoryaccess: false
 
 # General Settings
 general:
@@ -406,13 +425,13 @@ general:
    # Allow /island teleport when falling. If set to false, all teleporting is
    # disabled until death from the void or until you hit something.
    # See commands that this will block too
-   # Using * will block ALL commands when falling
+   # Using "*" (with quotes) will block ALL commands when falling
    allowfallingteleport: true
    blockingcommands:
    - home
    #- anotherCommand
    #- andAnotherOne
-   #- *
+   #- "*"
 
    # Remove non-repeatable challenges from the challenge GUI when complete
    removecompleteonetimechallenges: false
@@ -463,7 +482,7 @@ general:
    
    # Mute death messages
    mutedeathmessages: false
-   
+      
    # Config.yml version. DO NOT EDIT. This number only changes if the latest
    # plugin config has been updated. If a new config is detected, it will be
    # auto-saved to config.new.yml.

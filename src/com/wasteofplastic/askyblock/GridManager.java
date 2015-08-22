@@ -351,7 +351,7 @@ public class GridManager {
      * @return PlayerIsland object
      */
     public Island getIslandAt(Location location) {
-	if (location == null) {
+	if (location == null || (!location.getWorld().equals(ASkyBlock.getIslandWorld()) && !location.getWorld().equals(ASkyBlock.getNetherWorld()))) {
 	    return null;
 	}
 	// Check if it is spawn
@@ -1432,4 +1432,5 @@ public class GridManager {
     public int getIslandCount() {
 	return ownershipMap.size();
     }
+
 }
