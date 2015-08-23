@@ -171,6 +171,8 @@ public class Settings {
     public static boolean allowSpawnHorseInvAccess;
     public static boolean allowSpawnHorseRiding;
     public static boolean allowSpawnPressurePlate;
+    public static boolean allowSpawnVisitorItemDrop;
+    public static boolean allowSpawnVisitorItemPickup;
 
     // Levels
     public static HashMap<MaterialData, Integer> blockLimits;
@@ -253,5 +255,7 @@ public class Settings {
     public static int maxIslands;
     public static HashMap<String,Integer> limitedBlocks;
     public static long pvpRestartCooldown;
+    
+    
 
 }

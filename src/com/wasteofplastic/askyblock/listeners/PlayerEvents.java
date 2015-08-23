@@ -161,6 +161,12 @@ public class PlayerEvents implements Listener {
 	if (!IslandGuard.inWorld(e.getPlayer())) {
 	    return;
 	}
+	if (plugin.getGrid().isAtSpawn(e.getItem().getLocation())) {
+	    if (Settings.allowSpawnVisitorItemPickup || e.getPlayer().isOp() || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
+		    || plugin.getGrid().locationIsOnIsland(e.getPlayer(), e.getItem().getLocation())) {
+		return;
+	    }
+	}
 	if (Settings.allowVisitorItemPickup || e.getPlayer().isOp() || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
 		|| plugin.getGrid().locationIsOnIsland(e.getPlayer(), e.getItem().getLocation())) {
 	    return;
@@ -178,6 +184,12 @@ public class PlayerEvents implements Listener {
 	}
 	if (!IslandGuard.inWorld(e.getPlayer())) {
 	    return;
+	}
+	if (plugin.getGrid().isAtSpawn(e.getItemDrop().getLocation())) {
+	    if (Settings.allowSpawnVisitorItemDrop || e.getPlayer().isOp() || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
+		    || plugin.getGrid().locationIsOnIsland(e.getPlayer(), e.getItemDrop().getLocation())) {
+		return;
+	    }
 	}
 	if (Settings.allowVisitorItemPickup || e.getPlayer().isOp() || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
 		|| plugin.getGrid().locationIsOnIsland(e.getPlayer(), e.getItemDrop().getLocation())) {

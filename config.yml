@@ -504,6 +504,8 @@ spawn:
   allowenchanting: true
   allowanviluse: true
   allowpressureplates: true
+  allowvisitoritemdrop: true
+  allowvisitoritempickup: true
 
   # The following are recommended to be false at spawn, but you can change
   allowbreakblocks: false
@@ -522,6 +524,7 @@ spawn:
   allowwatercollection: false
   allowhorseriding: false
   allowhorseinventoryaccess: false
+
 
 # This section contains the biomes that can be bought or used
 biomesettings:
