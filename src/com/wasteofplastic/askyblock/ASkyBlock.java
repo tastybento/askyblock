@@ -967,23 +967,17 @@ public class ASkyBlock extends JavaPlugin {
 	}
 
 	Settings.animalSpawnLimit = getConfig().getInt("general.animalspawnlimit", 15);
-	if (Settings.animalSpawnLimit > 100) {
-	    Settings.animalSpawnLimit = 100;
-	} else if (Settings.animalSpawnLimit < -1) {
+	if (Settings.animalSpawnLimit < -1) {
 	    Settings.animalSpawnLimit = -1;
 	}
 
-	Settings.monsterSpawnLimit = getConfig().getInt("general.monsterspawnlimit", 70);
-	if (Settings.monsterSpawnLimit > 100) {
-	    Settings.monsterSpawnLimit = 100;
-	} else if (Settings.monsterSpawnLimit < -1) {
+	Settings.monsterSpawnLimit = getConfig().getInt("general.monsterspawnlimit", 100);
+	if (Settings.monsterSpawnLimit < -1) {
 	    Settings.monsterSpawnLimit = -1;
 	}
 
 	Settings.waterAnimalSpawnLimit = getConfig().getInt("general.wateranimalspawnlimit", 15);
-	if (Settings.waterAnimalSpawnLimit > 100) {
-	    Settings.waterAnimalSpawnLimit = 100;
-	} else if (Settings.waterAnimalSpawnLimit < -1) {
+	if (Settings.waterAnimalSpawnLimit < -1) {
 	    Settings.waterAnimalSpawnLimit = -1;
 	}
 
