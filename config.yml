@@ -323,12 +323,10 @@ general:
    # Sets the limit for number of monsters that can spawn in a chunk in this world. 
    # Note: this does not limit the number of monsters, just how many spawn naturally.
    # Note: If set to a negative number the world will use the server-wide spawn limit instead.
-   # Max is 100
-   monsterspawnlimit: 70
+   monsterspawnlimit: 100
    
    # Sets the limit for number of animals that can spawn in a chunk in this world. 
    # Note: If set to a negative number the world will use the server-wide spawn limit instead.
-   # Max is 100
    animalspawnlimit: 15
    
    # Animal breeding limits - if this is set to more than 0, then players will not be able
@@ -337,6 +335,11 @@ general:
    # This WILL affect mobspawn blocks AND spawn egg use. Note that hearts will
    # still appear, but breeding will not happen.
    breedinglimit: 0
+   
+   # Sets the limit for number of water animals [squid] that can spawn in a chunk in this world. 
+   # Note: If set to a negative number the world will use the server-wide spawn limit instead.
+   # Max is 100
+   wateranimalspawnlimit: 15
 
    # Villager limit - this is per team player, so an island of 4 will have 4x this number
    # Note that 10 villagers minimum are required to create an iron farm. Zero is unlimited.
@@ -346,6 +349,7 @@ general:
    # Use this section to limit how many entities can be added to an island.
    # 0 means the item will be blocked from placement completely.
    # Uncomment to set the limit. The numbers are just suggested values.
+   # These are the ONLY blocks that can be limited (because they are entities).
    entitylimits:
      #BANNER: 20
      #ITEM_FRAME: 30
@@ -366,16 +370,9 @@ general:
      #HOPPER: 30
      #REDSTONE_COMPARATOR: 30
      #FLOWER_POT: 20
-     
-
-   # Sets the limit for number of water animals [squid] that can spawn in a chunk in this world. 
-   # Note: If set to a negative number the world will use the server-wide spawn limit instead.
-   # Max is 100
-   wateranimalspawnlimit: 15
 
    # Islands below this level will be removed if they are abandoned and admins issue the purge command
    abandonedislandlevel: 10
-
 
    ##### Economy ######
    # Use economy or not. If true, an economy plugin is required. If false,
