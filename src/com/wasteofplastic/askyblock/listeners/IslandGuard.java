@@ -1917,7 +1917,7 @@ public class IslandGuard implements Listener {
 	if (!plugin.getGrid().playerIsOnIsland(e.getPlayer())) {
 	    // Not on island
 	    // Minecarts and other storage entities
-	    plugin.getLogger().info("DEBUG: " + e.getRightClicked().getType().toString());
+	    //plugin.getLogger().info("DEBUG: " + e.getRightClicked().getType().toString());
 	    switch (e.getRightClicked().getType()) {
 	    case HORSE:
 		if (island != null && island.isSpawn()) {
