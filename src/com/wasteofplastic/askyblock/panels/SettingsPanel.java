@@ -242,6 +242,10 @@ public class SettingsPanel implements Listener {
 	    // Special handling to avoid errors on 1.7.x servers
 	    flag = Flags.allowArmorStandUse;
 	}
+	// If flag is null, do nothing
+	if (flag == null) {
+	    return;
+	}
 	// Players can only do something if they own the island or are op
 	Island island = plugin.getGrid().getIslandAt(player.getLocation());
 	if (island != null && (island.getOwner().equals(player.getUniqueId()) || player.isOp())) {
