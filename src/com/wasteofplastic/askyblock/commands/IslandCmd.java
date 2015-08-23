@@ -1152,6 +1152,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 			player.sendMessage("Čeština");
 			player.sendMessage("Slovenčina");
 			player.sendMessage("繁體中文 / TraditionalChinese");
+			player.sendMessage("Nederlands");
 		    } else {
 			player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).errorNoPermission);
 		    }
@@ -2990,9 +2991,12 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 		    options.add("Polski");
 		    options.add("Brasil");
 		    options.add("中国");
-		    options.add("Chinese");
+		    options.add("SimplifiedChinese");
+		    options.add("繁體中文");
+		    options.add("TraditionalChinese");
 		    options.add("Čeština");
 		    options.add("Slovenčina");
+		    options.add("Nederlands");
 		}
 	    }
 	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.sethome")) {
