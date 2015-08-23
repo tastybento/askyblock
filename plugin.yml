@@ -100,7 +100,7 @@ permissions:
           askyblock.craft.enderchest:
             description: Allow crafting and use of enderchests in askyblock
             default: false
-      skyblock.settings.*:
+      askyblock.settings.*:
         children:
           askyblock.settings.allowAnvilUse:
             description: Allow player to change this island guard setting
