@@ -74,7 +74,7 @@ public class IslandGuardNew implements Listener {
 	if (e.getRightClicked() != null && e.getRightClicked().getType().equals(EntityType.ARMOR_STAND)) {
 	    // Check island
 	    Island island = plugin.getGrid().getIslandAt(e.getRightClicked().getLocation());
-	    if ((island == null && Settings.allowArmorStandUse) || (island !=null && island.getIgsFlag(Flags.allowArmorStandUse))) {
+	    if (island !=null && island.getIgsFlag(Flags.allowArmorStandUse)) {
 		return;
 	    }
 	    // plugin.getLogger().info("DEBUG: Armor stand clicked off island");
@@ -146,7 +146,7 @@ public class IslandGuardNew implements Listener {
 	if (inHand != null && inHand.getType().equals(Material.ARMOR_STAND)) {
 	    // Check island
 	    Island island = plugin.getGrid().getIslandAt(e.getPlayer().getLocation());
-	    if ((island == null && Settings.allowPlaceBlocks) || (island !=null && island.getIgsFlag(Flags.allowPlaceBlocks))) {
+	    if (island !=null && island.getIgsFlag(Flags.allowPlaceBlocks)) {
 		return;
 	    }
 	    // plugin.getLogger().info("DEBUG: stand place cancelled");
@@ -174,20 +174,19 @@ public class IslandGuardNew implements Listener {
 	}
 	if (e.getDamager() instanceof Player) {
 	    Player p = (Player) e.getDamager();
-	    if (p.isOp()) {
+	    if (p.isOp() || VaultHelper.checkPerm(p, Settings.PERMPREFIX + "mod.bypassprotect")) {
 		return;
 	    }
 	    // Check if on island
 	    if (plugin.getGrid().playerIsOnIsland(p)) {
 		return;
 	    }
-	    // This permission bypasses protection
-	    if (VaultHelper.checkPerm(p, Settings.PERMPREFIX + "mod.bypassprotect")) {
-		return;
-	    }
 	    // Check island
 	    Island island = plugin.getGrid().getIslandAt(e.getEntity().getLocation());
-	    if ((island == null && Settings.allowBreakBlocks) || (island !=null && island.getIgsFlag(Flags.allowBreakBlocks))) {
+	    if (island != null && island.isSpawn() && Settings.allowSpawnBreakBlocks) {
+		return;
+	    }
+	    if (island != null && island.getIgsFlag(Flags.allowBreakBlocks)) {
 		return;
 	    }
 	    p.sendMessage(ChatColor.RED + plugin.myLocale(p.getUniqueId()).islandProtected);

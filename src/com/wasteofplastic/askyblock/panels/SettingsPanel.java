@@ -73,7 +73,7 @@ public class SettingsPanel implements Listener {
     public Inventory islandGuardPanel(Player player) {
 	UUID uuid = player.getUniqueId();
 	// Get the island settings for this player's location
-	Island island = plugin.getGrid().getIslandAt(player.getLocation());
+	Island island = plugin.getGrid().getProtectedIslandAt(player.getLocation());
 	List<IPItem> ip = new ArrayList<IPItem>();
 	Inventory newPanel = null;
 	if (island == null) {
