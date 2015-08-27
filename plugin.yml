@@ -239,6 +239,9 @@ permissions:
           askyblock.mod.excludetopten:
             description: Exclude player from the top ten list
             default: false
+          askyblock.mod.removesign:
+            description: Gives ability to remove warp signs
+            default: false
       askyblock.admin.*:
         children:
           askyblock.admin.reload:

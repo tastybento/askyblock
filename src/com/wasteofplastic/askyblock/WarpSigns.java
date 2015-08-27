@@ -16,10 +16,10 @@
  *******************************************************************************/
 package com.wasteofplastic.askyblock;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
@@ -50,7 +50,7 @@ import com.wasteofplastic.askyblock.util.VaultHelper;
 public class WarpSigns implements Listener {
     private final ASkyBlock plugin;
     // Map of all warps stored as player, warp sign Location
-    private HashMap<UUID, Object> warpList = new HashMap<UUID, Object>();
+    private HashMap<UUID, Location> warpList = new HashMap<UUID, Location>();
     // Where warps are stored
     private YamlConfiguration welcomeWarps;
 
@@ -59,7 +59,7 @@ public class WarpSigns implements Listener {
      */
     public WarpSigns(ASkyBlock plugin) {
 	this.plugin = plugin;
-	this.warpList = new HashMap<UUID, Object>();
+	this.warpList = new HashMap<UUID, Location>();
     }
 
     /**
@@ -74,26 +74,24 @@ public class WarpSigns implements Listener {
 	    if (b.getType().equals(Material.SIGN_POST) || b.getType().equals(Material.WALL_SIGN)) {
 		Sign s = (Sign) b.getState();
 		if (s != null) {
+		    //plugin.getLogger().info("DEBUG: sign found at location " + s.toString());
 		    if (s.getLine(0).equalsIgnoreCase(ChatColor.GREEN + plugin.myLocale().warpswelcomeLine)) {
 			// Do a quick check to see if this sign location is in
+			//plugin.getLogger().info("DEBUG: welcome sign");
 			// the list of warp signs
-			if (checkWarp(s.getLocation())) {
+			if (warpList.containsValue(s.getLocation())) {
+			    //plugin.getLogger().info("DEBUG: warp sign is in list");
 			    // Welcome sign detected - check to see if it is
 			    // this player's sign
-			    final Location playerSignLoc = getWarp(player.getUniqueId());
-			    if (playerSignLoc != null) {
-				if (playerSignLoc.equals(s.getLocation())) {
-				    // This is the player's sign, so allow it to
-				    // be destroyed
-				    player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).warpssignRemoved);
-				    removeWarp(player.getUniqueId());
-				} else {
-				    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorNoRemove);
-				    e.setCancelled(true);
-				}
+			    if ((warpList.containsKey(player.getUniqueId()) && warpList.get(player.getUniqueId()).equals(s.getLocation()))) {
+				// Player removed sign
+				removeWarp(s.getLocation());
+			    } else if (player.isOp()  || player.hasPermission(Settings.PERMPREFIX + "mod.removesign")) {
+				// Op or mod removed sign
+				player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).warpsremoved);
+				removeWarp(s.getLocation());
 			    } else {
-				// Someone else's sign because this player has
-				// none registered
+				// Someone else's sign - not allowed
 				player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorNoRemove);
 				e.setCancelled(true);
 			    }
@@ -198,7 +196,7 @@ public class WarpSigns implements Listener {
 	//plugin.getLogger().info("Saving warps...");
 	final HashMap<String, Object> warps = new HashMap<String, Object>();
 	for (UUID p : warpList.keySet()) {
-	    warps.put(p.toString(), warpList.get(p));
+	    warps.put(p.toString(), Util.getStringLocation(warpList.get(p)));
 	}
 	welcomeWarps.set("warps", warps);
 	Util.saveYamlFile(welcomeWarps, "warps.yml");
@@ -239,12 +237,13 @@ public class WarpSigns implements Listener {
 		Block b = l.getBlock();
 		// Check that a warp sign is still there
 		if (b.getType().equals(Material.SIGN_POST) || b.getType().equals(Material.WALL_SIGN)) {
-		    warpList.put(playerUUID, temp.get(s));
+		    warpList.put(playerUUID, l);
 		} else {
-		    plugin.getLogger().warning("Warp at location " + (String) temp.get(s) + " has no sign - removing.");
+		    plugin.getLogger().warning("Warp at location " + temp.get(s) + " has no sign - removing.");
 		}
 	    } catch (Exception e) {
-		plugin.getLogger().severe("Problem loading warp at location " + (String) temp.get(s) + " - removing.");
+		plugin.getLogger().severe("Problem loading warp at location " + temp.get(s) + " - removing.");
+		e.printStackTrace();
 	    }
 	}
     }
@@ -256,16 +255,15 @@ public class WarpSigns implements Listener {
      * @param loc
      */
     public boolean addWarp(UUID player, Location loc) {
-	final String locS = Util.getStringLocation(loc);
 	// Do not allow warps to be in the same location
-	if (warpList.containsValue(locS)) {
+	if (warpList.containsValue(loc)) {
 	    return false;
 	}
 	// Remove the old warp if it existed
 	if (warpList.containsKey(player)) {
 	    warpList.remove(player);
 	}
-	warpList.put(player, locS);
+	warpList.put(player, loc);
 	saveWarpList(true);
 	return true;
     }
@@ -278,12 +276,16 @@ public class WarpSigns implements Listener {
      */
     public void removeWarp(UUID uuid) {
 	if (warpList.containsKey(uuid)) {
-	    popSign(Util.getLocationString((String) warpList.get(uuid)));
+	    popSign(warpList.get(uuid));
 	    warpList.remove(uuid);
 	}
 	saveWarpList(true);
     }
 
+    /**
+     * Changes the sign to red if it exists
+     * @param loc
+     */
     private void popSign(Location loc) {
 	Block b = loc.getBlock();
 	if (b.getType().equals(Material.SIGN_POST) || b.getType().equals(Material.WALL_SIGN)) {
@@ -303,48 +305,24 @@ public class WarpSigns implements Listener {
      * @param loc
      */
     public void removeWarp(Location loc) {
-	final String locS = Util.getStringLocation(loc);
-	plugin.getLogger().info("Asked to remove warp at " + locS);
+	//plugin.getLogger().info("Asked to remove warp at " + loc);
 	popSign(loc);
-	if (warpList.containsValue(locS)) {
-	    // Step through every key (sigh)
-	    List<UUID> playerList = new ArrayList<UUID>();
-	    for (UUID player : warpList.keySet()) {
-		if (locS.equals(warpList.get(player))) {
-		    playerList.add(player);
-		}
-	    }
-	    for (UUID rp : playerList) {
-		warpList.remove(rp);
-		final Player p = plugin.getServer().getPlayer(rp);
+	Iterator<Entry<UUID, Location>> it = warpList.entrySet().iterator();
+	while (it.hasNext()) {
+	    Entry<UUID, Location> en = it.next();
+	    if (en.getValue().equals(loc)) {
+		// Inform player
+		Player p = plugin.getServer().getPlayer(en.getKey());
 		if (p != null) {
 		    // Inform the player
 		    p.sendMessage(ChatColor.RED + plugin.myLocale(p.getUniqueId()).warpssignRemoved);
+		} else {
+		    plugin.getMessages().setMessage(en.getKey(), ChatColor.RED + plugin.myLocale(en.getKey()).warpssignRemoved);
 		}
-		plugin.getLogger().warning(rp.toString() + "'s welcome sign at " + loc.toString() + " was removed by something.");
+		it.remove();
 	    }
-	} else {
-	    plugin.getLogger().info("Not in the list which is:");
-	    for (UUID player : warpList.keySet()) {
-		plugin.getLogger().info(player.toString() + "," + warpList.get(player));
-	    }
-
 	}
 	saveWarpList(true);
-    }
-
-    /**
-     * Returns true if the location supplied is a warp location
-     * 
-     * @param loc
-     * @return true if this location has a warp sign, false if not
-     */
-    public boolean checkWarp(Location loc) {
-	final String locS = Util.getStringLocation(loc);
-	if (warpList.containsValue(locS)) {
-	    return true;
-	}
-	return false;
     }
 
     /**
@@ -382,7 +360,7 @@ public class WarpSigns implements Listener {
      */
     public Location getWarp(UUID player) {
 	if (warpList.containsKey(player)) {
-	    return Util.getLocationString((String) warpList.get(player));
+	    return warpList.get(player);
 	} else {
 	    return null;
 	}
@@ -394,8 +372,7 @@ public class WarpSigns implements Listener {
      */
     public String getWarpOwner(Location location) {
 	for (UUID playerUUID : warpList.keySet()) {
-	    Location l = Util.getLocationString((String) warpList.get(playerUUID));
-	    if (l.equals(location)) {
+	    if (location.equals(warpList.get(playerUUID))) {
 		return plugin.getPlayers().getName(playerUUID);
 	    }
 	}
