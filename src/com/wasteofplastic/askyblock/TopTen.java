@@ -2,8 +2,10 @@ package com.wasteofplastic.askyblock;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.UUID;
 
 import org.bukkit.ChatColor;
@@ -39,6 +41,15 @@ public class TopTen {
 		topTenList.remove(ownerUUID);
 	    }
 	    return;
+	}
+	// Try and see if the player is online
+	Player player = plugin.getServer().getPlayer(ownerUUID);
+	if (player != null) {
+	    // Online
+	    if (player.hasPermission(Settings.PERMPREFIX + "mod.excludetopten")) {
+		topTenList.remove(ownerUUID);
+		return;
+	    }
 	}
 	topTenList.put(ownerUUID, level);
 	topTenList = MapUtil.sortByValue(topTenList);
@@ -203,25 +214,38 @@ public class TopTen {
 	int i = 1;
 	// getLogger().info("DEBUG: " + topTenList.toString());
 	// getLogger().info("DEBUG: " + topTenList.values());
-	for (Map.Entry<UUID, Integer> m : topTenList.entrySet()) {
-	    final UUID playerUUID = m.getKey();
-	    if (plugin.getPlayers().inTeam(playerUUID)) {
-		final List<UUID> pMembers = plugin.getPlayers().getMembers(playerUUID);
-		String memberList = "";
-		for (UUID members : pMembers) {
-		    memberList += plugin.getPlayers().getName(members) + ", ";
+	Iterator<Entry<UUID, Integer>> it = topTenList.entrySet().iterator();
+	while (it.hasNext()) {
+	    Map.Entry<UUID, Integer> m = it.next();
+	    UUID playerUUID = m.getKey();
+	    // Remove from TopTen if the player is online and has the permission
+	    Player entry = plugin.getServer().getPlayer(playerUUID);
+	    boolean show = true;
+	    if (entry != null) {
+		if (entry.hasPermission(Settings.PERMPREFIX + "mod.excludetopten")) {
+		    it.remove();
+		    show = false;
 		}
-		if (memberList.length() > 2) {
-		    memberList = memberList.substring(0, memberList.length() - 2);
-		}
-		player.sendMessage(ChatColor.AQUA + "#" + i + ": " + plugin.getPlayers().getName(playerUUID) + " (" + memberList + ") - "
-			+ plugin.myLocale(player.getUniqueId()).levelislandLevel + " " + m.getValue());
-	    } else {
-		player.sendMessage(ChatColor.AQUA + "#" + i + ": " + plugin.getPlayers().getName(playerUUID) + " - " + plugin.myLocale(player.getUniqueId()).levelislandLevel + " "
-			+ m.getValue());
 	    }
-	    if (i++ == 10) {
-		break;
+	    if (show) {
+		if (plugin.getPlayers().inTeam(playerUUID)) {
+		    final List<UUID> pMembers = plugin.getPlayers().getMembers(playerUUID);
+		    String memberList = "";
+		    for (UUID members : pMembers) {
+			memberList += plugin.getPlayers().getName(members) + ", ";
+		    }
+		    if (memberList.length() > 2) {
+			memberList = memberList.substring(0, memberList.length() - 2);
+		    }
+		    player.sendMessage(ChatColor.AQUA + "#" + i + ": " + plugin.getPlayers().getName(playerUUID) + " (" + memberList + ") - "
+			    + plugin.myLocale(player.getUniqueId()).levelislandLevel + " " + m.getValue());
+		} else {
+		    player.sendMessage(ChatColor.AQUA + "#" + i + ": " + plugin.getPlayers().getName(playerUUID) + " - " + plugin.myLocale(player.getUniqueId()).levelislandLevel + " "
+			    + m.getValue());
+		}
+		if (i++ == 10) {
+		    break;
+		}
 	    }
 	}
 	return true;

@@ -37,6 +37,8 @@ import com.wasteofplastic.askyblock.LevelCalc;
 import com.wasteofplastic.askyblock.PlayerCache;
 import com.wasteofplastic.askyblock.Scoreboards;
 import com.wasteofplastic.askyblock.Settings;
+import com.wasteofplastic.askyblock.TopTen;
+import com.wasteofplastic.askyblock.util.MapUtil;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
 public class JoinLeaveEvents implements Listener {
@@ -210,10 +212,18 @@ public class JoinLeaveEvents implements Listener {
 	}
 	// Set the player's level
 	plugin.getChatListener().setPlayerLevel(playerUUID, plugin.getPlayers().getIslandLevel(player.getUniqueId()));
+	// Remove from TopTen if the player has the permission
+	if (player.hasPermission(Settings.PERMPREFIX + "mod.excludetopten")) {
+	    TopTen.topTenRemoveEntry(playerUUID);
+	}
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerQuit(final PlayerQuitEvent event) {
+	// Remove from TopTen if the player has the permission
+	if (event.getPlayer().hasPermission(Settings.PERMPREFIX + "mod.excludetopten")) {
+	    TopTen.topTenRemoveEntry(event.getPlayer().getUniqueId());
+	}
 	// Remove from coop list
 	CoopPlay.getInstance().clearMyCoops(event.getPlayer());
 	CoopPlay.getInstance().clearMyInvitedCoops(event.getPlayer());
