@@ -665,7 +665,7 @@ public class Island {
 	for (int x = getMinProtectedX() /16; x <= (getMinProtectedX() + getProtectionSize() - 1)/16; x++) {
 	    for (int z = getMinProtectedZ() /16; z <= (getMinProtectedZ() + getProtectionSize() - 1)/16; z++) {
 		for (BlockState holder : world.getChunkAt(x, z).getTileEntities()) {
-		    plugin.getLogger().info("DEBUG: entity: " + holder.getType());
+		    //plugin.getLogger().info("DEBUG: entity: " + holder.getType());
 		    if (holder.getType() == material) {
 			result++;
 		    } else if (material.equals(Material.REDSTONE_COMPARATOR_OFF)) {
