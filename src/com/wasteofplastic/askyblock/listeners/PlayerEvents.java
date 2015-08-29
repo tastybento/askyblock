@@ -36,10 +36,12 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.InventorySave;
 import com.wasteofplastic.askyblock.Island;
+import com.wasteofplastic.askyblock.Island.Flags;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
@@ -308,6 +310,29 @@ public class PlayerEvents implements Listener {
 	//plugin.getLogger().info("DEBUG: To : " + e.getTo());
 	// Teleporting to a locked island
 	Island islandTo = plugin.getGrid().getProtectedIslandAt(e.getTo());
+	// Ender pearl teleport check
+	if (e.getCause() != null && e.getCause().equals(TeleportCause.ENDER_PEARL)) {
+	    if (islandTo == null) {
+		if (Settings.allowEnderPearls) {
+		    return;
+		}
+	    } else {
+		if (islandTo.isSpawn()) {
+		    if (Settings.allowEnderPearls) {
+			return;
+		    }
+		} else {
+		    // Regular island
+		    if (islandTo.getIgsFlag(Flags.allowEnderPearls)) {
+			return;
+		    }
+		}	
+	    }
+	    e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
+	    e.setCancelled(true);
+	    return;
+	}
+
 	// Announcement entering
 	Island islandFrom = plugin.getGrid().getProtectedIslandAt(e.getFrom());
 	// Only says something if there is a change in islands

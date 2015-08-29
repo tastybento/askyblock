@@ -153,7 +153,11 @@ public class NetherPortals implements Listener {
 	    break;
 	case NETHER_PORTAL:
 	    // Get the home world of this player
-	    World homeWorld = plugin.getPlayers().getHomeLocation(event.getPlayer().getUniqueId()).getWorld();
+	    World homeWorld = ASkyBlock.getIslandWorld();
+	    Location home = plugin.getPlayers().getHomeLocation(event.getPlayer().getUniqueId());
+	    if (home != null) {
+		homeWorld = home.getWorld();
+	    }
 	    if (!Settings.newNether) {
 		// Legacy action
 		if (event.getFrom().getWorld().getEnvironment().equals(Environment.NORMAL)) {

@@ -248,9 +248,11 @@ public class SettingsPanel implements Listener {
 	}
 	// Players can only do something if they own the island or are op
 	Island island = plugin.getGrid().getIslandAt(player.getLocation());
-	if (island != null && (island.getOwner().equals(player.getUniqueId()) || player.isOp())) {
+	if (island != null && (player.isOp() || (island.getOwner() != null && island.getOwner().equals(player.getUniqueId())))) {
+	    //plugin.getLogger().info("DEBUG: Check perms");
 	    // Check perms
 	    if (player.hasPermission(Settings.PERMPREFIX + "settings." + flag.toString())) {
+		//plugin.getLogger().info("DEBUG: Player has perm");
 		if (flag.equals(Flags.allowPvP) || flag.equals(Flags.allowNetherPvP)) {
 		    // PVP always results in an inventory closure
 		    player.closeInventory();
