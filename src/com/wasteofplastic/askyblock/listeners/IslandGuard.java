@@ -913,7 +913,7 @@ public class IslandGuard implements Listener {
 		    }
 		} else {
 		    // Regular island
-		    if (island.getIgsFlag(Flags.allowEnderPearls)) {
+		    if (island.getIgsFlag(Flags.allowEnderPearls) || island.getMembers().contains(p.getUniqueId())) {
 			return;
 		    }
 		}	

@@ -323,7 +323,7 @@ public class PlayerEvents implements Listener {
 		    }
 		} else {
 		    // Regular island
-		    if (islandTo.getIgsFlag(Flags.allowEnderPearls)) {
+		    if (islandTo.getIgsFlag(Flags.allowEnderPearls) || islandTo.getMembers().contains(e.getPlayer().getUniqueId())) {
 			return;
 		    }
 		}	
