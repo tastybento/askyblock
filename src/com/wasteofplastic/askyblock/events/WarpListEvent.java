@@ -6,7 +6,7 @@ import java.util.UUID;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.MyShard;
 
 /**
  * This event is fired when request is made for a sorted list of warps or when
@@ -25,7 +25,7 @@ public class WarpListEvent extends Event {
      * @param plugin
      * @param warps
      */
-    public WarpListEvent(ASkyBlock plugin, Collection<UUID> warps) {
+    public WarpListEvent(MyShard plugin, Collection<UUID> warps) {
 	this.warps = warps;
     }
 

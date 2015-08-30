@@ -22,7 +22,7 @@ import net.milkbowl.vault.permission.Permission;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
-import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.MyShard;
 
 /**
  * Helper class for Vault Economy and Permissions
@@ -37,7 +37,7 @@ public class VaultHelper {
      * @return
      */
     public static boolean setupEconomy() {
-	RegisteredServiceProvider<Economy> economyProvider = ASkyBlock.getPlugin().getServer().getServicesManager()
+	RegisteredServiceProvider<Economy> economyProvider = MyShard.getPlugin().getServer().getServicesManager()
 		.getRegistration(net.milkbowl.vault.economy.Economy.class);
 	if (economyProvider != null) {
 	    econ = economyProvider.getProvider();
@@ -51,7 +51,7 @@ public class VaultHelper {
      * @return
      */
     public static boolean setupPermissions() {
-	RegisteredServiceProvider<Permission> permissionProvider = ASkyBlock.getPlugin().getServer().getServicesManager()
+	RegisteredServiceProvider<Permission> permissionProvider = MyShard.getPlugin().getServer().getServicesManager()
 		.getRegistration(net.milkbowl.vault.permission.Permission.class);
 	if (permissionProvider != null) {
 	    permission = permissionProvider.getProvider();

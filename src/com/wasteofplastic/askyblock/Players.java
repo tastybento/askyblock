@@ -38,7 +38,7 @@ import com.wasteofplastic.askyblock.util.Util;
  * @author tastybento
  */
 public class Players {
-    private ASkyBlock plugin;
+    private MyShard plugin;
     private YamlConfiguration playerInfo;
     private HashMap<String, Boolean> challengeList;
     private HashMap<String, Integer> challengeListTimes;
@@ -64,7 +64,7 @@ public class Players {
      *            Constructor - initializes the state variables
      * 
      */
-    public Players(final ASkyBlock aSkyBlock, final UUID uuid) {
+    public Players(final MyShard aSkyBlock, final UUID uuid) {
 	this.plugin = aSkyBlock;
 	this.uuid = uuid;
 	this.members = new ArrayList<UUID>();

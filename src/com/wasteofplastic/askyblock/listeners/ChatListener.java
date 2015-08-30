@@ -14,7 +14,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
-import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.MyShard;
 import com.wasteofplastic.askyblock.Settings;
 
 /**
@@ -32,7 +32,7 @@ import com.wasteofplastic.askyblock.Settings;
  */
 public class ChatListener implements Listener {
 
-    private ASkyBlock plugin;
+    private MyShard plugin;
     private ConcurrentHashMap<UUID,Boolean> teamChatUsers;
     private ConcurrentHashMap<UUID,Integer> playerLevels;
     // List of which admins are spying or not on team chat
@@ -42,7 +42,7 @@ public class ChatListener implements Listener {
      * @param plugin
      * @param teamChatOn
      */
-    public ChatListener(ASkyBlock plugin) {
+    public ChatListener(MyShard plugin) {
 	this.teamChatUsers = new ConcurrentHashMap<UUID,Boolean>();
 	this.playerLevels = new ConcurrentHashMap<UUID,Integer>();
 	this.plugin = plugin;

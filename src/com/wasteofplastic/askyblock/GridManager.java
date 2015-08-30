@@ -41,7 +41,7 @@ import com.wasteofplastic.askyblock.util.Util;
  * @author tastybento
  */
 public class GridManager {
-    private ASkyBlock plugin;
+    private MyShard plugin;
     // 2D islandGrid of islands, x,z
     private TreeMap<Integer, TreeMap<Integer, Island>> islandGrid = new TreeMap<Integer, TreeMap<Integer, Island>>();
     // private TreeMap<Integer,TreeMap<Integer,PlayerIsland>> protectionGrid = new
@@ -54,7 +54,7 @@ public class GridManager {
     /**
      * @param plugin
      */
-    public GridManager(ASkyBlock plugin) {
+    public GridManager(MyShard plugin) {
 	this.plugin = plugin;
 	loadGrid();
     }
@@ -351,7 +351,7 @@ public class GridManager {
      * @return PlayerIsland object
      */
     public Island getIslandAt(Location location) {
-	if (location == null || (!location.getWorld().equals(ASkyBlock.getIslandWorld()) && !location.getWorld().equals(ASkyBlock.getNetherWorld()))) {
+	if (location == null || (!location.getWorld().equals(MyShard.getIslandWorld()) && !location.getWorld().equals(MyShard.getNetherWorld()))) {
 	    return null;
 	}
 	// Check if it is spawn
@@ -1253,7 +1253,7 @@ public class GridManager {
      */
     private Location netherIsland(Location islandLocation) {
 	//plugin.getLogger().info("DEBUG: netherworld = " + ASkyBlock.getNetherWorld());
-	return islandLocation.toVector().toLocation(ASkyBlock.getNetherWorld());
+	return islandLocation.toVector().toLocation(MyShard.getNetherWorld());
     }
 
     /**
@@ -1377,7 +1377,7 @@ public class GridManager {
 		    Island spawn = getSpawn();
 		    if (spawn != null) {
 			// go to island spawn
-			player.teleport(ASkyBlock.getIslandWorld().getSpawnLocation());
+			player.teleport(MyShard.getIslandWorld().getSpawnLocation());
 			//plugin.getLogger().warning("During island deletion player " + player.getName() + " sent to spawn.");
 		    } else {
 			if (!player.performCommand(Settings.SPAWNCOMMAND)) {
@@ -1413,7 +1413,7 @@ public class GridManager {
      * @param location
      */
     public void setSpawnPoint(Location location) {
-	ASkyBlock.getIslandWorld().setSpawnLocation(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+	MyShard.getIslandWorld().setSpawnLocation(location.getBlockX(), location.getBlockY(), location.getBlockZ());
 	//plugin.getLogger().info("DEBUG: setting spawn point to " + location);
 	spawn.setSpawnPoint(location);
     }

@@ -12,7 +12,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
-import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.MyShard;
 import com.wasteofplastic.askyblock.PlayerCache;
 
 /**
@@ -22,7 +22,7 @@ import com.wasteofplastic.askyblock.PlayerCache;
  * 
  */
 public class Util {
-    private static ASkyBlock plugin = ASkyBlock.getPlugin();
+    private static MyShard plugin = MyShard.getPlugin();
 
     /**
      * Loads a YAML file and if it does not exist it is looked for in the JAR

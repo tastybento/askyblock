@@ -20,19 +20,19 @@ import org.bukkit.entity.Player;
  * 
  */
 public class CoopPlay {
-    private static CoopPlay instance = new CoopPlay(ASkyBlock.getPlugin());
+    private static CoopPlay instance = new CoopPlay(MyShard.getPlugin());
     // Stores all the coop islands, the coop player, the location and the
     // inviter
     private HashMap<UUID, HashMap<Location, UUID>> coopPlayers = new HashMap<UUID, HashMap<Location, UUID>>();
     // Defines whether a player is on a coop island or not
     // private HashMap<UUID, Location> onCoopIsland = new HashMap<UUID,
     // Location>();
-    private ASkyBlock plugin;
+    private MyShard plugin;
 
     /**
      * @param instance
      */
-    private CoopPlay(ASkyBlock plugin) {
+    private CoopPlay(MyShard plugin) {
 	this.plugin = plugin;
     }
 

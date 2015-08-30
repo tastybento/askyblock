@@ -23,21 +23,21 @@ import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.util.Vector;
 
-import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.MyShard;
 import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
 public class BiomesPanel implements Listener {
-    private ASkyBlock plugin;
+    private MyShard plugin;
     private HashMap<UUID, List<BiomeItem>> biomeItems = new HashMap<UUID, List<BiomeItem>>();
 
 
     /**
      * @param plugin
      */
-    public BiomesPanel(ASkyBlock plugin) {
+    public BiomesPanel(MyShard plugin) {
 	this.plugin = plugin;
     }
 
@@ -268,7 +268,7 @@ public class BiomesPanel implements Listener {
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = false)
     public void onChunkLoad(ChunkLoadEvent e) {
 	// Only affects overworld
-	if (!e.getWorld().equals(ASkyBlock.getIslandWorld())) {
+	if (!e.getWorld().equals(MyShard.getIslandWorld())) {
 	    return;
 	}
 	Island island = plugin.getGrid().getIslandAt(e.getChunk().getX()*16, e.getChunk().getZ()*16);

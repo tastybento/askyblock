@@ -11,12 +11,12 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.ChunkLoadEvent;
 
-import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.MyShard;
 import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.Settings;
 
 public class BiomeChunk implements Listener {
-    private final ASkyBlock plugin;
+    private final MyShard plugin;
     private final Set<Material> bannedBlocks = new HashSet<Material>();
 
     /**
@@ -24,7 +24,7 @@ public class BiomeChunk implements Listener {
      * if it exists.
      * @param plugin
      */
-    public BiomeChunk(ASkyBlock plugin) {
+    public BiomeChunk(MyShard plugin) {
 	this.plugin = plugin;
 	bannedBlocks.add(Material.ICE);
 	bannedBlocks.add(Material.SNOW);
@@ -42,7 +42,7 @@ public class BiomeChunk implements Listener {
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = false)
     public void onChunkLoad(ChunkLoadEvent e) {
 	// Only affects overworld
-	if (!e.getWorld().equals(ASkyBlock.getIslandWorld())) {
+	if (!e.getWorld().equals(MyShard.getIslandWorld())) {
 	    return;
 	}
 	Island island = plugin.getGrid().getIslandAt(e.getChunk().getX()*16, e.getChunk().getZ()*16);

@@ -13,7 +13,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
 
-import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.MyShard;
 import com.wasteofplastic.askyblock.Island;
 
 /**
@@ -25,13 +25,13 @@ import com.wasteofplastic.askyblock.Island;
  *
  */
 public class WitherEvents implements Listener {
-    private final ASkyBlock plugin;
+    private final MyShard plugin;
     private final boolean debug = false;
     private HashMap<UUID, Island> witherSpawnInfo;
     /**
      * @param plugin
      */
-    public WitherEvents(ASkyBlock plugin) {
+    public WitherEvents(MyShard plugin) {
 	this.plugin = plugin;
 	this.witherSpawnInfo = new HashMap<UUID, Island>();
     }

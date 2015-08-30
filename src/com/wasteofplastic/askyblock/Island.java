@@ -27,7 +27,7 @@ import com.wasteofplastic.askyblock.util.Util;
  * 
  */
 public class Island {
-    ASkyBlock plugin;
+    MyShard plugin;
     // Coordinates of the island area
     private int minX;
     private int minZ;
@@ -103,7 +103,7 @@ public class Island {
      * @param plugin
      * @param serial
      */
-    public Island(ASkyBlock plugin, String serial) {
+    public Island(MyShard plugin, String serial) {
 	this.plugin = plugin;
 	// Bukkit.getLogger().info("DEBUG: adding serialized island to grid ");
 	// Deserialize
@@ -120,7 +120,7 @@ public class Island {
 	    minZ = z - islandDistance / 2;
 	    minProtectedX = x - protectionRange / 2;
 	    minProtectedZ = z - protectionRange / 2;
-	    this.world = ASkyBlock.getIslandWorld();
+	    this.world = MyShard.getIslandWorld();
 	    this.center = new Location(world, x, y, z);
 	    this.createdDate = new Date().getTime();
 	    this.updatedDate = createdDate;
@@ -213,11 +213,11 @@ public class Island {
      * @param minX
      * @param minZ
      */
-    public Island(ASkyBlock plugin, int x, int z) {
+    public Island(MyShard plugin, int x, int z) {
 	this(plugin, x, z, null);
     }
 
-    public Island(ASkyBlock plugin, int x, int z, UUID owner) {
+    public Island(MyShard plugin, int x, int z, UUID owner) {
 	this.plugin = plugin;
 	// Calculate min minX and z
 	this.minX = x - Settings.islandDistance / 2;
@@ -227,7 +227,7 @@ public class Island {
 	this.y = Settings.island_level;
 	this.islandDistance = Settings.islandDistance;
 	this.protectionRange = Settings.island_protectionRange;
-	this.world = ASkyBlock.getIslandWorld();
+	this.world = MyShard.getIslandWorld();
 	this.center = new Location(world, x, y, z);
 	this.createdDate = new Date().getTime();
 	this.updatedDate = createdDate;
@@ -276,7 +276,7 @@ public class Island {
     public boolean onIsland(Location target) {
 	if (world != null) {
 	    // If the new nether is being used, islands exist in the nether too
-	    if (target.getWorld().equals(world) || (Settings.createNether && Settings.newNether && target.getWorld().equals(ASkyBlock.getNetherWorld()))) {
+	    if (target.getWorld().equals(world) || (Settings.createNether && Settings.newNether && target.getWorld().equals(MyShard.getNetherWorld()))) {
 		if (target.getX() >= center.getBlockX() - protectionRange / 2 && target.getX() < center.getBlockX() + protectionRange / 2
 			&& target.getZ() >= center.getBlockZ() - protectionRange / 2 && target.getZ() < center.getBlockZ() + protectionRange / 2) {
 		    return true;
@@ -293,7 +293,7 @@ public class Island {
      * @return true if in the area
      */
     public boolean inIslandSpace(Location target) {
-	if (target.getWorld().equals(ASkyBlock.getIslandWorld()) || target.getWorld().equals(ASkyBlock.getNetherWorld())) {
+	if (target.getWorld().equals(MyShard.getIslandWorld()) || target.getWorld().equals(MyShard.getNetherWorld())) {
 	    if (target.getX() >= center.getBlockX() - islandDistance / 2 && target.getX() < center.getBlockX() + islandDistance / 2
 		    && target.getZ() >= center.getBlockZ() - islandDistance / 2 && target.getZ() < center.getBlockZ() + islandDistance / 2) {
 		return true;

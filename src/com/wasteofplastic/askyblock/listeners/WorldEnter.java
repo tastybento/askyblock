@@ -6,20 +6,20 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 
-import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.MyShard;
 import com.wasteofplastic.askyblock.Settings;
 
 public class WorldEnter implements Listener {
-    private ASkyBlock plugin;
+    private MyShard plugin;
 
-    public WorldEnter(ASkyBlock aSkyBlock) {
+    public WorldEnter(MyShard aSkyBlock) {
 	this.plugin = aSkyBlock;
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onWorldEnter(final PlayerChangedWorldEvent event) {
 	//plugin.getLogger().info("DEBUG " + event.getEventName());
-	if (!event.getPlayer().getWorld().equals(ASkyBlock.getIslandWorld())) {
+	if (!event.getPlayer().getWorld().equals(MyShard.getIslandWorld())) {
 	    return;
 	}
 	//plugin.getLogger().info("DEBUG correct world");

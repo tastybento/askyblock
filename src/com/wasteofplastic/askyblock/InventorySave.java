@@ -12,14 +12,14 @@ import org.bukkit.entity.Player;
  * 
  */
 public class InventorySave {
-    private static InventorySave instance = new InventorySave(ASkyBlock.getPlugin());
+    private static InventorySave instance = new InventorySave(MyShard.getPlugin());
     private HashMap<UUID, InventoryStore> inventories;
-    private ASkyBlock plugin;
+    private MyShard plugin;
 
     /**
      * Saves the inventory of a player
      */
-    public InventorySave(ASkyBlock plugin) {
+    public InventorySave(MyShard plugin) {
 	this.plugin = plugin;
 	inventories = new HashMap<UUID, InventoryStore>();
     }

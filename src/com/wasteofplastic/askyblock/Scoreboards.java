@@ -16,7 +16,7 @@ import org.bukkit.scoreboard.Team;
  *
  */
 public class Scoreboards {
-    private static ASkyBlock plugin = ASkyBlock.getPlugin();
+    private static MyShard plugin = MyShard.getPlugin();
     private static Scoreboards instance = new Scoreboards();
     private static ScoreboardManager manager;
     private static Scoreboard board;

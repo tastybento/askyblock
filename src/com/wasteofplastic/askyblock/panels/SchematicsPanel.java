@@ -14,18 +14,18 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 
-import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.MyShard;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.schematics.Schematic;
 
 public class SchematicsPanel implements Listener {
-    private ASkyBlock plugin;
+    private MyShard plugin;
     private HashMap<UUID, List<SPItem>> schematicItems = new HashMap<UUID, List<SPItem>>();
 
     /**
      * @param plugin
      */
-    public SchematicsPanel(ASkyBlock plugin) {
+    public SchematicsPanel(MyShard plugin) {
 	this.plugin = plugin;
     }
 

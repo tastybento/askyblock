@@ -39,7 +39,7 @@ import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.util.Vector;
 
-import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.MyShard;
 import com.wasteofplastic.askyblock.GridManager;
 import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.Island.Flags;
@@ -50,9 +50,9 @@ import com.wasteofplastic.askyblock.schematics.Schematic;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
 public class NetherPortals implements Listener {
-    private final ASkyBlock plugin;
+    private final MyShard plugin;
 
-    public NetherPortals(ASkyBlock plugin) {
+    public NetherPortals(MyShard plugin) {
 	this.plugin = plugin;
     }
 
@@ -84,9 +84,9 @@ public class NetherPortals implements Listener {
 	}
 	// New nether
 	// Entities can pass only if there are adjoining portals
-	Location dest = event.getFrom().toVector().toLocation(ASkyBlock.getIslandWorld());
+	Location dest = event.getFrom().toVector().toLocation(MyShard.getIslandWorld());
 	if (event.getFrom().getWorld().getEnvironment().equals(Environment.NORMAL)) {
-	    dest = event.getFrom().toVector().toLocation(ASkyBlock.getNetherWorld());
+	    dest = event.getFrom().toVector().toLocation(MyShard.getNetherWorld());
 	}
 	// Vehicles
 	if (event.getEntity() instanceof Vehicle) {
@@ -153,7 +153,7 @@ public class NetherPortals implements Listener {
 	    break;
 	case NETHER_PORTAL:
 	    // Get the home world of this player
-	    World homeWorld = ASkyBlock.getIslandWorld();
+	    World homeWorld = MyShard.getIslandWorld();
 	    Location home = plugin.getPlayers().getHomeLocation(event.getPlayer().getUniqueId());
 	    if (home != null) {
 		homeWorld = home.getWorld();
@@ -164,7 +164,7 @@ public class NetherPortals implements Listener {
 		    // Going to Nether
 		    if (homeWorld.getEnvironment().equals(Environment.NORMAL)) {
 			// Home world is over world
-			event.setTo(ASkyBlock.getNetherWorld().getSpawnLocation());
+			event.setTo(MyShard.getNetherWorld().getSpawnLocation());
 			event.useTravelAgent(true); 
 		    } else {
 			// Home world is nether - going home
@@ -191,7 +191,7 @@ public class NetherPortals implements Listener {
 			}
 		    } else {
 			// Home world is nether 
-			event.setTo(ASkyBlock.getIslandWorld().getSpawnLocation());
+			event.setTo(MyShard.getIslandWorld().getSpawnLocation());
 			event.useTravelAgent(true); 
 		    }
 		}
@@ -204,18 +204,18 @@ public class NetherPortals implements Listener {
 		}
 		// Can go both ways now
 		//Location dest = island.getCenter().toVector().toLocation(ASkyBlock.getIslandWorld());
-		Location dest = event.getFrom().toVector().toLocation(ASkyBlock.getIslandWorld());
+		Location dest = event.getFrom().toVector().toLocation(MyShard.getIslandWorld());
 		if (event.getFrom().getWorld().getEnvironment().equals(Environment.NORMAL)) {
 		    // Going to Nether
-		    dest = event.getFrom().toVector().toLocation(ASkyBlock.getNetherWorld());
+		    dest = event.getFrom().toVector().toLocation(MyShard.getNetherWorld());
 		    // Check that there is a nether island there. Due to legacy reasons it may not exist
-		    if (island.getCenter().toVector().toLocation(ASkyBlock.getNetherWorld()).getBlock().getType() != Material.BEDROCK) {
+		    if (island.getCenter().toVector().toLocation(MyShard.getNetherWorld()).getBlock().getType() != Material.BEDROCK) {
 			// Check to see if there is anything there
 			if (plugin.getGrid().bigScan(dest, 20) == null) {
 			    plugin.getLogger().warning("Creating nether island for " + event.getPlayer().getName() + " using default nether schematic");
 			    Schematic nether = IslandCmd.getSchematics().get("nether");
 			    if (nether != null) {
-				plugin.getIslandCmd().pasteSchematic(nether, island.getCenter().toVector().toLocation(ASkyBlock.getNetherWorld()), event.getPlayer());
+				plugin.getIslandCmd().pasteSchematic(nether, island.getCenter().toVector().toLocation(MyShard.getNetherWorld()), event.getPlayer());
 			    } else {
 				plugin.getLogger().severe("Cannot telelport player to nether because there is no nether schematic");
 				event.setCancelled(true);
@@ -349,7 +349,7 @@ public class NetherPortals implements Listener {
 	    return;
 	}
 	// Check world
-	if (!e.getLocation().getWorld().equals(ASkyBlock.getNetherWorld())) {
+	if (!e.getLocation().getWorld().equals(MyShard.getNetherWorld())) {
 	    return;
 	}
 	for (BlockState b : e.getBlocks()) {

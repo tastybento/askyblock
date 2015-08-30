@@ -81,7 +81,7 @@ import org.bukkit.material.MaterialData;
 import org.bukkit.potion.Potion;
 import org.bukkit.util.Vector;
 
-import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.MyShard;
 import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.Island.Flags;
 import com.wasteofplastic.askyblock.SafeBoat;
@@ -94,11 +94,11 @@ import com.wasteofplastic.askyblock.util.VaultHelper;
  *         Provides protection to islands
  */
 public class IslandGuard implements Listener {
-    private final ASkyBlock plugin;
+    private final MyShard plugin;
     private final boolean debug = false;
     private HashMap<UUID,Vector> onPlate = new HashMap<UUID,Vector>();
 
-    public IslandGuard(final ASkyBlock plugin) {
+    public IslandGuard(final MyShard plugin) {
 	this.plugin = plugin;
 
     }
@@ -129,10 +129,10 @@ public class IslandGuard implements Listener {
      * @return
      */
     protected static boolean inWorld(Location loc) {
-	if (loc.getWorld().equals(ASkyBlock.getIslandWorld())) {
+	if (loc.getWorld().equals(MyShard.getIslandWorld())) {
 	    return true;
 	}
-	if (Settings.createNether && Settings.newNether && loc.getWorld().equals(ASkyBlock.getNetherWorld())) {
+	if (Settings.createNether && Settings.newNether && loc.getWorld().equals(MyShard.getNetherWorld())) {
 	    return true;
 	}
 	return false;
@@ -504,7 +504,7 @@ public class IslandGuard implements Listener {
 	    return;
 	}
 	// Only cover overworld
-	if (!e.getEntity().getWorld().equals(ASkyBlock.getIslandWorld())) {
+	if (!e.getEntity().getWorld().equals(MyShard.getIslandWorld())) {
 	    return;
 	}
 	// If there's no limit - leave it
@@ -576,7 +576,7 @@ public class IslandGuard implements Listener {
 	World world = animal.getWorld();
 	// If not in the right world, return
 	// Only cover overworld, not nether
-	if (!animal.getWorld().equals(ASkyBlock.getIslandWorld())) {
+	if (!animal.getWorld().equals(MyShard.getIslandWorld())) {
 	    return;
 	}
 	Island island = plugin.getGrid().getProtectedIslandAt(animal.getLocation());
@@ -636,7 +636,7 @@ public class IslandGuard implements Listener {
 	    //plugin.getLogger().info(e.getEventName());
 	}
 	// If not in the right world, return
-	if (!e.getEntity().getWorld().equals(ASkyBlock.getIslandWorld())) {
+	if (!e.getEntity().getWorld().equals(MyShard.getIslandWorld())) {
 	    return;
 	}
 	// If not at spawn, return, or if grid is not loaded yet.
@@ -927,7 +927,7 @@ public class IslandGuard implements Listener {
 	    return;
 	}
 	boolean inNether = false;
-	if (e.getEntity().getWorld().equals(ASkyBlock.getNetherWorld())) {
+	if (e.getEntity().getWorld().equals(MyShard.getNetherWorld())) {
 	    inNether = true;
 	}
 	// Stop TNT damage if it is disallowed
@@ -2026,7 +2026,7 @@ public class IslandGuard implements Listener {
 		    if (p.isSplash()) {
 			// Splash potions are allowed only if PVP is allowed
 			boolean inNether = false;
-			if (e.getPlayer().getWorld().equals(ASkyBlock.getNetherWorld())) {
+			if (e.getPlayer().getWorld().equals(MyShard.getNetherWorld())) {
 			    inNether = true;
 			}
 			// Check spawn PVP
@@ -2059,7 +2059,7 @@ public class IslandGuard implements Listener {
 	    plugin.getLogger().info(event.getEventName());
 	}
 	Player player = (Player) event.getWhoClicked();
-	if (inWorld(player) || player.getWorld().equals(ASkyBlock.getNetherWorld())) {
+	if (inWorld(player) || player.getWorld().equals(MyShard.getNetherWorld())) {
 	    if (event.getRecipe().getResult().getType() == Material.ENDER_CHEST) {
 		if (!(player.hasPermission(Settings.PERMPREFIX + "craft.enderchest"))) {
 		    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
@@ -2081,7 +2081,7 @@ public class IslandGuard implements Listener {
 	    plugin.getLogger().info("Ender chest " + event.getEventName());
 	}
 	Player player = (Player) event.getPlayer();
-	if (inWorld(player) || player.getWorld().equals(ASkyBlock.getNetherWorld())) {
+	if (inWorld(player) || player.getWorld().equals(MyShard.getNetherWorld())) {
 	    if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 		if (event.getClickedBlock().getType() == Material.ENDER_CHEST) {
 		    if (!(event.getPlayer().hasPermission(Settings.PERMPREFIX + "craft.enderchest"))) {

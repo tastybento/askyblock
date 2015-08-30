@@ -21,7 +21,7 @@ import com.wasteofplastic.askyblock.events.IslandLevelEvent;
  * 
  */
 public class LevelCalc extends BukkitRunnable {
-    private ASkyBlock plugin;
+    private MyShard plugin;
     private Location l;
     private int counter;
     private int px;
@@ -36,7 +36,7 @@ public class LevelCalc extends BukkitRunnable {
     private int range = Settings.island_protectionRange;
     private boolean silent = false;
 
-    public LevelCalc(ASkyBlock plugin, UUID targetPlayer, Player asker) {
+    public LevelCalc(MyShard plugin, UUID targetPlayer, Player asker) {
 	this(plugin, targetPlayer, asker, false);
     }
 
@@ -47,7 +47,7 @@ public class LevelCalc extends BukkitRunnable {
      * @param targetPlayer
      * @param asker
      */
-    public LevelCalc(ASkyBlock plugin, UUID targetPlayer, Player asker, boolean silent) {
+    public LevelCalc(MyShard plugin, UUID targetPlayer, Player asker, boolean silent) {
 	this.silent = silent;
 	this.plugin = plugin;
 	// plugin.getLogger().info("DEBUG: running level calc " + silent);

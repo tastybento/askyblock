@@ -36,7 +36,7 @@ import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.MyShard;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
@@ -50,14 +50,14 @@ public class ControlPanel implements Listener {
     private static YamlConfiguration miniShopFile;
     private static HashMap<Integer, MiniShopItem> store = new HashMap<Integer, MiniShopItem>();
     private static YamlConfiguration cpFile;
-    private ASkyBlock plugin;
+    private MyShard plugin;
     private static boolean allowSelling;
     private static String defaultPanelName;
 
     /**
      * @param plugin
      */
-    public ControlPanel(ASkyBlock plugin) {
+    public ControlPanel(MyShard plugin) {
 	this.plugin = plugin;
 	if (Settings.useEconomy) {
 	    loadShop();
@@ -96,7 +96,7 @@ public class ControlPanel implements Listener {
 	miniShopFile = Util.loadYamlFile("minishop.yml");
 	allowSelling = miniShopFile.getBoolean("config.allowselling", false);
 	ConfigurationSection items = miniShopFile.getConfigurationSection("items");
-	ASkyBlock plugin = ASkyBlock.getPlugin();
+	MyShard plugin = MyShard.getPlugin();
 	// plugin.getLogger().info("DEBUG: loading the shop. items = " +
 	// items.toString());
 	if (items != null) {
@@ -138,7 +138,7 @@ public class ControlPanel implements Listener {
      * This loads the control panel from the controlpanel.yml file
      */
     public static void loadControlPanel() {
-	ASkyBlock plugin = ASkyBlock.getPlugin();
+	MyShard plugin = MyShard.getPlugin();
 	// Map of known panel contents by name
 	panels.clear();
 	// Map of panel inventories by name

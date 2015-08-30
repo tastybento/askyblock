@@ -30,7 +30,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.MyShard;
 import com.wasteofplastic.askyblock.CoopPlay;
 import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.LevelCalc;
@@ -41,10 +41,10 @@ import com.wasteofplastic.askyblock.TopTen;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
 public class JoinLeaveEvents implements Listener {
-    private ASkyBlock plugin;
+    private MyShard plugin;
     private PlayerCache players;
 
-    public JoinLeaveEvents(ASkyBlock aSkyBlock) {
+    public JoinLeaveEvents(MyShard aSkyBlock) {
 	this.plugin = aSkyBlock;
 	this.players = plugin.getPlayers();
     }

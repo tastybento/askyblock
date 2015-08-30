@@ -35,7 +35,7 @@ public class Locale {
     // Localization Strings
     private FileConfiguration locale = null;
     private File localeFile = null;
-    private ASkyBlock plugin;
+    private MyShard plugin;
 
     public String changingObsidiantoLava;
     public String acidLore;
@@ -576,7 +576,7 @@ public class Locale {
      * @param plugin
      * @param localeName - name of the yml file that will be used
      */
-    public Locale(ASkyBlock plugin, String localeName) {
+    public Locale(MyShard plugin, String localeName) {
 	this.plugin = plugin;
 	getLocale(localeName);
 	loadLocale();

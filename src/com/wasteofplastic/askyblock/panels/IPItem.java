@@ -8,7 +8,7 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.MyShard;
 import com.wasteofplastic.askyblock.util.Util;
 
 /**
@@ -96,9 +96,9 @@ public class IPItem {
 	ItemMeta meta = item.getItemMeta();
 	meta.setDisplayName(name);
 	if (flagValue) {
-	    description.add(ChatColor.GREEN + ASkyBlock.getPlugin().myLocale().igsAllowed);
+	    description.add(ChatColor.GREEN + MyShard.getPlugin().myLocale().igsAllowed);
 	} else {
-	    description.add(ChatColor.RED + ASkyBlock.getPlugin().myLocale().igsDisallowed);
+	    description.add(ChatColor.RED + MyShard.getPlugin().myLocale().igsDisallowed);
 	}
 	meta.setLore(description);
 	item.setItemMeta(meta);

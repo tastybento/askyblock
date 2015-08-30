@@ -5,7 +5,7 @@ import java.util.UUID;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.MyShard;
 
 /**
  * This event is fired when an island level is calculated
@@ -22,7 +22,7 @@ public class IslandLevelEvent extends Event {
      * @param player
      * @param teamLeader
      */
-    public IslandLevelEvent(ASkyBlock plugin, UUID player, int level) {
+    public IslandLevelEvent(MyShard plugin, UUID player, int level) {
 	this.player = player;
 	this.level = level;
     }

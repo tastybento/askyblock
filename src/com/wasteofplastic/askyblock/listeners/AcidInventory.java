@@ -39,7 +39,7 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.BlockIterator;
 
-import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.MyShard;
 import com.wasteofplastic.askyblock.Settings;
 
 /**
@@ -49,10 +49,10 @@ import com.wasteofplastic.askyblock.Settings;
  *         It also checks for interactions with water bottles
  */
 public class AcidInventory implements Listener {
-    private final ASkyBlock plugin;
+    private final MyShard plugin;
     private List<String> lore = new ArrayList<String>();
 
-    public AcidInventory(ASkyBlock aSkyBlock) {
+    public AcidInventory(MyShard aSkyBlock) {
 	plugin = aSkyBlock;
     }
 

@@ -45,7 +45,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.MyShard;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
@@ -55,12 +55,12 @@ import com.wasteofplastic.askyblock.util.VaultHelper;
  * @author tastybento
  */
 public class AcidEffect implements Listener {
-    private final ASkyBlock plugin;
+    private final MyShard plugin;
     private List<Player> burningPlayers = new ArrayList<Player>();
     private boolean isRaining = false;
     private List<Player> wetPlayers = new ArrayList<Player>();
 
-    public AcidEffect(final ASkyBlock pluginI) {
+    public AcidEffect(final MyShard pluginI) {
 	plugin = pluginI;
     }
 

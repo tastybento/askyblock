@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.wasteofplastic</groupId>
-	<artifactId>askyblock</artifactId>
+	<artifactId>myshard</artifactId>
 	<packaging>jar</packaging>
 
 	<name>com.wasteofplastic</name>
@@ -16,7 +16,7 @@
 
 	<build>
 		<defaultGoal>clean package install</defaultGoal>
-		<finalName>shard</finalName>
+		<finalName>myshard</finalName>
 		<sourceDirectory>${basedir}/src/</sourceDirectory>
 		<resources>
 			<resource>

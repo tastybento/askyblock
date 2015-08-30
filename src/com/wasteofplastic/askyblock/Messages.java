@@ -18,7 +18,7 @@ import com.wasteofplastic.askyblock.util.Util;
  * 
  */
 public class Messages {
-    private ASkyBlock plugin;
+    private MyShard plugin;
     // Offline Messages
     private HashMap<UUID, List<String>> messages = new HashMap<UUID, List<String>>();
     private YamlConfiguration messageStore;
@@ -27,7 +27,7 @@ public class Messages {
     /**
      * @param plugin
      */
-    public Messages(ASkyBlock plugin) {
+    public Messages(MyShard plugin) {
 	this.plugin = plugin;
     }
     

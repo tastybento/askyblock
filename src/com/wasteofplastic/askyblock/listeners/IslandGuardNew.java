@@ -31,7 +31,7 @@ import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
-import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.MyShard;
 import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.Island.Flags;
 import com.wasteofplastic.askyblock.Settings;
@@ -43,10 +43,10 @@ import com.wasteofplastic.askyblock.util.VaultHelper;
  *         exist in older servers
  */
 public class IslandGuardNew implements Listener {
-    private final ASkyBlock plugin;
+    private final MyShard plugin;
     private final boolean debug = false;
 
-    public IslandGuardNew(final ASkyBlock plugin) {
+    public IslandGuardNew(final MyShard plugin) {
 	this.plugin = plugin;
 
     }

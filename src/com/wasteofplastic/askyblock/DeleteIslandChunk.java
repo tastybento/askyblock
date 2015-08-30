@@ -33,7 +33,7 @@ public class DeleteIslandChunk {
      * @param plugin
      * @param loc
      */
-    public DeleteIslandChunk(ASkyBlock plugin, final Island island) {
+    public DeleteIslandChunk(MyShard plugin, final Island island) {
 	World world = island.getCenter().getWorld();
 	if (world == null)
 	    return;

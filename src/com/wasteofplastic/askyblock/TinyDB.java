@@ -17,7 +17,7 @@ import jdbm.RecordManagerFactory;
  *
  */
 public class TinyDB {
-    private ASkyBlock plugin;
+    private MyShard plugin;
     private RecordManager recMan;
     private PrimaryHashMap<String,UUID> treeMap;
     private String fileName = "nameUUIDdb";
@@ -28,7 +28,7 @@ public class TinyDB {
      * Opens the database
      * @param plugin
      */
-    public TinyDB(ASkyBlock plugin) {
+    public TinyDB(MyShard plugin) {
 	this.plugin = plugin;
 	this.dbReady = false;
 	// Open database

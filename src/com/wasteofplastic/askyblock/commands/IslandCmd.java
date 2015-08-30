@@ -63,7 +63,7 @@ import org.bukkit.potion.PotionType;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
-import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.MyShard;
 import com.wasteofplastic.askyblock.CoopPlay;
 import com.wasteofplastic.askyblock.DeleteIslandChunk;
 import com.wasteofplastic.askyblock.GridManager;
@@ -86,7 +86,7 @@ import com.wasteofplastic.askyblock.util.VaultHelper;
 public class IslandCmd implements CommandExecutor, TabCompleter {
     public boolean levelCalcFreeFlag = true;
     private static HashMap<String, Schematic> schematics = new HashMap<String, Schematic>();
-    private ASkyBlock plugin;
+    private MyShard plugin;
     // The island reset confirmation
     private HashMap<UUID, Boolean> confirm = new HashMap<UUID, Boolean>();
     // Last island
@@ -116,7 +116,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
      * @param aSkyBlock
      * @param players
      */
-    public IslandCmd(ASkyBlock aSkyBlock) {
+    public IslandCmd(MyShard aSkyBlock) {
 	// Plugin instance
 	this.plugin = aSkyBlock;
 	// Load schematics
@@ -678,7 +678,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 		    pastePartner(schematics.get(schematic.getPartnerName()),next, player);
 		}
 		// Switch home location to the Nether
-		next = next.toVector().toLocation(ASkyBlock.getNetherWorld());
+		next = next.toVector().toLocation(MyShard.getNetherWorld());
 		// Set the player's island location to this new spot
 		plugin.getPlayers().setIslandLocation(playerUUID, next);
 		// TODO: work through the implications of this!
@@ -694,7 +694,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 		//plugin.getLogger().info("DEBUG: pasted overworld");
 		if (Settings.createNether && Settings.newNether) {
 		    // Paste the other world schematic
-		    final Location netherLoc = next.toVector().toLocation(ASkyBlock.getNetherWorld());
+		    final Location netherLoc = next.toVector().toLocation(MyShard.getNetherWorld());
 		    if (schematic.getPartnerName().isEmpty()) {
 			// This will paste the over world schematic again
 			//plugin.getLogger().info("DEBUG: pasting nether");
@@ -836,7 +836,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
     private Location getNextIsland() {
 	// Find the next free spot
 	if (last == null) {
-	    last = new Location(ASkyBlock.getIslandWorld(), Settings.islandXOffset + Settings.islandStartX, Settings.island_level, Settings.islandZOffset + Settings.islandStartZ);
+	    last = new Location(MyShard.getIslandWorld(), Settings.islandXOffset + Settings.islandStartX, Settings.island_level, Settings.islandZOffset + Settings.islandStartZ);
 	}
 	Location next = last.clone();
 
@@ -1188,7 +1188,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 			    for (Player target : plugin.getServer().getOnlinePlayers()) {
 				// See if target is on this player's island, not a mod, no bypass, and not a coop player
 				if (!player.equals(target) && !target.isOp() && !VaultHelper.checkPerm(target, Settings.PERMPREFIX + "mod.bypassprotect")
-					&& (target.getWorld().equals(ASkyBlock.getIslandWorld()) || target.getWorld().equals(ASkyBlock.getNetherWorld()))
+					&& (target.getWorld().equals(MyShard.getIslandWorld()) || target.getWorld().equals(MyShard.getNetherWorld()))
 					&& plugin.getGrid().isOnIsland(player, target)
 					&& !CoopPlay.getInstance().getCoopPlayers(island.getCenter()).contains(target.getUniqueId())) {
 				    // Send them home
@@ -1278,7 +1278,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoIsland);
 			return true;
 		    }
-		    if (player.getWorld().equals(ASkyBlock.getIslandWorld()) || player.getWorld().equals(ASkyBlock.getNetherWorld())) {	
+		    if (player.getWorld().equals(MyShard.getIslandWorld()) || player.getWorld().equals(MyShard.getNetherWorld())) {	
 			if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.minishop")) {
 			    player.openInventory(ControlPanel.miniShop);
 			    return true;
@@ -1564,7 +1564,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 		}
 	    } else if (split[0].equalsIgnoreCase("spawn") && plugin.getGrid().getSpawn() != null) {
 		// go to spawn
-		Location l = ASkyBlock.getIslandWorld().getSpawnLocation();
+		Location l = MyShard.getIslandWorld().getSpawnLocation();
 		l.add(new Vector(0.5,0,0.5));
 		Island spawn = plugin.getGrid().getSpawn();
 		if (spawn != null && spawn.getSpawnPoint() != null) {
@@ -1709,7 +1709,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 	    } else if (split[0].equalsIgnoreCase("leave")) {
 		// Leave team command
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.join")) {
-		    if (player.getWorld().getName().equalsIgnoreCase(ASkyBlock.getIslandWorld().getName())) {
+		    if (player.getWorld().getName().equalsIgnoreCase(MyShard.getIslandWorld().getName())) {
 			if (plugin.getPlayers().inTeam(playerUUID)) {
 			    if (plugin.getPlayers().getTeamLeader(playerUUID).equals(playerUUID)) {
 				player.sendMessage(ChatColor.YELLOW + plugin.myLocale(player.getUniqueId()).leaveerrorYouAreTheLeader);
@@ -2047,8 +2047,8 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 					}
 				    }
 				    boolean pvp = false;
-				    if ((warpSpot.getWorld().equals(ASkyBlock.getIslandWorld()) && island.getIgsFlag(Flags.allowPvP)) 
-					    || (warpSpot.getWorld().equals(ASkyBlock.getNetherWorld()) && island.getIgsFlag(Flags.allowNetherPvP))) {
+				    if ((warpSpot.getWorld().equals(MyShard.getIslandWorld()) && island.getIgsFlag(Flags.allowPvP)) 
+					    || (warpSpot.getWorld().equals(MyShard.getNetherWorld()) && island.getIgsFlag(Flags.allowNetherPvP))) {
 					pvp = true;
 				    }
 				    // Find out which direction the warp is facing
@@ -2547,7 +2547,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 				    CoopPlay.getInstance().clearMyCoops(target);
 				    // Clear the player out and throw their stuff at the
 				    // leader
-				    if (target.getWorld().equals(ASkyBlock.getIslandWorld())) {
+				    if (target.getWorld().equals(MyShard.getIslandWorld())) {
 					for (ItemStack i : target.getInventory().getContents()) {
 					    if (i != null) {
 						try {
@@ -2591,7 +2591,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 					target.updateInventory();
 				    }
 				    if (!target.performCommand(Settings.SPAWNCOMMAND)) {
-					target.teleport(ASkyBlock.getIslandWorld().getSpawnLocation());
+					target.teleport(MyShard.getIslandWorld().getSpawnLocation());
 				    }
 				} else {
 				    // Offline

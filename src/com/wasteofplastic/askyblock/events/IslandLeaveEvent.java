@@ -6,7 +6,7 @@ import org.bukkit.Location;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.MyShard;
 import com.wasteofplastic.askyblock.Island;
 
 
@@ -25,7 +25,7 @@ public class IslandLeaveEvent extends Event {
      * @param player
      * @param teamLeader
      */
-    public IslandLeaveEvent(ASkyBlock plugin, UUID player, UUID teamLeader) {
+    public IslandLeaveEvent(MyShard plugin, UUID player, UUID teamLeader) {
 	this.player = player;
 	this.teamLeader = teamLeader;
 	this.island = plugin.getGrid().getIsland(teamLeader);

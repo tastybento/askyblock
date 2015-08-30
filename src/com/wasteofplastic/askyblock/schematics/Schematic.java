@@ -68,13 +68,13 @@ import org.jnbt.ShortTag;
 import org.jnbt.StringTag;
 import org.jnbt.Tag;
 
-import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.MyShard;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.Settings.GameType;
 import com.wasteofplastic.askyblock.nms.NMSAbstraction;
 
 public class Schematic {
-    private ASkyBlock plugin;
+    private MyShard plugin;
     //private short[] blocks;
     //private byte[] data;
     private short width;
@@ -115,7 +115,7 @@ public class Schematic {
     private List<IslandBlock> islandBlocks;
     private boolean pasteAir;
 
-    public Schematic(ASkyBlock plugin) {
+    public Schematic(MyShard plugin) {
 	this.plugin = plugin;
 	// Initialize 
 	name = "";
@@ -143,7 +143,7 @@ public class Schematic {
 	partnerName = "";
     }
 
-    public Schematic(ASkyBlock plugin, File file) throws IOException {
+    public Schematic(MyShard plugin, File file) throws IOException {
 	this.plugin = plugin;
 	// Initialize
 	short[] blocks;
@@ -624,7 +624,7 @@ public class Schematic {
 		generateIslandBlocks(loc,player);
 	    } else {
 		loc.getBlock().setType(Material.BEDROCK);
-		ASkyBlock.getPlugin().getLogger().severe("Missing schematic - using bedrock block only");
+		MyShard.getPlugin().getLogger().severe("Missing schematic - using bedrock block only");
 	    }
 	    return;
 	}
@@ -722,10 +722,10 @@ public class Schematic {
 	    blockToChange = ws.toLocation(world).getBlock();
 	    blockToChange.setType(Material.SIGN_POST);
 	    Sign sign = (Sign) blockToChange.getState();
-	    sign.setLine(0, ASkyBlock.getPlugin().myLocale(player.getUniqueId()).signLine1.replace("[player]", player.getName()));
-	    sign.setLine(1, ASkyBlock.getPlugin().myLocale(player.getUniqueId()).signLine2.replace("[player]", player.getName()));
-	    sign.setLine(2, ASkyBlock.getPlugin().myLocale(player.getUniqueId()).signLine3.replace("[player]", player.getName()));
-	    sign.setLine(3, ASkyBlock.getPlugin().myLocale(player.getUniqueId()).signLine4.replace("[player]", player.getName()));
+	    sign.setLine(0, MyShard.getPlugin().myLocale(player.getUniqueId()).signLine1.replace("[player]", player.getName()));
+	    sign.setLine(1, MyShard.getPlugin().myLocale(player.getUniqueId()).signLine2.replace("[player]", player.getName()));
+	    sign.setLine(2, MyShard.getPlugin().myLocale(player.getUniqueId()).signLine3.replace("[player]", player.getName()));
+	    sign.setLine(3, MyShard.getPlugin().myLocale(player.getUniqueId()).signLine4.replace("[player]", player.getName()));
 	    // BlockFace direction = ((org.bukkit.material.Sign)
 	    // sign.getData()).getFacing();
 	    ((org.bukkit.material.Sign) sign.getData()).setFacingDirection(BlockFace.NORTH);
@@ -769,7 +769,7 @@ public class Schematic {
 	    plugin.getGrid().homeTeleport(player);
 	}
 	if (!islandCompanion.isEmpty() && grass != null) {
-	    Bukkit.getServer().getScheduler().runTaskLater(ASkyBlock.getPlugin(), new Runnable() {
+	    Bukkit.getServer().getScheduler().runTaskLater(MyShard.getPlugin(), new Runnable() {
 		@Override
 		public void run() {
 		    spawnCompanion(player, grass);
@@ -1063,10 +1063,10 @@ public class Schematic {
 	Block blockToChange = world.getBlockAt(x, Settings.island_level + 5, z + 3);
 	blockToChange.setType(Material.SIGN_POST);
 	Sign sign = (Sign) blockToChange.getState();
-	sign.setLine(0, ASkyBlock.getPlugin().myLocale(player.getUniqueId()).signLine1.replace("[player]", player.getName()));
-	sign.setLine(1, ASkyBlock.getPlugin().myLocale(player.getUniqueId()).signLine2.replace("[player]", player.getName()));
-	sign.setLine(2, ASkyBlock.getPlugin().myLocale(player.getUniqueId()).signLine3.replace("[player]", player.getName()));
-	sign.setLine(3, ASkyBlock.getPlugin().myLocale(player.getUniqueId()).signLine4.replace("[player]", player.getName()));
+	sign.setLine(0, MyShard.getPlugin().myLocale(player.getUniqueId()).signLine1.replace("[player]", player.getName()));
+	sign.setLine(1, MyShard.getPlugin().myLocale(player.getUniqueId()).signLine2.replace("[player]", player.getName()));
+	sign.setLine(2, MyShard.getPlugin().myLocale(player.getUniqueId()).signLine3.replace("[player]", player.getName()));
+	sign.setLine(3, MyShard.getPlugin().myLocale(player.getUniqueId()).signLine4.replace("[player]", player.getName()));
 	((org.bukkit.material.Sign) sign.getData()).setFacingDirection(BlockFace.NORTH);
 	sign.update();
 	// Place the chest - no need to use the safe spawn function
@@ -1089,7 +1089,7 @@ public class Schematic {
 	// Teleport player
 	plugin.getGrid().homeTeleport(player);
 	if (!islandCompanion.isEmpty()) {
-	    Bukkit.getServer().getScheduler().runTaskLater(ASkyBlock.getPlugin(), new Runnable() {
+	    Bukkit.getServer().getScheduler().runTaskLater(MyShard.getPlugin(), new Runnable() {
 		@Override
 		public void run() {
 		    spawnCompanion(player, location);

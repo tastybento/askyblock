@@ -17,14 +17,14 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 
-import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.MyShard;
 import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.Island.Flags;
 import com.wasteofplastic.askyblock.Settings;
 
 public class SettingsPanel implements Listener {
     // Island Guard Settings Panel
-    private ASkyBlock plugin;
+    private MyShard plugin;
     private Class<?> clazz;
     private HashMap<UUID,Long> pvpCoolDown = new HashMap<UUID,Long>();
 
@@ -60,7 +60,7 @@ public class SettingsPanel implements Listener {
 	lookup.put( Material.SHEARS,Flags.allowShearing);
     }
 
-    public SettingsPanel(ASkyBlock plugin) {
+    public SettingsPanel(MyShard plugin) {
 	this.plugin = plugin;
 	try {
 	    clazz = Class.forName("org.bukkit.entity.ArmorStand");
@@ -214,7 +214,7 @@ public class SettingsPanel implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onInventoryClick(InventoryClickEvent event) {
 	Player player = (Player) event.getWhoClicked(); // The player that clicked the item
-	if (!player.getLocation().getWorld().equals(ASkyBlock.getIslandWorld()) && !player.getLocation().getWorld().equals(ASkyBlock.getNetherWorld())) {
+	if (!player.getLocation().getWorld().equals(MyShard.getIslandWorld()) && !player.getLocation().getWorld().equals(MyShard.getNetherWorld())) {
 	    return;
 	}
 	Inventory inventory = event.getInventory(); // The inventory that was clicked in

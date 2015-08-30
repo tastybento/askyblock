@@ -50,12 +50,12 @@ import org.bukkit.util.Vector;
 public class SafeBoat implements Listener {
     // Flags to indicate if a player has exited a boat recently or not
     private static HashMap<UUID, Entity> exitedBoat = new HashMap<UUID, Entity>();
-    private final ASkyBlock plugin;
+    private final MyShard plugin;
     // Stores players that should be ignored because they are being teleported away from 
     // a locked islands
     private static Set<UUID> ignoreList = new HashSet<UUID>();
 
-    public SafeBoat(ASkyBlock aSkyBlock) {
+    public SafeBoat(MyShard aSkyBlock) {
 	plugin = aSkyBlock;
     }
 

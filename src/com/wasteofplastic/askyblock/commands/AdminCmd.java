@@ -53,7 +53,7 @@ import org.bukkit.util.BlockIterator;
 
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
-import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.MyShard;
 import com.wasteofplastic.askyblock.CoopPlay;
 import com.wasteofplastic.askyblock.DeleteIslandChunk;
 import com.wasteofplastic.askyblock.GridManager;
@@ -81,7 +81,7 @@ import com.wasteofplastic.askyblock.util.VaultHelper;
  * 
  */
 public class AdminCmd implements CommandExecutor, TabCompleter {
-    private ASkyBlock plugin;
+    private MyShard plugin;
     private List<UUID> removeList = new ArrayList<UUID>();
     private boolean purgeFlag = false;
     private boolean confirmReq = false;
@@ -91,7 +91,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
     private HashMap<String, Island> unowned = new HashMap<String,Island>();
     private boolean asyncPending = false;
 
-    public AdminCmd(ASkyBlock aSkyBlock) {
+    public AdminCmd(MyShard aSkyBlock) {
 	this.plugin = aSkyBlock;
     }
 
@@ -308,9 +308,9 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 		    // Generate the stats
 		    sender.sendMessage(plugin.myLocale().adminTopBreedersChecking.replace("[number]",String.valueOf(plugin.getGrid().getOwnershipMap().size())));
 		    // Try just finding every entity
-		    final List<Entity> allEntities = ASkyBlock.getIslandWorld().getEntities();
-		    final World islandWorld = ASkyBlock.getIslandWorld();
-		    final World netherWorld = ASkyBlock.getNetherWorld();
+		    final List<Entity> allEntities = MyShard.getIslandWorld().getEntities();
+		    final World islandWorld = MyShard.getIslandWorld();
+		    final World netherWorld = MyShard.getNetherWorld();
 		    plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
 
 			@Override
@@ -816,7 +816,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 		    }
 		    Player p = (Player) sender;
 		    // Island spawn must be in the island world
-		    if (!p.getLocation().getWorld().equals(ASkyBlock.getIslandWorld()) && !p.getLocation().getWorld().equals(ASkyBlock.getNetherWorld())) {
+		    if (!p.getLocation().getWorld().equals(MyShard.getIslandWorld()) && !p.getLocation().getWorld().equals(MyShard.getNetherWorld())) {
 			p.sendMessage(ChatColor.RED + plugin.myLocale(p.getUniqueId()).errorWrongWorld);
 			return true;
 		    }
@@ -998,13 +998,13 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 		} else {
 		    if (plugin.getPlayers().hasIsland(targetUUID) || plugin.getPlayers().inTeam(targetUUID)) {
 			// Teleport to the over world
-			Location warpSpot = plugin.getPlayers().getIslandLocation(targetUUID).toVector().toLocation(ASkyBlock.getIslandWorld());
+			Location warpSpot = plugin.getPlayers().getIslandLocation(targetUUID).toVector().toLocation(MyShard.getIslandWorld());
 			String failureMessage = ChatColor.RED + plugin.myLocale(player.getUniqueId()).adminTpManualWarp.replace("[location]", warpSpot.getBlockX() + " " + warpSpot.getBlockY() + " "
 				+ warpSpot.getBlockZ());
 			// Try the player's home first
 			Location home = plugin.getPlayers().getHomeLocation(targetUUID);
 			plugin.getGrid();
-			if (home.getWorld().equals(ASkyBlock.getIslandWorld()) && GridManager.isSafeLocation(home)) {
+			if (home.getWorld().equals(MyShard.getIslandWorld()) && GridManager.isSafeLocation(home)) {
 			    player.teleport(home);
 			    return true;
 			}
@@ -1032,13 +1032,13 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 		} else {
 		    if (plugin.getPlayers().hasIsland(targetUUID) || plugin.getPlayers().inTeam(targetUUID)) {
 			// Teleport to the nether
-			Location warpSpot = plugin.getPlayers().getIslandLocation(targetUUID).toVector().toLocation(ASkyBlock.getNetherWorld());
+			Location warpSpot = plugin.getPlayers().getIslandLocation(targetUUID).toVector().toLocation(MyShard.getNetherWorld());
 			String failureMessage = ChatColor.RED + plugin.myLocale(player.getUniqueId()).adminTpManualWarp.replace("[location]", warpSpot.getBlockX() + " " + warpSpot.getBlockY() + " "
 				+ warpSpot.getBlockZ());
 			// Try the player's home first
 			Location home = plugin.getPlayers().getHomeLocation(targetUUID);
 			plugin.getGrid();
-			if (home.getWorld().equals(ASkyBlock.getNetherWorld()) && GridManager.isSafeLocation(home)) {
+			if (home.getWorld().equals(MyShard.getNetherWorld()) && GridManager.isSafeLocation(home)) {
 			    player.teleport(home);
 			    return true;
 			}

@@ -25,7 +25,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.scheduler.BukkitTask;
 
-import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.MyShard;
 import com.wasteofplastic.askyblock.Settings;
 
 /**
@@ -34,9 +34,9 @@ import com.wasteofplastic.askyblock.Settings;
  */
 public class LavaCheck implements Listener {
     BukkitTask task;
-    private final ASkyBlock plugin;
+    private final MyShard plugin;
 
-    public LavaCheck(ASkyBlock aSkyBlock) {
+    public LavaCheck(MyShard aSkyBlock) {
 	plugin = aSkyBlock;
     }
 

@@ -21,7 +21,7 @@ import org.bukkit.util.Vector;
 public class SafeSpotTeleport {
 
     //private NMSAbstraction nms;
-    private ASkyBlock plugin;
+    private MyShard plugin;
     /**
      * Teleport to a safe place and if it fails, show a failure message
      * @param plugin
@@ -29,7 +29,7 @@ public class SafeSpotTeleport {
      * @param l
      * @param failureMessage
      */
-    public SafeSpotTeleport(final ASkyBlock plugin, final Entity player, final Location l, final String failureMessage) {
+    public SafeSpotTeleport(final MyShard plugin, final Entity player, final Location l, final String failureMessage) {
 	new SafeSpotTeleport(plugin, player, l, 1, failureMessage, false);
     }
 
@@ -40,7 +40,7 @@ public class SafeSpotTeleport {
      * @param l
      * @param setHome
      */
-    public SafeSpotTeleport(final ASkyBlock plugin, final Entity player, final Location l, final int number) {
+    public SafeSpotTeleport(final MyShard plugin, final Entity player, final Location l, final int number) {
 	new SafeSpotTeleport(plugin, player, l, number, "", true);
     }
 
@@ -50,7 +50,7 @@ public class SafeSpotTeleport {
      * @param player
      * @param l
      */
-    public SafeSpotTeleport(final ASkyBlock plugin, final Entity player, final Location l) {
+    public SafeSpotTeleport(final MyShard plugin, final Entity player, final Location l) {
 	new SafeSpotTeleport(plugin, player, l, 1, "", false);
     } 
     /**
@@ -60,7 +60,7 @@ public class SafeSpotTeleport {
      * @param entity
      * @param islandLoc
      */
-    public SafeSpotTeleport(final ASkyBlock plugin, final Entity entity, final Location islandLoc, final int homeNumber, final String failureMessage, final boolean setHome) {
+    public SafeSpotTeleport(final MyShard plugin, final Entity entity, final Location islandLoc, final int homeNumber, final String failureMessage, final boolean setHome) {
 	this.plugin = plugin;
 	//plugin.getLogger().info("DEBUG: running safe spot");
 	// Get island

@@ -83,9 +83,9 @@ import com.wasteofplastic.askyblock.util.VaultHelper;
  * @author tastybento
  *         Main ASkyBlock class - provides an island minigame in a sea of acid
  */
-public class ASkyBlock extends JavaPlugin {
+public class MyShard extends JavaPlugin {
     // This plugin
-    private static ASkyBlock plugin;
+    private static MyShard plugin;
     // The ASkyBlock world
     private static World islandWorld = null;
     private static World netherWorld = null;
@@ -191,7 +191,7 @@ public class ASkyBlock extends JavaPlugin {
     /**
      * @return ASkyBlock object instance
      */
-    public static ASkyBlock getPlugin() {
+    public static MyShard getPlugin() {
 	return plugin;
     }
 
@@ -305,8 +305,8 @@ public class ASkyBlock extends JavaPlugin {
 	if (Settings.GAMETYPE.equals(Settings.GameType.ASKYBLOCK)) {
 	    AdminCmd adminCmd = new AdminCmd(this);
 
-	    getCommand("island").setExecutor(islandCmd);
-	    getCommand("island").setTabCompleter(islandCmd);
+	    getCommand("shard").setExecutor(islandCmd);
+	    getCommand("shard").setTabCompleter(islandCmd);
 
 	    getCommand("asc").setExecutor(getChallenges());
 	    getCommand("asc").setTabCompleter(getChallenges());

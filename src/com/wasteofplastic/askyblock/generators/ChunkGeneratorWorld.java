@@ -27,7 +27,7 @@ import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.util.noise.PerlinOctaveGenerator;
 
-import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.MyShard;
 import com.wasteofplastic.askyblock.Settings;
 
 /**
@@ -37,7 +37,7 @@ import com.wasteofplastic.askyblock.Settings;
 public class ChunkGeneratorWorld extends ChunkGenerator {
     Random rand = new Random();
     PerlinOctaveGenerator gen;
-    ASkyBlock plugin = ASkyBlock.getPlugin();
+    MyShard plugin = MyShard.getPlugin();
 
     @SuppressWarnings("deprecation")
     public byte[][] generateBlockSections(World world, Random random, int chunkX, int chunkZ, BiomeGrid biomeGrid) {

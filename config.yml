@@ -203,7 +203,7 @@ general:
    islandlevel: 120
 
    # Name of the world - if it does not exist then it will be generated
-   worldName: ASkyBlock
+   worldName: MyShard
 
    # Maximum number of islands. Set to 0 for unlimited. 
    # If the number of islands is greater than this number, no new islands will be

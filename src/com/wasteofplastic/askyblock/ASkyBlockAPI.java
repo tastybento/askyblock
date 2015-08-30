@@ -17,7 +17,7 @@ import org.bukkit.entity.Player;
  * @author tastybento
  */
 public class ASkyBlockAPI {
-    private static ASkyBlockAPI instance = new ASkyBlockAPI(ASkyBlock.getPlugin());
+    private static ASkyBlockAPI instance = new ASkyBlockAPI(MyShard.getPlugin());
 
     /**
      * @return the instance
@@ -26,9 +26,9 @@ public class ASkyBlockAPI {
 	return instance;
     }
 
-    private ASkyBlock plugin;
+    private MyShard plugin;
 
-    private ASkyBlockAPI(ASkyBlock plugin) {
+    private ASkyBlockAPI(MyShard plugin) {
 	this.plugin = plugin;
     }
 
@@ -311,7 +311,7 @@ public class ASkyBlockAPI {
      * @return the island overworld
      */
     public World getIslandWorld() {
-	return ASkyBlock.getIslandWorld();
+	return MyShard.getIslandWorld();
     }
     
     /**
@@ -319,7 +319,7 @@ public class ASkyBlockAPI {
      * @return the nether world
      */
     public World getNetherWorld() {
-	return ASkyBlock.getNetherWorld();
+	return MyShard.getNetherWorld();
     }
     
     /**

@@ -27,7 +27,7 @@ import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionType;
 
-import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.MyShard;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
@@ -76,13 +76,13 @@ public class MiniShopItem {
 	    }
 	    // Create prices for buying and selling
 	    if (price > 0D) {
-		buyAndSell.add(ASkyBlock.getPlugin().myLocale().minishopBuy + " " + quantity + " @ " + VaultHelper.econ.format(price));
+		buyAndSell.add(MyShard.getPlugin().myLocale().minishopBuy + " " + quantity + " @ " + VaultHelper.econ.format(price));
 	    }
 	    if (sellPrice > 0D) {
-		buyAndSell.add(ASkyBlock.getPlugin().myLocale().minishopSell + " " + quantity + " @ " + VaultHelper.econ.format(sellPrice));
+		buyAndSell.add(MyShard.getPlugin().myLocale().minishopSell + " " + quantity + " @ " + VaultHelper.econ.format(sellPrice));
 	    }
 	    if (price < 0D && sellPrice < 0D) {
-		buyAndSell.add(ASkyBlock.getPlugin().myLocale().minishopOutOfStock);
+		buyAndSell.add(MyShard.getPlugin().myLocale().minishopOutOfStock);
 	    }
 	    meta.setLore(buyAndSell);
 	    item.setItemMeta(meta);
@@ -130,13 +130,13 @@ public class MiniShopItem {
 		}
 	    }
 	} catch (Exception ex) {
-	    ASkyBlock.getPlugin().getLogger().severe("Problem parsing shop item from minishop.yml so skipping it: " + material);
-	    ASkyBlock.getPlugin().getLogger().severe("Error is : " + ex.getMessage());
+	    MyShard.getPlugin().getLogger().severe("Problem parsing shop item from minishop.yml so skipping it: " + material);
+	    MyShard.getPlugin().getLogger().severe("Error is : " + ex.getMessage());
 	    ex.printStackTrace();
-	    ASkyBlock.getPlugin().getLogger().info("Potential potion types are: ");
+	    MyShard.getPlugin().getLogger().info("Potential potion types are: ");
 	    for (PotionType c : PotionType.values())
-		ASkyBlock.getPlugin().getLogger().info(c.name());
-	    ASkyBlock.getPlugin().getLogger().info("Potions can also be EXTENDED, SPLASH or EXTENDEDSPLASH, example WATER_BREATHING:EXTENDED");
+		MyShard.getPlugin().getLogger().info(c.name());
+	    MyShard.getPlugin().getLogger().info("Potions can also be EXTENDED, SPLASH or EXTENDEDSPLASH, example WATER_BREATHING:EXTENDED");
 	}
 	// If there's no description, then set it.
 	if (description == null) {

@@ -1,7 +1,7 @@
-name: ASkyBlock
-main: com.wasteofplastic.askyblock.ASkyBlock
+name: MyShard
+main: com.wasteofplastic.askyblock.MyShard
 version: ${version}
-description: A SkyBlock Plugin (Shard)
+description: MyShard
 author: Tastybento
 depend: [Vault]
 softdepend: [Herochat]

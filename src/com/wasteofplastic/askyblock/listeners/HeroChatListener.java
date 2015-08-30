@@ -5,14 +5,14 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 import com.dthielke.herochat.ChannelChatEvent;
-import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.MyShard;
 
 public class HeroChatListener implements Listener {
-    private ASkyBlock plugin;
+    private MyShard plugin;
     /**
      * @param plugin
      */
-    public HeroChatListener(ASkyBlock plugin) {
+    public HeroChatListener(MyShard plugin) {
 	this.plugin = plugin;
 	plugin.getLogger().info("Herochat registered");
     }

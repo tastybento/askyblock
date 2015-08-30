@@ -38,7 +38,7 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
-import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.MyShard;
 import com.wasteofplastic.askyblock.InventorySave;
 import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.Island.Flags;
@@ -50,13 +50,13 @@ import com.wasteofplastic.askyblock.util.VaultHelper;
  *         Provides protection to islands
  */
 public class PlayerEvents implements Listener {
-    private final ASkyBlock plugin;
+    private final MyShard plugin;
     private final boolean debug = false;
     // A set of falling players
     private static HashSet<UUID> fallingPlayers = new HashSet<UUID>();
     private List<UUID> respawn;
 
-    public PlayerEvents(final ASkyBlock plugin) {
+    public PlayerEvents(final MyShard plugin) {
 	this.plugin = plugin;
 	respawn = new ArrayList<UUID>();
     }

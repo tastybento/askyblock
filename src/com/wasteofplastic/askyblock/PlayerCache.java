@@ -38,9 +38,9 @@ import com.google.common.collect.Lists;
  */
 public class PlayerCache {
     private HashMap<UUID, Players> playerCache = new HashMap<UUID, Players>();
-    private final ASkyBlock plugin;
+    private final MyShard plugin;
 
-    public PlayerCache(ASkyBlock plugin) {
+    public PlayerCache(MyShard plugin) {
 	this.plugin = plugin;
 	// final Collection<? extends Player> serverPlayers =
 	// Bukkit.getServer().getOnlinePlayers();

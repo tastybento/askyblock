@@ -23,7 +23,7 @@ import com.wasteofplastic.askyblock.util.Util;
  * 
  */
 public class TopTen {
-    private static ASkyBlock plugin = ASkyBlock.getPlugin();
+    private static MyShard plugin = MyShard.getPlugin();
     // Top ten list of players
     private static Map<UUID, Integer> topTenList = new HashMap<UUID, Integer>();
 

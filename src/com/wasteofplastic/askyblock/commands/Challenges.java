@@ -54,7 +54,7 @@ import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 
-import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.MyShard;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.events.ChallengeCompleteEvent;
 import com.wasteofplastic.askyblock.events.ChallengeLevelCompleteEvent;
@@ -66,7 +66,7 @@ import com.wasteofplastic.askyblock.util.VaultHelper;
  * Handles challenge commands and related methods
  */
 public class Challenges implements CommandExecutor, TabCompleter {
-    private ASkyBlock plugin;
+    private MyShard plugin;
     // Database of challenges
     private LinkedHashMap<String, List<String>> challengeList = new LinkedHashMap<String, List<String>>();
     private HashMap<UUID, List<CPItem>> playerChallengeGUI = new HashMap<UUID, List<CPItem>>();
@@ -82,7 +82,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
     private static final int NAME_BIT = 0x3F;
 
 
-    public Challenges(ASkyBlock plugin) {
+    public Challenges(MyShard plugin) {
 	this.plugin = plugin;
 	saveDefaultChallengeConfig();
 	// Get the challenges
@@ -193,9 +193,9 @@ public class Challenges implements CommandExecutor, TabCompleter {
 	    return true;
 	case 2:
 	    if (cmd[0].equalsIgnoreCase("complete") || cmd[0].equalsIgnoreCase("c")) {
-		if (!player.getWorld().equals(ASkyBlock.getIslandWorld())) {
+		if (!player.getWorld().equals(MyShard.getIslandWorld())) {
 		    // Check if in new nether
-		    if (!Settings.createNether || !Settings.newNether || !player.getWorld().equals(ASkyBlock.getNetherWorld())) {
+		    if (!Settings.createNether || !Settings.newNether || !player.getWorld().equals(MyShard.getNetherWorld())) {
 			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorWrongWorld);
 			return true;
 		    }

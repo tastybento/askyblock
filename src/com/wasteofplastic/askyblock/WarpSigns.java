@@ -48,7 +48,7 @@ import com.wasteofplastic.askyblock.util.VaultHelper;
  * 
  */
 public class WarpSigns implements Listener {
-    private final ASkyBlock plugin;
+    private final MyShard plugin;
     // Map of all warps stored as player, warp sign Location
     private HashMap<UUID, Location> warpList = new HashMap<UUID, Location>();
     // Where warps are stored
@@ -57,7 +57,7 @@ public class WarpSigns implements Listener {
     /**
      * @param plugin
      */
-    public WarpSigns(ASkyBlock plugin) {
+    public WarpSigns(MyShard plugin) {
 	this.plugin = plugin;
 	this.warpList = new HashMap<UUID, Location>();
     }
@@ -70,7 +70,7 @@ public class WarpSigns implements Listener {
     public void onSignBreak(BlockBreakEvent e) {
 	Block b = e.getBlock();
 	Player player = e.getPlayer();
-	if (b.getWorld().equals(ASkyBlock.getIslandWorld())) {
+	if (b.getWorld().equals(MyShard.getIslandWorld())) {
 	    if (b.getType().equals(Material.SIGN_POST) || b.getType().equals(Material.WALL_SIGN)) {
 		Sign s = (Sign) b.getState();
 		if (s != null) {
@@ -112,7 +112,7 @@ public class WarpSigns implements Listener {
 	//plugin.getLogger().info("DEBUG: SignChangeEvent called");
 	String title = e.getLine(0);
 	Player player = e.getPlayer();
-	if (player.getWorld().equals(ASkyBlock.getIslandWorld())) {
+	if (player.getWorld().equals(MyShard.getIslandWorld())) {
 	    //plugin.getLogger().info("DEBUG: Correct world");
 	    if (e.getBlock().getType().equals(Material.SIGN_POST) || e.getBlock().getType().equals(Material.WALL_SIGN)) {
 

@@ -25,7 +25,7 @@ import com.wasteofplastic.askyblock.events.IslandLevelEvent;
  */
 public class LevelCalcByChunk {
 
-    public LevelCalcByChunk(ASkyBlock plugin, UUID targetPlayer, Player asker) {
+    public LevelCalcByChunk(MyShard plugin, UUID targetPlayer, Player asker) {
 	this(plugin, targetPlayer, asker, false);
     }
 
@@ -36,7 +36,7 @@ public class LevelCalcByChunk {
      * @param targetPlayer
      * @param asker
      */
-    public LevelCalcByChunk(final ASkyBlock plugin, final UUID targetPlayer, final Player asker, final boolean silent) {
+    public LevelCalcByChunk(final MyShard plugin, final UUID targetPlayer, final Player asker, final boolean silent) {
 	// plugin.getLogger().info("DEBUG: running level calc " + silent);
 	// Get player's island
 	Island island = plugin.getGrid().getIsland(targetPlayer);
