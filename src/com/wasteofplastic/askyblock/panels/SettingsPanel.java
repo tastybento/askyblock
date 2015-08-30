@@ -192,7 +192,11 @@ public class SettingsPanel implements Listener {
 	    // Make sure size is a multiple of 9
 	    int size = ip.size() + 8;
 	    size -= (size % 9);
-	    newPanel = Bukkit.createInventory(null, size, plugin.myLocale(uuid).igsTitle);
+	    String title = plugin.myLocale(uuid).igsTitle;
+	    if (title.length() > 32) {
+		title = title.substring(0, 31);
+	    }
+	    newPanel = Bukkit.createInventory(null, size, title);
 	    // Fill the inventory and return
 	    int slot = 0;
 	    for (IPItem i : ip) {
