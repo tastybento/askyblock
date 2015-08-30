@@ -215,7 +215,7 @@ public class NetherPortals implements Listener {
 			    plugin.getLogger().warning("Creating nether island for " + event.getPlayer().getName() + " using default nether schematic");
 			    Schematic nether = IslandCmd.getSchematics().get("nether");
 			    if (nether != null) {
-				plugin.getIslandCmd().pasteSchematic(nether, dest, event.getPlayer());
+				plugin.getIslandCmd().pasteSchematic(nether, island.getCenter().toVector().toLocation(ASkyBlock.getNetherWorld()), event.getPlayer());
 			    } else {
 				plugin.getLogger().severe("Cannot telelport player to nether because there is no nether schematic");
 				event.setCancelled(true);

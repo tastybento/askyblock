@@ -55,7 +55,7 @@ public class Settings {
     // Permission prefix
     public final static String PERMPREFIX = "askyblock.";
     // The island command
-    public final static String ISLANDCOMMAND = "island";
+    public final static String ISLANDCOMMAND = "shard";
     // The challenge command
     public static final String CHALLENGECOMMAND = "asc";
     // The spawn command (Essentials spawn for example)

@@ -16,7 +16,7 @@
 
 	<build>
 		<defaultGoal>clean package install</defaultGoal>
-		<finalName>askyblock</finalName>
+		<finalName>shard</finalName>
 		<sourceDirectory>${basedir}/src/</sourceDirectory>
 		<resources>
 			<resource>

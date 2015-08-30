@@ -1,18 +1,18 @@
 name: ASkyBlock
 main: com.wasteofplastic.askyblock.ASkyBlock
 version: ${version}
-description: A SkyBlock Plugin
+description: A SkyBlock Plugin (Shard)
 author: Tastybento
 depend: [Vault]
 softdepend: [Herochat]
 load: startup
 loadbefore: [Multiverse-Core]
 commands:
-    island:
+    shard:
         description: Main player command
-        aliases: [is, island]
+        aliases: [sh]
         usage:  |
-             /island help
+             /shard help
     asadmin:
         description: Admin commands
         usage:  |
