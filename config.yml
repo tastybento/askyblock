@@ -632,7 +632,7 @@ schematicsection:
   # pasteentities - if the schematic has entities in it (mobs) this will paste them.
   # usephysics - if true, causes lava or water to flow after being pasted.
   # pasteair - Only set to true if you need to paste below sea level.
-  
+  # permission - the permission required to use this schematic. It can be anything you like
   # You can add or remove from this list. If this section is missing, only the default
   # island works.
   schematics:
