@@ -74,7 +74,7 @@ public class IslandGuardNew implements Listener {
 	if (e.getRightClicked() != null && e.getRightClicked().getType().equals(EntityType.ARMOR_STAND)) {
 	    // Check island
 	    Island island = plugin.getGrid().getIslandAt(e.getRightClicked().getLocation());
-	    if (island !=null && island.getIgsFlag(Flags.allowArmorStandUse)) {
+	    if (island !=null && (island.getMembers().contains(e.getPlayer().getUniqueId()) || island.getIgsFlag(Flags.allowArmorStandUse))) {
 		return;
 	    }
 	    // plugin.getLogger().info("DEBUG: Armor stand clicked off island");
