@@ -897,6 +897,10 @@ public class IslandGuard implements Listener {
 	    plugin.getLogger().info("DEBUG: Damager = " + e.getDamager().toString());
 	    plugin.getLogger().info("DEBUG: Entitytype = " + e.getEntityType());
 	}
+	// Check world
+	if (!inWorld(e.getEntity())) {
+	    return;
+	}
 	// Get the island where the damage is occurring
 	Island island = plugin.getGrid().getProtectedIslandAt(e.getEntity().getLocation());
 	// EnderPearl damage
@@ -920,10 +924,6 @@ public class IslandGuard implements Listener {
 	    }
 	    p.sendMessage(ChatColor.RED + plugin.myLocale(p.getUniqueId()).islandProtected);
 	    e.setCancelled(true);
-	    return;
-	}
-	// Check world
-	if (!inWorld(e.getEntity())) {
 	    return;
 	}
 	boolean inNether = false;
@@ -1690,7 +1690,7 @@ public class IslandGuard implements Listener {
 		return;
 	    }
 	}
-*/
+	 */
 
 	// Check for disallowed clicked blocks
 	if (e.getClickedBlock() != null) {
