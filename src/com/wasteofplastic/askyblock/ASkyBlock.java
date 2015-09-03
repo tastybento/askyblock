@@ -1071,81 +1071,87 @@ public class ASkyBlock extends JavaPlugin {
 	}
 	// getLogger().info("DEBUG: island level is " + Settings.island_level);
 	// Get chest items
-	final String[] chestItemString = getConfig().getString("island.chestItems").split(" ");
-	// getLogger().info("DEBUG: chest items = " + chestItemString);
-	final ItemStack[] tempChest = new ItemStack[chestItemString.length];
-	for (int i = 0; i < tempChest.length; i++) {
-	    try {
-		String[] amountdata = chestItemString[i].split(":");
-		if (amountdata[0].equals("POTION")) {
-		    // getLogger().info("DEBUG: Potion length " +
-		    // amountdata.length);
-		    if (amountdata.length == 2) {
-			final String chestPotionEffect = getConfig().getString("island.chestPotion", "");
-			if (!chestPotionEffect.isEmpty()) {
-			    // Change the water bottle stack to a potion of some
-			    // kind
-			    Potion chestPotion = new Potion(PotionType.valueOf(chestPotionEffect));
-			    tempChest[i] = chestPotion.toItemStack(Integer.parseInt(amountdata[1]));
+	String chestItems = getConfig().getString("island.chestItems","");
+	if (!chestItems.isEmpty()) {
+	    final String[] chestItemString = chestItems.split(" ");
+	    // getLogger().info("DEBUG: chest items = " + chestItemString);
+	    final ItemStack[] tempChest = new ItemStack[chestItemString.length];
+	    for (int i = 0; i < tempChest.length; i++) {
+		try {
+		    String[] amountdata = chestItemString[i].split(":");
+		    if (amountdata[0].equals("POTION")) {
+			// getLogger().info("DEBUG: Potion length " +
+			// amountdata.length);
+			if (amountdata.length == 2) {
+			    final String chestPotionEffect = getConfig().getString("island.chestPotion", "");
+			    if (!chestPotionEffect.isEmpty()) {
+				// Change the water bottle stack to a potion of some
+				// kind
+				Potion chestPotion = new Potion(PotionType.valueOf(chestPotionEffect));
+				tempChest[i] = chestPotion.toItemStack(Integer.parseInt(amountdata[1]));
+			    }
+			} else if (amountdata.length == 3) {
+			    // getLogger().info("DEBUG: Potion type :" +
+			    // amountdata[1]);
+			    Potion chestPotion = new Potion(PotionType.valueOf(amountdata[1]));
+			    // getLogger().info("Potion in chest is :" +
+			    // chestPotion.getType().toString() + " x " +
+			    // amountdata[2]);
+			    tempChest[i] = chestPotion.toItemStack(Integer.parseInt(amountdata[2]));
+			} else if (amountdata.length == 4) {
+			    // Extended or splash potions
+			    if (amountdata[2].equals("EXTENDED")) {
+				Potion chestPotion = new Potion(PotionType.valueOf(amountdata[1])).extend();
+				// getLogger().info("Potion in chest is :" +
+				// chestPotion.getType().toString() +
+				// " extended duration x " + amountdata[3]);
+				tempChest[i] = chestPotion.toItemStack(Integer.parseInt(amountdata[3]));
+			    } else if (amountdata[2].equals("SPLASH")) {
+				Potion chestPotion = new Potion(PotionType.valueOf(amountdata[1])).splash();
+				// getLogger().info("Potion in chest is :" +
+				// chestPotion.getType().toString() + " splash x " +
+				// amountdata[3]);
+				tempChest[i] = chestPotion.toItemStack(Integer.parseInt(amountdata[3]));
+			    } else if (amountdata[2].equals("EXTENDEDSPLASH")) {
+				Potion chestPotion = new Potion(PotionType.valueOf(amountdata[1])).extend().splash();
+				// getLogger().info("Potion in chest is :" +
+				// chestPotion.getType().toString() +
+				// " splash, extended duration x " + amountdata[3]);
+				tempChest[i] = chestPotion.toItemStack(Integer.parseInt(amountdata[3]));
+			    }
 			}
-		    } else if (amountdata.length == 3) {
-			// getLogger().info("DEBUG: Potion type :" +
-			// amountdata[1]);
-			Potion chestPotion = new Potion(PotionType.valueOf(amountdata[1]));
-			// getLogger().info("Potion in chest is :" +
-			// chestPotion.getType().toString() + " x " +
-			// amountdata[2]);
-			tempChest[i] = chestPotion.toItemStack(Integer.parseInt(amountdata[2]));
-		    } else if (amountdata.length == 4) {
-			// Extended or splash potions
-			if (amountdata[2].equals("EXTENDED")) {
-			    Potion chestPotion = new Potion(PotionType.valueOf(amountdata[1])).extend();
-			    // getLogger().info("Potion in chest is :" +
-			    // chestPotion.getType().toString() +
-			    // " extended duration x " + amountdata[3]);
-			    tempChest[i] = chestPotion.toItemStack(Integer.parseInt(amountdata[3]));
-			} else if (amountdata[2].equals("SPLASH")) {
-			    Potion chestPotion = new Potion(PotionType.valueOf(amountdata[1])).splash();
-			    // getLogger().info("Potion in chest is :" +
-			    // chestPotion.getType().toString() + " splash x " +
-			    // amountdata[3]);
-			    tempChest[i] = chestPotion.toItemStack(Integer.parseInt(amountdata[3]));
-			} else if (amountdata[2].equals("EXTENDEDSPLASH")) {
-			    Potion chestPotion = new Potion(PotionType.valueOf(amountdata[1])).extend().splash();
-			    // getLogger().info("Potion in chest is :" +
-			    // chestPotion.getType().toString() +
-			    // " splash, extended duration x " + amountdata[3]);
-			    tempChest[i] = chestPotion.toItemStack(Integer.parseInt(amountdata[3]));
-			}
-		    }
-		} else {
-		    Material mat;
-		    if (StringUtils.isNumeric(amountdata[0])) {
-			mat = Material.getMaterial(Integer.parseInt(amountdata[0]));
 		    } else {
-			mat = Material.getMaterial(amountdata[0].toUpperCase());
+			Material mat;
+			if (StringUtils.isNumeric(amountdata[0])) {
+			    mat = Material.getMaterial(Integer.parseInt(amountdata[0]));
+			} else {
+			    mat = Material.getMaterial(amountdata[0].toUpperCase());
+			}
+			if (amountdata.length == 2) {
+			    tempChest[i] = new ItemStack(mat, Integer.parseInt(amountdata[1]));
+			} else if (amountdata.length == 3) {
+			    tempChest[i] = new ItemStack(mat, Integer.parseInt(amountdata[2]), Short.parseShort(amountdata[1]));
+			}
 		    }
-		    if (amountdata.length == 2) {
-			tempChest[i] = new ItemStack(mat, Integer.parseInt(amountdata[1]));
-		    } else if (amountdata.length == 3) {
-			tempChest[i] = new ItemStack(mat, Integer.parseInt(amountdata[2]), Short.parseShort(amountdata[1]));
-		    }
+		} catch (java.lang.IllegalArgumentException ex) {
+		    getLogger().severe("Problem loading chest item from config.yml so skipping it: " + chestItemString[i]);
+		    getLogger().severe("Error is : " + ex.getMessage());
+		    getLogger().info("Potential potion types are: ");
+		    for (PotionType c : PotionType.values())
+			getLogger().info(c.name());
+		} catch (Exception e) {
+		    getLogger().severe("Problem loading chest item from config.yml so skipping it: " + chestItemString[i]);
+		    getLogger().info("Potential material types are: ");
+		    for (Material c : Material.values())
+			getLogger().info(c.name());
+		    // e.printStackTrace();
 		}
-	    } catch (java.lang.IllegalArgumentException ex) {
-		getLogger().severe("Problem loading chest item from config.yml so skipping it: " + chestItemString[i]);
-		getLogger().severe("Error is : " + ex.getMessage());
-		getLogger().info("Potential potion types are: ");
-		for (PotionType c : PotionType.values())
-		    getLogger().info(c.name());
-	    } catch (Exception e) {
-		getLogger().severe("Problem loading chest item from config.yml so skipping it: " + chestItemString[i]);
-		getLogger().info("Potential material types are: ");
-		for (Material c : Material.values())
-		    getLogger().info(c.name());
-		// e.printStackTrace();
 	    }
+	    Settings.chestItems = tempChest;
+	} else {
+	    // Nothing in the chest
+	    Settings.chestItems = new ItemStack[0];
 	}
-	Settings.chestItems = tempChest;
 	Settings.allowPvP = getConfig().getBoolean("island.allowPvP", false);
 	Settings.allowNetherPvP = getConfig().getBoolean("island.allowNetherPvP", false);
 	Settings.allowBreakBlocks = getConfig().getBoolean("island.allowbreakblocks", false);

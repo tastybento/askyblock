@@ -331,7 +331,7 @@ public class GridManager {
 	for (int x : islandGrid.keySet()) {
 	    for (int z : islandGrid.get(x).keySet()) {
 		Island island = islandGrid.get(x).get(z);
-		islandList.add(island.serialize());
+		islandList.add(island.save());
 	    }
 	}
 	islandYaml.set(Settings.worldName, islandList);

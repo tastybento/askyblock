@@ -161,7 +161,8 @@ public class Island {
 		}
 	    }
 	    // Check if protection options there
-	    if (owner != null) {
+	    if (!isSpawn) {
+		//plugin.getLogger().info("DEBUG: NOT SPAWN owner is " + owner + " location " + center);
 		if (split.length > 8 && split[8].length() == 29) {
 		    // Parse the 8th string into island guard protection settings
 		    int index = 0;
@@ -170,6 +171,7 @@ public class Island {
 			this.igs.put(f, split[8].charAt(index++) == '1' ? true : false);
 		    }
 		} else {
+		    //plugin.getLogger().info("DEBUG: Setting default protection items");
 		    // Manually set to defaults
 		    this.igs.put(Flags.allowAnvilUse, Settings.allowAnvilUse);
 		    this.igs.put(Flags.allowArmorStandUse, Settings.allowArmorStandUse);
@@ -500,7 +502,7 @@ public class Island {
      * Serializes the island for island.yml storage
      * @return string that represents the island settings
      */
-    public String serialize() {
+    public String save() {
 	// x:height:z:protection range:island distance:owner UUID
 	String result = "";
 	String ownerString = "null";
@@ -511,13 +513,21 @@ public class Island {
 		return center.getBlockX() + ":" + center.getBlockY() + ":" + center.getBlockZ() + ":" + protectionRange + ":" 
 			+ islandDistance + ":" + ownerString + ":" + locked + ":" + purgeProtected + ":SP:" + Util.getStringLocation(spawnPoint);
 	    }
+	    return center.getBlockX() + ":" + center.getBlockY() + ":" + center.getBlockZ() + ":" + protectionRange + ":" 
+	    + islandDistance + ":" + ownerString + ":" + locked + ":" + purgeProtected;
 	}
+	// Not spawn
 	if (owner != null) {
 	    ownerString = owner.toString();
-	    // Personal island protection settings - serialize enum into 1's and 0's representing the boolean values
+	}
+	// Personal island protection settings - serialize enum into 1's and 0's representing the boolean values
+	try {
 	    for (Flags f: Flags.values()) {
 		result += this.igs.get(f) ? "1" : "0";
 	    }
+	} catch (Exception e) {
+	    e.printStackTrace();
+	    result = "";
 	}
 	return center.getBlockX() + ":" + center.getBlockY() + ":" + center.getBlockZ() + ":" + protectionRange + ":" 
 	+ islandDistance + ":" + ownerString + ":" + locked + ":" + purgeProtected + ":" + result;
@@ -665,7 +675,7 @@ public class Island {
 	for (int x = getMinProtectedX() /16; x <= (getMinProtectedX() + getProtectionSize() - 1)/16; x++) {
 	    for (int z = getMinProtectedZ() /16; z <= (getMinProtectedZ() + getProtectionSize() - 1)/16; z++) {
 		for (BlockState holder : world.getChunkAt(x, z).getTileEntities()) {
-		    //plugin.getLogger().info("DEBUG: entity: " + holder.getType());
+		    //plugin.getLogger().info("DEBUG: tile entity: " + holder.getType());
 		    if (holder.getType() == material) {
 			result++;
 		    } else if (material.equals(Material.REDSTONE_COMPARATOR_OFF)) {
@@ -686,7 +696,19 @@ public class Island {
 			}
 		    }
 		}
+		for (Entity holder : world.getChunkAt(x, z).getEntities()) {
+		    //plugin.getLogger().info("DEBUG: entity: " + holder.getType());
+		    if (holder.getType().toString().equals(material.toString())) {
+			result++;
+		    }
+		}
 	    }  
+	}
+	// Version 1.7.x counts differently to 1.8 (ugh)
+	// In 1.7, the entity is present before it is cancelled and so gets counted.
+	// Remove 1 from count if it is 1.7.x
+	if (!plugin.isOnePointEight()) {
+	    result--;
 	}
 	return result;
     }
