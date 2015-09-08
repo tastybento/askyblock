@@ -367,6 +367,10 @@ public class IslandGuard implements Listener {
 	if (e.getPlayer().isInsideVehicle()) {
 	    return;
 	}
+	// Only do something if there is a definite x or z movement
+	if (e.getTo().getBlockX() - e.getFrom().getBlockX() == 0 && e.getTo().getBlockZ() - e.getFrom().getBlockZ() == 0) {
+	    return;
+	}
 	Island islandTo = plugin.getGrid().getProtectedIslandAt(e.getTo());
 	// Announcement entering
 	Island islandFrom = plugin.getGrid().getProtectedIslandAt(e.getFrom());

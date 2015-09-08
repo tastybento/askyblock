@@ -379,7 +379,7 @@ public class GridManager {
 		    // plugin.getLogger().info("DEBUG: In island space");
 		    return island;
 		}
-		// plugin.getLogger().info("DEBUG: not in island space");
+		//plugin.getLogger().info("DEBUG: not in island space");
 	    }
 	}
 	return null;
