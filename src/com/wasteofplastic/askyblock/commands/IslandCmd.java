@@ -796,6 +796,8 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 	if (firstTime) {
 	    runCommands(Settings.startCommands, player.getUniqueId());
 	}
+	// Save grid just in case there's a crash
+	plugin.getGrid().saveGrid();
 	// Done - fire event
 	final IslandNewEvent event = new IslandNewEvent(player,schematic, myIsland);
 	plugin.getServer().getPluginManager().callEvent(event);
@@ -1683,6 +1685,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 			}
 			// Remove the invite
 			inviteList.remove(player.getUniqueId());
+			plugin.getGrid().saveGrid();
 			return true;
 		    }
 		    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorCommandNotReady);
@@ -2455,6 +2458,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 			plugin.getMessages().tellOfflineTeam(playerUUID, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).banSuccess.replace("[name]", offlineTarget.getName()));
 			// Ban the sucker
 			plugin.getPlayers().ban(playerUUID, targetPlayerUUID);
+			plugin.getGrid().saveGrid();
 			return true;
 		    } else if (split[0].equalsIgnoreCase("unban")) {
 			if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.ban")) {
@@ -2498,6 +2502,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 			plugin.getMessages().tellOfflineTeam(playerUUID, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).banLiftedSuccess.replace("[name]", offlineTarget.getName()));
 			// Unban the redeemed one
 			plugin.getPlayers().unBan(playerUUID, targetPlayerUUID);
+			plugin.getGrid().saveGrid();
 			return true;
 		    } else if (split[0].equalsIgnoreCase("kick") || split[0].equalsIgnoreCase("remove")) {
 			// PlayerIsland remove command with a player name, or island kick
@@ -2669,6 +2674,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 					// Create a new team with
 					addPlayertoTeam(player.getUniqueId(), targetPlayer);
 					addPlayertoTeam(targetPlayer, targetPlayer);
+					plugin.getGrid().saveGrid();
 					return true;
 				    }
 				    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).makeLeadererrorThatPlayerIsNotInTeam);
@@ -2775,6 +2781,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 	}
 	// Run any commands that need to be run at reset
 	runCommands(Settings.resetCommands, player.getUniqueId());
+	plugin.getGrid().saveGrid();
     }
 
     /**

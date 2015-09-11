@@ -400,6 +400,14 @@ public class ASkyBlock extends JavaPlugin {
 			for (Player onlinePlayer : plugin.getServer().getOnlinePlayers()) {
 			    tinyDB.savePlayerName(onlinePlayer.getName(), onlinePlayer.getUniqueId());
 			}
+			// Save grid every 5 minutes
+			getServer().getScheduler().runTaskTimer(plugin, new Runnable() {
+
+			    @Override
+			    public void run() {
+				getGrid().saveGrid();
+			    }}, Settings.backupDuration, Settings.backupDuration);
+			
 			getLogger().info("All files loaded. Ready to play...");
 		    }
 		});
@@ -730,6 +738,8 @@ public class ASkyBlock extends JavaPlugin {
 	}
 	// Debug
 	Settings.debug = getConfig().getInt("debug", 0);
+	// How often the grid will be saved to file. Default is 5 minutes
+	Settings.backupDuration = getConfig().getLong("general.backupduration", 6000);
 	// How long a player has to wait after deactivating PVP until they can activate PVP again
 	Settings.pvpRestartCooldown = getConfig().getLong("general.pvpcooldown",60);
 	// Max Islands

@@ -255,6 +255,7 @@ public class Settings {
     public static int maxIslands;
     public static HashMap<String,Integer> limitedBlocks;
     public static long pvpRestartCooldown;
+    public static long backupDuration;
     
     
 

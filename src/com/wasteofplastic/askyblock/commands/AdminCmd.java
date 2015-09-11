@@ -1084,6 +1084,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 		    } else {
 			if (adminSetPlayerIsland(sender, ((Player) sender).getLocation(), playerUUID)) {
 			    sender.sendMessage(ChatColor.GREEN + plugin.myLocale().registersettingIsland.replace("[name]", split[1]));
+			    plugin.getGrid().saveGrid();
 			} else {
 			    sender.sendMessage(ChatColor.RED + plugin.myLocale().registererrorBedrockNotFound);
 			}
@@ -1114,6 +1115,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 			    + plugin.getPlayers().getIslandLocation(playerUUID).getBlockX() + ","
 				    + plugin.getPlayers().getIslandLocation(playerUUID).getBlockZ()));
 		    plugin.deletePlayerIsland(playerUUID, false);
+		    plugin.getGrid().saveGrid();
 		    return true;
 		}
 	    } else if (split[0].equalsIgnoreCase("info")) {
@@ -1201,6 +1203,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 		    island.setProtectionSize(newRange);
 		    sender.sendMessage(ChatColor.GREEN + plugin.myLocale().adminSetRangeSet.replace("[number]",String.valueOf(newRange)));
 		    showInfo(playerUUID, sender);
+		    plugin.getGrid().saveGrid();
 		    return true;
 		}
 	    }
@@ -1431,6 +1434,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 		if (targetPlayer != null) {
 		    plugin.getGrid().homeTeleport(targetPlayer);
 		}
+		plugin.getGrid().saveGrid();
 		return true;
 	    } else {
 		sender.sendMessage(ChatColor.RED + plugin.myLocale().errorUnknownCommand);
@@ -1451,6 +1455,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 	// Reset the biome
 	plugin.getBiomes().setIslandBiome(island.getCenter(), Settings.defaultBiome);
 	new DeleteIslandChunk(plugin, island);
+	plugin.getGrid().saveGrid();
     }
 
     /**
@@ -1467,6 +1472,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 		    purgeFlag = false;
 		    sender.sendMessage(ChatColor.YELLOW + plugin.myLocale().purgefinished);
 		    this.cancel();
+		    plugin.getGrid().saveGrid();
 		}
 		if (unowned.size() > 0) {
 		    Iterator<Entry<String, Island>> it = unowned.entrySet().iterator();
@@ -1571,6 +1577,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 			    purgeFlag = false;
 			}
 			this.cancel();
+			plugin.getGrid().saveGrid();
 		    }
 
 		}
