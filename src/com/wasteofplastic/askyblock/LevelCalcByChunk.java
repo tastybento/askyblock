@@ -1,8 +1,10 @@
 package com.wasteofplastic.askyblock;
 
-import java.util.ArrayList;
+import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.ChatColor;
@@ -43,14 +45,22 @@ public class LevelCalcByChunk {
 	if (island != null) {
 	    World world = island.getCenter().getWorld();
 	    // Get the chunks
-	    List<ChunkSnapshot> chunkSnapshot = new ArrayList<ChunkSnapshot>();
-	    for (int x = island.getMinProtectedX() /16; x <= (island.getMinProtectedX() + island.getProtectionSize() - 1)/16; x++) {
-		for (int z = island.getMinProtectedZ() /16; z <= (island.getMinProtectedZ() + island.getProtectionSize() - 1)/16; z++) {
-		    chunkSnapshot.add(world.getChunkAt(x, z).getChunkSnapshot());
+	    //long nano = System.nanoTime();
+	    Set<ChunkSnapshot> chunkSnapshot = new HashSet<ChunkSnapshot>();
+	    //plugin.getLogger().info("DEBUG: max z = " + (double)(island.getMinProtectedZ() + island.getProtectionSize() - 1)/16);
+	    //plugin.getLogger().info("DEBUG: rounded z = " + new BigDecimal((double)(island.getMinProtectedZ() + island.getProtectionSize() - 1)/16).setScale(0, BigDecimal.ROUND_UP).intValue());
+	    
+	    for (int x = new BigDecimal((double)island.getMinProtectedX() / 16).setScale(0,BigDecimal.ROUND_DOWN).intValue(); 
+		    x <= new BigDecimal((double)(island.getMinProtectedX() + island.getProtectionSize() - 1)/16).setScale(0, BigDecimal.ROUND_UP).intValue(); x++) {
+		for (int z = new BigDecimal((double)island.getMinProtectedZ() / 16).setScale(0,BigDecimal.ROUND_DOWN).intValue();
+			z <= new BigDecimal((double)(island.getMinProtectedZ() + island.getProtectionSize() - 1)/16).setScale(0, BigDecimal.ROUND_UP).intValue(); z++) {
+		    //plugin.getLogger().info("DEBUG: x = " + x + " z =" + z);
+		    chunkSnapshot.add(world.getChunkAt(x,z).getChunkSnapshot());
 		}  
 	    }
+	    //plugin.getLogger().info("DEBUG: time = " + (System.nanoTime() - nano) / 1000000 + " ms");
 	    //plugin.getLogger().info("DEBUG: size of chunk ss = " + chunkSnapshot.size());
-	    final List<ChunkSnapshot> finalChunk = chunkSnapshot;
+	    final Set<ChunkSnapshot> finalChunk = chunkSnapshot;
 	    final int worldHeight = world.getMaxHeight();
 	    //plugin.getLogger().info("DEBUG:world height = " +worldHeight);
 	    plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
