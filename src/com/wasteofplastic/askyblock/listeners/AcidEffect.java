@@ -28,6 +28,7 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -98,6 +99,7 @@ public class AcidEffect implements Listener {
 	// Slow checks
 	final Location playerLoc = player.getLocation();
 	final Block block = playerLoc.getBlock();
+	final Block head = block.getRelative(BlockFace.UP);
 
 	// Check for acid rain
 	if (Settings.rainDamage > 0D && isRaining) {
@@ -213,7 +215,7 @@ public class AcidEffect implements Listener {
 	}
 
 	// If they are not in liquid, then return
-	if (!block.isLiquid()) {
+	if (!block.isLiquid() && !head.isLiquid()) {
 	    return;
 	}
 	// Find out if they are at the bottom of the sea and if so bounce them
@@ -242,7 +244,9 @@ public class AcidEffect implements Listener {
 	}
 	// plugin.getLogger().info("DEBUG: no acid water is false");
 	// Check if they are in water
-	if (block.getType().equals(Material.STATIONARY_WATER) || block.getType().equals(Material.WATER)) {
+	if (block.getType().equals(Material.STATIONARY_WATER) || block.getType().equals(Material.WATER)
+		|| head.getType().equals(Material.STATIONARY_WATER) || head.getType().equals(Material.WATER)) {
+	    //plugin.getLogger().info("DEBUG: head = " + head.getType() + " body = " + block.getType());
 	    // Check if player has just exited a boat - in which case, they are
 	    // immune for 1 tick
 	    // This is needed because safeboat.java cannot teleport the player
@@ -267,11 +271,12 @@ public class AcidEffect implements Listener {
 		// s.getType().toString());
 		if (s.getType().equals(PotionEffectType.WATER_BREATHING)) {
 		    // Safe!
+		    //plugin.getLogger().info("DEBUG: Water breathing potion protection!");
 		    return;
-		    // plugin.getLogger().info("Water breathing potion protection!");
 		}
 	    }
 	    // ACID!
+	    //plugin.getLogger().info("DEBUG: Acid!");
 	    // Put the player into the acid list
 	    burningPlayers.add(player);
 	    // This runnable continuously hurts the player even if they are not
@@ -282,7 +287,8 @@ public class AcidEffect implements Listener {
 		    if (player.isDead()) {
 			burningPlayers.remove(player);
 			this.cancel();
-		    } else if (player.getLocation().getBlock().isLiquid() && player.getLocation().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+		    } else if ((player.getLocation().getBlock().isLiquid() || player.getLocation().getBlock().getRelative(BlockFace.UP).isLiquid())
+			    && player.getLocation().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 			// plugin.getLogger().info("Damage setting = " +
 			// Settings.acidDamage);
 			// plugin.getLogger().info("Damage to player = " +
