@@ -739,7 +739,7 @@ public class ASkyBlock extends JavaPlugin {
 	// Debug
 	Settings.debug = getConfig().getInt("debug", 0);
 	// How often the grid will be saved to file. Default is 5 minutes
-	Settings.backupDuration = getConfig().getLong("general.backupduration", 6000);
+	Settings.backupDuration = (getConfig().getLong("general.backupduration", 5) * 20 * 60);
 	// How long a player has to wait after deactivating PVP until they can activate PVP again
 	Settings.pvpRestartCooldown = getConfig().getLong("general.pvpcooldown",60);
 	// Max Islands
