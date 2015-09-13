@@ -301,8 +301,10 @@ public class Challenges implements CommandExecutor, TabCompleter {
 	    // First time
 	    player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).challengesyouHaveCompleted.replace("[challenge]", challengeName));
 	    if (Settings.broadcastMessages) {
-		plugin.getServer().broadcastMessage(
-			ChatColor.GOLD + plugin.myLocale(player.getUniqueId()).challengesnameHasCompleted.replace("[name]", player.getName()).replace("[challenge]", challengeName));
+		for (Player p : plugin.getServer().getOnlinePlayers()) {
+		    p.sendMessage(
+			ChatColor.GOLD + plugin.myLocale(p.getUniqueId()).challengesnameHasCompleted.replace("[name]", player.getDisplayName()).replace("[challenge]", challengeName));
+		}
 	    }
 	    plugin.getMessages().tellOfflineTeam(player.getUniqueId(),
 		    ChatColor.GOLD + plugin.myLocale(player.getUniqueId()).challengesnameHasCompleted.replace("[name]", player.getName()).replace("[challenge]", challengeName));

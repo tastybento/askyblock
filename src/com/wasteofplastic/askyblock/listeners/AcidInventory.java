@@ -144,7 +144,11 @@ public class AcidInventory implements Listener {
 	if (e.getItem().getType().equals(Material.POTION) && e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 	    if (e.getItem().getDurability() == 0) {
 		plugin.getLogger().info(e.getPlayer().getName() + " " + plugin.myLocale().drankAcidAndDied);
-		plugin.getServer().broadcastMessage(e.getPlayer().getDisplayName() + " " + plugin.myLocale().drankAcid);
+		if (!Settings.muteDeathMessages) {
+		    for (Player p : plugin.getServer().getOnlinePlayers()) {
+			p.sendMessage(e.getPlayer().getDisplayName() + " " + plugin.myLocale(p.getUniqueId()).drankAcid);
+		    }
+		}
 		final ItemStack item = new ItemStack(Material.GLASS_BOTTLE);
 		e.getPlayer().setItemInHand(item);
 		e.getPlayer().setHealth(0D);
