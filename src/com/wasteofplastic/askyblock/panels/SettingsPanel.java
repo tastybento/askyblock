@@ -15,6 +15,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.inventory.Inventory;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
@@ -208,24 +209,25 @@ public class SettingsPanel implements Listener {
     }
 
     /**
-     * Action is determined by where the player is
+     * Handle clicks to the Settings panel
      * @param event
      */
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled=true)
     public void onInventoryClick(InventoryClickEvent event) {
 	Player player = (Player) event.getWhoClicked(); // The player that clicked the item
-	if (!player.getLocation().getWorld().equals(ASkyBlock.getIslandWorld()) && !player.getLocation().getWorld().equals(ASkyBlock.getNetherWorld())) {
-	    return;
-	}
 	Inventory inventory = event.getInventory(); // The inventory that was clicked in
 	int slot = event.getRawSlot();
 	// Check this is the right panel
 	if (!inventory.getName().equals(plugin.myLocale(player.getUniqueId()).igsTitle)) {
 	    return;
 	}
+	// Check world
+	if (!player.getLocation().getWorld().equals(ASkyBlock.getIslandWorld()) && !player.getLocation().getWorld().equals(ASkyBlock.getNetherWorld())) {
+	    return;
+	}
 	// Stop removal of items
 	event.setCancelled(true);
-	if (slot < 0) {
+	if (event.getSlotType() == SlotType.OUTSIDE) {
 	    player.closeInventory();
 	    return;
 	}

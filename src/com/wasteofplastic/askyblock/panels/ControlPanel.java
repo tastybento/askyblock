@@ -201,9 +201,8 @@ public class ControlPanel implements Listener {
 	}
     }
 
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled=false)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled=true)
     public void onInventoryClick(InventoryClickEvent event) {
-	// TODO : this needs optimization
 	Player player = (Player) event.getWhoClicked(); // The player that
 							// clicked the item
 	ItemStack clicked = event.getCurrentItem(); // The item that was clicked
@@ -211,15 +210,6 @@ public class ControlPanel implements Listener {
 						    // clicked in
 	// ASkyBlock plugin = ASkyBlock.getPlugin();
 	int slot = event.getRawSlot();
-	// Settings
-	if (inventory.getName().equalsIgnoreCase(plugin.myLocale().igsTitle)) {
-	    if (event.getSlotType() == SlotType.OUTSIDE) {
-		player.closeInventory();
-		return;
-	    }
-	    event.setCancelled(true);
-	    return;
-	}
 	// Challenges
 	if (inventory.getName().equals(plugin.myLocale(player.getUniqueId()).challengesguiTitle)) {
 	    event.setCancelled(true);
