@@ -684,6 +684,9 @@ public class Locale {
 	islandProtected = ChatColor.translateAlternateColorCodes('&', locale.getString("islandProtected", "Island protected."));
 	targetInNoPVPArea = ChatColor.translateAlternateColorCodes('&', locale.getString("targetInPVPArea", "Target is in a no-PVP area!"));
 	igsTitle = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.title", "Island Guard Settings"));
+	if (igsTitle.length() > 30) {
+	    igsTitle = igsTitle.substring(0,29);
+	}
 	igsAnvil = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.anvil", "Anvil Use"));
 	igsAllowed = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.allowed", "Allowed"));
 	igsDisallowed = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.disallowed", "Disallowed"));
@@ -720,10 +723,19 @@ public class Locale {
 	igsRedstone = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.redstone", "Redstone use"));
 	igsShears = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.shears", "Shears use"));
 	igsSettingsGeneralTitle = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.settingsgeneraltitle", "General Island World Settings"));
+	if (igsSettingsGeneralTitle.length() > 30) {
+	    igsSettingsGeneralTitle = igsSettingsGeneralTitle.substring(0,29);
+	}
 	igsSettingsGeneralDesc = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.settingsgeneraldesc", "General Island World Settings"));
 	igsSettingsIslandTitle = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.settingsislandtitle", "Island Settings"));
+	if (igsSettingsIslandTitle.length() > 30) {
+	    igsSettingsIslandTitle = igsSettingsIslandTitle.substring(0,29);
+	}
 	igsSettingsIslandDesc = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.settingsislanddesc", "These rules apply to visitors on this island"));
 	igsSettingsSpawnTitle = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.settingsspawntitle", "Spawn Settings"));
+	if (igsSettingsSpawnTitle.length() > 30) {
+	    igsSettingsSpawnTitle = igsSettingsSpawnTitle.substring(0,29);
+	}
 	igsSettingsSpawnDesc = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.settingsspawndesc", "These rules apply at spawn."));
 	igsTeleport = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.teleportwhenfalling", "Teleport when falling"));
 	igsTNT = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.TNTdamage", "TNT Damage"));
@@ -765,6 +777,9 @@ public class Locale {
 	warpsPrevious = ChatColor.translateAlternateColorCodes('&', locale.getString("warps.previous", "Previous"));
 	warpsNext = ChatColor.translateAlternateColorCodes('&', locale.getString("warps.next", "Next"));
 	warpsTitle = ChatColor.translateAlternateColorCodes('&', locale.getString("warps.title", "Island warps"));
+	if (warpsTitle.length() > 30) {
+	    warpsTitle = warpsTitle.substring(0, 29);
+	}
 	topTenheader = ChatColor.translateAlternateColorCodes('&', locale.getString("topTen.header", "These are the Top 10 islands:"));
 	topTenerrorNotReady = ChatColor.translateAlternateColorCodes('&', locale.getString("topTen.errorNotReady", "Top ten list not generated yet!"));
 	levelislandLevel = ChatColor.translateAlternateColorCodes('&', locale.getString("level.islandLevel", "Island level"));
@@ -833,6 +848,9 @@ public class Locale {
 	challengeserrorRewardProblem = ChatColor.translateAlternateColorCodes('&',
 		locale.getString("challenges.errorRewardProblem", "There was a problem giving your reward. Ask Admin to check log!"));
 	challengesguiTitle = ChatColor.translateAlternateColorCodes('&', locale.getString("challenges.guititle", "Challenges"));
+	if (challengesguiTitle.length() > 30) {
+	    challengesguiTitle = challengesguiTitle.substring(0,29);
+	}
 	challengeserrorYouAreMissing = ChatColor.translateAlternateColorCodes('&', locale.getString("challenges.erroryouaremissing", "You are missing"));
 	challengesNavigation = ChatColor
 		.translateAlternateColorCodes('&', locale.getString("challenges.navigation", "Click to see [level] challenges!"));
@@ -1103,6 +1121,9 @@ public class Locale {
 		locale.getString("nether.spawnisprotected", "The Nether spawn area is protected."));
 	islandhelpMiniShop = ChatColor.translateAlternateColorCodes('&', locale.getString("minishop.islandhelpMiniShop", "Opens the MiniShop"));
 	islandMiniShopTitle = ChatColor.translateAlternateColorCodes('&', locale.getString("minishop.title", "MiniShop"));
+	if (islandMiniShopTitle.length() > 30) {
+	    islandMiniShopTitle = islandMiniShopTitle.substring(0, 29);
+	}
 	minishopBuy = ChatColor.translateAlternateColorCodes('&', locale.getString("minishop.buy", "Buy(Left Click)"));
 	minishopSell = ChatColor.translateAlternateColorCodes('&', locale.getString("minishop.sell", "Sell(Right Click)"));
 	minishopYouBought = ChatColor.translateAlternateColorCodes('&',
@@ -1130,6 +1151,9 @@ public class Locale {
 	biomeUnknown = ChatColor.translateAlternateColorCodes('&', locale.getString("biome.unknown", "Unknown biome!"));
 	biomeYouBought = ChatColor.translateAlternateColorCodes('&', locale.getString("biome.youbought", "Purchased for [cost]!"));
 	biomePanelTitle = ChatColor.translateAlternateColorCodes('&', locale.getString("biome.paneltitle", "Select A Biome"));
+	if (biomePanelTitle.length() > 30) {
+	    biomePanelTitle = biomePanelTitle.substring(0, 29);
+	}
 	expelNotOnIsland = ChatColor.translateAlternateColorCodes('&',
 		locale.getString("expel.notonisland", "Player is not trespassing on your island!"));
 	expelSuccess = ChatColor.translateAlternateColorCodes('&', locale.getString("expel.success", "You expelled [name]!"));
@@ -1173,6 +1197,9 @@ public class Locale {
 	lockEnteringSpawn = ChatColor.translateAlternateColorCodes('&', locale.getString("lock.enteringspawn", "Entering Spawn"));
 	lockLeavingSpawn = ChatColor.translateAlternateColorCodes('&', locale.getString("lock.leavingspawn", "Leaving Spawn"));
 	schematicsTitle = ChatColor.translateAlternateColorCodes('&', locale.getString("schematics.title", "Choose island..."));
+	if (schematicsTitle.length() > 30) {
+	    schematicsTitle = schematicsTitle.substring(0, 29);
+	}
 	teamChatPrefix = ChatColor.translateAlternateColorCodes('&', locale.getString("teamchat.prefix", "[Team Chat]<{ISLAND_PLAYER}> "));
 	teamChatHelp = ChatColor.translateAlternateColorCodes('&', locale.getString("teamchat.helpChat", "turn on/off team chat"));
 	teamChatStatusOff = ChatColor.translateAlternateColorCodes('&', locale.getString("teamchat.statusOff", "Team chat is off"));

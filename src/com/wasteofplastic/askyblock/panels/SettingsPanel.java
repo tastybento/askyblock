@@ -320,6 +320,7 @@ public class SettingsPanel implements Listener {
 		    island.toggleIgs(flag);
 		}
 	    }
+	    //player.closeInventory();
 	    player.openInventory(islandGuardPanel(player));
 	}
     }

@@ -319,7 +319,7 @@ islandguardsettings:
   shears: "Uso de las zizallas"
   spawnegg: "Uso de los huevos de spawn"
   teleportwhenfalling: "Teletransportandote al caer"
-  title: "Preferencias de seguridad de la isla"
+  title: "Preferencias"
   visitordrop: "El visitante puede soltar items"
   visitorkeepitems: "El visitante mantiene los items al morir"
   visitorpickup: "El visitante puede regoger items"
