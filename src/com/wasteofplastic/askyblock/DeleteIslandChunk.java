@@ -88,6 +88,14 @@ public class DeleteIslandChunk {
 		}
 		if (regen) {
 		    world.regenerateChunk(x, z);
+		    if (Settings.newNether && Settings.createNether) {
+			if (world.equals(ASkyBlock.getIslandWorld())) {
+			    ASkyBlock.getNetherWorld().regenerateChunk(x, z);
+			}
+			if (world.equals(ASkyBlock.getNetherWorld())) {
+			    ASkyBlock.getIslandWorld().regenerateChunk(x, z);
+			}
+		    }
 		}
 	    }
 	}
