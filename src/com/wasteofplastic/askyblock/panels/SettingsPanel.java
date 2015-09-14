@@ -223,12 +223,12 @@ public class SettingsPanel implements Listener {
 	}
 	// Stop removal of items
 	event.setCancelled(true);
-	// Check world
-	if (!player.getLocation().getWorld().equals(ASkyBlock.getIslandWorld()) && !player.getLocation().getWorld().equals(ASkyBlock.getNetherWorld())) {
-	    return;
-	}
 	if (event.getSlotType() == SlotType.OUTSIDE) {
 	    player.closeInventory();
+	    return;
+	}
+	// Check world
+	if (!player.getLocation().getWorld().equals(ASkyBlock.getIslandWorld()) && !player.getLocation().getWorld().equals(ASkyBlock.getNetherWorld())) {
 	    return;
 	}
 	// 1.7.x server
