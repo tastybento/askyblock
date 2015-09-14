@@ -221,12 +221,12 @@ public class SettingsPanel implements Listener {
 	if (!inventory.getName().equals(plugin.myLocale(player.getUniqueId()).igsTitle)) {
 	    return;
 	}
+	// Stop removal of items
+	event.setCancelled(true);
 	// Check world
 	if (!player.getLocation().getWorld().equals(ASkyBlock.getIslandWorld()) && !player.getLocation().getWorld().equals(ASkyBlock.getNetherWorld())) {
 	    return;
 	}
-	// Stop removal of items
-	event.setCancelled(true);
 	if (event.getSlotType() == SlotType.OUTSIDE) {
 	    player.closeInventory();
 	    return;
