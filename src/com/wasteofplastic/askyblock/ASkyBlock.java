@@ -579,7 +579,7 @@ public class ASkyBlock extends JavaPlugin {
      */
     public void deletePlayerIsland(final UUID player, boolean removeBlocks) {
 	// Removes the island
-	// getLogger().info("DEBUG: deleting player island");
+	getLogger().info("DEBUG: deleting player island");
 	CoopPlay.getInstance().clearAllIslandCoops(player);
 	getWarpSignsListener().removeWarp(player);
 	Island island = grid.getIsland(player);

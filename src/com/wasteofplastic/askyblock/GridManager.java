@@ -1369,10 +1369,13 @@ public class GridManager {
 	// Teleport players away
 	for (Player player : plugin.getServer().getOnlinePlayers()) {
 	    if (island.inIslandSpace(player.getLocation())) {
+		//plugin.getLogger().info("DEBUG: in island space");
 		// Teleport island players to their island home
 		if (!player.getUniqueId().equals(uuid) && (plugin.getPlayers().hasIsland(player.getUniqueId()) || plugin.getPlayers().inTeam(player.getUniqueId()))) {
+		    //plugin.getLogger().info("DEBUG: home teleport");
 		    homeTeleport(player);
-		} else if (!player.getUniqueId().equals(uuid)) {
+		} else {
+		    //plugin.getLogger().info("DEBUG: move player to spawn");
 		    // Move player to spawn
 		    Island spawn = getSpawn();
 		    if (spawn != null) {

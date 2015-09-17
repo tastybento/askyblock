@@ -2766,7 +2766,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 	// Remove any coop invitees and grab their stuff
 	CoopPlay.getInstance().clearMyInvitedCoops(player);
 	CoopPlay.getInstance().clearMyCoops(player);
-	// plugin.getLogger().info("DEBUG Reset command issued!");
+	//plugin.getLogger().info("DEBUG Reset command issued!");
 	// Remove any warps
 	plugin.getWarpSignsListener().removeWarp(player.getUniqueId());
 	// Delete the old island, if it exists
@@ -2774,10 +2774,13 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 	    // Remove any coops
 	    CoopPlay.getInstance().clearAllIslandCoops(oldIsland.getCenter());
 	    plugin.getGrid().removePlayersFromIsland(oldIsland, player.getUniqueId());
+	    //plugin.getLogger().info("DEBUG Deleting old island");
 	    new DeleteIslandChunk(plugin, oldIsland);
 	    // Fire event
 	    final IslandResetEvent event = new IslandResetEvent(player, oldIsland.getCenter());
 	    plugin.getServer().getPluginManager().callEvent(event);
+	} else {
+	    //plugin.getLogger().info("DEBUG oldisland = null!");
 	}
 	// Run any commands that need to be run at reset
 	runCommands(Settings.resetCommands, player.getUniqueId());
