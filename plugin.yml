@@ -100,6 +100,9 @@ permissions:
           askyblock.craft.enderchest:
             description: Allow crafting and use of enderchests in askyblock
             default: false
+          askyblock.craft.dirt:
+            description: Allows tilling of coarse dirt into dirt
+            default: false
       askyblock.settings.*:
         children:
           askyblock.settings.allowAnvilUse:

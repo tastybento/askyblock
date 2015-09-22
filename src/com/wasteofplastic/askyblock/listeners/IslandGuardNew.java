@@ -86,6 +86,8 @@ public class IslandGuardNew implements Listener {
 
     /**
      * Handle V1.8 blocks that need special treatment
+     * Tilling of coarse dirt into dirt
+     * Usually prevented because it could lead to an endless supply of dirt with gravel
      * 
      * @param e
      */
@@ -105,7 +107,8 @@ public class IslandGuardNew implements Listener {
 	    return;
 	}
 	// This permission bypasses protection
-	if (VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
+	if (VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
+		|| VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "craft.dirt")) {
 	    return;
 	}
 	// Prevents tilling of coarse dirt into dirt
