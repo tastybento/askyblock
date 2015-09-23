@@ -944,6 +944,25 @@ public class IslandGuard implements Listener {
 	    e.setCancelled(true);
 	    return;
 	}
+	// Stop Creeper griefing if it is disallowed
+	if (!Settings.allowCreeperGriefing && e.getDamager().getType().equals(EntityType.CREEPER)) {
+	    // Now we have to check what the target was
+	    Creeper creeper = (Creeper)e.getDamager();
+	    //plugin.getLogger().info("DEBUG: creeper is damager");
+	    //plugin.getLogger().info("DEBUG: entity being damaged is " + e.getEntity());
+	    if (creeper.getTarget() instanceof Player) {
+		//plugin.getLogger().info("DEBUG: target is a player");
+		Player target = (Player)creeper.getTarget();
+		//plugin.getLogger().info("DEBUG: player = " + target.getName());
+		// Check if the target is on their own island or not
+		if (!plugin.getGrid().locationIsOnIsland(target, e.getEntity().getLocation())) {
+		    // They are a visitor tsk tsk
+		    //plugin.getLogger().info("DEBUG: player is a visitor");
+		    e.setCancelled(true);
+		    return;
+		}
+	    } 
+	}
 	// Ops can do anything
 	if (e.getDamager() instanceof Player) {
 	    Player p = (Player) e.getDamager();
@@ -1428,6 +1447,20 @@ public class IslandGuard implements Listener {
 	    if ((e.getRemover() instanceof Creeper) && !Settings.allowCreeperDamage) {
 		e.setCancelled(true);
 		return;
+	    }
+	    // Check if creeper griefing is allowed
+	    if ((e.getRemover() instanceof Creeper) && !Settings.allowCreeperGriefing) {
+		// Find out who the creeper was targeting
+		Creeper creeper = (Creeper)e.getRemover();
+		if (creeper.getTarget() instanceof Player) {
+		    Player target = (Player)creeper.getTarget();
+		    // Check if the target is on their own island or not
+		    if (!plugin.getGrid().locationIsOnIsland(target, e.getEntity().getLocation())) {
+			// They are a visitor tsk tsk
+			e.setCancelled(true);
+			return;
+		    }
+		}
 	    }
 	    if (e.getRemover() instanceof Player) {
 		Player p = (Player) e.getRemover();
