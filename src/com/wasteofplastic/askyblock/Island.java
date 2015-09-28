@@ -564,7 +564,8 @@ public class Island {
     public List<UUID> getMembers() {
 	List<UUID> result = new ArrayList<UUID>();
 	// Add any coop members for this island
-	result.addAll(CoopPlay.getInstance().getCoopPlayers(center));
+	result.addAll(CoopPlay.getInstance().getCoopPlayers(center.toVector().toLocation(ASkyBlock.getIslandWorld())));
+	result.addAll(CoopPlay.getInstance().getCoopPlayers(center.toVector().toLocation(ASkyBlock.getNetherWorld())));
 	if (owner == null) {
 	    return result;
 	}
