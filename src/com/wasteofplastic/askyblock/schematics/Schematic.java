@@ -766,7 +766,15 @@ public class Schematic {
 	    }
 	}
 	if (teleport) {
-	    plugin.getGrid().homeTeleport(player);
+	    player.teleport(world.getSpawnLocation());
+	    plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
+
+		@Override
+		public void run() {
+		    plugin.getGrid().homeTeleport(player);
+		    
+		}}, 10L);
+	   
 	}
 	if (!islandCompanion.isEmpty() && grass != null) {
 	    Bukkit.getServer().getScheduler().runTaskLater(ASkyBlock.getPlugin(), new Runnable() {
