@@ -1018,6 +1018,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] split) {
 	if (!(sender instanceof Player)) {
+	    sender.sendMessage(plugin.myLocale().errorUseInGame);
 	    return false;
 	}
 	final Player player = (Player) sender;
@@ -1075,6 +1076,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.chat")) {
 		    // Check if this command is on or not
 		    if (!Settings.teamChat) {
+			player.sendMessage(ChatColor.RED + plugin.myLocale().errorUnknownCommand);
 			return false;
 		    }
 		    // Check if in team
@@ -1128,6 +1130,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 	    } else if (split[0].equalsIgnoreCase("make")) {
 		//plugin.getLogger().info("DEBUG: /is make called");
 		if (!pendingNewIslandSelection.contains(playerUUID)) {
+		    player.sendMessage(ChatColor.RED + plugin.myLocale().errorUnknownCommand);
 		    return false;
 		}
 		pendingNewIslandSelection.remove(playerUUID);
@@ -1434,8 +1437,10 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 		    }
 		    plugin.getGrid().homeSet(player);
 		    return true;
+		} else {
+		    player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).errorNoPermission);
+		    return true;
 		}
-		return false;
 	    } else if (split[0].equalsIgnoreCase("help")) {
 		player.sendMessage(ChatColor.GREEN + plugin.getName() + " " + plugin.getDescription().getVersion() + " help:");
 		if (Settings.useControlPanel) {
@@ -1578,8 +1583,10 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.topten")) {
 		    TopTen.topTenShow(player);
 		    return true;
+		} else {
+		    player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).errorNoPermission);
+		    return true;
 		}
-		return false;
 	    } else if (split[0].equalsIgnoreCase("level")) {
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.info")) {
 		    if (!plugin.getPlayers().inTeam(playerUUID) && !plugin.getPlayers().hasIsland(playerUUID)) {
@@ -1599,8 +1606,10 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 			    return true;
 			}
 		    }
+		} else {
+		    player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).errorNoPermission);
+		    return true;
 		}
-		return false;
 	    } else if (split[0].equalsIgnoreCase("invite")) {
 		// Invite label with no name, i.e., /island invite - tells the
 		// player how many more people they can invite
@@ -1649,8 +1658,10 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 		    }
 
 		    return true;
+		} else {
+		    player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).errorNoPermission);
+		    return true;
 		}
-		return false;
 	    } else if (split[0].equalsIgnoreCase("accept")) {
 		// Accept an invite command
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.join")) {
@@ -1690,8 +1701,10 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 		    }
 		    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorCommandNotReady);
 		    return true;
+		} else {
+		    player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).errorNoPermission);
+		    return true;
 		}
-		return false;
 	    } else if (split[0].equalsIgnoreCase("reject")) {
 		// Reject /island reject
 		if (inviteList.containsKey(player.getUniqueId())) {
@@ -1762,8 +1775,10 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).leaveerrorYouMustBeInWorld);
 		    }
 		    return true;
+		} else {
+		    player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).errorNoPermission);
+		    return true;
 		}
-		return false;
 	    } else if (split[0].equalsIgnoreCase("team")) {
 		if (plugin.getPlayers().inTeam(playerUUID)) {
 		    if (teamLeader.equals(playerUUID)) {
@@ -1800,7 +1815,8 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 		return true;
 	    } else {
 		// Incorrect syntax
-		return false;
+		player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).errorUnknownCommand);
+		return true;
 	    }
 	    /*
 	     * Commands that have two parameters
@@ -1832,18 +1848,21 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 			player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).errorNoPermission);
 		    }
 		} else {
-		    return false;
+		    player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).errorUnknownCommand);
+		    return true;
 		}
 	    } else
 		if (split[0].equalsIgnoreCase("make")) {
 		    //plugin.getLogger().info("DEBUG: /is make '" + split[1] + "' called");
 		    if (!pendingNewIslandSelection.contains(playerUUID)) {
-			return false;
+			player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).errorUnknownCommand);
+			return true;
 		    }
 		    pendingNewIslandSelection.remove(playerUUID);
 		    // Create a new island using schematic
 		    if (!schematics.containsKey(split[1])) {
-			return false;
+			player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).errorUnknownCommand);
+			return true;
 		    } else {
 			Schematic schematic = schematics.get(split[1]);
 			// Check perm again
@@ -1856,7 +1875,8 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 			    }
 			    return true;
 			} else {
-			    return false;
+			    player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).errorNoPermission);
+			    return true;
 			}    
 		    }
 		} else if (split[0].equalsIgnoreCase("lang")) {
@@ -2101,7 +2121,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 			    }
 			} else {
 			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
-			    return false;
+			    return true;
 			}
 		    } else if (split[0].equalsIgnoreCase("level")) {
 			// island level <name> command
@@ -2123,8 +2143,8 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 			    return true;
 			} else {
 			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
+			    return true;
 			}
-			return false;
 		    } else if (split[0].equalsIgnoreCase("invite")) {
 			// Team invite a player command
 			if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.create")) {
@@ -2240,7 +2260,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 			    return true;
 			} else {
 			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
-			    return false;
+			    return true;
 			}
 		    } else if (split[0].equalsIgnoreCase("coop")) {
 			// Give a player coop privileges
@@ -2622,7 +2642,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 			    return true;
 			} else {
 			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
-			    return false;
+			    return true;
 			}
 		    } else if (split[0].equalsIgnoreCase("makeleader")) {
 			if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.makeleader")) {
@@ -2687,13 +2707,15 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 			    return true;
 			} else {
 			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
-			    return false;
+			    return true;
 			}
 		    } else {
-			return false;
+			player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).errorUnknownCommand);
+			return true;
 		    }
 	}
-	return false;
+	player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).errorUnknownCommand);
+	return true;
     }
 
 
