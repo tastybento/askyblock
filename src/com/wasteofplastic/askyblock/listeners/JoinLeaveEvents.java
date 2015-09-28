@@ -212,7 +212,7 @@ public class JoinLeaveEvents implements Listener {
 	// Set the player's level
 	plugin.getChatListener().setPlayerLevel(playerUUID, plugin.getPlayers().getIslandLevel(player.getUniqueId()));
 	// Remove from TopTen if the player has the permission
-	if (player.hasPermission(Settings.PERMPREFIX + "mod.excludetopten")) {
+	if (player.hasPermission(Settings.PERMPREFIX + "excludetopten")) {
 	    TopTen.topTenRemoveEntry(playerUUID);
 	}
     }
@@ -220,7 +220,7 @@ public class JoinLeaveEvents implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerQuit(final PlayerQuitEvent event) {
 	// Remove from TopTen if the player has the permission
-	if (event.getPlayer().hasPermission(Settings.PERMPREFIX + "mod.excludetopten")) {
+	if (event.getPlayer().hasPermission(Settings.PERMPREFIX + "excludetopten")) {
 	    TopTen.topTenRemoveEntry(event.getPlayer().getUniqueId());
 	}
 	// Remove from coop list

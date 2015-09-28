@@ -46,7 +46,7 @@ public class TopTen {
 	Player player = plugin.getServer().getPlayer(ownerUUID);
 	if (player != null) {
 	    // Online
-	    if (player.hasPermission(Settings.PERMPREFIX + "mod.excludetopten")) {
+	    if (player.hasPermission(Settings.PERMPREFIX + "excludetopten")) {
 		topTenList.remove(ownerUUID);
 		return;
 	    }
@@ -222,7 +222,7 @@ public class TopTen {
 	    Player entry = plugin.getServer().getPlayer(playerUUID);
 	    boolean show = true;
 	    if (entry != null) {
-		if (entry.hasPermission(Settings.PERMPREFIX + "mod.excludetopten")) {
+		if (entry.hasPermission(Settings.PERMPREFIX + "excludetopten")) {
 		    it.remove();
 		    show = false;
 		}

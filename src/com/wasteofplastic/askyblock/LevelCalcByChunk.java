@@ -167,7 +167,7 @@ public class LevelCalcByChunk {
 			    }
 			    //plugin.getLogger().info("DEBUG: updating top ten");
 			    // Only update top ten if the asker doesn't have this permission
-			    if (!(asker.getUniqueId().equals(targetPlayer) && asker.hasPermission(Settings.PERMPREFIX + "mod.excludetopten"))) {
+			    if (!(asker.getUniqueId().equals(targetPlayer) && asker.hasPermission(Settings.PERMPREFIX + "excludetopten"))) {
 				if (plugin.getPlayers().inTeam(targetPlayer)) {
 				    UUID leader = plugin.getPlayers().getTeamLeader(targetPlayer);
 				    if (leader != null) {

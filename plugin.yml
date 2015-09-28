@@ -103,6 +103,9 @@ permissions:
           askyblock.craft.dirt:
             description: Allows tilling of coarse dirt into dirt
             default: false
+      askyblock.excludetopten:
+        description: Excludes player from top ten
+        default: false
       askyblock.settings.*:
         children:
           askyblock.settings.allowAnvilUse:
@@ -238,9 +241,6 @@ permissions:
             default: op
           askyblock.mod.spy:
             description: Spy on team chats
-            default: false
-          askyblock.mod.excludetopten:
-            description: Exclude player from the top ten list
             default: false
           askyblock.mod.removesign:
             description: Gives ability to remove warp signs

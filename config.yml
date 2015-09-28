@@ -690,7 +690,10 @@ schematicsection:
       filename: double.schematic
       # Schematics can have biomes set when they are created
       biome: FLOWER_FOREST
+      # If useDefaultChest is false, the items in the schematic will be used
+      # If false, the default chest items will be used, or the list below
       useDefaultChest: true
+      # Chest items defined here will override the default chest items.
       # You can set the chest items here in this list
       # Material:Qty, or Material:Data:Qty
       #chestItems:
@@ -720,7 +723,8 @@ schematicsection:
       filename: harder.schematic
       biome: COLD_TAIGA
       useDefaultChest: false
-      # Chest items can be defined here if useDefaultChest is false
+      # Chest items defined here will override the default chest items.
+      # You can set the chest items here in this list
       # Material:Qty, or Material:Data:Qty
       #chestItems:
       #- MELON:1
