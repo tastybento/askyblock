@@ -70,7 +70,7 @@ public class WarpSigns implements Listener {
     public void onSignBreak(BlockBreakEvent e) {
 	Block b = e.getBlock();
 	Player player = e.getPlayer();
-	if (b.getWorld().equals(ASkyBlock.getIslandWorld())) {
+	if (b.getWorld().equals(ASkyBlock.getIslandWorld()) || b.getWorld().equals(ASkyBlock.getNetherWorld())) {
 	    if (b.getType().equals(Material.SIGN_POST) || b.getType().equals(Material.WALL_SIGN)) {
 		Sign s = (Sign) b.getState();
 		if (s != null) {
@@ -112,7 +112,7 @@ public class WarpSigns implements Listener {
 	//plugin.getLogger().info("DEBUG: SignChangeEvent called");
 	String title = e.getLine(0);
 	Player player = e.getPlayer();
-	if (player.getWorld().equals(ASkyBlock.getIslandWorld())) {
+	if (player.getWorld().equals(ASkyBlock.getIslandWorld()) || player.getWorld().equals(ASkyBlock.getNetherWorld())) {
 	    //plugin.getLogger().info("DEBUG: Correct world");
 	    if (e.getBlock().getType().equals(Material.SIGN_POST) || e.getBlock().getType().equals(Material.WALL_SIGN)) {
 
