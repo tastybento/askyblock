@@ -268,7 +268,7 @@ public class BiomesPanel implements Listener {
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = false)
     public void onChunkLoad(ChunkLoadEvent e) {
-	if (e.getWorld() != ASkyBlock.getIslandWorld()) {
+	if (!ASkyBlock.getIslandWorldReady() || e.getWorld() != ASkyBlock.getIslandWorld()) {
 	    //plugin.getLogger().info("DEBUG: not right world");
 	    return;
 	}
