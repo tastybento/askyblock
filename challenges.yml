@@ -398,6 +398,10 @@ challenges:
       level: 'Competent'
       type: island
       requiredItems: 'BED_BLOCK:1 WORKBENCH:1 GLASS:1 WOODEN_DOOR:1 FURNACE:1 BOOKSHELF:1 TORCH:1'
+      # Search radius - the number of blocks that will be searched around the player
+      # Minimum 10, which searches from -10 to +10 blocks around the player in x,y,z
+      # Max is 50 because big searches cause lag
+      searchRadius: 10
       takeItems: false
       itemReward: 'JUKEBOX:1 RECORD_12:1 LAPIS_BLOCK:10'
       rewardText: '1 jukebox, 1 music disk, 10 lapis lazuli blocks'

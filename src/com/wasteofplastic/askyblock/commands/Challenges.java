@@ -1253,9 +1253,16 @@ public class Challenges implements CommandExecutor, TabCompleter {
 	    final int px = l.getBlockX();
 	    final int py = l.getBlockY();
 	    final int pz = l.getBlockZ();
-	    for (int x = -10; x <= 10; x++) {
-		for (int y = -10; y <= 10; y++) {
-		    for (int z = -10; z <= 10; z++) {
+	    // Get search radius - min is 10, max is 50
+	    int searchRadius = getChallengeConfig().getInt("challenges.challengeList." + challenge + ".searchRadius",10);
+	    if (searchRadius < 10) {
+		searchRadius = 10;
+	    } else if (searchRadius > 50) {
+		searchRadius = 50;
+	    }
+	    for (int x = -searchRadius; x <= searchRadius; x++) {
+		for (int y = -searchRadius; y <= searchRadius; y++) {
+		    for (int z = -searchRadius; z <= searchRadius; z++) {
 			final Material b = new Location(l.getWorld(), px + x, py + y, pz + z).getBlock().getType();
 			if (neededItem.containsKey(b)) {
 			    if (neededItem.get(b) == 1) {
