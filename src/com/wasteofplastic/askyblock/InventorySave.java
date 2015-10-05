@@ -54,7 +54,7 @@ public class InventorySave {
 	    //plugin.getLogger().info("DEBUG: player is known");
 	    player.getInventory().setContents(inv.getInventory());
 	    player.getInventory().setArmorContents(inv.getArmor());
-	    inventories.remove(inv);
+	    inventories.remove(player.getUniqueId());
 	    return;
 	}
     }
