@@ -1517,7 +1517,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
 		plugin.getLogger().warning("Format should be 'icon: MaterialType:Damage' where Damage is optional");
 	    }
 	}
-	if (icon == null || icon.equals(Material.AIR)) {
+	if (icon == null || icon.getType() == Material.AIR) {
 	    icon = new ItemStack(Material.PAPER);
 	}
 	String description = ChatColor.GREEN
