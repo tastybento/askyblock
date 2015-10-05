@@ -147,6 +147,7 @@ public class IslandBlock {
 	WEtoME.put("OZELOT", EntityType.OCELOT);
 	WEtoME.put("MUSHROOMCOW", EntityType.MUSHROOM_COW);
 	WEtoME.put("PIGZOMBIE", EntityType.PIG_ZOMBIE);
+	WEtoME.put("CAVESPIDER", EntityType.CAVE_SPIDER);
     }
 
     /**
@@ -228,7 +229,11 @@ public class IslandBlock {
 	if (WEtoME.containsKey(creatureType)) {
 	    spawnerBlockType = WEtoME.get(creatureType);
 	} else {
-	    spawnerBlockType = EntityType.valueOf(creatureType);
+	    try {
+		spawnerBlockType = EntityType.valueOf(creatureType);
+	    } catch (Exception e) {
+		Bukkit.getLogger().severe("I don't know what a " + creatureType + " is... Skipping spawner setting.");
+	    }
 	}
     }
 
