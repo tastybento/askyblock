@@ -143,7 +143,7 @@ challenges:
   completedtimes: "Completed [donetimes] out of [maxtimes]"
   errorIslandLevel: "Your island must be level [level] to complete this challenge!"
   errorItemsNotThere: "All required items must be close to you on your island!"
-  errorNotCloseEnough: "You must be standing within 10 blocks of all required items."
+  errorNotCloseEnough: "You must be standing within [number] blocks of all required items."
   errorNotEnoughItems: "You do not have enough required item(s)"
   errorNotOnIsland: "You must be on your island to do that!"
   errorRewardProblem: "There was a problem giving your reward. Ask Admin to check log!"

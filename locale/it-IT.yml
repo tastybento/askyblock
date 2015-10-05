@@ -51,7 +51,7 @@ challenges:
   completeRepeatable: "Completata(ripetibile)"
   errorIslandLevel: "La tua isole deve essere di livello [level] per completare questa sfida!"
   errorItemsNotThere: "Devi avere tutti gli oggetti richiesti e essere vicino alla tua isola!"
-  errorNotCloseEnough: "Devi stare almeno 10 blocchi con tutti gli oggetti neccessari."
+  errorNotCloseEnough: "Devi stare almeno [number] blocchi con tutti gli oggetti neccessari."
   errorNotEnoughItems: "Non hai ancora gli oggetti neccessari per completare la sfida"
   errorNotOnIsland: "Devi essere sulla tua isola per farlo!"
   errorRewardProblem: "Si è verificato un problema con la ricompensa. Comunica allo staff il problema!"

@@ -137,7 +137,7 @@ challenges:
   completedtimes: "Gedaan in [donetimes] van de [maxtimes]"
   errorIslandLevel: "Je eiland level moet [level] zijn om deze challenge te doen!"
   errorItemsNotThere: "Alle spullen moeten dicht bij je zijn!"
-  errorNotCloseEnough: "Je moet binnen 10 blokken van de spullen staan!"
+  errorNotCloseEnough: "Je moet binnen [number] blokken van de spullen staan!"
   errorNotEnoughItems: "Je hebt niet voldoende spullen!"
   errorNotOnIsland: "Je moet op een eiland zijn om dat te doen!"
   errorRewardProblem: "Er is een probleem met de beloning. Vraag de Eigenaar/mod's om het te fixen!"

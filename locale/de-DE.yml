@@ -145,7 +145,7 @@ challenges:
   completedtimes: "[donetimes]x von [maxtimes]x abgeschlossen"
   errorIslandLevel: "Deine Insel muss auf Level [level] sein, um diese Herausforderung abzuschliessen!"
   errorItemsNotThere: "Alle benötigten Items müssen bei deiner Insel sein!"
-  errorNotCloseEnough: "Du musst innerhalb von 10 Blöcken von den benötigten Items stehen."
+  errorNotCloseEnough: "Du musst innerhalb von [number] Blöcken von den benötigten Items stehen."
   errorNotEnoughItems: "Du hast nicht genug von den benötigten Items"
   errorNotOnIsland: "Du musst auf deiner Insel sein!"
   errorRewardProblem: "Ein Fehler ist aufgetreten. Bitte informiere einen Teamler!"

@@ -51,7 +51,7 @@ challenges:
   completedtimes: "Dokonceno [donetimes] z [maxtimes]"
   errorIslandLevel: "Tvuj ostrov musi mit uroven [level] k dokonceni ukolu!"
   errorItemsNotThere: "Vsechny pozadovane predmety musi byt blizko tebe na tvem ostrove!"
-  errorNotCloseEnough: "Musis stat nejvice 10 bloku od vsech pozadovanech predmetu."
+  errorNotCloseEnough: "Musis stat nejvice [number] bloku od vsech pozadovanech predmetu."
   errorNotEnoughItems: "Nemas dostatek pozadovanych predmetu"
   errorNotOnIsland: "Musis byt na svem ostrovu abys to mohl udelat!"
   errorRewardProblem: "Nastal problem pri odmenovani. Kontaktuj Admina!"

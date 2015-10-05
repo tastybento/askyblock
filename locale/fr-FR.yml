@@ -134,7 +134,7 @@ challenges:
   completedtimes: "Complété [donetimes]/[maxtimes] fois"
   errorIslandLevel: "Votre île doit être niveau [level] pour compléter ce challenge !"
   errorItemsNotThere: "Les objets doivent être proche de vous sur votre île !"
-  errorNotCloseEnough: "Vous devez vous tenir à moins de 10 mètres des blocs nécessaires."
+  errorNotCloseEnough: "Vous devez vous tenir à moins de [number] mètres des blocs nécessaires."
   errorNotEnoughItems: "Vous n'avez pas le ou les objets requis !"
   errorNotOnIsland: "Vous devez être sur votre île pour faire ça !"
   errorRewardProblem: "Il y a eu un problème en vous donnant votre récompense. Contactez un administrateur !"

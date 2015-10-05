@@ -58,7 +58,7 @@ challenges:
   completedtimes: "完成 [donetimes] / [maxtimes]"
   errorIslandLevel: "你的島嶼等級必須達到 &e[level]級&c才能夠完成這個任務!"
   errorItemsNotThere: 所有任務所需物品必須在你的島上!
-  errorNotCloseEnough: 任務所需物品必須在你十格範圍內.
+  errorNotCloseEnough: 任務所需物品必須在你[number]格範圍內.
   errorNotEnoughItems: 你沒有足夠的所需物品
   errorNotOnIsland: 你只能夠在你的島嶼上那樣做!
   errorRewardProblem: "在獲得獎勵時出現問題. 請聯繫管理員檢查紀錄!"

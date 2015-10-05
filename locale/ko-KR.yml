@@ -143,7 +143,7 @@ challenges:
   completedtimes: "진행 단계: [donetimes] / [maxtimes]"
   errorIslandLevel: "당신의 섬 레벨이 [level] 정도는 되야 이 도전 과제가 완료될 수 있습니다!"
   errorItemsNotThere: "모든 요구된 아이템들은 당신의 섬에서 당신과 가까워야 합니다!"
-  errorNotCloseEnough: "당신은 반드시 요구된 모든 아이템들의 10 블록 이내에 같이 서있어야만 합니다."
+  errorNotCloseEnough: "당신은 반드시 요구된 모든 아이템들의 [number] 블록 이내에 같이 서있어야만 합니다."
   errorNotEnoughItems: "요구된 아이템(들)을 충분히 가지고 있지 않습니다."
   errorNotOnIsland: "당신은 반드시 당신의 섬에서 그것을 해야 합니다!"
   errorRewardProblem: "당신에게 보상을 주는 데 문제가 있습니다. 관리자에게 기록을 확인해달라고 요청하세요!"

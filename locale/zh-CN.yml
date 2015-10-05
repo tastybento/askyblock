@@ -93,7 +93,7 @@ challenges:
   completedtimes: "§a完成次数§e [donetimes] §a/§6 [maxtimes]"
   errorIslandLevel: "§c你的岛屿等级必须达到 §e[level]级§c才能够完成这个任务!"
   errorItemsNotThere: §c所有任务所需物品必须在你的岛上!
-  errorNotCloseEnough: §c任务所需物品必须在你十格范围内.
+  errorNotCloseEnough: §c任务所需物品必须在你[number]格范围内.
   errorNotEnoughItems: §c你没有足够的所需物品
   errorNotOnIsland: §c你只能够在你的岛屿上那样做!
   errorRewardProblem: "§c奖励你物品的时候发生了未知错误,请联系管理员!"

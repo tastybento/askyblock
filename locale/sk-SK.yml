@@ -49,7 +49,7 @@ challenges:
   completedtimes: "Splnene [donetimes] z [maxtimes] moznosti"
   errorIslandLevel: "Tvoj ostrov musi byt na urovni [level] pre splnenie ulohy!"
   errorItemsNotThere: "Vsetky pozadovane veci musia byt na tvojom ostrove!"
-  errorNotCloseEnough: "Musis stat 10 blokov od pozadovanych veci."
+  errorNotCloseEnough: "Musis stat [number] blokov od pozadovanych veci."
   errorNotEnoughItems: "Zatial nemas pozadovane veci"
   errorNotOnIsland: "Musis byt na ostrove ak chces vykonat tuto akciu!"
   errorRewardProblem: "Je problem s odmenou! Nahlas to do bugtrackera na fore!"
