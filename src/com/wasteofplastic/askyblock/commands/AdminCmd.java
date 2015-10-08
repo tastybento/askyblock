@@ -19,7 +19,9 @@ package com.wasteofplastic.askyblock.commands;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -53,6 +55,7 @@ import org.bukkit.util.BlockIterator;
 
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
+import com.google.common.io.Files;
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.CoopPlay;
 import com.wasteofplastic.askyblock.DeleteIslandChunk;
@@ -600,210 +603,283 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 		return false;
 	    }
 	case 2:
-	    // Resetsign <player> - makes a warp sign for player
-	    if (split[0].equalsIgnoreCase("resetsign")) {
-		// Find the closest island
-		if (!(sender instanceof Player)) {
-		    sender.sendMessage(ChatColor.RED + plugin.myLocale().errorUseInGame);
+	    // cleareset all - clears all player resets
+	    if (split[0].equalsIgnoreCase("clearreset") && split[1].equalsIgnoreCase("all")) {
+		if (asyncPending) {
+		    sender.sendMessage(ChatColor.RED + plugin.myLocale().errorCommandNotReady);
 		    return true;
 		}
-		Player p = (Player) sender;
-		if (!VaultHelper.checkPerm(p, Settings.PERMPREFIX + "mod.signadmin") && !p.isOp()) {
-		    p.sendMessage(ChatColor.RED + plugin.myLocale(p.getUniqueId()).errorNoPermission);
-		    return true;
-		}
-		// Convert target name to a UUID
-		final UUID playerUUID = plugin.getPlayers().getUUID(split[1]);
-		if (!plugin.getPlayers().isAKnownPlayer(playerUUID)) {
-		    sender.sendMessage(ChatColor.RED + plugin.myLocale().errorUnknownPlayer);
-		} else {
-		    // Check if this player has an island
-		    if (!plugin.getPlayers().hasIsland(playerUUID) && !plugin.getPlayers().inTeam(playerUUID)) {
-			// No island
-			sender.sendMessage(ChatColor.RED + plugin.myLocale().errorNoIslandOther);
-			return true;
-		    }
-		    // Has an island
-		    // Find out whether the player is looking at a warp sign
-		    // Look at what the player was looking at
-		    BlockIterator iter = new BlockIterator(p, 10);
-		    Block lastBlock = iter.next();
-		    while (iter.hasNext()) {
-			lastBlock = iter.next();
-			if (lastBlock.getType() == Material.AIR)
-			    continue;
-			break;
-		    }
-		    // Check if it is a sign
-		    if (!lastBlock.getType().equals(Material.SIGN_POST)) {
-			sender.sendMessage(ChatColor.RED + plugin.myLocale(p.getUniqueId()).adminResetSignNoSign);
-			return true;
-		    }
-		    Sign sign = (Sign) lastBlock.getState();
-		    // Check if the sign is within the right island boundary
-		    Location islandLoc = plugin.getPlayers().getIslandLocation(playerUUID);
-		    if (!plugin.getGrid().getIslandAt(islandLoc).inIslandSpace(sign.getLocation())) {
-			p.sendMessage(ChatColor.RED + plugin.myLocale(p.getUniqueId()).adminSetHomeNotOnPlayersIsland);
-		    } else {
-			sender.sendMessage(ChatColor.GREEN + plugin.myLocale(p.getUniqueId()).adminResetSignFound);
-			// Find out if this player is allowed to have a sign on this island
-			if (plugin.getWarpSignsListener().addWarp(playerUUID, lastBlock.getLocation())) {
-			    // Change sign color to green
-			    sign.setLine(0, ChatColor.GREEN + plugin.myLocale().warpswelcomeLine);
-			    sign.update();
-			    p.sendMessage(ChatColor.GREEN + plugin.myLocale(p.getUniqueId()).adminResetSignRescued.replace("[name]", plugin.getPlayers().getName(playerUUID)));
-			    return true;
+		// Do online players first
+		plugin.getPlayers().clearResets(Settings.resetLimit);
+		// Do offline players
+		final File playerFolder = plugin.getPlayersFolder();
+		// Set the pending flag
+		asyncPending = true;
+		// Check against player files
+		plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+
+		    @Override
+		    public void run() {
+			//System.out.println("DEBUG: Running async task");
+			int done = 0;
+			// Check files against potentialUnowned
+			FilenameFilter ymlFilter = new FilenameFilter() {
+			    public boolean accept(File dir, String name) {
+				String lowercaseName = name.toLowerCase();
+				if (lowercaseName.endsWith(".yml")) {
+				    return true;
+				} else {
+				    return false;
+				}
+			    }
+			};			
+			for (File file: playerFolder.listFiles(ymlFilter)) {
+			    List<String> playerFileContents = new ArrayList<String>();
+			    done++;
+			    try {
+				Scanner scanner = new Scanner(file);
+				while (scanner.hasNextLine()) {
+				    final String lineFromFile = scanner.nextLine();
+				    if (lineFromFile.contains("resetsLeft:")) { 
+					playerFileContents.add("resetsLeft: " + Settings.resetLimit);
+				    } else {
+					playerFileContents.add(lineFromFile);
+				    }
+				}
+				scanner.close();
+				// Write file
+				FileWriter writer = new FileWriter(file); 
+				for(String str: playerFileContents) {
+				  writer.write(str + "\n");
+				}
+				writer.close();
+				if (done % 500 == 0) {
+				    final int update = done;
+				    plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
+
+					@Override
+					public void run() {
+					    // Tell player
+					    sender.sendMessage(ChatColor.GREEN + plugin.myLocale().clearedResetLimit + " [" + update + " players]...");	    
+					}});
+				    }
+			    } catch (FileNotFoundException e) {
+				e.printStackTrace();
+			    } catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			    }
 			}
-			// Warp already exists
-			sender.sendMessage(ChatColor.RED + plugin.myLocale(p.getUniqueId()).adminResetSignErrorExists.replace("[name]", plugin.getWarpSignsListener().getWarpOwner(lastBlock.getLocation())));
-		    }
-		}
-		return true;
-	    }
-	    // Delete the island you are on
-	    else if (split[0].equalsIgnoreCase("deleteisland")) {
-		if (!split[1].equalsIgnoreCase("confirm")) {
-		    sender.sendMessage(ChatColor.RED + plugin.myLocale().adminDeleteIslandError);
-		    return true;
-		}
-		// Get the island I am on
-		Island island = plugin.getGrid().getIslandAt(((Player) sender).getLocation());
-		if (island == null) {
-		    sender.sendMessage(ChatColor.RED + plugin.myLocale().adminDeleteIslandnoid);
-		    return true;
-		}
-		// Try to get the owner of this island
-		UUID owner = island.getOwner();
-		String name = "unknown";
-		if (owner != null) {
-		    name = plugin.getPlayers().getName(owner);
-		    sender.sendMessage(ChatColor.RED + plugin.myLocale().adminSetSpawnownedBy.replace("[name]", name));
-		    sender.sendMessage(ChatColor.RED + plugin.myLocale().adminDeleteIslanduse.replace("[name]",name));
-		    return true;
-		} else {
-		    sender.sendMessage(ChatColor.YELLOW + plugin.myLocale().deleteremoving.replace("[name]", name));
-		    deleteIslands(island, sender);
-		    return true;
-		}
-	    } else if (split[0].equalsIgnoreCase("resethome")) { 
-		// Convert name to a UUID
-		final UUID playerUUID = plugin.getPlayers().getUUID(split[1]);
-		if (!plugin.getPlayers().isAKnownPlayer(playerUUID)) {
-		    sender.sendMessage(ChatColor.RED + plugin.myLocale().errorUnknownPlayer);
-		} else {
-		    // Check if this player has an island
-		    if (!plugin.getPlayers().hasIsland(playerUUID) && !plugin.getPlayers().inTeam(playerUUID)) {
-			// No island
-			sender.sendMessage(ChatColor.RED + plugin.myLocale().errorNoIslandOther);
-			return true;
-		    }
-		    // Has an island
-		    Location safeHome = plugin.getGrid().getSafeHomeLocation(playerUUID, 1);
-		    if (safeHome == null) {
-			sender.sendMessage(ChatColor.RED + plugin.myLocale().adminSetHomeNoneFound);
-		    } else {
-			plugin.getPlayers().setHomeLocation(playerUUID, safeHome);
-			sender.sendMessage(ChatColor.GREEN + plugin.myLocale().adminSetHomeHomeSet.replace("[location]", safeHome.getBlockX() + ", " + safeHome.getBlockY() + "," + safeHome.getBlockZ()));
-		    }
-		}
-		return true;
-	    } else if (split[0].equalsIgnoreCase("sethome")) { 
-		if (!(sender instanceof Player)) {
-		    sender.sendMessage(ChatColor.RED + plugin.myLocale().adminLockerrorInGame);
-		    return true;
-		}
-		player = (Player)sender;
-		// Convert name to a UUID
-		final UUID playerUUID = plugin.getPlayers().getUUID(split[1]);
-		if (!plugin.getPlayers().isAKnownPlayer(playerUUID)) {
-		    sender.sendMessage(ChatColor.RED + plugin.myLocale().errorUnknownPlayer);
-		} else {
-		    // Check if this player has an island
-		    if (!plugin.getPlayers().hasIsland(playerUUID) && !plugin.getPlayers().inTeam(playerUUID)) {
-			// No island
-			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoIslandOther);
-			return true;
-		    }
-		    // Has an island
-		    Location islandLoc = plugin.getPlayers().getIslandLocation(playerUUID);
-		    // Check the player is within the island boundaries
-		    if (!plugin.getGrid().getIslandAt(islandLoc).inIslandSpace(player.getLocation())) {
-			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).adminSetHomeNotOnPlayersIsland);
-		    } else {
-			// Check that the location is safe
-			if (!GridManager.isSafeLocation(player.getLocation())) {
-			    // Not safe
-			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).adminSetHomeNoneFound);
-			} else {
-			    // Success
-			    plugin.getPlayers().setHomeLocation(playerUUID, player.getLocation());
-			    player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).adminSetHomeHomeSet.replace("[location]", player.getLocation().getBlockX() + ", " + player.getLocation().getBlockY() + "," + player.getLocation().getBlockZ()));
-			}
-		    }
-		}
+			//System.out.println("DEBUG: scanning done");
+			asyncPending = false;
+			sender.sendMessage(ChatColor.YELLOW + plugin.myLocale().clearedResetLimit + " [" + done + " players] completed.");
+		    }});
 		return true;
 	    } else
-		// Set protection for the island the player is on
-		if (split[0].equalsIgnoreCase("setrange")) {
+		// Resetsign <player> - makes a warp sign for player
+		if (split[0].equalsIgnoreCase("resetsign")) {
+		    // Find the closest island
+		    if (!(sender instanceof Player)) {
+			sender.sendMessage(ChatColor.RED + plugin.myLocale().errorUseInGame);
+			return true;
+		    }
+		    Player p = (Player) sender;
+		    if (!VaultHelper.checkPerm(p, Settings.PERMPREFIX + "mod.signadmin") && !p.isOp()) {
+			p.sendMessage(ChatColor.RED + plugin.myLocale(p.getUniqueId()).errorNoPermission);
+			return true;
+		    }
+		    // Convert target name to a UUID
+		    final UUID playerUUID = plugin.getPlayers().getUUID(split[1]);
+		    if (!plugin.getPlayers().isAKnownPlayer(playerUUID)) {
+			sender.sendMessage(ChatColor.RED + plugin.myLocale().errorUnknownPlayer);
+		    } else {
+			// Check if this player has an island
+			if (!plugin.getPlayers().hasIsland(playerUUID) && !plugin.getPlayers().inTeam(playerUUID)) {
+			    // No island
+			    sender.sendMessage(ChatColor.RED + plugin.myLocale().errorNoIslandOther);
+			    return true;
+			}
+			// Has an island
+			// Find out whether the player is looking at a warp sign
+			// Look at what the player was looking at
+			BlockIterator iter = new BlockIterator(p, 10);
+			Block lastBlock = iter.next();
+			while (iter.hasNext()) {
+			    lastBlock = iter.next();
+			    if (lastBlock.getType() == Material.AIR)
+				continue;
+			    break;
+			}
+			// Check if it is a sign
+			if (!lastBlock.getType().equals(Material.SIGN_POST)) {
+			    sender.sendMessage(ChatColor.RED + plugin.myLocale(p.getUniqueId()).adminResetSignNoSign);
+			    return true;
+			}
+			Sign sign = (Sign) lastBlock.getState();
+			// Check if the sign is within the right island boundary
+			Location islandLoc = plugin.getPlayers().getIslandLocation(playerUUID);
+			if (!plugin.getGrid().getIslandAt(islandLoc).inIslandSpace(sign.getLocation())) {
+			    p.sendMessage(ChatColor.RED + plugin.myLocale(p.getUniqueId()).adminSetHomeNotOnPlayersIsland);
+			} else {
+			    sender.sendMessage(ChatColor.GREEN + plugin.myLocale(p.getUniqueId()).adminResetSignFound);
+			    // Find out if this player is allowed to have a sign on this island
+			    if (plugin.getWarpSignsListener().addWarp(playerUUID, lastBlock.getLocation())) {
+				// Change sign color to green
+				sign.setLine(0, ChatColor.GREEN + plugin.myLocale().warpswelcomeLine);
+				sign.update();
+				p.sendMessage(ChatColor.GREEN + plugin.myLocale(p.getUniqueId()).adminResetSignRescued.replace("[name]", plugin.getPlayers().getName(playerUUID)));
+				return true;
+			    }
+			    // Warp already exists
+			    sender.sendMessage(ChatColor.RED + plugin.myLocale(p.getUniqueId()).adminResetSignErrorExists.replace("[name]", plugin.getWarpSignsListener().getWarpOwner(lastBlock.getLocation())));
+			}
+		    }
+		    return true;
+		}
+	    // Delete the island you are on
+		else if (split[0].equalsIgnoreCase("deleteisland")) {
+		    if (!split[1].equalsIgnoreCase("confirm")) {
+			sender.sendMessage(ChatColor.RED + plugin.myLocale().adminDeleteIslandError);
+			return true;
+		    }
+		    // Get the island I am on
+		    Island island = plugin.getGrid().getIslandAt(((Player) sender).getLocation());
+		    if (island == null) {
+			sender.sendMessage(ChatColor.RED + plugin.myLocale().adminDeleteIslandnoid);
+			return true;
+		    }
+		    // Try to get the owner of this island
+		    UUID owner = island.getOwner();
+		    String name = "unknown";
+		    if (owner != null) {
+			name = plugin.getPlayers().getName(owner);
+			sender.sendMessage(ChatColor.RED + plugin.myLocale().adminSetSpawnownedBy.replace("[name]", name));
+			sender.sendMessage(ChatColor.RED + plugin.myLocale().adminDeleteIslanduse.replace("[name]",name));
+			return true;
+		    } else {
+			sender.sendMessage(ChatColor.YELLOW + plugin.myLocale().deleteremoving.replace("[name]", name));
+			deleteIslands(island, sender);
+			return true;
+		    }
+		} else if (split[0].equalsIgnoreCase("resethome")) { 
+		    // Convert name to a UUID
+		    final UUID playerUUID = plugin.getPlayers().getUUID(split[1]);
+		    if (!plugin.getPlayers().isAKnownPlayer(playerUUID)) {
+			sender.sendMessage(ChatColor.RED + plugin.myLocale().errorUnknownPlayer);
+		    } else {
+			// Check if this player has an island
+			if (!plugin.getPlayers().hasIsland(playerUUID) && !plugin.getPlayers().inTeam(playerUUID)) {
+			    // No island
+			    sender.sendMessage(ChatColor.RED + plugin.myLocale().errorNoIslandOther);
+			    return true;
+			}
+			// Has an island
+			Location safeHome = plugin.getGrid().getSafeHomeLocation(playerUUID, 1);
+			if (safeHome == null) {
+			    sender.sendMessage(ChatColor.RED + plugin.myLocale().adminSetHomeNoneFound);
+			} else {
+			    plugin.getPlayers().setHomeLocation(playerUUID, safeHome);
+			    sender.sendMessage(ChatColor.GREEN + plugin.myLocale().adminSetHomeHomeSet.replace("[location]", safeHome.getBlockX() + ", " + safeHome.getBlockY() + "," + safeHome.getBlockZ()));
+			}
+		    }
+		    return true;
+		} else if (split[0].equalsIgnoreCase("sethome")) { 
 		    if (!(sender instanceof Player)) {
 			sender.sendMessage(ChatColor.RED + plugin.myLocale().adminLockerrorInGame);
 			return true;
 		    }
 		    player = (Player)sender;
-		    UUID playerUUID = player.getUniqueId();
-		    Island island = plugin.getGrid().getIslandAt(player.getLocation());
-		    // Check if island exists
-		    if (island == null) {
-			player.sendMessage(ChatColor.RED + plugin.myLocale().errorNotOnIsland);
-			return true;
+		    // Convert name to a UUID
+		    final UUID playerUUID = plugin.getPlayers().getUUID(split[1]);
+		    if (!plugin.getPlayers().isAKnownPlayer(playerUUID)) {
+			sender.sendMessage(ChatColor.RED + plugin.myLocale().errorUnknownPlayer);
 		    } else {
-			int newRange = 10;
-			int maxRange = Settings.islandDistance;
-			// If spawn do something different
-			if (island.isSpawn()) {
-			    try {
-				newRange = Integer.valueOf(split[1]);
-			    } catch (Exception e) {
-				player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).adminSetRangeInvalid);
-				return true;
-			    }
-			    player.sendMessage(ChatColor.GREEN + plugin.myLocale(playerUUID).adminSetRangeSet.replace("[number]",String.valueOf(newRange)));
-			    if (newRange > maxRange) {
-				player.sendMessage(ChatColor.RED + "" + ChatColor.BOLD + plugin.myLocale(playerUUID).adminSetRangeWarning.replace("[max]",String.valueOf(maxRange)));
-				player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).adminSetRangeWarning2);
-			    }
-			    island.setProtectionSize(newRange);
-			    player.sendMessage(ChatColor.YELLOW + plugin.myLocale().adminSetSpawncenter.replace("[location]", island.getCenter().getBlockX() + "," + island.getCenter().getBlockZ()));
-			    player.sendMessage(ChatColor.YELLOW + plugin.myLocale().adminSetSpawnlimits.replace("[min]", island.getMinX() + "," + island.getMinZ()).replace("[max]",
-				    (island.getMinX() + island.getIslandDistance() - 1) + "," + (island.getMinZ() + island.getIslandDistance() - 1)));
-			    player.sendMessage(ChatColor.YELLOW + plugin.myLocale().adminSetSpawnrange.replace("[number]",String.valueOf(island.getProtectionSize())));
-			    player.sendMessage(ChatColor.YELLOW + plugin.myLocale().adminSetSpawncoords.replace("[min]",  island.getMinProtectedX() + ", " + island.getMinProtectedZ()).replace("[max]",
-				    + (island.getMinProtectedX() + island.getProtectionSize() - 1) + ", "
-					    + (island.getMinProtectedZ() + island.getProtectionSize() - 1)));
-			    if (island.isLocked()) {
-				player.sendMessage(ChatColor.RED + plugin.myLocale().adminSetSpawnlocked);
-			    }
-			} else {
-			    if (!plugin.getConfig().getBoolean("island.overridelimit")) {
-				maxRange -= 16;
-			    }
-			    try {
-				newRange = Integer.valueOf(split[1]);
-			    } catch (Exception e) {
-				player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).adminSetRangeInvalid + " "  + plugin.myLocale(playerUUID).adminSetRangeTip.replace("[max]", String.valueOf(maxRange)));
-				return true;
-			    }
-			    if (newRange < 10 || newRange > maxRange) {
-				player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).adminSetRangeInvalid + " "  + plugin.myLocale(playerUUID).adminSetRangeTip.replace("[max]", String.valueOf(maxRange)));
-				return true;
-			    }
-			    island.setProtectionSize(newRange);
-			    player.sendMessage(ChatColor.GREEN + plugin.myLocale(playerUUID).adminSetRangeSet.replace("[number]",String.valueOf(newRange)));
-			    showInfo(island.getOwner(), sender);
+			// Check if this player has an island
+			if (!plugin.getPlayers().hasIsland(playerUUID) && !plugin.getPlayers().inTeam(playerUUID)) {
+			    // No island
+			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoIslandOther);
+			    return true;
 			}
-			return true;
+			// Has an island
+			Location islandLoc = plugin.getPlayers().getIslandLocation(playerUUID);
+			// Check the player is within the island boundaries
+			if (!plugin.getGrid().getIslandAt(islandLoc).inIslandSpace(player.getLocation())) {
+			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).adminSetHomeNotOnPlayersIsland);
+			} else {
+			    // Check that the location is safe
+			    if (!GridManager.isSafeLocation(player.getLocation())) {
+				// Not safe
+				player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).adminSetHomeNoneFound);
+			    } else {
+				// Success
+				plugin.getPlayers().setHomeLocation(playerUUID, player.getLocation());
+				player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).adminSetHomeHomeSet.replace("[location]", player.getLocation().getBlockX() + ", " + player.getLocation().getBlockY() + "," + player.getLocation().getBlockZ()));
+			    }
+			}
 		    }
-		}
+		    return true;
+		} else
+		    // Set protection for the island the player is on
+		    if (split[0].equalsIgnoreCase("setrange")) {
+			if (!(sender instanceof Player)) {
+			    sender.sendMessage(ChatColor.RED + plugin.myLocale().adminLockerrorInGame);
+			    return true;
+			}
+			player = (Player)sender;
+			UUID playerUUID = player.getUniqueId();
+			Island island = plugin.getGrid().getIslandAt(player.getLocation());
+			// Check if island exists
+			if (island == null) {
+			    player.sendMessage(ChatColor.RED + plugin.myLocale().errorNotOnIsland);
+			    return true;
+			} else {
+			    int newRange = 10;
+			    int maxRange = Settings.islandDistance;
+			    // If spawn do something different
+			    if (island.isSpawn()) {
+				try {
+				    newRange = Integer.valueOf(split[1]);
+				} catch (Exception e) {
+				    player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).adminSetRangeInvalid);
+				    return true;
+				}
+				player.sendMessage(ChatColor.GREEN + plugin.myLocale(playerUUID).adminSetRangeSet.replace("[number]",String.valueOf(newRange)));
+				if (newRange > maxRange) {
+				    player.sendMessage(ChatColor.RED + "" + ChatColor.BOLD + plugin.myLocale(playerUUID).adminSetRangeWarning.replace("[max]",String.valueOf(maxRange)));
+				    player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).adminSetRangeWarning2);
+				}
+				island.setProtectionSize(newRange);
+				player.sendMessage(ChatColor.YELLOW + plugin.myLocale().adminSetSpawncenter.replace("[location]", island.getCenter().getBlockX() + "," + island.getCenter().getBlockZ()));
+				player.sendMessage(ChatColor.YELLOW + plugin.myLocale().adminSetSpawnlimits.replace("[min]", island.getMinX() + "," + island.getMinZ()).replace("[max]",
+					(island.getMinX() + island.getIslandDistance() - 1) + "," + (island.getMinZ() + island.getIslandDistance() - 1)));
+				player.sendMessage(ChatColor.YELLOW + plugin.myLocale().adminSetSpawnrange.replace("[number]",String.valueOf(island.getProtectionSize())));
+				player.sendMessage(ChatColor.YELLOW + plugin.myLocale().adminSetSpawncoords.replace("[min]",  island.getMinProtectedX() + ", " + island.getMinProtectedZ()).replace("[max]",
+					+ (island.getMinProtectedX() + island.getProtectionSize() - 1) + ", "
+						+ (island.getMinProtectedZ() + island.getProtectionSize() - 1)));
+				if (island.isLocked()) {
+				    player.sendMessage(ChatColor.RED + plugin.myLocale().adminSetSpawnlocked);
+				}
+			    } else {
+				if (!plugin.getConfig().getBoolean("island.overridelimit")) {
+				    maxRange -= 16;
+				}
+				try {
+				    newRange = Integer.valueOf(split[1]);
+				} catch (Exception e) {
+				    player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).adminSetRangeInvalid + " "  + plugin.myLocale(playerUUID).adminSetRangeTip.replace("[max]", String.valueOf(maxRange)));
+				    return true;
+				}
+				if (newRange < 10 || newRange > maxRange) {
+				    player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).adminSetRangeInvalid + " "  + plugin.myLocale(playerUUID).adminSetRangeTip.replace("[max]", String.valueOf(maxRange)));
+				    return true;
+				}
+				island.setProtectionSize(newRange);
+				player.sendMessage(ChatColor.GREEN + plugin.myLocale(playerUUID).adminSetRangeSet.replace("[number]",String.valueOf(newRange)));
+				showInfo(island.getOwner(), sender);
+			    }
+			    return true;
+			}
+		    }
 	    if (split[0].equalsIgnoreCase("purge")) {
 		// PURGE Command
 		// Check for "allow" or "disallow" flags
@@ -1849,6 +1925,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 		}
 		if (args[0].equalsIgnoreCase("clearreset")) {
 		    options.addAll(Util.getOnlinePlayerList());
+		    options.add("all");
 		}
 		if (args[0].equalsIgnoreCase("setbiome")) {
 		    options.addAll(Util.getOnlinePlayerList());

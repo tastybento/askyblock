@@ -20,6 +20,7 @@ import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -753,5 +754,15 @@ public class PlayerCache {
     public List<UUID> getBanList(UUID playerUUID) {
 	addPlayer(playerUUID);
 	return playerCache.get(playerUUID).getBanList();
+    }
+
+    /**
+     * Clears resets for online players or players in the cache
+     * @param resetLimit
+     */
+    public void clearResets(int resetLimit) {
+	for (Players player : playerCache.values()) {
+	    player.setResetsLeft(resetLimit);
+	}	
     }
 }
