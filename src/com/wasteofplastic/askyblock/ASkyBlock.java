@@ -418,7 +418,7 @@ public class ASkyBlock extends JavaPlugin {
 			    public void run() {
 				getGrid().saveGrid();
 			    }}, Settings.backupDuration, Settings.backupDuration);
-			
+
 			getLogger().info("All files loaded. Ready to play...");
 		    }
 		});
@@ -1446,7 +1446,9 @@ public class ASkyBlock extends JavaPlugin {
 	    player.getInventory().setBoots(null);
 	    player.getEquipment().clear();
 	}
-	player.setGameMode(GameMode.SURVIVAL);
+	if (!player.isOp()) {
+	    player.setGameMode(GameMode.SURVIVAL);
+	}
 	if (Settings.resetChallenges) {
 	    // Reset the player's challenge status
 	    players.resetAllChallenges(player.getUniqueId());
