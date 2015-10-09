@@ -83,9 +83,9 @@ import org.bukkit.util.Vector;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Island;
-import com.wasteofplastic.askyblock.Island.Flags;
 import com.wasteofplastic.askyblock.SafeBoat;
 import com.wasteofplastic.askyblock.Settings;
+import com.wasteofplastic.askyblock.Island.Flags;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
@@ -142,7 +142,7 @@ public class IslandGuard implements Listener {
      * Prevents visitors picking items from riding horses or other inventories
      * @param event
      */
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onHorseInventoryClick(InventoryClickEvent event) {
 	if (!(event.getInventory().getHolder() instanceof Horse)) {
 	    //plugin.getLogger().info("DEBUG: not a horse!");
@@ -181,7 +181,7 @@ public class IslandGuard implements Listener {
      * }
      */
     // Vehicle damage
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onVehicleDamageEvent(VehicleDamageEvent e) {
 	if (debug) {
 	    plugin.getLogger().info(e.getEventName());

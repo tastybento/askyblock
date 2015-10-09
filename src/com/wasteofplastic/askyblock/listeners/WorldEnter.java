@@ -16,10 +16,11 @@ public class WorldEnter implements Listener {
 	this.plugin = aSkyBlock;
     }
 
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled=true)
     public void onWorldEnter(final PlayerChangedWorldEvent event) {
 	//plugin.getLogger().info("DEBUG " + event.getEventName());
-	if (!event.getPlayer().getWorld().equals(ASkyBlock.getIslandWorld())) {
+	if (!event.getPlayer().getWorld().equals(ASkyBlock.getIslandWorld()) &&
+		!event.getPlayer().getWorld().equals(ASkyBlock.getNetherWorld())) {
 	    return;
 	}
 	//plugin.getLogger().info("DEBUG correct world");
@@ -27,32 +28,16 @@ public class WorldEnter implements Listener {
 	if (islandLoc == null) {
 	    //plugin.getLogger().info("DEBUG  no island");
 	    // They have no island
-	    if (!Settings.makeIslandIfNone) {
-		// If player should go to spawn, just return
-		//plugin.getLogger().info("DEBUG go to spawn");
-		return;
+	    if (Settings.makeIslandIfNone || Settings.immediateTeleport) {
+		event.getPlayer().performCommand(Settings.ISLANDCOMMAND);
 	    }
 	    //plugin.getLogger().info("DEBUG Make island");
 	} else {
-	    // They have an island
-	    if (!Settings.immediateTeleport) {
-		//plugin.getLogger().info("DEBUG no teleport");
-		// No need to teleport
-		return;
-	    }  
-	    //plugin.getLogger().info("DEBUG immediate teleport");
+	    // They have an island and are going to their own world
+	    if (Settings.immediateTeleport && islandLoc.getWorld().equals(event.getPlayer().getWorld())) {
+		//plugin.getLogger().info("DEBUG teleport");
+		event.getPlayer().performCommand(Settings.ISLANDCOMMAND + " go");
+	    }
 	}
-	// Make new island or teleport there - it's the same command
-	event.getPlayer().performCommand(Settings.ISLANDCOMMAND);
-	/*
-	// Set velocity to zero just in case they sped through a portal!
-	plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
-
-	    @Override
-	    public void run() {
-		event.getPlayer().setVelocity(new Vector());
-	    }});
-	
-	return;*/
     }
 }
