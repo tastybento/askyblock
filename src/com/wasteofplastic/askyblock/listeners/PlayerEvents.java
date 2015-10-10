@@ -53,7 +53,7 @@ import com.wasteofplastic.askyblock.util.VaultHelper;
  */
 public class PlayerEvents implements Listener {
     private final ASkyBlock plugin;
-    private final boolean debug = false;
+    private static final boolean DEBUG = false;
     // A set of falling players
     private static HashSet<UUID> fallingPlayers = new HashSet<UUID>();
     private List<UUID> respawn;
@@ -69,7 +69,7 @@ public class PlayerEvents implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onHungerChange(final FoodLevelChangeEvent e) {
-	if (debug) {
+	if (DEBUG) {
 	    plugin.getLogger().info(e.getEventName());
 	}
 	if (e.getEntity().hasPermission(Settings.PERMPREFIX + "nohunger")) {
@@ -85,7 +85,7 @@ public class PlayerEvents implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
     public void onPlayerRespawn(final PlayerRespawnEvent e) {
-	if (debug) {
+	if (DEBUG) {
 	    plugin.getLogger().info(e.getEventName());
 	}
 	if (!Settings.respawnOnIsland) {
@@ -107,7 +107,7 @@ public class PlayerEvents implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = false)
     public void onPlayerDeath(final PlayerDeathEvent e) {
-	if (debug) {
+	if (DEBUG) {
 	    plugin.getLogger().info(e.getEventName());
 	}
 	if (!Settings.respawnOnIsland) {
@@ -132,7 +132,7 @@ public class PlayerEvents implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = false)
     public void onVistorDeath(final PlayerDeathEvent e) {
-	if (debug) {
+	if (DEBUG) {
 	    plugin.getLogger().info(e.getEventName());
 	}
 	if (!IslandGuard.inWorld(e.getEntity())) {
@@ -159,7 +159,7 @@ public class PlayerEvents implements Listener {
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onVistorSpawn(final PlayerRespawnEvent e) {
-	if (debug) {
+	if (DEBUG) {
 	    plugin.getLogger().info(e.getEventName());
 	}
 	// This will override any global settings
@@ -173,7 +173,7 @@ public class PlayerEvents implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onVisitorPickup(final PlayerPickupItemEvent e) {
-	if (debug) {
+	if (DEBUG) {
 	    plugin.getLogger().info(e.getEventName());
 	}
 	if (!IslandGuard.inWorld(e.getPlayer())) {
@@ -197,7 +197,7 @@ public class PlayerEvents implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onVisitorDrop(final PlayerDropItemEvent e) {
-	if (debug) {
+	if (DEBUG) {
 	    plugin.getLogger().info(e.getEventName());
 	}
 	if (!IslandGuard.inWorld(e.getPlayer())) {
@@ -265,7 +265,7 @@ public class PlayerEvents implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
     public void onPlayerTeleport(final PlayerCommandPreprocessEvent e) {
-	if (debug) {
+	if (DEBUG) {
 	    plugin.getLogger().info(e.getEventName());
 	}
 	if (!IslandGuard.inWorld(e.getPlayer()) || Settings.allowTeleportWhenFalling || e.getPlayer().isOp()
@@ -290,7 +290,7 @@ public class PlayerEvents implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = false)
     public void onPlayerTeleport(final PlayerTeleportEvent e) {
-	if (debug) {
+	if (DEBUG) {
 	    plugin.getLogger().info(e.getEventName());
 	}
 	// Options - 
@@ -417,7 +417,7 @@ public class PlayerEvents implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
     public void onVisitorCommand(final PlayerCommandPreprocessEvent e) {
-	if (debug) {
+	if (DEBUG) {
 	    plugin.getLogger().info("Visitor command " + e.getEventName() + ": " + e.getMessage());
 	}
 	if (!IslandGuard.inWorld(e.getPlayer()) || e.getPlayer().isOp()
