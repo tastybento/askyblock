@@ -26,9 +26,11 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -61,6 +63,22 @@ public class PlayerEvents implements Listener {
 	respawn = new ArrayList<UUID>();
     }
 
+    /**
+     * Prevents changing of hunger while having a special permission and being on your island
+     * @param e
+     */
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onHungerChange(final FoodLevelChangeEvent e) {
+	if (debug) {
+	    plugin.getLogger().info(e.getEventName());
+	}
+	if (e.getEntity().hasPermission(Settings.PERMPREFIX + "nohunger")) {
+		if(plugin.getGrid().playerIsOnIsland((Player) e.getEntity())) {
+			e.setCancelled(true);
+		}
+	}
+    }
+    
     /**
      * Places player back on their island if the setting is true
      * @param e

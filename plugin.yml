@@ -106,6 +106,9 @@ permissions:
       askyblock.excludetopten:
         description: Excludes player from top ten
         default: false
+      askyblock.nohunger:
+        description: Excludes player from hunger if on island
+        default: false   
       askyblock.settings.*:
         children:
           askyblock.settings.allowAnvilUse:
