@@ -101,6 +101,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
     private void help(CommandSender sender, String label) {
 	if (!(sender instanceof Player)) {
 	    sender.sendMessage(ChatColor.YELLOW + "/" + label + " clearreset <player>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpclearReset);
+	    sender.sendMessage(ChatColor.YELLOW + "/" + label + " clearresetall:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpclearReset);
 	    sender.sendMessage(ChatColor.YELLOW + "/" + label + " completechallenge <challengename> <player>:" + ChatColor.WHITE + " "
 		    + plugin.myLocale().adminHelpcompleteChallenge);
 	    sender.sendMessage(ChatColor.YELLOW + "/" + label + " delete <player>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpdelete);
@@ -129,6 +130,9 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 	    player.sendMessage(plugin.myLocale(player.getUniqueId()).adminHelpHelp);
 	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.clearreset") || player.isOp()) {
 		player.sendMessage(ChatColor.YELLOW + "/" + label + " clearreset <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpclearReset);
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.clearresetall") || player.isOp()) {
+			player.sendMessage(ChatColor.YELLOW + "/" + label + " clearresetall:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpclearReset);
 	    }
 	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.challenges") || player.isOp()) {
 		player.sendMessage(ChatColor.YELLOW + "/" + label + " completechallenge <challengename> <player>:" + ChatColor.WHITE + " "
@@ -235,7 +239,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 		if (split[0].equalsIgnoreCase("reload") || split[0].equalsIgnoreCase("register") || split[0].equalsIgnoreCase("delete")
 			|| split[0].equalsIgnoreCase("purge") || split[0].equalsIgnoreCase("confirm") || split[0].equalsIgnoreCase("setspawn")
 			|| split[0].equalsIgnoreCase("deleteisland") || split[0].equalsIgnoreCase("setrange")
-			|| split[0].equalsIgnoreCase("unregister")) {
+			|| split[0].equalsIgnoreCase("unregister") || split[0].equalsIgnoreCase("clearresetall")) {
 		    if (!checkAdminPerms(player, split)) {
 			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
 			return true;
@@ -598,13 +602,9 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 		    confirmReq = false;
 		}
 		return true;
-	    } else {
-		sender.sendMessage(ChatColor.RED + plugin.myLocale().errorUnknownCommand);
-		return false;
-	    }
-	case 2:
-	    // cleareset all - clears all player resets
-	    if (split[0].equalsIgnoreCase("clearreset") && split[1].equalsIgnoreCase("all")) {
+	    } else
+		// clearesetall - clears all player resets
+	    if (split[0].equalsIgnoreCase("clearresetall")) {
 		if (asyncPending) {
 		    sender.sendMessage(ChatColor.RED + plugin.myLocale().errorCommandNotReady);
 		    return true;
@@ -675,7 +675,11 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 			sender.sendMessage(ChatColor.YELLOW + plugin.myLocale().clearedResetLimit + " [" + done + " players] completed.");
 		    }});
 		return true;
-	    } else
+	    } else {
+		sender.sendMessage(ChatColor.RED + plugin.myLocale().errorUnknownCommand);
+		return false;
+	    }
+	case 2:
 		// Resetsign <player> - makes a warp sign for player
 		if (split[0].equalsIgnoreCase("resetsign")) {
 		    // Find the closest island
@@ -1896,7 +1900,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 		options.addAll(Arrays.asList("reload", "topten", "unregister",
 			"delete", "completechallenge", "resetchallenge",
 			"resetallchallenges", "purge", "info", "info", "info",
-			"clearreset", "setbiome", "topbreeders", "team"));
+			"clearreset", "clearresetall", "setbiome", "topbreeders", "team"));
 		break;
 	    case 2:
 		if (args[0].equalsIgnoreCase("lock")) {
@@ -1920,12 +1924,10 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 		}
 		if (args[0].equalsIgnoreCase("info")) {
 		    options.add("challenges");
-
 		    options.addAll(Util.getOnlinePlayerList());
 		}
 		if (args[0].equalsIgnoreCase("clearreset")) {
 		    options.addAll(Util.getOnlinePlayerList());
-		    options.add("all");
 		}
 		if (args[0].equalsIgnoreCase("setbiome")) {
 		    options.addAll(Util.getOnlinePlayerList());
@@ -2003,6 +2005,9 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 		}
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.clearreset") || player.isOp()) {
 		    options.add("clearreset");
+		}
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.clearresetall") || player.isOp()) {
+		    options.add("clearresetall");
 		}
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.setspawn") || player.isOp()) {
 		    options.add("setspawn");

@@ -250,6 +250,9 @@ permissions:
             default: false
       askyblock.admin.*:
         children:
+          askyblock.admin.clearresetall:
+            description: Allow clearing of island reset limit of all players
+            default: op
           askyblock.admin.reload:
             description: Reload the config.yml
             default: op
