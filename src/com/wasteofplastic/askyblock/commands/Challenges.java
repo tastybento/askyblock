@@ -1293,7 +1293,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
 	    } else {
 		// plugin.getLogger().info("DEBUG: Items are there");
 		// Check for needed entities
-		for (Entity entity : player.getNearbyEntities(10, 10, 10)) {
+		for (Entity entity : player.getNearbyEntities(searchRadius, searchRadius, searchRadius)) {
 		    // plugin.getLogger().info("DEBUG: Entity found:" +
 		    // entity.getType().toString());
 		    if (neededEntities.containsKey(entity.getType())) {

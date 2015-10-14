@@ -71,6 +71,7 @@ import com.wasteofplastic.askyblock.listeners.NetherPortals;
 import com.wasteofplastic.askyblock.listeners.PlayerEvents;
 import com.wasteofplastic.askyblock.listeners.WitherEvents;
 import com.wasteofplastic.askyblock.listeners.WorldEnter;
+import com.wasteofplastic.askyblock.listeners.WorldLoader;
 import com.wasteofplastic.askyblock.panels.BiomesPanel;
 import com.wasteofplastic.askyblock.panels.ControlPanel;
 import com.wasteofplastic.askyblock.panels.SchematicsPanel;
@@ -137,17 +138,6 @@ public class ASkyBlock extends JavaPlugin {
     private SettingsPanel settingsPanel;
 
     /**
-     * Check if the island world is ready or not. Used by biomepanel to avoid chunk load issues when
-     * worlds are being created.
-     * @return true if world is ready, otherwise false
-     */
-    public static boolean getIslandWorldReady() {
-	if (islandWorld != null) {
-	    return true;
-	}
-	return false;
-    }
-    /**
      * Returns the World object for the island world named in config.yml.
      * If the world does not exist then it is created.
      * 
@@ -155,8 +145,8 @@ public class ASkyBlock extends JavaPlugin {
      */
     public static World getIslandWorld() {
 	if (islandWorld == null) {
-	    // Bukkit.getLogger().info("DEBUG worldName = " +
-	    // Settings.worldName);
+	    //Bukkit.getLogger().info("DEBUG worldName = " + Settings.worldName);
+	    // 
 	    islandWorld = WorldCreator.name(Settings.worldName).type(WorldType.FLAT).environment(World.Environment.NORMAL).generator(new ChunkGeneratorWorld())
 		    .createWorld();
 	    // Make the nether if it does not exist
@@ -303,8 +293,14 @@ public class ASkyBlock extends JavaPlugin {
 	// This can no longer be run in onEnable because the plugin is loaded at
 	// startup and so key variables are
 	// not known to the server. Instead it is run one tick after startup.
-	// getIslandWorld();
-
+	// If the world exists, load it, even without the generator
+	/*
+	if (Settings.createNether) {
+	    Bukkit.getWorld(Settings.worldName + "_nether");
+	}
+	if (Bukkit.getWorld(Settings.worldName) == null) {
+	    islandWorld = WorldCreator.name(Settings.worldName).type(WorldType.FLAT).environment(World.Environment.NORMAL).createWorld();
+	}*/
 	// Set and make the player's directory if it does not exist and then
 	// load players into memory
 	playersFolder = new File(getDataFolder() + File.separator + "players");
@@ -371,6 +367,11 @@ public class ASkyBlock extends JavaPlugin {
 		// Settings
 		settingsPanel = new SettingsPanel(plugin);
 		getServer().getPluginManager().registerEvents(settingsPanel, plugin);
+		// Biomes
+		// Load Biomes
+		biomes = new BiomesPanel(plugin);
+		getServer().getPluginManager().registerEvents(biomes, plugin);
+
 		// Try to register Herochat
 		if (Bukkit.getServer().getPluginManager().isPluginEnabled("Herochat")) {
 		    getServer().getPluginManager().registerEvents(new HeroChatListener(plugin), plugin);
@@ -1404,10 +1405,6 @@ public class ASkyBlock extends JavaPlugin {
 	// manager.registerEvents(new ControlPanel(), this);
 	// Change names of inventory items
 	manager.registerEvents(new AcidInventory(this), this);
-	// Biomes
-	// Load Biomes
-	biomes = new BiomesPanel(this);
-	manager.registerEvents(biomes, this);
 	// Schematics panel
 	schematicsPanel = new SchematicsPanel(this);
 	manager.registerEvents(schematicsPanel, this);
@@ -1420,6 +1417,8 @@ public class ASkyBlock extends JavaPlugin {
 	if (Settings.restrictWither) {
 	    manager.registerEvents(new WitherEvents(this), this);
 	}
+	// World loader
+	manager.registerEvents(new WorldLoader(this), this);
     }
 
 
