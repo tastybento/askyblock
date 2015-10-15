@@ -51,6 +51,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockDispenseEvent;
+import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockMultiPlaceEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -1553,8 +1554,58 @@ public class IslandGuard implements Listener {
 	    }
 	}
     }
-
-    @EventHandler(priority = EventPriority.LOW)
+/*
+ * Not going to implement this right now, but it could be used if required
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onLiquidFlow(final BlockFromToEvent e) {
+	// Ignore non-island worlds
+	if (!inWorld(e.getBlock())) {
+	    return;
+	}
+	// Only check lateral movement
+	if (e.getBlock().getLocation().getBlockX() == e.getToBlock().getLocation().getBlockX()
+		&& e.getBlock().getLocation().getBlockZ() == e.getToBlock().getLocation().getBlockZ()) {
+	    return;
+	}
+	// Ignore flows within flow
+	if (e.getBlock().getType().equals(e.getToBlock().getType())) {
+	    return;
+	}
+	// Ignore stationary to non-stationary
+	if (e.getBlock().getType().equals(Material.STATIONARY_WATER) && e.getToBlock().getType().equals(Material.WATER) ) {
+	    return;
+	}
+	if (e.getBlock().getType().equals(Material.STATIONARY_LAVA) && e.getToBlock().getType().equals(Material.LAVA) ) {
+	    return;
+	}
+	// Check if flow leaving island protection range
+	// Check home island
+	Island from = plugin.getGrid().getProtectedIslandAt(e.getBlock().getLocation());
+	Island to = plugin.getGrid().getProtectedIslandAt(e.getToBlock().getLocation());
+	// Scenarios
+	// 1. inside district or outside - always ok
+	// 2. inside to outside - not allowed
+	// 3. outside to inside - allowed
+	if (to == null && from == null) {
+	    return;
+	}
+	if (to !=null && from != null && to.equals(from)) {
+	    return;
+	}
+	// Flows into an island space is allowed, e.g., sea
+	if (to != null) {
+	    return;
+	}
+	// Otherwise cancel - the flow is not allowed
+	e.setCancelled(true);
+    }
+ */   
+    
+    /**
+     * Prevents emptying of buckets outside of island space
+     * @param e
+     */
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onBucketEmpty(final PlayerBucketEmptyEvent e) {
 	if (debug) {
 	    plugin.getLogger().info(e.getEventName());
@@ -1566,14 +1617,16 @@ public class IslandGuard implements Listener {
 	    }
 	    Player p = e.getPlayer();
 	    if (e.getBlockClicked() != null) {
+		// This is where the water or lava actually will be dumped
+		Block dumpBlock = e.getBlockClicked().getRelative(e.getBlockFace());
 		// Check home island
-		Island island = plugin.getGrid().getProtectedIslandAt(e.getBlockClicked().getLocation());
+		Island island = plugin.getGrid().getProtectedIslandAt(dumpBlock.getLocation());
 		// Not allowed outside of a protected island
 		if (island != null) {	
 		    // Check island
 		    if (island.getIgsFlag(Flags.allowBreakBlocks) || island.getMembers().contains(p.getUniqueId())) {
 			// Check if biome is Nether and then allow water placement but fizz the water
-			if (e.getBlockClicked() != null && e.getBlockClicked().getBiome().equals(Biome.HELL)
+			if (e.getBlockClicked().getBiome().equals(Biome.HELL)
 				&& e.getPlayer().getItemInHand().getType().equals(Material.WATER_BUCKET)) {
 			    e.setCancelled(true);
 			    e.getPlayer().getItemInHand().setType(Material.BUCKET);
