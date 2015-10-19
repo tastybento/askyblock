@@ -25,7 +25,7 @@ public class WorldLoader implements Listener {
 	if (worldLoaded) {
 	    return;
 	}
-	plugin.getLogger().info("DEBUG: " + event.getWorld().getName());
+	//plugin.getLogger().info("DEBUG: " + event.getWorld().getName());
 	if (event.getWorld().getName().equals(Settings.worldName) || event.getWorld().getName().equals(Settings.worldName + "_nether")) {
 	    return;
 	}
