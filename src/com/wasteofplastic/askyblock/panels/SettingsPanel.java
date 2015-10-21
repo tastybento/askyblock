@@ -294,7 +294,18 @@ public class SettingsPanel implements Listener {
 			// Toggle the flag
 			island.toggleIgs(flag); 
 			// Update warp signs
-			plugin.getWarpPanel().updatePanel();
+			final List<UUID> members = island.getMembers();
+			// Run one tick later because text gets updated at the end of tick
+			plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
+
+			    @Override
+			    public void run() {
+				for (UUID playerUUID : members) {
+				    plugin.getWarpPanel().updateWarp(playerUUID);
+				}
+
+			    }});
+
 			return;
 		    } else {
 			// PVP deactivation
@@ -302,7 +313,18 @@ public class SettingsPanel implements Listener {
 			pvpCoolDown.put(player.getUniqueId(), System.currentTimeMillis());
 			// Immediately toggle the setting
 			island.toggleIgs(flag);
-			plugin.getWarpPanel().updatePanel();
+			// Update warp signs
+			final List<UUID> members = island.getMembers();
+			// Run one tick later because text gets updated at the end of tick
+			plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
+
+			    @Override
+			    public void run() {
+				for (UUID playerUUID : members) {
+				    plugin.getWarpPanel().updateWarp(playerUUID);
+				}
+
+			    }});
 			// Warn players of change
 			for (Player p : plugin.getServer().getOnlinePlayers()) {
 			    if (island.onIsland(p.getLocation())) {
