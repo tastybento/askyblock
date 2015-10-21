@@ -24,6 +24,7 @@ commands:
             /challenge
 permissions:    
   askyblock.*:
+    default: false
     children:
       askyblock.island.*:
         children:
@@ -92,6 +93,9 @@ permissions:
           askyblock.team.chat:
             description: Allow player to use team chat
             default: true
+      askyblock.command.exempt:
+        description: Challenge commands will not be run for players with this perm
+        default: false
       askyblock.coop:
         description: Allows player to use the coop command
         default: false    

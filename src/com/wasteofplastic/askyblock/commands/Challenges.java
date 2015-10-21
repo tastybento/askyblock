@@ -50,6 +50,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
@@ -375,6 +377,10 @@ public class Challenges implements CommandExecutor, TabCompleter {
     }
 
     private void runCommands(Player player, List<String> commands) {
+	// Ignore commands with this perm
+	if (player.hasPermission(Settings.PERMPREFIX + "command.exempt")) {
+	    return;
+	}
 	for (String cmd : commands) {
 	    // Substitute in any references to player
 	    try {
