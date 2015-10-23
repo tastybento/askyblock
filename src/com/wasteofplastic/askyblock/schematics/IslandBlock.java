@@ -347,7 +347,7 @@ public class IslandBlock {
     }
 
     public void setBook(Map<String, Tag> tileData) {
-	Bukkit.getLogger().info("DEBUG: Book data ");
+	//Bukkit.getLogger().info("DEBUG: Book data ");
 	Bukkit.getLogger().info(tileData.toString());
     }
     

@@ -93,9 +93,22 @@ permissions:
           askyblock.team.chat:
             description: Allow player to use team chat
             default: true
-      askyblock.command.exempt:
-        description: Challenge commands will not be run for players with this perm
+      askyblock.command.*:
+        description: Event commands will not be run for players with this perm
         default: false
+        children:
+          askyblock.command.resetexempt:
+            description: Player is exempt from commands run when island resets
+            default: false
+          askyblock.command.leaveexempt:
+            description: Player is exempt from commands run when they leave or are kicked. Note will not help if player is offline.
+            default: false
+          askyblock.command.newexempt:
+            description: Player is exempt from commands run when starting an island
+            default: false
+          askyblock.command.challengeexempt:
+            description: Player is exempt from commands run when a challenge is completed
+            default: false
       askyblock.coop:
         description: Allows player to use the coop command
         default: false    

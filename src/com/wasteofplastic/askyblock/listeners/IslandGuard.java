@@ -96,7 +96,7 @@ import com.wasteofplastic.askyblock.util.VaultHelper;
  */
 public class IslandGuard implements Listener {
     private final ASkyBlock plugin;
-    private final boolean debug = false;
+    private final static boolean DEBUG = false;
     private HashMap<UUID,Vector> onPlate = new HashMap<UUID,Vector>();
 
     public IslandGuard(final ASkyBlock plugin) {
@@ -184,7 +184,7 @@ public class IslandGuard implements Listener {
     // Vehicle damage
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onVehicleDamageEvent(VehicleDamageEvent e) {
-	if (debug) {
+	if (DEBUG) {
 	    plugin.getLogger().info(e.getEventName());
 	    plugin.getLogger().info(e.getAttacker().getType().toString());
 	}
@@ -637,7 +637,7 @@ public class IslandGuard implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onMobSpawn(final CreatureSpawnEvent e) {
-	if (debug) {
+	if (DEBUG) {
 	    //plugin.getLogger().info(e.getEventName());
 	}
 	// If not in the right world, return
@@ -682,7 +682,7 @@ public class IslandGuard implements Listener {
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onExplosion(final EntityExplodeEvent e) {
-	if (debug) {
+	if (DEBUG) {
 	    plugin.getLogger().info(e.getEventName());
 	    plugin.getLogger().info("Entity exploding is " + e.getEntity());
 	}
@@ -810,7 +810,7 @@ public class IslandGuard implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onEndermanGrief(final EntityChangeBlockEvent e) {
-	if (debug) {
+	if (DEBUG) {
 	    plugin.getLogger().info(e.getEventName());
 	}
 	if (!(e.getEntity() instanceof Enderman)) {
@@ -837,7 +837,7 @@ public class IslandGuard implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onEndermanDeath(final EntityDeathEvent e) {
-	if (debug) {
+	if (DEBUG) {
 	    plugin.getLogger().info(e.getEventName());
 	}
 	if (!Settings.endermanDeathDrop)
@@ -866,7 +866,7 @@ public class IslandGuard implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onBlockBreak(final BlockBreakEvent e) {
-	if (debug) {
+	if (DEBUG) {
 	    plugin.getLogger().info(e.getEventName());
 	}
 	if (inWorld(e.getPlayer())) {
@@ -897,7 +897,7 @@ public class IslandGuard implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onEntityDamage(final EntityDamageByEntityEvent e) {
-	if (debug) {
+	if (DEBUG) {
 	    plugin.getLogger().info(e.getEventName());
 	    plugin.getLogger().info("DEBUG: Damager = " + e.getDamager().toString());
 	    plugin.getLogger().info("DEBUG: Entitytype = " + e.getEntityType());
@@ -989,7 +989,7 @@ public class IslandGuard implements Listener {
 	}
 	// Self damage
 	if (e.getEntity() instanceof Player && attacker.equals((Player)e.getEntity())) {
-	    if (debug) plugin.getLogger().info("Self damage!");
+	    if (DEBUG) plugin.getLogger().info("Self damage!");
 	    return;
 	}
 
@@ -1061,7 +1061,7 @@ public class IslandGuard implements Listener {
 	if (island == null) {
 	    // Outside an island
 	    if ((inNether && Settings.allowNetherPvP) || (!inNether && Settings.allowPvP)) {
-		if (debug) plugin.getLogger().info("DEBUG: PVP allowed");
+		if (DEBUG) plugin.getLogger().info("DEBUG: PVP allowed");
 		pvp = true;
 	    }
 	} else {
@@ -1069,7 +1069,7 @@ public class IslandGuard implements Listener {
 	    if (island.isSpawn() && Settings.allowSpawnPVP) {
 		pvp = true;
 	    } else if ((inNether && island.getIgsFlag(Flags.allowNetherPvP) || (!inNether && island.getIgsFlag(Flags.allowPvP)))) {
-		if (debug) plugin.getLogger().info("DEBUG: PVP allowed");
+		if (DEBUG) plugin.getLogger().info("DEBUG: PVP allowed");
 		pvp = true;
 	    } 
 	}
@@ -1244,7 +1244,7 @@ public class IslandGuard implements Listener {
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerBlockPlace(final BlockPlaceEvent e) {
-	if (debug) {
+	if (DEBUG) {
 	    plugin.getLogger().info(e.getEventName());
 	}
 	// plugin.getLogger().info(e.getEventName());
@@ -1300,7 +1300,7 @@ public class IslandGuard implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerBlockPlace(final BlockMultiPlaceEvent e) {
-	if (debug) {
+	if (DEBUG) {
 	    plugin.getLogger().info(e.getEventName());
 	}
 	// plugin.getLogger().info(e.getEventName());
@@ -1355,7 +1355,7 @@ public class IslandGuard implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerBlockPlace(final HangingPlaceEvent e) {
-	if (debug) {
+	if (DEBUG) {
 	    plugin.getLogger().info(e.getEventName());
 	    plugin.getLogger().info("DEBUG: block placed " + e.getBlock().getType());
 	    plugin.getLogger().info("DEBUG: entity " + e.getEntity().getType());
@@ -1411,7 +1411,7 @@ public class IslandGuard implements Listener {
     // Prevent sleeping in other beds
     @EventHandler(priority = EventPriority.LOW)
     public void onPlayerBedEnter(final PlayerBedEnterEvent e) {
-	if (debug) {
+	if (DEBUG) {
 	    plugin.getLogger().info(e.getEventName());
 	}
 	// Check world
@@ -1440,7 +1440,7 @@ public class IslandGuard implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW)
     public void onBreakHanging(final HangingBreakByEntityEvent e) {
-	if (debug) {
+	if (DEBUG) {
 	    plugin.getLogger().info(e.getEventName());
 	    plugin.getLogger().info(e.getRemover().toString());
 	}
@@ -1499,7 +1499,7 @@ public class IslandGuard implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW)
     public void onLeashUse(final PlayerLeashEntityEvent e) {
-	if (debug) {
+	if (DEBUG) {
 	    plugin.getLogger().info(e.getEventName());
 	}
 	if (inWorld(e.getEntity())) {
@@ -1531,7 +1531,7 @@ public class IslandGuard implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW)
     public void onLeashUse(final PlayerUnleashEntityEvent e) {
-	if (debug) {
+	if (DEBUG) {
 	    plugin.getLogger().info(e.getEventName());
 	}
 	if (inWorld(e.getEntity())) {
@@ -1607,7 +1607,7 @@ public class IslandGuard implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onBucketEmpty(final PlayerBucketEmptyEvent e) {
-	if (debug) {
+	if (DEBUG) {
 	    plugin.getLogger().info(e.getEventName());
 	}
 	if (inWorld(e.getPlayer())) {
@@ -1654,7 +1654,7 @@ public class IslandGuard implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW)
     public void onNetherDispenser(final BlockDispenseEvent e) {
-	if (debug) {
+	if (DEBUG) {
 	    plugin.getLogger().info(e.getEventName());
 	}
 	if (!inWorld(e.getBlock().getLocation()) || !e.getBlock().getBiome().equals(Biome.HELL)) {
@@ -1670,7 +1670,7 @@ public class IslandGuard implements Listener {
 
     @EventHandler(priority = EventPriority.LOW)
     public void onBucketFill(final PlayerBucketFillEvent e) {
-	if (debug) {
+	if (DEBUG) {
 	    plugin.getLogger().info(e.getEventName());
 	}
 	if (inWorld(e.getPlayer())) {
@@ -1711,7 +1711,7 @@ public class IslandGuard implements Listener {
     // Protect sheep
     @EventHandler(priority = EventPriority.LOW)
     public void onShear(final PlayerShearEntityEvent e) {
-	if (debug) {
+	if (DEBUG) {
 	    plugin.getLogger().info(e.getEventName());
 	}
 	if (inWorld(e.getPlayer())) {
@@ -1737,7 +1737,7 @@ public class IslandGuard implements Listener {
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerInteract(final PlayerInteractEvent e) {
-	if (debug) {
+	if (DEBUG) {
 	    plugin.getLogger().info(e.getEventName());
 	}
 	if (!inWorld(e.getPlayer())) {
@@ -2147,7 +2147,7 @@ public class IslandGuard implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW)
     public void onCraft(CraftItemEvent event) {
-	if (debug) {
+	if (DEBUG) {
 	    plugin.getLogger().info(event.getEventName());
 	}
 	Player player = (Player) event.getWhoClicked();
@@ -2169,7 +2169,7 @@ public class IslandGuard implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onEnderChestEvent(PlayerInteractEvent event) {
-	if (debug) {
+	if (DEBUG) {
 	    plugin.getLogger().info("Ender chest " + event.getEventName());
 	}
 	Player player = (Player) event.getPlayer();
@@ -2193,7 +2193,7 @@ public class IslandGuard implements Listener {
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerHitEntity(PlayerInteractEntityEvent e) {
 	Player p = e.getPlayer();
-	if (debug) {
+	if (DEBUG) {
 	    plugin.getLogger().info("Hit entity event " + e.getEventName());
 	}
 	if (!inWorld(p)) {
@@ -2281,7 +2281,7 @@ public class IslandGuard implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGH)
     public void onBlockBurn(BlockBurnEvent e) {
-	if (debug) {
+	if (DEBUG) {
 	    plugin.getLogger().info(e.getEventName());
 	}
 	if (Settings.allowFireSpread || !inWorld(e.getBlock())) {
@@ -2297,7 +2297,7 @@ public class IslandGuard implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGH)
     public void onBlockSpread(BlockSpreadEvent e) {
-	if (debug) {
+	if (DEBUG) {
 	    plugin.getLogger().info(e.getEventName());
 	    plugin.getLogger().info(e.getSource().getType().toString());
 	}
@@ -2316,7 +2316,7 @@ public class IslandGuard implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlateStep(PlayerInteractEvent e) {
-	if (debug) {
+	if (DEBUG) {
 	    plugin.getLogger().info("pressure plate = " + e.getEventName());
 	}
 	if (!inWorld(e.getPlayer()) || !e.getAction().equals(Action.PHYSICAL)
@@ -2367,7 +2367,7 @@ public class IslandGuard implements Listener {
 
     @EventHandler(priority = EventPriority.LOW)
     public void onPistonExtend(BlockPistonExtendEvent e) {
-	if (debug) {
+	if (DEBUG) {
 	    plugin.getLogger().info(e.getEventName());
 	}
 	Location pistonLoc = e.getBlock().getLocation();

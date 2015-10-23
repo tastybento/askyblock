@@ -955,7 +955,7 @@ public class Schematic {
 		}
 	    }
 	}
-	plugin.getLogger().info("DEBUG: islandBlocks after removing air blocks = " + islandBlocks.size());
+	//plugin.getLogger().info("DEBUG: islandBlocks after removing air blocks = " + islandBlocks.size());
     }
 
     /**

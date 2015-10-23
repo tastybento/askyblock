@@ -560,7 +560,16 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 	    plugin.getPlayers().clearHomeLocations(playerUUID);
 	    plugin.getPlayers().setIslandLocation(playerUUID, null);
 	    plugin.getPlayers().setTeamIslandLocation(playerUUID, null);
-	    runCommands(Settings.leaveCommands, playerUUID);
+	    OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayer(playerUUID);
+	    if (offlinePlayer.isOnline()) {
+		// Check perms
+		if (!((Player)offlinePlayer).hasPermission(Settings.PERMPREFIX + "command.leaveexempt")) {
+		    runCommands(Settings.leaveCommands, offlinePlayer);
+		}
+	    } else {
+		// If offline, all commands are run, sorry
+		runCommands(Settings.leaveCommands, offlinePlayer);
+	    }
 	    // Fire event
 	    final IslandLeaveEvent event = new IslandLeaveEvent(plugin, playerUUID, teamLeader);
 	    plugin.getServer().getPluginManager().callEvent(event);
@@ -794,7 +803,11 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 	}
 	// Run any commands that need to be run at the start
 	if (firstTime) {
-	    runCommands(Settings.startCommands, player.getUniqueId());
+	    //plugin.getLogger().info("DEBUG: First time");
+	    if (!player.hasPermission(Settings.PERMPREFIX + "command.newislandexempt")) {
+		//plugin.getLogger().info("DEBUG: Executing new island commands");
+		runCommands(Settings.startCommands, player);
+	    }
 	}
 	// Save grid just in case there's a crash
 	plugin.getGrid().saveGrid();
@@ -2805,27 +2818,47 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 	    //plugin.getLogger().info("DEBUG oldisland = null!");
 	}
 	// Run any commands that need to be run at reset
-	runCommands(Settings.resetCommands, player.getUniqueId());
+	// Ignore commands with this perm
+	if (!player.hasPermission(Settings.PERMPREFIX + "command.resetexempt")) {
+	    runCommands(Settings.resetCommands, player);
+	}
 	plugin.getGrid().saveGrid();
     }
 
     /**
      * Runs commands when a player resets or leaves a team, etc.
+     * Can be run for offline players
      * 
      * @param commands
-     * @param player
+     * @param offlinePlayer
      */
-    private void runCommands(List<String> commands, UUID player) {
-	// Run any reset commands
+    private void runCommands(List<String> commands, OfflinePlayer offlinePlayer) {
+	// Run commands
 	for (String cmd : commands) {
+	    if (cmd.startsWith("[SELF]")) {
+		cmd = cmd.substring(6,cmd.length()).replace("[player]", offlinePlayer.getName()).trim();
+		if (offlinePlayer.isOnline()) {
+		    try {
+			plugin.getLogger().info("Running command '" + cmd + "' as " + offlinePlayer.getName());
+			((Player)offlinePlayer).performCommand(cmd);
+		    } catch (Exception e) {
+			plugin.getLogger().severe("Problem executing island command executed by player - skipping!");
+			plugin.getLogger().severe("Command was : " + cmd);
+			plugin.getLogger().severe("Error was: " + e.getMessage());
+			e.printStackTrace();
+		    }
+		}
+		continue;
+	    }
 	    // Substitute in any references to player
 	    try {
-		if (!plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), cmd.replace("[player]", plugin.getPlayers().getName(player)))) {
-		    plugin.getLogger().severe("Problem executing island reset commands - skipping!");
+		//plugin.getLogger().info("Running command " + cmd + " as console.");
+		if (!plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), cmd.replace("[player]", offlinePlayer.getName()))) {
+		    plugin.getLogger().severe("Problem executing island command - skipping!");
 		    plugin.getLogger().severe("Command was : " + cmd);
 		}
 	    } catch (Exception e) {
-		plugin.getLogger().severe("Problem executing island reset commands - skipping!");
+		plugin.getLogger().severe("Problem executing island command - skipping!");
 		plugin.getLogger().severe("Command was : " + cmd);
 		plugin.getLogger().severe("Error was: " + e.getMessage());
 		e.printStackTrace();

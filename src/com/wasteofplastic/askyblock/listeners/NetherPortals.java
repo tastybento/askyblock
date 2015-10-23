@@ -64,11 +64,26 @@ public class NetherPortals implements Listener {
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
     public void onEntityPortal(EntityPortalEvent event) {
+	//plugin.getLogger().info("DEBUG: nether portal entity " + event.getFrom().getBlock().getType());
 	// If the nether is disabled then quit immediately
 	if (!Settings.createNether) {
 	    return;
 	}
 	if (event.getEntity() == null) {
+	    return;
+	}
+	if (event.getFrom() != null && event.getFrom().getBlock().getType().equals(Material.ENDER_PORTAL)) {
+	    event.setCancelled(true);
+	    // Same action for all worlds except the end itself
+	    if (!event.getFrom().getWorld().getEnvironment().equals(Environment.THE_END)) {
+		if (plugin.getServer().getWorld(Settings.worldName + "_the_end") != null) {
+		    // The end exists
+		    Location end_place = plugin.getServer().getWorld(Settings.worldName + "_the_end").getSpawnLocation();
+		    boolean result = event.getEntity().teleport(end_place);
+		    //plugin.getLogger().info("DEBUG: Result " + result + " teleported " + event.getEntityType() + " to " + end_place);
+		    return;
+		}
+	    }
 	    return;
 	}
 	Location currentLocation = event.getFrom().clone();
