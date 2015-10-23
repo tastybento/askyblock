@@ -258,21 +258,24 @@ general:
 
    #Commands to run when the player resets their island (uncomment and customize)
    # [player] is the player name of who is reseting
+   # If the command is proceeded by [SELF] the command will be run as that player
+   # E.g., - "[SELF] kit tools"
    resetcommands:
-   #- kit tools [player]
-   #- some other command
+   #- "kit tools [player]"
+   #- "some other command"
 
    # Commands to execute when player leaves a team, either by leaving or being kicked
    # Commands will execute even if the player is offline, so may cause errors in
    # the console if the commands doesn't make sense
    leavecommands:
-   #- kit tools [player]
-   #- some other command
+   #- "kit tools [player]"
+   #- "some other command"
 
    # Commands to execute when a player starts a new island for the first time - NOT a reset
    startcommands:
-   #- asadmin lock [player]
-   #- some other command
+   #- "asadmin lock [player]"
+   #- "[SELF] balance"
+   #- "some other command"
 
    # Visitor banned commands: Visitors to islands cannot use these commands
    visitorbannedcommands:
