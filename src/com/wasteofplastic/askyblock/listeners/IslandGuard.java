@@ -51,7 +51,6 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockDispenseEvent;
-import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockMultiPlaceEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -84,9 +83,9 @@ import org.bukkit.util.Vector;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Island;
+import com.wasteofplastic.askyblock.Island.Flags;
 import com.wasteofplastic.askyblock.SafeBoat;
 import com.wasteofplastic.askyblock.Settings;
-import com.wasteofplastic.askyblock.Island.Flags;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
@@ -2065,6 +2064,28 @@ public class IslandGuard implements Listener {
 			return;
 		    }
 		} else if (!island.getIgsFlag(Flags.allowBeaconAccess)) {
+		    e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
+		    e.setCancelled(true);
+		    return;
+		}
+		break;
+	    case DRAGON_EGG:
+		if (island == null) {
+		    if (Settings.allowBreakBlocks) {
+			return;
+		    } else {
+			e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
+			e.setCancelled(true);
+			return;
+		    }
+		}
+		if (island.isSpawn()) {
+		    if (!Settings.allowSpawnBreakBlocks) {
+			e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
+			e.setCancelled(true);
+			return;
+		    }
+		} else if (!island.getIgsFlag(Flags.allowBreakBlocks)) {
 		    e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
 		    e.setCancelled(true);
 		    return;
