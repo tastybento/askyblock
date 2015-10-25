@@ -38,7 +38,7 @@ public class LevelCalcByChunk {
      * @param asker
      */
     public LevelCalcByChunk(final ASkyBlock plugin, final UUID targetPlayer, final Player asker, final boolean silent) {
-	plugin.getLogger().info("DEBUG: running level calc " + silent);
+	//plugin.getLogger().info("DEBUG: running level calc " + silent);
 	// Get player's island
 	Island island = plugin.getGrid().getIsland(targetPlayer);
 	if (island != null) {
