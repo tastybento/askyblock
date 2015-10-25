@@ -34,6 +34,7 @@ import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.CoopPlay;
 import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.LevelCalc;
+import com.wasteofplastic.askyblock.LevelCalcByChunk;
 import com.wasteofplastic.askyblock.PlayerCache;
 import com.wasteofplastic.askyblock.Scoreboards;
 import com.wasteofplastic.askyblock.Settings;
@@ -173,11 +174,15 @@ public class JoinLeaveEvents implements Listener {
 	}
 	// Run the level command if it's free to do so
 	if (Settings.loginLevel) {
-	    if (!plugin.isCalculatingLevel()) {
-		// This flag is true if the command can be used
-		plugin.setCalculatingLevel(true);
-		LevelCalc levelCalc = new LevelCalc(plugin, playerUUID, player, true);
-		levelCalc.runTaskTimer(plugin, 0L, 10L);
+	    if (Settings.fastLevelCalc) {
+		new LevelCalcByChunk(plugin, playerUUID, player, true);
+	    } else {
+		if (!plugin.isCalculatingLevel()) {
+		    // This flag is true if the command can be used
+		    plugin.setCalculatingLevel(true);
+		    LevelCalc levelCalc = new LevelCalc(plugin, playerUUID, player, true);
+		    levelCalc.runTaskTimer(plugin, 0L, 10L);
+		}
 	    }
 	}
 

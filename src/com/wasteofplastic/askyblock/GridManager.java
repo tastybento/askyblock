@@ -5,6 +5,7 @@ package com.wasteofplastic.askyblock;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -30,6 +31,7 @@ import org.bukkit.material.SimpleAttachableMaterialData;
 import org.bukkit.material.TrapDoor;
 import org.bukkit.util.Vector;
 
+import com.wasteofplastic.askyblock.Island.Flags;
 import com.wasteofplastic.askyblock.util.Util;
 
 /**
@@ -253,6 +255,55 @@ public class GridManager {
 						if (teamLeaderUUID.equals(ownerString)) {
 						    TopTen.topTenAddEntry(owner, islandLevel);
 						}
+					    }
+					}
+
+					// Check if there is an island info string and see if it jibes
+					String islandInfo = playerFile.getString("islandInfo","");
+					if (!islandInfo.isEmpty()) {
+					    String[] split = islandInfo.split(":");
+					    try {
+						//int protectionRange = Integer.parseInt(split[3]);
+						//int islandDistance = Integer.parseInt(split[4]);
+						newIsland.setLocked(false);
+						if (split.length > 6) {
+						    // Get locked status
+						    if (split[6].equalsIgnoreCase("true")) {
+							newIsland.setLocked(true);
+						    }
+						}
+						// Check if deletable
+						newIsland.setPurgeProtected(false);
+						if (split.length > 7) {
+						    if (split[7].equalsIgnoreCase("true")) {
+							newIsland.setPurgeProtected(true);
+						    }
+						}
+						if (!split[5].equals("null")) {
+						    if (split[5].equals("spawn")) {
+							newIsland.setSpawn(true);
+							// Try to get the spawn point
+							if (split.length > 8) {
+							    //plugin.getLogger().info("DEBUG: " + serial.substring(serial.indexOf(":SP:") + 4));
+							    Location spawnPoint = Util.getLocationString(islandInfo.substring(islandInfo.indexOf(":SP:") + 4));
+							    newIsland.setSpawnPoint(spawnPoint);
+							}
+						    }
+						}
+						// Check if protection options there
+						if (!newIsland.isSpawn()) {
+						    //plugin.getLogger().info("DEBUG: NOT SPAWN owner is " + owner + " location " + center);
+						    if (split.length > 8 && split[8].length() == 29) {
+							// Parse the 8th string into island guard protection settings
+							int index = 0;
+							// Run through the enum and set
+							for (Flags flag : Flags.values()) {
+							    newIsland.setIgsFlag(flag, split[8].charAt(index++) == '1' ? true : false);
+							}
+						    } 
+						}
+					    } catch (Exception e) {
+						e.printStackTrace();
 					    }
 					}
 				    }
@@ -1192,8 +1243,8 @@ public class GridManager {
     public boolean playerIsOnIsland(final Player player, boolean coop) {
 	return locationIsAtHome(player, coop, player.getLocation());
     }
-    
-    
+
+
     /**
      * Checks if a location is within the home boundaries of a player. If coop is true, this check includes coop players.
      * @param player

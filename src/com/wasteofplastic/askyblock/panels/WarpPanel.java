@@ -103,8 +103,9 @@ public class WarpPanel implements Listener {
 	//plugin.getLogger().info("DEBUG: name of warp = " + playerName);
 	ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
 	if (playerName == null) {
-	    plugin.getLogger().warning("Warp for Player: UUID " + playerUUID.toString() + " is unknown on this server, skipping...");
-	    playerName = playerUUID.toString().substring(0, 10);
+	    //plugin.getLogger().warning("Warp for Player: UUID " + playerUUID.toString() + " is unknown on this server, skipping...");
+	    return null;
+	    //playerName = playerUUID.toString().substring(0, 10);
 	}
 	SkullMeta meta = (SkullMeta) playerSkull.getItemMeta();
 	meta.setOwner(playerName);

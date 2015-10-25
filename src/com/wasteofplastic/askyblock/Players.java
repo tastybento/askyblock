@@ -269,7 +269,14 @@ public class Players {
 	} else {
 	    playerInfo.set("startIslandRating", startIslandRating);
 	}
-
+	// Island info - to be used if the island.yml file is removed
+	playerInfo.set("islandInfo",null);
+	if (hasIsland) {
+	    Island island = plugin.getGrid().getIsland(uuid);
+	    if (island != null) {
+		playerInfo.set("islandInfo", island.save());
+	    } 
+	}
 	// Actually save the file
 	Util.saveYamlFile(playerInfo, "players/" + uuid.toString() + ".yml");
     }
