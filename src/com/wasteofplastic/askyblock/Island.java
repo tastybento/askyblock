@@ -9,6 +9,7 @@ import java.util.UUID;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Biome;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Hopper;
 import org.bukkit.entity.Entity;
@@ -63,6 +64,8 @@ public class Island {
     private Location spawnPoint;
     // Tile entities
     private Multiset<Material> tileEntityCount = HashMultiset.create();
+    // Biome
+    Biome biome;
     // Island protection settings
     private HashMap<Flags, Boolean> igs = new HashMap<Flags, Boolean>();
     public enum Flags {
@@ -203,6 +206,15 @@ public class Island {
 		    this.igs.put(Flags.allowRedStone, Settings.allowRedStone);
 		    this.igs.put(Flags.allowShearing, Settings.allowShearing);
 		}
+		// Get the biome
+		if (split.length > 9) {
+		    try {
+			biome = Biome.valueOf(split[9]);
+			
+		    } catch (IllegalArgumentException ee) {
+			// Unknown biome
+		    }
+		} 
 	    }
 	} catch (Exception e) {
 	    e.printStackTrace();
@@ -530,7 +542,7 @@ public class Island {
 	    result = "";
 	}
 	return center.getBlockX() + ":" + center.getBlockY() + ":" + center.getBlockZ() + ":" + protectionRange + ":" 
-	+ islandDistance + ":" + ownerString + ":" + locked + ":" + purgeProtected + ":" + result;
+	+ islandDistance + ":" + ownerString + ":" + locked + ":" + purgeProtected + ":" + result + ":" + getBiome().toString();
     }
 
     /**
@@ -747,5 +759,22 @@ public class Island {
 	    igs.put(flag, igs.get(flag) ? false : true);
 	}
 
+    }
+
+    /**
+     * @return the biome
+     */
+    public Biome getBiome() {
+	if (biome == null) {
+	    biome = center.getBlock().getBiome();
+	}
+        return biome;
+    }
+
+    /**
+     * @param biome the biome to set
+     */
+    public void setBiome(Biome biome) {
+        this.biome = biome;
     }
 }

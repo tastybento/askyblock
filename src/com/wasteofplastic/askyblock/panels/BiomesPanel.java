@@ -34,7 +34,6 @@ public class BiomesPanel implements Listener {
     private ASkyBlock plugin;
     private HashMap<UUID, List<BiomeItem>> biomeItems = new HashMap<UUID, List<BiomeItem>>();
 
-
     /**
      * @param plugin
      */
@@ -180,7 +179,9 @@ public class BiomesPanel implements Listener {
     public boolean setIslandBiome(final Location islandLoc, final Biome biomeType) {
 	final Island island = plugin.getGrid().getIslandAt(islandLoc);
 	if (island != null) {
-	    island.getCenter().getBlock().setBiome(biomeType);
+	    // Update the settings so they can be checked later
+	    island.setBiome(biomeType);
+	    //island.getCenter().getBlock().setBiome(biomeType);
 	    // Get a snapshot of the island
 	    final World world = island.getCenter().getWorld();
 	    // If the biome is dry, then we need to remove the water, ice, snow, etc.
@@ -279,7 +280,7 @@ public class BiomesPanel implements Listener {
 	    for (int z = 0; z< 16; z++) {
 		Island island = plugin.getGrid().getIslandAt(e.getChunk().getX()*16 + x, e.getChunk().getZ()*16 + z);
 		if (island != null && !island.isSpawn()) {
-		    Biome biome = island.getCenter().getBlock().getBiome();
+		    Biome biome = island.getBiome();
 		    Biome blockBiome = e.getChunk().getBlock(x, 0, z).getBiome();
 		    // If not set already, set it now
 		    if (!biome.equals(blockBiome)) {
@@ -336,7 +337,8 @@ public class BiomesPanel implements Listener {
 			}
 		    }
 		}
-	    }
+		
+	    }	    
 	}
     }
 
