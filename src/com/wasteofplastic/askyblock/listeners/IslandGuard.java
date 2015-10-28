@@ -86,6 +86,8 @@ import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.Island.Flags;
 import com.wasteofplastic.askyblock.SafeBoat;
 import com.wasteofplastic.askyblock.Settings;
+import com.wasteofplastic.askyblock.events.IslandEnterEvent;
+import com.wasteofplastic.askyblock.events.IslandExitEvent;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
@@ -472,6 +474,9 @@ public class IslandGuard implements Listener {
 	    } else {
 		e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).lockNowEntering.replace("[name]", plugin.getPlayers().getName(islandTo.getOwner())));
 	    }
+	    // Fire entry event
+	    final IslandEnterEvent event = new IslandEnterEvent(plugin, e.getPlayer().getUniqueId(), islandTo, e.getTo());
+	    plugin.getServer().getPluginManager().callEvent(event);
 	} else if (islandTo == null && islandFrom != null && (islandFrom.getOwner() != null || islandFrom.isSpawn())) {
 	    // Leaving
 	    if (islandFrom.isSpawn()) {
@@ -480,6 +485,9 @@ public class IslandGuard implements Listener {
 	    } else {
 		e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).lockNowLeaving.replace("[name]", plugin.getPlayers().getName(islandFrom.getOwner())));
 	    }
+	    // Fire exit event
+	    final IslandExitEvent event = new IslandExitEvent(plugin, e.getPlayer().getUniqueId(), islandFrom, e.getFrom());
+	    plugin.getServer().getPluginManager().callEvent(event);
 	} else if (islandTo != null && islandFrom != null && !islandTo.equals(islandFrom)) {
 	    // Adjacent islands or overlapping protections
 	    if (islandFrom.isSpawn()) {
@@ -493,6 +501,12 @@ public class IslandGuard implements Listener {
 	    } else if (islandTo.getOwner() != null) {
 		e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).lockNowEntering.replace("[name]", plugin.getPlayers().getName(islandTo.getOwner())));
 	    }
+	    // Fire exit event
+	    final IslandExitEvent event = new IslandExitEvent(plugin, e.getPlayer().getUniqueId(), islandTo, e.getTo());
+	    plugin.getServer().getPluginManager().callEvent(event);
+	    // Fire entry event
+	    final IslandEnterEvent event2 = new IslandEnterEvent(plugin, e.getPlayer().getUniqueId(), islandFrom, e.getFrom());
+	    plugin.getServer().getPluginManager().callEvent(event2);
 	}
     }
 
@@ -1553,8 +1567,8 @@ public class IslandGuard implements Listener {
 	    }
 	}
     }
-/*
- * Not going to implement this right now, but it could be used if required
+    /*
+     * Not going to implement this right now, but it could be used if required
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onLiquidFlow(final BlockFromToEvent e) {
 	// Ignore non-island worlds
@@ -1598,8 +1612,8 @@ public class IslandGuard implements Listener {
 	// Otherwise cancel - the flow is not allowed
 	e.setCancelled(true);
     }
- */   
-    
+     */   
+
     /**
      * Prevents emptying of buckets outside of island space
      * @param e
