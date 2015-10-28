@@ -23,8 +23,10 @@ public class IslandEnterEvent extends Event {
 
     /**
      * Called to create the event
+     * @param plugin
      * @param player
-     * @param teamLeader
+     * @param island
+     * @param location
      */
     public IslandEnterEvent(ASkyBlock plugin, UUID player, Island island, Location location) {
 	this.player = player;
