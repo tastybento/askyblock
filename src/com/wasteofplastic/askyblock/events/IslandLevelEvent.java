@@ -19,8 +19,9 @@ public class IslandLevelEvent extends Event {
     private int level;
 
     /**
+     * @param plugin
      * @param player
-     * @param teamLeader
+     * @param level
      */
     public IslandLevelEvent(ASkyBlock plugin, UUID player, int level) {
 	this.player = player;
