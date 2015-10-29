@@ -106,7 +106,7 @@ public class IslandGuard implements Listener {
     /**
      * Determines if an entity is in the island world or not or
      * in the new nether if it is activated
-     * @param player
+     * @param entity
      * @return
      */
     protected static boolean inWorld(Entity entity) {
