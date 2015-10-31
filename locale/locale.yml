@@ -212,6 +212,8 @@ expel:
   notonisland: "Player is not trespassing on your island!"
   notyourself: "You cannot expel yourself!"
   success: "You expelled [name]!"
+general:
+  success: "Success!"
 invite: 
   errorCantJoinIsland: "You couldn't join the island, maybe it's full."
   errorCoolDown: "You can invite that player again in [time] minutes"

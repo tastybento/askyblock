@@ -569,6 +569,7 @@ public class Locale {
     public String islandhelpUnCoop;
     public String errorMaxIslands;
     public String entityLimitReached;
+    public String generalSuccess;
 
 
     /**
@@ -1272,5 +1273,6 @@ public class Locale {
 	adminRegisterNoIsland = ChatColor.translateAlternateColorCodes('&', locale.getString("adminRegister.noIsland", "There is no known island in this area!"));
 	adminHelpTeamChatSpy = ChatColor.translateAlternateColorCodes('&', locale.getString("adminHelp.teamChatSpy", "Spy on team chats (on/off)"));
 	errorMaxIslands = ChatColor.translateAlternateColorCodes('&', locale.getString("error.maxIslands", "The sky is full of islands! Try again later!"));
+	generalSuccess = ChatColor.translateAlternateColorCodes('&', locale.getString("general.success", "Success!"));
     }
 }

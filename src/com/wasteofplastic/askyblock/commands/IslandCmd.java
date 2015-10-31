@@ -1068,7 +1068,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 		chooseIsland(player);
 		return true;
 	    } else {
-		if (Settings.useControlPanel) {
+		if (plugin.getPlayers().getControlPanel(playerUUID)) {
 		    player.performCommand(Settings.ISLANDCOMMAND + " cp");
 		} else {
 		    if (!player.getWorld().getName().equalsIgnoreCase(Settings.worldName) || Settings.allowTeleportWhenFalling
@@ -1481,7 +1481,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 		    player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " spawn: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpSpawn);
 		}
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.controlpanel")) {
-		    player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " controlpanel or cp: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpControlPanel);
+		    player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " controlpanel or cp [on/off]: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpControlPanel);
 		}
 		player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " restart: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpRestart);
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.sethome")) {
@@ -1835,6 +1835,20 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 	     * Commands that have two parameters
 	     */
 	case 2:
+	    if (split[0].equalsIgnoreCase("controlpanel") || split[0].equalsIgnoreCase("cp")) {
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.controlpanel")) {
+		    if (split[1].equalsIgnoreCase("on")) {
+			plugin.getPlayers().setControlPanel(playerUUID, true);
+		    } else if (split[1].equalsIgnoreCase("off")) {
+			plugin.getPlayers().setControlPanel(playerUUID, false);
+		    }
+		    player.sendMessage(ChatColor.GREEN + plugin.myLocale(playerUUID).generalSuccess);
+		    return true;
+		} else {
+		    player.sendMessage(plugin.myLocale(playerUUID).errorNoPermission);
+		    return true;
+		}
+	    } else
 	    if (split[0].equalsIgnoreCase("warps")) {
 		if (Settings.useWarpPanel) {
 		    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.warp")) {
@@ -3110,6 +3124,11 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 		for (UUID member : teamMembers) {
 		    options.add(plugin.getPlayers().getName(member));
 		}
+	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.controlpanel")
+		    && (args[0].equalsIgnoreCase("cp") || args[0].equalsIgnoreCase("controlpanel"))) {
+		options.add("on");
+		options.add("off");
 	    }
 	    break;
 	}

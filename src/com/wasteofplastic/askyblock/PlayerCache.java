@@ -764,4 +764,24 @@ public class PlayerCache {
 	    player.setResetsLeft(resetLimit);
 	}	
     }
+
+    /**
+     * Sets whether the player uses the control panel or not when doing /island
+     * @param b
+     */
+    public void setControlPanel(UUID playerUUID, boolean b) {
+	addPlayer(playerUUID);
+	playerCache.get(playerUUID).setControlPanel(b);
+	
+    }
+    
+    /**
+     * Sets whether the player uses the control panel or not when doing /island
+     * @param b
+     */
+    public boolean getControlPanel(UUID playerUUID) {
+	addPlayer(playerUUID);
+	return playerCache.get(playerUUID).getControlPanel();
+	
+    }
 }

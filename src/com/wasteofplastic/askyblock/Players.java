@@ -58,6 +58,7 @@ public class Players {
     private List<UUID> banList;
     private String locale;
     private int startIslandRating;
+    private boolean useControlPanel;
 
     /**
      * @param uuid
@@ -84,6 +85,7 @@ public class Players {
 	this.locale = "";
 	this.startIslandRating = 50;
 	this.banList = new ArrayList<UUID>();
+	this.useControlPanel = Settings.useControlPanel;
 	load(uuid);
     }
 
@@ -171,6 +173,8 @@ public class Players {
 	if (Settings.resetLimit > 0 && this.resetsLeft == -1) {
 	    resetsLeft = Settings.resetLimit;
 	}
+	// Load control panel setting
+	useControlPanel = playerInfo.getBoolean("useControlPanel", Settings.useControlPanel);
 	// Load the invite cool downs
 	if (playerInfo.contains("invitecooldown")) {
 	    // plugin.getLogger().info("DEBUG: cooldown found");
@@ -277,6 +281,8 @@ public class Players {
 		playerInfo.set("islandInfo", island.save());
 	    } 
 	}
+	// Control panel
+	playerInfo.set("useControlPanel", useControlPanel);
 	// Actually save the file
 	Util.saveYamlFile(playerInfo, "players/" + uuid.toString() + ".yml");
     }
@@ -809,5 +815,20 @@ public class Players {
      */
     public boolean isBanned(UUID targetUUID) {
 	return this.banList.contains(targetUUID);
+    }
+
+    /**
+     * Sets whether a player uses the control panel or not
+     * @param b
+     */
+    public void setControlPanel(boolean b) {
+	useControlPanel = b;
+    }
+
+    /**
+     * @return useControlPanel
+     */
+    public boolean getControlPanel() {
+	return useControlPanel;
     }
 }
