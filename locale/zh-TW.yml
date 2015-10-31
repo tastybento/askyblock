@@ -130,7 +130,7 @@ invite:
   errorYouMustHaveIslandToInvite: "你必須擁有一個島嶼, 才能邀請其他玩家入住!"
   errorYourIslandIsFull: "你的島嶼住滿了人, 你沒辦法再邀請其他玩家了."
   hasJoinedYourIsland: "&b&l[name] &a加入了你的島嶼!"
-  help: "&6輸入&e/island invite &b<玩家ID> &6邀請玩家加入你的島嶼."
+  help: "&6輸入&e/[label] invite &b<玩家ID> &6邀請玩家加入你的島嶼."
   inviteSentTo: "邀請已發送給&b&l [name]"
   nameHasInvitedYou: "&b&l[name] &2&l邀請&a你入住他的島嶼!"
   onlyIslandOwnerCanInvite: 只有島嶼主人才能邀請其他玩家!
@@ -139,7 +139,7 @@ invite:
   warningYouWillLoseIsland: "&4&l警告: &c如果你&2&l接受&c, 你將&4&l失去&c當前這個島嶼!"
   youCanInvite: "&b你還能邀請 &e&l[number] &b個玩家."
   youCannotInvite: "&l你無法邀請更多的玩家了."
-  youHaveJoinedAnIsland: "你加入了一個島嶼! 使用 &e&l/island team &a來查看其他成員."
+  youHaveJoinedAnIsland: "你加入了一個島嶼! 使用 &e&l/[label] team &a來查看其他成員."
 island: 
   cannotTeleport: "&c&l你不能在掉落時傳送!"
   donate: "Welcome to A SkyBlock by tastybento"
@@ -162,7 +162,7 @@ island:
   helpLock: 鎖住島嶼讓訪客無法訪問
   helpMakeLeader: 將島嶼贈送給玩家.
   helpRestart: "&c&l重新開始&6的你島嶼生涯."
-  helpSetHome: "&6設置島嶼指令&e/island&6的傳送坐標."
+  helpSetHome: "&6設置島嶼指令&e/[label]&6的傳送坐標."
   helpSettings: 查看島嶼保護設定和遊戲設定
   helpTeam: "&a顯示你團隊的信息."
   helpTeleport: 傳送到你的島嶼.
@@ -172,16 +172,16 @@ island:
   islandDeletedLifeboats: "&c島嶼已&4&l刪除!"
   islandLevelis: "&6島嶼等級為&b&l"
   new: "&b&l正在為你創建一個新的島嶼..."
-  resetConfirm: "請在&e10&c秒內輸入&e/island confirm &c來確認你的操作,然後重新開始!"
-  resetMustRemovePlayers: "&c你只有將島嶼&4所有成員&e踢出&c才能重新開始 &b(/island kick &c<玩家ID>&b). &a輸入&e/island team &a可以查詢成員列表."
+  resetConfirm: "請在&e10&c秒內輸入&e/[label] confirm &c來確認你的操作,然後重新開始!"
+  resetMustRemovePlayers: "&c你只有將島嶼&4所有成員&e踢出&c才能重新開始 &b(/[label] kick &c<玩家ID>&b). &a輸入&e/[label] team &a可以查詢成員列表."
   resetNoMore: "&c&l你無法再重新開始了!"
-  resetOnlyOwner: "&c&l只有島嶼的主人才能那樣做. 請輸入&e&l/island leave&c&l離開當前團隊,然後重新你的島嶼生涯."
+  resetOnlyOwner: "&c&l只有島嶼的主人才能那樣做. 請輸入&e&l/[label] leave&c&l離開當前團隊,然後重新你的島嶼生涯."
   resetPleaseWait: "&b&l請稍等,正在創建新的島嶼"
   resetTo: "&c&l清除重新開始限制"
   resetWait: "&c你需要等待 &e[time] 秒&c才能那樣做."
   resetYouHave: "&6你還有&b&l [number] &6次重新開始的機會."
   subtitle: "by tastybento"
-  teleport: "&b&l[島嶼娘]:&6歡迎回來~我的主人. &e(輸入&c/island help &e獲取更多幫助)"
+  teleport: "&b&l[島嶼娘]:&6歡迎回來~我的主人. &e(輸入&c/[label] help &e獲取更多幫助)"
   title: "A SkyBlock"
   url: ""
 islandProtected: 島嶼保護.
@@ -233,9 +233,9 @@ kick:
   nameRemovedYou: "&b&l[name] &c將你&4&l驅逐&c出了他的島嶼!"
 lavaTip: "溫馨提示: 如果岩漿變成了黑曜石,可以使用鐵桶右鍵變回岩漿."
 leave: 
-  errorLeadersCannotLeave: "空島主人無法離開島嶼.請輸入 &b/island makeleader <玩家ID> 來轉讓島嶼"
-  errorYouAreTheLeader: "因為你是島嶼主人所以不能離開, 使用&b&l /island makeleader <玩家> &e來改變島嶼主人."
-  errorYouCannotLeaveIsland: "你無法離開島嶼當只剩下你一個人的時候.如果你想重新開始,請輸入 &e&l/island restart!"
+  errorLeadersCannotLeave: "空島主人無法離開島嶼.請輸入 &b/[label] makeleader <玩家ID> 來轉讓島嶼"
+  errorYouAreTheLeader: "因為你是島嶼主人所以不能離開, 使用&b&l /[label] makeleader <玩家> &e來改變島嶼主人."
+  errorYouCannotLeaveIsland: "你無法離開島嶼當只剩下你一個人的時候.如果你想重新開始,請輸入 &e&l/[label] restart!"
   errorYouMustBeInWorld: 你只能夠在你的島嶼上這樣做!
   nameHasLeftYourIsland: "&b&l[name] &c離開了你的島嶼!"
   youHaveLeftTheIsland: "你離開了島嶼, 並返回到了玩家出生地."

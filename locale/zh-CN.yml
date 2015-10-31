@@ -166,7 +166,7 @@ invite:
   errorYouMustHaveIslandToInvite: "§c你必须拥有一个岛屿, 才能邀请其他玩家入住!"
   errorYourIslandIsFull: "§c你的岛屿住满了人, 你没办法再邀请其他玩家了."
   hasJoinedYourIsland: "§b[name] §a加入了你的岛屿!"
-  help: "§6输入§e/island invite §b<玩家ID> §6邀请玩家加入你的岛屿."
+  help: "§6输入§e/[label] invite §b<玩家ID> §6邀请玩家加入你的岛屿."
   inviteSentTo: "§a邀请已发送给§b [name]"
   nameHasInvitedYou: "§b[name] §2邀请§a你入住他的岛屿!"
   onlyIslandOwnerCanInvite: §c只有岛屿主人才能邀请其他玩家!
@@ -175,7 +175,7 @@ invite:
   warningYouWillLoseIsland: "§4警告: §c如果你§2接受§c, 你将§4失去§c当前这个岛屿!"
   youCanInvite: "§b你还能邀请 §e[number] §b个玩家."
   youCannotInvite: §c你无法邀请更多的玩家了.
-  youHaveJoinedAnIsland: "§a你加入了一个岛屿! 使用 §e/island team §a来查看其他成员."
+  youHaveJoinedAnIsland: "§a你加入了一个岛屿! 使用 §e/[label] team §a来查看其他成员."
 island: 
   cannotTeleport: §c你无法在下落过程中进行传送!
   donate: §a本汉化由§e§l梦之地§a提供
@@ -208,16 +208,16 @@ island:
   islandDeletedLifeboats: §c岛屿已§4删除!
   islandLevelis: §6岛屿等级为§e§l
   new: §b正在为你创建一个新的岛屿...
-  resetConfirm: "§c请在§e[seconds]§c秒内输入§e/island confirm §c来确认你的操作,然后重新开始!"
-  resetMustRemovePlayers: "§c你只有将岛屿§4所有成员§e踢出§c才能重新开始 §b(/island kick §c<玩家ID>§b). §a输入§e/island team §a可以查询成员列表."
+  resetConfirm: "§c请在§e[seconds]§c秒内输入§e/[label] confirm §c来确认你的操作,然后重新开始!"
+  resetMustRemovePlayers: "§c你只有将岛屿§4所有成员§e踢出§c才能重新开始 §b(/[label] kick §c<玩家ID>§b). §a输入§e/[label] team §a可以查询成员列表."
   resetNoMore: §c你无法再重新开始了!
-  resetOnlyOwner: "§c只有岛屿的主人才能那样做. 请输入§e/island leave§c离开当前团队,然后重新你的岛屿生涯."
+  resetOnlyOwner: "§c只有岛屿的主人才能那样做. 请输入§e/[label] leave§c离开当前团队,然后重新你的岛屿生涯."
   resetPleaseWait: "§b请稍等,正在创建新的岛屿"
   resetTo: §c清除重新开始限制
   resetWait: "§c你需要等待 §e[time] 秒§c才能那样做."
   resetYouHave: "§6你还有§b [number] §6次重新开始的机会."
   subtitle: §a§l请务必努力生存下去
-  teleport: "§b[岛屿娘]:§6欢饮回来~我的主人. §e(输入§c/island help §e获取更多帮助)"
+  teleport: "§b[岛屿娘]:§6欢饮回来~我的主人. §e(输入§c/[label] help §e获取更多帮助)"
   title: §c§lASkyBlock
   url: ""
 islandProtected: 岛屿保护.
@@ -272,9 +272,9 @@ kick:
   nameRemovedYou: "§b[name] §c将你§4驱逐§c出了他的岛屿!"
 lavaTip: "§a§l温馨提示: §c如果岩浆变成了黑曜石,可以使用铁桶右键变回岩浆."
 leave: 
-  errorLeadersCannotLeave: "§c空岛主人无法离开岛屿.请输入 §b/island makeleader <玩家ID> 来转让岛屿"
-  errorYouAreTheLeader: "§c因为你是岛屿主人所以不能离开, 使用§b /island makeleader <玩家> §e来改变岛屿主人."
-  errorYouCannotLeaveIsland: "§c你无法离开岛屿当只剩下你一个人的时候.如果你想重新开始,请输入 §e/island restart!"
+  errorLeadersCannotLeave: "§c空岛主人无法离开岛屿.请输入 §b/[label] makeleader <玩家ID> 来转让岛屿"
+  errorYouAreTheLeader: "§c因为你是岛屿主人所以不能离开, 使用§b /[label] makeleader <玩家> §e来改变岛屿主人."
+  errorYouCannotLeaveIsland: "§c你无法离开岛屿当只剩下你一个人的时候.如果你想重新开始,请输入 §e/[label] restart!"
   errorYouMustBeInWorld: §c你只能够在你的岛屿上这样做!
   nameHasLeftYourIsland: "§b[name] §c离开了你的岛屿!"
   youHaveLeftTheIsland: "§c你离开了岛屿, 并返回到了玩家出生地."

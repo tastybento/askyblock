@@ -145,7 +145,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
 		sender.sendMessage(ChatColor.GOLD + plugin.myLocale(player.getUniqueId()).challengesname + ": " + ChatColor.WHITE + challenge);
 		sender.sendMessage(ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).challengeslevel + ": " + ChatColor.GOLD
 			+ getChallengeConfig().getString("challenges.challengeList." + challenge + ".level", ""));
-		sender.sendMessage(ChatColor.GOLD + getChallengeConfig().getString("challenges.challengeList." + challenge + ".description", ""));
+		sender.sendMessage(ChatColor.GOLD + getChallengeConfig().getString("challenges.challengeList." + challenge + ".description", "").replace("[label]", Settings.ISLANDCOMMAND));
 		final String type = getChallengeConfig().getString("challenges.challengeList." + challenge + ".type", "").toLowerCase();
 		if (type.equals("inventory")) {
 		    if (getChallengeConfig().getBoolean("challenges.challengeList." + cmd[0].toLowerCase() + ".takeItems")) {
@@ -696,7 +696,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
 	    // Check if the player has the required items
 	    if (!hasRequired(player, challenge, "inventory")) {
 		player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).challengeserrorNotEnoughItems);
-		player.sendMessage(ChatColor.RED + getChallengeConfig().getString("challenges.challengeList." + challenge + ".description"));
+		player.sendMessage(ChatColor.RED + getChallengeConfig().getString("challenges.challengeList." + challenge + ".description").replace("[label]", Settings.ISLANDCOMMAND));
 		return false;
 	    }
 	    return true;
@@ -717,7 +717,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
 		    searchRadius = 50;
 		}
 		player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).challengeserrorNotCloseEnough.replace("[number]", String.valueOf(searchRadius)));
-		player.sendMessage(ChatColor.RED + getChallengeConfig().getString("challenges.challengeList." + challenge + ".description"));
+		player.sendMessage(ChatColor.RED + getChallengeConfig().getString("challenges.challengeList." + challenge + ".description").replace("[label]", Settings.ISLANDCOMMAND));
 		return false;
 	    }
 	    // plugin.getLogger().info("DEBUG: 7");
@@ -782,7 +782,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
 	    if (moneyReq > 0D) {
 		if (!VaultHelper.econ.has(player, Settings.worldName, moneyReq)) {
 		    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).challengeserrorNotEnoughItems);
-		    player.sendMessage(ChatColor.RED + getChallengeConfig().getString("challenges.challengeList." + challenge + ".description"));
+		    player.sendMessage(ChatColor.RED + getChallengeConfig().getString("challenges.challengeList." + challenge + ".description").replace("[label]", Settings.ISLANDCOMMAND));
 		    return false;
 		}
 	    }
@@ -1629,7 +1629,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
 
 	final String type = getChallengeConfig().getString("challenges.challengeList." + challenge + ".type", "").toLowerCase();
 	if (!complete || (complete && repeatable)) {
-	    result.addAll(Util.chop(ChatColor.GOLD, getChallengeConfig().getString("challenges.challengeList." + challenge + ".description", ""), length));
+	    result.addAll(Util.chop(ChatColor.GOLD, getChallengeConfig().getString("challenges.challengeList." + challenge + ".description", "").replace("[label]", Settings.ISLANDCOMMAND), length));
 	    if (type.equals("inventory")) {
 		if (getChallengeConfig().getBoolean("challenges.challengeList." + challenge.toLowerCase() + ".takeItems")) {
 		    result.addAll(Util.chop(ChatColor.RED, plugin.myLocale(player.getUniqueId()).challengesitemTakeWarning, length));

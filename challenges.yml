@@ -259,7 +259,7 @@ challenges:
       maxtimes: 100
     builder:
       friendlyname: 'Builder'
-      description: 'Reach island level 10 (/island level).'
+      description: 'Reach island level 10 (/[label] level).'
       icon: WOOD
       level: 'Novice'
       type: level
@@ -375,7 +375,7 @@ challenges:
       maxtimes: 100
     craftsman:
       friendlyname: 'Craftsman'
-      description: 'Reach island level 75 (/island level).'
+      description: 'Reach island level 75 (/[label] level).'
       icon: IRON_BLOCK
       level: 'Competent'
       type: level
@@ -513,7 +513,7 @@ challenges:
       maxtimes: 100
     mason:
       friendlyname: 'Mason'
-      description: 'Reach island level 150 (/island level).'
+      description: 'Reach island level 150 (/[label] level).'
       icon: GOLD_BLOCK
       level: 'Expert'
       type: level
