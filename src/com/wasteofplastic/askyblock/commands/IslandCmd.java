@@ -2636,7 +2636,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 					    target.getEquipment().clear();
 					    if (Settings.resetChallenges) {
 						// Reset the player's challenge status
-						plugin.getPlayers().resetAllChallenges(target.getUniqueId());
+						plugin.getPlayers().resetAllChallenges(target.getUniqueId(), false);
 					    }
 					    // Reset the island level
 					    plugin.getPlayers().setIslandLevel(target.getUniqueId(), 0);

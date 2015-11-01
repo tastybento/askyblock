@@ -1799,4 +1799,13 @@ public class Challenges implements CommandExecutor, TabCompleter {
 
 	return Util.tabLimit(options, args.length != 0 ? args[args.length - 1] : "");
     }
+
+    /**
+     * Check if challenge can be reset according to challenges.yml file
+     * @param challenge
+     * @return true if this challenge can be reset, false if not
+     */
+    public boolean resetable(String challenge) {
+	return getChallengeConfig().getBoolean("challenges.challengeList." + challenge + ".resetallowed", true);
+    }
 }

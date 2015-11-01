@@ -1450,7 +1450,7 @@ public class ASkyBlock extends JavaPlugin {
 	}
 	if (Settings.resetChallenges) {
 	    // Reset the player's challenge status
-	    players.resetAllChallenges(player.getUniqueId());
+	    players.resetAllChallenges(player.getUniqueId(), false);
 	}
 	// Reset the island level
 	players.setIslandLevel(player.getUniqueId(), 0);

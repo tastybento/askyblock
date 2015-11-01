@@ -1216,7 +1216,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 		    sender.sendMessage(ChatColor.RED + plugin.myLocale().errorUnknownPlayer);
 		    return true;
 		}
-		plugin.getPlayers().resetAllChallenges(playerUUID);
+		plugin.getPlayers().resetAllChallenges(playerUUID, true);
 		sender.sendMessage(ChatColor.YELLOW + plugin.myLocale().resetChallengessuccess.replace("[name]", split[1]));
 		return true;
 	    } else {

@@ -42,6 +42,9 @@
 # WATER, REGEN, SPEED, FIRE_RESISTANCE, POISON, INSTANT_HEAL, NIGHT_VISION, WEAKNESS,
 # STRENGTH, SLOWNESS, JUMP, INSTANT_DAMAGE, WATER_BREATHING, INVISIBILITY
 #
+# Reseting islands and challenges - usually challenges are reset when a player resets
+# their island (see resetchallenges in config.yml). You can stop some challenges from
+# being reset by using resetallowed:false in the challenge.
 ##########################################################################################
 
 challenges:
@@ -137,6 +140,10 @@ challenges:
       #repeatrewardcommands:
       # Max times limits how many times a challenge can be done. Comment out to make unlimited
       maxtimes: 2
+      # Allow this challenge to reset when the player resets their island
+      # Default is true. Set to false to keep this challenge completed.
+      # Admins can always reset challenges even if this is set to false.
+      resetallowed: true
     breadmaker:
       friendlyname: 'Bread Maker'
       description: 'Bake 21 loaves of bread'

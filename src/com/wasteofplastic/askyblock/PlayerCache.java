@@ -378,9 +378,25 @@ public class PlayerCache {
 	playerCache.get(playerUUID).resetChallenge(challenge);
     }
 
-    public void resetAllChallenges(UUID playerUUID) {
+    /**
+     * Resets all the player's challenges. If the boolean is true, then everything will be reset, if false
+     * challenges that have the "resetallowed: false" flag in challenges.yml will not be reset
+     * @param playerUUID
+     * @param resetAll
+     */
+    public void resetAllChallenges(UUID playerUUID, boolean resetAll) {
 	addPlayer(playerUUID);
-	playerCache.get(playerUUID).resetAllChallenges();
+	if (resetAll) {
+	    playerCache.get(playerUUID).resetAllChallenges();
+	} else {
+	    // Look through challenges and check them
+	    for (String challenge: plugin.getChallenges().getAllChallenges()) {
+		// Check for the flag
+		if (plugin.getChallenges().resetable(challenge)) {
+		    playerCache.get(playerUUID).resetChallenge(challenge);
+		}
+	    }
+	}
     }
 
     public void setJoinTeam(UUID playerUUID, UUID teamLeader, Location islandLocation) {
