@@ -330,12 +330,12 @@ public class ControlPanel implements Listener {
 	// Check control panels
 	for (String panelName : controlPanel.keySet()) {
 	    if (inventory.getName().equals(panelName)) {
+		event.setCancelled(true);
 		// plugin.getLogger().info("DEBUG: panels length " +
 		// panels.size());
 		// plugin.getLogger().info("DEBUG: panel name " + panelName);
 		if (slot == -999) {
-		    player.closeInventory();
-		    event.setCancelled(true);
+		    player.closeInventory(); 
 		    return;
 		}
 		HashMap<Integer, CPItem> thisPanel = panels.get(panelName);
