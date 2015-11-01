@@ -147,7 +147,8 @@ public class JoinLeaveEvents implements Listener {
 		    // We have a mismatch - correct in favor of the player info
 		    //plugin.getLogger().info("DEBUG: getIslandLoc is null but there is a player listing");
 		    plugin.getLogger().warning(player.getName() + " login: mismatch - player.yml and islands.yml are out of sync. Fixing...");
-		    plugin.getGrid().deleteIsland(islandByOwner.getCenter());
+		    // Cannot delete by location
+		    plugin.getGrid().deleteIslandOwner(playerUUID);
 		    plugin.getGrid().addIsland(loc.getBlockX(), loc.getBlockZ(), leader);
 		}
 	    } else {

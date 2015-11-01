@@ -492,12 +492,20 @@ public class GridManager {
     public Island addIsland(int x, int z, UUID owner) {
 	// Check if this owner already has an island
 	if (ownershipMap.containsKey(owner)) {
+	    // Island exists
 	    Island island = ownershipMap.get(owner);
-	    plugin.getLogger().warning(
-		    "Island at " + island.getCenter().getBlockX() + ", " + island.getCenter().getBlockZ()
-		    + " is already owned by this player. Removing ownership of this island.");
-	    island.setOwner(null);
-	    ownershipMap.remove(owner);
+	    // Remove island if the player already has a different one
+	    if (island.getCenter().getBlockX() != x || island.getCenter().getBlockZ() != z) {
+		plugin.getLogger().warning(
+			"Island at " + island.getCenter().getBlockX() + ", " + island.getCenter().getBlockZ()
+			+ " is already owned by this player. Removing ownership of this island.");
+		island.setOwner(null);
+		ownershipMap.remove(owner);
+	    } else {
+		// Player already has island
+		addToGrids(island);
+		return island;
+	    }
 	}
 	// plugin.getLogger().info("DEBUG: adding island to grid at " + x + ", "
 	// + z + " for " + owner.toString());
@@ -521,6 +529,10 @@ public class GridManager {
 	return newIsland;
     }
 
+    /**
+     * Adds an island to the grid register
+     * @param newIsland
+     */
     private void addToGrids(Island newIsland) {
 	if (newIsland.getOwner() != null) {
 	    ownershipMap.put(newIsland.getOwner(), newIsland);
@@ -571,6 +583,21 @@ public class GridManager {
 	}
     }
 
+    /**
+     * Deletes any island owned by owner from the grid. Does not actually remove the island
+     * from the world. Used for cleaning up issues such as mismatches between player files
+     * and island.yml
+     * @param owner
+     */
+    public void deleteIslandOwner(UUID owner) {
+	if (owner != null && ownershipMap.containsKey(owner)) {
+	    Island island = ownershipMap.get(owner);
+	    if (island != null) {
+		island.setOwner(null);
+	    }
+	    ownershipMap.remove(owner);
+	}
+    }
     /**
      * Removes the island at location loc from the grid and removes the player
      * from the ownership map
