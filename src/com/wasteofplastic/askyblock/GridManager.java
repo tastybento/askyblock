@@ -496,9 +496,9 @@ public class GridManager {
 	    Island island = ownershipMap.get(owner);
 	    // Remove island if the player already has a different one
 	    if (island.getCenter().getBlockX() != x || island.getCenter().getBlockZ() != z) {
-		plugin.getLogger().warning(
-			"Island at " + island.getCenter().getBlockX() + ", " + island.getCenter().getBlockZ()
-			+ " is already owned by this player. Removing ownership of this island.");
+		//plugin.getLogger().warning(
+			//"Island at " + island.getCenter().getBlockX() + ", " + island.getCenter().getBlockZ()
+			//+ " is already owned by this player. Removing ownership of this island.");
 		island.setOwner(null);
 		ownershipMap.remove(owner);
 	    } else {

@@ -468,7 +468,7 @@ public class PlayerCache {
 	    plugin.getTinyDB().savePlayerName(playerCache.get(playerUUID).getPlayerName(), playerUUID);
 	}
     }
-    
+
     public void completeChallenge(UUID playerUUID, String challenge) {
 	addPlayer(playerUUID);
 	playerCache.get(playerUUID).completeChallenge(challenge);
@@ -510,7 +510,9 @@ public class PlayerCache {
 	playerCache.get(uniqueId).setPlayerN(name);
 	// Save the name in the name database. Note that the old name will still work until someone takes it
 	// This feature enables admins to locate 'fugitive' players even if they change their name
-	plugin.getTinyDB().savePlayerName(name, uniqueId);
+	if (plugin.getTinyDB().isDbReady()) {
+	    plugin.getTinyDB().savePlayerName(name, uniqueId);
+	}
     }
 
     /**
@@ -788,9 +790,9 @@ public class PlayerCache {
     public void setControlPanel(UUID playerUUID, boolean b) {
 	addPlayer(playerUUID);
 	playerCache.get(playerUUID).setControlPanel(b);
-	
+
     }
-    
+
     /**
      * Sets whether the player uses the control panel or not when doing /island
      * @param b
@@ -798,6 +800,6 @@ public class PlayerCache {
     public boolean getControlPanel(UUID playerUUID) {
 	addPlayer(playerUUID);
 	return playerCache.get(playerUUID).getControlPanel();
-	
+
     }
 }
