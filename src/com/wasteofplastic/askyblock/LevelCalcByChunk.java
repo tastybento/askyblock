@@ -47,16 +47,11 @@ public class LevelCalcByChunk {
 	    // Get the chunks
 	    //long nano = System.nanoTime();
 	    Set<ChunkSnapshot> chunkSnapshot = new HashSet<ChunkSnapshot>();
-	    //plugin.getLogger().info("DEBUG: max z = " + (double)(island.getMinProtectedZ() + island.getProtectionSize() - 1)/16);
-	    //plugin.getLogger().info("DEBUG: rounded z = " + new BigDecimal((double)(island.getMinProtectedZ() + island.getProtectionSize() - 1)/16).setScale(0, BigDecimal.ROUND_UP).intValue());
-	    
-	    for (int x = new BigDecimal((double)island.getMinProtectedX() / 16).setScale(0,BigDecimal.ROUND_DOWN).intValue(); 
-		    x <= new BigDecimal((double)(island.getMinProtectedX() + island.getProtectionSize() - 1)/16).setScale(0, BigDecimal.ROUND_UP).intValue(); x++) {
-		for (int z = new BigDecimal((double)island.getMinProtectedZ() / 16).setScale(0,BigDecimal.ROUND_DOWN).intValue();
-			z <= new BigDecimal((double)(island.getMinProtectedZ() + island.getProtectionSize() - 1)/16).setScale(0, BigDecimal.ROUND_UP).intValue(); z++) {
-		    //plugin.getLogger().info("DEBUG: x = " + x + " z =" + z);
-		    chunkSnapshot.add(world.getChunkAt(x,z).getChunkSnapshot());
-		}  
+	    for (int x = island.getMinProtectedX(); x < (island.getMinProtectedX() + island.getProtectionSize() + 16); x += 16) {
+		for (int z = island.getMinProtectedZ(); z < (island.getMinProtectedZ() + island.getProtectionSize() + 16); z += 16) {
+		    chunkSnapshot.add(world.getBlockAt(x, 0, z).getChunk().getChunkSnapshot());
+		    //plugin.getLogger().info("DEBUG: getting chunk at " + x + ", " + z);
+		}
 	    }
 	    //plugin.getLogger().info("DEBUG: time = " + (System.nanoTime() - nano) / 1000000 + " ms");
 	    //plugin.getLogger().info("DEBUG: size of chunk ss = " + chunkSnapshot.size());
