@@ -307,6 +307,9 @@ public class ASkyBlock extends JavaPlugin {
 	if (!playersFolder.exists()) {
 	    playersFolder.mkdir();
 	}
+	players = new PlayerCache(this);
+	// Get challenges
+	challenges = new Challenges(this);
 	// Set up commands for this plugin
 	islandCmd = new IslandCmd(this);
 	if (Settings.GAMETYPE.equals(Settings.GameType.ASKYBLOCK)) {
@@ -620,9 +623,10 @@ public class ASkyBlock extends JavaPlugin {
      * @return the challenges
      */
     public Challenges getChallenges() {
+	/*
 	if (challenges == null) {
 	    challenges = new Challenges(this);
-	}
+	}*/
 	return challenges;
     }
 
@@ -635,9 +639,10 @@ public class ASkyBlock extends JavaPlugin {
      * @return the grid
      */
     public GridManager getGrid() {
+	/*
 	if (grid == null) {
 	    grid = new GridManager(this);
-	}
+	}*/
 	return grid;
     }
 
@@ -645,9 +650,10 @@ public class ASkyBlock extends JavaPlugin {
      * @return the players
      */
     public PlayerCache getPlayers() {
+	/*
 	if (players == null) {
 	    players = new PlayerCache(this);
-	}
+	}*/
 	return players;
     }
 

@@ -534,15 +534,15 @@ public class GridManager {
      * @param newIsland
      */
     private void addToGrids(Island newIsland) {
+	//plugin.getLogger().info("DEBUG: adding island to grid at " + newIsland.getMinX() + "," + newIsland.getMinZ());
 	if (newIsland.getOwner() != null) {
 	    ownershipMap.put(newIsland.getOwner(), newIsland);
 	}
-	// plugin.getLogger().info("DEBUG: adding island to grid");
 	if (islandGrid.containsKey(newIsland.getMinX())) {
-	    // plugin.getLogger().info("DEBUG: min x is in the grid :" +
-	    // newIsland.getMinX());
+	    //plugin.getLogger().info("DEBUG: min x is in the grid :" + newIsland.getMinX());
 	    TreeMap<Integer, Island> zEntry = islandGrid.get(newIsland.getMinX());
 	    if (zEntry.containsKey(newIsland.getMinZ())) {
+		//plugin.getLogger().info("DEBUG: min z is in the grid :" + newIsland.getMinZ());
 		// Island already exists
 		Island conflict = islandGrid.get(newIsland.getMinX()).get(newIsland.getMinZ());
 		plugin.getLogger().warning("*** Duplicate or overlapping islands! ***");
@@ -565,18 +565,14 @@ public class GridManager {
 		return;
 	    } else {
 		// Add island
-		// plugin.getLogger().info("DEBUG: min z is not in the grid :" +
-		// newIsland.getMinZ());
+		//plugin.getLogger().info("DEBUG: added island to grid at " + newIsland.getMinX() + "," + newIsland.getMinZ());
 		zEntry.put(newIsland.getMinZ(), newIsland);
 		islandGrid.put(newIsland.getMinX(), zEntry);
 		// plugin.getLogger().info("Debug: " + newIsland.toString());
 	    }
 	} else {
 	    // Add island
-	    // plugin.getLogger().info("DEBUG: min x is not in the grid :" +
-	    // newIsland.getMinX());
-	    // plugin.getLogger().info("DEBUG: min Z is not in the grid :" +
-	    // newIsland.getMinZ());
+	    //plugin.getLogger().info("DEBUG: added island to grid at " + newIsland.getMinX() + "," + newIsland.getMinZ());
 	    TreeMap<Integer, Island> zEntry = new TreeMap<Integer, Island>();
 	    zEntry.put(newIsland.getMinZ(), newIsland);
 	    islandGrid.put(newIsland.getMinX(), zEntry);
