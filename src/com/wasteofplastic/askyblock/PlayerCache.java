@@ -464,7 +464,7 @@ public class PlayerCache {
     public void save(UUID playerUUID) {
 	playerCache.get(playerUUID).save();
 	// Save the name + UUID in the database if it ready
-	if (plugin.getTinyDB().isDbReady()) {
+	if (plugin.getTinyDB() != null && plugin.getTinyDB().isDbReady()) {
 	    plugin.getTinyDB().savePlayerName(playerCache.get(playerUUID).getPlayerName(), playerUUID);
 	}
     }
@@ -494,7 +494,7 @@ public class PlayerCache {
 	    }
 	}
 	// Look in the database if it ready
-	if (plugin.getTinyDB().isDbReady()) {
+	if (plugin.getTinyDB() != null && plugin.getTinyDB().isDbReady()) {
 	    return plugin.getTinyDB().getPlayerUUID(string);
 	}
 	return null;
@@ -510,7 +510,7 @@ public class PlayerCache {
 	playerCache.get(uniqueId).setPlayerN(name);
 	// Save the name in the name database. Note that the old name will still work until someone takes it
 	// This feature enables admins to locate 'fugitive' players even if they change their name
-	if (plugin.getTinyDB().isDbReady()) {
+	if (plugin.getTinyDB() != null && plugin.getTinyDB().isDbReady()) {
 	    plugin.getTinyDB().savePlayerName(name, uniqueId);
 	}
     }

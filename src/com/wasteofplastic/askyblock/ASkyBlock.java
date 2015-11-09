@@ -1563,9 +1563,6 @@ public class ASkyBlock extends JavaPlugin {
      * @return the nameDB
      */
     public TinyDB getTinyDB() {
-	if (tinyDB == null) {
-	    tinyDB = new TinyDB(this);
-	}
 	return tinyDB;
     }
 
