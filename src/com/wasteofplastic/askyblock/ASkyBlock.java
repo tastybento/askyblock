@@ -357,24 +357,6 @@ public class ASkyBlock extends JavaPlugin {
 		// Create the world if it does not exist. This is run after the
 		// server starts.
 		getIslandWorld();
-		// Load warps
-		getWarpSignsListener().loadWarpList();
-		// Load the warp panel
-		if (Settings.useWarpPanel) {
-		    warpPanel = new WarpPanel(plugin);
-		    getServer().getPluginManager().registerEvents(warpPanel, plugin);
-		}
-		// Minishop - must wait for economy to load before we can use
-		// econ
-		getServer().getPluginManager().registerEvents(new ControlPanel(plugin), plugin);
-		// Settings
-		settingsPanel = new SettingsPanel(plugin);
-		getServer().getPluginManager().registerEvents(settingsPanel, plugin);
-		// Biomes
-		// Load Biomes
-		biomes = new BiomesPanel(plugin);
-		getServer().getPluginManager().registerEvents(biomes, plugin);
-
 		// Try to register Herochat
 		if (Bukkit.getServer().getPluginManager().isPluginEnabled("Herochat")) {
 		    getServer().getPluginManager().registerEvents(new HeroChatListener(plugin), plugin);
@@ -407,6 +389,24 @@ public class ASkyBlock extends JavaPlugin {
 			if (grid == null) {
 			    grid = new GridManager(plugin);
 			}
+			// Load warps
+			getWarpSignsListener().loadWarpList();
+			// Load the warp panel
+			if (Settings.useWarpPanel) {
+			    warpPanel = new WarpPanel(plugin);
+			    getServer().getPluginManager().registerEvents(warpPanel, plugin);
+			}
+			// Minishop - must wait for economy to load before we can use
+			// econ
+			getServer().getPluginManager().registerEvents(new ControlPanel(plugin), plugin);
+			// Settings
+			settingsPanel = new SettingsPanel(plugin);
+			getServer().getPluginManager().registerEvents(settingsPanel, plugin);
+			// Biomes
+			// Load Biomes
+			biomes = new BiomesPanel(plugin);
+			getServer().getPluginManager().registerEvents(biomes, plugin);
+
 			TopTen.topTenLoad();
 			if (tinyDB == null) {
 			    tinyDB = new TinyDB(plugin);
