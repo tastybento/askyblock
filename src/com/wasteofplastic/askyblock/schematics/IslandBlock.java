@@ -45,15 +45,15 @@ public class IslandBlock {
     private EntityType spawnerBlockType;
     // Chest contents
     private HashMap<Byte,ItemStack> chestContents = new HashMap<Byte,ItemStack>();
-    private static HashMap<String, Material> WEtoM = new HashMap<String, Material>();
-    private static HashMap<String, EntityType> WEtoME = new HashMap<String, EntityType>();
+    public static final HashMap<String, Material> WEtoM = new HashMap<String, Material>();
+    public static final HashMap<String, EntityType> WEtoME = new HashMap<String, EntityType>();
 
     static {
 	// Establish the World Edit to Material look up
 	// V1.8 items
 	if (!Bukkit.getServer().getVersion().contains("(MC: 1.7")) {
 
-
+	    WEtoM.put("ARMORSTAND",Material.ARMOR_STAND);
 	    WEtoM.put("ACACIA_DOOR",Material.ACACIA_DOOR_ITEM);
 	    WEtoM.put("BIRCH_DOOR",Material.BIRCH_DOOR_ITEM);
 	    WEtoM.put("BIRCH_STAIRS",Material.BIRCH_WOOD_STAIRS);
@@ -149,6 +149,20 @@ public class IslandBlock {
 	WEtoME.put("MUSHROOMCOW", EntityType.MUSHROOM_COW);
 	WEtoME.put("PIGZOMBIE", EntityType.PIG_ZOMBIE);
 	WEtoME.put("CAVESPIDER", EntityType.CAVE_SPIDER);
+	WEtoME.put("XPORB", EntityType.EXPERIENCE_ORB);
+	WEtoME.put("MINECARTRIDEABLE", EntityType.MINECART);
+	WEtoME.put("MINECARTHOPPER", EntityType.MINECART_HOPPER);
+	WEtoME.put("MINECARTFURNACE", EntityType.MINECART_FURNACE);
+	WEtoME.put("MINECARTMOBSPAWNER", EntityType.MINECART_MOB_SPAWNER);
+	WEtoME.put("MINECARTTNT", EntityType.MINECART_TNT);
+	WEtoME.put("MINECARTCHEST", EntityType.MINECART_CHEST);
+	WEtoME.put("VILLAGERGOLEM", EntityType.IRON_GOLEM);
+	WEtoME.put("ENDERDRAGON", EntityType.ENDER_DRAGON);
+	if (!Bukkit.getServer().getVersion().contains("(MC: 1.7")) {
+	    WEtoME.put("ENDERCRYSTAL", EntityType.ENDER_CRYSTAL);
+	    WEtoME.put("ARMORSTAND", EntityType.ARMOR_STAND);
+	}
+
     }
 
     /**
@@ -351,7 +365,7 @@ public class IslandBlock {
 	//Bukkit.getLogger().info("DEBUG: Book data ");
 	Bukkit.getLogger().info(tileData.toString());
     }
-    
+
     @SuppressWarnings("deprecation")
     public void setChest(NMSAbstraction nms, Map<String, Tag> tileData) {
 	try {
@@ -447,7 +461,7 @@ public class IslandBlock {
 	//if (typeId != 0) {
 	nms.setBlockSuperFast(block, typeId, data, usePhysics);
 	//block.setTypeIdAndData(typeId, (byte)data, usePhysics);
-	
+
 	//}
 	//if (typeId != 0 && block.getWorld().getEnvironment().equals(Environment.NORMAL)) {
 	//    Bukkit.getLogger().info("Debug: " + Material.getMaterial(typeId) + "("+ typeId +":" + data + ") " + block.getLocation());
@@ -483,7 +497,7 @@ public class IslandBlock {
 	    }
 	}
     }
-    
+
     /**
      * @return Vector for where this block is in the schematic
      */

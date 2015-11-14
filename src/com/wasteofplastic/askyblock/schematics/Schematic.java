@@ -97,7 +97,7 @@ public class Schematic {
     private boolean visible;
     private int order;
     // These hashmaps enable translation between WorldEdit strings and Bukkit names
-    private HashMap<String, EntityType> WEtoME = new HashMap<String, EntityType>();
+    //private HashMap<String, EntityType> WEtoME = new HashMap<String, EntityType>();
     private List<EntityType> islandCompanion;
     private List<String> companionNames;
     private ItemStack[] defaultChestItems;
@@ -208,12 +208,13 @@ public class Schematic {
 	}
 
 	// Entities
+	/*
 	WEtoME.put("LAVASLIME", EntityType.MAGMA_CUBE);
 	WEtoME.put("ENTITYHORSE", EntityType.HORSE);
 	WEtoME.put("OZELOT", EntityType.OCELOT);
 	WEtoME.put("MUSHROOMCOW", EntityType.MUSHROOM_COW);
 	WEtoME.put("PIGZOMBIE", EntityType.PIG_ZOMBIE);
-
+	 */
 	this.file = file;
 	// Try to load the file
 	try { 
@@ -298,16 +299,16 @@ public class Schematic {
 		    //Bukkit.getLogger().info("++++++++++++++++++++++++++++++++++++++++++++++++++");
 		    if (entry.getKey().equals("id")) {
 			String id = ((StringTag)entry.getValue()).getValue().toUpperCase();
-			//Bukkit.getLogger().info("ID is " + id);
-			if (WEtoME.containsKey(id)) {
-			    ent.setType(WEtoME.get(id));
-			} else {
+			//Bukkit.getLogger().info("DEBUG: ID is '" + id + "'");
+			if (IslandBlock.WEtoME.containsKey(id)) {
+			    //Bukkit.getLogger().info("DEBUG: id found");
+			    ent.setType(IslandBlock.WEtoME.get(id));
+			} else if (!id.equalsIgnoreCase("ITEM")){
+			    //Bukkit.getLogger().info("DEBUG: id not found");
 			    try {
 				ent.setType(EntityType.valueOf(id));
 			    } catch (Exception ex) {
-				if (!id.equalsIgnoreCase("ITEM")) {
-				    Bukkit.getLogger().warning("MobType " + id + " unknown, skipping");
-				}
+				plugin.getLogger().warning("MobType " + id + " unknown, skipping");
 			    }
 			}
 		    }
