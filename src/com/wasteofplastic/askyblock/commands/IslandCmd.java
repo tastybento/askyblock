@@ -537,7 +537,8 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 		plugin.getPlayers().addTeamMember(teamLeader, teamLeader);
 	    }
 	    // Fire event
-	    final IslandJoinEvent event = new IslandJoinEvent(plugin, playerUUID, teamLeader);
+	    final Island island = plugin.getGrid().getIsland(teamLeader);
+	    final IslandJoinEvent event = new IslandJoinEvent(playerUUID, island);
 	    plugin.getServer().getPluginManager().callEvent(event);
 	}
 	return true;
@@ -571,7 +572,8 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 		runCommands(Settings.leaveCommands, offlinePlayer);
 	    }
 	    // Fire event
-	    final IslandLeaveEvent event = new IslandLeaveEvent(plugin, playerUUID, teamLeader);
+	    final Island island = plugin.getGrid().getIsland(teamLeader);
+	    final IslandLeaveEvent event = new IslandLeaveEvent(playerUUID, island);
 	    plugin.getServer().getPluginManager().callEvent(event);
 	} else {
 	    // Ex-Leaders keeps their island, but the rest of the team items are

@@ -150,7 +150,8 @@ public class LevelCalc extends BukkitRunnable {
 		TopTen.topTenAddEntry(targetPlayer, blockCount);
 	    }
 	    // Fire the level event
-	    final IslandLevelEvent event = new IslandLevelEvent(plugin, targetPlayer, blockCount);
+	    Island island = plugin.getGrid().getIsland(targetPlayer);
+	    final IslandLevelEvent event = new IslandLevelEvent(targetPlayer, island, blockCount);
 	    plugin.getServer().getPluginManager().callEvent(event);
 	    // plugin.getLogger().info("DEBUG: finished updating top ten");
 

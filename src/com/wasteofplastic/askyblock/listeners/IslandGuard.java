@@ -475,7 +475,7 @@ public class IslandGuard implements Listener {
 		e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).lockNowEntering.replace("[name]", plugin.getPlayers().getName(islandTo.getOwner())));
 	    }
 	    // Fire entry event
-	    final IslandEnterEvent event = new IslandEnterEvent(plugin, e.getPlayer().getUniqueId(), islandTo, e.getTo());
+	    final IslandEnterEvent event = new IslandEnterEvent(e.getPlayer().getUniqueId(), islandTo, e.getTo());
 	    plugin.getServer().getPluginManager().callEvent(event);
 	} else if (islandTo == null && islandFrom != null && (islandFrom.getOwner() != null || islandFrom.isSpawn())) {
 	    // Leaving
@@ -486,7 +486,7 @@ public class IslandGuard implements Listener {
 		e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).lockNowLeaving.replace("[name]", plugin.getPlayers().getName(islandFrom.getOwner())));
 	    }
 	    // Fire exit event
-	    final IslandExitEvent event = new IslandExitEvent(plugin, e.getPlayer().getUniqueId(), islandFrom, e.getFrom());
+	    final IslandExitEvent event = new IslandExitEvent(e.getPlayer().getUniqueId(), islandFrom, e.getFrom());
 	    plugin.getServer().getPluginManager().callEvent(event);
 	} else if (islandTo != null && islandFrom != null && !islandTo.equals(islandFrom)) {
 	    // Adjacent islands or overlapping protections
@@ -502,10 +502,10 @@ public class IslandGuard implements Listener {
 		e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).lockNowEntering.replace("[name]", plugin.getPlayers().getName(islandTo.getOwner())));
 	    }
 	    // Fire exit event
-	    final IslandExitEvent event = new IslandExitEvent(plugin, e.getPlayer().getUniqueId(), islandTo, e.getTo());
+	    final IslandExitEvent event = new IslandExitEvent(e.getPlayer().getUniqueId(), islandTo, e.getTo());
 	    plugin.getServer().getPluginManager().callEvent(event);
 	    // Fire entry event
-	    final IslandEnterEvent event2 = new IslandEnterEvent(plugin, e.getPlayer().getUniqueId(), islandFrom, e.getFrom());
+	    final IslandEnterEvent event2 = new IslandEnterEvent(e.getPlayer().getUniqueId(), islandFrom, e.getFrom());
 	    plugin.getServer().getPluginManager().callEvent(event2);
 	}
     }

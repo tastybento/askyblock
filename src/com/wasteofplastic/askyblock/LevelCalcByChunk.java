@@ -1,6 +1,5 @@
 package com.wasteofplastic.askyblock;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -173,7 +172,8 @@ public class LevelCalcByChunk {
 				}
 			    }
 			    // Fire the level event
-			    final IslandLevelEvent event = new IslandLevelEvent(plugin, targetPlayer, score);
+			    Island island = plugin.getGrid().getIsland(targetPlayer);
+			    final IslandLevelEvent event = new IslandLevelEvent(targetPlayer, island, score);
 			    plugin.getServer().getPluginManager().callEvent(event);
 			}});
 		}});

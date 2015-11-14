@@ -2,10 +2,7 @@ package com.wasteofplastic.askyblock.events;
 
 import java.util.UUID;
 
-import org.bukkit.event.Event;
-import org.bukkit.event.HandlerList;
-
-import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.Island;
 
 /**
  * This event is fired when an island level is calculated
@@ -13,26 +10,17 @@ import com.wasteofplastic.askyblock.ASkyBlock;
  * @author tastybento
  * 
  */
-public class IslandLevelEvent extends Event {
-    private static final HandlerList handlers = new HandlerList();
-    private final UUID player;
+public class IslandLevelEvent extends ASkyBlockEvent {
     private int level;
 
     /**
-     * @param plugin
      * @param player
+     * @param island
      * @param level
      */
-    public IslandLevelEvent(ASkyBlock plugin, UUID player, int level) {
-	this.player = player;
+    public IslandLevelEvent(UUID player, Island island, int level) {
+	super(player, island);
 	this.level = level;
-    }
-
-    /**
-     * @return the player
-     */
-    public UUID getPlayer() {
-        return player;
     }
    
     /**
@@ -42,12 +30,4 @@ public class IslandLevelEvent extends Event {
         return level;
     }
 
-    @Override
-    public HandlerList getHandlers() {
-	return handlers;
-    }
-
-    public static HandlerList getHandlerList() {
-	return handlers;
-    }
 }

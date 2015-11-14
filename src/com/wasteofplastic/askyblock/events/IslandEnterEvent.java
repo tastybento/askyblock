@@ -3,10 +3,7 @@ package com.wasteofplastic.askyblock.events;
 import java.util.UUID;
 
 import org.bukkit.Location;
-import org.bukkit.event.Event;
-import org.bukkit.event.HandlerList;
 
-import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Island;
 
 
@@ -15,10 +12,7 @@ import com.wasteofplastic.askyblock.Island;
  * @author tastybento
  *
  */
-public class IslandEnterEvent extends Event {
-    private static final HandlerList handlers = new HandlerList();
-    private final UUID player;
-    private final Island island;
+public class IslandEnterEvent extends ASkyBlockEvent {
     private final Location location;
 
     /**
@@ -28,72 +22,17 @@ public class IslandEnterEvent extends Event {
      * @param island
      * @param location
      */
-    public IslandEnterEvent(ASkyBlock plugin, UUID player, Island island, Location location) {
-	this.player = player;
-	this.island = island;
+    public IslandEnterEvent(UUID player, Island island, Location location) {
+	super(player,island);
 	this.location = location;
-	//plugin.getLogger().info("DEBUG: Island Enter Event");
     }
     
     /**
-     * Returns the island object. This contains lots of info on the island itself.
-     * @return island being entered
-     */
-    public Island getIsland() {
-	return island;
-    }
-    
-    /**
-     * Location of the event
+     * Location of where the player entered the island or tried to enter
      * @return the location
      */
     public Location getLocation() {
         return location;
     }
 
-    /**
-     * UUID of the player who entered
-     * @return the player
-     */
-    public UUID getPlayer() {
-        return player;
-    }
-
-    /**
-     * UUID of the island's owner or leader
-     * @return the owner
-     */
-    public UUID getIslandOwner() {
-        return island.getOwner();
-    }
-
-    /**
-     * @return the island center location
-     */
-    public Location getIslandLocation() {
-        return island.getCenter();
-    }
-    
-    /**
-     * @return the protectionSize
-     */
-    public int getProtectionSize() {
-        return island.getProtectionSize();
-    }
-
-    /**
-     * @return the isLocked
-     */
-    public boolean isLocked() {
-        return island.isLocked();
-    }
-
-    @Override
-    public HandlerList getHandlers() {
-	return handlers;
-    }
-
-    public static HandlerList getHandlerList() {
-	return handlers;
-    }
 }
