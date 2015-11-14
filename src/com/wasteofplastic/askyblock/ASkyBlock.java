@@ -301,6 +301,8 @@ public class ASkyBlock extends JavaPlugin {
 	if (Bukkit.getWorld(Settings.worldName) == null) {
 	    islandWorld = WorldCreator.name(Settings.worldName).type(WorldType.FLAT).environment(World.Environment.NORMAL).createWorld();
 	}*/
+	// Get challenges
+	challenges = new Challenges(this);
 	// Set and make the player's directory if it does not exist and then
 	// load players into memory
 	playersFolder = new File(getDataFolder() + File.separator + "players");
@@ -308,8 +310,6 @@ public class ASkyBlock extends JavaPlugin {
 	    playersFolder.mkdir();
 	}
 	players = new PlayerCache(this);
-	// Get challenges
-	challenges = new Challenges(this);
 	// Set up commands for this plugin
 	islandCmd = new IslandCmd(this);
 	if (Settings.GAMETYPE.equals(Settings.GameType.ASKYBLOCK)) {

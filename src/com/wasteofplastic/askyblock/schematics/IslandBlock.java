@@ -132,6 +132,7 @@ public class IslandBlock {
 	WEtoM.put("STONE_STAIRS",Material.COBBLESTONE_STAIRS);
 	WEtoM.put("TNT_MINECART",Material.EXPLOSIVE_MINECART);
 	WEtoM.put("WATERLILY",Material.WATER_LILY);
+	WEtoM.put("WHEAT_SEEDS", Material.SEEDS);
 	WEtoM.put("WOODEN_AXE",Material.WOOD_AXE);
 	WEtoM.put("WOODEN_BUTTON",Material.WOOD_BUTTON);
 	WEtoM.put("WOODEN_DOOR",Material.WOOD_DOOR);
