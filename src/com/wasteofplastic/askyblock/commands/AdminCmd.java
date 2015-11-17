@@ -1013,7 +1013,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 					    } 
 					} else {
 					    sender.sendMessage(ChatColor.YELLOW + "[" + (total - removeList.size() + 1) + "/" + total + "] "
-							+ "Skipping online player...");
+						    + "Skipping online player...");
 					}
 					removeList.remove(0);
 				    }
@@ -1852,45 +1852,51 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 	// Location island = getClosestIsland(l);
 	// Check what the grid thinks
 	Island island = plugin.getGrid().getIslandAt(l);
-	if (island != null) {
-	    if (island.isSpawn()) {
-		sender.sendMessage(ChatColor.RED + plugin.myLocale().adminRegisterNotSpawn);
-		return false;
+	if (island == null) {
+	    // Try to find it and create it if it isn't known
+	    Location closestIsland = plugin.getGrid().getClosestIsland(l);
+	    // Double check this is not taken already
+	    island = plugin.getGrid().getIslandAt(closestIsland);
+	    if (island == null) {
+		// Still not known - make an island
+		island = plugin.getGrid().addIsland(closestIsland.getBlockX(), closestIsland.getBlockZ());
 	    }
-	    UUID oldOwner = island.getOwner();
-	    if (oldOwner != null) {
-		if (plugin.getPlayers().inTeam(oldOwner)) {
-		    sender.sendMessage(ChatColor.RED + plugin.myLocale().adminRegisterLeadsTeam.replace("[name]", plugin.getPlayers().getName(oldOwner)));	   
-		    return false;
-		}
-		sender.sendMessage(ChatColor.RED + plugin.myLocale().adminRegisterTaking.replace("[name]", plugin.getPlayers().getName(oldOwner)));
-		plugin.getPlayers().setIslandLevel(newOwner, plugin.getPlayers().getIslandLevel(oldOwner));
-		plugin.getPlayers().setTeamIslandLocation(oldOwner, null);
-		plugin.getPlayers().setHasIsland(oldOwner, false);
-		plugin.getPlayers().setIslandLocation(oldOwner, null);
-		plugin.getPlayers().setIslandLevel(oldOwner, 0);
-		plugin.getPlayers().setTeamIslandLocation(oldOwner, null);
-		// plugin.topTenChangeOwner(oldOwner, newOwner);
-	    }
-	    // Check if the assigned player already has an island
-	    Island playersIsland = plugin.getGrid().getIsland(newOwner);
-	    if (playersIsland != null) {
-		sender.sendMessage(ChatColor.RED + (plugin.myLocale().adminRegisterHadIsland.replace("[name]", plugin.getPlayers().getName(playersIsland.getOwner())).replace("[location]",
-			playersIsland.getCenter().getBlockX() + "," + playersIsland.getCenter().getBlockZ())));
-		plugin.getGrid().setIslandOwner(playersIsland, null);
-	    }
-
-	    plugin.getPlayers().setHomeLocation(newOwner, island.getCenter());
-	    plugin.getPlayers().setHasIsland(newOwner, true);
-	    plugin.getPlayers().setIslandLocation(newOwner, island.getCenter());
-	    // Change the grid
-	    plugin.getGrid().setIslandOwner(island, newOwner);
-	    return true;
-	} else {
-	    sender.sendMessage(ChatColor.RED + plugin.myLocale().adminRegisterNoIsland);
+	}
+	if (island.isSpawn()) {
+	    sender.sendMessage(ChatColor.RED + plugin.myLocale().adminRegisterNotSpawn);
 	    return false;
 	}
+	UUID oldOwner = island.getOwner();
+	if (oldOwner != null) {
+	    if (plugin.getPlayers().inTeam(oldOwner)) {
+		sender.sendMessage(ChatColor.RED + plugin.myLocale().adminRegisterLeadsTeam.replace("[name]", plugin.getPlayers().getName(oldOwner)));	   
+		return false;
+	    }
+	    sender.sendMessage(ChatColor.RED + plugin.myLocale().adminRegisterTaking.replace("[name]", plugin.getPlayers().getName(oldOwner)));
+	    plugin.getPlayers().setIslandLevel(newOwner, plugin.getPlayers().getIslandLevel(oldOwner));
+	    plugin.getPlayers().setTeamIslandLocation(oldOwner, null);
+	    plugin.getPlayers().setHasIsland(oldOwner, false);
+	    plugin.getPlayers().setIslandLocation(oldOwner, null);
+	    plugin.getPlayers().setIslandLevel(oldOwner, 0);
+	    plugin.getPlayers().setTeamIslandLocation(oldOwner, null);
+	    // plugin.topTenChangeOwner(oldOwner, newOwner);
+	}
+	// Check if the assigned player already has an island
+	Island playersIsland = plugin.getGrid().getIsland(newOwner);
+	if (playersIsland != null) {
+	    sender.sendMessage(ChatColor.RED + (plugin.myLocale().adminRegisterHadIsland.replace("[name]", plugin.getPlayers().getName(playersIsland.getOwner())).replace("[location]",
+		    playersIsland.getCenter().getBlockX() + "," + playersIsland.getCenter().getBlockZ())));
+	    plugin.getGrid().setIslandOwner(playersIsland, null);
+	}
+
+	plugin.getPlayers().setHomeLocation(newOwner, island.getCenter());
+	plugin.getPlayers().setHasIsland(newOwner, true);
+	plugin.getPlayers().setIslandLocation(newOwner, island.getCenter());
+	// Change the grid
+	plugin.getGrid().setIslandOwner(island, newOwner);
+	return true;
     }
+
 
     @Override
     public List<String> onTabComplete(final CommandSender sender, final Command command, final String label, final String[] args) {
