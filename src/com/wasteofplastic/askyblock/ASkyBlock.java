@@ -1254,7 +1254,14 @@ public class ASkyBlock extends JavaPlugin {
 	Settings.allowSpawnWaterCollection = getConfig().getBoolean("spawn.allowwatercollection", false);
 	Settings.allowSpawnVisitorItemDrop = getConfig().getBoolean("spawn.allowvisitoritemdrop", true);
 	Settings.allowSpawnVisitorItemPickup = getConfig().getBoolean("spawn.allowvisitoritempickup", true);
-
+	Settings.allowSpawnArmorStandUse = getConfig().getBoolean("spawn.allowarmorstanduse",false);
+	Settings.allowSpawnBedUse = getConfig().getBoolean("spawn.allowbeduse",false);
+	Settings.allowSpawnBreeding = getConfig().getBoolean("spawn.allowbreeding",false);
+	Settings.allowSpawnCropTrample = getConfig().getBoolean("spawn.allowcroptrample",false);
+	Settings.allowSpawnEnderPearls = getConfig().getBoolean("spawn.allowenderpearls",false);
+	Settings.allowSpawnLeashUse = getConfig().getBoolean("spawn.allowleashuse",false);
+	Settings.allowSpawnShearing = getConfig().getBoolean("spawn.allowshearing",false);
+	
 	// Challenges
 	getChallenges();
 	// Challenge completion

@@ -531,7 +531,20 @@ spawn:
   allowwatercollection: false
   allowhorseriding: false
   allowhorseinventoryaccess: false
-
+  # Allow armor stand use by visitors (1.8+ only)
+  allowarmorstanduse: false
+  # Allow players to be able to sleep in beds not on their island
+  allowbeduse: false
+  # Allow animal breeding by visitors
+  allowbreeding: false
+  # Allow players to trample crops
+  allowcroptrample: false
+  # Allow players to throw enderpearls and teleport
+  allowenderpearls: false
+  # Allow leash use
+  allowleashuse: false
+  # Allow players to shear sheep
+  allowshearing: false
 
 # This section contains the biomes that can be bought or used
 biomesettings:

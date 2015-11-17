@@ -173,6 +173,13 @@ public class Settings {
     public static boolean allowSpawnPressurePlate;
     public static boolean allowSpawnVisitorItemDrop;
     public static boolean allowSpawnVisitorItemPickup;
+    public static boolean allowSpawnArmorStandUse;
+    public static boolean allowSpawnBedUse;
+    public static boolean allowSpawnBreeding;
+    public static boolean allowSpawnCropTrample;
+    public static boolean allowSpawnEnderPearls;
+    public static boolean allowSpawnLeashUse;
+    public static boolean allowSpawnShearing;
 
     // Levels
     public static HashMap<MaterialData, Integer> blockLimits;
@@ -256,6 +263,7 @@ public class Settings {
     public static HashMap<String,Integer> limitedBlocks;
     public static long pvpRestartCooldown;
     public static long backupDuration;
+
     
     
 

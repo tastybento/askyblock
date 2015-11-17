@@ -336,7 +336,7 @@ public class PlayerEvents implements Listener {
 		}
 	    } else {
 		if (islandTo.isSpawn()) {
-		    if (Settings.allowEnderPearls) {
+		    if (Settings.allowSpawnEnderPearls) {
 			return;
 		    }
 		} else {
