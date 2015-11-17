@@ -8,7 +8,7 @@ import com.wasteofplastic.askyblock.Island;
 
 
 /**
- * Fired when a player enters an island's area
+ * Fired when a player exits an island's area
  * @author tastybento
  *
  */
