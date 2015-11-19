@@ -90,15 +90,16 @@ public class AcidInventory implements Listener {
 		    }
 		}
 	    } else if (inventory.contains(Material.POTION)) {
-		// plugin.getLogger().info("Inventory contains water bottle");
+		//plugin.getLogger().info("Inventory contains water bottle");
 		ItemStack[] inv = inventory.getContents();
 		for (ItemStack item : inv) {
 		    if (item != null) {
-			// plugin.getLogger().info(item.toString());
+			//plugin.getLogger().info(item.toString());
 			if (item.getType() == Material.POTION && item.getDurability() == 0) {
-			    // plugin.getLogger().info("Found it!");
+			    //plugin.getLogger().info("Found it!");
 			    ItemMeta meta = item.getItemMeta();
 			    meta.setDisplayName(plugin.myLocale(e.getPlayer().getUniqueId()).acidBottle);
+			    lore = Arrays.asList(plugin.myLocale(e.getPlayer().getUniqueId()).acidLore.split("\n"));
 			    meta.setLore(lore);
 			    item.setItemMeta(meta);
 			}
@@ -120,9 +121,10 @@ public class AcidInventory implements Listener {
 	    // plugin.getLogger().info("Correct world");
 	    if (Settings.acidDamage > 0D) {
 		ItemStack item = e.getItemStack();
-		if (item.getType().equals(Material.WATER_BUCKET)) {
+		if (item.getType().equals(Material.WATER_BUCKET) || item.getType().equals(Material.POTION)) {
 		    ItemMeta meta = item.getItemMeta();
 		    meta.setDisplayName(plugin.myLocale(e.getPlayer().getUniqueId()).acidBucket);
+		    lore = Arrays.asList(plugin.myLocale(e.getPlayer().getUniqueId()).acidLore.split("\n"));
 		    meta.setLore(lore);
 		    item.setItemMeta(meta);
 		}
