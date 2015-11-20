@@ -570,6 +570,8 @@ public class Locale {
     public String errorMaxIslands;
     public String entityLimitReached;
     public String generalSuccess;
+    public String adminHelpReserve;
+    public String adminReserveIslandExists;
 
 
     /**
@@ -1274,5 +1276,7 @@ public class Locale {
 	adminHelpTeamChatSpy = ChatColor.translateAlternateColorCodes('&', locale.getString("adminHelp.teamChatSpy", "Spy on team chats (on/off)"));
 	errorMaxIslands = ChatColor.translateAlternateColorCodes('&', locale.getString("error.maxIslands", "The sky is full of islands! Try again later!"));
 	generalSuccess = ChatColor.translateAlternateColorCodes('&', locale.getString("general.success", "Success!"));
+	adminHelpReserve = ChatColor.translateAlternateColorCodes('&', locale.getString("adminHelp.reserve", "reserves this spot for player's next island"));
+	adminReserveIslandExists = ChatColor.translateAlternateColorCodes('&', locale.getString("adminReserve.islandExists", "There is an island here already! Register the player instead!"));
     }
 }

@@ -109,6 +109,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
     BukkitTask checker = null;
     // To choose an island randomly
     private final Random random = new Random();
+    private HashMap<UUID, Location> islandSpot = new HashMap<UUID, Location>();
 
     /**
      * Constructor
@@ -656,7 +657,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 	    firstTime = true;
 	}
 	//plugin.getLogger().info("DEBUG: finding island location");
-	Location next = getNextIsland();
+	Location next = getNextIsland(player.getUniqueId());
 	//plugin.getLogger().info("DEBUG: found " + next);
 	// Set the player's parameters to this island
 	plugin.getPlayers().setHasIsland(playerUUID, true);
@@ -847,17 +848,31 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 
     /**
      * Get the location of next free island spot
+     * @param player 
      * 
      * @return Location of island spot
      */
-    private Location getNextIsland() {
+    private Location getNextIsland(UUID playerUUID) {
+	// See if there is a reserved spot
+	if (islandSpot.containsKey(playerUUID)) {
+	    Location next = plugin.getGrid().getClosestIsland(islandSpot.get(playerUUID));
+	    // Single shot only
+	    islandSpot.remove(playerUUID);
+	    // Check if it is already occupied (shouldn't be)
+	    Island island = plugin.getGrid().getIslandAt(next);
+	    if (island == null || island.getOwner() == null) {
+		// it's still free
+		return next;
+	    }
+	    // Else, fall back to the random pick
+	}
 	// Find the next free spot
 	if (last == null) {
 	    last = new Location(ASkyBlock.getIslandWorld(), Settings.islandXOffset + Settings.islandStartX, Settings.island_level, Settings.islandZOffset + Settings.islandStartZ);
 	}
 	Location next = last.clone();
 
-	while (plugin.getGrid().islandAtLocation(next)) {
+	while (plugin.getGrid().islandAtLocation(next) || islandSpot.containsValue(next)) {
 	    next = nextGridLocation(next);
 	}
 	// Make the last next, last
@@ -2963,6 +2978,15 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 	}
 
 	return 0L;
+    }
+    
+    /**
+     * Reserves a spot in the world for the player to have their island placed next time they make one
+     * @param playerUUID
+     * @param location
+     */
+    public void reserveLocation(UUID playerUUID, Location location) {
+	islandSpot.put(playerUUID, location);
     }
 
     @Override
