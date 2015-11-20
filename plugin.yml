@@ -300,3 +300,7 @@ permissions:
           askyblock.admin.topbreeders:
             description: Lists most populated islands current loaded
             default: op
+          askyblock.admin.reserve:
+            description: Reserves an empty spot for a player's next island
+            default: op
+            

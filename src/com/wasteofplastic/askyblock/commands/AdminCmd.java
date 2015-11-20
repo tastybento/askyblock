@@ -180,6 +180,9 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 		player.sendMessage(ChatColor.YELLOW + "/" + label + " resetsign:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpResetSign);
 		player.sendMessage(ChatColor.YELLOW + "/" + label + " resetsign <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpResetSign);
 	    }
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.reserve") || player.isOp()) {
+		player.sendMessage(ChatColor.YELLOW + "/" + label + " reserve <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpReserve);
+	    }
 	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.setbiome") || player.isOp()) {
 		sender.sendMessage(ChatColor.YELLOW + "/" + label + " setbiome <leader> <biome>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpsetBiome);
 	    }
@@ -238,6 +241,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 		if (split[0].equalsIgnoreCase("reload") || split[0].equalsIgnoreCase("register") || split[0].equalsIgnoreCase("delete")
 			|| split[0].equalsIgnoreCase("purge") || split[0].equalsIgnoreCase("confirm") || split[0].equalsIgnoreCase("setspawn")
 			|| split[0].equalsIgnoreCase("deleteisland") || split[0].equalsIgnoreCase("setrange")
+			|| split[0].equalsIgnoreCase("reserve")
 			|| split[0].equalsIgnoreCase("unregister") || split[0].equalsIgnoreCase("clearresetall")) {
 		    if (!checkAdminPerms(player, split)) {
 			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
@@ -1160,6 +1164,32 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 		    plugin.deletePlayerIsland(playerUUID, true);
 		    return true;
 		}
+	    } else if (split[0].equalsIgnoreCase("reserve")) {
+		// Reserves a spot for the player's next island
+		if (sender instanceof Player) {
+		    player = (Player)sender;
+		    // Convert name to a UUID
+		    final UUID playerUUID = plugin.getPlayers().getUUID(split[1]);
+		    if (!plugin.getPlayers().isAKnownPlayer(playerUUID)) {
+			sender.sendMessage(ChatColor.RED + plugin.myLocale().errorUnknownPlayer);
+			return true;
+		    } else {
+			// Check the spot
+			Location islandLoc = plugin.getGrid().getClosestIsland(player.getLocation());
+			Island island = plugin.getGrid().getIslandAt(islandLoc);
+			if (island == null) {
+			    // Empty spot, reserve it!
+			    plugin.getIslandCmd().reserveLocation(playerUUID, islandLoc);
+			    sender.sendMessage(ChatColor.GREEN + " [" + islandLoc.getBlockX() + ", " + islandLoc.getBlockZ() + "] " + plugin.myLocale().generalSuccess);
+			} else {
+			    sender.sendMessage(ChatColor.RED + plugin.myLocale().adminReserveIslandExists);
+			}
+			return true;
+		    }
+		} else {
+		    sender.sendMessage(ChatColor.RED + plugin.myLocale().errorUnknownCommand);
+		}
+		return true;
 	    } else if (split[0].equalsIgnoreCase("register")) {
 		if (sender instanceof Player) {
 		    // Convert name to a UUID
@@ -1992,6 +2022,9 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 		}
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.unregister") || player.isOp()) {
 		    options.add("unregister");
+		}
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.reserve") || player.isOp()) {
+		    options.add("reserve");
 		}
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.delete") || player.isOp()) {
 		    options.add("delete");
