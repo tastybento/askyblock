@@ -65,7 +65,7 @@ challenges:
   erroryouaremissing: "You are missing"
   expReward: "&b經驗獎勵"
   firstTimeRewards: "&b首次完成獎勵"
-  guititle: 挑戰
+  guititle: "ASkyBlock 挑戰"
   help1: "&6輸入&e /c &b<挑戰名字> &6來查詢一個挑戰的信息."
   help2: "&6輸入&e /c complete &b<挑戰名字> &6完成一個挑戰."
   incomplete: "&l未完成"
