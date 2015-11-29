@@ -19,7 +19,9 @@ package com.wasteofplastic.askyblock;
 import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -39,6 +41,7 @@ import com.google.common.collect.Lists;
 public class PlayerCache {
     private HashMap<UUID, Players> playerCache = new HashMap<UUID, Players>();
     private final ASkyBlock plugin;
+    private Set<UUID> inTeleport = new HashSet<UUID>();
 
     public PlayerCache(ASkyBlock plugin) {
 	this.plugin = plugin;
@@ -802,4 +805,27 @@ public class PlayerCache {
 	return playerCache.get(playerUUID).getControlPanel();
 
     }
+
+    /**
+     * Map storing whether a player is officially teleporting or not
+     * @param uniqueId
+     * @param b
+     */
+    public void setInTeleport(UUID uniqueId, boolean b) {
+	if (b) {
+	    inTeleport.add(uniqueId);
+	} else {
+	    inTeleport.remove(uniqueId);
+	}	
+    }
+    
+    /**
+     * Checks whether player with UUID uniqueId is in an official teleport or not
+     * @param uniqueId
+     * @return true if in teleport
+     */
+    public boolean isInTeleport(UUID uniqueId) {
+	return inTeleport.contains(uniqueId);
+    }
+    
 }
