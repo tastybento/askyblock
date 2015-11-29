@@ -534,6 +534,13 @@ public class GridManager {
      */
     private void addToGrids(Island newIsland) {
 	//plugin.getLogger().info("DEBUG: adding island to grid at " + newIsland.getMinX() + "," + newIsland.getMinZ());
+	if (newIsland.getCenter().getBlockX() % Settings.islandDistance != 0
+		|| newIsland.getCenter().getBlockZ() % Settings.islandDistance != 0) {
+		plugin.getLogger().warning("ATTEMPT TO ADD NON-GRID ISLAND: " + newIsland.getCenter().getBlockX() + ","
+			+ newIsland.getCenter().getBlockZ());
+		new Exception().printStackTrace(System.out);
+		return;
+	}
 	if (newIsland.getOwner() != null) {
 	    ownershipMap.put(newIsland.getOwner(), newIsland);
 	}
