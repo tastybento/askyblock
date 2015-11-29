@@ -269,7 +269,8 @@ public class PlayerEvents implements Listener {
 	    plugin.getLogger().info(e.getEventName());
 	}
 	if (!IslandGuard.inWorld(e.getPlayer()) || Settings.allowTeleportWhenFalling || e.getPlayer().isOp()
-		|| !e.getPlayer().getGameMode().equals(GameMode.SURVIVAL)) {
+		|| !e.getPlayer().getGameMode().equals(GameMode.SURVIVAL)
+		|| plugin.getPlayers().isInTeleport(e.getPlayer().getUniqueId())) {
 	    return;
 	}
 	// Check commands
@@ -310,8 +311,10 @@ public class PlayerEvents implements Listener {
 	}
 	// Teleporting while falling check
 	if (!Settings.allowTeleportWhenFalling && e.getPlayer().getGameMode().equals(GameMode.SURVIVAL) && !e.getPlayer().isOp()) {
-	    //plugin.getLogger().info("DEBUG: teleport when falling is not allowed - check if falling");
-	    if (isFalling(e.getPlayer().getUniqueId())) {
+	    // If the player is allowed to teleport excuse them
+	    if (plugin.getPlayers().isInTeleport(e.getPlayer().getUniqueId())) {
+		unsetFalling(e.getPlayer().getUniqueId());
+	    } else if (isFalling(e.getPlayer().getUniqueId())) {
 		//plugin.getLogger().info("DEBUG: player is falling");
 		// Sorry you are going to die
 		e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).islandcannotTeleport);

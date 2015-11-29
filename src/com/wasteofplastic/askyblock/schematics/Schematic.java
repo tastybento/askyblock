@@ -767,13 +767,14 @@ public class Schematic {
 	    }
 	}
 	if (teleport) {
+	    plugin.getPlayers().setInTeleport(player.getUniqueId(), true);
 	    player.teleport(world.getSpawnLocation());
 	    plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
 
 		@Override
 		public void run() {
 		    plugin.getGrid().homeTeleport(player);
-		    
+		    plugin.getPlayers().setInTeleport(player.getUniqueId(), false);
 		}}, 10L);
 	   
 	}
