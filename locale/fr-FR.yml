@@ -141,7 +141,7 @@ challenges:
   erroryouaremissing: "Il vous manque"
   expReward: "Récompense en XP"
   firstTimeRewards: "Récompense(s):"
-  guititle: Challenges
+  guititle: "ASkyBlock Challenges"
   help1: "Utilisez /c <name> pour obtenir les informations de ce challenge."
   help2: "Utilisez /c complete <name> pour compléter ce challenge.."
   incomplete: "Non réussis"
