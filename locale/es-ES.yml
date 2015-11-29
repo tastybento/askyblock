@@ -149,7 +149,7 @@ challenges:
   erroryouaremissing: "Estás perdido"
   expReward: "Recompensa de XP"
   firstTimeRewards: "Recompensa(s) de primera vez."
-  guititle: "Retos"
+  guititle: "ASkyBlock Retos"
   help1: "Usa /c <nombre> para ver información sobre un reto."
   help2: "Usa /c complete <nombre> para intentar completar este reto."
   incomplete: "Incompletos"

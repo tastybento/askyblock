@@ -100,7 +100,7 @@ challenges:
   erroryouaremissing: §c未找到你的信息
   expReward: §b经验奖励
   firstTimeRewards: §b首次完成奖励
-  guititle: §e挑战
+  guititle: "§eASkyBlock 挑战"
   help1: "§6输入§e /c §b<挑战名字> §6来查询一个挑战的信息."
   help2: "§6输入§e /c complete §b<挑战名字> §6完成一个挑战."
   incomplete: §c未完成
