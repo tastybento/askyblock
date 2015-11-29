@@ -11,7 +11,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<server.jars>/Users/ben/serverJars</server.jars>
+		<server.jars>${project.basedir}/lib</server.jars>
 	</properties>
 
 	<build>
