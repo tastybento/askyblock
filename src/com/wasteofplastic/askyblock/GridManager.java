@@ -108,13 +108,13 @@ public class GridManager {
      * @param loc
      * @return
      */
-    private boolean onGrid(Location loc) {
+    public boolean onGrid(Location loc) {
 	int x = loc.getBlockX();
 	int z = loc.getBlockZ();
 	return onGrid(x, z);
     }
 
-    private boolean onGrid(int x, int z) {
+    public boolean onGrid(int x, int z) {
 	if ((x - Settings.islandXOffset) % Settings.islandDistance != 0) {
 	    return false;
 	}
@@ -752,10 +752,12 @@ public class GridManager {
      * @param loc
      * @return true if found, otherwise false
      */
-    public boolean islandAtLocation(final Location loc) {
+    public boolean islandAtLocation(Location loc) {
 	if (loc == null) {
 	    return true;
 	}
+	// Make sure location is on the grid
+	loc = getClosestIsland(loc);
 	// getLogger().info("DEBUG checking islandAtLocation for location " +
 	// loc.toString());
 	// Check the island grid
@@ -781,6 +783,7 @@ public class GridManager {
 
 	// Bedrock check
 	if (loc.getBlock().getType().equals(Material.BEDROCK)) {
+	    // Get the closest island 
 	    plugin.getLogger().info("Found bedrock at island height - adding to islands.yml " + px + "," + pz);
 	    addIsland(px, pz);
 	    return true;

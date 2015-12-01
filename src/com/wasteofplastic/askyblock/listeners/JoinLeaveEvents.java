@@ -142,14 +142,22 @@ public class JoinLeaveEvents implements Listener {
 		Island islandByOwner = plugin.getGrid().getIsland(leader);
 		if (islandByOwner == null) {
 		    // No previous ownership, so just create the new island in the grid
-		    plugin.getGrid().addIsland(loc.getBlockX(), loc.getBlockZ(), leader);
+		    if (plugin.getGrid().onGrid(loc)) {
+			plugin.getGrid().addIsland(loc.getBlockX(), loc.getBlockZ(), leader);
+		    } else {
+			plugin.getLogger().severe(player.getName() + " joined and has an island at " + loc + " but those coords are NOT on the grid! Use admin register commands to correct!");
+		    }
 		} else {
 		    // We have a mismatch - correct in favor of the player info
 		    //plugin.getLogger().info("DEBUG: getIslandLoc is null but there is a player listing");
 		    plugin.getLogger().warning(player.getName() + " login: mismatch - player.yml and islands.yml are out of sync. Fixing...");
 		    // Cannot delete by location
 		    plugin.getGrid().deleteIslandOwner(playerUUID);
-		    plugin.getGrid().addIsland(loc.getBlockX(), loc.getBlockZ(), leader);
+		    if (plugin.getGrid().onGrid(loc)) {
+			plugin.getGrid().addIsland(loc.getBlockX(), loc.getBlockZ(), leader);
+		    } else {
+			plugin.getLogger().severe(player.getName() + " joined and has an island at " + loc + " but those coords are NOT on the grid! Use admin register commands to correct!");
+		    }
 		}
 	    } else {
 		// Island at this location exists

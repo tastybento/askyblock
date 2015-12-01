@@ -1764,17 +1764,23 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 		    + islandLoc.getBlockY() + "," + islandLoc.getBlockZ() + ")");
 	    Island island = plugin.getGrid().getIslandAt(islandLoc);
 	    if (island == null) {
-		plugin.getLogger().warning("Player has an island, but it is not in the grid. Adding it now...");
-		island = plugin.getGrid().addIsland(islandLoc.getBlockX(), islandLoc.getBlockZ(), playerUUID);
+		if (plugin.getGrid().onGrid(islandLoc)) {
+		    plugin.getLogger().warning("Player has an island, but it is not in the grid. Adding it now...");
+		    island = plugin.getGrid().addIsland(islandLoc.getBlockX(), islandLoc.getBlockZ(), playerUUID);
+		} else {
+		    plugin.getLogger().severe("Player file says they have an island, but it is not in the grid and has the wrong coordinates to be added! Use register to correct!");
+		    sender.sendMessage(ChatColor.RED + "See console for error!");
+		    return;
+		}
 	    }
-	    sender.sendMessage(ChatColor.YELLOW + plugin.myLocale().adminSetSpawncenter.replace("[location]", island.getCenter().getBlockX() + "," + island.getCenter().getBlockZ()));
-	    sender.sendMessage(ChatColor.YELLOW + (plugin.myLocale().adminSetSpawnlimits.replace("[min]", island.getMinX() + "," + island.getMinZ())).replace("[max]",
-		    (island.getMinX() + island.getIslandDistance() - 1) + "," + (island.getMinZ() + island.getIslandDistance() - 1)));
-	    sender.sendMessage(ChatColor.YELLOW + plugin.myLocale().adminSetSpawnrange.replace("[number]",String.valueOf(island.getProtectionSize())));
-	    sender.sendMessage(ChatColor.YELLOW + (plugin.myLocale().adminSetSpawncoords.replace("[min]",  island.getMinProtectedX() + ", " + island.getMinProtectedZ())).replace("[max]",
-		    + (island.getMinProtectedX() + island.getProtectionSize() - 1) + ", "
-			    + (island.getMinProtectedZ() + island.getProtectionSize() - 1)));
 	    if (island.isSpawn()) {
+		sender.sendMessage(ChatColor.YELLOW + plugin.myLocale().adminSetSpawncenter.replace("[location]", island.getCenter().getBlockX() + "," + island.getCenter().getBlockZ()));
+		sender.sendMessage(ChatColor.YELLOW + (plugin.myLocale().adminSetSpawnlimits.replace("[min]", island.getMinX() + "," + island.getMinZ())).replace("[max]",
+			(island.getMinX() + island.getIslandDistance() - 1) + "," + (island.getMinZ() + island.getIslandDistance() - 1)));
+		sender.sendMessage(ChatColor.YELLOW + plugin.myLocale().adminSetSpawnrange.replace("[number]",String.valueOf(island.getProtectionSize())));
+		sender.sendMessage(ChatColor.YELLOW + (plugin.myLocale().adminSetSpawncoords.replace("[min]",  island.getMinProtectedX() + ", " + island.getMinProtectedZ())).replace("[max]",
+			+ (island.getMinProtectedX() + island.getProtectionSize() - 1) + ", "
+				+ (island.getMinProtectedZ() + island.getProtectionSize() - 1)));
 		sender.sendMessage(ChatColor.YELLOW + plugin.myLocale().adminInfoIsSpawn);
 	    }
 	    if (island.isLocked()) {
