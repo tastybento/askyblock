@@ -349,6 +349,10 @@ public class AcidEffect implements Listener {
     // @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerInteract(final PlayerInteractEvent e) {
+	// Check that they are in the ASkyBlock world
+	if (!e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+	    return;
+	}
 	if (plugin.getGrid().playerIsOnIsland(e.getPlayer())) {
 	    boolean otherOb = false;
 	    ItemStack inHand = e.getPlayer().getItemInHand();

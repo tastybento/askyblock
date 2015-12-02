@@ -1283,12 +1283,12 @@ public class GridManager {
 	if (plugin.getPlayers().hasIsland(player.getUniqueId())) {
 	    islandTestLocations.add(plugin.getPlayers().getIslandLocation(player.getUniqueId()));
 	    // If new Nether
-	    if (Settings.createNether && Settings.newNether) {
+	    if (Settings.createNether && Settings.newNether && ASkyBlock.getNetherWorld() != null) {
 		islandTestLocations.add(netherIsland(plugin.getPlayers().getIslandLocation(player.getUniqueId())));
 	    }
 	} else if (plugin.getPlayers().inTeam(player.getUniqueId())) {
 	    islandTestLocations.add(plugin.getPlayers().getTeamIslandLocation(player.getUniqueId()));
-	    if (Settings.createNether && Settings.newNether) {
+	    if (Settings.createNether && Settings.newNether && ASkyBlock.getNetherWorld() != null) {
 		islandTestLocations.add(netherIsland(plugin.getPlayers().getTeamIslandLocation(player.getUniqueId())));
 	    }
 	}
