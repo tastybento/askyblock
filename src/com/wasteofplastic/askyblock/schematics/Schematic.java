@@ -723,10 +723,18 @@ public class Schematic {
 	    blockToChange = ws.toLocation(world).getBlock();
 	    blockToChange.setType(Material.SIGN_POST);
 	    Sign sign = (Sign) blockToChange.getState();
-	    sign.setLine(0, ASkyBlock.getPlugin().myLocale(player.getUniqueId()).signLine1.replace("[player]", player.getName()));
-	    sign.setLine(1, ASkyBlock.getPlugin().myLocale(player.getUniqueId()).signLine2.replace("[player]", player.getName()));
-	    sign.setLine(2, ASkyBlock.getPlugin().myLocale(player.getUniqueId()).signLine3.replace("[player]", player.getName()));
-	    sign.setLine(3, ASkyBlock.getPlugin().myLocale(player.getUniqueId()).signLine4.replace("[player]", player.getName()));
+	    if (sign.getLine(0).isEmpty()) {
+		sign.setLine(0, plugin.myLocale(player.getUniqueId()).signLine1.replace("[player]", player.getName()));
+	    }
+	    if (sign.getLine(1).isEmpty()) {
+		sign.setLine(1, plugin.myLocale(player.getUniqueId()).signLine2.replace("[player]", player.getName()));
+	    }
+	    if (sign.getLine(2).isEmpty()) {
+		sign.setLine(2, plugin.myLocale(player.getUniqueId()).signLine3.replace("[player]", player.getName()));
+	    }
+	    if (sign.getLine(3).isEmpty()) {
+		sign.setLine(3, plugin.myLocale(player.getUniqueId()).signLine4.replace("[player]", player.getName()));
+	    }
 	    // BlockFace direction = ((org.bukkit.material.Sign)
 	    // sign.getData()).getFacing();
 	    ((org.bukkit.material.Sign) sign.getData()).setFacingDirection(BlockFace.NORTH);
@@ -776,7 +784,7 @@ public class Schematic {
 		    plugin.getGrid().homeTeleport(player);
 		    plugin.getPlayers().setInTeleport(player.getUniqueId(), false);
 		}}, 10L);
-	   
+
 	}
 	if (!islandCompanion.isEmpty() && grass != null) {
 	    Bukkit.getServer().getScheduler().runTaskLater(ASkyBlock.getPlugin(), new Runnable() {
