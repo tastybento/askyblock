@@ -357,10 +357,6 @@ public class ASkyBlock extends JavaPlugin {
 		// Create the world if it does not exist. This is run after the
 		// server starts.
 		getIslandWorld();
-		// Try to register Herochat
-		if (Bukkit.getServer().getPluginManager().isPluginEnabled("Herochat")) {
-		    getServer().getPluginManager().registerEvents(new HeroChatListener(plugin), plugin);
-		}
 		if (getServer().getWorld(Settings.worldName).getGenerator() == null) {
 		    // Check if the world generator is registered correctly
 		    getLogger().severe("********* The Generator for " + plugin.getName() + " is not registered so the plugin cannot start ********");
@@ -378,7 +374,12 @@ public class ASkyBlock extends JavaPlugin {
 			getCommand("aic").setExecutor(new NotSetup(Reason.GENERATOR));
 			getCommand("acid").setExecutor(new NotSetup(Reason.GENERATOR));
 		    }
+		    HandlerList.unregisterAll(plugin);
 		    return;
+		}
+		// Try to register Herochat
+		if (Bukkit.getServer().getPluginManager().isPluginEnabled("Herochat")) {
+		    getServer().getPluginManager().registerEvents(new HeroChatListener(plugin), plugin);
 		}
 		getServer().getScheduler().runTask(plugin, new Runnable() {
 		    @Override
