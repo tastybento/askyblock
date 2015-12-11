@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
@@ -54,6 +55,23 @@ public class ASkyBlockAPI {
      */
     public int getIslandLevel(UUID playerUUID) {
 	return plugin.getPlayers().getIslandLevel(playerUUID);
+    }
+
+
+    /**
+     * Calculates the island level. Only the fast calc is supported.
+     * The island calculation runs async and fires an IslandLevelEvent when completed
+     * or use getIslandLevel(playerUUID).
+     * 
+     * @param playerUUID
+     * @return true if player has an island, false if not
+     */
+    public boolean calculateIslandLevel(UUID playerUUID) {
+	if (plugin.getPlayers().inTeam(playerUUID) && !plugin.getPlayers().hasIsland(playerUUID)) {		
+	    new LevelCalcByChunk(plugin, playerUUID, null, true);
+	    return true;
+	}
+	return false;
     }
 
     /**
@@ -187,7 +205,7 @@ public class ASkyBlockAPI {
     public void updateWarpPanel() {
 	plugin.getWarpPanel().updatePanel();
     }
-    
+
     /**
      * Checks if a specific location is within the protected range of an island
      * owned by the player
@@ -288,7 +306,7 @@ public class ASkyBlockAPI {
     public Location getSpawnLocation() {
 	return plugin.getGrid().getSpawn().getCenter();
     }
-    
+
     /**
      * Provides the spawn range
      * @return spawn range
@@ -296,7 +314,7 @@ public class ASkyBlockAPI {
     public int getSpawnRange() {
 	return plugin.getGrid().getSpawn().getProtectionSize();
     }
-    
+
     /**
      * Checks if a location is at spawn or not
      * @param location
@@ -305,7 +323,7 @@ public class ASkyBlockAPI {
     public boolean isAtSpawn(Location location) {
 	return plugin.getGrid().isAtSpawn(location);
     }
-    
+
     /**
      * Get the island overworld
      * @return the island overworld
@@ -313,7 +331,7 @@ public class ASkyBlockAPI {
     public World getIslandWorld() {
 	return ASkyBlock.getIslandWorld();
     }
-    
+
     /**
      * Get the nether world
      * @return the nether world
@@ -321,7 +339,7 @@ public class ASkyBlockAPI {
     public World getNetherWorld() {
 	return ASkyBlock.getNetherWorld();
     }
-    
+
     /**
      * Whether the new nether is being used or not
      * @return true if new nether is being used
@@ -329,7 +347,7 @@ public class ASkyBlockAPI {
     public boolean isNewNether() {
 	return Settings.newNether;
     }
-    
+
     /**
      * Get the top ten list
      * @return Top ten list
@@ -337,5 +355,5 @@ public class ASkyBlockAPI {
     public Map<UUID, Integer> getTopTen() {
 	return TopTen.getTopTenList();
     }
-    
+
 }
