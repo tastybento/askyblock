@@ -55,7 +55,7 @@ public class ChatListener implements Listener {
     }
 
     
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onChat(final AsyncPlayerChatEvent event) {
 	// Substitute variable - thread safe
 	String level = "";
