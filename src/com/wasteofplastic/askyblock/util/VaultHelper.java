@@ -37,12 +37,12 @@ public class VaultHelper {
      * @return
      */
     public static boolean setupEconomy() {
-	RegisteredServiceProvider<Economy> economyProvider = ASkyBlock.getPlugin().getServer().getServicesManager()
-		.getRegistration(net.milkbowl.vault.economy.Economy.class);
-	if (economyProvider != null) {
-	    econ = economyProvider.getProvider();
-	}
-	return econ != null;
+        RegisteredServiceProvider<Economy> economyProvider = ASkyBlock.getPlugin().getServer().getServicesManager()
+                .getRegistration(net.milkbowl.vault.economy.Economy.class);
+        if (economyProvider != null) {
+            econ = economyProvider.getProvider();
+        }
+        return econ != null;
     }
 
     /**
@@ -51,12 +51,12 @@ public class VaultHelper {
      * @return
      */
     public static boolean setupPermissions() {
-	RegisteredServiceProvider<Permission> permissionProvider = ASkyBlock.getPlugin().getServer().getServicesManager()
-		.getRegistration(net.milkbowl.vault.permission.Permission.class);
-	if (permissionProvider != null) {
-	    permission = permissionProvider.getProvider();
-	}
-	return (permission != null);
+        RegisteredServiceProvider<Permission> permissionProvider = ASkyBlock.getPlugin().getServer().getServicesManager()
+                .getRegistration(net.milkbowl.vault.permission.Permission.class);
+        if (permissionProvider != null) {
+            permission = permissionProvider.getProvider();
+        }
+        return (permission != null);
     }
 
     /**
@@ -67,7 +67,7 @@ public class VaultHelper {
      * @return
      */
     public static boolean checkPerm(final Player player, final String perm) {
-	return permission.has(player, perm);
+        return permission.has(player, perm);
     }
 
     /**
@@ -77,7 +77,7 @@ public class VaultHelper {
      * @param perm
      */
     public static void addPerm(final Player player, final String perm) {
-	permission.playerAdd(player, perm);
+        permission.playerAdd(player, perm);
     }
 
     /**
@@ -87,7 +87,7 @@ public class VaultHelper {
      * @param perm
      */
     public static void removePerm(final Player player, final String perm) {
-	permission.playerRemove(player, perm);
+        permission.playerRemove(player, perm);
     }
 
 }

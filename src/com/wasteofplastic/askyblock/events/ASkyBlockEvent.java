@@ -1,6 +1,20 @@
-/**
- * 
- */
+/*******************************************************************************
+ * This file is part of ASkyBlock.
+ *
+ *     ASkyBlock is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     ASkyBlock is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with ASkyBlock.  If not, see <http://www.gnu.org/licenses/>.
+ *******************************************************************************/
+
 package com.wasteofplastic.askyblock.events;
 
 import java.util.UUID;
@@ -17,7 +31,7 @@ import com.wasteofplastic.askyblock.Island;
  *
  */
 public abstract class ASkyBlockEvent extends Event {
-    
+
     private static final HandlerList handlers = new HandlerList();
     private final UUID player;
     private final Island island;
@@ -26,8 +40,8 @@ public abstract class ASkyBlockEvent extends Event {
      * @param plugin
      */
     public ASkyBlockEvent(UUID player, Island island) {
-	this.player = player;
-	this.island = island;
+        this.player = player;
+        this.island = island;
     }
 
     /**
@@ -69,7 +83,7 @@ public abstract class ASkyBlockEvent extends Event {
     public int getIslandDistance() {
         return island.getIslandDistance();
     }
-    
+
     /**
      * @return the teamLeader
      */
@@ -82,9 +96,9 @@ public abstract class ASkyBlockEvent extends Event {
      * @return UUID of owner
      */
     public UUID getIslandOwner() {
-	return island.getOwner();
+        return island.getOwner();
     }
-    
+
     /**
      * Convenience function to obtain the island's center location
      * @return the island location
@@ -92,14 +106,14 @@ public abstract class ASkyBlockEvent extends Event {
     public Location getIslandLocation() {
         return island.getCenter();
     }
-    
+
     @Override
     public HandlerList getHandlers() {
-	return handlers;
+        return handlers;
     }
 
     public static HandlerList getHandlerList() {
-	return handlers;
+        return handlers;
     }
-    
+
 }

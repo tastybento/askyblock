@@ -1,3 +1,20 @@
+/*******************************************************************************
+ * This file is part of ASkyBlock.
+ *
+ *     ASkyBlock is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     ASkyBlock is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with ASkyBlock.  If not, see <http://www.gnu.org/licenses/>.
+ *******************************************************************************/
+
 package com.wasteofplastic.askyblock.panels;
 
 import java.util.ArrayList;
@@ -29,67 +46,67 @@ public class BiomeItem {
      * @param name
      */
     public BiomeItem(Material material, int slot, double cost, String description, String name, boolean confirm, Biome biome) {
-	this.slot = slot;
-	this.price = cost;
-	// this.description = description;
-	this.name = name;
-	this.confirm = confirm;
-	this.biome = biome;
-	// Make the item(s)
-	item = new ItemStack(material);
-	// Set the description and price
-	ItemMeta meta = item.getItemMeta();
-	meta.setDisplayName(name);
-	List<String> Lore = new ArrayList<String>();
-	Lore = Util.chop(ChatColor.YELLOW, description, 20);
-	// Create price
-	if (Settings.useEconomy && cost > 0D) {
-	    Lore.add(VaultHelper.econ.format(cost));
-	}
-	meta.setLore(Lore);
-	item.setItemMeta(meta);
+        this.slot = slot;
+        this.price = cost;
+        // this.description = description;
+        this.name = name;
+        this.confirm = confirm;
+        this.biome = biome;
+        // Make the item(s)
+        item = new ItemStack(material);
+        // Set the description and price
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName(name);
+        List<String> Lore = new ArrayList<String>();
+        Lore = Util.chop(ChatColor.YELLOW, description, 20);
+        // Create price
+        if (Settings.useEconomy && cost > 0D) {
+            Lore.add(VaultHelper.econ.format(cost));
+        }
+        meta.setLore(Lore);
+        item.setItemMeta(meta);
     }
 
     /**
      * @return the item
      */
     public ItemStack getItem() {
-	return item;
+        return item;
     }
 
     /**
      * @return the slot
      */
     public int getSlot() {
-	return slot;
+        return slot;
     }
 
     /**
      * @return the confirm
      */
     public boolean isConfirm() {
-	return confirm;
+        return confirm;
     }
 
     /**
      * @return the biome
      */
     public Biome getBiome() {
-	return biome;
+        return biome;
     }
 
     /**
      * @return the name
      */
     public String getName() {
-	return name;
+        return name;
     }
 
     /**
      * @return the price
      */
     public double getPrice() {
-	return price;
+        return price;
     }
 
     /**
@@ -97,7 +114,7 @@ public class BiomeItem {
      *            the biome to set
      */
     public void setBiome(Biome biome) {
-	this.biome = biome;
+        this.biome = biome;
     }
 
 }

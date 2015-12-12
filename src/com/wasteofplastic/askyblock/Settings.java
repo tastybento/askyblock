@@ -36,7 +36,7 @@ public class Settings {
     // Constants
     // Game Type ASKYBLOCK or ACIDISLAND
     public enum GameType {
-	ASKYBLOCK, ACIDISLAND
+        ASKYBLOCK, ACIDISLAND
     }
     /*
     public final static GameType GAMETYPE = GameType.ACIDISLAND;
@@ -50,7 +50,7 @@ public class Settings {
     public static final String CHALLENGECOMMAND = "aic";
     // Admin command
     public static final String ADMINCOMMAND = "acid";
-    */
+     */
     public final static GameType GAMETYPE = GameType.ASKYBLOCK;
     // Permission prefix
     public final static String PERMPREFIX = "askyblock.";
@@ -62,7 +62,7 @@ public class Settings {
     public final static String SPAWNCOMMAND = "spawn";
     // Admin command
     public static final String ADMINCOMMAND = "asadmin";
-   
+
     public static Set<String> challengeList;
     public static int waiverAmount;
     public static List<String> challengeLevels;
@@ -106,7 +106,7 @@ public class Settings {
     public static boolean allowNetherPvP;
     public static boolean allowRedStone;
     public static boolean allowShearing;
-    
+
     // System settings
     public static boolean allowChestDamage;
     public static boolean allowCreeperDamage;
@@ -264,7 +264,7 @@ public class Settings {
     public static long pvpRestartCooldown;
     public static long backupDuration;
 
-    
-    
+
+
 
 }

@@ -37,7 +37,7 @@ public class LavaCheck implements Listener {
     private final ASkyBlock plugin;
 
     public LavaCheck(ASkyBlock aSkyBlock) {
-	plugin = aSkyBlock;
+        plugin = aSkyBlock;
     }
 
     /**
@@ -47,33 +47,33 @@ public class LavaCheck implements Listener {
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onCleanstoneGen(BlockFromToEvent e) {
-	// Only do this in ASkyBlock world
-	if (!e.getBlock().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
-	    return;
-	}
-	// Do nothing if a new island is being created
-	if (plugin.isNewIsland())
-	    return;
-	final Block to = e.getToBlock();
-	// plugin.getLogger().info("From material is " + from.toString());
-	// plugin.getLogger().info("To material is " + to.getType().toString());
-	// plugin.getLogger().info("---------------------------------");
-	if (Settings.acidDamage > 0) {
-	    final Material prev = to.getType();
-	    // plugin.getLogger().info("To material was " +
-	    // to.getType().toString());
-	    plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
-		@Override
-		public void run() {
-		    // plugin.getLogger().info("To material is after 1 tick " +
-		    // to.getType().toString());
-		    if ((prev.equals(Material.WATER) || prev.equals(Material.STATIONARY_WATER)) && to.getType().equals(Material.STONE)) {
-			to.setType(prev);
-			to.getWorld().playSound(to.getLocation(), Sound.FIZZ, 1F, 1F);
-		    }
-		}
-	    });
-	}
+        // Only do this in ASkyBlock world
+        if (!e.getBlock().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+            return;
+        }
+        // Do nothing if a new island is being created
+        if (plugin.isNewIsland())
+            return;
+        final Block to = e.getToBlock();
+        // plugin.getLogger().info("From material is " + from.toString());
+        // plugin.getLogger().info("To material is " + to.getType().toString());
+        // plugin.getLogger().info("---------------------------------");
+        if (Settings.acidDamage > 0) {
+            final Material prev = to.getType();
+            // plugin.getLogger().info("To material was " +
+            // to.getType().toString());
+            plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
+                @Override
+                public void run() {
+                    // plugin.getLogger().info("To material is after 1 tick " +
+                    // to.getType().toString());
+                    if ((prev.equals(Material.WATER) || prev.equals(Material.STATIONARY_WATER)) && to.getType().equals(Material.STONE)) {
+                        to.setType(prev);
+                        to.getWorld().playSound(to.getLocation(), Sound.FIZZ, 1F, 1F);
+                    }
+                }
+            });
+        }
     }
 
     // Failed attempts - remember the pain

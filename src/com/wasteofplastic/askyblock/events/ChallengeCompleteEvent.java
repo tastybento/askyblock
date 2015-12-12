@@ -1,3 +1,20 @@
+/*******************************************************************************
+ * This file is part of ASkyBlock.
+ *
+ *     ASkyBlock is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     ASkyBlock is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with ASkyBlock.  If not, see <http://www.gnu.org/licenses/>.
+ *******************************************************************************/
+
 package com.wasteofplastic.askyblock.events;
 
 import org.bukkit.entity.Player;
@@ -30,71 +47,71 @@ public class ChallengeCompleteEvent extends Event {
      * @param rewardText
      */
     public ChallengeCompleteEvent(Player player, String challengeName, String[] permList, String[] itemRewards, double moneyReward, int expReward,
-	    String rewardText) {
-	this.player = player;
-	this.challengeName = challengeName;
-	this.permList = permList;
-	this.itemRewards = itemRewards;
-	this.moneyReward = moneyReward;
-	this.expReward = expReward;
-	this.rewardText = rewardText;
+            String rewardText) {
+        this.player = player;
+        this.challengeName = challengeName;
+        this.permList = permList;
+        this.itemRewards = itemRewards;
+        this.moneyReward = moneyReward;
+        this.expReward = expReward;
+        this.rewardText = rewardText;
     }
 
     /**
      * @return the player
      */
     public Player getPlayer() {
-	return player;
+        return player;
     }
 
     /**
      * @return the challengeName
      */
     public String getChallengeName() {
-	return challengeName;
+        return challengeName;
     }
 
     /**
      * @return the permList
      */
     public String[] getPermList() {
-	return permList;
+        return permList;
     }
 
     /**
      * @return the itemRewards
      */
     public String[] getItemRewards() {
-	return itemRewards;
+        return itemRewards;
     }
 
     /**
      * @return the moneyReward
      */
     public double getMoneyReward() {
-	return moneyReward;
+        return moneyReward;
     }
 
     /**
      * @return the expReward
      */
     public int getExpReward() {
-	return expReward;
+        return expReward;
     }
 
     /**
      * @return the rewardText
      */
     public String getRewardText() {
-	return rewardText;
+        return rewardText;
     }
 
     @Override
     public HandlerList getHandlers() {
-	return handlers;
+        return handlers;
     }
 
     public static HandlerList getHandlerList() {
-	return handlers;
+        return handlers;
     }
 }

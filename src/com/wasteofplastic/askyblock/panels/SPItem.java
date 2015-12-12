@@ -1,3 +1,20 @@
+/*******************************************************************************
+ * This file is part of ASkyBlock.
+ *
+ *     ASkyBlock is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     ASkyBlock is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with ASkyBlock.  If not, see <http://www.gnu.org/licenses/>.
+ *******************************************************************************/
+
 package com.wasteofplastic.askyblock.panels;
 
 import java.util.ArrayList;
@@ -32,17 +49,17 @@ public class SPItem {
      * @param slot
      */
     public SPItem(Material material, String name, String description, int slot) {
-	this.slot = slot;
-	this.name = name;
-	this.perm = "";
-	this.heading = "";
-	this.description.clear();
-	item = new ItemStack(material);
-	ItemMeta meta = item.getItemMeta();
-	meta.setDisplayName(name);
-	this.description.addAll(Util.chop(ChatColor.AQUA, description, 25));
-	meta.setLore(this.description);
-	item.setItemMeta(meta);
+        this.slot = slot;
+        this.name = name;
+        this.perm = "";
+        this.heading = "";
+        this.description.clear();
+        item = new ItemStack(material);
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName(name);
+        this.description.addAll(Util.chop(ChatColor.AQUA, description, 25));
+        meta.setLore(this.description);
+        item.setItemMeta(meta);
     }
 
     /**
@@ -54,45 +71,45 @@ public class SPItem {
      * @param slot
      */
     public SPItem(Schematic schematic, int slot) {
-	this.slot = slot;
-	this.name = schematic.getName();
-	this.perm = schematic.getPerm();
-	this.heading = schematic.getHeading();
-	this.description.clear();
-	this.item = new ItemStack(schematic.getIcon());
-	ItemMeta meta = item.getItemMeta();
-	meta.setDisplayName(name);
-	// This neat bit of code makes a list out of the description split by new line character
-	List<String> desc = new ArrayList<String>(Arrays.asList(schematic.getDescription().split("\\|")));
-	this.description.addAll(desc);
-	meta.setLore(this.description);
-	item.setItemMeta(meta);
+        this.slot = slot;
+        this.name = schematic.getName();
+        this.perm = schematic.getPerm();
+        this.heading = schematic.getHeading();
+        this.description.clear();
+        this.item = new ItemStack(schematic.getIcon());
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName(name);
+        // This neat bit of code makes a list out of the description split by new line character
+        List<String> desc = new ArrayList<String>(Arrays.asList(schematic.getDescription().split("\\|")));
+        this.description.addAll(desc);
+        meta.setLore(this.description);
+        item.setItemMeta(meta);
     }
 
     public ItemStack getItem() {
-	return item;
+        return item;
     }
 
     /**
      * @return the slot
      */
     public int getSlot() {
-	return slot;
+        return slot;
     }
 
     public void setSlot(int slot) {
-	this.slot = slot;
+        this.slot = slot;
     }
 
     public String getName() {
-	return name;
+        return name;
     }
 
     /**
      * @return the perm
      */
     public String getPerm() {
-	return perm;
+        return perm;
     }
 
     /**

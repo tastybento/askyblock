@@ -1,3 +1,20 @@
+/*******************************************************************************
+ * This file is part of ASkyBlock.
+ *
+ *     ASkyBlock is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     ASkyBlock is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with ASkyBlock.  If not, see <http://www.gnu.org/licenses/>.
+ *******************************************************************************/
+
 package com.wasteofplastic.askyblock.nms.v1_7_R4;
 
 import java.lang.reflect.Field;
@@ -28,71 +45,77 @@ public class NMSHandler implements NMSAbstraction {
     @SuppressWarnings("deprecation")
     @Override
     public void setBlockSuperFast(Block b, int blockId, byte data, boolean applyPhysics) {
-	net.minecraft.server.v1_7_R4.World w = ((CraftWorld) b.getWorld()).getHandle();
-	net.minecraft.server.v1_7_R4.Chunk chunk = w.getChunkAt(b.getX() >> 4, b.getZ() >> 4);
-	try {
-	    Field f = chunk.getClass().getDeclaredField("sections");
-	    f.setAccessible(true);
-	    ChunkSection[] sections = (ChunkSection[]) f.get(chunk);
-	    ChunkSection chunksection = sections[b.getY() >> 4];
+        net.minecraft.server.v1_7_R4.World w = ((CraftWorld) b.getWorld()).getHandle();
+        net.minecraft.server.v1_7_R4.Chunk chunk = w.getChunkAt(b.getX() >> 4, b.getZ() >> 4);
+        try {
+            Field f = chunk.getClass().getDeclaredField("sections");
+            f.setAccessible(true);
+            ChunkSection[] sections = (ChunkSection[]) f.get(chunk);
+            ChunkSection chunksection = sections[b.getY() >> 4];
 
-	    if (chunksection == null) {
-		chunksection = sections[b.getY() >> 4] = new ChunkSection(b.getY() >> 4 << 4, !chunk.world.worldProvider.f);
-	    }
-	    net.minecraft.server.v1_7_R4.Block mb = net.minecraft.server.v1_7_R4.Block.getById(blockId);
-	    chunksection.setTypeId(b.getX() & 15, b.getY() & 15, b.getZ() & 15, mb);
-	    chunksection.setData(b.getX() & 15, b.getY() & 15, b.getZ() & 15, data);
-	    if (applyPhysics) {
-		w.update(b.getX(), b.getY(), b.getZ(), mb);
-	    }
-	} catch (Exception e) {
-	    //Bukkit.getLogger().info("Error");
-	    b.setTypeIdAndData(blockId, data, applyPhysics);
-	}
+            if (chunksection == null) {
+                chunksection = sections[b.getY() >> 4] = new ChunkSection(b.getY() >> 4 << 4, !chunk.world.worldProvider.f);
+            }
+            net.minecraft.server.v1_7_R4.Block mb = net.minecraft.server.v1_7_R4.Block.getById(blockId);
+            chunksection.setTypeId(b.getX() & 15, b.getY() & 15, b.getZ() & 15, mb);
+            chunksection.setData(b.getX() & 15, b.getY() & 15, b.getZ() & 15, data);
+            if (applyPhysics) {
+                w.update(b.getX(), b.getY(), b.getZ(), mb);
+            }
+        } catch (Exception e) {
+            //Bukkit.getLogger().info("Error");
+            b.setTypeIdAndData(blockId, data, applyPhysics);
+        }
 
 
     }
 
     @Override
     public ItemStack setBook(Tag item) {
-	ItemStack chestItem = new ItemStack(Material.WRITTEN_BOOK);
-	//Bukkit.getLogger().info("item data");
-	//Bukkit.getLogger().info(item.toString());
+        ItemStack chestItem = new ItemStack(Material.WRITTEN_BOOK);
+        //Bukkit.getLogger().info("item data");
+        //Bukkit.getLogger().info(item.toString());
 
-	Map<String,Tag> contents = (Map<String,Tag>) ((CompoundTag) item).getValue().get("tag").getValue();
-	//BookMeta bookMeta = (BookMeta) chestItem.getItemMeta();
-	String author = ((StringTag)contents.get("author")).getValue();
-	//Bukkit.getLogger().info("Author: " + author);
-	//bookMeta.setAuthor(author);
-	String title = ((StringTag)contents.get("title")).getValue();
-	//Bukkit.getLogger().info("Title: " + title);
-	//bookMeta.setTitle(title);
+        Map<String,Tag> contents = (Map<String,Tag>) ((CompoundTag) item).getValue().get("tag").getValue();
+        //BookMeta bookMeta = (BookMeta) chestItem.getItemMeta();
+        String author = ((StringTag)contents.get("author")).getValue();
+        //Bukkit.getLogger().info("Author: " + author);
+        //bookMeta.setAuthor(author);
+        String title = ((StringTag)contents.get("title")).getValue();
+        //Bukkit.getLogger().info("Title: " + title);
+        //bookMeta.setTitle(title);
 
-	Map<String,Tag> display = (Map<String, Tag>) (contents.get("display")).getValue();
-	List<Tag> loreTag = ((ListTag)display.get("Lore")).getValue();
-	List<String> lore = new ArrayList<String>();
-	for (Tag s: loreTag) {
-	    lore.add(((StringTag)s).getValue());
-	}
-	//Bukkit.getLogger().info("Lore: " + lore);
-	net.minecraft.server.v1_7_R4.ItemStack stack = CraftItemStack.asNMSCopy(chestItem); 
-	// Pages
-	NBTTagCompound tag = new NBTTagCompound(); //Create the NMS Stack's NBT (item data)
-	tag.setString("title", title); //Set the book's title
-	tag.setString("author", author);
-	NBTTagList pages = new NBTTagList();
-	List<Tag> pagesTag = ((ListTag)contents.get("pages")).getValue();
-	for (Tag s: pagesTag) {
-	    pages.add(new NBTTagString(((StringTag)s).getValue()));
-	}
-	tag.set("pages", pages); //Add the pages to the tag
-	stack.setTag(tag); //Apply the tag to the item
-	chestItem = CraftItemStack.asCraftMirror(stack); 
-	ItemMeta bookMeta = (ItemMeta) chestItem.getItemMeta();
-	bookMeta.setLore(lore);
-	chestItem.setItemMeta(bookMeta);
-	return chestItem;
+        Map<String,Tag> display = (Map<String, Tag>) (contents.get("display")).getValue();
+        List<Tag> loreTag = ((ListTag)display.get("Lore")).getValue();
+        List<String> lore = new ArrayList<String>();
+        for (Tag s: loreTag) {
+            lore.add(((StringTag)s).getValue());
+        }
+        //Bukkit.getLogger().info("Lore: " + lore);
+        net.minecraft.server.v1_7_R4.ItemStack stack = CraftItemStack.asNMSCopy(chestItem); 
+        // Pages
+        NBTTagCompound tag = new NBTTagCompound(); //Create the NMS Stack's NBT (item data)
+        tag.setString("title", title); //Set the book's title
+        tag.setString("author", author);
+        NBTTagList pages = new NBTTagList();
+        List<Tag> pagesTag = ((ListTag)contents.get("pages")).getValue();
+        for (Tag s: pagesTag) {
+            pages.add(new NBTTagString(((StringTag)s).getValue()));
+        }
+        tag.set("pages", pages); //Add the pages to the tag
+        stack.setTag(tag); //Apply the tag to the item
+        chestItem = CraftItemStack.asCraftMirror(stack); 
+        ItemMeta bookMeta = (ItemMeta) chestItem.getItemMeta();
+        bookMeta.setLore(lore);
+        chestItem.setItemMeta(bookMeta);
+        return chestItem;
     }
 
+    @SuppressWarnings("deprecation")
+    @Override
+    public void setBlock(Block block, ItemStack itemStack) {
+        block.setTypeIdAndData(itemStack.getTypeId(), itemStack.getData().getData(), false);
+
+    }
 
 }

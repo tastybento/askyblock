@@ -46,8 +46,8 @@ public class JoinLeaveEvents implements Listener {
     private PlayerCache players;
 
     public JoinLeaveEvents(ASkyBlock aSkyBlock) {
-	this.plugin = aSkyBlock;
-	this.players = plugin.getPlayers();
+        this.plugin = aSkyBlock;
+        this.players = plugin.getPlayers();
     }
 
     /**
@@ -55,194 +55,194 @@ public class JoinLeaveEvents implements Listener {
      */
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerJoin(final PlayerJoinEvent event) {
-	final Player player = event.getPlayer();
-	final UUID playerUUID = player.getUniqueId();
-	// Check language permission
-	if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.lang")) {
-	    // Get language
-	    String language = getLanguage(player);
-	    //plugin.getLogger().info("DEBUG: language = " + language);
-	    // Check if we have this language
-	    if (plugin.getResource("locale/" + language + ".yml") != null) {
-		if (plugin.getPlayers().getLocale(playerUUID).isEmpty()) {
-		    plugin.getPlayers().setLocale(playerUUID, language);
-		}
-	    }
-	} else {
-	    // Default locale
-	    plugin.getPlayers().setLocale(playerUUID,"");
-	}
-	// Check updates
-	if (player.isOp() && plugin.getUpdateCheck() != null) {
-	    plugin.checkUpdatesNotify(player);
-	}
+        final Player player = event.getPlayer();
+        final UUID playerUUID = player.getUniqueId();
+        // Check language permission
+        if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.lang")) {
+            // Get language
+            String language = getLanguage(player);
+            //plugin.getLogger().info("DEBUG: language = " + language);
+            // Check if we have this language
+            if (plugin.getResource("locale/" + language + ".yml") != null) {
+                if (plugin.getPlayers().getLocale(playerUUID).isEmpty()) {
+                    plugin.getPlayers().setLocale(playerUUID, language);
+                }
+            }
+        } else {
+            // Default locale
+            plugin.getPlayers().setLocale(playerUUID,"");
+        }
+        // Check updates
+        if (player.isOp() && plugin.getUpdateCheck() != null) {
+            plugin.checkUpdatesNotify(player);
+        }
 
-	if (players == null) {
-	    plugin.getLogger().severe("players is NULL");
-	}
-	// Load any messages for the player
-	// plugin.getLogger().info("DEBUG: Checking messages for " +
-	// player.getName());
-	final List<String> messages = plugin.getMessages().getMessages(playerUUID);
-	if (messages != null) {
-	    // plugin.getLogger().info("DEBUG: Messages waiting!");
-	    plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
-		@Override
-		public void run() {
-		    player.sendMessage(ChatColor.AQUA + plugin.myLocale(playerUUID).newsHeadline);
-		    int i = 1;
-		    for (String message : messages) {
-			player.sendMessage(i++ + ": " + message);
-		    }
-		    // Clear the messages
-		    plugin.getMessages().clearMessages(playerUUID);
-		}
-	    }, 40L);
-	} // else {
-	// plugin.getLogger().info("no messages");
-	// }
+        if (players == null) {
+            plugin.getLogger().severe("players is NULL");
+        }
+        // Load any messages for the player
+        // plugin.getLogger().info("DEBUG: Checking messages for " +
+        // player.getName());
+        final List<String> messages = plugin.getMessages().getMessages(playerUUID);
+        if (messages != null) {
+            // plugin.getLogger().info("DEBUG: Messages waiting!");
+            plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
+                @Override
+                public void run() {
+                    player.sendMessage(ChatColor.AQUA + plugin.myLocale(playerUUID).newsHeadline);
+                    int i = 1;
+                    for (String message : messages) {
+                        player.sendMessage(i++ + ": " + message);
+                    }
+                    // Clear the messages
+                    plugin.getMessages().clearMessages(playerUUID);
+                }
+            }, 40L);
+        } // else {
+        // plugin.getLogger().info("no messages");
+        // }
 
-	// If this player is not an island player just skip all this
-	if (!players.hasIsland(playerUUID) && !players.inTeam(playerUUID)) {
-	    return;
-	}
-	UUID leader = null;
-	Location loc = null;
-	/*
-	 * This should not be needed
-	 */
-	if (players.inTeam(playerUUID) && players.getTeamIslandLocation(playerUUID) == null) {
-	    // plugin.getLogger().info("DEBUG: reseting team island");
-	    leader = players.getTeamLeader(playerUUID);
-	    players.setTeamIslandLocation(playerUUID, players.getIslandLocation(leader));
-	}
-	// Add island to grid if it is not in there already
-	// Add owners to the island grid list as they log in
-	// Rationalize any out-of-sync issues, which may occur if the server wasn't shutdown properly, etc.
-	// Leader or solo
-	if (players.hasIsland(playerUUID)) {
-	    loc = players.getIslandLocation(playerUUID);
-	    leader = playerUUID;
-	} else if (players.inTeam(playerUUID)) {
-	    // Team player
-	    loc = players.getTeamIslandLocation(playerUUID);
-	    leader = players.getTeamLeader(playerUUID);
-	    if (leader == null) {
-		plugin.getLogger().severe("Player "+ player.getName() + " is in a team but leader's UUID is missing.");
-	    }
-	}
-	// If the player has an island location of some kind
-	if (loc != null && leader != null) {
-	    // Check if the island location is on the grid
-	    Island island = plugin.getGrid().getIslandAt(loc);
-	    if (island == null) {
-		//plugin.getLogger().info("DEBUG: getIslandLoc is null!");
-		// Island isn't in the grid, so add it
-		// See if this owner is tagged as having an island elsewhere
-		Island islandByOwner = plugin.getGrid().getIsland(leader);
-		if (islandByOwner == null) {
-		    // No previous ownership, so just create the new island in the grid
-		    if (plugin.getGrid().onGrid(loc)) {
-			plugin.getGrid().addIsland(loc.getBlockX(), loc.getBlockZ(), leader);
-		    } else {
-			plugin.getLogger().severe(player.getName() + " joined and has an island at " + loc + " but those coords are NOT on the grid! Use admin register commands to correct!");
-		    }
-		} else {
-		    // We have a mismatch - correct in favor of the player info
-		    //plugin.getLogger().info("DEBUG: getIslandLoc is null but there is a player listing");
-		    plugin.getLogger().warning(player.getName() + " login: mismatch - player.yml and islands.yml are out of sync. Fixing...");
-		    // Cannot delete by location
-		    plugin.getGrid().deleteIslandOwner(playerUUID);
-		    if (plugin.getGrid().onGrid(loc)) {
-			plugin.getGrid().addIsland(loc.getBlockX(), loc.getBlockZ(), leader);
-		    } else {
-			plugin.getLogger().severe(player.getName() + " joined and has an island at " + loc + " but those coords are NOT on the grid! Use admin register commands to correct!");
-		    }
-		}
-	    } else {
-		// Island at this location exists
-		//plugin.getLogger().info("DEBUG: getIslandLoc is not null - island exists");
-		// See if this owner is tagged as having an island elsewhere
-		Island islandByOwner = plugin.getGrid().getIsland(leader);
-		if (islandByOwner == null) {
-		    plugin.getLogger().warning(player.getName() + " login: has island, but islands.yml says it is unowned, correcting...");
-		    // No previous ownership, so just assign ownership
-		    plugin.getGrid().setIslandOwner(island, leader);
-		} else {
-		    if (!islandByOwner.equals(island)) {
-			//plugin.getLogger().info("DEBUG: mismatch");
-			plugin.getLogger().warning(player.getName() + " login: mismatch - islands.yml and player.yml are out of sync. Fixing...");
-			// We have a mismatch - correct in favor of the player info
-			plugin.getGrid().deleteIsland(islandByOwner.getCenter());
-			plugin.getGrid().setIslandOwner(island, leader);
-		    } else {
-			//plugin.getLogger().info("DEBUG: everything looks good");
-		    }
-		}
-	    }
-	}
-	// Run the level command if it's free to do so
-	if (Settings.loginLevel) {
-	    if (Settings.fastLevelCalc) {
-		new LevelCalcByChunk(plugin, playerUUID, player, true);
-	    } else {
-		if (!plugin.isCalculatingLevel()) {
-		    // This flag is true if the command can be used
-		    plugin.setCalculatingLevel(true);
-		    LevelCalc levelCalc = new LevelCalc(plugin, playerUUID, player, true);
-		    levelCalc.runTaskTimer(plugin, 0L, 10L);
-		}
-	    }
-	}
+        // If this player is not an island player just skip all this
+        if (!players.hasIsland(playerUUID) && !players.inTeam(playerUUID)) {
+            return;
+        }
+        UUID leader = null;
+        Location loc = null;
+        /*
+         * This should not be needed
+         */
+        if (players.inTeam(playerUUID) && players.getTeamIslandLocation(playerUUID) == null) {
+            // plugin.getLogger().info("DEBUG: reseting team island");
+            leader = players.getTeamLeader(playerUUID);
+            players.setTeamIslandLocation(playerUUID, players.getIslandLocation(leader));
+        }
+        // Add island to grid if it is not in there already
+        // Add owners to the island grid list as they log in
+        // Rationalize any out-of-sync issues, which may occur if the server wasn't shutdown properly, etc.
+        // Leader or solo
+        if (players.hasIsland(playerUUID)) {
+            loc = players.getIslandLocation(playerUUID);
+            leader = playerUUID;
+        } else if (players.inTeam(playerUUID)) {
+            // Team player
+            loc = players.getTeamIslandLocation(playerUUID);
+            leader = players.getTeamLeader(playerUUID);
+            if (leader == null) {
+                plugin.getLogger().severe("Player "+ player.getName() + " is in a team but leader's UUID is missing.");
+            }
+        }
+        // If the player has an island location of some kind
+        if (loc != null && leader != null) {
+            // Check if the island location is on the grid
+            Island island = plugin.getGrid().getIslandAt(loc);
+            if (island == null) {
+                //plugin.getLogger().info("DEBUG: getIslandLoc is null!");
+                // Island isn't in the grid, so add it
+                // See if this owner is tagged as having an island elsewhere
+                Island islandByOwner = plugin.getGrid().getIsland(leader);
+                if (islandByOwner == null) {
+                    // No previous ownership, so just create the new island in the grid
+                    if (plugin.getGrid().onGrid(loc)) {
+                        plugin.getGrid().addIsland(loc.getBlockX(), loc.getBlockZ(), leader);
+                    } else {
+                        plugin.getLogger().severe(player.getName() + " joined and has an island at " + loc + " but those coords are NOT on the grid! Use admin register commands to correct!");
+                    }
+                } else {
+                    // We have a mismatch - correct in favor of the player info
+                    //plugin.getLogger().info("DEBUG: getIslandLoc is null but there is a player listing");
+                    plugin.getLogger().warning(player.getName() + " login: mismatch - player.yml and islands.yml are out of sync. Fixing...");
+                    // Cannot delete by location
+                    plugin.getGrid().deleteIslandOwner(playerUUID);
+                    if (plugin.getGrid().onGrid(loc)) {
+                        plugin.getGrid().addIsland(loc.getBlockX(), loc.getBlockZ(), leader);
+                    } else {
+                        plugin.getLogger().severe(player.getName() + " joined and has an island at " + loc + " but those coords are NOT on the grid! Use admin register commands to correct!");
+                    }
+                }
+            } else {
+                // Island at this location exists
+                //plugin.getLogger().info("DEBUG: getIslandLoc is not null - island exists");
+                // See if this owner is tagged as having an island elsewhere
+                Island islandByOwner = plugin.getGrid().getIsland(leader);
+                if (islandByOwner == null) {
+                    plugin.getLogger().warning(player.getName() + " login: has island, but islands.yml says it is unowned, correcting...");
+                    // No previous ownership, so just assign ownership
+                    plugin.getGrid().setIslandOwner(island, leader);
+                } else {
+                    if (!islandByOwner.equals(island)) {
+                        //plugin.getLogger().info("DEBUG: mismatch");
+                        plugin.getLogger().warning(player.getName() + " login: mismatch - islands.yml and player.yml are out of sync. Fixing...");
+                        // We have a mismatch - correct in favor of the player info
+                        plugin.getGrid().deleteIsland(islandByOwner.getCenter());
+                        plugin.getGrid().setIslandOwner(island, leader);
+                    } else {
+                        //plugin.getLogger().info("DEBUG: everything looks good");
+                    }
+                }
+            }
+        }
+        // Run the level command if it's free to do so
+        if (Settings.loginLevel) {
+            if (Settings.fastLevelCalc) {
+                new LevelCalcByChunk(plugin, playerUUID, player, true);
+            } else {
+                if (!plugin.isCalculatingLevel()) {
+                    // This flag is true if the command can be used
+                    plugin.setCalculatingLevel(true);
+                    LevelCalc levelCalc = new LevelCalc(plugin, playerUUID, player, true);
+                    levelCalc.runTaskTimer(plugin, 0L, 10L);
+                }
+            }
+        }
 
-	// Set the player's name (it may have changed), but only if it isn't empty
-	if (!player.getName().isEmpty()) {
-	    players.setPlayerName(playerUUID, player.getName());
-	} else {
-	    plugin.getLogger().warning("Player that just logged in has no name! " + playerUUID.toString());
-	}
-	players.save(playerUUID);
-	if (Settings.logInRemoveMobs) {
-	    plugin.getGrid().removeMobs(player.getLocation());
-	}
-	// plugin.getLogger().info("Cached " + player.getName());
+        // Set the player's name (it may have changed), but only if it isn't empty
+        if (!player.getName().isEmpty()) {
+            players.setPlayerName(playerUUID, player.getName());
+        } else {
+            plugin.getLogger().warning("Player that just logged in has no name! " + playerUUID.toString());
+        }
+        players.save(playerUUID);
+        if (Settings.logInRemoveMobs) {
+            plugin.getGrid().removeMobs(player.getLocation());
+        }
+        // plugin.getLogger().info("Cached " + player.getName());
 
-	// Set the TEAMNAME and TEAMSUFFIX variable if required
-	if (Settings.setTeamName) {
-	    Scoreboards.getInstance().setLevel(playerUUID);
-	}
+        // Set the TEAMNAME and TEAMSUFFIX variable if required
+        if (Settings.setTeamName) {
+            Scoreboards.getInstance().setLevel(playerUUID);
+        }
 
-	// Check if they logged in to a locked island and expel them or if they are banned
-	Island currentIsland = plugin.getGrid().getIslandAt(player.getLocation());
-	if (currentIsland != null && (currentIsland.isLocked() || plugin.getPlayers().isBanned(currentIsland.getOwner(),player.getUniqueId()))) {
-	    if (!currentIsland.getMembers().contains(playerUUID) && !player.isOp()
-		    && !VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.bypassprotect")) {
-		player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).lockIslandLocked);
-		plugin.getGrid().homeTeleport(player);
-	    }
-	}
-	// Set the player's level
-	plugin.getChatListener().setPlayerLevel(playerUUID, plugin.getPlayers().getIslandLevel(player.getUniqueId()));
-	// Remove from TopTen if the player has the permission
-	if (player.hasPermission(Settings.PERMPREFIX + "excludetopten")) {
-	    TopTen.topTenRemoveEntry(playerUUID);
-	}
+        // Check if they logged in to a locked island and expel them or if they are banned
+        Island currentIsland = plugin.getGrid().getIslandAt(player.getLocation());
+        if (currentIsland != null && (currentIsland.isLocked() || plugin.getPlayers().isBanned(currentIsland.getOwner(),player.getUniqueId()))) {
+            if (!currentIsland.getMembers().contains(playerUUID) && !player.isOp()
+                    && !VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.bypassprotect")) {
+                player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).lockIslandLocked);
+                plugin.getGrid().homeTeleport(player);
+            }
+        }
+        // Set the player's level
+        plugin.getChatListener().setPlayerLevel(playerUUID, plugin.getPlayers().getIslandLevel(player.getUniqueId()));
+        // Remove from TopTen if the player has the permission
+        if (player.hasPermission(Settings.PERMPREFIX + "excludetopten")) {
+            TopTen.topTenRemoveEntry(playerUUID);
+        }
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerQuit(final PlayerQuitEvent event) {
-	// Remove from TopTen if the player has the permission
-	if (event.getPlayer().hasPermission(Settings.PERMPREFIX + "excludetopten")) {
-	    TopTen.topTenRemoveEntry(event.getPlayer().getUniqueId());
-	}
-	// Remove from coop list
-	CoopPlay.getInstance().clearMyCoops(event.getPlayer());
-	CoopPlay.getInstance().clearMyInvitedCoops(event.getPlayer());
-	plugin.getChatListener().unSetPlayer(event.getPlayer().getUniqueId());
-	// CoopPlay.getInstance().returnAllInventories(event.getPlayer());
-	// plugin.setMessage(event.getPlayer().getUniqueId(),
-	// "Hello! This is a test. You logged out");
-	players.removeOnlinePlayer(event.getPlayer().getUniqueId());
+        // Remove from TopTen if the player has the permission
+        if (event.getPlayer().hasPermission(Settings.PERMPREFIX + "excludetopten")) {
+            TopTen.topTenRemoveEntry(event.getPlayer().getUniqueId());
+        }
+        // Remove from coop list
+        CoopPlay.getInstance().clearMyCoops(event.getPlayer());
+        CoopPlay.getInstance().clearMyInvitedCoops(event.getPlayer());
+        plugin.getChatListener().unSetPlayer(event.getPlayer().getUniqueId());
+        // CoopPlay.getInstance().returnAllInventories(event.getPlayer());
+        // plugin.setMessage(event.getPlayer().getUniqueId(),
+        // "Hello! This is a test. You logged out");
+        players.removeOnlinePlayer(event.getPlayer().getUniqueId());
     }
 
     /**
@@ -251,26 +251,26 @@ public class JoinLeaveEvents implements Listener {
      * @return language or empty string
      */
     public String getLanguage(Player p){
-	Object ep;
-	try {
-	    ep = getMethod("getHandle", p.getClass()).invoke(p, (Object[]) null);
-	    Field f = ep.getClass().getDeclaredField("locale");
-	    f.setAccessible(true);
-	    String language = (String) f.get(ep);
-	    language.replace('_', '-');
-	    return language;
-	} catch (Exception e) {
-	    //nothing
-	}
-	return "en-US";
+        Object ep;
+        try {
+            ep = getMethod("getHandle", p.getClass()).invoke(p, (Object[]) null);
+            Field f = ep.getClass().getDeclaredField("locale");
+            f.setAccessible(true);
+            String language = (String) f.get(ep);
+            language.replace('_', '-');
+            return language;
+        } catch (Exception e) {
+            //nothing
+        }
+        return "en-US";
     }
 
     private Method getMethod(String name, Class<?> clazz) {
-	for (Method m : clazz.getDeclaredMethods()) {
-	    if (m.getName().equals(name))
-		return m;
-	}
-	return null;
+        for (Method m : clazz.getDeclaredMethods()) {
+            if (m.getName().equals(name))
+                return m;
+        }
+        return null;
     }
 
 }

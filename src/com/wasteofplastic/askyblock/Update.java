@@ -1,3 +1,20 @@
+/*******************************************************************************
+ * This file is part of ASkyBlock.
+ *
+ *     ASkyBlock is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     ASkyBlock is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with ASkyBlock.  If not, see <http://www.gnu.org/licenses/>.
+ *******************************************************************************/
+
 package com.wasteofplastic.askyblock;
 
 import java.io.BufferedReader;
@@ -63,7 +80,7 @@ public class Update {
      *            right-side of your project page.
      */
     public Update(int projectID) {
-	this(projectID, null);
+        this(projectID, null);
     }
 
     /**
@@ -77,9 +94,9 @@ public class Update {
      *            https://dev.bukkit.org/home/servermods-apikey/
      */
     public Update(int projectID, String apiKey) {
-	this.projectID = projectID;
-	this.apiKey = apiKey;
-	this.success = query();
+        this.projectID = projectID;
+        this.apiKey = apiKey;
+        this.success = query();
     }
 
     /**
@@ -88,110 +105,110 @@ public class Update {
      * @return true if successful
      */
     public boolean query() {
-	URL url = null;
+        URL url = null;
 
-	try {
-	    // Create the URL to query using the project's ID
-	    url = new URL(API_HOST + API_QUERY + projectID);
-	} catch (MalformedURLException e) {
-	    // There was an error creating the URL
+        try {
+            // Create the URL to query using the project's ID
+            url = new URL(API_HOST + API_QUERY + projectID);
+        } catch (MalformedURLException e) {
+            // There was an error creating the URL
 
-	    e.printStackTrace();
-	    return false;
-	}
+            e.printStackTrace();
+            return false;
+        }
 
-	try {
-	    // Open a connection and query the project
-	    URLConnection conn = url.openConnection();
+        try {
+            // Open a connection and query the project
+            URLConnection conn = url.openConnection();
 
-	    if (apiKey != null) {
-		// Add the API key to the request if present
-		conn.addRequestProperty("X-API-Key", apiKey);
-	    }
+            if (apiKey != null) {
+                // Add the API key to the request if present
+                conn.addRequestProperty("X-API-Key", apiKey);
+            }
 
-	    // Add the user-agent to identify the program
-	    conn.addRequestProperty("User-Agent", "ASkyBlockAcidIsland Update Checker");
+            // Add the user-agent to identify the program
+            conn.addRequestProperty("User-Agent", "ASkyBlockAcidIsland Update Checker");
 
-	    // Read the response of the query
-	    // The response will be in a JSON format, so only reading one line
-	    // is necessary.
-	    final BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-	    String response = reader.readLine();
+            // Read the response of the query
+            // The response will be in a JSON format, so only reading one line
+            // is necessary.
+            final BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            String response = reader.readLine();
 
-	    // Parse the array of files from the query's response
-	    JSONArray array = (JSONArray) JSONValue.parse(response);
+            // Parse the array of files from the query's response
+            JSONArray array = (JSONArray) JSONValue.parse(response);
 
-	    if (array.size() > 0) {
-		// Get the newest file's details
-		JSONObject latest = (JSONObject) array.get(array.size() - 1);
+            if (array.size() > 0) {
+                // Get the newest file's details
+                JSONObject latest = (JSONObject) array.get(array.size() - 1);
 
-		// Get the version's title
-		versionName = (String) latest.get(API_NAME_VALUE);
+                // Get the version's title
+                versionName = (String) latest.get(API_NAME_VALUE);
 
-		// Get the version's link
-		versionLink = (String) latest.get(API_LINK_VALUE);
+                // Get the version's link
+                versionLink = (String) latest.get(API_LINK_VALUE);
 
-		// Get the version's release type
-		versionType = (String) latest.get(API_RELEASE_TYPE_VALUE);
+                // Get the version's release type
+                versionType = (String) latest.get(API_RELEASE_TYPE_VALUE);
 
-		// Get the version's file name
-		versionFileName = (String) latest.get(API_FILE_NAME_VALUE);
+                // Get the version's file name
+                versionFileName = (String) latest.get(API_FILE_NAME_VALUE);
 
-		// Get the version's game version
-		versionGameVersion = (String) latest.get(API_GAME_VERSION_VALUE);
+                // Get the version's game version
+                versionGameVersion = (String) latest.get(API_GAME_VERSION_VALUE);
 
-		return true;
-	    } else {
-		System.out.println("There are no files for this project");
-		return false;
-	    }
-	} catch (IOException e) {
-	    // There was an error reading the query
+                return true;
+            } else {
+                System.out.println("There are no files for this project");
+                return false;
+            }
+        } catch (IOException e) {
+            // There was an error reading the query
 
-	    e.printStackTrace();
-	    return false;
-	}
+            e.printStackTrace();
+            return false;
+        }
     }
 
     /**
      * @return the versionName
      */
     public String getVersionName() {
-	return versionName;
+        return versionName;
     }
 
     /**
      * @return the versionLink
      */
     public String getVersionLink() {
-	return versionLink;
+        return versionLink;
     }
 
     /**
      * @return the versionType
      */
     public String getVersionType() {
-	return versionType;
+        return versionType;
     }
 
     /**
      * @return the versionFileName
      */
     public String getVersionFileName() {
-	return versionFileName;
+        return versionFileName;
     }
 
     /**
      * @return the versionGameVersion
      */
     public String getVersionGameVersion() {
-	return versionGameVersion;
+        return versionGameVersion;
     }
 
     /**
      * @return the success
      */
     public boolean isSuccess() {
-	return success;
+        return success;
     }
 }

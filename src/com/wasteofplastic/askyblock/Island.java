@@ -1,3 +1,20 @@
+/*******************************************************************************
+ * This file is part of ASkyBlock.
+ *
+ *     ASkyBlock is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     ASkyBlock is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with ASkyBlock.  If not, see <http://www.gnu.org/licenses/>.
+ *******************************************************************************/
+
 package com.wasteofplastic.askyblock;
 
 import java.util.ArrayList;
@@ -69,35 +86,35 @@ public class Island {
     // Island protection settings
     private HashMap<Flags, Boolean> igs = new HashMap<Flags, Boolean>();
     public enum Flags {
-	allowAnvilUse,
-	allowArmorStandUse,
-	allowBeaconAccess,
-	allowBedUse,
-	allowBreakBlocks,
-	allowBreeding,
-	allowBrewing,
-	allowBucketUse,
-	allowChestAccess,
-	allowCrafting,
-	allowCropTrample,
-	allowDoorUse,
-	allowEnchanting,
-	allowEnderPearls,
-	allowFurnaceUse,
-	allowGateUse,
-	allowHorseInvAccess,
-	allowHorseRiding,
-	allowHurtMobs,
-	allowLeashUse,
-	allowLeverButtonUse,
-	allowMusic,
-	allowPlaceBlocks,
-	allowPortalUse,
-	allowPressurePlate,
-	allowPvP,
-	allowNetherPvP,
-	allowRedStone,
-	allowShearing
+        allowAnvilUse,
+        allowArmorStandUse,
+        allowBeaconAccess,
+        allowBedUse,
+        allowBreakBlocks,
+        allowBreeding,
+        allowBrewing,
+        allowBucketUse,
+        allowChestAccess,
+        allowCrafting,
+        allowCropTrample,
+        allowDoorUse,
+        allowEnchanting,
+        allowEnderPearls,
+        allowFurnaceUse,
+        allowGateUse,
+        allowHorseInvAccess,
+        allowHorseRiding,
+        allowHurtMobs,
+        allowLeashUse,
+        allowLeverButtonUse,
+        allowMusic,
+        allowPlaceBlocks,
+        allowPortalUse,
+        allowPressurePlate,
+        allowPvP,
+        allowNetherPvP,
+        allowRedStone,
+        allowShearing
     }
 
 
@@ -107,118 +124,118 @@ public class Island {
      * @param serial
      */
     public Island(ASkyBlock plugin, String serial) {
-	this.plugin = plugin;
-	// Bukkit.getLogger().info("DEBUG: adding serialized island to grid ");
-	// Deserialize
-	// Format:
-	// x:height:z:protection range:island distance:owner UUID: locked: protected
-	String[] split = serial.split(":");
-	try {
-	    protectionRange = Integer.parseInt(split[3]);
-	    islandDistance = Integer.parseInt(split[4]);
-	    int x = Integer.parseInt(split[0]);
-	    int z = Integer.parseInt(split[2]);
-	    minX = x - islandDistance / 2;
-	    y = Integer.parseInt(split[1]);
-	    minZ = z - islandDistance / 2;
-	    minProtectedX = x - protectionRange / 2;
-	    minProtectedZ = z - protectionRange / 2;
-	    this.world = ASkyBlock.getIslandWorld();
-	    this.center = new Location(world, x, y, z);
-	    this.createdDate = new Date().getTime();
-	    this.updatedDate = createdDate;
-	    this.password = "";
-	    this.votes = 0;
-	    if (split.length > 6) {
-		// Bukkit.getLogger().info("DEBUG: " + split[6]);
-		// Get locked status
-		if (split[6].equalsIgnoreCase("true")) {
-		    this.locked = true;
-		} else {
-		    this.locked = false;
-		}
-		// Bukkit.getLogger().info("DEBUG: " + locked);
-	    } else {
-		this.locked = false;
-	    }
-	    // Check if deletable
-	    if (split.length > 7) {
-		if (split[7].equalsIgnoreCase("true")) {
-		    this.purgeProtected = true;
-		} else {
-		    this.purgeProtected = false;
-		}
-	    } else {
-		this.purgeProtected = false;
-	    }
-	    if (!split[5].equals("null")) {
-		if (split[5].equals("spawn")) {
-		    isSpawn = true;
-		    // Try to get the spawn point
-		    if (split.length > 8) {
-			//plugin.getLogger().info("DEBUG: " + serial.substring(serial.indexOf(":SP:") + 4));
-			spawnPoint = Util.getLocationString(serial.substring(serial.indexOf(":SP:") + 4));
-		    }
-		} else {
-		    owner = UUID.fromString(split[5]);
-		}
-	    }
-	    // Check if protection options there
-	    if (!isSpawn) {
-		//plugin.getLogger().info("DEBUG: NOT SPAWN owner is " + owner + " location " + center);
-		if (split.length > 8 && split[8].length() == 29) {
-		    // Parse the 8th string into island guard protection settings
-		    int index = 0;
-		    // Run through the enum and set
-		    for (Flags f : Flags.values()) {
-			this.igs.put(f, split[8].charAt(index++) == '1' ? true : false);
-		    }
-		} else {
-		    //plugin.getLogger().info("DEBUG: Setting default protection items");
-		    // Manually set to defaults
-		    this.igs.put(Flags.allowAnvilUse, Settings.allowAnvilUse);
-		    this.igs.put(Flags.allowArmorStandUse, Settings.allowArmorStandUse);
-		    this.igs.put(Flags.allowBeaconAccess, Settings.allowBeaconAccess);
-		    this.igs.put(Flags.allowBedUse, Settings.allowBedUse);
-		    this.igs.put(Flags.allowBreakBlocks, Settings.allowBreakBlocks);
-		    this.igs.put(Flags.allowBreeding, Settings.allowBreeding);
-		    this.igs.put(Flags.allowBrewing, Settings.allowBrewing);
-		    this.igs.put(Flags.allowBucketUse, Settings.allowBucketUse);
-		    this.igs.put(Flags.allowChestAccess, Settings.allowChestAccess);
-		    this.igs.put(Flags.allowCrafting, Settings.allowCrafting);
-		    this.igs.put(Flags.allowCropTrample, Settings.allowCropTrample);
-		    this.igs.put(Flags.allowDoorUse, Settings.allowDoorUse);
-		    this.igs.put(Flags.allowEnchanting, Settings.allowEnchanting);
-		    this.igs.put(Flags.allowEnderPearls, Settings.allowEnderPearls);
-		    this.igs.put(Flags.allowFurnaceUse, Settings.allowFurnaceUse);
-		    this.igs.put(Flags.allowGateUse, Settings.allowGateUse);
-		    this.igs.put(Flags.allowHorseInvAccess, Settings.allowHorseInvAccess);
-		    this.igs.put(Flags.allowHorseRiding, Settings.allowHorseRiding);
-		    this.igs.put(Flags.allowHurtMobs, Settings.allowHurtMobs);
-		    this.igs.put(Flags.allowLeashUse, Settings.allowLeashUse);
-		    this.igs.put(Flags.allowLeverButtonUse, Settings.allowLeverButtonUse);
-		    this.igs.put(Flags.allowMusic, Settings.allowMusic);
-		    this.igs.put(Flags.allowPlaceBlocks, Settings.allowPlaceBlocks);
-		    this.igs.put(Flags.allowPortalUse, Settings.allowPortalUse);
-		    this.igs.put(Flags.allowPressurePlate, Settings.allowPressurePlate);
-		    this.igs.put(Flags.allowPvP, Settings.allowPvP);
-		    this.igs.put(Flags.allowNetherPvP, Settings.allowNetherPvP);
-		    this.igs.put(Flags.allowRedStone, Settings.allowRedStone);
-		    this.igs.put(Flags.allowShearing, Settings.allowShearing);
-		}
-		// Get the biome
-		if (split.length > 9) {
-		    try {
-			biome = Biome.valueOf(split[9]);
-			
-		    } catch (IllegalArgumentException ee) {
-			// Unknown biome
-		    }
-		} 
-	    }
-	} catch (Exception e) {
-	    e.printStackTrace();
-	}
+        this.plugin = plugin;
+        // Bukkit.getLogger().info("DEBUG: adding serialized island to grid ");
+        // Deserialize
+        // Format:
+        // x:height:z:protection range:island distance:owner UUID: locked: protected
+        String[] split = serial.split(":");
+        try {
+            protectionRange = Integer.parseInt(split[3]);
+            islandDistance = Integer.parseInt(split[4]);
+            int x = Integer.parseInt(split[0]);
+            int z = Integer.parseInt(split[2]);
+            minX = x - islandDistance / 2;
+            y = Integer.parseInt(split[1]);
+            minZ = z - islandDistance / 2;
+            minProtectedX = x - protectionRange / 2;
+            minProtectedZ = z - protectionRange / 2;
+            this.world = ASkyBlock.getIslandWorld();
+            this.center = new Location(world, x, y, z);
+            this.createdDate = new Date().getTime();
+            this.updatedDate = createdDate;
+            this.password = "";
+            this.votes = 0;
+            if (split.length > 6) {
+                // Bukkit.getLogger().info("DEBUG: " + split[6]);
+                // Get locked status
+                if (split[6].equalsIgnoreCase("true")) {
+                    this.locked = true;
+                } else {
+                    this.locked = false;
+                }
+                // Bukkit.getLogger().info("DEBUG: " + locked);
+            } else {
+                this.locked = false;
+            }
+            // Check if deletable
+            if (split.length > 7) {
+                if (split[7].equalsIgnoreCase("true")) {
+                    this.purgeProtected = true;
+                } else {
+                    this.purgeProtected = false;
+                }
+            } else {
+                this.purgeProtected = false;
+            }
+            if (!split[5].equals("null")) {
+                if (split[5].equals("spawn")) {
+                    isSpawn = true;
+                    // Try to get the spawn point
+                    if (split.length > 8) {
+                        //plugin.getLogger().info("DEBUG: " + serial.substring(serial.indexOf(":SP:") + 4));
+                        spawnPoint = Util.getLocationString(serial.substring(serial.indexOf(":SP:") + 4));
+                    }
+                } else {
+                    owner = UUID.fromString(split[5]);
+                }
+            }
+            // Check if protection options there
+            if (!isSpawn) {
+                //plugin.getLogger().info("DEBUG: NOT SPAWN owner is " + owner + " location " + center);
+                if (split.length > 8 && split[8].length() == 29) {
+                    // Parse the 8th string into island guard protection settings
+                    int index = 0;
+                    // Run through the enum and set
+                    for (Flags f : Flags.values()) {
+                        this.igs.put(f, split[8].charAt(index++) == '1' ? true : false);
+                    }
+                } else {
+                    //plugin.getLogger().info("DEBUG: Setting default protection items");
+                    // Manually set to defaults
+                    this.igs.put(Flags.allowAnvilUse, Settings.allowAnvilUse);
+                    this.igs.put(Flags.allowArmorStandUse, Settings.allowArmorStandUse);
+                    this.igs.put(Flags.allowBeaconAccess, Settings.allowBeaconAccess);
+                    this.igs.put(Flags.allowBedUse, Settings.allowBedUse);
+                    this.igs.put(Flags.allowBreakBlocks, Settings.allowBreakBlocks);
+                    this.igs.put(Flags.allowBreeding, Settings.allowBreeding);
+                    this.igs.put(Flags.allowBrewing, Settings.allowBrewing);
+                    this.igs.put(Flags.allowBucketUse, Settings.allowBucketUse);
+                    this.igs.put(Flags.allowChestAccess, Settings.allowChestAccess);
+                    this.igs.put(Flags.allowCrafting, Settings.allowCrafting);
+                    this.igs.put(Flags.allowCropTrample, Settings.allowCropTrample);
+                    this.igs.put(Flags.allowDoorUse, Settings.allowDoorUse);
+                    this.igs.put(Flags.allowEnchanting, Settings.allowEnchanting);
+                    this.igs.put(Flags.allowEnderPearls, Settings.allowEnderPearls);
+                    this.igs.put(Flags.allowFurnaceUse, Settings.allowFurnaceUse);
+                    this.igs.put(Flags.allowGateUse, Settings.allowGateUse);
+                    this.igs.put(Flags.allowHorseInvAccess, Settings.allowHorseInvAccess);
+                    this.igs.put(Flags.allowHorseRiding, Settings.allowHorseRiding);
+                    this.igs.put(Flags.allowHurtMobs, Settings.allowHurtMobs);
+                    this.igs.put(Flags.allowLeashUse, Settings.allowLeashUse);
+                    this.igs.put(Flags.allowLeverButtonUse, Settings.allowLeverButtonUse);
+                    this.igs.put(Flags.allowMusic, Settings.allowMusic);
+                    this.igs.put(Flags.allowPlaceBlocks, Settings.allowPlaceBlocks);
+                    this.igs.put(Flags.allowPortalUse, Settings.allowPortalUse);
+                    this.igs.put(Flags.allowPressurePlate, Settings.allowPressurePlate);
+                    this.igs.put(Flags.allowPvP, Settings.allowPvP);
+                    this.igs.put(Flags.allowNetherPvP, Settings.allowNetherPvP);
+                    this.igs.put(Flags.allowRedStone, Settings.allowRedStone);
+                    this.igs.put(Flags.allowShearing, Settings.allowShearing);
+                }
+                // Get the biome
+                if (split.length > 9) {
+                    try {
+                        biome = Biome.valueOf(split[9]);
+
+                    } catch (IllegalArgumentException ee) {
+                        // Unknown biome
+                    }
+                } 
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -228,56 +245,56 @@ public class Island {
      * @param minZ
      */
     public Island(ASkyBlock plugin, int x, int z) {
-	this(plugin, x, z, null);
+        this(plugin, x, z, null);
     }
 
     public Island(ASkyBlock plugin, int x, int z, UUID owner) {
-	this.plugin = plugin;
-	// Calculate min minX and z
-	this.minX = x - Settings.islandDistance / 2;
-	this.minZ = z - Settings.islandDistance / 2;
-	this.minProtectedX = x - Settings.island_protectionRange / 2;
-	this.minProtectedZ = z - Settings.island_protectionRange / 2;
-	this.y = Settings.island_level;
-	this.islandDistance = Settings.islandDistance;
-	this.protectionRange = Settings.island_protectionRange;
-	this.world = ASkyBlock.getIslandWorld();
-	this.center = new Location(world, x, y, z);
-	this.createdDate = new Date().getTime();
-	this.updatedDate = createdDate;
-	this.password = "";
-	this.votes = 0;
-	this.owner = owner;
-	// Island Guard Settings
-	this.igs.put(Flags.allowAnvilUse, Settings.allowAnvilUse);
-	this.igs.put(Flags.allowArmorStandUse, Settings.allowArmorStandUse);
-	this.igs.put(Flags.allowBeaconAccess, Settings.allowBeaconAccess);
-	this.igs.put(Flags.allowBedUse, Settings.allowBedUse);
-	this.igs.put(Flags.allowBreakBlocks, Settings.allowBreakBlocks);
-	this.igs.put(Flags.allowBreeding, Settings.allowBreeding);
-	this.igs.put(Flags.allowBrewing, Settings.allowBrewing);
-	this.igs.put(Flags.allowBucketUse, Settings.allowBucketUse);
-	this.igs.put(Flags.allowChestAccess, Settings.allowChestAccess);
-	this.igs.put(Flags.allowCrafting, Settings.allowCrafting);
-	this.igs.put(Flags.allowCropTrample, Settings.allowCropTrample);
-	this.igs.put(Flags.allowDoorUse, Settings.allowDoorUse);
-	this.igs.put(Flags.allowEnchanting, Settings.allowEnchanting);
-	this.igs.put(Flags.allowEnderPearls, Settings.allowEnderPearls);
-	this.igs.put(Flags.allowFurnaceUse, Settings.allowFurnaceUse);
-	this.igs.put(Flags.allowGateUse, Settings.allowGateUse);
-	this.igs.put(Flags.allowHorseInvAccess, Settings.allowHorseInvAccess);
-	this.igs.put(Flags.allowHorseRiding, Settings.allowHorseRiding);
-	this.igs.put(Flags.allowHurtMobs, Settings.allowHurtMobs);
-	this.igs.put(Flags.allowLeashUse, Settings.allowLeashUse);
-	this.igs.put(Flags.allowLeverButtonUse, Settings.allowLeverButtonUse);
-	this.igs.put(Flags.allowMusic, Settings.allowMusic);
-	this.igs.put(Flags.allowPlaceBlocks, Settings.allowPlaceBlocks);
-	this.igs.put(Flags.allowPortalUse, Settings.allowPortalUse);
-	this.igs.put(Flags.allowPressurePlate, Settings.allowPressurePlate);
-	this.igs.put(Flags.allowPvP, Settings.allowPvP);
-	this.igs.put(Flags.allowNetherPvP, Settings.allowNetherPvP);
-	this.igs.put(Flags.allowRedStone, Settings.allowRedStone);
-	this.igs.put(Flags.allowShearing, Settings.allowShearing);
+        this.plugin = plugin;
+        // Calculate min minX and z
+        this.minX = x - Settings.islandDistance / 2;
+        this.minZ = z - Settings.islandDistance / 2;
+        this.minProtectedX = x - Settings.island_protectionRange / 2;
+        this.minProtectedZ = z - Settings.island_protectionRange / 2;
+        this.y = Settings.island_level;
+        this.islandDistance = Settings.islandDistance;
+        this.protectionRange = Settings.island_protectionRange;
+        this.world = ASkyBlock.getIslandWorld();
+        this.center = new Location(world, x, y, z);
+        this.createdDate = new Date().getTime();
+        this.updatedDate = createdDate;
+        this.password = "";
+        this.votes = 0;
+        this.owner = owner;
+        // Island Guard Settings
+        this.igs.put(Flags.allowAnvilUse, Settings.allowAnvilUse);
+        this.igs.put(Flags.allowArmorStandUse, Settings.allowArmorStandUse);
+        this.igs.put(Flags.allowBeaconAccess, Settings.allowBeaconAccess);
+        this.igs.put(Flags.allowBedUse, Settings.allowBedUse);
+        this.igs.put(Flags.allowBreakBlocks, Settings.allowBreakBlocks);
+        this.igs.put(Flags.allowBreeding, Settings.allowBreeding);
+        this.igs.put(Flags.allowBrewing, Settings.allowBrewing);
+        this.igs.put(Flags.allowBucketUse, Settings.allowBucketUse);
+        this.igs.put(Flags.allowChestAccess, Settings.allowChestAccess);
+        this.igs.put(Flags.allowCrafting, Settings.allowCrafting);
+        this.igs.put(Flags.allowCropTrample, Settings.allowCropTrample);
+        this.igs.put(Flags.allowDoorUse, Settings.allowDoorUse);
+        this.igs.put(Flags.allowEnchanting, Settings.allowEnchanting);
+        this.igs.put(Flags.allowEnderPearls, Settings.allowEnderPearls);
+        this.igs.put(Flags.allowFurnaceUse, Settings.allowFurnaceUse);
+        this.igs.put(Flags.allowGateUse, Settings.allowGateUse);
+        this.igs.put(Flags.allowHorseInvAccess, Settings.allowHorseInvAccess);
+        this.igs.put(Flags.allowHorseRiding, Settings.allowHorseRiding);
+        this.igs.put(Flags.allowHurtMobs, Settings.allowHurtMobs);
+        this.igs.put(Flags.allowLeashUse, Settings.allowLeashUse);
+        this.igs.put(Flags.allowLeverButtonUse, Settings.allowLeverButtonUse);
+        this.igs.put(Flags.allowMusic, Settings.allowMusic);
+        this.igs.put(Flags.allowPlaceBlocks, Settings.allowPlaceBlocks);
+        this.igs.put(Flags.allowPortalUse, Settings.allowPortalUse);
+        this.igs.put(Flags.allowPressurePlate, Settings.allowPressurePlate);
+        this.igs.put(Flags.allowPvP, Settings.allowPvP);
+        this.igs.put(Flags.allowNetherPvP, Settings.allowNetherPvP);
+        this.igs.put(Flags.allowRedStone, Settings.allowRedStone);
+        this.igs.put(Flags.allowShearing, Settings.allowShearing);
 
     }
 
@@ -288,16 +305,16 @@ public class Island {
      * @return
      */
     public boolean onIsland(Location target) {
-	if (world != null) {
-	    // If the new nether is being used, islands exist in the nether too
-	    if (target.getWorld().equals(world) || (Settings.createNether && Settings.newNether && target.getWorld().equals(ASkyBlock.getNetherWorld()))) {
-		if (target.getX() >= center.getBlockX() - protectionRange / 2 && target.getX() < center.getBlockX() + protectionRange / 2
-			&& target.getZ() >= center.getBlockZ() - protectionRange / 2 && target.getZ() < center.getBlockZ() + protectionRange / 2) {
-		    return true;
-		}
-	    }
-	}
-	return false;
+        if (world != null) {
+            // If the new nether is being used, islands exist in the nether too
+            if (target.getWorld().equals(world) || (Settings.createNether && Settings.newNether && target.getWorld().equals(ASkyBlock.getNetherWorld()))) {
+                if (target.getX() >= center.getBlockX() - protectionRange / 2 && target.getX() < center.getBlockX() + protectionRange / 2
+                        && target.getZ() >= center.getBlockZ() - protectionRange / 2 && target.getZ() < center.getBlockZ() + protectionRange / 2) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -307,28 +324,28 @@ public class Island {
      * @return true if in the area
      */
     public boolean inIslandSpace(Location target) {
-	if (target.getWorld().equals(ASkyBlock.getIslandWorld()) || target.getWorld().equals(ASkyBlock.getNetherWorld())) {
-	    if (target.getX() >= center.getBlockX() - islandDistance / 2 && target.getX() < center.getBlockX() + islandDistance / 2
-		    && target.getZ() >= center.getBlockZ() - islandDistance / 2 && target.getZ() < center.getBlockZ() + islandDistance / 2) {
-		return true;
-	    }
-	}
-	return false;
+        if (target.getWorld().equals(ASkyBlock.getIslandWorld()) || target.getWorld().equals(ASkyBlock.getNetherWorld())) {
+            if (target.getX() >= center.getBlockX() - islandDistance / 2 && target.getX() < center.getBlockX() + islandDistance / 2
+                    && target.getZ() >= center.getBlockZ() - islandDistance / 2 && target.getZ() < center.getBlockZ() + islandDistance / 2) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean inIslandSpace(int x, int z) {
-	if (x >= center.getBlockX() - islandDistance / 2 && x < center.getBlockX() + islandDistance / 2 && z >= center.getBlockZ() - islandDistance / 2
-		&& z < center.getBlockZ() + islandDistance / 2) {
-	    return true;
-	}
-	return false;
+        if (x >= center.getBlockX() - islandDistance / 2 && x < center.getBlockX() + islandDistance / 2 && z >= center.getBlockZ() - islandDistance / 2
+                && z < center.getBlockZ() + islandDistance / 2) {
+            return true;
+        }
+        return false;
     }
 
     /**
      * @return the minX
      */
     public int getMinX() {
-	return minX;
+        return minX;
     }
 
     /**
@@ -336,14 +353,14 @@ public class Island {
      *            the minX to set
      */
     public void setMinX(int minX) {
-	this.minX = minX;
+        this.minX = minX;
     }
 
     /**
      * @return the z
      */
     public int getMinZ() {
-	return minZ;
+        return minZ;
     }
 
     /**
@@ -351,28 +368,28 @@ public class Island {
      *            the z to set
      */
     public void setMinZ(int minZ) {
-	this.minZ = minZ;
+        this.minZ = minZ;
     }
 
     /**
      * @return the minprotectedX
      */
     public int getMinProtectedX() {
-	return minProtectedX;
+        return minProtectedX;
     }
 
     /**
      * @return the minProtectedZ
      */
     public int getMinProtectedZ() {
-	return minProtectedZ;
+        return minProtectedZ;
     }
 
     /**
      * @return the protectionRange
      */
     public int getProtectionSize() {
-	return protectionRange;
+        return protectionRange;
     }
 
     /**
@@ -380,9 +397,9 @@ public class Island {
      *            the protectionRange to set
      */
     public void setProtectionSize(int protectionSize) {
-	this.protectionRange = protectionSize;
-	this.minProtectedX = center.getBlockX() - protectionSize / 2;
-	this.minProtectedZ = center.getBlockZ() - protectionSize / 2;
+        this.protectionRange = protectionSize;
+        this.minProtectedX = center.getBlockX() - protectionSize / 2;
+        this.minProtectedZ = center.getBlockZ() - protectionSize / 2;
 
     }
 
@@ -390,7 +407,7 @@ public class Island {
      * @return the islandDistance
      */
     public int getIslandDistance() {
-	return islandDistance;
+        return islandDistance;
     }
 
     /**
@@ -398,14 +415,14 @@ public class Island {
      *            the islandDistance to set
      */
     public void setIslandDistance(int islandDistance) {
-	this.islandDistance = islandDistance;
+        this.islandDistance = islandDistance;
     }
 
     /**
      * @return the center
      */
     public Location getCenter() {
-	return center;
+        return center;
     }
 
     /**
@@ -413,14 +430,14 @@ public class Island {
      *            the center to set
      */
     public void setCenter(Location center) {
-	this.center = center;
+        this.center = center;
     }
 
     /**
      * @return the owner
      */
     public UUID getOwner() {
-	return owner;
+        return owner;
     }
 
     /**
@@ -428,17 +445,17 @@ public class Island {
      *            the owner to set
      */
     public void setOwner(UUID owner) {
-	this.owner = owner;
-	//if (owner == null) {
-	//    Bukkit.getLogger().info("DEBUG: island owner set to null for " + center);
-	//}
+        this.owner = owner;
+        //if (owner == null) {
+        //    Bukkit.getLogger().info("DEBUG: island owner set to null for " + center);
+        //}
     }
 
     /**
      * @return the createdDate
      */
     public long getCreatedDate() {
-	return createdDate;
+        return createdDate;
     }
 
     /**
@@ -446,14 +463,14 @@ public class Island {
      *            the createdDate to set
      */
     public void setCreatedDate(long createdDate) {
-	this.createdDate = createdDate;
+        this.createdDate = createdDate;
     }
 
     /**
      * @return the updatedDate
      */
     public long getUpdatedDate() {
-	return updatedDate;
+        return updatedDate;
     }
 
     /**
@@ -461,14 +478,14 @@ public class Island {
      *            the updatedDate to set
      */
     public void setUpdatedDate(long updatedDate) {
-	this.updatedDate = updatedDate;
+        this.updatedDate = updatedDate;
     }
 
     /**
      * @return the password
      */
     public String getPassword() {
-	return password;
+        return password;
     }
 
     /**
@@ -476,14 +493,14 @@ public class Island {
      *            the password to set
      */
     public void setPassword(String password) {
-	this.password = password;
+        this.password = password;
     }
 
     /**
      * @return the votes
      */
     public int getVotes() {
-	return votes;
+        return votes;
     }
 
     /**
@@ -491,14 +508,14 @@ public class Island {
      *            the votes to set
      */
     public void setVotes(int votes) {
-	this.votes = votes;
+        this.votes = votes;
     }
 
     /**
      * @return the locked
      */
     public boolean isLocked() {
-	return locked;
+        return locked;
     }
 
     /**
@@ -506,8 +523,8 @@ public class Island {
      *            the locked to set
      */
     public void setLocked(boolean locked) {
-	// Bukkit.getLogger().info("DEBUG: island is now " + locked);
-	this.locked = locked;
+        // Bukkit.getLogger().info("DEBUG: island is now " + locked);
+        this.locked = locked;
     }
 
     /**
@@ -515,34 +532,34 @@ public class Island {
      * @return string that represents the island settings
      */
     public String save() {
-	// x:height:z:protection range:island distance:owner UUID
-	String result = "";
-	String ownerString = "null";
-	if (isSpawn) {
-	    // Bukkit.getLogger().info("DEBUG: island is spawn");
-	    ownerString = "spawn";
-	    if (spawnPoint != null) {
-		return center.getBlockX() + ":" + center.getBlockY() + ":" + center.getBlockZ() + ":" + protectionRange + ":" 
-			+ islandDistance + ":" + ownerString + ":" + locked + ":" + purgeProtected + ":SP:" + Util.getStringLocation(spawnPoint);
-	    }
-	    return center.getBlockX() + ":" + center.getBlockY() + ":" + center.getBlockZ() + ":" + protectionRange + ":" 
-	    + islandDistance + ":" + ownerString + ":" + locked + ":" + purgeProtected;
-	}
-	// Not spawn
-	if (owner != null) {
-	    ownerString = owner.toString();
-	}
-	// Personal island protection settings - serialize enum into 1's and 0's representing the boolean values
-	try {
-	    for (Flags f: Flags.values()) {
-		result += this.igs.get(f) ? "1" : "0";
-	    }
-	} catch (Exception e) {
-	    e.printStackTrace();
-	    result = "";
-	}
-	return center.getBlockX() + ":" + center.getBlockY() + ":" + center.getBlockZ() + ":" + protectionRange + ":" 
-	+ islandDistance + ":" + ownerString + ":" + locked + ":" + purgeProtected + ":" + result + ":" + getBiome().toString();
+        // x:height:z:protection range:island distance:owner UUID
+        String result = "";
+        String ownerString = "null";
+        if (isSpawn) {
+            // Bukkit.getLogger().info("DEBUG: island is spawn");
+            ownerString = "spawn";
+            if (spawnPoint != null) {
+                return center.getBlockX() + ":" + center.getBlockY() + ":" + center.getBlockZ() + ":" + protectionRange + ":" 
+                        + islandDistance + ":" + ownerString + ":" + locked + ":" + purgeProtected + ":SP:" + Util.getStringLocation(spawnPoint);
+            }
+            return center.getBlockX() + ":" + center.getBlockY() + ":" + center.getBlockZ() + ":" + protectionRange + ":" 
+            + islandDistance + ":" + ownerString + ":" + locked + ":" + purgeProtected;
+        }
+        // Not spawn
+        if (owner != null) {
+            ownerString = owner.toString();
+        }
+        // Personal island protection settings - serialize enum into 1's and 0's representing the boolean values
+        try {
+            for (Flags f: Flags.values()) {
+                result += this.igs.get(f) ? "1" : "0";
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            result = "";
+        }
+        return center.getBlockX() + ":" + center.getBlockY() + ":" + center.getBlockZ() + ":" + protectionRange + ":" 
+        + islandDistance + ":" + ownerString + ":" + locked + ":" + purgeProtected + ":" + result + ":" + getBiome().toString();
     }
 
     /**
@@ -551,11 +568,11 @@ public class Island {
      * @return true or false, or false if flag is not in the list
      */
     public boolean getIgsFlag(Flags flag) {
-	//plugin.getLogger().info("DEBUG: asking for " + flag + " = " + igs.get(flag));
-	if (this.igs.containsKey(flag)) {
-	    return igs.get(flag);
-	}
-	return false;
+        //plugin.getLogger().info("DEBUG: asking for " + flag + " = " + igs.get(flag));
+        if (this.igs.containsKey(flag)) {
+            return igs.get(flag);
+        }
+        return false;
     }
 
     /**
@@ -564,7 +581,7 @@ public class Island {
      * @param value
      */
     public void setIgsFlag(Flags flag, boolean value) {
-	this.igs.put(flag, value);
+        this.igs.put(flag, value);
     }
 
     /**
@@ -574,24 +591,24 @@ public class Island {
      * @return a list of UUIDs that have legitimate access to the island
      */
     public List<UUID> getMembers() {
-	List<UUID> result = new ArrayList<UUID>();
-	// Add any coop members for this island
-	result.addAll(CoopPlay.getInstance().getCoopPlayers(center.toVector().toLocation(ASkyBlock.getIslandWorld())));
-	result.addAll(CoopPlay.getInstance().getCoopPlayers(center.toVector().toLocation(ASkyBlock.getNetherWorld())));
-	if (owner == null) {
-	    return result;
-	}
-	result.add(owner);
-	// Add any team members
-	result.addAll(plugin.getPlayers().getMembers(owner));
-	return result;
+        List<UUID> result = new ArrayList<UUID>();
+        // Add any coop members for this island
+        result.addAll(CoopPlay.getInstance().getCoopPlayers(center.toVector().toLocation(ASkyBlock.getIslandWorld())));
+        result.addAll(CoopPlay.getInstance().getCoopPlayers(center.toVector().toLocation(ASkyBlock.getNetherWorld())));
+        if (owner == null) {
+            return result;
+        }
+        result.add(owner);
+        // Add any team members
+        result.addAll(plugin.getPlayers().getMembers(owner));
+        return result;
     }
 
     /**
      * @return the isSpawn
      */
     public boolean isSpawn() {
-	return isSpawn;
+        return isSpawn;
     }
 
     /**
@@ -599,83 +616,83 @@ public class Island {
      *            the isSpawn to set
      */
     public void setSpawn(boolean isSpawn) {
-	this.isSpawn = isSpawn;
+        this.isSpawn = isSpawn;
     }
 
     public void addEntity(EntityType type) {
-	if (this.entities.containsKey(type)) {
-	    int sum = this.entities.get(type);
-	    this.entities.put(type, (sum + 1));
-	} else {
-	    this.entities.put(type, 1);
-	}
+        if (this.entities.containsKey(type)) {
+            int sum = this.entities.get(type);
+            this.entities.put(type, (sum + 1));
+        } else {
+            this.entities.put(type, 1);
+        }
     }
 
     public int getEntity(EntityType type) {
-	if (this.entities.containsKey(type)) {
-	    return this.entities.get(type);
-	}
-	return 0;
+        if (this.entities.containsKey(type)) {
+            return this.entities.get(type);
+        }
+        return 0;
     }
 
     /**
      * @return the entities
      */
     public HashMap<EntityType, Integer> getEntities() {
-	return entities;
+        return entities;
     }
 
     public void clearStats() {
-	this.entities.clear();
+        this.entities.clear();
     }
 
     /**
      * @return the islandDeletable
      */
     public boolean isPurgeProtected() {
-	return purgeProtected;
+        return purgeProtected;
     }
 
     /**
      * @param purgeProtected the islandDeletable to set
      */
     public void setPurgeProtected(boolean purgeProtected) {
-	this.purgeProtected = purgeProtected;
+        this.purgeProtected = purgeProtected;
     }
 
     /**
      * @return Provides count of villagers within the protected island boundaries
      */
     public int getPopulation() {
-	int result = 0;	
-	for (int x = getMinProtectedX() /16; x <= (getMinProtectedX() + getProtectionSize() - 1)/16; x++) {
-	    for (int z = getMinProtectedZ() /16; z <= (getMinProtectedZ() + getProtectionSize() - 1)/16; z++) {
-		for (Entity entity : world.getChunkAt(x, z).getEntities()) {
-		    if (entity instanceof Villager) {
-			result++;
-		    }
-		}
-	    }  
-	}
-	return result;
+        int result = 0;	
+        for (int x = getMinProtectedX() /16; x <= (getMinProtectedX() + getProtectionSize() - 1)/16; x++) {
+            for (int z = getMinProtectedZ() /16; z <= (getMinProtectedZ() + getProtectionSize() - 1)/16; z++) {
+                for (Entity entity : world.getChunkAt(x, z).getEntities()) {
+                    if (entity instanceof Villager) {
+                        result++;
+                    }
+                }
+            }  
+        }
+        return result;
     }
 
     /**
      * @return number of hoppers on the island
      */
     public int getHopperCount() {
-	tileEntityCount.clear();
-	int result = 0;	
-	for (int x = getMinProtectedX() /16; x <= (getMinProtectedX() + getProtectionSize() - 1)/16; x++) {
-	    for (int z = getMinProtectedZ() /16; z <= (getMinProtectedZ() + getProtectionSize() - 1)/16; z++) {
-		for (BlockState holder : world.getChunkAt(x, z).getTileEntities()) {
-		    if (holder instanceof Hopper) {
-			result++;
-		    }
-		}
-	    }  
-	}
-	return result;
+        tileEntityCount.clear();
+        int result = 0;	
+        for (int x = getMinProtectedX() /16; x <= (getMinProtectedX() + getProtectionSize() - 1)/16; x++) {
+            for (int z = getMinProtectedZ() /16; z <= (getMinProtectedZ() + getProtectionSize() - 1)/16; z++) {
+                for (BlockState holder : world.getChunkAt(x, z).getTileEntities()) {
+                    if (holder instanceof Hopper) {
+                        result++;
+                    }
+                }
+            }  
+        }
+        return result;
     }
 
     /**
@@ -684,70 +701,70 @@ public class Island {
      * a tile entity.
      */
     public int getTileEntityCount(Material material) {
-	int result = 0;	
-	for (int x = getMinProtectedX() /16; x <= (getMinProtectedX() + getProtectionSize() - 1)/16; x++) {
-	    for (int z = getMinProtectedZ() /16; z <= (getMinProtectedZ() + getProtectionSize() - 1)/16; z++) {
-		for (BlockState holder : world.getChunkAt(x, z).getTileEntities()) {
-		    //plugin.getLogger().info("DEBUG: tile entity: " + holder.getType());
-		    if (holder.getType() == material) {
-			result++;
-		    } else if (material.equals(Material.REDSTONE_COMPARATOR_OFF)) {
-			if (holder.getType().equals(Material.REDSTONE_COMPARATOR_ON)) {
-			    result++;
-			}
-		    } else if (material.equals(Material.FURNACE)) {
-			if (holder.getType().equals(Material.BURNING_FURNACE)) {
-			    result++;
-			}
-		    } else if (material.toString().endsWith("BANNER")) {
-			if (holder.getType().toString().endsWith("BANNER")) {
-			    result++;
-			}
-		    } else if (material.equals(Material.WALL_SIGN) || material.equals(Material.SIGN_POST)) {
-			if (holder.getType().equals(Material.WALL_SIGN) || holder.getType().equals(Material.SIGN_POST)) {
-			    result++;
-			}
-		    }
-		}
-		for (Entity holder : world.getChunkAt(x, z).getEntities()) {
-		    //plugin.getLogger().info("DEBUG: entity: " + holder.getType());
-		    if (holder.getType().toString().equals(material.toString())) {
-			result++;
-		    }
-		}
-	    }  
-	}
-	// Version 1.7.x counts differently to 1.8 (ugh)
-	// In 1.7, the entity is present before it is cancelled and so gets counted.
-	// Remove 1 from count if it is 1.7.x
-	if (!plugin.isOnePointEight()) {
-	    result--;
-	}
-	return result;
+        int result = 0;	
+        for (int x = getMinProtectedX() /16; x <= (getMinProtectedX() + getProtectionSize() - 1)/16; x++) {
+            for (int z = getMinProtectedZ() /16; z <= (getMinProtectedZ() + getProtectionSize() - 1)/16; z++) {
+                for (BlockState holder : world.getChunkAt(x, z).getTileEntities()) {
+                    //plugin.getLogger().info("DEBUG: tile entity: " + holder.getType());
+                    if (holder.getType() == material) {
+                        result++;
+                    } else if (material.equals(Material.REDSTONE_COMPARATOR_OFF)) {
+                        if (holder.getType().equals(Material.REDSTONE_COMPARATOR_ON)) {
+                            result++;
+                        }
+                    } else if (material.equals(Material.FURNACE)) {
+                        if (holder.getType().equals(Material.BURNING_FURNACE)) {
+                            result++;
+                        }
+                    } else if (material.toString().endsWith("BANNER")) {
+                        if (holder.getType().toString().endsWith("BANNER")) {
+                            result++;
+                        }
+                    } else if (material.equals(Material.WALL_SIGN) || material.equals(Material.SIGN_POST)) {
+                        if (holder.getType().equals(Material.WALL_SIGN) || holder.getType().equals(Material.SIGN_POST)) {
+                            result++;
+                        }
+                    }
+                }
+                for (Entity holder : world.getChunkAt(x, z).getEntities()) {
+                    //plugin.getLogger().info("DEBUG: entity: " + holder.getType());
+                    if (holder.getType().toString().equals(material.toString())) {
+                        result++;
+                    }
+                }
+            }  
+        }
+        // Version 1.7.x counts differently to 1.8 (ugh)
+        // In 1.7, the entity is present before it is cancelled and so gets counted.
+        // Remove 1 from count if it is 1.7.x
+        if (!plugin.isOnePointEight()) {
+            result--;
+        }
+        return result;
     }
 
     public int getEntityCount(EntityType et) {
-	int result = 0;	
-	for (int x = getMinProtectedX() /16; x <= (getMinProtectedX() + getProtectionSize() - 1)/16; x++) {
-	    for (int z = getMinProtectedZ() /16; z <= (getMinProtectedZ() + getProtectionSize() - 1)/16; z++) {
-		for (Entity holder : world.getChunkAt(x, z).getEntities()) {
-		    //plugin.getLogger().info("DEBUG: entity: " + holder.getType());
-		    if (holder.getType() == et) {
-			result++;
-		    }
-		}
-	    }  
-	}
-	return result;
+        int result = 0;	
+        for (int x = getMinProtectedX() /16; x <= (getMinProtectedX() + getProtectionSize() - 1)/16; x++) {
+            for (int z = getMinProtectedZ() /16; z <= (getMinProtectedZ() + getProtectionSize() - 1)/16; z++) {
+                for (Entity holder : world.getChunkAt(x, z).getEntities()) {
+                    //plugin.getLogger().info("DEBUG: entity: " + holder.getType());
+                    if (holder.getType() == et) {
+                        result++;
+                    }
+                }
+            }  
+        }
+        return result;
     }
 
     public void setSpawnPoint(Location location) {
-	spawnPoint = location;
+        spawnPoint = location;
 
     }
 
     public Location getSpawnPoint() {
-	return spawnPoint;
+        return spawnPoint;
     }
 
     /**
@@ -755,9 +772,9 @@ public class Island {
      * @param flag
      */
     public void toggleIgs(Flags flag) {
-	if (igs.containsKey(flag)) {
-	    igs.put(flag, igs.get(flag) ? false : true);
-	}
+        if (igs.containsKey(flag)) {
+            igs.put(flag, igs.get(flag) ? false : true);
+        }
 
     }
 
@@ -765,9 +782,9 @@ public class Island {
      * @return the biome
      */
     public Biome getBiome() {
-	if (biome == null) {
-	    biome = center.getBlock().getBiome();
-	}
+        if (biome == null) {
+            biome = center.getBlock().getBiome();
+        }
         return biome;
     }
 

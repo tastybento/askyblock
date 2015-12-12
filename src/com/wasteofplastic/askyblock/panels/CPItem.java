@@ -44,60 +44,60 @@ public class CPItem {
      * @param nextSection
      */
     public CPItem(Material material, String name, String command, String nextSection) {
-	this.command = command;
-	this.nextSection = nextSection;
-	item = new ItemStack(material);
-	ItemMeta meta = item.getItemMeta();
-	// Handle multi line names (split by |)
-	List<String> desc = new ArrayList<String>(Arrays.asList(name.split("\\|")));
-	meta.setDisplayName(desc.get(0));
-	if (desc.size() > 1) {
-	    desc.remove(0); // Remove the name
-	    meta.setLore(desc);
-	}
-	item.setItemMeta(meta);
+        this.command = command;
+        this.nextSection = nextSection;
+        item = new ItemStack(material);
+        ItemMeta meta = item.getItemMeta();
+        // Handle multi line names (split by |)
+        List<String> desc = new ArrayList<String>(Arrays.asList(name.split("\\|")));
+        meta.setDisplayName(desc.get(0));
+        if (desc.size() > 1) {
+            desc.remove(0); // Remove the name
+            meta.setLore(desc);
+        }
+        item.setItemMeta(meta);
     }
 
     public CPItem(ItemStack itemStack, String name, String command, String nextSection) {
-	this.command = command;
-	this.nextSection = nextSection;
-	this.item = itemStack;
-	ItemMeta meta = item.getItemMeta();
-	// Handle multi line names (split by |)
-	List<String> desc = new ArrayList<String>(Arrays.asList(name.split("\\|")));
-	meta.setDisplayName(desc.get(0));
-	if (desc.size() > 1) {
-	    desc.remove(0); // Remove the name
-	    meta.setLore(desc);
-	}
-	item.setItemMeta(meta);
+        this.command = command;
+        this.nextSection = nextSection;
+        this.item = itemStack;
+        ItemMeta meta = item.getItemMeta();
+        // Handle multi line names (split by |)
+        List<String> desc = new ArrayList<String>(Arrays.asList(name.split("\\|")));
+        meta.setDisplayName(desc.get(0));
+        if (desc.size() > 1) {
+            desc.remove(0); // Remove the name
+            meta.setLore(desc);
+        }
+        item.setItemMeta(meta);
     }
 
     // For warps
     public CPItem(ItemStack itemStack, String command) {
-	this.command = command;
-	this.nextSection = "";
-	this.item = itemStack;
+        this.command = command;
+        this.nextSection = "";
+        this.item = itemStack;
     }    
 
     public void setLore(List<String> lore) {
-	ItemMeta meta = item.getItemMeta();
-	meta.setLore(lore);
-	item.setItemMeta(meta);
+        ItemMeta meta = item.getItemMeta();
+        meta.setLore(lore);
+        item.setItemMeta(meta);
     }
 
     /**
      * @return the command
      */
     public String getCommand() {
-	return command;
+        return command;
     }
 
     /**
      * @return the nextSection
      */
     public String getNextSection() {
-	return nextSection;
+        return nextSection;
     }
 
     /**
@@ -105,11 +105,11 @@ public class CPItem {
      *            the nextSection to set
      */
     public void setNextSection(String nextSection) {
-	this.nextSection = nextSection;
+        this.nextSection = nextSection;
     }
 
     public ItemStack getItem() {
-	return item;
+        return item;
     }
 
 }

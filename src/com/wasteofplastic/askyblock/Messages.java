@@ -1,3 +1,20 @@
+/*******************************************************************************
+ * This file is part of ASkyBlock.
+ *
+ *     ASkyBlock is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     ASkyBlock is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with ASkyBlock.  If not, see <http://www.gnu.org/licenses/>.
+ *******************************************************************************/
+
 package com.wasteofplastic.askyblock;
 
 import java.util.ArrayList;
@@ -23,14 +40,14 @@ public class Messages {
     private HashMap<UUID, List<String>> messages = new HashMap<UUID, List<String>>();
     private YamlConfiguration messageStore;
 
-    
+
     /**
      * @param plugin
      */
     public Messages(ASkyBlock plugin) {
-	this.plugin = plugin;
+        this.plugin = plugin;
     }
-    
+
     /**
      * Returns what messages are waiting for the player or null if none
      * 
@@ -38,8 +55,8 @@ public class Messages {
      * @return
      */
     public List<String> getMessages(UUID playerUUID) {
-	List<String> playerMessages = messages.get(playerUUID);
-	return playerMessages;
+        List<String> playerMessages = messages.get(playerUUID);
+        return playerMessages;
     }
 
     /**
@@ -48,50 +65,50 @@ public class Messages {
      * @param playerUUID
      */
     public void clearMessages(UUID playerUUID) {
-	messages.remove(playerUUID);
+        messages.remove(playerUUID);
     }
 
     public void saveMessages() {
-	if (messageStore == null) {
-	    return;
-	}
-	plugin.getLogger().info("Saving offline messages...");
-	try {
-	    // Convert to a serialized string
-	    final HashMap<String, Object> offlineMessages = new HashMap<String, Object>();
-	    for (UUID p : messages.keySet()) {
-		offlineMessages.put(p.toString(), messages.get(p));
-	    }
-	    // Convert to YAML
-	    messageStore.set("messages", offlineMessages);
-	    Util.saveYamlFile(messageStore, "messages.yml");
-	    return;
-	} catch (Exception e) {
-	    e.printStackTrace();
-	    return;
-	}
+        if (messageStore == null) {
+            return;
+        }
+        plugin.getLogger().info("Saving offline messages...");
+        try {
+            // Convert to a serialized string
+            final HashMap<String, Object> offlineMessages = new HashMap<String, Object>();
+            for (UUID p : messages.keySet()) {
+                offlineMessages.put(p.toString(), messages.get(p));
+            }
+            // Convert to YAML
+            messageStore.set("messages", offlineMessages);
+            Util.saveYamlFile(messageStore, "messages.yml");
+            return;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
     }
 
     public boolean loadMessages() {
-	plugin.getLogger().info("Loading offline messages...");
-	try {
-	    messageStore = Util.loadYamlFile("messages.yml");
-	    if (messageStore.getConfigurationSection("messages") == null) {
-		messageStore.createSection("messages"); // This is only used to
-							// create
-	    }
-	    HashMap<String, Object> temp = (HashMap<String, Object>) messageStore.getConfigurationSection("messages").getValues(true);
-	    for (String s : temp.keySet()) {
-		List<String> messageList = messageStore.getStringList("messages." + s);
-		if (!messageList.isEmpty()) {
-		    messages.put(UUID.fromString(s), messageList);
-		}
-	    }
-	    return true;
-	} catch (Exception e) {
-	    e.printStackTrace();
-	    return false;
-	}
+        plugin.getLogger().info("Loading offline messages...");
+        try {
+            messageStore = Util.loadYamlFile("messages.yml");
+            if (messageStore.getConfigurationSection("messages") == null) {
+                messageStore.createSection("messages"); // This is only used to
+                // create
+            }
+            HashMap<String, Object> temp = (HashMap<String, Object>) messageStore.getConfigurationSection("messages").getValues(true);
+            for (String s : temp.keySet()) {
+                List<String> messageList = messageStore.getStringList("messages." + s);
+                if (!messageList.isEmpty()) {
+                    messages.put(UUID.fromString(s), messageList);
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     /**
@@ -101,7 +118,7 @@ public class Messages {
      * @return List of messages
      */
     public List<String> get(UUID playerUUID) {
-	return messages.get(playerUUID);
+        return messages.get(playerUUID);
     }
 
     /**
@@ -111,7 +128,7 @@ public class Messages {
      * @param playerMessages
      */
     public void put(UUID playerUUID, List<String> playerMessages) {
-	messages.put(playerUUID, playerMessages);
+        messages.put(playerUUID, playerMessages);
 
     }
 
@@ -122,20 +139,20 @@ public class Messages {
      * @param message
      */
     public void tellOfflineTeam(UUID playerUUID, String message) {
-	// getLogger().info("DEBUG: tell offline team called");
-	if (!plugin.getPlayers().inTeam(playerUUID)) {
-	    // getLogger().info("DEBUG: player is not in a team");
-	    return;
-	}
-	UUID teamLeader = plugin.getPlayers().getTeamLeader(playerUUID);
-	List<UUID> teamMembers = plugin.getPlayers().getMembers(teamLeader);
-	for (UUID member : teamMembers) {
-	    // getLogger().info("DEBUG: trying UUID " + member.toString());
-	    if (plugin.getServer().getPlayer(member) == null) {
-		// Offline player
-		setMessage(member, message);
-	    }
-	}
+        // getLogger().info("DEBUG: tell offline team called");
+        if (!plugin.getPlayers().inTeam(playerUUID)) {
+            // getLogger().info("DEBUG: player is not in a team");
+            return;
+        }
+        UUID teamLeader = plugin.getPlayers().getTeamLeader(playerUUID);
+        List<UUID> teamMembers = plugin.getPlayers().getMembers(teamLeader);
+        for (UUID member : teamMembers) {
+            // getLogger().info("DEBUG: trying UUID " + member.toString());
+            if (plugin.getServer().getPlayer(member) == null) {
+                // Offline player
+                setMessage(member, message);
+            }
+        }
     }
 
     /**
@@ -145,20 +162,20 @@ public class Messages {
      * @param message
      */
     public void tellTeam(UUID playerUUID, String message) {
-	// getLogger().info("DEBUG: tell offline team called");
-	if (!plugin.getPlayers().inTeam(playerUUID)) {
-	    // getLogger().info("DEBUG: player is not in a team");
-	    return;
-	}
-	UUID teamLeader = plugin.getPlayers().getTeamLeader(playerUUID);
-	List<UUID> teamMembers = plugin.getPlayers().getMembers(teamLeader);
-	for (UUID member : teamMembers) {
-	    // getLogger().info("DEBUG: trying UUID " + member.toString());
-	    if (!member.equals(playerUUID) && plugin.getServer().getPlayer(member) != null) {
-		// Online player
-		plugin.getServer().getPlayer(member).sendMessage(message);
-	    }
-	}
+        // getLogger().info("DEBUG: tell offline team called");
+        if (!plugin.getPlayers().inTeam(playerUUID)) {
+            // getLogger().info("DEBUG: player is not in a team");
+            return;
+        }
+        UUID teamLeader = plugin.getPlayers().getTeamLeader(playerUUID);
+        List<UUID> teamMembers = plugin.getPlayers().getMembers(teamLeader);
+        for (UUID member : teamMembers) {
+            // getLogger().info("DEBUG: trying UUID " + member.toString());
+            if (!member.equals(playerUUID) && plugin.getServer().getPlayer(member) != null) {
+                // Online player
+                plugin.getServer().getPlayer(member).sendMessage(message);
+            }
+        }
     }
 
     /**
@@ -169,25 +186,25 @@ public class Messages {
      * @return true if player is offline, false if online
      */
     public boolean setMessage(UUID playerUUID, String message) {
-	// getLogger().info("DEBUG: received message - " + message);
-	Player player = plugin.getServer().getPlayer(playerUUID);
-	// Check if player is online
-	if (player != null) {
-	    if (player.isOnline()) {
-		// player.sendMessage(message);
-		return false;
-	    }
-	}
-	// Player is offline so store the message
-	// getLogger().info("DEBUG: player is offline - storing message");
-	List<String> playerMessages = get(playerUUID);
-	if (playerMessages != null) {
-	    playerMessages.add(message);
-	} else {
-	    playerMessages = new ArrayList<String>(Arrays.asList(message));
-	}
-	put(playerUUID, playerMessages);
-	return true;
+        // getLogger().info("DEBUG: received message - " + message);
+        Player player = plugin.getServer().getPlayer(playerUUID);
+        // Check if player is online
+        if (player != null) {
+            if (player.isOnline()) {
+                // player.sendMessage(message);
+                return false;
+            }
+        }
+        // Player is offline so store the message
+        // getLogger().info("DEBUG: player is offline - storing message");
+        List<String> playerMessages = get(playerUUID);
+        if (playerMessages != null) {
+            playerMessages.add(message);
+        } else {
+            playerMessages = new ArrayList<String>(Arrays.asList(message));
+        }
+        put(playerUUID, playerMessages);
+        return true;
     }
 
 }

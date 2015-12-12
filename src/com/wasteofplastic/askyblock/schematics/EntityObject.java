@@ -1,3 +1,20 @@
+/*******************************************************************************
+ * This file is part of ASkyBlock.
+ *
+ *     ASkyBlock is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     ASkyBlock is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with ASkyBlock.  If not, see <http://www.gnu.org/licenses/>.
+ *******************************************************************************/
+
 package com.wasteofplastic.askyblock.schematics;
 
 import org.bukkit.entity.EntityType;
@@ -27,14 +44,14 @@ public class EntityObject {
     private float itemDropChance;
     private byte itemRotation;
     // Coordinates for tiles
-	private Double tileX = null;
-	private Double tileY = null;
-	private Double tileZ = null;
-	// Items informations
-	private Byte count = null;
-	private Short damage = null;
-	private String id = null; 
-    
+    private Double tileX = null;
+    private Double tileY = null;
+    private Double tileZ = null;
+    // Items informations
+    private Byte count = null;
+    private Short damage = null;
+    private String id = null; 
+
     /**
      * @return the type
      */
@@ -165,9 +182,9 @@ public class EntityObject {
      * @param carryingChest the carryingChest to set
      */
     public void setCarryingChest(byte carryingChest) {
-	if (carryingChest > (byte)0) {
-	    this.carryingChest = true;
-	}
+        if (carryingChest > (byte)0) {
+            this.carryingChest = true;
+        }
         this.carryingChest = false;
     }
     /**
@@ -192,9 +209,9 @@ public class EntityObject {
      * @param sitting the sitting to set
      */
     public void setSitting(byte sitting) {
-	if (sitting > (byte)0) {
-	    this.sitting = true;
-	}
+        if (sitting > (byte)0) {
+            this.sitting = true;
+        }
         this.sitting = false;
     }
     /**
@@ -248,97 +265,97 @@ public class EntityObject {
     /**
      * @return the itemDropChance
      */
-	public float getItemDropChance() {
-		return itemDropChance;
-	}
+    public float getItemDropChance() {
+        return itemDropChance;
+    }
     /**
      * @param itemDropCance the itemDropChance to set
      */
-	public void setItemDropChance(float itemDropChance) {
-		this.itemDropChance = itemDropChance;
-	}
+    public void setItemDropChance(float itemDropChance) {
+        this.itemDropChance = itemDropChance;
+    }
     /**
      * @return the itemRotation
      */
-	public byte getItemRotation() {
-		return itemRotation;
-	}
+    public byte getItemRotation() {
+        return itemRotation;
+    }
     /**
      * @param itemRotation the itemRotation to set
      */
-	public void setItemRotation(byte itemRotation) {
-		this.itemRotation = itemRotation;
-	}
+    public void setItemRotation(byte itemRotation) {
+        this.itemRotation = itemRotation;
+    }
     /**
      * @return the tileX
      */
-	public Double getTileX() {
-		return tileX;
-	}
+    public Double getTileX() {
+        return tileX;
+    }
     /**
      * @param tileX the tileX to set
      */
-	public void setTileX(Double tileX) {
-		this.tileX = tileX;
-	}
+    public void setTileX(Double tileX) {
+        this.tileX = tileX;
+    }
     /**
      * @return the tileX
      */
-	public Double getTileY() {
-		return tileY;
-	}
+    public Double getTileY() {
+        return tileY;
+    }
     /**
      * @param tileX the tileX to set
      */
-	public void setTileY(Double tileY) {
-		this.tileY = tileY;
-	}
+    public void setTileY(Double tileY) {
+        this.tileY = tileY;
+    }
     /**
      * @return the tileX
      */
-	public Double getTileZ() {
-		return tileZ;
-	}
+    public Double getTileZ() {
+        return tileZ;
+    }
     /**
      * @param tileX the tileX to set
      */
-	public void setTileZ(Double tileZ) {
-		this.tileZ = tileZ;
-	}
+    public void setTileZ(Double tileZ) {
+        this.tileZ = tileZ;
+    }
     /**
      * @return the count
      */
-	public Byte getCount() {
-		return count;
-	}
+    public Byte getCount() {
+        return count;
+    }
     /**
      * @param cout the count to set
      */
-	public void setCount(Byte count) {
-		this.count = count;
-	}
+    public void setCount(Byte count) {
+        this.count = count;
+    }
     /**
      * @return the damage
      */
-	public Short getDamage() {
-		return damage;
-	}
+    public Short getDamage() {
+        return damage;
+    }
     /**
      * @param damage the damage to set
      */
-	public void setDamage(Short damage) {
-		this.damage = damage;
-	}
+    public void setDamage(Short damage) {
+        this.damage = damage;
+    }
     /**
      * @return the id
      */
-	public String getId() {
-		return id;
-	}
+    public String getId() {
+        return id;
+    }
     /**
      * @param id the id to set
      */
-	public void setId(String id) {
-		this.id = id;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 }
