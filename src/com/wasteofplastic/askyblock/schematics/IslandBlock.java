@@ -19,6 +19,7 @@ import org.bukkit.block.Chest;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.block.DoubleChest;
 import org.bukkit.block.Sign;
+import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -34,6 +35,9 @@ import org.json.simple.parser.ParseException;
 
 import com.wasteofplastic.askyblock.nms.NMSAbstraction;
 
+import net.minecraft.server.v1_8_R3.BlockPosition;
+import net.minecraft.server.v1_8_R3.EnumSkyBlock;
+
 public class IslandBlock {
     private short typeId;
     private byte data;
@@ -42,6 +46,8 @@ public class IslandBlock {
     private int z;
     private List<String> signText;
     private BannerBlock banner;
+    private SkullBlock skull;
+    private PotBlock pot;
     private EntityType spawnerBlockType;
     // Chest contents
     private HashMap<Byte,ItemStack> chestContents = new HashMap<Byte,ItemStack>();
@@ -66,9 +72,11 @@ public class IslandBlock {
 	WEtoM.put("CARROT_ON_A_STICK",Material.CARROT_STICK);
 	WEtoM.put("CARROT",Material.CARROT_ITEM);
 	WEtoM.put("CAULDRON", Material.CAULDRON_ITEM);
+	WEtoM.put("CLOCK", Material.WATCH);
 	WEtoM.put("COBBLESTONE_WALL",Material.COBBLE_WALL);
 	WEtoM.put("COMPARATOR",Material.REDSTONE_COMPARATOR);
-	WEtoM.put("COOKED_PORKCHOP", Material.GRILLED_PORK);	
+	WEtoM.put("COOKED_PORKCHOP", Material.GRILLED_PORK);
+	WEtoM.put("CLOCK", Material.WATCH);
 	WEtoM.put("DIAMOND_HORSE_ARMOR",Material.DIAMOND_BARDING);
 	WEtoM.put("DIAMOND_SHOVEL",Material.DIAMOND_SPADE);
 	WEtoM.put("DYE",Material.INK_SACK);
@@ -158,6 +166,8 @@ public class IslandBlock {
 	WEtoME.put("MINECARTCHEST", EntityType.MINECART_CHEST);
 	WEtoME.put("VILLAGERGOLEM", EntityType.IRON_GOLEM);
 	WEtoME.put("ENDERDRAGON", EntityType.ENDER_DRAGON);
+	WEtoME.put("PAINTING", EntityType.PAINTING);
+	WEtoME.put("ITEMFRAME", EntityType.ITEM_FRAME);
 	if (!Bukkit.getServer().getVersion().contains("(MC: 1.7")) {
 	    WEtoME.put("ENDERCRYSTAL", EntityType.ENDER_CRYSTAL);
 	    WEtoME.put("ARMORSTAND", EntityType.ARMOR_STAND);
@@ -176,6 +186,8 @@ public class IslandBlock {
 	this.z = z;
 	signText = null;
 	banner = null;
+	skull = null;
+	pot = null;
 	spawnerBlockType = null;
 	chestContents = new HashMap<Byte,ItemStack>();
     }
@@ -231,8 +243,21 @@ public class IslandBlock {
      * @param map
      */
     public void setBanner(Map<String, Tag> map) {
-	banner = new BannerBlock();
-	banner.prep(map);
+    	banner = new BannerBlock();
+    	banner.prep(map);
+    }
+    /**
+     * Sets this block up with all the skull data required
+     * @param map
+     * @param dataValue
+     */
+    public void setSkull(Map<String, Tag> map, int dataValue) {
+    	skull = new SkullBlock();
+    	skull.prep(map, dataValue);
+    }
+    public void setFlowerPot(Map<String, Tag> map){
+    	pot = new PotBlock();
+    	pot.prep(map);
     }
 
     /**
@@ -460,6 +485,7 @@ public class IslandBlock {
 	block.setBiome(biome);
 	//if (typeId != 0) {
 	nms.setBlockSuperFast(block, typeId, data, usePhysics);
+	
 	//block.setTypeIdAndData(typeId, (byte)data, usePhysics);
 
 	//}
@@ -475,7 +501,11 @@ public class IslandBlock {
 	    }
 	    sign.update();
 	} else if (banner != null) {
-	    banner.set(block); 
+	    banner.set(block);
+	} else if (skull != null){
+		skull.set(block);
+	} else if (pot != null){
+		pot.set(block);
 	} else if (spawnerBlockType != null) {
 	    CreatureSpawner cs = (CreatureSpawner)block.getState();
 	    cs.setSpawnedType(spawnerBlockType);

@@ -20,6 +20,20 @@ public class EntityObject {
     private boolean carryingChest;
     private boolean owned;
     private byte collarColor;
+    // Paintings
+    private byte facing;
+    private String motive;
+    // Item Frames
+    private float itemDropChance;
+    private byte itemRotation;
+    // Coordinates for tiles
+	private Double tileX = null;
+	private Double tileY = null;
+	private Double tileZ = null;
+	// Items informations
+	private Byte count = null;
+	private Short damage = null;
+	private String id = null; 
     
     /**
      * @return the type
@@ -207,4 +221,124 @@ public class EntityObject {
     public void setCollarColor(byte collarColor) {
         this.collarColor = collarColor;
     }
+    /**
+     * @return the facing
+     */
+    public byte getFacing() {
+        return facing;
+    }
+    /**
+     * @param facing the facing to set
+     */
+    public void setFacing(byte facing) {
+        this.facing = facing;
+    }
+    /**
+     * @return the motive
+     */
+    public String getMotive() {
+        return motive;
+    }
+    /**
+     * @param motive the motive to set
+     */
+    public void setMotive(String motive) {
+        this.motive = motive;
+    }
+    /**
+     * @return the itemDropChance
+     */
+	public float getItemDropChance() {
+		return itemDropChance;
+	}
+    /**
+     * @param itemDropCance the itemDropChance to set
+     */
+	public void setItemDropChance(float itemDropChance) {
+		this.itemDropChance = itemDropChance;
+	}
+    /**
+     * @return the itemRotation
+     */
+	public byte getItemRotation() {
+		return itemRotation;
+	}
+    /**
+     * @param itemRotation the itemRotation to set
+     */
+	public void setItemRotation(byte itemRotation) {
+		this.itemRotation = itemRotation;
+	}
+    /**
+     * @return the tileX
+     */
+	public Double getTileX() {
+		return tileX;
+	}
+    /**
+     * @param tileX the tileX to set
+     */
+	public void setTileX(Double tileX) {
+		this.tileX = tileX;
+	}
+    /**
+     * @return the tileX
+     */
+	public Double getTileY() {
+		return tileY;
+	}
+    /**
+     * @param tileX the tileX to set
+     */
+	public void setTileY(Double tileY) {
+		this.tileY = tileY;
+	}
+    /**
+     * @return the tileX
+     */
+	public Double getTileZ() {
+		return tileZ;
+	}
+    /**
+     * @param tileX the tileX to set
+     */
+	public void setTileZ(Double tileZ) {
+		this.tileZ = tileZ;
+	}
+    /**
+     * @return the count
+     */
+	public Byte getCount() {
+		return count;
+	}
+    /**
+     * @param cout the count to set
+     */
+	public void setCount(Byte count) {
+		this.count = count;
+	}
+    /**
+     * @return the damage
+     */
+	public Short getDamage() {
+		return damage;
+	}
+    /**
+     * @param damage the damage to set
+     */
+	public void setDamage(Short damage) {
+		this.damage = damage;
+	}
+    /**
+     * @return the id
+     */
+	public String getId() {
+		return id;
+	}
+    /**
+     * @param id the id to set
+     */
+	public void setId(String id) {
+		this.id = id;
+	}
 }
