@@ -37,6 +37,7 @@ import java.util.UUID;
 import net.milkbowl.vault.economy.EconomyResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -2236,7 +2237,17 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 					    // Dynamic team sizes with permissions
 					    for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
 						if (perms.getPermission().startsWith(Settings.PERMPREFIX + "team.maxsize.")) {
-						    maxSize = Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "team.maxsize.")[1]);
+						    // Prevent the situation where the player has 
+						    String[] permSplit = perms.getPermission().split(Settings.PERMPREFIX + "team.maxsize.");
+						    if (permSplit.length == 2 && NumberUtils.isNumber(permSplit[1])) {
+							try {
+							    maxSize = Integer.valueOf(permSplit[1]);
+							} catch (Exception e) {
+							    plugin.getLogger().severe("Max team perm for player " + player.getName() + " cannot be parsed " + perms.getPermission());
+							}
+						    } else {
+							plugin.getLogger().severe("Max team perm for player " + player.getName() + " cannot be parsed " + perms.getPermission());
+						    }
 						}
 						// Do some sanity checking
 						if (maxSize < Settings.maxTeamSize) {
@@ -2979,7 +2990,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 
 	return 0L;
     }
-    
+
     /**
      * Reserves a spot in the world for the player to have their island placed next time they make one
      * @param playerUUID
