@@ -198,8 +198,8 @@ challenges:
       expReward: 30
       permissionReward: ''
       repeatable: true
-      repeatItemReward: 'CLAY:2'
-      repeatRewardText: '2 clay blocks'
+      repeatItemReward: 'SAND:2'
+      repeatRewardText: '2 sand blocks'
       repeatMoneyReward: 5
       repeatExpReward: 10
       # Max times limits how many times a challenge can be done. Comment out to make unlimited
