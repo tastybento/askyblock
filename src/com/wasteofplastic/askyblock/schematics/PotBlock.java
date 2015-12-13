@@ -56,7 +56,7 @@ public class PotBlock {
 
     public boolean set(NMSAbstraction nms, Block block) {
         if(potItem != Material.AIR){
-            nms.setBlock(block, new ItemStack(potItem, 1,(short) potItemData));
+            nms.setFlowerPotBlock(block, new ItemStack(potItem, 1,(short) potItemData));
         }
         return true;
     }

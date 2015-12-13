@@ -38,5 +38,5 @@ public interface NMSAbstraction {
      * @param block
      * @param itemStack
      */
-    public void setBlock(Block block, ItemStack itemStack);
+    public void setFlowerPotBlock(Block block, ItemStack itemStack);
 }

@@ -235,14 +235,16 @@ public class Schematic {
         facingList.put((byte) 3, BlockFace.EAST);
 
         rotationList.put((byte) 0, Rotation.NONE);
-        rotationList.put((byte) 1, Rotation.CLOCKWISE_45);
         rotationList.put((byte) 2, Rotation.CLOCKWISE);
-        rotationList.put((byte) 3, Rotation.CLOCKWISE_135);
         rotationList.put((byte) 4, Rotation.FLIPPED);
-        rotationList.put((byte) 5, Rotation.FLIPPED_45);
         rotationList.put((byte) 6, Rotation.COUNTER_CLOCKWISE);
-        rotationList.put((byte) 7, Rotation.COUNTER_CLOCKWISE_45);
 
+        if (!Bukkit.getServer().getVersion().contains("(MC: 1.7")) {
+            rotationList.put((byte) 1, Rotation.CLOCKWISE_45);
+            rotationList.put((byte) 3, Rotation.CLOCKWISE_135);
+            rotationList.put((byte) 5, Rotation.FLIPPED_45);
+            rotationList.put((byte) 7, Rotation.COUNTER_CLOCKWISE_45);
+        }
 
         try {
             nms = checkVersion();
@@ -778,29 +780,30 @@ public class Schematic {
 
                     //Bukkit.getLogger().info("DEBUG: painting = " + ent.getMotive() + "; facing = " + ent.getFacing());
                     //Bukkit.getLogger().info("DEBUG: spawning " + ent.getType().toString() + " at " + entitySpot);
+                    try {
+                        Painting painting = blockLoc.getWorld().spawn(entitySpot, Painting.class);
+                        if (painting != null) {
+                            if(paintingList.containsKey(ent.getMotive())){
+                                //painting.setArt(Art.GRAHAM);
+                                painting.setArt(paintingList.get(ent.getMotive()), true);
+                            } else {
+                                // Set default
+                                painting.setArt(Art.ALBAN, true);
+                            }
 
-                    Painting painting = blockLoc.getWorld().spawn(entitySpot, Painting.class);
-                    if (painting != null) {
-                        painting.setVelocity(ent.getMotion());
+                            // http://minecraft.gamepedia.com/Painting#Data_values
+                            if(facingList.containsKey(ent.getFacing())){
+                                painting.setFacingDirection(facingList.get(ent.getFacing()), true);
+                            } else {
+                                //set default direction
+                                painting.setFacingDirection(BlockFace.NORTH, true);
+                            }
+                            //Bukkit.getLogger().info("DEBUG: Painting setFacingDirection: " + painting.getLocation().toString() + "; facing: " + painting.getFacing() + "; ent facing: " + ent.getFacing());
+                            //Bukkit.getLogger().info("DEBUG: Painting setArt: " + painting.getLocation().toString() + "; art: " + painting.getArt() + "; ent motive: " + ent.getMotive());
 
-                        if(paintingList.containsKey(ent.getMotive())){
-                            //painting.setArt(Art.GRAHAM);
-                            painting.setArt(paintingList.get(ent.getMotive()), true);
-                        } else {
-                            // Set default
-                            painting.setArt(Art.ALBAN, true);
                         }
-
-                        // http://minecraft.gamepedia.com/Painting#Data_values
-                        if(facingList.containsKey(ent.getFacing())){
-                            painting.setFacingDirection(facingList.get(ent.getFacing()), true);
-                        } else {
-                            //set default direction
-                            painting.setFacingDirection(BlockFace.NORTH, true);
-                        }
-                        //Bukkit.getLogger().info("DEBUG: Painting setFacingDirection: " + painting.getLocation().toString() + "; facing: " + painting.getFacing() + "; ent facing: " + ent.getFacing());
-                        //Bukkit.getLogger().info("DEBUG: Painting setArt: " + painting.getLocation().toString() + "; art: " + painting.getArt() + "; ent motive: " + ent.getMotive());
-
+                    } catch (IllegalArgumentException e) {
+                        //plugin.getLogger().warning("Cannot paste painting from schematic");
                     }
                 } else if(ent.getType() == EntityType.ITEM_FRAME) {
 
@@ -809,106 +812,109 @@ public class Schematic {
                     //Bukkit.getLogger().info("DEBUG: tileX: " + ent.getTileX() + ", tileY: " + ent.getTileY() + ", tileZ: " + ent.getTileZ());
 
                     ItemFrame itemFrame = (ItemFrame) blockLoc.getWorld().spawnEntity(entitySpot, EntityType.ITEM_FRAME);
-                    // Need to improve this shity fix ...
-                    Material material = Material.matchMaterial(ent.getId().substring(10).toUpperCase());;
+                    if (itemFrame != null) {
+                        // Need to improve this shity fix ...
+                        Material material = Material.matchMaterial(ent.getId().substring(10).toUpperCase());;
 
-                    if(material == null && IslandBlock.WEtoM.containsKey(ent.getId().substring(10).toUpperCase())){
-                        material = IslandBlock.WEtoM.get(ent.getId().substring(10).toUpperCase());
-                    }
+                        if(material == null && IslandBlock.WEtoM.containsKey(ent.getId().substring(10).toUpperCase())){
+                            material = IslandBlock.WEtoM.get(ent.getId().substring(10).toUpperCase());
+                        }
 
-                    ItemStack item;
+                        ItemStack item;
 
-                    if(material != null){
-                        //Bukkit.getLogger().info("DEBUG: id: " + ent.getId() + ", material match: " + material.toString()); 
-                        if(ent.getCount() != null){
-                            if(ent.getDamage() != null){
-                                item = new ItemStack(material, ent.getCount(), ent.getDamage());
+                        if(material != null){
+                            //Bukkit.getLogger().info("DEBUG: id: " + ent.getId() + ", material match: " + material.toString()); 
+                            if(ent.getCount() != null){
+                                if(ent.getDamage() != null){
+                                    item = new ItemStack(material, ent.getCount(), ent.getDamage());
+                                } else {
+                                    item = new ItemStack(material, ent.getCount(), (short) 0);
+                                }
                             } else {
-                                item = new ItemStack(material, ent.getCount(), (short) 0);
+                                if(ent.getDamage() != null){
+                                    item = new ItemStack(material, 1, ent.getDamage());
+                                } else {
+                                    item = new ItemStack(material, 1, (short) 0);
+                                }
                             }
                         } else {
-                            if(ent.getDamage() != null){
-                                item = new ItemStack(material, 1, ent.getDamage());
-                            } else {
-                                item = new ItemStack(material, 1, (short) 0);
-                            }
+                            //Bukkit.getLogger().info("DEBUG: material can't be found for: " + ent.getId() + " (" + ent.getId().substring(10).toUpperCase() + ")"); 
+                            // Set to default content
+                            item = new ItemStack(Material.STONE, 0, (short) 4);
                         }
-                    } else {
-                        //Bukkit.getLogger().info("DEBUG: material can't be found for: " + ent.getId() + " (" + ent.getId().substring(10).toUpperCase() + ")"); 
-                        // Set to default content
-                        item = new ItemStack(Material.STONE, 0, (short) 4);
-                    }
 
-                    ItemMeta itemMeta = item.getItemMeta();
+                        ItemMeta itemMeta = item.getItemMeta();
 
-                    // TODO: Implement methods to get enchantement, names, lore etc.
+                        // TODO: Implement methods to get enchantement, names, lore etc.
 
-                    item.setItemMeta(itemMeta);
-                    itemFrame.setItem(item);
+                        item.setItemMeta(itemMeta);
+                        itemFrame.setItem(item);
 
-                    if(facingList.containsKey(ent.getFacing())){
-                        itemFrame.setFacingDirection(facingList.get(ent.getFacing()), true);
-                    } else {
-                        //set default direction
-                        itemFrame.setFacingDirection(BlockFace.NORTH, true);
-                    }
+                        if(facingList.containsKey(ent.getFacing())){
+                            itemFrame.setFacingDirection(facingList.get(ent.getFacing()), true);
+                        } else {
+                            //set default direction
+                            itemFrame.setFacingDirection(BlockFace.NORTH, true);
+                        }
 
-                    // TODO: Implements code to handle the rotation of the item in the itemframe
-                    if(rotationList.containsKey(ent.getItemRotation())){
-                        itemFrame.setRotation(rotationList.get(ent.getItemRotation()));
-                    } else {
-                        // Set default direction
-                        itemFrame.setRotation(Rotation.NONE);
+                        // TODO: Implements code to handle the rotation of the item in the itemframe
+                        if(rotationList.containsKey(ent.getItemRotation())){
+                            itemFrame.setRotation(rotationList.get(ent.getItemRotation()));
+                        } else {
+                            // Set default direction
+                            itemFrame.setRotation(Rotation.NONE);
+                        }
                     }
                 } else {
                     //Bukkit.getLogger().info("Spawning " + ent.getType().toString() + " at " + entitySpot);
                     Entity spawned = blockLoc.getWorld().spawnEntity(entitySpot, ent.getType());
-
-                    spawned.setVelocity(ent.getMotion());
-                    if (ent.getType() == EntityType.SHEEP) {
-                        Sheep sheep = (Sheep)spawned;
-                        if (ent.isSheared()) {   
-                            sheep.setSheared(true);
+                    if (spawned != null) {
+                        spawned.setVelocity(ent.getMotion());
+                        if (ent.getType() == EntityType.SHEEP) {
+                            Sheep sheep = (Sheep)spawned;
+                            if (ent.isSheared()) {   
+                                sheep.setSheared(true);
+                            }
+                            DyeColor[] set = DyeColor.values();
+                            sheep.setColor(set[ent.getColor()]);
+                            sheep.setAge(ent.getAge());
+                        } else if (ent.getType() == EntityType.HORSE) {
+                            Horse horse = (Horse)spawned;
+                            Horse.Color[] set = Horse.Color.values();
+                            horse.setColor(set[ent.getColor()]);
+                            horse.setAge(ent.getAge());
+                            horse.setCarryingChest(ent.isCarryingChest());
+                        } else if (ent.getType() == EntityType.VILLAGER) {
+                            Villager villager = (Villager)spawned;
+                            villager.setAge(ent.getAge());
+                            Profession[] proffs = Profession.values();
+                            villager.setProfession(proffs[ent.getProfession()]);
+                        } else if (ent.getType() == EntityType.RABBIT) {
+                            Rabbit rabbit = (Rabbit)spawned;
+                            Rabbit.Type[] set = Rabbit.Type.values();
+                            rabbit.setRabbitType(set[ent.getRabbitType()]);
+                            rabbit.setAge(ent.getAge());
+                        } else if (ent.getType() == EntityType.OCELOT) {
+                            Ocelot cat = (Ocelot)spawned;
+                            if (ent.isOwned()) {
+                                cat.setTamed(true);
+                                cat.setOwner(player);
+                            }
+                            Ocelot.Type[] set = Ocelot.Type.values();
+                            cat.setCatType(set[ent.getCatType()]);
+                            cat.setAge(ent.getAge());
+                            cat.setSitting(ent.isSitting());
+                        } else if (ent.getType() == EntityType.WOLF) {
+                            Wolf wolf = (Wolf)spawned;
+                            if (ent.isOwned()) {
+                                wolf.setTamed(true);
+                                wolf.setOwner(player);
+                            }
+                            wolf.setAge(ent.getAge());
+                            wolf.setSitting(ent.isSitting());
+                            DyeColor[] color = DyeColor.values();
+                            wolf.setCollarColor(color[ent.getCollarColor()]);
                         }
-                        DyeColor[] set = DyeColor.values();
-                        sheep.setColor(set[ent.getColor()]);
-                        sheep.setAge(ent.getAge());
-                    } else if (ent.getType() == EntityType.HORSE) {
-                        Horse horse = (Horse)spawned;
-                        Horse.Color[] set = Horse.Color.values();
-                        horse.setColor(set[ent.getColor()]);
-                        horse.setAge(ent.getAge());
-                        horse.setCarryingChest(ent.isCarryingChest());
-                    } else if (ent.getType() == EntityType.VILLAGER) {
-                        Villager villager = (Villager)spawned;
-                        villager.setAge(ent.getAge());
-                        Profession[] proffs = Profession.values();
-                        villager.setProfession(proffs[ent.getProfession()]);
-                    } else if (ent.getType() == EntityType.RABBIT) {
-                        Rabbit rabbit = (Rabbit)spawned;
-                        Rabbit.Type[] set = Rabbit.Type.values();
-                        rabbit.setRabbitType(set[ent.getRabbitType()]);
-                        rabbit.setAge(ent.getAge());
-                    } else if (ent.getType() == EntityType.OCELOT) {
-                        Ocelot cat = (Ocelot)spawned;
-                        if (ent.isOwned()) {
-                            cat.setTamed(true);
-                            cat.setOwner(player);
-                        }
-                        Ocelot.Type[] set = Ocelot.Type.values();
-                        cat.setCatType(set[ent.getCatType()]);
-                        cat.setAge(ent.getAge());
-                        cat.setSitting(ent.isSitting());
-                    } else if (ent.getType() == EntityType.WOLF) {
-                        Wolf wolf = (Wolf)spawned;
-                        if (ent.isOwned()) {
-                            wolf.setTamed(true);
-                            wolf.setOwner(player);
-                        }
-                        wolf.setAge(ent.getAge());
-                        wolf.setSitting(ent.isSitting());
-                        DyeColor[] color = DyeColor.values();
-                        wolf.setCollarColor(color[ent.getCollarColor()]);
                     }
                 }
             }
@@ -1531,10 +1537,10 @@ public class Schematic {
         String version = serverPackageName.substring(serverPackageName.lastIndexOf('.') + 1);
         Class<?> clazz;
         try {
-            //plugin.getLogger().info("DEBUG: Trying " + pluginPackageName + ".nms." + version + ".NMSHandler");
+            //plugin.getLogger().info("Trying " + pluginPackageName + ".nms." + version + ".NMSHandler");
             clazz = Class.forName(pluginPackageName + ".nms." + version + ".NMSHandler");
         } catch (Exception e) {
-            plugin.getLogger().info("No NMS Handler found, falling back to Bukkit API.");
+            plugin.getLogger().info("No NMS Handler found for " + version + ", falling back to Bukkit API.");
             clazz = Class.forName(pluginPackageName + ".nms.fallback.NMSHandler");
         }
         //plugin.getLogger().info("DEBUG: " + serverPackageName);

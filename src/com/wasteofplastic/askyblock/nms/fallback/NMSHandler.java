@@ -48,7 +48,7 @@ public class NMSHandler implements NMSAbstraction {
 
     @SuppressWarnings("deprecation")
     @Override
-    public void setBlock(Block block, ItemStack itemStack) {
+    public void setFlowerPotBlock(Block block, ItemStack itemStack) {
         block.setTypeIdAndData(itemStack.getTypeId(), itemStack.getData().getData(), false);
 
     }

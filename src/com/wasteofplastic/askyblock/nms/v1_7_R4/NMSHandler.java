@@ -26,7 +26,10 @@ import net.minecraft.server.v1_7_R4.ChunkSection;
 import net.minecraft.server.v1_7_R4.NBTTagCompound;
 import net.minecraft.server.v1_7_R4.NBTTagList;
 import net.minecraft.server.v1_7_R4.NBTTagString;
+import net.minecraft.server.v1_7_R4.TileEntityFlowerPot;
 
+import org.bukkit.Chunk;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_7_R4.CraftWorld;
@@ -111,11 +114,21 @@ public class NMSHandler implements NMSAbstraction {
         return chestItem;
     }
 
-    @SuppressWarnings("deprecation")
+    /* (non-Javadoc)
+     * @see com.wasteofplastic.askyblock.nms.NMSAbstraction#setBlock(org.bukkit.block.Block, org.bukkit.inventory.ItemStack)
+     * Credis: Mister_Frans (THANK YOU VERY MUCH !)
+     */
     @Override
-    public void setBlock(Block block, ItemStack itemStack) {
-        block.setTypeIdAndData(itemStack.getTypeId(), itemStack.getData().getData(), false);
-
+    public void setFlowerPotBlock(Block block, ItemStack itemStack) {
+        Location loc = block.getLocation();
+        CraftWorld cw = (CraftWorld)block.getWorld();
+        TileEntityFlowerPot te = (TileEntityFlowerPot)cw.getHandle().getTileEntity(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+        //Bukkit.getLogger().info("Debug: flowerpot materialdata = " + (new ItemStack(potItem, 1,(short) potItemData).toString()));
+        net.minecraft.server.v1_7_R4.ItemStack cis = CraftItemStack.asNMSCopy(itemStack);
+        te.a(cis.getItem(), cis.getData());
+        te.update();
+        cw.getHandle().notify(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+        Chunk ch = loc.getChunk();
+        cw.refreshChunk(ch.getX(), ch.getZ());  
     }
-
 }
