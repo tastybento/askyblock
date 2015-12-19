@@ -386,12 +386,15 @@ public class GridManager {
 	}
 	islandYaml.set(Settings.worldName, islandList);
 	// Save the file
-	try {
-	    islandYaml.save(islandFile);
-	} catch (Exception e) {
-	    plugin.getLogger().severe("Could not save islands.yml!");
-	    e.printStackTrace();
-	}
+	Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+	public void run() {
+		try {
+		    islandYaml.save(islandFile);
+		} catch (Exception e) {
+		    plugin.getLogger().severe("Could not save islands.yml!");
+		    e.printStackTrace();
+		}}
+	  });
     }
 
     /**
