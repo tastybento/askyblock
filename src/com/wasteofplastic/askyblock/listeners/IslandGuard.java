@@ -2345,7 +2345,23 @@ public class IslandGuard implements Listener {
                 }
                 break;
             case ITEM_FRAME:
-                // This is to place or extract items from an item frame so it is governed by chest access
+                // This is to place items in an item frame
+                if (island == null && !Settings.allowPlaceBlocks) {
+                    e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
+                    e.setCancelled(true);
+                }
+                if (island != null) {
+                    if (island.isSpawn()) {
+                        if (!Settings.allowSpawnPlaceBlocks) {
+                            e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
+                            e.setCancelled(true);
+                        }
+                    } else if (!island.getIgsFlag(Flags.allowPlaceBlocks)) {
+                        e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
+                        e.setCancelled(true);
+                    }
+                }
+                break;
             case MINECART_CHEST:
             case MINECART_FURNACE:
             case MINECART_HOPPER:
