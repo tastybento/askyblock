@@ -17,7 +17,9 @@
 
 package com.wasteofplastic.askyblock;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -52,10 +54,11 @@ public class ASkyBlockAPI {
     /**
      * @param playerUUID
      * @return HashMap of all of the known challenges with a boolean marking
-     *         them as complete (true) or incomplete (false)
+     *         them as complete (true) or incomplete (false). This is a copy of the challenges
+     *         and changing this list will not affect the actual list.
      */
     public HashMap<String, Boolean> getChallengeStatus(UUID playerUUID) {
-        return plugin.getPlayers().getChallengeStatus(playerUUID);
+        return new HashMap<String, Boolean>(plugin.getPlayers().getChallengeStatus(playerUUID));
     }
 
     public Location getHomeLocation(UUID playerUUID) {
@@ -77,7 +80,8 @@ public class ASkyBlockAPI {
     /**
      * Calculates the island level. Only the fast calc is supported.
      * The island calculation runs async and fires an IslandLevelEvent when completed
-     * or use getIslandLevel(playerUUID).
+     * or use getIslandLevel(playerUUID). See https://gist.github.com/tastybento/e81d2403c03f2fe26642
+     * for example code.
      * 
      * @param playerUUID
      * @return true if player has an island, false if not
@@ -98,16 +102,12 @@ public class ASkyBlockAPI {
      * @return Location of island
      */
     public Location getIslandLocation(UUID playerUUID) {
-        if (plugin.getPlayers().inTeam(playerUUID)) {
-            return plugin.getPlayers().getTeamIslandLocation(playerUUID);
-        }
         return plugin.getPlayers().getIslandLocation(playerUUID);
     }
 
     /**
-     * Returns the owner of an island from the location. This is an expensive
-     * call as it may have to hunt through the file system to find offline
-     * players.
+     * Returns the owner of an island from the location.
+     * Uses the grid lookup and is quick
      * 
      * @param location
      * @return UUID of owner
@@ -128,14 +128,15 @@ public class ASkyBlockAPI {
     }
 
     /**
-     * Get team members.
+     * Get a list of team members. This is a copy and changing the return value
+     * will not affect the membership.
      * 
      * @param playerUUID
      * @return List of team members, including the player. Empty if there are
      *         none.
      */
     public List<UUID> getTeamMembers(UUID playerUUID) {
-        return plugin.getPlayers().getMembers(playerUUID);
+        return new ArrayList<UUID>(plugin.getPlayers().getMembers(playerUUID));
     }
 
     /**
@@ -191,7 +192,7 @@ public class ASkyBlockAPI {
     }
 
     /**
-     * Checks to see if a player is trespassing on another player's island Both
+     * Checks to see if a player is trespassing on another player's island. Both
      * players must be online.
      * 
      * @param owner
@@ -206,12 +207,13 @@ public class ASkyBlockAPI {
     /**
      * Lists all the known warps. As each player can have only one warp, the
      * player's UUID is used. It can be displayed however you like to other
-     * users.
+     * users. This is a copy of the set and changing it will not affect the
+     * actual set of warps.
      * 
      * @return String set of warps
      */
     public Set<UUID> listWarps() {
-        return plugin.getWarpSignsListener().listWarps();
+        return new HashSet<UUID>(plugin.getWarpSignsListener().listWarps());
     }
 
     /**
@@ -227,16 +229,18 @@ public class ASkyBlockAPI {
      * owned by the player
      * 
      * @param player
-     * @param loc
+     * @param location
      * @return true if the location is on an island owner by player
      */
-    public boolean locationIsOnIsland(final Player player, final Location loc) {
-        return plugin.getGrid().locationIsOnIsland(player, loc);
+    public boolean locationIsOnIsland(final Player player, final Location location) {
+        return plugin.getGrid().locationIsOnIsland(player, location);
     }
 
     /**
      * Finds out if location is within a set of island locations and returns the
-     * one that is there or null if not
+     * one that is there or null if not. The islandTestLocations should be the center
+     * location of an island. The check is done to see if loc is inside the protected
+     * range of any of the islands given. 
      * 
      * @param islandTestLocations
      * @param loc
@@ -312,7 +316,7 @@ public class ASkyBlockAPI {
      * @return set of locations of islands or empty if none
      */
     public Set<Location> getCoopIslands(Player player) {
-        return CoopPlay.getInstance().getCoopIslands(player);
+        return new HashSet<Location>(CoopPlay.getInstance().getCoopIslands(player));
     }
 
     /**
@@ -369,7 +373,32 @@ public class ASkyBlockAPI {
      * @return Top ten list
      */
     public Map<UUID, Integer> getTopTen() {
-        return TopTen.getTopTenList();
+        return new HashMap<UUID, Integer>(TopTen.getTopTenList());
     }
 
+    /**
+     * Obtains a copy of the island object owned by playerUUID
+     * @param playerUUID
+     * @return copy of Island object
+     */
+    public Island getIslandOwnedBy(UUID playerUUID) {
+        return (Island)plugin.getGrid().getIsland(playerUUID).clone();
+    }
+    
+    /**
+     * Returns a copy of the Island object for an island at this location or null if one does not exist
+     * @param location
+     * @return copy of Island object
+     */
+    public Island getIslandAt(Location location) {
+        return (Island)plugin.getGrid().getIslandAt(location);
+    }
+    
+    /**
+     * @return how many islands are in the world (that the plugin knows of)
+     */
+    public int getIslandCount() {
+        return plugin.getGrid().getIslandCount();
+    }
+    
 }

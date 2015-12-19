@@ -44,7 +44,7 @@ import com.wasteofplastic.askyblock.util.Util;
  * @author tastybento
  * 
  */
-public class Island {
+public class Island implements Cloneable {
     ASkyBlock plugin;
     // Coordinates of the island area
     private int minX;
@@ -296,6 +296,19 @@ public class Island {
         this.igs.put(Flags.allowRedStone, Settings.allowRedStone);
         this.igs.put(Flags.allowShearing, Settings.allowShearing);
 
+    }
+    
+    /* (non-Javadoc)
+     * @see java.lang.Object#clone()
+     */
+    public Object clone() {
+        try {
+            return super.clone();
+        }
+        catch (CloneNotSupportedException e) {
+            // This should never happen
+            throw new InternalError(e.toString());
+        }
     }
 
     /**

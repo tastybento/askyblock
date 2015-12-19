@@ -552,49 +552,6 @@ public class PlayerCache {
         if (island != null) {
             return island.getOwner();
         }
-        // Check the cache
-        /*
-         * for (UUID uuid: playerCache.keySet()) {
-         * // Check for block equiv
-         * Location check = playerCache.get(uuid).getIslandLocation();
-         * if (check != null) {
-         * if (check.getBlockX() == loc.getBlockX()
-         * && check.getBlockZ() == loc.getBlockZ()) {
-         * return uuid;
-         * }
-         * }
-         * }
-         */
-        /*
-         * // Look in the file system
-         * for (final File f : plugin.getPlayersFolder().listFiles()) {
-         * // Need to remove the .yml suffix
-         * String fileName = f.getName();
-         * if (fileName.endsWith(".yml")) {
-         * try {
-         * UUID uuid = UUID.fromString(fileName.substring(0, fileName.length() -
-         * 4));
-         * addPlayer(uuid);
-         * Location check = playerCache.get(uuid).getIslandLocation();
-         * if (check != null) {
-         * //plugin.getLogger().info("DEBUG: checking " + check.toString());
-         * if (check.getBlockX() == loc.getBlockX()
-         * && check.getBlockZ() == loc.getBlockZ()) {
-         * // Add to the grid
-         * if (island == null) {
-         * plugin.getGrid().addIsland(loc.getBlockX(), loc.getBlockZ(), uuid);
-         * } else if (island != null) {
-         * island.setOwner(uuid);
-         * }
-         * return uuid;
-         * }
-         * }
-         * } catch (Exception e) {
-         * }
-         * }
-         * }
-         */
-
         return null;
     }
 
