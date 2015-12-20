@@ -1103,7 +1103,25 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                 return true;
             }
         case 1:
-            if (split[0].equalsIgnoreCase("teamchat")) {
+            if (split[0].equalsIgnoreCase("coop")) {
+                // Explain command
+                if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "coop")) {
+                    player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " coop <player>: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpCoop);
+                    return true;
+                }
+            } else if (split[0].equalsIgnoreCase("uncoop")) {
+                // Explain command
+                if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "coop")) {
+                    player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " uncoop <player>: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpUnCoop);
+                    return true;
+                }
+            } else if (split[0].equalsIgnoreCase("expel")) {
+                // Explain command
+                if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.expel")) {
+                    player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " expel <player>: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpExpel);
+                    return true;
+                }
+            } else if (split[0].equalsIgnoreCase("teamchat")) {
                 if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.chat")) {
                     // Check if this command is on or not
                     if (!Settings.teamChat) {
@@ -1554,8 +1572,8 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                     player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " unban <player>: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpUnban);
                 }
                 if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "coop")) {
-                    player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " coop: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpCoop);
-                    player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " uncoop: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpUnCoop);
+                    player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " coop <player>: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpCoop);
+                    player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " uncoop <player>: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpUnCoop);
                 }
                 if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.lock")) {
                     player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " lock: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandHelpLock);

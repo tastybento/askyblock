@@ -389,7 +389,19 @@ public class GridManager {
         saveGrid();
     }
 
+    /**
+     * Saves the grid asynchronously
+     */
     public void saveGrid() {
+        saveGrid(true);
+    }
+    
+    /**
+     * Saves the grid. Option to save sync or async.
+     * Asymc cannot be used when disabling the plugin
+     * @param async
+     */
+    public void saveGrid(boolean async) {
 	final File islandFile = new File(plugin.getDataFolder(), "islands.yml");
 	final YamlConfiguration islandYaml = new YamlConfiguration();
 	List<String> islandList = new ArrayList<String>();
@@ -401,6 +413,7 @@ public class GridManager {
 	}
 	islandYaml.set(Settings.worldName, islandList);
 	// Save the file
+	if (async) {
 	Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
 	public void run() {
 		try {
@@ -410,6 +423,14 @@ public class GridManager {
 		    e.printStackTrace();
 		}}
 	  });
+	} else {
+	    try {
+                islandYaml.save(islandFile);
+            } catch (Exception e) {
+                plugin.getLogger().severe("Could not save islands.yml!");
+                e.printStackTrace();
+            }
+	}
     }
 
     /**

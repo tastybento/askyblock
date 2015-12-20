@@ -207,7 +207,8 @@ public class ASkyBlock extends JavaPlugin {
                 players.removeAllPlayers();
             }
             if (grid != null) {
-                grid.saveGrid();
+                // Save grid synchronously
+                grid.saveGrid(false);
             }
             // Save the warps and do not reload the panel
             if (warpSignsListener != null) {
