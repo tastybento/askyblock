@@ -27,6 +27,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -389,23 +390,26 @@ public class GridManager {
     }
 
     public void saveGrid() {
-        final File islandFile = new File(plugin.getDataFolder(), "islands.yml");
-        YamlConfiguration islandYaml = new YamlConfiguration();
-        List<String> islandList = new ArrayList<String>();
-        for (int x : islandGrid.keySet()) {
-            for (int z : islandGrid.get(x).keySet()) {
-                Island island = islandGrid.get(x).get(z);
-                islandList.add(island.save());
-            }
-        }
-        islandYaml.set(Settings.worldName, islandList);
-        // Save the file
-        try {
-            islandYaml.save(islandFile);
-        } catch (Exception e) {
-            plugin.getLogger().severe("Could not save islands.yml!");
-            e.printStackTrace();
-        }
+	final File islandFile = new File(plugin.getDataFolder(), "islands.yml");
+	final YamlConfiguration islandYaml = new YamlConfiguration();
+	List<String> islandList = new ArrayList<String>();
+	for (int x : islandGrid.keySet()) {
+	    for (int z : islandGrid.get(x).keySet()) {
+		Island island = islandGrid.get(x).get(z);
+		islandList.add(island.save());
+	    }
+	}
+	islandYaml.set(Settings.worldName, islandList);
+	// Save the file
+	Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+	public void run() {
+		try {
+		    islandYaml.save(islandFile);
+		} catch (Exception e) {
+		    plugin.getLogger().severe("Could not save islands.yml!");
+		    e.printStackTrace();
+		}}
+	  });
     }
 
     /**
