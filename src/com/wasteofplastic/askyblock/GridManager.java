@@ -21,6 +21,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -1459,6 +1460,13 @@ public class GridManager {
      * @param l
      */
     public void removeMobs(final Location l) {
+        //plugin.getLogger().info("DEBUG: removing mobs");
+        // Don't remove mobs if at spawn
+        if (this.isAtSpawn(l)) {
+            //plugin.getLogger().info("DEBUG: at spawn!");
+            return;
+        }
+
         final int px = l.getBlockX();
         final int py = l.getBlockY();
         final int pz = l.getBlockZ();
@@ -1467,8 +1475,17 @@ public class GridManager {
                 final Chunk c = l.getWorld().getChunkAt(new Location(l.getWorld(), px + x * 16, py, pz + z * 16));
                 if (c.isLoaded()) {
                     for (final Entity e : c.getEntities()) {
+                        //plugin.getLogger().info("DEBUG: " + e.getType());
+                        
                         if (e instanceof Monster && !Settings.mobWhiteList.contains(e.getType())) {
-                            e.remove();
+                            Monster monster = (Monster)e;
+                            //plugin.getLogger().info("DEBUG: monster found. custom name is '" + monster.getCustomName() + "'");
+                            //plugin.getLogger().info("DEBUG: remove when far away = " + monster.getRemoveWhenFarAway());
+
+                            // Don't remove if the monster has a name tag
+                            if (monster.getCustomName() == null || monster.getRemoveWhenFarAway()) {
+                                e.remove();
+                            }
                         }
                     }
                 }
