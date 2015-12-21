@@ -536,7 +536,7 @@ public class IslandGuard implements Listener {
             return;
         }
         Island island = plugin.getGrid().getProtectedIslandAt(e.getLocation());
-        if (island == null) {
+        if (island == null || island.getOwner() == null || island.isSpawn()) {
             // No island, no limit
             return;
         }
