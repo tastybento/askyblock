@@ -18,6 +18,7 @@ package com.wasteofplastic.askyblock.listeners;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,6 +29,7 @@ import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.EnderPearl;
@@ -76,6 +78,7 @@ import org.bukkit.event.player.PlayerShearEntityEvent;
 import org.bukkit.event.player.PlayerUnleashEntityEvent;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
+import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 import org.bukkit.potion.Potion;
@@ -2504,5 +2507,31 @@ public class IslandGuard implements Listener {
         }
     }
 
-
+    /**
+     * Prevents trees from growing outside of the protected area.
+     * 
+     * @param e
+     */
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onTreeGrow(final StructureGrowEvent e) {
+        // Check world
+        if (!e.getLocation().getWorld().equals(ASkyBlock.getIslandWorld()) && !e.getLocation().getWorld().equals(ASkyBlock.getNetherWorld())) {
+            return;
+        }
+        // Check if this is on an island
+        Island island = plugin.getGrid().getIslandAt(e.getLocation());
+        if (island == null || island.isSpawn()) {
+            return;
+        }
+        Iterator<BlockState> it = e.getBlocks().iterator();
+        while (it.hasNext()) {
+            BlockState b = it.next();
+            if (b.getType() == Material.LOG || b.getType() == Material.LOG_2 
+                    || b.getType() == Material.LEAVES || b.getType() == Material.LEAVES_2) {
+                if (!island.onIsland(b.getLocation())) {
+                    it.remove();
+                }
+            } 
+        }
+    }
 }
