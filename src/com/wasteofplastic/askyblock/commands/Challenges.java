@@ -26,7 +26,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.UUID;
 
 import net.milkbowl.vault.economy.EconomyResponse;
@@ -85,16 +84,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
     public Challenges(ASkyBlock plugin) {
         this.plugin = plugin;
         saveDefaultChallengeConfig();
-        // Get the challenges
-        getChallengeConfig();
-        final Set<String> challengeList = getChallengeConfig().getConfigurationSection("challenges.challengeList").getKeys(false);
-        Settings.challengeList = challengeList;
-        Settings.challengeLevels = Arrays.asList(getChallengeConfig().getString("challenges.levels").split(" "));
-        Settings.waiverAmount = getChallengeConfig().getInt("challenges.waiveramount", 1);
-        if (Settings.waiverAmount < 0) {
-            Settings.waiverAmount = 0;
-        }
-        populateChallengeList();
+        reloadChallengeConfig();
     }
 
     /*
@@ -651,12 +641,17 @@ public class Challenges implements CommandExecutor, TabCompleter {
         // challenge);
         // plugin.getLogger().info("DEBUG: 1");
         // Check if the challenge exists
-        if (!plugin.getPlayers().challengeExists(player.getUniqueId(), challenge)) {
-            player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).challengesunknownChallenge);
+        /*
+        if (!isLevelAvailable(player, getChallengeConfig().getString("challenges.challengeList." + challenge.toLowerCase() + ".level"))) {
+            player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).challengesunknownChallenge + " '" + challenge + "'");
             return false;
-        }
+        }*/
         // Check if this challenge level is available
         String level = getChallengeConfig().getString("challenges.challengeList." + challenge + ".level");
+        if (level == null) {
+            player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).challengesunknownChallenge + " '" + challenge + "'");
+            return false;
+        }
         // Only check if the challenge has a level, otherwise it's a free level
         if (!level.isEmpty()) {
             if (!isLevelAvailable(player, level)) {
@@ -746,6 +741,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
      * the challenges list
      */
     public void populateChallengeList() {
+        challengeList.clear();
         for (String s : Settings.challengeList) {
             String level = getChallengeConfig().getString("challenges.challengeList." + s + ".level", "");
             // Verify that this challenge's level is in the list of levels
@@ -1700,6 +1696,13 @@ public class Challenges implements CommandExecutor, TabCompleter {
             YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
             challengeFile.setDefaults(defConfig);
         }
+        Settings.challengeList = getChallengeConfig().getConfigurationSection("challenges.challengeList").getKeys(false);
+        Settings.challengeLevels = Arrays.asList(getChallengeConfig().getString("challenges.levels").split(" "));
+        Settings.waiverAmount = getChallengeConfig().getInt("challenges.waiveramount", 1);
+        if (Settings.waiverAmount < 0) {
+            Settings.waiverAmount = 0;
+        }
+        populateChallengeList();
     }
 
     /**

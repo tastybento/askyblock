@@ -380,14 +380,18 @@ public class Players {
     }
 
     /**
-     * Records the challenge as being complete in the player's list If the
+     * Records the challenge as being complete in the player's list. If the
      * challenge is not listed in the player's challenge list already, then it
-     * will not be recorded! TODO: Possible systemic bug here as a result
+     * will be added.
      * 
      * @param challenge
      */
     public void completeChallenge(final String challenge) {
         // plugin.getLogger().info("DEBUG: Complete challenge");
+        if (!challengeList.containsKey(challenge)) {
+           // Add it if it is not there
+           updateChallengeList(); 
+        }
         if (challengeList.containsKey(challenge)) {
             challengeList.remove(challenge);
             challengeList.put(challenge, Boolean.valueOf(true));
@@ -400,6 +404,8 @@ public class Players {
             challengeListTimes.put(challenge, times);
             // plugin.getLogger().info("DEBUG: complete " + challenge + ":" +
             // challengeListTimes.get(challenge.toLowerCase()).intValue() );
+        } else {
+            plugin.getLogger().severe("Attempt to complete a challenge that does not exist: " + challenge + " for player " + playerName);
         }
     }
 
