@@ -29,15 +29,15 @@ import org.bukkit.SkullType;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Skull;
-import org.jnbt.ByteTag;
-import org.jnbt.CompoundTag;
-import org.jnbt.IntTag;
-import org.jnbt.ListTag;
-import org.jnbt.StringTag;
-import org.jnbt.Tag;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+import com.wasteofplastic.org.jnbt.ByteTag;
+import com.wasteofplastic.org.jnbt.CompoundTag;
+import com.wasteofplastic.org.jnbt.IntTag;
+import com.wasteofplastic.org.jnbt.ListTag;
+import com.wasteofplastic.org.jnbt.StringTag;
+import com.wasteofplastic.org.jnbt.Tag;
 
 /**
  * This class describes skulls and is used in schematic importing

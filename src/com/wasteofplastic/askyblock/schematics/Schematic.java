@@ -63,21 +63,21 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.DirectionalContainer;
 import org.bukkit.util.BlockVector;
 import org.bukkit.util.Vector;
-import org.jnbt.ByteArrayTag;
-import org.jnbt.ByteTag;
-import org.jnbt.CompoundTag;
-import org.jnbt.FloatTag;
-import org.jnbt.IntTag;
-import org.jnbt.ListTag;
-import org.jnbt.NBTInputStream;
-import org.jnbt.ShortTag;
-import org.jnbt.StringTag;
-import org.jnbt.Tag;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.Settings.GameType;
 import com.wasteofplastic.askyblock.nms.NMSAbstraction;
+import com.wasteofplastic.org.jnbt.ByteArrayTag;
+import com.wasteofplastic.org.jnbt.ByteTag;
+import com.wasteofplastic.org.jnbt.CompoundTag;
+import com.wasteofplastic.org.jnbt.FloatTag;
+import com.wasteofplastic.org.jnbt.IntTag;
+import com.wasteofplastic.org.jnbt.ListTag;
+import com.wasteofplastic.org.jnbt.NBTInputStream;
+import com.wasteofplastic.org.jnbt.ShortTag;
+import com.wasteofplastic.org.jnbt.StringTag;
+import com.wasteofplastic.org.jnbt.Tag;
 
 public class Schematic {
     private ASkyBlock plugin;

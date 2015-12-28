@@ -40,16 +40,16 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
-import org.jnbt.CompoundTag;
-import org.jnbt.ListTag;
-import org.jnbt.StringTag;
-import org.jnbt.Tag;
 import org.json.simple.JSONValue;
 import org.json.simple.parser.ContainerFactory;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import com.wasteofplastic.askyblock.nms.NMSAbstraction;
+import com.wasteofplastic.org.jnbt.CompoundTag;
+import com.wasteofplastic.org.jnbt.ListTag;
+import com.wasteofplastic.org.jnbt.StringTag;
+import com.wasteofplastic.org.jnbt.Tag;
 
 public class IslandBlock {
     private short typeId;

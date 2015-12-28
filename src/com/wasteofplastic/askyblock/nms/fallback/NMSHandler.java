@@ -21,9 +21,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
-import org.jnbt.Tag;
 
 import com.wasteofplastic.askyblock.nms.NMSAbstraction;
+import com.wasteofplastic.org.jnbt.Tag;
 
 /**
  * @author ben

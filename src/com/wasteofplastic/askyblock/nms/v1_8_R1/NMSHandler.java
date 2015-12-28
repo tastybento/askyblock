@@ -36,12 +36,12 @@ import org.bukkit.craftbukkit.v1_8_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R1.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.jnbt.CompoundTag;
-import org.jnbt.ListTag;
-import org.jnbt.StringTag;
-import org.jnbt.Tag;
 
 import com.wasteofplastic.askyblock.nms.NMSAbstraction;
+import com.wasteofplastic.org.jnbt.CompoundTag;
+import com.wasteofplastic.org.jnbt.ListTag;
+import com.wasteofplastic.org.jnbt.StringTag;
+import com.wasteofplastic.org.jnbt.Tag;
 
 public class NMSHandler implements NMSAbstraction {
 

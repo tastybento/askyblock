@@ -23,9 +23,9 @@ import java.io.IOException;
 import java.util.Scanner;
 import java.util.UUID;
 
-import jdbm.PrimaryHashMap;
-import jdbm.RecordManager;
-import jdbm.RecordManagerFactory;
+import com.wasteofplastic.jdbm.PrimaryHashMap;
+import com.wasteofplastic.jdbm.RecordManager;
+import com.wasteofplastic.jdbm.RecordManagerFactory;
 
 /**
  * Tiny database for a hashmap that is not used very often, but could be very big so I

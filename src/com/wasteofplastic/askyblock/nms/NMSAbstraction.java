@@ -19,7 +19,8 @@ package com.wasteofplastic.askyblock.nms;
 
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
-import org.jnbt.Tag;
+
+import com.wasteofplastic.org.jnbt.Tag;
 
 public interface NMSAbstraction {
 

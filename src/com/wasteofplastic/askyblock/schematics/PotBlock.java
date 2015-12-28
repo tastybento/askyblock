@@ -23,11 +23,11 @@ import java.util.Map;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
-import org.jnbt.IntTag;
-import org.jnbt.StringTag;
-import org.jnbt.Tag;
 
 import com.wasteofplastic.askyblock.nms.NMSAbstraction;
+import com.wasteofplastic.org.jnbt.IntTag;
+import com.wasteofplastic.org.jnbt.StringTag;
+import com.wasteofplastic.org.jnbt.Tag;
 
 /**
  * This class describes pots and is used in schematic importing

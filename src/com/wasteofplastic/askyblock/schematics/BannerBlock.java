@@ -27,11 +27,12 @@ import org.bukkit.block.Banner;
 import org.bukkit.block.Block;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
-import org.jnbt.CompoundTag;
-import org.jnbt.IntTag;
-import org.jnbt.ListTag;
-import org.jnbt.StringTag;
-import org.jnbt.Tag;
+
+import com.wasteofplastic.org.jnbt.CompoundTag;
+import com.wasteofplastic.org.jnbt.IntTag;
+import com.wasteofplastic.org.jnbt.ListTag;
+import com.wasteofplastic.org.jnbt.StringTag;
+import com.wasteofplastic.org.jnbt.Tag;
 
 /**
  * This class describes banners and is used in schematic importing
