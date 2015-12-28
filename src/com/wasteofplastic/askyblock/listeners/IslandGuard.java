@@ -18,8 +18,10 @@ package com.wasteofplastic.askyblock.listeners;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.ChatColor;
@@ -102,6 +104,7 @@ public class IslandGuard implements Listener {
     private final ASkyBlock plugin;
     private final static boolean DEBUG = false;
     private HashMap<UUID,Vector> onPlate = new HashMap<UUID,Vector>();
+    private Set<Location> tntBlocks = new HashSet<Location>();
 
     public IslandGuard(final ASkyBlock plugin) {
         this.plugin = plugin;
@@ -702,6 +705,9 @@ public class IslandGuard implements Listener {
             plugin.getLogger().info(e.getEventName());
             plugin.getLogger().info("Entity exploding is " + e.getEntity());
         }
+        if (!inWorld(e.getLocation())) {
+            return;
+        }
         // Find out what is exploding
         Entity expl = e.getEntity();
         if (expl == null) {
@@ -732,9 +738,6 @@ public class IslandGuard implements Listener {
                     }
                 }
             }
-            return;
-        }
-        if (!inWorld(e.getEntity())) {
             return;
         }
         // prevent at spawn
@@ -956,6 +959,7 @@ public class IslandGuard implements Listener {
             e.setCancelled(true);
             return;
         }
+
         // Stop Creeper damager if it is disallowed
         if (!Settings.allowCreeperDamage && e.getDamager().getType().equals(EntityType.CREEPER) && !(e.getEntity() instanceof Player)) {
             e.setCancelled(true);
@@ -2514,8 +2518,11 @@ public class IslandGuard implements Listener {
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onTreeGrow(final StructureGrowEvent e) {
+        if (DEBUG) {
+            plugin.getLogger().info(e.getEventName());
+        }
         // Check world
-        if (!e.getLocation().getWorld().equals(ASkyBlock.getIslandWorld()) && !e.getLocation().getWorld().equals(ASkyBlock.getNetherWorld())) {
+        if (!inWorld(e.getLocation())) {
             return;
         }
         // Check if this is on an island
@@ -2532,6 +2539,72 @@ public class IslandGuard implements Listener {
                     it.remove();
                 }
             } 
+        }
+    }
+
+    /**
+     * Trap TNT being primed by flaming arrows
+     * @param e
+     */
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onTNTPrimed(final EntityChangeBlockEvent e) {
+        if (DEBUG) {
+            plugin.getLogger().info(e.getEventName());
+            plugin.getLogger().info("DEBUG: block = " + e.getBlock().getType());
+            plugin.getLogger().info("DEBUG: entity = " + e.getEntityType());
+            plugin.getLogger().info("DEBUG: material changing to " + e.getTo());
+        }
+        if (Settings.allowFire) {
+            return; 
+        }
+        if (e.getBlock() == null) {
+            return;
+        }
+        // Check for TNT
+        if (!e.getBlock().getType().equals(Material.TNT)) {
+            //plugin.getLogger().info("DEBUG: not tnt");
+            return;
+        }
+        // Check world
+        if (!inWorld(e.getBlock())) {
+            return;
+        }
+        // Check if this is on an island
+        Island island = plugin.getGrid().getIslandAt(e.getBlock().getLocation());
+        if (island == null || island.isSpawn()) {
+            return;
+        }
+        // Stop TNT from being damaged if it is being caused by a visitor with a flaming arrow
+        if (e.getEntity() instanceof Projectile) {
+            //plugin.getLogger().info("DEBUG: projectile");
+            Projectile projectile = (Projectile) e.getEntity();
+            // Find out who fired it
+            if (projectile.getShooter() instanceof Player) {
+                //plugin.getLogger().info("DEBUG: player shot arrow. Fire ticks = " + projectile.getFireTicks());
+                if (projectile.getFireTicks() > 0) {
+                    //plugin.getLogger().info("DEBUG: arrow on fire");
+                    Player shooter = (Player)projectile.getShooter();
+                    if (!plugin.getGrid().locationIsAtHome(shooter, true, e.getBlock().getLocation())) {
+                        //plugin.getLogger().info("DEBUG: shooter is not at home");
+                        // Only say it once a second
+                        // Debounce event (it can be called twice for the same action)
+                        if (!tntBlocks.contains(e.getBlock().getLocation())) {
+                            shooter.sendMessage(ChatColor.RED + plugin.myLocale(shooter.getUniqueId()).islandProtected);
+                            tntBlocks.add(e.getBlock().getLocation());
+                            plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
+
+                                @Override
+                                public void run() {
+                                    tntBlocks.remove(e.getBlock().getLocation());
+                                }}, 20L);
+                        }
+                        // Remove the arrow
+                        projectile.remove();
+                        e.setCancelled(true);
+                        return; 
+                    }
+                }
+            }
         }
     }
 }
