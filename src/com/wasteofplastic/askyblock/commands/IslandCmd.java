@@ -1675,7 +1675,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                             for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
                                 //plugin.getLogger().info("DEBUG perms: " + perms);
                                 if (perms.getPermission().startsWith(Settings.PERMPREFIX + "team.maxsize.")) {
-                                    maxSize = Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "team.maxsize.")[1]);
+                                    maxSize = Math.max(maxSize, Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "team.maxsize.")[1]));
                                 }
                                 // Do some sanity checking
                                 if (maxSize < Settings.maxTeamSize) {
