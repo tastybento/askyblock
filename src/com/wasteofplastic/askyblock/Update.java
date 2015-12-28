@@ -24,6 +24,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
+import org.bukkit.Bukkit;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -164,8 +165,8 @@ public class Update {
             }
         } catch (IOException e) {
             // There was an error reading the query
-
-            e.printStackTrace();
+            Bukkit.getLogger().warning(e.getMessage());
+            //e.printStackTrace();
             return false;
         }
     }
