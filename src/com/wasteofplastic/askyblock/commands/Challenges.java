@@ -191,14 +191,16 @@ public class Challenges implements CommandExecutor, TabCompleter {
                     }
                 }
                 if (checkIfCanCompleteChallenge(player, cmd[1].toLowerCase())) {
-                    int oldLevel = levelDone(player);
+                    int oldLevel = getLevelDone(player);
                     giveReward(player, cmd[1].toLowerCase());
-                    int newLevel = levelDone(player);
+                    int newLevel = getLevelDone(player);
                     // Fire an event if they are different
                     //plugin.getLogger().info("DEBUG: " + oldLevel + " " + newLevel);
                     if (oldLevel < newLevel) {
                         ChallengeLevelCompleteEvent event = new ChallengeLevelCompleteEvent(player, oldLevel, newLevel);
                         plugin.getServer().getPluginManager().callEvent(event);
+                        // Update chat
+                        plugin.getChatListener().setPlayerChallengeLevel(player);
                         // Run commands and give rewards
                         //plugin.getLogger().info("DEBUG: old level = " + oldLevel + " new level = " + newLevel);
                         String level = Settings.challengeLevels.get(newLevel);
@@ -255,16 +257,15 @@ public class Challenges implements CommandExecutor, TabCompleter {
      * @param player
      * @return level number
      */
-    private int levelDone(Player player) {
-        int level = 0;
-        int done = 0;
-        for (String levelName : Settings.challengeLevels) {
-            if (checkLevelCompletion(player, levelName) <= 0) {
-                level = (done + 1);
+    private int getLevelDone(Player player) {
+        //plugin.getLogger().info("DEBUG: checking level completed");
+        //plugin.getLogger().info("DEBUG: getting challenge level for " + player.getName());
+        for (int result = 1; result <= Settings.challengeLevels.size(); result++) {
+            if (checkLevelCompletion(player, Settings.challengeLevels.get(result - 1)) > 0) {
+                return result;
             }
-            done++;
         }
-        return level;
+        return Settings.challengeLevels.size();
     }
 
     /**
@@ -1814,5 +1815,18 @@ public class Challenges implements CommandExecutor, TabCompleter {
      */
     public boolean resetable(String challenge) {
         return getChallengeConfig().getBoolean("challenges.challengeList." + challenge + ".resetallowed", true);
+    }
+
+    /**
+     * Gets the name of the highest challenge level the player has completed
+     * @param player
+     * @return challenge level
+     */
+    public String getChallengeLevel(Player player) {
+        //plugin.getLogger().info("DEBUG: getting challenge level for " + player.getName());
+        if (Settings.challengeLevels.isEmpty()) {
+            return "";
+        }
+        return Settings.challengeLevels.get(getLevelDone(player) - 1);
     }
 }

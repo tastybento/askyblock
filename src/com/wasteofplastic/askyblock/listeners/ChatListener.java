@@ -51,7 +51,8 @@ public class ChatListener implements Listener {
 
     private ASkyBlock plugin;
     private ConcurrentHashMap<UUID,Boolean> teamChatUsers;
-    private ConcurrentHashMap<UUID,Integer> playerLevels;
+    private ConcurrentHashMap<UUID,String> playerLevels;
+    private ConcurrentHashMap<UUID,String> playerChallengeLevels;
     // List of which admins are spying or not on team chat
     private Set<UUID> spies;
 
@@ -61,11 +62,13 @@ public class ChatListener implements Listener {
      */
     public ChatListener(ASkyBlock plugin) {
         this.teamChatUsers = new ConcurrentHashMap<UUID,Boolean>();
-        this.playerLevels = new ConcurrentHashMap<UUID,Integer>();
+        this.playerLevels = new ConcurrentHashMap<UUID,String>();
+        this.playerChallengeLevels = new ConcurrentHashMap<UUID,String>();
         this.plugin = plugin;
         // Add all online player Levels
         for (Player player : plugin.getServer().getOnlinePlayers()) {
-            playerLevels.put(player.getUniqueId(), plugin.getPlayers().getIslandLevel(player.getUniqueId()));
+            playerLevels.put(player.getUniqueId(), String.valueOf(plugin.getPlayers().getIslandLevel(player.getUniqueId())));
+            playerChallengeLevels.put(player.getUniqueId(), plugin.getChallenges().getChallengeLevel(player));
         }
         // Initialize spies
         spies = new HashSet<UUID>();
@@ -77,9 +80,15 @@ public class ChatListener implements Listener {
         // Substitute variable - thread safe
         String level = "";
         if (playerLevels.containsKey(event.getPlayer().getUniqueId())) {
-            level = String.valueOf(playerLevels.get(event.getPlayer().getUniqueId()));
+            level = playerLevels.get(event.getPlayer().getUniqueId());
         }
-        event.setFormat(event.getFormat().replace("{ISLAND_LEVEL}", level));
+        String format = event.getFormat().replace("{ISLAND_LEVEL}", level);
+        level = "";
+        if (playerChallengeLevels.containsKey(event.getPlayer().getUniqueId())) {
+            level = playerChallengeLevels.get(event.getPlayer().getUniqueId());
+        }
+        format = format.replace("{ISLAND_CHALLENGE_LEVEL}", level);
+        event.setFormat(format);
         // Team chat
         if (Settings.teamChat && teamChatUsers.containsKey(event.getPlayer().getUniqueId())) {
             // Cancel the event
@@ -167,16 +176,34 @@ public class ChatListener implements Listener {
      */
     public void setPlayerLevel(UUID playerUUID, int level) {
         //plugin.getLogger().info("DEBUG: putting " + playerUUID.toString() + " Level " + level);
-        playerLevels.put(playerUUID, level);
+        playerLevels.put(playerUUID, String.valueOf(level));
     }
 
+    /**
+     * Store the player's challenge level for use in their chat tag
+     * @param player
+     */
+    public void setPlayerChallengeLevel(Player player) {
+        //plugin.getLogger().info("DEBUG: setting player's challenge level to " + plugin.getChallenges().getChallengeLevel(player));
+        playerChallengeLevels.put(player.getUniqueId(), plugin.getChallenges().getChallengeLevel(player));
+    }
+    
     /**
      * Return the player's level for use in chat - async safe
      * @param playerUUID
      * @return
      */
-    public int getPlayerLevel(UUID playerUUID) {
+    public String getPlayerLevel(UUID playerUUID) {
         return playerLevels.get(playerUUID);
+    }
+
+    /**
+     * Return the player's challenge level for use in chat - async safe
+     * @param playerUUID
+     * @return
+     */
+    public String getPlayerChallengeLevel(UUID playerUUID) {
+        return playerChallengeLevels.get(playerUUID);
     }
 
     /**

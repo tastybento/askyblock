@@ -41,8 +41,9 @@ public class HeroChatListener implements Listener {
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerHeroChat(final ChannelChatEvent event) {
         try {
-            int level = plugin.getChatListener().getPlayerLevel(event.getSender().getPlayer().getUniqueId());
-            event.setFormat(event.getFormat().replace("{ISLAND_LEVEL}", String.valueOf(level)));
+            String format = event.getFormat().replace("{ISLAND_LEVEL}", plugin.getChatListener().getPlayerLevel(event.getSender().getPlayer().getUniqueId()));
+            format = format.replace("{ISLAND_CHALLENGE_LEVEL}", plugin.getChatListener().getPlayerChallengeLevel(event.getSender().getPlayer().getUniqueId()));
+            event.setFormat(format);
         } catch (Exception e) {
             // Do nothing
         }
