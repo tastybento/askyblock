@@ -24,8 +24,10 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Wither;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
@@ -43,7 +45,7 @@ import com.wasteofplastic.askyblock.Island;
  */
 public class WitherEvents implements Listener {
     private final ASkyBlock plugin;
-    private final boolean debug = false;
+    private final static boolean DEBUG = false;
     private HashMap<UUID, Island> witherSpawnInfo;
     /**
      * @param plugin
@@ -57,9 +59,9 @@ public class WitherEvents implements Listener {
      * Track where the wither was created. This will determine its allowable attack zone.
      * @param event
      */
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void WitherSpawn(CreatureSpawnEvent e) {
-        if (debug) {
+        if (DEBUG) {
             plugin.getLogger().info(e.getEventName());
         }
         // Only cover withers in the island world
@@ -69,14 +71,16 @@ public class WitherEvents implements Listener {
         // Store where this wither originated
         Island island = plugin.getGrid().getIslandAt(e.getLocation());
         if (island != null) {
-            //plugin.getLogger().info("DEBUG: Wither spawned on known island - id = " + e.getEntity().getUniqueId());
+            if (DEBUG) {
+                plugin.getLogger().info("DEBUG: Wither spawned on known island - id = " + e.getEntity().getUniqueId());
+            }
             witherSpawnInfo.put(e.getEntity().getUniqueId(),island);
         } // Else do nothing - maybe an Op spawned it? If so, on their head be it!
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void WitherExplosion(EntityExplodeEvent e) {
-        if (debug) {
+        if (DEBUG) {
             plugin.getLogger().info(e.getEventName());
         }
         // Only cover withers in the island world
@@ -89,10 +93,14 @@ public class WitherEvents implements Listener {
             //plugin.getLogger().info("DEBUG: Wither or wither skull");
             if (witherSpawnInfo.containsKey(e.getEntity().getUniqueId())) {
                 // We know about this wither
-                //plugin.getLogger().info("DEBUG: We know about this wither");
+                if (DEBUG) {
+                    plugin.getLogger().info("DEBUG: We know about this wither");
+                }
                 if (!witherSpawnInfo.get(e.getEntity().getUniqueId()).inIslandSpace(e.getLocation())) {
                     // Cancel the explosion and block damage
-                    //plugin.getLogger().info("DEBUG: cancel");
+                    if (DEBUG) {
+                        plugin.getLogger().info("DEBUG: cancel wither explosion");
+                    }
                     e.blockList().clear();
                     e.setCancelled(true);
                 }
@@ -103,9 +111,9 @@ public class WitherEvents implements Listener {
     /**
      * Deal with pre-explosions
      */
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void WitherExplode(ExplosionPrimeEvent e) {
-        if (debug) {
+        if (DEBUG) {
             plugin.getLogger().info(e.getEventName());
         }
         // Only cover withers in the island world
@@ -118,10 +126,14 @@ public class WitherEvents implements Listener {
             // Check the location
             if (witherSpawnInfo.containsKey(e.getEntity().getUniqueId())) {
                 // We know about this wither
-                //plugin.getLogger().info("DEBUG: We know about this wither");
+                if (DEBUG) {
+                    plugin.getLogger().info("DEBUG: We know about this wither");
+                }
                 if (!witherSpawnInfo.get(e.getEntity().getUniqueId()).inIslandSpace(e.getEntity().getLocation())) {
                     // Cancel the explosion
-                    //plugin.getLogger().info("DEBUG: cancel");
+                    if (DEBUG) {
+                        plugin.getLogger().info("DEBUG: cancelling wither pre-explosion");
+                    }
                     e.setCancelled(true);
                 }
             }
@@ -137,10 +149,14 @@ public class WitherEvents implements Listener {
                 // Check the location
                 if (witherSpawnInfo.containsKey(wither.getUniqueId())) {
                     // We know about this wither
-                    //plugin.getLogger().info("DEBUG: We know about this wither");
+                    if (DEBUG) {
+                        plugin.getLogger().info("DEBUG: We know about this wither");
+                    }
                     if (!witherSpawnInfo.get(wither.getUniqueId()).inIslandSpace(e.getEntity().getLocation())) {
                         // Cancel the explosion
-                        //plugin.getLogger().info("DEBUG: cancel");
+                        if (DEBUG) {
+                            plugin.getLogger().info("DEBUG: cancel wither skull explosion");
+                        }
                         e.setCancelled(true);
                     }
                 }
@@ -149,9 +165,37 @@ public class WitherEvents implements Listener {
     }
 
     /**
+     * Withers change blocks to air after they are hit (don't know why)
+     * This prevents this when the wither has been spawned by a visitor
+     * @param e
+     */
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void WitherChangeBlocks(EntityChangeBlockEvent e) {
+        if (DEBUG) {
+            plugin.getLogger().info(e.getEventName());
+        }
+        // Only cover withers in the island world
+        if (e.getEntityType() != EntityType.WITHER || !IslandGuard.inWorld(e.getEntity()) ) {
+            return;
+        }
+        if (witherSpawnInfo.containsKey(e.getEntity().getUniqueId())) {
+            // We know about this wither
+            if (DEBUG) {
+                plugin.getLogger().info("DEBUG: We know about this wither");
+            }
+            if (!witherSpawnInfo.get(e.getEntity().getUniqueId()).inIslandSpace(e.getEntity().getLocation())) {
+                // Cancel the block changes
+                if (DEBUG) {
+                    plugin.getLogger().info("DEBUG: cancelled wither block change");
+                }
+                e.setCancelled(true);
+            }
+        }
+    }
+    /**
      * Clean up the hashmap. It's probably not needed, but just in case.
      */
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void WitherDeath(EntityDeathEvent e) {
         if (e.getEntityType() == EntityType.WITHER) {
             witherSpawnInfo.remove(e.getEntity().getUniqueId());
