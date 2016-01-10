@@ -95,7 +95,7 @@ public class BiomesPanel implements Listener {
                     // Get friendly name
                     String name = plugin.getConfig().getString("biomes." + biomeName + ".friendlyname", Util.prettifyText(biomeName));
                     // Get description
-                    String description = plugin.getConfig().getString("biomes." + biomeName + ".description", "");
+                    String description = ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("biomes." + biomeName + ".description", ""));
                     // Get confirmation or not
                     boolean confirm = plugin.getConfig().getBoolean("biomes." + biomeName + ".confirm", false);
                     // Add item to list
