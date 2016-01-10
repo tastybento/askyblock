@@ -105,6 +105,7 @@ public class IslandGuard implements Listener {
     private final static boolean DEBUG = false;
     private HashMap<UUID,Vector> onPlate = new HashMap<UUID,Vector>();
     private Set<Location> tntBlocks = new HashSet<Location>();
+    private Set<UUID> litCreeper = new HashSet<UUID>();
 
     public IslandGuard(final ASkyBlock plugin) {
         this.plugin = plugin;
@@ -768,6 +769,15 @@ public class IslandGuard implements Listener {
                             e.blockList().clear();
                         }
                     }
+                    // Check if this creeper was lit by a visitor
+                    if (litCreeper.contains(creeper.getUniqueId())) {
+                        if (DEBUG) {
+                            plugin.getLogger().info("DBEUG: preventing creeper from damaging");
+                        }
+                        litCreeper.remove(creeper.getUniqueId());
+                        e.setCancelled(true);
+                        return;
+                    }
                 }
                 if (!Settings.allowChestDamage) {
                     List<Block> toberemoved = new ArrayList<Block>();
@@ -982,7 +992,15 @@ public class IslandGuard implements Listener {
                     e.setCancelled(true);
                     return;
                 }
-            } 
+            }
+            // Check if this creeper was lit by a visitor
+            if (litCreeper.contains(creeper.getUniqueId())) {
+                if (DEBUG) {
+                    plugin.getLogger().info("DBEUG: preventing creeeper from damaging");
+                }
+                e.setCancelled(true);
+                return;
+            }
         }
         // Ops can do anything
         if (e.getDamager() instanceof Player) {
@@ -1045,8 +1063,22 @@ public class IslandGuard implements Listener {
                 return;
             }
             // Normal island check
-            if (Settings.allowHurtMonsters || island.getMembers().contains(attacker.getUniqueId())) {
+            if (island.getMembers().contains(attacker.getUniqueId())) {
                 // Members always allowed
+                return;
+            }
+            if (Settings.allowHurtMonsters) { 
+                // Check for visitors setting creepers alight using flint steel
+                if (!Settings.allowCreeperGriefing && e.getEntity() instanceof Creeper) {
+                    ItemStack holding = attacker.getItemInHand();
+                    if (holding != null && holding.getType().equals(Material.FLINT_AND_STEEL)) {
+                        // Save this creeper for later when any damage caused by its explosion will be nullified
+                        litCreeper.add(e.getEntity().getUniqueId());
+                        if (DEBUG) {
+                            plugin.getLogger().info("DBEUG: adding to lit creeper set");
+                        }
+                    }
+                }
                 return;
             }
             // Not allowed
@@ -1522,6 +1554,14 @@ public class IslandGuard implements Listener {
                         e.setCancelled(true);
                         return;
                     }
+                }
+                // Check if this creeper was lit by a visitor
+                if (litCreeper.contains(creeper.getUniqueId())) {
+                    if (DEBUG) {
+                        plugin.getLogger().info("DBEUG: preventing creeper from damaging");
+                    }
+                    e.setCancelled(true);
+                    return;
                 }
             }
             if (e.getRemover() instanceof Player) {
@@ -2333,6 +2373,19 @@ public class IslandGuard implements Listener {
                 }
             }
             switch (e.getRightClicked().getType()) {
+            case CREEPER:
+                // This seems to be called when the player is in Creative mode...
+                if (!Settings.allowCreeperGriefing) {
+                    ItemStack item = e.getPlayer().getItemInHand();
+                    if (item != null && item.getType().equals(Material.FLINT_AND_STEEL)) {
+                        if (!island.getMembers().contains(e.getPlayer().getUniqueId())) {
+                            // Visitor
+                            litCreeper.add(e.getRightClicked().getUniqueId());
+                            plugin.getLogger().info("DEBUG: visitor lit creeper");
+                        }
+                    }
+                }
+                break;
             case HORSE:
                 //plugin.getLogger().info("Horse riding");
                 if (island == null && !Settings.allowHorseRiding) {
