@@ -1511,6 +1511,10 @@ public class Challenges implements CommandExecutor, TabCompleter {
                         iconName = "PUMPKIN";
                     } else if (iconName.equalsIgnoreCase("skull")) {
                         iconName = "SKULL_ITEM";
+                    } else if (iconName.equalsIgnoreCase("COCOA")) {
+                        iconName = "INK_SACK:3";
+                    } else if (iconName.equalsIgnoreCase("NETHER_WARTS")) {
+                        iconName = "NETHER_STALK";
                     }
                     if (StringUtils.isNumeric(iconName)) {
                         icon = new ItemStack(Integer.parseInt(iconName));
