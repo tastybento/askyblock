@@ -265,6 +265,9 @@ permissions:
           askyblock.mod.removesign:
             description: Gives ability to remove warp signs
             default: false
+          askyblock.mod.team:
+            description: Enables modification of teams via kick and add commands
+            default: false
       askyblock.admin.*:
         children:
           askyblock.admin.clearresetall:

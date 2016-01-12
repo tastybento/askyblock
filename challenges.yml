@@ -7,7 +7,9 @@
 # inventory - means the player must have the items on them
 # island - means the items have to be on the island and within 10 blocks of the player
 #          entities are also supported, e.g., COW.
-# level - means the island level has to be equal or over this amount
+# level - means the island level has to be equal or over this amount.
+#         If level is set as nothing '', then the challenge is a free challenge and can be
+#         done at any time.
 # Challenges can be repeatable only if they are inventory challenges
 # permissions can be given as a reward
 #
