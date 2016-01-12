@@ -17,9 +17,12 @@
 
 package com.wasteofplastic.askyblock.events;
 
+import java.util.List;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.bukkit.inventory.ItemStack;
 
 /**
  * This event is fired when a player completes a challenge
@@ -36,6 +39,7 @@ public class ChallengeCompleteEvent extends Event {
     private final double moneyReward;
     private final int expReward;
     private final String rewardText;
+    private final List<ItemStack> rewardedItems;
 
     /**
      * @param player
@@ -47,7 +51,7 @@ public class ChallengeCompleteEvent extends Event {
      * @param rewardText
      */
     public ChallengeCompleteEvent(Player player, String challengeName, String[] permList, String[] itemRewards, double moneyReward, int expReward,
-            String rewardText) {
+            String rewardText, List<ItemStack> rewardedItems) {
         this.player = player;
         this.challengeName = challengeName;
         this.permList = permList;
@@ -55,6 +59,7 @@ public class ChallengeCompleteEvent extends Event {
         this.moneyReward = moneyReward;
         this.expReward = expReward;
         this.rewardText = rewardText;
+        this.rewardedItems = rewardedItems;
     }
 
     /**
@@ -104,6 +109,13 @@ public class ChallengeCompleteEvent extends Event {
      */
     public String getRewardText() {
         return rewardText;
+    }
+
+    /**
+     * @return the rewardedItems
+     */
+    public List<ItemStack> getRewardedItems() {
+        return rewardedItems;
     }
 
     @Override

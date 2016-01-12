@@ -17,9 +17,12 @@
 
 package com.wasteofplastic.askyblock.events;
 
+import java.util.List;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.bukkit.inventory.ItemStack;
 
 /**
  * This event is fired when a player completes a challenge level
@@ -32,16 +35,19 @@ public class ChallengeLevelCompleteEvent extends Event {
     private final Player player;
     private final int oldLevel;
     private final int newLevel;
+    private final List<ItemStack> rewardedItems;
 
     /**
      * @param player
      * @param oldLevel
      * @param newLevel
+     * @param rewardedItems 
      */
-    public ChallengeLevelCompleteEvent(Player player, int oldLevel, int newLevel) {
+    public ChallengeLevelCompleteEvent(Player player, int oldLevel, int newLevel, List<ItemStack> rewardedItems) {
         this.player = player;
         this.oldLevel = oldLevel;
         this.newLevel = newLevel;
+        this.rewardedItems = rewardedItems;
     }
 
     /**
@@ -63,6 +69,13 @@ public class ChallengeLevelCompleteEvent extends Event {
      */
     public int getNewLevel() {
         return newLevel;
+    }
+
+    /**
+     * @return the rewardedItems
+     */
+    public List<ItemStack> getRewardedItems() {
+        return rewardedItems;
     }
 
     @Override

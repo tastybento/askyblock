@@ -197,8 +197,6 @@ public class Challenges implements CommandExecutor, TabCompleter {
                     // Fire an event if they are different
                     //plugin.getLogger().info("DEBUG: " + oldLevel + " " + newLevel);
                     if (oldLevel < newLevel) {
-                        ChallengeLevelCompleteEvent event = new ChallengeLevelCompleteEvent(player, oldLevel, newLevel);
-                        plugin.getServer().getPluginManager().callEvent(event);
                         // Update chat
                         plugin.getChatListener().setPlayerChallengeLevel(player);
                         // Run commands and give rewards
@@ -216,7 +214,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
                             if (!rewardDesc.isEmpty()) {
                                 player.sendMessage(ChatColor.GOLD + plugin.myLocale(player.getUniqueId()).challengesrewards + ": " + ChatColor.WHITE + rewardDesc);
                             }
-                            giveItems(player, itemReward);
+                            List<ItemStack> rewardedItems = giveItems(player, itemReward);
                             double moneyReward = getChallengeConfig().getDouble("challenges.levelUnlock." + level + ".moneyReward", 0D);
                             int expReward = getChallengeConfig().getInt("challenges.levelUnlock." + level + ".expReward", 0);
                             if (expReward > 0) {
@@ -242,6 +240,10 @@ public class Challenges implements CommandExecutor, TabCompleter {
                             }
                             List<String> commands = getChallengeConfig().getStringList("challenges.levelUnlock." + level + ".commands");
                             runCommands(player,commands);
+                            // Fire event
+                            ChallengeLevelCompleteEvent event = new ChallengeLevelCompleteEvent(player, oldLevel, newLevel, rewardedItems);
+                            plugin.getServer().getPluginManager().callEvent(event);
+
                         }
                     }
                 }
@@ -340,7 +342,8 @@ public class Challenges implements CommandExecutor, TabCompleter {
             }
         }
         // Give items
-        if (!giveItems(player, itemRewards)) {
+        List<ItemStack> rewardedItems = giveItems(player, itemRewards);
+        if (rewardedItems == null) {
             return false;
         }
 
@@ -360,7 +363,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
         plugin.getPlayers().completeChallenge(player.getUniqueId(), challenge);
         // }
         // Call the Challenge Complete Event
-        final ChallengeCompleteEvent event = new ChallengeCompleteEvent(player, challenge, permList, itemRewards, moneyReward, expReward, rewardText);
+        final ChallengeCompleteEvent event = new ChallengeCompleteEvent(player, challenge, permList, itemRewards, moneyReward, expReward, rewardText, rewardedItems);
         plugin.getServer().getPluginManager().callEvent(event);
         return true;
     }
@@ -400,7 +403,14 @@ public class Challenges implements CommandExecutor, TabCompleter {
         }
     }
 
-    private boolean giveItems(Player player, String[] itemRewards) {
+    /**
+     * Gives player the reward items. 
+     * @param player
+     * @param itemRewards
+     * @return List of ItemStacks that were given to the player or null if there was an error in the interpretation of the rewards
+     */
+    private List<ItemStack> giveItems(Player player, String[] itemRewards) {
+        List<ItemStack> rewardedItems = new ArrayList<ItemStack>();
         Material rewardItem;
         int rewardQty;
         // Build the item stack of rewards to give the player
@@ -414,7 +424,9 @@ public class Challenges implements CommandExecutor, TabCompleter {
                         rewardItem = Material.getMaterial(element[0].toUpperCase());
                     }
                     rewardQty = Integer.parseInt(element[1]);
-                    final HashMap<Integer, ItemStack> leftOvers = player.getInventory().addItem(new ItemStack[] { new ItemStack(rewardItem, rewardQty) });
+                    ItemStack item = new ItemStack(rewardItem, rewardQty);
+                    rewardedItems.add(item);
+                    final HashMap<Integer, ItemStack> leftOvers = player.getInventory().addItem(new ItemStack[] { item });
                     if (!leftOvers.isEmpty()) {
                         player.getWorld().dropItemNaturally(player.getLocation(), leftOvers.get(0));
                     }
@@ -454,7 +466,9 @@ public class Challenges implements CommandExecutor, TabCompleter {
                             plugin.getLogger().severe("Reward potion effect type in config.yml challenges is unknown - skipping!");
                         } else {
                             final Potion rewPotion = new Potion(PotionType.getByEffect(potionType));
-                            final HashMap<Integer, ItemStack> leftOvers = player.getInventory().addItem(new ItemStack[] { rewPotion.toItemStack(rewardQty) });
+                            ItemStack item = rewPotion.toItemStack(rewardQty);
+                            rewardedItems.add(item);
+                            final HashMap<Integer, ItemStack> leftOvers = player.getInventory().addItem(item);
                             if (!leftOvers.isEmpty()) {
                                 player.getWorld().dropItemNaturally(player.getLocation(), leftOvers.get(0));
                             }
@@ -462,8 +476,10 @@ public class Challenges implements CommandExecutor, TabCompleter {
                     } else {
                         // Normal item, not a potion
                         int rewMod = Integer.parseInt(element[1]);
+                        ItemStack item = new ItemStack(rewardItem, rewardQty, (short) rewMod);
+                        rewardedItems.add(item);
                         final HashMap<Integer, ItemStack> leftOvers = player.getInventory().addItem(
-                                new ItemStack[] { new ItemStack(rewardItem, rewardQty, (short) rewMod) });
+                                new ItemStack[] { item });
                         if (!leftOvers.isEmpty()) {
                             player.getWorld().dropItemNaturally(player.getLocation(), leftOvers.get(0));
                         }
@@ -503,7 +519,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
                             plugin.getLogger().severe(materialList.substring(0, materialList.length() - 1));
                         }
                     }
-                    return false;
+                    return null;
                 }
             } else if (element.length == 6) {
                 //plugin.getLogger().info("DEBUG: 6 element reward");
@@ -540,7 +556,9 @@ public class Challenges implements CommandExecutor, TabCompleter {
                                 rewPotion.setSplash(true);
                             }
                             //plugin.getLogger().info("DEBUG: adding items!");
-                            final HashMap<Integer, ItemStack> leftOvers = player.getInventory().addItem(new ItemStack[] { rewPotion.toItemStack(rewardQty) });
+                            ItemStack item = rewPotion.toItemStack(rewardQty);
+                            rewardedItems.add(item);
+                            final HashMap<Integer, ItemStack> leftOvers = player.getInventory().addItem(item);
                             if (!leftOvers.isEmpty()) {
                                 player.getWorld().dropItemNaturally(player.getLocation(), leftOvers.get(0));
                             }
@@ -562,11 +580,11 @@ public class Challenges implements CommandExecutor, TabCompleter {
                         potionNames += p.toString() + ", ";
                     }
                     plugin.getLogger().severe(potionNames.substring(0, potionNames.length()-2));
-                    return false;
+                    return null;
                 }
             }
         }
-        return true;
+        return rewardedItems;
     }
 
     /**
