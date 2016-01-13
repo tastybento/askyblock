@@ -328,31 +328,47 @@ public class IslandGuard implements Listener {
         if (islandTo !=null && islandFrom == null && (islandTo.getOwner() != null || islandTo.isSpawn())) {
             // Entering
             if (islandTo.isSpawn()) {
-                player.sendMessage(plugin.myLocale(player.getUniqueId()).lockEnteringSpawn);
+                if (!plugin.myLocale(player.getUniqueId()).lockEnteringSpawn.isEmpty()) {
+                    player.sendMessage(plugin.myLocale(player.getUniqueId()).lockEnteringSpawn);
+                }
             } else {
-                player.sendMessage(plugin.myLocale(player.getUniqueId()).lockNowEntering.replace("[name]", plugin.getPlayers().getName(islandTo.getOwner())));
+                if (!plugin.myLocale(player.getUniqueId()).lockNowEntering.isEmpty()) {
+                    player.sendMessage(plugin.myLocale(player.getUniqueId()).lockNowEntering.replace("[name]", plugin.getPlayers().getName(islandTo.getOwner())));
+                }
             }
         } else if (islandTo == null && islandFrom != null && (islandFrom.getOwner() != null || islandFrom.isSpawn())) {
             // Leaving
             if (islandFrom.isSpawn()) {
                 // Leaving
-                player.sendMessage(plugin.myLocale(player.getUniqueId()).lockLeavingSpawn);
+                if (!plugin.myLocale(player.getUniqueId()).lockLeavingSpawn.isEmpty()) {
+                    player.sendMessage(plugin.myLocale(player.getUniqueId()).lockLeavingSpawn);
+                }
             } else {
-                player.sendMessage(plugin.myLocale(player.getUniqueId()).lockNowLeaving.replace("[name]", plugin.getPlayers().getName(islandFrom.getOwner())));
+                if (!plugin.myLocale(player.getUniqueId()).lockNowLeaving.isEmpty()) {
+                    player.sendMessage(plugin.myLocale(player.getUniqueId()).lockNowLeaving.replace("[name]", plugin.getPlayers().getName(islandFrom.getOwner())));
+                }
             }
         } else if (islandTo != null && islandFrom !=null && !islandTo.equals(islandFrom)) {
             // Adjacent islands or overlapping protections
             if (islandFrom.isSpawn()) {
                 // Leaving
-                player.sendMessage(plugin.myLocale(player.getUniqueId()).lockLeavingSpawn);
+                if (!plugin.myLocale(player.getUniqueId()).lockLeavingSpawn.isEmpty()) {
+                    player.sendMessage(plugin.myLocale(player.getUniqueId()).lockLeavingSpawn);
+                }
             } else if (islandFrom.getOwner() != null){
-                player.sendMessage(plugin.myLocale(player.getUniqueId()).lockNowLeaving.replace("[name]", plugin.getPlayers().getName(islandFrom.getOwner())));
+                if (!plugin.myLocale(player.getUniqueId()).lockNowLeaving.isEmpty()) {
+                    player.sendMessage(plugin.myLocale(player.getUniqueId()).lockNowLeaving.replace("[name]", plugin.getPlayers().getName(islandFrom.getOwner())));
+                }
             }
             if (islandTo.isSpawn()) {
-                player.sendMessage(plugin.myLocale(player.getUniqueId()).lockEnteringSpawn);
-            } else if (islandTo.getOwner() != null){
-                player.sendMessage(plugin.myLocale(player.getUniqueId()).lockNowEntering.replace("[name]", plugin.getPlayers().getName(islandTo.getOwner())));
-            }    
+                if (!plugin.myLocale(player.getUniqueId()).lockEnteringSpawn.isEmpty()) {
+                    player.sendMessage(plugin.myLocale(player.getUniqueId()).lockEnteringSpawn);
+                }
+            } else if (islandTo.getOwner() != null) {
+                if (!plugin.myLocale(player.getUniqueId()).lockNowEntering.isEmpty()) {
+                    player.sendMessage(plugin.myLocale(player.getUniqueId()).lockNowEntering.replace("[name]", plugin.getPlayers().getName(islandTo.getOwner())));
+                }
+            }
         }	
     }
 
@@ -477,9 +493,13 @@ public class IslandGuard implements Listener {
                 e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).lockIslandLocked);
             }
             if (islandTo.isSpawn()) {
-                e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).lockEnteringSpawn);
+                if (!plugin.myLocale(e.getPlayer().getUniqueId()).lockEnteringSpawn.isEmpty()) {
+                    e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).lockEnteringSpawn);
+                }
             } else {
-                e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).lockNowEntering.replace("[name]", plugin.getPlayers().getName(islandTo.getOwner())));
+                if (!plugin.myLocale(e.getPlayer().getUniqueId()).lockNowEntering.isEmpty()) {
+                    e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).lockNowEntering.replace("[name]", plugin.getPlayers().getName(islandTo.getOwner())));
+                }
             }
             // Fire entry event
             final IslandEnterEvent event = new IslandEnterEvent(e.getPlayer().getUniqueId(), islandTo, e.getTo());
@@ -488,9 +508,13 @@ public class IslandGuard implements Listener {
             // Leaving
             if (islandFrom.isSpawn()) {
                 // Leaving
-                e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).lockLeavingSpawn);
+                if (!plugin.myLocale(e.getPlayer().getUniqueId()).lockLeavingSpawn.isEmpty()) {
+                    e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).lockLeavingSpawn);
+                }
             } else {
-                e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).lockNowLeaving.replace("[name]", plugin.getPlayers().getName(islandFrom.getOwner())));
+                if (!plugin.myLocale(e.getPlayer().getUniqueId()).lockNowLeaving.isEmpty()) {
+                    e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).lockNowLeaving.replace("[name]", plugin.getPlayers().getName(islandFrom.getOwner())));
+                }
             }
             // Fire exit event
             final IslandExitEvent event = new IslandExitEvent(e.getPlayer().getUniqueId(), islandFrom, e.getFrom());
