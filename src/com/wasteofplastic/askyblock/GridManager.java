@@ -21,7 +21,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -482,12 +481,14 @@ public class GridManager {
      * @return PlayerIsland object
      */
     public Island getProtectedIslandAt(Location location) {
+        //plugin.getLogger().info("DEBUG: getProtectedIslandAt " + location);
         // Try spawn
         if (spawn != null && spawn.onIsland(location)) {
             return spawn;
         }
         Island island = getIslandAt(location);
         if (island == null) {
+            //plugin.getLogger().info("DEBUG: no island at this location");
             return null;
         }
         if (island.onIsland(location)) {

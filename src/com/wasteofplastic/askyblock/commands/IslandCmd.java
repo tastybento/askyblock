@@ -37,7 +37,6 @@ import java.util.UUID;
 import net.milkbowl.vault.economy.EconomyResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -2257,7 +2256,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                                 if (perms.getPermission().startsWith(Settings.PERMPREFIX + "team.maxsize.")) {
                                                     // Prevent the situation where the player has 
                                                     String[] permSplit = perms.getPermission().split(Settings.PERMPREFIX + "team.maxsize.");
-                                                    if (permSplit.length == 2 && NumberUtils.isNumber(permSplit[1])) {
+                                                    if (permSplit.length == 2) {
                                                         try {
                                                             maxSize = Integer.valueOf(permSplit[1]);
                                                         } catch (Exception e) {
@@ -2874,6 +2873,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
             plugin.getGrid().removePlayersFromIsland(oldIsland, player.getUniqueId());
             //plugin.getLogger().info("DEBUG Deleting old island");
             new DeleteIslandChunk(plugin, oldIsland);
+            //new DeleteIslandByBlock(plugin, oldIsland);
             // Fire event
             final IslandResetEvent event = new IslandResetEvent(player, oldIsland.getCenter());
             plugin.getServer().getPluginManager().callEvent(event);

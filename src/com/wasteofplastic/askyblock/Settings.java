@@ -263,6 +263,7 @@ public class Settings {
     public static HashMap<String,Integer> limitedBlocks;
     public static long pvpRestartCooldown;
     public static long backupDuration;
+    public static boolean cleanUpBlocks;
 
 
 

@@ -1571,6 +1571,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
         // Reset the biome
         plugin.getBiomes().setIslandBiome(island.getCenter(), Settings.defaultBiome);
         new DeleteIslandChunk(plugin, island);
+        //new DeleteIslandByBlock(plugin, island);
         plugin.getGrid().saveGrid();
     }
 
@@ -1773,16 +1774,16 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                     return;
                 }
             }
+            sender.sendMessage(ChatColor.YELLOW + plugin.myLocale().adminSetSpawncenter.replace("[location]", island.getCenter().getBlockX() + "," + island.getCenter().getBlockZ()));
+            sender.sendMessage(ChatColor.YELLOW + (plugin.myLocale().adminSetSpawnlimits.replace("[min]", island.getMinX() + "," + island.getMinZ())).replace("[max]",
+                    (island.getMinX() + island.getIslandDistance() - 1) + "," + (island.getMinZ() + island.getIslandDistance() - 1)));
+            sender.sendMessage(ChatColor.YELLOW + plugin.myLocale().adminSetSpawnrange.replace("[number]",String.valueOf(island.getProtectionSize())));
+            sender.sendMessage(ChatColor.YELLOW + (plugin.myLocale().adminSetSpawncoords.replace("[min]",  (island.getMinProtectedX() + 1) + ", " + (island.getMinProtectedZ() + 1))).replace("[max]",
+                    + (island.getMinProtectedX() + island.getProtectionSize() - 1) + ", "
+                            + (island.getMinProtectedZ() + island.getProtectionSize() - 1)));
             if (island.isSpawn()) {
-                sender.sendMessage(ChatColor.YELLOW + plugin.myLocale().adminSetSpawncenter.replace("[location]", island.getCenter().getBlockX() + "," + island.getCenter().getBlockZ()));
-                sender.sendMessage(ChatColor.YELLOW + (plugin.myLocale().adminSetSpawnlimits.replace("[min]", island.getMinX() + "," + island.getMinZ())).replace("[max]",
-                        (island.getMinX() + island.getIslandDistance() - 1) + "," + (island.getMinZ() + island.getIslandDistance() - 1)));
-                sender.sendMessage(ChatColor.YELLOW + plugin.myLocale().adminSetSpawnrange.replace("[number]",String.valueOf(island.getProtectionSize())));
-                sender.sendMessage(ChatColor.YELLOW + (plugin.myLocale().adminSetSpawncoords.replace("[min]",  island.getMinProtectedX() + ", " + island.getMinProtectedZ())).replace("[max]",
-                        + (island.getMinProtectedX() + island.getProtectionSize() - 1) + ", "
-                                + (island.getMinProtectedZ() + island.getProtectionSize() - 1)));
                 sender.sendMessage(ChatColor.YELLOW + plugin.myLocale().adminInfoIsSpawn);
-            }
+            } 
             if (island.isLocked()) {
                 sender.sendMessage(ChatColor.YELLOW + plugin.myLocale().adminInfoIsLocked);
             } else {

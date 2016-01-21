@@ -1329,6 +1329,7 @@ public class IslandGuard implements Listener {
             if (e.getPlayer().isOp() || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
                 return;
             }
+            //plugin.getLogger().info("DEBUG: checking is inside protection area");
             Island island = plugin.getGrid().getProtectedIslandAt(e.getBlock().getLocation());
             // Outside of island protection zone
             if (island == null) {

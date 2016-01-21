@@ -320,11 +320,22 @@ public class Island implements Cloneable {
     public boolean onIsland(Location target) {
         if (world != null) {
             // If the new nether is being used, islands exist in the nether too
+            //plugin.getLogger().info("DEBUG: target x = " + target.getBlockX() + " target z = " + target.getBlockZ());
+            //plugin.getLogger().info("DEBUG: min prot x = " + minProtectedX + " min z = " + minProtectedZ);
+            //plugin.getLogger().info("DEBUG: max x = " + (minProtectedX + protectionRange) + " max z = " + (minProtectedZ + protectionRange));
+            
             if (target.getWorld().equals(world) || (Settings.createNether && Settings.newNether && target.getWorld().equals(ASkyBlock.getNetherWorld()))) {
-                if (target.getX() >= center.getBlockX() - protectionRange / 2 && target.getX() < center.getBlockX() + protectionRange / 2
-                        && target.getZ() >= center.getBlockZ() - protectionRange / 2 && target.getZ() < center.getBlockZ() + protectionRange / 2) {
+                if (target.getBlockX() >= minProtectedX && target.getBlockX() < (minProtectedX + protectionRange)
+                        && target.getBlockZ() >= minProtectedZ && target.getBlockZ() < (minProtectedZ + protectionRange)) {
                     return true;
                 }
+                /*
+                if (target.getX() >= center.getBlockX() - protectionRange / 2 && target.getX() < center.getBlockX() + protectionRange / 2
+                        && target.getZ() >= center.getBlockZ() - protectionRange / 2 && target.getZ() < center.getBlockZ() + protectionRange / 2) {
+                
+                    return true;
+                }
+                */
             }
         }
         return false;

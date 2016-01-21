@@ -604,6 +604,7 @@ public class ASkyBlock extends JavaPlugin {
             if (removeBlocks) {
                 grid.removePlayersFromIsland(island, player);
                 new DeleteIslandChunk(this, island);
+                //new DeleteIslandByBlock(this, island);
             } else {
                 island.setLocked(false);
                 grid.setIslandOwner(island, null);
@@ -1382,6 +1383,8 @@ public class ASkyBlock extends JavaPlugin {
         Settings.mobLimit = getConfig().getInt("general.moblimit", 0);
         Settings.removeCompleteOntimeChallenges = getConfig().getBoolean("general.removecompleteonetimechallenges", false);
         Settings.addCompletedGlow = getConfig().getBoolean("general.addcompletedglow", true);
+        // Clean up blocks around edges when deleting islands
+        Settings.cleanUpBlocks = getConfig().getBoolean("island.cleanupblocks",false);
         // All done
         return true;
     }

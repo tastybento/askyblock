@@ -1529,7 +1529,7 @@ public class Schematic {
      * @throws InvocationTargetException
      * @throws NoSuchMethodException
      */
-    private NMSAbstraction checkVersion() throws ClassNotFoundException, IllegalArgumentException,
+    public NMSAbstraction checkVersion() throws ClassNotFoundException, IllegalArgumentException,
     SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException,
     NoSuchMethodException {
         String serverPackageName = plugin.getServer().getClass().getPackage().getName();
