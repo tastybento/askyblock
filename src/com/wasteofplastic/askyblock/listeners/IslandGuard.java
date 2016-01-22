@@ -912,6 +912,16 @@ public class IslandGuard implements Listener {
         }
     }
 
+/*    
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = false)
+    public void onBlockBreakCheck(final BlockPhysicsEvent e) {
+        if (DEBUG) {
+            plugin.getLogger().info("DEBUG: check: " + e.getEventName());
+            plugin.getLogger().info("DEBUG: block is " + e.getBlock());
+        }
+    }
+*/    
+    
     /**
      * Prevents blocks from being broken
      * 
@@ -1379,6 +1389,7 @@ public class IslandGuard implements Listener {
     public void onPlayerBlockPlace(final BlockMultiPlaceEvent e) {
         if (DEBUG) {
             plugin.getLogger().info(e.getEventName());
+            plugin.getLogger().info("Block being placed " + e.getBlock());
         }
         // plugin.getLogger().info(e.getEventName());
         if (inWorld(e.getPlayer())) {
@@ -1429,7 +1440,7 @@ public class IslandGuard implements Listener {
             e.setCancelled(true);
         }
     }
-
+    
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerLeashHitch(final HangingPlaceEvent e) {
         if (DEBUG) {
@@ -2238,7 +2249,8 @@ public class IslandGuard implements Listener {
         if (e.getMaterial() != null) {
             // This check protects against an exploit in 1.7.9 against cactus
             // and sugar cane
-            if (e.getMaterial() == Material.WOOD_DOOR) {
+            if (e.getMaterial() == Material.WOOD_DOOR || e.getMaterial() == Material.CHEST 
+                    || e.getMaterial() == Material.TRAPPED_CHEST || e.getMaterial() == Material.IRON_DOOR) {
                 e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                 e.setCancelled(true);
                 e.getPlayer().updateInventory();
