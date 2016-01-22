@@ -285,16 +285,26 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                         newSchem.setOrder(schemSection.getInt("schematics." + key + ".order", 0));
                         // Load the rest of the settings
                         // Icon
-                        try { 
+                        try {
+                                            
                             Material icon;
                             String iconString = schemSection.getString("schematics." + key + ".icon","MAP").toUpperCase();
-                            if (StringUtils.isNumeric(iconString)) {
+                            // Support damage values
+                            String[] split = iconString.split(":");                            
+                            if (StringUtils.isNumeric(split[0])) {
                                 icon = Material.getMaterial(Integer.parseInt(iconString));
                             } else {
-                                icon = Material.valueOf(iconString);
+                                icon = Material.valueOf(split[0]);
                             }
-                            newSchem.setIcon(icon);
+                            int damage = 0;
+                            if (split.length == 2) {
+                                if (StringUtils.isNumeric(split[1])) {
+                                   damage = Integer.parseInt(split[1]);
+                                }  
+                            }
+                            newSchem.setIcon(icon, damage);
                         } catch (Exception e) {
+                            //e.printStackTrace();
                             newSchem.setIcon(Material.MAP); 
                         }
                         // Friendly name

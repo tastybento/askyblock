@@ -77,6 +77,7 @@ public class SPItem {
         this.heading = schematic.getHeading();
         this.description.clear();
         this.item = new ItemStack(schematic.getIcon());
+        this.item.setDurability((short)schematic.getDurability());
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(name);
         // This neat bit of code makes a list out of the description split by new line character

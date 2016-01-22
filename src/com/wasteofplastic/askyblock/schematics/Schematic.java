@@ -123,6 +123,7 @@ public class Schematic {
     private Map<Byte, Rotation> rotationList = new HashMap<Byte, Rotation>();
     private List<IslandBlock> islandBlocks;
     private boolean pasteAir;
+    private int durability;
 
     public Schematic(ASkyBlock plugin) {
         this.plugin = plugin;
@@ -649,6 +650,13 @@ public class Schematic {
     }
 
     /**
+     * @return the durability of the icon
+     */
+    public int getDurability() {
+        return durability;
+    }
+
+    /**
      * @return the length
      */
     public short getLength() {
@@ -1138,6 +1146,10 @@ public class Schematic {
         this.heading = heading;
     }
 
+    public void setIcon(Material icon, int damage) {
+        this.icon = icon;
+        this.durability = damage;    
+    }
     /**
      * @param icon the icon to set
      */
