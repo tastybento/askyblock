@@ -262,12 +262,12 @@ public class Challenges implements CommandExecutor, TabCompleter {
     private int getLevelDone(Player player) {
         //plugin.getLogger().info("DEBUG: checking level completed");
         //plugin.getLogger().info("DEBUG: getting challenge level for " + player.getName());
-        for (int result = 1; result <= Settings.challengeLevels.size(); result++) {
-            if (checkLevelCompletion(player, Settings.challengeLevels.get(result - 1)) > 0) {
+        for (int result = 0; result < Settings.challengeLevels.size(); result++) {
+            if (checkLevelCompletion(player, Settings.challengeLevels.get(result)) > 0) {
                 return result;
             }
         }
-        return Settings.challengeLevels.size();
+        return (Settings.challengeLevels.size()-1);
     }
 
     /**
