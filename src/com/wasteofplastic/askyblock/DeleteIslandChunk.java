@@ -138,28 +138,30 @@ public class DeleteIslandChunk {
                 }
                 // Nether
                 //plugin.getLogger().info("DEBUG: Adding nether blocks");
-                for (ChunkSnapshot snap1 : finalNetherChunk) {
-                    // Run through the x and z coords and determine if the chunk is within the safe area
-                    if (!(snap1.getX() * 16 >= minxX && snap1.getZ() * 16 >= minzZ
-                            && snap1.getX() * 16 + 15 <= maxxX && snap1.getZ() * 16 + 15 <= maxzZ)) {
-                        // We need to delete the blocks one by one
-                        for (int x = 0; x < 16; x++) {
-                            for (int z = 0; z <16; z++) {
-                                // Check if inside the protected area
-                                if (snap1.getX() * 16  + x >= minx && snap1.getZ() * 16 + z >= minz
-                                        && snap1.getX() * 16 + x < maxx && snap1.getZ() * 16 + z < maxz) {
-                                    // We cannot currently clean up the ceiling if it has to be done by blocks...
-                                    for (int y = 0; y < ASkyBlock.getIslandWorld().getMaxHeight() - 16; y++) {                                        
-                                        // If the block is not already air, set it to air
-                                        // Only air in the nether
-                                        if (snap1.getBlockTypeId(x, y, z) != Material.AIR.getId()) {
-                                            blocksToClear.put(new Location(ASkyBlock.getNetherWorld(),snap1.getX() * 16 + x, y, snap1.getZ() * 16 + z), Material.AIR);
-                                        }                                       
+                if (Settings.createNether && Settings.newNether) {
+                    for (ChunkSnapshot snap1 : finalNetherChunk) {
+                        // Run through the x and z coords and determine if the chunk is within the safe area
+                        if (!(snap1.getX() * 16 >= minxX && snap1.getZ() * 16 >= minzZ
+                                && snap1.getX() * 16 + 15 <= maxxX && snap1.getZ() * 16 + 15 <= maxzZ)) {
+                            // We need to delete the blocks one by one
+                            for (int x = 0; x < 16; x++) {
+                                for (int z = 0; z <16; z++) {
+                                    // Check if inside the protected area
+                                    if (snap1.getX() * 16  + x >= minx && snap1.getZ() * 16 + z >= minz
+                                            && snap1.getX() * 16 + x < maxx && snap1.getZ() * 16 + z < maxz) {
+                                        // We cannot currently clean up the ceiling if it has to be done by blocks...
+                                        for (int y = 0; y < ASkyBlock.getNetherWorld().getMaxHeight() - 16; y++) {                                        
+                                            // If the block is not already air, set it to air
+                                            // Only air in the nether
+                                            if (snap1.getBlockTypeId(x, y, z) != Material.AIR.getId()) {
+                                                blocksToClear.put(new Location(ASkyBlock.getNetherWorld(),snap1.getX() * 16 + x, y, snap1.getZ() * 16 + z), Material.AIR);
+                                            }                                       
+                                        }
                                     }
                                 }
                             }
+                            //plugin.getLogger().info("DEBUG: Blocks to clear (+nether) = " + blocksToClear.size());
                         }
-                        //plugin.getLogger().info("DEBUG: Blocks to clear (+nether) = " + blocksToClear.size());
                     }
                 }
                 // Now that we have determined what chunks and blocks need to be changed we need to enter bukkit sync space
@@ -202,7 +204,9 @@ public class DeleteIslandChunk {
                             Pair entry = it1.next();
                             //plugin.getLogger().info("DEBUG: regenerating chunk " + entry.getLeft() + "," + entry.getRight());
                             ASkyBlock.getIslandWorld().regenerateChunk(entry.getLeft(), entry.getRight());
-                            ASkyBlock.getNetherWorld().regenerateChunk(entry.getLeft(), entry.getRight());
+                            if (Settings.createNether && Settings.newNether) {
+                                ASkyBlock.getNetherWorld().regenerateChunk(entry.getLeft(), entry.getRight());
+                            }
                             it1.remove();
                             //count++;
                         }
@@ -241,7 +245,7 @@ public class DeleteIslandChunk {
             if (Settings.cleanUpBlocks) {
                 plugin.getLogger().severe("Island deletion will be very laggy! Recommend to not use block clean up setting!");
             }
-              
+
             try {
                 clazz = Class.forName(pluginPackageName + ".nms.fallback.NMSHandler");
             } catch (ClassNotFoundException e1) {
