@@ -267,7 +267,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
                 return result;
             }
         }
-        return (Settings.challengeLevels.size()-1);
+        return (Math.max(0,Settings.challengeLevels.size()-1));
     }
 
     /**
@@ -1844,7 +1844,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
         //plugin.getLogger().info("DEBUG: getting challenge level for " + player.getName());
         if (Settings.challengeLevels.isEmpty()) {
             return "";
-        }
-        return Settings.challengeLevels.get(getLevelDone(player) - 1);
+        }      
+        return Settings.challengeLevels.get(getLevelDone(player));
     }
 }

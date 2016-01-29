@@ -299,10 +299,11 @@ public class IslandBlock {
         List<String> text = new ArrayList<String>();
         for (int i = 1; i < 5; i++) {
             String line = ((StringTag) tileData.get("Text" + String.valueOf(i))).getValue();
-            // The tag could be null
-            if (line == null) {
+            // This value can actually be a string that says null sometimes.
+            if (line.equalsIgnoreCase("null")) {
                 line = "";
             }
+            //System.out.println("DEBUG: line " + i + " = '"+ line + "' of length " + line.length());
             text.add(line);
         }
 
