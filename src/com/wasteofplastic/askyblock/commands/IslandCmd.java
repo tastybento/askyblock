@@ -483,6 +483,9 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                         } else {
                             // plugin.getLogger().info("No spawn block found");
                         }
+                        // Level handicap
+                        newSchem.setLevelHandicap(schemSection.getInt("schematics." + key + ".levelHandicap", 0));
+                        
                         // Store it
                         schematics.put(key, newSchem);
                         if (perm.isEmpty()) {
@@ -802,16 +805,16 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
         // Show fancy titles!
         if (!plugin.myLocale(player.getUniqueId()).islandSubTitle.isEmpty()) {
             plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(),
-                    "title " + player.getName() + " subtitle {text:\"" + plugin.myLocale(player.getUniqueId()).islandSubTitle + "\", color:blue}");
+                    "title " + player.getName() + " subtitle {text:\"" + plugin.myLocale(player.getUniqueId()).islandSubTitle + "\", color:" + plugin.myLocale(player.getUniqueId()).islandSubTitleColor + "}");
         }
         if (!plugin.myLocale(player.getUniqueId()).islandTitle.isEmpty()) {
             plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(),
-                    "title " + player.getName() + " title {text:\"" + plugin.myLocale(player.getUniqueId()).islandTitle + "\", color:gold}");
+                    "title " + player.getName() + " title {text:\"" + plugin.myLocale(player.getUniqueId()).islandTitle + "\", color:" + plugin.myLocale(player.getUniqueId()).islandTitleColor + "}");
         }
         if (!plugin.myLocale(player.getUniqueId()).islandDonate.isEmpty() && !plugin.myLocale(player.getUniqueId()).islandURL.isEmpty()) {
             plugin.getServer().dispatchCommand(
                     plugin.getServer().getConsoleSender(),
-                    "tellraw " + player.getName() + " {text:\"" + plugin.myLocale(player.getUniqueId()).islandDonate + "\",color:aqua" + ",clickEvent:{action:open_url,value:\""
+                    "tellraw " + player.getName() + " {text:\"" + plugin.myLocale(player.getUniqueId()).islandDonate + "\",color:" + plugin.myLocale(player.getUniqueId()).islandDonateColor + ",clickEvent:{action:open_url,value:\""
                             + plugin.myLocale(player.getUniqueId()).islandURL + "\"}}");
         }
         // Run any commands that need to be run at the start

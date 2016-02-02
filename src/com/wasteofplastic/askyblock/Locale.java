@@ -18,6 +18,9 @@ package com.wasteofplastic.askyblock;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -31,6 +34,25 @@ import org.bukkit.configuration.file.YamlConfiguration;
  * @author tastybento
  */
 public class Locale {
+    
+    private final static Set<String> TITLE_COLORS = new HashSet<String>(Arrays.asList(
+            "black",
+            "dark_blue",
+            "dark_green",
+            "dark_aqua",
+            "dark_red",
+            "dark_purple",
+            "gold",
+            "gray",
+            "dark_gray",
+            "blue",
+            "green",
+            "aqua",
+            "red",
+            "light_purple",
+            "yellow",
+            "white"
+            ));
 
     // Localization Strings
     private FileConfiguration locale = null;
@@ -409,6 +431,9 @@ public class Locale {
     public String islandTitle;
     public String islandDonate;
     public String islandURL;
+    public String islandSubTitleColor;
+    public String islandTitleColor;
+    public String islandDonateColor;
     public String adminHelpunregister;
     public String adminHelpSetRange;
     public String challengeserrorRewardProblem;
@@ -870,6 +895,9 @@ public class Locale {
         islandDonate = locale.getString("island.donate", "ASkyBlock by tastybento, click here to donate via PayPal!");
         islandTitle = locale.getString("island.title", "A SkyBlock");
         islandURL = locale.getString("island.url", "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZSBJG5J2E3B7U");
+        islandSubTitleColor = colorCheck(locale.getString("island.subtitlecolor", "blue"));
+        islandDonateColor = colorCheck(locale.getString("island.donatecolor", "aqua"));
+        islandTitleColor = colorCheck(locale.getString("island.titlecolor", "gold"));
         islanderrorCouldNotCreateIsland = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("island.errorCouldNotCreateIsland", "Could not create your Island. Please contact a server moderator."));
         islanderrorYouDoNotHavePermission = ChatColor.translateAlternateColorCodes('&',
@@ -1278,5 +1306,22 @@ public class Locale {
         generalSuccess = ChatColor.translateAlternateColorCodes('&', locale.getString("general.success", "Success!"));
         adminHelpReserve = ChatColor.translateAlternateColorCodes('&', locale.getString("adminHelp.reserve", "reserves this spot for player's next island"));
         adminReserveIslandExists = ChatColor.translateAlternateColorCodes('&', locale.getString("adminReserve.islandExists", "There is an island here already! Register the player instead!"));
+    }
+
+    /**
+     * Checks that the color supplied is a valid color
+     * @param string
+     * @return color
+     */
+    private String colorCheck(String string) {
+        string = string.toLowerCase();
+        if (TITLE_COLORS.contains(string)) {
+            return string;
+        }
+        plugin.getLogger().severe("Title color " + string + " is unknown. Use one from this list:");
+        for (String color : TITLE_COLORS) {
+            plugin.getLogger().severe(color);
+        }
+        return "white";
     }
 }

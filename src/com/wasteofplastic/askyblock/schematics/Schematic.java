@@ -124,6 +124,7 @@ public class Schematic {
     private List<IslandBlock> islandBlocks;
     private boolean pasteAir;
     private int durability;
+    private int levelHandicap;
 
     public Schematic(ASkyBlock plugin) {
         this.plugin = plugin;
@@ -1563,6 +1564,20 @@ public class Schematic {
         } else {
             throw new IllegalStateException("Class " + clazz.getName() + " does not implement NMSAbstraction");
         }
+    }
+
+    /**
+     * @return the levelHandicap
+     */
+    public int getLevelHandicap() {
+        return levelHandicap;
+    }
+
+    /**
+     * @param levelHandicap the levelHandicap to set
+     */
+    public void setLevelHandicap(int levelHandicap) {
+        this.levelHandicap = levelHandicap;
     }
 
 }

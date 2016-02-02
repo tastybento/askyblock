@@ -384,7 +384,7 @@ public class ASkyBlockAPI {
     public Island getIslandOwnedBy(UUID playerUUID) {
         return (Island)plugin.getGrid().getIsland(playerUUID).clone();
     }
-    
+
     /**
      * Returns a copy of the Island object for an island at this location or null if one does not exist
      * @param location
@@ -393,12 +393,29 @@ public class ASkyBlockAPI {
     public Island getIslandAt(Location location) {
         return (Island)plugin.getGrid().getIslandAt(location);
     }
-    
+
     /**
      * @return how many islands are in the world (that the plugin knows of)
      */
     public int getIslandCount() {
         return plugin.getGrid().getIslandCount();
     }
-    
+
+    /**
+     * Get a copy of the ownership map of islands
+     * @return Hashmap of owned islands with owner UUID as a key
+     */
+    public HashMap<UUID, Island> getOwnedIslands() {
+        //System.out.println("DEBUG: getOwnedIslands");
+        if (plugin.getGrid() != null) {
+            HashMap<UUID, Island> islands = plugin.getGrid().getOwnedIslands();
+            if (islands != null) {
+                //plugin.getLogger().info("DEBUG: getOwnedIslands is not null");
+                return new HashMap<UUID, Island>(islands);
+            }
+            //plugin.getLogger().info("DEBUG: getOwnedIslands is null");
+        }
+        return new HashMap<UUID, Island>();
+
+    }
 }

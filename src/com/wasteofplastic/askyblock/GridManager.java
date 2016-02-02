@@ -1571,4 +1571,13 @@ public class GridManager {
         return ownershipMap.size();
     }
 
+    /**
+     * Get the ownership map of islands
+     * @return Hashmap of owned islands with owner UUID as a key
+     * 
+     */
+    public HashMap<UUID, Island> getOwnedIslands() {
+        return ownershipMap;
+    }
+
 }
