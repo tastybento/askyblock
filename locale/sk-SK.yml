@@ -134,6 +134,7 @@ invite:
 island: 
   cannotTeleport: "Nemozes sa portnut ked padas!"
   donate: "A SkyBlock by tastybento"
+  donatecolor: "aqua"
   errorCouldNotCreateIsland: "Nemozem vytvorit ostrov. Nahlas to do bugtrackera na fore!"
   errorInvalidPlayer: "Hrac je zle zadany, alebo nema ostrov"
   errorLevelNotReady: "Tento prikaz teraz nemozes pouzit. Skus to neskor"
@@ -172,8 +173,10 @@ island:
   resetWait: "musis cakat [time] sekund nez mozes vykonat tuto akciu znovu."
   resetYouHave: "Ostava ti [number] restartov ostrova."
   subtitle: "Zacina sa dobrodruzstvo!"
+  subtitlecolor: "blue"
   teleport: "Vitaj na svojom ostrove. (Pouzi /[label] help pre viac info)"
-  title: Skyblock
+  title: "A Skyblock"
+  titlecolor: "gold"
   url: ""
 islandProtected: "Ostrov je chraneny."
 islandguardsettings: 

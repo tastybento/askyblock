@@ -226,7 +226,8 @@ invite:
   youHaveJoinedAnIsland: "Je hebt een eiland gejoined! Gebruik /[label] team om je teamleden te zien."
 island: 
   cannotTeleport: "Je kan niet teleporteren tijdens het vallen!"
-  donate: "Credits in spawn"
+  donate: "Plugin by tastybento"
+  donatecolor: "aqua"
   errorCouldNotCreateIsland: "Kan het eiland niet maken. Neem contact op met een moderator."
   errorInvalidPlayer: "Die speler bestaat niet of heeft geen eiland!"
   errorLevelNotReady: "Kan dat commando nu niet uitvoeren! Probeer het later nog een keer."
@@ -264,9 +265,11 @@ island:
   resetTo: "Reset limiet gereset"
   resetWait: "Je moet nog [time] seconden wachten voordat je dat weer kan doen."
   resetYouHave: "Je hebt [number] resets over."
-  subtitle: ""
+  subtitle: "by tastybento"
+  subtitlecolor: "blue"
   teleport: "Teleporteren naar je eiland. (/[label] help voor meer info)"
-  title: Skyblock
+  title: "A Skyblock"
+  titlecolor: "gold"
   url: ""
 islandProtected: "Eiland beschermd."
 islandguardsettings: 

@@ -179,6 +179,7 @@ invite:
 island: 
   cannotTeleport: §c你无法在下落过程中进行传送!
   donate: §a本汉化由§e§l梦之地§a提供
+  donatecolor: "aqua"
   errorCouldNotCreateIsland: "§c无法为你创建岛屿. 请联系管理员."
   errorInvalidPlayer: §c玩家不存在或者他不曾拥有一个岛屿!
   errorLevelNotReady: §c请稍等数秒后再输入此指令!.
@@ -217,8 +218,10 @@ island:
   resetWait: "§c你需要等待 §e[time] 秒§c才能那样做."
   resetYouHave: "§6你还有§b [number] §6次重新开始的机会."
   subtitle: §a§l请务必努力生存下去
+  subtitlecolor: "blue"
   teleport: "§b[岛屿娘]:§6欢饮回来~我的主人. §e(输入§c/[label] help §e获取更多帮助)"
-  title: §c§lASkyBlock
+  title: ASkyBlock
+  titlecolor: "gold"
   url: ""
 islandProtected: 岛屿保护.
 islandguardsettings: 

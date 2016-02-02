@@ -221,6 +221,7 @@ invite:
 island: 
   cannotTeleport: "Vous ne pouvez pas vous téléporter quand vous tombez "
   donate: "Bienvenue sur ASkyblock par Tastybento - traduction par MrSheepSheep"
+  donatecolor: "aqua"
   errorCouldNotCreateIsland: "Impossible de creér une nouvelle île. Contactez un modérateur / administrateur."
   errorInvalidPlayer: "Ce joueur est invalide ou n'a pas d'île !"
   errorLevelNotReady: "Vous ne pouvez pas utiliser ça maintenant! Essayez à nouveau dans quelques secondes."
@@ -259,8 +260,10 @@ island:
   resetWait: "Vous devez attendre [time] secondes avant de pouvoir faire ça à nouveau."
   resetYouHave: "Vous avez [number] réinitalisations restantes."
   subtitle: "Ne tombez pas !"
+  subtitlecolor: "blue"
   teleport: "Téléportation sur votre île"
   title: "Bonne chance"
+  titlecolor: "gold"
   url: ""
 islandProtected: "Ile protégée"
 islandguardsettings: 

@@ -676,9 +676,6 @@ schematicsection:
       # Which schematic will be used in the opposite world if newnether:true
       # If there is no partner, this island will be used
       partnerSchematic: nether
-      # Level handicap - this value will be subtracted from the island level
-      # Use this if you want island levels to start at zero
-      levelHandicap: 0
     # This is the default nether island - do not remove this section!
     nether:
       # Hide or show this schematic to players in the GUI

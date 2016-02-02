@@ -235,6 +235,7 @@ invite:
 island: 
   cannotTeleport: "Im Fall kannst du dich nicht teleportieren!"
   donate: "A SkyBlock von tastybento."
+  donatecolor: "aqua"
   errorCouldNotCreateIsland: "Insel konnte nicht erstellt werden, bitte melde das einem Teamler."
   errorInvalidPlayer: "Dieser Spieler ist ungültig oder hat keine Insel!"
   errorLevelNotReady: "Du kannst diesen Befehl gerade nicht nutzen! Versuch es in einigen Sekunden."
@@ -273,8 +274,10 @@ island:
   resetWait: "Du musst noch [time] Sekunden warten."
   resetYouHave: "Es sind noch [number] weitere Resets möglich!"
   subtitle: "von tastybento"
+  subtitlecolor: "blue"
   teleport: "Du wurdest auf deine Insel teleportiert. (/[label] help für mehr Infos)"
   title: "A SkyBlock"
+  titlecolor: "gold"
   url: ""
 islandProtected: "Insel ist gesichert!"
 islandguardsettings: 

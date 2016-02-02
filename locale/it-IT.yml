@@ -135,6 +135,7 @@ invite:
 island: 
   cannotTeleport: "Non puoi teletrasportarti mentre stai cadendo!"
   donate: "ASkyBlock di tastybento, clicca qui per donarlo via PayPal!"
+  donatecolor: "aqua"
   errorCouldNotCreateIsland: "Non puoi creare la tua isola. Per favore contatta lo staff."
   errorInvalidPlayer: "Quel giocatore è invalido o non ha una isola!"
   errorLevelNotReady: "Non puoi usare quel commando ora! Riprova tra qualche secondo."
@@ -171,8 +172,10 @@ island:
   resetWait: "Devi aspettare [time] secondi per farlo di nuovo."
   resetYouHave: "Tu hai ancora [number] reset rimanenti."
   subtitle: "di tastybento"
+  subtitlecolor: "blue"
   teleport: "Ti sto portando alla tua isola. (Digita /[label] help per maggiori info)"
   title: "A SkyBlock"
+  titlecolor: "gold"
   url: "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZSBJG5J2E3B7U"
 islandProtected: "Isola protetta."
 kick: 

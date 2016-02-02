@@ -143,6 +143,7 @@ invite:
 island: 
   cannotTeleport: "&c&l你不能在掉落時傳送!"
   donate: "Welcome to A SkyBlock by tastybento"
+  donatecolor: "aqua"
   errorCouldNotCreateIsland: "無法為你創建島嶼. 請聯繫管理員."
   errorInvalidPlayer: 玩家不存在或者他不曾擁有一個島嶼!
   errorLevelNotReady: 請稍等數秒後再輸入此指令!
@@ -181,8 +182,10 @@ island:
   resetWait: "&c你需要等待 &e[time] 秒&c才能那樣做."
   resetYouHave: "&6你還有&b&l [number] &6次重新開始的機會."
   subtitle: "by tastybento"
+  subtitlecolor: "aqua"
   teleport: "&b&l[島嶼娘]:&6歡迎回來~我的主人. &e(輸入&c/[label] help &e獲取更多幫助)"
   title: "A SkyBlock"
+  titlecolor: "gold"
   url: ""
 islandProtected: 島嶼保護.
 islandguardsettings: 

@@ -124,7 +124,14 @@ invite:
   youCanInvite: "możesz zaprosić [number] więcej graczy."
   youCannotInvite: "Nie możesz zaprosić więcej graczy."
   youHaveJoinedAnIsland: "Dołączyłeś do wyspy! Użj /[label] team żeby zobaczyć innych członków drużyny."
-island: 
+island:
+  donate: "Plugin by tastybento"
+  donatecolor: "aqua"
+  subtitle: "by tastybento"
+  subtitlecolor: "blue"
+  title: "A Skyblock"
+  titlecolor: "gold"
+  url: "" 
   errorCouldNotCreateIsland: "Nie można stworzyć wyspy. Proszę skontaktuj się z moderatorem."
   errorInvalidPlayer: "Ten gracz jest nie prawidłowy lub nie ma wyspy!"
   errorLevelNotReady: "Nie możesz użyć tej komendy teraz! Spróbuj ponownie później."

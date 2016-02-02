@@ -233,6 +233,7 @@ invite:
 island: 
   cannotTeleport: "You cannot teleport when falling!"
   donate: "Welcome to A SkyBlock by tastybento"
+  donatecolor: "aqua"
   errorCouldNotCreateIsland: "Could not create your Island. Please contact a server moderator."
   errorInvalidPlayer: "That player is invalid or does not have an island!"
   errorLevelNotReady: "Can't use that command right now! Try again in a few seconds."
@@ -271,8 +272,10 @@ island:
   resetWait: "You have to wait [time] seconds before you can do that again."
   resetYouHave: "You have [number] resets left."
   subtitle: "by tastybento"
+  subtitlecolor: "blue"
   teleport: "Teleporting you to your island. (/[label] help for more info)"
   title: "A SkyBlock"
+  titlecolor: "gold"
   url: ""
 islandProtected: "Island protected."
 islandguardsettings: 
