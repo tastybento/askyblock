@@ -35,6 +35,11 @@ island:
    # If you want to have protection range = distance set the following to true.
    # It may result in incomplete deletion of islands. Not recommended, but not fatal.
    overridelimit: false
+   
+   # If your distance and protectionRange are the same value and you see blocks not
+   # being deleted around the edges of an island, set this to be true, but it may
+   # cause some lag so do not use it unless you really are sure
+   cleanupblocks: false
 
    # Start islands at these coordinates. This is where new islands will start in the
    # world. These must be a factor of your island distance, but the plugin will auto
