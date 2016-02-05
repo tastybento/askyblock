@@ -898,7 +898,7 @@ public class Schematic {
                             villager.setAge(ent.getAge());
                             Profession[] proffs = Profession.values();
                             villager.setProfession(proffs[ent.getProfession()]);
-                        } else if (ent.getType() == EntityType.RABBIT) {
+                        } else if (!Bukkit.getServer().getVersion().contains("(MC: 1.7") && ent.getType() == EntityType.RABBIT) {
                             Rabbit rabbit = (Rabbit)spawned;
                             Rabbit.Type[] set = Rabbit.Type.values();
                             rabbit.setRabbitType(set[ent.getRabbitType()]);
@@ -1059,7 +1059,7 @@ public class Schematic {
                         //plugin.getLogger().info("DEBUG: height " + (count++) + ":" +h);
                         IslandBlock block = new IslandBlock(x, y, z);
                         if (!attachable.contains((int)blocks[index]) || blocks[index] == 179) {
-                            if (blocks[index] == 179) {
+                            if (Bukkit.getServer().getVersion().contains("(MC: 1.7") && blocks[index] == 179) {
                                 // Red sandstone - use red sand instead
                                 block.setBlock(12, (byte)1);
                             } else {
