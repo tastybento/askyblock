@@ -78,7 +78,7 @@ public class SafeSpotTeleport {
      * @param islandLoc
      */
     public SafeSpotTeleport(final ASkyBlock plugin, final Entity entity, final Location islandLoc, final int homeNumber, final String failureMessage, final boolean setHome) {
-	this.plugin = plugin;
+	//this.plugin = plugin;
 	//plugin.getLogger().info("DEBUG: running safe spot");
 	// Get island
 	Island island = plugin.getGrid().getIslandAt(islandLoc);

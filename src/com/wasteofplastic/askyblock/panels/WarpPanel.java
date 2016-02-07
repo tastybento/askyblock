@@ -42,8 +42,8 @@ import org.bukkit.inventory.meta.SkullMeta;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Island;
-import com.wasteofplastic.askyblock.Island.Flags;
 import com.wasteofplastic.askyblock.Settings;
+import com.wasteofplastic.askyblock.Island.Flags;
 
 public class WarpPanel implements Listener {
     private ASkyBlock plugin;

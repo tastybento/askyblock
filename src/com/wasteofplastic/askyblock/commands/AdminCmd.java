@@ -63,8 +63,8 @@ import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.PlayerCache;
 import com.wasteofplastic.askyblock.SafeSpotTeleport;
 import com.wasteofplastic.askyblock.Settings;
-import com.wasteofplastic.askyblock.Settings.GameType;
 import com.wasteofplastic.askyblock.TopTen;
+import com.wasteofplastic.askyblock.Settings.GameType;
 import com.wasteofplastic.askyblock.panels.ControlPanel;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
@@ -1778,7 +1778,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
             sender.sendMessage(ChatColor.YELLOW + (plugin.myLocale().adminSetSpawnlimits.replace("[min]", island.getMinX() + "," + island.getMinZ())).replace("[max]",
                     (island.getMinX() + island.getIslandDistance() - 1) + "," + (island.getMinZ() + island.getIslandDistance() - 1)));
             sender.sendMessage(ChatColor.YELLOW + plugin.myLocale().adminSetSpawnrange.replace("[number]",String.valueOf(island.getProtectionSize())));
-            sender.sendMessage(ChatColor.YELLOW + (plugin.myLocale().adminSetSpawncoords.replace("[min]",  (island.getMinProtectedX() + 1) + ", " + (island.getMinProtectedZ() + 1))).replace("[max]",
+            sender.sendMessage(ChatColor.YELLOW + (plugin.myLocale().adminSetSpawncoords.replace("[min]",  island.getMinProtectedX() + ", " + island.getMinProtectedZ())).replace("[max]",
                     + (island.getMinProtectedX() + island.getProtectionSize() - 1) + ", "
                             + (island.getMinProtectedZ() + island.getProtectionSize() - 1)));
             if (island.isSpawn()) {

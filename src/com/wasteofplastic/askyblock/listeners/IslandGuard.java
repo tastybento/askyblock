@@ -88,9 +88,9 @@ import org.bukkit.util.Vector;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Island;
-import com.wasteofplastic.askyblock.Island.Flags;
 import com.wasteofplastic.askyblock.SafeBoat;
 import com.wasteofplastic.askyblock.Settings;
+import com.wasteofplastic.askyblock.Island.Flags;
 import com.wasteofplastic.askyblock.events.IslandEnterEvent;
 import com.wasteofplastic.askyblock.events.IslandExitEvent;
 import com.wasteofplastic.askyblock.util.Util;

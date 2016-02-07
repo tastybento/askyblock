@@ -458,9 +458,9 @@ public class GridManager {
      * @return PlayerIsland or null
      */
     public Island getIslandAt(int x, int z) {
-        Entry<Integer, TreeMap<Integer, Island>> en = islandGrid.lowerEntry(x);
+        Entry<Integer, TreeMap<Integer, Island>> en = islandGrid.floorEntry(x);
         if (en != null) {
-            Entry<Integer, Island> ent = en.getValue().lowerEntry(z);
+            Entry<Integer, Island> ent = en.getValue().floorEntry(z);
             if (ent != null) {
                 // Check if in the island range
                 Island island = ent.getValue();

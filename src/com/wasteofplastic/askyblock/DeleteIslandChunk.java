@@ -61,8 +61,8 @@ public class DeleteIslandChunk {
             return;
         }
         final int range = island.getProtectionSize() / 2 * +1;
-        final int minx = island.getMinProtectedX() + 1;
-        final int minz = island.getMinProtectedZ() + 1;
+        final int minx = island.getMinProtectedX();
+        final int minz = island.getMinProtectedZ();
         final int maxx = island.getMinProtectedX() + island.getProtectionSize();
         final int maxz = island.getMinProtectedZ() + island.getProtectionSize();
         //plugin.getLogger().info("DEBUG: protection limits are: " + minx + ", " + minz + " to " + maxx + ", " + maxz );
