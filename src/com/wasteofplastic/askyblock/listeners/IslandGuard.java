@@ -2418,7 +2418,9 @@ public class IslandGuard implements Listener {
                         if (!island.getMembers().contains(e.getPlayer().getUniqueId())) {
                             // Visitor
                             litCreeper.add(e.getRightClicked().getUniqueId());
-                            plugin.getLogger().info("DEBUG: visitor lit creeper");
+                            if (DEBUG) {
+                                plugin.getLogger().info("DEBUG: visitor lit creeper");
+                            }
                         }
                     }
                 }
