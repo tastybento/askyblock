@@ -259,10 +259,10 @@ public class Util {
      * @return String of location
      */
     static public String getStringLocation(final Location location) {
-        if (l == null || l.getWorld() == null) {
+        if (location == null || location.getWorld() == null) {
             return "";
         }
-        return l.getWorld().getName() + ":" + l.getBlockX() + ":" + l.getBlockY() + ":" + l.getBlockZ() + ":" + Float.floatToIntBits(l.getYaw()) + ":" + Float.floatToIntBits(l.getPitch());
+        return location.getWorld().getName() + ":" + location.getBlockX() + ":" + location.getBlockY() + ":" + location.getBlockZ() + ":" + Float.floatToIntBits(location.getYaw()) + ":" + Float.floatToIntBits(location.getPitch());
     }
 
     /**

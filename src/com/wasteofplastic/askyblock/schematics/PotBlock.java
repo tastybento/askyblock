@@ -62,62 +62,71 @@ public class PotBlock {
     }
 
     public boolean prep(Map<String, Tag> tileData) {
+        // Initialize as default
+        potItem = Material.AIR;
+        potItemData = 0;
         try {
             if(tileData.containsKey("Item")){
-                String itemName = ((StringTag) tileData.get("Item")).getValue();
-                // We can't set everything in a flowerpot, check that
-                if(potItemList.containsKey(itemName)){
-                    potItem = potItemList.get(itemName);
 
-                    if(tileData.containsKey("Data")){
-                        int dataTag = ((IntTag) tileData.get("Data")).getValue();
-                        // We should check data for each type of potItem 
-                        if(potItem == Material.RED_ROSE){
-                            if(dataTag >= 0 && dataTag <= 8){
-                                potItemData = dataTag;
-                            } else {
-                                // Prevent hacks
-                                potItemData = 0;
-                            }
-                        } else if(potItem == Material.YELLOW_FLOWER ||
-                                potItem == Material.RED_MUSHROOM ||
-                                potItem == Material.BROWN_MUSHROOM ||
-                                potItem == Material.CACTUS){
-                            // Set to 0 anyway
-                            potItemData = 0;
-                        } else if(potItem == Material.SAPLING){
-                            if(dataTag >= 0 && dataTag <= 4){
-                                potItemData = dataTag;
-                            } else {
-                                // Prevent hacks
-                                potItemData = 0;
-                            }
-                        } else if(potItem == Material.LONG_GRASS){
-                            // Only 0 or 2
-                            if(dataTag == 0 || dataTag == 2){
-                                potItemData = dataTag;
-                            } else {
-                                potItemData = 0;
-                            }
-                        } else {
-                            // ERROR ?
-                            potItemData = 0;
+                // Get the item in the pot
+                if (tileData.get("Item") instanceof IntTag) {
+                    // Item is a number, not a material
+                    int id = ((IntTag) tileData.get("Item")).getValue();
+                    potItem = Material.getMaterial(id);
+                    // Check it's a viable pot item
+                    if (!potItemList.containsValue(potItem)) {
+                        // No, so reset to AIR
+                        potItem = Material.AIR;
+                    }
+                } else if (tileData.get("Item") instanceof StringTag) {
+                    // Item is a material
+                    String itemName = ((StringTag) tileData.get("Item")).getValue();
+                    if (potItemList.containsKey(itemName)){
+                        // Check it's a viable pot item
+                        if (potItemList.containsKey(itemName)) {
+                            potItem = potItemList.get(itemName);
                         }
                     }
-                    else {
+                }
+
+                if(tileData.containsKey("Data")){
+                    int dataTag = ((IntTag) tileData.get("Data")).getValue();
+                    // We should check data for each type of potItem 
+                    if(potItem == Material.RED_ROSE){
+                        if(dataTag >= 0 && dataTag <= 8){
+                            potItemData = dataTag;
+                        } else {
+                            // Prevent hacks
+                            potItemData = 0;
+                        }
+                    } else if(potItem == Material.YELLOW_FLOWER ||
+                            potItem == Material.RED_MUSHROOM ||
+                            potItem == Material.BROWN_MUSHROOM ||
+                            potItem == Material.CACTUS){
+                        // Set to 0 anyway
+                        potItemData = 0;
+                    } else if(potItem == Material.SAPLING){
+                        if(dataTag >= 0 && dataTag <= 4){
+                            potItemData = dataTag;
+                        } else {
+                            // Prevent hacks
+                            potItemData = 0;
+                        }
+                    } else if(potItem == Material.LONG_GRASS){
+                        // Only 0 or 2
+                        if(dataTag == 0 || dataTag == 2){
+                            potItemData = dataTag;
+                        } else {
+                            potItemData = 0;
+                        }
+                    } else {
+                        // ERROR ?
                         potItemData = 0;
                     }
                 }
                 else {
-                    // Prevent hacks, set to null (empty flower pot)
-                    potItem = potItemList.get("");
                     potItemData = 0;
                 }
-            }
-            else {
-                // Prevent hacks, set to null (empty flower pot)
-                potItem = potItemList.get("");
-                potItemData = 0;
             }
             //Bukkit.getLogger().info("Debug: flowerpot item = " + potItem.toString());
             //Bukkit.getLogger().info("Debug: flowerpot item data = " + potItemData);
