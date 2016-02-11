@@ -275,7 +275,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
      * 
      * @param player
      * @param challenge
-     * @return
+     * @return ture if reward given successfully
      */
     private boolean giveReward(final Player player, final String challenge) {
         // Grab the rewards from the config.yml file
@@ -627,7 +627,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
      * 
      * @param player
      * @param level
-     * @return
+     * @return int of challenges that must still be completed to finish level.
      */
     public int checkLevelCompletion(final Player player, final String level) {
         int challengesCompleted = 0;
@@ -1599,7 +1599,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
      * 
      * @param challenge
      * @param player
-     * @return
+     * @return List of strings splitting challenge string into 25 chars long 
      */
     private List<String> challengeDescription(String challenge, Player player) {
         List<String> result = new ArrayList<String>();
@@ -1755,7 +1755,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
     /**
      * Returns a potion based on a damage value
      * @param damage
-     * @return
+     * @return Potion derived from damage value
      */
     @SuppressWarnings("deprecation")
     public static Potion fromDamage(int damage) {
@@ -1793,7 +1793,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
     /**
      * Creates a list of challenges that the specified player is able to complete.
      * @param player
-     * @return
+     * @return List of challenges
      */
     public List<String> getAvailableChallenges(Player player) {
         List<String> returned = new ArrayList<String>();

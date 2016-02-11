@@ -52,7 +52,7 @@ public class Messages {
      * Returns what messages are waiting for the player or null if none
      * 
      * @param playerUUID
-     * @return
+     * @return List of messages
      */
     public List<String> getMessages(UUID playerUUID) {
         List<String> playerMessages = messages.get(playerUUID);
@@ -181,7 +181,7 @@ public class Messages {
     /**
      * Sets a message for the player to receive next time they login
      * 
-     * @param player
+     * @param playerUUID
      * @param message
      * @return true if player is offline, false if online
      */

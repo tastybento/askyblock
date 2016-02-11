@@ -31,7 +31,7 @@ public class MapUtil {
      * Sorts map in descending order
      * 
      * @param map
-     * @return
+     * @return 
      */
     public static <Key, Value extends Comparable<? super Value>> LinkedHashMap<Key, Value> sortByValue(Map<Key, Value> map) {
         List<Map.Entry<Key, Value>> list = new LinkedList<Map.Entry<Key, Value>>(map.entrySet());

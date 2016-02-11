@@ -155,7 +155,7 @@ public class MiniShopItem {
     /**
      * Returns a clean version of this item with no meta data
      * 
-     * @return
+     * @return Clean item stack
      */
     public ItemStack getItemClean() {
         ItemStack temp = this.item.clone();

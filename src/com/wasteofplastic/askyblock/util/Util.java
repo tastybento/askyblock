@@ -256,9 +256,9 @@ public class Util {
      * If location is null, returns empty string
      * 
      * @param l
-     * @return
+     * @return String of location
      */
-    static public String getStringLocation(final Location l) {
+    static public String getStringLocation(final Location location) {
         if (l == null || l.getWorld() == null) {
             return "";
         }
@@ -271,7 +271,7 @@ public class Util {
      * 
      * @param list
      * @param start
-     * @return
+     * @return List of items that start with the letters
      */
     public static List<String> tabLimit(final List<String> list, final String start) {
         final List<String> returned = new ArrayList<String>();
@@ -287,7 +287,7 @@ public class Util {
     /**
      * Gets a list of all players who are currently online.
      * 
-     * @return
+     * @return list of online players
      */
     public static List<String> getOnlinePlayerList() {
         final List<String> returned = new ArrayList<String>();

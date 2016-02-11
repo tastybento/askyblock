@@ -100,14 +100,16 @@ public class EntityObject {
     public void setYaw(float yaw) {
         this.yaw = yaw;
     }
+
     /**
-     * @return the roll
+     * @return the pitch
      */
     public float getPitch() {
         return pitch;
     }
+
     /**
-     * @param roll the roll to set
+     * @param pitch
      */
     public void setPitch(float pitch) {
         this.pitch = pitch;
@@ -328,6 +330,7 @@ public class EntityObject {
     public Byte getCount() {
         return count;
     }
+
     /**
      * @param cout the count to set
      */

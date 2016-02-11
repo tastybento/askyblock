@@ -364,7 +364,7 @@ public class Players {
      * Checks how many times a challenge has been done
      * 
      * @param challenge
-     * @return
+     * @return number of times
      */
     public int checkChallengeTimes(final String challenge) {
         if (challengeListTimes.containsKey(challenge.toLowerCase())) {
@@ -455,7 +455,7 @@ public class Players {
 
     /**
      * Gets the default home location.
-     * @return
+     * @return Location
      */
     public Location getHomeLocation() {
         return getHomeLocation(1); // Default
@@ -738,11 +738,8 @@ public class Players {
     }
 
     /**
-     * Stores the location that the player has been kicked from along with the
-     * current time
-     * 
-     * @param kickedList
-     *            the kickedList to set
+     * Starts the invite cooldown timer for location. Location should be the center of an island.
+     * @param location
      */
     public void startInviteCoolDownTimer(Location location) {
         if (location != null) {

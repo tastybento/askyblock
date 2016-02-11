@@ -240,9 +240,9 @@ public class Island implements Cloneable {
 
     /**
      * Add a new island using the island center method
-     * 
-     * @param minX
-     * @param minZ
+     * @param plugin
+     * @param x
+     * @param z
      */
     public Island(ASkyBlock plugin, int x, int z) {
         this(plugin, x, z, null);
@@ -314,8 +314,8 @@ public class Island implements Cloneable {
     /**
      * Checks if a location is within this island's protected area
      * 
-     * @param loc
-     * @return
+     * @param target
+     * @return true if it is, false if not
      */
     public boolean onIsland(Location target) {
         if (world != null) {
@@ -388,7 +388,7 @@ public class Island implements Cloneable {
     }
 
     /**
-     * @param z
+     * @param minZ
      *            the z to set
      */
     public void setMinZ(int minZ) {
@@ -417,8 +417,8 @@ public class Island implements Cloneable {
     }
 
     /**
-     * @param protectionRange
-     *            the protectionRange to set
+     * @param protectionSize
+     *            the protectionSize to set
      */
     public void setProtectionSize(int protectionSize) {
         this.protectionRange = protectionSize;
@@ -720,7 +720,7 @@ public class Island implements Cloneable {
     }
 
     /**
-     * @param mat
+     * @param material
      * @return count of how many tile entities of type mat are on the island at last count. Counts are done when a player places
      * a tile entity.
      */

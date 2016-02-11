@@ -1030,10 +1030,8 @@ public class Schematic {
     }
     /**
      * This method prepares to pastes a schematic.
-     * @param blocks 
-     * @param data 
-     * @param loc
-     * @param player
+     * @param blocks
+     * @param data
      */
     @SuppressWarnings("deprecation")
     public void prePasteSchematic(short[] blocks, byte[] data) {
@@ -1212,11 +1210,8 @@ public class Schematic {
 
     /**
      * Creates an island block by block
-     * 
-     * @param x
-     * @param z
+     * @param islandLoc
      * @param player
-     * @param world
      */
     @SuppressWarnings("deprecation")
     public void generateIslandBlocks(final Location islandLoc, final Player player) {

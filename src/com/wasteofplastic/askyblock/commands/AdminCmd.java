@@ -1709,7 +1709,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
      * This returns the coordinate of where an island should be on the grid.
      * 
      * @param location
-     * @return
+     * @return Location of where an island should be on a grid in this world
      */
     public static Location getClosestIsland(Location location) {
         long x = Math.round((double) location.getBlockX() / Settings.islandDistance) * Settings.islandDistance + Settings.islandXOffset;

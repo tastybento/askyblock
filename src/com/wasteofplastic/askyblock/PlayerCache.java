@@ -185,7 +185,7 @@ public class PlayerCache {
      * Checks if player is in a Team from cache if available
      * 
      * @param playerUUID
-     * @return
+     * @return true if player in a team
      */
     public boolean inTeam(final UUID playerUUID) {
         addPlayer(playerUUID);
@@ -295,7 +295,7 @@ public class PlayerCache {
      * Returns an island location OR a team island location
      * 
      * @param playerUUID
-     * @return
+     * @return Location of player's island
      */
     public Location getIslandLocation(UUID playerUUID) {
         addPlayer(playerUUID);
@@ -335,7 +335,7 @@ public class PlayerCache {
      * 
      * @param playerUUID
      * @param challenge
-     * @return
+     * @return true if complete
      */
     public boolean checkChallenge(UUID playerUUID, String challenge) {
         addPlayer(playerUUID);
@@ -347,7 +347,7 @@ public class PlayerCache {
      * 
      * @param playerUUID
      * @param challenge
-     * @return
+     * @return number of times
      */
     public int checkChallengeTimes(UUID playerUUID, String challenge) {
         addPlayer(playerUUID);
@@ -358,7 +358,7 @@ public class PlayerCache {
      * Provides the status of all challenges for this player
      * 
      * @param playerUUID
-     * @return
+     * @return Hashmap of challenges as key, boolean as state
      */
     public HashMap<String, Boolean> getChallengeStatus(UUID playerUUID) {
         addPlayer(playerUUID);
@@ -422,7 +422,7 @@ public class PlayerCache {
      * then the leader's list is used
      * 
      * @param playerUUID
-     * @return
+     * @return List of team UUIDs
      */
     public List<UUID> getMembers(UUID playerUUID) {
         addPlayer(playerUUID);
@@ -452,7 +452,7 @@ public class PlayerCache {
     /**
      * Provides UUID of this player's team leader or null if it does not exist
      * @param playerUUID
-     * @return
+     * @return UUID of leader
      */
     public UUID getTeamLeader(UUID playerUUID) {
         addPlayer(playerUUID);
@@ -486,7 +486,7 @@ public class PlayerCache {
      * Attempts to return a UUID for a given player's name
      * 
      * @param string
-     * @return
+     * @return UUID of player
      */
     public UUID getUUID(String string) {
         for (UUID id : playerCache.keySet()) {
@@ -542,7 +542,7 @@ public class PlayerCache {
      * Reverse lookup - returns the owner of an island from the location
      * 
      * @param loc
-     * @return
+     * @return UUID of owner of island
      */
     public UUID getPlayerFromIslandLocation(Location loc) {
         if (loc == null)
@@ -559,7 +559,7 @@ public class PlayerCache {
      * Gets how many island resets the player has left
      * 
      * @param playerUUID
-     * @return
+     * @return number of resets
      */
     public int getResetsLeft(UUID playerUUID) {
         addPlayer(playerUUID);
@@ -754,8 +754,9 @@ public class PlayerCache {
     }
 
     /**
-     * Sets whether the player uses the control panel or not when doing /island
-     * @param b
+     * Gets whether the player uses the control panel or not when doing /island
+     * @param playerUUID
+     * @return true if they use the control panel
      */
     public boolean getControlPanel(UUID playerUUID) {
         addPlayer(playerUUID);

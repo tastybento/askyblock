@@ -36,8 +36,10 @@ public abstract class ASkyBlockEvent extends Event {
     private final UUID player;
     private final Island island;
 
+
     /**
-     * @param plugin
+     * @param player
+     * @param island
      */
     public ASkyBlockEvent(UUID player, Island island) {
         this.player = player;

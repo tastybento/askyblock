@@ -55,7 +55,7 @@ public class SafeSpotTeleport {
      * @param plugin
      * @param player
      * @param l
-     * @param setHome
+     * @param number
      */
     public SafeSpotTeleport(final ASkyBlock plugin, final Entity player, final Location l, final int number) {
 	new SafeSpotTeleport(plugin, player, l, number, "", true);

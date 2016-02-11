@@ -58,7 +58,6 @@ public class ChatListener implements Listener {
 
     /**
      * @param plugin
-     * @param teamChatOn
      */
     public ChatListener(ASkyBlock plugin) {
         this.teamChatUsers = new ConcurrentHashMap<UUID,Boolean>();
@@ -191,7 +190,7 @@ public class ChatListener implements Listener {
     /**
      * Return the player's level for use in chat - async safe
      * @param playerUUID
-     * @return
+     * @return Player's level as string
      */
     public String getPlayerLevel(UUID playerUUID) {
         return playerLevels.get(playerUUID);
@@ -200,7 +199,7 @@ public class ChatListener implements Listener {
     /**
      * Return the player's challenge level for use in chat - async safe
      * @param playerUUID
-     * @return
+     * @return challenge level as string
      */
     public String getPlayerChallengeLevel(UUID playerUUID) {
         return playerChallengeLevels.get(playerUUID);

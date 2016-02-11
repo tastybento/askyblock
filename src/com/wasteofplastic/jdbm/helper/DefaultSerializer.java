@@ -62,10 +62,10 @@ public class DefaultSerializer
     /**
      * Deserialize the content of an object from a byte array.
      *
-     * @param serialized Byte array representation of the object
+     * @param in serialized Byte array representation of the object
      * @return deserialized object
      */
-     public Object deserialize(SerializerInput in )
+    public Object deserialize(SerializerInput in )
         throws IOException
      {
          try {

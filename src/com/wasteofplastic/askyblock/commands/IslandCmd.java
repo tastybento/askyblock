@@ -115,7 +115,6 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
      * Constructor
      * 
      * @param aSkyBlock
-     * @param players
      */
     public IslandCmd(ASkyBlock aSkyBlock) {
 	// Plugin instance
@@ -520,7 +519,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
      * 
      * @param playerUUID
      * @param teamLeader
-     * @return
+     * @return true if the player is successfully added
      */
     public boolean addPlayertoTeam(final UUID playerUUID, final UUID teamLeader) {
 	// Set the player's team giving the team leader's name and the team's
@@ -961,7 +960,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
      * island_distance setting from the config file Builds up in a grid fashion
      * 
      * @param lastIsland
-     * @return
+     * @return Location of next free island
      */
     private Location nextGridLocation(final Location lastIsland) {
 	// plugin.getLogger().info("DEBUG nextIslandLocation");
@@ -1043,7 +1042,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
      * 
      * @param map
      * @param value
-     * @return
+     * @return key
      */
     public static <T, E> T getKeyByValue(Map<T, E> map, E value) {
 	for (Entry<T, E> entry : map.entrySet()) {
@@ -2946,10 +2945,10 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
     }
 
     /**
-     * Set time out for island restarting
+     * Check time out for island restarting
      * 
      * @param player
-     * @return
+     * @return true if the timeout is over
      */
     public boolean onRestartWaitTime(final Player player) {
 	if (resetWaitTime.containsKey(player.getUniqueId())) {
@@ -2998,7 +2997,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
      * in seconds
      * 
      * @param player
-     * @return
+     * @return how long the player must wait
      */
     private long getResetWaitTime(final Player player) {
 	if (resetWaitTime.containsKey(player.getUniqueId())) {

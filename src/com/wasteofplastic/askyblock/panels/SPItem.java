@@ -64,10 +64,7 @@ public class SPItem {
 
     /**
      * This constructor is for schematics that will do something if chosen
-     * @param material
-     * @param perm
-     * @param name
-     * @param description
+     * @param schematic
      * @param slot
      */
     public SPItem(Schematic schematic, int slot) {

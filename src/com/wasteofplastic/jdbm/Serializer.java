@@ -42,7 +42,7 @@ public interface Serializer<A>
     /**
      * Deserialize the content of an object from a byte array.
      *
-     * @param serialized DataInputStream to read object from
+     * @param in serialized DataInputStream to read object from
      * @return deserialized object
      * @throws IOException
      * @throws ClassNotFoundException 

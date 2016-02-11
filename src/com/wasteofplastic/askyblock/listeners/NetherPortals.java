@@ -256,7 +256,7 @@ public class NetherPortals implements Listener {
      * Function to check proximity to nether spawn location
      * 
      * @param player
-     * @return
+     * @return true if in the spawn area, false if not
      */
     private boolean awayFromSpawn(Player player) {
         Vector p = player.getLocation().toVector().multiply(new Vector(1, 0, 1));

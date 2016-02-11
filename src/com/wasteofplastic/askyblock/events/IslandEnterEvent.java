@@ -34,7 +34,6 @@ public class IslandEnterEvent extends ASkyBlockEvent {
 
     /**
      * Called to create the event
-     * @param plugin
      * @param player
      * @param island
      * @param location

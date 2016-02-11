@@ -125,7 +125,7 @@ public class IslandGuard implements Listener {
     /**
      * Determines if a block is in the island world or not
      * @param block
-     * @return
+     * @return true if in the island world
      */
     protected static boolean inWorld(Block block) {
         return inWorld(block.getLocation());
@@ -135,7 +135,7 @@ public class IslandGuard implements Listener {
      * Determines if a location is in the island world or not or
      * in the new nether if it is activated
      * @param loc
-     * @return
+     * @return true if in the island world
      */
     protected static boolean inWorld(Location loc) {
         if (loc.getWorld().equals(ASkyBlock.getIslandWorld())) {

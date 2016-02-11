@@ -568,7 +568,7 @@ public class LongHashMap<V> implements  Serializable {
     }
 
     /**
-     * @returns iterator over values in map
+     * @return iterator over values in map
      */
     public Iterator<V> valuesIterator() {
         return new HashMapIterator<V, V>(

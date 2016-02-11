@@ -848,7 +848,7 @@ public class GridManager {
      * This returns the coordinate of where an island should be on the grid.
      * 
      * @param location
-     * @return
+     * @return Location of closest island
      */
     public Location getClosestIsland(Location location) {
         long x = Math.round((double) location.getBlockX() / Settings.islandDistance) * Settings.islandDistance + Settings.islandXOffset;
@@ -1121,7 +1121,7 @@ public class GridManager {
      * then the player is sent to spawn via /spawn command
      * 
      * @param player
-     * @return
+     * @return true if the home teleport is successful
      */
     public boolean homeTeleport(final Player player) {
         return homeTeleport(player, 1);
@@ -1196,7 +1196,6 @@ public class GridManager {
      * Sets the home location based on where the player is now
      * 
      * @param player
-     * @return
      */
     public void homeSet(final Player player) {
         homeSet(player, 1);
@@ -1208,7 +1207,7 @@ public class GridManager {
      * 
      * @param player
      * @param loc
-     * @return
+     * @return true if location is on island of player
      */
     public boolean locationIsOnIsland(final Player player, final Location loc) {
 
@@ -1264,7 +1263,7 @@ public class GridManager {
      * 
      * @param islandTestLocations
      * @param loc
-     * @return
+     * @return Location found that is on the island
      */
     public Location locationIsOnIsland(final Set<Location> islandTestLocations, final Location loc) {
         // Run through all the locations
@@ -1428,7 +1427,7 @@ public class GridManager {
      * 
      * @param oldOwner
      * @param newOwner
-     * @return
+     * @return true if successful
      */
     public boolean transferIsland(final UUID oldOwner, final UUID newOwner) {
         if (plugin.getPlayers().hasIsland(oldOwner)) {

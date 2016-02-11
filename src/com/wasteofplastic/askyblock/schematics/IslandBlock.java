@@ -275,7 +275,7 @@ public class IslandBlock {
 
     /**
      * Sets the spawner type if this block is a spawner
-     * @param spawnerBlockType
+     * @param tileData
      */
     public void setSpawnerType(Map<String, Tag> tileData) {
         String creatureType = ((StringTag) tileData.get("EntityId")).getValue().toUpperCase();

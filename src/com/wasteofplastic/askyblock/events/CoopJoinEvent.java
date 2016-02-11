@@ -31,9 +31,11 @@ public class CoopJoinEvent extends ASkyBlockEvent {
 
     private final UUID inviter;
 
+
     /**
      * @param player
-     * @param teamLeader
+     * @param island
+     * @param inviter
      */
     public CoopJoinEvent(UUID player, Island island, UUID inviter) {
         super(player, island);

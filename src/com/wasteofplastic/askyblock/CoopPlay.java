@@ -142,7 +142,7 @@ public class CoopPlay {
      * Returns the list of islands that this player is coop on or empty if none
      * 
      * @param player
-     * @return
+     * @return Set of locations
      */
     public Set<Location> getCoopIslands(Player player) {
         if (coopPlayers.containsKey(player.getUniqueId())) {

@@ -36,8 +36,9 @@ public class CPItem {
     private String command;
     private String nextSection;
 
+ 
     /**
-     * @param item
+     * A Control Panel item
      * @param material
      * @param name
      * @param command

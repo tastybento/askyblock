@@ -34,7 +34,7 @@ public class VaultHelper {
     /**
      * Sets up the economy instance
      * 
-     * @return
+     * @return true if successful
      */
     public static boolean setupEconomy() {
         RegisteredServiceProvider<Economy> economyProvider = ASkyBlock.getPlugin().getServer().getServicesManager()
@@ -48,7 +48,7 @@ public class VaultHelper {
     /**
      * Sets up the permissions instance
      * 
-     * @return
+     * @return true if successful
      */
     public static boolean setupPermissions() {
         RegisteredServiceProvider<Permission> permissionProvider = ASkyBlock.getPlugin().getServer().getServicesManager()
@@ -64,7 +64,7 @@ public class VaultHelper {
      * 
      * @param player
      * @param perm
-     * @return
+     * @return true if the player has the perm
      */
     public static boolean checkPerm(final Player player, final String perm) {
         return permission.has(player, perm);
