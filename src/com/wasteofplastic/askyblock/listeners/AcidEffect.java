@@ -74,6 +74,10 @@ public class AcidEffect implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerMove(PlayerMoveEvent e) {
+        // Fast return if acid isn't being used
+        if (Settings.rainDamage == 0 && Settings.acidDamage == 0) {
+            return;
+        }
         final Player player = e.getPlayer();
         // Fast checks
         if (player.isDead()) {
@@ -82,7 +86,7 @@ public class AcidEffect implements Listener {
         // Check that they are in the ASkyBlock world
         if (!player.getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
             return;
-        }
+        }        
         // Return if players are immune
         if (player.isOp()) {
             if (!Settings.damageOps) {
