@@ -2044,6 +2044,8 @@ public class IslandGuard implements Listener {
             case DIODE_BLOCK_ON:
             case REDSTONE_COMPARATOR_ON:
             case REDSTONE_COMPARATOR_OFF:
+            case DAYLIGHT_DETECTOR:
+            case DAYLIGHT_DETECTOR_INVERTED:
                 if (island == null) {
                     if (Settings.allowRedStone) {
                         return;
