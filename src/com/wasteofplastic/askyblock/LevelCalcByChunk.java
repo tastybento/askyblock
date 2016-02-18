@@ -56,7 +56,7 @@ public class LevelCalcByChunk {
 	final Island island = plugin.getGrid().getIsland(targetPlayer);
 	if (island != null) {
 	    // Check if player's island world is the nether or overworld and adjust accordingly
-	    World world = plugin.getPlayers().getHomeLocation(targetPlayer).getWorld();
+	    World world = plugin.getPlayers().getIslandLocation(targetPlayer).getWorld();
 	    // Get the chunks
 	    //long nano = System.nanoTime();
 	    Set<ChunkSnapshot> chunkSnapshot = new HashSet<ChunkSnapshot>();

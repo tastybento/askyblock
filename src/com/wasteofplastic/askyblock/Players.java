@@ -462,7 +462,7 @@ public class Players {
     }
 
     /**
-     * Gets the home location by number. Note that the number is a string (to avoid conversion)
+     * Gets the home location by number.
      * @param number
      * @return Location of this home or null if not available
      */
