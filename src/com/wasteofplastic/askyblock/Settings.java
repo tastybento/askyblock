@@ -264,6 +264,7 @@ public class Settings {
     public static long pvpRestartCooldown;
     public static long backupDuration;
     public static boolean cleanUpBlocks;
+    public static boolean acidBottle;
 
 
 

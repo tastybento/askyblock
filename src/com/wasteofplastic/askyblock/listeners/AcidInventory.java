@@ -66,7 +66,7 @@ public class AcidInventory implements Listener {
         // plugin.getLogger().info("Inventory open event called");
         if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
             Inventory inventory = e.getInventory();
-            if (Settings.acidDamage == 0D) {
+            if (Settings.acidDamage == 0D || !Settings.acidBottle) {
                 return;
             }
             // If this is the minishop - forget it
@@ -119,7 +119,7 @@ public class AcidInventory implements Listener {
         // plugin.getLogger().info("Player filled the bucket");
         if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
             // plugin.getLogger().info("Correct world");
-            if (Settings.acidDamage > 0D) {
+            if (Settings.acidDamage > 0D && Settings.acidBottle) {
                 ItemStack item = e.getItemStack();
                 if (item.getType().equals(Material.WATER_BUCKET) || item.getType().equals(Material.POTION)) {
                     ItemMeta meta = item.getItemMeta();
@@ -139,7 +139,7 @@ public class AcidInventory implements Listener {
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
     public void onWaterBottleDrink(final PlayerItemConsumeEvent e) {
-        if (Settings.acidDamage == 0D)
+        if (Settings.acidDamage == 0D || !Settings.acidBottle)
             return;
         // plugin.getLogger().info(e.getEventName() + " called for " +
         // e.getItem().getType().toString());
@@ -195,7 +195,7 @@ public class AcidInventory implements Listener {
         Player player = e.getPlayer();
         if (!player.getWorld().getName().equalsIgnoreCase(Settings.worldName))
             return;
-        if (Settings.acidDamage == 0D)
+        if (Settings.acidDamage == 0D || !Settings.acidBottle)
             return;
         if (!player.getItemInHand().getType().equals(Material.GLASS_BOTTLE)) {
             return;

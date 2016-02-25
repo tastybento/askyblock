@@ -221,10 +221,10 @@ general:
    usecontrolpanel: false
 
    # Create Nether - if this is false, the nether world will not be made and access to
-   # AcidIsland control of the nether will not occur. Other plugins may still enable
+   # the nether will not occur. Other plugins may still enable
    # portal usage.
    # Note: Some challenges will not be possible if there is no nether.
-   # Note that in AcidIsland, all players arrive at the same portal and entering a
+   # Note that with a standard nether all players arrive at the same portal and entering a
    # portal will return them back to their islands.
    createnether: true
 
@@ -303,6 +303,9 @@ general:
    animaldamage: 0
    # Damage chickens in acid - true or false - chickens tend to go swimming...
    damagechickens: false
+   # Have water bottles and buckets marked as Acid Bottles/Buckets and kill players if
+   # they drink from them. Only active if aciddamage > 0.
+   acidbottles: true
 
    # Damage type to apply in addition to acid damage
    # Types can be : SLOW, SLOW_DIGGING, CONFUSION,BLINDNESS, HUNGER, WEAKNESS and POISON

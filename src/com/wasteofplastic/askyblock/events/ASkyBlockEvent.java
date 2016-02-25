@@ -46,6 +46,11 @@ public abstract class ASkyBlockEvent extends Event {
         this.island = island;
     }
 
+    public ASkyBlockEvent(UUID player) {
+        this.player = player;
+        this.island = null;
+    }
+
     /**
      * Gets the player involved in this event
      * @return the player

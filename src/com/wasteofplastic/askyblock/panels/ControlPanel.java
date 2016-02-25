@@ -38,6 +38,8 @@ import org.bukkit.inventory.ItemStack;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Settings;
+import com.wasteofplastic.askyblock.events.MiniShopEvent;
+import com.wasteofplastic.askyblock.events.MiniShopEvent.TransactionType;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
@@ -294,6 +296,9 @@ public class ControlPanel implements Listener {
                                     message = message.replace("[description]", item.getDescription());
                                     message = message.replace("[price]", VaultHelper.econ.format(item.getPrice()));
                                     player.getInventory().addItem(item.getItemClean());
+                                    // Fire event
+                                    MiniShopEvent shopEvent = new MiniShopEvent(player.getUniqueId(), item, TransactionType.BUY);
+                                    plugin.getServer().getPluginManager().callEvent(shopEvent);
                                 } else {
                                     // message =
                                     // "There was a problem puchasing that item: "
@@ -313,6 +318,9 @@ public class ControlPanel implements Listener {
                             message = plugin.myLocale().minishopYouSold.replace("[number]", Integer.toString(item.getQuantity()));
                             message = message.replace("[description]", item.getDescription());
                             message = message.replace("[price]", VaultHelper.econ.format(item.getSellPrice()));
+                         // Fire event
+                            MiniShopEvent shopEvent = new MiniShopEvent(player.getUniqueId(), item, TransactionType.SELL);
+                            plugin.getServer().getPluginManager().callEvent(shopEvent);
                         } else {
                             // message =
                             // "You do not have enough of that item to sell it.";

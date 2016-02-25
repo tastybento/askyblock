@@ -1385,6 +1385,8 @@ public class ASkyBlock extends JavaPlugin {
         Settings.addCompletedGlow = getConfig().getBoolean("general.addcompletedglow", true);
         // Clean up blocks around edges when deleting islands
         Settings.cleanUpBlocks = getConfig().getBoolean("island.cleanupblocks",false);
+        // No acid bottles or buckets
+        Settings.acidBottle = getConfig().getBoolean("general.acidbottles", true);
         // All done
         return true;
     }
