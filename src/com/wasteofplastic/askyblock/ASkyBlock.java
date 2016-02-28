@@ -147,14 +147,19 @@ public class ASkyBlock extends JavaPlugin {
         if (islandWorld == null) {
             //Bukkit.getLogger().info("DEBUG worldName = " + Settings.worldName);
             // 
-            islandWorld = WorldCreator.name(Settings.worldName).type(WorldType.FLAT).environment(World.Environment.NORMAL).generator(new ChunkGeneratorWorld())
-                    .createWorld();
+            if (Settings.useOwnGenerator) {
+                islandWorld = Bukkit.getServer().getWorld(Settings.worldName);
+            } else {
+                islandWorld = WorldCreator.name(Settings.worldName).type(WorldType.FLAT).environment(World.Environment.NORMAL).generator(new ChunkGeneratorWorld())
+                        .createWorld();
+            }
             // Make the nether if it does not exist
             if (Settings.createNether) {
                 getNetherWorld();
             }
             // Multiverse configuration
-            if (Bukkit.getServer().getPluginManager().isPluginEnabled("Multiverse-Core")) {
+
+            if (!Settings.useOwnGenerator && Bukkit.getServer().getPluginManager().isPluginEnabled("Multiverse-Core")) {
                 Bukkit.getLogger().info("Trying to register generator with Multiverse ");
                 try {
                     Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
@@ -759,6 +764,8 @@ public class ASkyBlock extends JavaPlugin {
         }
         // Debug
         Settings.debug = getConfig().getInt("debug", 0);
+        // Custom generator
+        Settings.useOwnGenerator = getConfig().getBoolean("general.useowngenerator", false);
         // How often the grid will be saved to file. Default is 5 minutes
         Settings.backupDuration = (getConfig().getLong("general.backupduration", 5) * 20 * 60);
         // How long a player has to wait after deactivating PVP until they can activate PVP again
@@ -1526,6 +1533,9 @@ public class ASkyBlock extends JavaPlugin {
      */
     public static World getNetherWorld() {
         if (netherWorld == null && Settings.createNether) {
+            if (Settings.useOwnGenerator) {
+                return Bukkit.getServer().getWorld(Settings.worldName +"_nether");
+            }
             if (plugin.getServer().getWorld(Settings.worldName + "_nether") == null) {
                 Bukkit.getLogger().info("Creating " + plugin.getName() + "'s Nether...");
             }

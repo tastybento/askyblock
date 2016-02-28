@@ -265,8 +265,5 @@ public class Settings {
     public static long backupDuration;
     public static boolean cleanUpBlocks;
     public static boolean acidBottle;
-
-
-
-
+    public static boolean useOwnGenerator;
 }

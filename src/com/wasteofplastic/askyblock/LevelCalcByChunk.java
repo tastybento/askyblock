@@ -145,7 +145,7 @@ public class LevelCalcByChunk {
 			    }
 			}
 		    }
-		    blockCount += (int)((double)underWaterBlockCount * Math.max(Settings.underWaterMultiplier,1D));
+		    blockCount += (int)((double)underWaterBlockCount * Settings.underWaterMultiplier);
 		    //System.out.println("block count = "+blockCount);
 		    final int score = blockCount / Settings.levelCost;
 

@@ -118,7 +118,7 @@ public class LevelCalc extends BukkitRunnable {
         if (counter <= 0) {
             // Calculations are complete
             // Add in the under water count
-            blockCount += (int)((double)underWaterBlockCount * Math.max(Settings.underWaterMultiplier,1D));
+            blockCount += (int)((double)underWaterBlockCount * Settings.underWaterMultiplier);
             // Add a multiplier based on the island rating 50 = normal, 100 = max hard, 1 = max easy
             // TODO: Removing this functionality for now as it will be too confusing for players
             // Need to get the rating for the LEADER of the island, not the target player
