@@ -2269,11 +2269,11 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 					    // Dynamic team sizes with permissions
 					    for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
 						if (perms.getPermission().startsWith(Settings.PERMPREFIX + "team.maxsize.")) {
-						    // Prevent the situation where the player has 
+						    // Prevent the situation where the player has multiple permissions
 						    String[] permSplit = perms.getPermission().split(Settings.PERMPREFIX + "team.maxsize.");
 						    if (permSplit.length == 2) {
 							try {
-							    maxSize = Integer.valueOf(permSplit[1]);
+							    maxSize = Math.max(maxSize, Integer.valueOf(permSplit[1]));
 							} catch (Exception e) {
 							    plugin.getLogger().severe("Max team perm for player " + player.getName() + " cannot be parsed " + perms.getPermission());
 							}
