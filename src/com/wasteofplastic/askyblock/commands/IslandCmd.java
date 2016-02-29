@@ -2111,9 +2111,11 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                     // Check if this is part of a name
                                     UUID foundWarp = null;
                                     for (UUID warp : warpList) {
-                                        if (plugin.getPlayers().getName(warp).toLowerCase().startsWith(split[1].toLowerCase())) {
+                                        if (plugin.getPlayers().getName(warp).toLowerCase().equals(split[1].toLowerCase())) {
                                             foundWarp = warp;
                                             break;
+                                        } else if (plugin.getPlayers().getName(warp).toLowerCase().startsWith(split[1].toLowerCase())) {
+                                            foundWarp = warp;
                                         }
                                     }
                                     if (foundWarp == null) {
