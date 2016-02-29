@@ -73,6 +73,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
+import org.bukkit.event.player.PlayerEggThrowEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -603,11 +604,11 @@ public class IslandGuard implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onAnimalSpawn(final CreatureSpawnEvent e) {
-        //if (debug) {
-        //plugin.getLogger().info("Animal spawn event! " + e.getEventName());
-        // plugin.getLogger().info(e.getSpawnReason().toString());
-        // plugin.getLogger().info(e.getCreatureType().toString());
-        //}
+        if (DEBUG) {
+            plugin.getLogger().info("Animal spawn event! " + e.getEventName());
+            plugin.getLogger().info(e.getSpawnReason().toString());
+            plugin.getLogger().info(e.getEntityType().toString());
+        }
         // If not an animal
         if (!(e.getEntity() instanceof Animals)) {
             return;
@@ -912,7 +913,7 @@ public class IslandGuard implements Listener {
         }
     }
 
-/*    
+    /*    
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = false)
     public void onBlockBreakCheck(final BlockPhysicsEvent e) {
         if (DEBUG) {
@@ -920,8 +921,8 @@ public class IslandGuard implements Listener {
             plugin.getLogger().info("DEBUG: block is " + e.getBlock());
         }
     }
-*/    
-    
+     */    
+
     /**
      * Prevents blocks from being broken
      * 
@@ -1440,7 +1441,7 @@ public class IslandGuard implements Listener {
             e.setCancelled(true);
         }
     }
-    
+
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerLeashHitch(final HangingPlaceEvent e) {
         if (DEBUG) {
@@ -2603,6 +2604,33 @@ public class IslandGuard implements Listener {
                 return;
             }
         }
+    }
+
+    /**
+     * Handle visitor chicken egg throwing
+     * @param e
+     */
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onEggThrow(PlayerEggThrowEvent e) {
+        if (DEBUG) {
+            plugin.getLogger().info("egg throwing = " + e.getEventName());
+        }
+        if (!inWorld(e.getPlayer()) || e.getPlayer().isOp() || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
+                || plugin.getGrid().playerIsOnIsland(e.getPlayer()) || plugin.getGrid().isAtSpawn(e.getPlayer().getLocation())) {
+            return;
+        }
+        // Check island
+        Island island = plugin.getGrid().getProtectedIslandAt(e.getPlayer().getLocation()); 
+        if (island == null) {
+            return;
+        }
+        if (!island.getIgsFlag(Flags.allowBreeding)) {
+            e.setHatching(false);
+            e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
+            //e.getPlayer().updateInventory();
+        }
+
+        return;
     }
 
     /**
