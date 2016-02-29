@@ -1,3 +1,0 @@
-# Source language and JDK version to use.
-language: java
-jdk: oraclejdk7
