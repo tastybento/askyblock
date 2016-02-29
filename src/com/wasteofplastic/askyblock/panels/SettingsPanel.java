@@ -305,7 +305,7 @@ public class SettingsPanel implements Listener {
                                 } else {
                                     p.sendMessage(ChatColor.RED + "" + ChatColor.BOLD + plugin.myLocale(p.getUniqueId()).igsPVP + " " + plugin.myLocale(p.getUniqueId()).igsAllowed);
                                 }
-                                p.getWorld().playSound(p.getLocation(), Sound.ARROW_HIT, 1F, 1F);
+                                p.getWorld().playSound(p.getLocation(), Sound.ENTITY_ARROW_HIT, 1F, 1F);
                             }
                         }
                         // Toggle the flag
@@ -351,7 +351,7 @@ public class SettingsPanel implements Listener {
                                 } else {
                                     p.sendMessage(ChatColor.GREEN + plugin.myLocale(p.getUniqueId()).igsPVP + " " + plugin.myLocale(p.getUniqueId()).igsDisallowed);
                                 }
-                                p.getWorld().playSound(p.getLocation(), Sound.FIREWORK_TWINKLE, 1F, 1F);
+                                p.getWorld().playSound(p.getLocation(), Sound.ENTITY_FIREWORK_TWINKLE, 1F, 1F);
                             }
                         }
                     }

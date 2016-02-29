@@ -204,13 +204,9 @@ public class BiomesPanel implements Listener {
             // If the biome is dry, then we need to remove the water, ice, snow, etc.
             switch (biomeType) {
             case MESA:
-            case MESA_BRYCE:
             case DESERT:
             case JUNGLE:
             case SAVANNA:
-            case SAVANNA_MOUNTAINS:
-            case SAVANNA_PLATEAU:
-            case SAVANNA_PLATEAU_MOUNTAINS:
             case SWAMPLAND:
             case HELL:
                 // Get the chunks
@@ -311,13 +307,9 @@ public class BiomesPanel implements Listener {
                         // Check y down for snow etc.
                         switch (biome) {
                         case MESA:
-                        case MESA_BRYCE:
                         case DESERT:
                         case JUNGLE:
                         case SAVANNA:
-                        case SAVANNA_MOUNTAINS:
-                        case SAVANNA_PLATEAU:
-                        case SAVANNA_PLATEAU_MOUNTAINS:
                         case SWAMPLAND:
                             boolean topBlockFound = false;
                             for (int y = e.getWorld().getMaxHeight(); y >= Settings.sea_level; y--) {

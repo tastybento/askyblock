@@ -2192,9 +2192,9 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                             player.teleport(actualWarp);
                                             if (pvp) {
                                                 player.sendMessage(ChatColor.BOLD + "" + ChatColor.RED + plugin.myLocale(player.getUniqueId()).igsPVP + " " + plugin.myLocale(player.getUniqueId()).igsAllowed);
-                                                player.getWorld().playSound(player.getLocation(), Sound.ARROW_HIT, 1F, 1F);
+                                                player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ARROW_HIT, 1F, 1F);
                                             } else {
-                                                player.getWorld().playSound(player.getLocation(), Sound.BAT_TAKEOFF, 1F, 1F);
+                                                player.getWorld().playSound(player.getLocation(), Sound.ENTITY_BAT_TAKEOFF, 1F, 1F);
                                             }
                                             return true;
                                         }
@@ -2824,9 +2824,9 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
         player.teleport(actualWarp);
         if (pvp) {
             player.sendMessage(ChatColor.BOLD + "" + ChatColor.RED + plugin.myLocale(player.getUniqueId()).igsPVP + " " + plugin.myLocale(player.getUniqueId()).igsAllowed);
-            player.getWorld().playSound(player.getLocation(), Sound.ARROW_HIT, 1F, 1F);
+            player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ARROW_HIT, 1F, 1F);
         } else {
-            player.getWorld().playSound(player.getLocation(), Sound.BAT_TAKEOFF, 1F, 1F);
+            player.getWorld().playSound(player.getLocation(), Sound.ENTITY_BAT_TAKEOFF, 1F, 1F);
         }
         Player warpOwner = plugin.getServer().getPlayer(foundWarp);
         if (warpOwner != null && !warpOwner.equals(player)) {

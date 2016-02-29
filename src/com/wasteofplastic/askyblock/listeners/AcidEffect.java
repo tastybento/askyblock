@@ -109,11 +109,8 @@ public class AcidEffect implements Listener {
         if (Settings.rainDamage > 0D && isRaining) {
             // Only check if they are in a non-dry biome
             Biome biome = playerLoc.getBlock().getBiome();
-            if (biome != Biome.DESERT && biome != Biome.DESERT_HILLS && biome != Biome.DESERT_MOUNTAINS
-                    && biome != Biome.SAVANNA && biome != Biome.SAVANNA_MOUNTAINS && biome != Biome.SAVANNA_PLATEAU
-                    && biome != Biome.SAVANNA_PLATEAU_MOUNTAINS && biome != Biome.MESA && biome != Biome.MESA_BRYCE
-                    && biome != Biome.MESA_PLATEAU && biome != Biome.MESA_PLATEAU_FOREST && biome != Biome.MESA_PLATEAU_FOREST_MOUNTAINS
-                    && biome != Biome.MESA_PLATEAU_MOUNTAINS && biome != Biome.HELL) {
+            if (biome != Biome.DESERT && biome != Biome.DESERT_HILLS 
+                    && biome != Biome.SAVANNA && biome != Biome.MESA && biome != Biome.HELL) {
                 // plugin.getLogger().info("Rain damage = " + Settings.rainDamage);
                 boolean hitByRain = true;
                 // Check if all air above player
@@ -202,7 +199,7 @@ public class AcidEffect implements Listener {
                                                 health = 20D;
                                             }
                                             player.setHealth(health);
-                                            player.getWorld().playSound(playerLoc, Sound.FIZZ, 3F, 3F);
+                                            player.getWorld().playSound(playerLoc, Sound.ENTITY_CREEPER_PRIMED, 3F, 3F);
                                         }
                                     } else {
                                         // plugin.getLogger().info("DEBUG: Player no longer in acid world");
@@ -330,7 +327,7 @@ public class AcidEffect implements Listener {
                             }
                             player.setHealth(health);
 
-                            player.getWorld().playSound(playerLoc, Sound.FIZZ, 2F, 2F);
+                            player.getWorld().playSound(playerLoc, Sound.ENTITY_CREEPER_PRIMED, 2F, 2F);
                         }
 
                     } else {

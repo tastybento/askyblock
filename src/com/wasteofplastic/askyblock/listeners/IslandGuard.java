@@ -1774,7 +1774,7 @@ public class IslandGuard implements Listener {
                                 && e.getPlayer().getItemInHand().getType().equals(Material.WATER_BUCKET)) {
                             e.setCancelled(true);
                             e.getPlayer().getItemInHand().setType(Material.BUCKET);
-                            e.getPlayer().playSound(e.getPlayer().getLocation(), Sound.FIZZ, 1F, 2F);
+                            e.getPlayer().playSound(e.getPlayer().getLocation(), Sound.ENTITY_CREEPER_PRIMED, 1F, 2F);
                             e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).biomeSet.replace("[biome]", "Nether"));
                         }
                         return;
@@ -1808,7 +1808,7 @@ public class IslandGuard implements Listener {
         // e.getItem().getType().toString());
         if (e.getItem().getType().equals(Material.WATER_BUCKET)) {
             e.setCancelled(true);
-            e.getBlock().getWorld().playSound(e.getBlock().getLocation(), Sound.FIZZ, 1F, 2F);
+            e.getBlock().getWorld().playSound(e.getBlock().getLocation(), Sound.ENTITY_CREEPER_PRIMED, 1F, 2F);
         }
     }
 

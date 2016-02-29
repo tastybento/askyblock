@@ -62,7 +62,7 @@
 		<dependency>
 			<groupId>org.spigotmc</groupId>
 			<artifactId>spigot-api</artifactId>
-			<version>1.8.8-R0.1-SNAPSHOT</version>
+			<version>1.9-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>net.milkbowl.vault</groupId>
@@ -110,6 +110,13 @@
 			<scope>system</scope>
 			<systemPath>${server.jars}/spigot-1.8.6.jar</systemPath>
 			<version>1.8.6</version>
+		</dependency>
+		<dependency>
+			<groupId>spigotmc.org</groupId>
+			<artifactId>spigot.1.8.8</artifactId>
+			<scope>system</scope>
+			<systemPath>${server.jars}/spigot-1.8.8.jar</systemPath>
+			<version>1.8.8</version>
 		</dependency>
 		<dependency>
 			<groupId>spigotmc.org</groupId>
