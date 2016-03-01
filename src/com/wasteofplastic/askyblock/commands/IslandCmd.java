@@ -802,19 +802,23 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
         }
         myIsland.setProtectionSize(range);
         // Show fancy titles!
-        if (!Bukkit.getServer().getVersion().contains("(MC: 1.7") && Bukkit.getServer().getVersion().contains("(MC: 1.8")) {
+        if (!Bukkit.getServer().getVersion().contains("(MC: 1.7")) {
             if (!plugin.myLocale(player.getUniqueId()).islandSubTitle.isEmpty()) {
+                //plugin.getLogger().info("DEBUG: title " + player.getName() + " subtitle {\"text\":\"" + plugin.myLocale(player.getUniqueId()).islandSubTitle + "\", \"color\":\"" + plugin.myLocale(player.getUniqueId()).islandSubTitleColor + "\"}");
                 plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(),
-                        "title " + player.getName() + " subtitle {text:\"" + plugin.myLocale(player.getUniqueId()).islandSubTitle + "\", color:" + plugin.myLocale(player.getUniqueId()).islandSubTitleColor + "}");
+                        "title " + player.getName() + " subtitle {\"text\":\"" + plugin.myLocale(player.getUniqueId()).islandSubTitle + "\", \"color\":\"" + plugin.myLocale(player.getUniqueId()).islandSubTitleColor + "\"}");
             }
             if (!plugin.myLocale(player.getUniqueId()).islandTitle.isEmpty()) {
+                //plugin.getLogger().info("DEBUG: title " + player.getName() + " title {\"text\":\"" + plugin.myLocale(player.getUniqueId()).islandTitle + "\", \"color\":\"" + plugin.myLocale(player.getUniqueId()).islandTitleColor + "\"}");
                 plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(),
-                        "title " + player.getName() + " title {text:\"" + plugin.myLocale(player.getUniqueId()).islandTitle + "\", color:" + plugin.myLocale(player.getUniqueId()).islandTitleColor + "}");
+                        "title " + player.getName() + " title {\"text\":\"" + plugin.myLocale(player.getUniqueId()).islandTitle + "\", \"color\":\"" + plugin.myLocale(player.getUniqueId()).islandTitleColor + "\"}");
             }
             if (!plugin.myLocale(player.getUniqueId()).islandDonate.isEmpty() && !plugin.myLocale(player.getUniqueId()).islandURL.isEmpty()) {
+                //plugin.getLogger().info("DEBUG: tellraw " + player.getName() + " {\"text\":\"" + plugin.myLocale(player.getUniqueId()).islandDonate + "\",\"color\":\"" + plugin.myLocale(player.getUniqueId()).islandDonateColor + "\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\""
+                //                + plugin.myLocale(player.getUniqueId()).islandURL + "\"}}");
                 plugin.getServer().dispatchCommand(
                         plugin.getServer().getConsoleSender(),
-                        "tellraw " + player.getName() + " {text:\"" + plugin.myLocale(player.getUniqueId()).islandDonate + "\",color:" + plugin.myLocale(player.getUniqueId()).islandDonateColor + ",clickEvent:{action:open_url,value:\""
+                        "tellraw " + player.getName() + " {\"text\":\"" + plugin.myLocale(player.getUniqueId()).islandDonate + "\",\"color\":\"" + plugin.myLocale(player.getUniqueId()).islandDonateColor + "\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\""
                                 + plugin.myLocale(player.getUniqueId()).islandURL + "\"}}");
             }
         }

@@ -582,6 +582,8 @@ biomesettings:
 # remove ice/water/snow - will be done once when the biome is made
 
 biomes:
+  # For 1.9 and later use
+  #TAIGA_COLD:
   COLD_TAIGA:
     icon: SAPLING
     description: "Snowy and cold. Brrr."
@@ -591,6 +593,8 @@ biomes:
     icon: DEAD_BUSH
     description: "A dry desert. Warning - Ice or snow have to go."
     #permission: any.perm.you.want
+  # For 1.9 and later use
+  #FOREST:
   FLOWER_FOREST:
     icon: RED_ROSE
     description: "The place for flowers!"

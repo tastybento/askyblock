@@ -107,6 +107,7 @@ public class BiomesPanel implements Listener {
                 }
             } catch (Exception e) {
                 plugin.getLogger().severe("Could not recognize " + biomeName + " as valid Biome! Skipping...");
+                plugin.getLogger().severe("For V1.9, some biome names do not exist anymore. Change config.yml to the latest.");
             }
         }
         // Now create the inventory panel
