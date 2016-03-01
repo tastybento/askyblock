@@ -1768,13 +1768,17 @@ public class IslandGuard implements Listener {
                 // Not allowed outside of a protected island
                 if (island != null) {
                     // Check island
-                    if (island.getIgsFlag(Flags.allowBreakBlocks) || island.getMembers().contains(p.getUniqueId())) {
+                    if (island.getIgsFlag(Flags.allowBucketUse) || island.getMembers().contains(p.getUniqueId())) {
                         // Check if biome is Nether and then allow water placement but fizz the water
                         if (e.getBlockClicked().getBiome().equals(Biome.HELL)
                                 && e.getPlayer().getItemInHand().getType().equals(Material.WATER_BUCKET)) {
                             e.setCancelled(true);
                             e.getPlayer().getItemInHand().setType(Material.BUCKET);
-                            e.getPlayer().playSound(e.getPlayer().getLocation(), Sound.ENTITY_CREEPER_PRIMED, 1F, 2F);
+                            if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
+                                e.getPlayer().getWorld().playSound(e.getPlayer().getLocation(), Sound.valueOf("FIZZ"), 1F, 2F);
+                            } else {
+                                e.getPlayer().getWorld().playSound(e.getPlayer().getLocation(), Sound.ENTITY_CREEPER_PRIMED, 1F, 2F);
+                            }
                             e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).biomeSet.replace("[biome]", "Nether"));
                         }
                         return;
@@ -1808,7 +1812,11 @@ public class IslandGuard implements Listener {
         // e.getItem().getType().toString());
         if (e.getItem().getType().equals(Material.WATER_BUCKET)) {
             e.setCancelled(true);
-            e.getBlock().getWorld().playSound(e.getBlock().getLocation(), Sound.ENTITY_CREEPER_PRIMED, 1F, 2F);
+            if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
+                e.getBlock().getWorld().playSound(e.getBlock().getLocation(), Sound.valueOf("FIZZ"), 1F, 2F);
+            } else {
+                e.getBlock().getWorld().playSound(e.getBlock().getLocation(), Sound.ENTITY_CREEPER_PRIMED, 1F, 2F);
+            }
         }
     }
 

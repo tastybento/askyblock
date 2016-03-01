@@ -199,7 +199,11 @@ public class AcidEffect implements Listener {
                                                 health = 20D;
                                             }
                                             player.setHealth(health);
-                                            player.getWorld().playSound(playerLoc, Sound.ENTITY_CREEPER_PRIMED, 3F, 3F);
+                                            if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
+                                                player.getWorld().playSound(playerLoc, Sound.valueOf("FIZZ"), 3F, 3F);
+                                            } else {
+                                                player.getWorld().playSound(playerLoc, Sound.ENTITY_CREEPER_PRIMED, 3F, 3F);
+                                            }
                                         }
                                     } else {
                                         // plugin.getLogger().info("DEBUG: Player no longer in acid world");
@@ -326,8 +330,11 @@ public class AcidEffect implements Listener {
                                 health = 20D;
                             }
                             player.setHealth(health);
-
-                            player.getWorld().playSound(playerLoc, Sound.ENTITY_CREEPER_PRIMED, 2F, 2F);
+                            if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
+                                player.getWorld().playSound(playerLoc, Sound.valueOf("FIZZ"), 3F, 3F);
+                            } else {
+                                player.getWorld().playSound(playerLoc, Sound.ENTITY_CREEPER_PRIMED, 3F, 3F);
+                            }
                         }
 
                     } else {

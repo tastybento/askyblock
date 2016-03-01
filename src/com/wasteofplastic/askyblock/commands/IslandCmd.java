@@ -802,7 +802,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
         }
         myIsland.setProtectionSize(range);
         // Show fancy titles!
-        if (!Bukkit.getServer().getVersion().contains("(MC: 1.7")) {
+        if (!Bukkit.getServer().getVersion().contains("(MC: 1.7") && Bukkit.getServer().getVersion().contains("(MC: 1.8")) {
             if (!plugin.myLocale(player.getUniqueId()).islandSubTitle.isEmpty()) {
                 plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(),
                         "title " + player.getName() + " subtitle {text:\"" + plugin.myLocale(player.getUniqueId()).islandSubTitle + "\", color:" + plugin.myLocale(player.getUniqueId()).islandSubTitleColor + "}");
@@ -2192,9 +2192,17 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                             player.teleport(actualWarp);
                                             if (pvp) {
                                                 player.sendMessage(ChatColor.BOLD + "" + ChatColor.RED + plugin.myLocale(player.getUniqueId()).igsPVP + " " + plugin.myLocale(player.getUniqueId()).igsAllowed);
-                                                player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ARROW_HIT, 1F, 1F);
+                                                if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
+                                                    player.getWorld().playSound(player.getLocation(), Sound.valueOf("ARROW_HIT"), 1F, 1F);
+                                                } else {
+                                                    player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ARROW_HIT, 1F, 1F);
+                                                }
                                             } else {
-                                                player.getWorld().playSound(player.getLocation(), Sound.ENTITY_BAT_TAKEOFF, 1F, 1F);
+                                                if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
+                                                    player.getWorld().playSound(player.getLocation(), Sound.valueOf("BAT_TAKEOFF"), 1F, 1F);
+                                                } else {
+                                                    player.getWorld().playSound(player.getLocation(), Sound.ENTITY_BAT_TAKEOFF, 1F, 1F);
+                                                }                             
                                             }
                                             return true;
                                         }
@@ -2824,9 +2832,17 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
         player.teleport(actualWarp);
         if (pvp) {
             player.sendMessage(ChatColor.BOLD + "" + ChatColor.RED + plugin.myLocale(player.getUniqueId()).igsPVP + " " + plugin.myLocale(player.getUniqueId()).igsAllowed);
-            player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ARROW_HIT, 1F, 1F);
+            if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
+                player.getWorld().playSound(player.getLocation(), Sound.valueOf("ARROW_HIT"), 1F, 1F);
+            } else {
+                player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ARROW_HIT, 1F, 1F);
+            }
         } else {
-            player.getWorld().playSound(player.getLocation(), Sound.ENTITY_BAT_TAKEOFF, 1F, 1F);
+            if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
+                player.getWorld().playSound(player.getLocation(), Sound.valueOf("BAT_TAKEOFF"), 1F, 1F);
+            } else {
+                player.getWorld().playSound(player.getLocation(), Sound.ENTITY_BAT_TAKEOFF, 1F, 1F);
+            }
         }
         Player warpOwner = plugin.getServer().getPlayer(foundWarp);
         if (warpOwner != null && !warpOwner.equals(player)) {

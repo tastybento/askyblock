@@ -194,6 +194,7 @@ public class BiomesPanel implements Listener {
      * @param biomeType
      */
     public boolean setIslandBiome(final Location islandLoc, final Biome biomeType) {
+        //plugin.getLogger().info("DEBUG: Biome is " + biomeType);
         final Island island = plugin.getGrid().getIslandAt(islandLoc);
         if (island != null) {
             // Update the settings so they can be checked later
@@ -247,6 +248,7 @@ public class BiomesPanel implements Listener {
                         }
                         // Now get rid of the blocks
                         if (!blocksToRemove.isEmpty()) {
+                            //plugin.getLogger().info("DEBUG: There are blocks to remove "  + blocksToRemove.size());
                             final HashMap<Vector, Integer> blocks = blocksToRemove;
                             // Kick of a sync task
                             plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
@@ -293,6 +295,7 @@ public class BiomesPanel implements Listener {
         //Island island = plugin.getGrid().getIslandAt(e.getChunk().getX()*16, e.getChunk().getZ()*16);
         //if (island != null && !island.isSpawn()) {
         //    Biome biome = island.getCenter().getBlock().getBiome();
+        //plugin.getLogger().info("DEBUG: Writing the biome");
         for (int x = 0; x< 16; x++) {
             for (int z = 0; z< 16; z++) {
                 Island island = plugin.getGrid().getIslandAt(e.getChunk().getX()*16 + x, e.getChunk().getZ()*16 + z);

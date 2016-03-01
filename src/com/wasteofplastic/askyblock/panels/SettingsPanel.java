@@ -22,9 +22,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-import net.md_5.bungee.api.ChatColor;
-
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -305,7 +304,12 @@ public class SettingsPanel implements Listener {
                                 } else {
                                     p.sendMessage(ChatColor.RED + "" + ChatColor.BOLD + plugin.myLocale(p.getUniqueId()).igsPVP + " " + plugin.myLocale(p.getUniqueId()).igsAllowed);
                                 }
-                                p.getWorld().playSound(p.getLocation(), Sound.ENTITY_ARROW_HIT, 1F, 1F);
+                                
+                                if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
+                                    player.getWorld().playSound(player.getLocation(), Sound.valueOf("ARROW_HIT"), 1F, 1F);
+                                } else {
+                                    player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ARROW_HIT, 1F, 1F);
+                                }
                             }
                         }
                         // Toggle the flag
@@ -351,7 +355,12 @@ public class SettingsPanel implements Listener {
                                 } else {
                                     p.sendMessage(ChatColor.GREEN + plugin.myLocale(p.getUniqueId()).igsPVP + " " + plugin.myLocale(p.getUniqueId()).igsDisallowed);
                                 }
-                                p.getWorld().playSound(p.getLocation(), Sound.ENTITY_FIREWORK_TWINKLE, 1F, 1F);
+                                if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
+                                    p.getWorld().playSound(p.getLocation(), Sound.valueOf("FIREWORK_TWINKLE"), 1F, 1F);
+                                } else {
+                                    p.getWorld().playSound(p.getLocation(), Sound.ENTITY_FIREWORK_TWINKLE, 1F, 1F);
+                                }
+                                
                             }
                         }
                     }

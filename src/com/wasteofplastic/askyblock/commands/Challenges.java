@@ -430,7 +430,11 @@ public class Challenges implements CommandExecutor, TabCompleter {
                     if (!leftOvers.isEmpty()) {
                         player.getWorld().dropItemNaturally(player.getLocation(), leftOvers.get(0));
                     }
-                    player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, 1F, 1F);
+                    if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
+                        player.getWorld().playSound(player.getLocation(), Sound.valueOf("ITEM_PICKUP"), 1F, 1F);
+                    } else {
+                        player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, 1F, 1F);
+                    }
                 } catch (Exception e) {
                     player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).challengeserrorRewardProblem);
                     plugin.getLogger().severe("Could not give " + element[0] + ":" + element[1] + " to " + player.getName() + " for challenge reward!");
@@ -484,7 +488,11 @@ public class Challenges implements CommandExecutor, TabCompleter {
                             player.getWorld().dropItemNaturally(player.getLocation(), leftOvers.get(0));
                         }
                     }
-                    player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, 1F, 1F);
+                    if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
+                        player.getWorld().playSound(player.getLocation(), Sound.valueOf("ITEM_PICKUP"), 1F, 1F);
+                    } else {
+                        player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, 1F, 1F);
+                    }
                 } catch (Exception e) {
                     player.sendMessage(ChatColor.RED + "There was a problem giving your reward. Ask Admin to check log!");
                     plugin.getLogger().severe("Could not give " + element[0] + ":" + element[1] + " to " + player.getName() + " for challenge reward!");

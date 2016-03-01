@@ -69,7 +69,11 @@ public class LavaCheck implements Listener {
                     // to.getType().toString());
                     if ((prev.equals(Material.WATER) || prev.equals(Material.STATIONARY_WATER)) && to.getType().equals(Material.STONE)) {
                         to.setType(prev);
-                        to.getWorld().playSound(to.getLocation(), Sound.ENTITY_GENERIC_BURN, 1F, 1F);
+                        if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
+                            to.getWorld().playSound(to.getLocation(), Sound.valueOf("FIZZ"), 1F, 2F);
+                        } else {
+                            to.getWorld().playSound(to.getLocation(), Sound.ENTITY_CREEPER_PRIMED, 1F, 2F);
+                        }
                     }
                 }
             });
