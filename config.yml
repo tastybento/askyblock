@@ -719,7 +719,7 @@ schematicsection:
       description: "Two close islands!|Double the fun,|but a little easier.|&a[Credit] Antal1609"
       filename: double.schematic
       # Schematics can have biomes set when they are created
-      biome: FLOWER_FOREST
+      biome: FOREST
       # If useDefaultChest is false, the items in the schematic will be used
       # If false, the default chest items will be used, or the list below
       useDefaultChest: true
@@ -751,7 +751,7 @@ schematicsection:
       name: "&lBlack &bDiamonds"
       description: "Experts only!|&aMinimal resources|&awith a few diamonds."
       filename: harder.schematic
-      biome: COLD_TAIGA
+      biome: TAIGA_COLD
       useDefaultChest: false
       # Chest items defined here will override the default chest items.
       # You can set the chest items here in this list
