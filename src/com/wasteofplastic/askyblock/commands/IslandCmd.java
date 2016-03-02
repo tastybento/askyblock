@@ -1850,7 +1850,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 			// Dynamic team sizes with permissions
 			for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
 			    if (perms.getPermission().startsWith(Settings.PERMPREFIX + "team.maxsize.")) {
-				maxSize = Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "team.maxsize.")[1]);
+				maxSize = Math.max(maxSize, Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "team.maxsize.")[1]));
 			    }
 			    // Do some sanity checking
 			    if (maxSize < Settings.maxTeamSize) {
