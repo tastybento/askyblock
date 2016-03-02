@@ -66,7 +66,7 @@ public class NetherPortals implements Listener {
     public void onEntityPortal(EntityPortalEvent event) {
         //plugin.getLogger().info("DEBUG: nether portal entity " + event.getFrom().getBlock().getType());
         // If the nether is disabled then quit immediately
-        if (!Settings.createNether) {
+        if (!Settings.createNether || ASkyBlock.getNetherWorld() == null) {
             return;
         }
         if (event.getEntity() == null) {
@@ -117,7 +117,7 @@ public class NetherPortals implements Listener {
         //plugin.getLogger().info("Player portal event - reason =" + event.getCause());
         UUID playerUUID = event.getPlayer().getUniqueId();
         // If the nether is disabled then quit immediately
-        if (!Settings.createNether) {
+        if (!Settings.createNether || ASkyBlock.getNetherWorld() == null) {
             return;
         }
         Location currentLocation = event.getFrom().clone();

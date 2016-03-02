@@ -187,9 +187,11 @@ public class ASkyBlock extends JavaPlugin {
 
         }
         // Set world settings
-        islandWorld.setWaterAnimalSpawnLimit(Settings.waterAnimalSpawnLimit);
-        islandWorld.setMonsterSpawnLimit(Settings.monsterSpawnLimit);
-        islandWorld.setAnimalSpawnLimit(Settings.animalSpawnLimit);
+        if (islandWorld != null) {
+            islandWorld.setWaterAnimalSpawnLimit(Settings.waterAnimalSpawnLimit);
+            islandWorld.setMonsterSpawnLimit(Settings.monsterSpawnLimit);
+            islandWorld.setAnimalSpawnLimit(Settings.animalSpawnLimit);
+        }
 
         return islandWorld;
     }

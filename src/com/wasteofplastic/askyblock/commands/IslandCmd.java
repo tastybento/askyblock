@@ -617,7 +617,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                 if (schematic.isVisible()) {
                     // Check if it's a nether island, but the nether is not enables
                     if (schematic.getBiome().equals(Biome.HELL)) {
-                        if (Settings.createNether && Settings.newNether) {
+                        if (Settings.createNether && Settings.newNether && ASkyBlock.getNetherWorld() != null) {
                             result.add(schematic);
                         }
                     } else {
@@ -693,8 +693,9 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
         // Create island based on schematic
         if (schematic != null) {
             //plugin.getLogger().info("DEBUG: pasting schematic " + schematic.getName() + " " + schematic.getPerm());
+            //plugin.getLogger().info("DEBUG: nether world is " + ASkyBlock.getNetherWorld());
             // Paste the starting island. If it is a HELL biome, then we start in the Nether
-            if (Settings.createNether && schematic.isInNether() && Settings.newNether) {
+            if (Settings.createNether && schematic.isInNether() && Settings.newNether && ASkyBlock.getNetherWorld() != null) {
                 // Nether start
                 // Paste the overworld if it exists
                 if (!schematic.getPartnerName().isEmpty() && schematics.containsKey(schematic.getPartnerName())) {
@@ -716,7 +717,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                 //double diff = (System.nanoTime() - timer)/1000000;
                 //plugin.getLogger().info("DEBUG: nano time = " + diff + " ms");
                 //plugin.getLogger().info("DEBUG: pasted overworld");
-                if (Settings.createNether && Settings.newNether) {
+                if (Settings.createNether && Settings.newNether && ASkyBlock.getNetherWorld() != null) {
                     // Paste the other world schematic
                     final Location netherLoc = next.toVector().toLocation(ASkyBlock.getNetherWorld());
                     if (schematic.getPartnerName().isEmpty()) {

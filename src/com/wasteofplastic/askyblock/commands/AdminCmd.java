@@ -214,7 +214,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.tp") || player.isOp()) {
                 player.sendMessage(ChatColor.YELLOW + "/" + label + " tp <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelptp);
             }
-            if (Settings.createNether && Settings.newNether && (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.tpnether") || player.isOp())) {
+            if (Settings.createNether && Settings.newNether && ASkyBlock.getNetherWorld() != null && (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.tpnether") || player.isOp())) {
                 player.sendMessage(ChatColor.YELLOW + "/" + label + " tpnether <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelptpNether);
             }
 
@@ -1106,7 +1106,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                     return true;
                 }
             } else if (split[0].equalsIgnoreCase("tpnether")) {
-                if (!Settings.createNether || !Settings.newNether) {
+                if (!Settings.createNether || !Settings.newNether || ASkyBlock.getNetherWorld() == null) {
                     return false;
                 }
                 if (!(sender instanceof Player)) {
@@ -2071,7 +2071,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.tp") || player.isOp()) {
                     options.add("tp");
                 }
-                if (Settings.createNether && Settings.newNether && (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.tpnether") || player.isOp())) {
+                if (Settings.createNether && Settings.newNether && ASkyBlock.getNetherWorld() != null && (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.tpnether") || player.isOp())) {
                     options.add("tpnether");
                 }
 

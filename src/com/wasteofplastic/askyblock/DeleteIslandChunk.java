@@ -84,7 +84,7 @@ public class DeleteIslandChunk {
         for (int x = island.getMinProtectedX(); x < (island.getMinProtectedX() + island.getProtectionSize() + 16); x += 16) {
             for (int z = island.getMinProtectedZ(); z < (island.getMinProtectedZ() + island.getProtectionSize() + 16); z += 16) {
                 chunkSnapshot.add(ASkyBlock.getIslandWorld().getBlockAt(x, 0, z).getChunk().getChunkSnapshot());
-                if (Settings.createNether && Settings.newNether) {
+                if (Settings.createNether && Settings.newNether && ASkyBlock.getNetherWorld() != null) {
                     netherChunkSnapshot.add(ASkyBlock.getNetherWorld().getBlockAt(x, 0, z).getChunk().getChunkSnapshot());
                 }
             }
@@ -204,7 +204,7 @@ public class DeleteIslandChunk {
                             Pair entry = it1.next();
                             //plugin.getLogger().info("DEBUG: regenerating chunk " + entry.getLeft() + "," + entry.getRight());
                             ASkyBlock.getIslandWorld().regenerateChunk(entry.getLeft(), entry.getRight());
-                            if (Settings.createNether && Settings.newNether) {
+                            if (Settings.createNether && Settings.newNether && ASkyBlock.getNetherWorld() != null) {
                                 ASkyBlock.getNetherWorld().regenerateChunk(entry.getLeft(), entry.getRight());
                             }
                             it1.remove();

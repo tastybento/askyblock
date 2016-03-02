@@ -324,7 +324,7 @@ public class Island implements Cloneable {
             //plugin.getLogger().info("DEBUG: min prot x = " + minProtectedX + " min z = " + minProtectedZ);
             //plugin.getLogger().info("DEBUG: max x = " + (minProtectedX + protectionRange) + " max z = " + (minProtectedZ + protectionRange));
             
-            if (target.getWorld().equals(world) || (Settings.createNether && Settings.newNether && target.getWorld().equals(ASkyBlock.getNetherWorld()))) {
+            if (target.getWorld().equals(world) || (Settings.createNether && Settings.newNether && ASkyBlock.getNetherWorld() != null && target.getWorld().equals(ASkyBlock.getNetherWorld()))) {
                 if (target.getBlockX() >= minProtectedX && target.getBlockX() < (minProtectedX + protectionRange)
                         && target.getBlockZ() >= minProtectedZ && target.getBlockZ() < (minProtectedZ + protectionRange)) {
                     return true;

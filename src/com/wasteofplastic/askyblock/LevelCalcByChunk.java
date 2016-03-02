@@ -108,7 +108,7 @@ public class LevelCalcByChunk {
 					    //plugin.getLogger().info("DEBUG: Count for non-generic " + md + " is " + count);
 					    if (count > 0) {
 						limitCount.put(md, --count);
-						if (y<Settings.sea_level) {
+						if (y<=Settings.sea_level) {
 						    underWaterBlockCount += Settings.blockValues.get(md);
 						} else {
 						    blockCount += Settings.blockValues.get(md);
@@ -119,7 +119,7 @@ public class LevelCalcByChunk {
 					    //plugin.getLogger().info("DEBUG: Count for generic " + generic + " is " + count);
 					    if (count > 0) {  
 						limitCount.put(md, --count);
-						if (y<Settings.sea_level) {
+						if (y<=Settings.sea_level) {
 						    underWaterBlockCount += Settings.blockValues.get(generic);
 						} else {
 						    blockCount += Settings.blockValues.get(generic);
@@ -127,14 +127,14 @@ public class LevelCalcByChunk {
 					    }
 					} else if (Settings.blockValues.containsKey(md)) {
 					    //plugin.getLogger().info("DEBUG: Adding " + md + " = " + Settings.blockValues.get(md));
-					    if (y<Settings.sea_level) {
+					    if (y<=Settings.sea_level) {
 						underWaterBlockCount += Settings.blockValues.get(md);
 					    } else {
 						blockCount += Settings.blockValues.get(md);
 					    }
 					} else if (Settings.blockValues.containsKey(generic)) {
 					    //plugin.getLogger().info("DEBUG: Adding " + generic + " = " + Settings.blockValues.get(generic));
-					    if (y<Settings.sea_level) {
+					    if (y<=Settings.sea_level) {
 						underWaterBlockCount += Settings.blockValues.get(generic);
 					    } else {
 						blockCount += Settings.blockValues.get(generic);

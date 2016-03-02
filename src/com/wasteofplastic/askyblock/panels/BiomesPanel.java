@@ -289,7 +289,7 @@ public class BiomesPanel implements Listener {
         if (plugin.getGrid() == null) {
             return;
         }
-        if (e.getWorld() != ASkyBlock.getIslandWorld()) {
+        if (ASkyBlock.getIslandWorld() == null || e.getWorld() != ASkyBlock.getIslandWorld()) {
             //plugin.getLogger().info("DEBUG: not right world");
             return;
         }
