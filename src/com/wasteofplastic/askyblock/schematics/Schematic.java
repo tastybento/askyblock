@@ -40,6 +40,7 @@ import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
 import org.bukkit.block.DoubleChest;
 import org.bukkit.block.Sign;
@@ -953,24 +954,26 @@ public class Schematic {
             // Bukkit.getLogger().info("DEBUG welcome sign actual position is:"
             // + welcomeSign.toString());
             blockToChange = ws.toLocation(world).getBlock();
-            blockToChange.setType(Material.SIGN_POST);
-            Sign sign = (Sign) blockToChange.getState();
-            if (sign.getLine(0).isEmpty()) {
-                sign.setLine(0, plugin.myLocale(player.getUniqueId()).signLine1.replace("[player]", player.getName()));
+            BlockState signState = blockToChange.getState();
+            if (signState instanceof Sign) {
+                Sign sign = (Sign) signState;
+                if (sign.getLine(0).isEmpty()) {
+                    sign.setLine(0, plugin.myLocale(player.getUniqueId()).signLine1.replace("[player]", player.getName()));
+                }
+                if (sign.getLine(1).isEmpty()) {
+                    sign.setLine(1, plugin.myLocale(player.getUniqueId()).signLine2.replace("[player]", player.getName()));
+                }
+                if (sign.getLine(2).isEmpty()) {
+                    sign.setLine(2, plugin.myLocale(player.getUniqueId()).signLine3.replace("[player]", player.getName()));
+                }
+                if (sign.getLine(3).isEmpty()) {
+                    sign.setLine(3, plugin.myLocale(player.getUniqueId()).signLine4.replace("[player]", player.getName()));
+                }
+                // BlockFace direction = ((org.bukkit.material.Sign)
+                // sign.getData()).getFacing();
+                //((org.bukkit.material.Sign) sign.getData()).setFacingDirection(BlockFace.NORTH);
+                sign.update();
             }
-            if (sign.getLine(1).isEmpty()) {
-                sign.setLine(1, plugin.myLocale(player.getUniqueId()).signLine2.replace("[player]", player.getName()));
-            }
-            if (sign.getLine(2).isEmpty()) {
-                sign.setLine(2, plugin.myLocale(player.getUniqueId()).signLine3.replace("[player]", player.getName()));
-            }
-            if (sign.getLine(3).isEmpty()) {
-                sign.setLine(3, plugin.myLocale(player.getUniqueId()).signLine4.replace("[player]", player.getName()));
-            }
-            // BlockFace direction = ((org.bukkit.material.Sign)
-            // sign.getData()).getFacing();
-            ((org.bukkit.material.Sign) sign.getData()).setFacingDirection(BlockFace.NORTH);
-            sign.update();
         }
         if (chest != null) {
             Vector ch = chest.clone().subtract(bedrock);

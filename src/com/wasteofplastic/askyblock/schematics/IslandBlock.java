@@ -492,24 +492,9 @@ public class IslandBlock {
      */
     public void paste(NMSAbstraction nms, Location blockLoc, boolean usePhysics, Biome biome) {
         // Only paste air if it is below the sea level and in the overworld
-        //if (this.typeId == 0 
-        //	&& (blockLoc.getBlockY() > Settings.sea_level 
-        //		|| !blockLoc.getWorld().getEnvironment().equals(Environment.NORMAL))) {
-        //    return;
-        //}
-        //Bukkit.getLogger().info("DEBUG: " + x + " " + y + " " + z);
         Block block = new Location(blockLoc.getWorld(), x, y, z).add(blockLoc).getBlock();
-        //Bukkit.getLogger().info("DEBUG: " + block.getLocation().getBlockY());
         block.setBiome(biome);
-        //if (typeId != 0) {
         nms.setBlockSuperFast(block, typeId, data, usePhysics);
-
-        //block.setTypeIdAndData(typeId, (byte)data, usePhysics);
-
-        //}
-        //if (typeId != 0 && block.getWorld().getEnvironment().equals(Environment.NORMAL)) {
-        //    Bukkit.getLogger().info("Debug: " + Material.getMaterial(typeId) + "("+ typeId +":" + data + ") " + block.getLocation());
-        //}
         if (signText != null) {
             // Sign
             Sign sign = (Sign) block.getState();
