@@ -365,7 +365,7 @@ public class ASkyBlock extends JavaPlugin {
                 // Create the world if it does not exist. This is run after the
                 // server starts.
                 getIslandWorld();
-                if (getServer().getWorld(Settings.worldName).getGenerator() == null) {
+                if (!Settings.useOwnGenerator && getServer().getWorld(Settings.worldName).getGenerator() == null) {
                     // Check if the world generator is registered correctly
                     getLogger().severe("********* The Generator for " + plugin.getName() + " is not registered so the plugin cannot start ********");
                     getLogger().severe("Make sure you have the following in bukkit.yml (case sensitive):");

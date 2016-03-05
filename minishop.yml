@@ -44,12 +44,14 @@ items:
       #extra: WATER_BREATHING:EXTENDED
       #extra: WATER_BREATHING:SPLASH
       #extra: WATER_BREATHING:EXTENDEDSPLASH
+      description: Potion of water breathing
       price: 50
    # Potions can be Extended, Splash or ExtendedSplash. Not all potions can be modified
+   # Monster Eggs must be described by name. Use _ for spaces, e.g. PIG_ZOMBIE
    item7:
       material: MONSTER_EGG
       quantity: 1
-      extra: 90
+      extra: PIG
       price: 300
       description: A pig
    # A dark oak (4 saplings needed)

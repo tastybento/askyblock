@@ -49,6 +49,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.material.SpawnEgg;
 import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
@@ -58,6 +59,8 @@ import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.events.ChallengeCompleteEvent;
 import com.wasteofplastic.askyblock.events.ChallengeLevelCompleteEvent;
 import com.wasteofplastic.askyblock.panels.CPItem;
+import com.wasteofplastic.askyblock.util.Potion1_9;
+import com.wasteofplastic.askyblock.util.SpawnEgg1_9;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
@@ -461,31 +464,46 @@ public class Challenges implements CommandExecutor, TabCompleter {
                     } else {
                         rewardItem = Material.getMaterial(element[0].toUpperCase());
                     }
-                    rewardQty = Integer.parseInt(element[2]);
+                    rewardQty = Integer.parseInt(element[2]);                    
                     // Check for POTION
                     if (rewardItem.equals(Material.POTION)) {
-                        // Add the effect of the potion
-                        final PotionEffectType potionType = PotionEffectType.getByName(element[1]);
-                        if (potionType == null) {
-                            plugin.getLogger().severe("Reward potion effect type in config.yml challenges is unknown - skipping!");
+                        givePotion(player, rewardedItems, element, rewardQty);
+                    } else {
+                        ItemStack item = null;
+                        // Normal item, not a potion, check if it is a Monster Egg
+                        if (rewardItem.equals(Material.MONSTER_EGG)) {
+
+                            try {                                
+                                EntityType type = EntityType.valueOf(element[1].toUpperCase());
+                                if (Bukkit.getServer().getVersion().contains("(MC: 1.8") || Bukkit.getServer().getVersion().contains("(MC: 1.7")) {
+                                    item = new SpawnEgg(type).toItemStack(rewardQty);
+                                } else {
+                                    try {
+                                        item = new SpawnEgg1_9(type).toItemStack(rewardQty);
+                                    } catch (Exception ex) {
+                                        item = new ItemStack(rewardItem);
+                                        plugin.getLogger().severe("Monster eggs not supported with this server version.");
+                                    }
+                                }
+                            } catch (Exception e) {
+                                Bukkit.getLogger().severe("Spawn eggs must be described by name. Try one of these (not all are possible):");                          
+                                for (EntityType type : EntityType.values()) {
+                                    if (type.isSpawnable() && type.isAlive()) {
+                                        plugin.getLogger().severe(type.toString());
+                                    }
+                                }
+                            }
                         } else {
-                            final Potion rewPotion = new Potion(PotionType.getByEffect(potionType));
-                            ItemStack item = rewPotion.toItemStack(rewardQty);
+                            int rewMod = Integer.parseInt(element[1]);
+                            item = new ItemStack(rewardItem, rewardQty, (short) rewMod);
+                        }
+                        if (item != null) {
                             rewardedItems.add(item);
-                            final HashMap<Integer, ItemStack> leftOvers = player.getInventory().addItem(item);
+                            final HashMap<Integer, ItemStack> leftOvers = player.getInventory().addItem(
+                                    new ItemStack[] { item });
                             if (!leftOvers.isEmpty()) {
                                 player.getWorld().dropItemNaturally(player.getLocation(), leftOvers.get(0));
                             }
-                        }
-                    } else {
-                        // Normal item, not a potion
-                        int rewMod = Integer.parseInt(element[1]);
-                        ItemStack item = new ItemStack(rewardItem, rewardQty, (short) rewMod);
-                        rewardedItems.add(item);
-                        final HashMap<Integer, ItemStack> leftOvers = player.getInventory().addItem(
-                                new ItemStack[] { item });
-                        if (!leftOvers.isEmpty()) {
-                            player.getWorld().dropItemNaturally(player.getLocation(), leftOvers.get(0));
                         }
                     }
                     if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
@@ -496,6 +514,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
                 } catch (Exception e) {
                     player.sendMessage(ChatColor.RED + "There was a problem giving your reward. Ask Admin to check log!");
                     plugin.getLogger().severe("Could not give " + element[0] + ":" + element[1] + " to " + player.getName() + " for challenge reward!");
+                    /*
                     if (element[0].equalsIgnoreCase("POTION")) {
                         String potionList = "";
                         boolean hint = false;
@@ -512,21 +531,22 @@ public class Challenges implements CommandExecutor, TabCompleter {
                             plugin.getLogger().severe("Sorry, I have no idea what potion type " + element[1] + " is. Pick from one of these:");
                             plugin.getLogger().severe(potionList.substring(0, potionList.length() - 1));
                         }
-                    } else {
-                        String materialList = "";
-                        boolean hint = false;
-                        for (Material m : Material.values()) {
-                            materialList += m.toString() + ",";
-                            if (m.toString().startsWith(element[0].substring(0, 3))) {
-                                plugin.getLogger().severe("Did you mean " + m.toString() + "? If so, put that in challenges.yml.");
-                                hint = true;
-                            }
-                        }
-                        if (!hint) {
-                            plugin.getLogger().severe("Sorry, I have no idea what " + element[0] + " is. Pick from one of these:");
-                            plugin.getLogger().severe(materialList.substring(0, materialList.length() - 1));
+
+                    } else {*/
+                    String materialList = "";
+                    boolean hint = false;
+                    for (Material m : Material.values()) {
+                        materialList += m.toString() + ",";
+                        if (m.toString().startsWith(element[0].substring(0, 3))) {
+                            plugin.getLogger().severe("Did you mean " + m.toString() + "? If so, put that in challenges.yml.");
+                            hint = true;
                         }
                     }
+                    if (!hint) {
+                        plugin.getLogger().severe("Sorry, I have no idea what " + element[0] + " is. Pick from one of these:");
+                        plugin.getLogger().severe(materialList.substring(0, materialList.length() - 1));
+                    }
+                    //}
                     return null;
                 }
             } else if (element.length == 6) {
@@ -541,36 +561,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
                     rewardQty = Integer.parseInt(element[5]);
                     // Check for POTION
                     if (rewardItem.equals(Material.POTION)) {
-                        // Add the effect of the potion
-                        final PotionType potionType = PotionType.valueOf(element[1]);
-                        if (potionType == null) {
-                            plugin.getLogger().severe("Reward potion effect type in config.yml challenges is unknown - skipping!");
-                        } else {
-                            final Potion rewPotion = new Potion(potionType);
-                            // Add extended, splash, level etc.
-                            rewPotion.setLevel(Integer.valueOf(element[2]));
-                            //plugin.getLogger().info("DEBUG: level = " + Integer.valueOf(element[2]));
-                            if (element[3].equalsIgnoreCase("EXTENDED")) {
-                                //plugin.getLogger().info("DEBUG: Extended");
-                                if (potionType != PotionType.INSTANT_DAMAGE && potionType != PotionType.INSTANT_HEAL) {
-                                    // Instant potions cannot be extended
-                                    rewPotion.setHasExtendedDuration(true);
-                                } else {
-                                    plugin.getLogger().warning("Reward potion is an instant potion and cannot be extended!");
-                                }
-                            }
-                            if (element[4].equalsIgnoreCase("SPLASH")) {
-                                //plugin.getLogger().info("DEBUG: splash");
-                                rewPotion.setSplash(true);
-                            }
-                            //plugin.getLogger().info("DEBUG: adding items!");
-                            ItemStack item = rewPotion.toItemStack(rewardQty);
-                            rewardedItems.add(item);
-                            final HashMap<Integer, ItemStack> leftOvers = player.getInventory().addItem(item);
-                            if (!leftOvers.isEmpty()) {
-                                player.getWorld().dropItemNaturally(player.getLocation(), leftOvers.get(0));
-                            }
-                        }
+                        givePotion(player, rewardedItems, element, rewardQty);
                     }
                 } catch (Exception e) {
                     player.sendMessage(ChatColor.RED + "There was a problem giving your reward. Ask Admin to check log!");
@@ -581,7 +572,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
                     plugin.getLogger().severe("Examples:");
                     plugin.getLogger().severe("POTION:STRENGTH:1:EXTENDED:SPLASH:1");
                     plugin.getLogger().severe("POTION:JUMP:2:NOTEXTENDED:NOSPLASH:1");
-                    plugin.getLogger().severe("POTION:WEAKNESS::::1   -  any weakness potion");
+                    plugin.getLogger().severe("POTION:WEAKNESS:::::1   -  any weakness potion");
                     plugin.getLogger().severe("Available names are:");
                     String potionNames = "";
                     for (PotionType p : PotionType.values()) {
@@ -593,6 +584,78 @@ public class Challenges implements CommandExecutor, TabCompleter {
             }
         }
         return rewardedItems;
+    }
+
+
+    private void givePotion(Player player, List<ItemStack> rewardedItems, String[] element, int rewardQty) {
+        // Check for potion aspects
+        boolean splash = false;
+        boolean extended = false;
+        boolean linger = false;
+        int level = 1;
+
+        if (element.length == 6) {
+            // Add extended, splash, level etc.
+            if (!element[2].isEmpty()) {
+                level = Integer.valueOf(element[2]);
+            }
+            //plugin.getLogger().info("DEBUG: level = " + Integer.valueOf(element[2]));
+            if (element[3].equalsIgnoreCase("EXTENDED")) {
+                //plugin.getLogger().info("DEBUG: Extended");
+                extended = true;
+            }
+            if (element[4].equalsIgnoreCase("SPLASH")) {
+                //plugin.getLogger().info("DEBUG: splash");
+                splash = true;                
+            }
+            if (element[4].equalsIgnoreCase("LINGER")) {
+                //plugin.getLogger().info("DEBUG: linger");
+                linger = true;
+            } 
+        }
+
+        if (Bukkit.getServer().getVersion().contains("(MC: 1.8") || Bukkit.getServer().getVersion().contains("(MC: 1.7")) {
+            // Add the effect of the potion
+            final PotionEffectType potionType = PotionEffectType.getByName(element[1]);
+            if (potionType == null) {
+                plugin.getLogger().severe("Reward potion effect type in config.yml challenges is unknown - skipping!");
+            } else {
+                final Potion rewPotion = new Potion(PotionType.getByEffect(potionType));
+                if (potionType != PotionEffectType.HARM && potionType != PotionEffectType.HEAL) {
+                    // Instant potions cannot be extended
+                    rewPotion.setHasExtendedDuration(extended);
+                }
+                rewPotion.setLevel(level);
+                rewPotion.setSplash(splash);
+                ItemStack item = rewPotion.toItemStack(rewardQty);
+                rewardedItems.add(item);
+                final HashMap<Integer, ItemStack> leftOvers = player.getInventory().addItem(item);
+                if (!leftOvers.isEmpty()) {
+                    player.getWorld().dropItemNaturally(player.getLocation(), leftOvers.get(0));
+                }
+            }
+        } else {
+            // 1.9
+            try {
+                Potion1_9 rewPotion = new Potion1_9(Potion1_9.PotionType.valueOf(element[1].toUpperCase()));
+                rewPotion.setHasExtendedDuration(extended);                
+                rewPotion.setStrong(level > 1 ? true : false);
+                rewPotion.setSplash(splash);
+                rewPotion.setLinger(linger);
+                ItemStack item = rewPotion.toItemStack(rewardQty);
+                //plugin.getLogger().info("DEBUG: poion itemstack " + item + " qty = " + rewardQty);
+                rewardedItems.add(item);
+                final HashMap<Integer, ItemStack> leftOvers = player.getInventory().addItem(item);
+                if (!leftOvers.isEmpty()) {
+                    player.getWorld().dropItemNaturally(player.getLocation(), leftOvers.get(0));
+                }  
+            } catch (Exception e) {
+                plugin.getLogger().severe("Reward potion effect type in config.yml challenges is unknown - skipping!");
+                for (Potion1_9.PotionType name : Potion1_9.PotionType.values()) {
+                    plugin.getLogger().severe(name.name());
+                }
+            }
+        }
     }
 
     /**

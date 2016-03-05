@@ -19,7 +19,6 @@ package com.wasteofplastic.askyblock.schematics;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -69,6 +68,7 @@ import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.Settings.GameType;
 import com.wasteofplastic.askyblock.nms.NMSAbstraction;
+import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.org.jnbt.ByteArrayTag;
 import com.wasteofplastic.org.jnbt.ByteTag;
 import com.wasteofplastic.org.jnbt.CompoundTag;
@@ -250,7 +250,7 @@ public class Schematic {
         }
 
         try {
-            nms = checkVersion();
+            nms = Util.checkVersion();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1529,40 +1529,6 @@ public class Schematic {
         return false;
     }
 
-    /**
-     * Checks what version the server is running and picks the appropriate NMS handler, or fallback
-     * @return NMSAbstraction class
-     * @throws ClassNotFoundException
-     * @throws IllegalArgumentException
-     * @throws SecurityException
-     * @throws InstantiationException
-     * @throws IllegalAccessException
-     * @throws InvocationTargetException
-     * @throws NoSuchMethodException
-     */
-    public NMSAbstraction checkVersion() throws ClassNotFoundException, IllegalArgumentException,
-    SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException,
-    NoSuchMethodException {
-        String serverPackageName = plugin.getServer().getClass().getPackage().getName();
-        String pluginPackageName = plugin.getClass().getPackage().getName();
-        String version = serverPackageName.substring(serverPackageName.lastIndexOf('.') + 1);
-        Class<?> clazz;
-        try {
-            //plugin.getLogger().info("Trying " + pluginPackageName + ".nms." + version + ".NMSHandler");
-            clazz = Class.forName(pluginPackageName + ".nms." + version + ".NMSHandler");
-        } catch (Exception e) {
-            plugin.getLogger().info("No NMS Handler found for " + version + ", falling back to Bukkit API.");
-            clazz = Class.forName(pluginPackageName + ".nms.fallback.NMSHandler");
-        }
-        //plugin.getLogger().info("DEBUG: " + serverPackageName);
-        //plugin.getLogger().info("DEBUG: " + pluginPackageName);
-        // Check if we have a NMSAbstraction implementing class at that location.
-        if (NMSAbstraction.class.isAssignableFrom(clazz)) {
-            return (NMSAbstraction) clazz.getConstructor().newInstance();
-        } else {
-            throw new IllegalStateException("Class " + clazz.getName() + " does not implement NMSAbstraction");
-        }
-    }
 
     /**
      * @return the levelHandicap

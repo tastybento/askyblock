@@ -32,17 +32,22 @@
 #
 # The format for POTIONS is as follows:
 #
-# Format POTION:NAME:<LEVEL>:<EXTENDED/NOTEXTENDED>:<SPLASH/NOSPLASH>:QTY
-# LEVEL, EXTENDED and SPLASH are optional. If they are left blank, any is acceptable
-# LEVEL is a number, normally 1 or 2
+# Format POTION:NAME:<LEVEL>:<EXTENDED>:<SPLASH/LINGER>:QTY
+# LEVEL, EXTENDED, SPLASH, LINGER are optional.
+# LEVEL is a number, 1 or 2
+# LINGER is for V1.9 servers and later
 # Examples:
 # POTION:STRENGTH:1:EXTENDED:SPLASH:1
+# POTION:INSTANT_HARM:2::LINGER:2
 # POTION:JUMP:2:NOTEXTENDED:NOSPLASH:1
 # POTION:WEAKNESS::::1   -  any weakness potion
 # 
 # Valid potion names are:
 # WATER, REGEN, SPEED, FIRE_RESISTANCE, POISON, INSTANT_HEAL, NIGHT_VISION, WEAKNESS,
 # STRENGTH, SLOWNESS, JUMP, INSTANT_DAMAGE, WATER_BREATHING, INVISIBILITY
+# For V1.9 these are also available:
+# LUCK, MUNDANE, THICK, AWKWARD
+#
 #
 # Reseting islands and challenges - usually challenges are reset when a player resets
 # their island (see resetchallenges in config.yml). You can stop some challenges from

@@ -34,17 +34,20 @@ import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.inventory.ItemStack;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.InventorySave;
 import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.Island.Flags;
 import com.wasteofplastic.askyblock.Settings;
+import com.wasteofplastic.askyblock.util.SpawnEgg1_9;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
 /**
@@ -63,6 +66,14 @@ public class PlayerEvents implements Listener {
         respawn = new ArrayList<UUID>();
     }
 
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void testEvent(final PlayerInteractEvent e) {
+        ItemStack item = e.getItem();
+        if (item != null && item.getType().equals(Material.MONSTER_EGG)) {
+            SpawnEgg1_9 spawnEgg = SpawnEgg1_9.fromItemStack(item);
+        }
+    }
+    
     /**
      * Prevents changing of hunger while having a special permission and being on your island
      * @param e

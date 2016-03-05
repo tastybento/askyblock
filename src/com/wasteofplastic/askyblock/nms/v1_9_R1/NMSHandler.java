@@ -28,6 +28,7 @@ import net.minecraft.server.v1_9_R1.NBTTagList;
 import net.minecraft.server.v1_9_R1.NBTTagString;
 import net.minecraft.server.v1_9_R1.TileEntityFlowerPot;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -121,4 +122,25 @@ public class NMSHandler implements NMSAbstraction {
         cw.refreshChunk(ch.getX(), ch.getZ());	
     }
 
+    /* (non-Javadoc)
+     * @see com.wasteofplastic.askyblock.nms.NMSAbstraction#isPotion(org.bukkit.inventory.ItemStack)
+     */
+    @Override
+    public boolean isPotion(ItemStack item) {
+        Bukkit.getLogger().info("DEBUG:item = " + item);
+        if (item.getType().equals(Material.POTION)) {
+            net.minecraft.server.v1_9_R1.ItemStack stack = CraftItemStack.asNMSCopy(item);
+            NBTTagCompound tag = stack.getTag();
+            Bukkit.getLogger().info("DEBUG: tag is " + tag);
+            //Bukkit.getLogger().info("DEBUG: display is " + tag.getString("display"));
+            /*
+            for (String list : tag.c()) {
+                Bukkit.getLogger().info("DEBUG: list = " + list);
+            }*/
+            if (tag != null && (!tag.getString("Potion").equalsIgnoreCase("minecraft:water") || tag.getString("Potion").isEmpty())) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

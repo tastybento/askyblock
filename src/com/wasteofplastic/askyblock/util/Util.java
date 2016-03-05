@@ -18,6 +18,7 @@
 package com.wasteofplastic.askyblock.util;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +32,7 @@ import org.bukkit.entity.Player;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.PlayerCache;
+import com.wasteofplastic.askyblock.nms.NMSAbstraction;
 
 /**
  * A set of utility methods
@@ -296,5 +298,40 @@ public class Util {
             returned.add(p.getName());
         }
         return returned;
+    }
+    
+    /**
+     * Checks what version the server is running and picks the appropriate NMS handler, or fallback
+     * @return NMSAbstraction class
+     * @throws ClassNotFoundException
+     * @throws IllegalArgumentException
+     * @throws SecurityException
+     * @throws InstantiationException
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     * @throws NoSuchMethodException
+     */
+    public static NMSAbstraction checkVersion() throws ClassNotFoundException, IllegalArgumentException,
+    SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException,
+    NoSuchMethodException {
+        String serverPackageName = Bukkit.getServer().getClass().getPackage().getName();
+        String pluginPackageName = ASkyBlock.getPlugin().getClass().getPackage().getName();
+        String version = serverPackageName.substring(serverPackageName.lastIndexOf('.') + 1);
+        Class<?> clazz;
+        try {
+            //plugin.getLogger().info("Trying " + pluginPackageName + ".nms." + version + ".NMSHandler");
+            clazz = Class.forName(pluginPackageName + ".nms." + version + ".NMSHandler");
+        } catch (Exception e) {
+            Bukkit.getLogger().info("No NMS Handler found for " + version + ", falling back to Bukkit API.");
+            clazz = Class.forName(pluginPackageName + ".nms.fallback.NMSHandler");
+        }
+        //plugin.getLogger().info("DEBUG: " + serverPackageName);
+        //plugin.getLogger().info("DEBUG: " + pluginPackageName);
+        // Check if we have a NMSAbstraction implementing class at that location.
+        if (NMSAbstraction.class.isAssignableFrom(clazz)) {
+            return (NMSAbstraction) clazz.getConstructor().newInstance();
+        } else {
+            throw new IllegalStateException("Class " + clazz.getName() + " does not implement NMSAbstraction");
+        }
     }
 }

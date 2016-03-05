@@ -42,4 +42,6 @@ public interface NMSAbstraction {
      * @param itemStack
      */
     public void setFlowerPotBlock(Block block, ItemStack itemStack);
+
+    boolean isPotion(ItemStack item);
 }

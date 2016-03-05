@@ -131,4 +131,12 @@ public class NMSHandler implements NMSAbstraction {
         Chunk ch = loc.getChunk();
         cw.refreshChunk(ch.getX(), ch.getZ());  
     }
+
+    @Override
+    public boolean isPotion(ItemStack item) {
+        if (item.getType().equals(Material.POTION) && item.getDurability() != 0) {
+            return true;
+        }
+        return false;
+    }
 }

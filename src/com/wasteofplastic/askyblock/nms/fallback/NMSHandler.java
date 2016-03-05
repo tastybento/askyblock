@@ -52,4 +52,12 @@ public class NMSHandler implements NMSAbstraction {
         block.setTypeIdAndData(itemStack.getTypeId(), itemStack.getData().getData(), false);
 
     }
+
+    @Override
+    public boolean isPotion(ItemStack item) {
+        if (item.getType().equals(Material.POTION) && item.getDurability() != 0) {
+            return true;
+        }
+        return false;
+    }
 }
