@@ -582,9 +582,7 @@ biomesettings:
 # remove ice/water/snow - will be done once when the biome is made
 
 biomes:
-  # For 1.9 and later use
-  #TAIGA_COLD:
-  COLD_TAIGA:
+  COLD_BEACH:
     icon: SAPLING
     description: "Snowy and cold. Brrr."
     # Perms can be any string you like!
@@ -593,11 +591,9 @@ biomes:
     icon: DEAD_BUSH
     description: "A dry desert. Warning - Ice or snow have to go."
     #permission: any.perm.you.want
-  # For 1.9 and later use
-  #FOREST:
-  FLOWER_FOREST:
+  FOREST:
     icon: RED_ROSE
-    description: "The place for flowers!"
+    description: "Forest!"
     #permission: any.perm.you.want
   HELL:
     icon: LAVA_BUCKET
@@ -755,7 +751,7 @@ schematicsection:
       name: "&lBlack &bDiamonds"
       description: "Experts only!|&aMinimal resources|&awith a few diamonds."
       filename: harder.schematic
-      biome: TAIGA_COLD
+      biome: COLD_BEACH
       useDefaultChest: false
       # Chest items defined here will override the default chest items.
       # You can set the chest items here in this list
