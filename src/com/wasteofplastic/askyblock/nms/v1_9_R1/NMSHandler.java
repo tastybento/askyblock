@@ -37,11 +37,8 @@ import org.bukkit.craftbukkit.v1_9_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_9_R1.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.potion.Potion;
-import org.bukkit.potion.PotionType;
 
 import com.wasteofplastic.askyblock.nms.NMSAbstraction;
-import com.wasteofplastic.askyblock.util.Potion1_9;
 import com.wasteofplastic.org.jnbt.CompoundTag;
 import com.wasteofplastic.org.jnbt.ListTag;
 import com.wasteofplastic.org.jnbt.StringTag;
