@@ -29,6 +29,7 @@ import net.minecraft.server.v1_8_R3.NBTTagList;
 import net.minecraft.server.v1_8_R3.NBTTagString;
 import net.minecraft.server.v1_8_R3.TileEntityFlowerPot;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -37,6 +38,8 @@ import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.potion.Potion;
+import org.bukkit.potion.PotionType;
 
 import com.wasteofplastic.askyblock.nms.NMSAbstraction;
 import com.wasteofplastic.org.jnbt.CompoundTag;
@@ -141,4 +144,60 @@ public class NMSHandler implements NMSAbstraction {
         return false;
     }
 
+    @Override
+    public ItemStack setPotion(Material itemMaterial, Tag itemTags,
+            ItemStack chestItem) {
+        // Try some backwards compatibility with new 1.9 schematics
+        Map<String,Tag> cont = (Map<String,Tag>) ((CompoundTag) itemTags).getValue();
+        if (cont != null) {
+            if (((CompoundTag) itemTags).getValue().containsKey("tag")) {
+                Map<String,Tag> contents = (Map<String,Tag>)((CompoundTag) itemTags).getValue().get("tag").getValue();
+                StringTag stringTag = ((StringTag)contents.get("Potion"));
+                if (stringTag != null) {
+                    String tag = stringTag.getValue().replace("minecraft:", "");
+                    PotionType type = null;
+                    boolean strong = tag.contains("strong");
+                    boolean _long = tag.contains("long");
+                    Bukkit.getLogger().info("tag = " + tag);
+                    if(tag.equals("fire_resistance") || tag.equals("long_fire_resistance")){
+                        type = PotionType.FIRE_RESISTANCE;
+                    }else if(tag.equals("harming") || tag.equals("strong_harming")){
+                        type = PotionType.INSTANT_DAMAGE;
+                    }else if(tag.equals("healing") || tag.equals("strong_healing")){
+                        type = PotionType.INSTANT_HEAL;
+                    }else if(tag.equals("invisibility") || tag.equals("long_invisibility")){
+                        type = PotionType.INVISIBILITY;
+                    }else if(tag.equals("leaping") || tag.equals("long_leaping") || tag.equals("strong_leaping")){
+                        type = PotionType.JUMP;
+                    }else if(tag.equals("night_vision") || tag.equals("long_night_vision")){
+                        type = PotionType.NIGHT_VISION;
+                    }else if(tag.equals("poison") || tag.equals("long_poison") || tag.equals("strong_poison")){
+                        type = PotionType.POISON;
+                    }else if(tag.equals("regeneration") || tag.equals("long_regeneration") || tag.equals("strong_regeneration")){
+                        type = PotionType.REGEN;
+                    }else if(tag.equals("slowness") || tag.equals("long_slowness")){
+                        type = PotionType.SLOWNESS;
+                    }else if(tag.equals("swiftness") || tag.equals("long_swiftness") || tag.equals("strong_swiftness")){
+                        type = PotionType.SPEED;
+                    }else if(tag.equals("strength") || tag.equals("long_strength") || tag.equals("strong_strength")){
+                        type = PotionType.STRENGTH;
+                    }else if(tag.equals("water_breathing") || tag.equals("long_water_breathing")){
+                        type = PotionType.WATER_BREATHING;
+                    }else if(tag.equals("water")){
+                        type = PotionType.WATER;
+                    }else if(tag.equals("weakness") || tag.equals("long_weakness")){
+                        type = PotionType.WEAKNESS;
+                    }else{
+                        return chestItem;
+                    }
+                    Potion potion = new Potion(type);
+                    potion.setHasExtendedDuration(_long);
+                    potion.setLevel(strong ? 2 : 1);
+                    chestItem = potion.toItemStack(chestItem.getAmount());
+                }
+            }
+        }
+
+        return chestItem;
+    }
 }

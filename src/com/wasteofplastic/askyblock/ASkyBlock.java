@@ -149,6 +149,7 @@ public class ASkyBlock extends JavaPlugin {
             // 
             if (Settings.useOwnGenerator) {
                 islandWorld = Bukkit.getServer().getWorld(Settings.worldName);
+                //Bukkit.getLogger().info("DEBUG world is " + islandWorld);
             } else {
                 islandWorld = WorldCreator.name(Settings.worldName).type(WorldType.FLAT).environment(World.Environment.NORMAL).generator(new ChunkGeneratorWorld())
                         .createWorld();

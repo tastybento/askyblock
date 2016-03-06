@@ -37,8 +37,11 @@ import org.bukkit.craftbukkit.v1_9_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_9_R1.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.potion.Potion;
+import org.bukkit.potion.PotionType;
 
 import com.wasteofplastic.askyblock.nms.NMSAbstraction;
+import com.wasteofplastic.askyblock.util.Potion1_9;
 import com.wasteofplastic.org.jnbt.CompoundTag;
 import com.wasteofplastic.org.jnbt.ListTag;
 import com.wasteofplastic.org.jnbt.StringTag;
@@ -142,5 +145,37 @@ public class NMSHandler implements NMSAbstraction {
             }
         }
         return false;
+    }
+
+    /* (non-Javadoc)
+     * @see com.wasteofplastic.acidisland.nms.NMSAbstraction#setPotion(com.wasteofplastic.org.jnbt.Tag)
+     */
+    @SuppressWarnings({ "unchecked"})
+    @Override
+    public ItemStack setPotion(Material material, Tag itemTags, ItemStack chestItem) {
+        Map<String,Tag> cont = (Map<String,Tag>) ((CompoundTag) itemTags).getValue();
+        if (cont != null) {
+            if (((CompoundTag) itemTags).getValue().containsKey("tag")) {
+                Map<String,Tag> contents = (Map<String,Tag>)((CompoundTag) itemTags).getValue().get("tag").getValue();
+                StringTag stringTag = ((StringTag)contents.get("Potion"));
+                if (stringTag != null) {
+                    String tag = ((StringTag)contents.get("Potion")).getValue();
+                    //Bukkit.getLogger().info("DEBUG: potioninfo found: " + tag);
+                    net.minecraft.server.v1_9_R1.ItemStack stack = CraftItemStack.asNMSCopy(chestItem);
+                    NBTTagCompound tagCompound = stack.getTag();
+                    if(tagCompound == null){
+                        tagCompound = new NBTTagCompound();
+                    }
+                    tagCompound.setString("Potion", tag);
+                    stack.setTag(tagCompound);
+                    return CraftItemStack.asBukkitCopy(stack);
+                }
+            }
+        }
+        // Schematic is old, the potions do not have tags
+        // Set it to zero so that the potion bottles don't look like giant purple and black blocks
+        chestItem.setDurability((short)0);
+        Bukkit.getLogger().warning("Potion in schematic is pre-V1.9 format and will just be water.");
+        return chestItem;
     }
 }

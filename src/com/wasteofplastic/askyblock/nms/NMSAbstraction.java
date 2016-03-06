@@ -17,6 +17,7 @@
 
 package com.wasteofplastic.askyblock.nms;
 
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 
@@ -44,4 +45,13 @@ public interface NMSAbstraction {
     public void setFlowerPotBlock(Block block, ItemStack itemStack);
 
     boolean isPotion(ItemStack item);
+
+    /**
+     * Returns a potion ItemStack
+     * @param itemMaterial 
+     * @param chestItem 
+     * @param item
+     * @return
+     */
+    public ItemStack setPotion(Material itemMaterial, Tag itemTag, ItemStack chestItem);
 }
