@@ -368,6 +368,8 @@ public class ASkyBlock extends JavaPlugin {
                 if (!Settings.useOwnGenerator && getServer().getWorld(Settings.worldName).getGenerator() == null) {
                     // Check if the world generator is registered correctly
                     getLogger().severe("********* The Generator for " + plugin.getName() + " is not registered so the plugin cannot start ********");
+                    getLogger().severe("If you are using your own generator or server.properties, set useowngenerator: true in config.yml");
+                    getLogger().severe("Otherwise:");
                     getLogger().severe("Make sure you have the following in bukkit.yml (case sensitive):");
                     getLogger().severe("worlds:");
                     getLogger().severe("  # The next line must be the name of your world:");

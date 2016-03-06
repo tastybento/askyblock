@@ -127,11 +127,11 @@ public class NMSHandler implements NMSAbstraction {
      */
     @Override
     public boolean isPotion(ItemStack item) {
-        Bukkit.getLogger().info("DEBUG:item = " + item);
+        //Bukkit.getLogger().info("DEBUG:item = " + item);
         if (item.getType().equals(Material.POTION)) {
             net.minecraft.server.v1_9_R1.ItemStack stack = CraftItemStack.asNMSCopy(item);
             NBTTagCompound tag = stack.getTag();
-            Bukkit.getLogger().info("DEBUG: tag is " + tag);
+            //Bukkit.getLogger().info("DEBUG: tag is " + tag);
             //Bukkit.getLogger().info("DEBUG: display is " + tag.getString("display"));
             /*
             for (String list : tag.c()) {
