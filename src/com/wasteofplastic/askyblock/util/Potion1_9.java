@@ -12,17 +12,17 @@ import org.bukkit.inventory.ItemStack;
  * This class lets you get the potion type from a potion item stack.
  * Bukkit has class org.bukkit.potion.Potion to do this, but that class fails to work properly in minecraft 1.9 due to potions using NBT tags instead of durability values.
  * 
- * @author Michael Forseth
+ * @author Michael Forseth, tastybento
  *
  */
 public class Potion1_9 {
     private PotionType type;
     private boolean strong, extended, linger, splash;
-    
+
     public enum PotionType{
         FIRE_RESISTANCE, INSTANT_DAMAGE, INSTANT_HEAL, INVISIBILITY, JUMP, LUCK, NIGHT_VISION, POISON, REGEN, SLOWNESS, SPEED, STRENGTH, WATER, WATER_BREATHING, WEAKNESS, EMPTY, MUNDANE, THICK, AWKWARD;
     }
-    
+
     /**
      * Construct a new potion of the given type.
      *
@@ -74,8 +74,8 @@ public class Potion1_9 {
             throw new IllegalArgumentException("Water bottles cannot be strong!");
         this.strong = strong;
     }
-    
-    
+
+
     /**
      * This constructs an instance of Potion1_9.
      * @param type
@@ -171,7 +171,7 @@ public class Potion1_9 {
             if(extended){
                 tag = "long_fire_resistance";
             }else{
-                tag = "fire_restistance";
+                tag = "fire_resistance";
             }
         }else if(type.equals(PotionType.INSTANT_DAMAGE)){
             if(strong){
@@ -294,7 +294,8 @@ public class Potion1_9 {
             PotionType type = null;
             boolean strong = tag.contains("strong");
             boolean _long = tag.contains("long");
-            if(tag.equals("fire_restistance") || tag.equals("long_fire_resistance")){
+            Bukkit.getLogger().info("tag = " + tag);
+            if(tag.equals("fire_resistance") || tag.equals("long_fire_resistance")){
                 type = PotionType.FIRE_RESISTANCE;
             }else if(tag.equals("harming") || tag.equals("strong_harming")){
                 type = PotionType.INSTANT_DAMAGE;
@@ -422,4 +423,17 @@ public class Potion1_9 {
         this.splash = splash;
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object object) {
+        if (object instanceof Potion1_9) {
+            Potion1_9 test = (Potion1_9)object;
+            if (test.type.equals(type) && test.extended == extended && test.linger == linger && test.splash == splash) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
