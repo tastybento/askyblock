@@ -193,35 +193,7 @@ public class Island implements Cloneable {
                 } else {
                     //plugin.getLogger().info("DEBUG: Setting default protection items");
                     // Manually set to defaults
-                    this.igs.put(Flags.allowAnvilUse, Settings.allowAnvilUse);
-                    this.igs.put(Flags.allowArmorStandUse, Settings.allowArmorStandUse);
-                    this.igs.put(Flags.allowBeaconAccess, Settings.allowBeaconAccess);
-                    this.igs.put(Flags.allowBedUse, Settings.allowBedUse);
-                    this.igs.put(Flags.allowBreakBlocks, Settings.allowBreakBlocks);
-                    this.igs.put(Flags.allowBreeding, Settings.allowBreeding);
-                    this.igs.put(Flags.allowBrewing, Settings.allowBrewing);
-                    this.igs.put(Flags.allowBucketUse, Settings.allowBucketUse);
-                    this.igs.put(Flags.allowChestAccess, Settings.allowChestAccess);
-                    this.igs.put(Flags.allowCrafting, Settings.allowCrafting);
-                    this.igs.put(Flags.allowCropTrample, Settings.allowCropTrample);
-                    this.igs.put(Flags.allowDoorUse, Settings.allowDoorUse);
-                    this.igs.put(Flags.allowEnchanting, Settings.allowEnchanting);
-                    this.igs.put(Flags.allowEnderPearls, Settings.allowEnderPearls);
-                    this.igs.put(Flags.allowFurnaceUse, Settings.allowFurnaceUse);
-                    this.igs.put(Flags.allowGateUse, Settings.allowGateUse);
-                    this.igs.put(Flags.allowHorseInvAccess, Settings.allowHorseInvAccess);
-                    this.igs.put(Flags.allowHorseRiding, Settings.allowHorseRiding);
-                    this.igs.put(Flags.allowHurtMobs, Settings.allowHurtMobs);
-                    this.igs.put(Flags.allowLeashUse, Settings.allowLeashUse);
-                    this.igs.put(Flags.allowLeverButtonUse, Settings.allowLeverButtonUse);
-                    this.igs.put(Flags.allowMusic, Settings.allowMusic);
-                    this.igs.put(Flags.allowPlaceBlocks, Settings.allowPlaceBlocks);
-                    this.igs.put(Flags.allowPortalUse, Settings.allowPortalUse);
-                    this.igs.put(Flags.allowPressurePlate, Settings.allowPressurePlate);
-                    this.igs.put(Flags.allowPvP, Settings.allowPvP);
-                    this.igs.put(Flags.allowNetherPvP, Settings.allowNetherPvP);
-                    this.igs.put(Flags.allowRedStone, Settings.allowRedStone);
-                    this.igs.put(Flags.allowShearing, Settings.allowShearing);
+                    setDefaults();
                 }
                 // Get the biome
                 if (split.length > 9) {
@@ -236,6 +208,41 @@ public class Island implements Cloneable {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Resets the island protection settings to their default as set in config.yml
+     */
+    public void setDefaults() {
+        this.igs.put(Flags.allowAnvilUse, Settings.allowAnvilUse);
+        this.igs.put(Flags.allowArmorStandUse, Settings.allowArmorStandUse);
+        this.igs.put(Flags.allowBeaconAccess, Settings.allowBeaconAccess);
+        this.igs.put(Flags.allowBedUse, Settings.allowBedUse);
+        this.igs.put(Flags.allowBreakBlocks, Settings.allowBreakBlocks);
+        this.igs.put(Flags.allowBreeding, Settings.allowBreeding);
+        this.igs.put(Flags.allowBrewing, Settings.allowBrewing);
+        this.igs.put(Flags.allowBucketUse, Settings.allowBucketUse);
+        this.igs.put(Flags.allowChestAccess, Settings.allowChestAccess);
+        this.igs.put(Flags.allowCrafting, Settings.allowCrafting);
+        this.igs.put(Flags.allowCropTrample, Settings.allowCropTrample);
+        this.igs.put(Flags.allowDoorUse, Settings.allowDoorUse);
+        this.igs.put(Flags.allowEnchanting, Settings.allowEnchanting);
+        this.igs.put(Flags.allowEnderPearls, Settings.allowEnderPearls);
+        this.igs.put(Flags.allowFurnaceUse, Settings.allowFurnaceUse);
+        this.igs.put(Flags.allowGateUse, Settings.allowGateUse);
+        this.igs.put(Flags.allowHorseInvAccess, Settings.allowHorseInvAccess);
+        this.igs.put(Flags.allowHorseRiding, Settings.allowHorseRiding);
+        this.igs.put(Flags.allowHurtMobs, Settings.allowHurtMobs);
+        this.igs.put(Flags.allowLeashUse, Settings.allowLeashUse);
+        this.igs.put(Flags.allowLeverButtonUse, Settings.allowLeverButtonUse);
+        this.igs.put(Flags.allowMusic, Settings.allowMusic);
+        this.igs.put(Flags.allowPlaceBlocks, Settings.allowPlaceBlocks);
+        this.igs.put(Flags.allowPortalUse, Settings.allowPortalUse);
+        this.igs.put(Flags.allowPressurePlate, Settings.allowPressurePlate);
+        this.igs.put(Flags.allowPvP, Settings.allowPvP);
+        this.igs.put(Flags.allowNetherPvP, Settings.allowNetherPvP);
+        this.igs.put(Flags.allowRedStone, Settings.allowRedStone);
+        this.igs.put(Flags.allowShearing, Settings.allowShearing);
     }
 
     /**
@@ -266,36 +273,7 @@ public class Island implements Cloneable {
         this.votes = 0;
         this.owner = owner;
         // Island Guard Settings
-        this.igs.put(Flags.allowAnvilUse, Settings.allowAnvilUse);
-        this.igs.put(Flags.allowArmorStandUse, Settings.allowArmorStandUse);
-        this.igs.put(Flags.allowBeaconAccess, Settings.allowBeaconAccess);
-        this.igs.put(Flags.allowBedUse, Settings.allowBedUse);
-        this.igs.put(Flags.allowBreakBlocks, Settings.allowBreakBlocks);
-        this.igs.put(Flags.allowBreeding, Settings.allowBreeding);
-        this.igs.put(Flags.allowBrewing, Settings.allowBrewing);
-        this.igs.put(Flags.allowBucketUse, Settings.allowBucketUse);
-        this.igs.put(Flags.allowChestAccess, Settings.allowChestAccess);
-        this.igs.put(Flags.allowCrafting, Settings.allowCrafting);
-        this.igs.put(Flags.allowCropTrample, Settings.allowCropTrample);
-        this.igs.put(Flags.allowDoorUse, Settings.allowDoorUse);
-        this.igs.put(Flags.allowEnchanting, Settings.allowEnchanting);
-        this.igs.put(Flags.allowEnderPearls, Settings.allowEnderPearls);
-        this.igs.put(Flags.allowFurnaceUse, Settings.allowFurnaceUse);
-        this.igs.put(Flags.allowGateUse, Settings.allowGateUse);
-        this.igs.put(Flags.allowHorseInvAccess, Settings.allowHorseInvAccess);
-        this.igs.put(Flags.allowHorseRiding, Settings.allowHorseRiding);
-        this.igs.put(Flags.allowHurtMobs, Settings.allowHurtMobs);
-        this.igs.put(Flags.allowLeashUse, Settings.allowLeashUse);
-        this.igs.put(Flags.allowLeverButtonUse, Settings.allowLeverButtonUse);
-        this.igs.put(Flags.allowMusic, Settings.allowMusic);
-        this.igs.put(Flags.allowPlaceBlocks, Settings.allowPlaceBlocks);
-        this.igs.put(Flags.allowPortalUse, Settings.allowPortalUse);
-        this.igs.put(Flags.allowPressurePlate, Settings.allowPressurePlate);
-        this.igs.put(Flags.allowPvP, Settings.allowPvP);
-        this.igs.put(Flags.allowNetherPvP, Settings.allowNetherPvP);
-        this.igs.put(Flags.allowRedStone, Settings.allowRedStone);
-        this.igs.put(Flags.allowShearing, Settings.allowShearing);
-
+        setDefaults();
     }
     
     /* (non-Javadoc)

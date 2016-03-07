@@ -60,6 +60,7 @@ import com.wasteofplastic.askyblock.CoopPlay;
 import com.wasteofplastic.askyblock.DeleteIslandChunk;
 import com.wasteofplastic.askyblock.GridManager;
 import com.wasteofplastic.askyblock.Island;
+import com.wasteofplastic.askyblock.Island.Flags;
 import com.wasteofplastic.askyblock.PlayerCache;
 import com.wasteofplastic.askyblock.SafeSpotTeleport;
 import com.wasteofplastic.askyblock.Settings;
@@ -195,6 +196,9 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.setrange") || player.isOp()) {
                 player.sendMessage(ChatColor.YELLOW + "/" + label + " setrange:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpSetRange);
             }
+            if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.settingsreset") || player.isOp()) {
+                player.sendMessage(ChatColor.YELLOW + "/" + label + " settingsreset confirm:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpSettingsReset);
+            }
             if (Settings.teamChat && VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.spy") || player.isOp()) {
                 player.sendMessage(ChatColor.YELLOW + "/" + label + " spy:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpTeamChatSpy);
             }
@@ -242,7 +246,8 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                         || split[0].equalsIgnoreCase("purge") || split[0].equalsIgnoreCase("confirm") || split[0].equalsIgnoreCase("setspawn")
                         || split[0].equalsIgnoreCase("deleteisland") || split[0].equalsIgnoreCase("setrange")
                         || split[0].equalsIgnoreCase("reserve")
-                        || split[0].equalsIgnoreCase("unregister") || split[0].equalsIgnoreCase("clearresetall")) {
+                        || split[0].equalsIgnoreCase("unregister") || split[0].equalsIgnoreCase("clearresetall")
+                        || split[0].equalsIgnoreCase("settingsreset")) {
                     if (!checkAdminPerms(player, split)) {
                         player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
                         return true;
@@ -262,6 +267,10 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
             help(sender, label);
             return true;
         case 1:
+            if (split[0].equalsIgnoreCase("settingsreset")) {
+                sender.sendMessage(ChatColor.RED + plugin.myLocale().adminHelpSettingsReset);
+                return true;
+            }
             if (Settings.teamChat && split[0].equalsIgnoreCase("spy")) {
                 if (!(sender instanceof Player)) {
                     sender.sendMessage(ChatColor.RED + plugin.myLocale().adminLockerrorInGame);
@@ -683,6 +692,28 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                     return false;
                 }
         case 2:
+            if (split[0].equalsIgnoreCase("settingsreset")) {                
+                if (split[1].equalsIgnoreCase("confirm")) {
+                    sender.sendMessage(ChatColor.GREEN + plugin.myLocale().settingsResetInProgress);
+                    plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+
+                        @Override
+                        public void run() {
+                            for (Island island : plugin.getGrid().getOwnedIslands().values()) {
+                                island.setDefaults();
+                            }
+                            for (Island island : plugin.getGrid().getUnownedIslands().values()) {
+                                island.setDefaults();
+                            }
+                            sender.sendMessage(ChatColor.GREEN + plugin.myLocale().settingsResetDone);
+                            plugin.getGrid().saveGrid();
+                        }});
+                    return true;
+                } else {
+                    sender.sendMessage(ChatColor.RED + plugin.myLocale().adminHelpSettingsReset);
+                    return true;
+                }
+            }
             // Resetsign <player> - makes a warp sign for player
             if (split[0].equalsIgnoreCase("resetsign")) {
                 // Find the closest island

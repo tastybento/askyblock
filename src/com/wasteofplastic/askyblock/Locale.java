@@ -598,6 +598,10 @@ public class Locale {
     public String adminHelpReserve;
     public String adminReserveIslandExists;
 
+    public String settingsResetInProgress;
+    public String settingsResetDone;
+    public String adminHelpSettingsReset;
+
 
     /**
      * Creates a locale object full of localized strings for a language
@@ -1065,6 +1069,12 @@ public class Locale {
                 .translateAlternateColorCodes('&', locale.getString("adminHelp.kick", "removes player from any team"));
         adminHelpadd = ChatColor
                 .translateAlternateColorCodes('&', locale.getString("adminHelp.add", "adds player to leader's team"));
+        settingsResetInProgress = ChatColor
+                .translateAlternateColorCodes('&', locale.getString("settingsReset.inprogress", "Protection settings being reset, please wait..."));
+        settingsResetDone = ChatColor
+                .translateAlternateColorCodes('&', locale.getString("settingsReset.done", "Done."));
+        adminHelpSettingsReset = ChatColor
+                .translateAlternateColorCodes('&', locale.getString("adminHelp.settingsreset", "Resets all islands to default protection settings"));
 
 
 

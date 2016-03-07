@@ -38,6 +38,7 @@ adminHelp:
   setbiome: "sets leader's island biome"
   setrange: "changes the island's protection range"
   setspawn: "sets the island world spawn to a location close to you"
+  settingsreset: "Resets all islands to default protection settings"
   teamChatSpy: "Spy on team chats (on/off)"
   topTen: "manually update the top 10 list"
   topbreeders: "lists most populated islands currently loaded"
@@ -429,6 +430,9 @@ sethome:
   errorNotOnIsland: "You must be within your island boundaries to set home!"
   errorNumHomes: "Homes can be 1 to [max]"
   homeSet: "Your island home has been set to your current location."
+settingsReset:
+  done: "Done."
+  inprogress: "Protection settings being reset, please wait..."
 sign: 
   line1: "&1[A Skyblock]"
   line2: "[player]"

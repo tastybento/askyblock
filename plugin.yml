@@ -306,4 +306,7 @@ permissions:
           askyblock.admin.reserve:
             description: Reserves an empty spot for a player's next island
             default: op
+          askyblock.admin.settingsreset:
+            description: Resets all the islands to default protection settings
+            default: op
             
