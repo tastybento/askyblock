@@ -151,24 +151,26 @@ public class AcidInventory implements Listener {
     public void onWaterBottleDrink(final PlayerItemConsumeEvent e) {
         if (Settings.acidDamage == 0D || !Settings.acidBottle)
             return;
-        //plugin.getLogger().info(e.getEventName() + " called for " + e.getItem().getType());
-        NMSAbstraction nms = null;
-        try {
-            nms = Util.checkVersion();
-        } catch (Exception ex) {
-            return;
-        }
-        if (!nms.isPotion(e.getItem())) {
-            plugin.getLogger().info(e.getPlayer().getName() + " " + plugin.myLocale().drankAcidAndDied);
-            if (!Settings.muteDeathMessages) {
-                for (Player p : plugin.getServer().getOnlinePlayers()) {
-                    p.sendMessage(e.getPlayer().getDisplayName() + " " + plugin.myLocale(p.getUniqueId()).drankAcid);
-                }
+        if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName) && e.getItem().getType().equals(Material.POTION)) {
+            //plugin.getLogger().info(e.getEventName() + " called for " + e.getItem().getType());
+            NMSAbstraction nms = null;
+            try {
+                nms = Util.checkVersion();
+            } catch (Exception ex) {
+                return;
             }
-            final ItemStack item = new ItemStack(Material.GLASS_BOTTLE);
-            e.getPlayer().setItemInHand(item);
-            e.getPlayer().setHealth(0D);
-            e.setCancelled(true);
+            if (!nms.isPotion(e.getItem())) {
+                plugin.getLogger().info(e.getPlayer().getName() + " " + plugin.myLocale().drankAcidAndDied);
+                if (!Settings.muteDeathMessages) {
+                    for (Player p : plugin.getServer().getOnlinePlayers()) {
+                        p.sendMessage(e.getPlayer().getDisplayName() + " " + plugin.myLocale(p.getUniqueId()).drankAcid);
+                    }
+                }
+                final ItemStack item = new ItemStack(Material.GLASS_BOTTLE);
+                e.getPlayer().setItemInHand(item);
+                e.getPlayer().setHealth(0D);
+                e.setCancelled(true);
+            }
         }
     }
 
