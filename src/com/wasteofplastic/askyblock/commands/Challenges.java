@@ -585,7 +585,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
         return rewardedItems;
     }
 
-    private ItemStack getPotion(String[] element, int rewardQty) {
+    public static ItemStack getPotion(String[] element, int rewardQty) {
         // Check for potion aspects
         boolean splash = false;
         boolean extended = false;
@@ -616,7 +616,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
             // Add the effect of the potion
             final PotionType potionType = PotionType.valueOf(element[1]);
             if (potionType == null) {
-                plugin.getLogger().severe("Potion effect '" + element[1] + "' in challenges.yml is unknown - skipping!");
+                Bukkit.getLogger().severe("Potion effect '" + element[1] + "' in challenges.yml is unknown - skipping!");
             } else {
                 final Potion rewPotion = new Potion(potionType);
                 if (potionType != PotionType.INSTANT_DAMAGE && potionType != PotionType.INSTANT_HEAL) {
@@ -637,9 +637,9 @@ public class Challenges implements CommandExecutor, TabCompleter {
                 rewPotion.setLinger(linger);
                 return rewPotion.toItemStack(rewardQty);               
             } catch (Exception e) {
-                plugin.getLogger().severe("Reward potion effect type in config.yml challenges is unknown - skipping!");
+                Bukkit.getLogger().severe("Reward potion effect type in config.yml challenges is unknown - skipping!");
                 for (Potion1_9.PotionType name : Potion1_9.PotionType.values()) {
-                    plugin.getLogger().severe(name.name());
+                    Bukkit.getLogger().severe(name.name());
                 }
             }
         } 

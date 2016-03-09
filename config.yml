@@ -58,8 +58,27 @@ island:
    # Must be in Bukkit Materials format. Format is <Material>:<Qty>
    # or <Material>:<Data>:<Qty>
    # Use <Data> to set the durability of a item or to select sub-items/colors.
-   # Format for POTION is POTION:<effect>:<qty> or POTION:<effect>:<type>:<qty>
-   # <type> is EXTENDED, SPLASH or EXTENDEDSPLASH. Not all potions can be extended.
+   # 
+   # Spawn Eggs must be defined by name, e.g., MONSTER_EGG:PIG
+   #
+   # The format for POTIONS is as follows:
+   #
+   # Format POTION:NAME:<LEVEL>:<EXTENDED>:<SPLASH/LINGER>:QTY
+   # LEVEL, EXTENDED, SPLASH, LINGER are optional.
+   # LEVEL is a number, 1 or 2
+   # LINGER is for V1.9 servers and later
+   # Examples:
+   # POTION:STRENGTH:1:EXTENDED:SPLASH:1
+   # POTION:INSTANT_HARM:2::LINGER:2
+   # POTION:JUMP:2:NOTEXTENDED:NOSPLASH:1
+   # POTION:WEAKNESS::::1   -  any weakness potion
+   # 
+   # Valid potion names are:
+   # WATER, REGEN, SPEED, FIRE_RESISTANCE, POISON, INSTANT_HEAL, NIGHT_VISION, WEAKNESS,
+   # STRENGTH, SLOWNESS, JUMP, INSTANT_DAMAGE, WATER_BREATHING, INVISIBILITY
+   # For V1.9 these are also available:
+   # LUCK, MUNDANE, THICK, AWKWARD
+   #
    # Check console for errors and guidance after reloading configuration
    # Schematics can override this - see schematicsection
 
@@ -604,7 +623,7 @@ biomes:
   MUSHROOM_ISLAND:
     icon: RED_MUSHROOM
     # Note, this permission can be anything you like
-    permission: askyblock.biomes.mushoom_island
+    permission: askyblock.biomes.mushroom_island
     description: "Mushroom island"
   PLAINS:
     icon: GRASS
