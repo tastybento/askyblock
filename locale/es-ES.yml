@@ -36,6 +36,7 @@ adminHelp:
   setbiome: "Establece isla bioma del líder."
   setrange: "Cambio de rango de proteccion de isla."
   setspawn: "Establece el punto de reaparicion donde estas."
+  settingsreset: "Restablecer todas las islas a los parametros de proteccion predefinidos."
   teamChatSpy: "Espiar a los chats de equipo. (Encendido/Apagado)"
   topTen: "Actualiza manualmente el top 10 de islas"
   topbreeders: "Enumera islas más pobladas actualmente cargado."
@@ -423,6 +424,9 @@ sethome:
   errorNotOnIsland: "Tienes que estar en tu isla para poner el spawnpoint!"
   errorNumHomes: "Podees 1 del maximo de [max] punto de reaparicion."
   homeSet: "Tu spawnpoint ha sido puesto en esta ubicacion."
+settingsReset:
+  done: "Hecho."
+  inprogress: "Proteccion predefinidas se estan reiniciando, por favor espere..."
 sign: 
   line1: "&1[A Skyblock]"
   line2: "[player]"
