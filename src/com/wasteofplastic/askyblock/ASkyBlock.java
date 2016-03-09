@@ -1152,7 +1152,7 @@ public class ASkyBlock extends JavaPlugin {
                         // getLogger().info("DEBUG: Potion length " +
                         // amountdata.length);
                         if (amountdata.length == 6) {
-                            tempChest[i] = Challenges.getPotion(amountdata, Integer.parseInt(amountdata[5]));
+                            tempChest[i] = Challenges.getPotion(amountdata, Integer.parseInt(amountdata[5]), "config.yml");
                         } else {
                             getLogger().severe("Problem loading chest item from config.yml so skipping it: " + chestItemString[i]);
                             getLogger().severe("Potions for the chest must be fully defined as POTION:NAME:<LEVEL>:<EXTENDED>:<SPLASH/LINGER>:QTY");

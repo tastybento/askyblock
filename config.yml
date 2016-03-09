@@ -69,8 +69,8 @@ island:
    # LINGER is for V1.9 servers and later
    # Examples:
    # POTION:STRENGTH:1:EXTENDED:SPLASH:1
-   # POTION:INSTANT_HARM:2::LINGER:2
-   # POTION:JUMP:2:NOTEXTENDED:NOSPLASH:1
+   # POTION:INSTANT_DAMAGE:2::LINGER:2
+   # POTION:JUMP:2:::1
    # POTION:WEAKNESS::::1   -  any weakness potion
    # 
    # Valid potion names are:

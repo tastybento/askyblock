@@ -585,7 +585,14 @@ public class Challenges implements CommandExecutor, TabCompleter {
         return rewardedItems;
     }
 
-    public static ItemStack getPotion(String[] element, int rewardQty) {
+    /**
+     * Converts a serialized potion to a ItemStack of that potion
+     * @param element
+     * @param rewardQty
+     * @param configFile that is being used
+     * @return ItemStack of the potion
+     */
+    public static ItemStack getPotion(String[] element, int rewardQty, String configFile) {
         // Check for potion aspects
         boolean splash = false;
         boolean extended = false;
@@ -616,7 +623,11 @@ public class Challenges implements CommandExecutor, TabCompleter {
             // Add the effect of the potion
             final PotionType potionType = PotionType.valueOf(element[1]);
             if (potionType == null) {
-                Bukkit.getLogger().severe("Potion effect '" + element[1] + "' in challenges.yml is unknown - skipping!");
+                Bukkit.getLogger().severe("Potion effect '" + element[1] + "' in " + configFile + " is unknown - skipping!");
+                Bukkit.getLogger().severe("Use one of the following:");
+                for (PotionType name : PotionType.values()) {
+                    Bukkit.getLogger().severe(name.name());
+                }
             } else {
                 final Potion rewPotion = new Potion(potionType);
                 if (potionType != PotionType.INSTANT_DAMAGE && potionType != PotionType.INSTANT_HEAL) {
@@ -637,7 +648,8 @@ public class Challenges implements CommandExecutor, TabCompleter {
                 rewPotion.setLinger(linger);
                 return rewPotion.toItemStack(rewardQty);               
             } catch (Exception e) {
-                Bukkit.getLogger().severe("Reward potion effect type in config.yml challenges is unknown - skipping!");
+                Bukkit.getLogger().severe("Potion effect '" + element[1] + "' in " + configFile + " is unknown - skipping!");
+                Bukkit.getLogger().severe("Use one of the following:");
                 for (Potion1_9.PotionType name : Potion1_9.PotionType.values()) {
                     Bukkit.getLogger().severe(name.name());
                 }
@@ -647,7 +659,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
     }
 
     private void givePotion(Player player, List<ItemStack> rewardedItems, String[] element, int rewardQty) {
-        ItemStack item = getPotion(element, rewardQty);
+        ItemStack item = getPotion(element, rewardQty, "challenges.yml");
         rewardedItems.add(item);
         final HashMap<Integer, ItemStack> leftOvers = player.getInventory().addItem(item);
         if (!leftOvers.isEmpty()) {
@@ -1036,7 +1048,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
                         // Check for potions
                         if (reqItem.equals(Material.POTION)) {
                             //Logger.logger(2,"DEBUG: Potion");
-                            item = getPotion(part,1);
+                            item = getPotion(part,1, "challenges.yml");
 
                             // Contains at least does not work for potions
                             ItemStack[] playerInv = player.getInventory().getContents();
@@ -1208,7 +1220,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
                         if (reqItem == Material.POTION) {
                             //plugin.getLogger().info("DEBUG: required item is a potion");
                             // This gets the correct potion 
-                            item = getPotion(part, reqAmount);
+                            item = getPotion(part, reqAmount, "challenges.yml");
                             if (item != null) {
                                 ItemStack[] playerInv = player.getInventory().getContents();
                                 for (ItemStack i : playerInv) {
