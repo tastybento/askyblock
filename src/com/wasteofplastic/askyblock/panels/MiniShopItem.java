@@ -69,29 +69,7 @@ public class MiniShopItem {
                 quantity = 1;
             }
             item.setAmount(quantity);
-            // Set the description and price
-            ItemMeta meta = item.getItemMeta();
-            // Split up the description
-            List<String> desc = new ArrayList<String>(Arrays.asList(description.split("\\|")));
-            meta.setDisplayName(desc.get(0));
-            ArrayList<String> buyAndSell = new ArrayList<String>();
-            if (desc.size() > 1) {
-                desc.remove(0);// Remove the name
-                buyAndSell.addAll(desc); // Add the rest to the description
-            }
-            // Create prices for buying and selling
-            if (price > 0D) {
-                buyAndSell.add(ASkyBlock.getPlugin().myLocale().minishopBuy + " " + quantity + " @ " + VaultHelper.econ.format(price));
-            }
-            if (sellPrice > 0D) {
-                buyAndSell.add(ASkyBlock.getPlugin().myLocale().minishopSell + " " + quantity + " @ " + VaultHelper.econ.format(sellPrice));
-            }
-            if (price < 0D && sellPrice < 0D) {
-                buyAndSell.add(ASkyBlock.getPlugin().myLocale().minishopOutOfStock);
-            }
-            meta.setLore(buyAndSell);
-            item.setItemMeta(meta);
-            // Deal with extras
+           // Deal with extras
             if (!extra.isEmpty()) {
                 // plugin.getLogger().info("DEBUG: extra is not empty");
                 // If it not a potion, then the extras should just be durability
@@ -191,6 +169,29 @@ public class MiniShopItem {
                     }
                 }
             }
+            // Set the description and price
+            ItemMeta meta = item.getItemMeta();
+            // Split up the description
+            List<String> desc = new ArrayList<String>(Arrays.asList(description.split("\\|")));
+            meta.setDisplayName(desc.get(0));
+            ArrayList<String> buyAndSell = new ArrayList<String>();
+            if (desc.size() > 1) {
+                desc.remove(0);// Remove the name
+                buyAndSell.addAll(desc); // Add the rest to the description
+            }
+            // Create prices for buying and selling
+            if (price > 0D) {
+                buyAndSell.add(ASkyBlock.getPlugin().myLocale().minishopBuy + " " + quantity + " @ " + VaultHelper.econ.format(price));
+            }
+            if (sellPrice > 0D) {
+                buyAndSell.add(ASkyBlock.getPlugin().myLocale().minishopSell + " " + quantity + " @ " + VaultHelper.econ.format(sellPrice));
+            }
+            if (price < 0D && sellPrice < 0D) {
+                buyAndSell.add(ASkyBlock.getPlugin().myLocale().minishopOutOfStock);
+            }
+            meta.setLore(buyAndSell);
+            item.setItemMeta(meta);
+ 
         } catch (Exception ex) {
             ASkyBlock.getPlugin().getLogger().severe("Problem parsing shop item from minishop.yml so skipping it: " + material);
             ASkyBlock.getPlugin().getLogger().severe("Error is : " + ex.getMessage());
