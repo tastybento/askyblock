@@ -315,13 +315,13 @@ challenges:
       type: inventory
       requiredItems: 'WHEAT:64 SUGAR:64 MELON:64 CARROT_ITEM:64 POTATO_ITEM:64 PUMPKIN:64'
       takeItems: true
-      itemReward: 'REDSTONE:16 INK_SACK:3:1 MONSTER_EGG:90:1 MONSTER_EGG:92:1 MONSTER_EGG:93:1'
+      itemReward: 'REDSTONE:16 INK_SACK:3:1 MONSTER_EGG:PIG:1 MONSTER_EGG:COW:1 MONSTER_EGG:CHICKEN:1'
       rewardText: '16 redstone dust, 1 cocoa bean, 1 spawn egg(chicken,cow,pig)'
       moneyReward: 75
       expReward: 75
       permissionReward: ''
       repeatable: true
-      repeatItemReward: 'INK_SACK:3:1 MONSTER_EGG:90:1 MONSTER_EGG:92:1 MONSTER_EGG:93:1'
+      repeatItemReward: 'INK_SACK:3:1 MONSTER_EGG:PIG:1 MONSTER_EGG:COW:1 MONSTER_EGG:CHICKEN:1'
       repeatRewardText: '1 cocoa bean, 1 spawn egg(chicken,cow,pig)'
       repeatMoneyReward: 20
       repeatExpReward: 20
@@ -355,7 +355,7 @@ challenges:
       type: inventory
       requiredItems: 'LOG:0:16 LOG:1:16 LOG:2:16 LOG:3:16'
       takeItems: true
-      itemReward: 'REDSTONE:16 IRON_ORE:5 MONSTER_EGG:95:1'
+      itemReward: 'REDSTONE:16 IRON_ORE:5 MONSTER_EGG:WOLF:1'
       rewardText: '16 redstone dust, 5 iron (ore), 1 wolf spawn egg'
       moneyReward: 75
       expReward: 75
@@ -513,7 +513,7 @@ challenges:
       type: inventory
       requiredItems: 'NETHERRACK:64 SOUL_SAND:16 GHAST_TEAR:1 MAP:1 COMPASS:1 WATCH:1'
       takeItems: true
-      itemReward: 'POWERED_RAIL:32 RAILS:256 DIAMOND:1 MONSTER_EGG:98:1'
+      itemReward: 'POWERED_RAIL:32 RAILS:256 DIAMOND:1 MONSTER_EGG:OCELOT:1'
       rewardText: '256 rails, 32 powered rails, 1 ocelot spawn egg, 1 diamond'
       moneyReward: 100
       expReward: 100
@@ -551,13 +551,13 @@ challenges:
       type: inventory
       requiredItems: 'WOOL:0:5 WOOL:1:5 WOOL:2:5 WOOL:3:5 WOOL:4:5 WOOL:5:5 WOOL:6:5 WOOL:7:5 WOOL:8:5 WOOL:9:5 WOOL:10:5 WOOL:11:5 WOOL:12:5 WOOL:13:5 WOOL:14:5 WOOL:15:5' 
       takeItems: true
-      itemReward: 'DIAMOND:2 RECORD_7:1 RECORD_8:1 RECORD_6:1 MONSTER_EGG:91:1 EMERALD:5'
+      itemReward: 'DIAMOND:2 RECORD_7:1 RECORD_8:1 RECORD_6:1 MONSTER_EGG:SHEEP:1 EMERALD:5'
       rewardText: '2 diamonds, 5 emeralds, 3 music disks, 1 sheep spawn egg'
       moneyReward: 200
       expReward: 200
       permissionReward: ''
       repeatable: true
-      repeatItemReward: 'EMERALD:1 MONSTER_EGG:91:1'
+      repeatItemReward: 'EMERALD:1 MONSTER_EGG:SHEEP:1'
       repeatRewardText: '1 emerald, 1 sheep spawn egg'
       repeatMoneyReward: 20
       repeatExpReward: 20
@@ -631,13 +631,13 @@ challenges:
       # If you are running 1.8 change to this:
       # requiredItems: 'BAKED_POTATO:1 BREAD:1 CAKE:1 COOKED_CHICKEN:1 COOKED_FISH:1 GRILLED_PORK:1 COOKIE:1 GOLDEN_APPLE:0:1 GOLDEN_CARROT:1 MUSHROOM_SOUP:1 PUMPKIN_PIE:1 COOKED_BEEF:1 COOKED_RABBIT:1 RABBIT_STEW:1 COOKED_MUTTON:1'
       takeItems: true
-      itemReward: 'GOLD_BLOCK:2 GREEN_RECORD:1 RECORD_3:1 RECORD_5:1 MONSTER_EGG:96:1 EMERALD:5'
+      itemReward: 'GOLD_BLOCK:2 GREEN_RECORD:1 RECORD_3:1 RECORD_5:1 MONSTER_EGG:MUSHROOM_COW:1 EMERALD:5'
       rewardText: '2 gold blocks, 3 music discs, 1 mooshroom spawn egg, and 5 emeralds'
       moneyReward: 200
       expReward: 200
       permissionReward: ''
       repeatable: true
-      repeatItemReward: 'GOLD_INGOT:10 MONSTER_EGG:96:1 EMERALD:1'
+      repeatItemReward: 'GOLD_INGOT:10 MONSTER_EGG:MUSHROOM_COW:1 EMERALD:1'
       repeatRewardText: '10 gold ingots, 1 mooshroom spawn egg, 1 emerald'
       repeatMoneyReward: 20
       repeatExpReward: 20
