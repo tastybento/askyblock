@@ -136,8 +136,8 @@
 			<groupId>org.dthielke</groupId>
 			<artifactId>Herochat</artifactId>
 			<scope>system</scope>
-			<systemPath>${server.jars}/HeroChat.jar</systemPath>
-			<version>5.6.7</version>
+			<systemPath>${server.jars}/HeroChat-5.7.0.jar</systemPath>
+			<version>5.7.0</version>
 		</dependency>
 	</dependencies>
 	<repositories>

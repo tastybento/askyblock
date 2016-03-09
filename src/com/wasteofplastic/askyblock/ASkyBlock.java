@@ -390,7 +390,11 @@ public class ASkyBlock extends JavaPlugin {
                 }
                 // Try to register Herochat
                 if (Bukkit.getServer().getPluginManager().isPluginEnabled("Herochat")) {
-                    getServer().getPluginManager().registerEvents(new HeroChatListener(plugin), plugin);
+                    try {
+                        getServer().getPluginManager().registerEvents(new HeroChatListener(plugin), plugin);
+                    } catch (Exception e) {
+                        plugin.getLogger().severe("Could not register with Herochat - old version? This plugin uses 5.7.0.");
+                    }
                 }
                 getServer().getScheduler().runTask(plugin, new Runnable() {
                     @Override

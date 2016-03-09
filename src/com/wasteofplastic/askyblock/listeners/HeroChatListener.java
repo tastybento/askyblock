@@ -21,7 +21,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
-import com.dthielke.herochat.ChannelChatEvent;
+import com.dthielke.api.event.ChannelChatEvent;
 import com.wasteofplastic.askyblock.ASkyBlock;
 
 public class HeroChatListener implements Listener {
@@ -41,8 +41,8 @@ public class HeroChatListener implements Listener {
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerHeroChat(final ChannelChatEvent event) {
         try {
-            String format = event.getFormat().replace("{ISLAND_LEVEL}", plugin.getChatListener().getPlayerLevel(event.getSender().getPlayer().getUniqueId()));
-            format = format.replace("{ISLAND_CHALLENGE_LEVEL}", plugin.getChatListener().getPlayerChallengeLevel(event.getSender().getPlayer().getUniqueId()));
+            String format = event.getFormat().replace("{ISLAND_LEVEL}", plugin.getChatListener().getPlayerLevel(event.getChatter().getPlayer().getUniqueId()));
+            format = format.replace("{ISLAND_CHALLENGE_LEVEL}", plugin.getChatListener().getPlayerChallengeLevel(event.getChatter().getPlayer().getUniqueId()));
             event.setFormat(format);
         } catch (Exception e) {
             // Do nothing
