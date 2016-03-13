@@ -711,6 +711,9 @@ public class Challenges implements CommandExecutor, TabCompleter {
      * @return int of challenges that must still be completed to finish level.
      */
     public int checkLevelCompletion(final Player player, final String level) {
+        if (Settings.freeLevels.contains(level)) {
+            return 0;
+        }
         int challengesCompleted = 0;
         List<String> levelChallengeList = challengeList.get(level);
         int waiver = Settings.waiverAmount;
@@ -1822,7 +1825,8 @@ public class Challenges implements CommandExecutor, TabCompleter {
             challengeFile.setDefaults(defConfig);
         }
         Settings.challengeList = getChallengeConfig().getConfigurationSection("challenges.challengeList").getKeys(false);
-        Settings.challengeLevels = Arrays.asList(getChallengeConfig().getString("challenges.levels").split(" "));
+        Settings.challengeLevels = Arrays.asList(getChallengeConfig().getString("challenges.levels","").split(" "));
+        Settings.freeLevels = Arrays.asList(getChallengeConfig().getString("challenges.freelevels","").split(" "));
         Settings.waiverAmount = getChallengeConfig().getInt("challenges.waiveramount", 1);
         if (Settings.waiverAmount < 0) {
             Settings.waiverAmount = 0;

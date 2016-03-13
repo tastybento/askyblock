@@ -615,7 +615,6 @@ biomes:
     permission: askyblock.biomes.hell
     friendlyname: Nether
     description: "Warning - all water, snow and ice will be removed."
-    #permission: any.perm.you.want
   JUNGLE:
     icon: VINE
     description: "Lush jungle. Warning - Ice or snow have to go."

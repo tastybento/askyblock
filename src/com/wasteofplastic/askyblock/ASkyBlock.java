@@ -64,7 +64,8 @@ import com.wasteofplastic.askyblock.listeners.AcidInventory;
 import com.wasteofplastic.askyblock.listeners.ChatListener;
 import com.wasteofplastic.askyblock.listeners.HeroChatListener;
 import com.wasteofplastic.askyblock.listeners.IslandGuard;
-import com.wasteofplastic.askyblock.listeners.IslandGuardNew;
+import com.wasteofplastic.askyblock.listeners.IslandGuard1_8;
+import com.wasteofplastic.askyblock.listeners.IslandGuard1_9;
 import com.wasteofplastic.askyblock.listeners.JoinLeaveEvents;
 import com.wasteofplastic.askyblock.listeners.LavaCheck;
 import com.wasteofplastic.askyblock.listeners.NetherPortals;
@@ -256,6 +257,7 @@ public class ASkyBlock extends JavaPlugin {
         if (clazz != null) {
             onePointEight = true;
         }
+
         saveDefaultConfig();
         // Check to see if island distance is set or not
         if (getConfig().getInt("island.distance", -1) < 1) {
@@ -1393,6 +1395,10 @@ public class ASkyBlock extends JavaPlugin {
         Settings.addCompletedGlow = getConfig().getBoolean("general.addcompletedglow", true);
         // Clean up blocks around edges when deleting islands
         Settings.cleanUpBlocks = getConfig().getBoolean("island.cleanupblocks",false);
+        Settings.cleanRate = getConfig().getInt("island.cleanrate", 2);
+        if (Settings.cleanRate < 1) {
+            Settings.cleanRate = 1;
+        }
         // No acid bottles or buckets
         Settings.acidBottle = getConfig().getBoolean("general.acidbottles", true);
         // All done
@@ -1413,7 +1419,14 @@ public class ASkyBlock extends JavaPlugin {
         manager.registerEvents(new PlayerEvents(this), this);
         // New V1.8 events
         if (onePointEight) {
-            manager.registerEvents(new IslandGuardNew(this), this);
+            manager.registerEvents(new IslandGuard1_8(this), this);
+        }
+        // Check for 1.9 material
+        for (Material m : Material.values()) {
+            if (m.name().equalsIgnoreCase("END_CRYSTAL")) {
+                manager.registerEvents(new IslandGuard1_9(this), this);
+                break;
+            }    
         }
         // Events for when a player joins or leaves the server
         manager.registerEvents(new JoinLeaveEvents(this), this);

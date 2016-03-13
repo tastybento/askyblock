@@ -58,6 +58,8 @@ challenges:
   # Challenge levels - list as many as you like. If a challenge's level is '' it can
   # be done anytime.
   levels: 'Novice Competent Expert Advanced Elite'
+  # Free levels - which levels above should be freely available
+  freelevels: ''
     
   # The number of undone tasks that can be left on a level before unlocking next level
   waiveramount: 1

@@ -36,8 +36,8 @@ import org.bukkit.inventory.Inventory;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Island;
-import com.wasteofplastic.askyblock.Island.Flags;
 import com.wasteofplastic.askyblock.Settings;
+import com.wasteofplastic.askyblock.Island.Flags;
 
 public class SettingsPanel implements Listener {
     // Island Guard Settings Panel

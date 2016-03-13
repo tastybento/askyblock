@@ -18,6 +18,7 @@ package com.wasteofplastic.askyblock;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -38,7 +39,7 @@ public class Settings {
     public enum GameType {
         ASKYBLOCK, ACIDISLAND
     }
-    /*
+    
     public final static GameType GAMETYPE = GameType.ACIDISLAND;
     // The spawn command (Essentials spawn for example)
     public final static String SPAWNCOMMAND = "spawn";
@@ -50,7 +51,7 @@ public class Settings {
     public static final String CHALLENGECOMMAND = "aic";
     // Admin command
     public static final String ADMINCOMMAND = "acid";
-    */
+    /*
     public final static GameType GAMETYPE = GameType.ASKYBLOCK;
     // Permission prefix
     public final static String PERMPREFIX = "askyblock.";
@@ -62,7 +63,7 @@ public class Settings {
     public final static String SPAWNCOMMAND = "spawn";
     // Admin command
     public static final String ADMINCOMMAND = "asadmin";
-
+*/
     public static Set<String> challengeList;
     public static int waiverAmount;
     public static List<String> challengeLevels;
@@ -266,4 +267,6 @@ public class Settings {
     public static boolean cleanUpBlocks;
     public static boolean acidBottle;
     public static boolean useOwnGenerator;
+    public static List<String> freeLevels = new ArrayList<String>();
+    public static int cleanRate;
 }
