@@ -183,18 +183,17 @@ public class AcidInventory implements Listener {
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
     public void onBrewComplete(final BrewEvent e) {
         if (e.getBlock().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
-            // plugin.getLogger().info("DEBUG: Brew Event called");
+            //if (Settings.acidBottle && Settings.acidDamage>0 && e.getBlock().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+
+        	plugin.getLogger().info("DEBUG: Brew Event called");
             BrewerInventory inv = e.getContents();
             int i = 0;
             for (ItemStack item : inv.getContents()) {
                 if (item != null) {
                     // Remove lore
                     ItemMeta meta = item.getItemMeta();
-                    // plugin.getLogger().info("DEBUG: " +
-                    // meta.getDisplayName());
+                    plugin.getLogger().info("DEBUG: " + meta.getDisplayName());
                     meta.setDisplayName(null);
-                    meta.setLore(null);
-                    item.setItemMeta(null);
                     inv.setItem(i, item);
                 }
                 i++;

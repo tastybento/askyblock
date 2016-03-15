@@ -18,6 +18,7 @@ package com.wasteofplastic.askyblock;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -266,4 +267,6 @@ public class Settings {
     public static boolean cleanUpBlocks;
     public static boolean acidBottle;
     public static boolean useOwnGenerator;
+    public static List<String> freeLevels = new ArrayList<String>();
+    public static int cleanRate;
 }

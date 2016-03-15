@@ -62,6 +62,13 @@ challenges:
   # The number of undone tasks that can be left on a level before unlocking next level
   waiveramount: 1
   
+  # Free levels - which levels above should be auto done when reached, therefore unlocking next level.
+  # Example:
+  # freelevels: 'Novice' will immediately put player onto Competent level challenges 
+  # freelevels: 'Novice Competent' will make all Novice, Competent and Expert challenges available immediately.
+  # freelevels: 'Competent' will open Competent and Expert levels once Novice is complete
+  freelevels: ''
+  
   # This section determines what happens when a player unlocks a new level
   # The subname should correspond to the levels listed above
   # Note that there is no section for the first level as it is automatically unlocked

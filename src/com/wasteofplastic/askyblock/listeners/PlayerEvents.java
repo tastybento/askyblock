@@ -43,8 +43,8 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.InventorySave;
 import com.wasteofplastic.askyblock.Island;
-import com.wasteofplastic.askyblock.Island.Flags;
 import com.wasteofplastic.askyblock.Settings;
+import com.wasteofplastic.askyblock.Island.Flags;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
 /**
