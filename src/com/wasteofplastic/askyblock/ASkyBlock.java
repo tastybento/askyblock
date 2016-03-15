@@ -60,7 +60,6 @@ import com.wasteofplastic.askyblock.commands.Challenges;
 import com.wasteofplastic.askyblock.commands.IslandCmd;
 import com.wasteofplastic.askyblock.generators.ChunkGeneratorWorld;
 import com.wasteofplastic.askyblock.listeners.AcidEffect;
-import com.wasteofplastic.askyblock.listeners.AcidInventory;
 import com.wasteofplastic.askyblock.listeners.ChatListener;
 import com.wasteofplastic.askyblock.listeners.HeroChatListener;
 import com.wasteofplastic.askyblock.listeners.IslandGuard;
@@ -1445,7 +1444,7 @@ public class ASkyBlock extends JavaPlugin {
         // Control panel - for future use
         // manager.registerEvents(new ControlPanel(), this);
         // Change names of inventory items
-        manager.registerEvents(new AcidInventory(this), this);
+        //manager.registerEvents(new AcidInventory(this), this);
         // Schematics panel
         schematicsPanel = new SchematicsPanel(this);
         manager.registerEvents(schematicsPanel, this);
