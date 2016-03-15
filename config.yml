@@ -322,9 +322,6 @@ general:
    animaldamage: 0
    # Damage chickens in acid - true or false - chickens tend to go swimming...
    damagechickens: false
-   # Have water bottles and buckets marked as Acid Bottles/Buckets and kill players if
-   # they drink from them. Only active if aciddamage > 0.
-   acidbottles: true
 
    # Damage type to apply in addition to acid damage
    # Types can be : SLOW, SLOW_DIGGING, CONFUSION,BLINDNESS, HUNGER, WEAKNESS and POISON
