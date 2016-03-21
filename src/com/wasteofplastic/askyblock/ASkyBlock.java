@@ -19,6 +19,7 @@ package com.wasteofplastic.askyblock;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -1646,4 +1647,13 @@ public class ASkyBlock extends JavaPlugin {
     public SettingsPanel getSettingsPanel() {
         return settingsPanel;
     }
+
+	/**
+	 * MySQL database
+	 * @return
+	 */
+	public Connection getDatabaseConnection() {
+		// TODO Complete
+		return null;
+	}
 }
