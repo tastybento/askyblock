@@ -294,7 +294,7 @@ public class Potion1_9 {
             PotionType type = null;
             boolean strong = tag.contains("strong");
             boolean _long = tag.contains("long");
-            Bukkit.getLogger().info("tag = " + tag);
+            //Bukkit.getLogger().info("tag = " + tag);
             if(tag.equals("fire_resistance") || tag.equals("long_fire_resistance")){
                 type = PotionType.FIRE_RESISTANCE;
             }else if(tag.equals("harming") || tag.equals("strong_harming")){

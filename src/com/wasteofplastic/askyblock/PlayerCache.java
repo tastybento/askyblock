@@ -500,6 +500,10 @@ public class PlayerCache {
         if (plugin.getTinyDB() != null && plugin.getTinyDB().isDbReady()) {
             return plugin.getTinyDB().getPlayerUUID(string);
         }
+        // Try the server
+        if (plugin.getServer().getPlayer(string) != null) {
+            return plugin.getServer().getPlayer(string).getUniqueId();
+        }
         return null;
     }
 
