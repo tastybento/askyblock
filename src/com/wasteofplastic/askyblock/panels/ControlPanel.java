@@ -16,6 +16,7 @@
  *******************************************************************************/
 package com.wasteofplastic.askyblock.panels;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -35,6 +36,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Settings;
@@ -233,10 +235,28 @@ public class ControlPanel implements Listener {
             // challenges.size());
             if (slot >= 0 && slot < challenges.size()) {
                 CPItem item = challenges.get(slot);
-                // plugin.getLogger().info("DEBUG: CP Item is " +
-                // item.getItem().toString());
-                // plugin.getLogger().info("DEBUG: Clicked is " +
-                // clicked.toString());
+                // TEST
+                /*
+                ItemStack icon = new ItemStack(Material.POTION);
+                ItemMeta meta = icon.getItemMeta();
+                meta.setDisplayName("Name");
+                List<String> lore = new ArrayList<String>();
+                lore.add("Lore 1");
+                lore.add("Lore 2");
+                meta.setLore(lore);
+                icon.setItemMeta(meta);
+                ItemStack click = new ItemStack(Material.POTION);
+                plugin.getLogger().info("DEBUG: icon is " + icon.toString());
+                plugin.getLogger().info("DEBUG: click is " + click.toString());
+                if (click.equals(icon)) {
+                    plugin.getLogger().info("DEBUG same");
+                } else {
+                    plugin.getLogger().info("DEBUG not same");
+                   
+                }*/
+                // END TEST
+                //plugin.getLogger().info("DEBUG: CP Item is " + item.getItem().toString());
+                //plugin.getLogger().info("DEBUG: Clicked is " + clicked.toString());
                 // Check that it is the top items that are being clicked on
                 // These two should be identical because it is made before
                 if (clicked.equals(item.getItem())) {

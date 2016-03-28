@@ -31,7 +31,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionType;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
-import com.wasteofplastic.askyblock.util.Potion1_9;
+import com.wasteofplastic.askyblock.commands.Challenges;
 import com.wasteofplastic.askyblock.util.SpawnEgg1_9;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
@@ -73,7 +73,7 @@ public class MiniShopItem {
             if (!extra.isEmpty()) {
                 // plugin.getLogger().info("DEBUG: extra is not empty");
                 // If it not a potion, then the extras should just be durability
-                if (!material.equals(Material.POTION)) {
+                if (!material.name().contains("POTION")) {
                     if (material.equals(Material.MONSTER_EGG)) {
                         try {
                             EntityType type = EntityType.valueOf(extra.toUpperCase());
@@ -99,6 +99,11 @@ public class MiniShopItem {
                         item.setDurability(Short.parseShort(extra));
                     }
                 } else {
+                    // Potion, splash potion or linger potion
+                    extra = "POTION:" + extra;
+                    String[] extras = extra.split(":");
+                    item = Challenges.getPotion(extras, quantity, "minishop.yml");
+                    /*
                     // plugin.getLogger().info("DEBUG: extra is a potion");
                     if (Bukkit.getServer().getVersion().contains("(MC: 1.8") || Bukkit.getServer().getVersion().contains("(MC: 1.7")) {
                         Potion newPotion;
@@ -166,7 +171,7 @@ public class MiniShopItem {
                                 item = newPotion.toItemStack(quantity);
                             }
                         }
-                    }
+                    }*/
                 }
             }
             // Set the description and price
