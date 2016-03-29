@@ -29,7 +29,6 @@ import net.minecraft.server.v1_8_R3.NBTTagList;
 import net.minecraft.server.v1_8_R3.NBTTagString;
 import net.minecraft.server.v1_8_R3.TileEntityFlowerPot;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;

@@ -29,6 +29,7 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.EntityBlockFormEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
@@ -38,8 +39,8 @@ import org.bukkit.projectiles.ProjectileSource;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Island;
-import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.Island.Flags;
+import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
@@ -58,11 +59,51 @@ public class IslandGuard1_9 implements Listener {
     }
 
     /**
-     * Handle interaction with armor stands V1.8
+     * Handles Frost Walking on visitor's islands
+     * @param e
+     */
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
+    public void onBlockForm(EntityBlockFormEvent e) {
+        if (DEBUG) {
+            plugin.getLogger().info(e.getEventName());
+        }
+        if (e.getEntity() instanceof Player && e.getNewState().getType().equals(Material.FROSTED_ICE)) {
+            Player player= (Player) e.getEntity();
+            if (!IslandGuard.inWorld(player)) {
+                return;
+            }
+            if (player.isOp()) {
+                return;
+            }
+            // This permission bypasses protection
+            if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.bypassprotect")) {
+                return;
+            }
+            // Check island
+            Island island = plugin.getGrid().getIslandAt(player.getLocation());
+            if (island !=null) {
+                if (island.isSpawn()) {
+                    if (Settings.allowSpawnPlaceBlocks) {
+                        return;
+                    }
+                } else {
+                    if (island.getMembers().contains(player.getUniqueId()) || island.getIgsFlag(Flags.allowPlaceBlocks)) {
+                        return;
+                    }
+                }
+            }
+            // Silently cancel the event
+            e.setCancelled(true);
+        }
+    }
+
+
+    /**
+     * Handle interaction with end crystals 1.9
      * 
      * @param e
      */
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onHitEndCrystal(final PlayerInteractAtEntityEvent e) {
         if (DEBUG) {
             plugin.getLogger().info(e.getEventName());
@@ -97,7 +138,7 @@ public class IslandGuard1_9 implements Listener {
     }
 
     // End crystal
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled=true)
     void placeEndCrystalEvent(PlayerInteractEvent e) {
         Player p = e.getPlayer();
         if (DEBUG) {
@@ -139,7 +180,11 @@ public class IslandGuard1_9 implements Listener {
 
     }
 
-    @EventHandler(priority = EventPriority.LOW)
+    /**
+     * Handle end crystal damage by visitors
+     * @param e
+     */
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void EndCrystalDamage(EntityDamageByEntityEvent e) {
         if (DEBUG) {
             plugin.getLogger().info("IslandGuard 1_9 " + e.getEventName());

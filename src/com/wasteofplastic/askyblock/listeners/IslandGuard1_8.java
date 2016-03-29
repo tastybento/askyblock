@@ -33,8 +33,8 @@ import org.bukkit.inventory.ItemStack;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Island;
-import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.Island.Flags;
+import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
@@ -57,7 +57,7 @@ public class IslandGuard1_8 implements Listener {
      * 
      * @param e
      */
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onPlayerInteract(final PlayerInteractAtEntityEvent e) {
         if (debug) {
             plugin.getLogger().info(e.getEventName());
@@ -100,7 +100,7 @@ public class IslandGuard1_8 implements Listener {
      * @param e
      */
     @SuppressWarnings("deprecation")
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onPlayerInteract(final PlayerInteractEvent e) {
         if (debug) {
             plugin.getLogger().info(e.getEventName());
@@ -136,7 +136,7 @@ public class IslandGuard1_8 implements Listener {
     }
 
     // Armor stand events
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled=true)
     void placeArmorStandEvent(PlayerInteractEvent e) {
         Player p = e.getPlayer();
         if (debug) {
@@ -178,7 +178,7 @@ public class IslandGuard1_8 implements Listener {
 
     }
 
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void ArmorStandDestroy(EntityDamageByEntityEvent e) {
         if (debug) {
             plugin.getLogger().info("IslandGuard New " + e.getEventName());

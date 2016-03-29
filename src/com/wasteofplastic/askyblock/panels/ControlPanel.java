@@ -16,7 +16,6 @@
  *******************************************************************************/
 package com.wasteofplastic.askyblock.panels;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -36,7 +35,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Settings;
