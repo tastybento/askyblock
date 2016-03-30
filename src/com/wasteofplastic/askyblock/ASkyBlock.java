@@ -228,9 +228,10 @@ public class ASkyBlock extends JavaPlugin {
             }
             TopTen.topTenSave();
             // Close the name database
+            /*
             if (tinyDB != null) {
                 tinyDB.closeDB();
-            }
+            }*/
         } catch (final Exception e) {
             getLogger().severe("Something went wrong saving files!");
             e.printStackTrace();
@@ -426,13 +427,14 @@ public class ASkyBlock extends JavaPlugin {
                         getServer().getPluginManager().registerEvents(biomes, plugin);
 
                         TopTen.topTenLoad();
+                        /*
                         if (tinyDB == null) {
                             tinyDB = new TinyDB(plugin);
                         }
                         // Add any online players to the DB
                         for (Player onlinePlayer : plugin.getServer().getOnlinePlayers()) {
                             tinyDB.savePlayerName(onlinePlayer.getName(), onlinePlayer.getUniqueId());
-                        }
+                        }*/
                         // Save grid every 5 minutes
                         getServer().getScheduler().runTaskTimer(plugin, new Runnable() {
 
@@ -775,6 +777,8 @@ public class ASkyBlock extends JavaPlugin {
         }
         // Debug
         Settings.debug = getConfig().getInt("debug", 0);
+        // Allow pushing
+        Settings.allowPushing = getConfig().getBoolean("general.allowpushing", true);
         // Custom generator
         Settings.useOwnGenerator = getConfig().getBoolean("general.useowngenerator", false);
         // How often the grid will be saved to file. Default is 5 minutes
@@ -1599,6 +1603,7 @@ public class ASkyBlock extends JavaPlugin {
     /**
      * @return the nameDB
      */
+    
     public TinyDB getTinyDB() {
         return tinyDB;
     }

@@ -268,4 +268,5 @@ public class Settings {
     public static boolean useOwnGenerator;
     public static List<String> freeLevels = new ArrayList<String>();
     public static int cleanRate;
+    public static boolean allowPushing;
 }

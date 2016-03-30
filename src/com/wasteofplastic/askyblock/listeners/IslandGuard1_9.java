@@ -19,6 +19,7 @@ package com.wasteofplastic.askyblock.listeners;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -34,8 +35,11 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.projectiles.ProjectileSource;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Team;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Island;
@@ -52,10 +56,11 @@ import com.wasteofplastic.askyblock.util.VaultHelper;
 public class IslandGuard1_9 implements Listener {
     private final ASkyBlock plugin;
     private final static boolean DEBUG = false;
+    private Scoreboard scoreboard;
+    private Team pushTeam;
 
     public IslandGuard1_9(final ASkyBlock plugin) {
         this.plugin = plugin;
-
     }
 
     /**
@@ -253,6 +258,10 @@ public class IslandGuard1_9 implements Listener {
 
     }
 
+    /**
+     * Handles end crystal explosions
+     * @param e
+     */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onExplosion(final EntityExplodeEvent e) {
         if (DEBUG) {
@@ -303,5 +312,48 @@ public class IslandGuard1_9 implements Listener {
 
     }
 
+    /**
+     * Triggers a push protection change or not
+     * @param e
+     */
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onPlayerJoin(final PlayerJoinEvent e) {
+        setPush(e.getPlayer());
+    }
 
+    /**
+     * Handles push protection
+     * @param player
+     */
+    public void setPush(Player player) {
+        scoreboard = player.getScoreboard();
+        if (scoreboard == null) {
+            //plugin.getLogger().info("DEBUG: initializing scoreboard");
+            scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+        }
+        if (Settings.allowPushing) {
+            if (scoreboard.getTeam("ASkyBlockNP") != null) {
+                //plugin.getLogger().info("DEBUG: unregistering the team");
+                scoreboard.getTeam("ASkyBlockNP").unregister();
+            }
+            return;
+        }
+        // Try and get what team the player is on right now
+        pushTeam = scoreboard.getEntryTeam(player.getName());
+        if (pushTeam == null) {
+            // It doesn't exist yet, so make it
+            pushTeam = scoreboard.getTeam("ASkyBlockNP");
+            if (pushTeam == null) {
+                pushTeam = scoreboard.registerNewTeam("ASkyBlockNP");
+            }
+            // Add the player to the team
+            pushTeam.addEntry(player.getName()); 
+        }
+        if (pushTeam.getName().equals("ASkyBlockNP")) {
+            //plugin.getLogger().info("DEBUG: pushing not allowed");
+            pushTeam.setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER);               
+        } else {
+            //plugin.getLogger().info("DEBUG: player is already in another team");
+        }
+    }
 }

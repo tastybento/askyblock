@@ -125,7 +125,7 @@ permissions:
         default: false
       askyblock.nohunger:
         description: Excludes player from hunger if on island
-        default: false   
+        default: false  
       askyblock.settings.*:
         children:
           askyblock.settings.allowAnvilUse:
