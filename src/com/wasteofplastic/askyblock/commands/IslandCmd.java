@@ -2673,23 +2673,15 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                         CoopPlay.getInstance().clearMyCoops(target);
                                         // Clear the player out and throw their stuff at the
                                         // leader
-                                        if (target.getWorld().equals(ASkyBlock.getIslandWorld())) {
+                                        if (target.getWorld().equals(ASkyBlock.getIslandWorld())) {                     
                                             for (ItemStack i : target.getInventory().getContents()) {
                                                 if (i != null) {
-                                                    try {
+                                                    try {                                                        
                                                         player.getWorld().dropItemNaturally(player.getLocation(), i);
                                                     } catch (Exception e) {
                                                     }
                                                 }
-                                            }
-                                            for (ItemStack i : target.getEquipment().getArmorContents()) {
-                                                if (i != null) {
-                                                    try {
-                                                        player.getWorld().dropItemNaturally(player.getLocation(), i);
-                                                    } catch (Exception e) {
-                                                    }
-                                                }
-                                            }
+                                            }                           
                                             // plugin.resetPlayer(target); <- no good if
                                             // reset inventory is false
                                             // Clear their inventory and equipment and set
