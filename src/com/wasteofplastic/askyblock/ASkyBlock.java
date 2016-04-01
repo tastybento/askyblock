@@ -227,11 +227,10 @@ public class ASkyBlock extends JavaPlugin {
                 messages.saveMessages();
             }
             TopTen.topTenSave();
-            // Close the name database
-            /*
+            // Close the name database           
             if (tinyDB != null) {
                 tinyDB.closeDB();
-            }*/
+            }
         } catch (final Exception e) {
             getLogger().severe("Something went wrong saving files!");
             e.printStackTrace();
@@ -427,14 +426,13 @@ public class ASkyBlock extends JavaPlugin {
                         getServer().getPluginManager().registerEvents(biomes, plugin);
 
                         TopTen.topTenLoad();
-                        /*
                         if (tinyDB == null) {
                             tinyDB = new TinyDB(plugin);
                         }
                         // Add any online players to the DB
                         for (Player onlinePlayer : plugin.getServer().getOnlinePlayers()) {
                             tinyDB.savePlayerName(onlinePlayer.getName(), onlinePlayer.getUniqueId());
-                        }*/
+                        }
                         // Save grid every 5 minutes
                         getServer().getScheduler().runTaskTimer(plugin, new Runnable() {
 
@@ -1602,8 +1600,7 @@ public class ASkyBlock extends JavaPlugin {
 
     /**
      * @return the nameDB
-     */
-    
+     */    
     public TinyDB getTinyDB() {
         return tinyDB;
     }
