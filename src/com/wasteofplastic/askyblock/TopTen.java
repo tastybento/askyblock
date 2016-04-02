@@ -228,6 +228,7 @@ public class TopTen {
             // player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).topTenerrorNotReady);
             // return true;
         }
+        topTenList = MapUtil.sortByValue(topTenList);
         int i = 1;
         // getLogger().info("DEBUG: " + topTenList.toString());
         // getLogger().info("DEBUG: " + topTenList.values());
