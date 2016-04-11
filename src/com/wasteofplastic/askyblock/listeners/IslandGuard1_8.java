@@ -45,7 +45,7 @@ import com.wasteofplastic.askyblock.util.VaultHelper;
  */
 public class IslandGuard1_8 implements Listener {
     private final ASkyBlock plugin;
-    private final boolean debug = false;
+    private final static boolean DEBUG = false;
 
     public IslandGuard1_8(final ASkyBlock plugin) {
         this.plugin = plugin;
@@ -59,8 +59,8 @@ public class IslandGuard1_8 implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onPlayerInteract(final PlayerInteractAtEntityEvent e) {
-        if (debug) {
-            plugin.getLogger().info(e.getEventName());
+        if (DEBUG) {
+            plugin.getLogger().info("1.8 " + e.getEventName());
         }
         if (!IslandGuard.inWorld(e.getPlayer())) {
             return;
@@ -86,7 +86,7 @@ public class IslandGuard1_8 implements Listener {
                     }
                 }
             }
-            // plugin.getLogger().info("DEBUG: Armor stand clicked off island");
+            // plugin.getLogger().info("1.8 " + "DEBUG: Armor stand clicked off island");
             e.setCancelled(true);
             e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
         }
@@ -102,8 +102,8 @@ public class IslandGuard1_8 implements Listener {
     @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onPlayerInteract(final PlayerInteractEvent e) {
-        if (debug) {
-            plugin.getLogger().info(e.getEventName());
+        if (DEBUG) {
+            plugin.getLogger().info("1.8 " + e.getEventName());
         }
         if (!e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
             return;
@@ -123,13 +123,13 @@ public class IslandGuard1_8 implements Listener {
         ItemStack inHand = e.getPlayer().getItemInHand();
         if (inHand.getType() == Material.WOOD_HOE || inHand.getType() == Material.IRON_HOE || inHand.getType() == Material.GOLD_HOE
                 || inHand.getType() == Material.DIAMOND_HOE || inHand.getType() == Material.STONE_HOE) {
-            // plugin.getLogger().info("DEBUG: hoe in hand");
+            // plugin.getLogger().info("1.8 " + "DEBUG: hoe in hand");
             Block block = e.getClickedBlock();
-            // plugin.getLogger().info("DEBUG: block is " + block.getType() +
+            // plugin.getLogger().info("1.8 " + "DEBUG: block is " + block.getType() +
             // ":" + block.getData());
             // Check if coarse dirt
             if (block.getType() == Material.DIRT && block.getData() == (byte) 1) {
-                // plugin.getLogger().info("DEBUG: hitting coarse dirt!");
+                // plugin.getLogger().info("1.8 " + "DEBUG: hitting coarse dirt!");
                 e.setCancelled(true);
             }
         }
@@ -139,8 +139,8 @@ public class IslandGuard1_8 implements Listener {
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled=true)
     void placeArmorStandEvent(PlayerInteractEvent e) {
         Player p = e.getPlayer();
-        if (debug) {
-            plugin.getLogger().info("Armor stand place " + e.getEventName());
+        if (DEBUG) {
+            plugin.getLogger().info("1.8 " + "Armor stand place " + e.getEventName());
         }
         if (!IslandGuard.inWorld(p)) {
             return;
@@ -156,11 +156,11 @@ public class IslandGuard1_8 implements Listener {
             // Check island
             Island island = plugin.getGrid().getIslandAt(e.getPlayer().getLocation());
             if (island !=null && (island.getMembers().contains(p.getUniqueId()) || island.getIgsFlag(Flags.allowPlaceBlocks))) {
-                //plugin.getLogger().info("DEBUG: armor stand place check");
+                //plugin.getLogger().info("1.8 " + "DEBUG: armor stand place check");
                 if (Settings.limitedBlocks.containsKey("ARMOR_STAND") && Settings.limitedBlocks.get("ARMOR_STAND") > -1) {
-                    //plugin.getLogger().info("DEBUG: count armor stands");
+                    //plugin.getLogger().info("1.8 " + "DEBUG: count armor stands");
                     int count = island.getTileEntityCount(Material.ARMOR_STAND);
-                    //plugin.getLogger().info("DEBUG: count is " + count + " limit is " + Settings.limitedBlocks.get("ARMOR_STAND"));
+                    //plugin.getLogger().info("1.8 " + "DEBUG: count is " + count + " limit is " + Settings.limitedBlocks.get("ARMOR_STAND"));
                     if (Settings.limitedBlocks.get("ARMOR_STAND") <= count) {
                         e.getPlayer().sendMessage(ChatColor.RED + (plugin.myLocale(e.getPlayer().getUniqueId()).entityLimitReached.replace("[entity]",
                                 Util.prettifyText(Material.ARMOR_STAND.toString()))).replace("[number]", String.valueOf(Settings.limitedBlocks.get("ARMOR_STAND"))));
@@ -170,7 +170,7 @@ public class IslandGuard1_8 implements Listener {
                 }
                 return;
             }
-            // plugin.getLogger().info("DEBUG: stand place cancelled");
+            // plugin.getLogger().info("1.8 " + "DEBUG: stand place cancelled");
             e.setCancelled(true);
             e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
             e.getPlayer().updateInventory();
@@ -180,8 +180,8 @@ public class IslandGuard1_8 implements Listener {
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void ArmorStandDestroy(EntityDamageByEntityEvent e) {
-        if (debug) {
-            plugin.getLogger().info("IslandGuard New " + e.getEventName());
+        if (DEBUG) {
+            plugin.getLogger().info("1.8 " + "IslandGuard New " + e.getEventName());
         }
         if (!(e.getEntity() instanceof LivingEntity)) {
             return;

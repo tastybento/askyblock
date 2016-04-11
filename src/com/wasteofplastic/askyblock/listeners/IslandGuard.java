@@ -55,6 +55,8 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockDispenseEvent;
+import org.bukkit.event.block.BlockIgniteEvent;
+import org.bukkit.event.block.BlockIgniteEvent.IgniteCause;
 import org.bukkit.event.block.BlockMultiPlaceEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -2549,6 +2551,25 @@ public class IslandGuard implements Listener {
             e.setCancelled(true);
         }
     }
+    
+    @EventHandler(priority = EventPriority.LOW)
+    public void onBlockIgnite(BlockIgniteEvent e) {
+        if (DEBUG) {
+            plugin.getLogger().info(e.getEventName());
+            plugin.getLogger().info(e.getCause().name());
+        }
+        if (Settings.allowFire || !inWorld(e.getBlock())) {
+            //plugin.getLogger().info("DEBUG: Not in world");
+            return;
+        }
+        if (!Settings.allowFireSpread && e.getCause() != null && e.getCause().equals(IgniteCause.LAVA)) {
+            if (DEBUG) {
+                plugin.getLogger().info("Fire spread not allowed, stopping LAVA ignition");
+            }
+            e.setCancelled(true);
+        }
+    }   
+    
 
     /**
      * Pressure plates

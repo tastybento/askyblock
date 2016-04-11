@@ -70,7 +70,7 @@ public class IslandGuard1_9 implements Listener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onBlockForm(EntityBlockFormEvent e) {
         if (DEBUG) {
-            plugin.getLogger().info(e.getEventName());
+            plugin.getLogger().info("1.9 " +e.getEventName());
         }
         if (e.getEntity() instanceof Player && e.getNewState().getType().equals(Material.FROSTED_ICE)) {
             Player player= (Player) e.getEntity();
@@ -111,7 +111,7 @@ public class IslandGuard1_9 implements Listener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onHitEndCrystal(final PlayerInteractAtEntityEvent e) {
         if (DEBUG) {
-            plugin.getLogger().info(e.getEventName());
+            plugin.getLogger().info("1.9 " +e.getEventName());
         }
         if (!IslandGuard.inWorld(e.getPlayer())) {
             return;
@@ -147,7 +147,7 @@ public class IslandGuard1_9 implements Listener {
     void placeEndCrystalEvent(PlayerInteractEvent e) {
         Player p = e.getPlayer();
         if (DEBUG) {
-            plugin.getLogger().info("End crystal place " + e.getEventName());
+            plugin.getLogger().info("1.9 " +"End crystal place " + e.getEventName());
         }
         if (!IslandGuard.inWorld(p)) {
             return;
@@ -163,11 +163,11 @@ public class IslandGuard1_9 implements Listener {
             // Check island
             Island island = plugin.getGrid().getIslandAt(e.getPlayer().getLocation());
             if (island !=null && (island.getMembers().contains(p.getUniqueId()) || island.getIgsFlag(Flags.allowPlaceBlocks))) {
-                //plugin.getLogger().info("DEBUG: armor stand place check");
+                //plugin.getLogger().info("1.9 " +"DEBUG: armor stand place check");
                 if (Settings.limitedBlocks.containsKey("END_CRYSTAL") && Settings.limitedBlocks.get("END_CRYSTAL") > -1) {
-                    //plugin.getLogger().info("DEBUG: count armor stands");
+                    //plugin.getLogger().info("1.9 " +"DEBUG: count armor stands");
                     int count = island.getTileEntityCount(Material.END_CRYSTAL);
-                    //plugin.getLogger().info("DEBUG: count is " + count + " limit is " + Settings.limitedBlocks.get("ARMOR_STAND"));
+                    //plugin.getLogger().info("1.9 " +"DEBUG: count is " + count + " limit is " + Settings.limitedBlocks.get("ARMOR_STAND"));
                     if (Settings.limitedBlocks.get("END_CRYSTAL") <= count) {
                         e.getPlayer().sendMessage(ChatColor.RED + (plugin.myLocale(e.getPlayer().getUniqueId()).entityLimitReached.replace("[entity]",
                                 Util.prettifyText(Material.END_CRYSTAL.toString()))).replace("[number]", String.valueOf(Settings.limitedBlocks.get("END_CRYSTAL"))));
@@ -177,7 +177,7 @@ public class IslandGuard1_9 implements Listener {
                 }
                 return;
             }
-            // plugin.getLogger().info("DEBUG: stand place cancelled");
+            // plugin.getLogger().info("1.9 " +"DEBUG: stand place cancelled");
             e.setCancelled(true);
             e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
             e.getPlayer().updateInventory();
@@ -192,26 +192,26 @@ public class IslandGuard1_9 implements Listener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void EndCrystalDamage(EntityDamageByEntityEvent e) {
         if (DEBUG) {
-            plugin.getLogger().info("IslandGuard 1_9 " + e.getEventName());
-            plugin.getLogger().info("Entity is " + e.getEntityType());
+            plugin.getLogger().info("1.9 " +"IslandGuard 1_9 " + e.getEventName());
+            plugin.getLogger().info("1.9 " +"Entity is " + e.getEntityType());
         }
         if (e.getEntity() == null || !IslandGuard.inWorld(e.getEntity())) {
             return;
         }
         if (!(e.getEntity() instanceof EnderCrystal)) {
             if (DEBUG) {
-                plugin.getLogger().info("Entity is not End crystal it is " + e.getEntityType());
+                plugin.getLogger().info("1.9 " +"Entity is not End crystal it is " + e.getEntityType());
             }
             return;
         }
         if (DEBUG) {
-            plugin.getLogger().info("Damager is " + e.getDamager());
+            plugin.getLogger().info("1.9 " +"Damager is " + e.getDamager());
         }
         Player p = null;
         if (e.getDamager() instanceof Player) {
             p = (Player) e.getDamager();
             if (DEBUG) {
-                plugin.getLogger().info("Damager is a player");
+                plugin.getLogger().info("1.9 " +"Damager is a player");
             }
         } else if (e.getDamager() instanceof Projectile) {
             // Get the shooter
@@ -221,20 +221,20 @@ public class IslandGuard1_9 implements Listener {
                 p = (Player)shooter;
             }
             if (DEBUG) {
-                plugin.getLogger().info("Damager is a projectile shot by " + p.getName());
+                plugin.getLogger().info("1.9 " +"Damager is a projectile shot by " + p.getName());
             }
         }
         if (p != null) {  
             if (p.isOp() || VaultHelper.checkPerm(p, Settings.PERMPREFIX + "mod.bypassprotect")) {
                 if (DEBUG) {
-                    plugin.getLogger().info("Bypassing protection");
+                    plugin.getLogger().info("1.9 " +"Bypassing protection");
                 }
                 return;
             }
             // Check if on island
             if (plugin.getGrid().playerIsOnIsland(p)) {
                 if (DEBUG) {
-                    plugin.getLogger().info("Player is on their own island");
+                    plugin.getLogger().info("1.9 " +"Player is on their own island");
                 }
                 return;
             }
@@ -242,13 +242,13 @@ public class IslandGuard1_9 implements Listener {
             Island island = plugin.getGrid().getIslandAt(e.getEntity().getLocation());
             if (island != null && island.isSpawn() && Settings.allowSpawnBreakBlocks) {
                 if (DEBUG) {
-                    plugin.getLogger().info("Spawn and breaking blocks is allowed");
+                    plugin.getLogger().info("1.9 " +"Spawn and breaking blocks is allowed");
                 }
                 return;
             }
             if (island != null && island.getIgsFlag(Flags.allowBreakBlocks)) {
                 if (DEBUG) {
-                    plugin.getLogger().info("Visitor is allowed to break blocks");
+                    plugin.getLogger().info("1.9 " +"Visitor is allowed to break blocks");
                 }
                 return;
             }
@@ -265,12 +265,12 @@ public class IslandGuard1_9 implements Listener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onExplosion(final EntityExplodeEvent e) {
         if (DEBUG) {
-            plugin.getLogger().info(e.getEventName());
-            plugin.getLogger().info("Entity exploding is " + e.getEntity());
+            plugin.getLogger().info("1.9 " +e.getEventName());
+            plugin.getLogger().info("1.9 " +"Entity exploding is " + e.getEntity());
         }
         if (e.getEntity() == null || !e.getEntityType().equals(EntityType.ENDER_CRYSTAL)) {
             if (DEBUG) {
-                plugin.getLogger().info("Entity is not an END CRYSTAL");
+                plugin.getLogger().info("1.9 " +"Entity is not an END CRYSTAL");
             }
             return;
         }
@@ -280,7 +280,7 @@ public class IslandGuard1_9 implements Listener {
         }
         // General settings irrespective of whether this is allowed or not
         if (!Settings.allowTNTDamage) {
-            plugin.getLogger().info("TNT block damage prevented");
+            plugin.getLogger().info("1.9 " +"TNT block damage prevented");
             e.blockList().clear();
         } else {
             if (!Settings.allowChestDamage) {
@@ -316,8 +316,11 @@ public class IslandGuard1_9 implements Listener {
      * Triggers a push protection change or not
      * @param e
      */
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerJoin(final PlayerJoinEvent e) {
+        if (Settings.allowPushing) {
+            return;
+        }
         setPush(e.getPlayer());
     }
 
@@ -328,12 +331,12 @@ public class IslandGuard1_9 implements Listener {
     public void setPush(Player player) {
         scoreboard = player.getScoreboard();
         if (scoreboard == null) {
-            //plugin.getLogger().info("DEBUG: initializing scoreboard");
+            //plugin.getLogger().info("1.9 " +"DEBUG: initializing scoreboard");
             scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
         }
         if (Settings.allowPushing) {
             if (scoreboard.getTeam("ASkyBlockNP") != null) {
-                //plugin.getLogger().info("DEBUG: unregistering the team");
+                //plugin.getLogger().info("1.9 " +"DEBUG: unregistering the team");
                 scoreboard.getTeam("ASkyBlockNP").unregister();
             }
             return;
@@ -350,10 +353,10 @@ public class IslandGuard1_9 implements Listener {
             pushTeam.addEntry(player.getName()); 
         }
         if (pushTeam.getName().equals("ASkyBlockNP")) {
-            //plugin.getLogger().info("DEBUG: pushing not allowed");
+            //plugin.getLogger().info("1.9 " +"DEBUG: pushing not allowed");
             pushTeam.setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER);               
         } else {
-            //plugin.getLogger().info("DEBUG: player is already in another team");
+            //plugin.getLogger().info("1.9 " +"DEBUG: player is already in another team");
         }
     }
 }
