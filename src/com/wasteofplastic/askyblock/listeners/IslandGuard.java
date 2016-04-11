@@ -195,7 +195,9 @@ public class IslandGuard implements Listener {
     public void onVehicleDamageEvent(VehicleDamageEvent e) {
         if (DEBUG) {
             plugin.getLogger().info(e.getEventName());
-            plugin.getLogger().info(e.getAttacker().getType().toString());
+            if (e.getAttacker() != null) {
+                plugin.getLogger().info(e.getAttacker().getType().toString());
+            }
         }
         if (inWorld(e.getVehicle())) {
             if (!(e.getAttacker() instanceof Player)) {
