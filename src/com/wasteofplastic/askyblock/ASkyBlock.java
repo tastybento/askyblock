@@ -351,8 +351,8 @@ public class ASkyBlock extends JavaPlugin {
         // Load messages
         messages = new Messages(this);
         messages.loadMessages();
-        // Register events
-        registerEvents();
+        // Register world load event
+        getServer().getPluginManager().registerEvents(new WorldLoader(this), this);
         // Metrics
         try {
             final Metrics metrics = new Metrics(this);
@@ -407,6 +407,9 @@ public class ASkyBlock extends JavaPlugin {
                         if (grid == null) {
                             grid = new GridManager(plugin);
                         }
+                        // Register events
+                        registerEvents();
+
                         // Load warps
                         getWarpSignsListener().loadWarpList();
                         // Load the warp panel
@@ -440,7 +443,6 @@ public class ASkyBlock extends JavaPlugin {
                             public void run() {
                                 getGrid().saveGrid();
                             }}, Settings.backupDuration, Settings.backupDuration);
-
                         getLogger().info("All files loaded. Ready to play...");
                     }
                 });
@@ -1460,7 +1462,7 @@ public class ASkyBlock extends JavaPlugin {
             manager.registerEvents(new WitherEvents(this), this);
         }
         // World loader
-        manager.registerEvents(new WorldLoader(this), this);
+        //manager.registerEvents(new WorldLoader(this), this);
     }
 
 
