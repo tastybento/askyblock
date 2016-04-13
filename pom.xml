@@ -67,7 +67,7 @@
 		<dependency>
 			<groupId>net.milkbowl.vault</groupId>
 			<artifactId>VaultAPI</artifactId>
-			<version>1.5</version>
+			<version>LATEST</version>
 		</dependency>
 		<dependency>
 			<groupId>com.sk89q</groupId>

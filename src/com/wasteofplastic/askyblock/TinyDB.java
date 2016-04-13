@@ -17,15 +17,18 @@
 
 package com.wasteofplastic.askyblock;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Map.Entry;
 import java.util.Scanner;
+import java.util.TreeMap;
 import java.util.UUID;
 
-import com.wasteofplastic.jdbm.PrimaryHashMap;
-import com.wasteofplastic.jdbm.RecordManager;
-import com.wasteofplastic.jdbm.RecordManagerFactory;
+import org.bukkit.scheduler.BukkitRunnable;
 
 /**
  * Tiny database for a hashmap that is not used very often, but could be very big so I
@@ -35,118 +38,131 @@ import com.wasteofplastic.jdbm.RecordManagerFactory;
  */
 public class TinyDB {
     private ASkyBlock plugin;
-    private RecordManager recMan;
-    private PrimaryHashMap<String,UUID> treeMap;
-    private String fileName = "nameUUIDdb";
-    private File dbFolder;
-    private File name2UUID;
+    private TreeMap<String,UUID> treeMap;
     private boolean dbReady;
     /**
      * Opens the database
      * @param plugin
      */
-    public TinyDB(ASkyBlock plugin) {
+    public TinyDB(ASkyBlock plugin) {       
         this.plugin = plugin;
-        this.dbReady = false;
-        // Open database
-        dbFolder = new File(plugin.getDataFolder(),"database");
-        name2UUID = new File(dbFolder,fileName);
-        if (!dbFolder.exists()) {
-            plugin.getLogger().info("Creating a tiny playerName-UUID database");
-            // Create folder
-            dbFolder.mkdir();
-            // Run async task to do conversion
-            plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
-
-                @Override
-                public void run() {
-                    convertFiles();
-                }});
-
+        this.treeMap = new TreeMap<String,UUID>();
+        File database = new File(plugin.getDataFolder(), "name-uuid.txt");
+        if (!database.exists()) {
+            // Import from player files. Done async so may take a while
+            convertFiles();
         } else {
-            try {
-                recMan = RecordManagerFactory.createRecordManager(name2UUID.getAbsolutePath());
-                String recordName = "nameToUUID";
-                treeMap = recMan.hashMap(recordName);
-                dbReady = true;
-            } catch (IOException e) {
-                dbReady = false;
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+            // Ready to go...
+            this.dbReady = true;
         }
     }
 
     /**
-     * Commits the database records and closes the database
+     * Saves the DB
      */
-    public void closeDB() {
-        /** Map changes are not persisted yet, commit them (save to disk) */
+    public void saveDB() {
         try {
-            recMan.commit();
-            /** close record manager */
-            recMan.close();
-            plugin.getLogger().info("Saved name database");
+            File oldDB = new File(plugin.getDataFolder(), "name-uuid.txt");
+            File newDB = new File(plugin.getDataFolder(), "name-uuid-new.txt");
+            //File backup = new File(plugin.getDataFolder(), "name-uuid.bak");
+            try(PrintWriter out = new PrintWriter(newDB)) {
+                // Write the newest entries at the top
+                for (Entry<String, UUID> entry: treeMap.entrySet()) {
+                    out.println(entry.getKey());
+                    out.println(entry.getValue().toString());
+                }
+                if (oldDB.exists()) {
+                    // Go through the old file and remove any                     
+                    try(BufferedReader br = new BufferedReader(new FileReader(oldDB))){
+                        // Go through the old file and read it line by line and write to the new file
+                        String line = br.readLine();
+                        String uuid = br.readLine();
+                        while (line != null) {
+                            if (!treeMap.containsKey(line)) {                  
+                                out.println(line);
+                                out.println(uuid);
+                            }                    
+                            // Read next lines
+                            line = br.readLine();
+                            uuid = br.readLine();
+                        }                             
+                    }
+                }
+            }
+            // Move files around
+            boolean  success = false;
+            //success = oldDB.renameTo(backup);
+            success = newDB.renameTo(oldDB);
+            if (success) {
+                plugin.getLogger().info("Saved name database");
+            } else {
+                plugin.getLogger().severe("Problem saving name database! Could not rename files!");
+            }             
         } catch (IOException e) {
             plugin.getLogger().severe("Problem saving name database!");
             e.printStackTrace();
         }
+
     }
 
     private void convertFiles() {
         /** create database */
-        try {
-            recMan = RecordManagerFactory.createRecordManager(name2UUID.getAbsolutePath());
-            String recordName = "nameToUUID";
-            treeMap = recMan.hashMap(recordName);
-            // Load all the files from the player folder
-            FilenameFilter ymlFilter = new FilenameFilter() {
-                public boolean accept(File dir, String name) {
-                    String lowercaseName = name.toLowerCase();
-                    if (lowercaseName.endsWith(".yml")) {
-                        return true;
-                    } else {
-                        return false;
-                    }
-                }
-            };
-            int count = 0;
-            for (final File file : plugin.getPlayersFolder().listFiles(ymlFilter)) {
-                if (count % 1000 == 0) {
-                    System.out.println("[ASkyBlock]: Processed " + count + " names to database");
-                }
-                count++;
+        new BukkitRunnable() {
+
+            @Override
+            public void run() {
                 try {
-                    // Get UUID
-                    String uuid = file.getName().substring(0, file.getName().length() - 4);
-                    //System.out.println("DEBUG: UUID is " + uuid);
-                    final UUID playerUUID = UUID.fromString(uuid);
-                    // Get the player's name
-                    Scanner scanner = new Scanner(file);
-                    while (scanner.hasNextLine()) {
-                        final String lineFromFile = scanner.nextLine();
-                        if (lineFromFile.contains("playerName:")) { 
-                            // Check against potentialUnowned list
-                            String playerName = lineFromFile.substring(lineFromFile.indexOf(' ')).trim();
-                            //System.out.println("DEBUG: Player name is " + playerName);
-                            treeMap.put(playerName.toLowerCase(), playerUUID);
-                            break;
+                    // Load all the files from the player folder
+                    FilenameFilter ymlFilter = new FilenameFilter() {
+                        public boolean accept(File dir, String name) {
+                            String lowercaseName = name.toLowerCase();
+                            if (lowercaseName.endsWith(".yml")) {
+                                return true;
+                            } else {
+                                return false;
+                            }
+                        }
+                    };
+                    int count = 0;
+                    for (final File file : plugin.getPlayersFolder().listFiles(ymlFilter)) {
+                        if (count % 1000 == 0) {
+                            System.out.println("[ASkyBlock]: Processed " + count + " names to database");
+                        }
+                        count++;
+                        try {
+                            // Get UUID
+                            String uuid = file.getName().substring(0, file.getName().length() - 4);
+                            //System.out.println("DEBUG: UUID is " + uuid);
+                            final UUID playerUUID = UUID.fromString(uuid);
+                            // Get the player's name
+                            Scanner scanner = new Scanner(file);
+                            while (scanner.hasNextLine()) {
+                                final String lineFromFile = scanner.nextLine();
+                                if (lineFromFile.contains("playerName:")) { 
+                                    // Check against potentialUnowned list
+                                    String playerName = lineFromFile.substring(lineFromFile.indexOf(' ')).trim();
+                                    //System.out.println("DEBUG: Player name is " + playerName);
+                                    treeMap.put(playerName.toLowerCase(), playerUUID);
+                                    break;
+                                }
+                            }
+                            scanner.close();
+                        } catch (Exception ex) {
+                            System.err.println("[ASkyBlock/AcidIsland]: Problem reading " + file.getName() + " skipping...");
+                            //ex.printStackTrace();
                         }
                     }
-                    scanner.close();
-                } catch (Exception ex) {
-                    System.err.println("[ASkyBlock/AcidIsland]: Problem reading " + file.getName() + " skipping...");
-                    //ex.printStackTrace();
+                    // Save files
+                    saveDB();
+                    // Save memory
+                    treeMap.clear();
+                    System.out.println("[ASkyBlock]: Complete. Processed " + count + " names to database");
+                    // Set flag
+                    dbReady = true;
+                } catch (Exception e) {
+                    System.err.println("[ASkyBlock/AcidIsland] : Problem creating database");
                 }
-            }
-            /** Map changes are not persisted yet, commit them (save to disk) */
-            recMan.commit();
-            System.out.println("[ASkyBlock]: Complete. Processed " + count + " names to database");
-            // Set flag
-            dbReady = true;
-        } catch (Exception e) {
-            System.err.println("[ASkyBlock/AcidIsland] : Problem creating database");
-        }
+            }}.runTaskAsynchronously(plugin);
     }
 
     /**
@@ -163,13 +179,40 @@ public class TinyDB {
      */
     public void savePlayerName(String playerName, UUID playerUUID) {
         treeMap.put(playerName.toLowerCase(), playerUUID);
+        // This will be saved when everything shuts down
     }
 
     /**
      * Gets the UUID for this player name or null if not known. Case insensitive!
      * @param playerName
+     * @return UUID of player, or null if unknown
      */
     public UUID getPlayerUUID(String playerName) {
-        return treeMap.get(playerName.toLowerCase());
+        // Try cache
+        if (treeMap.containsKey(playerName.toLowerCase())) {
+            //plugin.getLogger().info("DEBUG: found in UUID cache");
+            return treeMap.get(playerName.toLowerCase());
+        }
+        // Names and UUID's are stored in line pairs.
+        try(BufferedReader br = new BufferedReader(new FileReader(new File(plugin.getDataFolder(), "name-uuid.txt")))) {
+            String line = br.readLine();
+            String uuid = br.readLine();
+            while (line != null && !line.equalsIgnoreCase(playerName)) {                
+                line = br.readLine();
+                uuid = br.readLine();
+            }
+            if (line == null) {
+                return null;
+            }
+            UUID result = UUID.fromString(uuid);
+            // Add to cache
+            treeMap.put(playerName.toLowerCase(), result);
+            //plugin.getLogger().info("DEBUG: found in UUID database");
+            return result;
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } 
+        return null;
     }
 }

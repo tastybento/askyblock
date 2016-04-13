@@ -229,7 +229,7 @@ public class ASkyBlock extends JavaPlugin {
             TopTen.topTenSave();
             // Close the name database           
             if (tinyDB != null) {
-                tinyDB.closeDB();
+                tinyDB.saveDB();
             }
         } catch (final Exception e) {
             getLogger().severe("Something went wrong saving files!");

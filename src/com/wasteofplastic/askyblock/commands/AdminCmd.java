@@ -726,7 +726,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                     return true;
                 }
                 // Convert target name to a UUID
-                final UUID playerUUID = plugin.getPlayers().getUUID(split[1]);
+                final UUID playerUUID = plugin.getPlayers().getUUID(split[1], true);
                 if (!plugin.getPlayers().isAKnownPlayer(playerUUID)) {
                     sender.sendMessage(ChatColor.RED + plugin.myLocale().errorUnknownPlayer);
                 } else {
@@ -800,7 +800,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 }
             } else if (split[0].equalsIgnoreCase("resethome")) { 
                 // Convert name to a UUID
-                final UUID playerUUID = plugin.getPlayers().getUUID(split[1]);
+                final UUID playerUUID = plugin.getPlayers().getUUID(split[1], true);
                 if (!plugin.getPlayers().isAKnownPlayer(playerUUID)) {
                     sender.sendMessage(ChatColor.RED + plugin.myLocale().errorUnknownPlayer);
                 } else {
@@ -827,7 +827,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 }
                 player = (Player)sender;
                 // Convert name to a UUID
-                final UUID playerUUID = plugin.getPlayers().getUUID(split[1]);
+                final UUID playerUUID = plugin.getPlayers().getUUID(split[1], true);
                 if (!plugin.getPlayers().isAKnownPlayer(playerUUID)) {
                     sender.sendMessage(ChatColor.RED + plugin.myLocale().errorUnknownPlayer);
                 } else {
@@ -1063,7 +1063,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 return true;
             } else if (split[0].equalsIgnoreCase("lock")) {
                 // Convert name to a UUID
-                final UUID playerUUID = plugin.getPlayers().getUUID(split[1]);
+                final UUID playerUUID = plugin.getPlayers().getUUID(split[1], true);
                 if (!plugin.getPlayers().isAKnownPlayer(playerUUID)) {
                     sender.sendMessage(ChatColor.RED + plugin.myLocale().errorUnknownPlayer);
                     return true;
@@ -1095,7 +1095,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 }
             } else if (split[0].equalsIgnoreCase("clearreset")) {
                 // Convert name to a UUID
-                final UUID playerUUID = plugin.getPlayers().getUUID(split[1]);
+                final UUID playerUUID = plugin.getPlayers().getUUID(split[1], true);
                 if (!plugin.getPlayers().isAKnownPlayer(playerUUID)) {
                     sender.sendMessage(ChatColor.RED + plugin.myLocale().errorUnknownPlayer);
                     return true;
@@ -1111,7 +1111,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 }
                 player = (Player)sender;
                 // Convert name to a UUID
-                final UUID targetUUID = plugin.getPlayers().getUUID(split[1]);
+                final UUID targetUUID = plugin.getPlayers().getUUID(split[1], true);
                 if (!plugin.getPlayers().isAKnownPlayer(targetUUID)) {
                     player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorUnknownPlayer);
                     return true;
@@ -1145,7 +1145,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 }
                 player = (Player)sender;
                 // Convert name to a UUID
-                final UUID targetUUID = plugin.getPlayers().getUUID(split[1]);
+                final UUID targetUUID = plugin.getPlayers().getUUID(split[1], true);
                 if (!plugin.getPlayers().isAKnownPlayer(targetUUID)) {
                     player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorUnknownPlayer);
                     return true;
@@ -1170,7 +1170,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 }
             } else if (split[0].equalsIgnoreCase("delete")) {
                 // Convert name to a UUID
-                final UUID playerUUID = plugin.getPlayers().getUUID(split[1]);
+                final UUID playerUUID = plugin.getPlayers().getUUID(split[1], true);
                 if (!plugin.getPlayers().isAKnownPlayer(playerUUID)) {
                     sender.sendMessage(ChatColor.RED + plugin.myLocale().errorUnknownPlayer);
                     return true;
@@ -1199,7 +1199,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 if (sender instanceof Player) {
                     player = (Player)sender;
                     // Convert name to a UUID
-                    final UUID playerUUID = plugin.getPlayers().getUUID(split[1]);
+                    final UUID playerUUID = plugin.getPlayers().getUUID(split[1], true);
                     if (!plugin.getPlayers().isAKnownPlayer(playerUUID)) {
                         sender.sendMessage(ChatColor.RED + plugin.myLocale().errorUnknownPlayer);
                         return true;
@@ -1223,7 +1223,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
             } else if (split[0].equalsIgnoreCase("register")) {
                 if (sender instanceof Player) {
                     // Convert name to a UUID
-                    final UUID playerUUID = plugin.getPlayers().getUUID(split[1]);
+                    final UUID playerUUID = plugin.getPlayers().getUUID(split[1], true);
                     if (!plugin.getPlayers().isAKnownPlayer(playerUUID)) {
                         sender.sendMessage(ChatColor.RED + plugin.myLocale().errorUnknownPlayer);
                         return true;
@@ -1242,7 +1242,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 return true;
             } else if (split[0].equalsIgnoreCase("unregister")) {
                 // Convert name to a UUID
-                final UUID playerUUID = plugin.getPlayers().getUUID(split[1]);
+                final UUID playerUUID = plugin.getPlayers().getUUID(split[1], true);
                 if (!plugin.getPlayers().isAKnownPlayer(playerUUID)) {
                     sender.sendMessage(ChatColor.RED + plugin.myLocale().errorUnknownPlayer);
                     return true;
@@ -1266,7 +1266,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 }
             } else if (split[0].equalsIgnoreCase("info")) {
                 // Convert name to a UUID
-                final UUID playerUUID = plugin.getPlayers().getUUID(split[1]);
+                final UUID playerUUID = plugin.getPlayers().getUUID(split[1], true);
                 // plugin.getLogger().info("DEBUG: console player info UUID = "
                 // + playerUUID);
                 if (!plugin.getPlayers().isAKnownPlayer(playerUUID)) {
@@ -1278,7 +1278,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 }
             } else if (split[0].equalsIgnoreCase("resetallchallenges")) {
                 // Convert name to a UUID
-                final UUID playerUUID = plugin.getPlayers().getUUID(split[1]);
+                final UUID playerUUID = plugin.getPlayers().getUUID(split[1], true);
                 if (!plugin.getPlayers().isAKnownPlayer(playerUUID)) {
                     sender.sendMessage(ChatColor.RED + plugin.myLocale().errorUnknownPlayer);
                     return true;
@@ -1313,7 +1313,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
             // Set protection
             if (split[0].equalsIgnoreCase("setrange")) {
                 // Convert name to a UUID
-                UUID playerUUID = plugin.getPlayers().getUUID(split[1]);
+                UUID playerUUID = plugin.getPlayers().getUUID(split[1], true);
                 // Check if player exists
                 if (!plugin.getPlayers().isAKnownPlayer(playerUUID)) {
                     sender.sendMessage(ChatColor.RED + plugin.myLocale().errorUnknownPlayer);
@@ -1356,7 +1356,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
             // Change biomes
             if (split[0].equalsIgnoreCase("setbiome")) {
                 // Convert name to a UUID
-                UUID playerUUID = plugin.getPlayers().getUUID(split[1]);
+                UUID playerUUID = plugin.getPlayers().getUUID(split[1], true);
                 // Check if player exists
                 if (!plugin.getPlayers().isAKnownPlayer(playerUUID)) {
                     sender.sendMessage(ChatColor.RED + plugin.myLocale().errorUnknownPlayer);
@@ -1415,7 +1415,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 // team kick <player> and team delete <leader>
                 if (split[0].equalsIgnoreCase("team")) {
                     // Convert name to a UUID
-                    final UUID playerUUID = plugin.getPlayers().getUUID(split[2]);
+                    final UUID playerUUID = plugin.getPlayers().getUUID(split[2], true);
                     if (!plugin.getPlayers().isAKnownPlayer(playerUUID)) {
                         sender.sendMessage(ChatColor.RED + plugin.myLocale().errorUnknownPlayer);
                         return true;
@@ -1465,7 +1465,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                     }
                 } else if (split[0].equalsIgnoreCase("completechallenge")) {
                     // Convert name to a UUID
-                    final UUID playerUUID = plugin.getPlayers().getUUID(split[2]);
+                    final UUID playerUUID = plugin.getPlayers().getUUID(split[2], true);
                     if (!plugin.getPlayers().isAKnownPlayer(playerUUID)) {
                         sender.sendMessage(ChatColor.RED + plugin.myLocale().errorUnknownPlayer);
                         return true;
@@ -1481,7 +1481,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                     return true;
                 } else if (split[0].equalsIgnoreCase("resetchallenge")) {
                     // Convert name to a UUID
-                    final UUID playerUUID = plugin.getPlayers().getUUID(split[2]);
+                    final UUID playerUUID = plugin.getPlayers().getUUID(split[2], true);
                     if (!plugin.getPlayers().isAKnownPlayer(playerUUID)) {
                         sender.sendMessage(ChatColor.RED + plugin.myLocale().errorUnknownPlayer);
                         return true;
@@ -1497,7 +1497,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                     return true;
                 } else if (split[0].equalsIgnoreCase("info") && split[1].equalsIgnoreCase("challenges")) {
                     // Convert name to a UUID
-                    final UUID playerUUID = plugin.getPlayers().getUUID(split[2]);
+                    final UUID playerUUID = plugin.getPlayers().getUUID(split[2], true);
                     // plugin.getLogger().info("DEBUG: console player info UUID = "
                     // + playerUUID);
                     if (!plugin.getPlayers().isAKnownPlayer(playerUUID)) {
@@ -1513,9 +1513,9 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
             // Team add <player> <leader>
             if (split[0].equalsIgnoreCase("team") && split[1].equalsIgnoreCase("add")) {
                 // Convert names to UUIDs
-                final UUID playerUUID = plugin.getPlayers().getUUID(split[2]);
+                final UUID playerUUID = plugin.getPlayers().getUUID(split[2], true);
                 final Player targetPlayer = plugin.getServer().getPlayer(playerUUID);
-                final UUID teamLeader = plugin.getPlayers().getUUID(split[3]);
+                final UUID teamLeader = plugin.getPlayers().getUUID(split[3], true);
                 if (!plugin.getPlayers().isAKnownPlayer(playerUUID) || !plugin.getPlayers().isAKnownPlayer(teamLeader)) {
                     sender.sendMessage(ChatColor.RED + plugin.myLocale().errorUnknownPlayer);
                     return true;

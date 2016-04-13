@@ -117,7 +117,7 @@ public class TopTen {
                             player.load(f);
                             index++;
                             if (index % 1000 == 0) {
-                                plugin.getLogger().info("Processed " + index + " players");
+                                plugin.getLogger().info("Processed " + index + " players for top ten");
                             }
                             // Players player = new Players(this, playerUUID);
                             int islandLevel = player.getInt("islandLevel", 0);
@@ -136,7 +136,7 @@ public class TopTen {
                         }
                     }
                 }
-                plugin.getLogger().info("Processed " + index + " players");
+                plugin.getLogger().info("Processed " + index + " players for top ten");
                 // Save the top ten
                 topTenSave();
 

@@ -484,13 +484,22 @@ public class PlayerCache {
     }
 
     /**
-     * Attempts to return a UUID for a given player's name
-     * 
+     * Attempts to return a UUID for a given player's name. Only uses online or cached information.
      * @param string
-     * @return UUID of player
+     * @return UUID of player or null if unknown
+     */
+    public UUID getUUID(String string) {
+        return getUUID(string, false);
+    }
+    
+    /**
+     * Attempts to return a UUID for a given player's name
+     * @param string
+     * @param adminCheck - if made via an admin call, this will go out to the 'net and grab - may cause lag
+     * @return UUID of player or null if unknown
      */
     @SuppressWarnings("deprecation")
-    public UUID getUUID(String string) {
+    public UUID getUUID(String string, boolean adminCheck) {
         for (UUID id : playerCache.keySet()) {
             String name = playerCache.get(id).getPlayerName();
             // plugin.getLogger().info("DEBUG: Testing name " + name);
@@ -500,10 +509,13 @@ public class PlayerCache {
         }
         // Look in the database if it ready
         if (plugin.getTinyDB() != null && plugin.getTinyDB().isDbReady()) {
-            return plugin.getTinyDB().getPlayerUUID(string);
+            UUID result = plugin.getTinyDB().getPlayerUUID(string);
+            if (result != null) {
+                return result;
+            }
         }
         // Try the server
-        if (plugin.getServer().getOfflinePlayer(string) != null) {
+        if (adminCheck && plugin.getServer().getOfflinePlayer(string) != null) {
             return plugin.getServer().getOfflinePlayer(string).getUniqueId();
         }
         return null;
@@ -518,8 +530,7 @@ public class PlayerCache {
         addPlayer(uniqueId);
         playerCache.get(uniqueId).setPlayerN(name);
         // Save the name in the name database. Note that the old name will still work until someone takes it
-        // This feature enables admins to locate 'fugitive' players even if they change their name
-        
+        // This feature enables admins to locate 'fugitive' players even if they change their name        
         if (plugin.getTinyDB() != null && plugin.getTinyDB().isDbReady()) {
             plugin.getTinyDB().savePlayerName(name, uniqueId);
         }
