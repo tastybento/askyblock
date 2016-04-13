@@ -27,6 +27,7 @@ import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.TreeMap;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -38,15 +39,16 @@ import org.bukkit.scheduler.BukkitRunnable;
  */
 public class TinyDB {
     private ASkyBlock plugin;
-    private TreeMap<String,UUID> treeMap;
+    private ConcurrentHashMap<String,UUID> treeMap;
     private boolean dbReady;
+    private boolean savingFlag;
     /**
      * Opens the database
      * @param plugin
      */
     public TinyDB(ASkyBlock plugin) {       
         this.plugin = plugin;
-        this.treeMap = new TreeMap<String,UUID>();
+        this.treeMap = new ConcurrentHashMap<String,UUID>();
         File database = new File(plugin.getDataFolder(), "name-uuid.txt");
         if (!database.exists()) {
             // Import from player files. Done async so may take a while
@@ -58,9 +60,24 @@ public class TinyDB {
     }
 
     /**
+     * Async Saving of the DB
+     */
+    public void asyncSaveDB() {
+        if (!savingFlag) {
+            new BukkitRunnable() {
+
+                @Override
+                public void run() {
+                    saveDB();                
+                }}.runTaskAsynchronously(plugin);
+        }
+    }
+
+    /**
      * Saves the DB
      */
     public void saveDB() {
+        savingFlag = true;
         try {
             File oldDB = new File(plugin.getDataFolder(), "name-uuid.txt");
             File newDB = new File(plugin.getDataFolder(), "name-uuid-new.txt");
@@ -102,7 +119,7 @@ public class TinyDB {
             plugin.getLogger().severe("Problem saving name database!");
             e.printStackTrace();
         }
-
+        savingFlag = false;
     }
 
     private void convertFiles() {

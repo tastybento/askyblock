@@ -436,13 +436,9 @@ public class ASkyBlock extends JavaPlugin {
                         for (Player onlinePlayer : plugin.getServer().getOnlinePlayers()) {
                             tinyDB.savePlayerName(onlinePlayer.getName(), onlinePlayer.getUniqueId());
                         }
-                        // Save grid every 5 minutes
-                        getServer().getScheduler().runTaskTimer(plugin, new Runnable() {
-
-                            @Override
-                            public void run() {
-                                getGrid().saveGrid();
-                            }}, Settings.backupDuration, Settings.backupDuration);
+                        if (Settings.backupDuration > 0) {
+                            new AsyncBackup(plugin);
+                        }
                         getLogger().info("All files loaded. Ready to play...");
                     }
                 });
