@@ -107,12 +107,7 @@ public class TinyDB {
                 }
             }
             // Move files around
-            boolean  success = false;
-            //success = oldDB.renameTo(backup);
-            success = newDB.renameTo(oldDB);
-            if (success) {
-                plugin.getLogger().info("Saved name database");
-            } else {
+            if (!newDB.renameTo(oldDB)) {
                 plugin.getLogger().severe("Problem saving name database! Could not rename files!");
             }             
         } catch (IOException e) {
