@@ -57,7 +57,6 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionType;
 import org.bukkit.scheduler.BukkitTask;
@@ -776,30 +775,21 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
         // Set the custom protection range if appropriate
         // Dynamic home sizes with permissions
         int range = Settings.island_protectionRange;
-        for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
-            if (perms.getPermission().startsWith(Settings.PERMPREFIX + "island.range.")) {
-                range = Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "island.range.")[1]);
-                // Do some sanity checking
-                if (range % 2 != 0) {
-                    range--;
-                    plugin.getLogger().warning("Protection range must be even, using " + range + " for " + player.getName());
-                }
-                if (range > Settings.islandDistance) {
-                    if (!plugin.getConfig().getBoolean("island.overridelimit", false)) {
-                        if (range > (Settings.islandDistance - 16)) {
-                            range = Settings.islandDistance - 16;
-                            plugin.getLogger().warning(
-                                    "Island protection range must be " + (Settings.islandDistance - 16) + " or less, (island range -16). Setting to: "
-                                            + range);
-                        }
-                    } else {
-                        range = Settings.islandDistance;
-                    }
-                }
-                if (range < 0) {
-                    range = 0;
-                }
+        for (int i = 0; i<= Settings.islandDistance; i++) {
+            if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.range." + i)) {
+                range = i;
             }
+        }
+        // Do some sanity checking
+        if (range % 2 != 0) {
+            range--;
+            plugin.getLogger().warning("Protection range must be even, using " + range + " for " + player.getName());
+        }
+        if (range > (Settings.islandDistance - 16) && !plugin.getConfig().getBoolean("island.overridelimit", false)) {
+            range = Settings.islandDistance - 16;
+            plugin.getLogger().warning(
+                    "Island protection range must be " + (Settings.islandDistance - 16) + " or less, (island range -16). Setting to: "
+                            + range);
         }
         myIsland.setProtectionSize(range);
         // Show fancy titles!
@@ -1517,14 +1507,10 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                 }
                 // Dynamic home sizes with permissions
                 int maxHomes = Settings.maxHomes;
-                for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
-                    if (perms.getPermission().startsWith(Settings.PERMPREFIX + "island.maxhomes.")) {
-                        // Get the max value should there be more than one
-                        maxHomes = Math.max(maxHomes, Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "island.maxhomes.")[1]));
-                    }
-                    // Do some sanity checking
-                    if (maxHomes < 1) {
-                        maxHomes = 1;
+                // Try the Vault way
+                for (int i = Settings.maxHomes; i< Settings.maxHomes + 100; i++) {
+                    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.maxhomes." + i)) {
+                        maxHomes = i;
                     }
                 }
                 if (maxHomes > 1 && VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.sethome")) {
@@ -1690,14 +1676,10 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                             // Check to see if the team is already full
                             int maxSize = Settings.maxTeamSize;
                             // Dynamic team sizes with permissions
-                            for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
-                                //plugin.getLogger().info("DEBUG perms: " + perms);
-                                if (perms.getPermission().startsWith(Settings.PERMPREFIX + "team.maxsize.")) {
-                                    maxSize = Math.max(maxSize, Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "team.maxsize.")[1]));
-                                }
-                                // Do some sanity checking
-                                if (maxSize < Settings.maxTeamSize) {
-                                    maxSize = Settings.maxTeamSize;
+                            // Try the Vault way
+                            for (int i = maxSize; i< Settings.maxTeamSize + 100; i++) {
+                                if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.maxsize." + i)) {
+                                    maxSize = i;
                                 }
                             }
                             // Account for deprecated permissions. These will be zero on new installs
@@ -1851,13 +1833,9 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                     if (teamLeader.equals(playerUUID)) {
                         int maxSize = Settings.maxTeamSize;
                         // Dynamic team sizes with permissions
-                        for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
-                            if (perms.getPermission().startsWith(Settings.PERMPREFIX + "team.maxsize.")) {
-                                maxSize = Math.max(maxSize, Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "team.maxsize.")[1]));
-                            }
-                            // Do some sanity checking
-                            if (maxSize < Settings.maxTeamSize) {
-                                maxSize = Settings.maxTeamSize;
+                        for (int i = maxSize; i< Settings.maxTeamSize + 100; i++) {
+                            if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.maxsize." + i)) {
+                                maxSize = i;
                             }
                         }
                         if (teamMembers.size() < maxSize) {
@@ -2028,15 +2006,10 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                         plugin.getGrid().homeTeleport(player,1);
                                     } else {
                                         int maxHomes = Settings.maxHomes;
-                                        // Dynamic home sizes with permissions
-                                        for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
-                                            if (perms.getPermission().startsWith(Settings.PERMPREFIX + "island.maxhomes.")) {
-                                                // Get the max value should there be more than one
-                                                maxHomes = Math.max(maxHomes, Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "island.maxhomes.")[1]));
-                                            }
-                                            // Do some sanity checking
-                                            if (maxHomes < 1) {
-                                                maxHomes = 1;
+                                        // Try the Vault way
+                                        for (int i = Settings.maxHomes; i< Settings.maxHomes + 100; i++) {
+                                            if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.maxhomes." + i)) {
+                                                maxHomes = i;
                                             }
                                         }
                                         if (number > maxHomes) {
@@ -2071,11 +2044,10 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                     return true;
                                 }
                                 int maxHomes = Settings.maxHomes;
-                                // Dynamic home sizes with permissions
-                                for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
-                                    if (perms.getPermission().startsWith(Settings.PERMPREFIX + "island.maxhomes.")) {
-                                        // Get the max value should there be more than one
-                                        maxHomes = Math.max(maxHomes, Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "island.maxhomes.")[1]));
+                                // Try the Vault way
+                                for (int i = Settings.maxHomes; i< Settings.maxHomes + 100; i++) {
+                                    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.maxhomes." + i)) {
+                                        maxHomes = i;
                                     }
                                 }
                                 if (maxHomes > 1) {
@@ -2274,23 +2246,9 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                             // Player has space in their team
                                             int maxSize = Settings.maxTeamSize;
                                             // Dynamic team sizes with permissions
-                                            for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
-                                                if (perms.getPermission().startsWith(Settings.PERMPREFIX + "team.maxsize.")) {
-                                                    // Prevent the situation where the player has multiple permissions
-                                                    String[] permSplit = perms.getPermission().split(Settings.PERMPREFIX + "team.maxsize.");
-                                                    if (permSplit.length == 2) {
-                                                        try {
-                                                            maxSize = Math.max(maxSize, Integer.valueOf(permSplit[1]));
-                                                        } catch (Exception e) {
-                                                            plugin.getLogger().severe("Max team perm for player " + player.getName() + " cannot be parsed " + perms.getPermission());
-                                                        }
-                                                    } else {
-                                                        plugin.getLogger().severe("Max team perm for player " + player.getName() + " cannot be parsed " + perms.getPermission());
-                                                    }
-                                                }
-                                                // Do some sanity checking
-                                                if (maxSize < Settings.maxTeamSize) {
-                                                    maxSize = Settings.maxTeamSize;
+                                            for (int i = maxSize; i< Settings.maxTeamSize + 100; i++) {
+                                                if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.maxsize." + i)) {
+                                                    maxSize = i;
                                                 }
                                             }
                                             if (teamMembers.size() < maxSize) {
@@ -3142,7 +3100,14 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.sethome")) {
                 if (args[0].equalsIgnoreCase("go") || args[0].equalsIgnoreCase("sethome")) {
-                    for (int i = 0; i < Settings.maxHomes; i++) {
+                    int maxHomes = Settings.maxHomes;
+                    // Try the Vault way
+                    for (int i = Settings.maxHomes; i< Settings.maxHomes + 100; i++) {
+                        if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.maxhomes." + i)) {
+                            maxHomes = i;
+                        }
+                    }
+                    for (int i = 0; i < maxHomes; i++) {
                         options.add(Integer.toString(i));
                     }
                 }
