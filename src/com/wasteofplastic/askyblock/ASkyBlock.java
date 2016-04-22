@@ -352,7 +352,9 @@ public class ASkyBlock extends JavaPlugin {
         messages = new Messages(this);
         messages.loadMessages();
         // Register world load event
-        getServer().getPluginManager().registerEvents(new WorldLoader(this), this);
+        if (getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
+            getServer().getPluginManager().registerEvents(new WorldLoader(this), this);
+        }
         // Metrics
         try {
             final Metrics metrics = new Metrics(this);
