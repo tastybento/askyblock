@@ -218,21 +218,24 @@ public class NetherPortals implements Listener {
                     return;
                 }
                 // Can go both ways now
-                //Location dest = island.getCenter().toVector().toLocation(ASkyBlock.getIslandWorld());
-                Location dest = event.getFrom().toVector().toLocation(ASkyBlock.getIslandWorld());
+                Location overworldIsland = island.getCenter().toVector().toLocation(ASkyBlock.getIslandWorld());
+                Location netherIsland = island.getCenter().toVector().toLocation(ASkyBlock.getNetherWorld());
+                //Location dest = event.getFrom().toVector().toLocation(ASkyBlock.getIslandWorld());
                 if (event.getFrom().getWorld().getEnvironment().equals(Environment.NORMAL)) {
                     // Going to Nether
-                    dest = event.getFrom().toVector().toLocation(ASkyBlock.getNetherWorld());
                     // Check that there is a nether island there. Due to legacy reasons it may not exist
-                    if (island.getCenter().toVector().toLocation(ASkyBlock.getNetherWorld()).getBlock().getType() != Material.BEDROCK) {
+                    //plugin.getLogger().info("DEBUG: island center = " + island.getCenter());               
+                    if (netherIsland.getBlock().getType() != Material.BEDROCK) {
                         // Check to see if there is anything there
-                        if (plugin.getGrid().bigScan(dest, 20) == null) {
+                        if (plugin.getGrid().bigScan(netherIsland, 20) == null) {
+                            //plugin.getLogger().info("DEBUG: big scan is null");
                             plugin.getLogger().warning("Creating nether island for " + event.getPlayer().getName() + " using default nether schematic");
                             Schematic nether = IslandCmd.getSchematics().get("nether");
                             if (nether != null) {
-                                plugin.getIslandCmd().pasteSchematic(nether, island.getCenter().toVector().toLocation(ASkyBlock.getNetherWorld()), event.getPlayer());
+                                //plugin.getLogger().info("DEBUG: pasting at " + island.getCenter().toVector());
+                                plugin.getIslandCmd().pasteSchematic(nether, netherIsland, event.getPlayer());
                             } else {
-                                plugin.getLogger().severe("Cannot telelport player to nether because there is no nether schematic");
+                                plugin.getLogger().severe("Cannot teleport player to nether because there is no nether schematic");
                                 event.setCancelled(true);
                                 event.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(event.getPlayer().getUniqueId()).warpserrorNotSafe);
                                 return;
@@ -240,10 +243,15 @@ public class NetherPortals implements Listener {
                         }
                     }
                     //plugin.getLogger().info("DEBUG: Teleporting to " + event.getFrom().toVector().toLocation(ASkyBlock.getNetherWorld()));
+                    event.setCancelled(true);
+                    // Teleport using the new safeSpot teleport
+                    new SafeSpotTeleport(plugin, event.getPlayer(), netherIsland);
+                    return;
                 }
+                // Going to the over world - if there isn't an island, do nothing
                 event.setCancelled(true);
                 // Teleport using the new safeSpot teleport
-                new SafeSpotTeleport(plugin, event.getPlayer(), dest);
+                new SafeSpotTeleport(plugin, event.getPlayer(), overworldIsland);
             }
             break;
         default:

@@ -764,8 +764,8 @@ public class Schematic {
             return;
         }
         World world = loc.getWorld();
-        //Location blockLoc = new Location(world, loc.getX(), loc.getY(), loc.getZ());
-        Location blockLoc = new Location(world, loc.getX(), Settings.island_level, loc.getZ());
+        Location blockLoc = new Location(world, loc.getX(), loc.getY(), loc.getZ());
+        //Location blockLoc = new Location(world, loc.getX(), Settings.island_level, loc.getZ());
         blockLoc.subtract(bedrock);
         //plugin.getLogger().info("DEBUG: blockloc = " + blockLoc);
         // Paste the island blocks
