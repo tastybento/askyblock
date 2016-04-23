@@ -14,6 +14,14 @@
 		<server.jars>${project.basedir}/lib</server.jars>
 	</properties>
 
+	<distributionManagement>
+		<repository>
+			<id>bintray-tastybento-maven-repo</id>
+			<name>tastybento-askyblock</name>
+			<url>https://api.bintray.com/maven/tastybento/maven-repo/askyblock/;publish=1</url>
+		</repository>
+	</distributionManagement>
+
 	<build>
 		<defaultGoal>clean package install</defaultGoal>
 		<finalName>askyblock</finalName>
