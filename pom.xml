@@ -55,7 +55,7 @@
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.2</version>
+				<version>3.5</version>
 				<configuration>
 					<nonFilteredFileExtensions>
 						<nonFilteredFileExtension>schematic</nonFilteredFileExtension>
