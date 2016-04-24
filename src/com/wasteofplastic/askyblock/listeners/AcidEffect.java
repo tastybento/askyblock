@@ -363,6 +363,7 @@ public class AcidEffect implements Listener {
         }
         if (plugin.getGrid().playerIsOnIsland(e.getPlayer())) {
             boolean otherOb = false;
+            @SuppressWarnings("deprecation")
             ItemStack inHand = e.getPlayer().getItemInHand();
             if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK) && inHand.getType().equals(Material.BUCKET)
                     && e.getClickedBlock().getType().equals(Material.OBSIDIAN)) {

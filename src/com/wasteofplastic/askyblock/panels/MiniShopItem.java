@@ -338,6 +338,7 @@ public class MiniShopItem {
      *            The item stack
      * @return A string with the name of the item.
      */
+    @SuppressWarnings("deprecation")
     private static String getDataName(ItemStack item) {
         Material mat = item.getType();
         // Find out durability, which indicates additional information on the

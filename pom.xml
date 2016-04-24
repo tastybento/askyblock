@@ -13,7 +13,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<server.jars>${project.basedir}/lib</server.jars>
 	</properties>
-
+<!--
 	<distributionManagement>
 		<repository>
 			<id>bintray-tastybento-maven-repo</id>
@@ -21,7 +21,7 @@
 			<url>https://api.bintray.com/maven/tastybento/maven-repo/askyblock/;publish=1</url>
 		</repository>
 	</distributionManagement>
-
+  -->
 	<build>
 		<defaultGoal>clean package install</defaultGoal>
 		<finalName>askyblock</finalName>
@@ -162,5 +162,5 @@
 			<url>http://maven.sk89q.com/repo/</url>
 		</repository>
 	</repositories>
-	<version>3.0.0.4</version>
+	<version>3.0.0.5</version>
 </project>

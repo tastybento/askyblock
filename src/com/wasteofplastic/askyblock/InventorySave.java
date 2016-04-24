@@ -31,13 +31,11 @@ import org.bukkit.entity.Player;
 public class InventorySave {
     private static InventorySave instance = new InventorySave(ASkyBlock.getPlugin());
     private HashMap<UUID, InventoryStore> inventories;
-    private ASkyBlock plugin;
 
     /**
      * Saves the inventory of a player
      */
     public InventorySave(ASkyBlock plugin) {
-        this.plugin = plugin;
         inventories = new HashMap<UUID, InventoryStore>();
     }
 

@@ -79,7 +79,7 @@ public class NetherPortals implements Listener {
                 if (plugin.getServer().getWorld(Settings.worldName + "_the_end") != null) {
                     // The end exists
                     Location end_place = plugin.getServer().getWorld(Settings.worldName + "_the_end").getSpawnLocation();
-                    boolean result = event.getEntity().teleport(end_place);
+                    event.getEntity().teleport(end_place);
                     //plugin.getLogger().info("DEBUG: Result " + result + " teleported " + event.getEntityType() + " to " + end_place);
                     return;
                 }

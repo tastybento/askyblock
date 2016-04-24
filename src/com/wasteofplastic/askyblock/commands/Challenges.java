@@ -18,7 +18,6 @@ package com.wasteofplastic.askyblock.commands;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -1865,12 +1864,11 @@ public class Challenges implements CommandExecutor, TabCompleter {
         challengeFile = YamlConfiguration.loadConfiguration(challengeConfigFile);
 
         // Look for defaults in the jar
-
-        InputStream defConfigStream = plugin.getResource("challenges.yml");
-        if (defConfigStream != null) {
+        /*
+        if (plugin.getResource("challenges.yml") != null) {
             YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
             challengeFile.setDefaults(defConfig);
-        }
+        }*/
         Settings.challengeList = getChallengeConfig().getConfigurationSection("challenges.challengeList").getKeys(false);
         Settings.challengeLevels = Arrays.asList(getChallengeConfig().getString("challenges.levels","").split(" "));
         Settings.freeLevels = Arrays.asList(getChallengeConfig().getString("challenges.freelevels","").split(" "));

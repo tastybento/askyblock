@@ -17,7 +17,6 @@
 package com.wasteofplastic.askyblock;
 
 import java.io.File;
-import java.io.InputStream;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -642,9 +641,7 @@ public class Locale {
             locale = YamlConfiguration.loadConfiguration(localeFile);
         } else {
             // Look for defaults in the jar
-            InputStream defLocaleStream = plugin.getResource("locale/" + localeName + ".yml");
-            if (defLocaleStream != null) {
-                //plugin.getLogger().info("DEBUG: Saving from jar");
+            if (plugin.getResource("locale/" + localeName + ".yml") != null) {
                 plugin.saveResource("locale/" + localeName + ".yml", true);
                 localeFile = new File(plugin.getDataFolder() + File.separator + "locale", localeName + ".yml");
                 locale = YamlConfiguration.loadConfiguration(localeFile);
@@ -655,9 +652,8 @@ public class Locale {
                 if (localeFile.exists()) {
                     locale = YamlConfiguration.loadConfiguration(localeFile);
                 } else {
-                    // Look for defaults in the jar
-                    defLocaleStream = plugin.getResource("locale/locale.yml");
-                    if (defLocaleStream != null) {
+                    // Look for defaults in the jar                    
+                    if (plugin.getResource("locale/locale.yml") != null) {
                         plugin.saveResource("locale/locale.yml", true);
                         localeFile = new File(plugin.getDataFolder() + File.separator + "locale", "locale.yml");
                         locale = YamlConfiguration.loadConfiguration(localeFile);

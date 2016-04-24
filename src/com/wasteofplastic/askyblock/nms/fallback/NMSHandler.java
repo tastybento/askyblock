@@ -67,6 +67,7 @@ public class NMSHandler implements NMSAbstraction {
         return false;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public ItemStack setPotion(Material itemMaterial, Tag itemTags,
             ItemStack chestItem) {

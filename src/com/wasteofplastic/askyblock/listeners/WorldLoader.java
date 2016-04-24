@@ -26,7 +26,7 @@ import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Settings;
 
 public class WorldLoader implements Listener {
-    private ASkyBlock plugin;
+    //private ASkyBlock plugin;
     private boolean worldLoaded = false;
 
     /**
@@ -34,7 +34,7 @@ public class WorldLoader implements Listener {
      * @param aSkyBlock
      */
     public WorldLoader(ASkyBlock aSkyBlock) {
-        this.plugin = aSkyBlock;
+        //this.plugin = aSkyBlock;
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)

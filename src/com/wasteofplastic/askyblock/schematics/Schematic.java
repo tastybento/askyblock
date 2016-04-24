@@ -116,14 +116,14 @@ public class Schematic {
     private Vector welcomeSign;
     private Vector topGrass;
     private Vector playerSpawn;
-    private Material playerSpawnBlock;
+    //private Material playerSpawnBlock;
     private NMSAbstraction nms;
     private Set<Integer> attachable = new HashSet<Integer>();
     private Map<String, Art> paintingList = new HashMap<String, Art>();
     private Map<Byte, BlockFace> facingList = new HashMap<Byte, BlockFace>();
     private Map<Byte, Rotation> rotationList = new HashMap<Byte, Rotation>();
     private List<IslandBlock> islandBlocks;
-    private boolean pasteAir;
+    //private boolean pasteAir;
     private int durability;
     private int levelHandicap;
 
@@ -151,7 +151,7 @@ public class Schematic {
         welcomeSign = null;
         topGrass = null;
         playerSpawn = null;
-        playerSpawnBlock = null;
+        //playerSpawnBlock = null;
         partnerName = "";
     }
 
@@ -182,7 +182,7 @@ public class Schematic {
         welcomeSign = null;
         topGrass = null;
         playerSpawn = null;
-        playerSpawnBlock = null;
+        //playerSpawnBlock = null;
         partnerName = "";
 
         attachable.add(Material.STONE_BUTTON.getId());
@@ -284,6 +284,7 @@ public class Schematic {
 
             CompoundTag schematicTag = (CompoundTag) nbtStream.readTag();
             nbtStream.close();
+            stream.close();
             if (!schematicTag.getName().equals("Schematic")) {
                 throw new IllegalArgumentException("Tag \"Schematic\" does not exist or is not first");
             }
@@ -1046,7 +1047,7 @@ public class Schematic {
         //plugin.getLogger().info("DEBUG: torch = " + Material.TORCH.getId());
         //plugin.getLogger().info("DEBUG: non attachable");
         //plugin.getLogger().info("DEBUG: bedrock y = " + bedrock.getBlockY());
-        int count = 0;
+        //int count = 0;
         for (int x = 0; x < width; ++x) {
             for (int y = 0; y < height; ++y) {
                 for (int z = 0; z < length; ++z) {
@@ -1512,6 +1513,7 @@ public class Schematic {
      * @param playerSpawnBlock the playerSpawnBlock to set
      * @return true if block is found otherwise false
      */
+    @SuppressWarnings("deprecation")
     public boolean setPlayerSpawnBlock(Material playerSpawnBlock) {
         if (bedrock == null) {
             return false;

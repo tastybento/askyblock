@@ -114,7 +114,8 @@ public class SafeSpotTeleport {
 	    //plugin.getLogger().info("DEBUG:world height = " + worldHeight);
 	    plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
 
-		@Override
+		@SuppressWarnings("deprecation")
+        @Override
 		public void run() {
 		    // Find a safe spot, defined as a solid block, with 2 air spaces above it
 		    //long time = System.nanoTime();
@@ -134,7 +135,6 @@ public class SafeSpotTeleport {
 		    Vector portalPart = null;
 		    double distance = 0D;
 		    double safeDistance = 0D;
-		    search:
 			for (ChunkSnapshot chunk: finalChunk) {
 			    for (x = 0; x< 16; x++) {
 				for (z = 0; z < 16; z++) {

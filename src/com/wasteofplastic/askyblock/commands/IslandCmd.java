@@ -126,6 +126,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
      * Loads schematics from the config.yml file. If the default
      * island is not included, it will be made up
      */
+    @SuppressWarnings("deprecation")
     public void loadSchematics() {
         // Check if there is a schematic folder and make it if it does not exist
         File schematicFolder = new File(plugin.getDataFolder(), "schematics");
@@ -2549,7 +2550,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                             } else {
                                 plugin.getMessages().setMessage(targetPlayerUUID, ChatColor.GREEN + plugin.myLocale(targetPlayerUUID).banLifted.replace("[name]", player.getDisplayName()));
                             }
-                            OfflinePlayer offlineTarget = plugin.getServer().getOfflinePlayer(targetPlayerUUID);
+                            //OfflinePlayer offlineTarget = plugin.getServer().getOfflinePlayer(targetPlayerUUID);
                             // Player
                             player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).banLiftedSuccess.replace("[name]", split[1]));
                             // Console
