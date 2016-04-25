@@ -23,6 +23,7 @@ import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
 import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.UUID;
@@ -101,14 +102,20 @@ public class TinyDB {
                             // Read next lines
                             line = br.readLine();
                             uuid = br.readLine();
-                        }                             
+                        } 
+                        br.close();
                     }
-                }
+                    
+                }                
+                out.close();      
             }
+            
             // Move files around
-            if (!newDB.renameTo(oldDB)) {
-                plugin.getLogger().severe("Problem saving name database! Could not rename files!");
-            }             
+            try {
+                Files.move(newDB.toPath(), oldDB.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException ex) {
+                plugin.getLogger().severe("Problem saving name database! Could not rename files!");                
+            }                         
         } catch (IOException e) {
             plugin.getLogger().severe("Problem saving name database!");
             e.printStackTrace();

@@ -13,15 +13,9 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<server.jars>${project.basedir}/lib</server.jars>
 	</properties>
-<!--
-	<distributionManagement>
-		<repository>
-			<id>bintray-tastybento-maven-repo</id>
-			<name>tastybento-askyblock</name>
-			<url>https://api.bintray.com/maven/tastybento/maven-repo/askyblock/;publish=1</url>
-		</repository>
-	</distributionManagement>
-  -->
+	<!-- <distributionManagement> <repository> <id>bintray-tastybento-maven-repo</id> 
+		<name>tastybento-askyblock</name> <url>https://api.bintray.com/maven/tastybento/maven-repo/askyblock/;publish=1</url> 
+		</repository> </distributionManagement> -->
 	<build>
 		<defaultGoal>clean package install</defaultGoal>
 		<finalName>askyblock</finalName>
@@ -68,9 +62,10 @@
 	</build>
 	<dependencies>
 		<dependency>
-			<groupId>org.spigotmc</groupId>
-			<artifactId>spigot-api</artifactId>
+			<groupId>org.bukkit</groupId>
+			<artifactId>bukkit</artifactId>
 			<version>1.9.2-R0.1-SNAPSHOT</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>net.milkbowl.vault</groupId>
@@ -151,7 +146,7 @@
 	<repositories>
 		<repository>
 			<id>spigot-repo</id>
-			<url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
+			<url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
 		</repository>
 		<repository>
 			<id>vault-repo</id>
