@@ -58,6 +58,9 @@ public class MiniShopItem {
     public MiniShopItem(Material material, String extra, int slot, String description, int quantity, Double price, Double sellPrice) {
         this.slot = slot;
         this.material = material;
+        if (description.isEmpty()) {
+            description = Util.prettifyText(material.name());
+        }
         this.description = description;
         this.price = price;
         this.sellPrice = sellPrice;
