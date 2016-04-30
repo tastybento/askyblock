@@ -18,6 +18,7 @@
 package com.wasteofplastic.askyblock.panels;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.bukkit.ChatColor;
@@ -57,13 +58,19 @@ public class BiomeItem {
         // Set the description and price
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(name);
-        List<String> Lore = new ArrayList<String>();
-        Lore = Util.chop(ChatColor.YELLOW, description, 20);
+        List<String> lore = new ArrayList<String>();
+        if (description.contains("|") || description.length() <= 20) {
+            // Split pip character requires escaping it
+            String[] split = description.split("\\|");
+            lore = new ArrayList<String>(Arrays.asList(split));
+        } else {
+            lore = Util.chop(ChatColor.YELLOW, description, 20);
+        }
         // Create price
         if (Settings.useEconomy && cost > 0D) {
-            Lore.add(VaultHelper.econ.format(cost));
+            lore.add(VaultHelper.econ.format(cost));
         }
-        meta.setLore(Lore);
+        meta.setLore(lore);
         item.setItemMeta(meta);
     }
 

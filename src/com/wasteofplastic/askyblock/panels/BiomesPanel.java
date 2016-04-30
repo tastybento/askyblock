@@ -93,7 +93,7 @@ public class BiomesPanel implements Listener {
                     // Get cost
                     double cost = plugin.getConfig().getDouble("biomes." + biomeName + ".cost", Settings.biomeCost);
                     // Get friendly name
-                    String name = plugin.getConfig().getString("biomes." + biomeName + ".friendlyname", Util.prettifyText(biomeName));
+                    String name = ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("biomes." + biomeName + ".friendlyname", Util.prettifyText(biomeName)));
                     // Get description
                     String description = ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("biomes." + biomeName + ".description", ""));
                     // Get confirmation or not
@@ -106,6 +106,7 @@ public class BiomesPanel implements Listener {
                     items.add(item);
                 }
             } catch (Exception e) {
+                e.printStackTrace();
                 plugin.getLogger().severe("Could not recognize " + biomeName + " as valid Biome! Skipping...");
                 plugin.getLogger().severe("For V1.9, some biome names do not exist anymore. Change config.yml to the latest.");
             }

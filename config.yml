@@ -600,33 +600,38 @@ biomesettings:
 biomes:
   COLD_BEACH:
     icon: SAPLING
-    description: "Snowy and cold. Brrr."
+    friendlyname: "&bCold &eBeach"
+    description: "&bSnowy and cold.|&bBrrr."
     # Perms can be any string you like!
     #permission: any.perm.you.want
   DESERT:
     icon: DEAD_BUSH
-    description: "A dry desert. Warning - Ice or snow have to go."
+    friendlyname: "&eDesert"
+    description: "&eA dry desert.|&eWarning - Ice or|&esnow have to go."
     #permission: any.perm.you.want
   FOREST:
     icon: RED_ROSE
-    description: "Forest!"
+    friendlyname: "&aForest"
+    description: "Trees!"
     #permission: any.perm.you.want
   HELL:
     icon: LAVA_BUCKET
     cost: 1000
     # Note, this permission can be anything you like
     permission: askyblock.biomes.hell
-    friendlyname: Nether
-    description: "Warning - all water, snow and ice will be removed."
+    friendlyname: "&cNether"
+    description: "&eWarning - all water,|&esnow and ice will|&ebe removed."
   JUNGLE:
     icon: VINE
-    description: "Lush jungle. Warning - Ice or snow have to go."
+    friendlyname: "&2Jungle"
+    description: "&aLush jungle.|&aWarning - Ice or|&asnow have to go."
     #permission: any.perm.you.want
   MUSHROOM_ISLAND:
     icon: RED_MUSHROOM
     # Note, this permission can be anything you like
     permission: askyblock.biomes.mushroom_island
-    description: "Mushroom island"
+    friendlyname: "&cMushroom island"
+    description: "&cMushrooms"
   PLAINS:
     icon: GRASS
     description: Plain plains!
@@ -634,21 +639,26 @@ biomes:
     #permission: any.perm.you.want
   SWAMPLAND:
     icon: WATER_LILY
-    description: "Swampy. Warning - Ice or snow have to go."
+    friendlyname: "&eSwampland"
+    description: "&2Swampy.|&eWarning - Ice or|&esnow have to go."
     #permission: any.perm.you.want
   MESA:
     icon: HARD_CLAY
-    description: "Rare dry, desert biome. Warning - Ice or snow have to go."
+    friendlyname: "&eMesa"
+    description: "&4Rare dry, desert biome.|&4Warning - Ice or|&4snow have to go."
     #permission: any.perm.you.want
     cost: 500
   SAVANNA:
     icon: LONG_GRASS
-    description: "Flat and dry, no rain. Warning - Ice or snow have to go."
+    friendlyname: "&eSavanna"
+    description: "&eFlat and dry, no rain.|&eWarning - Ice or|&esnow have to go."
     #permission: any.perm.you.want
   ROOFED_FOREST:
     icon: LOG
-    description: "Black forest"
+    friendlyname: "&l&eBlack Forest"
+    description: "&6Woods and trees"
     #permission: any.perm.you.want
+
 
 schematicsection:
    # All schematics should be put in the schematics folder

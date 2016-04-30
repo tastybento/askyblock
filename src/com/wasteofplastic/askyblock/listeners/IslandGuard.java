@@ -2285,7 +2285,7 @@ public class IslandGuard implements Listener {
                 e.setCancelled(true);
                 e.getPlayer().updateInventory();
                 return;
-            } else if (e.getMaterial().equals(Material.BOAT) && (e.getClickedBlock() != null && !e.getClickedBlock().isLiquid())) {
+            } else if (e.getMaterial().name().contains("BOAT") && (e.getClickedBlock() != null && !e.getClickedBlock().isLiquid())) {
                 // Trying to put a boat on non-liquid
                 e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                 e.setCancelled(true);
