@@ -269,4 +269,5 @@ public class Settings {
     public static List<String> freeLevels = new ArrayList<String>();
     public static int cleanRate;
     public static boolean allowPushing;
+    public static boolean recoverSuperFlat;
 }

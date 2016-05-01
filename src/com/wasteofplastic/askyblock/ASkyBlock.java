@@ -61,6 +61,7 @@ import com.wasteofplastic.askyblock.commands.IslandCmd;
 import com.wasteofplastic.askyblock.generators.ChunkGeneratorWorld;
 import com.wasteofplastic.askyblock.listeners.AcidEffect;
 import com.wasteofplastic.askyblock.listeners.ChatListener;
+import com.wasteofplastic.askyblock.listeners.CleanSuperFlat;
 import com.wasteofplastic.askyblock.listeners.HeroChatListener;
 import com.wasteofplastic.askyblock.listeners.IslandGuard;
 import com.wasteofplastic.askyblock.listeners.IslandGuard1_8;
@@ -773,6 +774,16 @@ public class ASkyBlock extends JavaPlugin {
                 } 
             }
         }
+        // Recover superflat
+        Settings.recoverSuperFlat = getConfig().getBoolean("general.recoversuperflat");
+        if (Settings.recoverSuperFlat) {
+            getLogger().warning("*********************************************************");
+            getLogger().warning("WARNING: Recover super flat mode is enabled");
+            getLogger().warning("This will regenerate any chunks with bedrock at y=0 when they are loaded");
+            getLogger().warning("Switch off when superflat chunks are cleared");
+            getLogger().warning("You should back up your world before running this");
+            getLogger().warning("*********************************************************");
+        }
         // Debug
         Settings.debug = getConfig().getInt("debug", 0);
         // Allow pushing
@@ -1458,6 +1469,9 @@ public class ASkyBlock extends JavaPlugin {
         // Wither
         if (Settings.restrictWither) {
             manager.registerEvents(new WitherEvents(this), this);
+        }
+        if (Settings.recoverSuperFlat) {
+            manager.registerEvents(new CleanSuperFlat(), this);
         }
         // World loader
         //manager.registerEvents(new WorldLoader(this), this);
