@@ -270,4 +270,5 @@ public class Settings {
     public static int cleanRate;
     public static boolean allowPushing;
     public static boolean recoverSuperFlat;
+    protected static boolean levelLogging;
 }

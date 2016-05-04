@@ -996,40 +996,69 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
      *            - UUID of the player's island that is being requested
      * @return - true if successful.
      */
-    public boolean calculateIslandLevel(final Player asker, final UUID targetPlayer) {
-        if (plugin.isCalculatingLevel()) {
-            asker.sendMessage(ChatColor.RED + plugin.myLocale(asker.getUniqueId()).islanderrorLevelNotReady);
-            return false;
-        }
-        // Player asking for their own island calc
-        if (asker.getUniqueId().equals(targetPlayer) || asker.isOp() || VaultHelper.checkPerm(asker, Settings.PERMPREFIX + "mod.info")) {
-            // Newer better system - uses chunks
-            if (Settings.fastLevelCalc) {
-                if (!onLevelWaitTime(asker) || Settings.levelWait <= 0 || asker.isOp() || VaultHelper.checkPerm(asker, Settings.PERMPREFIX + "mod.info")) {
-                    asker.sendMessage(ChatColor.GREEN + plugin.myLocale(asker.getUniqueId()).levelCalculating);
-                    setLevelWaitTime(asker);
-                    new LevelCalcByChunk(plugin, targetPlayer, asker);
+    public boolean calculateIslandLevel(final CommandSender sender, final UUID targetPlayer) {
+        return calculateIslandLevel(sender, targetPlayer, false);
+    }
+
+    /**
+     * Calculates the island level
+     * @param sender - asker of the level info
+     * @param targetPlayer
+     * @param report - if true, a detailed report will be provided
+     * @return - false if this is cannot be done
+     */
+    public boolean calculateIslandLevel(final CommandSender sender, final UUID targetPlayer, boolean report) {
+        if (sender instanceof Player) {
+            Player asker = (Player)sender;
+            if (plugin.isCalculatingLevel()) {
+                asker.sendMessage(ChatColor.RED + plugin.myLocale(asker.getUniqueId()).islanderrorLevelNotReady);
+                return false;
+            }
+            // Player asking for their own island calc
+            if (asker.getUniqueId().equals(targetPlayer) || asker.isOp() || VaultHelper.checkPerm(asker, Settings.PERMPREFIX + "mod.info")) {
+                // Newer better system - uses chunks
+                if (Settings.fastLevelCalc) {
+                    if (!onLevelWaitTime(asker) || Settings.levelWait <= 0 || asker.isOp() || VaultHelper.checkPerm(asker, Settings.PERMPREFIX + "mod.info")) {
+                        asker.sendMessage(ChatColor.GREEN + plugin.myLocale(asker.getUniqueId()).levelCalculating);
+                        setLevelWaitTime(asker);
+                        new LevelCalcByChunk(plugin, targetPlayer, asker, report);
+                    } else {
+                        asker.sendMessage(ChatColor.YELLOW + plugin.myLocale(asker.getUniqueId()).islandresetWait.replace("[time]", String.valueOf(getLevelWaitTime(asker))));
+                    }
                 } else {
-                    asker.sendMessage(ChatColor.YELLOW + plugin.myLocale(asker.getUniqueId()).islandresetWait.replace("[time]", String.valueOf(getLevelWaitTime(asker))));
+                    // Legacy support - maybe some people still want the old way (shrug)
+                    plugin.setCalculatingLevel(true);
+                    if (!onLevelWaitTime(asker) || Settings.levelWait <= 0 || asker.isOp() || VaultHelper.checkPerm(asker, Settings.PERMPREFIX + "mod.info")) {
+                        asker.sendMessage(ChatColor.GREEN + plugin.myLocale(asker.getUniqueId()).levelCalculating);
+                        LevelCalc levelCalc = new LevelCalc(plugin, targetPlayer, asker, report);
+                        levelCalc.runTaskTimer(plugin, 0L, 5L);
+                        setLevelWaitTime(asker);
+                    } else {
+                        asker.sendMessage(ChatColor.YELLOW + plugin.myLocale(asker.getUniqueId()).islandresetWait.replace("[time]", String.valueOf(getLevelWaitTime(asker))));
+                        plugin.setCalculatingLevel(false);
+                    }
                 }
             } else {
-                // Legacy support - maybe some people still want the old way (shrug)
-                plugin.setCalculatingLevel(true);
-                if (!onLevelWaitTime(asker) || Settings.levelWait <= 0 || asker.isOp() || VaultHelper.checkPerm(asker, Settings.PERMPREFIX + "mod.info")) {
-                    asker.sendMessage(ChatColor.GREEN + plugin.myLocale(asker.getUniqueId()).levelCalculating);
-                    LevelCalc levelCalc = new LevelCalc(plugin, targetPlayer, asker);
-                    levelCalc.runTaskTimer(plugin, 0L, 5L);
-                    setLevelWaitTime(asker);
-                } else {
-                    asker.sendMessage(ChatColor.YELLOW + plugin.myLocale(asker.getUniqueId()).islandresetWait.replace("[time]", String.valueOf(getLevelWaitTime(asker))));
-                    plugin.setCalculatingLevel(false);
-                }
+                // Asking for the level of another player
+                asker.sendMessage(ChatColor.GREEN + plugin.myLocale(asker.getUniqueId()).islandislandLevelis + " " + ChatColor.WHITE + plugin.getPlayers().getIslandLevel(targetPlayer));
             }
         } else {
-            // Asking for the level of another player
-            asker.sendMessage(ChatColor.GREEN + plugin.myLocale(asker.getUniqueId()).islandislandLevelis + " " + ChatColor.WHITE + plugin.getPlayers().getIslandLevel(targetPlayer));
+            // Console request            
+            if (Settings.fastLevelCalc) {
+                sender.sendMessage(ChatColor.GREEN + plugin.myLocale().levelCalculating);
+                new LevelCalcByChunk(plugin, targetPlayer, sender, report);
+            } else {
+                // Legacy support - maybe some people still want the old way (shrug) 
+                if (plugin.isCalculatingLevel()) {
+                    sender.sendMessage(ChatColor.RED + plugin.myLocale().islanderrorLevelNotReady);
+                    return true;
+                }
+                sender.sendMessage(ChatColor.GREEN + plugin.myLocale().levelCalculating);
+                plugin.setCalculatingLevel(true);
+                LevelCalc levelCalc = new LevelCalc(plugin, targetPlayer, sender, report);
+                levelCalc.runTaskTimer(plugin, 0L, 5L);
+            }
         }
-
         return true;
     }
 

@@ -601,6 +601,8 @@ public class Locale {
     public String settingsResetDone;
     public String adminHelpSettingsReset;
 
+    public String adminHelplevel;
+
 
     /**
      * Creates a locale object full of localized strings for a language
@@ -1071,9 +1073,8 @@ public class Locale {
                 .translateAlternateColorCodes('&', locale.getString("settingsReset.done", "Done."));
         adminHelpSettingsReset = ChatColor
                 .translateAlternateColorCodes('&', locale.getString("adminHelp.settingsreset", "Resets all islands to default protection settings"));
-
-
-
+        adminHelplevel = ChatColor.translateAlternateColorCodes('&',
+                locale.getString("adminHelp.level", "provide detailed island level report on player."));
         adminHelpinfoIsland = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("adminHelp.infoisland", "provide info on the nearest island."));
         adminHelptp = ChatColor.translateAlternateColorCodes('&', locale.getString("adminHelp.tp", "Teleport to a player's island."));

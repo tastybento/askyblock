@@ -24,6 +24,7 @@ adminHelp:
   info: "info for the given player"
   infoisland: "provide info on the nearest island"
   kick: "removes player from any team"
+  level: "provide detailed island level report on player"
   lock: "locks/unlocks player's island"
   purge: "delete inactive islands older than [TimeInDays]."
   purgeallowdisallow: "allow/disallow island to be purged if it meets purge criteria"

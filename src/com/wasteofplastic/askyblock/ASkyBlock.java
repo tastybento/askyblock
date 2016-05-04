@@ -786,6 +786,7 @@ public class ASkyBlock extends JavaPlugin {
         }
         // Debug
         Settings.debug = getConfig().getInt("debug", 0);
+        Settings.levelLogging = getConfig().getBoolean("general.levellogging");
         // Allow pushing
         Settings.allowPushing = getConfig().getBoolean("general.allowpushing", true);
         // Custom generator
