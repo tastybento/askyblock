@@ -1538,10 +1538,14 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                 }
                 // Dynamic home sizes with permissions
                 int maxHomes = Settings.maxHomes;
-                // Try the Vault way
-                for (int i = Settings.maxHomes; i< Settings.maxHomes + 100; i++) {
-                    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.maxhomes." + i)) {
-                        maxHomes = i;
+                for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
+                    if (perms.getPermission().startsWith(Settings.PERMPREFIX + "island.maxhomes.")) {
+                        // Get the max value should there be more than one
+                        maxHomes = Math.max(maxHomes, Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "island.maxhomes.")[1]));
+                    }
+                    // Do some sanity checking
+                    if (maxHomes < 1) {
+                        maxHomes = 1;
                     }
                 }
                 if (maxHomes > 1 && VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.sethome")) {
@@ -2036,11 +2040,16 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                     if (number < 1) {
                                         plugin.getGrid().homeTeleport(player,1);
                                     } else {
+                                        // Dynamic home sizes with permissions
                                         int maxHomes = Settings.maxHomes;
-                                        // Try the Vault way
-                                        for (int i = Settings.maxHomes; i< Settings.maxHomes + 100; i++) {
-                                            if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.maxhomes." + i)) {
-                                                maxHomes = i;
+                                        for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
+                                            if (perms.getPermission().startsWith(Settings.PERMPREFIX + "island.maxhomes.")) {
+                                                // Get the max value should there be more than one
+                                                maxHomes = Math.max(maxHomes, Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "island.maxhomes.")[1]));
+                                            }
+                                            // Do some sanity checking
+                                            if (maxHomes < 1) {
+                                                maxHomes = 1;
                                             }
                                         }
                                         if (number > maxHomes) {
@@ -2074,11 +2083,16 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                     player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoIsland);
                                     return true;
                                 }
+                                // Dynamic home sizes with permissions
                                 int maxHomes = Settings.maxHomes;
-                                // Try the Vault way
-                                for (int i = Settings.maxHomes; i< Settings.maxHomes + 100; i++) {
-                                    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.maxhomes." + i)) {
-                                        maxHomes = i;
+                                for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
+                                    if (perms.getPermission().startsWith(Settings.PERMPREFIX + "island.maxhomes.")) {
+                                        // Get the max value should there be more than one
+                                        maxHomes = Math.max(maxHomes, Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "island.maxhomes.")[1]));
+                                    }
+                                    // Do some sanity checking
+                                    if (maxHomes < 1) {
+                                        maxHomes = 1;
                                     }
                                 }
                                 if (maxHomes > 1) {
@@ -3131,11 +3145,16 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.sethome")) {
                 if (args[0].equalsIgnoreCase("go") || args[0].equalsIgnoreCase("sethome")) {
+                    // Dynamic home sizes with permissions
                     int maxHomes = Settings.maxHomes;
-                    // Try the Vault way
-                    for (int i = Settings.maxHomes; i< Settings.maxHomes + 100; i++) {
-                        if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.maxhomes." + i)) {
-                            maxHomes = i;
+                    for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
+                        if (perms.getPermission().startsWith(Settings.PERMPREFIX + "island.maxhomes.")) {
+                            // Get the max value should there be more than one
+                            maxHomes = Math.max(maxHomes, Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "island.maxhomes.")[1]));
+                        }
+                        // Do some sanity checking
+                        if (maxHomes < 1) {
+                            maxHomes = 1;
                         }
                     }
                     for (int i = 0; i < maxHomes; i++) {
