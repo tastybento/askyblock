@@ -278,7 +278,18 @@ public class IslandBlock {
      * @param tileData
      */
     public void setSpawnerType(Map<String, Tag> tileData) {
-        String creatureType = ((StringTag) tileData.get("EntityId")).getValue().toUpperCase();
+        String creatureType = "";        
+        if (tileData.containsKey("EntityId")) {
+            creatureType = ((StringTag) tileData.get("EntityId")).getValue().toUpperCase();
+        } else if (tileData.containsKey("SpawnData")) {
+            // 1.9 format
+            Map<String,Tag> spawnData = ((CompoundTag) tileData.get("SpawnData")).getValue();
+            //Bukkit.getLogger().info("DEBUG: " + spawnData.toString());
+            if (spawnData.containsKey("id")) {
+                creatureType = ((StringTag) spawnData.get("id")).getValue().toUpperCase();
+            }
+        }
+        //Bukkit.getLogger().info("DEBUG: creature type = " + creatureType);
         if (WEtoME.containsKey(creatureType)) {
             spawnerBlockType = WEtoME.get(creatureType);
         } else {
@@ -288,6 +299,7 @@ public class IslandBlock {
                 Bukkit.getLogger().severe("I don't know what a " + creatureType + " is... Skipping spawner setting.");
             }
         }
+        //Bukkit.getLogger().info("DEBUG: spawnerblock type = " + spawnerBlockType);
     }
 
     /**
