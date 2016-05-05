@@ -57,6 +57,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionType;
 import org.bukkit.scheduler.BukkitTask;
@@ -774,11 +775,11 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
             setResetWaitTime(player);
         }
         // Set the custom protection range if appropriate
-        // Dynamic home sizes with permissions
+        // Dynamic island range sizes with permissions
         int range = Settings.island_protectionRange;
-        for (int i = 0; i<= Settings.islandDistance; i++) {
-            if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.range." + i)) {
-                range = i;
+        for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
+            if (perms.getPermission().startsWith(Settings.PERMPREFIX + "island.range.")) {
+                range = Math.max(range, Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "island.range.")[1]));
             }
         }
         // Do some sanity checking
