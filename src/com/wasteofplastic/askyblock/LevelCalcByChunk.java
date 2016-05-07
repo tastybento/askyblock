@@ -36,6 +36,7 @@ import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.material.MaterialData;
+import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
@@ -75,6 +76,23 @@ public class LevelCalcByChunk {
         // Get player's island
         final Island island = plugin.getGrid().getIsland(targetPlayer);
         if (island != null) {
+            // Get the permission multiplier if it is available
+            Player player = plugin.getServer().getPlayer(targetPlayer);
+            int multiplier = 1;
+            if (player != null) {
+                // Get permission multiplier                
+                for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
+                    if (perms.getPermission().startsWith(Settings.PERMPREFIX + "island.multiplier.")) {
+                        // Get the max value should there be more than one
+                        multiplier = Math.max(multiplier, Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "island.multiplier.")[1]));
+                    }
+                    // Do some sanity checking
+                    if (multiplier < 1) {
+                        multiplier = 1;
+                    }
+                }
+            }
+            final int levelMultiplier = multiplier;
             // Check if player's island world is the nether or overworld and adjust accordingly
             final World world = plugin.getPlayers().getIslandLocation(targetPlayer).getWorld();
             // Get the chunks
@@ -230,7 +248,8 @@ public class LevelCalcByChunk {
 
                     blockCount += (int)((double)underWaterBlockCount * Settings.underWaterMultiplier);
                     //System.out.println("block count = "+blockCount);
-                    final int score = blockCount / Settings.levelCost;
+                    
+                    final int score = (blockCount * levelMultiplier) / Settings.levelCost;
                     // Logging or report
                     if (Settings.levelLogging || report) {
                         // provide counts
@@ -247,6 +266,7 @@ public class LevelCalcByChunk {
                         reportLines.add("Target player UUID = " + targetPlayer.toString());
                         reportLines.add("Total block value count = " + String.format("%,d",blockCount));
                         reportLines.add("Level cost = " + Settings.levelCost);
+                        reportLines.add("Level multiplier = " + levelMultiplier + " (Player must be online to get a permission multiplier)");
                         reportLines.add("Level calculated = " + score);
                         reportLines.add("==================================");
                         int total = 0;

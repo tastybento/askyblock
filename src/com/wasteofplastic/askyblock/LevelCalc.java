@@ -26,6 +26,7 @@ import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.material.MaterialData;
+import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import com.wasteofplastic.askyblock.events.IslandLevelEvent;
@@ -127,6 +128,23 @@ public class LevelCalc extends BukkitRunnable {
             // If not zero then use it.
             //plugin.getLogger().info("DEBUG: block count = " + blockCount);
             // blockCount = (blockCount * multiplier) / 5000;
+            // Get the permission multiplier if it is available
+            Player player = plugin.getServer().getPlayer(targetPlayer);
+             int multiplier = 1;
+            if (player != null) {
+                // Get permission multiplier                
+                for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
+                    if (perms.getPermission().startsWith(Settings.PERMPREFIX + "island.multiplier.")) {
+                        // Get the max value should there be more than one
+                        multiplier = Math.max(multiplier, Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "island.multiplier.")[1]));
+                    }
+                    // Do some sanity checking
+                    if (multiplier < 1) {
+                        multiplier = 1;
+                    }
+                }
+            }
+            blockCount *= multiplier;
             blockCount /= Settings.levelCost;
             // plugin.getLogger().info("DEBUG: updating player");
             // Update player and team mates
