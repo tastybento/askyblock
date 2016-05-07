@@ -39,6 +39,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
@@ -159,6 +160,21 @@ public class BiomesPanel implements Listener {
             event.setCancelled(true);
             // plugin.getLogger().info("DEBUG: slot is " + slot);
             // Do something
+            // Check this player has an island
+            Island island = plugin.getGrid().getIsland(playerUUID);
+            if (island == null) {
+                player.sendMessage(ChatColor.RED + plugin.myLocale().errorNoIsland);
+                return;
+            }
+            // Check ownership
+            if (!island.getOwner().equals(playerUUID)) {
+                player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).levelerrornotYourIsland);
+                return; 
+            }
+            if (!plugin.getGrid().playerIsOnIsland(player)) {
+                player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).challengeserrorNotOnIsland);
+                return;
+            }
             Biome biome = thisPanel.get(slot).getBiome();
             if (biome != null) {
                 event.setCancelled(true);
@@ -178,11 +194,7 @@ public class BiomesPanel implements Listener {
             }
             player.closeInventory(); // Closes the inventory
             // Actually set the biome
-            if (plugin.getPlayers().inTeam(playerUUID) && plugin.getPlayers().getTeamIslandLocation(playerUUID) != null) {
-                setIslandBiome(plugin.getPlayers().getTeamIslandLocation(playerUUID), biome);
-            } else {
-                setIslandBiome(plugin.getPlayers().getIslandLocation(player.getUniqueId()), biome);
-            }
+            setIslandBiome(island, biome);
             player.sendMessage(ChatColor.GREEN + plugin.myLocale().biomeSet.replace("[biome]", thisPanel.get(slot).getName()));
         }
         return;
@@ -192,87 +204,13 @@ public class BiomesPanel implements Listener {
     /**
      * Sets all blocks in an island to a specified biome type
      * 
-     * @param islandLoc
+     * @param island
      * @param biomeType
      */
-    public boolean setIslandBiome(final Location islandLoc, final Biome biomeType) {
+    public boolean setIslandBiome(final Island island, final Biome biomeType) {
         //plugin.getLogger().info("DEBUG: Biome is " + biomeType);
-        final Island island = plugin.getGrid().getIslandAt(islandLoc);
         if (island != null) {
-            // Update the settings so they can be checked later
-            island.setBiome(biomeType);
-            //island.getCenter().getBlock().setBiome(biomeType);
-            // Get a snapshot of the island
-            final World world = island.getCenter().getWorld();
-            // If the biome is dry, then we need to remove the water, ice, snow, etc.
-            switch (biomeType) {
-            case MESA:
-            case DESERT:
-            case JUNGLE:
-            case SAVANNA:
-            case SWAMPLAND:
-            case HELL:
-                // Get the chunks
-                //plugin.getLogger().info("DEBUG: get the chunks");
-                List<ChunkSnapshot> chunkSnapshot = new ArrayList<ChunkSnapshot>();
-                for (int x = island.getMinProtectedX() /16; x <= (island.getMinProtectedX() + island.getProtectionSize() - 1)/16; x++) {
-                    for (int z = island.getMinProtectedZ() /16; z <= (island.getMinProtectedZ() + island.getProtectionSize() - 1)/16; z++) {
-                        chunkSnapshot.add(world.getChunkAt(x, z).getChunkSnapshot());
-                    }  
-                }
-                //plugin.getLogger().info("DEBUG: size of chunk ss = " + chunkSnapshot.size());
-                final List<ChunkSnapshot> finalChunk = chunkSnapshot;
-                plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
-
-                    @SuppressWarnings("deprecation")
-                    @Override
-                    public void run() {
-                        //System.out.println("DEBUG: running async task");
-                        HashMap<Vector,Integer> blocksToRemove = new HashMap<Vector, Integer>();
-                        // Go through island space and find the offending columns
-                        for (ChunkSnapshot chunk: finalChunk) {
-                            for (int x = 0; x< 16; x++) {
-                                for (int z = 0; z < 16; z++) {
-                                    // Check if it is snow, ice or water
-                                    for (int yy = world.getMaxHeight()-1; yy >= Settings.sea_level; yy--) {
-                                        int type = chunk.getBlockTypeId(x, yy, z);
-                                        if (type == Material.ICE.getId() || type == Material.SNOW.getId() || type == Material.SNOW_BLOCK.getId()
-                                                || type == Material.WATER.getId() || type == Material.STATIONARY_WATER.getId()) {
-                                            //System.out.println("DEBUG: offending block found " + Material.getMaterial(type) + " @ " + (chunk.getX()*16 + x) + " " + yy + " " + (chunk.getZ()*16 + z));
-                                            blocksToRemove.put(new Vector(chunk.getX()*16 + x,yy,chunk.getZ()*16 + z), type);
-                                        } else if (type != Material.AIR.getId()){
-                                            // Hit a non-offending block so break and store this column of vectors
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        // Now get rid of the blocks
-                        if (!blocksToRemove.isEmpty()) {
-                            //plugin.getLogger().info("DEBUG: There are blocks to remove "  + blocksToRemove.size());
-                            final HashMap<Vector, Integer> blocks = blocksToRemove;
-                            // Kick of a sync task
-                            plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
-
-                                @Override
-                                public void run() {
-                                    //plugin.getLogger().info("DEBUG: Running sync task");
-                                    for (Entry<Vector, Integer> entry: blocks.entrySet()) {
-                                        if (entry.getValue() == Material.WATER.getId() || entry.getValue() == Material.STATIONARY_WATER.getId()) {
-                                            if (biomeType.equals(Biome.HELL)) {
-                                                // Remove water from Hell	
-                                                entry.getKey().toLocation(world).getBlock().setType(Material.AIR);
-                                            }
-                                        } else {
-                                            entry.getKey().toLocation(world).getBlock().setType(Material.AIR);
-                                        }
-                                    }
-                                }});
-                        }
-                    }});
-            default:
-            }
+            new SetBiome(plugin, island, biomeType);
             return true;
         } else {
             return false; 
@@ -284,6 +222,7 @@ public class BiomesPanel implements Listener {
      * if it exists. Does not apply to spawn.
      * @param e
      */
+    /*
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = false)
     public void onChunkLoad(ChunkLoadEvent e) {
         // Check if the grid is ready. If it is doing an import, it may not be.
@@ -358,6 +297,6 @@ public class BiomesPanel implements Listener {
 
             }	    
         }
-    }
+    }*/
 
 }

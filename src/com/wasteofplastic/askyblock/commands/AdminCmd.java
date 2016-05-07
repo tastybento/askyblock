@@ -1390,6 +1390,11 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 if (plugin.getPlayers().inTeam(playerUUID)) {
                     playerUUID = plugin.getPlayers().getTeamLeader(playerUUID);
                 }
+                Island island = plugin.getGrid().getIsland(playerUUID);
+                if (island == null) {
+                    sender.sendMessage(ChatColor.RED + plugin.myLocale().errorNoIsland);
+                    return true;
+                }
                 // Check if biome is valid
                 Biome biome = null;
                 String biomeName = split[2].toUpperCase();
@@ -1421,11 +1426,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 }
                 // Okay clear to set biome
                 // Actually set the biome
-                if (plugin.getPlayers().inTeam(playerUUID) && plugin.getPlayers().getTeamIslandLocation(playerUUID) != null) {
-                    plugin.getBiomes().setIslandBiome(plugin.getPlayers().getTeamIslandLocation(playerUUID), biome);
-                } else {
-                    plugin.getBiomes().setIslandBiome(plugin.getPlayers().getIslandLocation(playerUUID), biome);
-                }
+                plugin.getBiomes().setIslandBiome(island,biome);
                 sender.sendMessage(ChatColor.GREEN + plugin.myLocale().biomeSet.replace("[biome]", biomeName));
                 Player targetPlayer = plugin.getServer().getPlayer(playerUUID);
                 if (targetPlayer != null) {
@@ -1623,7 +1624,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
     private void deleteIslands(Island island, CommandSender sender) {
         plugin.getGrid().removePlayersFromIsland(island,null);
         // Reset the biome
-        plugin.getBiomes().setIslandBiome(island.getCenter(), Settings.defaultBiome);
+        plugin.getBiomes().setIslandBiome(island, Settings.defaultBiome);
         new DeleteIslandChunk(plugin, island);
         //new DeleteIslandByBlock(plugin, island);
         plugin.getGrid().saveGrid();
