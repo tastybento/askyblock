@@ -184,12 +184,12 @@ public class JoinLeaveEvents implements Listener {
         // Run the level command if it's free to do so
         if (Settings.loginLevel) {
             if (Settings.fastLevelCalc) {
-                new LevelCalcByChunk(plugin, playerUUID, player, true);
+                new LevelCalcByChunk(plugin, playerUUID, player, false);
             } else {
                 if (!plugin.isCalculatingLevel()) {
                     // This flag is true if the command can be used
                     plugin.setCalculatingLevel(true);
-                    LevelCalc levelCalc = new LevelCalc(plugin, playerUUID, player, true);
+                    LevelCalc levelCalc = new LevelCalc(plugin, playerUUID, player, false);
                     levelCalc.runTaskTimer(plugin, 0L, 10L);
                 }
             }

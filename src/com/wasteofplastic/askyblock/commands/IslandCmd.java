@@ -1711,12 +1711,16 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                             // Check to see if the team is already full
                             int maxSize = Settings.maxTeamSize;
                             // Dynamic team sizes with permissions
-                            // Try the Vault way
-                            for (int i = maxSize; i< Settings.maxTeamSize + 100; i++) {
-                                if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.maxsize." + i)) {
-                                    maxSize = i;
+                            for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
+                                if (perms.getPermission().startsWith(Settings.PERMPREFIX + "team.maxsize.")) {
+                                    // Get the max value should there be more than one
+                                    maxSize = Math.max(maxSize, Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "team.maxsize.")[1]));
                                 }
-                            }
+                                // Do some sanity checking
+                                if (maxSize < 1) {
+                                    maxSize = 1;
+                                }
+                            } 
                             // Account for deprecated permissions. These will be zero on new installs
                             // This avoids these permissions breaking on upgrades
                             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.vip")) {
@@ -1867,12 +1871,16 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                 if (plugin.getPlayers().inTeam(playerUUID)) {
                     if (teamLeader.equals(playerUUID)) {
                         int maxSize = Settings.maxTeamSize;
-                        // Dynamic team sizes with permissions
-                        for (int i = maxSize; i< Settings.maxTeamSize + 100; i++) {
-                            if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.maxsize." + i)) {
-                                maxSize = i;
+                        for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
+                            if (perms.getPermission().startsWith(Settings.PERMPREFIX + "team.maxsize.")) {
+                                // Get the max value should there be more than one
+                                maxSize = Math.max(maxSize, Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "team.maxsize.")[1]));
                             }
-                        }
+                            // Do some sanity checking
+                            if (maxSize < 1) {
+                                maxSize = 1;
+                            }
+                        }  
                         if (teamMembers.size() < maxSize) {
                             player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).inviteyouCanInvite.replace("[number]", String.valueOf(maxSize - teamMembers.size())));
                         } else {
@@ -2291,11 +2299,16 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                             // Player has space in their team
                                             int maxSize = Settings.maxTeamSize;
                                             // Dynamic team sizes with permissions
-                                            for (int i = maxSize; i< Settings.maxTeamSize + 100; i++) {
-                                                if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.maxsize." + i)) {
-                                                    maxSize = i;
+                                            for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
+                                                if (perms.getPermission().startsWith(Settings.PERMPREFIX + "team.maxsize.")) {
+                                                    // Get the max value should there be more than one
+                                                    maxSize = Math.max(maxSize, Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "team.maxsize.")[1]));
                                                 }
-                                            }
+                                                // Do some sanity checking
+                                                if (maxSize < 1) {
+                                                    maxSize = 1;
+                                                }
+                                            }                            
                                             if (teamMembers.size() < maxSize) {
                                                 // If that player already has an invite out
                                                 // then retract it.
