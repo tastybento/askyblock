@@ -175,6 +175,9 @@ public class CoopPlay {
     public void clearAllIslandCoops(UUID player) {
         // Remove any and all islands related to requester
         Island island = plugin.getGrid().getIsland(player);
+        if (island == null) {
+            return;
+        }
         for (HashMap<Location, UUID> coopPlayer : coopPlayers.values()) {
             for (UUID inviter : coopPlayer.values()) {
                 // Fire event
