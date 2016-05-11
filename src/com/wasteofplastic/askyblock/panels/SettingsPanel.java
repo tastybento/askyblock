@@ -232,6 +232,9 @@ public class SettingsPanel implements Listener {
     public void onInventoryClick(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked(); // The player that clicked the item
         Inventory inventory = event.getInventory(); // The inventory that was clicked in
+        if (inventory.getName() == null) {
+            return;
+        }
         int slot = event.getRawSlot();
         // Check this is the right panel
         if (!inventory.getName().equals(plugin.myLocale(player.getUniqueId()).igsTitle)) {

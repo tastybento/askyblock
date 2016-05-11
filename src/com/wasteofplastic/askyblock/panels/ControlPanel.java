@@ -208,8 +208,10 @@ public class ControlPanel implements Listener {
         Player player = (Player) event.getWhoClicked(); // The player that
         // clicked the item
         ItemStack clicked = event.getCurrentItem(); // The item that was clicked
-        Inventory inventory = event.getInventory(); // The inventory that was
-        // clicked in
+        Inventory inventory = event.getInventory(); // The inventory that was clicked in
+        if (inventory.getName() == null) {
+            return;
+        }
         // ASkyBlock plugin = ASkyBlock.getPlugin();
         int slot = event.getRawSlot();
         // Challenges

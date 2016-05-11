@@ -224,6 +224,9 @@ public class WarpPanel implements Listener {
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled=true)
     public void onInventoryClick(InventoryClickEvent event) {
         Inventory inventory = event.getInventory(); // The inventory that was clicked in
+        if (inventory.getName() == null) {
+            return;
+        }
         String title = inventory.getTitle();
         if (!inventory.getTitle().startsWith(plugin.myLocale().warpsTitle + " #")) {
             return;

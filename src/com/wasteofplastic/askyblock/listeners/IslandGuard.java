@@ -157,7 +157,7 @@ public class IslandGuard implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onHorseInventoryClick(InventoryClickEvent event) {
-        if (!(event.getInventory().getHolder() instanceof Horse)) {
+        if (event.getInventory().getHolder() == null || !(event.getInventory().getHolder() instanceof Horse)) {
             //plugin.getLogger().info("DEBUG: not a horse!");
             return;
         }

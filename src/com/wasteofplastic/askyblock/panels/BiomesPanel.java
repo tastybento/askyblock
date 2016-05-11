@@ -141,7 +141,7 @@ public class BiomesPanel implements Listener {
         // clicked in
         int slot = event.getRawSlot();
         // Check this is the right panel
-        if (!inventory.getName().equals(plugin.myLocale().biomePanelTitle)) {
+        if (inventory.getName() == null || !inventory.getName().equals(plugin.myLocale().biomePanelTitle)) {
             return;
         }
         if (slot == -999) {
