@@ -35,6 +35,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_9_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_9_R1.inventory.CraftItemStack;
+import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -174,5 +175,26 @@ public class NMSHandler implements NMSAbstraction {
         chestItem.setDurability((short)0);
         Bukkit.getLogger().warning("Potion in schematic is pre-V1.9 format and will just be water.");
         return chestItem;
+    }
+    
+    /**
+     * Get spawn egg
+     * @param type
+     * @param amount
+     * @return
+     */
+    @SuppressWarnings("deprecation")
+    public ItemStack getSpawnEgg(EntityType type, int amount) {
+        ItemStack item = new ItemStack(Material.MONSTER_EGG, amount);
+        net.minecraft.server.v1_9_R1.ItemStack stack = CraftItemStack.asNMSCopy(item);
+        NBTTagCompound tagCompound = stack.getTag();
+        if(tagCompound == null){
+            tagCompound = new NBTTagCompound();
+        }
+        NBTTagCompound id = new NBTTagCompound();
+        id.setString("id", type.getName());
+        tagCompound.set("EntityTag", id);
+        stack.setTag(tagCompound);
+        return CraftItemStack.asBukkitCopy(stack);
     }
 }

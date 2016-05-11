@@ -16,12 +16,11 @@
  *******************************************************************************/
 package com.wasteofplastic.askyblock.util;
 
-import net.minecraft.server.v1_9_R1.NBTTagCompound;
-
-import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_9_R1.inventory.CraftItemStack;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
+
+import com.wasteofplastic.askyblock.nms.NMSAbstraction;
 
 /**
  * Represents a spawn egg that can be used to spawn mobs. Only for V1.9 servers
@@ -30,36 +29,16 @@ import org.bukkit.inventory.ItemStack;
  */
 public class SpawnEgg1_9 {
     private EntityType type;
+    private NMSAbstraction nms;
 
     public SpawnEgg1_9(EntityType type) {
         this.type = type;
-    }
-    /**
-     * Get the type of entity this egg will spawn.
-     *
-     * @return The entity type.
-     */
-    public EntityType getSpawnedType() {
-        return type;
-    }
-
-    /**
-     * Set the type of entity this egg will spawn.
-     *
-     * @param type The entity type.
-     */
-    public void setSpawnedType(EntityType type) {
-        if (type.isAlive()) {
-            this.type = type;
+        nms = null;
+        try {
+            nms = Util.checkVersion();
+        } catch (Exception ex) {
+            Bukkit.getLogger().severe("Could not find NMS code to support");
         }
-    }
-
-    public String toString() {
-        return "SPAWN EGG{" + getSpawnedType() + "}";
-    }
-
-    public SpawnEgg1_9 clone() {
-        return (SpawnEgg1_9) this.clone();
     }
 
     /**
@@ -76,43 +55,8 @@ public class SpawnEgg1_9 {
      * @param amount
      * @return ItemStack of spawn eggs
      */
-    @SuppressWarnings("deprecation")
-    public ItemStack toItemStack(int amount) {
-        ItemStack item = new ItemStack(Material.MONSTER_EGG, amount);
-        net.minecraft.server.v1_9_R1.ItemStack stack = CraftItemStack.asNMSCopy(item);
-        NBTTagCompound tagCompound = stack.getTag();
-        if(tagCompound == null){
-            tagCompound = new NBTTagCompound();
-        }
-        NBTTagCompound id = new NBTTagCompound();
-        id.setString("id", type.getName());
-        tagCompound.set("EntityTag", id);
-        stack.setTag(tagCompound);
-        return CraftItemStack.asBukkitCopy(stack);
+    public ItemStack toItemStack(int amount) {        
+        return nms.getSpawnEgg(type, amount);
     }
 
-    /**
-     * Converts from an item stack to a spawn egg 1.9
-     * @param item - ItemStack, quantity is disregarded
-     * @return SpawnEgg 1.9
-     */
-    public static SpawnEgg1_9 fromItemStack(ItemStack item) {
-        if (item == null)
-            throw new IllegalArgumentException("item cannot be null");
-        if (item.getType() != Material.MONSTER_EGG )
-            throw new IllegalArgumentException("item is not a monster egg");
-        net.minecraft.server.v1_9_R1.ItemStack stack = CraftItemStack.asNMSCopy(item);
-        NBTTagCompound tagCompound = stack.getTag();
-        if (tagCompound != null) {    
-            @SuppressWarnings("deprecation")
-            EntityType type = EntityType.fromName(tagCompound.getCompound("EntityTag").getString("id"));    
-            if (type != null) {
-                return new SpawnEgg1_9(type);
-            } else {
-                return null;
-            }
-        } else {
-            return null;
-        }
-    }
 }

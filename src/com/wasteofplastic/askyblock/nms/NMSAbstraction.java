@@ -19,6 +19,7 @@ package com.wasteofplastic.askyblock.nms;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 
 import com.wasteofplastic.org.jnbt.Tag;
@@ -54,4 +55,12 @@ public interface NMSAbstraction {
      * @return
      */
     public ItemStack setPotion(Material itemMaterial, Tag itemTag, ItemStack chestItem);
+    
+    /**
+     * Gets a monster egg itemstack
+     * @param type
+     * @param amount
+     * @return itemstack
+     */
+    public ItemStack getSpawnEgg(EntityType type, int amount);
 }

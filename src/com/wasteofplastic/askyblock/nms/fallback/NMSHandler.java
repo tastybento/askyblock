@@ -22,7 +22,9 @@ import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.SpawnEgg;
 import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionType;
 
@@ -118,5 +120,14 @@ public class NMSHandler implements NMSAbstraction {
         }
 
         return chestItem;
+    }
+
+    /* (non-Javadoc)
+     * @see com.wasteofplastic.askyblock.nms.NMSAbstraction#getSpawnEgg(org.bukkit.entity.EntityType, int)
+     */
+    @Override
+    public ItemStack getSpawnEgg(EntityType type, int amount) {
+        SpawnEgg egg = new SpawnEgg(type);
+        return egg.toItemStack(amount);
     }
 }
