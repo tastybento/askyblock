@@ -1775,9 +1775,6 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 
                         plugin.getGrid().homeTeleport(player);
                         plugin.resetPlayer(player);
-                        // Reset reset limit - note that a player can get around the reset
-                        // limit by begging someone to invite them to an island and then leaving
-                        plugin.getPlayers().setResetsLeft(playerUUID, Settings.resetLimit);
                         player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).inviteyouHaveJoinedAnIsland);
                         if (Bukkit.getPlayer(inviteList.get(playerUUID)) != null) {
                             Bukkit.getPlayer(inviteList.get(playerUUID)).sendMessage(
