@@ -283,6 +283,9 @@ public class Players {
         }
         // Control panel
         playerInfo.set("useControlPanel", useControlPanel);
+
+        //playerInfo.set("coops", value);
+
         // Actually save the file
         Util.saveYamlFile(playerInfo, "players/" + uuid.toString() + ".yml");
     }
@@ -389,8 +392,8 @@ public class Players {
     public void completeChallenge(final String challenge) {
         // plugin.getLogger().info("DEBUG: Complete challenge");
         if (!challengeList.containsKey(challenge)) {
-           // Add it if it is not there
-           updateChallengeList(); 
+            // Add it if it is not there
+            updateChallengeList(); 
         }
         if (challengeList.containsKey(challenge)) {
             challengeList.remove(challenge);

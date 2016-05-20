@@ -232,6 +232,8 @@ public class ASkyBlock extends JavaPlugin {
             if (tinyDB != null) {
                 tinyDB.saveDB();
             }
+            // Save the coops
+            CoopPlay.getInstance().saveCoops();
         } catch (final Exception e) {
             getLogger().severe("Something went wrong saving files!");
             e.printStackTrace();
@@ -441,6 +443,10 @@ public class ASkyBlock extends JavaPlugin {
                         }
                         if (Settings.backupDuration > 0) {
                             new AsyncBackup(plugin);
+                        }
+                        // Load the coops
+                        if (Settings.persistantCoops) {
+                            CoopPlay.getInstance().loadCoops();
                         }
                         getLogger().info("All files loaded. Ready to play...");
                     }
@@ -786,6 +792,9 @@ public class ASkyBlock extends JavaPlugin {
         }
         // Debug
         Settings.debug = getConfig().getInt("debug", 0);
+        // Persistent coops
+        Settings.persistantCoops = getConfig().getBoolean("general.persistentcoops");
+        // Level logging
         Settings.levelLogging = getConfig().getBoolean("general.levellogging");
         // Allow pushing
         Settings.allowPushing = getConfig().getBoolean("general.allowpushing", true);

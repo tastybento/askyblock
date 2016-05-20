@@ -32,14 +32,12 @@ adminHelp:
   purgeunowned: "remove unowned islands"
   register: "set a player's island to your location"
   reload: "reload configuration from file."
-  register: "reserves this spot for player's next island"
   resetAllChallenges: "resets all of the player's challenges"
   resetChallenge: "marks a challenge as incomplete"
   resetsign: "Resets the sign you are looking at to the island owner"
   setbiome: "sets leader's island biome"
   setrange: "changes the island's protection range"
   setspawn: "sets the island world spawn to a location close to you"
-  settingsreset: "Resets all islands to default protection settings"
   teamChatSpy: "Spy on team chats (on/off)"
   topTen: "manually update the top 10 list"
   topbreeders: "lists most populated islands currently loaded"
@@ -76,8 +74,6 @@ adminResetSign:
   found: "Warp sign found!"
   noSign: "You must be looking at a sign post to run this command."
   rescued: "Warp sign rescued and assigned to [name]"
-adminReserve:
-  islandExists: "There is an island here already! Register the player instead!"
 adminSetHome: 
   homeSet: "Home set to [location]"
   noneFound: "No safe location found!"
@@ -184,8 +180,9 @@ completechallenge:
 confirm: 
   errorTimeLimitExpired: "Time limit expired! Issue command again."
 coop: 
-  help: "temporarily give a player full access to your island"
+  help: "give a player full access to your island"
   invited: "[name] made [player] a coop player!"
+  listcoops: "list coop players"
   madeyoucoopy: "[name] made you a coop player!"
   notincoop: "[name] is not in your coop!"
   onyourteam: "Player is already on your team!"
@@ -217,8 +214,6 @@ expel:
   notonisland: "Player is not trespassing on your island!"
   notyourself: "You cannot expel yourself!"
   success: "You expelled [name]!"
-general:
-  success: "Success!"
 invite: 
   errorCantJoinIsland: "You couldn't join the island, maybe it's full."
   errorCoolDown: "You can invite that player again in [time] minutes"
@@ -431,9 +426,6 @@ sethome:
   errorNotOnIsland: "You must be within your island boundaries to set home!"
   errorNumHomes: "Homes can be 1 to [max]"
   homeSet: "Your island home has been set to your current location."
-settingsReset:
-  done: "Done."
-  inprogress: "Protection settings being reset, please wait..."
 sign: 
   line1: "&1[A Skyblock]"
   line2: "[player]"

@@ -180,8 +180,9 @@ completechallenge:
 confirm: 
   errorTimeLimitExpired: "Time limit expired! Issue command again."
 coop: 
-  help: "temporarily give a player full access to your island"
+  help: "give a player full access to your island"
   invited: "[name] made [player] a coop player!"
+  listcoops: "list coop players"
   madeyoucoopy: "[name] made you a coop player!"
   notincoop: "[name] is not in your coop!"
   onyourteam: "Player is already on your team!"

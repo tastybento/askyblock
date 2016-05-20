@@ -236,8 +236,10 @@ public class JoinLeaveEvents implements Listener {
             TopTen.topTenRemoveEntry(event.getPlayer().getUniqueId());
         }
         // Remove from coop list
-        CoopPlay.getInstance().clearMyCoops(event.getPlayer());
-        CoopPlay.getInstance().clearMyInvitedCoops(event.getPlayer());
+        if (!Settings.persistantCoops) {
+            CoopPlay.getInstance().clearMyCoops(event.getPlayer());
+            CoopPlay.getInstance().clearMyInvitedCoops(event.getPlayer());
+        }
         plugin.getChatListener().unSetPlayer(event.getPlayer().getUniqueId());
         // CoopPlay.getInstance().returnAllInventories(event.getPlayer());
         // plugin.setMessage(event.getPlayer().getUniqueId(),

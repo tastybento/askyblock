@@ -271,4 +271,5 @@ public class Settings {
     public static boolean allowPushing;
     public static boolean recoverSuperFlat;
     protected static boolean levelLogging;
+    public static boolean persistantCoops;
 }
