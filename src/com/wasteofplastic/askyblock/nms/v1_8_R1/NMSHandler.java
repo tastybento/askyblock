@@ -69,40 +69,51 @@ public class NMSHandler implements NMSAbstraction {
         ItemStack chestItem = new ItemStack(Material.WRITTEN_BOOK);
         //Bukkit.getLogger().info("item data");
         //Bukkit.getLogger().info(item.toString());
-
-        Map<String,Tag> contents = (Map<String,Tag>) ((CompoundTag) item).getValue().get("tag").getValue();
-        //BookMeta bookMeta = (BookMeta) chestItem.getItemMeta();
-        String author = ((StringTag)contents.get("author")).getValue();
-        //Bukkit.getLogger().info("Author: " + author);
-        //bookMeta.setAuthor(author);
-        String title = ((StringTag)contents.get("title")).getValue();
-        //Bukkit.getLogger().info("Title: " + title);
-        //bookMeta.setTitle(title);
-
-        Map<String,Tag> display = (Map<String, Tag>) (contents.get("display")).getValue();
-        List<Tag> loreTag = ((ListTag)display.get("Lore")).getValue();
-        List<String> lore = new ArrayList<String>();
-        for (Tag s: loreTag) {
-            lore.add(((StringTag)s).getValue());
+        if (((CompoundTag) item).getValue().containsKey("tag")) {
+            Map<String,Tag> contents = (Map<String,Tag>) ((CompoundTag) item).getValue().get("tag").getValue();
+            //BookMeta bookMeta = (BookMeta) chestItem.getItemMeta();            
+            String author = "";
+            if (contents.containsKey("author")) {
+                author = ((StringTag)contents.get("author")).getValue();
+            }
+            //Bukkit.getLogger().info("Author: " + author);
+            //bookMeta.setAuthor(author);
+            String title = "";
+            if (contents.containsKey("title")) {
+                title = ((StringTag)contents.get("title")).getValue();
+            }
+            //Bukkit.getLogger().info("Title: " + title);
+            //bookMeta.setTitle(title);
+            List<String> lore = new ArrayList<String>();
+            if (contents.containsKey("display")) {
+                Map<String,Tag> display = (Map<String, Tag>) (contents.get("display")).getValue();
+                List<Tag> loreTag = ((ListTag)display.get("Lore")).getValue();
+                for (Tag s: loreTag) {
+                    lore.add(((StringTag)s).getValue());
+                }
+            }
+            //Bukkit.getLogger().info("Lore: " + lore);
+            net.minecraft.server.v1_8_R1.ItemStack stack = CraftItemStack.asNMSCopy(chestItem); 
+            // Pages
+            NBTTagCompound tag = new NBTTagCompound(); //Create the NMS Stack's NBT (item data)
+            tag.setString("title", title); //Set the book's title
+            tag.setString("author", author);
+            if (contents.containsKey("pages")) {
+                NBTTagList pages = new NBTTagList();
+                List<Tag> pagesTag = ((ListTag)contents.get("pages")).getValue();
+                for (Tag s: pagesTag) {
+                    pages.add(new NBTTagString(((StringTag)s).getValue()));
+                }
+                tag.set("pages", pages); //Add the pages to the tag
+            }
+            stack.setTag(tag); //Apply the tag to the item
+            chestItem = CraftItemStack.asCraftMirror(stack); 
+            ItemMeta bookMeta = (ItemMeta) chestItem.getItemMeta();
+            bookMeta.setLore(lore);
+            chestItem.setItemMeta(bookMeta);
         }
-        //Bukkit.getLogger().info("Lore: " + lore);
-        net.minecraft.server.v1_8_R1.ItemStack stack = CraftItemStack.asNMSCopy(chestItem); 
-        // Pages
-        NBTTagCompound tag = new NBTTagCompound(); //Create the NMS Stack's NBT (item data)
-        tag.setString("title", title); //Set the book's title
-        tag.setString("author", author);
-        NBTTagList pages = new NBTTagList();
-        List<Tag> pagesTag = ((ListTag)contents.get("pages")).getValue();
-        for (Tag s: pagesTag) {
-            pages.add(new NBTTagString(((StringTag)s).getValue()));
-        }
-        tag.set("pages", pages); //Add the pages to the tag
-        stack.setTag(tag); //Apply the tag to the item
-        chestItem = CraftItemStack.asCraftMirror(stack); 
-        ItemMeta bookMeta = (ItemMeta) chestItem.getItemMeta();
-        bookMeta.setLore(lore);
-        chestItem.setItemMeta(bookMeta);
         return chestItem;
+
     }
 
     /* (non-Javadoc)
