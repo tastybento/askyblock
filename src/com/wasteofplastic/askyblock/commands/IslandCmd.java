@@ -2446,7 +2446,8 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                             // Target cannot be op
                             Player target = plugin.getServer().getPlayer(targetPlayerUUID);
                             if (target != null) {
-                                if (target.isOp() || VaultHelper.checkPerm(target, Settings.PERMPREFIX + "mod.bypassprotect")) {
+                                if (target.isOp() || VaultHelper.checkPerm(target, Settings.PERMPREFIX + "mod.bypassprotect")
+                                        || VaultHelper.checkPerm(target, Settings.PERMPREFIX + "mod.bypassexpel")) {
                                     player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).expelFail.replace("[name]", target.getDisplayName()));
                                     return true;
                                 }

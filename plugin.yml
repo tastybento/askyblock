@@ -244,6 +244,9 @@ permissions:
           askyblock.mod.bypassprotect:
             description: Allow moderator to bypass island protection
             default: op
+          askyblock.mod.bypassexpel:
+            description: Allow moderator to bypass island expulsion
+            default: op
           askyblock.mod.setbiome:
             description: Allows setting player island biomes
             default: op
