@@ -496,10 +496,9 @@ general:
    # be replaced by the player's island level.
    # Confirmed to work with Essentials Chat, Multiverse Core and Herochat.
    
-   # Restrict Wither
-   # This allows the Wither to only damage the island where it is spawned.
-   # Damage to any islands or players will not occur.
-   # This prevents griefing-by-wither. 
+   # Restrict Wither and other flying mobs
+   # Any flying mobs that exit the island space where they were spawned will be removed.
+   # Includes blaze and ghast. 
    restrictwither: true
    
    # Warp panel - GUI for welcome warp signs. If set to false, old-style

@@ -62,6 +62,7 @@ import com.wasteofplastic.askyblock.generators.ChunkGeneratorWorld;
 import com.wasteofplastic.askyblock.listeners.AcidEffect;
 import com.wasteofplastic.askyblock.listeners.ChatListener;
 import com.wasteofplastic.askyblock.listeners.CleanSuperFlat;
+import com.wasteofplastic.askyblock.listeners.FlyingMobEvents;
 import com.wasteofplastic.askyblock.listeners.HeroChatListener;
 import com.wasteofplastic.askyblock.listeners.IslandGuard;
 import com.wasteofplastic.askyblock.listeners.IslandGuard1_8;
@@ -70,7 +71,6 @@ import com.wasteofplastic.askyblock.listeners.JoinLeaveEvents;
 import com.wasteofplastic.askyblock.listeners.LavaCheck;
 import com.wasteofplastic.askyblock.listeners.NetherPortals;
 import com.wasteofplastic.askyblock.listeners.PlayerEvents;
-import com.wasteofplastic.askyblock.listeners.WitherEvents;
 import com.wasteofplastic.askyblock.listeners.WorldEnter;
 import com.wasteofplastic.askyblock.listeners.WorldLoader;
 import com.wasteofplastic.askyblock.panels.BiomesPanel;
@@ -1478,7 +1478,7 @@ public class ASkyBlock extends JavaPlugin {
         manager.registerEvents(chatListener, this);
         // Wither
         if (Settings.restrictWither) {
-            manager.registerEvents(new WitherEvents(this), this);
+            manager.registerEvents(new FlyingMobEvents(this), this);
         }
         if (Settings.recoverSuperFlat) {
             manager.registerEvents(new CleanSuperFlat(), this);
