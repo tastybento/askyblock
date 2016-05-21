@@ -70,7 +70,12 @@ public class PlayerEvents implements Listener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onHungerChange(final FoodLevelChangeEvent e) {
         if (DEBUG) {
-            plugin.getLogger().info(e.getEventName());
+            plugin.getLogger().info(e.getEventName() + " food level = " + ((Player)e.getEntity()).getFoodLevel() + " new food level = " + e.getFoodLevel());
+            
+        }
+        // Allow food increases
+        if (e.getFoodLevel() - ((Player)e.getEntity()).getFoodLevel() > 0) {
+            return;
         }
         if (e.getEntity().hasPermission(Settings.PERMPREFIX + "nohunger")) {
             if(plugin.getGrid().playerIsOnIsland((Player) e.getEntity())) {
