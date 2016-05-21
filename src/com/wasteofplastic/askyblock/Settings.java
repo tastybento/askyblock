@@ -272,4 +272,5 @@ public class Settings {
     public static boolean recoverSuperFlat;
     protected static boolean levelLogging;
     public static boolean persistantCoops;
+    public static boolean allowSpawnCreeperPain;
 }

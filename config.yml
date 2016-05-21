@@ -560,6 +560,9 @@ spawn:
   allowredstone: false
   allowanimalkilling: false
   allowmobspawn: false
+  # This allows creepers to hurt players (but not damage blocks) at spawn. e.g. for a mob arena
+  # Note you have to allow mobs to spawn above.
+  allowcreeperpain: false
   allowbeaconaccess: false
   allowspawneggs: false
   alloweggs: false
