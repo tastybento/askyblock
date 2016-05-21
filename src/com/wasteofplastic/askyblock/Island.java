@@ -88,6 +88,10 @@ public class Island implements Cloneable {
     // Island protection settings
     private HashMap<Flags, Boolean> igs = new HashMap<Flags, Boolean>();
     private int levelHandicap;
+    /**
+     * Island Guard Setting flags
+     *
+     */
     public enum Flags {
         allowAnvilUse,
         allowArmorStandUse,
@@ -117,7 +121,8 @@ public class Island implements Cloneable {
         allowPvP,
         allowNetherPvP,
         allowRedStone,
-        allowShearing
+        allowShearing,
+        allowVillagerTrading
     }
 
 
@@ -191,6 +196,9 @@ public class Island implements Cloneable {
                     int index = 0;
                     // Run through the enum and set
                     for (Flags f : Flags.values()) {
+                        if (split[8].length() == index) {
+                            break;
+                        }
                         this.igs.put(f, split[8].charAt(index++) == '1' ? true : false);
                     }
                 } else {
@@ -254,6 +262,7 @@ public class Island implements Cloneable {
         this.igs.put(Flags.allowNetherPvP, Settings.allowNetherPvP);
         this.igs.put(Flags.allowRedStone, Settings.allowRedStone);
         this.igs.put(Flags.allowShearing, Settings.allowShearing);
+        this.igs.put(Flags.allowVillagerTrading, Settings.allowVillagerTrading);
     }
 
     /**
@@ -565,7 +574,11 @@ public class Island implements Cloneable {
         // Personal island protection settings - serialize enum into 1's and 0's representing the boolean values
         try {
             for (Flags f: Flags.values()) {
-                result += this.igs.get(f) ? "1" : "0";
+                if (this.igs.containsKey(f)) {
+                    result += this.igs.get(f) ? "1" : "0";
+                } else {
+                    result += "0";
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

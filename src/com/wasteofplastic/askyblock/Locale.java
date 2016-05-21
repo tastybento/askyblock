@@ -494,6 +494,7 @@ public class Locale {
     public String igsSettingsIslandDesc;
     public String igsSettingsSpawnTitle;
     public String igsSettingsSpawnDesc;
+    public String igsVillagerTrading;
 
 
     public String setHomeerrorNumHomes;
@@ -604,6 +605,7 @@ public class Locale {
     public String adminHelplevel;
 
     public String islandhelpListCoops;
+
 
 
     /**
@@ -778,6 +780,7 @@ public class Locale {
         igsHorseInvAccess = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.horseinventoryaccess", "Horse inv access when riding"));	
         igsPressurePlate = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.pressureplate", "Activate pressure plates"));	
         igsPistonPush = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.pistonpush", "Pistons can push blocks outside island area"));	
+        igsVillagerTrading = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.villagertrading", "Villager trading")); 
 
         lavaTip = ChatColor.translateAlternateColorCodes('&', locale.getString("lavaTip", "Changing obsidian back into lava. Be careful!"));
         warpswelcomeLine = ChatColor.translateAlternateColorCodes('&', locale.getString("warps.welcomeLine", "[WELCOME]"));

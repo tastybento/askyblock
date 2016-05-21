@@ -173,6 +173,8 @@ island:
    allowredstone: false
    # Allow players to shear sheep
    allowshearing: false
+   # Allow visitors to trade with villagers
+   allowvillagertrading: true
   
    # System settings - these cannot be changed by players, only viewed
    

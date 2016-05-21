@@ -75,6 +75,7 @@ public class SettingsPanel implements Listener {
         lookup.put( Material.NETHERRACK,Flags.allowNetherPvP);
         lookup.put( Material.REDSTONE_COMPARATOR,Flags.allowRedStone);
         lookup.put( Material.SHEARS,Flags.allowShearing);
+        lookup.put( Material.EMERALD,Flags.allowVillagerTrading);
     }
 
     public SettingsPanel(ASkyBlock plugin) {
@@ -87,6 +88,11 @@ public class SettingsPanel implements Listener {
         //plugin.getLogger().info("DEBUG: Settings Panel loaded");
     }
 
+    /**
+     * Presents a GUI for toggling or viewing settings
+     * @param player
+     * @return
+     */
     public Inventory islandGuardPanel(Player player) {
         UUID uuid = player.getUniqueId();
         // Get the island settings for this player's location
@@ -135,6 +141,8 @@ public class SettingsPanel implements Listener {
             ip.add(new IPItem(Settings.allowVisitorItemDrop, Material.GOLD_INGOT, plugin.myLocale(uuid).igsVisitorDrop));
             ip.add(new IPItem(Settings.allowVisitorItemPickup, Material.DIAMOND, plugin.myLocale(uuid).igsVisitorPickUp));
             ip.add(new IPItem(Settings.allowVisitorKeepInvOnDeath, Material.IRON_CHESTPLATE, plugin.myLocale(uuid).igsVisitorKeep));
+            ip.add(new IPItem(Settings.allowVillagerTrading, Material.EMERALD, plugin.myLocale(uuid).igsVillagerTrading));
+            // Place new settings here
 
         } else if (island.isSpawn()) {
             ip.add(new IPItem(Material.MAP, plugin.myLocale(uuid).igsSettingsSpawnTitle, plugin.myLocale(uuid).igsSettingsSpawnDesc));
@@ -204,6 +212,7 @@ public class SettingsPanel implements Listener {
             ip.add(new IPItem(island.getIgsFlag(Flags.allowNetherPvP), Material.NETHERRACK, plugin.myLocale(uuid).igsNetherPVP));
             ip.add(new IPItem(island.getIgsFlag(Flags.allowRedStone), Material.REDSTONE_COMPARATOR, plugin.myLocale(uuid).igsRedstone));
             ip.add(new IPItem(island.getIgsFlag(Flags.allowShearing), Material.SHEARS, plugin.myLocale(uuid).igsShears));
+            ip.add(new IPItem(island.getIgsFlag(Flags.allowVillagerTrading), Material.EMERALD, plugin.myLocale(uuid).igsVillagerTrading));
         }
         if (ip.size() > 0) {
             // Make sure size is a multiple of 9

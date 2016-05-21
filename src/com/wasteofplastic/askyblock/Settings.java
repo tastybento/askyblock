@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
@@ -106,6 +107,7 @@ public class Settings {
     public static boolean allowNetherPvP;
     public static boolean allowRedStone;
     public static boolean allowShearing;
+    public static boolean allowVillagerTrading;
 
     // System settings
     public static boolean allowChestDamage;
