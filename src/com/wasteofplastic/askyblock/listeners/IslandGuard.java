@@ -2413,8 +2413,9 @@ public class IslandGuard implements Listener {
             // Minecarts and other storage entities
             //plugin.getLogger().info("DEBUG: " + e.getRightClicked().getType().toString());
             //plugin.getLogger().info("DEBUG: " + p.getItemInHand());
-            // Handle name tags
-            if (p.getItemInHand() != null && p.getItemInHand().getType().equals(Material.NAME_TAG)) {
+            // Handle name tags and dyes
+            if (p.getItemInHand() != null && (p.getItemInHand().getType().equals(Material.NAME_TAG) || 
+                    p.getItemInHand().getType().equals(Material.INK_SACK))) {
                 e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                 e.setCancelled(true);
                 e.getPlayer().updateInventory();
