@@ -53,6 +53,7 @@ public class LevelCalc extends BukkitRunnable {
     private UUID targetPlayer;
     private int range = Settings.island_protectionRange;
     private CommandSender asker;
+    private int islandLevelHandicap;
 
     public LevelCalc(ASkyBlock plugin, UUID targetPlayer, CommandSender asker) {
         this(plugin, targetPlayer, asker, false);
@@ -82,6 +83,7 @@ public class LevelCalc extends BukkitRunnable {
         Island island = plugin.getGrid().getIsland(targetPlayer);
         if (island != null) {
             range = island.getProtectionSize();
+            islandLevelHandicap = island.getLevelHandicap();
         } else {
             range = Settings.island_protectionRange;
         }
@@ -146,6 +148,8 @@ public class LevelCalc extends BukkitRunnable {
             }
             blockCount *= multiplier;
             blockCount /= Settings.levelCost;
+            // Adjust using the island level handicap
+            blockCount -= islandLevelHandicap;
             // plugin.getLogger().info("DEBUG: updating player");
             // Update player and team mates
             plugin.getPlayers().setIslandLevel(targetPlayer, blockCount);

@@ -93,6 +93,8 @@ public class LevelCalcByChunk {
                 }
             }
             final int levelMultiplier = multiplier;
+            // Get the handicap
+            final int levelHandicap = island.getLevelHandicap();
             // Check if player's island world is the nether or overworld and adjust accordingly
             final World world = plugin.getPlayers().getIslandLocation(targetPlayer).getWorld();
             // Get the chunks
@@ -249,7 +251,7 @@ public class LevelCalcByChunk {
                     blockCount += (int)((double)underWaterBlockCount * Settings.underWaterMultiplier);
                     //System.out.println("block count = "+blockCount);
                     
-                    final int score = (blockCount * levelMultiplier) / Settings.levelCost;
+                    final int score = ((blockCount * levelMultiplier) / Settings.levelCost) - levelHandicap;
                     // Logging or report
                     if (Settings.levelLogging || report) {
                         // provide counts
@@ -267,6 +269,7 @@ public class LevelCalcByChunk {
                         reportLines.add("Total block value count = " + String.format("%,d",blockCount));
                         reportLines.add("Level cost = " + Settings.levelCost);
                         reportLines.add("Level multiplier = " + levelMultiplier + " (Player must be online to get a permission multiplier)");
+                        reportLines.add("Schematic level handicap = " + levelHandicap + " (level is reduced by this amount)");
                         reportLines.add("Level calculated = " + score);
                         reportLines.add("==================================");
                         int total = 0;

@@ -23,6 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import net.minecraft.util.org.apache.commons.lang3.math.NumberUtils;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -85,6 +87,7 @@ public class Island implements Cloneable {
     Biome biome;
     // Island protection settings
     private HashMap<Flags, Boolean> igs = new HashMap<Flags, Boolean>();
+    private int levelHandicap;
     public enum Flags {
         allowAnvilUse,
         allowArmorStandUse,
@@ -203,7 +206,15 @@ public class Island implements Cloneable {
                     } catch (IllegalArgumentException ee) {
                         // Unknown biome
                     }
-                } 
+                }
+                // Get island level handicap
+                if (split.length > 10) {
+                    try {
+                        this.levelHandicap = Integer.valueOf(split[10]);
+                    } catch (Exception e) {
+                        this.levelHandicap = 0;
+                    }
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -275,7 +286,7 @@ public class Island implements Cloneable {
         // Island Guard Settings
         setDefaults();
     }
-    
+
     /* (non-Javadoc)
      * @see java.lang.Object#clone()
      */
@@ -301,7 +312,7 @@ public class Island implements Cloneable {
             //plugin.getLogger().info("DEBUG: target x = " + target.getBlockX() + " target z = " + target.getBlockZ());
             //plugin.getLogger().info("DEBUG: min prot x = " + minProtectedX + " min z = " + minProtectedZ);
             //plugin.getLogger().info("DEBUG: max x = " + (minProtectedX + protectionRange) + " max z = " + (minProtectedZ + protectionRange));
-            
+
             if (target.getWorld().equals(world) || (Settings.createNether && Settings.newNether && ASkyBlock.getNetherWorld() != null && target.getWorld().equals(ASkyBlock.getNetherWorld()))) {
                 if (target.getBlockX() >= minProtectedX && target.getBlockX() < (minProtectedX + protectionRange)
                         && target.getBlockZ() >= minProtectedZ && target.getBlockZ() < (minProtectedZ + protectionRange)) {
@@ -310,10 +321,10 @@ public class Island implements Cloneable {
                 /*
                 if (target.getX() >= center.getBlockX() - protectionRange / 2 && target.getX() < center.getBlockX() + protectionRange / 2
                         && target.getZ() >= center.getBlockZ() - protectionRange / 2 && target.getZ() < center.getBlockZ() + protectionRange / 2) {
-                
+
                     return true;
                 }
-                */
+                 */
             }
         }
         return false;
@@ -561,7 +572,7 @@ public class Island implements Cloneable {
             result = "";
         }
         return center.getBlockX() + ":" + center.getBlockY() + ":" + center.getBlockZ() + ":" + protectionRange + ":" 
-        + islandDistance + ":" + ownerString + ":" + locked + ":" + purgeProtected + ":" + result + ":" + getBiome().toString();
+        + islandDistance + ":" + ownerString + ":" + locked + ":" + purgeProtected + ":" + result + ":" + getBiome().toString() + ":" + levelHandicap;
     }
 
     /**
@@ -795,5 +806,19 @@ public class Island implements Cloneable {
      */
     public void setBiome(Biome biome) {
         this.biome = biome;
+    }
+
+    /**
+     * @return the levelHandicap
+     */
+    public int getLevelHandicap() {
+        return levelHandicap;
+    }
+
+    /**
+     * @param levelHandicap the levelHandicap to set
+     */
+    public void setLevelHandicap(int levelHandicap) {
+        this.levelHandicap = levelHandicap;
     }
 }

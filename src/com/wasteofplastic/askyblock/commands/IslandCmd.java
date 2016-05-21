@@ -744,7 +744,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
         plugin.setNewIsland(false);
         // Add to the grid
         Island myIsland = plugin.getGrid().addIsland(next.getBlockX(), next.getBlockZ(), playerUUID);
-
+        myIsland.setLevelHandicap(schematic.getLevelHandicap());
         // Save the player so that if the server is reset weird things won't happen
         plugin.getPlayers().save(playerUUID);
         /*
