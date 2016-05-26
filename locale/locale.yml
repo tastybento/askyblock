@@ -379,6 +379,7 @@ minishop:
   youcannotafford: "You cannot afford [description]!"
   yousold: "You sold [number] [description] for [price]"
 moblimits: 
+  entity: "Island [entity] limit of [number] reached!"
   error: "Island animal breeding limit of [number] reached!"
   hopper: "Island hopper limit of [number] reached!"
   villager: "Island villager breeding limit of [number] reached!"

@@ -395,42 +395,42 @@ public class GridManager {
     public void saveGrid() {
         saveGrid(true);
     }
-    
+
     /**
      * Saves the grid. Option to save sync or async.
      * Asymc cannot be used when disabling the plugin
      * @param async
      */
     public void saveGrid(boolean async) {
-	final File islandFile = new File(plugin.getDataFolder(), "islands.yml");
-	final YamlConfiguration islandYaml = new YamlConfiguration();
-	List<String> islandList = new ArrayList<String>();
-	for (int x : islandGrid.keySet()) {
-	    for (int z : islandGrid.get(x).keySet()) {
-		Island island = islandGrid.get(x).get(z);
-		islandList.add(island.save());
-	    }
-	}
-	islandYaml.set(Settings.worldName, islandList);
-	// Save the file
-	if (async) {
-	Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
-	public void run() {
-		try {
-		    islandYaml.save(islandFile);
-		} catch (Exception e) {
-		    plugin.getLogger().severe("Could not save islands.yml!");
-		    e.printStackTrace();
-		}}
-	  });
-	} else {
-	    try {
+        final File islandFile = new File(plugin.getDataFolder(), "islands.yml");
+        final YamlConfiguration islandYaml = new YamlConfiguration();
+        List<String> islandList = new ArrayList<String>();
+        for (int x : islandGrid.keySet()) {
+            for (int z : islandGrid.get(x).keySet()) {
+                Island island = islandGrid.get(x).get(z);
+                islandList.add(island.save());
+            }
+        }
+        islandYaml.set(Settings.worldName, islandList);
+        // Save the file
+        if (async) {
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+                public void run() {
+                    try {
+                        islandYaml.save(islandFile);
+                    } catch (Exception e) {
+                        plugin.getLogger().severe("Could not save islands.yml!");
+                        e.printStackTrace();
+                    }}
+            });
+        } else {
+            try {
                 islandYaml.save(islandFile);
             } catch (Exception e) {
                 plugin.getLogger().severe("Could not save islands.yml!");
                 e.printStackTrace();
             }
-	}
+        }
     }
 
     /**
@@ -821,22 +821,24 @@ public class GridManager {
                 return true;
             }
         }
+        if (!Settings.useOwnGenerator) {
+            // Block check
+            if (!loc.getBlock().isEmpty() && !loc.getBlock().isLiquid()) {
+                // Get the closest island 
+                plugin.getLogger().info("Found solid block at island height - adding to islands.yml " + px + "," + pz);
+                addIsland(px, pz);
+                return true;
+            }
+            // Look around
 
-        // Bedrock check
-        if (loc.getBlock().getType().equals(Material.BEDROCK)) {
-            // Get the closest island 
-            plugin.getLogger().info("Found bedrock at island height - adding to islands.yml " + px + "," + pz);
-            addIsland(px, pz);
-            return true;
-        }
-        // Look around
-        for (int x = -5; x <= 5; x++) {
-            for (int y = 10; y <= 255; y++) {
-                for (int z = -5; z <= 5; z++) {
-                    if (loc.getWorld().getBlockAt(x + px, y, z + pz).getType().equals(Material.BEDROCK)) {
-                        plugin.getLogger().info("Bedrock found during long search - adding to islands.yml " + px + "," + pz);
-                        addIsland(px, pz);
-                        return true;
+            for (int x = -5; x <= 5; x++) {
+                for (int y = 10; y <= 255; y++) {
+                    for (int z = -5; z <= 5; z++) {
+                        if (!loc.getWorld().getBlockAt(x + px, y, z + pz).isEmpty() && !loc.getWorld().getBlockAt(x + px, y, z + pz).isLiquid()) {
+                            plugin.getLogger().info("Solid block found during long search - adding to islands.yml " + px + "," + pz);
+                            addIsland(px, pz);
+                            return true;
+                        }
                     }
                 }
             }
@@ -1476,7 +1478,7 @@ public class GridManager {
                 if (c.isLoaded()) {
                     for (final Entity e : c.getEntities()) {
                         //plugin.getLogger().info("DEBUG: " + e.getType());
-                        
+
                         if (e instanceof Monster && !Settings.mobWhiteList.contains(e.getType())) {
                             Monster monster = (Monster)e;
                             //plugin.getLogger().info("DEBUG: monster found. custom name is '" + monster.getCustomName() + "'");
