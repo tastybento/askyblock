@@ -109,6 +109,9 @@ permissions:
           askyblock.command.challengeexempt:
             description: Player is exempt from commands run when a challenge is completed
             default: false
+          askyblock.command.newteamexempt:
+            description: Player is exempt from commands run when accepting a team invite
+            default: false
       askyblock.coop:
         description: Allows player to use the coop command
         default: false    

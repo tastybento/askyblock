@@ -1792,6 +1792,10 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 
                         plugin.getGrid().homeTeleport(player);
                         plugin.resetPlayer(player);
+                        if (!player.hasPermission(Settings.PERMPREFIX + "command.newteamexempt")) {
+                            //plugin.getLogger().info("DEBUG: Executing new island commands");
+                            runCommands(Settings.teamStartCommands, player);
+                        }
                         player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).inviteyouHaveJoinedAnIsland);
                         if (Bukkit.getPlayer(inviteList.get(playerUUID)) != null) {
                             Bukkit.getPlayer(inviteList.get(playerUUID)).sendMessage(

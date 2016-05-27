@@ -275,4 +275,5 @@ public class Settings {
     protected static boolean levelLogging;
     public static boolean persistantCoops;
     public static boolean allowSpawnCreeperPain;
+    public static List<String> teamStartCommands;
 }

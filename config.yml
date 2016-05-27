@@ -303,6 +303,11 @@ general:
    #- "[SELF] balance"
    #- "some other command"
 
+   # Commands to execute when a player joins a new team island (does /island accept)
+   teamstartcommands:
+   #- "[SELF] balance"
+   #- "some other command"
+
    # Visitor banned commands: Visitors to islands cannot use these commands
    visitorbannedcommands:
    - spawner

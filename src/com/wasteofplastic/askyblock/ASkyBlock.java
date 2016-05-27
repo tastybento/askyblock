@@ -836,6 +836,7 @@ public class ASkyBlock extends JavaPlugin {
         Settings.resetCommands = getConfig().getStringList("general.resetcommands");
         Settings.leaveCommands = getConfig().getStringList("general.leavecommands");
         Settings.startCommands = getConfig().getStringList("general.startcommands");
+        Settings.teamStartCommands = getConfig().getStringList("general.teamstartcommands");
         Settings.useControlPanel = getConfig().getBoolean("general.usecontrolpanel", false);
         // Check if /island command is allowed when falling
         Settings.allowTeleportWhenFalling = getConfig().getBoolean("general.allowfallingteleport", true);
