@@ -164,8 +164,13 @@ public class Players {
         // Run through all challenges available
         for (String challenge : Settings.challengeList) {
             // If they are in the list, then use the value, otherwise use false
-            challengeList.put(challenge, playerInfo.getBoolean("challenges.status." + challenge, false));
-            challengeListTimes.put(challenge, playerInfo.getInt("challenges.times." + challenge, 0));
+            challengeList.put(challenge.toLowerCase(), playerInfo.getBoolean("challenges.status." + challenge.toLowerCase(), false));
+            challengeListTimes.put(challenge.toLowerCase(), playerInfo.getInt("challenges.times." + challenge.toLowerCase(), 0));
+        }
+        for (String challenge : Settings.challengeLevels) {
+            // If they are in the list, then use the value, otherwise use false
+            challengeList.put(challenge.toLowerCase(), playerInfo.getBoolean("challenges.status." + challenge.toLowerCase(), false));
+            challengeListTimes.put(challenge.toLowerCase(), playerInfo.getInt("challenges.times." + challenge.toLowerCase(), 0));
         }
         // Load reset limit
         this.resetsLeft = playerInfo.getInt("resetsLeft", Settings.resetLimit);
@@ -299,37 +304,6 @@ public class Players {
     }
 
     /**
-     * A maintenance function. Rebuilds the challenge list for this player.
-     * Should be used when the challenges change, e.g. config.yml changes.
-     */
-    public void updateChallengeList() {
-        // If it does not exist, then make it
-        if (challengeList == null) {
-            challengeList = new HashMap<String, Boolean>();
-        }
-        // Iterate through all the challenges in the config.yml and if they are
-        // not in the list the add them as yet to be done
-        final Iterator<?> itr = Settings.challengeList.iterator();
-        while (itr.hasNext()) {
-            final String current = (String) itr.next();
-            if (!challengeList.containsKey(current.toLowerCase())) {
-                challengeList.put(current.toLowerCase(), Boolean.valueOf(false));
-            }
-        }
-        // If the challenge list is bigger than the number of challenges in the
-        // config.yml (some were removed?)
-        // then remove the old ones - the ones that are no longer in Settings
-        if (challengeList.size() > Settings.challengeList.size()) {
-            final Object[] challengeArray = challengeList.keySet().toArray();
-            for (int i = 0; i < challengeArray.length; i++) {
-                if (!Settings.challengeList.contains(challengeArray[i].toString())) {
-                    challengeList.remove(challengeArray[i].toString());
-                }
-            }
-        }
-    }
-
-    /**
      * Checks if a challenge exists in the player's challenge list
      * 
      * @param challenge
@@ -337,14 +311,7 @@ public class Players {
      *         otherwise false
      */
     public boolean challengeExists(final String challenge) {
-        if (challengeList.containsKey(challenge.toLowerCase())) {
-            return true;
-        }
-        // for (String s : challengeList.keySet()) {
-        // ASkyBlock.getInstance().getLogger().info("DEBUG: challenge list: " +
-        // s);
-        // }
-        return false;
+        return challengeList.containsKey(challenge.toLowerCase());
     }
 
     /**
@@ -391,25 +358,16 @@ public class Players {
      */
     public void completeChallenge(final String challenge) {
         // plugin.getLogger().info("DEBUG: Complete challenge");
-        if (!challengeList.containsKey(challenge)) {
-            // Add it if it is not there
-            updateChallengeList(); 
+        challengeList.put(challenge.toLowerCase(), true);
+        // Count how many times the challenge has been done
+        int times = 0;
+        if (challengeListTimes.containsKey(challenge.toLowerCase())) {
+            times = challengeListTimes.get(challenge.toLowerCase());
         }
-        if (challengeList.containsKey(challenge)) {
-            challengeList.remove(challenge);
-            challengeList.put(challenge, Boolean.valueOf(true));
-            // Count how many times the challenge has been done
-            int times = 0;
-            if (challengeListTimes.containsKey(challenge)) {
-                times = challengeListTimes.get(challenge);
-            }
-            times++;
-            challengeListTimes.put(challenge, times);
-            // plugin.getLogger().info("DEBUG: complete " + challenge + ":" +
-            // challengeListTimes.get(challenge.toLowerCase()).intValue() );
-        } else {
-            plugin.getLogger().severe("Attempt to complete a challenge that does not exist: " + challenge + " for player " + playerName);
-        }
+        times++;
+        challengeListTimes.put(challenge.toLowerCase(), times);
+        // plugin.getLogger().info("DEBUG: complete " + challenge + ":" +
+        // challengeListTimes.get(challenge.toLowerCase()).intValue() );
     }
 
     public boolean hasIsland() {
@@ -584,7 +542,6 @@ public class Players {
     public void resetAllChallenges() {
         challengeList.clear();
         challengeListTimes.clear();
-        updateChallengeList();
     }
 
     /**
@@ -595,7 +552,7 @@ public class Players {
      */
     public void resetChallenge(final String challenge) {
         if (challengeList.containsKey(challenge)) {
-            challengeList.put(challenge, Boolean.valueOf(false));
+            challengeList.put(challenge, false);
             challengeListTimes.put(challenge, 0);
         }
     }

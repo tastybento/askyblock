@@ -204,11 +204,12 @@ public class Challenges implements CommandExecutor, TabCompleter {
                     if (oldLevel < newLevel) {
                         // Update chat
                         plugin.getChatListener().setPlayerChallengeLevel(player);
-                        // Run commands and give rewards
+                        // Run commands and give rewards but only if they haven't done it below
                         //plugin.getLogger().info("DEBUG: old level = " + oldLevel + " new level = " + newLevel);
                         String level = Settings.challengeLevels.get(newLevel);
-                        if (!level.isEmpty()) {
+                        if (!level.isEmpty() && !plugin.getPlayers().checkChallenge(player.getUniqueId(), level)) {
                             //plugin.getLogger().info("DEBUG: level name = " + level);
+                            plugin.getPlayers().completeChallenge(player.getUniqueId(), level);
                             String message = ChatColor.translateAlternateColorCodes('&', getChallengeConfig().getString("challenges.levelUnlock." + level + ".message", ""));
                             if (!message.isEmpty()) {
                                 player.sendMessage(ChatColor.GREEN + message);
