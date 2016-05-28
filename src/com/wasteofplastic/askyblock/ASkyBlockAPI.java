@@ -17,6 +17,7 @@
 
 package com.wasteofplastic.askyblock;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -25,6 +26,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
@@ -424,5 +426,23 @@ public class ASkyBlockAPI {
         }
         return new HashMap<UUID, Island>();
 
+    }
+
+    /**
+     * Get name of the island owned by owner
+     * @param owner
+     * @return Returns the name of owner's island, or the owner's name if there is none.
+     */
+    public String getIslandName(UUID owner) {
+        return plugin.getGrid().getIslandName(owner);
+    }
+
+    /**
+     * Set the island name
+     * @param owner
+     * @param name
+     */
+    public void setIslandName(UUID owner, String name) {
+        plugin.getGrid().setIslandName(owner, name);
     }
 }

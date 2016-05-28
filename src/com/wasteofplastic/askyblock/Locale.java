@@ -606,6 +606,18 @@ public class Locale {
 
     public String islandhelpListCoops;
 
+    public String islandHelpName;
+
+    public String errorTooShort;
+
+    public String errorTooLong;
+
+    public String islandhelpResetName;
+
+    public String adminHelpName;
+
+    public String adminHelpResetName;
+
 
 
     /**
@@ -701,6 +713,8 @@ public class Locale {
         acidBottle = ChatColor.translateAlternateColorCodes('&', locale.getString("acidBottle", "Bottle O' Acid"));
         drankAcidAndDied = ChatColor.translateAlternateColorCodes('&', locale.getString("drankAcidAndDied", "drank acid and died."));
         drankAcid = ChatColor.translateAlternateColorCodes('&', locale.getString("drankAcid", "drank acid."));
+        errorTooShort = ChatColor.translateAlternateColorCodes('&', locale.getString("error.tooShort", "Too short. Minimum size is [length]."));
+        errorTooLong = ChatColor.translateAlternateColorCodes('&', locale.getString("error.tooLong", "Too long. Maximum size is [length]."));
         errorUnknownPlayer = ChatColor.translateAlternateColorCodes('&', locale.getString("error.unknownPlayer", "That player is unknown."));
         errorNoPermission = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("error.noPermission", "You don't have permission to use that command!"));
@@ -926,6 +940,7 @@ public class Locale {
         islandhelpIsland = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("island.helpIsland", "start an island, or teleport to your island."));
         islandhelpTeleport = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpTeleport", "teleport to your island."));
+        islandhelpResetName = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpResetName", "reset your island name."));
         islandhelpControlPanel = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpControlPanel", "open the island GUI."));
         islandhelpRestart = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("island.helpRestart", "restart your island and remove the old one."));
@@ -948,16 +963,21 @@ public class Locale {
         islandHelpSettings = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("island.helpSettings", "see island protection and game settings"));
         islandHelpChallenges = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpChallenges", "/challenges: &fshow challenges"));
-        adminHelpHelp = ChatColor.translateAlternateColorCodes('&', locale.getString("adminHelp.help", "Acid Admin Commands:"));
+        adminHelpHelp = ChatColor.translateAlternateColorCodes('&', locale.getString("adminHelp.help", "Admin Commands:"));
+        adminHelpName = ChatColor.translateAlternateColorCodes('&', locale.getString("adminHelp.name", "Set name of player's island"));
+        adminHelpResetName = ChatColor.translateAlternateColorCodes('&', locale.getString("adminHelp.resetname", "Reset name of player's island"));
         islandhelpAcceptReject = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("island.helpAcceptReject", "accept or reject an invitation."));
         islandhelpMakeLeader = ChatColor
                 .translateAlternateColorCodes('&', locale.getString("island.helpMakeLeader", "transfer the island to <player>."));
+        islandHelpName = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpName", "Set a name for your island"));
+
         islanderrorLevelNotReady = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("island.errorLevelNotReady", "Can't use that command right now! Try again in a few seconds."));
         islanderrorInvalidPlayer = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("island.errorInvalidPlayer", "That player is invalid or does not have an island!"));
         islandislandLevelis = ChatColor.translateAlternateColorCodes('&', locale.getString("island.islandLevelis", "Island level is"));
+
         invitehelp = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("invite.help", "Use [/[label] invite <playername>] to invite a player to your island.").replace("[label]", Settings.ISLANDCOMMAND));
         inviteyouCanInvite = ChatColor.translateAlternateColorCodes('&',

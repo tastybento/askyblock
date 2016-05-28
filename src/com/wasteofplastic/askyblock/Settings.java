@@ -276,4 +276,6 @@ public class Settings {
     public static boolean persistantCoops;
     public static boolean allowSpawnCreeperPain;
     public static List<String> teamStartCommands;
+    public static int minNameLength;
+    public static int maxNameLength;
 }

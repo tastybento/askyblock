@@ -1107,6 +1107,33 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
         if (teamLeader != null) {
             teamMembers = plugin.getPlayers().getMembers(teamLeader);
         }
+        // Island name (can have spaces)
+        if (split.length > 1 && split[0].equalsIgnoreCase("name")) {
+            // Naming of island
+            if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.name")
+                    && plugin.getPlayers().hasIsland(playerUUID)) {
+                String name = split[1];
+                for (int i = 2; i < split.length; i++) {
+                    name = name + " " + split[i];
+                }
+                if (name.length() < Settings.minNameLength) {
+                    player.sendMessage(ChatColor.RED + (plugin.myLocale(player.getUniqueId()).errorTooShort).replace("[length]", String.valueOf(Settings.minNameLength)));
+                    return true;
+                }
+                if (name.length() > Settings.maxNameLength) {
+                    player.sendMessage(ChatColor.RED + (plugin.myLocale(player.getUniqueId()).errorTooLong).replace("[length]", String.valueOf(Settings.maxNameLength)));
+                    return true;
+                }
+                plugin.getGrid().setIslandName(playerUUID, ChatColor.translateAlternateColorCodes('&', name));
+                player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).generalSuccess);
+                return true;
+            } else {
+                player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
+                return true;
+            }
+        }
+
+
         // The target player's UUID
         UUID targetPlayer = null;
         // Check if a player has an island or is in a team
@@ -1142,6 +1169,23 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                 return true;
             }
         case 1:
+            if (split[0].equalsIgnoreCase("name")) {
+                // Explain command
+                if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.name")
+                        && plugin.getPlayers().hasIsland(playerUUID)) {
+                    player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " name <name>: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandHelpName);
+                    return true;
+                }
+            } else if (split[0].equalsIgnoreCase("resetname")) {
+                // Convert name to a UUID
+                if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.name")
+                        && plugin.getPlayers().hasIsland(playerUUID)) {
+                    // Has an island
+                    plugin.getGrid().setIslandName(playerUUID, null);
+                    sender.sendMessage(plugin.myLocale().generalSuccess);
+                }
+                return true;
+            }
             if (split[0].equalsIgnoreCase("coop")) {
                 // Explain command
                 if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "coop")) {
@@ -1571,6 +1615,10 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                     player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " level: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpLevel);
                     player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " level <player>: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpLevelPlayer);
                 }
+                if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.name")
+                        && plugin.getPlayers().hasIsland(playerUUID)) {
+                    player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " name <name>: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandHelpName);
+                }
                 if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.topten")) {
                     player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " top: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpTop);
                 }
@@ -1618,6 +1666,10 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                 }
                 if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.lock")) {
                     player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " lock: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandHelpLock);
+                }
+                if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.name")
+                        && plugin.getPlayers().hasIsland(playerUUID)) {
+                    player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " resetname: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpResetName);
                 }
                 if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.settings")) {
                     player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " settings: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandHelpSettings);
@@ -2827,6 +2879,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                             player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).errorUnknownCommand);
                             return true;
                         }
+            break;
         }
         player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).errorUnknownCommand);
         return true;
@@ -3093,6 +3146,9 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
             //options.add("make"); //Make is currently a private command never accessible to the player
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.sethome")) {
                 options.add("go");
+            }
+            if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.name") && plugin.getPlayers().hasIsland(player.getUniqueId())) {
+                options.add("name");
             }
             options.add("about"); //No permission needed. :-) Indeed.
             if (plugin.getGrid() != null && plugin.getGrid().getSpawn() != null) {

@@ -1426,6 +1426,18 @@ public class ASkyBlock extends JavaPlugin {
         }
         // No acid bottles or buckets
         Settings.acidBottle = getConfig().getBoolean("general.acidbottles", true);
+        // Island name length
+        Settings.minNameLength = getConfig().getInt("island.minnamelength", 1);
+        Settings.maxNameLength = getConfig().getInt("island.maxnamelength", 20);
+        if (Settings.minNameLength < 0) {
+            Settings.minNameLength = 0;
+        }
+        if (Settings.maxNameLength < 1) {
+            Settings.maxNameLength = 1;
+        }
+        if (Settings.minNameLength > Settings.maxNameLength) {
+            Settings.minNameLength = Settings.maxNameLength;
+        }
         // All done
         return true;
     }

@@ -18,6 +18,7 @@
 package com.wasteofplastic.askyblock;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -66,6 +67,8 @@ public class GridManager {
     private HashMap<UUID, Island> ownershipMap = new HashMap<UUID, Island>();
     private File islandFile;
     private Island spawn;
+    private File islandNameFile;
+    private YamlConfiguration islandNames = new YamlConfiguration();
 
     /**
      * @param plugin
@@ -108,6 +111,14 @@ public class GridManager {
                 }
             } catch (Exception e) {
                 plugin.getLogger().severe("Could not load islands.yml");
+            }
+        }
+        islandNameFile = new File(plugin.getDataFolder(), "islandnames.yml");
+        if (islandNameFile.exists()) {
+            try {
+                islandNames.load(islandNameFile);
+            } catch (Exception e) {
+                plugin.getLogger().severe("Could not load islandnames.yml");
             }
         }
         // for (int x : protectionGrid.)
@@ -427,9 +438,14 @@ public class GridManager {
             try {
                 islandYaml.save(islandFile);
             } catch (Exception e) {
-                plugin.getLogger().severe("Could not save islands.yml!");
-                e.printStackTrace();
+                plugin.getLogger().severe("Could not save islands.yml! " + e.getMessage());
             }
+        }
+        // Save any island names
+        try {
+            islandNames.save(islandNameFile);
+        } catch (IOException e) {
+            plugin.getLogger().severe("Could not save islandnames.yml! " + e.getMessage());       
         }
     }
 
@@ -1579,6 +1595,29 @@ public class GridManager {
      */
     public HashMap<UUID, Island> getOwnedIslands() {
         return ownershipMap;
+    }
+
+    /**
+     * Get name of the island owned by owner
+     * @param owner
+     * @return Returns the name of owner's island, or the owner's name if there is none.
+     */
+    public String getIslandName(UUID owner) {
+        return ChatColor.translateAlternateColorCodes('&', islandNames.getString(owner.toString(), plugin.getPlayers().getName(owner))) + ChatColor.RESET;
+    }
+
+    /**
+     * Set the island name
+     * @param owner
+     * @param name
+     */
+    public void setIslandName(UUID owner, String name) {
+        islandNames.set(owner.toString(), name);
+        try {
+            islandNames.save(islandNameFile);
+        } catch (IOException e) {
+            plugin.getLogger().severe("Could not save islandnames.yml! " + e.getMessage());
+        }
     }
 
 }

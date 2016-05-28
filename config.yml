@@ -112,6 +112,14 @@ island:
    # allowPvP, allowNetherPvP, allowRedStone, allowShearing
    # Permissions are CASE SENSITIVE!
    
+   # Island naming
+   # Only players with the askyblock.island.name permission can name their island
+   # It is displayed in the top ten and enter and exit announcements
+   # It replaces the owner's name. Players can use & for color coding.
+   # These set the minimum and maximum size of a name. 
+   minnamelength: 0
+   maxnamelength: 20
+   
    # Default settings
    # Allow anvil use by visitors
    allowanviluse: true

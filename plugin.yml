@@ -274,6 +274,13 @@ permissions:
           askyblock.mod.team:
             description: Enables modification of teams via kick and add commands
             default: false
+          askyblock.mod.name:
+            description: Enables naming of player's islands
+            default: false
+          askyblock.mod.resetname:
+            description: Enables reset of player's island names
+            default: false
+
       askyblock.admin.*:
         children:
           askyblock.admin.clearresetall:

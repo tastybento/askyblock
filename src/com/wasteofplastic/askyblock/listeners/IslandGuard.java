@@ -337,7 +337,7 @@ public class IslandGuard implements Listener {
                 }
             } else {
                 if (!plugin.myLocale(player.getUniqueId()).lockNowEntering.isEmpty()) {
-                    player.sendMessage(plugin.myLocale(player.getUniqueId()).lockNowEntering.replace("[name]", plugin.getPlayers().getName(islandTo.getOwner())));
+                    player.sendMessage(plugin.myLocale(player.getUniqueId()).lockNowEntering.replace("[name]", plugin.getGrid().getIslandName(islandTo.getOwner())));
                 }
             }
         } else if (islandTo == null && islandFrom != null && (islandFrom.getOwner() != null || islandFrom.isSpawn())) {
@@ -349,7 +349,7 @@ public class IslandGuard implements Listener {
                 }
             } else {
                 if (!plugin.myLocale(player.getUniqueId()).lockNowLeaving.isEmpty()) {
-                    player.sendMessage(plugin.myLocale(player.getUniqueId()).lockNowLeaving.replace("[name]", plugin.getPlayers().getName(islandFrom.getOwner())));
+                    player.sendMessage(plugin.myLocale(player.getUniqueId()).lockNowLeaving.replace("[name]", plugin.getGrid().getIslandName(islandFrom.getOwner())));
                 }
             }
         } else if (islandTo != null && islandFrom !=null && !islandTo.equals(islandFrom)) {
@@ -361,7 +361,7 @@ public class IslandGuard implements Listener {
                 }
             } else if (islandFrom.getOwner() != null){
                 if (!plugin.myLocale(player.getUniqueId()).lockNowLeaving.isEmpty()) {
-                    player.sendMessage(plugin.myLocale(player.getUniqueId()).lockNowLeaving.replace("[name]", plugin.getPlayers().getName(islandFrom.getOwner())));
+                    player.sendMessage(plugin.myLocale(player.getUniqueId()).lockNowLeaving.replace("[name]", plugin.getGrid().getIslandName(islandFrom.getOwner())));
                 }
             }
             if (islandTo.isSpawn()) {
@@ -370,7 +370,7 @@ public class IslandGuard implements Listener {
                 }
             } else if (islandTo.getOwner() != null) {
                 if (!plugin.myLocale(player.getUniqueId()).lockNowEntering.isEmpty()) {
-                    player.sendMessage(plugin.myLocale(player.getUniqueId()).lockNowEntering.replace("[name]", plugin.getPlayers().getName(islandTo.getOwner())));
+                    player.sendMessage(plugin.myLocale(player.getUniqueId()).lockNowEntering.replace("[name]", plugin.getGrid().getIslandName(islandTo.getOwner())));
                 }
             }
         }	
@@ -502,7 +502,7 @@ public class IslandGuard implements Listener {
                 }
             } else {
                 if (!plugin.myLocale(e.getPlayer().getUniqueId()).lockNowEntering.isEmpty()) {
-                    e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).lockNowEntering.replace("[name]", plugin.getPlayers().getName(islandTo.getOwner())));
+                    e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).lockNowEntering.replace("[name]", plugin.getGrid().getIslandName(islandTo.getOwner())));
                 }
             }
             // Fire entry event
@@ -517,7 +517,7 @@ public class IslandGuard implements Listener {
                 }
             } else {
                 if (!plugin.myLocale(e.getPlayer().getUniqueId()).lockNowLeaving.isEmpty()) {
-                    e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).lockNowLeaving.replace("[name]", plugin.getPlayers().getName(islandFrom.getOwner())));
+                    e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).lockNowLeaving.replace("[name]", plugin.getGrid().getIslandName(islandFrom.getOwner())));
                 }
             }
             // Fire exit event
@@ -529,12 +529,12 @@ public class IslandGuard implements Listener {
                 // Leaving
                 e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).lockLeavingSpawn);
             } else if (islandFrom.getOwner() != null) {
-                e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).lockNowLeaving.replace("[name]", plugin.getPlayers().getName(islandFrom.getOwner())));
+                e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).lockNowLeaving.replace("[name]", plugin.getGrid().getIslandName(islandFrom.getOwner())));
             }
             if (islandTo.isSpawn()) {
                 e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).lockEnteringSpawn);
             } else if (islandTo.getOwner() != null) {
-                e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).lockNowEntering.replace("[name]", plugin.getPlayers().getName(islandTo.getOwner())));
+                e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).lockNowEntering.replace("[name]", plugin.getGrid().getIslandName(islandTo.getOwner())));
             }
             // Fire exit event
             final IslandExitEvent event = new IslandExitEvent(e.getPlayer().getUniqueId(), islandTo, e.getTo());
@@ -1076,14 +1076,6 @@ public class IslandGuard implements Listener {
         // ITEM FRAME ENTITY DAMAGE or Armor Stand
         // Check to see if it's an item frame
         if (e.getEntity() instanceof ItemFrame || e.getEntityType().toString().endsWith("STAND")) {
-            if (island == null) {
-                if (!Settings.allowBreakBlocks) {
-                    // Protect the unprotected
-                    attacker.sendMessage(ChatColor.RED + plugin.myLocale(attacker.getUniqueId()).islandProtected);
-                    e.setCancelled(true);
-                }
-                return;
-            }
             // Spawn check
             if (Settings.allowSpawnBreakBlocks && island.isSpawn()) {
                 return;
@@ -1099,10 +1091,6 @@ public class IslandGuard implements Listener {
         }
         // Monsters being hurt
         if (e.getEntity() instanceof Monster || e.getEntity() instanceof Slime || e.getEntity() instanceof Squid) {
-            if (island == null) {
-                // Mob killing always allowed outside of island
-                return;
-            }
             // Normal island check
             if (island.getMembers().contains(attacker.getUniqueId())) {
                 // Members always allowed
@@ -1131,10 +1119,6 @@ public class IslandGuard implements Listener {
         // Mobs being hurt
         if (e.getEntity() instanceof Animals || e.getEntity() instanceof IronGolem || e.getEntity() instanceof Snowman
                 || e.getEntity() instanceof Villager) {
-            if (island == null) {
-                // Killing animals outside of a protected island is always ok
-                return;
-            }
             // Spawn check
             if (island.isSpawn() && Settings.allowSpawnAnimalKilling) {
                 return;
@@ -1151,20 +1135,12 @@ public class IslandGuard implements Listener {
 
         // Establish whether PVP is allowed or not. 
         boolean pvp = false;
-        if (island == null) {
-            // Outside an island
-            if ((inNether && Settings.allowNetherPvP) || (!inNether && Settings.allowPvP)) {
-                if (DEBUG) plugin.getLogger().info("DEBUG: PVP allowed");
-                pvp = true;
-            }
-        } else {
-            // On an island or at spawn
-            if (island.isSpawn() && Settings.allowSpawnPVP) {
-                pvp = true;
-            } else if ((inNether && island.getIgsFlag(Flags.allowNetherPvP) || (!inNether && island.getIgsFlag(Flags.allowPvP)))) {
-                if (DEBUG) plugin.getLogger().info("DEBUG: PVP allowed");
-                pvp = true;
-            } 
+        // On an island or at spawn
+        if (island.isSpawn() && Settings.allowSpawnPVP) {
+            pvp = true;
+        } else if ((inNether && island.getIgsFlag(Flags.allowNetherPvP) || (!inNether && island.getIgsFlag(Flags.allowPvP)))) {
+            if (DEBUG) plugin.getLogger().info("DEBUG: PVP allowed");
+            pvp = true;
         }
 
         // Players being hurt PvP
