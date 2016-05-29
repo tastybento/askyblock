@@ -400,7 +400,7 @@ public class ASkyBlock extends JavaPlugin {
                     try {
                         getServer().getPluginManager().registerEvents(new HeroChatListener(plugin), plugin);
                     } catch (Exception e) {
-                        plugin.getLogger().severe("Could not register with Herochat - old version? This plugin uses 5.7.0.");
+                        plugin.getLogger().severe("Could not register with Herochat");
                     }
                 }
                 getServer().getScheduler().runTask(plugin, new Runnable() {
