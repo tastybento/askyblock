@@ -1309,6 +1309,11 @@ public class ASkyBlock extends JavaPlugin {
         // Get the blockvalues.yml file
         YamlConfiguration blockValuesConfig = Util.loadYamlFile("blockvalues.yml");
         // Get the under water multiplier
+        Settings.deathpenalty = blockValuesConfig.getInt("deathpenalty", 0);
+        Settings.sumTeamDeaths = blockValuesConfig.getBoolean("sumteamdeaths");
+        Settings.maxDeaths = blockValuesConfig.getInt("maxdeaths", 10);
+        Settings.islandResetDeathReset = blockValuesConfig.getBoolean("islandresetdeathreset", true);
+        Settings.teamJoinDeathReset = blockValuesConfig.getBoolean("teamjoindeathreset", true);
         Settings.underWaterMultiplier = blockValuesConfig.getDouble("underwater", 1D);
         Settings.levelCost = blockValuesConfig.getInt("levelcost", 100);
         Settings.blockLimits = new HashMap<MaterialData, Integer>();

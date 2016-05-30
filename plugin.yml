@@ -280,7 +280,9 @@ permissions:
           askyblock.mod.resetname:
             description: Enables reset of player's island names
             default: false
-
+          askyblock.mod.setdeaths:
+            description: Sets how many deaths the player has
+            default: false
       askyblock.admin.*:
         children:
           askyblock.admin.clearresetall:

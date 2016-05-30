@@ -8,6 +8,18 @@ underwater: 1.0
 # Value of one island level. Default 100. 
 levelcost: 100
 
+# Death penalty
+# How many block values a player will lose per death.
+# Default value of 100 means that for every death, the player will lose 1 level (if levelcost is 100)
+deathpenalty: 100
+# Sum team deaths - if true, all the teams deaths are summed
+# If false, only the leader's deaths counts
+sumteamdeaths: false
+# Max deaths
+# If player dies more than this, it doesn't count anymore
+# Stops players from getting into an impossible situation
+maxdeaths: 10
+
 # This section lists the limits for any particular block. Blocks over this amount
 # are not counted.
 # Format:

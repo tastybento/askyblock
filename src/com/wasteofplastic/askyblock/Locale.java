@@ -618,6 +618,12 @@ public class Locale {
 
     public String adminHelpResetName;
 
+    public String deaths;
+    public String deathsDied;
+    public String adminHelpsetDeaths;
+
+    public String levelDeaths;
+
 
 
     /**
@@ -711,6 +717,10 @@ public class Locale {
         acidLore = ChatColor.translateAlternateColorCodes('&', locale.getString("acidLore", "Poison!\nBeware!\nDo not drink!"));
         acidBucket = ChatColor.translateAlternateColorCodes('&', locale.getString("acidBucket", "Acid Bucket"));
         acidBottle = ChatColor.translateAlternateColorCodes('&', locale.getString("acidBottle", "Bottle O' Acid"));
+        deaths = ChatColor.translateAlternateColorCodes('&', locale.getString("deaths.deaths", "Deaths"));
+        deathsDied = ChatColor.translateAlternateColorCodes('&', locale.getString("deaths.died", "died!"));
+        levelDeaths = ChatColor.translateAlternateColorCodes('&', locale.getString("deaths.leveldeaths", "&c[[number] deaths]"));
+
         drankAcidAndDied = ChatColor.translateAlternateColorCodes('&', locale.getString("drankAcidAndDied", "drank acid and died."));
         drankAcid = ChatColor.translateAlternateColorCodes('&', locale.getString("drankAcid", "drank acid."));
         errorTooShort = ChatColor.translateAlternateColorCodes('&', locale.getString("error.tooShort", "Too short. Minimum size is [length]."));
@@ -1084,6 +1094,8 @@ public class Locale {
                 .translateAlternateColorCodes('&', locale.getString("adminHelp.setrange", "changes the island's protection range"));
         adminHelpsetBiome = ChatColor
                 .translateAlternateColorCodes('&', locale.getString("adminHelp.setbiome", "sets leader's island biome"));
+        adminHelpsetDeaths = ChatColor
+                .translateAlternateColorCodes('&', locale.getString("adminHelp.setdeaths", "sets player's death count"));
         adminHelptopBreeders = ChatColor
                 .translateAlternateColorCodes('&', locale.getString("adminHelp.topbreeders", "lists most populated islands currently loaded"));
         adminHelplock = ChatColor

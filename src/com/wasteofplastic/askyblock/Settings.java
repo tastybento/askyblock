@@ -278,4 +278,9 @@ public class Settings {
     public static List<String> teamStartCommands;
     public static int minNameLength;
     public static int maxNameLength;
+    public static int deathpenalty;
+    public static boolean sumTeamDeaths;
+    public static int maxDeaths;
+    public static boolean islandResetDeathReset;
+    public static boolean teamJoinDeathReset;
 }

@@ -59,6 +59,7 @@ public class Players {
     private String locale;
     private int startIslandRating;
     private boolean useControlPanel;
+    private int deaths;
 
     /**
      * @param uuid
@@ -178,6 +179,8 @@ public class Players {
         if (Settings.resetLimit > 0 && this.resetsLeft == -1) {
             resetsLeft = Settings.resetLimit;
         }
+        // Deaths
+        this.deaths = playerInfo.getInt("deaths", 0);
         // Load control panel setting
         useControlPanel = playerInfo.getBoolean("useControlPanel", Settings.useControlPanel);
         // Load the invite cool downs
@@ -261,6 +264,7 @@ public class Players {
             this.resetsLeft = Settings.resetLimit;
         }
         playerInfo.set("resetsLeft", this.resetsLeft);
+        playerInfo.set("deaths", deaths);
         // Save invite cooldown timers
         playerInfo.set("invitecooldown", null);
         for (Entry<Location, Date> en : kickedList.entrySet()) {
@@ -793,5 +797,32 @@ public class Players {
      */
     public boolean getControlPanel() {
         return useControlPanel;
+    }
+
+    /**
+     * @return the deaths
+     */
+    public int getDeaths() {
+        return deaths;
+    }
+
+    /**
+     * @param deaths the deaths to set
+     */
+    public void setDeaths(int deaths) {
+        this.deaths = deaths;
+        if (this.deaths > Settings.maxDeaths) {
+            this.deaths = Settings.maxDeaths;
+        }
+    }
+
+    /**
+     * Add death
+     */
+    public void addDeath() {
+        this.deaths++;
+        if (this.deaths > Settings.maxDeaths) {
+            this.deaths = Settings.maxDeaths;
+        }
     }
 }

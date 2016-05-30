@@ -1841,7 +1841,9 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                             addPlayertoTeam(inviteList.get(playerUUID), inviteList.get(playerUUID));
                         }
                         setResetWaitTime(player);
-
+                        if (Settings.teamJoinDeathReset) {
+                            plugin.getPlayers().setDeaths(player.getUniqueId(), 0);
+                        }
                         plugin.getGrid().homeTeleport(player);
                         plugin.resetPlayer(player);
                         if (!player.hasPermission(Settings.PERMPREFIX + "command.newteamexempt")) {
@@ -2958,6 +2960,10 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
     private void resetPlayer(Player player, Island oldIsland) {
         // Deduct the reset
         plugin.getPlayers().setResetsLeft(player.getUniqueId(), plugin.getPlayers().getResetsLeft(player.getUniqueId()) - 1);
+        // Reset deaths
+        if (Settings.islandResetDeathReset) {
+            plugin.getPlayers().setDeaths(player.getUniqueId(), 0);
+        }
         // Clear any coop inventories
         // CoopPlay.getInstance().returnAllInventories(player);
         // Remove any coop invitees and grab their stuff

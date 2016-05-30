@@ -62,7 +62,7 @@ public class PlayerEvents implements Listener {
         this.plugin = plugin;
         respawn = new ArrayList<UUID>();
     }
-    
+
     /**
      * Prevents changing of hunger while having a special permission and being on your island
      * @param e
@@ -71,7 +71,7 @@ public class PlayerEvents implements Listener {
     public void onHungerChange(final FoodLevelChangeEvent e) {
         if (DEBUG) {
             plugin.getLogger().info(e.getEventName() + " food level = " + ((Player)e.getEntity()).getFoodLevel() + " new food level = " + e.getFoodLevel());
-            
+
         }
         // Allow food increases
         if (e.getFoodLevel() - ((Player)e.getEntity()).getFoodLevel() > 0) {
@@ -107,16 +107,14 @@ public class PlayerEvents implements Listener {
     }
 
     /**
-     * Places the player on the island respawn list if they are eligible
+     * Registers death of player.
+     * Places the player on the island respawn list if set
      * @param e
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = false)
     public void onPlayerDeath(final PlayerDeathEvent e) {
         if (DEBUG) {
             plugin.getLogger().info(e.getEventName());
-        }
-        if (!Settings.respawnOnIsland) {
-            return;
         }
         // Died in island space?
         if (!IslandGuard.inWorld(e.getEntity())) {
@@ -125,8 +123,18 @@ public class PlayerEvents implements Listener {
         UUID playerUUID = e.getEntity().getUniqueId();
         // Check if player has an island
         if (plugin.getPlayers().hasIsland(playerUUID) || plugin.getPlayers().inTeam(playerUUID)) {
-            // Add them to the list to be respawned on their island
-            respawn.add(playerUUID);
+            if (Settings.respawnOnIsland) {
+                // Add them to the list to be respawned on their island
+                respawn.add(playerUUID);
+            }
+            // Add death to death count
+            plugin.getPlayers().addDeath(playerUUID);
+            if (Settings.deathpenalty != 0) {
+                if (plugin.getPlayers().inTeam(playerUUID)) {
+                    // Tell team
+                    plugin.getMessages().tellOfflineTeam(playerUUID, ChatColor.GREEN + "(" + String.valueOf(plugin.getPlayers().getDeaths(playerUUID)) + " " + plugin.myLocale(playerUUID).deathsDied + ")");
+                }
+            }
         }
     } 
 

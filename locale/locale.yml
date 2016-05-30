@@ -38,6 +38,7 @@ adminHelp:
   resetname: "Reset name of player's island"
   resetsign: "Resets the sign you are looking at to the island owner"
   setbiome: "sets leader's island biome"
+  setdeaths: "sets player's death count"
   setrange: "changes the island's protection range"
   setspawn: "sets the island world spawn to a location close to you"
   teamChatSpy: "Spy on team chats (on/off)"
@@ -193,6 +194,10 @@ coop:
   success: "[name] is now a coop player until they log out or you uncoop or expel them."
   uncoop: "remove full island access from player"
   useexpel: "Use expel or uncoop to remove."
+deaths: 
+  deaths: "Deaths"
+  died: "died!"
+  leveldeaths: "&c[[number] deaths]"
 delete: 
   removing: "Removing [name]'s island."
 drankAcid: "drank acid."

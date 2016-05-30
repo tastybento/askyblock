@@ -95,6 +95,20 @@ public class LevelCalcByChunk {
             final int levelMultiplier = multiplier;
             // Get the handicap
             final int levelHandicap = island.getLevelHandicap();
+            // Get the death handicap
+            int deaths = plugin.getPlayers().getDeaths(targetPlayer);
+            if (plugin.getPlayers().inTeam(targetPlayer)) {
+                // Get the team leader's deaths
+                deaths = plugin.getPlayers().getDeaths(plugin.getPlayers().getTeamLeader(targetPlayer));
+                if (Settings.sumTeamDeaths) {
+                    deaths = 0;
+                    //plugin.getLogger().info("DEBUG: player is in team");
+                    for (UUID member : plugin.getPlayers().getMembers(targetPlayer)) {
+                        deaths += plugin.getPlayers().getDeaths(member);
+                    }
+                }
+            }
+            final int deathHandicap = deaths;
             // Check if player's island world is the nether or overworld and adjust accordingly
             final World world = plugin.getPlayers().getIslandLocation(targetPlayer).getWorld();
             // Get the chunks
@@ -250,8 +264,8 @@ public class LevelCalcByChunk {
 
                     blockCount += (int)((double)underWaterBlockCount * Settings.underWaterMultiplier);
                     //System.out.println("block count = "+blockCount);
-                    
-                    final int score = ((blockCount * levelMultiplier) / Settings.levelCost) - levelHandicap;
+
+                    final int score = (((blockCount * levelMultiplier) - (deathHandicap * Settings.deathpenalty)) / Settings.levelCost) - levelHandicap;
                     // Logging or report
                     if (Settings.levelLogging || report) {
                         // provide counts
@@ -270,6 +284,7 @@ public class LevelCalcByChunk {
                         reportLines.add("Level cost = " + Settings.levelCost);
                         reportLines.add("Level multiplier = " + levelMultiplier + " (Player must be online to get a permission multiplier)");
                         reportLines.add("Schematic level handicap = " + levelHandicap + " (level is reduced by this amount)");
+                        reportLines.add("Deaths handicap = " + (deathHandicap * Settings.deathpenalty) + " (" + deathHandicap + " deaths)");
                         reportLines.add("Level calculated = " + score);
                         reportLines.add("==================================");
                         int total = 0;
@@ -396,8 +411,11 @@ public class LevelCalcByChunk {
                                                     + plugin.getPlayers().getIslandLevel(targetPlayer));
                                         }
                                         if (sender instanceof Player && ((Player)sender).isOnline()) {
-                                            //plugin.getLogger().info("DEBUG: updating player GUI");
-                                            sender.sendMessage(ChatColor.GREEN + plugin.myLocale(((Player)sender).getUniqueId()).islandislandLevelis + " " + ChatColor.WHITE + plugin.getPlayers().getIslandLevel(targetPlayer));
+                                            String message = ChatColor.GREEN + plugin.myLocale(((Player)sender).getUniqueId()).islandislandLevelis + " " + ChatColor.WHITE + plugin.getPlayers().getIslandLevel(targetPlayer);
+                                            if (Settings.deathpenalty != 0) {
+                                                message += " " + plugin.myLocale(((Player)sender).getUniqueId()).levelDeaths.replace("[number]", String.valueOf(plugin.getPlayers().getDeaths(targetPlayer)));
+                                            }
+                                            sender.sendMessage(message);
                                         }
                                     } else {
                                         if (((Player)sender).isOnline()) {

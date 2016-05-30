@@ -132,7 +132,7 @@ public class LevelCalc extends BukkitRunnable {
             // blockCount = (blockCount * multiplier) / 5000;
             // Get the permission multiplier if it is available
             Player player = plugin.getServer().getPlayer(targetPlayer);
-             int multiplier = 1;
+            int multiplier = 1;
             if (player != null) {
                 // Get permission multiplier                
                 for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
@@ -147,6 +147,20 @@ public class LevelCalc extends BukkitRunnable {
                 }
             }
             blockCount *= multiplier;
+            // Get the death handicap
+            int deaths = plugin.getPlayers().getDeaths(targetPlayer);
+            if (plugin.getPlayers().inTeam(targetPlayer)) {
+                // Get the team leader's deaths
+                deaths = plugin.getPlayers().getDeaths(plugin.getPlayers().getTeamLeader(targetPlayer));
+                if (Settings.sumTeamDeaths) {
+                    deaths = 0;
+                    //plugin.getLogger().info("DEBUG: player is in team");
+                    for (UUID member : plugin.getPlayers().getMembers(targetPlayer)) {
+                        deaths += plugin.getPlayers().getDeaths(member);
+                    }
+                }
+            }
+            blockCount -= (deaths * Settings.deathpenalty);
             blockCount /= Settings.levelCost;
             // Adjust using the island level handicap
             blockCount -= islandLevelHandicap;
@@ -171,6 +185,9 @@ public class LevelCalc extends BukkitRunnable {
                 if (!(asker instanceof Player)) {
                     // Console
                     asker.sendMessage(ChatColor.GREEN + plugin.myLocale().islandislandLevelis + " " + ChatColor.WHITE + plugin.getPlayers().getIslandLevel(targetPlayer));
+                    if (Settings.deathpenalty != 0) {
+                        asker.sendMessage(ChatColor.GREEN + "(" + String.valueOf(plugin.getPlayers().getDeaths(targetPlayer)) + " " + plugin.myLocale().deaths + ")");
+                    }
                     asker.sendMessage(ChatColor.GREEN + "Level report only available with fast-level calculation option");
                 } else {
                     // Tell offline team members the island level increased.
@@ -181,7 +198,11 @@ public class LevelCalc extends BukkitRunnable {
                     }
                     if (asker instanceof Player && ((Player)asker).isOnline()) {
                         //plugin.getLogger().info("DEBUG: updating player GUI");
-                        asker.sendMessage(ChatColor.GREEN + plugin.myLocale(((Player)asker).getUniqueId()).islandislandLevelis + " " + ChatColor.WHITE + plugin.getPlayers().getIslandLevel(targetPlayer));
+                        String message = ChatColor.GREEN + plugin.myLocale(((Player)asker).getUniqueId()).islandislandLevelis + " " + ChatColor.WHITE + plugin.getPlayers().getIslandLevel(targetPlayer);
+                        if (Settings.deathpenalty != 0) {
+                            message += " " + plugin.myLocale(((Player)asker).getUniqueId()).levelDeaths.replace("[number]", String.valueOf(plugin.getPlayers().getDeaths(targetPlayer)));
+                        }
+                        asker.sendMessage(message);
                     }
                 }
 
