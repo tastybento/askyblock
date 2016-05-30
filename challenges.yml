@@ -56,7 +56,7 @@
 
 challenges:
   # Challenge levels - list as many as you like. If a challenge's level is '' it can
-  # be done anytime.
+  # be done anytime. You cannot name a challenge the same as a level.
   levels: 'Novice Competent Expert Advanced Elite'
     
   # The number of undone tasks that can be left on a level before unlocking next level
@@ -124,7 +124,7 @@ challenges:
       #- some other command
       
   # Challenge list
-  # Challenge names must be in lowercase.
+  # Challenge names must be in lowercase. Do not use the same name as a level!
   challengeList:
     glassmaker:
       friendlyname: 'Glass Maker'

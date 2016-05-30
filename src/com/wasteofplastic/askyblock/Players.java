@@ -549,16 +549,12 @@ public class Players {
     }
 
     /**
-     * Resets a specific challenge. Will not reset a challenge that does not
-     * exist in the player's list TODO: Add a success or failure return
-     * 
+     * Resets a specific challenge.
      * @param challenge
      */
     public void resetChallenge(final String challenge) {
-        if (challengeList.containsKey(challenge)) {
-            challengeList.put(challenge, false);
-            challengeListTimes.put(challenge, 0);
-        }
+        challengeList.put(challenge, false);
+        challengeListTimes.put(challenge, 0);
     }
 
     public void setHasIsland(final boolean b) {
@@ -824,5 +820,33 @@ public class Players {
         if (this.deaths > Settings.maxDeaths) {
             this.deaths = Settings.maxDeaths;
         }
+    }
+
+    /**
+     * @return a list of challenges this player has completed
+     * Used by the reset admin command
+     */
+    public List<String> getChallengesDone() {
+        List<String> result = new ArrayList<String>();
+        for (Entry<String, Boolean> en : challengeList.entrySet()) {
+           if (en.getValue()) {
+               result.add(en.getKey());
+           }
+        }
+        return result;
+    }
+    
+    /**
+     * @return a list of challenges this player has not completed
+     * Used by the complete admin command
+     */
+    public List<String> getChallengesNotDone() {
+        List<String> result = new ArrayList<String>();
+        for (Entry<String, Boolean> en : challengeList.entrySet()) {
+           if (!en.getValue()) {
+               result.add(en.getKey());
+           }
+        }
+        return result;
     }
 }

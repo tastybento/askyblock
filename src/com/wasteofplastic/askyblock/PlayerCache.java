@@ -832,4 +832,22 @@ public class PlayerCache {
         addPlayer(playerUUID);
         return playerCache.get(playerUUID).getDeaths();
     }
+    
+    /**
+     * @param playerUUID
+     * @return List of challenges or levels done
+     */
+    public List<String> getChallengesDone(UUID playerUUID) {
+        addPlayer(playerUUID);
+        return playerCache.get(playerUUID).getChallengesDone();
+    }
+    
+    /**
+     * @param playerUUID
+     * @return List of challenges or levels not done
+     */
+    public List<String> getChallengesNotDone(UUID playerUUID) {
+        addPlayer(playerUUID);
+        return playerCache.get(playerUUID).getChallengesNotDone();
+    }
 }

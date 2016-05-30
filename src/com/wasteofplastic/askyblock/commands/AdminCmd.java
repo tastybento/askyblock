@@ -101,7 +101,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
         if (!(sender instanceof Player)) {
             sender.sendMessage(ChatColor.YELLOW  + label + " clearreset <player>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpclearReset);
             sender.sendMessage(ChatColor.YELLOW  + label + " clearresetall:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpclearReset);
-            sender.sendMessage(ChatColor.YELLOW  + label + " completechallenge <challengename> <player>:" + ChatColor.WHITE + " "
+            sender.sendMessage(ChatColor.YELLOW  + label + " completechallenge <player> <challengename>:" + ChatColor.WHITE + " "
                     + plugin.myLocale().adminHelpcompleteChallenge);
             sender.sendMessage(ChatColor.YELLOW  + label + " delete <player>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpdelete);
             sender.sendMessage(ChatColor.YELLOW  + label + " info <player>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpinfo);
@@ -115,7 +115,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
             sender.sendMessage(ChatColor.YELLOW  + label + " name <player> <island name>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpName);
             sender.sendMessage(ChatColor.YELLOW  + label + " reload:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpreload);
             sender.sendMessage(ChatColor.YELLOW  + label + " resetallchallenges <player>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpresetAllChallenges);
-            sender.sendMessage(ChatColor.YELLOW  + label + " resetchallenge <challengename> <player>:" + ChatColor.WHITE + " "
+            sender.sendMessage(ChatColor.YELLOW  + label + " resetchallenge <player> <challengename>:" + ChatColor.WHITE + " "
                     + plugin.myLocale().adminHelpresetChallenge);
             sender.sendMessage(ChatColor.YELLOW  + label + " resethome <player>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpResetHome);
             sender.sendMessage(ChatColor.YELLOW  + label + " resetname <player>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpResetName);
@@ -140,7 +140,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 player.sendMessage(ChatColor.YELLOW + "/" + label + " clearresetall:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpclearReset);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.challenges") || player.isOp()) {
-                player.sendMessage(ChatColor.YELLOW + "/" + label + " completechallenge <challengename> <player>:" + ChatColor.WHITE + " "
+                player.sendMessage(ChatColor.YELLOW + "/" + label + " completechallenge <player> <challengename>:" + ChatColor.WHITE + " "
                         + plugin.myLocale(player.getUniqueId()).adminHelpcompleteChallenge);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.delete") || player.isOp()) {
@@ -178,7 +178,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 player.sendMessage(ChatColor.YELLOW + "/" + label + " resethome <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpResetHome);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.challenges") || player.isOp()) {
-                player.sendMessage(ChatColor.YELLOW + "/" + label + " resetchallenge <challengename> <player>:" + ChatColor.WHITE + " "
+                player.sendMessage(ChatColor.YELLOW + "/" + label + " resetchallenge <player> <challengename>:" + ChatColor.WHITE + " "
                         + plugin.myLocale(player.getUniqueId()).adminHelpresetChallenge);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.challenges") || player.isOp()) {
@@ -1586,35 +1586,35 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                     }
                 } else if (split[0].equalsIgnoreCase("completechallenge")) {
                     // Convert name to a UUID
-                    final UUID playerUUID = plugin.getPlayers().getUUID(split[2], true);
+                    final UUID playerUUID = plugin.getPlayers().getUUID(split[1], true);
                     if (!plugin.getPlayers().isAKnownPlayer(playerUUID)) {
                         sender.sendMessage(ChatColor.RED + plugin.myLocale().errorUnknownPlayer);
                         return true;
                     }
-                    if (plugin.getPlayers().checkChallenge(playerUUID, split[1].toLowerCase())
-                            || !plugin.getPlayers().get(playerUUID).challengeExists(split[1].toLowerCase())) {
+                    if (plugin.getPlayers().checkChallenge(playerUUID, split[2].toLowerCase())
+                            || !plugin.getPlayers().get(playerUUID).challengeExists(split[2].toLowerCase())) {
                         sender.sendMessage(ChatColor.RED + plugin.myLocale().completeChallengeerrorChallengeDoesNotExist);
                         return true;
                     }
-                    plugin.getPlayers().get(playerUUID).completeChallenge(split[1].toLowerCase());
+                    plugin.getPlayers().get(playerUUID).completeChallenge(split[2].toLowerCase());
                     sender.sendMessage(ChatColor.YELLOW
-                            + plugin.myLocale().completeChallengechallangeCompleted.replace("[challengename]", split[1].toLowerCase()).replace("[name]", split[2]));
+                            + plugin.myLocale().completeChallengechallangeCompleted.replace("[challengename]", split[2].toLowerCase()).replace("[name]", split[1]));
                     return true;
                 } else if (split[0].equalsIgnoreCase("resetchallenge")) {
                     // Convert name to a UUID
-                    final UUID playerUUID = plugin.getPlayers().getUUID(split[2], true);
+                    final UUID playerUUID = plugin.getPlayers().getUUID(split[1], true);
                     if (!plugin.getPlayers().isAKnownPlayer(playerUUID)) {
                         sender.sendMessage(ChatColor.RED + plugin.myLocale().errorUnknownPlayer);
                         return true;
                     }
-                    if (!plugin.getPlayers().checkChallenge(playerUUID, split[1].toLowerCase())
-                            || !plugin.getPlayers().get(playerUUID).challengeExists(split[1].toLowerCase())) {
+                    if (!plugin.getPlayers().checkChallenge(playerUUID, split[2].toLowerCase())
+                            || !plugin.getPlayers().get(playerUUID).challengeExists(split[2].toLowerCase())) {
                         sender.sendMessage(ChatColor.RED + plugin.myLocale().resetChallengeerrorChallengeDoesNotExist);
                         return true;
                     }
-                    plugin.getPlayers().resetChallenge(playerUUID, split[1].toLowerCase());
+                    plugin.getPlayers().resetChallenge(playerUUID, split[2].toLowerCase());
                     sender.sendMessage(ChatColor.YELLOW
-                            + plugin.myLocale().resetChallengechallengeReset.replace("[challengename]", split[1].toLowerCase()).replace("[name]", split[2]));
+                            + plugin.myLocale().resetChallengechallengeReset.replace("[challengename]", split[2].toLowerCase()).replace("[name]", split[1]));
                     return true;
                 } else if (split[0].equalsIgnoreCase("info") && split[1].equalsIgnoreCase("challenges")) {
                     // Convert name to a UUID
@@ -2120,14 +2120,10 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 if (args[0].equalsIgnoreCase("unregister")) {
                     options.addAll(Util.getOnlinePlayerList());
                 }
-                if (args[0].equalsIgnoreCase("delete")) {
+                if (args[0].equalsIgnoreCase("delete") || args[0].equalsIgnoreCase("resetchallenge")) {
                     options.addAll(Util.getOnlinePlayerList());
                 }
-                if (args[0].equalsIgnoreCase("completechallenge")
-                        || args[0].equalsIgnoreCase("resetchallenge")) {
-                    options.addAll(plugin.getChallenges().getAllChallenges());
-                }
-                if (args[0].equalsIgnoreCase("resetallchallenges")) {
+                if (args[0].equalsIgnoreCase("completechallenge") || args[0].equalsIgnoreCase("resetallchallenges")) {
                     options.addAll(Util.getOnlinePlayerList());
                 }
                 if (args[0].equalsIgnoreCase("info")) {
@@ -2146,9 +2142,23 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 }
                 break;
             case 3:
-                if (args[0].equalsIgnoreCase("completechallenge")
-                        || args[0].equalsIgnoreCase("resetchallenge")) {
-                    options.addAll(Util.getOnlinePlayerList());
+                if (args[0].equalsIgnoreCase("completechallenge")) {
+                    UUID uuid = plugin.getPlayers().getUUID(args[1]);
+                    //plugin.getLogger().info("DEBUG: uuid = " + uuid);
+                    if (uuid != null)  {
+                        options.addAll(plugin.getPlayers().getChallengesNotDone(uuid));
+                    } else {
+                        options.addAll(plugin.getChallenges().getAllChallenges());  
+                    }
+                }
+                if (args[0].equalsIgnoreCase("resetchallenge")) {
+                    UUID uuid = plugin.getPlayers().getUUID(args[1]);
+                    //plugin.getLogger().info("DEBUG: uuid = " + uuid);
+                    if (uuid != null)  {
+                        options.addAll(plugin.getPlayers().getChallengesDone(uuid));
+                    } else {
+                        options.addAll(plugin.getChallenges().getAllChallenges());  
+                    }
                 }
                 if (args[0].equalsIgnoreCase("info")
                         && args[1].equalsIgnoreCase("challenges")) {
@@ -2253,10 +2263,12 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 }
                 break;
             case 2:
-                if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.lock") || player.isOp()) {
+                if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.lock") || player.isOp())
+                        && args[0].equalsIgnoreCase("lock")) {
                     options.addAll(Util.getOnlinePlayerList());
                 }
-                if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.signadmin") || player.isOp()) {
+                if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.signadmin") || player.isOp())
+                        && args[0].equalsIgnoreCase("signadmin")) {
                     options.addAll(Util.getOnlinePlayerList());
                 }
                 if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.unregister") || player.isOp())
@@ -2269,7 +2281,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 }
                 if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.challenges") || player.isOp())
                         && (args[0].equalsIgnoreCase("completechallenge") || args[0].equalsIgnoreCase("resetchallenge"))) {
-                    options.addAll(plugin.getChallenges().getAllChallenges());
+                    options.addAll(Util.getOnlinePlayerList());
                 }
                 if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.challenges") || player.isOp())
                         && args[0].equalsIgnoreCase("resetallchallenges")) {
@@ -2278,7 +2290,6 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.info") || player.isOp())
                         && args[0].equalsIgnoreCase("info")) {
                     options.add("challenges");
-
                     options.addAll(Util.getOnlinePlayerList());
                 }
                 if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.clearreset") || player.isOp())
@@ -2304,9 +2315,25 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 }
                 break;
             case 3:
-                if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.challenges") || player.isOp())
-                        && (args[0].equalsIgnoreCase("completechallenge") || args[0].equalsIgnoreCase("resetchallenge"))) {
-                    options.addAll(Util.getOnlinePlayerList());
+                if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.challenges") || player.isOp())) {
+                    if (args[0].equalsIgnoreCase("completechallenge")) {
+                        UUID uuid = plugin.getPlayers().getUUID(args[1]);
+                        //plugin.getLogger().info("DEBUG: uuid = " + uuid);
+                        if (uuid != null)  {
+                            options.addAll(plugin.getPlayers().getChallengesNotDone(uuid));
+                        } else {
+                            options.addAll(plugin.getChallenges().getAllChallenges());  
+                        }
+                    }
+                    if (args[0].equalsIgnoreCase("resetchallenge")) {
+                        UUID uuid = plugin.getPlayers().getUUID(args[1]);
+                        //plugin.getLogger().info("DEBUG: uuid = " + uuid);
+                        if (uuid != null)  {
+                            options.addAll(plugin.getPlayers().getChallengesDone(uuid));
+                        } else {
+                            options.addAll(plugin.getChallenges().getAllChallenges());  
+                        }
+                    }
                 }
                 if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.info") || player.isOp())
                         && args[0].equalsIgnoreCase("info")

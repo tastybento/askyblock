@@ -1953,6 +1953,10 @@ public class Challenges implements CommandExecutor, TabCompleter {
         for (List<String> challenges : challengeList.values()) {
             returned.addAll(challenges);
         }
+        // Add levels
+        for (String level : Settings.challengeLevels) {
+            returned.add(level.toLowerCase());
+        }
         return returned;
     }
 
