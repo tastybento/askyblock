@@ -731,8 +731,9 @@ public class IslandGuard implements Listener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onExplosion(final EntityExplodeEvent e) {
         if (DEBUG) {
-            plugin.getLogger().info(e.getEventName());
-            plugin.getLogger().info("Entity exploding is " + e.getEntity());
+            // Commented out due to Ender dragon spam in Paper Spigot
+            //plugin.getLogger().info(e.getEventName());
+            //plugin.getLogger().info("Entity exploding is " + e.getEntity());
         }
         if (!inWorld(e.getLocation())) {
             return;
@@ -955,7 +956,17 @@ public class IslandGuard implements Listener {
             e.setCancelled(true);
         }
     }
-
+/*
+ * Not needed yet.
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onEntityCombust(final EntityCombustEvent e) {
+        if (DEBUG) {
+            plugin.getLogger().info(e.getEventName());
+            plugin.getLogger().info("DEBUG: Entity = " + e.getEntity());
+            plugin.getLogger().info("DEBUG: Duraction = " + e.getDuration());
+        }
+    }
+*/    
     /**
      * This method protects players from PVP if it is not allowed and from
      * arrows fired by other players
@@ -1051,15 +1062,25 @@ public class IslandGuard implements Listener {
             }
         }
         // Get the real attacker
+        boolean flamingArrow = false;
         Player attacker = null;
         if (e.getDamager() instanceof Player) {
             attacker = (Player)e.getDamager();
         } else if (e.getDamager() instanceof Projectile) {
+            if (DEBUG)
+                plugin.getLogger().info("DEBUG: Projectile damage");
             // Find out who fired the arrow
             Projectile p = (Projectile) e.getDamager();
-            //plugin.getLogger().info("DEBUG: Shooter is " + p.getShooter().toString());
+            if (DEBUG)
+                plugin.getLogger().info("DEBUG: Shooter is " + p.getShooter().toString());
             if (p.getShooter() instanceof Player) {
                 attacker = (Player) p.getShooter();
+                if (p.getFireTicks() > 0) {
+                    flamingArrow = true;
+                }
+                // Check if this is a flaming arrow
+                if (DEBUG)
+                    plugin.getLogger().info("DEBUG: fire ticks = " + p.getFireTicks() + " max = " + p.getMaxFireTicks());
             }
         }
         if (attacker == null) {
@@ -1071,7 +1092,8 @@ public class IslandGuard implements Listener {
             if (DEBUG) plugin.getLogger().info("Self damage!");
             return;
         }
-
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: Another player");
 
         // ITEM FRAME ENTITY DAMAGE or Armor Stand
         // Check to see if it's an item frame
@@ -1112,6 +1134,8 @@ public class IslandGuard implements Listener {
             }
             // Not allowed
             attacker.sendMessage(ChatColor.RED + plugin.myLocale(attacker.getUniqueId()).islandProtected);
+            if (flamingArrow)
+                e.getEntity().setFireTicks(0);
             e.setCancelled(true);
             return;
         }
@@ -1127,8 +1151,12 @@ public class IslandGuard implements Listener {
             if (island.getIgsFlag(Flags.allowHurtMobs) || island.getMembers().contains(attacker.getUniqueId())) {
                 return;
             }
+            if (DEBUG)
+                plugin.getLogger().info("DEBUG: Mobs not allowed to be hurt. Blocking");
             // Else not allowed
             attacker.sendMessage(ChatColor.RED + plugin.myLocale(attacker.getUniqueId()).islandProtected);
+            if (flamingArrow)
+                e.getEntity().setFireTicks(0);
             e.setCancelled(true);
             return;
         }
@@ -1149,6 +1177,8 @@ public class IslandGuard implements Listener {
                 return;
             } else {
                 attacker.sendMessage(ChatColor.RED + plugin.myLocale(attacker.getUniqueId()).targetInNoPVPArea);
+                if (flamingArrow)
+                    e.getEntity().setFireTicks(0);
                 e.setCancelled(true);
                 return;
             }
