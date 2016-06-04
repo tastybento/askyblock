@@ -20,27 +20,19 @@ package com.wasteofplastic.askyblock.panels;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.ChunkSnapshot;
-import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Biome;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Island;

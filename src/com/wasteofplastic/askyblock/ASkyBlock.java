@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
-import java.util.jar.JarFile;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;

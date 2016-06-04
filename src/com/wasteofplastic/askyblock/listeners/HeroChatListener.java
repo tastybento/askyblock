@@ -20,6 +20,7 @@ package com.wasteofplastic.askyblock.listeners;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+
 import com.dthielke.herochat.ChannelChatEvent;
 import com.wasteofplastic.askyblock.ASkyBlock;
 

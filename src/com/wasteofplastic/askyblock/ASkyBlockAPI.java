@@ -17,7 +17,6 @@
 
 package com.wasteofplastic.askyblock;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -26,7 +25,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Biome;

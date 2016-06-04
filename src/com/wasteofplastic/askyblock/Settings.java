@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
-import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
