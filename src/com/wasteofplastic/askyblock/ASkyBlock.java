@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.jar.JarFile;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -100,7 +101,7 @@ public class ASkyBlock extends JavaPlugin {
     // Challenges object
     private Challenges challenges;
     // Localization Strings
-    private HashMap<String,Locale> availableLocales = new HashMap<String,Locale>();
+    private HashMap<String,ASLocale> availableLocales = new HashMap<String,ASLocale>();
     // Players object
     private PlayerCache players;
     // Listeners
@@ -731,24 +732,20 @@ public class ASkyBlock extends JavaPlugin {
         }
         //CompareConfigs.compareConfigs();
         // Get the localization strings
+        // Look in the locale folder. If it is not there, then 
         //getLocale();
-        // Add this to the config
+        // Add this to the config      
+        FileLister fl = new FileLister(this);
+        try {
+            int index = 1;
+            for (String code: fl.list()) {
+                availableLocales.put(code, new ASLocale(this,code, index++)); 
+            }
+        } catch (IOException e1) {
+            getLogger().severe("Could not add locales!");
+        }
         // Default is locale.yml
-        availableLocales.put("locale", new Locale(this, "locale"));
-        availableLocales.put("de-DE", new Locale(this,"de-DE"));
-        availableLocales.put("en-US", new Locale(this,"en-US"));
-        availableLocales.put("es-ES", new Locale(this,"es-ES"));
-        availableLocales.put("fr-FR", new Locale(this,"fr-FR"));
-        availableLocales.put("it-IT", new Locale(this,"it-IT"));
-        availableLocales.put("ko-KR", new Locale(this,"ko-KR"));
-        availableLocales.put("pl-PL", new Locale(this,"pl-PL"));
-        availableLocales.put("pt-BR", new Locale(this,"pt-BR"));
-        availableLocales.put("zh-CN", new Locale(this,"zh-CN"));
-        availableLocales.put("cs-CS", new Locale(this,"cs-CS"));
-        availableLocales.put("sk-SK", new Locale(this,"sk-SK"));
-        availableLocales.put("zh-TW", new Locale(this,"zh-TW"));
-        availableLocales.put("nl-NL", new Locale(this,"nl-NL"));
-
+        availableLocales.put("locale", new ASLocale(this, "locale", 0));
         // Assign settings
         String configVersion = getConfig().getString("general.version", "");
         //getLogger().info("DEBUG: config ver length " + configVersion.split("\\.").length);
@@ -1613,7 +1610,7 @@ public class ASkyBlock extends JavaPlugin {
     /**
      * @return Locale for this player
      */
-    public Locale myLocale(UUID player) {
+    public ASLocale myLocale(UUID player) {
         String locale = players.getLocale(player);
         if (locale.isEmpty() || !availableLocales.containsKey(locale)) {
             return availableLocales.get("locale");
@@ -1624,7 +1621,7 @@ public class ASkyBlock extends JavaPlugin {
     /**
      * @return System locale
      */
-    public Locale myLocale() {
+    public ASLocale myLocale() {
         return availableLocales.get("locale");
     }
 
@@ -1691,5 +1688,12 @@ public class ASkyBlock extends JavaPlugin {
      */
     public SettingsPanel getSettingsPanel() {
         return settingsPanel;
+    }
+
+    /**
+     * @return the availableLocales
+     */
+    public HashMap<String, ASLocale> getAvailableLocales() {
+        return availableLocales;
     }
 }

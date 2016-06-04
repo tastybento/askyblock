@@ -18,7 +18,9 @@ package com.wasteofplastic.askyblock;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
 import org.bukkit.ChatColor;
@@ -32,8 +34,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
  * 
  * @author tastybento
  */
-public class Locale {
-    
+public class ASLocale {
+
     private final static Set<String> TITLE_COLORS = new HashSet<String>(Arrays.asList(
             "black",
             "dark_blue",
@@ -57,6 +59,7 @@ public class Locale {
     private FileConfiguration locale = null;
     private File localeFile = null;
     private ASkyBlock plugin;
+    private Locale localeObject;
 
     public String changingObsidiantoLava;
     public String acidLore;
@@ -624,17 +627,27 @@ public class Locale {
 
     public String levelDeaths;
 
+    private String localeName;
+
+    private int index;
+
 
 
     /**
      * Creates a locale object full of localized strings for a language
      * @param plugin
      * @param localeName - name of the yml file that will be used
+     * @param index 
      */
-    public Locale(ASkyBlock plugin, String localeName) {
+    public ASLocale(ASkyBlock plugin, String localeName, int index) {
         this.plugin = plugin;
+        this.index = index;
+        this.localeName = localeName;
         getLocale(localeName);
         loadLocale();
+        if (!localeName.equalsIgnoreCase("locale")) {
+            localeObject = new Locale(localeName.substring(0, 2), localeName.substring(3, 5));
+        }       
     }
 
     /**
@@ -1368,5 +1381,33 @@ public class Locale {
             plugin.getLogger().severe(color);
         }
         return "white";
+    }
+
+    /**
+     * @return the languageName
+     */
+    public String getLanguageName() {
+        if (localeObject == null) {
+            return "unknown";
+        }
+        return localeObject.getDisplayLanguage(localeObject);
+    }
+
+    public String getCountryName() {
+        if (localeObject == null) {
+            return "unknown";
+        }
+        return localeObject.getDisplayCountry(localeObject);
+    }
+
+    public String getLocaleName() {
+        return this.localeName;        
+    }
+
+    /**
+     * @return the index
+     */
+    public int getIndex() {
+        return index;
     }
 }

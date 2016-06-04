@@ -82,6 +82,19 @@ public class GridManager {
         plugin.getLogger().info("Loading island grid...");
         islandGrid.clear();
         // protectionGrid.clear();
+        islandNameFile = new File(plugin.getDataFolder(), "islandnames.yml");
+        if (!islandNameFile.exists()) {
+            try {
+                islandNameFile.createNewFile();
+            } catch (IOException e) {
+                plugin.getLogger().severe("Could not create islandnames.yml!");
+            }
+        }
+        try {
+            islandNames.load(islandNameFile);
+        } catch (Exception e) {
+            plugin.getLogger().severe("Could not load islandnames.yml");
+        }
         islandFile = new File(plugin.getDataFolder(), "islands.yml");
         if (!islandFile.exists()) {
             // check if island folder exists
@@ -111,14 +124,6 @@ public class GridManager {
                 }
             } catch (Exception e) {
                 plugin.getLogger().severe("Could not load islands.yml");
-            }
-        }
-        islandNameFile = new File(plugin.getDataFolder(), "islandnames.yml");
-        if (islandNameFile.exists()) {
-            try {
-                islandNames.load(islandNameFile);
-            } catch (Exception e) {
-                plugin.getLogger().severe("Could not load islandnames.yml");
             }
         }
         // for (int x : protectionGrid.)
@@ -442,10 +447,12 @@ public class GridManager {
             }
         }
         // Save any island names
-        try {
-            islandNames.save(islandNameFile);
-        } catch (IOException e) {
-            plugin.getLogger().severe("Could not save islandnames.yml! " + e.getMessage());       
+        if (islandNames != null) {
+            try { 
+                islandNames.save(islandNameFile);
+            } catch (IOException e) {
+                plugin.getLogger().severe("Could not save islandnames.yml! " + e.getMessage());       
+            }
         }
     }
 

@@ -32,11 +32,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.UUID;
 
 import net.milkbowl.vault.economy.EconomyResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -63,6 +65,7 @@ import org.bukkit.potion.PotionType;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
+import com.wasteofplastic.askyblock.ASLocale;
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.CoopPlay;
 import com.wasteofplastic.askyblock.DeleteIslandChunk;
@@ -1276,21 +1279,9 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
             } else 
                 if (split[0].equalsIgnoreCase("lang")) {
                     if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.lang")) {
-                        player.sendMessage("/" + label + " lang <locale>");
-                        player.sendMessage("English");
-                        player.sendMessage("Français");
-                        player.sendMessage("Deutsch");
-                        player.sendMessage("Español");
-                        player.sendMessage("Italiano");
-                        player.sendMessage("한국의 / Korean");
-                        player.sendMessage("Polski");
-                        player.sendMessage("Brasil");
-                        player.sendMessage("中国 / SimplifiedChinese");
-                        player.sendMessage("Čeština");
-                        player.sendMessage("Slovenčina");
-                        player.sendMessage("繁體中文 / TraditionalChinese");
-                        player.sendMessage("Nederlands");
-                    } else {
+                        player.sendMessage("/" + label + " lang <#>");
+                        displayLocales(player);
+                   } else {
                         player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).errorNoPermission);
                     }
                     return true;
@@ -1678,7 +1669,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                     player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + plugin.myLocale(player.getUniqueId()).islandHelpChallenges);
                 }
                 if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.lang")) {
-                    player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " lang <locale> - select language");
+                    player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " lang <#> - select language");
                 }
                 return true;
             } else if (split[0].equalsIgnoreCase("listcoops")) {
@@ -2054,51 +2045,33 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                         }
                     } else if (split[0].equalsIgnoreCase("lang")) {
                         if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.lang")) {
-                            if (split[1].equalsIgnoreCase("english")) {
-                                plugin.getPlayers().setLocale(playerUUID, "en-US"); 
-                            } else if (split[1].equalsIgnoreCase("Français") || split[1].equalsIgnoreCase("Francais")) {
-                                plugin.getPlayers().setLocale(playerUUID, "fr-FR"); 
-                            } else if (split[1].equalsIgnoreCase("Deutsch")) {
-                                plugin.getPlayers().setLocale(playerUUID, "de-DE");  
-                            } else if (split[1].equalsIgnoreCase("español") || split[1].equalsIgnoreCase("espanol")) {
-                                plugin.getPlayers().setLocale(playerUUID, "es-ES");  
-                            } else if (split[1].equalsIgnoreCase("italiano")) {
-                                plugin.getPlayers().setLocale(playerUUID, "it-IT");  
-                            } else if (split[1].equalsIgnoreCase("Korean") || split[1].equalsIgnoreCase("한국의")) {
-                                plugin.getPlayers().setLocale(playerUUID, "ko-KR");  
-                            } else if (split[1].equalsIgnoreCase("polski")) {
-                                plugin.getPlayers().setLocale(playerUUID, "pl-PL");  
-                            } else if (split[1].equalsIgnoreCase("Brasil")) {
-                                plugin.getPlayers().setLocale(playerUUID, "pt-BR");  
-                            } else if (split[1].equalsIgnoreCase("SimplifiedChinese") || split[1].equalsIgnoreCase("中国")) {
-                                plugin.getPlayers().setLocale(playerUUID, "zh-CN");  
-                            } else if (split[1].equalsIgnoreCase("Čeština") || split[1].equalsIgnoreCase("Cestina")) {
-                                plugin.getPlayers().setLocale(playerUUID, "cs-CS");  
-                            } else if (split[1].equalsIgnoreCase("Slovenčina") || split[1].equalsIgnoreCase("Slovencina")) {
-                                plugin.getPlayers().setLocale(playerUUID, "sk-SK");  
-                            } else if (split[1].equalsIgnoreCase("TraditionalChinese") || split[1].equalsIgnoreCase("繁體中文")) {
-                                plugin.getPlayers().setLocale(playerUUID, "nl-NL");  
-                            } else if (split[1].equalsIgnoreCase("Nederlands") || split[1].equalsIgnoreCase("Dutch")) {
-                                plugin.getPlayers().setLocale(playerUUID, "nl-NL");  
-                            } else {
-                                // Typed it in wrong
-                                player.sendMessage("/" + label + " lang <locale>");
-                                player.sendMessage("English");
-                                player.sendMessage("Français");
-                                player.sendMessage("Deutsch");
-                                player.sendMessage("Español");
-                                player.sendMessage("Italiano");
-                                player.sendMessage("한국의 / Korean");
-                                player.sendMessage("Polski");
-                                player.sendMessage("Brasil");
-                                player.sendMessage("中国 / SimplifiedChinese");
-                                player.sendMessage("Čeština");
-                                player.sendMessage("Slovenčina");
-                                player.sendMessage("繁體中文 / TraditionalChinese");
-                                player.sendMessage("Nederlands");
+                            if (!NumberUtils.isDigits(split[1])) {
+                                player.sendMessage(ChatColor.RED + "/" + label + " lang <#>");
+                                displayLocales(player);
                                 return true;
-                            }
-                            player.sendMessage("OK!");
+                            } else {
+                                try {
+                                    int index = Integer.valueOf(split[1]);
+                                    if (index < 1 || index > (plugin.getAvailableLocales().size()-1)) {
+                                        player.sendMessage(ChatColor.RED + "/" + label + " lang <#>");
+                                        displayLocales(player);
+                                        return true;
+                                    }
+                                    for (ASLocale locale : plugin.getAvailableLocales().values()) {
+                                        if (locale.getIndex() == index) {
+                                            plugin.getPlayers().setLocale(playerUUID, locale.getLocaleName());
+                                            player.sendMessage(ChatColor.GREEN + plugin.myLocale(playerUUID).generalSuccess);
+                                            return true;
+                                        }
+                                    }
+                                    // Not in the list
+                                    player.sendMessage(ChatColor.RED + "/" + label + " lang <#>");
+                                    displayLocales(player);
+                                } catch (Exception e) {
+                                    player.sendMessage(ChatColor.RED + "/" + label + " lang <#>");
+                                    displayLocales(player);
+                                }
+                            }                            
                             return true;
                         } else {
                             player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).errorNoPermission);
@@ -2889,6 +2862,22 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 
 
     /**
+     * Shows available languages to the player
+     * @param player
+     */
+    private void displayLocales(Player player) {
+        TreeMap<Integer,String> langs = new TreeMap<Integer,String>();
+        for (ASLocale locale : plugin.getAvailableLocales().values()) {
+            if (!locale.getLocaleName().equalsIgnoreCase("locale")) {
+                langs.put(locale.getIndex(), locale.getLanguageName() + " (" + locale.getCountryName() + ")"); 
+            }
+        }
+        for (Entry<Integer, String> entry: langs.entrySet()) {
+            player.sendMessage(entry.getKey() + ": " + entry.getValue());
+        }
+    }
+
+    /**
      * Warps a player to a spot in front of a sign
      * @param player
      * @param inFront
@@ -3225,26 +3214,6 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
         case 2: 
             if (args[0].equalsIgnoreCase("make")) {
                 options.addAll(schematics.keySet());
-            }
-            if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.lang")) {
-                if (args[0].equalsIgnoreCase("lang")) {
-                    options.add("English");
-                    options.add("Français");
-                    options.add("Deutsch");
-                    options.add("Español");
-                    options.add("Italiano");
-                    options.add("한국의");
-                    options.add("Korean");
-                    options.add("Polski");
-                    options.add("Brasil");
-                    options.add("中国");
-                    options.add("SimplifiedChinese");
-                    options.add("繁體中文");
-                    options.add("TraditionalChinese");
-                    options.add("Čeština");
-                    options.add("Slovenčina");
-                    options.add("Nederlands");
-                }
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.sethome")) {
                 if (args[0].equalsIgnoreCase("go") || args[0].equalsIgnoreCase("sethome")) {
