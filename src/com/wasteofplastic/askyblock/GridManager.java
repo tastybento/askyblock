@@ -1199,8 +1199,8 @@ public class GridManager {
      * @param number
      */
     public void homeSet(Player player, int number) {
-        // Check if player is in their home world
-        if (!player.getWorld().equals(plugin.getPlayers().getHomeLocation(player.getUniqueId()).getWorld())) {
+        // Check if player is in their home world        
+        if (!player.getWorld().equals(plugin.getPlayers().getIslandLocation(player.getUniqueId()).getWorld())) {
             player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).setHomeerrorNotOnIsland);
             return; 
         }

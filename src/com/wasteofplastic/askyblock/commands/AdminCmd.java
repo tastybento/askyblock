@@ -1225,7 +1225,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                         // Try the player's home first
                         Location home = plugin.getPlayers().getHomeLocation(targetUUID);
                         plugin.getGrid();
-                        if (home.getWorld().equals(ASkyBlock.getIslandWorld()) && GridManager.isSafeLocation(home)) {
+                        if (home != null && home.getWorld().equals(ASkyBlock.getIslandWorld()) && GridManager.isSafeLocation(home)) {
                             player.teleport(home);
                             return true;
                         }
@@ -1259,7 +1259,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                         // Try the player's home first
                         Location home = plugin.getPlayers().getHomeLocation(targetUUID);
                         plugin.getGrid();
-                        if (home.getWorld().equals(ASkyBlock.getNetherWorld()) && GridManager.isSafeLocation(home)) {
+                        if (home != null && home.getWorld().equals(ASkyBlock.getNetherWorld()) && GridManager.isSafeLocation(home)) {
                             player.teleport(home);
                             return true;
                         }
