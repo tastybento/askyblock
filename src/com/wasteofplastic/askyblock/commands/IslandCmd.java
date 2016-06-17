@@ -2052,7 +2052,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                             } else {
                                 try {
                                     int index = Integer.valueOf(split[1]);
-                                    if (index < 1 || index > (plugin.getAvailableLocales().size()-1)) {
+                                    if (index < 1 || index > plugin.getAvailableLocales().size()) {
                                         player.sendMessage(ChatColor.RED + "/" + label + " lang <#>");
                                         displayLocales(player);
                                         return true;
