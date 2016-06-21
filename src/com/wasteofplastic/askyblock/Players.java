@@ -164,13 +164,13 @@ public class Players {
         // Run through all challenges available
         for (String challenge : Settings.challengeList) {
             // If they are in the list, then use the value, otherwise use false
-            challengeList.put(challenge.toLowerCase(), playerInfo.getBoolean("challenges.status." + challenge.toLowerCase(), false));
-            challengeListTimes.put(challenge.toLowerCase(), playerInfo.getInt("challenges.times." + challenge.toLowerCase(), 0));
+            challengeList.put(challenge.toLowerCase(), playerInfo.getBoolean("challenges.status." + challenge.toLowerCase().replace(".", "[dot]"), false));
+            challengeListTimes.put(challenge.toLowerCase(), playerInfo.getInt("challenges.times." + challenge.toLowerCase().replace(".", "[dot]"), 0));
         }
         for (String challenge : Settings.challengeLevels) {
             // If they are in the list, then use the value, otherwise use false
-            challengeList.put(challenge.toLowerCase(), playerInfo.getBoolean("challenges.status." + challenge.toLowerCase(), false));
-            challengeListTimes.put(challenge.toLowerCase(), playerInfo.getInt("challenges.times." + challenge.toLowerCase(), 0));
+            challengeList.put(challenge.toLowerCase(), playerInfo.getBoolean("challenges.status." + challenge.toLowerCase().replace(".", "[dot]"), false));
+            challengeListTimes.put(challenge.toLowerCase(), playerInfo.getInt("challenges.times." + challenge.toLowerCase().replace(".", "[dot]"), 0));
         }
         // Load reset limit
         this.resetsLeft = playerInfo.getInt("resetsLeft", Settings.resetLimit);
@@ -253,10 +253,11 @@ public class Players {
         // Save the challenges
         playerInfo.set("challenges",null);
         for (String challenge : challengeList.keySet()) {
-            playerInfo.set("challenges.status." + challenge, challengeList.get(challenge));
+            //plugin.getLogger().info("DEBUG: " + challenge + "  --> " + challengeList.get(challenge));
+            playerInfo.set("challenges.status." + challenge.replace(".","[dot]"), challengeList.get(challenge));
         }
         for (String challenge : challengeListTimes.keySet()) {
-            playerInfo.set("challenges.times." + challenge, challengeListTimes.get(challenge));
+            playerInfo.set("challenges.times." + challenge.replace(".","[dot]"), challengeListTimes.get(challenge));
         }
         // Check what the global limit is
         if (Settings.resetLimit < this.resetsLeft) {
