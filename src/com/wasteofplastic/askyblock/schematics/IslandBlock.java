@@ -185,7 +185,10 @@ public class IslandBlock {
             WEtoME.put("ENDERCRYSTAL", EntityType.ENDER_CRYSTAL);
             WEtoME.put("ARMORSTAND", EntityType.ARMOR_STAND);
         }
-
+        // 1.10 entities
+        if (!Bukkit.getServer().getVersion().contains("(MC: 1.7") && !Bukkit.getServer().getVersion().contains("(MC: 1.8") && !Bukkit.getServer().getVersion().contains("(MC: 1.9")) {
+            WEtoME.put("POLARBEAR", EntityType.POLAR_BEAR);
+        }
     }
 
     /**
