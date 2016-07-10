@@ -692,7 +692,7 @@ public class Island implements Cloneable {
         for (int x = getMinProtectedX() /16; x <= (getMinProtectedX() + getProtectionSize() - 1)/16; x++) {
             for (int z = getMinProtectedZ() /16; z <= (getMinProtectedZ() + getProtectionSize() - 1)/16; z++) {
                 for (Entity entity : world.getChunkAt(x, z).getEntities()) {
-                    if (entity instanceof Villager) {
+                    if (entity instanceof Villager && onIsland(entity.getLocation())) {
                         result++;
                     }
                 }
@@ -710,7 +710,7 @@ public class Island implements Cloneable {
         for (int x = getMinProtectedX() /16; x <= (getMinProtectedX() + getProtectionSize() - 1)/16; x++) {
             for (int z = getMinProtectedZ() /16; z <= (getMinProtectedZ() + getProtectionSize() - 1)/16; z++) {
                 for (BlockState holder : world.getChunkAt(x, z).getTileEntities()) {
-                    if (holder instanceof Hopper) {
+                    if (holder instanceof Hopper && onIsland(holder.getLocation())) {
                         result++;
                     }
                 }
@@ -730,29 +730,31 @@ public class Island implements Cloneable {
             for (int z = getMinProtectedZ() /16; z <= (getMinProtectedZ() + getProtectionSize() - 1)/16; z++) {
                 for (BlockState holder : world.getChunkAt(x, z).getTileEntities()) {
                     //plugin.getLogger().info("DEBUG: tile entity: " + holder.getType());
-                    if (holder.getType() == material) {
-                        result++;
-                    } else if (material.equals(Material.REDSTONE_COMPARATOR_OFF)) {
-                        if (holder.getType().equals(Material.REDSTONE_COMPARATOR_ON)) {
+                    if (onIsland(holder.getLocation())) {
+                        if (holder.getType() == material) {
                             result++;
-                        }
-                    } else if (material.equals(Material.FURNACE)) {
-                        if (holder.getType().equals(Material.BURNING_FURNACE)) {
-                            result++;
-                        }
-                    } else if (material.toString().endsWith("BANNER")) {
-                        if (holder.getType().toString().endsWith("BANNER")) {
-                            result++;
-                        }
-                    } else if (material.equals(Material.WALL_SIGN) || material.equals(Material.SIGN_POST)) {
-                        if (holder.getType().equals(Material.WALL_SIGN) || holder.getType().equals(Material.SIGN_POST)) {
-                            result++;
+                        } else if (material.equals(Material.REDSTONE_COMPARATOR_OFF)) {
+                            if (holder.getType().equals(Material.REDSTONE_COMPARATOR_ON)) {
+                                result++;
+                            }
+                        } else if (material.equals(Material.FURNACE)) {
+                            if (holder.getType().equals(Material.BURNING_FURNACE)) {
+                                result++;
+                            }
+                        } else if (material.toString().endsWith("BANNER")) {
+                            if (holder.getType().toString().endsWith("BANNER")) {
+                                result++;
+                            }
+                        } else if (material.equals(Material.WALL_SIGN) || material.equals(Material.SIGN_POST)) {
+                            if (holder.getType().equals(Material.WALL_SIGN) || holder.getType().equals(Material.SIGN_POST)) {
+                                result++;
+                            }
                         }
                     }
                 }
                 for (Entity holder : world.getChunkAt(x, z).getEntities()) {
                     //plugin.getLogger().info("DEBUG: entity: " + holder.getType());
-                    if (holder.getType().toString().equals(material.toString())) {
+                    if (holder.getType().toString().equals(material.toString()) && onIsland(holder.getLocation())) {
                         result++;
                     }
                 }
@@ -763,21 +765,6 @@ public class Island implements Cloneable {
         // Remove 1 from count if it is 1.7.x
         if (!plugin.isOnePointEight()) {
             result--;
-        }
-        return result;
-    }
-
-    public int getEntityCount(EntityType et) {
-        int result = 0;	
-        for (int x = getMinProtectedX() /16; x <= (getMinProtectedX() + getProtectionSize() - 1)/16; x++) {
-            for (int z = getMinProtectedZ() /16; z <= (getMinProtectedZ() + getProtectionSize() - 1)/16; z++) {
-                for (Entity holder : world.getChunkAt(x, z).getEntities()) {
-                    //plugin.getLogger().info("DEBUG: entity: " + holder.getType());
-                    if (holder.getType() == et) {
-                        result++;
-                    }
-                }
-            }  
         }
         return result;
     }
