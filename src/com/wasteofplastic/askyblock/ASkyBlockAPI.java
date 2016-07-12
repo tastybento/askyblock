@@ -62,6 +62,16 @@ public class ASkyBlockAPI {
     public HashMap<String, Boolean> getChallengeStatus(UUID playerUUID) {
         return new HashMap<String, Boolean>(plugin.getPlayers().getChallengeStatus(playerUUID));
     }
+    
+    /**
+     * @param playerUUID
+     * @return HashMap of all of the known challenges and how many times each
+     *         one has been completed. This is a copy of the challenges
+     *         and changing this list will not affect the actual list.
+     */
+    public HashMap<String, Integer> getChallengeTimes(UUID playerUUID) {
+        return new HashMap<String, Integer>(plugin.getPlayers().getChallengeTimes(playerUUID));
+    }
 
     public Location getHomeLocation(UUID playerUUID) {
         return plugin.getPlayers().getHomeLocation(playerUUID,1);
