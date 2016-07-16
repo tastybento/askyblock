@@ -55,12 +55,22 @@ public class ASkyBlockAPI {
 
     /**
      * @param playerUUID
-     * @return HashMap of all of the known challenges with a boolean marking
-     *         them as complete (true) or incomplete (false). This is a copy of the challenges
-     *         and changing this list will not affect the actual list.
+     * @return Map of all of the known challenges with a boolean marking
+     *         them as complete (true) or incomplete (false). This is a view of the
+     *         challenges map that only allows read operations.
      */
-    public HashMap<String, Boolean> getChallengeStatus(UUID playerUUID) {
-        return new HashMap<String, Boolean>(plugin.getPlayers().getChallengeStatus(playerUUID));
+    public Map<String, Boolean> getChallengeStatus(UUID playerUUID) {
+        return Collections.unmodifiableMap(plugin.getPlayers().getChallengeStatus(playerUUID));
+    }
+    
+    /**
+     * @param playerUUID
+     * @return Map of all of the known challenges and how many times each
+     *         one has been completed. This is a view of the challenges
+     *         map that only allows read operations.
+     */
+    public Map<String, Integer> getChallengeTimes(UUID playerUUID) {
+        return Collections.unmodifiableMap(plugin.getPlayers().getChallengeTimes(playerUUID));
     }
 
     public Location getHomeLocation(UUID playerUUID) {
