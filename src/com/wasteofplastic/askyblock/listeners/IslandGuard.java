@@ -937,6 +937,9 @@ public class IslandGuard implements Listener {
         if (DEBUG) {
             plugin.getLogger().info(e.getEventName());
         }
+        if (Settings.allowAutoActivator && e.getPlayer().getName().equals("[CoFH]")) {
+            return;
+        }
         if (inWorld(e.getPlayer())) {
             // This permission bypasses protection
             if (e.getPlayer().isOp() || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
@@ -956,8 +959,8 @@ public class IslandGuard implements Listener {
             e.setCancelled(true);
         }
     }
-/*
- * Not needed yet.
+    /*
+     * Not needed yet.
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onEntityCombust(final EntityCombustEvent e) {
         if (DEBUG) {
@@ -966,7 +969,7 @@ public class IslandGuard implements Listener {
             plugin.getLogger().info("DEBUG: Duraction = " + e.getDuration());
         }
     }
-*/    
+     */    
     /**
      * This method protects players from PVP if it is not allowed and from
      * arrows fired by other players
@@ -1344,7 +1347,16 @@ public class IslandGuard implements Listener {
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerBlockPlace(final BlockPlaceEvent e) {
         if (DEBUG) {
-            plugin.getLogger().info(e.getEventName());
+            plugin.getLogger().info("DEBUG: " + e.getEventName());
+            if (e.getPlayer() == null) {
+                plugin.getLogger().info("DEBUG: player is null");
+            } else {
+                plugin.getLogger().info("DEBUG: block placed by " + e.getPlayer().getName());
+            }
+            plugin.getLogger().info("DEBUG: Block is " + e.getBlock().toString());
+        }
+        if (Settings.allowAutoActivator && e.getPlayer().getName().equals("[CoFH]")) {
+            return;
         }
         // plugin.getLogger().info(e.getEventName());
         if (inWorld(e.getPlayer())) {
@@ -1401,8 +1413,16 @@ public class IslandGuard implements Listener {
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerBlockPlace(final BlockMultiPlaceEvent e) {
         if (DEBUG) {
-            plugin.getLogger().info(e.getEventName());
-            plugin.getLogger().info("Block being placed " + e.getBlock());
+            plugin.getLogger().info("DEBUG: " + e.getEventName());
+            if (e.getPlayer() == null) {
+                plugin.getLogger().info("DEBUG: player is null");
+            } else {
+                plugin.getLogger().info("DEBUG: block placed by " + e.getPlayer().getName());
+            }
+            plugin.getLogger().info("DEBUG: Block is " + e.getBlock().toString());
+        }
+        if (Settings.allowAutoActivator && e.getPlayer().getName().equals("[CoFH]")) {
+            return;
         }
         // plugin.getLogger().info(e.getEventName());
         if (inWorld(e.getPlayer())) {
@@ -1461,6 +1481,9 @@ public class IslandGuard implements Listener {
             plugin.getLogger().info("DEBUG: block placed " + e.getBlock().getType());
             plugin.getLogger().info("DEBUG: entity " + e.getEntity().getType());
         }
+        if (Settings.allowAutoActivator && e.getPlayer().getName().equals("[CoFH]")) {
+            return;
+        }
         // plugin.getLogger().info(e.getEventName());
         if (inWorld(e.getPlayer())) {
             // This permission bypasses protection
@@ -1496,6 +1519,9 @@ public class IslandGuard implements Listener {
             plugin.getLogger().info(e.getEventName());
             plugin.getLogger().info("DEBUG: block placed " + e.getBlock().getType());
             plugin.getLogger().info("DEBUG: entity " + e.getEntity().getType());
+        }
+        if (Settings.allowAutoActivator && e.getPlayer().getName().equals("[CoFH]")) {
+            return;
         }
         // plugin.getLogger().info(e.getEventName());
         if (inWorld(e.getPlayer())) {
@@ -2576,7 +2602,7 @@ public class IslandGuard implements Listener {
             e.setCancelled(true);
         }
     }
-    
+
     @EventHandler(priority = EventPriority.LOW)
     public void onBlockIgnite(BlockIgniteEvent e) {
         if (DEBUG) {
@@ -2594,7 +2620,7 @@ public class IslandGuard implements Listener {
             e.setCancelled(true);
         }
     }   
-    
+
 
     /**
      * Pressure plates

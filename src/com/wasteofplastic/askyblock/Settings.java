@@ -282,4 +282,6 @@ public class Settings {
     public static int maxDeaths;
     public static boolean islandResetDeathReset;
     public static boolean teamJoinDeathReset;
+    public static boolean allowAutoActivator;
+    public static boolean netherRoof;
 }

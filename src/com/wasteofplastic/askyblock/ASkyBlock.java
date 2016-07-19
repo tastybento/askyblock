@@ -721,167 +721,170 @@ public class ASkyBlock extends JavaPlugin {
 		return newIsland;
 	}
 
-	/**
-	 * Loads the various settings from the config.yml file into the plugin
-	 */
-	@SuppressWarnings("deprecation")
-	public boolean loadPluginConfig() {
-		// getLogger().info("*********************************************");
-		try {
-			getConfig();
-		} catch (final Exception e) {
-			e.printStackTrace();
-		}
-		//CompareConfigs.compareConfigs();
-		// Get the localization strings
-		// Look in the locale folder. If it is not there, then
-		//getLocale();
-		// Add this to the config
-		FileLister fl = new FileLister(this);
-		try {
-			int index = 1;
-			for (String code: fl.list()) {
-				availableLocales.put(code, new ASLocale(this,code, index++));
-			}
-		} catch (IOException e1) {
-			getLogger().severe("Could not add locales!");
-		}
-		// Default is locale.yml
-		availableLocales.put("locale", new ASLocale(this, "locale", 0));
-		// Assign settings
-		String configVersion = getConfig().getString("general.version", "");
-		//getLogger().info("DEBUG: config ver length " + configVersion.split("\\.").length);
-		// Ignore last digit if it is 4 digits long
-		if (configVersion.split("\\.").length == 4) {
-			configVersion = configVersion.substring(0, configVersion.lastIndexOf('.'));
-		}
-		// Save for plugin version
-		String version = plugin.getDescription().getVersion();
-		//getLogger().info("DEBUG: version length " + version.split("\\.").length);
-		if (version.split("\\.").length == 4) {
-			version = version.substring(0, version.lastIndexOf('.'));
-		}
-		if (configVersion.isEmpty() || !configVersion.equalsIgnoreCase(version)) {
-			// Check to see if this has already been shared
-			File newConfig = new File(plugin.getDataFolder(),"config.new.yml");
-			getLogger().warning("***********************************************************");
-			getLogger().warning("Config file is out of date. See config.new.yml for updates!");
-			getLogger().warning("config.yml version is '" + configVersion + "'");
-			getLogger().warning("Latest config version is '" + version + "'");
-			getLogger().warning("***********************************************************");
-			if (!newConfig.exists()) {
-				File oldConfig = new File(plugin.getDataFolder(),"config.yml");
-				File bakConfig = new File(plugin.getDataFolder(),"config.bak");
-				if (oldConfig.renameTo(bakConfig)) {
-					plugin.saveResource("config.yml", false);
-					oldConfig.renameTo(newConfig);
-					bakConfig.renameTo(oldConfig);
-				}
-			}
-		}
-		// Recover superflat
-		Settings.recoverSuperFlat = getConfig().getBoolean("general.recoversuperflat");
-		if (Settings.recoverSuperFlat) {
-			getLogger().warning("*********************************************************");
-			getLogger().warning("WARNING: Recover super flat mode is enabled");
-			getLogger().warning("This will regenerate any chunks with bedrock at y=0 when they are loaded");
-			getLogger().warning("Switch off when superflat chunks are cleared");
-			getLogger().warning("You should back up your world before running this");
-			getLogger().warning("*********************************************************");
-		}
-		// Debug
-		Settings.debug = getConfig().getInt("debug", 0);
-		// Persistent coops
-		Settings.persistantCoops = getConfig().getBoolean("general.persistentcoops");
-		// Level logging
-		Settings.levelLogging = getConfig().getBoolean("general.levellogging");
-		// Allow pushing
-		Settings.allowPushing = getConfig().getBoolean("general.allowpushing", true);
-		// Custom generator
-		Settings.useOwnGenerator = getConfig().getBoolean("general.useowngenerator", false);
-		// How often the grid will be saved to file. Default is 5 minutes
-		Settings.backupDuration = (getConfig().getLong("general.backupduration", 5) * 20 * 60);
-		// How long a player has to wait after deactivating PVP until they can activate PVP again
-		Settings.pvpRestartCooldown = getConfig().getLong("general.pvpcooldown",60);
-		// Max Islands
-		Settings.maxIslands = getConfig().getInt("general.maxIslands",0);
-		// Mute death messages
-		Settings.muteDeathMessages = getConfig().getBoolean("general.mutedeathmessages", false);
-		// Warp panel
-		Settings.useWarpPanel = getConfig().getBoolean("general.usewarppanel", true);
-		// Fast level calculation (this is really fast)
-		Settings.fastLevelCalc = getConfig().getBoolean("general.fastlevelcalc", true);
-		// Restrict wither
-		Settings.restrictWither = getConfig().getBoolean("general.restrictwither", true);
-		// Team chat
-		Settings.teamChat = getConfig().getBoolean("general.teamchat", true);
-		// TEAMSUFFIX as island level
-		Settings.setTeamName = getConfig().getBoolean("general.setteamsuffix", false);
-		Settings.teamSuffix = getConfig().getString("general.teamsuffix","([level])");
-		// Immediate teleport
-		Settings.immediateTeleport = getConfig().getBoolean("general.immediateteleport", false);
-		// Make island automatically
-		Settings.makeIslandIfNone = getConfig().getBoolean("general.makeislandifnone", false);
-		// Use physics when pasting island block schematics
-		Settings.usePhysics = getConfig().getBoolean("general.usephysics", false);
-		// Run level calc at login
-		Settings.loginLevel = getConfig().getBoolean("general.loginlevel", false);
-		// Use economy or not
-		// In future expand to include internal economy
-		Settings.useEconomy = getConfig().getBoolean("general.useeconomy", true);
-		// Check for updates
-		Settings.updateCheck = getConfig().getBoolean("general.checkupdates", true);
-		// Island reset commands
-		Settings.resetCommands = getConfig().getStringList("general.resetcommands");
-		Settings.leaveCommands = getConfig().getStringList("general.leavecommands");
-		Settings.startCommands = getConfig().getStringList("general.startcommands");
-		Settings.teamStartCommands = getConfig().getStringList("general.teamstartcommands");
-		Settings.useControlPanel = getConfig().getBoolean("general.usecontrolpanel", false);
-		// Check if /island command is allowed when falling
-		Settings.allowTeleportWhenFalling = getConfig().getBoolean("general.allowfallingteleport", true);
-		Settings.fallingCommandBlockList = getConfig().getStringList("general.blockingcommands");
-		// Visitor command banned list
-		Settings.visitorCommandBlockList = getConfig().getStringList("general.visitorbannedcommands");
-		// Max team size
-		Settings.maxTeamSize = getConfig().getInt("island.maxteamsize", 4);
-		// Deprecated settings - use permission askyblock.team.maxsize.<number> instead
-		Settings.maxTeamSizeVIP = getConfig().getInt("island.vipteamsize", 0);
-		Settings.maxTeamSizeVIP2 = getConfig().getInt("island.vip2teamsize", 0);
-		if (Settings.maxTeamSizeVIP > 0 || Settings.maxTeamSizeVIP2 > 0) {
-			getLogger().warning(Settings.PERMPREFIX + "team.vip and " + Settings.PERMPREFIX + "team.vip2 are deprecated!");
-			getLogger().warning("Use permission " + Settings.PERMPREFIX + "team.maxsize.<number> instead.");
-		}
-		// Max home number
-		Settings.maxHomes = getConfig().getInt("general.maxhomes",1);
-		if (Settings.maxHomes < 1) {
-			Settings.maxHomes = 1;
-		}
-		// Settings from config.yml
-		Settings.worldName = getConfig().getString("general.worldName");
-		// Check if the world name matches island.yml info
-		File islandFile = new File(plugin.getDataFolder(), "islands.yml");
-		if (islandFile.exists()) {
-			YamlConfiguration islandYaml = new YamlConfiguration();
-			try {
-				islandYaml.load(islandFile);
-				if (!islandYaml.contains(Settings.worldName)) {
-					// Bad news, stop everything and tell the admin
-					getLogger().severe("+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
-					getLogger().severe("More set up is required. Go to config.yml and edit it.");
-					getLogger().severe("");
-					getLogger().severe("Check island world name is same as world in islands.yml.");
-					getLogger().severe("If you are resetting and changing world, delete island.yml and restart.");
-					getLogger().severe("");
-					getLogger().severe("+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
-					return false;
-				}
-			} catch (Exception e) {}
-		}
-		Settings.createNether = getConfig().getBoolean("general.createnether", true);
-		if (!Settings.createNether) {
-			getLogger().info("The Nether is disabled");
-		}
-
+    /**
+     * Loads the various settings from the config.yml file into the plugin
+     */
+    @SuppressWarnings("deprecation")
+    public boolean loadPluginConfig() {
+        // getLogger().info("*********************************************");
+        try {
+            getConfig();
+        } catch (final Exception e) {
+            e.printStackTrace();
+        }
+        //CompareConfigs.compareConfigs();
+        // Get the localization strings
+        // Look in the locale folder. If it is not there, then 
+        //getLocale();
+        // Add this to the config      
+        FileLister fl = new FileLister(this);
+        try {
+            int index = 1;
+            for (String code: fl.list()) {
+                availableLocales.put(code, new ASLocale(this,code, index++)); 
+            }
+        } catch (IOException e1) {
+            getLogger().severe("Could not add locales!");
+        }
+        // Default is locale.yml
+        availableLocales.put("locale", new ASLocale(this, "locale", 0));
+        // Assign settings
+        String configVersion = getConfig().getString("general.version", "");
+        //getLogger().info("DEBUG: config ver length " + configVersion.split("\\.").length);
+        // Ignore last digit if it is 4 digits long
+        if (configVersion.split("\\.").length == 4) {
+            configVersion = configVersion.substring(0, configVersion.lastIndexOf('.')); 
+        }
+        // Save for plugin version
+        String version = plugin.getDescription().getVersion();
+        //getLogger().info("DEBUG: version length " + version.split("\\.").length);
+        if (version.split("\\.").length == 4) {
+            version = version.substring(0, version.lastIndexOf('.')); 
+        }
+        if (configVersion.isEmpty() || !configVersion.equalsIgnoreCase(version)) {
+            // Check to see if this has already been shared
+            File newConfig = new File(plugin.getDataFolder(),"config.new.yml");
+            getLogger().warning("***********************************************************");
+            getLogger().warning("Config file is out of date. See config.new.yml for updates!");
+            getLogger().warning("config.yml version is '" + configVersion + "'");
+            getLogger().warning("Latest config version is '" + version + "'");
+            getLogger().warning("***********************************************************");
+            if (!newConfig.exists()) {
+                File oldConfig = new File(plugin.getDataFolder(),"config.yml");
+                File bakConfig = new File(plugin.getDataFolder(),"config.bak");
+                if (oldConfig.renameTo(bakConfig)) {
+                    plugin.saveResource("config.yml", false);
+                    oldConfig.renameTo(newConfig);
+                    bakConfig.renameTo(oldConfig);
+                } 
+            }
+        }
+        // Recover superflat
+        Settings.recoverSuperFlat = getConfig().getBoolean("general.recoversuperflat");
+        if (Settings.recoverSuperFlat) {
+            getLogger().warning("*********************************************************");
+            getLogger().warning("WARNING: Recover super flat mode is enabled");
+            getLogger().warning("This will regenerate any chunks with bedrock at y=0 when they are loaded");
+            getLogger().warning("Switch off when superflat chunks are cleared");
+            getLogger().warning("You should back up your world before running this");
+            getLogger().warning("*********************************************************");
+        }
+        // Nether roof option
+        Settings.netherRoof = getConfig().getBoolean("general.netherroof", true);
+        // FTB Autoamtic Activators
+        Settings.allowAutoActivator = getConfig().getBoolean("general.autoactivator");
+        // Debug
+        Settings.debug = getConfig().getInt("debug", 0);
+        // Persistent coops
+        Settings.persistantCoops = getConfig().getBoolean("general.persistentcoops");
+        // Level logging
+        Settings.levelLogging = getConfig().getBoolean("general.levellogging");
+        // Allow pushing
+        Settings.allowPushing = getConfig().getBoolean("general.allowpushing", true);
+        // Custom generator
+        Settings.useOwnGenerator = getConfig().getBoolean("general.useowngenerator", false);
+        // How often the grid will be saved to file. Default is 5 minutes
+        Settings.backupDuration = (getConfig().getLong("general.backupduration", 5) * 20 * 60);
+        // How long a player has to wait after deactivating PVP until they can activate PVP again
+        Settings.pvpRestartCooldown = getConfig().getLong("general.pvpcooldown",60);
+        // Max Islands
+        Settings.maxIslands = getConfig().getInt("general.maxIslands",0);
+        // Mute death messages
+        Settings.muteDeathMessages = getConfig().getBoolean("general.mutedeathmessages", false);
+        // Warp panel
+        Settings.useWarpPanel = getConfig().getBoolean("general.usewarppanel", true);
+        // Fast level calculation (this is really fast)
+        Settings.fastLevelCalc = getConfig().getBoolean("general.fastlevelcalc", true);
+        // Restrict wither
+        Settings.restrictWither = getConfig().getBoolean("general.restrictwither", true);
+        // Team chat
+        Settings.teamChat = getConfig().getBoolean("general.teamchat", true);
+        // TEAMSUFFIX as island level
+        Settings.setTeamName = getConfig().getBoolean("general.setteamsuffix", false);
+        Settings.teamSuffix = getConfig().getString("general.teamsuffix","([level])");
+        // Immediate teleport
+        Settings.immediateTeleport = getConfig().getBoolean("general.immediateteleport", false);
+        // Make island automatically
+        Settings.makeIslandIfNone = getConfig().getBoolean("general.makeislandifnone", false);
+        // Use physics when pasting island block schematics
+        Settings.usePhysics = getConfig().getBoolean("general.usephysics", false);
+        // Run level calc at login
+        Settings.loginLevel = getConfig().getBoolean("general.loginlevel", false);
+        // Use economy or not
+        // In future expand to include internal economy
+        Settings.useEconomy = getConfig().getBoolean("general.useeconomy", true);
+        // Check for updates
+        Settings.updateCheck = getConfig().getBoolean("general.checkupdates", true);
+        // Island reset commands
+        Settings.resetCommands = getConfig().getStringList("general.resetcommands");
+        Settings.leaveCommands = getConfig().getStringList("general.leavecommands");
+        Settings.startCommands = getConfig().getStringList("general.startcommands");
+        Settings.teamStartCommands = getConfig().getStringList("general.teamstartcommands");
+        Settings.useControlPanel = getConfig().getBoolean("general.usecontrolpanel", false);
+        // Check if /island command is allowed when falling
+        Settings.allowTeleportWhenFalling = getConfig().getBoolean("general.allowfallingteleport", true);
+        Settings.fallingCommandBlockList = getConfig().getStringList("general.blockingcommands");
+        // Visitor command banned list
+        Settings.visitorCommandBlockList = getConfig().getStringList("general.visitorbannedcommands");
+        // Max team size
+        Settings.maxTeamSize = getConfig().getInt("island.maxteamsize", 4);
+        // Deprecated settings - use permission askyblock.team.maxsize.<number> instead
+        Settings.maxTeamSizeVIP = getConfig().getInt("island.vipteamsize", 0);
+        Settings.maxTeamSizeVIP2 = getConfig().getInt("island.vip2teamsize", 0);
+        if (Settings.maxTeamSizeVIP > 0 || Settings.maxTeamSizeVIP2 > 0) {
+            getLogger().warning(Settings.PERMPREFIX + "team.vip and " + Settings.PERMPREFIX + "team.vip2 are deprecated!");
+            getLogger().warning("Use permission " + Settings.PERMPREFIX + "team.maxsize.<number> instead.");
+        }
+        // Max home number
+        Settings.maxHomes = getConfig().getInt("general.maxhomes",1);
+        if (Settings.maxHomes < 1) {
+            Settings.maxHomes = 1;
+        }
+        // Settings from config.yml
+        Settings.worldName = getConfig().getString("general.worldName");
+        // Check if the world name matches island.yml info
+        File islandFile = new File(plugin.getDataFolder(), "islands.yml");
+        if (islandFile.exists()) {
+            YamlConfiguration islandYaml = new YamlConfiguration();
+            try {
+                islandYaml.load(islandFile);
+                if (!islandYaml.contains(Settings.worldName)) {
+                    // Bad news, stop everything and tell the admin
+                    getLogger().severe("+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
+                    getLogger().severe("More set up is required. Go to config.yml and edit it.");
+                    getLogger().severe("");
+                    getLogger().severe("Check island world name is same as world in islands.yml.");
+                    getLogger().severe("If you are resetting and changing world, delete island.yml and restart.");
+                    getLogger().severe("");
+                    getLogger().severe("+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
+                    return false;
+                }
+            } catch (Exception e) {}	    
+        }
+        Settings.createNether = getConfig().getBoolean("general.createnether", true);
+        if (!Settings.createNether) {
+            getLogger().info("The Nether is disabled");
+        }
 		String companion = getConfig().getString("island.companion", "COW").toUpperCase();
 		if (companion.equalsIgnoreCase("NOTHING")) {
 			Settings.islandCompanion = null;
