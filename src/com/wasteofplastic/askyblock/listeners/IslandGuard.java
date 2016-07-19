@@ -1022,7 +1022,7 @@ public class IslandGuard implements Listener {
             return;
         }
         // Check for creeper damage at spawn
-        if (island.isSpawn() && e.getDamager().getType().equals(EntityType.CREEPER) && Settings.allowSpawnCreeperPain) {
+        if (island != null && island.isSpawn() && e.getDamager().getType().equals(EntityType.CREEPER) && Settings.allowSpawnCreeperPain) {
             return;
         }
         // Stop Creeper damager if it is disallowed
