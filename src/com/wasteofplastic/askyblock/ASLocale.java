@@ -630,6 +630,8 @@ public class ASLocale {
 
     private int index;
 
+    public String islandHelpSelectLanguage;
+
 
 
     /**
@@ -988,6 +990,8 @@ public class ASLocale {
         adminHelpHelp = ChatColor.translateAlternateColorCodes('&', locale.getString("adminHelp.help", "Admin Commands:"));
         adminHelpName = ChatColor.translateAlternateColorCodes('&', locale.getString("adminHelp.name", "Set name of player's island"));
         adminHelpResetName = ChatColor.translateAlternateColorCodes('&', locale.getString("adminHelp.resetname", "Reset name of player's island"));
+        islandHelpSelectLanguage = ChatColor.translateAlternateColorCodes('&', locale.getString("islandHelp.selectlanguage", "Select Language"));
+       
         islandhelpAcceptReject = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("island.helpAcceptReject", "accept or reject an invitation."));
         islandhelpMakeLeader = ChatColor

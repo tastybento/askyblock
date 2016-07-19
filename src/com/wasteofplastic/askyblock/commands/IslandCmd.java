@@ -1669,7 +1669,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                     player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + plugin.myLocale(player.getUniqueId()).islandHelpChallenges);
                 }
                 if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.lang")) {
-                    player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " lang <#> - select language");
+                    player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " lang <#>: "+ ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandHelpSelectLanguage);
                 }
                 return true;
             } else if (split[0].equalsIgnoreCase("listcoops")) {
