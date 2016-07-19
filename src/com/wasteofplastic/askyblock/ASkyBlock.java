@@ -786,6 +786,10 @@ public class ASkyBlock extends JavaPlugin {
             getLogger().warning("You should back up your world before running this");
             getLogger().warning("*********************************************************");
         }
+        // Nether roof option
+        Settings.netherRoof = getConfig().getBoolean("general.netherroof", true);
+        // FTB Autoamtic Activators
+        Settings.allowAutoActivator = getConfig().getBoolean("general.autoactivator");
         // Debug
         Settings.debug = getConfig().getInt("debug", 0);
         // Persistent coops

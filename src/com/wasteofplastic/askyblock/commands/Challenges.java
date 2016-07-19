@@ -1733,6 +1733,27 @@ public class Challenges implements CommandExecutor, TabCompleter {
                             } 
                             icon.setItemMeta(potionMeta);
                         }
+                    } else if (icon.getType().equals(Material.MONSTER_EGG)) {
+                        // Handle monster egg icons
+                        try {                                
+                            EntityType type = EntityType.valueOf(split[1].toUpperCase());
+                            if (Bukkit.getServer().getVersion().contains("(MC: 1.8") || Bukkit.getServer().getVersion().contains("(MC: 1.7")) {
+                                icon = new SpawnEgg(type).toItemStack();
+                            } else {
+                                try {
+                                    icon = new SpawnEgg1_9(type).toItemStack();
+                                } catch (Exception ex) {
+                                    plugin.getLogger().severe("Monster eggs not supported with this server version.");
+                                }
+                            }
+                        } catch (Exception e) {
+                            Bukkit.getLogger().severe("Spawn eggs must be described by name. Try one of these (not all are possible):");                          
+                            for (EntityType type : EntityType.values()) {
+                                if (type.isSpawnable() && type.isAlive()) {
+                                    plugin.getLogger().severe(type.toString());
+                                }
+                            }
+                        }
                     } else {
                         icon.setDurability(Integer.valueOf(split[1]).shortValue());
                     }
