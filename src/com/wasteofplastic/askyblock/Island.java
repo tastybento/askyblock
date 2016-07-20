@@ -189,7 +189,7 @@ public class Island implements Cloneable {
             // Check if protection options there
             if (!isSpawn) {
                 //plugin.getLogger().info("DEBUG: NOT SPAWN owner is " + owner + " location " + center);
-                if (split.length > 8 && split[8].length() == 29) {
+                if (split.length > 8) {
                     // Parse the 8th string into island guard protection settings
                     int index = 0;
                     // Run through the enum and set
