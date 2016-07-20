@@ -879,435 +879,226 @@ public class ASkyBlock extends JavaPlugin {
                     getLogger().severe("+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
                     return false;
                 }
-            } catch (Exception e) {}	    
+            } catch (Exception e) {}        
         }
         Settings.createNether = getConfig().getBoolean("general.createnether", true);
         if (!Settings.createNether) {
             getLogger().info("The Nether is disabled");
         }
-		String companion = getConfig().getString("island.companion", "COW").toUpperCase();
-		if (companion.equalsIgnoreCase("NOTHING")) {
-			Settings.islandCompanion = null;
-		} else {
-			try {
-				Settings.islandCompanion = EntityType.valueOf(companion);
-				// Limit types
-				switch (Settings.islandCompanion) {
-					case BAT:
-					case CHICKEN:
-					case COW:
-					case HORSE:
-					case IRON_GOLEM:
-					case MUSHROOM_COW:
-					case OCELOT:
-					case PIG:
-					case RABBIT:
-					case SHEEP:
-					case SNOWMAN:
-					case VILLAGER:
-					case WOLF:
-						break;
-					default:
-						getLogger()
-								.warning(
-										"Island companion is not recognized. Pick from COW, PIG, SHEEP, CHICKEN, VILLAGER, HORSE, IRON_GOLEM, OCELOT, RABBIT, WOLF, SNOWMAN, BAT, MUSHROOM_COW");
-						Settings.islandCompanion = EntityType.COW;
-						break;
-				}
-			} catch (Exception e) {
-				getLogger()
-						.warning(
-								"Island companion is not recognized. Pick from COW, PIG, SHEEP, CHICKEN, VILLAGER, HORSE, IRON_GOLEM, OCELOT, RABBIT, WOLF, BAT, MUSHROOM_COW, SNOWMAN");
-				Settings.islandCompanion = EntityType.COW;
-			}
-		}
-		// Companion names
-		List<String> companionNames = getConfig().getStringList("island.companionnames");
-		Settings.companionNames = new ArrayList<String>();
-		for (String name : companionNames) {
-			Settings.companionNames.add(ChatColor.translateAlternateColorCodes('&', name));
-		}
-		Settings.islandDistance = getConfig().getInt("island.distance", 200);
-		if (Settings.islandDistance < 50) {
-			Settings.islandDistance = 50;
-			getLogger().info("Setting minimum island distance to 50");
-		}
-		Settings.islandXOffset = getConfig().getInt("island.xoffset", 0);
-		if (Settings.islandXOffset < 0) {
-			Settings.islandXOffset = 0;
-			getLogger().info("Setting minimum island X Offset to 0");
-		} else if (Settings.islandXOffset > Settings.islandDistance) {
-			Settings.islandXOffset = Settings.islandDistance;
-			getLogger().info("Setting maximum island X Offset to " + Settings.islandDistance);
-		}
-		Settings.islandZOffset = getConfig().getInt("island.zoffset", 0);
-		if (Settings.islandZOffset < 0) {
-			Settings.islandZOffset = 0;
-			getLogger().info("Setting minimum island Z Offset to 0");
-		} else if (Settings.islandZOffset > Settings.islandDistance) {
-			Settings.islandZOffset = Settings.islandDistance;
-			getLogger().info("Setting maximum island Z Offset to " + Settings.islandDistance);
-		}
-		long x = getConfig().getLong("island.startx", 0);
-		// Check this is a multiple of island distance
-		long z = getConfig().getLong("island.startz", 0);
-		Settings.islandStartX = Math.round((double) x / Settings.islandDistance) * Settings.islandDistance + Settings.islandXOffset;
-		Settings.islandStartZ = Math.round((double) z / Settings.islandDistance) * Settings.islandDistance + Settings.islandZOffset;
 
-		// ASkyBlock and AcidIsland difference
-		if (Settings.GAMETYPE.equals(Settings.GameType.ACIDISLAND)) {
-			Settings.acidDamage = getConfig().getDouble("general.aciddamage", 5D);
-			if (Settings.acidDamage > 100D) {
-				Settings.acidDamage = 100D;
-			} else if (Settings.acidDamage < 0D) {
-				Settings.acidDamage = 0D;
-			}
-			Settings.mobAcidDamage = getConfig().getDouble("general.mobaciddamage", 10D);
-			if (Settings.mobAcidDamage > 100D) {
-				Settings.mobAcidDamage = 100D;
-			} else if (Settings.mobAcidDamage < 0D) {
-				Settings.mobAcidDamage = 0D;
-			}
-			Settings.rainDamage = getConfig().getDouble("general.raindamage", 0.5D);
-			if (Settings.rainDamage > 100D) {
-				Settings.rainDamage = 100D;
-			} else if (Settings.rainDamage < 0D) {
-				Settings.rainDamage = 0D;
-			}
-			// The island's center is actually 5 below sea level
-			Settings.sea_level = getConfig().getInt("general.sealevel", 50);
-			if (Settings.sea_level < 0) {
-				Settings.sea_level = 0;
-			}
-			Settings.island_level = getConfig().getInt("general.islandlevel", 50) - 5;
-			if (Settings.island_level < 0) {
-				Settings.island_level = 0;
-			}
-		} else {
-			Settings.acidDamage = getConfig().getDouble("general.aciddamage", 0D);
-			if (Settings.acidDamage > 100D) {
-				Settings.acidDamage = 100D;
-			} else if (Settings.acidDamage < 0D) {
-				Settings.acidDamage = 0D;
-			}
-			Settings.mobAcidDamage = getConfig().getDouble("general.mobaciddamage", 0D);
-			if (Settings.mobAcidDamage > 100D) {
-				Settings.mobAcidDamage = 100D;
-			} else if (Settings.mobAcidDamage < 0D) {
-				Settings.mobAcidDamage = 0D;
-			}
-			Settings.rainDamage = getConfig().getDouble("general.raindamage", 0D);
-			if (Settings.rainDamage > 100D) {
-				Settings.rainDamage = 100D;
-			} else if (Settings.rainDamage < 0D) {
-				Settings.rainDamage = 0D;
-			}
-			// The island's center is actually 5 below sea level
-			Settings.sea_level = getConfig().getInt("general.sealevel", 0);
-			if (Settings.sea_level < 0) {
-				Settings.sea_level = 0;
-			}
-			Settings.island_level = getConfig().getInt("general.islandlevel", 120) - 5;
-			if (Settings.island_level < 0) {
-				Settings.island_level = 0;
-			}
-		}
-		Settings.animalAcidDamage = getConfig().getDouble("general.animaldamage", 0D);
-		if (Settings.animalAcidDamage > 100D) {
-			Settings.animalAcidDamage = 100D;
-		} else if (Settings.animalAcidDamage < 0D) {
-			Settings.animalAcidDamage = 0D;
-		}
-		Settings.damageChickens = getConfig().getBoolean("general.damagechickens", false);
-		// Damage Type
-		List<String> acidDamageType = getConfig().getStringList("general.damagetype");
-		Settings.acidDamageType.clear();
-		if (acidDamageType != null) {
-			for (String effect : acidDamageType) {
-				PotionEffectType newPotionType = PotionEffectType.getByName(effect);
-				if (newPotionType != null) {
-					// Check if it is a valid addition
-					if (newPotionType.equals(PotionEffectType.BLINDNESS) || newPotionType.equals(PotionEffectType.CONFUSION)
-							|| newPotionType.equals(PotionEffectType.HUNGER) || newPotionType.equals(PotionEffectType.POISON)
-							|| newPotionType.equals(PotionEffectType.SLOW) || newPotionType.equals(PotionEffectType.SLOW_DIGGING)
-							|| newPotionType.equals(PotionEffectType.WEAKNESS)) {
-						Settings.acidDamageType.add(newPotionType);
-					}
-				} else {
-					getLogger().warning("Could not interpret acid damage modifier: " + effect + " - skipping");
-					getLogger().warning("Types can be : SLOW, SLOW_DIGGING, CONFUSION,");
-					getLogger().warning("BLINDNESS, HUNGER, WEAKNESS and POISON");
-				}
-			}
-		}
+        String companion = getConfig().getString("island.companion", "COW").toUpperCase();
+        if (companion.equalsIgnoreCase("NOTHING")) {
+            Settings.islandCompanion = null;
+        } else {
+            try {
+                Settings.islandCompanion = EntityType.valueOf(companion);
+                // Limit types
+                switch (Settings.islandCompanion) {
+                case BAT:
+                case CHICKEN:
+                case COW:
+                case HORSE:
+                case IRON_GOLEM:
+                case MUSHROOM_COW:
+                case OCELOT:
+                case PIG:
+                case RABBIT:
+                case SHEEP:
+                case SNOWMAN:
+                case VILLAGER:
+                case WOLF:
+                    break;
+                default:
+                    getLogger()
+                    .warning(
+                            "Island companion is not recognized. Pick from COW, PIG, SHEEP, CHICKEN, VILLAGER, HORSE, IRON_GOLEM, OCELOT, RABBIT, WOLF, SNOWMAN, BAT, MUSHROOM_COW");
+                    Settings.islandCompanion = EntityType.COW;
+                    break;
+                }
+            } catch (Exception e) {
+                getLogger()
+                .warning(
+                        "Island companion is not recognized. Pick from COW, PIG, SHEEP, CHICKEN, VILLAGER, HORSE, IRON_GOLEM, OCELOT, RABBIT, WOLF, BAT, MUSHROOM_COW, SNOWMAN");
+                Settings.islandCompanion = EntityType.COW;
+            }
+        }
+        // Companion names
+        List<String> companionNames = getConfig().getStringList("island.companionnames");
+        Settings.companionNames = new ArrayList<String>();
+        for (String name : companionNames) {
+            Settings.companionNames.add(ChatColor.translateAlternateColorCodes('&', name));
+        }
+        Settings.islandDistance = getConfig().getInt("island.distance", 200);
+        if (Settings.islandDistance < 50) {
+            Settings.islandDistance = 50;
+            getLogger().info("Setting minimum island distance to 50");
+        }
+        Settings.islandXOffset = getConfig().getInt("island.xoffset", 0);
+        if (Settings.islandXOffset < 0) {
+            Settings.islandXOffset = 0;
+            getLogger().info("Setting minimum island X Offset to 0");
+        } else if (Settings.islandXOffset > Settings.islandDistance) {
+            Settings.islandXOffset = Settings.islandDistance;
+            getLogger().info("Setting maximum island X Offset to " + Settings.islandDistance);
+        }
+        Settings.islandZOffset = getConfig().getInt("island.zoffset", 0);
+        if (Settings.islandZOffset < 0) {
+            Settings.islandZOffset = 0;
+            getLogger().info("Setting minimum island Z Offset to 0");
+        } else if (Settings.islandZOffset > Settings.islandDistance) {
+            Settings.islandZOffset = Settings.islandDistance;
+            getLogger().info("Setting maximum island Z Offset to " + Settings.islandDistance);
+        }
+        long x = getConfig().getLong("island.startx", 0);
+        // Check this is a multiple of island distance
+        long z = getConfig().getLong("island.startz", 0);
+        Settings.islandStartX = Math.round((double) x / Settings.islandDistance) * Settings.islandDistance + Settings.islandXOffset;
+        Settings.islandStartZ = Math.round((double) z / Settings.islandDistance) * Settings.islandDistance + Settings.islandZOffset;
 
-		Settings.animalSpawnLimit = getConfig().getInt("general.animalspawnlimit", 15);
-		if (Settings.animalSpawnLimit < -1) {
-			Settings.animalSpawnLimit = -1;
-		}
+        // ASkyBlock and AcidIsland difference
+        if (Settings.GAMETYPE.equals(Settings.GameType.ACIDISLAND)) {
+            Settings.acidDamage = getConfig().getDouble("general.aciddamage", 5D);
+            if (Settings.acidDamage > 100D) {
+                Settings.acidDamage = 100D;
+            } else if (Settings.acidDamage < 0D) {
+                Settings.acidDamage = 0D;
+            }
+            Settings.mobAcidDamage = getConfig().getDouble("general.mobaciddamage", 10D);
+            if (Settings.mobAcidDamage > 100D) {
+                Settings.mobAcidDamage = 100D;
+            } else if (Settings.mobAcidDamage < 0D) {
+                Settings.mobAcidDamage = 0D;
+            }
+            Settings.rainDamage = getConfig().getDouble("general.raindamage", 0.5D);
+            if (Settings.rainDamage > 100D) {
+                Settings.rainDamage = 100D;
+            } else if (Settings.rainDamage < 0D) {
+                Settings.rainDamage = 0D;
+            }
+            // The island's center is actually 5 below sea level
+            Settings.sea_level = getConfig().getInt("general.sealevel", 50);
+            if (Settings.sea_level < 0) {
+                Settings.sea_level = 0;
+            }
+            Settings.island_level = getConfig().getInt("general.islandlevel", 50) - 5;
+            if (Settings.island_level < 0) {
+                Settings.island_level = 0;
+            }
+        } else {
+            Settings.acidDamage = getConfig().getDouble("general.aciddamage", 0D);
+            if (Settings.acidDamage > 100D) {
+                Settings.acidDamage = 100D;
+            } else if (Settings.acidDamage < 0D) {
+                Settings.acidDamage = 0D;
+            }
+            Settings.mobAcidDamage = getConfig().getDouble("general.mobaciddamage", 0D);
+            if (Settings.mobAcidDamage > 100D) {
+                Settings.mobAcidDamage = 100D;
+            } else if (Settings.mobAcidDamage < 0D) {
+                Settings.mobAcidDamage = 0D;
+            }
+            Settings.rainDamage = getConfig().getDouble("general.raindamage", 0D);
+            if (Settings.rainDamage > 100D) {
+                Settings.rainDamage = 100D;
+            } else if (Settings.rainDamage < 0D) {
+                Settings.rainDamage = 0D;
+            }
+            // The island's center is actually 5 below sea level
+            Settings.sea_level = getConfig().getInt("general.sealevel", 0);
+            if (Settings.sea_level < 0) {
+                Settings.sea_level = 0;
+            }
+            Settings.island_level = getConfig().getInt("general.islandlevel", 120) - 5;
+            if (Settings.island_level < 0) {
+                Settings.island_level = 0;
+            }
+        }
+        Settings.animalAcidDamage = getConfig().getDouble("general.animaldamage", 0D);
+        if (Settings.animalAcidDamage > 100D) {
+            Settings.animalAcidDamage = 100D;
+        } else if (Settings.animalAcidDamage < 0D) {
+            Settings.animalAcidDamage = 0D;
+        }
+        Settings.damageChickens = getConfig().getBoolean("general.damagechickens", false);
+        // Damage Type
+        List<String> acidDamageType = getConfig().getStringList("general.damagetype");
+        Settings.acidDamageType.clear();
+        if (acidDamageType != null) {
+            for (String effect : acidDamageType) {
+                PotionEffectType newPotionType = PotionEffectType.getByName(effect);
+                if (newPotionType != null) {
+                    // Check if it is a valid addition
+                    if (newPotionType.equals(PotionEffectType.BLINDNESS) || newPotionType.equals(PotionEffectType.CONFUSION)
+                            || newPotionType.equals(PotionEffectType.HUNGER) || newPotionType.equals(PotionEffectType.POISON)
+                            || newPotionType.equals(PotionEffectType.SLOW) || newPotionType.equals(PotionEffectType.SLOW_DIGGING)
+                            || newPotionType.equals(PotionEffectType.WEAKNESS)) {
+                        Settings.acidDamageType.add(newPotionType);
+                    }
+                } else {
+                    getLogger().warning("Could not interpret acid damage modifier: " + effect + " - skipping");
+                    getLogger().warning("Types can be : SLOW, SLOW_DIGGING, CONFUSION,");
+                    getLogger().warning("BLINDNESS, HUNGER, WEAKNESS and POISON");
+                }
+            }
+        }
 
-		Settings.monsterSpawnLimit = getConfig().getInt("general.monsterspawnlimit", 100);
-		if (Settings.monsterSpawnLimit < -1) {
-			Settings.monsterSpawnLimit = -1;
-		}
+        Settings.animalSpawnLimit = getConfig().getInt("general.animalspawnlimit", 15);
+        if (Settings.animalSpawnLimit < -1) {
+            Settings.animalSpawnLimit = -1;
+        }
 
-		Settings.waterAnimalSpawnLimit = getConfig().getInt("general.wateranimalspawnlimit", 15);
-		if (Settings.waterAnimalSpawnLimit < -1) {
-			Settings.waterAnimalSpawnLimit = -1;
-		}
+        Settings.monsterSpawnLimit = getConfig().getInt("general.monsterspawnlimit", 100);
+        if (Settings.monsterSpawnLimit < -1) {
+            Settings.monsterSpawnLimit = -1;
+        }
 
-		Settings.abandonedIslandLevel = getConfig().getInt("general.abandonedislandlevel", 10);
-		if (Settings.abandonedIslandLevel < 0) {
-			Settings.abandonedIslandLevel = 0;
-		}
+        Settings.waterAnimalSpawnLimit = getConfig().getInt("general.wateranimalspawnlimit", 15);
+        if (Settings.waterAnimalSpawnLimit < -1) {
+            Settings.waterAnimalSpawnLimit = -1;
+        }
 
-		Settings.island_protectionRange = getConfig().getInt("island.protectionRange", 100);
-		if (Settings.island_protectionRange % 2 != 0) {
-			Settings.island_protectionRange--;
-			getLogger().warning("Protection range must be even, using " + Settings.island_protectionRange);
-		}
-		if (Settings.island_protectionRange > Settings.islandDistance) {
-			if (!getConfig().getBoolean("island.overridelimit", false)) {
-				if (Settings.island_protectionRange > (Settings.islandDistance - 16)) {
-					Settings.island_protectionRange = Settings.islandDistance - 16;
-					getLogger().warning(
-							"*** Island protection range must be " + (Settings.islandDistance - 16) + " or less, (island range -16). Setting to: "
-									+ Settings.island_protectionRange);
-				}
-			} else {
-				Settings.island_protectionRange = Settings.islandDistance;
-			}
-		}
-		if (Settings.island_protectionRange < 0) {
-			Settings.island_protectionRange = 0;
-		}
-		Settings.resetChallenges = getConfig().getBoolean("general.resetchallenges", true);
-		Settings.resetMoney = getConfig().getBoolean("general.resetmoney", true);
-		Settings.clearInventory = getConfig().getBoolean("general.resetinventory", true);
-		Settings.resetEnderChest = getConfig().getBoolean("general.resetenderchest", false);
+        Settings.abandonedIslandLevel = getConfig().getInt("general.abandonedislandlevel", 10);
+        if (Settings.abandonedIslandLevel < 0) {
+            Settings.abandonedIslandLevel = 0;
+        }
 
-		Settings.startingMoney = getConfig().getDouble("general.startingmoney", 0D);
-		Settings.respawnOnIsland = getConfig().getBoolean("general.respawnonisland", false);
-		Settings.newNether = getConfig().getBoolean("general.newnether", true);
-		Settings.netherTrees = getConfig().getBoolean("general.nethertrees", true);
-		// Nether spawn protection radius
-		Settings.netherSpawnRadius = getConfig().getInt("general.netherspawnradius", 25);
-		if (Settings.netherSpawnRadius < 0) {
-			Settings.netherSpawnRadius = 0;
-		} else if (Settings.netherSpawnRadius > 100) {
-			Settings.netherSpawnRadius = 100;
-		}
+        Settings.island_protectionRange = getConfig().getInt("island.protectionRange", 100);
+        if (Settings.island_protectionRange % 2 != 0) {
+            Settings.island_protectionRange--;
+            getLogger().warning("Protection range must be even, using " + Settings.island_protectionRange);
+        }
+        if (Settings.island_protectionRange > Settings.islandDistance) {
+            if (!getConfig().getBoolean("island.overridelimit", false)) {
+                if (Settings.island_protectionRange > (Settings.islandDistance - 16)) {
+                    Settings.island_protectionRange = Settings.islandDistance - 16;
+                    getLogger().warning(
+                            "*** Island protection range must be " + (Settings.islandDistance - 16) + " or less, (island range -16). Setting to: "
+                                    + Settings.island_protectionRange);
+                }
+            } else {
+                Settings.island_protectionRange = Settings.islandDistance;
+            }
+        }
+        if (Settings.island_protectionRange < 0) {
+            Settings.island_protectionRange = 0;
+        }
+        Settings.resetChallenges = getConfig().getBoolean("general.resetchallenges", true);
+        Settings.resetMoney = getConfig().getBoolean("general.resetmoney", true);
+        Settings.clearInventory = getConfig().getBoolean("general.resetinventory", true);
+        Settings.resetEnderChest = getConfig().getBoolean("general.resetenderchest", false);
 
-		Settings.resetWait = getConfig().getInt("general.resetwait", 300);
-		if (Settings.resetWait < 0) {
-			Settings.resetWait = 0;
-		}
-		Settings.resetLimit = getConfig().getInt("general.resetlimit", 0);
-		if (Settings.resetWait < 0) {
-			Settings.resetWait = -1;
-		}
-		Settings.inviteWait = getConfig().getInt("general.invitewait", 60);
-		if (Settings.inviteWait < 0) {
-			Settings.inviteWait = 0;
-		}
-		Settings.levelWait = getConfig().getInt("general.levelwait", 60);
-		if (Settings.levelWait < 0) {
-			Settings.levelWait = 0;
-		}
-		// Seconds to wait for a confirmation of reset
-		Settings.resetConfirmWait = getConfig().getInt("general.resetconfirmwait", 10);
-		if (Settings.resetConfirmWait < 0) {
-			Settings.resetConfirmWait = 0;
-		}
-		Settings.damageOps = getConfig().getBoolean("general.damageops", false);
-		// Settings.ultraSafeBoats =
-		// getConfig().getBoolean("general.ultrasafeboats", true);
-		Settings.logInRemoveMobs = getConfig().getBoolean("general.loginremovemobs", true);
-		Settings.islandRemoveMobs = getConfig().getBoolean("general.islandremovemobs", false);
-		List<String> mobWhiteList = getConfig().getStringList("general.mobwhitelist");
-		Settings.mobWhiteList.clear();
-		String valid = "BLAZE, CREEPER, SKELETON, SPIDER, GIANT, ZOMBIE, GHAST, PIG_ZOMBIE, "
-				+ "ENDERMAN, CAVE_SPIDER, SILVERFISH,  WITHER, WITCH, ENDERMITE,"
-				+ " GUARDIAN";
-		for (String mobName : mobWhiteList) {
-			if (valid.contains(mobName.toUpperCase())) {
-				try {
-					Settings.mobWhiteList.add(EntityType.valueOf(mobName.toUpperCase()));
-				} catch (Exception e) {
-					plugin.getLogger().severe("Error in config.yml, mobwhitelist value '" + mobName + "' is invalid.");
-					plugin.getLogger().severe("Possible values are : Blaze, Cave_Spider, Creeper, Enderman, Endermite, Giant, Guardian, "
-							+ "Pig_Zombie, Silverfish, Skeleton, Spider, Witch, Wither, Zombie");
-				}
-			} else {
-				plugin.getLogger().severe("Error in config.yml, mobwhitelist value '" + mobName + "' is invalid.");
-				plugin.getLogger().severe("Possible values are : Blaze, Cave_Spider, Creeper, Enderman, Endermite, Giant, Guardian, "
-						+ "Pig_Zombie, Silverfish, Skeleton, Spider, Witch, Wither, Zombie");
-			}
-		}
-		// getLogger().info("DEBUG: island level is " + Settings.island_level);
-		// Get chest items
-		String chestItems = getConfig().getString("island.chestItems","");
-		if (!chestItems.isEmpty()) {
-			final String[] chestItemString = chestItems.split(" ");
-			// getLogger().info("DEBUG: chest items = " + chestItemString);
-			final ItemStack[] tempChest = new ItemStack[chestItemString.length];
-			for (int i = 0; i < tempChest.length; i++) {
-				String[] amountdata = chestItemString[i].split(":");
-				try {
-					if (amountdata.length == 3 && amountdata[0].equalsIgnoreCase("MONSTER_EGG")) {
-						try {
-							EntityType type = EntityType.valueOf(amountdata[1].toUpperCase());
-							if (Bukkit.getServer().getVersion().contains("(MC: 1.8") || Bukkit.getServer().getVersion().contains("(MC: 1.7")) {
-								tempChest[i] = new SpawnEgg(type).toItemStack(Integer.parseInt(amountdata[2]));
-							} else {
-								try {
-									tempChest[i] = new SpawnEgg1_9(type).toItemStack(Integer.parseInt(amountdata[2]));
-								} catch (Exception ex) {
-									tempChest[i] = new ItemStack(Material.MONSTER_EGG);
-									plugin.getLogger().severe("Monster eggs not supported with this server version.");
-								}
-							}
-						} catch (Exception e) {
-							Bukkit.getLogger().severe("Spawn eggs must be described by name. Try one of these (not all are possible):");
-							for (EntityType type : EntityType.values()) {
-								if (type.isSpawnable() && type.isAlive()) {
-									plugin.getLogger().severe(type.toString());
-								}
-							}
-						}
-					} else if (amountdata[0].equals("POTION")) {
-						// getLogger().info("DEBUG: Potion length " +
-						// amountdata.length);
-						if (amountdata.length == 6) {
-							tempChest[i] = Challenges.getPotion(amountdata, Integer.parseInt(amountdata[5]), "config.yml");
-						} else {
-							getLogger().severe("Problem loading chest item from config.yml so skipping it: " + chestItemString[i]);
-							getLogger().severe("Potions for the chest must be fully defined as POTION:NAME:<LEVEL>:<EXTENDED>:<SPLASH/LINGER>:QTY");
-						}
-					} else {
-						Material mat;
-						if (StringUtils.isNumeric(amountdata[0])) {
-							mat = Material.getMaterial(Integer.parseInt(amountdata[0]));
-						} else {
-							mat = Material.getMaterial(amountdata[0].toUpperCase());
-						}
-						if (amountdata.length == 2) {
-							tempChest[i] = new ItemStack(mat, Integer.parseInt(amountdata[1]));
-						} else if (amountdata.length == 3) {
-							tempChest[i] = new ItemStack(mat, Integer.parseInt(amountdata[2]), Short.parseShort(amountdata[1]));
-						}
-					}
-				} catch (java.lang.IllegalArgumentException ex) {
-					ex.printStackTrace();
-					getLogger().severe("Problem loading chest item from config.yml so skipping it: " + chestItemString[i]);
-					getLogger().severe("Error is : " + ex.getMessage());
-					getLogger().info("Potential potion types are: ");
-					for (PotionType c : PotionType.values())
-						getLogger().info(c.name());
-				} catch (Exception e) {
-					e.printStackTrace();
-					getLogger().severe("Problem loading chest item from config.yml so skipping it: " + chestItemString[i]);
-					getLogger().info("Potential material types are: ");
-					for (Material c : Material.values())
-						getLogger().info(c.name());
-					// e.printStackTrace();
-				}
-			}
-			Settings.chestItems = tempChest;
-		} else {
-			// Nothing in the chest
-			Settings.chestItems = new ItemStack[0];
-		}
-		Settings.allowPvP = getConfig().getBoolean("island.allowPvP", false);
-		Settings.allowNetherPvP = getConfig().getBoolean("island.allowNetherPvP", false);
-		Settings.allowBreakBlocks = getConfig().getBoolean("island.allowbreakblocks", false);
-		Settings.allowPlaceBlocks = getConfig().getBoolean("island.allowplaceblocks", false);
-		Settings.allowBedUse = getConfig().getBoolean("island.allowbeduse", false);
-		Settings.allowBucketUse = getConfig().getBoolean("island.allowbucketuse", false);
-		Settings.allowShearing = getConfig().getBoolean("island.allowshearing", false);
-		Settings.allowEnderPearls = getConfig().getBoolean("island.allowenderpearls", false);
-		Settings.allowDoorUse = getConfig().getBoolean("island.allowdooruse", false);
-		Settings.allowLeverButtonUse = getConfig().getBoolean("island.allowleverbuttonuse", false);
-		Settings.allowCropTrample = getConfig().getBoolean("island.allowcroptrample", false);
-		Settings.allowChestAccess = getConfig().getBoolean("island.allowchestaccess", false);
-		Settings.allowFurnaceUse = getConfig().getBoolean("island.allowfurnaceuse", false);
-		Settings.allowRedStone = getConfig().getBoolean("island.allowredstone", false);
-		Settings.allowMusic = getConfig().getBoolean("island.allowmusic", false);
-		Settings.allowCrafting = getConfig().getBoolean("island.allowcrafting", false);
-		Settings.allowBrewing = getConfig().getBoolean("island.allowbrewing", false);
-		Settings.allowGateUse = getConfig().getBoolean("island.allowgateuse", false);
-		Settings.allowHurtMobs = getConfig().getBoolean("island.allowhurtmobs", true);
-		Settings.endermanDeathDrop = getConfig().getBoolean("island.endermandeathdrop", true);
-		Settings.allowEndermanGriefing = getConfig().getBoolean("island.allowendermangriefing", true);
-		Settings.allowCreeperDamage = getConfig().getBoolean("island.allowcreeperdamage", true);
-		Settings.allowCreeperGriefing = getConfig().getBoolean("island.allowcreepergriefing", false);
-		Settings.allowTNTDamage = getConfig().getBoolean("island.allowtntdamage", false);
-		Settings.allowMonsterEggs = getConfig().getBoolean("island.allowspawneggs", false);
-		Settings.allowBreeding = getConfig().getBoolean("island.allowbreeding", false);
-		Settings.allowFire = getConfig().getBoolean("island.allowfire", false);
-		Settings.allowFireSpread = getConfig().getBoolean("island.allowfirespread", false);
-		Settings.allowChestDamage = getConfig().getBoolean("island.allowchestdamage", false);
-		Settings.allowLeashUse = getConfig().getBoolean("island.allowleashuse", false);
-		Settings.allowHurtMonsters = getConfig().getBoolean("island.allowhurtmonsters", true);
-		Settings.allowEnchanting = getConfig().getBoolean("island.allowenchanting", true);
-		Settings.allowAnvilUse = getConfig().getBoolean("island.allowanviluse", true);
-		Settings.allowVisitorKeepInvOnDeath = getConfig().getBoolean("island.allowvisitorkeepinvondeath", false);
-		Settings.allowVisitorItemDrop = getConfig().getBoolean("island.allowvisitoritemdrop", true);
-		Settings.allowVisitorItemPickup = getConfig().getBoolean("island.allowvisitoritempickup", true);
-		Settings.allowArmorStandUse = getConfig().getBoolean("island.allowarmorstanduse", false);
-		Settings.allowBeaconAccess = getConfig().getBoolean("island.allowbeaconaccess", false);
-		Settings.allowPortalUse = getConfig().getBoolean("island.allowportaluse", true);
-		Settings.allowPressurePlate = getConfig().getBoolean("island.allowpressureplates", true);
-		Settings.allowPistonPush = getConfig().getBoolean("island.allowpistonpush", true);
-		Settings.allowHorseRiding = getConfig().getBoolean("island.allowhorseriding", false);
-		Settings.allowHorseInvAccess = getConfig().getBoolean("island.allowhorseinventoryaccess", false);
-		Settings.allowVillagerTrading = getConfig().getBoolean("island.allowvillagertrading", true);
-		// Spawn Settings
-		Settings.allowSpawnCreeperPain = getConfig().getBoolean("spawn.allowcreeperpain", false);
-		Settings.allowSpawnHorseRiding = getConfig().getBoolean("spawn.allowhorseriding", false);
-		Settings.allowSpawnHorseInvAccess = getConfig().getBoolean("spawn.allowhorseinventoryaccess", false);
-		Settings.allowSpawnPressurePlate = getConfig().getBoolean("spawn.allowpressureplates", true);
-		Settings.allowSpawnDoorUse = getConfig().getBoolean("spawn.allowdooruse", true);
-		Settings.allowSpawnLeverButtonUse = getConfig().getBoolean("spawn.allowleverbuttonuse", true);
-		Settings.allowSpawnChestAccess = getConfig().getBoolean("spawn.allowchestaccess", true);
-		Settings.allowSpawnFurnaceUse = getConfig().getBoolean("spawn.allowfurnaceuse", true);
-		Settings.allowSpawnRedStone = getConfig().getBoolean("spawn.allowredstone", false);
-		Settings.allowSpawnMusic = getConfig().getBoolean("spawn.allowmusic", true);
-		Settings.allowSpawnCrafting = getConfig().getBoolean("spawn.allowcrafting", true);
-		Settings.allowSpawnBrewing = getConfig().getBoolean("spawn.allowbrewing", true);
-		Settings.allowSpawnGateUse = getConfig().getBoolean("spawn.allowgateuse", true);
-		Settings.allowSpawnMobSpawn = getConfig().getBoolean("spawn.allowmobspawn", false);
-		Settings.allowSpawnAnimalSpawn = getConfig().getBoolean("spawn.allowanimalspawn", true);
-		Settings.allowSpawnAnimalKilling = getConfig().getBoolean("spawn.allowanimalkilling", false);
-		Settings.allowSpawnMobKilling = getConfig().getBoolean("spawn.allowmobkilling", true);
-		Settings.allowSpawnMonsterEggs = getConfig().getBoolean("spawn.allowspawneggs", false);
-		Settings.allowSpawnEggs = getConfig().getBoolean("spawn.alloweggs", false);
-		Settings.allowSpawnBreakBlocks = getConfig().getBoolean("spawn.allowbreakblocks", false);
-		Settings.allowSpawnPlaceBlocks = getConfig().getBoolean("spawn.allowplaceblocks", false);
-		Settings.allowSpawnNoAcidWater = getConfig().getBoolean("spawn.allowspawnnoacidwater", false);
-		Settings.allowSpawnEnchanting = getConfig().getBoolean("spawn.allowenchanting", true);
-		Settings.allowSpawnAnvilUse = getConfig().getBoolean("spawn.allowanviluse", true);
-		Settings.allowSpawnBeaconAccess = getConfig().getBoolean("spawn.allowbeaconaccess", false);
-		Settings.allowSpawnPVP = getConfig().getBoolean("spawn.allowPVP", false);
-		Settings.allowSpawnMilking = getConfig().getBoolean("spawn.allowmilking", false);
-		Settings.allowSpawnLavaCollection = getConfig().getBoolean("spawn.allowlavacollection", false);
-		Settings.allowSpawnWaterCollection = getConfig().getBoolean("spawn.allowwatercollection", false);
-		Settings.allowSpawnVisitorItemDrop = getConfig().getBoolean("spawn.allowvisitoritemdrop", true);
-		Settings.allowSpawnVisitorItemPickup = getConfig().getBoolean("spawn.allowvisitoritempickup", true);
-		Settings.allowSpawnArmorStandUse = getConfig().getBoolean("spawn.allowarmorstanduse",false);
-		Settings.allowSpawnBedUse = getConfig().getBoolean("spawn.allowbeduse",false);
-		Settings.allowSpawnBreeding = getConfig().getBoolean("spawn.allowbreeding",false);
-		Settings.allowSpawnCropTrample = getConfig().getBoolean("spawn.allowcroptrample",false);
-		Settings.allowSpawnEnderPearls = getConfig().getBoolean("spawn.allowenderpearls",false);
-		Settings.allowSpawnLeashUse = getConfig().getBoolean("spawn.allowleashuse",false);
-		Settings.allowSpawnShearing = getConfig().getBoolean("spawn.allowshearing",false);
+        Settings.startingMoney = getConfig().getDouble("general.startingmoney", 0D);
+        Settings.respawnOnIsland = getConfig().getBoolean("general.respawnonisland", false);
+        Settings.newNether = getConfig().getBoolean("general.newnether", true);
+        Settings.netherTrees = getConfig().getBoolean("general.nethertrees", true);
+        // Nether spawn protection radius
+        Settings.netherSpawnRadius = getConfig().getInt("general.netherspawnradius", 25);
+        if (Settings.netherSpawnRadius < 0) {
+            Settings.netherSpawnRadius = 0;
+        } else if (Settings.netherSpawnRadius > 100) {
+            Settings.netherSpawnRadius = 100;
+        }
 
-<<<<<<< Upstream, based on origin/master
-		// Challenges
-		getChallenges();
-		// Challenge completion
-		Settings.broadcastMessages = getConfig().getBoolean("general.broadcastmessages", true);
-=======
         Settings.resetWait = getConfig().getInt("general.resetwait", 300);
         if (Settings.resetWait < 0) {
             Settings.resetWait = 0;
@@ -1512,150 +1303,153 @@ public class ASkyBlock extends JavaPlugin {
         Settings.allowSpawnEnderPearls = getConfig().getBoolean("spawn.allowenderpearls",false);
         Settings.allowSpawnLeashUse = getConfig().getBoolean("spawn.allowleashuse",false);
         Settings.allowSpawnShearing = getConfig().getBoolean("spawn.allowshearing",false);
->>>>>>> fc6c4c0 Added spawn settings option to allow villager trading at spawn.
 
-		// Levels
-		// Get the blockvalues.yml file
-		YamlConfiguration blockValuesConfig = Util.loadYamlFile("blockvalues.yml");
-		// Get the under water multiplier
-		Settings.deathpenalty = blockValuesConfig.getInt("deathpenalty", 0);
-		Settings.sumTeamDeaths = blockValuesConfig.getBoolean("sumteamdeaths");
-		Settings.maxDeaths = blockValuesConfig.getInt("maxdeaths", 10);
-		Settings.islandResetDeathReset = blockValuesConfig.getBoolean("islandresetdeathreset", true);
-		Settings.teamJoinDeathReset = blockValuesConfig.getBoolean("teamjoindeathreset", true);
-		Settings.underWaterMultiplier = blockValuesConfig.getDouble("underwater", 1D);
-		Settings.levelCost = blockValuesConfig.getInt("levelcost", 100);
-		Settings.blockLimits = new HashMap<MaterialData, Integer>();
-		if (blockValuesConfig.isSet("limits")) {
-			for (String material : blockValuesConfig.getConfigurationSection("limits").getKeys(false)) {
-				try {
-					String[] split = material.split(":");
-					byte data = 0;
-					if (split.length>1) {
-						data = Byte.valueOf(split[1]);
-					}
-					Material mat;
-					if (StringUtils.isNumeric(split[0])) {
-						mat = Material.getMaterial(Integer.parseInt(split[0]));
-					} else {
-						mat = Material.valueOf(split[0].toUpperCase());
-					}
-					MaterialData materialData = new MaterialData(mat);
-					materialData.setData(data);
-					Settings.blockLimits.put(materialData, blockValuesConfig.getInt("limits." + material, 0));
-					if (debug) {
-						getLogger().info("Maximum number of " + materialData + " will be " + Settings.blockLimits.get(materialData));
-					}
-				} catch (Exception e) {
-					getLogger().warning("Unknown material (" + material + ") in blockvalues.yml Limits section. Skipping...");
-				}
-			}
-		}
-		Settings.blockValues = new HashMap<MaterialData, Integer>();
-		if (blockValuesConfig.isSet("blocks")) {
-			for (String material : blockValuesConfig.getConfigurationSection("blocks").getKeys(false)) {
-				try {
-					String[] split = material.split(":");
-					byte data = 0;
-					if (split.length>1) {
-						data = Byte.valueOf(split[1]);
-					}
-					Material mat;
-					if (StringUtils.isNumeric(split[0])) {
-						mat = Material.getMaterial(Integer.parseInt(split[0]));
-					} else {
-						mat = Material.valueOf(split[0].toUpperCase());
-					}
-					MaterialData materialData = new MaterialData(mat);
-					materialData.setData(data);
-					Settings.blockValues.put(materialData, blockValuesConfig.getInt("blocks." + material, 0));
-					if (debug) {
-						getLogger().info(mat.toString() + " value is " + Settings.blockValues.get(mat));
-					}
-				} catch (Exception e) {
-					// e.printStackTrace();
-					getLogger().warning("Unknown material (" + material + ") in blockvalues.yml blocks section. Skipping...");
-				}
-			}
-		} else {
-			getLogger().severe("No block values in blockvalues.yml! All island levels will be zero!");
-		}
-		// Biome Settings
-		Settings.biomeCost = getConfig().getDouble("biomesettings.defaultcost", 100D);
-		if (Settings.biomeCost < 0D) {
-			Settings.biomeCost = 0D;
-			getLogger().warning("Biome default cost is < $0, so set to zero.");
-		}
-		String defaultBiome = getConfig().getString("biomesettings.defaultbiome", "PLAINS");
-		try {
-			Settings.defaultBiome = Biome.valueOf(defaultBiome);
-		} catch (Exception e) {
-			getLogger().severe("Could not parse biome " + defaultBiome + " using PLAINS instead.");
-			Settings.defaultBiome = Biome.PLAINS;
-		}
-		Settings.breedingLimit = getConfig().getInt("general.breedinglimit", 0);
-		Settings.villagerLimit = getConfig().getInt("general.villagerlimit", 0);
-		Settings.limitedBlocks = new HashMap<String,Integer>();
-		ConfigurationSection entityLimits = getConfig().getConfigurationSection("general.entitylimits");
-		if (entityLimits != null) {
-			for (String entity: entityLimits.getKeys(false)) {
-				int limit = entityLimits.getInt(entity.toUpperCase(), -1);
-				if (limit > 0) {
-					getLogger().info(entity.toUpperCase() + " will be limited to " + limit);
-				}
-				if (Material.getMaterial(entity.toUpperCase()) == null) {
-					getLogger().warning("general.entitylimits section has unknown entity type: " + entity.toUpperCase() + " skipping...");
-				} else if (limit > -1) {
-					Settings.limitedBlocks.put(entity.toUpperCase(), limit);
-					if (entity.equalsIgnoreCase("REDSTONE_COMPARATOR")) {
-						// Player can only ever place a redstone comparator in the OFF state
-						Settings.limitedBlocks.put("REDSTONE_COMPARATOR_OFF", limit);
-					} else if (entity.equalsIgnoreCase("BANNER")) {
-						// To simplify banners, the banner is allowed and automatically made wall and standing banner
-						Settings.limitedBlocks.put("WALL_BANNER", limit);
-						Settings.limitedBlocks.put("STANDING_BANNER", limit);
-					} else if (entity.equalsIgnoreCase("SIGN")) {
-						// To simplify signs, the sign is allowed and automatically made wall and standing signs
-						Settings.limitedBlocks.put("WALL_SIGN", limit);
-						Settings.limitedBlocks.put("SIGN_POST", limit);
-					}
-				}
-			}
-		}
-		// Legacy setting support for hopper limiting
-		if (Settings.limitedBlocks.isEmpty()) {
-			Settings.hopperLimit = getConfig().getInt("general.hopperlimit", -1);
-			if (Settings.hopperLimit > 0) {
-				Settings.limitedBlocks.put("HOPPER", Settings.hopperLimit);
-			}
-		}
-		Settings.mobLimit = getConfig().getInt("general.moblimit", 0);
-		Settings.removeCompleteOntimeChallenges = getConfig().getBoolean("general.removecompleteonetimechallenges", false);
-		Settings.addCompletedGlow = getConfig().getBoolean("general.addcompletedglow", true);
-		// Clean up blocks around edges when deleting islands
-		Settings.cleanUpBlocks = getConfig().getBoolean("island.cleanupblocks",false);
-		Settings.cleanRate = getConfig().getInt("island.cleanrate", 2);
-		if (Settings.cleanRate < 1) {
-			Settings.cleanRate = 1;
-		}
-		// No acid bottles or buckets
-		Settings.acidBottle = getConfig().getBoolean("general.acidbottles", true);
-		// Island name length
-		Settings.minNameLength = getConfig().getInt("island.minnamelength", 1);
-		Settings.maxNameLength = getConfig().getInt("island.maxnamelength", 20);
-		if (Settings.minNameLength < 0) {
-			Settings.minNameLength = 0;
-		}
-		if (Settings.maxNameLength < 1) {
-			Settings.maxNameLength = 1;
-		}
-		if (Settings.minNameLength > Settings.maxNameLength) {
-			Settings.minNameLength = Settings.maxNameLength;
-		}
-		// All done
-		return true;
-	}
+        // Challenges
+        getChallenges();
+        // Challenge completion
+        Settings.broadcastMessages = getConfig().getBoolean("general.broadcastmessages", true);
 
+        // Levels
+        // Get the blockvalues.yml file
+        YamlConfiguration blockValuesConfig = Util.loadYamlFile("blockvalues.yml");
+        // Get the under water multiplier
+        Settings.deathpenalty = blockValuesConfig.getInt("deathpenalty", 0);
+        Settings.sumTeamDeaths = blockValuesConfig.getBoolean("sumteamdeaths");
+        Settings.maxDeaths = blockValuesConfig.getInt("maxdeaths", 10);
+        Settings.islandResetDeathReset = blockValuesConfig.getBoolean("islandresetdeathreset", true);
+        Settings.teamJoinDeathReset = blockValuesConfig.getBoolean("teamjoindeathreset", true);
+        Settings.underWaterMultiplier = blockValuesConfig.getDouble("underwater", 1D);
+        Settings.levelCost = blockValuesConfig.getInt("levelcost", 100);
+        Settings.blockLimits = new HashMap<MaterialData, Integer>();
+        if (blockValuesConfig.isSet("limits")) {
+            for (String material : blockValuesConfig.getConfigurationSection("limits").getKeys(false)) {
+                try {
+                    String[] split = material.split(":");
+                    byte data = 0;
+                    if (split.length>1) {
+                        data = Byte.valueOf(split[1]);
+                    }
+                    Material mat;
+                    if (StringUtils.isNumeric(split[0])) {
+                        mat = Material.getMaterial(Integer.parseInt(split[0]));
+                    } else {
+                        mat = Material.valueOf(split[0].toUpperCase());
+                    }
+                    MaterialData materialData = new MaterialData(mat);
+                    materialData.setData(data);
+                    Settings.blockLimits.put(materialData, blockValuesConfig.getInt("limits." + material, 0));
+                    if (debug) {
+                        getLogger().info("Maximum number of " + materialData + " will be " + Settings.blockLimits.get(materialData));
+                    }
+                } catch (Exception e) {
+                    getLogger().warning("Unknown material (" + material + ") in blockvalues.yml Limits section. Skipping...");
+                }
+            }
+        }
+        Settings.blockValues = new HashMap<MaterialData, Integer>();
+        if (blockValuesConfig.isSet("blocks")) {
+            for (String material : blockValuesConfig.getConfigurationSection("blocks").getKeys(false)) {
+                try {
+                    String[] split = material.split(":");
+                    byte data = 0;
+                    if (split.length>1) {
+                        data = Byte.valueOf(split[1]);
+                    }
+                    Material mat;
+                    if (StringUtils.isNumeric(split[0])) {
+                        mat = Material.getMaterial(Integer.parseInt(split[0]));
+                    } else {
+                        mat = Material.valueOf(split[0].toUpperCase());
+                    }
+                    MaterialData materialData = new MaterialData(mat);
+                    materialData.setData(data);
+                    Settings.blockValues.put(materialData, blockValuesConfig.getInt("blocks." + material, 0));
+                    if (debug) {
+                        getLogger().info(mat.toString() + " value is " + Settings.blockValues.get(mat));
+                    }
+                } catch (Exception e) {
+                    // e.printStackTrace();
+                    getLogger().warning("Unknown material (" + material + ") in blockvalues.yml blocks section. Skipping...");
+                }
+            }
+        } else {
+            getLogger().severe("No block values in blockvalues.yml! All island levels will be zero!");
+        }
+        // Biome Settings
+        Settings.biomeCost = getConfig().getDouble("biomesettings.defaultcost", 100D);
+        if (Settings.biomeCost < 0D) {
+            Settings.biomeCost = 0D;
+            getLogger().warning("Biome default cost is < $0, so set to zero.");
+        }
+        String defaultBiome = getConfig().getString("biomesettings.defaultbiome", "PLAINS");
+        try {
+            Settings.defaultBiome = Biome.valueOf(defaultBiome);
+        } catch (Exception e) {
+            getLogger().severe("Could not parse biome " + defaultBiome + " using PLAINS instead.");
+            Settings.defaultBiome = Biome.PLAINS;
+        }
+        Settings.breedingLimit = getConfig().getInt("general.breedinglimit", 0);
+        Settings.villagerLimit = getConfig().getInt("general.villagerlimit", 0);
+        Settings.limitedBlocks = new HashMap<String,Integer>();
+        ConfigurationSection entityLimits = getConfig().getConfigurationSection("general.entitylimits");
+        if (entityLimits != null) {
+            for (String entity: entityLimits.getKeys(false)) {
+                int limit = entityLimits.getInt(entity.toUpperCase(), -1);
+                if (limit > 0) {
+                    getLogger().info(entity.toUpperCase() + " will be limited to " + limit);
+                }
+                if (Material.getMaterial(entity.toUpperCase()) == null) {
+                    getLogger().warning("general.entitylimits section has unknown entity type: " + entity.toUpperCase() + " skipping...");
+                } else if (limit > -1) {
+                    Settings.limitedBlocks.put(entity.toUpperCase(), limit);
+                    if (entity.equalsIgnoreCase("REDSTONE_COMPARATOR")) {
+                        // Player can only ever place a redstone comparator in the OFF state
+                        Settings.limitedBlocks.put("REDSTONE_COMPARATOR_OFF", limit);
+                    } else if (entity.equalsIgnoreCase("BANNER")) {
+                        // To simplify banners, the banner is allowed and automatically made wall and standing banner
+                        Settings.limitedBlocks.put("WALL_BANNER", limit);
+                        Settings.limitedBlocks.put("STANDING_BANNER", limit);
+                    } else if (entity.equalsIgnoreCase("SIGN")) {
+                        // To simplify signs, the sign is allowed and automatically made wall and standing signs
+                        Settings.limitedBlocks.put("WALL_SIGN", limit);
+                        Settings.limitedBlocks.put("SIGN_POST", limit);
+                    }
+                }
+            }
+        }
+        // Legacy setting support for hopper limiting
+        if (Settings.limitedBlocks.isEmpty()) {
+            Settings.hopperLimit = getConfig().getInt("general.hopperlimit", -1);
+            if (Settings.hopperLimit > 0) {
+                Settings.limitedBlocks.put("HOPPER", Settings.hopperLimit);
+            }
+        }
+        Settings.mobLimit = getConfig().getInt("general.moblimit", 0);
+        Settings.removeCompleteOntimeChallenges = getConfig().getBoolean("general.removecompleteonetimechallenges", false);
+        Settings.addCompletedGlow = getConfig().getBoolean("general.addcompletedglow", true);
+        // Clean up blocks around edges when deleting islands
+        Settings.cleanUpBlocks = getConfig().getBoolean("island.cleanupblocks",false);
+        Settings.cleanRate = getConfig().getInt("island.cleanrate", 2);
+        if (Settings.cleanRate < 1) {
+            Settings.cleanRate = 1;
+        }
+        // No acid bottles or buckets
+        Settings.acidBottle = getConfig().getBoolean("general.acidbottles", true);
+        // Island name length
+        Settings.minNameLength = getConfig().getInt("island.minnamelength", 1);
+        Settings.maxNameLength = getConfig().getInt("island.maxnamelength", 20);
+        if (Settings.minNameLength < 0) {
+            Settings.minNameLength = 0;
+        }
+        if (Settings.maxNameLength < 1) {
+            Settings.maxNameLength = 1;
+        }
+        if (Settings.minNameLength > Settings.maxNameLength) {
+            Settings.minNameLength = Settings.maxNameLength;
+        }
+        // All done
+        return true;
+    }
 
 	/**
 	 * Registers events
