@@ -2450,10 +2450,29 @@ public class IslandGuard implements Listener {
             //plugin.getLogger().info("DEBUG: " + p.getItemInHand());
             // Handle village trading
             if (e.getRightClicked() != null && e.getRightClicked().getType().equals(EntityType.VILLAGER)) {
-                if ((!island.getIgsFlag(Flags.allowVillagerTrading) && !island.getMembers().contains(p.getUniqueId()))) {
-                    e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
-                    e.setCancelled(true);
-                    return;
+                if (island != null) {
+                    if (DEBUG) {
+                        plugin.getLogger().info("DEBUG: island is not null");
+                        if (island.isSpawn()) {
+                            plugin.getLogger().info("DEBUG: island is spawn");
+                            plugin.getLogger().info("DEBUG: villager trading is " + Settings.allowSpawnVillagerTrading);
+                        } else {
+                            plugin.getLogger().info("DEBUG: island is not spawn");
+                            plugin.getLogger().info("DEBUG: villager trading is " + island.getIgsFlag(Flags.allowVillagerTrading));
+                        }
+                    }
+                    if (island.isSpawn()) {
+                        if (!Settings.allowSpawnVillagerTrading) {
+                            e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
+                            e.setCancelled(true);
+                        }
+                        return;  
+                    }
+                    if ((!island.getIgsFlag(Flags.allowVillagerTrading) && !island.getMembers().contains(p.getUniqueId()))) {
+                        e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
+                        e.setCancelled(true);
+                        return;
+                    }
                 }
             }
             // Handle name tags and dyes
