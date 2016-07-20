@@ -1292,6 +1292,7 @@ public class ASkyBlock extends JavaPlugin {
         Settings.allowSpawnWaterCollection = getConfig().getBoolean("spawn.allowwatercollection", false);
         Settings.allowSpawnVisitorItemDrop = getConfig().getBoolean("spawn.allowvisitoritemdrop", true);
         Settings.allowSpawnVisitorItemPickup = getConfig().getBoolean("spawn.allowvisitoritempickup", true);
+        Settings.allowSpawnVillagerTrading = getConfig().getBoolean("spawn.allowvillagertrading", true);
         Settings.allowSpawnArmorStandUse = getConfig().getBoolean("spawn.allowarmorstanduse",false);
         Settings.allowSpawnBedUse = getConfig().getBoolean("spawn.allowbeduse",false);
         Settings.allowSpawnBreeding = getConfig().getBoolean("spawn.allowbreeding",false);

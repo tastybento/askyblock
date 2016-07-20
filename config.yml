@@ -574,6 +574,7 @@ spawn:
   allowpressureplates: true
   allowvisitoritemdrop: true
   allowvisitoritempickup: true
+  allowvillagertrading: true
 
   # The following are recommended to be false at spawn, but you can change
   allowbreakblocks: false

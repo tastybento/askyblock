@@ -284,4 +284,5 @@ public class Settings {
     public static boolean teamJoinDeathReset;
     public static boolean allowAutoActivator;
     public static boolean netherRoof;
+    public static boolean allowSpawnVillagerTrading;
 }
