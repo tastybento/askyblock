@@ -497,6 +497,7 @@ public class ASLocale {
     public String igsSettingsSpawnTitle;
     public String igsSettingsSpawnDesc;
     public String igsVillagerTrading;
+    public String igsChorusFruit;
 
 
     public String setHomeerrorNumHomes;
@@ -816,7 +817,8 @@ public class ASLocale {
         igsHorseInvAccess = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.horseinventoryaccess", "Horse inv access when riding"));	
         igsPressurePlate = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.pressureplate", "Activate pressure plates"));	
         igsPistonPush = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.pistonpush", "Pistons can push blocks outside island area"));	
-        igsVillagerTrading = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.villagertrading", "Villager trading")); 
+        igsVillagerTrading = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.villagertrading", "Villager trading"));
+        igsChorusFruit = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.chorusfruit", "Chorus Fruit Use"));
 
         lavaTip = ChatColor.translateAlternateColorCodes('&', locale.getString("lavaTip", "Changing obsidian back into lava. Be careful!"));
         warpswelcomeLine = ChatColor.translateAlternateColorCodes('&', locale.getString("warps.welcomeLine", "[WELCOME]"));

@@ -345,32 +345,78 @@ public class PlayerEvents implements Listener {
         //plugin.getLogger().info("DEBUG: From : " + e.getFrom());
         //plugin.getLogger().info("DEBUG: To : " + e.getTo());
         // Teleporting to a locked island
+        Island islandFrom = plugin.getGrid().getProtectedIslandAt(e.getFrom());
         Island islandTo = plugin.getGrid().getProtectedIslandAt(e.getTo());
-        // Ender pearl teleport check
-        if (e.getCause() != null && e.getCause().equals(TeleportCause.ENDER_PEARL)) {
-            if (islandTo == null) {
-                if (Settings.allowEnderPearls) {
-                    return;
-                }
-            } else {
-                if (islandTo.isSpawn()) {
-                    if (Settings.allowSpawnEnderPearls) {
+        // Ender pearl and chorus fruit teleport checks
+        if (e.getCause() != null) {
+            if (e.getCause().equals(TeleportCause.ENDER_PEARL)) {
+                if (islandTo == null) {
+                    if (Settings.allowEnderPearls) {
                         return;
                     }
                 } else {
-                    // Regular island
-                    if (islandTo.getIgsFlag(Flags.allowEnderPearls) || islandTo.getMembers().contains(e.getPlayer().getUniqueId())) {
-                        return;
+                    if (islandTo.isSpawn()) {
+                        if (Settings.allowSpawnEnderPearls) {
+                            return;
+                        }
+                    } else {
+                        // Regular island
+                        if (islandTo.getIgsFlag(Flags.allowEnderPearls) || islandTo.getMembers().contains(e.getPlayer().getUniqueId())) {
+                            return;
+                        }
                     }
-                }	
+                }
+                e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
+                e.setCancelled(true);
+                return;
+            } else if (!plugin.getServer().getVersion().contains("(MC: 1.8")
+                    && !plugin.getServer().getVersion().contains("(MC: 1.7")) {
+                // Chorus fruit only exist in 1.9 and above
+                if (e.getCause().equals(TeleportCause.CHORUS_FRUIT)) {
+                    boolean cancel = false;
+                    // Check both from and to islands
+                    if (islandTo == null) {
+                        if (!Settings.allowChorusFruit) {
+                            cancel = true;
+                        }
+                    } else {
+                        if (islandTo.isSpawn()) {
+                            if (!Settings.allowSpawnChorusFruit) {
+                                cancel = true;
+                            }
+                        } else {
+                            // Regular island
+                            if (!islandTo.getIgsFlag(Flags.allowChorusFruit) && !islandTo.getMembers().contains(e.getPlayer().getUniqueId())) {
+                                cancel = true;
+                            }
+                        }
+                    }
+                    if (islandFrom == null) {
+                        if (!Settings.allowChorusFruit) {
+                            cancel = true;
+                        }
+                    } else {
+                        if (islandFrom.isSpawn()) {
+                            if (!Settings.allowSpawnChorusFruit) {
+                                cancel = true;
+                            }
+                        } else {
+                            // Regular island
+                            if (!islandFrom.getIgsFlag(Flags.allowChorusFruit) && !islandFrom.getMembers().contains(e.getPlayer().getUniqueId())) {
+                                cancel = true;
+                            }
+                        }
+                    }
+                    if (cancel) {
+                        e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
+                        e.setCancelled(true);
+                    }
+                    return;
+                }
             }
-            e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
-            e.setCancelled(true);
-            return;
         }
 
         // Announcement entering
-        Island islandFrom = plugin.getGrid().getProtectedIslandAt(e.getFrom());
         // Only says something if there is a change in islands
         /*
          * Teleport Situations:
