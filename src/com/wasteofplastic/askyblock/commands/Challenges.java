@@ -981,25 +981,25 @@ public class Challenges implements CommandExecutor, TabCompleter {
                         }
                         reqAmount = Integer.parseInt(part[1]);
                         ItemStack item = new ItemStack(reqItem);
-                        // plugin.getLogger().info("DEBUG: required item = " +
-                        // reqItem.toString());
+                        //plugin.getLogger().info("DEBUG: required item = " + reqItem.toString());
                         // plugin.getLogger().info("DEBUG: item amount = " +
                         // reqAmount);
 
                         if (!player.getInventory().contains(reqItem)) {
+                            //plugin.getLogger().info("DEBUG: item not in inventory");
                             return false;
                         } else {
                             // check amount
                             int amount = 0;
-                            // plugin.getLogger().info("DEBUG: Amount in inventory = "
-                            // + player.getInventory().all(reqItem).size());
+                            //plugin.getLogger().info("DEBUG: Amount in inventory = " + player.getInventory().all(reqItem).size());
                             // Go through all the inventory and try to find
                             // enough required items
                             for (Entry<Integer, ? extends ItemStack> en : player.getInventory().all(reqItem).entrySet()) {
                                 // Get the item
                                 ItemStack i = en.getValue();
                                 // If the item is enchanted, skip - it doesn't count
-                                if (i.hasItemMeta()) {
+                                if (!i.getEnchantments().isEmpty()) {
+                                    //plugin.getLogger().info("DEBUG: item has enchantment - doesn't count");
                                     continue;
                                 }
                                 // Map needs special handling because the
