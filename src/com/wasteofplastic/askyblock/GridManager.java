@@ -328,7 +328,9 @@ public class GridManager {
                                                         int index = 0;
                                                         // Run through the enum and set
                                                         for (Flags flag : Flags.values()) {
-                                                            newIsland.setIgsFlag(flag, split[8].charAt(index++) == '1' ? true : false);
+                                                            if (index < split[8].length()) {
+                                                                newIsland.setIgsFlag(flag, split[8].charAt(index++) == '1' ? true : false);
+                                                            }
                                                         }
                                                     } 
                                                 }
