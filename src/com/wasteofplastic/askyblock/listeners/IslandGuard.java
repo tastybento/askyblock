@@ -1102,11 +1102,11 @@ public class IslandGuard implements Listener {
         // Check to see if it's an item frame
         if (e.getEntity() instanceof ItemFrame || e.getEntityType().toString().endsWith("STAND")) {
             // Spawn check
-            if (Settings.allowSpawnBreakBlocks && island.isSpawn()) {
+            if (Settings.allowSpawnBreakBlocks && island != null && island.isSpawn()) {
                 return;
             }
             // Normal island check
-            if (island.getIgsFlag(Flags.allowBreakBlocks) || island.getMembers().contains(attacker.getUniqueId())) {
+            if (island != null && island.getIgsFlag(Flags.allowBreakBlocks) || island.getMembers().contains(attacker.getUniqueId())) {
                 return;
             }
             // Else not allowed
@@ -1117,7 +1117,7 @@ public class IslandGuard implements Listener {
         // Monsters being hurt
         if (e.getEntity() instanceof Monster || e.getEntity() instanceof Slime || e.getEntity() instanceof Squid) {
             // Normal island check
-            if (island.getMembers().contains(attacker.getUniqueId())) {
+            if (island != null && island.getMembers().contains(attacker.getUniqueId())) {
                 // Members always allowed
                 return;
             }
@@ -1147,11 +1147,11 @@ public class IslandGuard implements Listener {
         if (e.getEntity() instanceof Animals || e.getEntity() instanceof IronGolem || e.getEntity() instanceof Snowman
                 || e.getEntity() instanceof Villager) {
             // Spawn check
-            if (island.isSpawn() && Settings.allowSpawnAnimalKilling) {
+            if (island != null && island.isSpawn() && Settings.allowSpawnAnimalKilling) {
                 return;
             }
             // Normal island check
-            if (island.getIgsFlag(Flags.allowHurtMobs) || island.getMembers().contains(attacker.getUniqueId())) {
+            if (island != null && (island.getIgsFlag(Flags.allowHurtMobs) || island.getMembers().contains(attacker.getUniqueId()))) {
                 return;
             }
             if (DEBUG)
@@ -1167,9 +1167,9 @@ public class IslandGuard implements Listener {
         // Establish whether PVP is allowed or not. 
         boolean pvp = false;
         // On an island or at spawn
-        if (island.isSpawn() && Settings.allowSpawnPVP) {
+        if (island != null && island.isSpawn() && Settings.allowSpawnPVP) {
             pvp = true;
-        } else if ((inNether && island.getIgsFlag(Flags.allowNetherPvP) || (!inNether && island.getIgsFlag(Flags.allowPvP)))) {
+        } else if ((inNether && island != null && island.getIgsFlag(Flags.allowNetherPvP) || (!inNether && island != null && island.getIgsFlag(Flags.allowPvP)))) {
             if (DEBUG) plugin.getLogger().info("DEBUG: PVP allowed");
             pvp = true;
         }
@@ -1187,158 +1187,7 @@ public class IslandGuard implements Listener {
             }
         }
     }
-    /*
 
-
-
-	if (debug)
-	    plugin.getLogger().info("DEBUG: Entity is " + e.getEntity().toString());
-	// Check for player initiated damage
-	if (e.getDamager() instanceof Player) {
-	    // plugin.getLogger().info("Damager is " +
-	    // ((Player)e.getDamager()).getName());
-	    // If the target is not a player check if mobs or animals can be
-	    // hurt
-	    if (!(e.getEntity() instanceof Player)) {
-		Location targetLoc = e.getEntity().getLocation();
-		// Check monsters
-		if (e.getEntity() instanceof Monster || e.getEntity() instanceof Slime || e.getEntity() instanceof Squid) {
-		    if (debug)
-			plugin.getLogger().info("Entity is a monster - ok to hurt");
-		    // At spawn?
-		    if (plugin.getGrid().isAtSpawn(targetLoc)) {
-			if (!Settings.allowSpawnMobKilling) {
-			    Player player = (Player) e.getDamager();
-			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).islandProtected);
-			    e.setCancelled(true);
-			    return;
-			}
-			return;
-		    }
-		    // Monster has to be on player's island.
-		    if (!plugin.getGrid().locationIsOnIsland((Player) e.getDamager(), e.getEntity().getLocation())) {
-			if (!Settings.allowHurtMonsters) {
-			    Player player = (Player) e.getDamager();
-			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).islandProtected);
-			    e.setCancelled(true);
-			    return;
-			}
-		    }
-		    return;
-		}
-		if (e.getEntity() instanceof Animals) {
-		    // plugin.getLogger().info("Entity is a non-monster - check if ok to hurt");
-		    // At spawn?
-		    if (plugin.getGrid().isAtSpawn(e.getEntity().getLocation())) {
-			if (!Settings.allowSpawnAnimalKilling) {
-			    Player player = (Player) e.getDamager();
-			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).islandProtected);
-			    e.setCancelled(true);
-			    return;
-			}
-			return;
-		    }
-		    if ((island == null && !Settings.allowHurtMobs) 
-			    || (island != null && !island.getIgsFlag(Flags.allowHurtMobs) 
-			    && !island.getMembers().contains(e.getDamager().getUniqueId()))) {
-			// Mob has to be on damager's island
-			Player player = (Player) e.getDamager();
-			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).islandProtected);
-			e.setCancelled(true);
-			return;
-		    }
-		    return;
-		}
-		// Other entities
-
-		switch (e.getEntityType()) {
-		case IRON_GOLEM:
-		case SNOWMAN:
-		case VILLAGER:
-		    if ((island == null && !Settings.allowHurtMobs) || (island != null && !island.getIgsFlag(Flags.allowHurtMobs) 
-		    && !island.getMembers().contains(e.getDamager().getUniqueId()))) {
-			Player player = (Player) e.getDamager();
-			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).islandProtected);
-			e.setCancelled(true);
-			return;
-		    }
-		    break;
-		default:
-		    break;
-
-		}
-		return;
-	    } else {
-		// PVP
-		// If PVP is okay then return
-		if (pvp) {
-		    return;
-		}
-		if (debug) plugin.getLogger().info("PVP not allowed");
-	    }
-
-	}
-	// Check for projectiles
-	//plugin.getLogger().info("DEBUG: projectile");
-	// Only damagers who are players or arrows are left
-	// Handle splash potions separately.
-	if (e.getDamager() instanceof Projectile) {
-	    if (debug) plugin.getLogger().info("DEBUG: Projectile attack");
-	    Projectile projectile = (Projectile) e.getDamager();
-	    // It really is a projectile
-	    if (projectile.getShooter() instanceof Player) {
-		Player shooter = (Player) projectile.getShooter();
-		if (debug) plugin.getLogger().info("Player arrow attack");
-		if (e.getEntity() instanceof Player) {
-		    if (debug) plugin.getLogger().info("Player vs Player!");
-		    // If this is self-inflicted damage, e.g., harming thrown potions then it is ok
-		    if (shooter.equals((Player)e.getEntity())) {
-			if (debug) plugin.getLogger().info("Self damage!");
-			return;
-		    }
-		    // Projectile shot by a player at another player
-		    if (!pvp) {
-			if (debug) plugin.getLogger().info("Target player is in a no-PVP area! projected shot by a player at another player");
-			shooter.sendMessage(ChatColor.RED + plugin.myLocale(shooter.getUniqueId()).targetInNoPVPArea);
-			e.setCancelled(true);
-			return;
-		    }
-		} else {
-		    // Damaged entity is NOT a player, but player is the shooter
-		    if (!(e.getEntity() instanceof Monster) && !(e.getEntity() instanceof Slime) && !(e.getEntity() instanceof Squid)) {
-			if (debug) plugin.getLogger().info("Entity is a non-monster - check if ok to hurt");
-			if (!Settings.allowHurtMobs) {
-			    if (!plugin.getGrid().locationIsOnIsland((Player) projectile.getShooter(), e.getEntity().getLocation())) {
-				shooter.sendMessage(ChatColor.RED + plugin.myLocale(shooter.getUniqueId()).islandProtected);
-				e.setCancelled(true);
-				return;
-			    }
-			}
-			return;
-		    } else {
-			if (!Settings.allowHurtMonsters) {
-			    if (!plugin.getGrid().locationIsOnIsland(shooter, e.getEntity().getLocation())) {
-				shooter.sendMessage(ChatColor.RED + plugin.myLocale(shooter.getUniqueId()).islandProtected);
-				e.setCancelled(true);
-				return;
-			    }
-			}
-		    }
-		}
-	    }
-	} else if (e.getDamager() instanceof Player) {
-	    if (debug) plugin.getLogger().info("DEBUG: Player attack");
-	    // Just a player attack
-	    if (!pvp) {
-		Player player = (Player) e.getDamager();
-		player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).targetInNoPVPArea);
-		e.setCancelled(true);
-		return;
-	    }
-	}
-	return;
-    }
-     */
     /**
      * Prevents placing of blocks
      * 
@@ -1493,7 +1342,7 @@ public class IslandGuard implements Listener {
             Island island = plugin.getGrid().getProtectedIslandAt(e.getBlock().getLocation());
             // Island exists, check for leash use
             if (e.getEntity() != null && e.getEntity().getType().equals(EntityType.LEASH_HITCH)) {
-                if (island.isSpawn()) {
+                if (island != null && island.isSpawn()) {
                     if (!Settings.allowSpawnLeashUse) {
                         // Visitor
                         e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
@@ -1501,7 +1350,7 @@ public class IslandGuard implements Listener {
                         return;
                     }
                 } else {
-                    if (!island.getIgsFlag(Flags.allowLeashUse) && !island.getMembers().contains(e.getPlayer().getUniqueId())) {
+                    if (island != null && !island.getIgsFlag(Flags.allowLeashUse) && !island.getMembers().contains(e.getPlayer().getUniqueId())) {
                         // Visitor
                         e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                         e.setCancelled(true);
