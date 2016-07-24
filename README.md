@@ -1,3 +1,4 @@
+[![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/Tastybento/askyblock.svg)](http://isitmaintained.com/project/Tastybento/askyblock "Average time to resolve an issue") [![Percentage of issues still open](http://isitmaintained.com/badge/open/Tastybento/askyblock.svg)](http://isitmaintained.com/project/Tastybento/askyblock "Percentage of issues still open")
 ASkyBlock
 ==========
 
