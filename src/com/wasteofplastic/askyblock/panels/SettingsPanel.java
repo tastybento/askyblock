@@ -186,15 +186,11 @@ public class SettingsPanel implements Listener {
             ip.add(new IPItem(Settings.allowPvP, Material.ARROW, plugin.myLocale(uuid).igsPVP));
             ip.add(new IPItem(Settings.allowNetherPvP, Material.NETHERRACK, plugin.myLocale(uuid).igsNetherPVP));
             ip.add(new IPItem(Settings.allowSpawnRedStone, Material.REDSTONE_COMPARATOR, plugin.myLocale(uuid).igsRedstone));
-<<<<<<< HEAD
             ip.add(new IPItem(Settings.allowSpawnShearing, Material.SHEARS, plugin.myLocale(uuid).igsShears));
             ip.add(new IPItem(Settings.allowSpawnVillagerTrading, Material.EMERALD, plugin.myLocale(uuid).igsVillagerTrading));
-=======
-            ip.add(new IPItem(Settings.allowShearing, Material.SHEARS, plugin.myLocale(uuid).igsShears));
             if (hasChorusFruit) {
                 ip.add(new IPItem(Settings.allowSpawnChorusFruit, Material.CHORUS_FRUIT, plugin.myLocale(uuid).igsChorusFruit));
             }
->>>>>>> refs/remotes/origin/master
         } else {
             // Standard island
             ip.add(new IPItem(Material.MAP, plugin.myLocale(uuid).igsSettingsIslandTitle, plugin.myLocale(uuid).igsSettingsIslandDesc));
