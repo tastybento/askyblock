@@ -218,7 +218,7 @@ permissions:
           askyblock.settings.allowShearing:
             description: Allow player to change this island guard setting
             default: false
-          askyblock.settings.allowVilagerTrading:
+          askyblock.settings.allowVillagerTrading:
             description: Allow player to change this island guard setting
             default: false
       askyblock.mod.*:
