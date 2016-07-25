@@ -166,6 +166,7 @@ challenges:
   moneyReward: "Money reward"
   name: "Challenge Name"
   nameHasCompleted: "[name] has completed the [challenge] challenge!"
+  navigation: "Click to see [level] challenges!"
   notRepeatable: "This Challenge is not repeatable!"
   repeatRewards: "Repeat reward(s)"
   rewards: "Reward(s)"
