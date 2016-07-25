@@ -43,10 +43,13 @@ public class SettingsPanel implements Listener {
     // Island Guard Settings Panel
     private ASkyBlock plugin;
     private Class<?> clazz;
+    private static boolean hasChorusFruit;
     private HashMap<UUID,Long> pvpCoolDown = new HashMap<UUID,Long>();
 
     private static HashMap<Material,Flags> lookup = new HashMap<Material,Flags>();
     static {
+        hasChorusFruit = (Material.getMaterial("CHORUS_FRUIT") != null);
+
         lookup.put( Material.ANVIL,Flags.allowAnvilUse);
         lookup.put( Material.BEACON,Flags.allowBeaconAccess);
         lookup.put( Material.BED,Flags.allowBedUse);
@@ -76,6 +79,9 @@ public class SettingsPanel implements Listener {
         lookup.put( Material.REDSTONE_COMPARATOR,Flags.allowRedStone);
         lookup.put( Material.SHEARS,Flags.allowShearing);
         lookup.put( Material.EMERALD,Flags.allowVillagerTrading);
+        if (hasChorusFruit) {
+            lookup.put( Material.CHORUS_FRUIT,Flags.allowEnderPearls);
+        }
     }
 
     public SettingsPanel(ASkyBlock plugin) {
@@ -142,6 +148,9 @@ public class SettingsPanel implements Listener {
             ip.add(new IPItem(Settings.allowVisitorItemPickup, Material.DIAMOND, plugin.myLocale(uuid).igsVisitorPickUp));
             ip.add(new IPItem(Settings.allowVisitorKeepInvOnDeath, Material.IRON_CHESTPLATE, plugin.myLocale(uuid).igsVisitorKeep));
             ip.add(new IPItem(Settings.allowVillagerTrading, Material.EMERALD, plugin.myLocale(uuid).igsVillagerTrading));
+            if (hasChorusFruit) {
+                ip.add(new IPItem(Settings.allowChorusFruit, Material.CHORUS_FRUIT, plugin.myLocale(uuid).igsChorusFruit));
+            }
             // Place new settings here
 
         } else if (island.isSpawn()) {
@@ -177,8 +186,15 @@ public class SettingsPanel implements Listener {
             ip.add(new IPItem(Settings.allowPvP, Material.ARROW, plugin.myLocale(uuid).igsPVP));
             ip.add(new IPItem(Settings.allowNetherPvP, Material.NETHERRACK, plugin.myLocale(uuid).igsNetherPVP));
             ip.add(new IPItem(Settings.allowSpawnRedStone, Material.REDSTONE_COMPARATOR, plugin.myLocale(uuid).igsRedstone));
+<<<<<<< HEAD
             ip.add(new IPItem(Settings.allowSpawnShearing, Material.SHEARS, plugin.myLocale(uuid).igsShears));
             ip.add(new IPItem(Settings.allowSpawnVillagerTrading, Material.EMERALD, plugin.myLocale(uuid).igsVillagerTrading));
+=======
+            ip.add(new IPItem(Settings.allowShearing, Material.SHEARS, plugin.myLocale(uuid).igsShears));
+            if (hasChorusFruit) {
+                ip.add(new IPItem(Settings.allowSpawnChorusFruit, Material.CHORUS_FRUIT, plugin.myLocale(uuid).igsChorusFruit));
+            }
+>>>>>>> refs/remotes/origin/master
         } else {
             // Standard island
             ip.add(new IPItem(Material.MAP, plugin.myLocale(uuid).igsSettingsIslandTitle, plugin.myLocale(uuid).igsSettingsIslandDesc));
@@ -214,6 +230,9 @@ public class SettingsPanel implements Listener {
             ip.add(new IPItem(island.getIgsFlag(Flags.allowRedStone), Material.REDSTONE_COMPARATOR, plugin.myLocale(uuid).igsRedstone));
             ip.add(new IPItem(island.getIgsFlag(Flags.allowShearing), Material.SHEARS, plugin.myLocale(uuid).igsShears));
             ip.add(new IPItem(island.getIgsFlag(Flags.allowVillagerTrading), Material.EMERALD, plugin.myLocale(uuid).igsVillagerTrading));
+            if (hasChorusFruit) {
+                ip.add(new IPItem(island.getIgsFlag(Flags.allowChorusFruit), Material.CHORUS_FRUIT, plugin.myLocale(uuid).igsChorusFruit));
+            }
         }
         if (ip.size() > 0) {
             // Make sure size is a multiple of 9

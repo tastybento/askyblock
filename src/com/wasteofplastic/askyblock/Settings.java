@@ -107,6 +107,7 @@ public class Settings {
     public static boolean allowRedStone;
     public static boolean allowShearing;
     public static boolean allowVillagerTrading;
+    public static boolean allowChorusFruit;
 
     // System settings
     public static boolean allowChestDamage;
@@ -181,6 +182,7 @@ public class Settings {
     public static boolean allowSpawnEnderPearls;
     public static boolean allowSpawnLeashUse;
     public static boolean allowSpawnShearing;
+    public static boolean allowSpawnChorusFruit;
 
     // Levels
     public static HashMap<MaterialData, Integer> blockLimits;
