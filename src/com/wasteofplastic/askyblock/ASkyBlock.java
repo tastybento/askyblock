@@ -1259,6 +1259,7 @@ public class ASkyBlock extends JavaPlugin {
 		Settings.allowHorseRiding = getConfig().getBoolean("island.allowhorseriding", false);
 		Settings.allowHorseInvAccess = getConfig().getBoolean("island.allowhorseinventoryaccess", false);
 		Settings.allowVillagerTrading = getConfig().getBoolean("island.allowvillagertrading", true);
+		Settings.allowChorusFruit = getConfig().getBoolean("island.allowchorusfruit", false);
 		// Spawn Settings
 		Settings.allowSpawnCreeperPain = getConfig().getBoolean("spawn.allowcreeperpain", false);
 		Settings.allowSpawnHorseRiding = getConfig().getBoolean("spawn.allowhorseriding", false);
@@ -1297,7 +1298,7 @@ public class ASkyBlock extends JavaPlugin {
 		Settings.allowSpawnCropTrample = getConfig().getBoolean("spawn.allowcroptrample",false);
 		Settings.allowSpawnEnderPearls = getConfig().getBoolean("spawn.allowenderpearls",false);
 		Settings.allowSpawnLeashUse = getConfig().getBoolean("spawn.allowleashuse",false);
-		Settings.allowSpawnShearing = getConfig().getBoolean("spawn.allowshearing",false);
+		Settings.allowSpawnChorusFruit = getConfig().getBoolean("spawn.allowchorusfruit", false);
 
 		// Challenges
 		getChallenges();

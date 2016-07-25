@@ -302,6 +302,7 @@ islandguardsettings:
   bucket: "Uso del cubo"
   chest: "Uso del cofre"
   chestdamage: "Daño de cofre por tnt"
+  chorusfruit: "Uso de la fruta coral"
   creeperdamage: "Daño de creeper"
   creepergriefing: "Destrucción por Creeper"
   croptrample: "Pisoteo de cultivos"

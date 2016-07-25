@@ -120,7 +120,8 @@ public class Island implements Cloneable {
         allowNetherPvP,
         allowRedStone,
         allowShearing,
-        allowVillagerTrading
+        allowVillagerTrading,
+        allowChorusFruit
     }
 
 
@@ -261,6 +262,7 @@ public class Island implements Cloneable {
         this.igs.put(Flags.allowRedStone, Settings.allowRedStone);
         this.igs.put(Flags.allowShearing, Settings.allowShearing);
         this.igs.put(Flags.allowVillagerTrading, Settings.allowVillagerTrading);
+        this.igs.put(Flags.allowChorusFruit, Settings.allowChorusFruit);
     }
 
     /**

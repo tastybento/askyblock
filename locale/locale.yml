@@ -302,6 +302,7 @@ islandguardsettings:
   bucket: "Bucket use"
   chest: "Chest use"
   chestdamage: "Chest damage by TNT"
+  chorusfruit: "Chorus Fruit Use"
   creeperdamage: "Creeper damage"
   creepergriefing: "Creeper griefing"
   croptrample: "Crop trampling"
