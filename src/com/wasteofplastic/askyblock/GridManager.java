@@ -465,7 +465,11 @@ public class GridManager {
      * @return PlayerIsland object
      */
     public Island getIslandAt(Location location) {
-        if (location == null || (!location.getWorld().equals(ASkyBlock.getIslandWorld()) && !location.getWorld().equals(ASkyBlock.getNetherWorld()))) {
+        if (location == null) {
+            return null;
+        }
+        // World check
+        if (!inWorld(location)) {
             return null;
         }
         // Check if it is spawn
@@ -474,6 +478,23 @@ public class GridManager {
         }
         return getIslandAt(location.getBlockX(), location.getBlockZ());
     }
+
+    /**
+     * Determines if a location is in the island world or not or
+     * in the new nether if it is activated
+     * @param loc
+     * @return true if in the island world
+     */
+    protected boolean inWorld(Location loc) {
+        if (loc.getWorld().equals(ASkyBlock.getIslandWorld())) {
+            return true;
+        }
+        if (Settings.createNether && Settings.newNether && ASkyBlock.getNetherWorld() != null && loc.getWorld().equals(ASkyBlock.getNetherWorld())) {
+            return true;
+        }
+        return false;
+    }
+
 
     /**
      * Returns the island at the x,z location or null if there is none

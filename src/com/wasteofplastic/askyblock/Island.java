@@ -620,7 +620,9 @@ public class Island implements Cloneable {
         List<UUID> result = new ArrayList<UUID>();
         // Add any coop members for this island
         result.addAll(CoopPlay.getInstance().getCoopPlayers(center.toVector().toLocation(ASkyBlock.getIslandWorld())));
-        result.addAll(CoopPlay.getInstance().getCoopPlayers(center.toVector().toLocation(ASkyBlock.getNetherWorld())));
+        if (Settings.createNether && Settings.newNether && ASkyBlock.getNetherWorld() != null) {
+            result.addAll(CoopPlay.getInstance().getCoopPlayers(center.toVector().toLocation(ASkyBlock.getNetherWorld())));
+        }
         if (owner == null) {
             return result;
         }
