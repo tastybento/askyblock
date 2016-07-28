@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-import com.wasteofplastic.askyblock.events.IslandDeleteEvent;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -59,6 +58,8 @@ import com.wasteofplastic.askyblock.Settings.GameType;
 import com.wasteofplastic.askyblock.commands.AdminCmd;
 import com.wasteofplastic.askyblock.commands.Challenges;
 import com.wasteofplastic.askyblock.commands.IslandCmd;
+import com.wasteofplastic.askyblock.events.IslandDeleteEvent;
+import com.wasteofplastic.askyblock.events.ReadyEvent;
 import com.wasteofplastic.askyblock.generators.ChunkGeneratorWorld;
 import com.wasteofplastic.askyblock.listeners.AcidEffect;
 import com.wasteofplastic.askyblock.listeners.ChatListener;
@@ -450,6 +451,8 @@ public class ASkyBlock extends JavaPlugin {
 							CoopPlay.getInstance().loadCoops();
 						}
 						getLogger().info("All files loaded. Ready to play...");
+						// Fire event
+						getServer().getPluginManager().callEvent(new ReadyEvent());
 					}
 				});
 				// Check for updates asynchronously
