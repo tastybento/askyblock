@@ -782,7 +782,12 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
         int range = Settings.island_protectionRange;
         for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
             if (perms.getPermission().startsWith(Settings.PERMPREFIX + "island.range.")) {
-                range = Math.max(range, Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "island.range.")[1]));
+                if (perms.getPermission().contains(Settings.PERMPREFIX + "island.range.*")) {
+                    range = Settings.island_protectionRange;
+                    break;
+                } else {
+                    range = Math.max(range, Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "island.range.")[1]));
+                }
             }
         }
         // Do some sanity checking
@@ -1281,7 +1286,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                     if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.lang")) {
                         player.sendMessage("/" + label + " lang <#>");
                         displayLocales(player);
-                   } else {
+                    } else {
                         player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).errorNoPermission);
                     }
                     return true;
@@ -1575,8 +1580,13 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                 int maxHomes = Settings.maxHomes;
                 for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
                     if (perms.getPermission().startsWith(Settings.PERMPREFIX + "island.maxhomes.")) {
-                        // Get the max value should there be more than one
-                        maxHomes = Math.max(maxHomes, Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "island.maxhomes.")[1]));
+                        if (perms.getPermission().contains(Settings.PERMPREFIX + "island.maxhomes.*")) {
+                            maxHomes = Settings.maxHomes;
+                            break;
+                        } else {
+                            // Get the max value should there be more than one
+                            maxHomes = Math.max(maxHomes, Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "island.maxhomes.")[1]));
+                        }
                     }
                     // Do some sanity checking
                     if (maxHomes < 1) {
@@ -1773,8 +1783,13 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                             // Dynamic team sizes with permissions
                             for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
                                 if (perms.getPermission().startsWith(Settings.PERMPREFIX + "team.maxsize.")) {
-                                    // Get the max value should there be more than one
-                                    maxSize = Math.max(maxSize, Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "team.maxsize.")[1]));
+                                    if (perms.getPermission().contains(Settings.PERMPREFIX + "team.maxsize.*")) {
+                                        maxSize = Settings.maxTeamSize;
+                                        break;
+                                    } else {
+                                        // Get the max value should there be more than one
+                                        maxSize = Math.max(maxSize, Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "team.maxsize.")[1]));
+                                    }
                                 }
                                 // Do some sanity checking
                                 if (maxSize < 1) {
@@ -1936,8 +1951,13 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                         int maxSize = Settings.maxTeamSize;
                         for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
                             if (perms.getPermission().startsWith(Settings.PERMPREFIX + "team.maxsize.")) {
-                                // Get the max value should there be more than one
-                                maxSize = Math.max(maxSize, Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "team.maxsize.")[1]));
+                                if (perms.getPermission().contains(Settings.PERMPREFIX + "team.maxsize.*")) {
+                                    maxSize = Settings.maxTeamSize;
+                                    break;
+                                } else {
+                                    // Get the max value should there be more than one
+                                    maxSize = Math.max(maxSize, Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "team.maxsize.")[1]));
+                                }
                             }
                             // Do some sanity checking
                             if (maxSize < 1) {
@@ -2097,8 +2117,13 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                         int maxHomes = Settings.maxHomes;
                                         for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
                                             if (perms.getPermission().startsWith(Settings.PERMPREFIX + "island.maxhomes.")) {
-                                                // Get the max value should there be more than one
-                                                maxHomes = Math.max(maxHomes, Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "island.maxhomes.")[1]));
+                                                if (perms.getPermission().contains(Settings.PERMPREFIX + "island.maxhomes.*")) {
+                                                    maxHomes = Settings.maxHomes;
+                                                    break;
+                                                } else {
+                                                    // Get the max value should there be more than one
+                                                    maxHomes = Math.max(maxHomes, Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "island.maxhomes.")[1]));
+                                                }
                                             }
                                             // Do some sanity checking
                                             if (maxHomes < 1) {
@@ -2141,7 +2166,12 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                 for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
                                     if (perms.getPermission().startsWith(Settings.PERMPREFIX + "island.maxhomes.")) {
                                         // Get the max value should there be more than one
-                                        maxHomes = Math.max(maxHomes, Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "island.maxhomes.")[1]));
+                                        if (perms.getPermission().contains(Settings.PERMPREFIX + "island.maxhomes.*")) {
+                                            maxHomes = Settings.maxHomes;
+                                            break;
+                                        } else {
+                                            maxHomes = Math.max(maxHomes, Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "island.maxhomes.")[1]));
+                                        }
                                     }
                                     // Do some sanity checking
                                     if (maxHomes < 1) {
@@ -2346,8 +2376,13 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                             // Dynamic team sizes with permissions
                                             for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
                                                 if (perms.getPermission().startsWith(Settings.PERMPREFIX + "team.maxsize.")) {
-                                                    // Get the max value should there be more than one
-                                                    maxSize = Math.max(maxSize, Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "team.maxsize.")[1]));
+                                                    if (perms.getPermission().contains(Settings.PERMPREFIX + "team.maxsize.*")) {
+                                                        maxSize = Settings.maxTeamSize;
+                                                        break;
+                                                    } else {
+                                                        // Get the max value should there be more than one
+                                                        maxSize = Math.max(maxSize, Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "team.maxsize.")[1]));
+                                                    }
                                                 }
                                                 // Do some sanity checking
                                                 if (maxSize < 1) {
@@ -3221,8 +3256,13 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                     int maxHomes = Settings.maxHomes;
                     for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
                         if (perms.getPermission().startsWith(Settings.PERMPREFIX + "island.maxhomes.")) {
-                            // Get the max value should there be more than one
-                            maxHomes = Math.max(maxHomes, Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "island.maxhomes.")[1]));
+                            if (perms.getPermission().contains(Settings.PERMPREFIX + "island.maxhomes.*")) {
+                                maxHomes = Settings.maxHomes;
+                                break;
+                            } else {
+                                // Get the max value should there be more than one
+                                maxHomes = Math.max(maxHomes, Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "island.maxhomes.")[1]));
+                            }
                         }
                         // Do some sanity checking
                         if (maxHomes < 1) {
