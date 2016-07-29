@@ -1230,7 +1230,6 @@ public class IslandGuard implements Listener {
             if (island.getIgsFlag(Flags.allowPlaceBlocks) || island.getMembers().contains(e.getPlayer().getUniqueId()))  {
                 // Check how many placed
                 //plugin.getLogger().info("DEBUG: block placed " + e.getBlock().getType());
-                /*
                 String type = e.getBlock().getType().toString();
                 if (!e.getBlock().getState().getClass().getName().endsWith("CraftBlockState") 
                         // Not all blocks have that type of class, so we have to do some explicit checking...
@@ -1251,7 +1250,7 @@ public class IslandGuard implements Listener {
                             return;
                         }
                     }
-                }*/
+                }
             } else {
                 // Visitor
                 e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
