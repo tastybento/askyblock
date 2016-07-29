@@ -81,12 +81,12 @@ public class ChatListener implements Listener {
         if (playerLevels.containsKey(event.getPlayer().getUniqueId())) {
             level = playerLevels.get(event.getPlayer().getUniqueId());
         }
-        String format = event.getFormat().replace("{ISLAND_LEVEL}", level);
+        String format = event.getFormat().replace(Settings.chatLevelPrefix, level);
         level = "";
         if (playerChallengeLevels.containsKey(event.getPlayer().getUniqueId())) {
             level = playerChallengeLevels.get(event.getPlayer().getUniqueId());
         }
-        format = format.replace("{ISLAND_CHALLENGE_LEVEL}", level);
+        format = format.replace(Settings.chatChallengeLevelPrefix, level);
         event.setFormat(format);
         // Team chat
         if (Settings.teamChat && teamChatUsers.containsKey(event.getPlayer().getUniqueId())) {
@@ -113,7 +113,7 @@ public class ChatListener implements Listener {
             List<UUID> teamMembers = plugin.getPlayers().getMembers(player.getUniqueId());
             // Tell only the team members if they are online
             boolean onLine = false;
-            message = plugin.myLocale(playerUUID).teamChatPrefix.replace("{ISLAND_PLAYER}",player.getDisplayName()) + message;
+            message = plugin.myLocale(playerUUID).teamChatPrefix.replace(Settings.chatIslandPlayer,player.getDisplayName()) + message;
             for (UUID teamMember : teamMembers) {
                 Player teamPlayer = plugin.getServer().getPlayer(teamMember);
                 if (teamPlayer != null) {

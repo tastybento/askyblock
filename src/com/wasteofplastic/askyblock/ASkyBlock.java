@@ -792,6 +792,10 @@ public class ASkyBlock extends JavaPlugin {
             getLogger().warning("You should back up your world before running this");
             getLogger().warning("*********************************************************");
         }
+        // Chat prefixes
+        Settings.chatLevelPrefix = getConfig().getString("general.chatlevelprefix","{ISLAND_LEVEL}");
+        Settings.chatChallengeLevelPrefix = getConfig().getString("general.chatchallanegelevelprefix","{ISLAND_CHALLENGE_LEVEL}");
+        Settings.chatChallengeLevelPrefix = getConfig().getString("general.chatislandplayer","{ISLAND_PLAYER}");
         // Nether roof option
         Settings.netherRoof = getConfig().getBoolean("general.netherroof", true);
         // FTB Autoamtic Activators

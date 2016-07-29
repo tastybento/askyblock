@@ -287,4 +287,7 @@ public class Settings {
     public static boolean allowAutoActivator;
     public static boolean netherRoof;
     public static boolean allowSpawnVillagerTrading;
+    public static String chatLevelPrefix;
+    public static String chatChallengeLevelPrefix;
+    public static CharSequence chatIslandPlayer;
 }
