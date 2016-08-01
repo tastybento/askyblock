@@ -309,11 +309,11 @@ islandguardsettings:
   pvp: PvP
   redstone: "Redstone gebruiken"
   settingsgeneraltitle: "Generale eiland wereld instellingen"
-  settingsgeneraldesc: "Generale eiland wereld instellingwn"
+  settingsgeneraldesc: "Generale eiland wereld instellingen"
   settingsislandtitle: "Eiland instellingen"
-  settingsislanddesc: "These rules apply to visitors on this island"
-  settingsspawntitle: "Spawn Settings"
-  settingsspawndesc: "These rules apply at spawn"
+  settingsislanddesc: "Deze regels gelden voor de bezoekers van dit eiland"
+  settingsspawntitle: "Spawn Instellingen"
+  settingsspawndesc: "deze regels gelden bij een spawn"
   shears: "Schaar gebruiken"
   spawnegg: "Spawn eieren gebruiken"
   teleportwhenfalling: "Teleporteren tijdens vallen"
@@ -428,7 +428,7 @@ sign-acidisland:
   line2: "[player]"
   line3: "Water is zuur!"
   line4: Voorzichtig!
-targetInPVPArea: "Doel is in een geen PvP arena!"
+targetInPVPArea: "Doel is in een geen PvP gebied!"
 team: 
   listingMembers: "Luister naar je teamleden"
 teamchat: 
