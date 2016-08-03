@@ -1309,6 +1309,7 @@ public class ASkyBlock extends JavaPlugin {
 		Settings.allowSpawnCropTrample = getConfig().getBoolean("spawn.allowcroptrample",false);
 		Settings.allowSpawnEnderPearls = getConfig().getBoolean("spawn.allowenderpearls",false);
 		Settings.allowSpawnLeashUse = getConfig().getBoolean("spawn.allowleashuse",false);
+		Settings.allowSpawnVillagerTrading = getConfig().getBoolean("spawn.allowvillagertrading", false);
 		Settings.allowSpawnChorusFruit = getConfig().getBoolean("spawn.allowchorusfruit", false);
 
         // Challenges
