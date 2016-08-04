@@ -308,8 +308,8 @@ islandguardsettings:
   pressureplate: "Bezoekers activeren pressure plates"
   pvp: PvP
   redstone: "Redstone gebruiken"
-  settingsgeneraltitle: "Generale eiland wereld instellingen"
-  settingsgeneraldesc: "Generale eiland wereld instellingen"
+  settingsgeneraltitle: "Algemene eiland wereld instellingen"
+  settingsgeneraldesc: "Algemene eiland wereld instellingen"
   settingsislandtitle: "Eiland instellingen"
   settingsislanddesc: "Deze regels gelden voor de bezoekers van dit eiland"
   settingsspawntitle: "Spawn Instellingen"
@@ -427,8 +427,8 @@ sign-acidisland:
   line1: "&1[AcidIsland]"
   line2: "[player]"
   line3: "Water is zuur!"
-  line4: Voorzichtig!
-targetInPVPArea: "Doel is in een geen PvP gebied!"
+  line4: "Voorzichtig!"
+targetInPVPArea: "Doel is in een geen-PvP gebied!"
 team: 
   listingMembers: "Luister naar je teamleden"
 teamchat: 
