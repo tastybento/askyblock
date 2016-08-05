@@ -50,7 +50,7 @@ public class SchematicsPanel implements Listener {
      * Returns a customized panel of available Schematics for the player
      * 
      * @param player
-     * @return custom Inventory object
+     * @return custom Inventory object or null if there are no valid schematics for this player
      */
     public Inventory getPanel(Player player) {
         // Go through the available schematics for this player

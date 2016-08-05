@@ -1892,7 +1892,9 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
             } else if (split[0].equalsIgnoreCase("leave")) {
                 // Leave team command
                 if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.join")) {
-                    if (player.getWorld().getName().equalsIgnoreCase(ASkyBlock.getIslandWorld().getName())) {
+                    if (player.getWorld().equals(ASkyBlock.getIslandWorld()) || 
+                            (Settings.createNether && Settings.newNether && 
+                                    ASkyBlock.getNetherWorld() != null && player.getWorld().equals(ASkyBlock.getNetherWorld()))) {
                         if (plugin.getPlayers().inTeam(playerUUID)) {
                             if (plugin.getPlayers().getTeamLeader(playerUUID).equals(playerUUID)) {
                                 player.sendMessage(ChatColor.YELLOW + plugin.myLocale(player.getUniqueId()).leaveerrorYouAreTheLeader);
@@ -2963,7 +2965,12 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
             // A panel can only be shown if there is >1 viable schematic
             if (Settings.useSchematicPanel) {
                 pendingNewIslandSelection.add(player.getUniqueId());
-                player.openInventory(plugin.getSchematicsPanel().getPanel(player));
+                Inventory inv = plugin.getSchematicsPanel().getPanel(player);
+                if (inv != null) {
+                    player.openInventory(inv);
+                } else {
+                    plugin.getLogger().severe("There are no valid schematics available for " + player.getName() + "! Check config.yml schematicsection.");
+                }
             } else {
                 // No panel
                 // Check schematics for specific permission
