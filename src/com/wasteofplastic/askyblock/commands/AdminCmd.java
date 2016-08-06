@@ -2078,10 +2078,18 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                     playersIsland.getCenter().getBlockX() + "," + playersIsland.getCenter().getBlockZ())));
             plugin.getGrid().setIslandOwner(playersIsland, null);
         }
-
-        plugin.getPlayers().setHomeLocation(newOwner, island.getCenter());
+        if (sender instanceof Player && Settings.createNether && Settings.newNether && 
+                ((Player)sender).getWorld().equals(ASkyBlock.getNetherWorld())) {
+            // Island in new nether
+            plugin.getPlayers().setHomeLocation(newOwner, island.getCenter().toVector().toLocation(ASkyBlock.getNetherWorld()));
+            plugin.getPlayers().setIslandLocation(newOwner, island.getCenter().toVector().toLocation(ASkyBlock.getNetherWorld()));
+        } else {
+            // Island in overworld
+            plugin.getPlayers().setHomeLocation(newOwner, island.getCenter());
+            plugin.getPlayers().setIslandLocation(newOwner, island.getCenter());
+        }
         plugin.getPlayers().setHasIsland(newOwner, true);
-        plugin.getPlayers().setIslandLocation(newOwner, island.getCenter());
+
         // Change the grid
         plugin.getGrid().setIslandOwner(island, newOwner);
         return true;
@@ -2105,7 +2113,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                         "resetallchallenges", "purge", "info", "info", "info",
                         "clearreset", "clearresetall", "setbiome", "topbreeders", "team",
                         "name", "setdeaths",
-                        "resetname"));
+                        "resetname", "register"));
                 break;
             case 2:
                 if (args[0].equalsIgnoreCase("name") || args[0].equalsIgnoreCase("resetname") || args[0].equalsIgnoreCase("setdeaths")) {
@@ -2117,7 +2125,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 if (args[0].equalsIgnoreCase("resetsign")) {
                     options.addAll(Util.getOnlinePlayerList());
                 }
-                if (args[0].equalsIgnoreCase("unregister")) {
+                if (args[0].equalsIgnoreCase("unregister") || args[0].equalsIgnoreCase("register")) {
                     options.addAll(Util.getOnlinePlayerList());
                 }
                 if (args[0].equalsIgnoreCase("delete") || args[0].equalsIgnoreCase("resetchallenge")) {
