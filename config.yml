@@ -548,13 +548,19 @@ general:
    # This will regenerate any chunks with bedrock at y=0 when they are loaded
    recoversuperflat: false
    
-   # Allow coops to be permenant
+   # Allow coops to be permanent
    # If you change this, change the text in the locale files about coop ending due to
    # log out.
    persistentcoops: false
       
    # Allow FTB Autonomous Activator to work (will allow player
    autoactivator: false
+   
+   # Allow obsidian to be scooped up with an empty bucket back into lava
+   # This only works if there is a single block of obsidian (no obsidian within 10 blocks)
+   # Recommendation is to keep this true so that newbies don't bother you or reset their
+   # island unnecessarily.
+   allowobsidianscooping: true
    
    # Config.yml version. DO NOT EDIT. This number only changes if the latest
    # plugin config has been updated. If a new config is detected, it will be

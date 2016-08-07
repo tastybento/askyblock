@@ -792,6 +792,10 @@ public class ASkyBlock extends JavaPlugin {
             getLogger().warning("You should back up your world before running this");
             getLogger().warning("*********************************************************");
         }
+        
+        // Allow Obsidian Scooping
+        Settings.allowObsidianScooping = getConfig().getBoolean("general.allowobsidianscooping", true);
+        
         // Chat prefixes
         Settings.chatLevelPrefix = getConfig().getString("general.chatlevelprefix","{ISLAND_LEVEL}");
         Settings.chatChallengeLevelPrefix = getConfig().getString("general.chatchallanegelevelprefix","{ISLAND_CHALLENGE_LEVEL}");

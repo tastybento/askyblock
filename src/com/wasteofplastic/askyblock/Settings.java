@@ -289,5 +289,6 @@ public class Settings {
     public static boolean allowSpawnVillagerTrading;
     public static String chatLevelPrefix;
     public static String chatChallengeLevelPrefix;
-    public static CharSequence chatIslandPlayer;
+    public static String chatIslandPlayer;
+    public static boolean allowObsidianScooping;
 }

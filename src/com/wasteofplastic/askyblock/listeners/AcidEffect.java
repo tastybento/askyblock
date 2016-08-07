@@ -352,11 +352,12 @@ public class AcidEffect implements Listener {
      * 
      * @param e
      */
-    // Deprecation is due to the updateinventory that still is required for some
-    // reason.
-    // @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerInteract(final PlayerInteractEvent e) {
+        //plugin.getLogger().info("DEBUG: " + Settings.allowObsidianScooping);
+        if (!Settings.allowObsidianScooping) {
+            return;
+        }
         // Check that they are in the ASkyBlock world
         if (!e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
             return;
