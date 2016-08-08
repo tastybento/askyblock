@@ -167,6 +167,7 @@ challenges:
   name: "Challenge Name"
   nameHasCompleted: "[name] has completed the [challenge] challenge!"
   notRepeatable: "This Challenge is not repeatable!"
+  navigation: "Click to see [level] challenges!"
   repeatRewards: "Repeat reward(s)"
   rewards: "Reward(s)"
   toComplete: "Complete [challengesToDo] more [thisLevel] challenges to unlock this level!"
