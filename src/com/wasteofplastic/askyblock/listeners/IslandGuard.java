@@ -29,6 +29,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
+import org.bukkit.World.Environment;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -1800,33 +1801,6 @@ public class IslandGuard implements Listener {
         }
         // Get island
         Island island = plugin.getGrid().getProtectedIslandAt(e.getPlayer().getLocation());
-        /* This doesn't work because this event is not called when an ender pearl is thrown
-	// Ender pearl check
-	if(e.getAction().equals(Action.RIGHT_CLICK_AIR) || e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-	    if(e.getPlayer().getItemInHand().getType().equals(Material.ENDER_PEARL)) {
-		if (island == null) {
-		    if (Settings.allowEnderPearls) {
-			return;
-		    }
-		} else {
-		    if (island.isSpawn()) {
-			if (Settings.allowEnderPearls) {
-			    return;
-			}
-		    } else {
-			// Regular island
-			if (island.getIgsFlag(Flags.allowEnderPearls)) {
-			    return;
-			}
-		    }	
-		}
-		e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
-		e.setCancelled(true);
-		return;
-	    }
-	}
-         */
-
         // Check for disallowed clicked blocks
         if (e.getClickedBlock() != null) {
             if (DEBUG) {
@@ -2149,6 +2123,14 @@ public class IslandGuard implements Listener {
                     e.setCancelled(true);
                     return;
                 } else if (!island.getIgsFlag(Flags.allowBreakBlocks)) {
+                    e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
+                    e.setCancelled(true);
+                    return;
+                }
+                break;
+            case BED_BLOCK:
+                if (e.getPlayer().getWorld().getEnvironment().equals(Environment.NETHER)) {
+                    // Prevent explosions
                     e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                     e.setCancelled(true);
                     return;
