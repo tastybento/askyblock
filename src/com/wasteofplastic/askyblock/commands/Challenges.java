@@ -845,7 +845,8 @@ public class Challenges implements CommandExecutor, TabCompleter {
         // Check if this is an island-based challenge
         if (getChallengeConfig().getString("challenges.challengeList." + challenge + ".type").equalsIgnoreCase("island")) {
             // plugin.getLogger().info("DEBUG: 6");
-            if (!plugin.getGrid().playerIsOnIsland(player)) {
+            // Don't count coop islands
+            if (!plugin.getGrid().playerIsOnIsland(player, false)) {
                 player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).challengeserrorNotOnIsland);
                 return false;
             }
