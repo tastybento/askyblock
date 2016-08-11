@@ -657,10 +657,10 @@ biomes:
     friendlyname: "&eDesert"
     description: "&eA dry desert.|&eWarning - Ice or|&esnow have to go."
     #permission: any.perm.you.want
-  FOREST:
+  MUTATED_FOREST:
     icon: RED_ROSE
-    friendlyname: "&aForest"
-    description: "Trees!"
+    friendlyname: "&aFlower Forest"
+    description: "Trees and flowers!"
     #permission: any.perm.you.want
   HELL:
     icon: LAVA_BUCKET

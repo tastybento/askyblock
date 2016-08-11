@@ -1594,11 +1594,13 @@ public class Challenges implements CommandExecutor, TabCompleter {
                 return error;
             }
         }
-        // Only show a control panel for the level requested.
-        for (String challengeName : challengeList.get(level)) {
-            CPItem item = createItem(challengeName, player);
-            if (item != null) {
-                cp.add(item);
+        if (challengeList.get(level) != null) {
+            // Only show a control panel for the level requested.
+            for (String challengeName : challengeList.get(level)) {
+                CPItem item = createItem(challengeName, player);
+                if (item != null) {
+                    cp.add(item);
+                }
             }
         }
         // Add the missing levels so player can navigate to them
