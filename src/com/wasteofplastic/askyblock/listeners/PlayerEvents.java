@@ -256,14 +256,13 @@ public class PlayerEvents implements Listener {
         if (Settings.allowTeleportWhenFalling) {
             return;
         }
-        if (!e.getPlayer().getGameMode().equals(GameMode.SURVIVAL) || e.getPlayer().isOp()) {
+        if (!e.getPlayer().getGameMode().equals(GameMode.SURVIVAL) || e.getPlayer().isOp() || e.getPlayer().isFlying()) {
             return;
         }
         // Check if air below player
         // plugin.getLogger().info("DEBUG:" +
         // Math.round(e.getPlayer().getVelocity().getY()));
-        if ((Math.round(e.getPlayer().getVelocity().getY()) < 0L)
-                && e.getPlayer().getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.AIR
+        if (e.getPlayer().getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.AIR
                 && e.getPlayer().getLocation().getBlock().getType() == Material.AIR) {
             // plugin.getLogger().info("DEBUG: falling");
             setFalling(e.getPlayer().getUniqueId());
