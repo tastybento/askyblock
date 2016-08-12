@@ -217,8 +217,9 @@ public class ControlPanel implements Listener {
         // Challenges
         if (inventory.getName().equals(plugin.myLocale(player.getUniqueId()).challengesguiTitle)) {
             event.setCancelled(true);
-            if (event.getClick().equals(ClickType.SHIFT_RIGHT)) {
+            if (event.getClick().equals(ClickType.SHIFT_RIGHT)) {                    
                 player.closeInventory();
+                player.updateInventory();
                 return;
             }
             if (event.getSlotType() == SlotType.OUTSIDE) {
@@ -298,6 +299,11 @@ public class ControlPanel implements Listener {
                 player.closeInventory();
                 return;
             }
+            if (event.getClick().equals(ClickType.SHIFT_RIGHT)) {                    
+                player.closeInventory();
+                player.updateInventory();
+                return;
+            }
             if (store.containsKey(slot)) {
                 // We have a winner!
                 MiniShopItem item = store.get(slot);
@@ -370,6 +376,11 @@ public class ControlPanel implements Listener {
                 // plugin.getLogger().info("DEBUG: panel name " + panelName);
                 if (slot == -999) {
                     player.closeInventory(); 
+                    return;
+                }
+                if (event.getClick().equals(ClickType.SHIFT_RIGHT)) {                    
+                    player.closeInventory();
+                    player.updateInventory();
                     return;
                 }
                 HashMap<Integer, CPItem> thisPanel = panels.get(panelName);

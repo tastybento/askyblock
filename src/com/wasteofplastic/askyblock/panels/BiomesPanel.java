@@ -31,6 +31,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 
@@ -141,6 +142,13 @@ public class BiomesPanel implements Listener {
             event.setCancelled(true);
             return;
         }
+        if (event.getClick().equals(ClickType.SHIFT_RIGHT)) {
+            event.setCancelled(true);
+            player.closeInventory();
+            player.updateInventory();
+            return;
+        }
+
         // Get the list of items for this player
         List<BiomeItem> thisPanel = biomeItems.get(player.getUniqueId());
         if (thisPanel == null) {

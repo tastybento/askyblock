@@ -33,6 +33,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.inventory.Inventory;
@@ -221,6 +222,7 @@ public class WarpPanel implements Listener {
         return warpPanel.get(panelNumber);
     }
 
+    @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled=true)
     public void onInventoryClick(InventoryClickEvent event) {
         Inventory inventory = event.getInventory(); // The inventory that was clicked in
@@ -236,6 +238,11 @@ public class WarpPanel implements Listener {
         event.setCancelled(true);
         if (event.getSlotType().equals(SlotType.OUTSIDE)) {
             player.closeInventory();
+            return;
+        }
+        if (event.getClick().equals(ClickType.SHIFT_RIGHT)) {
+            player.closeInventory();
+            player.updateInventory();
             return;
         }
         ItemStack clicked = event.getCurrentItem(); // The item that was clicked
