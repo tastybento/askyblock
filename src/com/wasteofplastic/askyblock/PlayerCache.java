@@ -145,8 +145,12 @@ public class PlayerCache {
             for (final File f : files) {
                 // Need to remove the .yml suffix
                 if (f.getName().endsWith(".yml")) {
-                    if (UUID.fromString(f.getName().substring(0, f.getName().length() - 4)).equals(uniqueID)) {
-                        return true;
+                    try {
+                        if (UUID.fromString(f.getName().substring(0, f.getName().length() - 4)).equals(uniqueID)) {
+                            return true;
+                        }
+                    } catch (Exception e) {
+                        plugin.getLogger().warning("Problem with " + f.getName());
                     }
                 }
             }
@@ -467,7 +471,7 @@ public class PlayerCache {
     public void save(UUID playerUUID) {
         playerCache.get(playerUUID).save();
         // Save the name + UUID in the database if it ready
-        
+
         if (plugin.getTinyDB() != null && plugin.getTinyDB().isDbReady()) {
             plugin.getTinyDB().savePlayerName(playerCache.get(playerUUID).getPlayerName(), playerUUID);
         }
@@ -491,7 +495,7 @@ public class PlayerCache {
     public UUID getUUID(String string) {
         return getUUID(string, false);
     }
-    
+
     /**
      * Attempts to return a UUID for a given player's name
      * @param string
@@ -812,7 +816,7 @@ public class PlayerCache {
         addPlayer(playerUUID);
         playerCache.get(playerUUID).addDeath();
     }
-    
+
     /**
      * Set death number for player
      * @param playerUUID
@@ -822,7 +826,7 @@ public class PlayerCache {
         addPlayer(playerUUID);
         playerCache.get(playerUUID).setDeaths(deaths);
     }
-    
+
     /**
      * Get number of times player has died in ASkyBlock worlds since counting began
      * @param playerUUID
@@ -832,7 +836,7 @@ public class PlayerCache {
         addPlayer(playerUUID);
         return playerCache.get(playerUUID).getDeaths();
     }
-    
+
     /**
      * @param playerUUID
      * @return List of challenges or levels done
@@ -841,7 +845,7 @@ public class PlayerCache {
         addPlayer(playerUUID);
         return playerCache.get(playerUUID).getChallengesDone();
     }
-    
+
     /**
      * @param playerUUID
      * @return List of challenges or levels not done
