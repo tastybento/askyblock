@@ -80,7 +80,7 @@ public class AcidEffect implements Listener {
         }
         final Player player = e.getPlayer();
         // Fast checks
-        if (player.isDead()) {
+        if (player.isDead() || player.getGameMode().toString().startsWith("SPECTATOR")) {
             return;
         }
         // Check that they are in the ASkyBlock world

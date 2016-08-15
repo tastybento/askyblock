@@ -19,12 +19,12 @@ adminHelp:
   infoisland: "geven informatie over het dichtstbijzijnde eiland"
   kick: "verwijder speler van welk team dan ook"
   lock: "vergrendel/ontgrendel eiland van speler"
-  purge: "verwijder alle eiland die ouder zijn dan [TimeInDays]."
+  purge: "verwijder alle eiland(en) die ouder zijn dan [TimeInDays]."
   purgeallowdisallow: "eiland toestaan/verbieden om te worden verwijderd als het voldaat aan de verwijder regels"
   purgeholes: "vrijmaken van gaten in eilanden voor hergebruik"
   purgeunowned: "verwijder eilanden zonder eigenaar"
   register: "zet een eiland van een speler naar jouw locatie"
-  reload: "reload configuratie van bestand."
+  reload: "herlaad ASkyBlock configuratie."
   resetAllChallenges: "resets alle speler challenges"
   resetChallenge: "markeer een challenge als niet gedaan"
   resetsign: "hiermee herstel je het warp bordje van de eigenaar"
@@ -131,9 +131,9 @@ boats:
   warning: "Het is niet veilig om nu in die boot te stappen..."
 challenges: 
   colors: "Challenges hebben verschillende kleuren als ze:"
-  complete: Klaar
-  completeNotRepeatable: "Klaar (niet herhaalbaar)"
-  completeRepeatable: "Klaar (herhaalbaar)"
+  complete: Voltooid
+  completeNotRepeatable: "Voltooid (niet herhaalbaar)"
+  completeRepeatable: "Voltooid (herhaalbaar)"
   completedtimes: "Gedaan in [donetimes] van de [maxtimes]"
   errorIslandLevel: "Je eiland level moet [level] zijn om deze challenge te doen!"
   errorItemsNotThere: "Alle spullen moeten dicht bij je zijn!"
