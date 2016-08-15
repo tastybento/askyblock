@@ -248,15 +248,12 @@ public class PlayerEvents implements Listener {
          * plugin.getLogger().info(e.getEventName());
          * }
          */
-        if (!IslandGuard.inWorld(e.getPlayer())) {
-            // If the player is not in the right world, then cancel any falling flags
-            unsetFalling(e.getPlayer().getUniqueId());
-            return;
-        }
-        if (Settings.allowTeleportWhenFalling) {
-            return;
-        }
-        if (!e.getPlayer().getGameMode().equals(GameMode.SURVIVAL) || e.getPlayer().isOp() || e.getPlayer().isFlying()) {
+        if (!IslandGuard.inWorld(e.getPlayer()) 
+                || Settings.allowTeleportWhenFalling 
+                || !e.getPlayer().getGameMode().equals(GameMode.SURVIVAL) 
+                || e.getPlayer().isOp() 
+                || e.getPlayer().isFlying()) {
+            fallingPlayers.remove(e.getPlayer().getUniqueId());
             return;
         }
         // Check if air below player
