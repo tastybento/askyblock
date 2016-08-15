@@ -318,7 +318,11 @@ public class IslandGuard1_9 implements Listener {
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerJoin(final PlayerJoinEvent e) {
-        if (Settings.allowPushing) {
+        if (Settings.allowPushing) {           
+            Team t = e.getPlayer().getScoreboard().getTeam("ASkyBlockNP");
+            if (t != null) {
+                t.unregister();
+            }
             return;
         }
         setPush(e.getPlayer());
