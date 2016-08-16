@@ -42,6 +42,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.IronGolem;
 import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -614,7 +615,9 @@ public class IslandGuard implements Listener {
             plugin.getLogger().info(e.getEntityType().toString());
         }
         // If not an animal
-        if (!(e.getEntity() instanceof Animals)) {
+        if (!(e.getEntity() instanceof Animals) && !e.getEntityType().equals(EntityType.SQUID)) {
+            if (DEBUG)
+                plugin.getLogger().info("Not an animal");
             return;
         }
         // If there's no limit - leave it
@@ -623,10 +626,10 @@ public class IslandGuard implements Listener {
         }
         // We only care about spawning and breeding
         if (e.getSpawnReason() != SpawnReason.SPAWNER && e.getSpawnReason() != SpawnReason.BREEDING && e.getSpawnReason() != SpawnReason.EGG
-                && e.getSpawnReason() != SpawnReason.DISPENSE_EGG && e.getSpawnReason() != SpawnReason.SPAWNER_EGG) {
+                && e.getSpawnReason() != SpawnReason.DISPENSE_EGG && e.getSpawnReason() != SpawnReason.SPAWNER_EGG && !e.getSpawnReason().name().contains("BABY")) {
             return;
         }
-        Animals animal = (Animals) e.getEntity();
+        LivingEntity animal = e.getEntity();
         World world = animal.getWorld();
         // If not in the right world, return
         // Only cover overworld, not nether
@@ -642,8 +645,9 @@ public class IslandGuard implements Listener {
         for (int x = island.getMinProtectedX() /16; x <= (island.getMinProtectedX() + island.getProtectionSize() - 1)/16; x++) {
             for (int z = island.getMinProtectedZ() /16; z <= (island.getMinProtectedZ() + island.getProtectionSize() - 1)/16; z++) {
                 for (Entity entity : world.getChunkAt(x, z).getEntities()) {
-                    if (entity instanceof Animals) {
-                        // plugin.getLogger().info("DEBUG: Animal count is " + animals);
+                    if (entity instanceof Animals || entity.getType().equals(EntityType.SQUID)) {
+                        if (DEBUG)
+                            plugin.getLogger().info("DEBUG: Animal count is " + animals);
                         animals++;
                         if (animals >= Settings.breedingLimit) {
                             // Delete any extra animals
