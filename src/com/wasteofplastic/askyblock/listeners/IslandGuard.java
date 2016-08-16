@@ -35,7 +35,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Creeper;
-import org.bukkit.entity.EnderPearl;
 import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -987,6 +986,7 @@ public class IslandGuard implements Listener {
             plugin.getLogger().info(e.getEventName());
             plugin.getLogger().info("DEBUG: Damager = " + e.getDamager().toString());
             plugin.getLogger().info("DEBUG: Entitytype = " + e.getEntityType());
+            plugin.getLogger().info("DEBUG: Entity = " + e.getEntity());
         }
         // Check world
         if (!inWorld(e.getEntity())) {
@@ -995,8 +995,11 @@ public class IslandGuard implements Listener {
         // Get the island where the damage is occurring
         Island island = plugin.getGrid().getProtectedIslandAt(e.getEntity().getLocation());
         // EnderPearl damage
+        /*
         if (e.getDamager() instanceof EnderPearl && e.getEntity() != null && e.getEntity() instanceof Player) {
+            plugin.getLogger().info("DEBUG: enderpearl damage");
             Player p = (Player) e.getEntity();
+            plugin.getLogger().info("DEBUG: Player is " + p.getName());
             if (island == null) {
                 if (Settings.allowEnderPearls) {
                     return;
@@ -1014,9 +1017,10 @@ public class IslandGuard implements Listener {
                 }	
             }
             p.sendMessage(ChatColor.RED + plugin.myLocale(p.getUniqueId()).islandProtected);
+            e.setDamage(0D);
             e.setCancelled(true);
             return;
-        }
+        }*/
         boolean inNether = false;
         if (e.getEntity().getWorld().equals(ASkyBlock.getNetherWorld())) {
             inNether = true;
