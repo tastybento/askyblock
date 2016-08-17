@@ -17,11 +17,11 @@
 
 package com.wasteofplastic.askyblock.events;
 
+import java.util.UUID;
+
 import org.bukkit.Location;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-
-import java.util.UUID;
 
 /**
  * This event is fired when a player resets an island

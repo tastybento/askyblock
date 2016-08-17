@@ -17,10 +17,11 @@
 
 package com.wasteofplastic.askyblock.listeners;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
+import java.util.WeakHashMap;
 
+import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Projectile;
@@ -47,14 +48,14 @@ import com.wasteofplastic.askyblock.Island;
 public class FlyingMobEvents implements Listener {
     private final ASkyBlock plugin;
     private final static boolean DEBUG = false;
-    private HashMap<Entity, Island> mobSpawnInfo;
+    private WeakHashMap<Entity, Island> mobSpawnInfo;
 
     /**
      * @param plugin
      */
     public FlyingMobEvents(ASkyBlock plugin) {
         this.plugin = plugin;
-        this.mobSpawnInfo = new HashMap<Entity, Island>();
+        this.mobSpawnInfo = new WeakHashMap<Entity, Island>();
         new BukkitRunnable() {
 
             public void run() {
@@ -70,6 +71,8 @@ public class FlyingMobEvents implements Listener {
                         if (!entry.getValue().inIslandSpace(entry.getKey().getLocation())) {
                             //Bukkit.getLogger().info("DEBUG: removing entity outside of island");
                             it.remove();
+                            Creature mob = (Creature)entry.getKey();
+                            mob.setHealth(0);
                             entry.getKey().remove();
                         } else {
                             //Bukkit.getLogger().info("DEBUG: entity " + entry.getKey().getName() + " is in island space");
