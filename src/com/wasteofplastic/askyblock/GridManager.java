@@ -1508,6 +1508,9 @@ public class GridManager {
      * @param l
      */
     public void removeMobs(final Location l) {
+        if (!inWorld(l)) {
+            return;
+        }
         //plugin.getLogger().info("DEBUG: removing mobs");
         // Don't remove mobs if at spawn
         if (this.isAtSpawn(l)) {
