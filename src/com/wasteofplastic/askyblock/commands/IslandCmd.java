@@ -1585,7 +1585,10 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                             break;
                         } else {
                             // Get the max value should there be more than one
-                            maxHomes = Math.max(maxHomes, Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "island.maxhomes.")[1]));
+                            String[] spl = perms.getPermission().split(Settings.PERMPREFIX + "island.maxhomes.");
+                            if (spl.length > 1) {
+                                maxHomes = Math.max(maxHomes, Integer.valueOf(spl[1]));
+                            }
                         }
                     }
                     // Do some sanity checking
