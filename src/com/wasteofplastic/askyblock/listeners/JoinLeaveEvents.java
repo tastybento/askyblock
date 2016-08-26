@@ -29,6 +29,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.CoopPlay;
@@ -106,6 +107,7 @@ public class JoinLeaveEvents implements Listener {
         if (!players.hasIsland(playerUUID) && !players.inTeam(playerUUID)) {
             return;
         }
+        //plugin.getLogger().info("DEBUG: has island");
         UUID leader = null;
         Location loc = null;
         /*
@@ -133,6 +135,7 @@ public class JoinLeaveEvents implements Listener {
         }
         // If the player has an island location of some kind
         if (loc != null && leader != null) {
+            //plugin.getLogger().info("DEBUG: getting island");
             // Check if the island location is on the grid
             Island island = plugin.getGrid().getIslandAt(loc);
             if (island == null) {
@@ -160,6 +163,7 @@ public class JoinLeaveEvents implements Listener {
                     }
                 }
             } else {
+                //plugin.getLogger().info("DEBUG: island is not null");
                 // Island at this location exists
                 //plugin.getLogger().info("DEBUG: getIslandLoc is not null - island exists");
                 // See if this owner is tagged as having an island elsewhere
@@ -169,6 +173,7 @@ public class JoinLeaveEvents implements Listener {
                     // No previous ownership, so just assign ownership
                     plugin.getGrid().setIslandOwner(island, leader);
                 } else {
+                    //plugin.getLogger().info("DEBUG: island by owner found");
                     if (!islandByOwner.equals(island)) {
                         //plugin.getLogger().info("DEBUG: mismatch");
                         plugin.getLogger().warning(player.getName() + " login: mismatch - islands.yml and player.yml are out of sync. Fixing...");
@@ -176,7 +181,42 @@ public class JoinLeaveEvents implements Listener {
                         plugin.getGrid().deleteIsland(islandByOwner.getCenter());
                         plugin.getGrid().setIslandOwner(island, leader);
                     } else {
-                        //plugin.getLogger().info("DEBUG: everything looks good");
+                        if (island.getOwner().equals(player.getUniqueId())) {
+                            //plugin.getLogger().info("DEBUG: This player owns the island and island protection size is " + islandByOwner.getProtectionSize());
+                            //plugin.getLogger().info("DEBUG: everything looks good");
+                            // Dynamic island range sizes with permissions
+                            int range = islandByOwner.getProtectionSize();
+                            for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
+                                if (perms.getPermission().startsWith(Settings.PERMPREFIX + "island.range.")) {
+                                    //plugin.getLogger().info("DEBUG: per found");
+                                    if (perms.getPermission().contains(Settings.PERMPREFIX + "island.range.*")) {
+                                        range = islandByOwner.getProtectionSize();
+                                        break;
+                                    } else {
+                                        //plugin.getLogger().info("DEBUG: found number perm");
+                                        String[] spl = perms.getPermission().split(Settings.PERMPREFIX + "island.range.");
+                                        if (spl.length > 1) {
+                                            range = Math.max(range, Integer.valueOf(spl[1]));
+                                        }
+                                    }
+                                }
+                            }
+                            // Do some sanity checking
+                            if (range % 2 != 0) {
+                                range--;
+                                //plugin.getLogger().warning("Login range setting: Protection range must be even, using " + range + " for " + player.getName());
+                            }
+                            if (range > (Settings.islandDistance - 16) && !plugin.getConfig().getBoolean("island.overridelimit", false)) {
+                                range = Settings.islandDistance - 16;
+                                //plugin.getLogger().warning("Login range setting: Island protection range must be " + (Settings.islandDistance - 16) + " or less, (island range -16). Setting to: "+ range);
+                            }
+                            if (range > islandByOwner.getProtectionSize()) {
+                                plugin.getLogger().info(
+                                        "Login range setting: Island protection range increased from " + islandByOwner.getProtectionSize() + " to "
+                                                + range + " for " + player.getName() + " due to permission.");
+                            }
+                            islandByOwner.setProtectionSize(range);
+                        }
                     }
                 }
             }
