@@ -89,7 +89,18 @@ public class ASkyBlockAPI {
         return plugin.getPlayers().getIslandLevel(playerUUID);
     }
 
-
+    /**
+     * Sets the player's island level. Does not calculate it and does not set the level of any team members.
+     * You will need to check if the player is in a team and individually set the level of each team member.
+     * This value will be overwritten if the players run the build-in level command or if the island level
+     * is calculated some other way, e.g. at login or via an admin command.
+     * @param playerUUID
+     * @param level
+     */
+    public void setIslandLevel(UUID playerUUID, int level) {
+        plugin.getPlayers().setIslandLevel(playerUUID, level);
+    }
+    
     /**
      * Calculates the island level. Only the fast calc is supported.
      * The island calculation runs async and fires an IslandLevelEvent when completed
