@@ -50,6 +50,7 @@ import com.wasteofplastic.askyblock.util.VaultHelper;
  */
 public class WarpSigns implements Listener {
     private final ASkyBlock plugin;
+    private final static boolean DEBUG = false;
     // Map of all warps stored as player, warp sign Location
     private HashMap<UUID, Location> warpList = new HashMap<UUID, Location>();
     // Where warps are stored
@@ -243,15 +244,17 @@ public class WarpSigns implements Listener {
                 } else {
                     plugin.getLogger().warning("Warp at location " + temp.get(s) + " has no sign - removing.");
                     // Test code
-                    String name = plugin.getTinyDB().getPlayerName(playerUUID);
-                    warpList.put(playerUUID, l);
-                    b.getRelative(BlockFace.DOWN).setType(Material.DIRT);
-                    b.setType(Material.SIGN_POST);
-                    Sign sign = (Sign)b.getState();
-                    sign.setLine(0, ChatColor.GREEN + plugin.myLocale().warpswelcomeLine);
-                    sign.setLine(1, name);
-                    sign.setLine(2, "Test 2");
-                    sign.update();
+                    if (DEBUG) {
+                        String name = plugin.getTinyDB().getPlayerName(playerUUID);
+                        warpList.put(playerUUID, l);
+                        b.getRelative(BlockFace.DOWN).setType(Material.DIRT);
+                        b.setType(Material.SIGN_POST);
+                        Sign sign = (Sign)b.getState();
+                        sign.setLine(0, ChatColor.GREEN + plugin.myLocale().warpswelcomeLine);
+                        sign.setLine(1, name);
+                        sign.setLine(2, "Test 2");
+                        sign.update();
+                    }
                     // End test code
                 }
             } catch (Exception e) {
