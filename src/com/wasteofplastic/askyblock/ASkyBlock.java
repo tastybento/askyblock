@@ -416,7 +416,11 @@ public class ASkyBlock extends JavaPlugin {
 						}
 						// Register events
 						registerEvents();
-
+						
+						// Load TinyDb
+						if (tinyDB == null) {
+                            tinyDB = new TinyDB(plugin);
+                        }
 						// Load warps
 						getWarpSignsListener().loadWarpList();
 						// Load the warp panel
@@ -436,9 +440,7 @@ public class ASkyBlock extends JavaPlugin {
 						getServer().getPluginManager().registerEvents(biomes, plugin);
 
 						TopTen.topTenLoad();
-						if (tinyDB == null) {
-							tinyDB = new TinyDB(plugin);
-						}
+						
 						// Add any online players to the DB
 						for (Player onlinePlayer : plugin.getServer().getOnlinePlayers()) {
 							tinyDB.savePlayerName(onlinePlayer.getName(), onlinePlayer.getUniqueId());
