@@ -45,7 +45,7 @@ import com.wasteofplastic.askyblock.util.VaultHelper;
 public class JoinLeaveEvents implements Listener {
     private ASkyBlock plugin;
     private PlayerCache players;
-    private final static boolean DEBUG = true;
+    private final static boolean DEBUG = false;
 
     public JoinLeaveEvents(ASkyBlock aSkyBlock) {
         this.plugin = aSkyBlock;
