@@ -60,6 +60,7 @@ public class AcidEffect implements Listener {
     private List<Player> burningPlayers = new ArrayList<Player>();
     private boolean isRaining = false;
     private List<Player> wetPlayers = new ArrayList<Player>();
+    private static final boolean DEBUG = false;
 
     public AcidEffect(final ASkyBlock pluginI) {
         plugin = pluginI;
@@ -67,6 +68,9 @@ public class AcidEffect implements Listener {
 
     @EventHandler(priority = EventPriority.LOW)
     public void onPlayerDeath(PlayerDeathEvent e) {
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: " + e.getEventName());
+
         burningPlayers.remove((Player) e.getEntity());
         wetPlayers.remove((Player) e.getEntity());
         PlayerEvents.unsetFalling(((Player) e.getEntity()).getUniqueId());
@@ -99,6 +103,8 @@ public class AcidEffect implements Listener {
         if (player.getGameMode().equals(GameMode.CREATIVE)) {
             return;
         }
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: Acid Effect " + e.getEventName());
 
         // Slow checks
         final Location playerLoc = player.getLocation();
@@ -362,6 +368,9 @@ public class AcidEffect implements Listener {
         if (!e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
             return;
         }
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: obsidian scoop " + e.getEventName());
+
         if (plugin.getGrid().playerIsOnIsland(e.getPlayer())) {
             boolean otherOb = false;
             @SuppressWarnings("deprecation")
@@ -470,6 +479,9 @@ public class AcidEffect implements Listener {
      */
     @EventHandler(priority = EventPriority.NORMAL)
     public void onWeatherChange(final WeatherChangeEvent e) {
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: " + e.getEventName());
+
         // Check that they are in the ASkyBlock world
         // plugin.getLogger().info("weather change noted");
         if (!e.getWorld().getName().equalsIgnoreCase(Settings.worldName)) {

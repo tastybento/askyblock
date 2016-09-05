@@ -35,6 +35,7 @@ import com.wasteofplastic.askyblock.Settings;
 public class LavaCheck implements Listener {
     BukkitTask task;
     private final ASkyBlock plugin;
+    private final static boolean DEBUG = false;
 
     public LavaCheck(ASkyBlock aSkyBlock) {
         plugin = aSkyBlock;
@@ -59,6 +60,9 @@ public class LavaCheck implements Listener {
         // plugin.getLogger().info("To material is " + to.getType().toString());
         // plugin.getLogger().info("---------------------------------");
         if (Settings.acidDamage > 0) {
+            if (DEBUG)
+                plugin.getLogger().info("DEBUG: cleanstone gen " + e.getEventName());
+
             final Material prev = to.getType();
             // plugin.getLogger().info("To material was " +
             // to.getType().toString());

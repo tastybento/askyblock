@@ -304,6 +304,8 @@ public class PlayerEvents implements Listener {
     public void onPlayerTeleport(final PlayerTeleportEvent e) {
         if (DEBUG) {
             plugin.getLogger().info(e.getEventName());
+            plugin.getLogger().info("DEBUG: to = " + e.getTo());
+            plugin.getLogger().info("DEBUG: from = " + e.getFrom());
         }
         // Options - 
         // Player is in an island world and trying to teleport out - handle
@@ -314,24 +316,29 @@ public class PlayerEvents implements Listener {
             return;
         }
         if (!IslandGuard.inWorld(e.getTo()) && !IslandGuard.inWorld(e.getFrom())) {
+            plugin.getLogger().info("DEBUG: to or from are not in this world - returning ");
             return;
         }
         // Check if ready
         if (plugin.getGrid() == null) {
+            plugin.getLogger().info("DEBUG: grid is not ready");
             return;
         }
         // Teleporting while falling check
         if (!Settings.allowTeleportWhenFalling && e.getPlayer().getGameMode().equals(GameMode.SURVIVAL) && !e.getPlayer().isOp()) {
+            plugin.getLogger().info("DEBUG: Teleporting while falling check");
             // If the player is allowed to teleport excuse them
             if (plugin.getPlayers().isInTeleport(e.getPlayer().getUniqueId())) {
+                plugin.getLogger().info("DEBUG: player is allowed to teleport excuse them");
                 unsetFalling(e.getPlayer().getUniqueId());
             } else if (isFalling(e.getPlayer().getUniqueId())) {
-                //plugin.getLogger().info("DEBUG: player is falling");
+                plugin.getLogger().info("DEBUG: player is falling");
                 // Sorry you are going to die
                 e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).islandcannotTeleport);
                 e.setCancelled(true);
                 // Check if the player is in the void and kill them just in case
                 if (e.getPlayer().getLocation().getBlockY() < 0) {
+                    plugin.getLogger().info("DEBUG: player is in the void");
                     e.getPlayer().setHealth(0D);
                     unsetFalling(e.getPlayer().getUniqueId());
                 }
@@ -341,34 +348,62 @@ public class PlayerEvents implements Listener {
         //plugin.getLogger().info("DEBUG: From : " + e.getFrom());
         //plugin.getLogger().info("DEBUG: To : " + e.getTo());
         // Teleporting to a locked island
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: getting islands for to from");
         Island islandFrom = plugin.getGrid().getProtectedIslandAt(e.getFrom());
+        if (DEBUG && islandFrom != null)
+            plugin.getLogger().info("DEBUG: islandFrom is not null");
         Island islandTo = plugin.getGrid().getProtectedIslandAt(e.getTo());
+        if (DEBUG && islandTo != null)
+            plugin.getLogger().info("DEBUG: islandTo is not null");
+
         // Ender pearl and chorus fruit teleport checks
         if (e.getCause() != null) {
             if (e.getCause().equals(TeleportCause.ENDER_PEARL)) {
+                if (DEBUG)
+                    plugin.getLogger().info("DEBUG: Enderpearl");
+
                 if (islandTo == null) {
                     if (Settings.allowEnderPearls) {
                         return;
                     }
                 } else {
+                    if (DEBUG )
+                        plugin.getLogger().info("DEBUG: islandTo is not null enderpearl");
+
                     if (islandTo.isSpawn()) {
+                        if (DEBUG)
+                            plugin.getLogger().info("DEBUG: islandTo is spawn");
+
                         if (Settings.allowSpawnEnderPearls) {
+                            if (DEBUG )
+                                plugin.getLogger().info("DEBUG: spawn enderpearl allowed");
                             return;
                         }
                     } else {
+                        if (DEBUG )
+                            plugin.getLogger().info("DEBUG: islandTo is regular island");
                         // Regular island
                         if (islandTo.getIgsFlag(Flags.allowEnderPearls) || islandTo.getMembers().contains(e.getPlayer().getUniqueId())) {
+                            if (DEBUG )
+                                plugin.getLogger().info("DEBUG: enderpearl allowed");
                             return;
                         }
                     }
                 }
+                if (DEBUG )
+                    plugin.getLogger().info("DEBUG: enderpearl not allowed");
                 e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                 e.setCancelled(true);
                 return;
             } else if (!plugin.getServer().getVersion().contains("(MC: 1.8")
                     && !plugin.getServer().getVersion().contains("(MC: 1.7")) {
+                if (DEBUG )
+                    plugin.getLogger().info("DEBUG: chorus fruit check");
                 // Chorus fruit only exist in 1.9 and above
                 if (e.getCause().equals(TeleportCause.CHORUS_FRUIT)) {
+                    if (DEBUG )
+                        plugin.getLogger().info("DEBUG: chorus fruit");
                     boolean cancel = false;
                     // Check both from and to islands
                     if (islandTo == null) {
@@ -422,22 +457,32 @@ public class PlayerEvents implements Listener {
          * islandTo != null && islandFrom != null - same PlayerIsland or teleport?
          * islandTo == islandFrom
          */
+        if (DEBUG )
+            plugin.getLogger().info("DEBUG: announcements");
         if (islandTo != null && islandFrom == null && (islandTo.getOwner() != null || islandTo.isSpawn())) {
+            if (DEBUG )
+                plugin.getLogger().info("DEBUG: entering");
             // Entering
             if (islandTo.isLocked() || plugin.getPlayers().isBanned(islandTo.getOwner(),e.getPlayer().getUniqueId())) {
                 e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).lockIslandLocked);
                 if (!plugin.getGrid().locationIsOnIsland(e.getPlayer(), e.getTo()) && !e.getPlayer().isOp()
                         && !VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
                         && !VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypasslock")) {
+                    if (DEBUG )
+                        plugin.getLogger().info("DEBUG: not allowed to enter");
                     e.setCancelled(true);
                     return;
                 }
             }
             if (islandTo.isSpawn()) {
+                if (DEBUG )
+                    plugin.getLogger().info("DEBUG: islandTo is locked spawn");
                 if (!plugin.myLocale(e.getPlayer().getUniqueId()).lockEnteringSpawn.isEmpty()) {
                     e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).lockEnteringSpawn);
                 }
             } else {
+                if (DEBUG )
+                    plugin.getLogger().info("DEBUG: islandTo is locked regular");
                 if (!plugin.myLocale(e.getPlayer().getUniqueId()).lockNowEntering.isEmpty()) {
                     e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).lockNowEntering.replace("[name]", plugin.getGrid().getIslandName(islandTo.getOwner())));
                 }
@@ -446,13 +491,19 @@ public class PlayerEvents implements Listener {
             final IslandEnterEvent event = new IslandEnterEvent(e.getPlayer().getUniqueId(), islandTo, e.getTo());
             plugin.getServer().getPluginManager().callEvent(event);
         } else if (islandTo == null && islandFrom != null && (islandFrom.getOwner() != null || islandFrom.isSpawn())) {
+            if (DEBUG )
+                plugin.getLogger().info("DEBUG: Leaving");
             // Leaving
             if (islandFrom.isSpawn()) {
+                if (DEBUG )
+                    plugin.getLogger().info("DEBUG: leaving spawn");
                 // Leaving
                 if (!plugin.myLocale(e.getPlayer().getUniqueId()).lockLeavingSpawn.isEmpty()) {
                     e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).lockLeavingSpawn);
                 }
             } else {
+                if (DEBUG )
+                    plugin.getLogger().info("DEBUG: leaving locked");
                 if (!plugin.myLocale(e.getPlayer().getUniqueId()).lockNowLeaving.isEmpty()) {
                     e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).lockNowLeaving.replace("[name]", plugin.getGrid().getIslandName(islandFrom.getOwner())));
                 }
@@ -461,6 +512,8 @@ public class PlayerEvents implements Listener {
             final IslandExitEvent event = new IslandExitEvent(e.getPlayer().getUniqueId(), islandFrom, e.getFrom());
             plugin.getServer().getPluginManager().callEvent(event);
         } else if (islandTo != null && islandFrom != null && !islandTo.equals(islandFrom)) {
+            if (DEBUG )
+                plugin.getLogger().info("DEBUG: jumping from one island to another - adjacent islands");
             // Teleporting from one islands to another
             // Entering
             if (islandTo.isLocked() || plugin.getPlayers().isBanned(islandTo.getOwner(),e.getPlayer().getUniqueId())) {
@@ -468,6 +521,8 @@ public class PlayerEvents implements Listener {
                 if (!plugin.getGrid().locationIsOnIsland(e.getPlayer(), e.getTo()) && !e.getPlayer().isOp()
                         && !VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
                         && !VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypasslock")) {
+                    if (DEBUG )
+                        plugin.getLogger().info("DEBUG: cannot enter");
                     e.setCancelled(true);
                     return;
                 }
@@ -490,9 +545,9 @@ public class PlayerEvents implements Listener {
             final IslandEnterEvent event2 = new IslandEnterEvent(e.getPlayer().getUniqueId(), islandFrom, e.getFrom());
             plugin.getServer().getPluginManager().callEvent(event2);
         }
-        
-        
-        
+
+
+
     }
 
 

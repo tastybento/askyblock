@@ -26,15 +26,16 @@ import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Settings;
 
 public class WorldLoader implements Listener {
-    //private ASkyBlock plugin;
+    private ASkyBlock plugin;
     private boolean worldLoaded = false;
+    private static final boolean DEBUG = false;
 
     /**
      * Class to force world loading before plugins.
-     * @param aSkyBlock
+     * @param plugin
      */
-    public WorldLoader(ASkyBlock aSkyBlock) {
-        //this.plugin = aSkyBlock;
+    public WorldLoader(ASkyBlock plugin) {
+        this.plugin = plugin;
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
@@ -42,7 +43,8 @@ public class WorldLoader implements Listener {
         if (worldLoaded) {
             return;
         }
-        //plugin.getLogger().info("DEBUG: " + event.getWorld().getName());
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: " + event.getEventName() + " : " + event.getWorld().getName());
         if (event.getWorld().getName().equals(Settings.worldName) || event.getWorld().getName().equals(Settings.worldName + "_nether")) {
             return;
         }

@@ -90,15 +90,15 @@ public class FlyingMobEvents implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void mobSpawn(CreatureSpawnEvent e) {
-        if (DEBUG) {
-            plugin.getLogger().info(e.getEventName());
-        }
         // Only cover withers in the island world
         if (!IslandGuard.inWorld(e.getEntity())) {
             return;
         }
         if (!e.getEntityType().equals(EntityType.WITHER) && !e.getEntityType().equals(EntityType.BLAZE) && !e.getEntityType().equals(EntityType.GHAST)) {
             return;
+        }
+        if (DEBUG) {
+            plugin.getLogger().info("Flying mobs " + e.getEventName());
         }
         // Store where this mob originated
         Island island = plugin.getGrid().getIslandAt(e.getLocation());

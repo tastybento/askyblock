@@ -614,19 +614,19 @@ public class Challenges implements CommandExecutor, TabCompleter {
             }
         }
         if (element.length > 3) {
-            //plugin.getLogger().info("DEBUG: level = " + Integer.valueOf(element[2]));
+            //Bukkit.getLogger().info("DEBUG: level = " + Integer.valueOf(element[2]));
             if (element[3].equalsIgnoreCase("EXTENDED")) {
-                //plugin.getLogger().info("DEBUG: Extended");
+                //Bukkit.getLogger().info("DEBUG: Extended");
                 extended = true;
             }
         }
         if (element.length > 4) {
             if (element[4].equalsIgnoreCase("SPLASH")) {
-                //plugin.getLogger().info("DEBUG: splash");
+                //Bukkit.getLogger().info("DEBUG: splash");
                 splash = true;                
             }
             if (element[4].equalsIgnoreCase("LINGER")) {
-                //plugin.getLogger().info("DEBUG: linger");
+                //Bukkit.getLogger().info("DEBUG: linger");
                 linger = true;
             } 
         }

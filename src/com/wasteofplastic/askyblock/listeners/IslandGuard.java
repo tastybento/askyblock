@@ -108,6 +108,7 @@ import com.wasteofplastic.askyblock.util.VaultHelper;
 public class IslandGuard implements Listener {
     private final ASkyBlock plugin;
     private final static boolean DEBUG = false;
+    private static final boolean DEBUG2 = false;
     private HashMap<UUID,Vector> onPlate = new HashMap<UUID,Vector>();
     private Set<Location> tntBlocks = new HashSet<Location>();
     private Set<UUID> litCreeper = new HashSet<UUID>();
@@ -608,14 +609,14 @@ public class IslandGuard implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onAnimalSpawn(final CreatureSpawnEvent e) {
-        if (DEBUG) {
+        if (DEBUG2) {
             plugin.getLogger().info("Animal spawn event! " + e.getEventName());
             plugin.getLogger().info(e.getSpawnReason().toString());
             plugin.getLogger().info(e.getEntityType().toString());
         }
         // If not an animal
         if (!(e.getEntity() instanceof Animals) && !e.getEntityType().equals(EntityType.SQUID)) {
-            if (DEBUG)
+            if (DEBUG2)
                 plugin.getLogger().info("Not an animal");
             return;
         }
@@ -689,8 +690,8 @@ public class IslandGuard implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onMobSpawn(final CreatureSpawnEvent e) {
-        if (DEBUG) {
-            //plugin.getLogger().info(e.getEventName());
+        if (DEBUG2) {
+            plugin.getLogger().info(e.getEventName());
         }
         // If not in the right world, return
         if (!e.getEntity().getWorld().equals(ASkyBlock.getIslandWorld())) {

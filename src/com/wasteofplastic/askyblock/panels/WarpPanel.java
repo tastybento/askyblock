@@ -53,6 +53,7 @@ public class WarpPanel implements Listener {
     // The list of all players who have warps and their corresponding inventory icon
     // A stack of zero amount will mean they are not active
     private HashMap<UUID, ItemStack> cachedWarps;
+    private final static boolean DEBUG = false;
 
     /**
      * @param plugin
@@ -75,6 +76,9 @@ public class WarpPanel implements Listener {
      * @param playerUUID
      */
     public void updateWarp(UUID playerUUID) {
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: update Warp");
+
         if (cachedWarps.containsKey(playerUUID)) {
             // Get the item
             ItemStack playerSkull = cachedWarps.get(playerUUID);
@@ -90,10 +94,12 @@ public class WarpPanel implements Listener {
      * @param playerUUID
      */
     public void addWarp(UUID playerUUID) {
-        //plugin.getLogger().info("DEBUG: Adding warp");
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: Adding warp");
         // Check cached warps
         if (cachedWarps.containsKey(playerUUID)) {
-            //plugin.getLogger().info("DEBUG: Found in cache");
+            if (DEBUG)
+                plugin.getLogger().info("DEBUG: Found in cache");
             // Get the item
             ItemStack playerSkull = cachedWarps.get(playerUUID);
             playerSkull = updateText(playerSkull, playerUUID);
@@ -118,10 +124,12 @@ public class WarpPanel implements Listener {
      */
     private ItemStack getSkull(UUID playerUUID) {
         String playerName = plugin.getServer().getOfflinePlayer(playerUUID).getName();
-        //plugin.getLogger().info("DEBUG: name of warp = " + playerName);
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: name of warp = " + playerName);
         ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
         if (playerName == null) {
-            //plugin.getLogger().warning("Warp for Player: UUID " + playerUUID.toString() + " is unknown on this server, skipping...");
+            if (DEBUG)
+                plugin.getLogger().warning("Warp for Player: UUID " + playerUUID.toString() + " is unknown on this server, skipping...");
             return null;
             //playerName = playerUUID.toString().substring(0, 10);
         }
@@ -140,7 +148,8 @@ public class WarpPanel implements Listener {
      * @return updated skull item stack
      */
     private ItemStack updateText(ItemStack playerSkull, final UUID playerUUID) {
-        //plugin.getLogger().info("DEBUG: Updating text on item");
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: Updating text on item");
         ItemMeta meta = playerSkull.getItemMeta();
         //get the sign info
         Location signLocation = plugin.getWarpSignsListener().getWarp(playerUUID);
@@ -159,7 +168,8 @@ public class WarpPanel implements Listener {
                 }
             }
             meta.setLore(lines);
-            //plugin.getLogger().info("DEBUG: lines = " + lines);
+            if (DEBUG)
+                plugin.getLogger().info("DEBUG: lines = " + lines);
         }
         playerSkull.setItemMeta(meta);
         return playerSkull;
@@ -173,19 +183,23 @@ public class WarpPanel implements Listener {
         warpPanel.clear();
         Collection<UUID> activeWarps = plugin.getWarpSignsListener().listSortedWarps();
         // Create the warp panels
-        //plugin.getLogger().info("DEBUG: warps size = " + activeWarps.size());
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: warps size = " + activeWarps.size());
         int panelNumber = activeWarps.size() / (PANELSIZE-2);
         int remainder = (activeWarps.size() % (PANELSIZE-2)) + 8 + 2;
         remainder -= (remainder % 9);
-        //plugin.getLogger().info("DEBUG: panel number = " + panelNumber + " remainder = " + remainder);
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: panel number = " + panelNumber + " remainder = " + remainder);
         int i = 0;
         // TODO: Make panel title a string
         for (i = 0; i < panelNumber; i++) {
-            //plugin.getLogger().info("DEBUG: created panel " + (i+1));
+            if (DEBUG)
+                plugin.getLogger().info("DEBUG: created panel " + (i+1));
             warpPanel.add(Bukkit.createInventory(null, PANELSIZE, plugin.myLocale().warpsTitle + " #" + (i+1)));
         }
         // Make the last panel
-        //plugin.getLogger().info("DEBUG: created panel " + (i+1));
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: created panel " + (i+1));
         warpPanel.add(Bukkit.createInventory(null, remainder, plugin.myLocale().warpsTitle + " #" + (i+1)));
         panelNumber = 0;
         int slot = 0;
@@ -246,9 +260,12 @@ public class WarpPanel implements Listener {
             return;
         }
         ItemStack clicked = event.getCurrentItem(); // The item that was clicked
-        //plugin.getLogger().info("DEBUG: inventory size = " + inventory.getSize());
-        //plugin.getLogger().info("DEBUG: clicked = " + clicked);
-        //plugin.getLogger().info("DEBUG: rawslot = " + event.getRawSlot());
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: inventory size = " + inventory.getSize());
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: clicked = " + clicked);
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: rawslot = " + event.getRawSlot());
         if (event.getRawSlot() >= event.getInventory().getSize() || clicked.getType() == Material.AIR) {
             return;
         }
@@ -259,7 +276,8 @@ public class WarpPanel implements Listener {
             panelNumber = 0;
         }
         String command = clicked.getItemMeta().getDisplayName();
-        //plugin.getLogger().info("DEBUG: command = " + command);
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: command = " + command);
         if (command != null) {
             if (command.equalsIgnoreCase(plugin.myLocale().warpsNext)) {
                 player.closeInventory();

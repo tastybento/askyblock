@@ -55,6 +55,7 @@ public class ControlPanel implements Listener {
     private ASkyBlock plugin;
     private static boolean allowSelling;
     private static String defaultPanelName;
+    private static final boolean DEBUG = false;
 
     /**
      * @param plugin
@@ -99,8 +100,8 @@ public class ControlPanel implements Listener {
         allowSelling = miniShopFile.getBoolean("config.allowselling", false);
         ConfigurationSection items = miniShopFile.getConfigurationSection("items");
         ASkyBlock plugin = ASkyBlock.getPlugin();
-        // plugin.getLogger().info("DEBUG: loading the shop. items = " +
-        // items.toString());
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: loading the shop. items = " + items.toString());
         if (items != null) {
             // Create the store
             // Get how many the store should be
@@ -205,6 +206,8 @@ public class ControlPanel implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled=true)
     public void onInventoryClick(InventoryClickEvent event) {
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG:" + event.getEventName());
         Player player = (Player) event.getWhoClicked(); // The player that
         // clicked the item
         ItemStack clicked = event.getCurrentItem(); // The item that was clicked
