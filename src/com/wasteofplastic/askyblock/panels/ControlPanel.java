@@ -305,12 +305,10 @@ public class ControlPanel implements Listener {
             event.setCancelled(true); // Don't let them pick it up
             if (!Settings.useEconomy || slot == -999) {
                 player.closeInventory();
-                inventory.clear();
                 return;
             }
             if (event.getClick().equals(ClickType.SHIFT_RIGHT)) {                    
                 player.closeInventory();
-                inventory.clear();
                 player.updateInventory();
                 return;
             }
@@ -386,12 +384,10 @@ public class ControlPanel implements Listener {
                 // plugin.getLogger().info("DEBUG: panel name " + panelName);
                 if (slot == -999) {
                     player.closeInventory();
-                    inventory.clear();
                     return;
                 }
                 if (event.getClick().equals(ClickType.SHIFT_RIGHT)) {                    
                     player.closeInventory();
-                    inventory.clear();
                     player.updateInventory();
                     return;
                 }
@@ -403,7 +399,6 @@ public class ControlPanel implements Listener {
                     String nextSection = ChatColor.translateAlternateColorCodes('&', thisPanel.get(slot).getNextSection());
                     if (!command.isEmpty()) {
                         player.closeInventory(); // Closes the inventory
-                        inventory.clear();
                         event.setCancelled(true);
                         // plugin.getLogger().info("DEBUG: performing command "
                         // + command);
@@ -412,7 +407,6 @@ public class ControlPanel implements Listener {
                     }
                     if (!nextSection.isEmpty()) {
                         player.closeInventory(); // Closes the inventory
-                        inventory.clear();
                         Inventory next = controlPanel.get(nextSection);
                         if (next == null) {
                             // plugin.getLogger().info("DEBUG: next panel is null");
@@ -423,7 +417,6 @@ public class ControlPanel implements Listener {
                         return;
                     }
                     player.closeInventory(); // Closes the inventory
-                    inventory.clear();
                     event.setCancelled(true);
                     return;
                 }
