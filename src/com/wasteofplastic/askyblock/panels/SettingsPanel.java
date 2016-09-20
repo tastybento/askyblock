@@ -270,10 +270,12 @@ public class SettingsPanel implements Listener {
         event.setCancelled(true);
         if (event.getSlotType() == SlotType.OUTSIDE) {
             player.closeInventory();
+            inventory.clear();
             return;
         }
         if (event.getClick().equals(ClickType.SHIFT_RIGHT)) {
             player.closeInventory();
+            inventory.clear();
             player.updateInventory();
             return;
         }
@@ -312,6 +314,7 @@ public class SettingsPanel implements Listener {
                 if (flag.equals(Flags.allowPvP) || flag.equals(Flags.allowNetherPvP)) {
                     // PVP always results in an inventory closure
                     player.closeInventory();
+                    inventory.clear();
                     // Check if the player is allowed to toggle
                     // PVP activation
                     if (!island.getIgsFlag(flag)) {
@@ -403,6 +406,7 @@ public class SettingsPanel implements Listener {
                 }
             }
             //player.closeInventory();
+            inventory.clear();
             player.openInventory(islandGuardPanel(player));
         }
     }

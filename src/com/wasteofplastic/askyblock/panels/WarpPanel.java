@@ -252,10 +252,12 @@ public class WarpPanel implements Listener {
         event.setCancelled(true);
         if (event.getSlotType().equals(SlotType.OUTSIDE)) {
             player.closeInventory();
+            inventory.clear();
             return;
         }
         if (event.getClick().equals(ClickType.SHIFT_RIGHT)) {
             player.closeInventory();
+            inventory.clear();
             player.updateInventory();
             return;
         }
@@ -281,12 +283,15 @@ public class WarpPanel implements Listener {
         if (command != null) {
             if (command.equalsIgnoreCase(plugin.myLocale().warpsNext)) {
                 player.closeInventory();
+                inventory.clear();
                 player.performCommand(Settings.ISLANDCOMMAND + " warps " + (panelNumber+1));
             } else if (command.equalsIgnoreCase(plugin.myLocale().warpsPrevious)) {
                 player.closeInventory();
+                inventory.clear();
                 player.performCommand(Settings.ISLANDCOMMAND + " warps " + (panelNumber-1));
             } else {
                 player.closeInventory();
+                inventory.clear();
                 player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).warpswarpToPlayersSign.replace("<player>", command));
                 player.performCommand(Settings.ISLANDCOMMAND + " warp " + command);
             }

@@ -105,12 +105,14 @@ public class SchematicsPanel implements Listener {
         }
         if (slot == -999) {
             player.closeInventory();
+            inventory.clear();
             event.setCancelled(true);
             return;
         }
         if (event.getClick().equals(ClickType.SHIFT_RIGHT)) {
             event.setCancelled(true);
             player.closeInventory();
+            inventory.clear();
             player.updateInventory();
             return;
         }
@@ -118,6 +120,7 @@ public class SchematicsPanel implements Listener {
         List<SPItem> thisPanel = schematicItems.get(player.getUniqueId());
         if (thisPanel == null) {
             player.closeInventory();
+            inventory.clear();
             event.setCancelled(true);
             return;
         }
@@ -125,6 +128,7 @@ public class SchematicsPanel implements Listener {
             event.setCancelled(true);
             // plugin.getLogger().info("DEBUG: slot is " + slot);
             player.closeInventory(); // Closes the inventory
+            inventory.clear();
             // Get the item clicked
             SPItem item = thisPanel.get(slot);
             // Do something

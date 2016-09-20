@@ -138,12 +138,14 @@ public class BiomesPanel implements Listener {
             return;
         }
         if (slot == -999) {
+            inventory.clear();
             player.closeInventory();
             event.setCancelled(true);
             return;
         }
         if (event.getClick().equals(ClickType.SHIFT_RIGHT)) {
             event.setCancelled(true);
+            inventory.clear();
             player.closeInventory();
             player.updateInventory();
             return;
@@ -152,6 +154,7 @@ public class BiomesPanel implements Listener {
         // Get the list of items for this player
         List<BiomeItem> thisPanel = biomeItems.get(player.getUniqueId());
         if (thisPanel == null) {
+            inventory.clear();
             player.closeInventory();
             event.setCancelled(true);
             return;
@@ -192,6 +195,7 @@ public class BiomesPanel implements Listener {
                     }
                 }
             }
+            inventory.clear();
             player.closeInventory(); // Closes the inventory
             // Actually set the biome
             setIslandBiome(island, biome);
