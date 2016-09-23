@@ -76,6 +76,9 @@ permissions:
           askyblock.island.lang:
             description: Player can select a language
             default: true
+          askyblock.island.name:
+            description: Player can set the name of their island
+            default: false
       askyblock.team.*:
         children:
           askyblock.team.create:

@@ -316,29 +316,35 @@ public class PlayerEvents implements Listener {
             return;
         }
         if (!IslandGuard.inWorld(e.getTo()) && !IslandGuard.inWorld(e.getFrom())) {
-            plugin.getLogger().info("DEBUG: to or from are not in this world - returning ");
+            if (DEBUG)
+                plugin.getLogger().info("DEBUG: to or from are not in this world - returning ");
             return;
         }
         // Check if ready
         if (plugin.getGrid() == null) {
-            plugin.getLogger().info("DEBUG: grid is not ready");
+            if (DEBUG)
+                plugin.getLogger().info("DEBUG: grid is not ready");
             return;
         }
         // Teleporting while falling check
         if (!Settings.allowTeleportWhenFalling && e.getPlayer().getGameMode().equals(GameMode.SURVIVAL) && !e.getPlayer().isOp()) {
-            plugin.getLogger().info("DEBUG: Teleporting while falling check");
+            if (DEBUG)
+                plugin.getLogger().info("DEBUG: Teleporting while falling check");
             // If the player is allowed to teleport excuse them
             if (plugin.getPlayers().isInTeleport(e.getPlayer().getUniqueId())) {
-                plugin.getLogger().info("DEBUG: player is allowed to teleport excuse them");
+                if (DEBUG)
+                    plugin.getLogger().info("DEBUG: player is allowed to teleport excuse them");
                 unsetFalling(e.getPlayer().getUniqueId());
             } else if (isFalling(e.getPlayer().getUniqueId())) {
-                plugin.getLogger().info("DEBUG: player is falling");
+                if (DEBUG)
+                    plugin.getLogger().info("DEBUG: player is falling");
                 // Sorry you are going to die
                 e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).islandcannotTeleport);
                 e.setCancelled(true);
                 // Check if the player is in the void and kill them just in case
                 if (e.getPlayer().getLocation().getBlockY() < 0) {
-                    plugin.getLogger().info("DEBUG: player is in the void");
+                    if (DEBUG)
+                        plugin.getLogger().info("DEBUG: player is in the void");
                     e.getPlayer().setHealth(0D);
                     unsetFalling(e.getPlayer().getUniqueId());
                 }
