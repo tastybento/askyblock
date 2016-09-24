@@ -57,6 +57,7 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.PermissionAttachmentInfo;
@@ -64,6 +65,7 @@ import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionType;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
+import org.bukkit.entity.Item;
 
 import com.wasteofplastic.askyblock.ASLocale;
 import com.wasteofplastic.askyblock.ASkyBlock;
@@ -2779,11 +2781,15 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                         CoopPlay.getInstance().clearMyCoops(target);
                                         // Clear the player out and throw their stuff at the
                                         // leader
-                                        if (target.getWorld().equals(ASkyBlock.getIslandWorld())) {                     
+                                        if (target.getWorld().equals(ASkyBlock.getIslandWorld())) {                        
                                             for (ItemStack i : target.getInventory().getContents()) {
                                                 if (i != null) {
-                                                    try {                                                        
-                                                        player.getWorld().dropItemNaturally(player.getLocation(), i);
+                                                    try { 
+                                                        // Fire an event to see if this item should be dropped or not
+                                                        // Some plugins may not want items to be dropped
+                                                        Item drop = player.getWorld().dropItemNaturally(player.getLocation(), i);
+                                                        PlayerDropItemEvent event = new PlayerDropItemEvent(target, drop);
+                                                        plugin.getServer().getPluginManager().callEvent(event);                                                        
                                                     } catch (Exception e) {
                                                     }
                                                 }
