@@ -1010,7 +1010,7 @@ public class IslandGuard implements Listener {
                 return;
             }
             // Normal island check
-            if (island != null && island.getIgsFlag(Flags.allowBreakBlocks) || island.getMembers().contains(attacker.getUniqueId())) {
+            if (island != null && (island.getIgsFlag(Flags.allowBreakBlocks) || island.getMembers().contains(attacker.getUniqueId()))) {
                 return;
             }
             // Else not allowed
