@@ -232,7 +232,8 @@ public class IslandGuard implements Listener {
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onVehicleMove(final VehicleMoveEvent e) {
-        plugin.getLogger().info("DEBUG: vehicle move = " + e.getVehicle());
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: vehicle move = " + e.getVehicle());
         if (!inWorld(e.getVehicle())) {
             return;
         }
@@ -245,7 +246,8 @@ public class IslandGuard implements Listener {
 
         Player player = (Player)passenger;
         if (plugin.getGrid() == null) {
-            plugin.getLogger().info("DEBUG: grid = null");
+            if (DEBUG)
+                plugin.getLogger().info("DEBUG: grid = null");
             return;
         }
         Island islandTo = plugin.getGrid().getProtectedIslandAt(e.getTo());
@@ -379,7 +381,8 @@ public class IslandGuard implements Listener {
 
                     } else {
                         Vector v = e.getPlayer().getLocation().toVector().subtract(islandTo.getCenter().toVector()).normalize().multiply(new Vector(1.2,0,1.2));
-                        plugin.getLogger().info("DEBUG: direction vector = " + v);
+                        if (DEBUG)
+                            plugin.getLogger().info("DEBUG: direction vector = " + v);
                         e.getPlayer().setVelocity(v);
                     }
                     return;
