@@ -21,9 +21,9 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.WeakHashMap;
 
-import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Wither;
 import org.bukkit.event.EventHandler;
@@ -67,15 +67,20 @@ public class FlyingMobEvents implements Listener {
                         //Bukkit.getLogger().info("DEBUG: removing null entity");
                         it.remove();
                     } else {
-                       
-                        if (!entry.getValue().inIslandSpace(entry.getKey().getLocation())) {
-                            //Bukkit.getLogger().info("DEBUG: removing entity outside of island");
-                            it.remove();
-                            Creature mob = (Creature)entry.getKey();
-                            mob.setHealth(0);
-                            entry.getKey().remove();
+                        if (entry.getKey() instanceof LivingEntity) {
+                            if (!entry.getValue().inIslandSpace(entry.getKey().getLocation())) {
+                                //Bukkit.getLogger().info("DEBUG: removing entity outside of island");
+                                it.remove();
+                                // Kill mob
+                                LivingEntity mob = (LivingEntity)entry.getKey();
+                                mob.setHealth(0);
+                                entry.getKey().remove();
+                            } else {
+                                //Bukkit.getLogger().info("DEBUG: entity " + entry.getKey().getName() + " is in island space");
+                            }
                         } else {
-                            //Bukkit.getLogger().info("DEBUG: entity " + entry.getKey().getName() + " is in island space");
+                            // Not living entity
+                            it.remove();
                         }
                     }
                 }               
