@@ -40,6 +40,7 @@ public class SPItem {
     private String name;
     private String perm;
     private int slot;
+    private double cost;
 
     /**
      * This constructor is for the default schematic/island
@@ -75,6 +76,7 @@ public class SPItem {
         this.description.clear();
         this.item = new ItemStack(schematic.getIcon());
         this.item.setDurability((short)schematic.getDurability());
+        this.cost = schematic.getCost();
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(name);
         // This neat bit of code makes a list out of the description split by new line character
@@ -115,6 +117,20 @@ public class SPItem {
      */
     public String getHeading() {
         return heading;
+    }
+
+    /**
+     * @return the cost
+     */
+    public double getCost() {
+        return cost;
+    }
+
+    /**
+     * @param cost the cost to set
+     */
+    public void setCost(double cost) {
+        this.cost = cost;
     }
 
 

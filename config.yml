@@ -824,6 +824,10 @@ schematicsection:
       #permission: any.perm.you.like
       #Level handicap zeros the initial island level. 
       levelHandicap: 9
+      # Cost - if an economy is in use, this can be used to require a fee
+      # Only works with the schematic panel
+      # The cost is a double and displayed in the description if [cost] is there
+      cost: 0
 
     # New snowy schematic
     extrahard:
@@ -854,4 +858,8 @@ schematicsection:
       #spawnblock: SPONGE
       #Level handicap zeros the initial island level. 
       levelHandicap: 1
-      
+      # Cost - if an economy is in use, this can be used to require a fee
+      # Only works with the schematic panel
+      # The cost is a double and displayed in the description if [cost] is there
+      cost: 0
+

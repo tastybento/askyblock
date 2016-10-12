@@ -323,9 +323,18 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                             rating = 100;
                         }
                         newSchem.setRating(rating);
+                        // Cost
+                        double cost = schemSection.getDouble("schematics." + key + ".cost", 0D);
+                        if (cost < 0) {
+                            cost = 0;
+                        }
+                        newSchem.setCost(cost);
                         // Description
                         String description = ChatColor.translateAlternateColorCodes('&', schemSection.getString("schematics." + key + ".description",""));
                         description = description.replace("[rating]",String.valueOf(rating));
+                        if (Settings.useEconomy) {
+                            description = description.replace("[cost]", String.valueOf(cost));
+                        }
                         newSchem.setDescription(description);
                         // Permission
                         String perm = schemSection.getString("schematics." + key + ".permission","");
