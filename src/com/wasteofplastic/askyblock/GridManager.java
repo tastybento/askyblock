@@ -1432,24 +1432,27 @@ public class GridManager {
      * @return true if they are on the island otherwise false.
      */
     public boolean isOnIsland(final Player owner, final Player target) {
-        // Get the island location of owner
-        Location islandTestLocation = null;
-        if (plugin.getPlayers().inTeam(owner.getUniqueId())) {
-            // Is the target in the owner's team?
-            if (plugin.getPlayers().getMembers(plugin.getPlayers().getTeamLeader(owner.getUniqueId())).contains(target.getUniqueId())) {
-                // Yes, so this is not a trespass for sure
+        // Check world
+        if (target.getWorld().equals(ASkyBlock.getIslandWorld()) || (Settings.newNether && Settings.createNether && target.getWorld().equals(ASkyBlock.getNetherWorld()))) {
+
+            // Get the island location of owner
+            Location islandTestLocation = null;
+            if (plugin.getPlayers().inTeam(owner.getUniqueId())) {
+                // Is the target in the owner's team?
+                if (plugin.getPlayers().getMembers(plugin.getPlayers().getTeamLeader(owner.getUniqueId())).contains(target.getUniqueId())) {
+                    // Yes, so this is not a trespass for sure
+                    return false;
+                }
+                // No, so check where the target is now
+                islandTestLocation = plugin.getPlayers().getTeamIslandLocation(owner.getUniqueId());
+            } else {
+                islandTestLocation = plugin.getPlayers().getIslandLocation(owner.getUniqueId());
+            }
+            // Check position of target
+            if (islandTestLocation == null) {
                 return false;
             }
-            // No, so check where the target is now
-            islandTestLocation = plugin.getPlayers().getTeamIslandLocation(owner.getUniqueId());
-        } else {
-            islandTestLocation = plugin.getPlayers().getIslandLocation(owner.getUniqueId());
-        }
-        // Check position of target
-        if (islandTestLocation == null) {
-            return false;
-        }
-        if (target.getWorld().equals(islandTestLocation.getWorld())) {
+
             int protectionRange = Settings.island_protectionRange;
             if (getIslandAt(islandTestLocation) != null) {
 
@@ -1466,6 +1469,7 @@ public class GridManager {
                     && target.getLocation().getZ() < islandTestLocation.getZ() + protectionRange / 2) {
                 return true;
             }
+
         }
         return false;
     }
