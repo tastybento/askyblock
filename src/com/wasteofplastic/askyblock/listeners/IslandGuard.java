@@ -1018,6 +1018,8 @@ public class IslandGuard implements Listener {
             }
             // Else not allowed
             attacker.sendMessage(ChatColor.RED + plugin.myLocale(attacker.getUniqueId()).islandProtected);
+            if (flamingArrow)
+                e.getEntity().setFireTicks(0);
             e.setCancelled(true);
             return;
         }

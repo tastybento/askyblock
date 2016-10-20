@@ -54,6 +54,7 @@ public class IslandGuard1_8 implements Listener {
 
     /**
      * Handle interaction with armor stands V1.8
+     * Note - some armor stand protection is done in IslandGuard.java, e.g. against projectiles.
      * 
      * @param e
      */
