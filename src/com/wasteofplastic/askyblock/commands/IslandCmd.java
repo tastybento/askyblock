@@ -1215,7 +1215,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                     player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " expel <player>: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpExpel);
                     return true;
                 }
-            } else if (split[0].equalsIgnoreCase("teamchat")) {
+            } else if (split[0].equalsIgnoreCase("teamchat") || split[0].equalsIgnoreCase("tc")) {
                 if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.chat")) {
                     // Check if this command is on or not
                     if (!Settings.teamChat) {
@@ -3251,6 +3251,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.chat")) {
                 options.add("teamchat");
+		options.add("tc");
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.biomes")) {
                 options.add("biomes");
