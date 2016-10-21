@@ -533,7 +533,7 @@ public class Schematic {
             }
         } catch (IOException e) {
             Bukkit.getLogger().severe("Could not load island schematic! Error in file.");
-            //e.printStackTrace();
+            e.printStackTrace();
             throw new IOException();
         }
 
