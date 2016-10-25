@@ -126,6 +126,7 @@ public class Schematic {
     //private boolean pasteAir;
     private int durability;
     private int levelHandicap;
+    private double cost;
 
     public Schematic(ASkyBlock plugin) {
         this.plugin = plugin;
@@ -532,7 +533,7 @@ public class Schematic {
             }
         } catch (IOException e) {
             Bukkit.getLogger().severe("Could not load island schematic! Error in file.");
-            //e.printStackTrace();
+            e.printStackTrace();
             throw new IOException();
         }
 
@@ -1544,6 +1545,21 @@ public class Schematic {
      */
     public void setLevelHandicap(int levelHandicap) {
         this.levelHandicap = levelHandicap;
+    }
+
+    /**
+     * Set the cost
+     * @param cost
+     */
+    public void setCost(double cost) {
+       this.cost = cost;
+    }
+
+    /**
+     * @return the cost
+     */
+    public double getCost() {
+        return cost;
     }
 
 }

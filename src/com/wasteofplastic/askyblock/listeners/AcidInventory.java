@@ -53,6 +53,7 @@ import com.wasteofplastic.askyblock.util.Util;
 public class AcidInventory implements Listener {
     private final ASkyBlock plugin;
     private List<String> lore = new ArrayList<String>();
+    private final static boolean DEBUG = false;
 
     public AcidInventory(ASkyBlock aSkyBlock) {
         plugin = aSkyBlock;
@@ -65,6 +66,9 @@ public class AcidInventory implements Listener {
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
     public void onInventoryOpen(InventoryOpenEvent e) {
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: " + e.getEventName());
+
         // plugin.getLogger().info("Inventory open event called");
         if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
             Inventory inventory = e.getInventory();
@@ -76,13 +80,15 @@ public class AcidInventory implements Listener {
                 return;
             }
             if (inventory.contains(Material.WATER_BUCKET)) {
-                // plugin.getLogger().info("Inventory contains water bucket");
+                if (DEBUG)
+                    plugin.getLogger().info("Inventory contains water bucket");
                 ItemStack[] inv = inventory.getContents();
                 for (ItemStack item : inv) {
                     if (item != null) {
                         // plugin.getLogger().info(item.toString());
                         if (item.getType() == Material.WATER_BUCKET) {
-                            // plugin.getLogger().info("Found it!");
+                            if (DEBUG)
+                                plugin.getLogger().info("Found it!");
                             ItemMeta meta = item.getItemMeta();
                             meta.setDisplayName(plugin.myLocale(e.getPlayer().getUniqueId()).acidBucket);
                             lore = Arrays.asList(plugin.myLocale(e.getPlayer().getUniqueId()).acidLore.split("\n"));
@@ -92,7 +98,8 @@ public class AcidInventory implements Listener {
                     }
                 }
             } else if (inventory.contains(Material.POTION)) {
-                //plugin.getLogger().info("Inventory contains water bottle");
+                if (DEBUG)
+                    plugin.getLogger().info("Inventory contains water bottle");
                 ItemStack[] inv = inventory.getContents();
                 for (ItemStack item : inv) {
                     if (item != null) {
@@ -105,7 +112,8 @@ public class AcidInventory implements Listener {
                                 return;
                             }
                             if (!nms.isPotion(item)) {
-                                //plugin.getLogger().info("Found it!");
+                                if (DEBUG)
+                                    plugin.getLogger().info("Found it!");
                                 ItemMeta meta = item.getItemMeta();
                                 meta.setDisplayName(plugin.myLocale(e.getPlayer().getUniqueId()).acidBottle);
                                 lore = Arrays.asList(plugin.myLocale(e.getPlayer().getUniqueId()).acidLore.split("\n"));
@@ -126,9 +134,11 @@ public class AcidInventory implements Listener {
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
     public void onBucketFill(PlayerBucketFillEvent e) {
-        // plugin.getLogger().info("Player filled the bucket");
+        if (DEBUG)
+            plugin.getLogger().info("Player filled the bucket");
         if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
-            // plugin.getLogger().info("Correct world");
+            if (DEBUG)
+                plugin.getLogger().info("Correct world");
             if (Settings.acidDamage > 0D && Settings.acidBottle) {
                 ItemStack item = e.getItemStack();
                 if (item.getType().equals(Material.WATER_BUCKET) || item.getType().equals(Material.POTION)) {
@@ -151,8 +161,11 @@ public class AcidInventory implements Listener {
     public void onWaterBottleDrink(final PlayerItemConsumeEvent e) {
         if (Settings.acidDamage == 0D || !Settings.acidBottle)
             return;
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: " + e.getEventName());
         if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName) && e.getItem().getType().equals(Material.POTION)) {
-            //plugin.getLogger().info(e.getEventName() + " called for " + e.getItem().getType());
+            if (DEBUG)
+                plugin.getLogger().info(e.getEventName() + " called for " + e.getItem().getType());
             NMSAbstraction nms = null;
             try {
                 nms = Util.checkVersion();
@@ -182,10 +195,13 @@ public class AcidInventory implements Listener {
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
     public void onBrewComplete(final BrewEvent e) {
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: " + e.getEventName());
+
         if (e.getBlock().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
             //if (Settings.acidBottle && Settings.acidDamage>0 && e.getBlock().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 
-        	plugin.getLogger().info("DEBUG: Brew Event called");
+            plugin.getLogger().info("DEBUG: Brew Event called");
             BrewerInventory inv = e.getContents();
             int i = 0;
             for (ItemStack item : inv.getContents()) {
@@ -206,6 +222,9 @@ public class AcidInventory implements Listener {
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
     public void onWaterBottleFill(final PlayerInteractEvent e) {
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: " + e.getEventName());
+
         Player player = e.getPlayer();
         if (!player.getWorld().getName().equalsIgnoreCase(Settings.worldName))
             return;

@@ -26,6 +26,8 @@ import com.wasteofplastic.askyblock.ASkyBlock;
 
 public class HeroChatListener implements Listener {
     private ASkyBlock plugin;
+    private static final boolean DEBUG = false;
+    
     /**
      * @param plugin
      */
@@ -40,6 +42,9 @@ public class HeroChatListener implements Listener {
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerHeroChat(final ChannelChatEvent event) {
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: hero chat " + event.getEventName());
+
         try {
             String format = event.getFormat().replace("{ISLAND_LEVEL}", plugin.getChatListener().getPlayerLevel(event.getSender().getPlayer().getUniqueId()));
             format = format.replace("{ISLAND_CHALLENGE_LEVEL}", plugin.getChatListener().getPlayerChallengeLevel(event.getSender().getPlayer().getUniqueId()));

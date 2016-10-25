@@ -55,6 +55,7 @@ public class ControlPanel implements Listener {
     private ASkyBlock plugin;
     private static boolean allowSelling;
     private static String defaultPanelName;
+    private static final boolean DEBUG = false;
 
     /**
      * @param plugin
@@ -99,8 +100,8 @@ public class ControlPanel implements Listener {
         allowSelling = miniShopFile.getBoolean("config.allowselling", false);
         ConfigurationSection items = miniShopFile.getConfigurationSection("items");
         ASkyBlock plugin = ASkyBlock.getPlugin();
-        // plugin.getLogger().info("DEBUG: loading the shop. items = " +
-        // items.toString());
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: loading the shop. items = " + items.toString());
         if (items != null) {
             // Create the store
             // Get how many the store should be
@@ -205,6 +206,8 @@ public class ControlPanel implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled=true)
     public void onInventoryClick(InventoryClickEvent event) {
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG:" + event.getEventName());
         Player player = (Player) event.getWhoClicked(); // The player that
         // clicked the item
         ItemStack clicked = event.getCurrentItem(); // The item that was clicked
@@ -217,12 +220,14 @@ public class ControlPanel implements Listener {
         // Challenges
         if (inventory.getName().equals(plugin.myLocale(player.getUniqueId()).challengesguiTitle)) {
             event.setCancelled(true);
-            if (event.getClick().equals(ClickType.SHIFT_RIGHT)) {                    
+            if (event.getClick().equals(ClickType.SHIFT_RIGHT)) {
+                inventory.clear();
                 player.closeInventory();
                 player.updateInventory();
                 return;
             }
             if (event.getSlotType() == SlotType.OUTSIDE) {
+                inventory.clear();
                 player.closeInventory();
                 return;
             }
@@ -232,6 +237,7 @@ public class ControlPanel implements Listener {
             List<CPItem> challenges = plugin.getChallenges().getCP(player);
             if (challenges == null) {
                 plugin.getLogger().warning("Player was accessing Challenge Inventory, but it had lost state - was server restarted?");
+                inventory.clear();
                 player.closeInventory();
                 player.performCommand(Settings.CHALLENGECOMMAND);
                 return;
@@ -272,10 +278,12 @@ public class ControlPanel implements Listener {
                     // item.getNextSection());
                     // Next section indicates the level of panel to open
                     if (item.getNextSection() != null) {
+                        inventory.clear();
                         player.closeInventory();
                         player.openInventory(plugin.getChallenges().challengePanel(player, item.getNextSection()));
                     } else if (item.getCommand() != null) {
                         player.performCommand(item.getCommand());
+                        inventory.clear();
                         player.closeInventory();
                         player.openInventory(plugin.getChallenges().challengePanel(player));
                     }
@@ -375,7 +383,7 @@ public class ControlPanel implements Listener {
                 // panels.size());
                 // plugin.getLogger().info("DEBUG: panel name " + panelName);
                 if (slot == -999) {
-                    player.closeInventory(); 
+                    player.closeInventory();
                     return;
                 }
                 if (event.getClick().equals(ClickType.SHIFT_RIGHT)) {                    

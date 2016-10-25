@@ -33,11 +33,13 @@ import com.wasteofplastic.askyblock.ASkyBlock;
  * @author tastybento
  */
 public class CleanSuperFlat implements Listener {
+    private static final boolean DEBUG = false;
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onChunkLoad(ChunkLoadEvent e) {
         if (ASkyBlock.getIslandWorld() == null || e.getWorld() != ASkyBlock.getIslandWorld()) {
-            //plugin.getLogger().info("DEBUG: not right world");
+            if (DEBUG)
+                Bukkit.getLogger().info("DEBUG: not right world");
             return;
         }
         if (e.getChunk().getBlock(0, 0, 0).getType().equals(Material.BEDROCK)) {
@@ -46,5 +48,5 @@ public class CleanSuperFlat implements Listener {
         }
     }
 
- 
+
 }

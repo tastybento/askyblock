@@ -233,4 +233,32 @@ public class TinyDB {
         } 
         return null;
     }
+    
+    /**
+     * Gets players name from tiny database
+     * @param playerUuid
+     * @return Name or empty string if unknown
+     */
+    public String getPlayerName(UUID playerUuid) {
+        // Names and UUID's are stored in line pairs.
+        try(BufferedReader br = new BufferedReader(new FileReader(new File(plugin.getDataFolder(), "name-uuid.txt")))) {
+            String line = br.readLine();
+            String uuid = br.readLine();
+            while (uuid != null && !uuid.equals(playerUuid.toString())) {                
+                line = br.readLine();
+                uuid = br.readLine();
+            }
+            if (line == null) {
+                return "";
+            }
+            // Add to cache
+            treeMap.put(line.toLowerCase(), playerUuid);
+            plugin.getLogger().info("DEBUG: found in UUID database - name is " + line);
+            return line;
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } 
+        return "";
+    }
 }

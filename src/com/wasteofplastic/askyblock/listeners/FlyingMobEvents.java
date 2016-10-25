@@ -21,9 +21,9 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.WeakHashMap;
 
-import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Wither;
 import org.bukkit.event.EventHandler;
@@ -67,15 +67,20 @@ public class FlyingMobEvents implements Listener {
                         //Bukkit.getLogger().info("DEBUG: removing null entity");
                         it.remove();
                     } else {
-                       
-                        if (!entry.getValue().inIslandSpace(entry.getKey().getLocation())) {
-                            //Bukkit.getLogger().info("DEBUG: removing entity outside of island");
-                            it.remove();
-                            Creature mob = (Creature)entry.getKey();
-                            mob.setHealth(0);
-                            entry.getKey().remove();
+                        if (entry.getKey() instanceof LivingEntity) {
+                            if (!entry.getValue().inIslandSpace(entry.getKey().getLocation())) {
+                                //Bukkit.getLogger().info("DEBUG: removing entity outside of island");
+                                it.remove();
+                                // Kill mob
+                                LivingEntity mob = (LivingEntity)entry.getKey();
+                                mob.setHealth(0);
+                                entry.getKey().remove();
+                            } else {
+                                //Bukkit.getLogger().info("DEBUG: entity " + entry.getKey().getName() + " is in island space");
+                            }
                         } else {
-                            //Bukkit.getLogger().info("DEBUG: entity " + entry.getKey().getName() + " is in island space");
+                            // Not living entity
+                            it.remove();
                         }
                     }
                 }               
@@ -90,15 +95,15 @@ public class FlyingMobEvents implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void mobSpawn(CreatureSpawnEvent e) {
-        if (DEBUG) {
-            plugin.getLogger().info(e.getEventName());
-        }
         // Only cover withers in the island world
         if (!IslandGuard.inWorld(e.getEntity())) {
             return;
         }
         if (!e.getEntityType().equals(EntityType.WITHER) && !e.getEntityType().equals(EntityType.BLAZE) && !e.getEntityType().equals(EntityType.GHAST)) {
             return;
+        }
+        if (DEBUG) {
+            plugin.getLogger().info("Flying mobs " + e.getEventName());
         }
         // Store where this mob originated
         Island island = plugin.getGrid().getIslandAt(e.getLocation());

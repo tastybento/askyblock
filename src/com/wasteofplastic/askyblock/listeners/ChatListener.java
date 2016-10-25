@@ -55,6 +55,7 @@ public class ChatListener implements Listener {
     private ConcurrentHashMap<UUID,String> playerChallengeLevels;
     // List of which admins are spying or not on team chat
     private Set<UUID> spies;
+    private static final boolean DEBUG = false;
 
     /**
      * @param plugin
@@ -76,6 +77,8 @@ public class ChatListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onChat(final AsyncPlayerChatEvent event) {
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: " + event.getEventName());
         // Substitute variable - thread safe
         String level = "";
         if (playerLevels.containsKey(event.getPlayer().getUniqueId())) {

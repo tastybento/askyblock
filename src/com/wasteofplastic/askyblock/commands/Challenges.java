@@ -70,6 +70,7 @@ import com.wasteofplastic.askyblock.util.VaultHelper;
 @SuppressWarnings("deprecation")
 public class Challenges implements CommandExecutor, TabCompleter {
     private ASkyBlock plugin;
+    private static final boolean DEBUG = false;
     // Database of challenges
     private LinkedHashMap<String, List<String>> challengeList = new LinkedHashMap<String, List<String>>();
     private HashMap<UUID, List<CPItem>> playerChallengeGUI = new HashMap<UUID, List<CPItem>>();
@@ -614,19 +615,19 @@ public class Challenges implements CommandExecutor, TabCompleter {
             }
         }
         if (element.length > 3) {
-            //plugin.getLogger().info("DEBUG: level = " + Integer.valueOf(element[2]));
+            //Bukkit.getLogger().info("DEBUG: level = " + Integer.valueOf(element[2]));
             if (element[3].equalsIgnoreCase("EXTENDED")) {
-                //plugin.getLogger().info("DEBUG: Extended");
+                //Bukkit.getLogger().info("DEBUG: Extended");
                 extended = true;
             }
         }
         if (element.length > 4) {
             if (element[4].equalsIgnoreCase("SPLASH")) {
-                //plugin.getLogger().info("DEBUG: splash");
+                //Bukkit.getLogger().info("DEBUG: splash");
                 splash = true;                
             }
             if (element[4].equalsIgnoreCase("LINGER")) {
-                //plugin.getLogger().info("DEBUG: linger");
+                //Bukkit.getLogger().info("DEBUG: linger");
                 linger = true;
             } 
         }
@@ -946,7 +947,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
                 }
             }
         }
-        final String[] reqList = getChallengeConfig().getString("challenges.challengeList." + challenge + ".requiredItems").split(" ");
+        final String reqList = getChallengeConfig().getString("challenges.challengeList." + challenge + ".requiredItems");
         // The format of the requiredItems is as follows:
         // Material:Qty
         // or
@@ -957,11 +958,132 @@ public class Challenges implements CommandExecutor, TabCompleter {
             List<ItemStack> toBeRemoved = new ArrayList<ItemStack>();
             Material reqItem;
             int reqAmount = 0;
-            for (final String s : reqList) {
-                final String[] part = s.split(":");
-                // Material:Qty
-                if (part.length == 2) {
-                    try {
+            if (!reqList.isEmpty()) {
+                for (final String s : reqList.split(" ")) {
+                    final String[] part = s.split(":");
+                    // Material:Qty
+                    if (part.length == 2) {
+                        try {
+                            // Correct some common mistakes
+                            if (part[0].equalsIgnoreCase("potato")) {
+                                part[0] = "POTATO_ITEM";
+                            } else if (part[0].equalsIgnoreCase("brewing_stand")) {
+                                part[0] = "BREWING_STAND_ITEM";
+                            } else if (part[0].equalsIgnoreCase("carrot")) {
+                                part[0] = "CARROT_ITEM";
+                            } else if (part[0].equalsIgnoreCase("cauldron")) {
+                                part[0] = "CAULDRON_ITEM";
+                            } else if (part[0].equalsIgnoreCase("skull")) {
+                                part[0] = "SKULL_ITEM";
+                            }
+                            // TODO: add netherwart vs. netherstalk?
+                            if (StringUtils.isNumeric(part[0])) {
+                                reqItem = Material.getMaterial(Integer.parseInt(part[0]));
+                            } else {
+                                reqItem = Material.getMaterial(part[0].toUpperCase());
+                            }
+                            reqAmount = Integer.parseInt(part[1]);
+                            ItemStack item = new ItemStack(reqItem);
+                            if (DEBUG) {
+                                plugin.getLogger().info("DEBUG: required item = " + reqItem.toString());
+                                plugin.getLogger().info("DEBUG: item amount = " + reqAmount);
+                            }
+                            if (!player.getInventory().contains(reqItem)) {
+                                if (DEBUG)
+                                    plugin.getLogger().info("DEBUG: item not in inventory");
+                                return false;
+                            } else {
+                                // check amount
+                                int amount = 0;
+                                if (DEBUG)
+                                    plugin.getLogger().info("DEBUG: Amount in inventory = " + player.getInventory().all(reqItem).size());
+                                // Go through all the inventory and try to find
+                                // enough required items
+                                for (Entry<Integer, ? extends ItemStack> en : player.getInventory().all(reqItem).entrySet()) {
+                                    // Get the item
+                                    ItemStack i = en.getValue();
+                                    // If the item is enchanted, skip - it doesn't count
+                                    if (!i.getEnchantments().isEmpty()) {
+                                        if (DEBUG)
+                                            plugin.getLogger().info("DEBUG: item has enchantment - doesn't count");
+                                        continue;
+                                    }
+                                    // Map needs special handling because the
+                                    // durability increments every time a new one is
+                                    // made by the player
+                                    // TODO: if there are any other items that act
+                                    // in the same way, they need adding too...
+                                    if (i.getDurability() == 0 || (reqItem == Material.MAP && i.getType() == Material.MAP)) {
+                                        // Clear any naming, or lore etc.
+                                        //i.setItemMeta(null);
+                                        //player.getInventory().setItem(en.getKey(), i);
+                                        // #1 item stack qty + amount is less than
+                                        // required items - take all i
+                                        // #2 item stack qty + amount = required
+                                        // item -
+                                        // take all
+                                        // #3 item stack qty + amount > req items -
+                                        // take
+                                        // portion of i
+                                        // amount += i.getAmount();
+                                        if ((amount + i.getAmount()) < reqAmount) {
+                                            // Remove all of this item stack - clone
+                                            // otherwise it will keep a reference to
+                                            // the
+                                            // original
+                                            toBeRemoved.add(i.clone());
+                                            amount += i.getAmount();
+                                            if (DEBUG)
+                                                plugin.getLogger().info("DEBUG: amount is <= req Remove "+ i.toString() + ":" + i.getDurability() + " x " + i.getAmount());
+                                        } else if ((amount + i.getAmount()) == reqAmount) {
+                                            if (DEBUG)
+                                                plugin.getLogger().info("DEBUG: amount is = req Remove " + i.toString() + ":" + i.getDurability() + " x " + i.getAmount());
+                                            toBeRemoved.add(i.clone());
+                                            amount += i.getAmount();
+                                            break;
+                                        } else {
+                                            // Remove a portion of this item
+                                            if (DEBUG)
+                                                plugin.getLogger().info("DEBUG: amount is > req Remove " + i.toString() + ":" + i.getDurability() + " x " + i.getAmount());
+
+                                            item.setAmount(reqAmount - amount);
+                                            item.setDurability(i.getDurability());
+                                            toBeRemoved.add(item);
+                                            amount += i.getAmount();
+                                            break;
+                                        }
+                                    }
+                                }
+                                if (DEBUG)
+                                    plugin.getLogger().info("DEBUG: amount "+amount);
+                                if (amount < reqAmount) {
+                                    return false;
+                                }
+                            }
+                        } catch (Exception e) {
+                            plugin.getLogger().severe("Problem with " + s + " in challenges.yml!");
+                            player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorCommandNotReady);
+                            String materialList = "";
+                            boolean hint = false;
+                            for (Material m : Material.values()) {
+                                materialList += m.toString() + ",";
+                                if (m.toString().contains(s.substring(0, 3).toUpperCase())) {
+                                    plugin.getLogger().severe("Did you mean " + m.toString() + "?");
+                                    hint = true;
+                                }
+                            }
+                            if (!hint) {
+                                plugin.getLogger().severe("Sorry, I have no idea what " + s + " is. Pick from one of these:");
+                                plugin.getLogger().severe(materialList.substring(0, materialList.length() - 1));
+                            } else {
+                                plugin.getLogger().severe("Correct challenges.yml with the correct material.");
+                            }
+                            return false;
+                        }
+                    } else if (part.length == 3) {
+                        if (DEBUG)
+                            plugin.getLogger().info("DEBUG: Item with durability");
+                        // This handles items with durability
                         // Correct some common mistakes
                         if (part[0].equalsIgnoreCase("potato")) {
                             part[0] = "POTATO_ITEM";
@@ -974,397 +1096,303 @@ public class Challenges implements CommandExecutor, TabCompleter {
                         } else if (part[0].equalsIgnoreCase("skull")) {
                             part[0] = "SKULL_ITEM";
                         }
-                        // TODO: add netherwart vs. netherstalk?
                         if (StringUtils.isNumeric(part[0])) {
                             reqItem = Material.getMaterial(Integer.parseInt(part[0]));
                         } else {
                             reqItem = Material.getMaterial(part[0].toUpperCase());
                         }
-                        reqAmount = Integer.parseInt(part[1]);
+                        reqAmount = Integer.parseInt(part[2]);
+                        int reqDurability = Integer.parseInt(part[1]);
                         ItemStack item = new ItemStack(reqItem);
-                        //plugin.getLogger().info("DEBUG: required item = " + reqItem.toString());
-                        // plugin.getLogger().info("DEBUG: item amount = " +
-                        // reqAmount);
 
-                        if (!player.getInventory().contains(reqItem)) {
-                            //plugin.getLogger().info("DEBUG: item not in inventory");
+                        // Item
+                        item.setDurability((short) reqDurability);
+                        // check amount
+                        int amount = 0;
+                        // Go through all the inventory and try to find
+                        // enough required items
+                        for (Entry<Integer, ? extends ItemStack> en : player.getInventory().all(reqItem).entrySet()) {
+                            // Get the item
+                            ItemStack i = en.getValue();
+                            if (i.hasItemMeta()) {
+                                continue;
+                            }
+                            if (i.getDurability() == reqDurability) {
+                                // Clear any naming, or lore etc.
+                                //i.setItemMeta(null);
+                                // player.getInventory().setItem(en.getKey(), i);
+                                // #1 item stack qty + amount is less than
+                                // required items - take all i
+                                // #2 item stack qty + amount = required
+                                // item -
+                                // take all
+                                // #3 item stack qty + amount > req items -
+                                // take
+                                // portion of i
+                                // amount += i.getAmount();
+                                if ((amount + i.getAmount()) < reqAmount) {
+                                    // Remove all of this item stack - clone
+                                    // otherwise it will keep a reference to
+                                    // the
+                                    // original
+                                    toBeRemoved.add(i.clone());
+                                    amount += i.getAmount();
+                                    if (DEBUG)
+                                        plugin.getLogger().info("DEBUG: amount is <= req Remove " + i.toString() + ":" + i.getDurability() + " x " + i.getAmount());
+                                } else if ((amount + i.getAmount()) == reqAmount) {
+                                    toBeRemoved.add(i.clone());
+                                    amount += i.getAmount();
+                                    break;
+                                } else {
+                                    // Remove a portion of this item
+                                    if (DEBUG)
+                                        plugin.getLogger().info("DEBUG: amount is > req Remove " + i.toString() + ":" + i.getDurability() + " x " + i.getAmount());
+
+                                    item.setAmount(reqAmount - amount);
+                                    item.setDurability(i.getDurability());
+                                    toBeRemoved.add(item);
+                                    amount += i.getAmount();
+                                    break;
+                                }
+                            }
+                        }
+                        if (DEBUG) {
+                            plugin.getLogger().info("DEBUG: amount is " + amount);
+                            plugin.getLogger().info("DEBUG: req amount is " + reqAmount);
+                        }
+                        if (amount < reqAmount) {
+                            if (DEBUG)
+                                plugin.getLogger().info("DEBUG: Failure! Insufficient amount of " + item.toString() + " required = " + reqAmount + " actual = " + amount);
                             return false;
-                        } else {
-                            // check amount
-                            int amount = 0;
-                            //plugin.getLogger().info("DEBUG: Amount in inventory = " + player.getInventory().all(reqItem).size());
-                            // Go through all the inventory and try to find
-                            // enough required items
-                            for (Entry<Integer, ? extends ItemStack> en : player.getInventory().all(reqItem).entrySet()) {
-                                // Get the item
-                                ItemStack i = en.getValue();
-                                // If the item is enchanted, skip - it doesn't count
-                                if (!i.getEnchantments().isEmpty()) {
-                                    //plugin.getLogger().info("DEBUG: item has enchantment - doesn't count");
-                                    continue;
-                                }
-                                // Map needs special handling because the
-                                // durability increments every time a new one is
-                                // made by the player
-                                // TODO: if there are any other items that act
-                                // in the same way, they need adding too...
-                                if (i.getDurability() == 0 || (reqItem == Material.MAP && i.getType() == Material.MAP)) {
-                                    // Clear any naming, or lore etc.
-                                    //i.setItemMeta(null);
-                                    //player.getInventory().setItem(en.getKey(), i);
-                                    // #1 item stack qty + amount is less than
-                                    // required items - take all i
-                                    // #2 item stack qty + amount = required
-                                    // item -
-                                    // take all
-                                    // #3 item stack qty + amount > req items -
-                                    // take
-                                    // portion of i
-                                    // amount += i.getAmount();
-                                    if ((amount + i.getAmount()) < reqAmount) {
-                                        // Remove all of this item stack - clone
-                                        // otherwise it will keep a reference to
-                                        // the
-                                        // original
-                                        toBeRemoved.add(i.clone());
-                                        amount += i.getAmount();
-                                        // plugin.getLogger().info("DEBUG: amount is <= req Remove "
-                                        // + i.toString() + ":" +
-                                        // i.getDurability() + " x " +
-                                        // i.getAmount());
-                                    } else if ((amount + i.getAmount()) == reqAmount) {
-                                        // plugin.getLogger().info("DEBUG: amount is = req Remove "
-                                        // + i.toString() + ":" +
-                                        // i.getDurability() + " x " +
-                                        // i.getAmount());
-                                        toBeRemoved.add(i.clone());
-                                        amount += i.getAmount();
-                                        break;
-                                    } else {
-                                        // Remove a portion of this item
-                                        // plugin.getLogger().info("DEBUG: amount is > req Remove "
-                                        // + i.toString() + ":" +
-                                        // i.getDurability() + " x " +
-                                        // i.getAmount());
+                        }
+                        if (DEBUG)
+                            plugin.getLogger().info("DEBUG: before set amount " + item.toString() + ":" + item.getDurability() + " x " + item.getAmount());
 
-                                        item.setAmount(reqAmount - amount);
-                                        item.setDurability(i.getDurability());
-                                        toBeRemoved.add(item);
-                                        amount += i.getAmount();
-                                        break;
+                    } else if (part.length == 6 && part[0].contains("POTION")) {
+                        // Run through player's inventory for the item
+                        ItemStack[] playerInv = player.getInventory().getContents();
+                        try {
+                            reqAmount = Integer.parseInt(part[5]);
+                            if (DEBUG)
+                                plugin.getLogger().info("DEBUG: required amount is " + reqAmount);
+                        } catch (Exception e) {
+                            plugin.getLogger().severe("Could not parse the quantity of the potion item " + s);
+                            return false;
+                        }
+                        int count = reqAmount;
+                        for (ItemStack i : playerInv) {
+                            // Catches all POTION, LINGERING_POTION and SPLASH_POTION
+                            if (i != null && i.getType().toString().contains("POTION")) {
+                                //plugin.getLogger().info("DEBUG:6 part potion check!");
+                                // POTION:NAME:<LEVEL>:<EXTENDED>:<SPLASH/LINGER>:QTY
+                                if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
+                                    // Test potion
+                                    Potion potion = Potion.fromItemStack(i);
+                                    PotionType potionType = potion.getType();
+                                    boolean match = true;                                    
+                                    if (DEBUG)
+                                        plugin.getLogger().info("DEBUG: name check " + part[1]);
+                                    // Name check
+                                    if (!part[1].isEmpty()) {
+                                        // There is a name
+                                        // Custom potions may not have names
+                                        if (PotionType.valueOf(part[1]) != null) {
+                                            if (!part[1].equalsIgnoreCase(potionType.name())) {
+                                                match = false;
+                                                if (DEBUG)
+                                                    plugin.getLogger().info("DEBUG: name does not match");
+                                            } else {
+                                                if (DEBUG)
+                                                    plugin.getLogger().info("DEBUG: name matches");
+                                            }
+                                        } else {
+                                            plugin.getLogger().severe("Potion type is unknown. Please pick from the following:");
+                                            for (PotionType pt: PotionType.values()) {
+                                                plugin.getLogger().severe(pt.name());
+                                            }
+                                            match = false;
+                                        }
+                                    }
+                                    // Level check (upgraded)
+                                    if (DEBUG)
+                                        plugin.getLogger().info("DEBUG: level check " + part[2]);
+                                    if (!part[2].isEmpty()) {
+                                        // There is a level declared - check it
+                                        if (StringUtils.isNumeric(part[2])) {
+                                            int level = Integer.valueOf(part[2]);
+                                            if (level != potion.getLevel()) {
+                                                if (DEBUG)
+                                                    plugin.getLogger().info("DEBUG: level does not match");
+                                                match = false;
+                                            }                                     
+                                        }
+                                    }
+                                    // Extended check
+                                    if (DEBUG)
+                                        plugin.getLogger().info("DEBUG: extended check " + part[3]);
+                                    if (!part[3].isEmpty()) {
+                                        if (part[3].equalsIgnoreCase("EXTENDED") && !potion.hasExtendedDuration()) {
+                                            match = false;
+                                            if (DEBUG)
+                                                plugin.getLogger().info("DEBUG: extended does not match");
+                                        }
+                                        if (part[3].equalsIgnoreCase("NOTEXTENDED") && potion.hasExtendedDuration()) {
+                                            match = false;
+                                            if (DEBUG)
+                                                plugin.getLogger().info("DEBUG: extended does not match");
+                                        }
+                                    }
+                                    // Splash check
+                                    if (DEBUG)
+                                        plugin.getLogger().info("DEBUG: splash/linger check " + part[4]);
+                                    if (!part[4].isEmpty()) {
+                                        if (part[4].equalsIgnoreCase("SPLASH") && !potion.isSplash()) {
+                                            match = false;
+                                            if (DEBUG)
+                                                plugin.getLogger().info("DEBUG: not splash");
+                                        }
+                                        if (part[4].equalsIgnoreCase("NOSPLASH") && potion.isSplash()) {
+                                            match = false;
+                                            if (DEBUG)
+                                                plugin.getLogger().info("DEBUG: not no splash");
+                                        }                                    
+                                    }
+                                    // Quantity check
+                                    if (match) {
+                                        if (DEBUG)
+                                            plugin.getLogger().info("DEBUG: potion matches!");
+                                        ItemStack removeItem = i.clone();
+                                        if (removeItem.getAmount() > reqAmount) {
+                                            if (DEBUG)
+                                                plugin.getLogger().info("DEBUG: found " + removeItem.getAmount() + " qty in inv");
+                                            removeItem.setAmount(reqAmount);
+                                        }
+                                        count = count - removeItem.getAmount();
+                                        if (DEBUG)
+                                            plugin.getLogger().info("DEBUG: " + count + " left");
+                                        toBeRemoved.add(removeItem);
+                                    }                 
+                                } else {
+                                    // V1.9 and above
+                                    PotionMeta potionMeta = (PotionMeta)i.getItemMeta();
+                                    // If any of the settings above are missing, then any is okay
+                                    boolean match = true;
+                                    if (DEBUG)
+                                        plugin.getLogger().info("DEBUG: name check " + part[1]);
+                                    // Name check
+                                    if (!part[1].isEmpty()) {
+                                        // There is a name
+                                        if (PotionType.valueOf(part[1]) != null) {
+                                            if (!potionMeta.getBasePotionData().getType().name().equalsIgnoreCase(part[1])) {
+                                                match = false;
+                                                if (DEBUG)
+                                                    plugin.getLogger().info("DEBUG: name does not match");
+                                            } else {
+                                                if (DEBUG)
+                                                    plugin.getLogger().info("DEBUG: name matches");
+                                            }
+                                        } else {
+                                            plugin.getLogger().severe("Potion type is unknown. Please pick from the following:");
+                                            for (PotionType pt: PotionType.values()) {
+                                                plugin.getLogger().severe(pt.name());
+                                            }
+                                            match = false;
+                                        }
+                                    }
+                                    // Level check (upgraded)
+                                    // plugin.getLogger().info("DEBUG: level check " + part[2]);
+                                    if (!part[2].isEmpty()) {
+                                        // There is a level declared - check it
+                                        if (StringUtils.isNumeric(part[2])) {
+                                            int level = Integer.valueOf(part[2]);
+                                            if (level == 1 && potionMeta.getBasePotionData().isUpgraded()) {
+                                                if (DEBUG)
+                                                    plugin.getLogger().info("DEBUG: level does not match");
+                                                match = false;
+                                            }
+                                            if (level !=1 && !potionMeta.getBasePotionData().isUpgraded()) {
+                                                match = false;
+                                                if (DEBUG)
+                                                    plugin.getLogger().info("DEBUG: level does not match");
+                                            }
+                                        }
+                                    }
+                                    // Extended check
+                                    if (DEBUG)
+                                        plugin.getLogger().info("DEBUG: extended check " + part[3]);
+                                    if (!part[3].isEmpty()) {
+                                        if (part[3].equalsIgnoreCase("EXTENDED") && !potionMeta.getBasePotionData().isExtended()) {
+                                            match = false;
+                                            if (DEBUG)
+                                                plugin.getLogger().info("DEBUG: extended does not match");
+                                        }
+                                        if (part[3].equalsIgnoreCase("NOTEXTENDED") && potionMeta.getBasePotionData().isExtended()) {
+                                            match = false;
+                                            if (DEBUG)
+                                                plugin.getLogger().info("DEBUG: extended does not match");
+                                        }
+                                    }
+                                    // Splash or Linger check
+                                    if (DEBUG)
+                                     plugin.getLogger().info("DEBUG: splash/linger check " + part[4]);
+                                    if (!part[4].isEmpty()) {
+                                        if (part[4].equalsIgnoreCase("SPLASH") && !i.getType().equals(Material.SPLASH_POTION)) {
+                                            match = false;
+                                            if (DEBUG)
+                                             plugin.getLogger().info("DEBUG: not splash");
+                                        }
+                                        if (part[4].equalsIgnoreCase("NOSPLASH") && i.getType().equals(Material.SPLASH_POTION)) {
+                                            match = false;
+                                            if (DEBUG)
+                                             plugin.getLogger().info("DEBUG: not no splash");
+                                        }
+                                        if (part[4].equalsIgnoreCase("LINGER") && !i.getType().equals(Material.LINGERING_POTION)) {
+                                            match = false;
+                                            if (DEBUG)
+                                                plugin.getLogger().info("DEBUG: not linger");
+                                        }
+                                        if (part[4].equalsIgnoreCase("NOLINGER") && i.getType().equals(Material.LINGERING_POTION)) {
+                                            match = false;
+                                            if (DEBUG)
+                                                plugin.getLogger().info("DEBUG: not no linger");
+                                        }
+                                    }
+                                    // Quantity check
+                                    if (match) {
+                                        if (DEBUG)
+                                            plugin.getLogger().info("DEBUG: potion matches!");
+                                        ItemStack removeItem = i.clone();
+                                        if (removeItem.getAmount() > reqAmount) {
+                                            if (DEBUG)
+                                                plugin.getLogger().info("DEBUG: found " + removeItem.getAmount() + " qty in inv");
+                                            removeItem.setAmount(reqAmount);
+                                        }
+                                        count = count - removeItem.getAmount();
+                                        if (DEBUG)
+                                            plugin.getLogger().info("DEBUG: " + count + " left");
+                                        toBeRemoved.add(removeItem);
                                     }
                                 }
                             }
-                            // plugin.getLogger().info("DEBUG: amount "+
-                            // amount);
-                            if (amount < reqAmount) {
-                                return false;
+                            if (count <= 0) {
+                                if (DEBUG)
+                                    plugin.getLogger().info("DEBUG: Player has enough");
+                                break;
                             }
+                            if (DEBUG)
+                                plugin.getLogger().info("DEBUG: still need " + count + " to complete");
                         }
-                    } catch (Exception e) {
-                        plugin.getLogger().severe("Problem with " + s + " in challenges.yml!");
-                        player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorCommandNotReady);
-                        String materialList = "";
-                        boolean hint = false;
-                        for (Material m : Material.values()) {
-                            materialList += m.toString() + ",";
-                            if (m.toString().contains(s.substring(0, 3).toUpperCase())) {
-                                plugin.getLogger().severe("Did you mean " + m.toString() + "?");
-                                hint = true;
-                            }
+                        if (count > 0) {
+                            if (DEBUG)
+                                plugin.getLogger().info("DEBUG: Player does not have enough");
+                            return false;
                         }
-                        if (!hint) {
-                            plugin.getLogger().severe("Sorry, I have no idea what " + s + " is. Pick from one of these:");
-                            plugin.getLogger().severe(materialList.substring(0, materialList.length() - 1));
-                        } else {
-                            plugin.getLogger().severe("Correct challenges.yml with the correct material.");
-                        }
-                        return false;
-                    }
-                } else if (part.length == 3) {
-                    // This handles items with durability
-                    // Correct some common mistakes
-                    if (part[0].equalsIgnoreCase("potato")) {
-                        part[0] = "POTATO_ITEM";
-                    } else if (part[0].equalsIgnoreCase("brewing_stand")) {
-                        part[0] = "BREWING_STAND_ITEM";
-                    } else if (part[0].equalsIgnoreCase("carrot")) {
-                        part[0] = "CARROT_ITEM";
-                    } else if (part[0].equalsIgnoreCase("cauldron")) {
-                        part[0] = "CAULDRON_ITEM";
-                    } else if (part[0].equalsIgnoreCase("skull")) {
-                        part[0] = "SKULL_ITEM";
-                    }
-                    if (StringUtils.isNumeric(part[0])) {
-                        reqItem = Material.getMaterial(Integer.parseInt(part[0]));
+
                     } else {
-                        reqItem = Material.getMaterial(part[0].toUpperCase());
-                    }
-                    reqAmount = Integer.parseInt(part[2]);
-                    int reqDurability = Integer.parseInt(part[1]);
-                    ItemStack item = new ItemStack(reqItem);
-
-                    // Item
-                    item.setDurability((short) reqDurability);
-                    // check amount
-                    int amount = 0;
-                    // Go through all the inventory and try to find
-                    // enough required items
-                    for (Entry<Integer, ? extends ItemStack> en : player.getInventory().all(reqItem).entrySet()) {
-                        // Get the item
-                        ItemStack i = en.getValue();
-                        if (i.hasItemMeta()) {
-                            continue;
-                        }
-                        if (i.getDurability() == reqDurability) {
-                            // Clear any naming, or lore etc.
-                            //i.setItemMeta(null);
-                            // player.getInventory().setItem(en.getKey(), i);
-                            // #1 item stack qty + amount is less than
-                            // required items - take all i
-                            // #2 item stack qty + amount = required
-                            // item -
-                            // take all
-                            // #3 item stack qty + amount > req items -
-                            // take
-                            // portion of i
-                            // amount += i.getAmount();
-                            if ((amount + i.getAmount()) < reqAmount) {
-                                // Remove all of this item stack - clone
-                                // otherwise it will keep a reference to
-                                // the
-                                // original
-                                toBeRemoved.add(i.clone());
-                                amount += i.getAmount();
-                                // plugin.getLogger().info("DEBUG: amount is <= req Remove "
-                                // + i.toString() + ":" +
-                                // i.getDurability()
-                                // + " x " + i.getAmount());
-                            } else if ((amount + i.getAmount()) == reqAmount) {
-                                toBeRemoved.add(i.clone());
-                                amount += i.getAmount();
-                                break;
-                            } else {
-                                // Remove a portion of this item
-                                // plugin.getLogger().info("DEBUG: amount is > req Remove "
-                                // + i.toString() + ":" +
-                                // i.getDurability()
-                                // + " x " + i.getAmount());
-
-                                item.setAmount(reqAmount - amount);
-                                item.setDurability(i.getDurability());
-                                toBeRemoved.add(item);
-                                amount += i.getAmount();
-                                break;
-                            }
-                        }
-                    }
-                    // plugin.getLogger().info("DEBUG: amount is " +
-                    // amount);
-                    // plugin.getLogger().info("DEBUG: req amount is " +
-                    // reqAmount);
-                    if (amount < reqAmount) {
+                        plugin.getLogger().severe("Problem with " + s + " in challenges.yml!");
                         return false;
-                    }
-
-                    // plugin.getLogger().info("DEBUG: before set amount " +
-                    // item.toString() + ":" + item.getDurability() + " x "
-                    // + item.getAmount());
-                    // item.setAmount(reqAmount);
-                    // plugin.getLogger().info("DEBUG: after set amount " +
-                    // item.toString() + ":" + item.getDurability() + " x "
-                    // + item.getAmount());
-                    // toBeRemoved.add(item);
-
-                } else if (part.length == 6 && part[0].contains("POTION")) {
-                    // Run through player's inventory for the item
-                    ItemStack[] playerInv = player.getInventory().getContents();
-                    try {
-                        reqAmount = Integer.parseInt(part[5]);
-                        //plugin.getLogger().info("DEBUG: required amount is " + reqAmount);
-                    } catch (Exception e) {
-                        plugin.getLogger().severe("Could not parse the quantity of the potion item " + s);
-                        return false;
-                    }
-                    int count = reqAmount;
-                    for (ItemStack i : playerInv) {
-                        // Catches all POTION, LINGERING_POTION and SPLASH_POTION
-                        if (i != null && i.getType().toString().contains("POTION")) {
-                            //plugin.getLogger().info("DEBUG:6 part potion check!");
-                            // POTION:NAME:<LEVEL>:<EXTENDED>:<SPLASH/LINGER>:QTY
-                            if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
-                                // Test potion
-                                Potion potion = Potion.fromItemStack(i);
-                                PotionType potionType = potion.getType();
-                                boolean match = true;
-                                // plugin.getLogger().info("DEBUG: name check " + part[1]);
-                                // Name check
-                                if (!part[1].isEmpty()) {
-                                    // There is a name
-                                    if (PotionType.valueOf(part[1]) != null) {
-                                        if (!potionType.name().equalsIgnoreCase(part[1])) {
-                                            match = false;
-                                            // plugin.getLogger().info("DEBUG: name does not match");
-                                        } else {
-                                            // plugin.getLogger().info("DEBUG: name matches");
-                                        }
-                                    } else {
-                                        plugin.getLogger().severe("Potion type is unknown. Please pick from the following:");
-                                        for (PotionType pt: PotionType.values()) {
-                                            plugin.getLogger().severe(pt.name());
-                                        }
-                                        match = false;
-                                    }
-                                }
-                                // Level check (upgraded)
-                                // plugin.getLogger().info("DEBUG: level check " + part[2]);
-                                if (!part[2].isEmpty()) {
-                                    // There is a level declared - check it
-                                    if (StringUtils.isNumeric(part[2])) {
-                                        int level = Integer.valueOf(part[2]);
-                                        if (level != potion.getLevel()) {
-                                            // plugin.getLogger().info("DEBUG: level does not match");
-                                            match = false;
-                                        }                                     
-                                    }
-                                }
-                                // Extended check
-                                // plugin.getLogger().info("DEBUG: extended check " + part[3]);
-                                if (!part[3].isEmpty()) {
-                                    if (part[3].equalsIgnoreCase("EXTENDED") && !potion.hasExtendedDuration()) {
-                                        match = false;
-                                        // plugin.getLogger().info("DEBUG: extended does not match");
-                                    }
-                                    if (part[3].equalsIgnoreCase("NOTEXTENDED") && potion.hasExtendedDuration()) {
-                                        match = false;
-                                        // plugin.getLogger().info("DEBUG: extended does not match");
-                                    }
-                                }
-                                // Splash check
-                                // plugin.getLogger().info("DEBUG: splash/linger check " + part[4]);
-                                if (!part[4].isEmpty()) {
-                                    if (part[4].equalsIgnoreCase("SPLASH") && !potion.isSplash()) {
-                                        match = false;
-                                        // plugin.getLogger().info("DEBUG: not splash");
-                                    }
-                                    if (part[4].equalsIgnoreCase("NOSPLASH") && potion.isSplash()) {
-                                        match = false;
-                                        // plugin.getLogger().info("DEBUG: not no splash");
-                                    }                                    
-                                }
-                                // Quantity check
-                                if (match) {
-                                    // plugin.getLogger().info("DEBUG: potion matches!");
-                                    ItemStack removeItem = i.clone();
-                                    if (removeItem.getAmount() > reqAmount) {
-                                        // plugin.getLogger().info("DEBUG: found " + removeItem.getAmount() + " qty in inv");
-                                        removeItem.setAmount(reqAmount);
-                                    }
-                                    count = count - removeItem.getAmount();
-                                    // plugin.getLogger().info("DEBUG: " + count + " left");
-                                    toBeRemoved.add(removeItem);
-                                }                 
-                            } else {
-                                // V1.9 and above
-                                PotionMeta potionMeta = (PotionMeta)i.getItemMeta();
-                                // If any of the settings above are missing, then any is okay
-                                boolean match = true;
-                                // plugin.getLogger().info("DEBUG: name check " + part[1]);
-                                // Name check
-                                if (!part[1].isEmpty()) {
-                                    // There is a name
-                                    if (PotionType.valueOf(part[1]) != null) {
-                                        if (!potionMeta.getBasePotionData().getType().name().equalsIgnoreCase(part[1])) {
-                                            match = false;
-                                            // plugin.getLogger().info("DEBUG: name does not match");
-                                        } else {
-                                            // plugin.getLogger().info("DEBUG: name matches");
-                                        }
-                                    } else {
-                                        plugin.getLogger().severe("Potion type is unknown. Please pick from the following:");
-                                        for (PotionType pt: PotionType.values()) {
-                                            plugin.getLogger().severe(pt.name());
-                                        }
-                                        match = false;
-                                    }
-                                }
-                                // Level check (upgraded)
-                                // plugin.getLogger().info("DEBUG: level check " + part[2]);
-                                if (!part[2].isEmpty()) {
-                                    // There is a level declared - check it
-                                    if (StringUtils.isNumeric(part[2])) {
-                                        int level = Integer.valueOf(part[2]);
-                                        if (level == 1 && potionMeta.getBasePotionData().isUpgraded()) {
-                                            // plugin.getLogger().info("DEBUG: level does not match");
-                                            match = false;
-                                        }
-                                        if (level !=1 && !potionMeta.getBasePotionData().isUpgraded()) {
-                                            match = false;
-                                            // plugin.getLogger().info("DEBUG: level does not match");
-                                        }
-                                    }
-                                }
-                                // Extended check
-                                // plugin.getLogger().info("DEBUG: extended check " + part[3]);
-                                if (!part[3].isEmpty()) {
-                                    if (part[3].equalsIgnoreCase("EXTENDED") && !potionMeta.getBasePotionData().isExtended()) {
-                                        match = false;
-                                        // plugin.getLogger().info("DEBUG: extended does not match");
-                                    }
-                                    if (part[3].equalsIgnoreCase("NOTEXTENDED") && potionMeta.getBasePotionData().isExtended()) {
-                                        match = false;
-                                        // plugin.getLogger().info("DEBUG: extended does not match");
-                                    }
-                                }
-                                // Splash or Linger check
-                                // plugin.getLogger().info("DEBUG: splash/linger check " + part[4]);
-                                if (!part[4].isEmpty()) {
-                                    if (part[4].equalsIgnoreCase("SPLASH") && !i.getType().equals(Material.SPLASH_POTION)) {
-                                        match = false;
-                                        // plugin.getLogger().info("DEBUG: not splash");
-                                    }
-                                    if (part[4].equalsIgnoreCase("NOSPLASH") && i.getType().equals(Material.SPLASH_POTION)) {
-                                        match = false;
-                                        // plugin.getLogger().info("DEBUG: not no splash");
-                                    }
-                                    if (part[4].equalsIgnoreCase("LINGER") && !i.getType().equals(Material.LINGERING_POTION)) {
-                                        match = false;
-                                        // plugin.getLogger().info("DEBUG: not linger");
-                                    }
-                                    if (part[4].equalsIgnoreCase("NOLINGER") && i.getType().equals(Material.LINGERING_POTION)) {
-                                        match = false;
-                                        // plugin.getLogger().info("DEBUG: not no linger");
-                                    }
-                                }
-                                // Quantity check
-                                if (match) {
-                                    // plugin.getLogger().info("DEBUG: potion matches!");
-                                    ItemStack removeItem = i.clone();
-                                    if (removeItem.getAmount() > reqAmount) {
-                                        // plugin.getLogger().info("DEBUG: found " + removeItem.getAmount() + " qty in inv");
-                                        removeItem.setAmount(reqAmount);
-                                    }
-                                    count = count - removeItem.getAmount();
-                                    // plugin.getLogger().info("DEBUG: " + count + " left");
-                                    toBeRemoved.add(removeItem);
-                                }
-                            }
-                        }
-                        if (count <= 0) {
-                            // plugin.getLogger().info("DEBUG: Player has enough");
-                            break;
-                        }
-                        // plugin.getLogger().info("DEBUG: still need " + count + " to complete");
-                    }
-                    if (count > 0) {
-                        // plugin.getLogger().info("DEBUG: Player does not have enough");
-                        return false;
-                    }
-
-                } else {
-                    plugin.getLogger().severe("Problem with " + s + " in challenges.yml!");
-                    return false;
-                }                
+                    }                
+                }
             }
             // Build up the items in the inventory and remove them if they are
             // all there.
@@ -1372,11 +1400,12 @@ public class Challenges implements CommandExecutor, TabCompleter {
             if (getChallengeConfig().getBoolean("challenges.challengeList." + challenge + ".takeItems")) {
                 // checkChallengeItems(player, challenge);
                 // int qty = 0;
-                // plugin.getLogger().info("DEBUG: Removing items");
+                if (DEBUG)
+                    plugin.getLogger().info("DEBUG: Removing items");
                 for (ItemStack i : toBeRemoved) {
                     // qty += i.getAmount();
-                    // plugin.getLogger().info("DEBUG: Remove " + i.toString() +
-                    // "::" + i.getDurability() + " x " + i.getAmount());
+                    if (DEBUG)
+                        plugin.getLogger().info("DEBUG: Remove " + i.toString() + "::" + i.getDurability() + " x " + i.getAmount());
                     HashMap<Integer, ItemStack> leftOver = player.getInventory().removeItem(i);
                     if (!leftOver.isEmpty()) {
                         plugin.getLogger().warning(
@@ -1404,52 +1433,53 @@ public class Challenges implements CommandExecutor, TabCompleter {
         if (type.equalsIgnoreCase("island")) {
             final HashMap<Material, Integer> neededItem = new HashMap<Material, Integer>();
             final HashMap<EntityType, Integer> neededEntities = new HashMap<EntityType, Integer>();
-            for (int i = 0; i < reqList.length; i++) {
-                final String[] sPart = reqList[i].split(":");
-                // Parse the qty required first
-                try {
-                    final int qty = Integer.parseInt(sPart[1]);
-                    // Find out if the needed item is a Material or an Entity
-                    boolean isEntity = false;
-                    for (EntityType entityType : EntityType.values()) {
-                        if (entityType.toString().equalsIgnoreCase(sPart[0])) {
-                            isEntity = true;
-                            break;
+            if (!reqList.isEmpty()) {
+                for (int i = 0; i < reqList.split(" ").length; i++) {
+                    final String[] sPart = reqList.split(" ")[i].split(":");
+                    // Parse the qty required first
+                    try {
+                        final int qty = Integer.parseInt(sPart[1]);
+                        // Find out if the needed item is a Material or an Entity
+                        boolean isEntity = false;
+                        for (EntityType entityType : EntityType.values()) {
+                            if (entityType.toString().equalsIgnoreCase(sPart[0])) {
+                                isEntity = true;
+                                break;
+                            }
                         }
-                    }
-                    if (isEntity) {
-                        // plugin.getLogger().info("DEBUG: Item " +
-                        // sPart[0].toUpperCase() + " is an entity");
-                        EntityType entityType = EntityType.valueOf(sPart[0].toUpperCase());
-                        if (entityType != null) {
-                            neededEntities.put(entityType, qty);
-                            // plugin.getLogger().info("DEBUG: Needed entity is "
-                            // + Integer.parseInt(sPart[1]) + " x " +
-                            // EntityType.valueOf(sPart[0].toUpperCase()).toString());
-                        }
-                    } else {	
-                        Material item;
-                        if (StringUtils.isNumeric(sPart[0])) {
-                            item = Material.getMaterial(Integer.parseInt(sPart[0]));
-                        } else {
-                            item = Material.getMaterial(sPart[0].toUpperCase());
-                        }
-                        if (item != null) {
-                            neededItem.put(item, qty);
-                            // plugin.getLogger().info("DEBUG: Needed item is "
-                            // + Integer.parseInt(sPart[1]) + " x " +
-                            // Material.getMaterial(sPart[0]).toString());
+                        if (isEntity) {
+                            // plugin.getLogger().info("DEBUG: Item " +
+                            // sPart[0].toUpperCase() + " is an entity");
+                            EntityType entityType = EntityType.valueOf(sPart[0].toUpperCase());
+                            if (entityType != null) {
+                                neededEntities.put(entityType, qty);
+                                // plugin.getLogger().info("DEBUG: Needed entity is "
+                                // + Integer.parseInt(sPart[1]) + " x " +
+                                // EntityType.valueOf(sPart[0].toUpperCase()).toString());
+                            }
+                        } else {	
+                            Material item;
+                            if (StringUtils.isNumeric(sPart[0])) {
+                                item = Material.getMaterial(Integer.parseInt(sPart[0]));
+                            } else {
+                                item = Material.getMaterial(sPart[0].toUpperCase());
+                            }
+                            if (item != null) {
+                                neededItem.put(item, qty);
+                                // plugin.getLogger().info("DEBUG: Needed item is "
+                                // + Integer.parseInt(sPart[1]) + " x " +
+                                // Material.getMaterial(sPart[0]).toString());
 
-                        } else {
-                            plugin.getLogger().warning("Problem parsing required item for challenge " + challenge + " in challenges.yml!");
-                            return false;
+                            } else {
+                                plugin.getLogger().warning("Problem parsing required item for challenge " + challenge + " in challenges.yml!");
+                                return false;
+                            }
                         }
+                    } catch (Exception intEx) {
+                        plugin.getLogger().warning("Problem parsing required items for challenge " + challenge + " in challenges.yml - skipping");
+                        return false;
                     }
-                } catch (Exception intEx) {
-                    plugin.getLogger().warning("Problem parsing required items for challenge " + challenge + " in challenges.yml - skipping");
-                    return false;
                 }
-
             }
             // We now have two sets of required items or entities
             // Check the items first

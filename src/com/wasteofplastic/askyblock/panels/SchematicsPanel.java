@@ -22,6 +22,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import net.milkbowl.vault.economy.EconomyResponse;
+import net.milkbowl.vault.economy.EconomyResponse.ResponseType;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -35,6 +38,7 @@ import org.bukkit.inventory.Inventory;
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.schematics.Schematic;
+import com.wasteofplastic.askyblock.util.VaultHelper;
 
 public class SchematicsPanel implements Listener {
     private ASkyBlock plugin;
@@ -105,12 +109,16 @@ public class SchematicsPanel implements Listener {
         }
         if (slot == -999) {
             player.closeInventory();
+            inventory.clear();
+            schematicItems.remove(player.getUniqueId());
             event.setCancelled(true);
             return;
         }
         if (event.getClick().equals(ClickType.SHIFT_RIGHT)) {
             event.setCancelled(true);
             player.closeInventory();
+            inventory.clear();
+            schematicItems.remove(player.getUniqueId());
             player.updateInventory();
             return;
         }
@@ -118,6 +126,8 @@ public class SchematicsPanel implements Listener {
         List<SPItem> thisPanel = schematicItems.get(player.getUniqueId());
         if (thisPanel == null) {
             player.closeInventory();
+            inventory.clear();
+            schematicItems.remove(player.getUniqueId());
             event.setCancelled(true);
             return;
         }
@@ -125,10 +135,22 @@ public class SchematicsPanel implements Listener {
             event.setCancelled(true);
             // plugin.getLogger().info("DEBUG: slot is " + slot);
             player.closeInventory(); // Closes the inventory
+            inventory.clear();
             // Get the item clicked
             SPItem item = thisPanel.get(slot);
-            // Do something
-            player.performCommand(Settings.ISLANDCOMMAND + " make " + item.getHeading());
+            // Check cost
+            if (Settings.useEconomy && VaultHelper.setupEconomy() && !VaultHelper.econ.has(player, item.getCost())) {
+                // Too expensive
+                player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).minishopYouCannotAfford.replace("[description]", item.getName()));        
+            } else {
+                // Do something
+                if (Settings.useEconomy && VaultHelper.setupEconomy()) {
+                    VaultHelper.econ.withdrawPlayer(player, item.getCost());                   
+                } 
+                player.performCommand(Settings.ISLANDCOMMAND + " make " + item.getHeading());
+            }
+            schematicItems.remove(player.getUniqueId());
+            thisPanel.clear();   
         }
         return;
     }

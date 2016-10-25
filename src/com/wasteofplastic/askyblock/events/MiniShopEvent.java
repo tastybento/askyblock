@@ -37,8 +37,8 @@ public class MiniShopEvent extends ASkyBlockEvent {
     /**
      * Called to create the event
      * @param player
-     * @param island
-     * @param location
+     * @param item
+     * @param type
      */
     public MiniShopEvent(final UUID player, final MiniShopItem item, final TransactionType type) {
         super(player);
