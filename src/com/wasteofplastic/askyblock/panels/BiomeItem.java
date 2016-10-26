@@ -57,7 +57,7 @@ public class BiomeItem {
         item = new ItemStack(material);
         // Set the description and price
         ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(name);
+        meta.setDisplayName(ChatColor.WHITE + name);
         List<String> lore = new ArrayList<String>();
         if (description.contains("|") || description.length() <= 20) {
             // Split pip character requires escaping it
