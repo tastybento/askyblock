@@ -72,7 +72,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
     private ASkyBlock plugin;
     private static final boolean DEBUG = false;
     // Database of challenges
-    private LinkedHashMap<String, List<String>> challengeList = new LinkedHashMap<String, List<String>>();
+    private static LinkedHashMap<String, List<String>> challengeList = new LinkedHashMap<String, List<String>>();
     private HashMap<UUID, List<CPItem>> playerChallengeGUI = new HashMap<UUID, List<CPItem>>();
     // Where challenges are stored
     private static FileConfiguration challengeFile = null;
@@ -2071,4 +2071,12 @@ public class Challenges implements CommandExecutor, TabCompleter {
         }      
         return Settings.challengeLevels.get(getLevelDone(player));
     }
+    
+    	/**
+	 * Get the challenge list
+	 * @return challenge list
+	 */
+	public static LinkedHashMap<String, List<String>> getChallengeList(){
+		return challengeList;
+	}
 }
