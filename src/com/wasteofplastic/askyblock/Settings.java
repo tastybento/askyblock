@@ -230,6 +230,9 @@ public class Settings {
     // Use physics when pasting schematic blocks
     public static boolean usePhysics;
 
+    // Need a certain amount of island levels to create a warp sign
+    public static int warpLevelsRestriction;
+    
     // Falling blocked commands
     public static List<String> fallingCommandBlockList;
     public static List<String> leaveCommands;

@@ -91,6 +91,7 @@ public class ASLocale {
     public String warpsdeactivate;
     public String warpserrorNoRemove;
     public String warpserrorNoPerm;
+    public String warpserrorNotEnoughLevel;
     public String warpserrorNoPlace;
     public String warpserrorDuplicate;
     public String warpserrorDoesNotExist;
@@ -834,6 +835,8 @@ public class ASLocale {
                 locale.getString("warps.errorNoRemove", "You can only remove your own Welcome Sign!"));
         warpserrorNoPerm = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("warps.errorNoPerm", "You do not have permission to place Welcome Signs yet!"));
+        warpserrorNotEnoughLevel = ChatColor.translateAlternateColorCodes('&', 
+        		locale.getString("warps.errorNotEnoughLevel", "You do not have enough island levels to create a Welcome Sign!"));
         warpserrorNoPlace = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("warps.errorNoPlace", "You must be on your island to place a Welcome Sign!"));
         warpserrorDuplicate = ChatColor.translateAlternateColorCodes('&',

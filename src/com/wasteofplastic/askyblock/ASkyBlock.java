@@ -824,6 +824,8 @@ public class ASkyBlock extends JavaPlugin {
         Settings.maxIslands = getConfig().getInt("general.maxIslands",0);
         // Mute death messages
         Settings.muteDeathMessages = getConfig().getBoolean("general.mutedeathmessages", false);
+        // Warp Restriction
+        Settings.warpLevelsRestriction = getConfig().getInt("general.warplevelrestriction", 10);
         // Warp panel
         Settings.useWarpPanel = getConfig().getBoolean("general.usewarppanel", true);
         // Fast level calculation (this is really fast)

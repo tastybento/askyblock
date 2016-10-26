@@ -528,6 +528,11 @@ general:
    # Includes blaze and ghast. 
    restrictwither: true
    
+   # Warp Restriction - needed levels to be able to create a warp
+   # 0 or negative values will disable this restriction
+   # 10 is default
+   warplevelrestriction: 10
+   
    # Warp panel - GUI for welcome warp signs. If set to false, old-style
    # text will be used
    usewarppanel: true
