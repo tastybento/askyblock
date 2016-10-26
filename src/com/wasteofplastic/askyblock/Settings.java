@@ -206,6 +206,9 @@ public class Settings {
     public static List<String> resetCommands = new ArrayList<String>();
     // Mob limits
     public static int breedingLimit;
+    
+    // Console shows teamchat messages
+    public static boolean logTeamChat;
 
     // Challenges - show or remove completed on-time challenges
     public static boolean removeCompleteOntimeChallenges;

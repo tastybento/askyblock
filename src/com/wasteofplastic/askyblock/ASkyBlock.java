@@ -832,6 +832,7 @@ public class ASkyBlock extends JavaPlugin {
         Settings.restrictWither = getConfig().getBoolean("general.restrictwither", true);
         // Team chat
         Settings.teamChat = getConfig().getBoolean("general.teamchat", true);
+        Settings.logTeamChat = getConfig().getBoolean("general.logteamchat", true);
         // TEAMSUFFIX as island level
         Settings.setTeamName = getConfig().getBoolean("general.setteamsuffix", false);
         Settings.teamSuffix = getConfig().getString("general.teamsuffix","([level])");

@@ -133,6 +133,8 @@ public class ChatListener implements Listener {
                         onlinePlayer.sendMessage(ChatColor.RED + "[TCSpy] " + ChatColor.WHITE + message);
                     }
                 }
+                //Log teamchat
+                if(Settings.logTeamChat) System.out.println(ChatColor.stripColor(message));
             }
             if (!onLine) {
                 player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).teamChatNoTeamAround);
