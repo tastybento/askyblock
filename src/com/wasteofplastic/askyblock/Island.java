@@ -121,7 +121,8 @@ public class Island implements Cloneable {
         allowRedStone,
         allowShearing,
         allowVillagerTrading,
-        allowChorusFruit
+        allowChorusFruit,
+        enableJoinAndLeaveIslandMessages
     }
 
 
@@ -263,6 +264,7 @@ public class Island implements Cloneable {
         this.igs.put(Flags.allowShearing, Settings.allowShearing);
         this.igs.put(Flags.allowVillagerTrading, Settings.allowVillagerTrading);
         this.igs.put(Flags.allowChorusFruit, Settings.allowChorusFruit);
+        this.igs.put(Flags.enableJoinAndLeaveIslandMessages, Settings.enableJoinAndLeaveIslandMessages);
     }
 
     /**

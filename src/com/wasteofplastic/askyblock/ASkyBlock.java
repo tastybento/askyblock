@@ -1277,6 +1277,8 @@ public class ASkyBlock extends JavaPlugin {
 		Settings.allowHorseInvAccess = getConfig().getBoolean("island.allowhorseinventoryaccess", false);
 		Settings.allowVillagerTrading = getConfig().getBoolean("island.allowvillagertrading", true);
 		Settings.allowChorusFruit = getConfig().getBoolean("island.allowchorusfruit", false);
+	    Settings.enableJoinAndLeaveIslandMessages = getConfig().getBoolean("island.enablejoinandleaveislandmessages", true);
+
 		// Spawn Settings
 		Settings.allowSpawnCreeperPain = getConfig().getBoolean("spawn.allowcreeperpain", false);
 		Settings.allowSpawnHorseRiding = getConfig().getBoolean("spawn.allowhorseriding", false);

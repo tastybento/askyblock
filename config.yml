@@ -185,7 +185,9 @@ island:
    allowvillagertrading: true
    # Allow visitors to teleport when eating chorus fruit
    allowchorusfruit: false
-  
+   # Enable or disable join/leave messages from the player's island
+   enablejoinandleaveislandmessages: true
+   
    # System settings - these cannot be changed by players, only viewed
    
    # Allow monsters to be hurt (creepers,slimes, etc.)
