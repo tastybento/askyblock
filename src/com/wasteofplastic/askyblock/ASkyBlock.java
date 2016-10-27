@@ -118,6 +118,8 @@ public class ASkyBlock extends JavaPlugin {
 	private TinyDB tinyDB;
 	// Warp panel
 	private WarpPanel warpPanel;
+	// Top Ten
+	private TopTen topTen;
 	// V1.8 or later
 	private boolean onePointEight;
 
@@ -427,6 +429,11 @@ public class ASkyBlock extends JavaPlugin {
 						if (Settings.useWarpPanel) {
 							warpPanel = new WarpPanel(plugin);
 							getServer().getPluginManager().registerEvents(warpPanel, plugin);
+						}
+						// Load the TopTen GUI
+						if (!Settings.displayIslandTopTenInChat){
+							topTen = new TopTen(plugin);
+							getServer().getPluginManager().registerEvents(topTen, plugin);
 						}
 						// Minishop - must wait for economy to load before we can use
 						// econ
@@ -841,6 +848,8 @@ public class ASkyBlock extends JavaPlugin {
         Settings.makeIslandIfNone = getConfig().getBoolean("general.makeislandifnone", false);
         // Use physics when pasting island block schematics
         Settings.usePhysics = getConfig().getBoolean("general.usephysics", false);
+        // Use old display (chat instead of GUI) for Island top ten
+        Settings.displayIslandTopTenInChat = getConfig().getBoolean("general.islandtopteninchat", false);
         // Run level calc at login
         Settings.loginLevel = getConfig().getBoolean("general.loginlevel", false);
         // Use economy or not
@@ -1688,7 +1697,18 @@ public class ASkyBlock extends JavaPlugin {
 		}
 		return warpPanel;
 	}
-
+	
+	/**
+	 * 
+	 */
+	public TopTen getTopTen() {
+		if (topTen == null){
+			topTen = new TopTen(this);
+			getServer().getPluginManager().registerEvents(topTen, plugin);
+		}
+		return topTen;
+	}
+	
 	/**
 	 * @return the schematicsPanel
 	 */

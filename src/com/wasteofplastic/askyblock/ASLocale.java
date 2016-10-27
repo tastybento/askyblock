@@ -104,6 +104,7 @@ public class ASLocale {
 
     // ASkyBlock
     public String topTenheader;
+    public String topTenGuiTitle;
     public String topTenerrorNotReady;
     public String levelislandLevel;
     public String levelerrornotYourIsland;
@@ -856,6 +857,7 @@ public class ASLocale {
             warpsTitle = warpsTitle.substring(0, 29);
         }
         topTenheader = ChatColor.translateAlternateColorCodes('&', locale.getString("topTen.header", "These are the Top 10 islands:"));
+        topTenGuiTitle = ChatColor.translateAlternateColorCodes('&', locale.getString("topTen.guiTitle", "Top 10 Islands"));
         topTenerrorNotReady = ChatColor.translateAlternateColorCodes('&', locale.getString("topTen.errorNotReady", "Top ten list not generated yet!"));
         levelislandLevel = ChatColor.translateAlternateColorCodes('&', locale.getString("level.islandLevel", "Island level"));
         levelerrornotYourIsland = ChatColor.translateAlternateColorCodes('&',
