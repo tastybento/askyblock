@@ -83,6 +83,7 @@ public class SettingsPanel implements Listener {
         if (hasChorusFruit) {
             lookup.put( Material.CHORUS_FRUIT,Flags.allowEnderPearls);
         }
+        lookup.put( Material.NOTE_BLOCK,Flags.enableJoinAndLeaveIslandMessages);
     }
 
     public SettingsPanel(ASkyBlock plugin) {
@@ -153,7 +154,8 @@ public class SettingsPanel implements Listener {
                 ip.add(new IPItem(Settings.allowChorusFruit, Material.CHORUS_FRUIT, plugin.myLocale(uuid).igsChorusFruit));
             }
             // Place new settings here
-
+            ip.add(new IPItem(Settings.enableJoinAndLeaveIslandMessages, Material.NOTE_BLOCK, plugin.myLocale(uuid).igsJoinLeaveIslandMessage));
+            
         } else if (island.isSpawn()) {
             ip.add(new IPItem(Material.MAP, plugin.myLocale(uuid).igsSettingsSpawnTitle, plugin.myLocale(uuid).igsSettingsSpawnDesc));
             // Spawn settings
@@ -230,6 +232,7 @@ public class SettingsPanel implements Listener {
             if (hasChorusFruit) {
                 ip.add(new IPItem(island.getIgsFlag(Flags.allowChorusFruit), Material.CHORUS_FRUIT, plugin.myLocale(uuid).igsChorusFruit));
             }
+            ip.add(new IPItem(island.getIgsFlag(Flags.enableJoinAndLeaveIslandMessages), Material.NOTE_BLOCK, plugin.myLocale(uuid).igsJoinLeaveIslandMessage));
         }
         if (ip.size() > 0) {
             // Make sure size is a multiple of 9
