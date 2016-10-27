@@ -57,7 +57,7 @@ public class SPItem {
         this.description.clear();
         item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(name);
+        meta.setDisplayName(ChatColor.WHITE + name);
         this.description.addAll(Util.chop(ChatColor.AQUA, description, 25));
         meta.setLore(this.description);
         item.setItemMeta(meta);
