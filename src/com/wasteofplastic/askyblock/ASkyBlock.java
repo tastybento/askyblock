@@ -429,10 +429,10 @@ public class ASkyBlock extends JavaPlugin {
 						if (Settings.useWarpPanel) {
 							warpPanel = new WarpPanel(plugin);
 							getServer().getPluginManager().registerEvents(warpPanel, plugin);
-						}
+						}						
 						// Load the TopTen GUI
 						if (!Settings.displayIslandTopTenInChat){
-							topTen = new TopTen(plugin);
+						    topTen = new TopTen(plugin);
 							getServer().getPluginManager().registerEvents(topTen, plugin);
 						}
 						// Minishop - must wait for economy to load before we can use
@@ -1699,18 +1699,7 @@ public class ASkyBlock extends JavaPlugin {
 		}
 		return warpPanel;
 	}
-	
-	/**
-	 * 
-	 */
-	public TopTen getTopTen() {
-		if (topTen == null){
-			topTen = new TopTen(this);
-			getServer().getPluginManager().registerEvents(topTen, plugin);
-		}
-		return topTen;
-	}
-	
+		
 	/**
 	 * @return the schematicsPanel
 	 */

@@ -857,6 +857,9 @@ public class ASLocale {
         }
         topTenheader = ChatColor.translateAlternateColorCodes('&', locale.getString("topTen.header", "These are the Top 10 islands:"));
         topTenGuiTitle = ChatColor.translateAlternateColorCodes('&', locale.getString("topTen.guiTitle", "Top 10 Islands"));
+        if (topTenGuiTitle.length() > 30) {
+            topTenGuiTitle = topTenGuiTitle.substring(0, 29);
+        }
         topTenerrorNotReady = ChatColor.translateAlternateColorCodes('&', locale.getString("topTen.errorNotReady", "Top ten list not generated yet!"));
         levelislandLevel = ChatColor.translateAlternateColorCodes('&', locale.getString("level.islandLevel", "Island level"));
         levelerrornotYourIsland = ChatColor.translateAlternateColorCodes('&',
