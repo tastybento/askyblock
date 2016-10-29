@@ -56,6 +56,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.Inventory;
@@ -65,7 +66,6 @@ import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionType;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
-import org.bukkit.entity.Item;
 
 import com.wasteofplastic.askyblock.ASLocale;
 import com.wasteofplastic.askyblock.ASkyBlock;

@@ -105,6 +105,7 @@ public class ASLocale {
 
     // ASkyBlock
     public String topTenheader;
+    public String topTenGuiTitle;
     public String topTenerrorNotReady;
     public String levelislandLevel;
     public String levelerrornotYourIsland;
@@ -499,7 +500,7 @@ public class ASLocale {
     public String igsSettingsSpawnDesc;
     public String igsVillagerTrading;
     public String igsChorusFruit;
-
+    public String igsJoinLeaveIslandMessage;
 
     public String setHomeerrorNumHomes;
     public String schematicsTitle;
@@ -633,8 +634,6 @@ public class ASLocale {
     private int index;
 
     public String islandHelpSelectLanguage;
-
-
 
     /**
      * Creates a locale object full of localized strings for a language
@@ -822,7 +821,8 @@ public class ASLocale {
         igsPistonPush = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.pistonpush", "Pistons can push blocks outside island area"));	
         igsVillagerTrading = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.villagertrading", "Villager trading"));
         igsChorusFruit = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.chorusfruit", "Chorus Fruit Use"));
-
+        igsJoinLeaveIslandMessage = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.joinleaveislandmessages", "Enable Join & Leave Island Messages"));
+        
         lavaTip = ChatColor.translateAlternateColorCodes('&', locale.getString("lavaTip", "Changing obsidian back into lava. Be careful!"));
         warpswelcomeLine = ChatColor.translateAlternateColorCodes('&', locale.getString("warps.welcomeLine", "[WELCOME]"));
         warpswarpTip = ChatColor.translateAlternateColorCodes('&',
@@ -859,6 +859,10 @@ public class ASLocale {
             warpsTitle = warpsTitle.substring(0, 29);
         }
         topTenheader = ChatColor.translateAlternateColorCodes('&', locale.getString("topTen.header", "These are the Top 10 islands:"));
+        topTenGuiTitle = ChatColor.translateAlternateColorCodes('&', locale.getString("topTen.guiTitle", "Top 10 Islands"));
+        if (topTenGuiTitle.length() > 30) {
+            topTenGuiTitle = topTenGuiTitle.substring(0, 29);
+        }
         topTenerrorNotReady = ChatColor.translateAlternateColorCodes('&', locale.getString("topTen.errorNotReady", "Top ten list not generated yet!"));
         levelislandLevel = ChatColor.translateAlternateColorCodes('&', locale.getString("level.islandLevel", "Island level"));
         levelerrornotYourIsland = ChatColor.translateAlternateColorCodes('&',

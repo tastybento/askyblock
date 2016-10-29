@@ -18,6 +18,7 @@
 package com.wasteofplastic.askyblock;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -25,10 +26,21 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType.SlotType;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.SkullMeta;
 
 import com.wasteofplastic.askyblock.util.MapUtil;
 import com.wasteofplastic.askyblock.util.Util;
@@ -39,10 +51,22 @@ import com.wasteofplastic.askyblock.util.Util;
  * @author tastybento
  * 
  */
-public class TopTen {
+public class TopTen implements Listener{
     private static ASkyBlock plugin = ASkyBlock.getPlugin();
     // Top ten list of players
     private static Map<UUID, Integer> topTenList = new HashMap<UUID, Integer>();
+    private static final int GUISIZE = 27; // Must be a multiple of 9
+    private static final int[] SLOTS = new int[] {4, 12, 14, 19, 20, 21, 22, 23, 24, 25};
+    // Store this as a static because it's the same for everyone and saves memory cleanup
+    private static Inventory gui;
+
+    public TopTen(ASkyBlock plugin) {
+        TopTen.plugin = plugin;
+        // Create the top ten GUI if it is to be used
+        if (!Settings.displayIslandTopTenInChat) {
+            gui = Bukkit.createInventory(null, GUISIZE, plugin.myLocale().topTenGuiTitle);
+        }
+    }
 
     /**
      * Adds a player to the top ten, if the level is good enough
@@ -222,55 +246,136 @@ public class TopTen {
      * @return - true if successful, false if no Top Ten list exists
      */
     public static boolean topTenShow(final Player player) {
-        player.sendMessage(ChatColor.GOLD + plugin.myLocale(player.getUniqueId()).topTenheader);
-        if (topTenList == null) {
-            topTenCreate();
-            // player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).topTenerrorNotReady);
-            // return true;
-        }
-        topTenList = MapUtil.sortByValue(topTenList);
-        int i = 1;
-        // getLogger().info("DEBUG: " + topTenList.toString());
-        // getLogger().info("DEBUG: " + topTenList.values());
-        Iterator<Entry<UUID, Integer>> it = topTenList.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry<UUID, Integer> m = it.next();
-            UUID playerUUID = m.getKey();
-            // Remove from TopTen if the player is online and has the permission
-            Player entry = plugin.getServer().getPlayer(playerUUID);
-            boolean show = true;
-            if (entry != null) {
-                if (entry.hasPermission(Settings.PERMPREFIX + "excludetopten")) {
-                    it.remove();
-                    show = false;
+        // Old chat display
+        if(Settings.displayIslandTopTenInChat){
+            player.sendMessage(ChatColor.GOLD + plugin.myLocale(player.getUniqueId()).topTenheader);
+            if (topTenList == null) {
+                topTenCreate();
+                // player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).topTenerrorNotReady);
+                // return true;
+            }
+            topTenList = MapUtil.sortByValue(topTenList);
+            int i = 1;
+            // getLogger().info("DEBUG: " + topTenList.toString());
+            // getLogger().info("DEBUG: " + topTenList.values());
+            Iterator<Entry<UUID, Integer>> it = topTenList.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry<UUID, Integer> m = it.next();
+                UUID playerUUID = m.getKey();
+                // Remove from TopTen if the player is online and has the permission
+                Player entry = plugin.getServer().getPlayer(playerUUID);
+                boolean show = true;
+                if (entry != null) {
+                    if (entry.hasPermission(Settings.PERMPREFIX + "excludetopten")) {
+                        it.remove();
+                        show = false;
+                    }
+                }
+                if (show) {
+                    if (plugin.getPlayers().inTeam(playerUUID)) {
+                        // Island name + Island members + Island level
+                        final List<UUID> pMembers = plugin.getPlayers().getMembers(playerUUID);
+                        String memberList = "";
+                        for (UUID members : pMembers) {
+                            memberList += plugin.getPlayers().getName(members) + ", ";
+                        }
+                        if (memberList.length() > 2) {
+                            memberList = memberList.substring(0, memberList.length() - 2);
+                        }
+                        player.sendMessage(ChatColor.AQUA + "#" + i + ": " + plugin.getGrid().getIslandName(playerUUID) + ChatColor.AQUA + " (" + memberList + ") - "
+                                + plugin.myLocale(player.getUniqueId()).levelislandLevel + " " + m.getValue());
+                    } else {
+                        // Island name + Island level
+                        player.sendMessage(ChatColor.AQUA + "#" + i + ": " + plugin.getGrid().getIslandName(playerUUID) + ChatColor.AQUA +  " - " + plugin.myLocale(player.getUniqueId()).levelislandLevel + " "
+                                + m.getValue());
+                    }
+                    if (i++ == 10) {
+                        break;
+                    }
                 }
             }
-            if (show) {
-                if (plugin.getPlayers().inTeam(playerUUID)) {
-                    final List<UUID> pMembers = plugin.getPlayers().getMembers(playerUUID);
-                    String memberList = "";
-                    for (UUID members : pMembers) {
-                        memberList += plugin.getPlayers().getName(members) + ", ";
+        } else {
+            // New GUI display (shown by default)
+            if (topTenList == null) topTenCreate();
+            topTenList = MapUtil.sortByValue(topTenList);
+            // Reset
+            gui.clear();
+            int i = 1;
+            Iterator<Entry<UUID, Integer>> it = topTenList.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry<UUID, Integer> m = it.next();
+                UUID playerUUID = m.getKey();
+                //plugin.getLogger().info("DEBUG: " + i + ": " + playerUUID);
+                // Remove from TopTen if the player is online and has the permission
+                Player entry = plugin.getServer().getPlayer(playerUUID);
+                boolean show = true;
+                if (entry != null) {
+                    if (entry.hasPermission(Settings.PERMPREFIX + "excludetopten")) {
+                        it.remove();
+                        show = false;
                     }
-                    if (memberList.length() > 2) {
-                        memberList = memberList.substring(0, memberList.length() - 2);
-                    }
-                    player.sendMessage(ChatColor.AQUA + "#" + i + ": " + plugin.getGrid().getIslandName(playerUUID) + ChatColor.AQUA + " (" + memberList + ") - "
-                            + plugin.myLocale(player.getUniqueId()).levelislandLevel + " " + m.getValue());
-                } else {
-                    player.sendMessage(ChatColor.AQUA + "#" + i + ": " + plugin.getGrid().getIslandName(playerUUID) + ChatColor.AQUA +  " - " + plugin.myLocale(player.getUniqueId()).levelislandLevel + " "
-                            + m.getValue());
                 }
-                if (i++ == 10) {
-                    break;
+                if (show) {
+                    gui.setItem(SLOTS[i-1], getSkull(i, m.getValue(), playerUUID));
+                    if (i++ == 10) break;
                 }
             }
+
+            player.openInventory(gui);
         }
         return true;
     }
 
+    static ItemStack getSkull(int rank, int levels, UUID player){
+        String playerName = plugin.getServer().getOfflinePlayer(player).getName();
+        ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
+        if (playerName == null) return null;
+        SkullMeta meta = (SkullMeta) playerSkull.getItemMeta();
+        meta.setOwner(playerName);
+        meta.setDisplayName(ChatColor.AQUA + "#" + rank + ": " + ChatColor.GREEN.toString() + ChatColor.BOLD + plugin.getGrid().getIslandName(player));
+        List<String> lore = new ArrayList<String>();
+        lore.add(ChatColor.GOLD + plugin.myLocale(player).levelislandLevel + " " + levels);
+        if (plugin.getPlayers().inTeam(player)) {
+            final List<UUID> pMembers = plugin.getPlayers().getMembers(player);
+            // Need to make this a vertical list, because some teams are very large and it'll go off the screen otherwise
+            List<String> memberList = new ArrayList<>();
+            for (UUID members : pMembers) {
+                memberList.add(ChatColor.AQUA + plugin.getPlayers().getName(members));
+            }
+            lore.addAll(memberList);
+        }
+        //else lore.add(ChatColor.AQUA + playerName);
+        
+        meta.setLore(lore);
+        playerSkull.setItemMeta(meta);
+        return playerSkull;
+    }
+
     static void remove(UUID owner) {
         topTenList.remove(owner);
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled=true)
+    public void onInventoryClick(InventoryClickEvent event) {
+        Inventory inventory = event.getInventory(); // The inventory that was clicked in
+        if (inventory.getName() == null) {
+            return;
+        }
+        if (!inventory.getTitle().equals(plugin.myLocale().topTenGuiTitle)) {
+            return;
+        }
+        // The player that clicked the item
+        Player player = (Player) event.getWhoClicked();
+        event.setCancelled(true);
+        if (event.getSlotType().equals(SlotType.OUTSIDE)) {
+            player.closeInventory();
+            return;
+        }
+        if (event.getClick().equals(ClickType.SHIFT_RIGHT)) {
+            player.closeInventory();
+            player.updateInventory();
+            return;
+        }
     }
 
     /**

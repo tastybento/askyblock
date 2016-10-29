@@ -135,7 +135,7 @@ public class WarpPanel implements Listener {
         }
         SkullMeta meta = (SkullMeta) playerSkull.getItemMeta();
         meta.setOwner(playerName);
-        meta.setDisplayName(playerName);
+        meta.setDisplayName(ChatColor.WHITE + playerName);
         playerSkull.setItemMeta(meta);
         return playerSkull;
     }

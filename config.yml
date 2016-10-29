@@ -185,7 +185,9 @@ island:
    allowvillagertrading: true
    # Allow visitors to teleport when eating chorus fruit
    allowchorusfruit: false
-  
+   # Enable or disable join/leave messages from the player's island
+   enablejoinandleaveislandmessages: true
+   
    # System settings - these cannot be changed by players, only viewed
    
    # Allow monsters to be hurt (creepers,slimes, etc.)
@@ -570,6 +572,13 @@ general:
    # Recommendation is to keep this true so that newbies don't bother you or reset their
    # island unnecessarily.
    allowobsidianscooping: true
+   
+   # By default, island top ten (/is top) is displayed as a GUI.
+   # If this option is set to TRUE, the top ten will be displayed
+   # in chat, like in older versions (up to V3.0.3.3), which can
+   # be a little spammy.
+   # Recommendation is to keep this false.
+   islandtopteninchat: false
    
    # Config.yml version. DO NOT EDIT. This number only changes if the latest
    # plugin config has been updated. If a new config is detected, it will be

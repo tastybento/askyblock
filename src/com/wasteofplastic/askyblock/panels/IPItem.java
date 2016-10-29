@@ -111,7 +111,7 @@ public class IPItem {
         item = new ItemStack(material);
         item.setDurability((short)durability);
         ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(name);
+        meta.setDisplayName(ChatColor.WHITE + name);
         if (flagValue) {
             description.add(ChatColor.GREEN + ASkyBlock.getPlugin().myLocale().igsAllowed);
         } else {

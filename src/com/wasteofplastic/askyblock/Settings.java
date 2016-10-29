@@ -108,6 +108,7 @@ public class Settings {
     public static boolean allowShearing;
     public static boolean allowVillagerTrading;
     public static boolean allowChorusFruit;
+    public static boolean enableJoinAndLeaveIslandMessages;
 
     // System settings
     public static boolean allowChestDamage;
@@ -229,6 +230,9 @@ public class Settings {
 
     // Use physics when pasting schematic blocks
     public static boolean usePhysics;
+    
+    // Use old display (chat instead of GUI) for Island top ten
+    public static boolean displayIslandTopTenInChat;
 
     // Need a certain amount of island levels to create a warp sign
     public static int warpLevelsRestriction;
