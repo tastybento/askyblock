@@ -831,6 +831,8 @@ public class ASkyBlock extends JavaPlugin {
         Settings.maxIslands = getConfig().getInt("general.maxIslands",0);
         // Mute death messages
         Settings.muteDeathMessages = getConfig().getBoolean("general.mutedeathmessages", false);
+        // Warp Restriction
+        Settings.warpLevelsRestriction = getConfig().getInt("general.warplevelrestriction", 10);
         // Warp panel
         Settings.useWarpPanel = getConfig().getBoolean("general.usewarppanel", true);
         // Fast level calculation (this is really fast)
@@ -839,6 +841,7 @@ public class ASkyBlock extends JavaPlugin {
         Settings.restrictWither = getConfig().getBoolean("general.restrictwither", true);
         // Team chat
         Settings.teamChat = getConfig().getBoolean("general.teamchat", true);
+        Settings.logTeamChat = getConfig().getBoolean("general.logteamchat", true);
         // TEAMSUFFIX as island level
         Settings.setTeamName = getConfig().getBoolean("general.setteamsuffix", false);
         Settings.teamSuffix = getConfig().getString("general.teamsuffix","([level])");

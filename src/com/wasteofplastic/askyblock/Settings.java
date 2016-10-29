@@ -207,6 +207,9 @@ public class Settings {
     public static List<String> resetCommands = new ArrayList<String>();
     // Mob limits
     public static int breedingLimit;
+    
+    // Console shows teamchat messages
+    public static boolean logTeamChat;
 
     // Challenges - show or remove completed on-time challenges
     public static boolean removeCompleteOntimeChallenges;
@@ -231,6 +234,9 @@ public class Settings {
     // Use old display (chat instead of GUI) for Island top ten
     public static boolean displayIslandTopTenInChat;
 
+    // Need a certain amount of island levels to create a warp sign
+    public static int warpLevelsRestriction;
+    
     // Falling blocked commands
     public static List<String> fallingCommandBlockList;
     public static List<String> leaveCommands;

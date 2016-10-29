@@ -2487,45 +2487,46 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                 player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
                                 return true;
                             }
-                        } else if (split[0].equalsIgnoreCase("coop")) {
-                            // Give a player coop privileges
-                            if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "coop")) {
-                                // Only online players can be cooped
-                                Player target = plugin.getServer().getPlayer(split[1]);
-                                if (target == null) {
-                                    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorOfflinePlayer);
-                                    return true;  
-                                }                                
-                                UUID targetPlayerUUID = target.getUniqueId();                                // Player issuing the command must have an island
-                                if (!plugin.getPlayers().hasIsland(playerUUID) && !plugin.getPlayers().inTeam(playerUUID)) {
-                                    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).inviteerrorYouMustHaveIslandToInvite);
-                                    return true;
-                                }
-                                // Player cannot invite themselves
-                                if (playerUUID.equals(targetPlayerUUID)) {
-                                    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).inviteerrorYouCannotInviteYourself);
-                                    return true;
-                                }
-                                // If target player is already on the team ignore
-                                if (plugin.getPlayers().getMembers(playerUUID).contains(targetPlayerUUID)) {
-                                    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).coopOnYourTeam);
-                                    return true;
-                                }
-                                // Target has to have an island
-                                if (!plugin.getPlayers().inTeam(targetPlayerUUID)) {
-                                    if (!plugin.getPlayers().hasIsland(targetPlayerUUID)) {
-                                        player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoIslandOther);
-                                        return true;
-                                    }
-                                }
-                                // Add target to coop list
-                                CoopPlay.getInstance().addCoopPlayer(player, target);
-                                // Tell everyone what happened
-                                player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).coopSuccess.replace("[name]", target.getDisplayName()));
-                                target.sendMessage(ChatColor.GREEN + plugin.myLocale(targetPlayerUUID).coopMadeYouCoop.replace("[name]", player.getDisplayName()));
-                                return true;
-
-                            }
+			} else if (split[0].equalsIgnoreCase("coop")) {
+			// Give a player coop privileges
+			if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "coop")) {
+				player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
+				return true;
+			}
+			// Only online players can be cooped
+			Player target = plugin.getServer().getPlayer(split[1]);
+			if (target == null) {
+				player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorOfflinePlayer);
+				return true;  
+			}                                
+			UUID targetPlayerUUID = target.getUniqueId();                                // Player issuing the command must have an island
+			if (!plugin.getPlayers().hasIsland(playerUUID) && !plugin.getPlayers().inTeam(playerUUID)) {
+				player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).inviteerrorYouMustHaveIslandToInvite);
+				return true;
+			}
+			// Player cannot invite themselves
+			if (playerUUID.equals(targetPlayerUUID)) {
+				player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).inviteerrorYouCannotInviteYourself);
+				return true;
+			}
+			// If target player is already on the team ignore
+			if (plugin.getPlayers().getMembers(playerUUID).contains(targetPlayerUUID)) {
+				player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).coopOnYourTeam);
+				return true;
+			}
+			// Target has to have an island
+			if (!plugin.getPlayers().inTeam(targetPlayerUUID)) {
+				if (!plugin.getPlayers().hasIsland(targetPlayerUUID)) {
+					player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoIslandOther);
+					return true;
+				}
+			}
+			// Add target to coop list
+			CoopPlay.getInstance().addCoopPlayer(player, target);
+			// Tell everyone what happened
+			player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).coopSuccess.replace("[name]", target.getDisplayName()));
+			target.sendMessage(ChatColor.GREEN + plugin.myLocale(targetPlayerUUID).coopMadeYouCoop.replace("[name]", player.getDisplayName()));
+			return true;
                         } else if (split[0].equalsIgnoreCase("expel")) {
                             if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.expel")) {
                                 player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);

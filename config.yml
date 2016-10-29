@@ -513,6 +513,10 @@ general:
    # using the /island teamchat command.
    # The prefix [Team Chat] that goes in front of team chats is in the locale files
    teamchat: true
+   
+   # Set this to true will log all messages sent in TeamChats
+   # If set to false, it won't be logged, like before.
+   logteamchat: true
 
    # Variables to use as chat prefixes. You can change them to be what you want.
    # "{ISLAND_LEVEL}" is replaced by the player's island level.
@@ -525,6 +529,11 @@ general:
    # Any flying mobs that exit the island space where they were spawned will be removed.
    # Includes blaze and ghast. 
    restrictwither: true
+   
+   # Warp Restriction - needed levels to be able to create a warp
+   # 0 or negative values will disable this restriction
+   # 10 is default
+   warplevelrestriction: 10
    
    # Warp panel - GUI for welcome warp signs. If set to false, old-style
    # text will be used
