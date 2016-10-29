@@ -3,14 +3,14 @@
 # Rewards and required items have to be described using Bukkit Materials
 # and be exactly correct
 # Do not use Type Id's - they will not work
-# Challenges can be one of three types - inventory, island or level.
-# inventory - means the player must have the items on them
+# Challenges can be one of three types - player, island or level.
+# player - means the player must have the items on them
 # island - means the items have to be on the island and within 10 blocks of the player
 #          entities are also supported, e.g., COW.
 # level - means the island level has to be equal or over this amount.
 #         If level is set as nothing '', then the challenge is a free challenge and can be
 #         done at any time.
-# Challenges can be repeatable only if they are inventory challenges
+# Challenges can be repeatable only if they are player challenges
 # permissions can be given as a reward
 #
 # Reward Commands - commands can be run when a challenge is completed and repeated
@@ -127,13 +127,14 @@ challenges:
   # Challenge names must be in lowercase. Do not use the same name as a level!
   challengeList:
     glassmaker:
+      # You can use &color in the friendlyname, description, rewardText and the repeatRewardText.
       friendlyname: 'Glass Maker'
       description: 'Create 1 block of glass'
       icon: GLASS
       level: 'Novice'
-      type: inventory
+      type: player
       requiredItems: 'GLASS:1'
-      # You can require the player has a certain amount of money for inventory challenges.
+      # You can require the player has a certain amount of money for player challenges.
       # Remember to mention it in the description!
       # If takeItems is true, the money will be removed, so you may want to give it
       # back in the reward.
@@ -163,7 +164,7 @@ challenges:
       description: 'Bake 21 loaves of bread'
       icon: BREAD
       level: 'Novice'
-      type: inventory
+      type: player
       requiredItems: 'BREAD:21'
       takeItems: true
       itemReward: 'DIRT:5'
@@ -183,7 +184,7 @@ challenges:
       description: 'Craft 32 cactus green dyes'
       icon: INK_SACK:2
       level: 'Novice'
-      type: inventory
+      type: player
       requiredItems: 'INK_SACK:2:32'
       takeItems: true
       itemReward: 'SAPLING:0:2 SAPLING:1:2 SAPLING:2:2 SAPLING:3:2'
@@ -203,7 +204,7 @@ challenges:
       description: 'Create 21 pages of paper'
       icon: PAPER
       level: 'Novice'
-      type: inventory
+      type: player
       requiredItems: 'PAPER:21'
       takeItems: true
       itemReward: 'DIRT:5 CLAY:15'
@@ -223,7 +224,7 @@ challenges:
       description: 'Create a cobblestone generator and mine 64 cobblestone.'
       icon: COBBLESTONE
       level: 'Novice'
-      type: inventory
+      type: player
       requiredItems: 'COBBLESTONE:64'
       takeItems: true
       itemReward: 'LEATHER:4'
@@ -243,7 +244,7 @@ challenges:
       description: 'Collect 64 melon seeds, 64 pumpkin seeds and 64 wheat seeds'
       icon: PUMPKIN_SEEDS
       level: 'Novice'
-      type: inventory
+      type: player
       requiredItems: 'MELON_SEEDS:64 PUMPKIN_SEEDS:64 SEEDS:64'
       takeItems: true
       itemReward: 'DIRT:5 VINE:20'
@@ -263,7 +264,7 @@ challenges:
       description: 'Cook up 18 bowls of mushroom stew'
       icon: MUSHROOM_SOUP
       level: 'Novice'
-      type: inventory
+      type: player
       requiredItems: 'MUSHROOM_SOUP:18'
       takeItems: true
       itemReward: 'MYCEL:2'
@@ -300,7 +301,7 @@ challenges:
       description: 'Kill monsters and collect 64 rotten flesh, 32 skeleton bones, 32 string, 32 arrows, 16 gunpowder, 5 spider eyes'
       icon: BONE
       level: 'Competent'
-      type: inventory
+      type: player
       requiredItems: 'ROTTEN_FLESH:64 STRING:32 SULPHUR:16 ARROW:32 BONE:32 SPIDER_EYE:5'
       takeItems: true
       itemReward: 'REDSTONE:16 IRON_ORE:5 FLINT:1 POTION:WATER_BREATHING:1 POTION:NIGHT_VISION:1'
@@ -319,7 +320,7 @@ challenges:
       description: 'Harvest 64 units of the following: wheat, sugar, melon, carrots, potatoes, pumpkin'
       icon: WHEAT
       level: 'Competent'
-      type: inventory
+      type: player
       requiredItems: 'WHEAT:64 SUGAR:64 MELON:64 CARROT_ITEM:64 POTATO_ITEM:64 PUMPKIN:64'
       takeItems: true
       itemReward: 'REDSTONE:16 INK_SACK:3:1 MONSTER_EGG:PIG:1 MONSTER_EGG:COW:1 MONSTER_EGG:CHICKEN:1'
@@ -339,7 +340,7 @@ challenges:
       description: 'Catch and cook 10 standard fish (no salmon)'
       icon: COOKED_FISH
       level: 'Competent'
-      type: inventory
+      type: player
       requiredItems: 'COOKED_FISH:10'
       takeItems: true
       itemReward: 'REDSTONE:16 IRON_ORE:5 INK_SACK:5'
@@ -359,7 +360,7 @@ challenges:
       description: 'Create a tree farm and collect 16 oak, birch, jungle, and spruce logs'
       icon: LOG
       level: 'Competent'
-      type: inventory
+      type: player
       requiredItems: 'LOG:0:16 LOG:1:16 LOG:2:16 LOG:3:16'
       takeItems: true
       itemReward: 'REDSTONE:16 IRON_ORE:5 MONSTER_EGG:WOLF:1'
@@ -379,7 +380,7 @@ challenges:
       description: 'Make 128 cookies and a bucket of milk'
       icon: COOKIE
       level: 'Competent'
-      type: inventory
+      type: player
       requiredItems: 'MILK_BUCKET:1 COOKIE:128'
       takeItems: true
       itemReward: 'REDSTONE:16 IRON_ORE:5'
@@ -457,7 +458,7 @@ challenges:
       description: 'Collect 15 enderpearls from endermen'
       icon: ENDER_PEARL
       level: 'Expert'
-      type: inventory
+      type: player
       requiredItems: 'ENDER_PEARL:15'
       takeItems: true
       itemReward: 'GOLD_INGOT:5 BLAZE_ROD:1'
@@ -477,7 +478,7 @@ challenges:
       description: 'Collect 40 slimeballs from slimes'
       icon: SLIME_BALL
       level: 'Expert'
-      type: inventory
+      type: player
       requiredItems: 'SLIME_BALL:40'
       takeItems: true
       itemReward: 'GOLD_INGOT:5 IRON_ORE:5'
@@ -497,7 +498,7 @@ challenges:
       description: 'Bake 5 cakes and 5 pumpkin pies'
       icon: CAKE
       level: 'Expert'
-      type: inventory
+      type: player
       requiredItems: 'CAKE:5 PUMPKIN_PIE:5'
       takeItems: true
       itemReward: 'GOLD_INGOT:5 DIAMOND:1'
@@ -517,7 +518,7 @@ challenges:
       description: 'Make 1 map and use it, a compass, a clock and collect 64 netherrack, 16 soulsand, and 1 ghast tear'
       icon: MAP
       level: 'Expert'
-      type: inventory
+      type: player
       requiredItems: 'NETHERRACK:64 SOUL_SAND:16 GHAST_TEAR:1 MAP:1 COMPASS:1 WATCH:1'
       takeItems: true
       itemReward: 'POWERED_RAIL:32 RAILS:256 DIAMOND:1 MONSTER_EGG:OCELOT:1'
@@ -555,7 +556,7 @@ challenges:
       description: 'Collect 5 of every color of wool'
       icon: WOOL:2
       level: 'Advanced'
-      type: inventory
+      type: player
       requiredItems: 'WOOL:0:5 WOOL:1:5 WOOL:2:5 WOOL:3:5 WOOL:4:5 WOOL:5:5 WOOL:6:5 WOOL:7:5 WOOL:8:5 WOOL:9:5 WOOL:10:5 WOOL:11:5 WOOL:12:5 WOOL:13:5 WOOL:14:5 WOOL:15:5' 
       takeItems: true
       itemReward: 'DIAMOND:2 RECORD_7:1 RECORD_8:1 RECORD_6:1 MONSTER_EGG:SHEEP:1 EMERALD:5'
@@ -575,7 +576,7 @@ challenges:
       description: 'Brew 1 potion of Fire Resistance, Slowness, Swiftness, Healing, Harming, Invisibility, Strength and Regeneration'
       icon: BREWING_STAND_ITEM
       level: 'Advanced'
-      type: inventory
+      type: player
       requiredItems: 'POTION:FIRE_RESISTANCE::::1 POTION:SLOWNESS::::1 POTION:SPEED::::1 POTION:INSTANT_HEAL::::1 POTION:INSTANT_DAMAGE::::1 POTION:INVISIBILITY::::1 POTION:STRENGTH::::1 POTION:REGEN::::1'
       takeItems: true
       itemReward: 'ENCHANTMENT_TABLE:1'
@@ -593,7 +594,7 @@ challenges:
       description: 'Craft a jukebox and collect all music discs'
       icon: RECORD_5
       level: 'Advanced'
-      type: inventory
+      type: player
       requiredItems: 'GOLD_RECORD:1 GREEN_RECORD:1 RECORD_3:1 RECORD_4:1 RECORD_5:1 RECORD_6:1 RECORD_7:1 RECORD_8:1 RECORD_9:1 RECORD_10:1 RECORD_11:1 RECORD_12:1 JUKEBOX:1' 
       takeItems: true
       itemReward: 'DIAMOND:3 EMERALD:10 GOLD_INGOT:5'
@@ -613,7 +614,7 @@ challenges:
       description: 'Collect 50 emeralds'
       icon: EMERALD
       level: 'Advanced'
-      type: inventory
+      type: player
       requiredItems: 'EMERALD:50' 
       takeItems: true
       itemReward: 'DIAMOND:10'
@@ -633,7 +634,7 @@ challenges:
       description: 'Collect 1 of every kind of cooked or crafted edible food (no raw food, zombie flesh, or super golden apples)'
       icon: GOLDEN_APPLE
       level: 'Advanced'
-      type: inventory
+      type: player
       requiredItems: 'BAKED_POTATO:1 BREAD:1 CAKE:1 COOKED_CHICKEN:1 COOKED_FISH:1 GRILLED_PORK:1 COOKIE:1 GOLDEN_APPLE:0:1 GOLDEN_CARROT:1 MUSHROOM_SOUP:1 PUMPKIN_PIE:1 COOKED_BEEF:1'
       # If you are running 1.8 change to this:
       # requiredItems: 'BAKED_POTATO:1 BREAD:1 CAKE:1 COOKED_CHICKEN:1 COOKED_FISH:1 GRILLED_PORK:1 COOKIE:1 GOLDEN_APPLE:0:1 GOLDEN_CARROT:1 MUSHROOM_SOUP:1 PUMPKIN_PIE:1 COOKED_BEEF:1 COOKED_RABBIT:1 RABBIT_STEW:1 COOKED_MUTTON:1'
