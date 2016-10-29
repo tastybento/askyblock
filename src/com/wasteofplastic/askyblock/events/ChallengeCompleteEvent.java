@@ -17,12 +17,11 @@
 
 package com.wasteofplastic.askyblock.events;
 
-import java.util.List;
-
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import org.bukkit.inventory.ItemStack;
+
+import com.wasteofplastic.askyblock.challenge.Challenge;
 
 /**
  * This event is fired when a player completes a challenge
@@ -33,33 +32,15 @@ import org.bukkit.inventory.ItemStack;
 public class ChallengeCompleteEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
     private final Player player;
-    private final String challengeName;
-    private String[] permList;
-    private String[] itemRewards;
-    private final double moneyReward;
-    private final int expReward;
-    private final String rewardText;
-    private final List<ItemStack> rewardedItems;
+    private final Challenge challenge;
 
     /**
      * @param player
-     * @param challengeName
-     * @param permList
-     * @param itemRewards
-     * @param moneyReward
-     * @param expReward
-     * @param rewardText
+     * @param challenge
      */
-    public ChallengeCompleteEvent(Player player, String challengeName, String[] permList, String[] itemRewards, double moneyReward, int expReward,
-            String rewardText, List<ItemStack> rewardedItems) {
+    public ChallengeCompleteEvent(Player player, Challenge challenge) {
         this.player = player;
-        this.challengeName = challengeName;
-        this.permList = permList;
-        this.itemRewards = itemRewards;
-        this.moneyReward = moneyReward;
-        this.expReward = expReward;
-        this.rewardText = rewardText;
-        this.rewardedItems = rewardedItems;
+        this.challenge = challenge;
     }
 
     /**
@@ -70,52 +51,10 @@ public class ChallengeCompleteEvent extends Event {
     }
 
     /**
-     * @return the challengeName
+     * @return the completed challenge
      */
-    public String getChallengeName() {
-        return challengeName;
-    }
-
-    /**
-     * @return the permList
-     */
-    public String[] getPermList() {
-        return permList;
-    }
-
-    /**
-     * @return the itemRewards
-     */
-    public String[] getItemRewards() {
-        return itemRewards;
-    }
-
-    /**
-     * @return the moneyReward
-     */
-    public double getMoneyReward() {
-        return moneyReward;
-    }
-
-    /**
-     * @return the expReward
-     */
-    public int getExpReward() {
-        return expReward;
-    }
-
-    /**
-     * @return the rewardText
-     */
-    public String getRewardText() {
-        return rewardText;
-    }
-
-    /**
-     * @return the rewardedItems
-     */
-    public List<ItemStack> getRewardedItems() {
-        return rewardedItems;
+    public Challenge getChallenge() {
+    	return challenge;
     }
 
     @Override

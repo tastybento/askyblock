@@ -114,104 +114,104 @@ public class ChallengesPopulator {
 		String friendlyName = ChatColor.translateAlternateColorCodes('&', getChallengeConfig().getString(path + "friendlyname", ""));
 		String description = ChatColor.translateAlternateColorCodes('&', getChallengeConfig().getString(path + "description", ""));
 		ItemStack icon = null;
-        String iconName = getChallengeConfig().getString(path + "icon", "");
-        if (!iconName.isEmpty()) {
-            try {
-                // Split if required
-                String[] split = iconName.split(":");
-                if (split.length == 1) {
-                    // Some material does not show in the inventory
-                    if (iconName.equalsIgnoreCase("potato")) {
-                        iconName = "POTATO_ITEM";
-                    } else if (iconName.equalsIgnoreCase("brewing_stand")) {
-                        iconName = "BREWING_STAND_ITEM";
-                    } else if (iconName.equalsIgnoreCase("carrot")) {
-                        iconName = "CARROT_ITEM";
-                    } else if (iconName.equalsIgnoreCase("cauldron")) {
-                        iconName = "CAULDRON_ITEM";
-                    } else if (iconName.equalsIgnoreCase("lava") || iconName.equalsIgnoreCase("stationary_lava")) {
-                        iconName = "LAVA_BUCKET";
-                    } else if (iconName.equalsIgnoreCase("water") || iconName.equalsIgnoreCase("stationary_water")) {
-                        iconName = "WATER_BUCKET";
-                    } else if (iconName.equalsIgnoreCase("portal")) {
-                        iconName = "OBSIDIAN";
-                    } else if (iconName.equalsIgnoreCase("PUMPKIN_STEM")) {
-                        iconName = "PUMPKIN";
-                    } else if (iconName.equalsIgnoreCase("skull")) {
-                        iconName = "SKULL_ITEM";
-                    } else if (iconName.equalsIgnoreCase("COCOA")) {
-                        iconName = "INK_SACK:3";
-                    } else if (iconName.equalsIgnoreCase("NETHER_WARTS")) {
-                        iconName = "NETHER_STALK";
-                    }
-                    if (StringUtils.isNumeric(iconName)) {
-                        icon = new ItemStack(Integer.parseInt(iconName));
-                    } else {
-                        icon = new ItemStack(Material.valueOf(iconName));
-                    }
-                    // Check POTION for V1.9 - for some reason, it must be declared as WATER otherwise comparison later causes an NPE
-                    if (icon.getType().name().contains("POTION")) {
-                        if (!plugin.getServer().getVersion().contains("(MC: 1.8") && !plugin.getServer().getVersion().contains("(MC: 1.7")) {                        
-                            PotionMeta potionMeta = (PotionMeta)icon.getItemMeta();
-                            potionMeta.setBasePotionData(new PotionData(PotionType.WATER));
-                            icon.setItemMeta(potionMeta);
-                        }
-                    }
-                } else if (split.length == 2) {
-                    if (StringUtils.isNumeric(split[0])) {
-                        icon = new ItemStack(Integer.parseInt(split[0]));
-                    } else {
-                        icon = new ItemStack(Material.valueOf(split[0]));
-                    }
-                    // Check POTION for V1.9 - for some reason, it must be declared as WATER otherwise comparison later causes an NPE
-                    if (icon.getType().name().contains("POTION")) {
-                        if (!plugin.getServer().getVersion().contains("(MC: 1.8") && !plugin.getServer().getVersion().contains("(MC: 1.7")) {                       
-                            PotionMeta potionMeta = (PotionMeta)icon.getItemMeta();
-                            try {
-                                potionMeta.setBasePotionData(new PotionData(PotionType.valueOf(split[1].toUpperCase())));
-                            } catch (Exception e) {
-                                plugin.getLogger().severe("Challenges icon: Potion type of " + split[1] + " is unknown, setting to WATER. Valid types are:");
-                                for (PotionType type: PotionType.values()) {
-                                    plugin.getLogger().severe(type.name());
-                                }
-                                potionMeta.setBasePotionData(new PotionData(PotionType.WATER));
-                            } 
-                            icon.setItemMeta(potionMeta);
-                        }
-                    } else if (icon.getType().equals(Material.MONSTER_EGG)) {
-                        // Handle monster egg icons
-                        try {                                
-                            EntityType type = EntityType.valueOf(split[1].toUpperCase());
-                            if (Bukkit.getServer().getVersion().contains("(MC: 1.8") || Bukkit.getServer().getVersion().contains("(MC: 1.7")) {
-                                icon = new SpawnEgg(type).toItemStack();
-                            } else {
-                                try {
-                                    icon = new SpawnEgg1_9(type).toItemStack();
-                                } catch (Exception ex) {
-                                    plugin.getLogger().severe("Monster eggs not supported with this server version.");
-                                }
-                            }
-                        } catch (Exception e) {
-                            Bukkit.getLogger().severe("Spawn eggs must be described by name. Try one of these (not all are possible):");                          
-                            for (EntityType type : EntityType.values()) {
-                                if (type.isSpawnable() && type.isAlive()) {
-                                    plugin.getLogger().severe(type.toString());
-                                }
-                            }
-                        }
-                    } else {
-                        icon.setDurability(Integer.valueOf(split[1]).shortValue());
-                    }
-                }
-            } catch (Exception e) {
-                // Icon was not well formatted
-                plugin.getLogger().warning("Error in challenges.yml - icon format is incorrect for " + id + ":" + iconName);
-                plugin.getLogger().warning("Format should be 'icon: MaterialType:Damage' where Damage is optional");
-            }
-        }
-        if (icon == null || icon.getType() == Material.AIR) icon = new ItemStack(Material.PAPER);
-		
-        String level = getChallengeConfig().getString(path + "level", "");
+		String iconName = getChallengeConfig().getString(path + "icon", "");
+		if (!iconName.isEmpty()) {
+			try {
+				// Split if required
+				String[] split = iconName.split(":");
+				if (split.length == 1) {
+					// Some material does not show in the inventory
+					if (iconName.equalsIgnoreCase("potato")) {
+						iconName = "POTATO_ITEM";
+					} else if (iconName.equalsIgnoreCase("brewing_stand")) {
+						iconName = "BREWING_STAND_ITEM";
+					} else if (iconName.equalsIgnoreCase("carrot")) {
+						iconName = "CARROT_ITEM";
+					} else if (iconName.equalsIgnoreCase("cauldron")) {
+						iconName = "CAULDRON_ITEM";
+					} else if (iconName.equalsIgnoreCase("lava") || iconName.equalsIgnoreCase("stationary_lava")) {
+						iconName = "LAVA_BUCKET";
+					} else if (iconName.equalsIgnoreCase("water") || iconName.equalsIgnoreCase("stationary_water")) {
+						iconName = "WATER_BUCKET";
+					} else if (iconName.equalsIgnoreCase("portal")) {
+						iconName = "OBSIDIAN";
+					} else if (iconName.equalsIgnoreCase("PUMPKIN_STEM")) {
+						iconName = "PUMPKIN";
+					} else if (iconName.equalsIgnoreCase("skull")) {
+						iconName = "SKULL_ITEM";
+					} else if (iconName.equalsIgnoreCase("COCOA")) {
+						iconName = "INK_SACK:3";
+					} else if (iconName.equalsIgnoreCase("NETHER_WARTS")) {
+						iconName = "NETHER_STALK";
+					}
+					if (StringUtils.isNumeric(iconName)) {
+						icon = new ItemStack(Integer.parseInt(iconName));
+					} else {
+						icon = new ItemStack(Material.valueOf(iconName));
+					}
+					// Check POTION for V1.9 - for some reason, it must be declared as WATER otherwise comparison later causes an NPE
+					if (icon.getType().name().contains("POTION")) {
+						if (!plugin.getServer().getVersion().contains("(MC: 1.8") && !plugin.getServer().getVersion().contains("(MC: 1.7")) {                        
+							PotionMeta potionMeta = (PotionMeta)icon.getItemMeta();
+							potionMeta.setBasePotionData(new PotionData(PotionType.WATER));
+							icon.setItemMeta(potionMeta);
+						}
+					}
+				} else if (split.length == 2) {
+					if (StringUtils.isNumeric(split[0])) {
+						icon = new ItemStack(Integer.parseInt(split[0]));
+					} else {
+						icon = new ItemStack(Material.valueOf(split[0]));
+					}
+					// Check POTION for V1.9 - for some reason, it must be declared as WATER otherwise comparison later causes an NPE
+					if (icon.getType().name().contains("POTION")) {
+						if (!plugin.getServer().getVersion().contains("(MC: 1.8") && !plugin.getServer().getVersion().contains("(MC: 1.7")) {                       
+							PotionMeta potionMeta = (PotionMeta)icon.getItemMeta();
+							try {
+								potionMeta.setBasePotionData(new PotionData(PotionType.valueOf(split[1].toUpperCase())));
+							} catch (Exception e) {
+								plugin.getLogger().severe("Challenges icon: Potion type of " + split[1] + " is unknown, setting to WATER. Valid types are:");
+								for (PotionType type: PotionType.values()) {
+									plugin.getLogger().severe(type.name());
+								}
+								potionMeta.setBasePotionData(new PotionData(PotionType.WATER));
+							} 
+							icon.setItemMeta(potionMeta);
+						}
+					} else if (icon.getType().equals(Material.MONSTER_EGG)) {
+						// Handle monster egg icons
+						try {                                
+							EntityType type = EntityType.valueOf(split[1].toUpperCase());
+							if (Bukkit.getServer().getVersion().contains("(MC: 1.8") || Bukkit.getServer().getVersion().contains("(MC: 1.7")) {
+								icon = new SpawnEgg(type).toItemStack();
+							} else {
+								try {
+									icon = new SpawnEgg1_9(type).toItemStack();
+								} catch (Exception ex) {
+									plugin.getLogger().severe("Monster eggs not supported with this server version.");
+								}
+							}
+						} catch (Exception e) {
+							Bukkit.getLogger().severe("Spawn eggs must be described by name. Try one of these (not all are possible):");                          
+							for (EntityType type : EntityType.values()) {
+								if (type.isSpawnable() && type.isAlive()) {
+									plugin.getLogger().severe(type.toString());
+								}
+							}
+						}
+					} else {
+						icon.setDurability(Integer.valueOf(split[1]).shortValue());
+					}
+				}
+			} catch (Exception e) {
+				// Icon was not well formatted
+				plugin.getLogger().warning("Error in challenges.yml - icon format is incorrect for " + id + ":" + iconName);
+				plugin.getLogger().warning("Format should be 'icon: MaterialType:Damage' where Damage is optional");
+			}
+		}
+		if (icon == null || icon.getType() == Material.AIR) icon = new ItemStack(Material.PAPER);
+
+		String level = getChallengeConfig().getString(path + "level", "");
 		ChallengeType type = ChallengeType.getFromString(getChallengeConfig().getString(path + "type", "player"));
 		//TODO REQUIRED ITEMS/MOBS/BLOCKS
 		int requiredMoney = getChallengeConfig().getInt(path + "requiredMoney", 0);
@@ -225,7 +225,7 @@ public class ChallengesPopulator {
 		String repeatRewardText = ChatColor.translateAlternateColorCodes('&', getChallengeConfig().getString(path + "repeatRewardText", ""));
 		int maxTimes = getChallengeConfig().getInt(path + "maxTimes", -1);
 		int searchRadius = getChallengeConfig().getInt(path + "searchRadius", 0);
-		
+
 		switch (type) {
 		case PLAYER:
 			c = new Challenge(id, friendlyName, description, level, icon, requiredItems, requiredChallenges, requiredPermissions, requiredMoney, requiredXP, takeRequirements, reward, repeatReward, maxTimes);

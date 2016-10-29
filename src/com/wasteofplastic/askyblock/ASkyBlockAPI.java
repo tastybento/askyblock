@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -32,7 +31,6 @@ import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
 
-import com.wasteofplastic.askyblock.commands.Challenges;
 import com.wasteofplastic.askyblock.panels.SetBiome;
 
 /**
@@ -466,13 +464,5 @@ public class ASkyBlockAPI {
      */
     public void setIslandName(UUID owner, String name) {
         plugin.getGrid().setIslandName(owner, name);
-    }
-    
-    /**
-     * Get all the challenges
-     * @return challenges per level
-     */
-    public LinkedHashMap<String, List<String>> getAllChallenges(){
-    	return Challenges.getChallengeList();
     }
 }
