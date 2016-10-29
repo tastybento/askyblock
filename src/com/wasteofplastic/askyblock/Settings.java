@@ -227,6 +227,9 @@ public class Settings {
 
     // Use physics when pasting schematic blocks
     public static boolean usePhysics;
+    
+    // Use old display (chat instead of GUI) for Island top ten
+    public static boolean displayIslandTopTenInChat;
 
     // Falling blocked commands
     public static List<String> fallingCommandBlockList;
