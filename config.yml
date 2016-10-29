@@ -513,9 +513,9 @@ general:
    # using the /island teamchat command.
    # The prefix [Team Chat] that goes in front of team chats is in the locale files
    teamchat: true
-   
-   # Set this to true will log all messages sent in TeamChats
-   # If set to false, it won't be logged, like before.
+
+   # Set this to true will log all messages sent in TeamChats to console
+   # If set to false, it won't be logged.
    logteamchat: true
 
    # Variables to use as chat prefixes. You can change them to be what you want.
