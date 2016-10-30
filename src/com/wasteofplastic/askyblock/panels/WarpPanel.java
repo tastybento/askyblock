@@ -275,20 +275,22 @@ public class WarpPanel implements Listener {
         } catch (Exception e) {
             panelNumber = 0;
         }
-        String command = clicked.getItemMeta().getDisplayName();
-        if (DEBUG)
-            plugin.getLogger().info("DEBUG: command = " + command);
-        if (command != null) {
-            if (command.equalsIgnoreCase(plugin.myLocale().warpsNext)) {
-                player.closeInventory();
-                player.performCommand(Settings.ISLANDCOMMAND + " warps " + (panelNumber+1));
-            } else if (command.equalsIgnoreCase(plugin.myLocale().warpsPrevious)) {
-                player.closeInventory();
-                player.performCommand(Settings.ISLANDCOMMAND + " warps " + (panelNumber-1));
-            } else {
-                player.closeInventory();
-                player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).warpswarpToPlayersSign.replace("<player>", command));
-                player.performCommand(Settings.ISLANDCOMMAND + " warp " + command);
+        if (clicked.getItemMeta().hasDisplayName()) {
+            String command = ChatColor.stripColor(clicked.getItemMeta().getDisplayName());
+            if (DEBUG)
+                plugin.getLogger().info("DEBUG: command = " + command);
+            if (command != null) {
+                if (command.equalsIgnoreCase(plugin.myLocale().warpsNext)) {
+                    player.closeInventory();
+                    player.performCommand(Settings.ISLANDCOMMAND + " warps " + (panelNumber+1));
+                } else if (command.equalsIgnoreCase(plugin.myLocale().warpsPrevious)) {
+                    player.closeInventory();
+                    player.performCommand(Settings.ISLANDCOMMAND + " warps " + (panelNumber-1));
+                } else {
+                    player.closeInventory();
+                    player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).warpswarpToPlayersSign.replace("<player>", command));
+                    player.performCommand(Settings.ISLANDCOMMAND + " warp " + command);
+                }
             }
         }
     }

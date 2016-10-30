@@ -182,5 +182,5 @@
 			<url>http://maven.sk89q.com/repo/</url>
 		</repository>
 	</repositories>
-	<version>3.0.3.3</version>
+	<version>3.0.4</version>
 </project>
