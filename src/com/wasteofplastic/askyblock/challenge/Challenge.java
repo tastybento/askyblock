@@ -1,7 +1,10 @@
 package com.wasteofplastic.askyblock.challenge;
 
+import java.util.HashMap;
 import java.util.List;
 
+import org.bukkit.Material;
+import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 
 /**
@@ -14,14 +17,18 @@ public class Challenge {
 	String name, friendlyName, description, level;
 	ItemStack icon;
 	ChallengeType type;
-	List<String> requirements, requiredChallenges, requiredPermissions;
+	List<String> requiredChallenges, requiredPermissions;
 	Reward reward;
+	boolean resetAllowed;
 	//PLAYER Challenges settings
+	List<ItemStack> requiredItems;
 	int requiredMoney, requiredXP;
 	boolean takeRequirements;
-	Reward repeatReward;
+	List<Reward> repeatRewards;
 	int maxTimes;
 	//ISLAND Challenges settings
+	HashMap<Material, Integer> requiredBlocks;
+	HashMap<EntityType, Integer> requiredEntities;
 	int searchRadius;
 	//ISLAND_LEVEL Challenges settings
 	int requiredIslandLevel;
@@ -42,10 +49,11 @@ public class Challenge {
 	 * @param reward
 	 * @param repeatReward
 	 * @param maxTimes
+	 * @param resetAllowed
 	 */
 	public Challenge(String name, String friendlyName, String description, String level, ItemStack icon,
-			List<String> requiredItems, List<String> requiredChallenges, List<String> requiredPermissions, int requiredMoney, int requiredXP,
-			boolean takeRequirements, Reward reward, Reward repeatReward, int maxTimes){
+			List<ItemStack> requiredItems, List<String> requiredChallenges, List<String> requiredPermissions, int requiredMoney, int requiredXP,
+			boolean takeRequirements, Reward reward, List<Reward> repeatReward, int maxTimes, boolean resetAllowed){
 		
 		this.name = name;
 		this.friendlyName = friendlyName;
@@ -56,16 +64,19 @@ public class Challenge {
 		this.requiredChallenges = requiredChallenges;
 		this.requiredPermissions = requiredPermissions;
 		this.reward = reward;
+		this.resetAllowed = resetAllowed;
 		
-		this.requirements = requiredItems;
+		this.requiredItems = requiredItems;
 		this.requiredMoney = requiredMoney;
 		this.requiredXP = requiredXP;
 		this.takeRequirements = takeRequirements;
-		this.repeatReward = repeatReward;
+		this.repeatRewards = repeatReward;
 		this.maxTimes = maxTimes;
 		
 		this.searchRadius = 0;
 		this.requiredIslandLevel = 0;
+		this.requiredBlocks = null;
+		this.requiredEntities = null;
 	}
 	
 	/**
@@ -85,10 +96,11 @@ public class Challenge {
 	 * @param reward
 	 * @param repeatReward
 	 * @param maxTimes
+	 * @param resetAllowed
 	 */
 	public Challenge(String name, String friendlyName, String description, String level, ItemStack icon,
-			List<String> requiredItems, int requiredIslandLevel, List<String> requiredChallenges, List<String> requiredPermissions, int requiredMoney, int requiredXP,
-			boolean takeRequirements, Reward reward, Reward repeatReward, int maxTimes){
+			List<ItemStack> requiredItems, int requiredIslandLevel, List<String> requiredChallenges, List<String> requiredPermissions, int requiredMoney, int requiredXP,
+			boolean takeRequirements, Reward reward, List<Reward> repeatReward, int maxTimes, boolean resetAllowed){
 		
 		this.name = name;
 		this.friendlyName = friendlyName;
@@ -99,16 +111,19 @@ public class Challenge {
 		this.requiredChallenges = requiredChallenges;
 		this.requiredPermissions = requiredPermissions;
 		this.reward = reward;
+		this.resetAllowed = resetAllowed;
 		
-		this.requirements = requiredItems;
+		this.requiredItems = requiredItems;
 		this.requiredMoney = requiredMoney;
 		this.requiredXP = requiredXP;
 		this.takeRequirements = takeRequirements;
-		this.repeatReward = repeatReward;
+		this.repeatRewards = repeatReward;
 		this.maxTimes = maxTimes;
 		this.requiredIslandLevel = requiredIslandLevel;
 
 		this.searchRadius = 0;
+		this.requiredBlocks = null;
+		this.requiredEntities = null;
 	}
 	
 	/**
@@ -118,15 +133,17 @@ public class Challenge {
 	 * @param description
 	 * @param level
 	 * @param icon
-	 * @param requirements
+	 * @param requiredBlocks
+	 * @param requiredEntities
 	 * @param requiredChallenges
 	 * @param requiredPermissions
 	 * @param searchRadius
 	 * @param reward
+	 * @param resetAllowed
 	 */
 	public Challenge(String name, String friendlyName, String description, String level, ItemStack icon,
-			List<String> requirements, List<String> requiredChallenges, List<String> requiredPermissions,
-			int searchRadius, Reward reward){
+			HashMap<Material, Integer> requiredBlocks, HashMap<EntityType, Integer> requiredEntities, List<String> requiredChallenges, List<String> requiredPermissions,
+			int searchRadius, Reward reward, boolean resetAllowed){
 				
 		this.name = name;
 		this.friendlyName = friendlyName;
@@ -137,14 +154,16 @@ public class Challenge {
 		this.requiredChallenges = requiredChallenges;
 		this.requiredPermissions = requiredPermissions;
 		this.reward = reward;
+		this.resetAllowed = resetAllowed;
 		
-		this.requirements = requirements;
+		this.requiredBlocks = requiredBlocks;
+		this.requiredEntities = requiredEntities;
 		this.searchRadius = searchRadius;
 		
 		this.requiredMoney = 0;
 		this.requiredXP = 0;
 		this.takeRequirements = false;
-		this.repeatReward = null;
+		this.repeatRewards = null;
 		this.maxTimes = 1;
 		this.requiredIslandLevel = 0;
 	}
@@ -156,16 +175,18 @@ public class Challenge {
 	 * @param description
 	 * @param level
 	 * @param icon
-	 * @param requirements
+	 * @param requiredBlocks
+	 * @param requiredEntities
 	 * @param requiredIslandLevel
 	 * @param requiredChallenges
 	 * @param requiredPermissions
 	 * @param searchRadius
 	 * @param reward
+	 * @param resetAllowed
 	 */
 	public Challenge(String name, String friendlyName, String description, String level, ItemStack icon,
-			List<String> requirements, int requiredIslandLevel, List<String> requiredChallenges, List<String> requiredPermissions,
-			int searchRadius, Reward reward){
+			HashMap<Material, Integer> requiredBlocks, HashMap<EntityType, Integer> requiredEntities, int requiredIslandLevel, List<String> requiredChallenges, List<String> requiredPermissions,
+			int searchRadius, Reward reward, boolean resetAllowed){
 				
 		this.name = name;
 		this.friendlyName = friendlyName;
@@ -176,15 +197,17 @@ public class Challenge {
 		this.requiredChallenges = requiredChallenges;
 		this.requiredPermissions = requiredPermissions;
 		this.reward = reward;
+		this.resetAllowed = resetAllowed;
 		
-		this.requirements = requirements;
+		this.requiredBlocks = requiredBlocks;
+		this.requiredEntities = requiredEntities;
 		this.requiredIslandLevel = requiredIslandLevel;
 		this.searchRadius = searchRadius;
 		
 		this.requiredMoney = 0;
 		this.requiredXP = 0;
 		this.takeRequirements = false;
-		this.repeatReward = null;
+		this.repeatRewards = null;
 		this.maxTimes = 1;
 	}
 	
@@ -199,10 +222,11 @@ public class Challenge {
 	 * @param requiredChallenges
 	 * @param requiredPermissions
 	 * @param reward
+	 * @param resetAllowed
 	 */
 	public Challenge(String name, String friendlyName, String description, String level, ItemStack icon,
 			int requiredIslandLevel, List<String> requiredChallenges, List<String> requiredPermissions,
-			Reward reward){
+			Reward reward, boolean resetAllowed){
 		
 		this.name = name;
 		this.friendlyName = friendlyName;
@@ -213,15 +237,17 @@ public class Challenge {
 		this.requiredChallenges = requiredChallenges;
 		this.requiredPermissions = requiredPermissions;
 		this.reward = reward;
+		this.resetAllowed = resetAllowed;
 		
 		this.requiredIslandLevel = requiredIslandLevel;
 
-		this.requirements = null;
+		this.requiredBlocks = null;
+		this.requiredEntities = null;
 		this.searchRadius = 0;
 		this.requiredMoney = 0;
 		this.requiredXP = 0;
 		this.takeRequirements = false;
-		this.repeatReward = null;
+		this.repeatRewards = null;
 		this.maxTimes = 1;
 	}
 	
@@ -262,11 +288,25 @@ public class Challenge {
 	public ChallengeType getChallengeType(){return type;}
 	
 	/**
-	 * Gets the required items, blocks or entities required for the challenge. 
-	 * Only works with PLAYER and ISLAND challenges. ISLAND_LEVEL will return null.
-	 * @return the challenge's requirements.
+	 * Gets the required items for the challenge. 
+	 * Only works with PLAYER and MEGA_PLAYER. Others will return null.
+	 * @return the challenge's required items.
 	 */
-	public List<String> getRequirements(){return requirements;}
+	public List<ItemStack> getRequiredItems(){return requiredItems;}
+	
+	/**
+	 * Gets the required Blocks for the challenge.
+	 * Only works with ISLAND and MEGA_ISLAND. Other will return null.
+	 * @return the challenge's required blocks.
+	 */
+	public HashMap<Material, Integer> getRequiredBlocks(){return requiredBlocks;}
+	
+	/**
+	 * Gets the required Entities for the challenge.
+	 * Only works with ISLAND and MEGA_ISLAND. Other will return null.
+	 * @return the challenge's required entities.
+	 */
+	public HashMap<EntityType, Integer> getRequiredEntities(){return requiredEntities;}
 	
 	/**
 	 * Gets the required island level for the challenge. 
@@ -321,14 +361,14 @@ public class Challenge {
 	 * Only works with PLAYER challenges. Others will return false.
 	 * @return true if the challenge can be repeated, false if not.
 	 */
-	public boolean isRepeatable(){return repeatReward != null;}
+	public boolean isRepeatable(){return repeatRewards != null;}
 	
 	/**
 	 * Gets the repetition reward. 
 	 * Only works with PLAYER challenges. Other will return null.
 	 * @return the repetition reward.
 	 */
-	public Reward getRepeatReward(){return repeatReward;}
+	public List<Reward> getRepeatReward(){return repeatRewards;}
 	
 	/**
 	 * Gets the max times before a challenge can't be completed again. 
