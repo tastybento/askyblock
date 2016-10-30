@@ -1474,6 +1474,15 @@ public class ASkyBlock extends JavaPlugin {
         }
         if (Settings.minNameLength > Settings.maxNameLength) {
             Settings.minNameLength = Settings.maxNameLength;
+	}
+        // Magic Cobble Generator
+        Settings.useMagicCobbleGen = getConfig().getBoolean("general.usemagiccobblegen", false);
+        if(Settings.useMagicCobbleGen && getConfig().isSet("general.magiccobblegenchances")){
+            for(String block : getConfig().getConfigurationSection("general.magiccobblegenchances").getKeys(false)){
+        	double chance = getConfig().getDouble("general.magiccobblegenchances." + block, 0D);
+        	if(chance < 0) chance = 0; 
+        	if(Material.getMaterial(block).isBlock()) Settings.magicCobbleGenChances.put(Material.getMaterial(block), chance);
+            }
         }
         // All done
         return true;
