@@ -237,6 +237,10 @@ public class Settings {
     // Need a certain amount of island levels to create a warp sign
     public static int warpLevelsRestriction;
     
+    // Magic Cobble Generator
+    public static boolean useMagicCobbleGen;
+    public static HashMap<Material, Double> magicCobbleGenChances;
+    
     // Falling blocked commands
     public static List<String> fallingCommandBlockList;
     public static List<String> leaveCommands;
