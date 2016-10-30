@@ -97,8 +97,6 @@ public class LavaCheck implements Listener {
 	public void onCobbleGen(BlockFromToEvent e){
 		// If magic cobble gen isnt used
 		if(!Settings.useMagicCobbleGen) return;
-		// Only do this in ASkyBlock world
-		if (!e.getBlock().getWorld().getName().equalsIgnoreCase(Settings.worldName)) return;
 
 		int id = e.getBlock().getTypeId();
 		if ((id >= 8) && (id <= 11)) {
