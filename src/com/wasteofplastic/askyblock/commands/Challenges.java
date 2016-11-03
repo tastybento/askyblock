@@ -1193,10 +1193,10 @@ public class Challenges implements CommandExecutor, TabCompleter {
                                     if (DEBUG)
                                         plugin.getLogger().info("DEBUG: name check " + part[1]);
                                     // Name check
-                                    if (!part[1].isEmpty()) {
+                                    if (potion != null && potionType != null && !part[1].isEmpty()) {
                                         // There is a name
                                         // Custom potions may not have names
-                                        if (PotionType.valueOf(part[1]) != null) {
+                                        if (potionType.name() != null) {
                                             if (!part[1].equalsIgnoreCase(potionType.name())) {
                                                 match = false;
                                                 if (DEBUG)
