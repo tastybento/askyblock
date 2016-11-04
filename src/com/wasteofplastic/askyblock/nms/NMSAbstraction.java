@@ -50,8 +50,8 @@ public interface NMSAbstraction {
     /**
      * Returns a potion ItemStack
      * @param itemMaterial 
-     * @param chestItem 
-     * @param item
+     * @param itemTag
+     * @param chestItem
      * @return
      */
     public ItemStack setPotion(Material itemMaterial, Tag itemTag, ItemStack chestItem);

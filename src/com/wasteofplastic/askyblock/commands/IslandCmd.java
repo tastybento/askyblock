@@ -881,8 +881,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 
     /**
      * Get the location of next free island spot
-     * @param player 
-     * 
+     * @param playerUUID
      * @return Location of island spot
      */
     private Location getNextIsland(UUID playerUUID) {
@@ -1013,7 +1012,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
     /**
      * Calculates the island level
      * 
-     * @param asker
+     * @param sender
      *            - Player object of player who is asking
      * @param targetPlayer
      *            - UUID of the player's island that is being requested

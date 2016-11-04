@@ -257,7 +257,7 @@ public class Util {
      * Converts a location to a simple string representation
      * If location is null, returns empty string
      * 
-     * @param l
+     * @param location
      * @return String of location
      */
     static public String getStringLocation(final Location location) {
