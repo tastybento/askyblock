@@ -150,7 +150,8 @@ public class ChatListener implements Listener {
     }
 
     /**
-     * @param Adds player to team chat
+     * Adds player to team chat
+     * @param playerUUID
      */
     public void setPlayer(UUID playerUUID) {
         this.teamChatUsers.put(playerUUID,true);
