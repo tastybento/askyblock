@@ -134,7 +134,7 @@ public class ChatListener implements Listener {
                     }
                 }
                 //Log teamchat
-                if(Settings.logTeamChat) System.out.println(ChatColor.stripColor(message));
+                if(Settings.logTeamChat) plugin.getLogger().info(ChatColor.stripColor(message));
             }
             if (!onLine) {
                 player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).teamChatNoTeamAround);

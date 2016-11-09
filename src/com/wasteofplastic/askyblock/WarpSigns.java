@@ -280,7 +280,7 @@ public class WarpSigns implements Listener {
      * @param player
      * @param loc
      */
-    public boolean addWarp(final UUID player, Location loc) {
+    public boolean addWarp(final UUID player, final Location loc) {
         // Do not allow warps to be in the same location
         if (warpList.containsValue(loc)) {
             return false;
