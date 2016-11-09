@@ -34,53 +34,7 @@ public class Challenge {
 	int requiredIslandLevel;
 	
 	/**
-	 * PLAYER Challenge. Repeatable.
-	 * @param name
-	 * @param friendlyname
-	 * @param description
-	 * @param level
-	 * @param icon
-	 * @param requiredItems
-	 * @param requiredChallenges
-	 * @param requiredPermissions
-	 * @param requiredMoney
-	 * @param requiredXP
-	 * @param takeRequirements
-	 * @param reward
-	 * @param repeatReward
-	 * @param maxTimes
-	 * @param resetAllowed
-	 */
-	public Challenge(String name, String friendlyName, String description, String level, ItemStack icon,
-			List<ItemStack> requiredItems, List<String> requiredChallenges, List<String> requiredPermissions, int requiredMoney, int requiredXP,
-			boolean takeRequirements, Reward reward, List<Reward> repeatReward, int maxTimes, boolean resetAllowed){
-		
-		this.name = name;
-		this.friendlyName = friendlyName;
-		this.description = description;
-		this.level = level;
-		this.icon = icon;
-		this.type = ChallengeType.PLAYER;
-		this.requiredChallenges = requiredChallenges;
-		this.requiredPermissions = requiredPermissions;
-		this.reward = reward;
-		this.resetAllowed = resetAllowed;
-		
-		this.requiredItems = requiredItems;
-		this.requiredMoney = requiredMoney;
-		this.requiredXP = requiredXP;
-		this.takeRequirements = takeRequirements;
-		this.repeatRewards = repeatReward;
-		this.maxTimes = maxTimes;
-		
-		this.searchRadius = 0;
-		this.requiredIslandLevel = 0;
-		this.requiredBlocks = null;
-		this.requiredEntities = null;
-	}
-	
-	/**
-	 * MEGA_PLAYER Challenge. Repeatable. Handle the required island levels.
+	 * PLAYER Challenge. Repeatable. Handle the required island levels.
 	 * @param name
 	 * @param friendlyname
 	 * @param description
@@ -107,7 +61,7 @@ public class Challenge {
 		this.description = description;
 		this.level = level;
 		this.icon = icon;
-		this.type = ChallengeType.MEGA_PLAYER;
+		this.type = ChallengeType.PLAYER;
 		this.requiredChallenges = requiredChallenges;
 		this.requiredPermissions = requiredPermissions;
 		this.reward = reward;
@@ -135,48 +89,6 @@ public class Challenge {
 	 * @param icon
 	 * @param requiredBlocks
 	 * @param requiredEntities
-	 * @param requiredChallenges
-	 * @param requiredPermissions
-	 * @param searchRadius
-	 * @param reward
-	 * @param resetAllowed
-	 */
-	public Challenge(String name, String friendlyName, String description, String level, ItemStack icon,
-			HashMap<Material, Integer> requiredBlocks, HashMap<EntityType, Integer> requiredEntities, List<String> requiredChallenges, List<String> requiredPermissions,
-			int searchRadius, Reward reward, boolean resetAllowed){
-				
-		this.name = name;
-		this.friendlyName = friendlyName;
-		this.description = description;
-		this.level = level;
-		this.icon = icon;
-		this.type = ChallengeType.ISLAND;
-		this.requiredChallenges = requiredChallenges;
-		this.requiredPermissions = requiredPermissions;
-		this.reward = reward;
-		this.resetAllowed = resetAllowed;
-		
-		this.requiredBlocks = requiredBlocks;
-		this.requiredEntities = requiredEntities;
-		this.searchRadius = searchRadius;
-		
-		this.requiredMoney = 0;
-		this.requiredXP = 0;
-		this.takeRequirements = false;
-		this.repeatRewards = null;
-		this.maxTimes = 1;
-		this.requiredIslandLevel = 0;
-	}
-	
-	/**
-	 * MEGA_ISLAND Challenge. Not repeatable.
-	 * @param name
-	 * @param friendlyName
-	 * @param description
-	 * @param level
-	 * @param icon
-	 * @param requiredBlocks
-	 * @param requiredEntities
 	 * @param requiredIslandLevel
 	 * @param requiredChallenges
 	 * @param requiredPermissions
@@ -193,7 +105,7 @@ public class Challenge {
 		this.description = description;
 		this.level = level;
 		this.icon = icon;
-		this.type = ChallengeType.MEGA_ISLAND;
+		this.type = ChallengeType.ISLAND;
 		this.requiredChallenges = requiredChallenges;
 		this.requiredPermissions = requiredPermissions;
 		this.reward = reward;
@@ -388,5 +300,25 @@ public class Challenge {
 	public String toString(){
 		//TODO
 		return "";
+	}
+	
+	public enum ChallengeType {
+		PLAYER,
+		ISLAND,
+		ISLAND_LEVEL;
+		
+		static ChallengeType getFromString(String s){
+			if(s == null || s.trim().isEmpty()) return PLAYER;
+			switch(s.trim()){
+			case "player":
+				return PLAYER;
+			case "island":
+				return ISLAND;
+			case "level":
+				return ISLAND_LEVEL;
+			default:
+				return PLAYER;
+			}
+		}
 	}
 }

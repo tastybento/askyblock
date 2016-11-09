@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -21,9 +22,8 @@ import org.bukkit.potion.PotionType;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Settings;
+import com.wasteofplastic.askyblock.challenge.Challenge.ChallengeType;
 import com.wasteofplastic.askyblock.util.SpawnEgg1_9;
-
-import net.md_5.bungee.api.ChatColor;
 
 /**
  * 
@@ -227,19 +227,13 @@ public class ChallengesPopulator {
 		int searchRadius = getChallengeConfig().getInt(path + "searchRadius", 0);
 
 		switch (type) {
-		case PLAYER:
-			c = new Challenge(id, friendlyName, description, level, icon, requiredItems, requiredChallenges, requiredPermissions, requiredMoney, requiredXP, takeRequirements, reward, repeatReward, maxTimes);
-			break;
-		case ISLAND:
-			c = new Challenge(id, friendlyName, description, level, icon, requirements, requiredChallenges, requiredPermissions, searchRadius, reward);
-			break;
 		case ISLAND_LEVEL:
 			c = new Challenge(id, friendlyName, description, level, icon, requiredIslandLevel, requiredChallenges, requiredPermissions, reward);
 			break;
-		case MEGA_PLAYER:
+		case PLAYER:
 			c = new Challenge(id, friendlyName, description, level, icon, requiredItems, requiredIslandLevel, requiredChallenges, requiredPermissions, requiredMoney, requiredXP, takeRequirements, reward, repeatReward, maxTimes);
 			break;
-		case MEGA_ISLAND:
+		case ISLAND:
 			c = new Challenge(id, friendlyName, description, level, icon, requirements, requiredIslandLevel, requiredChallenges, requiredPermissions, searchRadius, reward);
 		default:
 			break;
