@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -125,6 +126,7 @@ public class ChallengesPopulator {
 		List<String> requiredPermissions = getChallengeConfig().getStringList(path + ".require.permissions");
 
 		//Get requirements
+		List<ItemStack> requiredItems = loadRequiredItems(getChallengeConfig().getStringList(path + ".require.items"));
 		int requiredIslandLevel = getChallengeConfig().getInt(path + ".require.islandlevel", 0);
 		int requiredMoney = getChallengeConfig().getInt(path + ".require.money", 0);
 		int requiredXP = getChallengeConfig().getInt(path + ".require.exp", 0);
@@ -153,6 +155,84 @@ public class ChallengesPopulator {
 	}
 
 	@SuppressWarnings("deprecation")
+	private List<ItemStack> loadRequiredItems(List<String> list) {
+		// The format of the requiredItems is as follows:
+		// Material:Qty
+		// or
+		// Material:DamageModifier:Qty
+		// This second one is so that items such as potions or variations on
+		// standard items can be collected
+		List<ItemStack> requiredItems = new ArrayList<ItemStack>();
+		if(!list.isEmpty()){
+			for(final String s : list){
+				Material material;
+				int amount = 0;
+				//Multiple allowed items
+				if(s.contains(",")){
+
+				}
+				//"Normal"
+				else{
+					final String[] part = s.split(":");
+					// Material:Quantity
+					if(part.length == 2){
+						try{
+							// Correct some common mistakes
+							if (part[0].equalsIgnoreCase("potato")) part[0] = "POTATO_ITEM";
+							else if (part[0].equalsIgnoreCase("brewing_stand")) part[0] = "BREWING_STAND_ITEM";
+							else if (part[0].equalsIgnoreCase("carrot")) part[0] = "CARROT_ITEM";
+							else if (part[0].equalsIgnoreCase("cauldron")) part[0] = "CAULDRON_ITEM";
+							else if (part[0].equalsIgnoreCase("skull")) part[0] = "SKULL_ITEM";
+
+							// TODO: add netherwart vs. netherstalk?
+							if (StringUtils.isNumeric(part[0])) material = Material.getMaterial(Integer.parseInt(part[0]));
+							else material = Material.getMaterial(part[0].toUpperCase());
+							
+							amount = Integer.parseInt(part[1]);
+							ItemStack item = new ItemStack(material, amount);
+							requiredItems.add(item);
+						} catch (Exception e) {
+							plugin.getLogger().severe("Problem with " + s + " in challenges.yml!");
+							String materialList = "";
+							boolean hint = false;
+							for (Material m : Material.values()) {
+								materialList += m.toString() + ",";
+								if (m.toString().contains(s.substring(0, 3).toUpperCase())) {
+									plugin.getLogger().severe("Did you mean " + m.toString() + "?");
+									hint = true;
+								}
+							}
+							if (!hint) {
+								plugin.getLogger().severe("Sorry, I have no idea what " + s + " is. Pick from one of these:");
+								plugin.getLogger().severe(materialList.substring(0, materialList.length() - 1));
+							} else {
+								plugin.getLogger().severe("Correct challenges.yml with the correct material.");
+							}
+						}
+					} else if (part.length == 3) {
+						// This handles items with durability
+						// Correct some common mistakes
+						if (part[0].equalsIgnoreCase("potato")) part[0] = "POTATO_ITEM";
+						else if (part[0].equalsIgnoreCase("brewing_stand")) part[0] = "BREWING_STAND_ITEM";
+						else if (part[0].equalsIgnoreCase("carrot")) part[0] = "CARROT_ITEM";
+						else if (part[0].equalsIgnoreCase("cauldron")) part[0] = "CAULDRON_ITEM";
+						else if (part[0].equalsIgnoreCase("skull")) part[0] = "SKULL_ITEM";
+						
+						if (StringUtils.isNumeric(part[0])) material = Material.getMaterial(Integer.parseInt(part[0]));
+						else material = Material.getMaterial(part[0].toUpperCase());
+						
+						int durability = Integer.parseInt(part[1]);
+						amount = Integer.parseInt(part[2]);
+						ItemStack item = new ItemStack(material, amount, (short) durability);
+						requiredItems.add(item);
+					}
+				}
+			}
+		}
+		return requiredItems;
+	}
+
+	@SuppressWarnings("deprecation")
 	private ItemStack loadIconFromString(String challenge, String iconType){
 		ItemStack icon = null;
 		if (!iconType.isEmpty()) {
@@ -161,34 +241,21 @@ public class ChallengesPopulator {
 				String[] split = iconType.split(":");
 				if (split.length == 1) {
 					// Some material does not show in the inventory
-					if (iconType.equalsIgnoreCase("potato")) {
-						iconType = "POTATO_ITEM";
-					} else if (iconType.equalsIgnoreCase("brewing_stand")) {
-						iconType = "BREWING_STAND_ITEM";
-					} else if (iconType.equalsIgnoreCase("carrot")) {
-						iconType = "CARROT_ITEM";
-					} else if (iconType.equalsIgnoreCase("cauldron")) {
-						iconType = "CAULDRON_ITEM";
-					} else if (iconType.equalsIgnoreCase("lava") || iconType.equalsIgnoreCase("stationary_lava")) {
-						iconType = "LAVA_BUCKET";
-					} else if (iconType.equalsIgnoreCase("water") || iconType.equalsIgnoreCase("stationary_water")) {
-						iconType = "WATER_BUCKET";
-					} else if (iconType.equalsIgnoreCase("portal")) {
-						iconType = "OBSIDIAN";
-					} else if (iconType.equalsIgnoreCase("PUMPKIN_STEM")) {
-						iconType = "PUMPKIN";
-					} else if (iconType.equalsIgnoreCase("skull")) {
-						iconType = "SKULL_ITEM";
-					} else if (iconType.equalsIgnoreCase("COCOA")) {
-						iconType = "INK_SACK:3";
-					} else if (iconType.equalsIgnoreCase("NETHER_WARTS")) {
-						iconType = "NETHER_STALK";
-					}
-					if (StringUtils.isNumeric(iconType)) {
-						icon = new ItemStack(Integer.parseInt(iconType));
-					} else {
-						icon = new ItemStack(Material.valueOf(iconType));
-					}
+					if (iconType.equalsIgnoreCase("potato")) iconType = "POTATO_ITEM";
+					else if (iconType.equalsIgnoreCase("brewing_stand")) iconType = "BREWING_STAND_ITEM";
+					else if (iconType.equalsIgnoreCase("carrot")) iconType = "CARROT_ITEM";
+					else if (iconType.equalsIgnoreCase("cauldron")) iconType = "CAULDRON_ITEM";
+					else if (iconType.equalsIgnoreCase("lava") || iconType.equalsIgnoreCase("stationary_lava")) iconType = "LAVA_BUCKET";
+					else if (iconType.equalsIgnoreCase("water") || iconType.equalsIgnoreCase("stationary_water")) iconType = "WATER_BUCKET";
+					else if (iconType.equalsIgnoreCase("portal")) iconType = "OBSIDIAN";
+					else if (iconType.equalsIgnoreCase("PUMPKIN_STEM")) iconType = "PUMPKIN";
+					else if (iconType.equalsIgnoreCase("skull")) iconType = "SKULL_ITEM";
+					else if (iconType.equalsIgnoreCase("COCOA")) iconType = "INK_SACK:3";
+					else if (iconType.equalsIgnoreCase("NETHER_WARTS")) iconType = "NETHER_STALK";
+					
+					if (StringUtils.isNumeric(iconType)) icon = new ItemStack(Integer.parseInt(iconType));
+					else icon = new ItemStack(Material.valueOf(iconType));
+					
 					// Check POTION for V1.9 - for some reason, it must be declared as WATER otherwise comparison later causes an NPE
 					if (icon.getType().name().contains("POTION")) {
 						if (!plugin.getServer().getVersion().contains("(MC: 1.8") && !plugin.getServer().getVersion().contains("(MC: 1.7")) {                        
@@ -198,11 +265,9 @@ public class ChallengesPopulator {
 						}
 					}
 				} else if (split.length == 2) {
-					if (StringUtils.isNumeric(split[0])) {
-						icon = new ItemStack(Integer.parseInt(split[0]));
-					} else {
-						icon = new ItemStack(Material.valueOf(split[0]));
-					}
+					if (StringUtils.isNumeric(split[0])) icon = new ItemStack(Integer.parseInt(split[0]));
+					else icon = new ItemStack(Material.valueOf(split[0]));
+					
 					// Check POTION for V1.9 - for some reason, it must be declared as WATER otherwise comparison later causes an NPE
 					if (icon.getType().name().contains("POTION")) {
 						if (!plugin.getServer().getVersion().contains("(MC: 1.8") && !plugin.getServer().getVersion().contains("(MC: 1.7")) {                       

@@ -48,10 +48,25 @@
 # For V1.9 these are also available:
 # LUCK, MUNDANE, THICK, AWKWARD
 #
+# The format for TIPPED_ARROWs is as follows:
+# Format TIPPED_ARROW:NAME:<LEVEL>:<EXTENDED>:QUANTITY
 #
+# LEVEL and EXTENDED are optional.
+# LEVEL is a number, 1 or 2
+# Examples:
+# TIPPED_ARROW:SPECTRAL::1
+# TIPPED_ARROW:JUMP:1:EXTENDED:2
+# TIPPED_ARROW:INSTANT_HEAL:2::1
+#
+# Valid tipped arrow names are:
+# WATER, REGEN, SPEED, FIRE_RESISTANCE, POISON, INSTANT_HEAL, NIGHT_VISION, WEAKNESS,
+# STRENGTH, SLOWNESS, JUMP, INSTANT_DAMAGE, WATER_BREATHING, INVISIBILITY
+# For V1.9 these are also available:
+# LUCK, MUNDANE, THICK, AWKWARD, SPECTRAL
+# 
 # Reseting islands and challenges - usually challenges are reset when a player resets
 # their island (see resetchallenges in config.yml). You can stop some challenges from
-# being reset by using resetallowed:false in the challenge.
+# being reset by using resetAllowed:false in the challenge.
 ##########################################################################################
 
 challenges:
@@ -147,10 +162,15 @@ challenges:
           # Challenges can also need to be completed before completing this one. 
           # challenges:
           # - papermaker
-          items: 'STONE:1:16'
-          # You can require the player has a certain amount of money or XP for 'player' 
-          # and 'megaplayer' challenges. Remember to mention it in the description!
-          # If takeRequirements is set to true, money and exp will be taken.
+          # All items listed are required
+          # If multiple items are listed on the same line, either of the items on that line are allowed
+          items:
+          - STONE:1:16
+          - WOODEN_DOOR:1, ACACIA_DOOR:1
+          - TIPPED_ARROW:JUMP:1:EXTENDED:2
+          # You can require the player has a certain amount of money or XP for 'player' challenges.
+          # Remember to mention it in the description!
+          # If takeRequirements is set to true, items, money and exp will be taken.
           money: 150
           exp: 10
           islandlevel: 250
@@ -184,6 +204,8 @@ challenges:
             exp: 200
             commands:
             - bc [player] has completed this challenge 5 times!
+            # A message that will be send to the player can be set. Color codes OK.
+            message: "&bGG! You repeated this challenge 5 times!"
         # Max times limits how many times a challenge can be done. Comment -1 to make unlimited.
         maxTimes: -1
         # Allow this challenge to reset when the player resets their island

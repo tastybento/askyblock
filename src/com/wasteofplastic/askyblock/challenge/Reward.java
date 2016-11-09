@@ -15,11 +15,11 @@ public class Reward {
 	List<ItemStack> rewardItems;
 	List<String> rewardPermissions, rewardCommands;
 	int rewardMoney, rewardXP;
-	String rewardText;
+	String rewardText, rewardMessage;
 	int repeats;
 	
 	public Reward(String rewardText, List<ItemStack> rewardItems, List<String> rewardPermissions, List<String> rewardCommands,
-			int rewardMoney, int rewardXP){
+			int rewardMoney, int rewardXP, String rewardMessage){
 		
 		this.rewardText = rewardText;
 		this.rewardItems = rewardItems;
@@ -27,11 +27,12 @@ public class Reward {
 		this.rewardCommands = rewardCommands;
 		this.rewardXP = rewardXP;
 		this.rewardMoney = rewardMoney;
+		this.rewardMessage = rewardMessage;
 		this.repeats = -1;
 	}
 	
 	public Reward(String rewardText, List<ItemStack> rewardItems, List<String> rewardPermissions, List<String> rewardCommands,
-			int rewardMoney, int rewardXP, int repeats){
+			int rewardMoney, int rewardXP, String rewardMessage, int repeats){
 		
 		this.rewardText = rewardText;
 		this.rewardItems = rewardItems;
@@ -39,6 +40,7 @@ public class Reward {
 		this.rewardCommands = rewardCommands;
 		this.rewardXP = rewardXP;
 		this.rewardMoney = rewardMoney;
+		this.rewardMessage = rewardMessage;
 		this.repeats = repeats;
 	}
 	
