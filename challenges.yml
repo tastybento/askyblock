@@ -138,7 +138,7 @@ challenges:
         friendlyname: '&2Example of a new challenge'
         description: '&7Every text &acan &bbe &2colored!'
         icon: EMPTY_MAP
-        type: megaplayer
+        type: player
         require:
           # Permissions can be required to complete a challenge
           # permissions:
@@ -153,7 +153,7 @@ challenges:
           # If takeRequirements is set to true, money and exp will be taken.
           money: 150
           exp: 10
-          islandlevels: 250
+          islandlevel: 250
         takeRequirements: true
         # First completion reward.
         reward:

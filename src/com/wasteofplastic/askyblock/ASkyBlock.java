@@ -1455,6 +1455,7 @@ public class ASkyBlock extends JavaPlugin {
         Settings.mobLimit = getConfig().getInt("general.moblimit", 0);
         Settings.removeCompleteOntimeChallenges = getConfig().getBoolean("general.removecompleteonetimechallenges", false);
         Settings.addCompletedGlow = getConfig().getBoolean("general.addcompletedglow", true);
+        Settings.showUndoableChallenges = getConfig().getBoolean("general.showundoablechallenges", true);
         // Clean up blocks around edges when deleting islands
         Settings.cleanUpBlocks = getConfig().getBoolean("island.cleanupblocks",false);
         Settings.cleanRate = getConfig().getInt("island.cleanrate", 2);

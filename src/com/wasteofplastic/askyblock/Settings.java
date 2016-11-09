@@ -214,6 +214,7 @@ public class Settings {
     // Challenges - show or remove completed on-time challenges
     public static boolean removeCompleteOntimeChallenges;
     public static boolean addCompletedGlow;
+    public static boolean showUndoableChallenges;
 
     // New nether
     public static boolean newNether;

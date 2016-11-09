@@ -312,10 +312,11 @@ public class Challenge {
 	public enum ChallengeType {
 		PLAYER,
 		ISLAND,
-		ISLAND_LEVEL;
+		ISLAND_LEVEL,
+		ERROR;
 		
 		static ChallengeType getFromString(String s){
-			if(s == null || s.trim().isEmpty()) return PLAYER;
+			if(s == null || s.trim().isEmpty()) return ERROR;
 			switch(s.trim()){
 			case "player":
 				return PLAYER;
@@ -324,7 +325,7 @@ public class Challenge {
 			case "level":
 				return ISLAND_LEVEL;
 			default:
-				return PLAYER;
+				return ERROR;
 			}
 		}
 	}
