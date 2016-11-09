@@ -57,7 +57,13 @@
 challenges:
   # Challenge levels - list as many as you like. If a challenge's level is '' it can
   # be done anytime. You cannot name a challenge the same as a level.
-  levels: 'Novice Competent Expert Advanced Elite'
+  levels:
+    # You can give them a colored and custom display name :o ! Try out!
+    Novice: "&bNovice"
+    Competent: "&aCompetent"
+    Expert: "&eExpert"
+    Advanced: "&6Advanced"
+    Elite: "&cElite"
     
   # The number of undone tasks that can be left on a level before unlocking next level
   waiveramount: 1
@@ -126,61 +132,61 @@ challenges:
   # Challenge list
   # Challenge names must be in lowercase. Do not use the same name as a level!
   challengeList:
-    newchallengeexample:
-      # Colors ('&') can be used in friendlyname, description, reward.text and repeatReward.text 
-      friendlyname: '&2Example of a new challenge'
-      description: '&7Every text &acan &bbe &2colored!'
-      icon: EMPTY_MAP
-      level: 'Novice'
-      type: megaplayer
-      require:
-        # Permissions can be required to complete a challenge
-        # permissions:
-        # - permission.1
-        # - permission.fun
-        # Challenges can also need to be completed before completing this one. 
-        # challenges:
-        # - papermaker
-        items: 'STONE:1:16'
-        # You can require the player has a certain amount of money or XP for 'player' 
-        # and 'megaplayer' challenges. Remember to mention it in the description!
-        # If takeRequirements is set to true, money and exp will be taken.
-        money: 150
-        exp: 10
-        islandlevels: 250
-      takeRequirements: true
-      # First completion reward.
-      reward:
-        text: '&7Again, &athis &bcan &dbe &f&lcolored &2!'
-        items: 'STONE:2:8'
-        money: 22
-        exp: 17
-        permissions:
-        - permission.chall.1
-        commands:
-        - bc [player] is the best!
-      # If repeatable is set to false, the repeatRewards won't be used.
-      repeatable: true
-      repeatRewards:
-        # -1 is the default repeat reward. If no other reward is specified, it'll be
-        # given for each repeat.
-        -1:
-          text: '&aThis is the default repeat reward'
+    Novice:
+      newchallengeexample:
+        # Colors ('&') can be used in friendlyname, description, reward.text and repeatReward.text 
+        friendlyname: '&2Example of a new challenge'
+        description: '&7Every text &acan &bbe &2colored!'
+        icon: EMPTY_MAP
+        type: megaplayer
+        require:
+          # Permissions can be required to complete a challenge
+          # permissions:
+          # - permission.1
+          # - permission.fun
+          # Challenges can also need to be completed before completing this one. 
+          # challenges:
+          # - papermaker
+          items: 'STONE:1:16'
+          # You can require the player has a certain amount of money or XP for 'player' 
+          # and 'megaplayer' challenges. Remember to mention it in the description!
+          # If takeRequirements is set to true, money and exp will be taken.
+          money: 150
+          exp: 10
+          islandlevels: 250
+        takeRequirements: true
+        # First completion reward.
+        reward:
+          text: '&7Again, &athis &bcan &dbe &f&lcolored &2!'
           items: 'STONE:2:8'
-          money: 11
+          money: 22
           exp: 17
-        # This reward will be given when the player has repeated 5 times
-        # this challenge. The default reward won't be given.
-        5:
-          text: '&b&lThis is a special repeat reward for 5 repeats'
-          items: 'DIAMOND:64'
-          money: 200
-          exp: 200
+          permissions:
+          - permission.chall.1
           commands:
-          - bc [player] has completed this challenge 5 times!
-      # Max times limits how many times a challenge can be done. Comment -1 to make unlimited.
-      maxTimes: -1
-      # Allow this challenge to reset when the player resets their island
-      # Default is true. Set to false to keep this challenge completed.
-      # Admins can always reset challenges even if this is set to false.
-      resetAllowed: true
+          - bc [player] is the best!
+        # If repeatable is set to false, the repeatRewards won't be used.
+        repeatable: true
+        repeatRewards:
+          # -1 is the default repeat reward. If no other reward is specified, it'll be
+          # given for each repeat.
+          -1:
+            text: '&aThis is the default repeat reward'
+            items: 'STONE:2:8'
+            money: 11
+            exp: 17
+          # This reward will be given when the player has repeated 5 times
+          # this challenge. The default reward won't be given.
+          5:
+            text: '&b&lThis is a special repeat reward for 5 repeats'
+            items: 'DIAMOND:64'
+            money: 200
+            exp: 200
+            commands:
+            - bc [player] has completed this challenge 5 times!
+        # Max times limits how many times a challenge can be done. Comment -1 to make unlimited.
+        maxTimes: -1
+        # Allow this challenge to reset when the player resets their island
+        # Default is true. Set to false to keep this challenge completed.
+        # Admins can always reset challenges even if this is set to false.
+        resetAllowed: true

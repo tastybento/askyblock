@@ -276,11 +276,11 @@ public class Challenge {
 	public boolean isRepeatable(){return repeatRewards != null;}
 	
 	/**
-	 * Gets the repetition reward. 
+	 * Gets the repetition rewards. 
 	 * Only works with PLAYER challenges. Other will return null.
-	 * @return the repetition reward.
+	 * @return the repetition rewards.
 	 */
-	public List<Reward> getRepeatReward(){return repeatRewards;}
+	public List<Reward> getRepeatRewards(){return repeatRewards;}
 	
 	/**
 	 * Gets the max times before a challenge can't be completed again. 
@@ -295,6 +295,13 @@ public class Challenge {
 	 * @return the search radius.
 	 */
 	public int getSearchRadius(){return searchRadius;}
+	
+	/**
+	 * Check if challenge can be reset.
+	 * Works with all types of Challenges.
+	 * @return true if this challenge can be reset, false if not
+	 */
+	public boolean isResetable(){return resetAllowed;}
 	
 	@Override
 	public String toString(){
