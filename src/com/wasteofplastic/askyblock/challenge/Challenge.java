@@ -54,7 +54,7 @@ public class Challenge {
 	 */
 	public Challenge(String name, String friendlyName, String description, String level, ItemStack icon,
 			List<ItemStack> requiredItems, int requiredIslandLevel, List<String> requiredChallenges, List<String> requiredPermissions, int requiredMoney, int requiredXP,
-			boolean takeRequirements, Reward reward, List<Reward> repeatReward, int maxTimes, boolean resetAllowed){
+			boolean takeRequirements, Reward reward, List<Reward> repeatRewards, int maxTimes, boolean resetAllowed){
 		
 		this.name = name;
 		this.friendlyName = friendlyName;
@@ -71,7 +71,7 @@ public class Challenge {
 		this.requiredMoney = requiredMoney;
 		this.requiredXP = requiredXP;
 		this.takeRequirements = takeRequirements;
-		this.repeatRewards = repeatReward;
+		this.repeatRewards = repeatRewards;
 		this.maxTimes = maxTimes;
 		this.requiredIslandLevel = requiredIslandLevel;
 
@@ -305,8 +305,28 @@ public class Challenge {
 	
 	@Override
 	public String toString(){
-		//TODO
-		return "";
+		return "Challenge{" +
+				"name='" + name + "'" +
+				", friendlyname='" + friendlyName + "'" +
+				", description='" + description + "'" +
+				", level='" + level + "'" +
+				", icon='" + icon + "'" +
+				", type='" + type + "'" +
+				", requiredChallenges='" + requiredChallenges + "'" +
+				", requiredPermissions='" + requiredPermissions + "'" +
+				", requiredItems='" + requiredItems + "'" +
+				", requiredMoney='" + requiredMoney + "'" +
+				", requiredXP='" + requiredXP + "'" +
+				", takeRequirements='" + takeRequirements + "'" +
+				", requiredBlocks='" + requiredBlocks + "'" +
+				", requiredEntities='" + requiredEntities + "'" +
+				", requiredIslandLevel='" + requiredIslandLevel + "'" +
+				", reward='" + reward + "'" +
+				", repeatRewards ='" + repeatRewards + "'" +
+				", maxTimes='" + maxTimes + "'" +
+				", searchRadius='" + searchRadius + "'" +
+				", resetAllowed='" + resetAllowed + "'" +
+				"}";
 	}
 	
 	public enum ChallengeType {

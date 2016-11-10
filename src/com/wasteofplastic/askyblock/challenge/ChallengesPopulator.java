@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -17,6 +18,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.material.SpawnEgg;
+import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
 
@@ -32,6 +34,7 @@ import com.wasteofplastic.askyblock.util.SpawnEgg1_9;
  * @author Poslovitch
  *
  */
+@SuppressWarnings("deprecation")
 public class ChallengesPopulator {
 
 	ASkyBlock plugin;
@@ -41,7 +44,14 @@ public class ChallengesPopulator {
 	}
 
 	// Database of challenges
-	private LinkedHashMap<String, List<Challenge>> challengeList = new LinkedHashMap<String, List<Challenge>>();
+	private static LinkedHashMap<String, List<Challenge>> challengeList = new LinkedHashMap<String, List<Challenge>>();
+
+	/**
+	 * @return all the loaded challenges, per level.
+	 */
+	public static LinkedHashMap<String, List<Challenge>> getLoadedChallenges(){
+		return challengeList;
+	}
 
 	// Where challenges are stored
 	private static FileConfiguration challengeFile = null;
@@ -126,17 +136,19 @@ public class ChallengesPopulator {
 		List<String> requiredPermissions = getChallengeConfig().getStringList(path + ".require.permissions");
 
 		//Get requirements
-		List<ItemStack> requiredItems = loadRequiredItems(getChallengeConfig().getStringList(path + ".require.items"));
+		List<ItemStack> requiredItems = loadItems(getChallengeConfig().getStringList(path + ".require.items"), true);
 		int requiredIslandLevel = getChallengeConfig().getInt(path + ".require.islandlevel", 0);
 		int requiredMoney = getChallengeConfig().getInt(path + ".require.money", 0);
 		int requiredXP = getChallengeConfig().getInt(path + ".require.exp", 0);
+		HashMap<Material, Integer> requiredBlocks = loadBlocks(id, getChallengeConfig().getStringList(path + ".require.blocks"));
+		HashMap<EntityType, Integer> requiredEntities = loadEntities();
 
 		//Get rewards
 
 		//Create challenge
 		switch (type) {
 		case PLAYER:
-			c = new Challenge(name, friendlyName, description, level, icon, requiredItems, requiredIslandLevel, requiredChallenges, requiredPermissions, requiredMoney, requiredXP, takeRequirements, reward, repeatReward, maxTimes, resetAllowed);
+			c = new Challenge(name, friendlyName, description, level, icon, requiredItems, requiredIslandLevel, requiredChallenges, requiredPermissions, requiredMoney, requiredXP, takeRequirements, reward, repeatRewards, maxTimes, resetAllowed);
 			break;
 		case ISLAND:
 			c = new Challenge(name, friendlyName, description, level, icon, requiredBlocks, requiredEntities, requiredIslandLevel, requiredChallenges, requiredPermissions, searchRadius, reward, resetAllowed);
@@ -154,9 +166,8 @@ public class ChallengesPopulator {
 		return c;
 	}
 
-	@SuppressWarnings("deprecation")
-	private List<ItemStack> loadRequiredItems(List<String> list) {
-		// The format of the requiredItems is as follows:
+	private List<ItemStack> loadItems(List<String> list, boolean required) {
+		// The format of the items is as follows:
 		// Material:Qty
 		// or
 		// Material:DamageModifier:Qty
@@ -187,7 +198,7 @@ public class ChallengesPopulator {
 							// TODO: add netherwart vs. netherstalk?
 							if (StringUtils.isNumeric(part[0])) material = Material.getMaterial(Integer.parseInt(part[0]));
 							else material = Material.getMaterial(part[0].toUpperCase());
-							
+
 							amount = Integer.parseInt(part[1]);
 							ItemStack item = new ItemStack(material, amount);
 							requiredItems.add(item);
@@ -209,7 +220,8 @@ public class ChallengesPopulator {
 								plugin.getLogger().severe("Correct challenges.yml with the correct material.");
 							}
 						}
-					} else if (part.length == 3) {
+					}
+					else if (part.length == 3) {
 						// This handles items with durability
 						// Correct some common mistakes
 						if (part[0].equalsIgnoreCase("potato")) part[0] = "POTATO_ITEM";
@@ -217,14 +229,62 @@ public class ChallengesPopulator {
 						else if (part[0].equalsIgnoreCase("carrot")) part[0] = "CARROT_ITEM";
 						else if (part[0].equalsIgnoreCase("cauldron")) part[0] = "CAULDRON_ITEM";
 						else if (part[0].equalsIgnoreCase("skull")) part[0] = "SKULL_ITEM";
-						
+
 						if (StringUtils.isNumeric(part[0])) material = Material.getMaterial(Integer.parseInt(part[0]));
 						else material = Material.getMaterial(part[0].toUpperCase());
-						
+
 						int durability = Integer.parseInt(part[1]);
 						amount = Integer.parseInt(part[2]);
 						ItemStack item = new ItemStack(material, amount, (short) durability);
 						requiredItems.add(item);
+					}
+					else if (part.length == 6 && part[0].contains("POTION")){
+						try{
+							amount = Integer.parseInt(part[5]);
+						} catch (Exception e) {
+							plugin.getLogger().severe("Could not parse the quantity of the potion item " + s);
+						}
+						// POTION:NAME:<LEVEL>:<EXTENDED>:<SPLASH/LINGER>:QTY
+						PotionType type = null;
+						int level = 0;
+						boolean extended = false;
+						boolean splash = false;
+						if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
+							//Type
+							if(!part[1].isEmpty()){
+								// There is a type
+								// Custom potions may not have type
+								if(PotionType.valueOf(part[1]) != null) type = PotionType.valueOf(part[1]);
+								else {
+									plugin.getLogger().severe("Potion type is unknown. Please pick from the following:");
+									for (PotionType pt: PotionType.values()) {
+										plugin.getLogger().severe(pt.name());
+									}
+								}
+							}
+
+							//Level
+							if(!part[2].isEmpty()) {
+								if(StringUtils.isNumeric(part[2])) level = Integer.valueOf(part[2]);
+							}
+
+							//Extended
+							if(!part[3].isEmpty()){
+								if(part[3].equalsIgnoreCase("EXTENDED")) extended = true;
+								else extended = false;
+							}
+
+							//Splash
+							if(!part[4].isEmpty()){
+								if(part[4].equalsIgnoreCase("SPLASH")) splash = true;
+								else splash = false;
+							}
+
+							requiredItems.add(new Potion(type, level, splash, extended).toItemStack(amount));
+						} else {
+							//1.9 and above
+							//TODO Finish 1.9 potion load
+						}
 					}
 				}
 			}
@@ -232,7 +292,34 @@ public class ChallengesPopulator {
 		return requiredItems;
 	}
 
-	@SuppressWarnings("deprecation")
+	private HashMap<Material, Integer> loadBlocks(String challenge, List<String> list){
+		HashMap<Material, Integer> requiredBlocks = new HashMap<Material, Integer>();
+		if(!list.isEmpty()){
+			for (String blocks : list) {
+				final String[] sPart = list.split(" ")[i].split(":");
+				// Parse the qty required first
+				try {
+					final int qty = Integer.parseInt(sPart[1]);
+					Material item;
+					if (StringUtils.isNumeric(sPart[0])) item = Material.getMaterial(Integer.parseInt(sPart[0]));
+					else item = Material.getMaterial(sPart[0].toUpperCase());
+					
+					if (item != null) requiredBlocks.put(item, qty);
+					else plugin.getLogger().warning("Problem parsing required blocks for challenge " + challenge + " in challenges.yml!");
+				} catch (Exception intEx) {
+					plugin.getLogger().warning("Problem parsing required blocks for challenge " + challenge + " in challenges.yml - skipping");
+				}
+			}
+		}
+		return requiredBlocks;
+	}
+	
+	private HashMap<EntityType, Integer> loadEntities(String challenge, List<String> list){
+		HashMap<EntityType, Integer> requiredEntities = new HashMap<EntityType, Integer>();
+		
+		return requiredEntities;
+	}
+
 	private ItemStack loadIconFromString(String challenge, String iconType){
 		ItemStack icon = null;
 		if (!iconType.isEmpty()) {
@@ -252,10 +339,10 @@ public class ChallengesPopulator {
 					else if (iconType.equalsIgnoreCase("skull")) iconType = "SKULL_ITEM";
 					else if (iconType.equalsIgnoreCase("COCOA")) iconType = "INK_SACK:3";
 					else if (iconType.equalsIgnoreCase("NETHER_WARTS")) iconType = "NETHER_STALK";
-					
+
 					if (StringUtils.isNumeric(iconType)) icon = new ItemStack(Integer.parseInt(iconType));
 					else icon = new ItemStack(Material.valueOf(iconType));
-					
+
 					// Check POTION for V1.9 - for some reason, it must be declared as WATER otherwise comparison later causes an NPE
 					if (icon.getType().name().contains("POTION")) {
 						if (!plugin.getServer().getVersion().contains("(MC: 1.8") && !plugin.getServer().getVersion().contains("(MC: 1.7")) {                        
@@ -267,7 +354,7 @@ public class ChallengesPopulator {
 				} else if (split.length == 2) {
 					if (StringUtils.isNumeric(split[0])) icon = new ItemStack(Integer.parseInt(split[0]));
 					else icon = new ItemStack(Material.valueOf(split[0]));
-					
+
 					// Check POTION for V1.9 - for some reason, it must be declared as WATER otherwise comparison later causes an NPE
 					if (icon.getType().name().contains("POTION")) {
 						if (!plugin.getServer().getVersion().contains("(MC: 1.8") && !plugin.getServer().getVersion().contains("(MC: 1.7")) {                       
