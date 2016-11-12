@@ -178,7 +178,8 @@ challenges:
         # First completion reward.
         reward:
           text: '&7Again, &athis &bcan &dbe &f&lcolored &2!'
-          items: 'STONE:2:8'
+          items: 
+          - STONE:2:8
           money: 22
           exp: 17
           permissions:
@@ -192,14 +193,16 @@ challenges:
           # given for each repeat.
           -1:
             text: '&aThis is the default repeat reward'
-            items: 'STONE:2:8'
+            items: 
+            - STONE:2:8
             money: 11
             exp: 17
           # This reward will be given when the player has repeated 5 times
           # this challenge. The default reward won't be given.
           5:
             text: '&b&lThis is a special repeat reward for 5 repeats'
-            items: 'DIAMOND:64'
+            items: 
+            - DIAMOND:64
             money: 200
             exp: 200
             commands:
@@ -212,3 +215,212 @@ challenges:
         # Default is true. Set to false to keep this challenge completed.
         # Admins can always reset challenges even if this is set to false.
         resetAllowed: true
+
+      glassmaker:
+        friendlyname: '&bGlass Maker'
+        description: 'Create 1 block of Glass'
+        icon: GLASS
+        type: player
+        require:
+          items:
+          - GLASS:1
+        takeRequirements: true
+        reward:
+          text: '1 block of ice'
+          items: 
+          - ICE:1
+          money: 10
+          exp: 30
+        repeatable: true
+        repeatRewards:
+          -1:
+            text: '1 block of ice'
+            items: 
+            - ICE:1
+            money: 5
+            exp: 10
+        maxTimes: 2
+        resetAllowed: true
+      breadmaker:
+        friendlyname: '&6Bread Maker'
+        description: 'Bake 21 loaves of bread'
+        icon: BREAD
+        type: player
+        require:
+          items:
+          - BREAD:21
+        takeRequirements: true
+        reward:
+          text: '5 dirt'
+          items: 
+          - DIRT:5
+          money: 10
+          exp: 30
+        repeatable: true
+        repeatRewards:
+          -1:
+            text: '1 dirt'
+            items: 
+            - DIRT:1
+            money: 5
+            exp: 10
+        maxTimes: 100
+        resetAllowed: true
+      dyemaker:
+        friendlyname: '&2Dye Maker'
+        description: 'Craft 32 cactus green dyes'
+        icon: INK_SACK:2
+        type: player
+        require:
+          items:
+          - INK_SACK:2:32
+        takeRequirements: true
+        reward:
+          text: '2 oak, 2 birch, 2 jungle and 2 spruce saplings'
+          items: 
+          - SAPLING:0:2
+          - SAPLING:1:2
+          - SAPLING:2:2
+          - SAPLING:3:2
+          money: 10
+          exp: 30
+        repeatable: true
+        repeatRewards:
+          -1:
+            text: '1 of each kind of sapling'
+            items: 
+            - SAPLING:0:1
+            - SAPLING:1:1
+            - SAPLING:2:1
+            - SAPLING:3:1
+            - SAPLING:4:1
+            - SAPLING:5:1
+            money: 5
+            exp: 10
+        maxTimes: 100
+        resetAllowed: true
+      papermaker:
+        friendlyname: '&fPaper Maker'
+        description: 'Create 21 pages of paper'
+        icon: PAPER
+        type: player
+        require:
+          items:
+          - PAPER:21
+        takeRequirements: true
+        reward:
+          text: '5 dirt and 15 clay blocks'
+          items: 
+          - DIRT:5
+          - CLAY:15
+          money: 10
+          exp: 30
+        repeatable: true
+        repeatRewards:
+          -1:
+            text: '2 sand blocks'
+            items: 
+            - SAND:2
+            money: 5
+            exp: 10
+        maxTimes: 100
+        resetAllowed: true
+      cobblemaker:
+        friendlyname: '&7Cobble Maker'
+        description: 'Create a cobblestone generator and mine 64 cobblestone'
+        icon: COBBLESTONE
+        type: player
+        require:
+          items:
+          - COBBLESTONE:64
+        takeRequirements: true
+        reward:
+          text: '4 leather - boots or a book perhaps?'
+          items: 
+          - LEATHER:4
+          money: 10
+          exp: 30
+        repeatable: true
+        repeatRewards:
+          -1:
+            text: '1 leather'
+            items: 
+            - LEATHER:1
+            money: 5
+            exp: 10
+        maxTimes: 100
+        resetAllowed: true
+      seedbank:
+        friendlyname: '&aSeedBank'
+        description: 'Collect 64 melon seeds, 64 pumpkin seeds and 64 wheat seeds'
+        icon: PUMPKIN_SEEDS
+        type: player
+        require:
+          items:
+          - MELON_SEEDS:64
+          - PUMPKIN_SEEDS:64
+          - SEEDS:64
+        takeRequirements: true
+        reward:
+          text: '5 dirt blocks and 20 vines'
+          items:
+          - DIRT:5
+          - VINE:20
+          money: 15
+          exp: 30
+        repeatable: true
+        repeatRewards:
+          -1:
+            text: '2 dirt blocks and 5 vines'
+            items:
+            - DIRT:2
+            - VINE:5
+            money: 5
+            exp: 10
+        maxTimes: 100
+        resetAllowed: true
+      stewmaker:
+        friendlyname: '&5Stew Maker'
+        description: 'Cook up 18 bowls of mushroom stew'
+        icon: MUSHROOM_SOUP
+        type: player
+        require:
+          items:
+          - MUSHROOM_SOUP:18
+        takeRequirements: true
+        reward:
+          text: '2 mycelium blocks'
+          items: 
+          - MYCEL:2
+          money: 15
+          exp: 30
+        repeatable: true
+        repeatRewards:
+          -1:
+            text: '1 mycelium block'
+            items: 
+            - MYCEL:1
+            money: 5
+            exp: 10
+        maxTimes: 100
+        resetAllowed: true
+      builder:
+        friendlyname: '&eBuilder'
+        description: 'Reach island level 10(/[label] level).'
+        icon: WOOD
+        type: level
+        require:
+          islandlevel: 10
+        takeRequirements: false
+        reward:
+          text: '1 iron pickaxe, 5 dirt and a Sponge'
+          items: 
+          - IRON_PICKAXE:1
+          - DIRT:5
+          - SPONGE:1
+          money: 50
+          exp: 50
+        repeatable: false
+        resetAllowed: true
+    Competent:
+    GRINDER
