@@ -1417,7 +1417,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
             }
 
             if (split[0].equalsIgnoreCase("minishop") || split[0].equalsIgnoreCase("ms")) {
-                if (Settings.useEconomy) {
+                if (Settings.useEconomy && Settings.useMinishop) {
                     // Check island
                     if (plugin.getGrid().getIsland(player.getUniqueId()) == null) {
                         player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoIsland);
@@ -1432,6 +1432,9 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                         player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorWrongWorld);
                         return true;
                     }
+                }
+                else{
+                	player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorMinishopDisabled);
                 }
             }
             // /island <command>
