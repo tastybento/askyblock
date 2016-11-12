@@ -21,13 +21,13 @@ public class Challenge {
 	Reward reward;
 	boolean resetAllowed;
 	//PLAYER Challenges settings
-	List<ItemStack> requiredItems;
+	List<ItemStack[]> requiredItems;
 	int requiredMoney, requiredXP;
 	boolean takeRequirements;
 	List<Reward> repeatRewards;
 	int maxTimes;
 	//ISLAND Challenges settings
-	HashMap<Material, Integer> requiredBlocks;
+	HashMap<Material[], Integer> requiredBlocks;
 	HashMap<EntityType, Integer> requiredEntities;
 	int searchRadius;
 	//ISLAND_LEVEL Challenges settings
@@ -53,7 +53,7 @@ public class Challenge {
 	 * @param resetAllowed
 	 */
 	public Challenge(String name, String friendlyName, String description, String level, ItemStack icon,
-			List<ItemStack> requiredItems, int requiredIslandLevel, List<String> requiredChallenges, List<String> requiredPermissions, int requiredMoney, int requiredXP,
+			List<ItemStack[]> requiredItems, int requiredIslandLevel, List<String> requiredChallenges, List<String> requiredPermissions, int requiredMoney, int requiredXP,
 			boolean takeRequirements, Reward reward, List<Reward> repeatRewards, int maxTimes, boolean resetAllowed){
 		
 		this.name = name;
@@ -97,7 +97,7 @@ public class Challenge {
 	 * @param resetAllowed
 	 */
 	public Challenge(String name, String friendlyName, String description, String level, ItemStack icon,
-			HashMap<Material, Integer> requiredBlocks, HashMap<EntityType, Integer> requiredEntities, int requiredIslandLevel, List<String> requiredChallenges, List<String> requiredPermissions,
+			HashMap<Material[], Integer> requiredBlocks, HashMap<EntityType, Integer> requiredEntities, int requiredIslandLevel, List<String> requiredChallenges, List<String> requiredPermissions,
 			int searchRadius, Reward reward, boolean resetAllowed){
 				
 		this.name = name;
@@ -201,28 +201,28 @@ public class Challenge {
 	
 	/**
 	 * Gets the required items for the challenge. 
-	 * Only works with PLAYER and MEGA_PLAYER. Others will return null.
+	 * Only works with PLAYER. Others will return null.
 	 * @return the challenge's required items.
 	 */
-	public List<ItemStack> getRequiredItems(){return requiredItems;}
+	public List<ItemStack[]> getRequiredItems(){return requiredItems;}
 	
 	/**
 	 * Gets the required Blocks for the challenge.
-	 * Only works with ISLAND and MEGA_ISLAND. Other will return null.
+	 * Only works with ISLAND. Other will return null.
 	 * @return the challenge's required blocks.
 	 */
-	public HashMap<Material, Integer> getRequiredBlocks(){return requiredBlocks;}
+	public HashMap<Material[], Integer> getRequiredBlocks(){return requiredBlocks;}
 	
 	/**
 	 * Gets the required Entities for the challenge.
-	 * Only works with ISLAND and MEGA_ISLAND. Other will return null.
+	 * Only works with ISLAND. Other will return null.
 	 * @return the challenge's required entities.
 	 */
 	public HashMap<EntityType, Integer> getRequiredEntities(){return requiredEntities;}
 	
 	/**
 	 * Gets the required island level for the challenge. 
-	 * Only works with ISLAND_LEVEL, MEGA_PLAYER and MEGA_ISLAND challenges. Others will return 0.
+	 * Works with all types of challenge.
 	 * @return the required island level.
 	 */
 	public int getRequiredIslandLevel(){return requiredIslandLevel;}

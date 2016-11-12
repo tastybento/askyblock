@@ -136,7 +136,7 @@ public class ChallengesPopulator {
 		List<String> requiredPermissions = getChallengeConfig().getStringList(path + ".require.permissions");
 
 		//Get requirements
-		List<ItemStack> requiredItems = loadItems(getChallengeConfig().getStringList(path + ".require.items"), true);
+		List<ItemStack[]> requiredItems = loadItems(getChallengeConfig().getStringList(path + ".require.items"), true);
 		int requiredIslandLevel = getChallengeConfig().getInt(path + ".require.islandlevel", 0);
 		int requiredMoney = getChallengeConfig().getInt(path + ".require.money", 0);
 		int requiredXP = getChallengeConfig().getInt(path + ".require.exp", 0);
@@ -166,14 +166,14 @@ public class ChallengesPopulator {
 		return c;
 	}
 
-	private List<ItemStack> loadItems(List<String> list, boolean required) {
+	private List<ItemStack[]> loadItems(List<String> list, boolean required) {
 		// The format of the items is as follows:
 		// Material:Qty
 		// or
 		// Material:DamageModifier:Qty
 		// This second one is so that items such as potions or variations on
 		// standard items can be collected
-		List<ItemStack> requiredItems = new ArrayList<ItemStack>();
+		List<ItemStack[]> requiredItems = new ArrayList<ItemStack[]>();
 		if(!list.isEmpty()){
 			for(final String s : list){
 				Material material;
@@ -201,7 +201,7 @@ public class ChallengesPopulator {
 
 							amount = Integer.parseInt(part[1]);
 							ItemStack item = new ItemStack(material, amount);
-							requiredItems.add(item);
+							requiredItems.add(new ItemStack[] {item});
 						} catch (Exception e) {
 							plugin.getLogger().severe("Problem with " + s + " in challenges.yml!");
 							String materialList = "";
@@ -236,7 +236,7 @@ public class ChallengesPopulator {
 						int durability = Integer.parseInt(part[1]);
 						amount = Integer.parseInt(part[2]);
 						ItemStack item = new ItemStack(material, amount, (short) durability);
-						requiredItems.add(item);
+						requiredItems.add(new ItemStack[] {item});
 					}
 					else if (part.length == 6 && part[0].contains("POTION")){
 						try{
@@ -280,7 +280,7 @@ public class ChallengesPopulator {
 								else splash = false;
 							}
 
-							requiredItems.add(new Potion(type, level, splash, extended).toItemStack(amount));
+							requiredItems.add(new ItemStack[] {new Potion(type, level, splash, extended).toItemStack(amount)});
 						} else {
 							//1.9 and above
 							//TODO Finish 1.9 potion load
@@ -292,8 +292,8 @@ public class ChallengesPopulator {
 		return requiredItems;
 	}
 
-	private HashMap<Material, Integer> loadBlocks(String challenge, List<String> list){
-		HashMap<Material, Integer> requiredBlocks = new HashMap<Material, Integer>();
+	private HashMap<Material[], Integer> loadBlocks(String challenge, List<String> list){
+		HashMap<Material[], Integer> requiredBlocks = new HashMap<Material[], Integer>();
 		if(!list.isEmpty()){
 			for (String blocks : list) {
 				final String[] sPart = list.split(" ")[i].split(":");
@@ -304,7 +304,7 @@ public class ChallengesPopulator {
 					if (StringUtils.isNumeric(sPart[0])) item = Material.getMaterial(Integer.parseInt(sPart[0]));
 					else item = Material.getMaterial(sPart[0].toUpperCase());
 					
-					if (item != null) requiredBlocks.put(item, qty);
+					if (item != null) requiredBlocks.put(new Material[] {item}, qty);
 					else plugin.getLogger().warning("Problem parsing required blocks for challenge " + challenge + " in challenges.yml!");
 				} catch (Exception intEx) {
 					plugin.getLogger().warning("Problem parsing required blocks for challenge " + challenge + " in challenges.yml - skipping");
