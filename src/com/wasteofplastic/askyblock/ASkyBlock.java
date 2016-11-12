@@ -858,6 +858,8 @@ public class ASkyBlock extends JavaPlugin {
         // Use economy or not
         // In future expand to include internal economy
         Settings.useEconomy = getConfig().getBoolean("general.useeconomy", true);
+        // Use the minishop or not
+        Settings.useMinishop = getConfig().getBoolean("general.useminishop", true);
         // Check for updates
         Settings.updateCheck = getConfig().getBoolean("general.checkupdates", true);
         // Island reset commands

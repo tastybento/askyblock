@@ -225,6 +225,9 @@ public class Settings {
 
     // Use Economy
     public static boolean useEconomy;
+    
+    // Use Minishop
+    public static boolean useMinishop;
 
     // Wait between being invited to same team island
     public static int inviteWait;
