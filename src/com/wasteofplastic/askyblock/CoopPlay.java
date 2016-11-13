@@ -55,7 +55,7 @@ public class CoopPlay {
     private ASkyBlock plugin;
 
     /**
-     * @param instance
+     * @param plugin
      */
     private CoopPlay(ASkyBlock plugin) {
         this.plugin = plugin;
@@ -278,7 +278,6 @@ public class CoopPlay {
      * Can be used when clearer logs out or when they are kicked or leave a team
      * 
      * @param clearer
-     * @param target
      */
     public void clearMyInvitedCoops(Player clearer) {
         //plugin.getLogger().info("DEBUG: clear my invited coops - clearing coops that were invited by " + clearer.getName());
@@ -311,7 +310,7 @@ public class CoopPlay {
     /**
      * Removes all coop players from an island - used when doing an island reset
      * 
-     * @param player
+     * @param island
      */
     public void clearAllIslandCoops(Location island) {
         if (island == null) {

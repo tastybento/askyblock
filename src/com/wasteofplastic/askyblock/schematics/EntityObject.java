@@ -271,7 +271,7 @@ public class EntityObject {
         return itemDropChance;
     }
     /**
-     * @param itemDropCance the itemDropChance to set
+     * @param itemDropChance the itemDropChance to set
      */
     public void setItemDropChance(float itemDropChance) {
         this.itemDropChance = itemDropChance;
@@ -307,7 +307,7 @@ public class EntityObject {
         return tileY;
     }
     /**
-     * @param tileX the tileX to set
+     * @param tileY the tileY to set
      */
     public void setTileY(Double tileY) {
         this.tileY = tileY;
@@ -319,7 +319,7 @@ public class EntityObject {
         return tileZ;
     }
     /**
-     * @param tileX the tileX to set
+     * @param tileZ the tileZ to set
      */
     public void setTileZ(Double tileZ) {
         this.tileZ = tileZ;
@@ -332,7 +332,7 @@ public class EntityObject {
     }
 
     /**
-     * @param cout the count to set
+     * @param count the count to set
      */
     public void setCount(Byte count) {
         this.count = count;
