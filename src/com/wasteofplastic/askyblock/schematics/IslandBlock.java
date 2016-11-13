@@ -520,9 +520,11 @@ public class IslandBlock {
      */
     public void paste(NMSAbstraction nms, Location blockLoc, boolean usePhysics, Biome biome) {
         // Only paste air if it is below the sea level and in the overworld
+        //int x = blockLoc.getWorld().getSpawnLocation().getBlockX();
         Block block = new Location(blockLoc.getWorld(), x, y, z).add(blockLoc).getBlock();
         block.setBiome(biome);
         nms.setBlockSuperFast(block, typeId, data, usePhysics);
+        
         if (signText != null) {
             // Sign
             Sign sign = (Sign) block.getState();
@@ -530,7 +532,7 @@ public class IslandBlock {
             for (String line : signText) {
                 sign.setLine(index++, line);
             }
-            sign.update();
+            sign.update();            
         } else if (banner != null) {
             banner.set(block);
         } else if (skull != null){
@@ -551,12 +553,17 @@ public class IslandBlock {
                     doubleChest.getInventory().addItem(chestItem);
                 }
             } else {
-                // Signle chest
+                // Single chest
                 for (Entry<Byte, ItemStack> en : chestContents.entrySet()) {
                     chestBlock.getInventory().setItem(en.getKey(), en.getValue());
                 }
             }
         }
+        /*
+        int newX = blockLoc.getWorld().getSpawnLocation().getBlockX();
+        if (newX != x) {
+            Bukkit.getLogger().info("DEBUG: FOUND IT! " + block + " type = " + typeId + " data = " + data + " phy = " + usePhysics);
+        }*/
     }
 
     /**

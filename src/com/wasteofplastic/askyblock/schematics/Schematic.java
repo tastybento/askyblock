@@ -755,6 +755,7 @@ public class Schematic {
      * @param player
      */
     public void pasteSchematic(final Location loc, final Player player, boolean teleport) {
+        plugin.getLogger().info("DEBUG: world spawn position pre-paste = " + loc.getWorld().getSpawnLocation().toString());
         // If this is not a file schematic, paste the default island
         if (this.file == null) {
             if (Settings.GAMETYPE == GameType.ACIDISLAND) {
@@ -775,6 +776,7 @@ public class Schematic {
         for (IslandBlock b : islandBlocks) {
             b.paste(nms, blockLoc, this.usePhysics, biome);
         }
+        plugin.getLogger().info("DEBUG: world spawn position after blocks paste = " + loc.getWorld().getSpawnLocation().toString());
         // PASTE ENTS
         //Bukkit.getLogger().info("Block loc = " + blockLoc);
         if (pasteEntities) {
@@ -931,6 +933,7 @@ public class Schematic {
                 }
             }
         }
+        plugin.getLogger().info("DEBUG: world spawn position after entities = " + loc.getWorld().getSpawnLocation().toString());
         // Find the grass spot
         final Location grass;
         if (topGrass != null) {
@@ -977,6 +980,7 @@ public class Schematic {
                 sign.update();
             }
         }
+        plugin.getLogger().info("DEBUG: world spawn position after sign = " + loc.getWorld().getSpawnLocation().toString());
         if (chest != null) {
             Vector ch = chest.clone().subtract(bedrock);
             ch.add(loc.toVector());
@@ -1011,7 +1015,7 @@ public class Schematic {
                 }
             }
         }
-
+        plugin.getLogger().info("DEBUG: world spawn position after chest = " + loc.getWorld().getSpawnLocation().toString());
         if (teleport) {
             plugin.getPlayers().setInTeleport(player.getUniqueId(), true);
             player.teleport(world.getSpawnLocation());
@@ -1021,6 +1025,7 @@ public class Schematic {
                 public void run() {
                     plugin.getGrid().homeTeleport(player);
                     plugin.getPlayers().setInTeleport(player.getUniqueId(), false);
+                    plugin.getLogger().info("DEBUG: world spawn position post-paste = " + loc.getWorld().getSpawnLocation().toString());
                 }}, 10L);
 
         }
