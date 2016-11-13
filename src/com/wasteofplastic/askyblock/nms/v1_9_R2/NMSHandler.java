@@ -128,9 +128,6 @@ public class NMSHandler implements NMSAbstraction {
         net.minecraft.server.v1_9_R2.ItemStack cis = CraftItemStack.asNMSCopy(itemStack);
         te.a(cis.getItem(), cis.getData());
         te.update();
-        cw.getHandle().A(bp);
-        Chunk ch = loc.getChunk();
-        cw.refreshChunk(ch.getX(), ch.getZ());	
     }
 
     /* (non-Javadoc)
