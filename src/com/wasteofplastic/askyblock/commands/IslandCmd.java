@@ -821,19 +821,19 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
             if (!plugin.myLocale(player.getUniqueId()).islandSubTitle.isEmpty()) {
                 //plugin.getLogger().info("DEBUG: title " + player.getName() + " subtitle {\"text\":\"" + plugin.myLocale(player.getUniqueId()).islandSubTitle + "\", \"color\":\"" + plugin.myLocale(player.getUniqueId()).islandSubTitleColor + "\"}");
                 plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(),
-                        "title " + player.getName() + " subtitle {\"text\":\"" + plugin.myLocale(player.getUniqueId()).islandSubTitle + "\", \"color\":\"" + plugin.myLocale(player.getUniqueId()).islandSubTitleColor + "\"}");
+                        "minecraft:title " + player.getName() + " subtitle {\"text\":\"" + plugin.myLocale(player.getUniqueId()).islandSubTitle + "\", \"color\":\"" + plugin.myLocale(player.getUniqueId()).islandSubTitleColor + "\"}");
             }
             if (!plugin.myLocale(player.getUniqueId()).islandTitle.isEmpty()) {
                 //plugin.getLogger().info("DEBUG: title " + player.getName() + " title {\"text\":\"" + plugin.myLocale(player.getUniqueId()).islandTitle + "\", \"color\":\"" + plugin.myLocale(player.getUniqueId()).islandTitleColor + "\"}");
                 plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(),
-                        "title " + player.getName() + " title {\"text\":\"" + plugin.myLocale(player.getUniqueId()).islandTitle + "\", \"color\":\"" + plugin.myLocale(player.getUniqueId()).islandTitleColor + "\"}");
+                        "minecraft:title " + player.getName() + " title {\"text\":\"" + plugin.myLocale(player.getUniqueId()).islandTitle + "\", \"color\":\"" + plugin.myLocale(player.getUniqueId()).islandTitleColor + "\"}");
             }
             if (!plugin.myLocale(player.getUniqueId()).islandDonate.isEmpty() && !plugin.myLocale(player.getUniqueId()).islandURL.isEmpty()) {
                 //plugin.getLogger().info("DEBUG: tellraw " + player.getName() + " {\"text\":\"" + plugin.myLocale(player.getUniqueId()).islandDonate + "\",\"color\":\"" + plugin.myLocale(player.getUniqueId()).islandDonateColor + "\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\""
                 //                + plugin.myLocale(player.getUniqueId()).islandURL + "\"}}");
                 plugin.getServer().dispatchCommand(
                         plugin.getServer().getConsoleSender(),
-                        "tellraw " + player.getName() + " {\"text\":\"" + plugin.myLocale(player.getUniqueId()).islandDonate + "\",\"color\":\"" + plugin.myLocale(player.getUniqueId()).islandDonateColor + "\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\""
+                        "minecraft:tellraw " + player.getName() + " {\"text\":\"" + plugin.myLocale(player.getUniqueId()).islandDonate + "\",\"color\":\"" + plugin.myLocale(player.getUniqueId()).islandDonateColor + "\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\""
                                 + plugin.myLocale(player.getUniqueId()).islandURL + "\"}}");
             }
         }
@@ -881,8 +881,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 
     /**
      * Get the location of next free island spot
-     * @param player 
-     * 
+     * @param playerUUID
      * @return Location of island spot
      */
     private Location getNextIsland(UUID playerUUID) {
@@ -1013,7 +1012,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
     /**
      * Calculates the island level
      * 
-     * @param asker
+     * @param sender
      *            - Player object of player who is asking
      * @param targetPlayer
      *            - UUID of the player's island that is being requested
@@ -1418,7 +1417,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
             }
 
             if (split[0].equalsIgnoreCase("minishop") || split[0].equalsIgnoreCase("ms")) {
-                if (Settings.useEconomy) {
+                if (Settings.useEconomy && Settings.useMinishop) {
                     // Check island
                     if (plugin.getGrid().getIsland(player.getUniqueId()) == null) {
                         player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoIsland);
@@ -1433,6 +1432,9 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                         player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorWrongWorld);
                         return true;
                     }
+                }
+                else{
+                	player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorMinishopDisabled);
                 }
             }
             // /island <command>

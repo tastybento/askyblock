@@ -369,7 +369,8 @@ public class ASLocale {
     public String minishopYouSold;
     public String minishopBuyProblem;
     public String minishopYouCannotAfford;
-
+    public String errorMinishopDisabled;
+    
     // Sign
     public String signLine1;
     public String signLine2;
@@ -754,6 +755,7 @@ public class ASLocale {
         errorUnknownCommand = ChatColor.translateAlternateColorCodes('&', locale.getString("error.unknownCommand", "Unknown command."));
         errorNoTeam = ChatColor.translateAlternateColorCodes('&', locale.getString("error.noTeam", "That player is not in a team."));
         errorWrongWorld = ChatColor.translateAlternateColorCodes('&', locale.getString("error.wrongWorld", "You cannot do that in this world."));
+        errorMinishopDisabled = ChatColor.translateAlternateColorCodes('&', locale.getString("error.minishopDisabled", "Minishop is disabled."));
         islandProtected = ChatColor.translateAlternateColorCodes('&', locale.getString("islandProtected", "Island protected."));
         targetInNoPVPArea = ChatColor.translateAlternateColorCodes('&', locale.getString("targetInPVPArea", "Target is in a no-PVP area!"));
         igsTitle = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.title", "Island Guard Settings"));
