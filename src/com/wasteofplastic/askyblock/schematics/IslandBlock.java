@@ -520,7 +520,6 @@ public class IslandBlock {
      */
     public void paste(NMSAbstraction nms, Location blockLoc, boolean usePhysics, Biome biome) {
         // Only paste air if it is below the sea level and in the overworld
-        //int x = blockLoc.getWorld().getSpawnLocation().getBlockX();
         Block block = new Location(blockLoc.getWorld(), x, y, z).add(blockLoc).getBlock();
         block.setBiome(biome);
         nms.setBlockSuperFast(block, typeId, data, usePhysics);
@@ -559,11 +558,6 @@ public class IslandBlock {
                 }
             }
         }
-        /*
-        int newX = blockLoc.getWorld().getSpawnLocation().getBlockX();
-        if (newX != x) {
-            Bukkit.getLogger().info("DEBUG: FOUND IT! " + block + " type = " + typeId + " data = " + data + " phy = " + usePhysics);
-        }*/
     }
 
     /**
