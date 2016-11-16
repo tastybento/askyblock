@@ -22,9 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-import net.milkbowl.vault.economy.EconomyResponse;
-import net.milkbowl.vault.economy.EconomyResponse.ResponseType;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
