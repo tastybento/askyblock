@@ -42,6 +42,7 @@ import org.bukkit.entity.Horse;
 import org.bukkit.entity.IronGolem;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Llama;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -158,28 +159,31 @@ public class IslandGuard implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onHorseInventoryClick(InventoryClickEvent event) {
-        if (event.getInventory().getHolder() == null || !(event.getInventory().getHolder() instanceof Horse)) {
-            //plugin.getLogger().info("DEBUG: not a horse!");
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: horse and llama inventory click");
+        if (event.getInventory().getHolder() == null) {
             return;
-        }
+        }           
         // Bypass
         if (!inWorld(event.getWhoClicked()) || event.getWhoClicked().isOp() 
                 || VaultHelper.checkPerm((Player)event.getWhoClicked(), Settings.PERMPREFIX + "mod.bypassprotect")) {
             return;
         }
-        Island island = plugin.getGrid().getProtectedIslandAt(event.getWhoClicked().getLocation());
-        // Spawn
-        if (island != null && island.isSpawn() && Settings.allowSpawnHorseInvAccess) {	
+        if (event.getInventory().getHolder() instanceof Horse || event.getInventory().getHolder() instanceof Llama) { 
+            Island island = plugin.getGrid().getProtectedIslandAt(event.getWhoClicked().getLocation());
+            // Spawn
+            if (island != null && island.isSpawn() && Settings.allowSpawnHorseInvAccess) {	
+                return;
+            }
+            // Normal island
+            if (island != null && (island.getIgsFlag(Flags.allowHorseInvAccess) || island.getMembers().contains(event.getWhoClicked().getUniqueId()))){
+                return;
+            } 
+            // Elsewhere - not allowed
+            event.getWhoClicked().sendMessage(ChatColor.RED + plugin.myLocale(event.getWhoClicked().getUniqueId()).islandProtected);
+            event.setCancelled(true);
             return;
         }
-        // Normal island
-        if (island != null && (island.getIgsFlag(Flags.allowHorseInvAccess) || island.getMembers().contains(event.getWhoClicked().getUniqueId()))){
-            return;
-        } 
-        // Elsewhere - not allowed
-        event.getWhoClicked().sendMessage(ChatColor.RED + plugin.myLocale(event.getWhoClicked().getUniqueId()).islandProtected);
-        event.setCancelled(true);
-        return;
     }
     /*
      * For testing only
@@ -289,7 +293,7 @@ public class IslandGuard implements Listener {
                 }
             } else {
                 if (!plugin.myLocale(player.getUniqueId()).lockNowEntering.isEmpty()) {
-                	if(islandTo.getIgsFlag(Flags.enableJoinAndLeaveIslandMessages)) player.sendMessage(plugin.myLocale(player.getUniqueId()).lockNowEntering.replace("[name]", plugin.getGrid().getIslandName(islandTo.getOwner())));
+                    if(islandTo.getIgsFlag(Flags.enableJoinAndLeaveIslandMessages)) player.sendMessage(plugin.myLocale(player.getUniqueId()).lockNowEntering.replace("[name]", plugin.getGrid().getIslandName(islandTo.getOwner())));
                 }
             }
         } else if (islandTo == null && islandFrom != null && (islandFrom.getOwner() != null || islandFrom.isSpawn())) {
@@ -301,7 +305,7 @@ public class IslandGuard implements Listener {
                 }
             } else {
                 if (!plugin.myLocale(player.getUniqueId()).lockNowLeaving.isEmpty()) {
-                	if(islandFrom.getIgsFlag(Flags.enableJoinAndLeaveIslandMessages)) player.sendMessage(plugin.myLocale(player.getUniqueId()).lockNowLeaving.replace("[name]", plugin.getGrid().getIslandName(islandFrom.getOwner())));
+                    if(islandFrom.getIgsFlag(Flags.enableJoinAndLeaveIslandMessages)) player.sendMessage(plugin.myLocale(player.getUniqueId()).lockNowLeaving.replace("[name]", plugin.getGrid().getIslandName(islandFrom.getOwner())));
                 }
             }
         } else if (islandTo != null && islandFrom !=null && !islandTo.equals(islandFrom)) {
@@ -313,7 +317,7 @@ public class IslandGuard implements Listener {
                 }
             } else if (islandFrom.getOwner() != null){
                 if (!plugin.myLocale(player.getUniqueId()).lockNowLeaving.isEmpty()) {
-                	if(islandFrom.getIgsFlag(Flags.enableJoinAndLeaveIslandMessages)) player.sendMessage(plugin.myLocale(player.getUniqueId()).lockNowLeaving.replace("[name]", plugin.getGrid().getIslandName(islandFrom.getOwner())));
+                    if(islandFrom.getIgsFlag(Flags.enableJoinAndLeaveIslandMessages)) player.sendMessage(plugin.myLocale(player.getUniqueId()).lockNowLeaving.replace("[name]", plugin.getGrid().getIslandName(islandFrom.getOwner())));
                 }
             }
             if (islandTo.isSpawn()) {
@@ -322,7 +326,7 @@ public class IslandGuard implements Listener {
                 }
             } else if (islandTo.getOwner() != null) {
                 if (!plugin.myLocale(player.getUniqueId()).lockNowEntering.isEmpty()) {
-                	if(islandTo.getIgsFlag(Flags.enableJoinAndLeaveIslandMessages)) player.sendMessage(plugin.myLocale(player.getUniqueId()).lockNowEntering.replace("[name]", plugin.getGrid().getIslandName(islandTo.getOwner())));
+                    if(islandTo.getIgsFlag(Flags.enableJoinAndLeaveIslandMessages)) player.sendMessage(plugin.myLocale(player.getUniqueId()).lockNowEntering.replace("[name]", plugin.getGrid().getIslandName(islandTo.getOwner())));
                 }
             }
         }	
@@ -401,7 +405,7 @@ public class IslandGuard implements Listener {
                 }
             } else {
                 if (!plugin.myLocale(e.getPlayer().getUniqueId()).lockNowEntering.isEmpty()) {
-                	if(islandTo.getIgsFlag(Flags.enableJoinAndLeaveIslandMessages)) e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).lockNowEntering.replace("[name]", plugin.getGrid().getIslandName(islandTo.getOwner())));
+                    if(islandTo.getIgsFlag(Flags.enableJoinAndLeaveIslandMessages)) e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).lockNowEntering.replace("[name]", plugin.getGrid().getIslandName(islandTo.getOwner())));
                 }
             }
             // Fire entry event
@@ -416,7 +420,7 @@ public class IslandGuard implements Listener {
                 }
             } else {
                 if (!plugin.myLocale(e.getPlayer().getUniqueId()).lockNowLeaving.isEmpty()) {
-                	if(islandFrom.getIgsFlag(Flags.enableJoinAndLeaveIslandMessages)) e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).lockNowLeaving.replace("[name]", plugin.getGrid().getIslandName(islandFrom.getOwner())));
+                    if(islandFrom.getIgsFlag(Flags.enableJoinAndLeaveIslandMessages)) e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).lockNowLeaving.replace("[name]", plugin.getGrid().getIslandName(islandFrom.getOwner())));
                 }
             }
             // Fire exit event
@@ -428,12 +432,12 @@ public class IslandGuard implements Listener {
                 // Leaving
                 e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).lockLeavingSpawn);
             } else if (islandFrom.getOwner() != null) {
-            	if(islandFrom.getIgsFlag(Flags.enableJoinAndLeaveIslandMessages)) e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).lockNowLeaving.replace("[name]", plugin.getGrid().getIslandName(islandFrom.getOwner())));
+                if(islandFrom.getIgsFlag(Flags.enableJoinAndLeaveIslandMessages)) e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).lockNowLeaving.replace("[name]", plugin.getGrid().getIslandName(islandFrom.getOwner())));
             }
             if (islandTo.isSpawn()) {
                 e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).lockEnteringSpawn);
             } else if (islandTo.getOwner() != null) {
-            	if(islandTo.getIgsFlag(Flags.enableJoinAndLeaveIslandMessages)) e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).lockNowEntering.replace("[name]", plugin.getGrid().getIslandName(islandTo.getOwner())));
+                if(islandTo.getIgsFlag(Flags.enableJoinAndLeaveIslandMessages)) e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).lockNowEntering.replace("[name]", plugin.getGrid().getIslandName(islandTo.getOwner())));
             }
             // Fire exit event
             final IslandExitEvent event = new IslandExitEvent(e.getPlayer().getUniqueId(), islandTo, e.getTo());
@@ -2264,6 +2268,7 @@ public class IslandGuard implements Listener {
                     }
                 }
                 break;
+            case LLAMA:
             case HORSE:
                 //plugin.getLogger().info("Horse riding");
                 if (island == null && !Settings.allowHorseRiding) {
