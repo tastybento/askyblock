@@ -85,8 +85,8 @@ island:
    chestItems: 'ICE:2 MELON:1 TORCH:2 BONE:1 LAVA_BUCKET:1 PUMPKIN_SEEDS:1 SUGAR_CANE:1 RED_MUSHROOM:1 BROWN_MUSHROOM:1 CACTUS:1 BREAD:1 WHEAT:1 LEATHER_BOOTS:1 LEATHER_HELMET:1 LEATHER_CHESTPLATE:1 LEATHER_LEGGINGS:1'
 
    # Default island companion. Set schematic-specific companions in the schematicsection
-   # Options are: COW, PIG, SHEEP, CHICKEN, VILLAGER, HORSE, IRON_GOLEM, OCELOT,
-   # RABBIT, WOLF or NOTHING. Default is COW.
+   # Recommended are: COW, PIG, SHEEP, CHICKEN, VILLAGER, HORSE, IRON_GOLEM, OCELOT,
+   # RABBIT, WOLF, LLAMA or NOTHING. Default is COW.
 
    companion: COW
 
@@ -847,8 +847,8 @@ schematicsection:
       #- ICE:1
       # Your island companion. Overrides the default setting. If more than one is
       # listed, one will be chosen at random.
-      # Options are: COW, PIG, SHEEP, CHICKEN, VILLAGER, HORSE, IRON_GOLEM, OCELOT,
-      # RABBIT, WOLF or NOTHING. Default is COW.
+      # Recommended choices: COW, PIG, SHEEP, CHICKEN, VILLAGER, HORSE, IRON_GOLEM, OCELOT,
+      # RABBIT, WOLF, LLAMA or NOTHING.
       companion:
       - CHICKEN 
       # This is a list of names, picked at random that will apply to the companion
