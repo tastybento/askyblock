@@ -116,7 +116,7 @@ public class BannerBlock {
             // //ASkyBlock.getPlugin().getLogger().info("Base value = " +
             // baseColor);
             // baseColor green = 10
-            bannerBaseColor = DyeColor.getByData((byte) baseColor);
+            bannerBaseColor = DyeColor.getByDyeData((byte) baseColor);
             // Do the patterns (no idea if this will work or not)
             bannerPattern = new ArrayList<Pattern>();
             ListTag patterns = (ListTag) tileData.get("Patterns");
@@ -136,7 +136,7 @@ public class BannerBlock {
                         // mark.getValue());
                         // ASkyBlock.getPlugin().getLogger().info("color = " +
                         // markColor);
-                        DyeColor dColor = DyeColor.getByData(markColor.byteValue());
+                        DyeColor dColor = DyeColor.getByDyeData(markColor.byteValue());
                         // ASkyBlock.getPlugin().getLogger().info(" dye color = "
                         // + dColor.toString());
                         if (patternKey.containsKey(mark.getValue())) {
