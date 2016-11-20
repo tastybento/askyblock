@@ -309,4 +309,6 @@ public class Settings {
     public static String chatChallengeLevelPrefix;
     public static String chatIslandPlayer;
     public static boolean allowObsidianScooping;
+    public static boolean allowFireExtinguish;
+    public static boolean allowSpawnFireExtinguish;
 }

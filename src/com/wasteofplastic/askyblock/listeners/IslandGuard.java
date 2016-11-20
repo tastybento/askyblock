@@ -89,6 +89,7 @@ import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 import org.bukkit.potion.Potion;
+import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
@@ -1719,6 +1720,41 @@ public class IslandGuard implements Listener {
                 plugin.getLogger().info("DEBUG: clicked block " + e.getClickedBlock());
                 plugin.getLogger().info("DEBUG: Material " + e.getMaterial());
             }
+            // Look along player's sight line to see if any blocks are fire
+            BlockIterator iter = new BlockIterator(e.getPlayer(), 10);
+            Block lastBlock = iter.next();
+            while (iter.hasNext()) {
+                lastBlock = iter.next();
+                if (DEBUG)
+                    plugin.getLogger().info("DEBUG: lastBlock = " + lastBlock.toString());
+                if (lastBlock.equals(e.getClickedBlock())) {
+                    if (DEBUG)
+                        plugin.getLogger().info("DEBUG: found clicked block");
+                    continue;
+                }
+                if (lastBlock.getType().equals(Material.FIRE)) {
+                    if (DEBUG)
+                        plugin.getLogger().info("DEBUG: fire found");
+                    if (island != null && island.isSpawn()) {
+                        if (!Settings.allowSpawnFireExtinguish) {
+                            e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
+                            e.setCancelled(true);
+                            return;
+                        }
+                    } else {
+                        if (Settings.allowFireExtinguish) {
+                            if (DEBUG)
+                                plugin.getLogger().info("DEBUG: extinguishing is allowed");
+                            continue;
+                        } else {
+                            e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
+                            e.setCancelled(true);
+                            return;
+                        }                   
+                    }
+                }
+            }
+
             switch (e.getClickedBlock().getType()) {
             case WOODEN_DOOR:
             case SPRUCE_DOOR:
@@ -1819,8 +1855,6 @@ public class IslandGuard implements Listener {
                     e.setCancelled(true);
                     return;
                 }
-                break;
-            case CAKE_BLOCK:
                 break;
             case DIODE:
             case DIODE_BLOCK_OFF:
@@ -2002,6 +2036,7 @@ public class IslandGuard implements Listener {
                     return;
                 }
                 break;
+            case CAKE_BLOCK:
             case DRAGON_EGG:
                 if (island == null) {
                     if (Settings.allowBreakBlocks) {

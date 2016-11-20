@@ -210,6 +210,8 @@ island:
    allowfire: false
    # Allow fire spread (global - not just for visitors)
    allowfirespread: false
+   # Allow fire extinguishing by visitors
+   allowfireextinguish: false
    # Allow chests to be blown up by creepers or TNT
    allowchestdamage: false
    # Allow item drop by visitors

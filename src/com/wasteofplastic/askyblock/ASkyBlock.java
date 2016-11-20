@@ -1274,6 +1274,7 @@ public class ASkyBlock extends JavaPlugin {
 		Settings.allowBreeding = getConfig().getBoolean("island.allowbreeding", false);
 		Settings.allowFire = getConfig().getBoolean("island.allowfire", false);
 		Settings.allowFireSpread = getConfig().getBoolean("island.allowfirespread", false);
+		Settings.allowFireExtinguish = getConfig().getBoolean("island.allowfireextinguish", false);
 		Settings.allowChestDamage = getConfig().getBoolean("island.allowchestdamage", false);
 		Settings.allowLeashUse = getConfig().getBoolean("island.allowleashuse", false);
 		Settings.allowHurtMonsters = getConfig().getBoolean("island.allowhurtmonsters", true);
@@ -1333,6 +1334,7 @@ public class ASkyBlock extends JavaPlugin {
 		Settings.allowSpawnLeashUse = getConfig().getBoolean("spawn.allowleashuse",false);
 		Settings.allowSpawnVillagerTrading = getConfig().getBoolean("spawn.allowvillagertrading", false);
 		Settings.allowSpawnChorusFruit = getConfig().getBoolean("spawn.allowchorusfruit", false);
+		Settings.allowSpawnFireExtinguish = getConfig().getBoolean("spawn.allowfireextinguish", false);
 
         // Challenges
         getChallenges();
