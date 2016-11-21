@@ -310,4 +310,7 @@ public class Settings {
     public static String chatIslandPlayer;
     public static boolean allowObsidianScooping;
     public static boolean useDatabase;
+    public static boolean allowFireExtinguish;
+    public static boolean allowSpawnFireExtinguish;
+    public static boolean allowMobDamageToItemFrames;
 }

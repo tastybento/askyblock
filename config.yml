@@ -85,8 +85,8 @@ island:
    chestItems: 'ICE:2 MELON:1 TORCH:2 BONE:1 LAVA_BUCKET:1 PUMPKIN_SEEDS:1 SUGAR_CANE:1 RED_MUSHROOM:1 BROWN_MUSHROOM:1 CACTUS:1 BREAD:1 WHEAT:1 LEATHER_BOOTS:1 LEATHER_HELMET:1 LEATHER_CHESTPLATE:1 LEATHER_LEGGINGS:1'
 
    # Default island companion. Set schematic-specific companions in the schematicsection
-   # Options are: COW, PIG, SHEEP, CHICKEN, VILLAGER, HORSE, IRON_GOLEM, OCELOT,
-   # RABBIT, WOLF or NOTHING. Default is COW.
+   # Recommended are: COW, PIG, SHEEP, CHICKEN, VILLAGER, HORSE, IRON_GOLEM, OCELOT,
+   # RABBIT, WOLF, LLAMA or NOTHING. Default is COW.
 
    companion: COW
 
@@ -210,6 +210,8 @@ island:
    allowfire: false
    # Allow fire spread (global - not just for visitors)
    allowfirespread: false
+   # Allow fire extinguishing by visitors
+   allowfireextinguish: false
    # Allow chests to be blown up by creepers or TNT
    allowchestdamage: false
    # Allow item drop by visitors
@@ -220,6 +222,8 @@ island:
    allowvisitorkeepinvondeath: false
    # Allow pistons to push outside of the protected area (maybe to make bridges)
    allowpistonpush: true
+   # Allow mob projectiles to damage item frames (skeleton arrows, shulker shots)
+   allowitemframedamage: false
 
 # General Settings
 general:
@@ -383,6 +387,7 @@ general:
    # limit. Note that animals will not be killed or reduced to this limit.
    # This WILL affect mobspawn blocks AND spawn egg use. Note that hearts will
    # still appear, but breeding will not happen.
+   # Limit includes nether island if nether islands are active.
    breedinglimit: 0
    
    # Sets the limit for number of water animals [squid] that can spawn in a chunk in this world. 
@@ -660,6 +665,8 @@ spawn:
   allowshearing: false
   # Allow players to teleport when eating chorus fruit
   allowchorusfruit: false
+  # Allow players to extinguish fire at spawn (by punching it)
+  allowfireextinguish: false
 
 # This section contains the biomes that can be bought or used
 biomesettings:
@@ -847,8 +854,8 @@ schematicsection:
       #- ICE:1
       # Your island companion. Overrides the default setting. If more than one is
       # listed, one will be chosen at random.
-      # Options are: COW, PIG, SHEEP, CHICKEN, VILLAGER, HORSE, IRON_GOLEM, OCELOT,
-      # RABBIT, WOLF or NOTHING. Default is COW.
+      # Recommended choices: COW, PIG, SHEEP, CHICKEN, VILLAGER, HORSE, IRON_GOLEM, OCELOT,
+      # RABBIT, WOLF, LLAMA or NOTHING.
       companion:
       - CHICKEN 
       # This is a list of names, picked at random that will apply to the companion

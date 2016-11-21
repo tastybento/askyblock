@@ -377,33 +377,11 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                 } else {
                                     try {
                                         EntityType type = EntityType.valueOf(companionType);
-                                        // Limit types
-                                        switch (type) {
-                                        case BAT:
-                                        case CHICKEN:
-                                        case COW:
-                                        case HORSE:
-                                        case IRON_GOLEM:
-                                        case MUSHROOM_COW:
-                                        case OCELOT:
-                                        case PIG:
-                                        case RABBIT:
-                                        case SHEEP:
-                                        case SNOWMAN:
-                                        case VILLAGER:
-                                        case WOLF:
-                                            companionTypes.add(type);
-                                            break;
-                                        default:
-                                            plugin.getLogger()
-                                            .warning(
-                                                    "Island companion is not recognized in schematic '" + name + "'. Pick from COW, PIG, SHEEP, CHICKEN, VILLAGER, HORSE, IRON_GOLEM, OCELOT, RABBIT, WOLF, SNOWMAN, BAT, MUSHROOM_COW");
-                                            break;
-                                        }
-                                    } catch (Exception e) {
+                                        companionTypes.add(type);
+                                   } catch (Exception e) {
                                         plugin.getLogger()
                                         .warning(
-                                                "Island companion is not recognized in schematic '" + name + "'. Pick from COW, PIG, SHEEP, CHICKEN, VILLAGER, HORSE, IRON_GOLEM, OCELOT, RABBIT, WOLF, BAT, MUSHROOM_COW, SNOWMAN");
+                                                "Island companion is not recognized in schematic '" + name + "'.");
                                     }
                                 }
                             }

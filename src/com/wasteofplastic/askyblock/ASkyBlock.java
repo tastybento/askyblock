@@ -1155,214 +1155,216 @@ public class ASkyBlock extends JavaPlugin {
         } else if (Settings.netherSpawnRadius > 100) {
             Settings.netherSpawnRadius = 100;
         }
+		Settings.resetWait = getConfig().getInt("general.resetwait", 300);
+		if (Settings.resetWait < 0) {
+			Settings.resetWait = 0;
+		}
+		Settings.resetLimit = getConfig().getInt("general.resetlimit", 0);
+		if (Settings.resetWait < 0) {
+			Settings.resetWait = -1;
+		}
+		Settings.inviteWait = getConfig().getInt("general.invitewait", 60);
+		if (Settings.inviteWait < 0) {
+			Settings.inviteWait = 0;
+		}
+		Settings.levelWait = getConfig().getInt("general.levelwait", 60);
+		if (Settings.levelWait < 0) {
+			Settings.levelWait = 0;
+		}
+		// Seconds to wait for a confirmation of reset
+		Settings.resetConfirmWait = getConfig().getInt("general.resetconfirmwait", 10);
+		if (Settings.resetConfirmWait < 0) {
+			Settings.resetConfirmWait = 0;
+		}
+		Settings.damageOps = getConfig().getBoolean("general.damageops", false);
+		// Settings.ultraSafeBoats =
+		// getConfig().getBoolean("general.ultrasafeboats", true);
+		Settings.logInRemoveMobs = getConfig().getBoolean("general.loginremovemobs", true);
+		Settings.islandRemoveMobs = getConfig().getBoolean("general.islandremovemobs", false);
+		List<String> mobWhiteList = getConfig().getStringList("general.mobwhitelist");
+		Settings.mobWhiteList.clear();
+		String valid = "BLAZE, CREEPER, SKELETON, SPIDER, GIANT, ZOMBIE, GHAST, PIG_ZOMBIE, "
+				+ "ENDERMAN, CAVE_SPIDER, SILVERFISH,  WITHER, WITCH, ENDERMITE,"
+				+ " GUARDIAN";
+		for (String mobName : mobWhiteList) {
+			if (valid.contains(mobName.toUpperCase())) {
+				try {
+					Settings.mobWhiteList.add(EntityType.valueOf(mobName.toUpperCase()));
+				} catch (Exception e) {
+					plugin.getLogger().severe("Error in config.yml, mobwhitelist value '" + mobName + "' is invalid.");
+					plugin.getLogger().severe("Possible values are : Blaze, Cave_Spider, Creeper, Enderman, Endermite, Giant, Guardian, "
+							+ "Pig_Zombie, Silverfish, Skeleton, Spider, Witch, Wither, Zombie");
+				}
+			} else {
+				plugin.getLogger().severe("Error in config.yml, mobwhitelist value '" + mobName + "' is invalid.");
+				plugin.getLogger().severe("Possible values are : Blaze, Cave_Spider, Creeper, Enderman, Endermite, Giant, Guardian, "
+						+ "Pig_Zombie, Silverfish, Skeleton, Spider, Witch, Wither, Zombie");
+			}
+		}
+		// getLogger().info("DEBUG: island level is " + Settings.island_level);
+		// Get chest items
+		String chestItems = getConfig().getString("island.chestItems","");
+		if (!chestItems.isEmpty()) {
+			final String[] chestItemString = chestItems.split(" ");
+			// getLogger().info("DEBUG: chest items = " + chestItemString);
+			final ItemStack[] tempChest = new ItemStack[chestItemString.length];
+			for (int i = 0; i < tempChest.length; i++) {
+				String[] amountdata = chestItemString[i].split(":");
+				try {
+					if (amountdata.length == 3 && amountdata[0].equalsIgnoreCase("MONSTER_EGG")) {
+						try {
+							EntityType type = EntityType.valueOf(amountdata[1].toUpperCase());
+							if (Bukkit.getServer().getVersion().contains("(MC: 1.8") || Bukkit.getServer().getVersion().contains("(MC: 1.7")) {
+								tempChest[i] = new SpawnEgg(type).toItemStack(Integer.parseInt(amountdata[2]));
+							} else {
+								try {
+									tempChest[i] = new SpawnEgg1_9(type).toItemStack(Integer.parseInt(amountdata[2]));
+								} catch (Exception ex) {
+									tempChest[i] = new ItemStack(Material.MONSTER_EGG);
+									plugin.getLogger().severe("Monster eggs not supported with this server version.");
+								}
+							}
+						} catch (Exception e) {
+							Bukkit.getLogger().severe("Spawn eggs must be described by name. Try one of these (not all are possible):");
+							for (EntityType type : EntityType.values()) {
+								if (type.isSpawnable() && type.isAlive()) {
+									plugin.getLogger().severe(type.toString());
+								}
+							}
+						}
+					} else if (amountdata[0].equals("POTION")) {
+						// getLogger().info("DEBUG: Potion length " +
+						// amountdata.length);
+						if (amountdata.length == 6) {
+							tempChest[i] = Challenges.getPotion(amountdata, Integer.parseInt(amountdata[5]), "config.yml");
+						} else {
+							getLogger().severe("Problem loading chest item from config.yml so skipping it: " + chestItemString[i]);
+							getLogger().severe("Potions for the chest must be fully defined as POTION:NAME:<LEVEL>:<EXTENDED>:<SPLASH/LINGER>:QTY");
+						}
+					} else {
+						Material mat;
+						if (StringUtils.isNumeric(amountdata[0])) {
+							mat = Material.getMaterial(Integer.parseInt(amountdata[0]));
+						} else {
+							mat = Material.getMaterial(amountdata[0].toUpperCase());
+						}
+						if (amountdata.length == 2) {
+							tempChest[i] = new ItemStack(mat, Integer.parseInt(amountdata[1]));
+						} else if (amountdata.length == 3) {
+							tempChest[i] = new ItemStack(mat, Integer.parseInt(amountdata[2]), Short.parseShort(amountdata[1]));
+						}
+					}
+				} catch (java.lang.IllegalArgumentException ex) {
+					ex.printStackTrace();
+					getLogger().severe("Problem loading chest item from config.yml so skipping it: " + chestItemString[i]);
+					getLogger().severe("Error is : " + ex.getMessage());
+					getLogger().info("Potential potion types are: ");
+					for (PotionType c : PotionType.values())
+						getLogger().info(c.name());
+				} catch (Exception e) {
+					e.printStackTrace();
+					getLogger().severe("Problem loading chest item from config.yml so skipping it: " + chestItemString[i]);
+					getLogger().info("Potential material types are: ");
+					for (Material c : Material.values())
+						getLogger().info(c.name());
+					// e.printStackTrace();
+				}
+			}
+			Settings.chestItems = tempChest;
+		} else {
+			// Nothing in the chest
+			Settings.chestItems = new ItemStack[0];
+		}
+		Settings.allowPvP = getConfig().getBoolean("island.allowPvP", false);
+		Settings.allowNetherPvP = getConfig().getBoolean("island.allowNetherPvP", false);
+		Settings.allowBreakBlocks = getConfig().getBoolean("island.allowbreakblocks", false);
+		Settings.allowPlaceBlocks = getConfig().getBoolean("island.allowplaceblocks", false);
+		Settings.allowBedUse = getConfig().getBoolean("island.allowbeduse", false);
+		Settings.allowBucketUse = getConfig().getBoolean("island.allowbucketuse", false);
+		Settings.allowShearing = getConfig().getBoolean("island.allowshearing", false);
+		Settings.allowEnderPearls = getConfig().getBoolean("island.allowenderpearls", false);
+		Settings.allowDoorUse = getConfig().getBoolean("island.allowdooruse", false);
+		Settings.allowLeverButtonUse = getConfig().getBoolean("island.allowleverbuttonuse", false);
+		Settings.allowCropTrample = getConfig().getBoolean("island.allowcroptrample", false);
+		Settings.allowChestAccess = getConfig().getBoolean("island.allowchestaccess", false);
+		Settings.allowFurnaceUse = getConfig().getBoolean("island.allowfurnaceuse", false);
+		Settings.allowRedStone = getConfig().getBoolean("island.allowredstone", false);
+		Settings.allowMusic = getConfig().getBoolean("island.allowmusic", false);
+		Settings.allowCrafting = getConfig().getBoolean("island.allowcrafting", false);
+		Settings.allowBrewing = getConfig().getBoolean("island.allowbrewing", false);
+		Settings.allowGateUse = getConfig().getBoolean("island.allowgateuse", false);
+		Settings.allowHurtMobs = getConfig().getBoolean("island.allowhurtmobs", true);
+		Settings.endermanDeathDrop = getConfig().getBoolean("island.endermandeathdrop", true);
+		Settings.allowEndermanGriefing = getConfig().getBoolean("island.allowendermangriefing", true);
+		Settings.allowCreeperDamage = getConfig().getBoolean("island.allowcreeperdamage", true);
+		Settings.allowCreeperGriefing = getConfig().getBoolean("island.allowcreepergriefing", false);
+		Settings.allowTNTDamage = getConfig().getBoolean("island.allowtntdamage", false);
+		Settings.allowMonsterEggs = getConfig().getBoolean("island.allowspawneggs", false);
+		Settings.allowBreeding = getConfig().getBoolean("island.allowbreeding", false);
+		Settings.allowFire = getConfig().getBoolean("island.allowfire", false);
+		Settings.allowFireSpread = getConfig().getBoolean("island.allowfirespread", false);
+		Settings.allowFireExtinguish = getConfig().getBoolean("island.allowfireextinguish", false);
+		Settings.allowChestDamage = getConfig().getBoolean("island.allowchestdamage", false);
+		Settings.allowLeashUse = getConfig().getBoolean("island.allowleashuse", false);
+		Settings.allowHurtMonsters = getConfig().getBoolean("island.allowhurtmonsters", true);
+		Settings.allowEnchanting = getConfig().getBoolean("island.allowenchanting", true);
+		Settings.allowAnvilUse = getConfig().getBoolean("island.allowanviluse", true);
+		Settings.allowVisitorKeepInvOnDeath = getConfig().getBoolean("island.allowvisitorkeepinvondeath", false);
+		Settings.allowVisitorItemDrop = getConfig().getBoolean("island.allowvisitoritemdrop", true);
+		Settings.allowVisitorItemPickup = getConfig().getBoolean("island.allowvisitoritempickup", true);
+		Settings.allowArmorStandUse = getConfig().getBoolean("island.allowarmorstanduse", false);
+		Settings.allowBeaconAccess = getConfig().getBoolean("island.allowbeaconaccess", false);
+		Settings.allowPortalUse = getConfig().getBoolean("island.allowportaluse", true);
+		Settings.allowPressurePlate = getConfig().getBoolean("island.allowpressureplates", true);
+		Settings.allowPistonPush = getConfig().getBoolean("island.allowpistonpush", true);
+		Settings.allowHorseRiding = getConfig().getBoolean("island.allowhorseriding", false);
+		Settings.allowHorseInvAccess = getConfig().getBoolean("island.allowhorseinventoryaccess", false);
+		Settings.allowVillagerTrading = getConfig().getBoolean("island.allowvillagertrading", true);
+		Settings.allowChorusFruit = getConfig().getBoolean("island.allowchorusfruit", false);
+	    Settings.enableJoinAndLeaveIslandMessages = getConfig().getBoolean("island.enablejoinandleaveislandmessages", true);
+	    Settings.allowMobDamageToItemFrames = getConfig().getBoolean("island.allowitemframedamage", false);
 
-        Settings.resetWait = getConfig().getInt("general.resetwait", 300);
-        if (Settings.resetWait < 0) {
-            Settings.resetWait = 0;
-        }
-        Settings.resetLimit = getConfig().getInt("general.resetlimit", 0);
-        if (Settings.resetWait < 0) {
-            Settings.resetWait = -1;
-        }
-        Settings.inviteWait = getConfig().getInt("general.invitewait", 60);
-        if (Settings.inviteWait < 0) {
-            Settings.inviteWait = 0;
-        }
-        Settings.levelWait = getConfig().getInt("general.levelwait", 60);
-        if (Settings.levelWait < 0) {
-            Settings.levelWait = 0;
-        }
-        // Seconds to wait for a confirmation of reset
-        Settings.resetConfirmWait = getConfig().getInt("general.resetconfirmwait", 10);
-        if (Settings.resetConfirmWait < 0) {
-            Settings.resetConfirmWait = 0;
-        }
-        Settings.damageOps = getConfig().getBoolean("general.damageops", false);
-        // Settings.ultraSafeBoats =
-        // getConfig().getBoolean("general.ultrasafeboats", true);
-        Settings.logInRemoveMobs = getConfig().getBoolean("general.loginremovemobs", true);
-        Settings.islandRemoveMobs = getConfig().getBoolean("general.islandremovemobs", false);
-        List<String> mobWhiteList = getConfig().getStringList("general.mobwhitelist");
-        Settings.mobWhiteList.clear();
-        String valid = "BLAZE, CREEPER, SKELETON, SPIDER, GIANT, ZOMBIE, GHAST, PIG_ZOMBIE, "
-                + "ENDERMAN, CAVE_SPIDER, SILVERFISH,  WITHER, WITCH, ENDERMITE,"
-                + " GUARDIAN";
-        for (String mobName : mobWhiteList) {
-            if (valid.contains(mobName.toUpperCase())) {
-                try {
-                    Settings.mobWhiteList.add(EntityType.valueOf(mobName.toUpperCase()));
-                } catch (Exception e) {
-                    plugin.getLogger().severe("Error in config.yml, mobwhitelist value '" + mobName + "' is invalid.");
-                    plugin.getLogger().severe("Possible values are : Blaze, Cave_Spider, Creeper, Enderman, Endermite, Giant, Guardian, "
-                            + "Pig_Zombie, Silverfish, Skeleton, Spider, Witch, Wither, Zombie");
-                }
-            } else {
-                plugin.getLogger().severe("Error in config.yml, mobwhitelist value '" + mobName + "' is invalid.");
-                plugin.getLogger().severe("Possible values are : Blaze, Cave_Spider, Creeper, Enderman, Endermite, Giant, Guardian, "
-                        + "Pig_Zombie, Silverfish, Skeleton, Spider, Witch, Wither, Zombie");
-            }
-        }
-        // getLogger().info("DEBUG: island level is " + Settings.island_level);
-        // Get chest items
-        String chestItems = getConfig().getString("island.chestItems","");
-        if (!chestItems.isEmpty()) {
-            final String[] chestItemString = chestItems.split(" ");
-            // getLogger().info("DEBUG: chest items = " + chestItemString);
-            final ItemStack[] tempChest = new ItemStack[chestItemString.length];
-            for (int i = 0; i < tempChest.length; i++) {
-                String[] amountdata = chestItemString[i].split(":");
-                try {
-                    if (amountdata.length == 3 && amountdata[0].equalsIgnoreCase("MONSTER_EGG")) {
-                        try {
-                            EntityType type = EntityType.valueOf(amountdata[1].toUpperCase());
-                            if (Bukkit.getServer().getVersion().contains("(MC: 1.8") || Bukkit.getServer().getVersion().contains("(MC: 1.7")) {
-                                tempChest[i] = new SpawnEgg(type).toItemStack(Integer.parseInt(amountdata[2]));
-                            } else {
-                                try {
-                                    tempChest[i] = new SpawnEgg1_9(type).toItemStack(Integer.parseInt(amountdata[2]));
-                                } catch (Exception ex) {
-                                    tempChest[i] = new ItemStack(Material.MONSTER_EGG);
-                                    plugin.getLogger().severe("Monster eggs not supported with this server version.");
-                                }
-                            }
-                        } catch (Exception e) {
-                            Bukkit.getLogger().severe("Spawn eggs must be described by name. Try one of these (not all are possible):");
-                            for (EntityType type : EntityType.values()) {
-                                if (type.isSpawnable() && type.isAlive()) {
-                                    plugin.getLogger().severe(type.toString());
-                                }
-                            }
-                        }
-                    } else if (amountdata[0].equals("POTION")) {
-                        // getLogger().info("DEBUG: Potion length " +
-                        // amountdata.length);
-                        if (amountdata.length == 6) {
-                            tempChest[i] = Challenges.getPotion(amountdata, Integer.parseInt(amountdata[5]), "config.yml");
-                        } else {
-                            getLogger().severe("Problem loading chest item from config.yml so skipping it: " + chestItemString[i]);
-                            getLogger().severe("Potions for the chest must be fully defined as POTION:NAME:<LEVEL>:<EXTENDED>:<SPLASH/LINGER>:QTY");
-                        }
-                    } else {
-                        Material mat;
-                        if (StringUtils.isNumeric(amountdata[0])) {
-                            mat = Material.getMaterial(Integer.parseInt(amountdata[0]));
-                        } else {
-                            mat = Material.getMaterial(amountdata[0].toUpperCase());
-                        }
-                        if (amountdata.length == 2) {
-                            tempChest[i] = new ItemStack(mat, Integer.parseInt(amountdata[1]));
-                        } else if (amountdata.length == 3) {
-                            tempChest[i] = new ItemStack(mat, Integer.parseInt(amountdata[2]), Short.parseShort(amountdata[1]));
-                        }
-                    }
-                } catch (java.lang.IllegalArgumentException ex) {
-                    ex.printStackTrace();
-                    getLogger().severe("Problem loading chest item from config.yml so skipping it: " + chestItemString[i]);
-                    getLogger().severe("Error is : " + ex.getMessage());
-                    getLogger().info("Potential potion types are: ");
-                    for (PotionType c : PotionType.values())
-                        getLogger().info(c.name());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    getLogger().severe("Problem loading chest item from config.yml so skipping it: " + chestItemString[i]);
-                    getLogger().info("Potential material types are: ");
-                    for (Material c : Material.values())
-                        getLogger().info(c.name());
-                    // e.printStackTrace();
-                }
-            }
-            Settings.chestItems = tempChest;
-        } else {
-            // Nothing in the chest
-            Settings.chestItems = new ItemStack[0];
-        }
-        Settings.allowPvP = getConfig().getBoolean("island.allowPvP", false);
-        Settings.allowNetherPvP = getConfig().getBoolean("island.allowNetherPvP", false);
-        Settings.allowBreakBlocks = getConfig().getBoolean("island.allowbreakblocks", false);
-        Settings.allowPlaceBlocks = getConfig().getBoolean("island.allowplaceblocks", false);
-        Settings.allowBedUse = getConfig().getBoolean("island.allowbeduse", false);
-        Settings.allowBucketUse = getConfig().getBoolean("island.allowbucketuse", false);
-        Settings.allowShearing = getConfig().getBoolean("island.allowshearing", false);
-        Settings.allowEnderPearls = getConfig().getBoolean("island.allowenderpearls", false);
-        Settings.allowDoorUse = getConfig().getBoolean("island.allowdooruse", false);
-        Settings.allowLeverButtonUse = getConfig().getBoolean("island.allowleverbuttonuse", false);
-        Settings.allowCropTrample = getConfig().getBoolean("island.allowcroptrample", false);
-        Settings.allowChestAccess = getConfig().getBoolean("island.allowchestaccess", false);
-        Settings.allowFurnaceUse = getConfig().getBoolean("island.allowfurnaceuse", false);
-        Settings.allowRedStone = getConfig().getBoolean("island.allowredstone", false);
-        Settings.allowMusic = getConfig().getBoolean("island.allowmusic", false);
-        Settings.allowCrafting = getConfig().getBoolean("island.allowcrafting", false);
-        Settings.allowBrewing = getConfig().getBoolean("island.allowbrewing", false);
-        Settings.allowGateUse = getConfig().getBoolean("island.allowgateuse", false);
-        Settings.allowHurtMobs = getConfig().getBoolean("island.allowhurtmobs", true);
-        Settings.endermanDeathDrop = getConfig().getBoolean("island.endermandeathdrop", true);
-        Settings.allowEndermanGriefing = getConfig().getBoolean("island.allowendermangriefing", true);
-        Settings.allowCreeperDamage = getConfig().getBoolean("island.allowcreeperdamage", true);
-        Settings.allowCreeperGriefing = getConfig().getBoolean("island.allowcreepergriefing", false);
-        Settings.allowTNTDamage = getConfig().getBoolean("island.allowtntdamage", false);
-        Settings.allowMonsterEggs = getConfig().getBoolean("island.allowspawneggs", false);
-        Settings.allowBreeding = getConfig().getBoolean("island.allowbreeding", false);
-        Settings.allowFire = getConfig().getBoolean("island.allowfire", false);
-        Settings.allowFireSpread = getConfig().getBoolean("island.allowfirespread", false);
-        Settings.allowChestDamage = getConfig().getBoolean("island.allowchestdamage", false);
-        Settings.allowLeashUse = getConfig().getBoolean("island.allowleashuse", false);
-        Settings.allowHurtMonsters = getConfig().getBoolean("island.allowhurtmonsters", true);
-        Settings.allowEnchanting = getConfig().getBoolean("island.allowenchanting", true);
-        Settings.allowAnvilUse = getConfig().getBoolean("island.allowanviluse", true);
-        Settings.allowVisitorKeepInvOnDeath = getConfig().getBoolean("island.allowvisitorkeepinvondeath", false);
-        Settings.allowVisitorItemDrop = getConfig().getBoolean("island.allowvisitoritemdrop", true);
-        Settings.allowVisitorItemPickup = getConfig().getBoolean("island.allowvisitoritempickup", true);
-        Settings.allowArmorStandUse = getConfig().getBoolean("island.allowarmorstanduse", false);
-        Settings.allowBeaconAccess = getConfig().getBoolean("island.allowbeaconaccess", false);
-        Settings.allowPortalUse = getConfig().getBoolean("island.allowportaluse", true);
-        Settings.allowPressurePlate = getConfig().getBoolean("island.allowpressureplates", true);
-        Settings.allowPistonPush = getConfig().getBoolean("island.allowpistonpush", true);
-        Settings.allowHorseRiding = getConfig().getBoolean("island.allowhorseriding", false);
-        Settings.allowHorseInvAccess = getConfig().getBoolean("island.allowhorseinventoryaccess", false);
-        Settings.allowVillagerTrading = getConfig().getBoolean("island.allowvillagertrading", true);
-        Settings.allowChorusFruit = getConfig().getBoolean("island.allowchorusfruit", false);
-        Settings.enableJoinAndLeaveIslandMessages = getConfig().getBoolean("island.enablejoinandleaveislandmessages", true);
-
-        // Spawn Settings
-        Settings.allowSpawnCreeperPain = getConfig().getBoolean("spawn.allowcreeperpain", false);
-        Settings.allowSpawnHorseRiding = getConfig().getBoolean("spawn.allowhorseriding", false);
-        Settings.allowSpawnHorseInvAccess = getConfig().getBoolean("spawn.allowhorseinventoryaccess", false);
-        Settings.allowSpawnPressurePlate = getConfig().getBoolean("spawn.allowpressureplates", true);
-        Settings.allowSpawnDoorUse = getConfig().getBoolean("spawn.allowdooruse", true);
-        Settings.allowSpawnLeverButtonUse = getConfig().getBoolean("spawn.allowleverbuttonuse", true);
-        Settings.allowSpawnChestAccess = getConfig().getBoolean("spawn.allowchestaccess", true);
-        Settings.allowSpawnFurnaceUse = getConfig().getBoolean("spawn.allowfurnaceuse", true);
-        Settings.allowSpawnRedStone = getConfig().getBoolean("spawn.allowredstone", false);
-        Settings.allowSpawnMusic = getConfig().getBoolean("spawn.allowmusic", true);
-        Settings.allowSpawnCrafting = getConfig().getBoolean("spawn.allowcrafting", true);
-        Settings.allowSpawnBrewing = getConfig().getBoolean("spawn.allowbrewing", true);
-        Settings.allowSpawnGateUse = getConfig().getBoolean("spawn.allowgateuse", true);
-        Settings.allowSpawnMobSpawn = getConfig().getBoolean("spawn.allowmobspawn", false);
-        Settings.allowSpawnAnimalSpawn = getConfig().getBoolean("spawn.allowanimalspawn", true);
-        Settings.allowSpawnAnimalKilling = getConfig().getBoolean("spawn.allowanimalkilling", false);
-        Settings.allowSpawnMobKilling = getConfig().getBoolean("spawn.allowmobkilling", true);
-        Settings.allowSpawnMonsterEggs = getConfig().getBoolean("spawn.allowspawneggs", false);
-        Settings.allowSpawnEggs = getConfig().getBoolean("spawn.alloweggs", false);
-        Settings.allowSpawnBreakBlocks = getConfig().getBoolean("spawn.allowbreakblocks", false);
-        Settings.allowSpawnPlaceBlocks = getConfig().getBoolean("spawn.allowplaceblocks", false);
-        Settings.allowSpawnNoAcidWater = getConfig().getBoolean("spawn.allowspawnnoacidwater", false);
-        Settings.allowSpawnEnchanting = getConfig().getBoolean("spawn.allowenchanting", true);
-        Settings.allowSpawnAnvilUse = getConfig().getBoolean("spawn.allowanviluse", true);
-        Settings.allowSpawnBeaconAccess = getConfig().getBoolean("spawn.allowbeaconaccess", false);
-        Settings.allowSpawnPVP = getConfig().getBoolean("spawn.allowPVP", false);
-        Settings.allowSpawnMilking = getConfig().getBoolean("spawn.allowmilking", false);
-        Settings.allowSpawnLavaCollection = getConfig().getBoolean("spawn.allowlavacollection", false);
-        Settings.allowSpawnWaterCollection = getConfig().getBoolean("spawn.allowwatercollection", false);
-        Settings.allowSpawnVisitorItemDrop = getConfig().getBoolean("spawn.allowvisitoritemdrop", true);
-        Settings.allowSpawnVisitorItemPickup = getConfig().getBoolean("spawn.allowvisitoritempickup", true);
-        Settings.allowSpawnArmorStandUse = getConfig().getBoolean("spawn.allowarmorstanduse",false);
-        Settings.allowSpawnBedUse = getConfig().getBoolean("spawn.allowbeduse",false);
-        Settings.allowSpawnBreeding = getConfig().getBoolean("spawn.allowbreeding",false);
-        Settings.allowSpawnCropTrample = getConfig().getBoolean("spawn.allowcroptrample",false);
-        Settings.allowSpawnEnderPearls = getConfig().getBoolean("spawn.allowenderpearls",false);
-        Settings.allowSpawnLeashUse = getConfig().getBoolean("spawn.allowleashuse",false);
-        Settings.allowSpawnVillagerTrading = getConfig().getBoolean("spawn.allowvillagertrading", false);
-        Settings.allowSpawnChorusFruit = getConfig().getBoolean("spawn.allowchorusfruit", false);
+		// Spawn Settings
+		Settings.allowSpawnCreeperPain = getConfig().getBoolean("spawn.allowcreeperpain", false);
+		Settings.allowSpawnHorseRiding = getConfig().getBoolean("spawn.allowhorseriding", false);
+		Settings.allowSpawnHorseInvAccess = getConfig().getBoolean("spawn.allowhorseinventoryaccess", false);
+		Settings.allowSpawnPressurePlate = getConfig().getBoolean("spawn.allowpressureplates", true);
+		Settings.allowSpawnDoorUse = getConfig().getBoolean("spawn.allowdooruse", true);
+		Settings.allowSpawnLeverButtonUse = getConfig().getBoolean("spawn.allowleverbuttonuse", true);
+		Settings.allowSpawnChestAccess = getConfig().getBoolean("spawn.allowchestaccess", true);
+		Settings.allowSpawnFurnaceUse = getConfig().getBoolean("spawn.allowfurnaceuse", true);
+		Settings.allowSpawnRedStone = getConfig().getBoolean("spawn.allowredstone", false);
+		Settings.allowSpawnMusic = getConfig().getBoolean("spawn.allowmusic", true);
+		Settings.allowSpawnCrafting = getConfig().getBoolean("spawn.allowcrafting", true);
+		Settings.allowSpawnBrewing = getConfig().getBoolean("spawn.allowbrewing", true);
+		Settings.allowSpawnGateUse = getConfig().getBoolean("spawn.allowgateuse", true);
+		Settings.allowSpawnMobSpawn = getConfig().getBoolean("spawn.allowmobspawn", false);
+		Settings.allowSpawnAnimalSpawn = getConfig().getBoolean("spawn.allowanimalspawn", true);
+		Settings.allowSpawnAnimalKilling = getConfig().getBoolean("spawn.allowanimalkilling", false);
+		Settings.allowSpawnMobKilling = getConfig().getBoolean("spawn.allowmobkilling", true);
+		Settings.allowSpawnMonsterEggs = getConfig().getBoolean("spawn.allowspawneggs", false);
+		Settings.allowSpawnEggs = getConfig().getBoolean("spawn.alloweggs", false);
+		Settings.allowSpawnBreakBlocks = getConfig().getBoolean("spawn.allowbreakblocks", false);
+		Settings.allowSpawnPlaceBlocks = getConfig().getBoolean("spawn.allowplaceblocks", false);
+		Settings.allowSpawnNoAcidWater = getConfig().getBoolean("spawn.allowspawnnoacidwater", false);
+		Settings.allowSpawnEnchanting = getConfig().getBoolean("spawn.allowenchanting", true);
+		Settings.allowSpawnAnvilUse = getConfig().getBoolean("spawn.allowanviluse", true);
+		Settings.allowSpawnBeaconAccess = getConfig().getBoolean("spawn.allowbeaconaccess", false);
+		Settings.allowSpawnPVP = getConfig().getBoolean("spawn.allowPVP", false);
+		Settings.allowSpawnMilking = getConfig().getBoolean("spawn.allowmilking", false);
+		Settings.allowSpawnLavaCollection = getConfig().getBoolean("spawn.allowlavacollection", false);
+		Settings.allowSpawnWaterCollection = getConfig().getBoolean("spawn.allowwatercollection", false);
+		Settings.allowSpawnVisitorItemDrop = getConfig().getBoolean("spawn.allowvisitoritemdrop", true);
+		Settings.allowSpawnVisitorItemPickup = getConfig().getBoolean("spawn.allowvisitoritempickup", true);
+		Settings.allowSpawnArmorStandUse = getConfig().getBoolean("spawn.allowarmorstanduse",false);
+		Settings.allowSpawnBedUse = getConfig().getBoolean("spawn.allowbeduse",false);
+		Settings.allowSpawnBreeding = getConfig().getBoolean("spawn.allowbreeding",false);
+		Settings.allowSpawnCropTrample = getConfig().getBoolean("spawn.allowcroptrample",false);
+		Settings.allowSpawnEnderPearls = getConfig().getBoolean("spawn.allowenderpearls",false);
+		Settings.allowSpawnLeashUse = getConfig().getBoolean("spawn.allowleashuse",false);
+		Settings.allowSpawnVillagerTrading = getConfig().getBoolean("spawn.allowvillagertrading", false);
+		Settings.allowSpawnChorusFruit = getConfig().getBoolean("spawn.allowchorusfruit", false);
+		Settings.allowSpawnFireExtinguish = getConfig().getBoolean("spawn.allowfireextinguish", false);
 
         // Challenges
         getChallenges();
