@@ -1293,6 +1293,7 @@ public class ASkyBlock extends JavaPlugin {
 		Settings.allowVillagerTrading = getConfig().getBoolean("island.allowvillagertrading", true);
 		Settings.allowChorusFruit = getConfig().getBoolean("island.allowchorusfruit", false);
 	    Settings.enableJoinAndLeaveIslandMessages = getConfig().getBoolean("island.enablejoinandleaveislandmessages", true);
+	    Settings.allowMobDamageToItemFrames = getConfig().getBoolean("island.allowitemframedamage", false);
 
 		// Spawn Settings
 		Settings.allowSpawnCreeperPain = getConfig().getBoolean("spawn.allowcreeperpain", false);

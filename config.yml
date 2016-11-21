@@ -222,6 +222,8 @@ island:
    allowvisitorkeepinvondeath: false
    # Allow pistons to push outside of the protected area (maybe to make bridges)
    allowpistonpush: true
+   # Allow mob projectiles to damage item frames (skeleton arrows, shulker shots)
+   allowitemframedamage: false
 
 # General Settings
 general:
@@ -662,6 +664,8 @@ spawn:
   allowshearing: false
   # Allow players to teleport when eating chorus fruit
   allowchorusfruit: false
+  # Allow players to extinguish fire at spawn (by punching it)
+  allowfireextinguish: false
 
 # This section contains the biomes that can be bought or used
 biomesettings:

@@ -38,6 +38,7 @@ import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Golem;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.IronGolem;
 import org.bukkit.entity.ItemFrame;
@@ -46,6 +47,7 @@ import org.bukkit.entity.Llama;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+import org.bukkit.entity.Skeleton;
 import org.bukkit.entity.Slime;
 import org.bukkit.entity.Snowman;
 import org.bukkit.entity.Squid;
@@ -876,7 +878,55 @@ public class IslandGuard implements Listener {
             plugin.getLogger().info("DEBUG: Duraction = " + e.getDuration());
         }
     }
-     */    
+     */ 
+
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onItemFrameDamage(final EntityDamageByEntityEvent e) {
+        // Check world
+        if (!inWorld(e.getEntity()) || !(e.getEntity() instanceof ItemFrame)) {
+            return;
+        }
+        if (e.getDamager() instanceof Projectile) {
+            if (DEBUG)
+                plugin.getLogger().info("DEBUG: Projectile damage to itemframe");
+            // Find out who fired the arrow
+            Projectile p = (Projectile) e.getDamager();
+            if (DEBUG)
+                plugin.getLogger().info("DEBUG: Shooter is " + p.getShooter().toString());
+            if (p.getShooter() instanceof Skeleton || p.getShooter() instanceof Golem) {
+                if (DEBUG)
+                    plugin.getLogger().info("DEBUG: Shooter is mob");
+                if (!Settings.allowMobDamageToItemFrames) {
+                    if (DEBUG)
+                        plugin.getLogger().info("DEBUG: Damage not allowed, cancelling");
+                    e.setCancelled(true); 
+                }
+            }
+        }      
+    }   
+
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onItemFrameDamage(final HangingBreakByEntityEvent e) {
+        if (DEBUG) {
+            plugin.getLogger().info("DEBUG: Hanging break by entity event");
+            plugin.getLogger().info("DEBUG: cause = " + e.getCause());
+            plugin.getLogger().info("DEBUG: entity = " + e.getEntity());
+            plugin.getLogger().info("DEBUG: remover = " + e.getRemover());
+        }
+        // Check world
+        if (!inWorld(e.getEntity()) || !(e.getEntity() instanceof ItemFrame)) {
+            return;
+        }
+        if (e.getRemover() instanceof Skeleton || e.getRemover() instanceof Golem) {
+            if (DEBUG)
+                plugin.getLogger().info("DEBUG: Remover is mob");
+            if (!Settings.allowMobDamageToItemFrames) {
+                if (DEBUG)
+                    plugin.getLogger().info("DEBUG: Damage not allowed, cancelling");
+                e.setCancelled(true); 
+            }
+        }      
+    }   
     /**
      * This method protects players from PVP if it is not allowed and from
      * arrows fired by other players

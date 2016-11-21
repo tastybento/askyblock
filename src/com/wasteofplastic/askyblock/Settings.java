@@ -311,4 +311,5 @@ public class Settings {
     public static boolean allowObsidianScooping;
     public static boolean allowFireExtinguish;
     public static boolean allowSpawnFireExtinguish;
+    public static boolean allowMobDamageToItemFrames;
 }
