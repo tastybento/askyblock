@@ -28,7 +28,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
@@ -39,11 +38,9 @@ import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Golem;
-import org.bukkit.entity.Horse;
 import org.bukkit.entity.IronGolem;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Llama;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -166,22 +163,22 @@ public class IslandGuard implements Listener {
             plugin.getLogger().info("DEBUG: horse and llama inventory click");
         if (event.getInventory().getHolder() == null) {
             return;
-        }           
+        }
         // Bypass
-        if (!inWorld(event.getWhoClicked()) || event.getWhoClicked().isOp() 
+        if (!inWorld(event.getWhoClicked()) || event.getWhoClicked().isOp()
                 || VaultHelper.checkPerm((Player)event.getWhoClicked(), Settings.PERMPREFIX + "mod.bypassprotect")) {
             return;
         }
-        if (event.getInventory().getHolder() instanceof Horse || event.getInventory().getHolder() instanceof Llama) { 
+        if (event.getInventory().getHolder() instanceof Animals) {
             Island island = plugin.getGrid().getProtectedIslandAt(event.getWhoClicked().getLocation());
             // Spawn
-            if (island != null && island.isSpawn() && Settings.allowSpawnHorseInvAccess) {	
+            if (island != null && island.isSpawn() && Settings.allowSpawnHorseInvAccess) {
                 return;
             }
             // Normal island
             if (island != null && (island.getIgsFlag(Flags.allowHorseInvAccess) || island.getMembers().contains(event.getWhoClicked().getUniqueId()))){
                 return;
-            } 
+            }
             // Elsewhere - not allowed
             event.getWhoClicked().sendMessage(ChatColor.RED + plugin.myLocale(event.getWhoClicked().getUniqueId()).islandProtected);
             event.setCancelled(true);
@@ -246,7 +243,7 @@ public class IslandGuard implements Listener {
         }
 
 
-        Entity passenger = e.getVehicle().getPassenger();       
+        Entity passenger = e.getVehicle().getPassenger();
         if (passenger == null || !(passenger instanceof Player)) {
             return;
         }
@@ -332,13 +329,13 @@ public class IslandGuard implements Listener {
                     if(islandTo.getIgsFlag(Flags.enableJoinAndLeaveIslandMessages)) player.sendMessage(plugin.myLocale(player.getUniqueId()).lockNowEntering.replace("[name]", plugin.getGrid().getIslandName(islandTo.getOwner())));
                 }
             }
-        }	
+        }
     }
 
 
     /**
      * Adds island lock function
-     * 
+     *
      * @param e
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
@@ -384,7 +381,7 @@ public class IslandGuard implements Listener {
                             // Dismount
                             e.getPlayer().leaveVehicle();
                             e.setCancelled(true);
-                        } 
+                        }
 
                     } else {
                         Vector v = e.getPlayer().getLocation().toVector().subtract(islandTo.getCenter().toVector()).normalize().multiply(new Vector(1.2,0,1.2));
@@ -471,7 +468,7 @@ public class IslandGuard implements Listener {
             return;
         }
         // We only care about villagers breeding, being cured or coming from a spawn egg, etc.
-        if (e.getSpawnReason() != SpawnReason.SPAWNER && e.getSpawnReason() != SpawnReason.BREEDING 
+        if (e.getSpawnReason() != SpawnReason.SPAWNER && e.getSpawnReason() != SpawnReason.BREEDING
                 && e.getSpawnReason() != SpawnReason.DISPENSE_EGG && e.getSpawnReason() != SpawnReason.SPAWNER_EGG
                 && e.getSpawnReason() != SpawnReason.CURED) {
             return;
@@ -534,21 +531,22 @@ public class IslandGuard implements Listener {
             return;
         }
         LivingEntity animal = e.getEntity();
-        World world = animal.getWorld();
         // If not in the right world, return
-        // Only cover overworld, not nether
         if (!animal.getWorld().equals(ASkyBlock.getIslandWorld())) {
-            return;
+            // Check nether
+            if (!(Settings.createNether && Settings.newNether && ASkyBlock.getNetherWorld() != null)) {
+                return;
+            }
         }
         Island island = plugin.getGrid().getProtectedIslandAt(animal.getLocation());
         // Count how many animals are there and who is the most likely spawner if it was a player
         // This had to be reworked because the previous snowball approach doesn't work for large volumes
         List<Player> culprits = new ArrayList<Player>();
         boolean overLimit = false;
-        int animals = 0;	
+        int animals = 0;
         for (int x = island.getMinProtectedX() /16; x <= (island.getMinProtectedX() + island.getProtectionSize() - 1)/16; x++) {
             for (int z = island.getMinProtectedZ() /16; z <= (island.getMinProtectedZ() + island.getProtectionSize() - 1)/16; z++) {
-                for (Entity entity : world.getChunkAt(x, z).getEntities()) {
+                for (Entity entity : ASkyBlock.getIslandWorld().getChunkAt(x, z).getEntities()) {
                     if (entity instanceof Animals || entity.getType().equals(EntityType.SQUID)) {
                         if (DEBUG)
                             plugin.getLogger().info("DEBUG: Animal count is " + animals);
@@ -572,6 +570,35 @@ public class IslandGuard implements Listener {
                 }
             }
         }
+        // Nether check
+        if (Settings.createNether && Settings.newNether && ASkyBlock.getNetherWorld() != null) {
+            for (int x = island.getMinProtectedX() /16; x <= (island.getMinProtectedX() + island.getProtectionSize() - 1)/16; x++) {
+                for (int z = island.getMinProtectedZ() /16; z <= (island.getMinProtectedZ() + island.getProtectionSize() - 1)/16; z++) {
+                    for (Entity entity : ASkyBlock.getNetherWorld().getChunkAt(x, z).getEntities()) {
+                        if (entity instanceof Animals || entity.getType().equals(EntityType.SQUID)) {
+                            if (DEBUG)
+                                plugin.getLogger().info("DEBUG: Animal count is " + animals);
+                            animals++;
+                            if (animals >= Settings.breedingLimit) {
+                                // Delete any extra animals
+                                overLimit = true;
+                                animal.remove();
+                                e.setCancelled(true);
+                            }
+                        } else if (entity instanceof Player && e.getSpawnReason() != SpawnReason.SPAWNER && e.getSpawnReason() != SpawnReason.DISPENSE_EGG) {
+                            ItemStack itemInHand = ((Player) entity).getItemInHand();
+                            if (itemInHand != null) {
+                                Material type = itemInHand.getType();
+                                if (type == Material.EGG || type == Material.MONSTER_EGG || type == Material.WHEAT || type == Material.CARROT_ITEM
+                                        || type == Material.SEEDS) {
+                                    culprits.add(((Player) entity));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
         if (overLimit) {
             if (e.getSpawnReason() != SpawnReason.SPAWNER) {
                 plugin.getLogger().warning(
@@ -589,7 +616,7 @@ public class IslandGuard implements Listener {
 
     /**
      * Prevents mobs spawning at spawn
-     * 
+     *
      * @param e
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
@@ -799,7 +826,7 @@ public class IslandGuard implements Listener {
 
     /**
      * Drops the Enderman's block when he dies if he has one
-     * 
+     *
      * @param e
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
@@ -826,7 +853,7 @@ public class IslandGuard implements Listener {
         }
     }
 
-    /*    
+    /*
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = false)
     public void onBlockBreakCheck(final BlockPhysicsEvent e) {
         if (DEBUG) {
@@ -834,11 +861,11 @@ public class IslandGuard implements Listener {
             plugin.getLogger().info("DEBUG: block is " + e.getBlock());
         }
     }
-     */    
+     */
 
     /**
      * Prevents blocks from being broken
-     * 
+     *
      * @param e
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
@@ -878,7 +905,7 @@ public class IslandGuard implements Listener {
             plugin.getLogger().info("DEBUG: Duraction = " + e.getDuration());
         }
     }
-     */ 
+     */
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onItemFrameDamage(final EntityDamageByEntityEvent e) {
@@ -899,11 +926,11 @@ public class IslandGuard implements Listener {
                 if (!Settings.allowMobDamageToItemFrames) {
                     if (DEBUG)
                         plugin.getLogger().info("DEBUG: Damage not allowed, cancelling");
-                    e.setCancelled(true); 
+                    e.setCancelled(true);
                 }
             }
-        }      
-    }   
+        }
+    }
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onItemFrameDamage(final HangingBreakByEntityEvent e) {
@@ -923,14 +950,14 @@ public class IslandGuard implements Listener {
             if (!Settings.allowMobDamageToItemFrames) {
                 if (DEBUG)
                     plugin.getLogger().info("DEBUG: Damage not allowed, cancelling");
-                e.setCancelled(true); 
+                e.setCancelled(true);
             }
-        }      
-    }   
+        }
+    }
     /**
      * This method protects players from PVP if it is not allowed and from
      * arrows fired by other players
-     * 
+     *
      * @param e
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
@@ -967,7 +994,7 @@ public class IslandGuard implements Listener {
                     if (island.getIgsFlag(Flags.allowEnderPearls) || island.getMembers().contains(p.getUniqueId())) {
                         return;
                     }
-                }	
+                }
             }
             p.sendMessage(ChatColor.RED + plugin.myLocale(p.getUniqueId()).islandProtected);
             e.setDamage(0D);
@@ -1085,7 +1112,7 @@ public class IslandGuard implements Listener {
                 // Members always allowed
                 return;
             }
-            if (Settings.allowHurtMonsters) { 
+            if (Settings.allowHurtMonsters) {
                 // Check for visitors setting creepers alight using flint steel
                 if (!Settings.allowCreeperGriefing && e.getEntity() instanceof Creeper) {
                     ItemStack holding = attacker.getItemInHand();
@@ -1128,7 +1155,7 @@ public class IslandGuard implements Listener {
             return;
         }
 
-        // Establish whether PVP is allowed or not. 
+        // Establish whether PVP is allowed or not.
         boolean pvp = false;
         // On an island or at spawn
         if (island != null && island.isSpawn() && Settings.allowSpawnPVP) {
@@ -1154,7 +1181,7 @@ public class IslandGuard implements Listener {
 
     /**
      * Prevents placing of blocks
-     * 
+     *
      * @param e
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
@@ -1195,9 +1222,9 @@ public class IslandGuard implements Listener {
                 // Check how many placed
                 //plugin.getLogger().info("DEBUG: block placed " + e.getBlock().getType());
                 String type = e.getBlock().getType().toString();
-                if (!e.getBlock().getState().getClass().getName().endsWith("CraftBlockState") 
+                if (!e.getBlock().getState().getClass().getName().endsWith("CraftBlockState")
                         // Not all blocks have that type of class, so we have to do some explicit checking...
-                        || e.getBlock().getType().equals(Material.REDSTONE_COMPARATOR_OFF) 
+                        || e.getBlock().getType().equals(Material.REDSTONE_COMPARATOR_OFF)
                         || type.endsWith("BANNER") // Avoids V1.7 issues
                         || e.getBlock().getType().equals(Material.ENDER_CHEST)
                         || e.getBlock().getType().equals(Material.ENCHANTMENT_TABLE)
@@ -1260,9 +1287,9 @@ public class IslandGuard implements Listener {
                 // Check how many placed
                 //plugin.getLogger().info("DEBUG: block placed " + e.getBlock().getType());
                 String type = e.getBlock().getType().toString();
-                if (!e.getBlock().getState().getClass().getName().endsWith("CraftBlockState") 
+                if (!e.getBlock().getState().getClass().getName().endsWith("CraftBlockState")
                         // Not all blocks have that type of class, so we have to do some explicit checking...
-                        || e.getBlock().getType().equals(Material.REDSTONE_COMPARATOR_OFF) 
+                        || e.getBlock().getType().equals(Material.REDSTONE_COMPARATOR_OFF)
                         || type.endsWith("BANNER") // Avoids V1.7 issues
                         || e.getBlock().getType().equals(Material.ENDER_CHEST)
                         || e.getBlock().getType().equals(Material.ENCHANTMENT_TABLE)
@@ -1416,7 +1443,7 @@ public class IslandGuard implements Listener {
 
     /**
      * Prevents the breakage of hanging items
-     * 
+     *
      * @param e
      */
     @EventHandler(priority = EventPriority.LOW)
@@ -1464,7 +1491,7 @@ public class IslandGuard implements Listener {
                     return;
                 }
                 // Not allowed outside of a protected island
-                if (island != null) {	
+                if (island != null) {
                     // Check spawn
                     if (Settings.allowSpawnBreakBlocks && island.isSpawn()) {
                         return;
@@ -1483,7 +1510,7 @@ public class IslandGuard implements Listener {
 
     /**
      * Prevents the leash use
-     * 
+     *
      * @param e
      */
     @EventHandler(priority = EventPriority.LOW)
@@ -1518,7 +1545,7 @@ public class IslandGuard implements Listener {
 
     /**
      * Prevents the leash use
-     * 
+     *
      * @param e
      */
     @EventHandler(priority = EventPriority.LOW)
@@ -1594,7 +1621,7 @@ public class IslandGuard implements Listener {
 	// Otherwise cancel - the flow is not allowed
 	e.setCancelled(true);
     }
-     */   
+     */
 
     /**
      * Prevents emptying of buckets outside of island space
@@ -1648,7 +1675,7 @@ public class IslandGuard implements Listener {
 
     /**
      * Prevents water from being dispensed in hell biomes
-     * 
+     *
      * @param e
      */
     @EventHandler(priority = EventPriority.LOW)
@@ -1696,7 +1723,7 @@ public class IslandGuard implements Listener {
                     }
                 }
                 // Normal island
-                if (island.getIgsFlag(Flags.allowBucketUse) || island.getMembers().contains(e.getPlayer().getUniqueId())) {	
+                if (island.getIgsFlag(Flags.allowBucketUse) || island.getMembers().contains(e.getPlayer().getUniqueId())) {
                     return;
                 }
             } else {
@@ -1727,7 +1754,7 @@ public class IslandGuard implements Listener {
                 return;
             }
             if (island != null && (island.getIgsFlag(Flags.allowShearing) || island.getMembers().contains(e.getPlayer().getUniqueId()))) {
-                return;	
+                return;
             }
 
             // Not allowed
@@ -1739,7 +1766,7 @@ public class IslandGuard implements Listener {
 
     /**
      * Handles interaction with objects
-     * 
+     *
      * @param e
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
@@ -1800,7 +1827,7 @@ public class IslandGuard implements Listener {
                             e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                             e.setCancelled(true);
                             return;
-                        }                   
+                        }
                     }
                 }
             }
@@ -2045,7 +2072,7 @@ public class IslandGuard implements Listener {
                     if (!Settings.allowPlaceBlocks) {
                         e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                         e.setCancelled(true);
-                    } 
+                    }
                     return;
                 }
                 if (island.isSpawn()) {
@@ -2142,7 +2169,7 @@ public class IslandGuard implements Listener {
         if (e.getMaterial() != null) {
             // This check protects against an exploit in 1.7.9 against cactus
             // and sugar cane
-            if (e.getMaterial() == Material.WOOD_DOOR || e.getMaterial() == Material.CHEST 
+            if (e.getMaterial() == Material.WOOD_DOOR || e.getMaterial() == Material.CHEST
                     || e.getMaterial() == Material.TRAPPED_CHEST || e.getMaterial() == Material.IRON_DOOR) {
                 e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                 e.setCancelled(true);
@@ -2205,7 +2232,7 @@ public class IslandGuard implements Listener {
 
     /**
      * Prevents crafting of EnderChest unless the player has permission
-     * 
+     *
      * @param event
      */
     @EventHandler(priority = EventPriority.LOW)
@@ -2226,7 +2253,7 @@ public class IslandGuard implements Listener {
 
     /**
      * Prevents usage of an Ender Chest
-     * 
+     *
      * @param event
      */
 
@@ -2294,7 +2321,7 @@ public class IslandGuard implements Listener {
                             e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                             e.setCancelled(true);
                         }
-                        return;  
+                        return;
                     }
                     if ((!island.getIgsFlag(Flags.allowVillagerTrading) && !island.getMembers().contains(p.getUniqueId()))) {
                         e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
@@ -2304,7 +2331,7 @@ public class IslandGuard implements Listener {
                 }
             }
             // Handle name tags and dyes
-            if (p.getItemInHand() != null && (p.getItemInHand().getType().equals(Material.NAME_TAG) || 
+            if (p.getItemInHand() != null && (p.getItemInHand().getType().equals(Material.NAME_TAG) ||
                     p.getItemInHand().getType().equals(Material.INK_SACK))) {
                 e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                 e.setCancelled(true);
@@ -2467,7 +2494,7 @@ public class IslandGuard implements Listener {
             }
             e.setCancelled(true);
         }
-    }   
+    }
 
 
     /**
@@ -2487,7 +2514,7 @@ public class IslandGuard implements Listener {
             return;
         }
         // Check island
-        Island island = plugin.getGrid().getProtectedIslandAt(e.getPlayer().getLocation());	
+        Island island = plugin.getGrid().getProtectedIslandAt(e.getPlayer().getLocation());
         if ((island == null && Settings.allowPressurePlate)) {
             return;
         }
@@ -2565,7 +2592,7 @@ public class IslandGuard implements Listener {
             return;
         }
         // Check island
-        Island island = plugin.getGrid().getProtectedIslandAt(e.getPlayer().getLocation()); 
+        Island island = plugin.getGrid().getProtectedIslandAt(e.getPlayer().getLocation());
         if (island == null) {
             return;
         }
@@ -2580,7 +2607,7 @@ public class IslandGuard implements Listener {
 
     /**
      * Prevents trees from growing outside of the protected area.
-     * 
+     *
      * @param e
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
@@ -2600,12 +2627,12 @@ public class IslandGuard implements Listener {
         Iterator<BlockState> it = e.getBlocks().iterator();
         while (it.hasNext()) {
             BlockState b = it.next();
-            if (b.getType() == Material.LOG || b.getType() == Material.LOG_2 
+            if (b.getType() == Material.LOG || b.getType() == Material.LOG_2
                     || b.getType() == Material.LEAVES || b.getType() == Material.LEAVES_2) {
                 if (!island.onIsland(b.getLocation())) {
                     it.remove();
                 }
-            } 
+            }
         }
     }
 
@@ -2622,7 +2649,7 @@ public class IslandGuard implements Listener {
             plugin.getLogger().info("DEBUG: material changing to " + e.getTo());
         }
         if (Settings.allowFire) {
-            return; 
+            return;
         }
         if (e.getBlock() == null) {
             return;
@@ -2668,7 +2695,7 @@ public class IslandGuard implements Listener {
                         // Remove the arrow
                         projectile.remove();
                         e.setCancelled(true);
-                        return; 
+                        return;
                     }
                 }
             }

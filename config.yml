@@ -387,6 +387,7 @@ general:
    # limit. Note that animals will not be killed or reduced to this limit.
    # This WILL affect mobspawn blocks AND spawn egg use. Note that hearts will
    # still appear, but breeding will not happen.
+   # Limit includes nether island if nether islands are active.
    breedinglimit: 0
    
    # Sets the limit for number of water animals [squid] that can spawn in a chunk in this world. 
