@@ -315,4 +315,5 @@ public class Settings {
     public static boolean allowFireExtinguish;
     public static boolean allowSpawnFireExtinguish;
     public static boolean allowMobDamageToItemFrames;
+    public static boolean kickedKeepInv;
 }

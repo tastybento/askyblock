@@ -805,7 +805,8 @@ public class ASkyBlock extends JavaPlugin {
         
         // Allow Obsidian Scooping
         Settings.allowObsidianScooping = getConfig().getBoolean("general.allowobsidianscooping", true);
-        
+        // Kicked players keep inventory
+        Settings.kickedKeepInv = getConfig().getBoolean("general.kickedkeepinv", false);
         // Chat prefixes
         Settings.chatLevelPrefix = getConfig().getString("general.chatlevelprefix","{ISLAND_LEVEL}");
         Settings.chatChallengeLevelPrefix = getConfig().getString("general.chatchallanegelevelprefix","{ISLAND_CHALLENGE_LEVEL}");

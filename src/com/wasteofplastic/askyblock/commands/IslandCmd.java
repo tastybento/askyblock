@@ -36,7 +36,6 @@ import java.util.TreeMap;
 import java.util.UUID;
 
 import net.milkbowl.vault.economy.EconomyResponse;
-import net.minecraft.server.v1_11_R1.NBTTagCompound;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
@@ -56,7 +55,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.craftbukkit.v1_11_R1.inventory.CraftItemStack;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -380,7 +378,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                     try {
                                         EntityType type = EntityType.valueOf(companionType);
                                         companionTypes.add(type);
-                                   } catch (Exception e) {
+                                    } catch (Exception e) {
                                         plugin.getLogger()
                                         .warning(
                                                 "Island companion is not recognized in schematic '" + name + "'.");
@@ -1414,7 +1412,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                     }
                 }
                 else{
-                	player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorMinishopDisabled);
+                    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorMinishopDisabled);
                 }
             }
             // /island <command>
@@ -1686,7 +1684,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                     NBTTagCompound tagCompound = stack.getTag();
                     Bukkit.getLogger().info("DEBUG: tag = " + tagCompound);
                 }
-                */
+                 */
                 return true;
             } else if (split[0].equalsIgnoreCase("listcoops")) {
                 if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "coop")) {
@@ -2477,46 +2475,46 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                 player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
                                 return true;
                             }
-			} else if (split[0].equalsIgnoreCase("coop")) {
-			// Give a player coop privileges
-			if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "coop")) {
-				player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
-				return true;
-			}
-			// Only online players can be cooped
-			Player target = plugin.getServer().getPlayer(split[1]);
-			if (target == null) {
-				player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorOfflinePlayer);
-				return true;  
-			}                                
-			UUID targetPlayerUUID = target.getUniqueId();                                // Player issuing the command must have an island
-			if (!plugin.getPlayers().hasIsland(playerUUID) && !plugin.getPlayers().inTeam(playerUUID)) {
-				player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).inviteerrorYouMustHaveIslandToInvite);
-				return true;
-			}
-			// Player cannot invite themselves
-			if (playerUUID.equals(targetPlayerUUID)) {
-				player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).inviteerrorYouCannotInviteYourself);
-				return true;
-			}
-			// If target player is already on the team ignore
-			if (plugin.getPlayers().getMembers(playerUUID).contains(targetPlayerUUID)) {
-				player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).coopOnYourTeam);
-				return true;
-			}
-			// Target has to have an island
-			if (!plugin.getPlayers().inTeam(targetPlayerUUID)) {
-				if (!plugin.getPlayers().hasIsland(targetPlayerUUID)) {
-					player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoIslandOther);
-					return true;
-				}
-			}
-			// Add target to coop list
-			CoopPlay.getInstance().addCoopPlayer(player, target);
-			// Tell everyone what happened
-			player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).coopSuccess.replace("[name]", target.getDisplayName()));
-			target.sendMessage(ChatColor.GREEN + plugin.myLocale(targetPlayerUUID).coopMadeYouCoop.replace("[name]", player.getDisplayName()));
-			return true;
+                        } else if (split[0].equalsIgnoreCase("coop")) {
+                            // Give a player coop privileges
+                            if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "coop")) {
+                                player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
+                                return true;
+                            }
+                            // Only online players can be cooped
+                            Player target = plugin.getServer().getPlayer(split[1]);
+                            if (target == null) {
+                                player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorOfflinePlayer);
+                                return true;  
+                            }                                
+                            UUID targetPlayerUUID = target.getUniqueId();                                // Player issuing the command must have an island
+                            if (!plugin.getPlayers().hasIsland(playerUUID) && !plugin.getPlayers().inTeam(playerUUID)) {
+                                player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).inviteerrorYouMustHaveIslandToInvite);
+                                return true;
+                            }
+                            // Player cannot invite themselves
+                            if (playerUUID.equals(targetPlayerUUID)) {
+                                player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).inviteerrorYouCannotInviteYourself);
+                                return true;
+                            }
+                            // If target player is already on the team ignore
+                            if (plugin.getPlayers().getMembers(playerUUID).contains(targetPlayerUUID)) {
+                                player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).coopOnYourTeam);
+                                return true;
+                            }
+                            // Target has to have an island
+                            if (!plugin.getPlayers().inTeam(targetPlayerUUID)) {
+                                if (!plugin.getPlayers().hasIsland(targetPlayerUUID)) {
+                                    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoIslandOther);
+                                    return true;
+                                }
+                            }
+                            // Add target to coop list
+                            CoopPlay.getInstance().addCoopPlayer(player, target);
+                            // Tell everyone what happened
+                            player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).coopSuccess.replace("[name]", target.getDisplayName()));
+                            target.sendMessage(ChatColor.GREEN + plugin.myLocale(targetPlayerUUID).coopMadeYouCoop.replace("[name]", player.getDisplayName()));
+                            return true;
                         } else if (split[0].equalsIgnoreCase("expel")) {
                             if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.expel")) {
                                 player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
@@ -2780,34 +2778,38 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                         CoopPlay.getInstance().clearMyCoops(target);
                                         // Clear the player out and throw their stuff at the
                                         // leader
-                                        if (target.getWorld().equals(ASkyBlock.getIslandWorld())) {                        
-                                            for (ItemStack i : target.getInventory().getContents()) {
-                                                if (i != null) {
-                                                    try { 
-                                                        // Fire an event to see if this item should be dropped or not
-                                                        // Some plugins may not want items to be dropped
-                                                        Item drop = player.getWorld().dropItemNaturally(player.getLocation(), i);
-                                                        PlayerDropItemEvent event = new PlayerDropItemEvent(target, drop);
-                                                        plugin.getServer().getPluginManager().callEvent(event);                                                        
-                                                    } catch (Exception e) {
+                                        if (target.getWorld().equals(ASkyBlock.getIslandWorld())) {
+                                            if (!Settings.kickedKeepInv) {
+                                                for (ItemStack i : target.getInventory().getContents()) {
+                                                    if (i != null) {
+                                                        try { 
+                                                            // Fire an event to see if this item should be dropped or not
+                                                            // Some plugins may not want items to be dropped
+                                                            Item drop = player.getWorld().dropItemNaturally(player.getLocation(), i);
+                                                            PlayerDropItemEvent event = new PlayerDropItemEvent(target, drop);
+                                                            plugin.getServer().getPluginManager().callEvent(event);                                                        
+                                                        } catch (Exception e) {
+                                                        }
                                                     }
-                                                }
-                                            }                           
-                                            // plugin.resetPlayer(target); <- no good if
-                                            // reset inventory is false
-                                            // Clear their inventory and equipment and set
-                                            // them as survival
-                                            target.getInventory().clear(); // Javadocs are
-                                            // wrong - this
-                                            // does not
-                                            // clear armor slots! So...
-                                            // plugin.getLogger().info("DEBUG: Clearing kicked player's inventory");
-                                            target.getInventory().setArmorContents(null);
-                                            target.getInventory().setHelmet(null);
-                                            target.getInventory().setChestplate(null);
-                                            target.getInventory().setLeggings(null);
-                                            target.getInventory().setBoots(null);
-                                            target.getEquipment().clear();
+                                                }                           
+                                                // plugin.resetPlayer(target); <- no good if
+                                                // reset inventory is false
+                                                // Clear their inventory and equipment and set
+                                                // them as survival
+                                                target.getInventory().clear(); // Javadocs are
+                                                // wrong - this
+                                                // does not
+                                                // clear armor slots! So...
+                                                // plugin.getLogger().info("DEBUG: Clearing kicked player's inventory");
+                                                target.getInventory().setArmorContents(null);
+                                                target.getInventory().setHelmet(null);
+                                                target.getInventory().setChestplate(null);
+                                                target.getInventory().setLeggings(null);
+                                                target.getInventory().setBoots(null);
+                                                target.getEquipment().clear();
+                                                // Update the inventory
+                                                target.updateInventory();
+                                            }
                                             if (Settings.resetChallenges) {
                                                 // Reset the player's challenge status
                                                 plugin.getPlayers().resetAllChallenges(target.getUniqueId(), false);
@@ -2816,8 +2818,6 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                             plugin.getPlayers().setIslandLevel(target.getUniqueId(), 0);
                                             plugin.getPlayers().save(target.getUniqueId());
                                             TopTen.topTenAddEntry(playerUUID, 0);
-                                            // Update the inventory
-                                            target.updateInventory();
                                         }
                                         if (!target.performCommand(Settings.SPAWNCOMMAND)) {
                                             target.teleport(ASkyBlock.getIslandWorld().getSpawnLocation());
@@ -3256,7 +3256,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.chat")) {
                 options.add("teamchat");
-		options.add("tc");
+                options.add("tc");
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.biomes")) {
                 options.add("biomes");

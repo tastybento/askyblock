@@ -460,6 +460,11 @@ general:
    # plugin may still reset the inventory when the world changes.
    resetinventory: true
 
+   # Allow kicked players to keep their inventory.
+   # If false, kicked player's inventory will be thrown at the island leader if the
+   # kicked player is online and in the island world.
+   kickedkeepinv: false
+
    # Reset Ender Chest - if true, the player's Ender Chest will be cleared when they
    # start or restart their island. Default is false.
    # NOTE: Ender Chests span worlds, so it will clear ALL chests. In general,
