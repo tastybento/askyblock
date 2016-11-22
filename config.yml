@@ -572,7 +572,7 @@ general:
    # log out.
    persistentcoops: false
       
-   # Allow FTB Autonomous Activator to work (will allow player
+   # Allow FTB Autonomous Activator to work (will allow a pseudo player [CoFH] to place and break blocks and hang items)
    autoactivator: false
    
    # Allow obsidian to be scooped up with an empty bucket back into lava
