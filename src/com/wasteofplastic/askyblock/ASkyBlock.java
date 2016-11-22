@@ -53,6 +53,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import com.wasteofplastic.askyblock.Island.Flags;
 import com.wasteofplastic.askyblock.NotSetup.Reason;
 import com.wasteofplastic.askyblock.Settings.GameType;
 import com.wasteofplastic.askyblock.commands.AdminCmd;
@@ -1294,7 +1295,42 @@ public class ASkyBlock extends JavaPlugin {
 		Settings.allowChorusFruit = getConfig().getBoolean("island.allowchorusfruit", false);
 	    Settings.enableJoinAndLeaveIslandMessages = getConfig().getBoolean("island.enablejoinandleaveislandmessages", true);
 	    Settings.allowMobDamageToItemFrames = getConfig().getBoolean("island.allowitemframedamage", false);
-
+	    
+	    // Default settings hashmap
+	    Settings.defaultIslandSettings.clear();
+        Settings.defaultIslandSettings.put(Flags.allowAnvilUse, Settings.allowAnvilUse);
+        Settings.defaultIslandSettings.put(Flags.allowArmorStandUse, Settings.allowArmorStandUse);
+        Settings.defaultIslandSettings.put(Flags.allowBeaconAccess, Settings.allowBeaconAccess);
+        Settings.defaultIslandSettings.put(Flags.allowBedUse, Settings.allowBedUse);
+        Settings.defaultIslandSettings.put(Flags.allowBreakBlocks, Settings.allowBreakBlocks);
+        Settings.defaultIslandSettings.put(Flags.allowBreeding, Settings.allowBreeding);
+        Settings.defaultIslandSettings.put(Flags.allowBrewing, Settings.allowBrewing);
+        Settings.defaultIslandSettings.put(Flags.allowBucketUse, Settings.allowBucketUse);
+        Settings.defaultIslandSettings.put(Flags.allowChestAccess, Settings.allowChestAccess);
+        Settings.defaultIslandSettings.put(Flags.allowCrafting, Settings.allowCrafting);
+        Settings.defaultIslandSettings.put(Flags.allowCropTrample, Settings.allowCropTrample);
+        Settings.defaultIslandSettings.put(Flags.allowDoorUse, Settings.allowDoorUse);
+        Settings.defaultIslandSettings.put(Flags.allowEnchanting, Settings.allowEnchanting);
+        Settings.defaultIslandSettings.put(Flags.allowEnderPearls, Settings.allowEnderPearls);
+        Settings.defaultIslandSettings.put(Flags.allowFurnaceUse, Settings.allowFurnaceUse);
+        Settings.defaultIslandSettings.put(Flags.allowGateUse, Settings.allowGateUse);
+        Settings.defaultIslandSettings.put(Flags.allowHorseInvAccess, Settings.allowHorseInvAccess);
+        Settings.defaultIslandSettings.put(Flags.allowHorseRiding, Settings.allowHorseRiding);
+        Settings.defaultIslandSettings.put(Flags.allowHurtMobs, Settings.allowHurtMobs);
+        Settings.defaultIslandSettings.put(Flags.allowLeashUse, Settings.allowLeashUse);
+        Settings.defaultIslandSettings.put(Flags.allowLeverButtonUse, Settings.allowLeverButtonUse);
+        Settings.defaultIslandSettings.put(Flags.allowMusic, Settings.allowMusic);
+        Settings.defaultIslandSettings.put(Flags.allowPlaceBlocks, Settings.allowPlaceBlocks);
+        Settings.defaultIslandSettings.put(Flags.allowPortalUse, Settings.allowPortalUse);
+        Settings.defaultIslandSettings.put(Flags.allowPressurePlate, Settings.allowPressurePlate);
+        Settings.defaultIslandSettings.put(Flags.allowPvP, Settings.allowPvP);
+        Settings.defaultIslandSettings.put(Flags.allowNetherPvP, Settings.allowNetherPvP);
+        Settings.defaultIslandSettings.put(Flags.allowRedStone, Settings.allowRedStone);
+        Settings.defaultIslandSettings.put(Flags.allowShearing, Settings.allowShearing);
+        Settings.defaultIslandSettings.put(Flags.allowVillagerTrading, Settings.allowVillagerTrading);
+        Settings.defaultIslandSettings.put(Flags.allowChorusFruit, Settings.allowChorusFruit);
+        Settings.defaultIslandSettings.put(Flags.enableJoinAndLeaveIslandMessages, Settings.enableJoinAndLeaveIslandMessages);
+        
 		// Spawn Settings
 		Settings.allowSpawnCreeperPain = getConfig().getBoolean("spawn.allowcreeperpain", false);
 		Settings.allowSpawnHorseRiding = getConfig().getBoolean("spawn.allowhorseriding", false);
