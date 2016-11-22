@@ -90,6 +90,7 @@ public class IslandBlock {
         WEtoM.put("COMPARATOR",Material.REDSTONE_COMPARATOR);
         WEtoM.put("COOKED_PORKCHOP", Material.GRILLED_PORK);
         WEtoM.put("CLOCK", Material.WATCH);
+        WEtoM.put("CRAFTING_TABLE", Material.WORKBENCH);
         WEtoM.put("DIAMOND_HORSE_ARMOR",Material.DIAMOND_BARDING);
         WEtoM.put("DIAMOND_SHOVEL",Material.DIAMOND_SPADE);
         WEtoM.put("DYE",Material.INK_SACK);
