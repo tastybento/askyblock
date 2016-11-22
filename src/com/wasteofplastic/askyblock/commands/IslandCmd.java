@@ -36,6 +36,7 @@ import java.util.TreeMap;
 import java.util.UUID;
 
 import net.milkbowl.vault.economy.EconomyResponse;
+import net.minecraft.server.v1_11_R1.NBTTagCompound;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
@@ -55,6 +56,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.craftbukkit.v1_11_R1.inventory.CraftItemStack;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -1677,6 +1679,14 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                 if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.lang")) {
                     player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " lang <#>: "+ ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandHelpSelectLanguage);
                 }
+                // DEBUG - used to find meta tags
+                /*
+                if (player.getInventory().getItemInMainHand() != null) {
+                    net.minecraft.server.v1_11_R1.ItemStack stack = CraftItemStack.asNMSCopy(player.getInventory().getItemInMainHand());
+                    NBTTagCompound tagCompound = stack.getTag();
+                    Bukkit.getLogger().info("DEBUG: tag = " + tagCompound);
+                }
+                */
                 return true;
             } else if (split[0].equalsIgnoreCase("listcoops")) {
                 if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "coop")) {

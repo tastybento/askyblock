@@ -89,6 +89,7 @@ public class MiniShopItem {
                                     item = new ItemStack(material);
                                     Bukkit.getLogger().severe("Monster eggs not supported with this server version.");
                                 }
+                                ItemMeta meta = item.getItemMeta();
                             }
                         } catch (Exception e) {
                             Bukkit.getLogger().severe("Spawn eggs must be described by name. Try one of these (not all are possible):");                          
@@ -106,75 +107,6 @@ public class MiniShopItem {
                     extra = "POTION:" + extra;
                     String[] extras = extra.split(":");
                     item = Challenges.getPotion(extras, quantity, "minishop.yml");
-                    /*
-                    // plugin.getLogger().info("DEBUG: extra is a potion");
-                    if (Bukkit.getServer().getVersion().contains("(MC: 1.8") || Bukkit.getServer().getVersion().contains("(MC: 1.7")) {
-                        Potion newPotion;
-                        // Get extras - delimiter is colon
-                        String[] extras = extra.split(":");
-                        switch (extras.length) {
-                        case 1:
-                            // Potion, not extended or throw
-                            newPotion = new Potion(PotionType.valueOf(extras[0]));
-                            newPotion.apply(item);
-                            // ASkyBlock.getPlugin().getLogger().info("Potion in shop is :"
-                            // + newPotion.getType().toString());
-                            break;
-                        case 2:
-                            // Extended or splash potions
-                            if (extras[1].equalsIgnoreCase("EXTENDED")) {
-                                newPotion = new Potion(PotionType.valueOf(extras[0])).extend();
-                                // ASkyBlock.getPlugin().getLogger().info("Potion in shop is :"
-                                // + newPotion.getType().toString() +
-                                // " extended duration");
-                                newPotion.apply(item);
-                            } else if (extras[1].equalsIgnoreCase("SPLASH")) {
-                                newPotion = new Potion(PotionType.valueOf(extras[0])).splash();
-                                // ASkyBlock.getPlugin().getLogger().info("Potion in shop is :"
-                                // + newPotion.getType().toString() +
-                                // " splash duration");
-                                newPotion.apply(item);
-                            } else if (extras[1].equalsIgnoreCase("EXTENDEDSPLASH")) {
-                                newPotion = new Potion(PotionType.valueOf(extras[0])).extend().splash();
-                                // ASkyBlock.getPlugin().getLogger().info("Potion in shop is :"
-                                // + newPotion.getType().toString() +
-                                // " extended duration splash");
-                                newPotion.apply(item);
-                            }
-                        }
-                    } else {
-                        // V1.9 Work around code
-                        Potion1_9 newPotion;
-                        // Get extras - delimiter is colon
-                        String[] extras = extra.split(":");
-                        switch (extras.length) {
-                        case 1:
-                            // Potion, not extended or throw
-                            newPotion = new Potion1_9(Potion1_9.PotionType.valueOf(extras[0]));
-                            item = newPotion.toItemStack(quantity);
-                            // ASkyBlock.getPlugin().getLogger().info("Potion in shop is :"
-                            // + newPotion.getType().toString());
-                            break;
-                        case 2:
-                            // Extended or splash potions
-                            if (extras[1].equalsIgnoreCase("EXTENDED")) {
-                                newPotion = new Potion1_9(Potion1_9.PotionType.valueOf(extras[0])).extend();
-                                item = newPotion.toItemStack(quantity);
-                            } else if (extras[1].equalsIgnoreCase("SPLASH")) {
-                                newPotion = new Potion1_9(Potion1_9.PotionType.valueOf(extras[0])).splash();
-                                item = newPotion.toItemStack(quantity);
-                            } else if (extras[1].equalsIgnoreCase("EXTENDEDSPLASH")) {
-                                newPotion = new Potion1_9(Potion1_9.PotionType.valueOf(extras[0])).extend().splash();
-                                item = newPotion.toItemStack(quantity);
-                            } else if (extras[1].equalsIgnoreCase("LINGER")) {
-                                newPotion = new Potion1_9(Potion1_9.PotionType.valueOf(extras[0])).extend().linger();
-                                item = newPotion.toItemStack(quantity);
-                            } else if (extras[1].equalsIgnoreCase("STRONG")) {
-                                newPotion = new Potion1_9(Potion1_9.PotionType.valueOf(extras[0])).extend().strong();
-                                item = newPotion.toItemStack(quantity);
-                            }
-                        }
-                    }*/
                 }
             }
             // Set the description and price
