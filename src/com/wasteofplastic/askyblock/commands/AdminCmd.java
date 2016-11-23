@@ -63,6 +63,7 @@ import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.PlayerCache;
 import com.wasteofplastic.askyblock.SafeSpotTeleport;
 import com.wasteofplastic.askyblock.Settings;
+import com.wasteofplastic.askyblock.Island.Flags;
 import com.wasteofplastic.askyblock.Settings.GameType;
 import com.wasteofplastic.askyblock.TopTen;
 import com.wasteofplastic.askyblock.panels.ControlPanel;
@@ -121,6 +122,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
             sender.sendMessage(ChatColor.YELLOW  + label + " resetname <player>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpResetName);
             sender.sendMessage(ChatColor.YELLOW  + label + " setbiome <leader> <biome>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpsetBiome);
             sender.sendMessage(ChatColor.YELLOW  + label + " setdeaths <player> <number>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpsetDeaths);
+            sender.sendMessage(ChatColor.YELLOW  + label + " settingsreset [help | all | flag]:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpSettingsReset);
             sender.sendMessage(ChatColor.YELLOW  + label + " team add <player> <leader>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpadd);
             sender.sendMessage(ChatColor.YELLOW  + label + " team kick <player>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpkick);
             sender.sendMessage(ChatColor.YELLOW  + label + " topbreeders: " + ChatColor.WHITE + " " + plugin.myLocale().adminHelptopBreeders);
@@ -211,7 +213,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 player.sendMessage(ChatColor.YELLOW + "/" + label + " setrange:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpSetRange);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.settingsreset") || player.isOp()) {
-                player.sendMessage(ChatColor.YELLOW + "/" + label + " settingsreset confirm:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpSettingsReset);
+                player.sendMessage(ChatColor.YELLOW + "/" + label + " settingsreset [help | all | flag]:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpSettingsReset);
             }
             if (Settings.teamChat && VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.spy") || player.isOp()) {
                 player.sendMessage(ChatColor.YELLOW + "/" + label + " spy:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpTeamChatSpy);
@@ -320,7 +322,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 return true;
             } else
                 if (split[0].equalsIgnoreCase("settingsreset")) {
-                    sender.sendMessage(ChatColor.RED + plugin.myLocale().adminHelpSettingsReset);
+                    sender.sendMessage(ChatColor.YELLOW  + label + " settingsreset help");
                     return true;
                 } else 
                     if (Settings.teamChat && split[0].equalsIgnoreCase("spy")) {
@@ -765,7 +767,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 }
             }
             if (split[0].equalsIgnoreCase("settingsreset")) {
-                if (split[1].equalsIgnoreCase("confirm")) {
+                if (split[1].equalsIgnoreCase("all")) {
                     sender.sendMessage(ChatColor.GREEN + plugin.myLocale().settingsResetInProgress);
                     plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
 
@@ -782,7 +784,35 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                         }});
                     return true;
                 } else {
-                    sender.sendMessage(ChatColor.RED + plugin.myLocale().adminHelpSettingsReset);
+                    // Check if there is a flag here
+                    for (Flags flag: Flags.values()) {
+                        if (split[1].equalsIgnoreCase(flag.toString())) {
+                            sender.sendMessage(ChatColor.GREEN + plugin.myLocale().settingsResetInProgress);
+                            final Flags flagToSet = flag;
+                            plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+
+                                @Override
+                                public void run() {
+                                    for (Island island : plugin.getGrid().getOwnedIslands().values()) {
+                                        island.setIgsFlag(flagToSet, Settings.defaultIslandSettings.get(flagToSet));
+                                    }
+                                    for (Island island : plugin.getGrid().getUnownedIslands().values()) {
+                                        island.setIgsFlag(flagToSet, Settings.defaultIslandSettings.get(flagToSet));
+                                    }
+                                    sender.sendMessage(ChatColor.GREEN + plugin.myLocale().settingsResetDone);
+                                    plugin.getGrid().saveGrid();
+                                }});
+                            return true;
+                        }
+                    }
+                    // Show help
+                    sender.sendMessage(ChatColor.YELLOW + "/" + label + " settingsreset [help | all | flag]:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpSettingsReset);
+                    sender.sendMessage(ChatColor.GREEN + "flag options: ");
+                    String commaList = "all";
+                    for (Flags flag: Flags.values()) {
+                        commaList += ", " + flag.toString();
+                    }
+                    sender.sendMessage(commaList);
                     return true;
                 }
             }
@@ -2112,7 +2142,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                         "delete", "completechallenge", "resetchallenge",
                         "resetallchallenges", "purge", "info", "info", "info",
                         "clearreset", "clearresetall", "setbiome", "topbreeders", "team",
-                        "name", "setdeaths",
+                        "name", "setdeaths", "settingsreset",
                         "resetname", "register"));
                 break;
             case 2:
@@ -2147,6 +2177,13 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 if (args[0].equalsIgnoreCase("team")) {
                     options.add("add");
                     options.add("kick");
+                }
+                if (args[0].equalsIgnoreCase("settingsreset")) {
+                    options.add("help");
+                    options.add("all");
+                    for (Flags flag: Flags.values()) {
+                        options.add(flag.toString());
+                    }
                 }
                 break;
             case 3:
