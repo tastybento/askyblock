@@ -84,6 +84,7 @@ public class SettingsPanel implements Listener {
             lookup.put( Material.CHORUS_FRUIT,Flags.allowEnderPearls);
         }
         lookup.put( Material.NOTE_BLOCK,Flags.enableJoinAndLeaveIslandMessages);
+        lookup.put(Material.MOB_SPAWNER, Flags.allowMobSpawning);
     }
 
     public SettingsPanel(ASkyBlock plugin) {
@@ -155,7 +156,7 @@ public class SettingsPanel implements Listener {
             }
             // Place new settings here
             ip.add(new IPItem(Settings.enableJoinAndLeaveIslandMessages, Material.NOTE_BLOCK, plugin.myLocale(uuid).igsJoinLeaveIslandMessage));
-            
+            ip.add(new IPItem(Settings.allowMobSpawning, Material.MOB_SPAWNER, plugin.myLocale(uuid).igsMobSpawning));
         } else if (island.isSpawn()) {
             ip.add(new IPItem(Material.MAP, plugin.myLocale(uuid).igsSettingsSpawnTitle, plugin.myLocale(uuid).igsSettingsSpawnDesc));
             // Spawn settings

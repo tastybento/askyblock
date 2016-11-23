@@ -615,7 +615,7 @@ public class IslandGuard implements Listener {
     }
 
     /**
-     * Prevents mobs spawning at spawn
+     * Prevents mobs spawning at spawn or in an island
      *
      * @param e
      */
@@ -628,39 +628,51 @@ public class IslandGuard implements Listener {
         if (!e.getEntity().getWorld().equals(ASkyBlock.getIslandWorld())) {
             return;
         }
-        // If not at spawn, return, or if grid is not loaded yet.
-        if (plugin.getGrid() == null || !plugin.getGrid().isAtSpawn(e.getLocation())) {
+        // if grid is not loaded yet, return.
+        if (plugin.getGrid() == null) {
             return;
         }
+        
+        // If it is at spawn
+        if(plugin.getGrid().isAtSpawn(e.getLocation())){
+        	// Deal with mobs
+        	if (e.getEntity() instanceof Monster || e.getEntity() instanceof Slime) {
+        		if (e.getSpawnReason() == SpawnReason.SPAWNER_EGG && !Settings.allowSpawnMonsterEggs) {
+        			e.setCancelled(true);
+        			return;
+        		}
+        		if (!Settings.allowSpawnMobSpawn) {
+        			// Mobs not allowed to spawn
+        			e.setCancelled(true);
+        			return;
+        		}
+        	}
 
-        // Deal with mobs
-        if (e.getEntity() instanceof Monster || e.getEntity() instanceof Slime) {
-            if (e.getSpawnReason() == SpawnReason.SPAWNER_EGG && !Settings.allowSpawnMonsterEggs) {
-                e.setCancelled(true);
-                return;
-            }
-            if (!Settings.allowSpawnMobSpawn) {
-                // Mobs not allowed to spawn
-                e.setCancelled(true);
-                return;
-            }
+        	// If animals can spawn, check if the spawning is natural, or
+        	// egg-induced
+        	if (e.getEntity() instanceof Animals) {
+        		if (e.getSpawnReason() == SpawnReason.SPAWNER_EGG && !Settings.allowSpawnMonsterEggs) {
+        			e.setCancelled(true);
+        			return;
+        		}
+        		if (e.getSpawnReason() == SpawnReason.EGG && !Settings.allowSpawnEggs) {
+        			e.setCancelled(true);
+        		}
+        		if (!Settings.allowSpawnAnimalSpawn) {
+        			// Animals are not allowed to spawn
+        			e.setCancelled(true);
+        			return;
+        		}
+        	}
         }
-
-        // If animals can spawn, check if the spawning is natural, or
-        // egg-induced
-        if (e.getEntity() instanceof Animals) {
-            if (e.getSpawnReason() == SpawnReason.SPAWNER_EGG && !Settings.allowSpawnMonsterEggs) {
-                e.setCancelled(true);
-                return;
-            }
-            if (e.getSpawnReason() == SpawnReason.EGG && !Settings.allowSpawnEggs) {
-                e.setCancelled(true);
-            }
-            if (!Settings.allowSpawnAnimalSpawn) {
-                // Animals are not allowed to spawn
-                e.setCancelled(true);
-                return;
-            }
+        // Else, is on island
+        else{
+        	if(e.getEntity() instanceof Monster || e.getEntity() instanceof Slime){
+        		if(!plugin.getGrid().getIslandAt(e.getLocation()).getIgsFlag(Flags.allowMobSpawning)){
+        			e.setCancelled(true);
+        			return;
+        		}
+        	}
         }
     }
 
