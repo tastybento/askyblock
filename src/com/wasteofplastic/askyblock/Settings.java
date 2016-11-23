@@ -113,6 +113,7 @@ public class Settings {
     public static boolean allowVillagerTrading;
     public static boolean allowChorusFruit;
     public static boolean enableJoinAndLeaveIslandMessages;
+    public static boolean allowMobSpawning;
 
     // System settings
     public static boolean allowChestDamage;
