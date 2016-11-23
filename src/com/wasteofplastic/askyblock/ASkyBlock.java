@@ -1296,6 +1296,7 @@ public class ASkyBlock extends JavaPlugin {
 		Settings.allowChorusFruit = getConfig().getBoolean("island.allowchorusfruit", false);
 	    Settings.enableJoinAndLeaveIslandMessages = getConfig().getBoolean("island.enablejoinandleaveislandmessages", true);
 	    Settings.allowMobDamageToItemFrames = getConfig().getBoolean("island.allowitemframedamage", false);
+	    Settings.allowMobSpawning = getConfig().getBoolean("island.allowmobspawning", true);
 	    
 	    // Default settings hashmap
 	    Settings.defaultIslandSettings.clear();
@@ -1331,6 +1332,7 @@ public class ASkyBlock extends JavaPlugin {
         Settings.defaultIslandSettings.put(Flags.allowVillagerTrading, Settings.allowVillagerTrading);
         Settings.defaultIslandSettings.put(Flags.allowChorusFruit, Settings.allowChorusFruit);
         Settings.defaultIslandSettings.put(Flags.enableJoinAndLeaveIslandMessages, Settings.enableJoinAndLeaveIslandMessages);
+        Settings.defaultIslandSettings.put(Flags.allowMobSpawning, Settings.allowMobSpawning);
         
 		// Spawn Settings
 		Settings.allowSpawnCreeperPain = getConfig().getBoolean("spawn.allowcreeperpain", false);

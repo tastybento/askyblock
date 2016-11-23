@@ -502,7 +502,8 @@ public class ASLocale {
     public String igsVillagerTrading;
     public String igsChorusFruit;
     public String igsJoinLeaveIslandMessage;
-
+    public String igsMobSpawning;
+    
     public String setHomeerrorNumHomes;
     public String schematicsTitle;
     public String islandhelpBan;
@@ -824,6 +825,7 @@ public class ASLocale {
         igsVillagerTrading = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.villagertrading", "Villager trading"));
         igsChorusFruit = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.chorusfruit", "Chorus Fruit Use"));
         igsJoinLeaveIslandMessage = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.joinleaveislandmessages", "Enable Join & Leave Island Messages"));
+        igsMobSpawning = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.mobspawning", "Allow/Disallow Mob Spawning"));
         
         lavaTip = ChatColor.translateAlternateColorCodes('&', locale.getString("lavaTip", "Changing obsidian back into lava. Be careful!"));
         warpswelcomeLine = ChatColor.translateAlternateColorCodes('&', locale.getString("warps.welcomeLine", "[WELCOME]"));
