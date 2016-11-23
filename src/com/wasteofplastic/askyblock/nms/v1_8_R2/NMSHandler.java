@@ -28,7 +28,6 @@ import net.minecraft.server.v1_8_R2.NBTTagList;
 import net.minecraft.server.v1_8_R2.NBTTagString;
 import net.minecraft.server.v1_8_R2.TileEntityFlowerPot;
 
-import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -129,9 +128,6 @@ public class NMSHandler implements NMSAbstraction {
         net.minecraft.server.v1_8_R2.ItemStack cis = CraftItemStack.asNMSCopy(itemStack);
         te.a(cis.getItem(), cis.getData());
         te.update();
-        cw.getHandle().notify(bp);
-        Chunk ch = loc.getChunk();
-        cw.refreshChunk(ch.getX(), ch.getZ());  
     }
 
     @Override

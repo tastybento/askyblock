@@ -40,9 +40,11 @@ public class LavaCheck implements Listener {
 	BukkitTask task;
 	private final ASkyBlock plugin;
 	private final static boolean DEBUG = false;
+	private final Random random;
 
 	public LavaCheck(ASkyBlock aSkyBlock) {
 		plugin = aSkyBlock;
+		random = new Random();
 	}
 
 	/**
@@ -106,7 +108,6 @@ public class LavaCheck implements Listener {
 				Material change = null;
 				if(!Settings.magicCobbleGenChances.isEmpty()){
 					for(Entry<Material, Double> entry : Settings.magicCobbleGenChances.entrySet()){
-						Random random = new Random();
 					    double d = random.nextDouble() * 100.0D;
 						if(d - entry.getValue() < 0.0D) change = entry.getKey();
 					}

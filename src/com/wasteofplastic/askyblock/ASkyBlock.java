@@ -858,6 +858,8 @@ public class ASkyBlock extends JavaPlugin {
         // Use economy or not
         // In future expand to include internal economy
         Settings.useEconomy = getConfig().getBoolean("general.useeconomy", true);
+        // Use the minishop or not
+        Settings.useMinishop = getConfig().getBoolean("general.useminishop", true);
         // Check for updates
         Settings.updateCheck = getConfig().getBoolean("general.checkupdates", true);
         // Island reset commands
@@ -1272,6 +1274,7 @@ public class ASkyBlock extends JavaPlugin {
 		Settings.allowBreeding = getConfig().getBoolean("island.allowbreeding", false);
 		Settings.allowFire = getConfig().getBoolean("island.allowfire", false);
 		Settings.allowFireSpread = getConfig().getBoolean("island.allowfirespread", false);
+		Settings.allowFireExtinguish = getConfig().getBoolean("island.allowfireextinguish", false);
 		Settings.allowChestDamage = getConfig().getBoolean("island.allowchestdamage", false);
 		Settings.allowLeashUse = getConfig().getBoolean("island.allowleashuse", false);
 		Settings.allowHurtMonsters = getConfig().getBoolean("island.allowhurtmonsters", true);
@@ -1290,6 +1293,7 @@ public class ASkyBlock extends JavaPlugin {
 		Settings.allowVillagerTrading = getConfig().getBoolean("island.allowvillagertrading", true);
 		Settings.allowChorusFruit = getConfig().getBoolean("island.allowchorusfruit", false);
 	    Settings.enableJoinAndLeaveIslandMessages = getConfig().getBoolean("island.enablejoinandleaveislandmessages", true);
+	    Settings.allowMobDamageToItemFrames = getConfig().getBoolean("island.allowitemframedamage", false);
 
 		// Spawn Settings
 		Settings.allowSpawnCreeperPain = getConfig().getBoolean("spawn.allowcreeperpain", false);
@@ -1331,6 +1335,7 @@ public class ASkyBlock extends JavaPlugin {
 		Settings.allowSpawnLeashUse = getConfig().getBoolean("spawn.allowleashuse",false);
 		Settings.allowSpawnVillagerTrading = getConfig().getBoolean("spawn.allowvillagertrading", false);
 		Settings.allowSpawnChorusFruit = getConfig().getBoolean("spawn.allowchorusfruit", false);
+		Settings.allowSpawnFireExtinguish = getConfig().getBoolean("spawn.allowfireextinguish", false);
 
         // Challenges
         getChallenges();

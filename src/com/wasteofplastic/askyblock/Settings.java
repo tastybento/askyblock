@@ -225,6 +225,9 @@ public class Settings {
 
     // Use Economy
     public static boolean useEconomy;
+    
+    // Use Minishop
+    public static boolean useMinishop;
 
     // Wait between being invited to same team island
     public static int inviteWait;
@@ -306,4 +309,7 @@ public class Settings {
     public static String chatChallengeLevelPrefix;
     public static String chatIslandPlayer;
     public static boolean allowObsidianScooping;
+    public static boolean allowFireExtinguish;
+    public static boolean allowSpawnFireExtinguish;
+    public static boolean allowMobDamageToItemFrames;
 }
