@@ -337,7 +337,7 @@ general:
    # Ops receive damage from acid (Set to true if you want Ops to play properly)
    damageops: false
    
-   # Invicible visitors - Prevent players from killing them (intentionally or by accident)
+   # Invincible visitors - Prevent players from killing them (intentionally or by accident)
    # If they fall to the void, they get TP'd to their island.
    invinciblevisitors: false
 
