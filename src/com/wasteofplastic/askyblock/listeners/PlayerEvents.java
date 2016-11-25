@@ -615,12 +615,12 @@ public class PlayerEvents implements Listener {
     }
 
     /**
-     * Prevents visitors from getting damage if inviciblevisitors option is set to TRUE
+     * Prevents visitors from getting damage if invinciblevisitors option is set to TRUE
      * @param e
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
     public void onVisitorGetDamage(EntityDamageEvent e){
-    	if(!Settings.invicibleVisitors) return;
+    	if(!Settings.invincibleVisitors) return;
     	if(!(e.getEntity() instanceof Player)) return;
     	
     	Player p = (Player) e.getEntity();
