@@ -1129,6 +1129,7 @@ public class ASkyBlock extends JavaPlugin {
             Settings.resetConfirmWait = 0;
         }
         Settings.damageOps = getConfig().getBoolean("general.damageops", false);
+        Settings.invicibleVisitors = getConfig().getBoolean("general.inviciblevisitors", false);
         // Settings.ultraSafeBoats =
         // getConfig().getBoolean("general.ultrasafeboats", true);
         Settings.logInRemoveMobs = getConfig().getBoolean("general.loginremovemobs", true);

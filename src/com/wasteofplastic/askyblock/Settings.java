@@ -143,6 +143,7 @@ public class Settings {
     public static List<PotionEffectType> acidDamageType = new ArrayList<PotionEffectType>();
     public static boolean resetMoney;
     public static boolean damageOps;
+    public static boolean invicibleVisitors;
     public static boolean endermanDeathDrop;
 
     // public static boolean ultraSafeBoats;

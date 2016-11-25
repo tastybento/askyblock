@@ -336,6 +336,10 @@ general:
 
    # Ops receive damage from acid (Set to true if you want Ops to play properly)
    damageops: false
+   
+   # Invicible visitors - Prevent players from killing them (intentionally or by accident)
+   # If they fall to the void, they get TP'd to spawn.
+   inviciblevisitors: false
 
    # Acid damage to player per second by being in acid if they have no armor on.
    # A fully health player has 20 health points. Players will regen some health
