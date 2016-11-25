@@ -338,7 +338,7 @@ general:
    damageops: false
    
    # Invicible visitors - Prevent players from killing them (intentionally or by accident)
-   # If they fall to the void, they get TP'd to spawn.
+   # If they fall to the void, they get TP'd to their island.
    inviciblevisitors: false
 
    # Acid damage to player per second by being in acid if they have no armor on.
