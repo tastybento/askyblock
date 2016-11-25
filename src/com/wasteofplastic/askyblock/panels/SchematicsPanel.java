@@ -136,14 +136,18 @@ public class SchematicsPanel implements Listener {
             // Get the item clicked
             SPItem item = thisPanel.get(slot);
             // Check cost
-            if (Settings.useEconomy && VaultHelper.setupEconomy() && !VaultHelper.econ.has(player, item.getCost())) {
-                // Too expensive
-                player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).minishopYouCannotAfford.replace("[description]", item.getName()));        
+            if (item.getCost() > 0) {
+                if (Settings.useEconomy && VaultHelper.setupEconomy() && !VaultHelper.econ.has(player, item.getCost())) {
+                    // Too expensive
+                    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).minishopYouCannotAfford.replace("[description]", item.getName()));        
+                } else {
+                    // Do something
+                    if (Settings.useEconomy && VaultHelper.setupEconomy()) {
+                        VaultHelper.econ.withdrawPlayer(player, item.getCost());                   
+                    } 
+                    player.performCommand(Settings.ISLANDCOMMAND + " make " + item.getHeading());
+                }
             } else {
-                // Do something
-                if (Settings.useEconomy && VaultHelper.setupEconomy()) {
-                    VaultHelper.econ.withdrawPlayer(player, item.getCost());                   
-                } 
                 player.performCommand(Settings.ISLANDCOMMAND + " make " + item.getHeading());
             }
             schematicItems.remove(player.getUniqueId());

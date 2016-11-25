@@ -62,10 +62,6 @@ public class TopTen implements Listener{
 
     public TopTen(ASkyBlock plugin) {
         TopTen.plugin = plugin;
-        // Create the top ten GUI if it is to be used
-        if (!Settings.displayIslandTopTenInChat) {
-            gui = Bukkit.createInventory(null, GUISIZE, plugin.myLocale().topTenGuiTitle);
-        }
     }
 
     /**
@@ -298,6 +294,10 @@ public class TopTen implements Listener{
             // New GUI display (shown by default)
             if (topTenList == null) topTenCreate();
             topTenList = MapUtil.sortByValue(topTenList);
+            // Create the top ten GUI if it does not exist
+            if (gui == null) {
+                gui = Bukkit.createInventory(null, GUISIZE, plugin.myLocale().topTenGuiTitle);
+            }
             // Reset
             gui.clear();
             int i = 1;
