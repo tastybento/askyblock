@@ -626,9 +626,33 @@ public class PlayerEvents implements Listener {
     	Player p = (Player) e.getEntity();
         if (!IslandGuard.inWorld(p) || plugin.getGrid().locationIsOnIsland(p, p.getLocation())) return;
         
-        if(e.getCause().equals(DamageCause.VOID)){
+        if(e.getCause().equals(DamageCause.BLOCK_EXPLOSION) && Settings.invincibleVisitors_BLOCK_EXPLOSION) e.setCancelled(true);
+        else if(e.getCause().equals(DamageCause.CONTACT) && Settings.invincibleVisitors_CONTACT) e.setCancelled(true);
+        else if(e.getCause().equals(DamageCause.CRAMMING) && Settings.invincibleVisitors_CRAMMING) e.setCancelled(true);
+        else if(e.getCause().equals(DamageCause.CUSTOM) && Settings.invincibleVisitors_CUSTOM) e.setCancelled(true);
+        else if(e.getCause().equals(DamageCause.DRAGON_BREATH) && Settings.invincibleVisitors_DRAGON_BREATH) e.setCancelled(true);
+        else if(e.getCause().equals(DamageCause.DROWNING) && Settings.invincibleVisitors_DROWNING) e.setCancelled(true);
+        else if(e.getCause().equals(DamageCause.ENTITY_ATTACK) && Settings.invincibleVisitors_ENTITY_ATTACK) e.setCancelled(true);
+        else if(e.getCause().equals(DamageCause.ENTITY_EXPLOSION) && Settings.invincibleVisitors_ENTITY_EXPLOSION) e.setCancelled(true);
+        else if(e.getCause().equals(DamageCause.FALL) && Settings.invincibleVisitors_FALL) e.setCancelled(true);
+        else if(e.getCause().equals(DamageCause.FALLING_BLOCK) && Settings.invincibleVisitors_FALLING_BLOCK) e.setCancelled(true);
+        else if(e.getCause().equals(DamageCause.FIRE) && Settings.invincibleVisitors_FIRE) e.setCancelled(true);
+        else if(e.getCause().equals(DamageCause.FIRE_TICK) && Settings.invincibleVisitors_FIRE_TICK) e.setCancelled(true);
+        else if(e.getCause().equals(DamageCause.FLY_INTO_WALL) && Settings.invincibleVisitors_FLY_INTO_WALL) e.setCancelled(true);
+        else if(e.getCause().equals(DamageCause.HOT_FLOOR) && Settings.invincibleVisitors_HOT_FLOOR) e.setCancelled(true);
+        else if(e.getCause().equals(DamageCause.LAVA) && Settings.invincibleVisitors_LAVA) e.setCancelled(true);
+        else if(e.getCause().equals(DamageCause.LIGHTNING) && Settings.invincibleVisitors_LIGHTNING) e.setCancelled(true);
+        else if(e.getCause().equals(DamageCause.MAGIC) && Settings.invincibleVisitors_MAGIC) e.setCancelled(true);
+        else if(e.getCause().equals(DamageCause.POISON) && Settings.invincibleVisitors_POISON) e.setCancelled(true);
+        else if(e.getCause().equals(DamageCause.PROJECTILE) && Settings.invincibleVisitors_PROJECTILE) e.setCancelled(true);
+        else if(e.getCause().equals(DamageCause.STARVATION) && Settings.invincibleVisitors_STARVATION) e.setCancelled(true);
+        else if(e.getCause().equals(DamageCause.SUFFOCATION) && Settings.invincibleVisitors_SUFFOCATION) e.setCancelled(true);
+        else if(e.getCause().equals(DamageCause.THORNS) && Settings.invincibleVisitors_THORNS) e.setCancelled(true);
+        else if(e.getCause().equals(DamageCause.WITHER) && Settings.invincibleVisitors_WITHER) e.setCancelled(true);
+
+        else if(e.getCause().equals(DamageCause.VOID)){
         	p.teleport(plugin.getGrid().getSafeHomeLocation(p.getUniqueId(), 1));
+        	e.setCancelled(true);
         }
-        e.setCancelled(true);
     }
 }
