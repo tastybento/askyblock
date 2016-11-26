@@ -1135,7 +1135,7 @@ public class ASkyBlock extends JavaPlugin {
         Settings.invincibleVisitors = getConfig().getBoolean("general.invinciblevisitors", false);
         if(Settings.invincibleVisitors){
         	Settings.visitorDamagePrevention = new HashSet<DamageCause>();
-        	List<String> damageSettings = getConfig().getStringList("general.invinciblevisitoroptions");
+        	List<String> damageSettings = getConfig().getStringList("general.invinciblevisitorsoptions");
         	for (DamageCause cause: DamageCause.values()) {
         		if (damageSettings.contains(cause.toString())) {
         			Settings.visitorDamagePrevention.add(cause);
