@@ -41,6 +41,7 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.util.Vector;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.InventorySave;
@@ -620,18 +621,26 @@ public class PlayerEvents implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
     public void onVisitorGetDamage(EntityDamageEvent e){
-    	if(!Settings.invincibleVisitors) return;
-    	if(!(e.getEntity() instanceof Player)) return;
-    	
-    	Player p = (Player) e.getEntity();
+        if(!Settings.invincibleVisitors) return;
+        if(!(e.getEntity() instanceof Player)) return;
+
+        Player p = (Player) e.getEntity();
         if (!IslandGuard.inWorld(p) || plugin.getGrid().locationIsOnIsland(p, p.getLocation())) return;
-        
+
         if (Settings.visitorDamagePrevention.contains(e.getCause())) e.setCancelled(true);
-        
+
         else if(e.getCause().equals(DamageCause.VOID)){
-        	if(plugin.getPlayers().hasIsland(p.getUniqueId())) p.teleport(plugin.getGrid().getSafeHomeLocation(p.getUniqueId(), 1));
-        	else p.performCommand("spawn");
-        	e.setCancelled(true);
+            if(plugin.getPlayers().hasIsland(p.getUniqueId())) {
+                p.teleport(plugin.getGrid().getSafeHomeLocation(p.getUniqueId(), 1));
+                // Set their fall distance to zero otherwise they crash onto their island and die
+                p.setFallDistance(0);
+            } else {
+                if (!p.performCommand("spawn")) {
+                    // If this command doesn't work, let them die otherwise they may get trapped in the void forever
+                    return;
+                }
+            }
+            e.setCancelled(true);
         }
     }
 }
