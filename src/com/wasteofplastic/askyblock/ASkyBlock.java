@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -42,6 +43,7 @@ import org.bukkit.entity.Guardian;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
@@ -1132,28 +1134,13 @@ public class ASkyBlock extends JavaPlugin {
         // Invincible visitors
         Settings.invincibleVisitors = getConfig().getBoolean("general.invinciblevisitors", false);
         if(Settings.invincibleVisitors){
-        	Settings.invincibleVisitors_BLOCK_EXPLOSION = getConfig().getBoolean("general.invinciblevisitorsoptions.BLOCK_EXPLOSION", true);
-        	Settings.invincibleVisitors_CONTACT = getConfig().getBoolean("general.invinciblevisitorsoptions.CONTACT", true);
-        	Settings.invincibleVisitors_CRAMMING = getConfig().getBoolean("general.invinciblevisitorsoptions.CRAMMING", true);
-        	Settings.invincibleVisitors_DRAGON_BREATH = getConfig().getBoolean("general.invinciblevisitorsoptions.DRAGON_BREATH", true);
-        	Settings.invincibleVisitors_DROWNING = getConfig().getBoolean("general.invinciblevisitorsoptions.DROWNING", true);
-        	Settings.invincibleVisitors_ENTITY_ATTACK = getConfig().getBoolean("general.invinciblevisitorsoptions.ENTITY_ATTACK", true);
-        	Settings.invincibleVisitors_ENTITY_EXPLOSION = getConfig().getBoolean("general.invinciblevisitorsoptions.ENTITY_EXPLOSION", true);
-        	Settings.invincibleVisitors_FALL = getConfig().getBoolean("general.invinciblevisitorsoptions.FALL", true);
-        	Settings.invincibleVisitors_FALLING_BLOCK = getConfig().getBoolean("general.invinciblevisitorsoptions.FALLING_BLOCK", true);
-        	Settings.invincibleVisitors_FIRE = getConfig().getBoolean("general.invinciblevisitorsoptions.FIRE", true);
-        	Settings.invincibleVisitors_FIRE_TICK = getConfig().getBoolean("general.invinciblevisitorsoptions.FIRE_TICK", true);
-        	Settings.invincibleVisitors_FLY_INTO_WALL = getConfig().getBoolean("general.invinciblevisitorsoptions.FLY_INTO_WALL", true);
-        	Settings.invincibleVisitors_HOT_FLOOR = getConfig().getBoolean("general.invinciblevisitorsoptions.HOT_FLOOR", true);
-        	Settings.invincibleVisitors_LAVA = getConfig().getBoolean("general.invinciblevisitorsoptions.LAVA", true);
-        	Settings.invincibleVisitors_LIGHTNING = getConfig().getBoolean("general.invinciblevisitorsoptions.LIGHTNING", true);
-        	Settings.invincibleVisitors_MAGIC = getConfig().getBoolean("general.invinciblevisitorsoptions.MAGIC", true);
-        	Settings.invincibleVisitors_POISON = getConfig().getBoolean("general.invinciblevisitorsoptions.POISON", true);
-        	Settings.invincibleVisitors_PROJECTILE = getConfig().getBoolean("general.invinciblevisitorsoptions.PROJECTILE", true);
-        	Settings.invincibleVisitors_STARVATION = getConfig().getBoolean("general.invinciblevisitorsoptions.STARVATION", true);
-        	Settings.invincibleVisitors_SUFFOCATION = getConfig().getBoolean("general.invinciblevisitorsoptions.SUFFOCATION", true);
-        	Settings.invincibleVisitors_THORNS = getConfig().getBoolean("general.invinciblevisitorsoptions.THORNS", true);
-        	Settings.invincibleVisitors_WITHER = getConfig().getBoolean("general.invinciblevisitorsoptions.WITHER", true);
+        	Settings.visitorDamagePrevention = new HashSet<DamageCause>();
+        	List<String> damageSettings = getConfig().getStringList("general.invinciblevisitoroptions");
+        	for (DamageCause cause: DamageCause.values()) {
+        		if (damageSettings.contains(cause.toString())) {
+        			Settings.visitorDamagePrevention.add(cause);
+        		}
+        	}
         }
         
         // Settings.ultraSafeBoats =

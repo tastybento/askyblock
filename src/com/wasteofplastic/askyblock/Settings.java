@@ -18,12 +18,14 @@ package com.wasteofplastic.askyblock;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.EntityType;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 import org.bukkit.potion.PotionEffectType;
@@ -147,29 +149,7 @@ public class Settings {
     
     // Invincible visitor
     public static boolean invincibleVisitors;
-    public static boolean invincibleVisitors_BLOCK_EXPLOSION;
-    public static boolean invincibleVisitors_CONTACT;
-    public static boolean invincibleVisitors_CRAMMING;
-    public static boolean invincibleVisitors_CUSTOM;
-    public static boolean invincibleVisitors_DRAGON_BREATH;
-    public static boolean invincibleVisitors_DROWNING;
-    public static boolean invincibleVisitors_ENTITY_ATTACK;
-    public static boolean invincibleVisitors_ENTITY_EXPLOSION;
-    public static boolean invincibleVisitors_FALL;
-    public static boolean invincibleVisitors_FALLING_BLOCK;
-    public static boolean invincibleVisitors_FIRE;
-    public static boolean invincibleVisitors_FIRE_TICK;
-    public static boolean invincibleVisitors_FLY_INTO_WALL;
-    public static boolean invincibleVisitors_HOT_FLOOR;
-    public static boolean invincibleVisitors_LAVA;
-    public static boolean invincibleVisitors_LIGHTNING;
-    public static boolean invincibleVisitors_MAGIC;
-    public static boolean invincibleVisitors_POISON;
-    public static boolean invincibleVisitors_PROJECTILE;
-    public static boolean invincibleVisitors_STARVATION;
-    public static boolean invincibleVisitors_SUFFOCATION;
-    public static boolean invincibleVisitors_THORNS;
-    public static boolean invincibleVisitors_WITHER;
+    public static HashSet<DamageCause> visitorDamagePrevention;
 
     // public static boolean ultraSafeBoats;
     public static boolean logInRemoveMobs;

@@ -343,35 +343,34 @@ general:
    
    # Only used if invinciblevisitors is set to TRUE
    # This allow you to customize what kind of damage visitors should not receive
-   # Everything is set to true by default.
    # See this for more info about options : https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/event/entity/EntityDamageEvent.DamageCause.html
    invinciblevisitorsoptions:
-     BLOCK_EXPLOSION: true
-     CONTACT: true
-     CUSTOM: true
-     DROWNING: true
-     ENTITY_ATTACK: true
-     ENTITY_EXPLOSION: true
-     FALL: true
-     FALLING_BLOCK: true
-     FIRE: true
-     FIRE_TICK: true
-     LAVA: true
-     LIGHTNING: true
-     MAGIC: true
-     POISON: true
-     PROJECTILE: true
-     STARVATION: true
-     SUFFOCATION: true
-     THORNS: true
-     WITHER: true
-     # 1.9+ only
-     DRAGON_BREATH: true
-     FLY_INTO_WALL: true
-     # 1.10+ only
-     HOT_FLOOR: true
-     # 1.11+ only
-     CRAMMING: true
+   - BLOCK_EXPLOSION
+   - CONTACT
+   - CUSTOM
+   - DROWNING
+   - ENTITY_ATTACK
+   - ENTITY_EXPLOSION
+   - FALL
+   - FALLING_BLOCK
+   - FIRE
+   - FIRE_TICK
+   - LAVA
+   - LIGHTNING
+   - MAGIC
+   - POISON
+   - PROJECTILE
+   - STARVATION
+   - SUFFOCATION
+   - THORNS
+   - WITHER
+   # 1.9+ only
+   - DRAGON_BREATH
+   - FLY_INTO_WALL
+   # 1.10+ only
+   - HOT_FLOOR
+   # 1.11+ only
+   - CRAMMING
 
    # Acid damage to player per second by being in acid if they have no armor on.
    # A fully health player has 20 health points. Players will regen some health
