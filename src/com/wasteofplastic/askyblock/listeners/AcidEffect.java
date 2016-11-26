@@ -201,8 +201,6 @@ public class AcidEffect implements Listener {
                                             double health = player.getHealth() - (Settings.rainDamage - Settings.rainDamage * getDamageReduced(player));
                                             if (health < 0D) {
                                                 health = 0D;
-                                            } else if (health > 20D) {
-                                                health = 20D;
                                             }
                                             player.setHealth(health);
                                             if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
@@ -332,8 +330,6 @@ public class AcidEffect implements Listener {
                             double health = player.getHealth() - (Settings.acidDamage - Settings.acidDamage * getDamageReduced(player));
                             if (health < 0D) {
                                 health = 0D;
-                            } else if (health > 20D) {
-                                health = 20D;
                             }
                             player.setHealth(health);
                             if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
