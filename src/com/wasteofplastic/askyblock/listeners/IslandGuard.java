@@ -1843,7 +1843,23 @@ public class IslandGuard implements Listener {
                     }
                 }
             }
-
+            // Handle Shulker Boxes
+            if (e.getClickedBlock().getType().toString().contains("BOX")) {
+                if (island == null) {
+                    if (Settings.allowChestAccess) {
+                        return;
+                    } else {
+                        e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
+                        e.setCancelled(true);
+                        return;
+                    }
+                }
+                if ((island.isSpawn() && !Settings.allowSpawnChestAccess) || (!island.isSpawn() && !island.getIgsFlag(Flags.allowChestAccess))) {
+                    e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
+                    e.setCancelled(true);
+                    return;
+                }  
+            }
             switch (e.getClickedBlock().getType()) {
             case WOODEN_DOOR:
             case SPRUCE_DOOR:
