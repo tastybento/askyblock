@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -42,6 +43,7 @@ import org.bukkit.entity.Guardian;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
@@ -1129,6 +1131,18 @@ public class ASkyBlock extends JavaPlugin {
             Settings.resetConfirmWait = 0;
         }
         Settings.damageOps = getConfig().getBoolean("general.damageops", false);
+        // Invincible visitors
+        Settings.invincibleVisitors = getConfig().getBoolean("general.invinciblevisitors", false);
+        if(Settings.invincibleVisitors){
+        	Settings.visitorDamagePrevention = new HashSet<DamageCause>();
+        	List<String> damageSettings = getConfig().getStringList("general.invinciblevisitoroptions");
+        	for (DamageCause cause: DamageCause.values()) {
+        		if (damageSettings.contains(cause.toString())) {
+        			Settings.visitorDamagePrevention.add(cause);
+        		}
+        	}
+        }
+        
         // Settings.ultraSafeBoats =
         // getConfig().getBoolean("general.ultrasafeboats", true);
         Settings.logInRemoveMobs = getConfig().getBoolean("general.loginremovemobs", true);

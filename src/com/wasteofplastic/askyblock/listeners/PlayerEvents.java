@@ -30,6 +30,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
@@ -612,4 +614,24 @@ public class PlayerEvents implements Listener {
         }
     }
 
+    /**
+     * Prevents visitors from getting damage if invinciblevisitors option is set to TRUE
+     * @param e
+     */
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
+    public void onVisitorGetDamage(EntityDamageEvent e){
+    	if(!Settings.invincibleVisitors) return;
+    	if(!(e.getEntity() instanceof Player)) return;
+    	
+    	Player p = (Player) e.getEntity();
+        if (!IslandGuard.inWorld(p) || plugin.getGrid().locationIsOnIsland(p, p.getLocation())) return;
+        
+        if (Settings.visitorDamagePrevention.contains(e.getCause())) e.setCancelled(true);
+        
+        else if(e.getCause().equals(DamageCause.VOID)){
+        	if(plugin.getPlayers().hasIsland(p.getUniqueId())) p.teleport(plugin.getGrid().getSafeHomeLocation(p.getUniqueId(), 1));
+        	else p.performCommand("spawn");
+        	e.setCancelled(true);
+        }
+    }
 }

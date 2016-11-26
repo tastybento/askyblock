@@ -336,6 +336,41 @@ general:
 
    # Ops receive damage from acid (Set to true if you want Ops to play properly)
    damageops: false
+   
+   # Invincible visitors - Prevent players from killing them (intentionally or by accident)
+   # If they fall to the void, they get TP'd to their island.
+   invinciblevisitors: false
+   
+   # Only used if invinciblevisitors is set to TRUE
+   # This allow you to customize what kind of damage visitors should not receive
+   # See this for more info about options : https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/event/entity/EntityDamageEvent.DamageCause.html
+   invinciblevisitorsoptions:
+   - BLOCK_EXPLOSION
+   - CONTACT
+   - CUSTOM
+   - DROWNING
+   - ENTITY_ATTACK
+   - ENTITY_EXPLOSION
+   - FALL
+   - FALLING_BLOCK
+   - FIRE
+   - FIRE_TICK
+   - LAVA
+   - LIGHTNING
+   - MAGIC
+   - POISON
+   - PROJECTILE
+   - STARVATION
+   - SUFFOCATION
+   - THORNS
+   - WITHER
+   # 1.9+ only
+   - DRAGON_BREATH
+   - FLY_INTO_WALL
+   # 1.10+ only
+   - HOT_FLOOR
+   # 1.11+ only
+   - CRAMMING
 
    # Acid damage to player per second by being in acid if they have no armor on.
    # A fully health player has 20 health points. Players will regen some health
