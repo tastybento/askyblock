@@ -190,6 +190,10 @@ island:
    # Allow mobs to spawn on player's island
    allowmobspawning: true
    
+   # How many seconds will the player keeps his flymode while flying outside his island?
+   # Negative value will be considered as 0.
+   flytimeoutside: 0
+   
    # System settings - these cannot be changed by players, only viewed
    
    # Allow monsters to be hurt (creepers,slimes, etc.)
