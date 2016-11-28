@@ -219,6 +219,7 @@ error:
   unknownPlayer: "That player is unknown."
   useInGame: "This command must be used in-game."
   wrongWorld: "You cannot do that in this world."
+  minishopDisabled: "Minishop is disabled."
 expel: 
   expelled: "You were expelled from that island!"
   fail: "[name] cannot be expelled!"
@@ -481,6 +482,7 @@ warps:
   errorNoWarpsYet: "There are no warps available yet!"
   errorNotReadyYet: "That warp is not ready yet. Try again later."
   errorNotSafe: "That warp is not safe right now. Try again later."
+  errorNotEnoughLevel: "You do not have enough island levels to create a Welcome Sign!"
   next: "Next"
   playerWarped: "[name] &2warped to your island!"
   previous: "Previous"
