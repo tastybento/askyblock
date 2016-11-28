@@ -603,13 +603,24 @@ general:
    
    # This won't be considered if usemagiccobblegen is set to false.
    # You can add, remove a block or modify its probability to be generated.
+   # You can also set different probabilities from specified minimum levels
    magiccobblegenchances:
-     COBBLESTONE: 75.0
-     STONE: 10.0
-     COAL_ORE: 7.5
-     IRON_ORE: 5.0
-     DIAMOND_ORE: 2.0
-     EMERALD_ORE: 0.5
+     # These probabilities will apply by default
+     -1:
+       COBBLESTONE: 75.0
+       STONE: 10.0
+       COAL_ORE: 7.5
+       IRON_ORE: 5.0
+       DIAMOND_ORE: 2.0
+       EMERALD_ORE: 0.5
+     #These probabilities will apply if island level is higher than 500.
+     500:
+       STONE: 70.0
+       COAL_ORE: 10.0
+       IRON_ORE: 10.0
+       REDSTONE_ORE: 5.0
+       DIAMOND_ORE: 4.0
+       EMERALD_ORE: 1.0
    
    # Config.yml version. DO NOT EDIT. This number only changes if the latest
    # plugin config has been updated. If a new config is detected, it will be
