@@ -114,6 +114,9 @@ public class Settings {
     public static boolean allowChorusFruit;
     public static boolean enableJoinAndLeaveIslandMessages;
     public static boolean allowMobSpawning;
+    
+    // Flymode
+    public static boolean flyTimeOutside;
 
     // System settings
     public static boolean allowChestDamage;
