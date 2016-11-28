@@ -49,6 +49,9 @@ import com.wasteofplastic.askyblock.events.IslandEnterEvent;
 import com.wasteofplastic.askyblock.events.IslandExitEvent;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
+import com.wasteofplastic.askyblock.events.IslandEnterEvent;
+import com.wasteofplastic.askyblock.events.IslandExitEvent;
+
 /**
  * @author tastybento
  *         Provides protection to islands
@@ -86,6 +89,22 @@ public class PlayerEvents implements Listener {
         }
     }
 
+    /**
+     * Gives flymode if player has a specific permission and is on his island
+     * @param e
+     */
+    @EventHandler
+    public void onPlayerEnterOnIsland(IslandEnterEvent e){
+        Player p = Bukkit.getServer().getPlayer(e.getPlayer);
+        if(p.hasPermission("askyblock.islandfly") && plugin.getGrid().playerIsOnIsland(p)){
+            p.setAllowFlight(true);
+            p.setFlying(true);
+        }
+    }
+    
+    //TODO Remove flymode with delay (Settings.flyTimeOutside) when IslandExitEvent is fired
+    //TODO Remove flymode instantly when PlayerTeleportEvent is fired
+    
     /**
      * Places player back on their island if the setting is true
      * @param e
