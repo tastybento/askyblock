@@ -641,7 +641,7 @@ general:
    # You can also set different probabilities from specified minimum levels
    magiccobblegenchances:
      # These probabilities will apply by default
-     -1:
+     default:
        COBBLESTONE: 75.0
        STONE: 10.0
        COAL_ORE: 7.5
