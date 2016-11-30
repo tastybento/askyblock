@@ -1522,6 +1522,8 @@ public class ASkyBlock extends JavaPlugin {
                 if(Material.getMaterial(block) != null && Material.getMaterial(block).isBlock()) Settings.magicCobbleGenChances.put(Material.getMaterial(block), chance);
             }
         }
+        // Disable offline redstone
+        Settings.disableOfflineRedstone = getConfig().getBoolean("general.disableofflineredstone", false);
         // All done
         return true;
     }
