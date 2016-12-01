@@ -343,6 +343,7 @@ general:
    
    # Only used if invinciblevisitors is set to TRUE
    # This allow you to customize what kind of damage visitors should not receive
+   # If you want visitors to receive a listed damage, put a "#" at the start of the line
    # See this for more info about options : https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/event/entity/EntityDamageEvent.DamageCause.html
    invinciblevisitorsoptions:
    - BLOCK_EXPLOSION
