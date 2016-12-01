@@ -16,6 +16,7 @@
  *******************************************************************************/
 package com.wasteofplastic.askyblock.listeners;
 
+import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Random;
 
@@ -30,6 +31,7 @@ import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.scheduler.BukkitTask;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.ASkyBlockAPI;
 import com.wasteofplastic.askyblock.Settings;
 
 /**
@@ -107,9 +109,18 @@ public class LavaCheck implements Listener {
 			if ((toID == 0) && (generatesCobble(id, b))){
 				Material change = null;
 				if(!Settings.magicCobbleGenChances.isEmpty()){
-					for(Entry<Material, Double> entry : Settings.magicCobbleGenChances.entrySet()){
-					    double d = random.nextDouble() * 100.0D;
-						if(d - entry.getValue() < 0.0D) change = entry.getKey();
+					int level = ASkyBlockAPI.getInstance().getIslandLevel(ASkyBlockAPI.getInstance().getIslandAt(e.getToBlock().getLocation()).getOwner());
+					int set = -1;
+					for(Entry<Integer,HashMap<Material,Double>> entry : Settings.magicCobbleGenChances.entrySet()){
+						if(entry.getKey() < level && entry.getKey() > set){
+							set = entry.getKey();
+							break;
+						}
+
+						for(Entry<Material,Double> blockEntry : entry.getValue().entrySet()){
+							double d = random.nextDouble() * 100.0D;
+							if(d - blockEntry.getValue() < 0.0D) change = blockEntry.getKey();
+						}
 					}
 				}
 				if (change == null) return;

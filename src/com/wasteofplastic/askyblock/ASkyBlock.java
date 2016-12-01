@@ -1515,12 +1515,25 @@ public class ASkyBlock extends JavaPlugin {
         // Magic Cobble Generator
         Settings.useMagicCobbleGen = getConfig().getBoolean("general.usemagiccobblegen", false);
         if(Settings.useMagicCobbleGen && getConfig().isSet("general.magiccobblegenchances")){
-            Settings.magicCobbleGenChances = new HashMap<Material, Double>();
-            for(String block : getConfig().getConfigurationSection("general.magiccobblegenchances").getKeys(false)){
-                double chance = getConfig().getDouble("general.magiccobblegenchances." + block, 0D);
-                if(chance < 0) chance = 0; 
-                if(Material.getMaterial(block) != null && Material.getMaterial(block).isBlock()) Settings.magicCobbleGenChances.put(Material.getMaterial(block), chance);
-            }
+        	Settings.magicCobbleGenChances = new HashMap<Integer, HashMap<Material,Double>>();
+        	for(String level : getConfig().getConfigurationSection("general.magiccobblegenchances").getKeys(false)){
+        		int levelInt = 0;
+        		if(level.equals("default")) levelInt = Integer.MIN_VALUE;
+        		else{
+        			try{
+        				levelInt = Integer.parseInt(level);
+        			} catch(NumberFormatException e){}
+        		}
+        		for(String block : getConfig().getConfigurationSection("general.magiccobblegenchances." + level).getKeys(false)){
+        			HashMap<Material,Double> blockMap = new HashMap<Material,Double>();
+        			double chance = getConfig().getDouble("general.magiccobblegenchances." + level + "." + block, 0D);
+        			if(chance < 0) chance = 0; 
+        			if(Material.getMaterial(block) != null && Material.getMaterial(block).isBlock()) {
+        				blockMap.put(Material.getMaterial(block), chance);
+        				Settings.magicCobbleGenChances.put(levelInt, blockMap);
+        			}
+        		}
+        	}
         }
         // All done
         return true;
