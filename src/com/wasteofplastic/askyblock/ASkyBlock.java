@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.TreeMap;
 import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
@@ -1134,15 +1135,15 @@ public class ASkyBlock extends JavaPlugin {
         // Invincible visitors
         Settings.invincibleVisitors = getConfig().getBoolean("general.invinciblevisitors", false);
         if(Settings.invincibleVisitors){
-        	Settings.visitorDamagePrevention = new HashSet<DamageCause>();
-        	List<String> damageSettings = getConfig().getStringList("general.invinciblevisitorsoptions");
-        	for (DamageCause cause: DamageCause.values()) {
-        		if (damageSettings.contains(cause.toString())) {
-        			Settings.visitorDamagePrevention.add(cause);
-        		}
-        	}
+            Settings.visitorDamagePrevention = new HashSet<DamageCause>();
+            List<String> damageSettings = getConfig().getStringList("general.invinciblevisitorsoptions");
+            for (DamageCause cause: DamageCause.values()) {
+                if (damageSettings.contains(cause.toString())) {
+                    Settings.visitorDamagePrevention.add(cause);
+                }
+            }
         }
-        
+
         // Settings.ultraSafeBoats =
         // getConfig().getBoolean("general.ultrasafeboats", true);
         Settings.logInRemoveMobs = getConfig().getBoolean("general.loginremovemobs", true);
@@ -1515,25 +1516,37 @@ public class ASkyBlock extends JavaPlugin {
         // Magic Cobble Generator
         Settings.useMagicCobbleGen = getConfig().getBoolean("general.usemagiccobblegen", false);
         if(Settings.useMagicCobbleGen && getConfig().isSet("general.magiccobblegenchances")){
-        	Settings.magicCobbleGenChances = new HashMap<Integer, HashMap<Material,Double>>();
-        	for(String level : getConfig().getConfigurationSection("general.magiccobblegenchances").getKeys(false)){
-        		int levelInt = 0;
-        		if(level.equals("default")) levelInt = Integer.MIN_VALUE;
-        		else{
-        			try{
-        				levelInt = Integer.parseInt(level);
-        			} catch(NumberFormatException e){}
-        		}
-        		for(String block : getConfig().getConfigurationSection("general.magiccobblegenchances." + level).getKeys(false)){
-        			HashMap<Material,Double> blockMap = new HashMap<Material,Double>();
-        			double chance = getConfig().getDouble("general.magiccobblegenchances." + level + "." + block, 0D);
-        			if(chance < 0) chance = 0; 
-        			if(Material.getMaterial(block) != null && Material.getMaterial(block).isBlock()) {
-        				blockMap.put(Material.getMaterial(block), chance);
-        				Settings.magicCobbleGenChances.put(levelInt, blockMap);
-        			}
-        		}
-        	}
+            getLogger().info("DEBUG: magic cobble gen enabled and chances section found");
+            Settings.magicCobbleGenChances = new TreeMap<Integer, HashMap<Material,Double>>();
+            for(String level : getConfig().getConfigurationSection("general.magiccobblegenchances").getKeys(false)){
+                int levelInt = 0;
+                //getLogger().info("DEBUG: level = " + level);
+                try{
+                    if(level.equals("default")) {
+                        //getLogger().info("DEBUG: default found");
+                        levelInt = Integer.MIN_VALUE;
+                    } else {
+                        levelInt = Integer.parseInt(level);
+                        //getLogger().info("DEBUG: int level = " + levelInt);
+                    }
+                    HashMap<Material,Double> blockMap = new HashMap<Material,Double>();
+                    for(String block : getConfig().getConfigurationSection("general.magiccobblegenchances." + level).getKeys(false)){
+                        getLogger().info("DEBUG: reading block " + block);          
+                        double chance = getConfig().getDouble("general.magiccobblegenchances." + level + "." + block, 0D);
+                        if(chance < 0) chance = 0; 
+                        getLogger().info("DEBUG: change = " + chance);
+                        if(Material.getMaterial(block) != null && Material.getMaterial(block).isBlock()) {
+                            blockMap.put(Material.getMaterial(block), chance);
+                        }
+                    }
+                    if (!blockMap.isEmpty()) {
+                        Settings.magicCobbleGenChances.put(levelInt, blockMap);
+                    }
+                } catch(NumberFormatException e){
+                    // Putting the catch here means that an invalid level is skipped completely
+                    getLogger().severe("Unknown level '" + level + "' listed in magiccobblegenchances section! Must be an integer or 'default'. Skipping...");
+                }
+            }
         }
         // All done
         return true;

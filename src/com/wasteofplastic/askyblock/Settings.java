@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
@@ -253,7 +254,7 @@ public class Settings {
     
     // Magic Cobble Generator
     public static boolean useMagicCobbleGen;
-    public static HashMap<Integer,HashMap<Material, Double>> magicCobbleGenChances;
+    public static TreeMap<Integer,HashMap<Material, Double>> magicCobbleGenChances;
     
     // Falling blocked commands
     public static List<String> fallingCommandBlockList;
