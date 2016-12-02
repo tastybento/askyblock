@@ -16,11 +16,13 @@
  *******************************************************************************/
 package com.wasteofplastic.askyblock.listeners;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Random;
+import java.util.TreeMap;
 
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -104,21 +106,26 @@ public class LavaCheck implements Listener {
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onCobbleGen(BlockFromToEvent e){
-        //plugin.getLogger().info("DEBUG: " + e.getEventName());
+        /*
+        plugin.getLogger().info("DEBUG: " + e.getEventName());
+        plugin.getLogger().info("From material is " + e.getBlock().toString());
+        plugin.getLogger().info("To material is " + e.getToBlock().getType().toString());
+        plugin.getLogger().info("---------------------------------");
+         */
         // If magic cobble gen isnt used
         if(!Settings.useMagicCobbleGen) {
-            plugin.getLogger().info("DEBUG: no magic cobble gen");
+            //plugin.getLogger().info("DEBUG: no magic cobble gen");
             return;
         }
 
         // Only do this in ASkyBlock world
         if (!e.getBlock().getWorld().equals(ASkyBlock.getIslandWorld())) {
-            plugin.getLogger().info("DEBUG: wrong world");
+            //plugin.getLogger().info("DEBUG: wrong world");
             return;
         }
         // Do nothing if a new island is being created
         if (plugin.isNewIsland()) {
-            plugin.getLogger().info("DEBUG: new island in creation");
+            //plugin.getLogger().info("DEBUG: new island in creation");
             return;
         }
 
@@ -140,35 +147,38 @@ public class LavaCheck implements Listener {
                 }
                 final int level = l;
                 // Check if cobble was generated next tick
-                // Store surrounding block types
-                final HashMap<Block, Material> prev = new HashMap<Block, Material>();
+                // Store surrounding blocks and their current material types
+                final List<Block> prevBlock = new ArrayList<Block>();
+                final List<Material> prevMat = new ArrayList<Material>();
                 for (BlockFace face: FACES) {
                     Block r = toBlock.getRelative(face);
-                    prev.put(r, r.getType());
+                    prevBlock.add(r);
+                    prevMat.add(r.getType());
+                    //r = toBlock.getRelative(face,2);
+                    //prevBlock.add(r);
+                    //prevMat.add(r.getType());
                 }
                 // Check if they became cobblestone next tick
                 plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
                     @Override
                     public void run() {
-                        for (Entry<Block, Material> en: prev.entrySet()) {
-                            /*
-                            if (!en.getKey().getType().equals(en.getValue())) {
-                                plugin.getLogger().info("DEBUG: " + en.getValue() + " => " + en.getKey().getType());
-                            }*/
-                            if (en.getKey().getType().equals(Material.COBBLESTONE) && !en.getKey().getType().equals(en.getValue())) {
-                                //plugin.getLogger().info("DEBUG: Cobble generated");
-                                Material change = null;
+                        Iterator<Block> blockIt = prevBlock.iterator();
+                        Iterator<Material> matIt = prevMat.iterator();
+                        while (blockIt.hasNext() && matIt.hasNext()) {
+                            Block block = blockIt.next();
+                            Material material = matIt.next();
+                            if (block.getType().equals(Material.COBBLESTONE) && !block.getType().equals(material)) {
+                                //plugin.getLogger().info("DEBUG: " + material + " => " + block.getType());
+                                //plugin.getLogger().info("DEBUG: Cobble generated. Island level = " + level);
                                 if(!Settings.magicCobbleGenChances.isEmpty()){
-                                    Entry<Integer,HashMap<Material,Double>> entry = Settings.magicCobbleGenChances.floorEntry(level);
-
-                                    for(Entry<Material,Double> blockEntry : entry.getValue().entrySet()){
-                                        double d = random.nextDouble() * 100.0D;
-                                        if(d - blockEntry.getValue() < 0.0D) change = blockEntry.getKey();
+                                    Entry<Integer,TreeMap<Double,Material>> entry = Settings.magicCobbleGenChances.floorEntry(level);
+                                    double maxValue = entry.getValue().lastKey();                                    
+                                    double rnd = random.nextDouble() * maxValue;
+                                    Entry<Double, Material> en = entry.getValue().ceilingEntry(rnd);
+                                    if (en != null) {
+                                        block.setType(en.getValue());
                                     }
-
                                 }
-                                if (change == null) return;
-                                en.getKey().setType(change);
                             }
                         }
                     }

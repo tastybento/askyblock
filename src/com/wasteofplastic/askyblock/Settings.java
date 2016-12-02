@@ -254,7 +254,7 @@ public class Settings {
     
     // Magic Cobble Generator
     public static boolean useMagicCobbleGen;
-    public static TreeMap<Integer,HashMap<Material, Double>> magicCobbleGenChances;
+    public static TreeMap<Integer,TreeMap<Double,Material>> magicCobbleGenChances;
     
     // Falling blocked commands
     public static List<String> fallingCommandBlockList;

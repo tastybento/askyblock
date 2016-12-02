@@ -651,7 +651,8 @@ general:
        EMERALD_ORE: 0.5
      #These probabilities will apply if island level is higher than 500.
      500:
-       STONE: 70.0
+       COBBLESTONE: 50.0
+       STONE: 20.0
        COAL_ORE: 10.0
        IRON_ORE: 10.0
        REDSTONE_ORE: 5.0

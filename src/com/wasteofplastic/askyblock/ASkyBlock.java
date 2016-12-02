@@ -1516,31 +1516,28 @@ public class ASkyBlock extends JavaPlugin {
         // Magic Cobble Generator
         Settings.useMagicCobbleGen = getConfig().getBoolean("general.usemagiccobblegen", false);
         if(Settings.useMagicCobbleGen && getConfig().isSet("general.magiccobblegenchances")){
-            getLogger().info("DEBUG: magic cobble gen enabled and chances section found");
-            Settings.magicCobbleGenChances = new TreeMap<Integer, HashMap<Material,Double>>();
+            //getLogger().info("DEBUG: magic cobble gen enabled and chances section found");
+            Settings.magicCobbleGenChances = new TreeMap<Integer, TreeMap<Double,Material>>();
             for(String level : getConfig().getConfigurationSection("general.magiccobblegenchances").getKeys(false)){
                 int levelInt = 0;
-                //getLogger().info("DEBUG: level = " + level);
                 try{
                     if(level.equals("default")) {
-                        //getLogger().info("DEBUG: default found");
                         levelInt = Integer.MIN_VALUE;
                     } else {
                         levelInt = Integer.parseInt(level);
-                        //getLogger().info("DEBUG: int level = " + levelInt);
-                    }
-                    HashMap<Material,Double> blockMap = new HashMap<Material,Double>();
+                    } 
+                    TreeMap<Double,Material> blockMapTree = new TreeMap<Double, Material>();
+                    double chanceTotal = 0;
                     for(String block : getConfig().getConfigurationSection("general.magiccobblegenchances." + level).getKeys(false)){
-                        getLogger().info("DEBUG: reading block " + block);          
                         double chance = getConfig().getDouble("general.magiccobblegenchances." + level + "." + block, 0D);
-                        if(chance < 0) chance = 0; 
-                        getLogger().info("DEBUG: change = " + chance);
-                        if(Material.getMaterial(block) != null && Material.getMaterial(block).isBlock()) {
-                            blockMap.put(Material.getMaterial(block), chance);
+                        if(chance > 0 && Material.getMaterial(block) != null && Material.getMaterial(block).isBlock()) {
+                            // Store the cumulative chance in the treemap. It does not need to add up to 100%
+                            chanceTotal += chance;
+                            blockMapTree.put(chanceTotal, Material.getMaterial(block));
                         }
                     }
-                    if (!blockMap.isEmpty()) {
-                        Settings.magicCobbleGenChances.put(levelInt, blockMap);
+                    if (!blockMapTree.isEmpty()) {
+                        Settings.magicCobbleGenChances.put(levelInt, blockMapTree);
                     }
                 } catch(NumberFormatException e){
                     // Putting the catch here means that an invalid level is skipped completely
