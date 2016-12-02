@@ -256,6 +256,9 @@ public class Settings {
     public static boolean useMagicCobbleGen;
     public static TreeMap<Integer,TreeMap<Double,Material>> magicCobbleGenChances;
     
+    // Disable offline redstone
+    public static boolean disableOfflineRedstone;
+    
     // Falling blocked commands
     public static List<String> fallingCommandBlockList;
     public static List<String> leaveCommands;

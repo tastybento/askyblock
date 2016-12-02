@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -61,6 +62,7 @@ import org.bukkit.event.block.BlockIgniteEvent.IgniteCause;
 import org.bukkit.event.block.BlockMultiPlaceEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
@@ -92,6 +94,7 @@ import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.ASkyBlockAPI;
 import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.Island.Flags;
 import com.wasteofplastic.askyblock.Settings;
@@ -2728,5 +2731,19 @@ public class IslandGuard implements Listener {
                 }
             }
         }
+    }
+    
+    /**
+     * Cancel if any team member is online and disableOfflineRedstone is TRUE.
+     * @param e
+     */
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onBlockRedstone(BlockRedstoneEvent e){
+    	if(Settings.disableOfflineRedstone){
+    		for(UUID member : ASkyBlockAPI.getInstance().getTeamMembers(ASkyBlockAPI.getInstance().getIslandAt(e.getBlock().getLocation()).getOwner())){
+    			if(Bukkit.getPlayer(member) != null) return;
+    		}
+    		e.setNewCurrent(0);
+    	}
     }
 }

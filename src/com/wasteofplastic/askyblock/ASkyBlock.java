@@ -1545,6 +1545,8 @@ public class ASkyBlock extends JavaPlugin {
                 }
             }
         }
+        // Disable offline redstone
+        Settings.disableOfflineRedstone = getConfig().getBoolean("general.disableofflineredstone", false);
         // All done
         return true;
     }
