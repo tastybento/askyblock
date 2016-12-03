@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -94,7 +93,6 @@ import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
-import com.wasteofplastic.askyblock.ASkyBlockAPI;
 import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.Island.Flags;
 import com.wasteofplastic.askyblock.Settings;
@@ -635,47 +633,47 @@ public class IslandGuard implements Listener {
         if (plugin.getGrid() == null) {
             return;
         }
-        
+
         // If it is at spawn
         if(plugin.getGrid().isAtSpawn(e.getLocation())){
-        	// Deal with mobs
-        	if (e.getEntity() instanceof Monster || e.getEntity() instanceof Slime) {
-        		if (e.getSpawnReason() == SpawnReason.SPAWNER_EGG && !Settings.allowSpawnMonsterEggs) {
-        			e.setCancelled(true);
-        			return;
-        		}
-        		if (!Settings.allowSpawnMobSpawn) {
-        			// Mobs not allowed to spawn
-        			e.setCancelled(true);
-        			return;
-        		}
-        	}
+            // Deal with mobs
+            if (e.getEntity() instanceof Monster || e.getEntity() instanceof Slime) {
+                if (e.getSpawnReason() == SpawnReason.SPAWNER_EGG && !Settings.allowSpawnMonsterEggs) {
+                    e.setCancelled(true);
+                    return;
+                }
+                if (!Settings.allowSpawnMobSpawn) {
+                    // Mobs not allowed to spawn
+                    e.setCancelled(true);
+                    return;
+                }
+            }
 
-        	// If animals can spawn, check if the spawning is natural, or
-        	// egg-induced
-        	if (e.getEntity() instanceof Animals) {
-        		if (e.getSpawnReason() == SpawnReason.SPAWNER_EGG && !Settings.allowSpawnMonsterEggs) {
-        			e.setCancelled(true);
-        			return;
-        		}
-        		if (e.getSpawnReason() == SpawnReason.EGG && !Settings.allowSpawnEggs) {
-        			e.setCancelled(true);
-        		}
-        		if (!Settings.allowSpawnAnimalSpawn) {
-        			// Animals are not allowed to spawn
-        			e.setCancelled(true);
-        			return;
-        		}
-        	}
+            // If animals can spawn, check if the spawning is natural, or
+            // egg-induced
+            if (e.getEntity() instanceof Animals) {
+                if (e.getSpawnReason() == SpawnReason.SPAWNER_EGG && !Settings.allowSpawnMonsterEggs) {
+                    e.setCancelled(true);
+                    return;
+                }
+                if (e.getSpawnReason() == SpawnReason.EGG && !Settings.allowSpawnEggs) {
+                    e.setCancelled(true);
+                }
+                if (!Settings.allowSpawnAnimalSpawn) {
+                    // Animals are not allowed to spawn
+                    e.setCancelled(true);
+                    return;
+                }
+            }
         }
         // Else, is on island
         else{
-        	if(e.getEntity() instanceof Monster || e.getEntity() instanceof Slime){
-        		if(!plugin.getGrid().getIslandAt(e.getLocation()).getIgsFlag(Flags.allowMobSpawning)){
-        			e.setCancelled(true);
-        			return;
-        		}
-        	}
+            if(e.getEntity() instanceof Monster || e.getEntity() instanceof Slime){
+                if(!plugin.getGrid().getIslandAt(e.getLocation()).getIgsFlag(Flags.allowMobSpawning)){
+                    e.setCancelled(true);
+                    return;
+                }
+            }
         }
     }
 
@@ -2732,18 +2730,27 @@ public class IslandGuard implements Listener {
             }
         }
     }
-    
+
     /**
-     * Cancel if any team member is online and disableOfflineRedstone is TRUE.
+     * Stop redstone if team members are offline and disableOfflineRedstone is TRUE.
      * @param e
      */
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onBlockRedstone(BlockRedstoneEvent e){
-    	if(Settings.disableOfflineRedstone){
-    		for(UUID member : ASkyBlockAPI.getInstance().getTeamMembers(ASkyBlockAPI.getInstance().getIslandAt(e.getBlock().getLocation()).getOwner())){
-    			if(Bukkit.getPlayer(member) != null) return;
-    		}
-    		e.setNewCurrent(0);
-    	}
+        if(Settings.disableOfflineRedstone) {
+            // Check world
+            if (!inWorld(e.getBlock())) {
+                return;
+            }
+            // Check if this is on an island
+            Island island = plugin.getGrid().getIslandAt(e.getBlock().getLocation());
+            if (island == null || island.isSpawn()) {
+                return;
+            }
+            for(UUID member : island.getMembers()){
+                if(plugin.getServer().getPlayer(member) != null) return;
+            }
+            e.setNewCurrent(0);
+        }
     }
 }
