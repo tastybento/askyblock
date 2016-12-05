@@ -637,6 +637,10 @@ public class ASLocale {
 
     public String islandHelpSelectLanguage;
 
+    public String islandhelpBanList;
+
+    public String banNone;
+
     /**
      * Creates a locale object full of localized strings for a language
      * @param plugin
@@ -996,6 +1000,7 @@ public class ASLocale {
         islandhelpKick = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpKick", "remove a team member from your island."));
         islandhelpExpel = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpExpel", "force a player from your island."));
         islandhelpBan = ChatColor.translateAlternateColorCodes('&', locale.getString("ban.helpBan", "ban a player from your island."));
+        islandhelpBanList = ChatColor.translateAlternateColorCodes('&', locale.getString("ban.helpBanList", "list banned players."));
         islandhelpUnban = ChatColor.translateAlternateColorCodes('&', locale.getString("ban.helpUnban", "un-ban a player from your island."));
         islandHelpSettings = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("island.helpSettings", "see island protection and game settings"));
@@ -1268,7 +1273,8 @@ public class ASLocale {
         banBanned = ChatColor.translateAlternateColorCodes('&', locale.getString("ban.banned", "You are banned from [name]'s island!"));
         banLifted = ChatColor.translateAlternateColorCodes('&', locale.getString("ban.lifted", "Ban lifted from [name]'s island!"));
         banLiftedSuccess = ChatColor.translateAlternateColorCodes('&', locale.getString("ban.liftedsuccess", "Ban lifted for [name]!"));
-        banFail = ChatColor.translateAlternateColorCodes('&', locale.getString("banned.fail", "[name] cannot be banned!"));
+        banFail = ChatColor.translateAlternateColorCodes('&', locale.getString("ban.fail", "[name] cannot be banned!"));
+        banNone = ChatColor.translateAlternateColorCodes('&', locale.getString("ban.none", "None"));
         banNotYourself = ChatColor.translateAlternateColorCodes('&', locale.getString("ban.notyourself", "You cannot do that to yourself!"));
         banNotTeamMember = ChatColor.translateAlternateColorCodes('&', locale.getString("ban.notteammember", "You cannot ban a team member!"));
         banNotBanned = ChatColor.translateAlternateColorCodes('&', locale.getString("ban.notbanned", "[name] is not banned!"));

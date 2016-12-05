@@ -339,4 +339,7 @@ permissions:
           askyblock.admin.settingsreset:
             description: Resets all the islands to default protection settings
             default: op
-            
+          askyblock.admin.noban:
+            description: Player cannot be banned from an island
+            default: op
+           
