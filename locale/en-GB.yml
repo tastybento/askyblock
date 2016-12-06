@@ -17,6 +17,7 @@ adminDeleteIsland:
   use: "Use &ldelete [name] &r&cto delete the player instead."
 adminHelp: 
   add: "adds player to leader's team"
+  addrange: "adds to or substracts from the island's protection range"
   clearreset: "resets the island reset limit for player"
   completeChallenge: "marks a challenge as complete"
   delete: "delete an island (removes blocks)."
@@ -86,7 +87,7 @@ adminSetHome:
 adminSetRange: 
   invalid: "Invalid range!"
   set: "Set new range to [number]"
-  tip: "Use 10 to [max]"
+  tip: "Range must be between 10 to [max]"
   warning: "Warning - range is greater than island range [max]"
   warning2: "Overlapped islands will act like spawn!"
 adminSetSpawn: 

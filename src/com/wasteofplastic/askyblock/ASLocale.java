@@ -641,6 +641,8 @@ public class ASLocale {
 
     public String banNone;
 
+    public String adminHelpAddRange;
+
     /**
      * Creates a locale object full of localized strings for a language
      * @param plugin
@@ -1126,6 +1128,8 @@ public class ASLocale {
                 locale.getString("adminHelp.setspawn", "sets the island world spawn to a location close to you"));
         adminHelpSetRange = ChatColor
                 .translateAlternateColorCodes('&', locale.getString("adminHelp.setrange", "changes the island's protection range"));
+        adminHelpAddRange = ChatColor
+                .translateAlternateColorCodes('&', locale.getString("adminHelp.addrange", "adds to or substracts from the island's protection range"));
         adminHelpsetBiome = ChatColor
                 .translateAlternateColorCodes('&', locale.getString("adminHelp.setbiome", "sets leader's island biome"));
         adminHelpsetDeaths = ChatColor
