@@ -234,6 +234,7 @@ public class SettingsPanel implements Listener {
                 ip.add(new IPItem(island.getIgsFlag(Flags.allowChorusFruit), Material.CHORUS_FRUIT, plugin.myLocale(uuid).igsChorusFruit));
             }
             ip.add(new IPItem(island.getIgsFlag(Flags.enableJoinAndLeaveIslandMessages), Material.NOTE_BLOCK, plugin.myLocale(uuid).igsJoinLeaveIslandMessage));
+            ip.add(new IPItem(island.getIgsFlag(Flags.allowMobSpawning), Material.MOB_SPAWNER, plugin.myLocale(uuid).igsMobSpawning));
         }
         if (ip.size() > 0) {
             // Make sure size is a multiple of 9
