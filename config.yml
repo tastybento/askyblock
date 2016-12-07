@@ -109,7 +109,8 @@ island:
    # allowCropTrample, allowDoorUse, allowEnchanting, allowEnderPearls, allowFurnaceUse, 
    # allowGateUse, allowHorseInvAccess, allowHorseRiding, allowHurtMobs, allowLeashUse,
    # allowLeverButtonUse, allowMusic, allowPlaceBlocks, allowPortalUse, allowPressurePlate,
-   # allowPvP, allowNetherPvP, allowRedStone, allowShearing
+   # allowPvP, allowNetherPvP, allowRedStone, allowShearing, allowVillagerTrading
+   # allowChorusFruit, enableJoinAndLeaveIslandMessages, allowMobSpawning
    # Permissions are CASE SENSITIVE!
    
    # Island naming
@@ -340,7 +341,7 @@ general:
    # Invincible visitors - Prevent players from killing them (intentionally or by accident)
    # If they fall to the void, they get TP'd to their island.
    invinciblevisitors: false
-   
+
    # Only used if invinciblevisitors is set to TRUE
    # This allow you to customize what kind of damage visitors should not receive
    # If you want visitors to receive a listed damage, put a "#" at the start of the line
