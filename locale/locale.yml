@@ -207,7 +207,8 @@ delete:
   removing: "Removing [name]'s island."
 drankAcid: "drank acid."
 drankAcidAndDied: "just drank acid and died."
-error: 
+error:
+  blockedbyapi: "A plugin using the API blocked this action."
   commandNotReady: "You can't use that command right now."
   noIsland: "You do not have an island!"
   noIslandOther: "That player does not have an island!"

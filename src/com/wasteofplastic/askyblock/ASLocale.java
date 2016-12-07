@@ -643,6 +643,8 @@ public class ASLocale {
 
     public String adminHelpAddRange;
 
+    public String errorBlockedByAPI;
+
     /**
      * Creates a locale object full of localized strings for a language
      * @param plugin
@@ -746,6 +748,7 @@ public class ASLocale {
 
         drankAcidAndDied = ChatColor.translateAlternateColorCodes('&', locale.getString("drankAcidAndDied", "drank acid and died."));
         drankAcid = ChatColor.translateAlternateColorCodes('&', locale.getString("drankAcid", "drank acid."));
+        errorBlockedByAPI = ChatColor.translateAlternateColorCodes('&', locale.getString("error.blockedbyapi", "A plugin using the API blocked this action."));
         errorTooShort = ChatColor.translateAlternateColorCodes('&', locale.getString("error.tooShort", "Too short. Minimum size is [length]."));
         errorTooLong = ChatColor.translateAlternateColorCodes('&', locale.getString("error.tooLong", "Too long. Maximum size is [length]."));
         errorUnknownPlayer = ChatColor.translateAlternateColorCodes('&', locale.getString("error.unknownPlayer", "That player is unknown."));

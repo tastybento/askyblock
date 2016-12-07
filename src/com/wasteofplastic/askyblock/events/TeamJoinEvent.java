@@ -19,6 +19,7 @@ package com.wasteofplastic.askyblock.events;
 
 import java.util.UUID;
 
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
@@ -28,13 +29,15 @@ import org.bukkit.event.HandlerList;
  * @author Exloki
  * 
  */
-public class TeamJoinEvent extends Event {
+public class TeamJoinEvent extends Event implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
 
     private final UUID player;
     private final UUID newTeamLeader;
+    private boolean cancelled;
 
     public TeamJoinEvent(UUID player, UUID newTeamLeader) {
+        super();
         this.player = player;
         this.newTeamLeader = newTeamLeader;
     }
@@ -62,5 +65,16 @@ public class TeamJoinEvent extends Event {
 
     public static HandlerList getHandlerList() {
         return handlers;
+    }
+
+    @Override
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    @Override
+    public void setCancelled(boolean cancel) {
+        cancelled = cancel;
+        
     }
 }

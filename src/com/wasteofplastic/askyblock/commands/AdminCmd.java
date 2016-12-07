@@ -1686,7 +1686,10 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                             // Player is apparently in a team, but there is no team leader
                             // Remove their team status
                             // Clear the player of all team-related items
-                            plugin.getPlayers().setLeaveTeam(playerUUID);
+                            if (!plugin.getPlayers().setLeaveTeam(playerUUID)) {
+                                sender.sendMessage(ChatColor.RED + plugin.myLocale().errorBlockedByAPI);
+                                return true;
+                            }
                             plugin.getPlayers().setHomeLocation(playerUUID, null);
                             plugin.getPlayers().setIslandLocation(playerUUID, null);
                             // Remove any warps
@@ -1697,14 +1700,20 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                         // Payer is not a team leader
                         if (!teamLeader.equals(playerUUID)) {
                             // Clear the player of all team-related items
-                            plugin.getPlayers().setLeaveTeam(playerUUID);
+                            if (!plugin.getPlayers().setLeaveTeam(playerUUID)) {
+                                sender.sendMessage(ChatColor.RED + plugin.myLocale().errorBlockedByAPI);
+                                return true;
+                            }
                             plugin.getPlayers().setHomeLocation(playerUUID, null);
                             plugin.getPlayers().setIslandLocation(playerUUID, null);
                             // Clear the leader of this player and if they now have
                             // no team, remove the team
                             plugin.getPlayers().removeMember(teamLeader, playerUUID);
                             if (plugin.getPlayers().getMembers(teamLeader).size() < 2) {
-                                plugin.getPlayers().setLeaveTeam(teamLeader);
+                                if (!plugin.getPlayers().setLeaveTeam(teamLeader)) {
+                                    sender.sendMessage(ChatColor.RED + plugin.myLocale().errorBlockedByAPI);
+                                    return true;
+                                }
                             }
                             // Remove any warps
                             plugin.getWarpSignsListener().removeWarp(playerUUID);
@@ -1790,11 +1799,13 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                     return true;
                 }
                 // If the leader's member list does not contain their own name
-                // then
-                // add it
+                // then add it
                 if (!plugin.getPlayers().getMembers(teamLeader).contains(teamLeader)) {
                     // Set up the team leader
-                    plugin.getPlayers().setJoinTeam(teamLeader, teamLeader, plugin.getPlayers().getIslandLocation(teamLeader));
+                    if (!plugin.getPlayers().setJoinTeam(teamLeader, teamLeader, plugin.getPlayers().getIslandLocation(teamLeader))) {
+                        sender.sendMessage(ChatColor.RED + plugin.myLocale().errorBlockedByAPI);
+                        return true;
+                    }
                     plugin.getPlayers().addTeamMember(teamLeader, teamLeader);
                     sender.sendMessage(ChatColor.GOLD + plugin.myLocale().adminTeamAddedLeader);
                 }

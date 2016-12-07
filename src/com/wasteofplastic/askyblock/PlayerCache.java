@@ -407,19 +407,26 @@ public class PlayerCache {
         }
     }
 
-    public void setJoinTeam(UUID playerUUID, UUID teamLeader, Location islandLocation) {
+    /**
+     * Puts a player in a team
+     * @param playerUUID
+     * @param teamLeader
+     * @param islandLocation
+     * @return true if successful, false if not
+     */
+    public boolean setJoinTeam(UUID playerUUID, UUID teamLeader, Location islandLocation) {
         addPlayer(playerUUID);
         addPlayer(teamLeader);
-        playerCache.get(playerUUID).setJoinTeam(teamLeader, islandLocation);
+        return playerCache.get(playerUUID).setJoinTeam(teamLeader, islandLocation);
     }
 
     /**
      * Called when a player leaves a team Resets inTeam, teamLeader,
      * islandLevel, teamIslandLocation, islandLocation and members array
      */
-    public void setLeaveTeam(UUID playerUUID) {
+    public boolean setLeaveTeam(UUID playerUUID) {
         addPlayer(playerUUID);
-        playerCache.get(playerUUID).setLeaveTeam();
+        return playerCache.get(playerUUID).setLeaveTeam();
     }
 
     /**

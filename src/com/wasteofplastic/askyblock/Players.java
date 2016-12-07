@@ -304,6 +304,7 @@ public class Players {
     /**
      * @param member
      *            Adds a member to the the player's list
+     * @return 
      */
     public void addTeamMember(final UUID member) {
         members.add(member);
@@ -618,26 +619,40 @@ public class Players {
      *            - the Bukkit location of the team's island (converted to a
      *            String in this function)
      */
-    public void setJoinTeam(final UUID leader, final Location l) {
+    public boolean setJoinTeam(final UUID leader, final Location l) {
         if(inTeam) {
-            Bukkit.getPluginManager().callEvent(new TeamLeaveEvent(uuid, teamLeader));
+            TeamLeaveEvent teamLeaveEvent = new TeamLeaveEvent(uuid, teamLeader);
+            Bukkit.getPluginManager().callEvent(teamLeaveEvent);
+            if (teamLeaveEvent.isCancelled()) {
+                return false;
+            }
         }
-
+        // Fire the event and give a chance for it to be cancelled.
+        TeamJoinEvent teamJoinEvent = new TeamJoinEvent(uuid, leader);
+        Bukkit.getPluginManager().callEvent(teamJoinEvent);
+        if (teamJoinEvent.isCancelled()) {
+            return false;
+        }
+        // Success
         inTeam = true;
         teamLeader = leader;
         teamIslandLocation = Util.getStringLocation(l);
 
-        Bukkit.getPluginManager().callEvent(new TeamJoinEvent(uuid, leader));
+        return true;
     }
 
     /**
      * Called when a player leaves a team Resets inTeam, teamLeader,
      * islandLevel, teamIslandLocation and members array
+     * @return true if successful, false if not
      */
-
-    public void setLeaveTeam() {
+    public boolean setLeaveTeam() {
         if(inTeam) {
-            Bukkit.getPluginManager().callEvent(new TeamLeaveEvent(uuid, teamLeader));
+            TeamLeaveEvent teamLeaveEvent = new TeamLeaveEvent(uuid, teamLeader);
+            Bukkit.getPluginManager().callEvent(teamLeaveEvent);
+            if (teamLeaveEvent.isCancelled()) {
+                return false;
+            }
         }
 
         inTeam = false;
@@ -645,6 +660,7 @@ public class Players {
         islandLevel = 0;
         teamIslandLocation = null;
         members = new ArrayList<>();
+        return true;
     }
 
     /**
@@ -659,16 +675,24 @@ public class Players {
      * @param leader
      *            a String name of the team leader
      */
-    public void setTeamLeader(final UUID leader) {
+    public boolean setTeamLeader(final UUID leader) {
         if(inTeam) {
             // Changing team leader changes the team identifier
-            Bukkit.getPluginManager().callEvent(new TeamLeaveEvent(uuid, teamLeader));
+            TeamLeaveEvent teamLeaveEvent = new TeamLeaveEvent(uuid, teamLeader);
+            Bukkit.getPluginManager().callEvent(teamLeaveEvent);
+            if (teamLeaveEvent.isCancelled()) {
+                return false;
+            }
         }
-
-        teamLeader = leader;
         if(leader != null) {
-            Bukkit.getPluginManager().callEvent(new TeamJoinEvent(uuid, leader));
+            TeamJoinEvent teamJoinEvent = new TeamJoinEvent(uuid, leader);
+            Bukkit.getPluginManager().callEvent(teamJoinEvent);
+            if (teamJoinEvent.isCancelled()) {
+                return false;
+            }
         }
+        teamLeader = leader;
+        return true;
     }
 
     /**
