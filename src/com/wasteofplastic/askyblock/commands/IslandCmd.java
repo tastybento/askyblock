@@ -518,7 +518,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
         // Set the player's team giving the team leader's name and the team's
         // island
         // location
-        if (!plugin.getPlayers().setJoinTeam(playerUUID, teamLeader, plugin.getPlayers().getIslandLocation(teamLeader)) {
+        if (!plugin.getPlayers().setJoinTeam(playerUUID, teamLeader, plugin.getPlayers().getIslandLocation(teamLeader))) {
             return false;
         }
         // If the player's name and the team leader are NOT the same when this
@@ -1948,7 +1948,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                             // Log the location that this player left so they
                             // cannot join again before the cool down ends
                             plugin.getPlayers().startInviteCoolDownTimer(playerUUID, plugin.getPlayers().getTeamIslandLocation(teamLeader));
-                            
+
                             // Remove any warps
                             plugin.getWarpSignsListener().removeWarp(playerUUID);
                             player.sendMessage(ChatColor.YELLOW + plugin.myLocale(player.getUniqueId()).leaveyouHaveLeftTheIsland);
@@ -2543,10 +2543,11 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                 }
                             }
                             // Add target to coop list
-                            CoopPlay.getInstance().addCoopPlayer(player, target);
-                            // Tell everyone what happened
-                            player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).coopSuccess.replace("[name]", target.getDisplayName()));
-                            target.sendMessage(ChatColor.GREEN + plugin.myLocale(targetPlayerUUID).coopMadeYouCoop.replace("[name]", player.getDisplayName()));
+                            if (CoopPlay.getInstance().addCoopPlayer(player, target)) {
+                                // Tell everyone what happened
+                                player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).coopSuccess.replace("[name]", target.getDisplayName()));
+                                target.sendMessage(ChatColor.GREEN + plugin.myLocale(targetPlayerUUID).coopMadeYouCoop.replace("[name]", player.getDisplayName()));
+                            } // else fail silently
                             return true;
                         } else if (split[0].equalsIgnoreCase("expel")) {
                             if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.expel")) {
@@ -2943,7 +2944,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                             }
                                             player.sendMessage(ChatColor.GREEN
                                                     + plugin.myLocale(player.getUniqueId()).makeLeadernameIsNowTheOwner.replace("[name]", plugin.getPlayers().getName(targetPlayer)));
-     
+
                                             // plugin.getLogger().info("DEBUG: " +
                                             // plugin.getPlayers().getIslandLevel(teamLeader));
                                             // Transfer the data from the old leader to the
