@@ -537,8 +537,12 @@ general:
    removecompleteonetimechallenges: false
 
    # Add enchanted glow to completed challenges (does not work with all clients)
-   # Also currently adds an "enchanted" line of text...
+   # It won't add an "enchanted" line in the text.
    addcompletedglow: true
+   
+   # Show the challenges that player hasn't the required permission(s) or 
+   # hasn't completed the required challenge(s) before to complete it.
+   showundoablechallenges: true
 
    # Use physics when pasting schematic blocks. If this is false, then blocks
    # like water will not flow from the schematic

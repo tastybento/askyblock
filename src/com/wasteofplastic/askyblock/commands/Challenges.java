@@ -71,13 +71,9 @@ import com.wasteofplastic.askyblock.util.VaultHelper;
 public class Challenges implements CommandExecutor, TabCompleter {
     private ASkyBlock plugin;
     private static final boolean DEBUG = false;
-    // Database of challenges
-    private static LinkedHashMap<String, List<String>> challengeList = new LinkedHashMap<String, List<String>>();
+    
     private HashMap<UUID, List<CPItem>> playerChallengeGUI = new HashMap<UUID, List<CPItem>>();
-    // Where challenges are stored
-    private static FileConfiguration challengeFile = null;
-    private static File challengeConfigFile = null;
-
+    
     public Challenges(ASkyBlock plugin) {
         this.plugin = plugin;
         saveDefaultChallengeConfig();
@@ -1939,67 +1935,6 @@ public class Challenges implements CommandExecutor, TabCompleter {
     }
 
     /**
-     * Saves the challenge.yml file if it does not exist
-     */
-    public void saveDefaultChallengeConfig() {
-        if (challengeConfigFile == null) {
-            challengeConfigFile = new File(plugin.getDataFolder(), "challenges.yml");
-        }
-        if (!challengeConfigFile.exists()) {
-            plugin.saveResource("challenges.yml", false);
-        }
-    }
-
-    /**
-     * Reloads the challenge config file
-     */
-    public void reloadChallengeConfig() {
-        if (challengeConfigFile == null) {
-            challengeConfigFile = new File(plugin.getDataFolder(), "challenges.yml");
-        }
-        challengeFile = YamlConfiguration.loadConfiguration(challengeConfigFile);
-
-        // Look for defaults in the jar
-        /*
-        if (plugin.getResource("challenges.yml") != null) {
-            YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
-            challengeFile.setDefaults(defConfig);
-        }*/
-        Settings.challengeList = getChallengeConfig().getConfigurationSection("challenges.challengeList").getKeys(false);
-        Settings.challengeLevels = Arrays.asList(getChallengeConfig().getString("challenges.levels","").split(" "));
-        Settings.freeLevels = Arrays.asList(getChallengeConfig().getString("challenges.freelevels","").split(" "));
-        Settings.waiverAmount = getChallengeConfig().getInt("challenges.waiveramount", 1);
-        if (Settings.waiverAmount < 0) {
-            Settings.waiverAmount = 0;
-        }
-        populateChallengeList();
-    }
-
-    /**
-     * @return challenges FileConfiguration object
-     */
-    public FileConfiguration getChallengeConfig() {
-        if (challengeFile == null) {
-            reloadChallengeConfig();
-        }
-        return challengeFile;
-    }
-
-    /**
-     * Saves challenges.yml
-     */
-    public void saveChallengeConfig() {
-        if (challengeFile == null || challengeConfigFile == null) {
-            return;
-        }
-        try {
-            getChallengeConfig().save(challengeConfigFile);
-        } catch (IOException ex) {
-            plugin.getLogger().severe("Could not save config to " + challengeConfigFile);
-        }
-    }
-
-    /**
      * Gets a list of all challenges in existence.
      */
     public List<String> getAllChallenges() {
@@ -2071,12 +2006,4 @@ public class Challenges implements CommandExecutor, TabCompleter {
         }      
         return Settings.challengeLevels.get(getLevelDone(player));
     }
-    
-    	/**
-	 * Get the challenge list
-	 * @return challenge list
-	 */
-	public static LinkedHashMap<String, List<String>> getChallengeList(){
-		return challengeList;
-	}
 }

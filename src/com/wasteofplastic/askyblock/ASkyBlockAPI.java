@@ -32,7 +32,8 @@ import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
 
-import com.wasteofplastic.askyblock.commands.Challenges;
+import com.wasteofplastic.askyblock.challenge.Challenge;
+import com.wasteofplastic.askyblock.challenge.ChallengesPopulator;
 import com.wasteofplastic.askyblock.panels.SetBiome;
 
 /**
@@ -469,10 +470,10 @@ public class ASkyBlockAPI {
     }
     
     /**
-     * Get all the challenges
-     * @return challenges per level
+     * Get all loaded challenges
+     * @return the list of loaded challenges per level.
      */
-    public LinkedHashMap<String, List<String>> getAllChallenges(){
-    	return Challenges.getChallengeList();
+    public LinkedHashMap<String, List<Challenge>> getChallenges(){
+    	return ChallengesPopulator.getLoadedChallenges();
     }
 }
