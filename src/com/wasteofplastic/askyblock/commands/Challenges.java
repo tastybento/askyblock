@@ -339,13 +339,12 @@ public class Challenges implements CommandExecutor, TabCompleter {
             }
         }
         // Dole out permissions
+        plugin.getLogger().info("DEBUG: dole out permissions");
         permList = getChallengeConfig().getString("challenges.challengeList." + challenge.toLowerCase() + ".permissionReward", "").split(" ");
         for (final String s : permList) {
             if (!s.isEmpty()) {
-                if (!VaultHelper.checkPerm(player, s)) {
-                    VaultHelper.addPerm(player, s);
-                    plugin.getLogger().info("Added permission " + s + " to " + player.getName() + "");
-                }
+                VaultHelper.addPerm(player, s);
+                plugin.getLogger().info("Added permission " + s + " to " + player.getName() + "");
             }
         }
         // Give items
@@ -1334,17 +1333,17 @@ public class Challenges implements CommandExecutor, TabCompleter {
                                     }
                                     // Splash or Linger check
                                     if (DEBUG)
-                                     plugin.getLogger().info("DEBUG: splash/linger check " + part[4]);
+                                        plugin.getLogger().info("DEBUG: splash/linger check " + part[4]);
                                     if (!part[4].isEmpty()) {
                                         if (part[4].equalsIgnoreCase("SPLASH") && !i.getType().equals(Material.SPLASH_POTION)) {
                                             match = false;
                                             if (DEBUG)
-                                             plugin.getLogger().info("DEBUG: not splash");
+                                                plugin.getLogger().info("DEBUG: not splash");
                                         }
                                         if (part[4].equalsIgnoreCase("NOSPLASH") && i.getType().equals(Material.SPLASH_POTION)) {
                                             match = false;
                                             if (DEBUG)
-                                             plugin.getLogger().info("DEBUG: not no splash");
+                                                plugin.getLogger().info("DEBUG: not no splash");
                                         }
                                         if (part[4].equalsIgnoreCase("LINGER") && !i.getType().equals(Material.LINGERING_POTION)) {
                                             match = false;
@@ -2071,12 +2070,12 @@ public class Challenges implements CommandExecutor, TabCompleter {
         }      
         return Settings.challengeLevels.get(getLevelDone(player));
     }
-    
-    	/**
-	 * Get the challenge list
-	 * @return challenge list
-	 */
-	public static LinkedHashMap<String, List<String>> getChallengeList(){
-		return challengeList;
-	}
+
+    /**
+     * Get the challenge list
+     * @return challenge list
+     */
+    public static LinkedHashMap<String, List<String>> getChallengeList(){
+        return challengeList;
+    }
 }
