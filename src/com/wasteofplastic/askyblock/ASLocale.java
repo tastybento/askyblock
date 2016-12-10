@@ -643,6 +643,8 @@ public class ASLocale {
 
     public String adminHelpAddRange;
 
+    public String adminHelpcobbleStats;
+
     /**
      * Creates a locale object full of localized strings for a language
      * @param plugin
@@ -1142,6 +1144,9 @@ public class ASLocale {
                 .translateAlternateColorCodes('&', locale.getString("adminHelp.kick", "removes player from any team"));
         adminHelpadd = ChatColor
                 .translateAlternateColorCodes('&', locale.getString("adminHelp.add", "adds player to leader's team"));
+        adminHelpcobbleStats = ChatColor
+                .translateAlternateColorCodes('&', locale.getString("adminHelp.cobblestats", "displays magic cobble generation stats"));
+
         settingsResetInProgress = ChatColor
                 .translateAlternateColorCodes('&', locale.getString("settingsReset.inprogress", "Protection settings being reset, please wait..."));
         settingsResetDone = ChatColor

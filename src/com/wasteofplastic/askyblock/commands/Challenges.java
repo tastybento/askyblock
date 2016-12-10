@@ -339,7 +339,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
             }
         }
         // Dole out permissions
-        plugin.getLogger().info("DEBUG: dole out permissions");
+        //plugin.getLogger().info("DEBUG: dole out permissions");
         permList = getChallengeConfig().getString("challenges.challengeList." + challenge.toLowerCase() + ".permissionReward", "").split(" ");
         for (final String s : permList) {
             if (!s.isEmpty()) {

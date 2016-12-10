@@ -342,4 +342,7 @@ permissions:
           askyblock.admin.noban:
             description: Player cannot be banned from an island
             default: op
+          askyblock.admin.cobblestats:
+            description: Displays magic cobble gen stats
+            default: op
            
