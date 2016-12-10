@@ -1773,6 +1773,9 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                         player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoIsland);
                         return true;
                     } else {
+                        if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "intopten")) {
+                            player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).topTenerrorExcluded.replace("[perm]", Settings.PERMPREFIX + "intopten"));
+                        }
                         if (Settings.fastLevelCalc) {
                             calculateIslandLevel(player, playerUUID);
                             return true;

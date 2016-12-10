@@ -333,7 +333,7 @@ public class JoinLeaveEvents implements Listener {
         if (DEBUG)
             plugin.getLogger().info("DEBUG: Remove from top ten if excluded");
         // Remove from TopTen if the player has the permission
-        if (player.hasPermission(Settings.PERMPREFIX + "excludetopten")) {
+        if (!player.hasPermission(Settings.PERMPREFIX + "intopten")) {
             if (DEBUG)
                 plugin.getLogger().info("DEBUG: Removing from top ten");
             TopTen.topTenRemoveEntry(playerUUID);
@@ -345,7 +345,7 @@ public class JoinLeaveEvents implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerQuit(final PlayerQuitEvent event) {
         // Remove from TopTen if the player has the permission
-        if (event.getPlayer().hasPermission(Settings.PERMPREFIX + "excludetopten")) {
+        if (!event.getPlayer().hasPermission(Settings.PERMPREFIX + "intopten")) {
             TopTen.topTenRemoveEntry(event.getPlayer().getUniqueId());
         }
         // Remove from coop list

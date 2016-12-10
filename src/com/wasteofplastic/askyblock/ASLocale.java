@@ -645,6 +645,8 @@ public class ASLocale {
 
     public String adminHelpcobbleStats;
 
+    public String topTenerrorExcluded;
+
     /**
      * Creates a locale object full of localized strings for a language
      * @param plugin
@@ -876,6 +878,7 @@ public class ASLocale {
             topTenGuiTitle = topTenGuiTitle.substring(0, 29);
         }
         topTenerrorNotReady = ChatColor.translateAlternateColorCodes('&', locale.getString("topTen.errorNotReady", "Top ten list not generated yet!"));
+        topTenerrorExcluded = ChatColor.translateAlternateColorCodes('&', locale.getString("topTen.errorExcluded", "FYI: You are excluded from the top ten as you do not have [perm]"));
         levelislandLevel = ChatColor.translateAlternateColorCodes('&', locale.getString("level.islandLevel", "Island level"));
         levelerrornotYourIsland = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("level.errornotYourIsland", "Only the island owner can do that."));
