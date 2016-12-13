@@ -36,6 +36,7 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.scoreboard.Scoreboard;
@@ -329,6 +330,19 @@ public class IslandGuard1_9 implements Listener {
     }
 
     /**
+     * Triggers scoreboard cleanup on Quit
+     * @param e
+     */
+    @EventHandler(priority = EventPriority.NORMAL,ignoreCancelled = true)
+    public void onPlayerQuit(PlayerQuitEvent e)
+    {
+        if(Settings.allowPushing)
+        {
+            return;
+        }
+        removePush(e.getPlayer());
+    }
+    /**
      * Handles push protection
      * @param player
      */
@@ -361,6 +375,20 @@ public class IslandGuard1_9 implements Listener {
             pushTeam.setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER);               
         } else {
             //plugin.getLogger().info("1.9 " +"DEBUG: player is already in another team");
+        }
+    }
+    /**
+     * Handles cleaning push protection on Quit
+     * @param player
+     */
+    private void removePush(Player player)
+    {
+        scoreboard = player.getScoreboard();
+        if(scoreboard !=null)
+            {
+            //Player Remove
+            Team pTeam = scoreboard.getTeam("ASkyBlockNP");
+            pTeam.getEntries().remove(player.getName());
         }
     }
 }
