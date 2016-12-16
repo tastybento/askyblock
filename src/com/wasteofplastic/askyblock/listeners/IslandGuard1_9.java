@@ -144,6 +144,7 @@ public class IslandGuard1_9 implements Listener {
     }
 
     // End crystal
+    @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled=true)
     void placeEndCrystalEvent(PlayerInteractEvent e) {
         Player p = e.getPlayer();
@@ -201,18 +202,18 @@ public class IslandGuard1_9 implements Listener {
         }
         if (!(e.getEntity() instanceof EnderCrystal)) {
             if (DEBUG) {
-                plugin.getLogger().info("1.9 " +"Entity is not End crystal it is " + e.getEntityType());
+                plugin.getLogger().info("1.9 Entity is not End crystal it is " + e.getEntityType());
             }
             return;
         }
         if (DEBUG) {
-            plugin.getLogger().info("1.9 " +"Damager is " + e.getDamager());
+            plugin.getLogger().info("1.9 Damager is " + e.getDamager());
         }
         Player p = null;
         if (e.getDamager() instanceof Player) {
             p = (Player) e.getDamager();
             if (DEBUG) {
-                plugin.getLogger().info("1.9 " +"Damager is a player");
+                plugin.getLogger().info("1.9 Damager is a player");
             }
         } else if (e.getDamager() instanceof Projectile) {
             // Get the shooter
@@ -342,6 +343,7 @@ public class IslandGuard1_9 implements Listener {
         }
         removePush(e.getPlayer());
     }
+    
     /**
      * Handles push protection
      * @param player
@@ -377,6 +379,7 @@ public class IslandGuard1_9 implements Listener {
             //plugin.getLogger().info("1.9 " +"DEBUG: player is already in another team");
         }
     }
+    
     /**
      * Handles cleaning push protection on Quit
      * @param player
