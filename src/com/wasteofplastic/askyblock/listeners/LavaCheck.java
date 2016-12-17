@@ -34,6 +34,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.scheduler.BukkitTask;
 
+import com.google.common.collect.HashMultiset;
+import com.google.common.collect.Multiset;
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.Settings;
@@ -48,11 +50,12 @@ public class LavaCheck implements Listener {
     private final static boolean DEBUG = false;
     private final Random random;
     private final static List<BlockFace> FACES = Arrays.asList(BlockFace.SELF, BlockFace.UP, BlockFace.DOWN, BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST);
-
+    private static Multiset<Material> stats = HashMultiset.create();
 
     public LavaCheck(ASkyBlock aSkyBlock) {
         plugin = aSkyBlock;
         random = new Random();
+        stats.clear();
     }
 
     /**
@@ -175,8 +178,13 @@ public class LavaCheck implements Listener {
                                     double maxValue = entry.getValue().lastKey();                                    
                                     double rnd = random.nextDouble() * maxValue;
                                     Entry<Double, Material> en = entry.getValue().ceilingEntry(rnd);
+                                    //plugin.getLogger().info("DEBUG: Cobble generated. Island level = " + level);
+                                    //plugin.getLogger().info("DEBUG: rnd = " + rnd + "/" + maxValue);
+                                    //plugin.getLogger().info("DEBUG: material = " + en.getValue());
                                     if (en != null) {
                                         block.setType(en.getValue());
+                                        // Record stats
+                                        stats.add(en.getValue());
                                     }
                                 }
                             }
@@ -200,6 +208,19 @@ public class LavaCheck implements Listener {
         return false;
     }
 
+    /**
+     * @return the magic cobble gen stats
+     */
+    public static Multiset<Material> getStats() {
+        return stats;
+    }
+
+    /**
+     * Clears the magic cobble gen stats
+     */
+    public static void clearStats() {
+        stats.clear();
+    }
 }
 
 // Failed attempts - remember the pain

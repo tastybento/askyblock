@@ -18,6 +18,7 @@ adminDeleteIsland:
 adminHelp: 
   add: "adds player to leader's team"
   addrange: "adds to or substracts from the island's protection range"
+  cobblestats: "displays magic cobble generation stats"
   clearreset: "resets the island reset limit for player"
   completeChallenge: "marks a challenge as complete"
   delete: "delete an island (removes blocks)."
@@ -473,7 +474,8 @@ teamchat:
   prefix: "[Team Chat]<{ISLAND_PLAYER}> "
   statusOff: "Team chat is off"
   statusOn: "Team chat is on"
-topTen: 
+topTen:
+  errorExcluded: "FYI: You are excluded from the top ten as you do not have [perm]"
   errorNotReady: "Top ten list not generated yet!"
   header: "These are the Top 10 islands:"
 warps: 

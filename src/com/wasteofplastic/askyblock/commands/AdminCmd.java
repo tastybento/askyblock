@@ -66,6 +66,7 @@ import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.Island.Flags;
 import com.wasteofplastic.askyblock.Settings.GameType;
 import com.wasteofplastic.askyblock.TopTen;
+import com.wasteofplastic.askyblock.listeners.LavaCheck;
 import com.wasteofplastic.askyblock.panels.ControlPanel;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
@@ -102,6 +103,9 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
         if (!(sender instanceof Player)) {
             sender.sendMessage(ChatColor.YELLOW  + label + " clearreset <player>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpclearReset);
             sender.sendMessage(ChatColor.YELLOW  + label + " clearresetall:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpclearReset);
+            if (Settings.useMagicCobbleGen) {
+                sender.sendMessage(ChatColor.YELLOW  + label + " cobblestats: " + ChatColor.WHITE + " " + plugin.myLocale().adminHelpcobbleStats);
+            }
             sender.sendMessage(ChatColor.YELLOW  + label + " completechallenge <player> <challengename>:" + ChatColor.WHITE + " "
                     + plugin.myLocale().adminHelpcompleteChallenge);
             sender.sendMessage(ChatColor.YELLOW  + label + " delete <player>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpdelete);
@@ -140,6 +144,9 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.clearresetall") || player.isOp()) {
                 player.sendMessage(ChatColor.YELLOW + "/" + label + " clearresetall:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpclearReset);
+            }
+            if (Settings.useMagicCobbleGen && VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.cobblestats") || player.isOp()) {
+                player.sendMessage(ChatColor.YELLOW  + "/" + label + " cobblestats: " + ChatColor.WHITE + " " + plugin.myLocale().adminHelpcobbleStats);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.challenges") || player.isOp()) {
                 player.sendMessage(ChatColor.YELLOW + "/" + label + " completechallenge <player> <challengename>:" + ChatColor.WHITE + " "
@@ -265,7 +272,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                         || split[0].equalsIgnoreCase("deleteisland") || split[0].equalsIgnoreCase("setrange")
                         || split[0].equalsIgnoreCase("reserve") || split[0].equalsIgnoreCase("addrange")
                         || split[0].equalsIgnoreCase("unregister") || split[0].equalsIgnoreCase("clearresetall")
-                        || split[0].equalsIgnoreCase("settingsreset")) {
+                        || split[0].equalsIgnoreCase("settingsreset") || split[0].equalsIgnoreCase("cobblestats")) {
                     if (!checkAdminPerms(player, split)) {
                         player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
                         return true;
@@ -318,6 +325,17 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
             help(sender, label);
             return true;
         case 1:
+            if (split[0].equalsIgnoreCase("cobblestats")) {
+                if (LavaCheck.getStats().size() == 0) {
+                    sender.sendMessage(ChatColor.RED + plugin.myLocale().banNone);
+                    return true;
+                }
+                for (Material mat : LavaCheck.getStats().elementSet()) {
+                    sender.sendMessage(mat + ": " + LavaCheck.getStats().count(mat) + "/" + LavaCheck.getStats().size() + " or " 
+                            + ((int)((double)LavaCheck.getStats().count(mat)/LavaCheck.getStats().size()*100)) + "%");
+                }
+                return true;
+            }
             if (split[0].equalsIgnoreCase("setdeaths")) {
                 sender.sendMessage(ChatColor.YELLOW  + label + " setdeaths <player> <number>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpsetDeaths);
                 return true;
@@ -2258,7 +2276,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                         "resetallchallenges", "purge", "info", "info", "info",
                         "clearreset", "clearresetall", "setbiome", "topbreeders", "team",
                         "name", "setdeaths", "settingsreset", "setrange", "addrange",
-                        "resetname", "register"));
+                        "resetname", "register", "cobblestats"));
                 break;
             case 2:
                 if (args[0].equalsIgnoreCase("name") || args[0].equalsIgnoreCase("resetname") || args[0].equalsIgnoreCase("setdeaths")) {

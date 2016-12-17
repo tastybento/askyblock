@@ -126,9 +126,9 @@ permissions:
           askyblock.craft.dirt:
             description: Allows tilling of coarse dirt into dirt
             default: false
-      askyblock.excludetopten:
-        description: Excludes player from top ten
-        default: false
+      askyblock.intopten:
+        description: Includes player in top ten
+        default: true
       askyblock.nohunger:
         description: Excludes player from hunger if on island
         default: false  
@@ -341,5 +341,8 @@ permissions:
             default: op
           askyblock.admin.noban:
             description: Player cannot be banned from an island
+            default: op
+          askyblock.admin.cobblestats:
+            description: Displays magic cobble gen stats
             default: op
            

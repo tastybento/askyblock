@@ -83,7 +83,7 @@ public class TopTen implements Listener{
         Player player = plugin.getServer().getPlayer(ownerUUID);
         if (player != null) {
             // Online
-            if (player.hasPermission(Settings.PERMPREFIX + "excludetopten")) {
+            if (!player.hasPermission(Settings.PERMPREFIX + "intopten")) {
                 topTenList.remove(ownerUUID);
                 return;
             }
@@ -262,7 +262,7 @@ public class TopTen implements Listener{
                 Player entry = plugin.getServer().getPlayer(playerUUID);
                 boolean show = true;
                 if (entry != null) {
-                    if (entry.hasPermission(Settings.PERMPREFIX + "excludetopten")) {
+                    if (!entry.hasPermission(Settings.PERMPREFIX + "intopten")) {
                         it.remove();
                         show = false;
                     }
@@ -310,7 +310,7 @@ public class TopTen implements Listener{
                 Player entry = plugin.getServer().getPlayer(playerUUID);
                 boolean show = true;
                 if (entry != null) {
-                    if (entry.hasPermission(Settings.PERMPREFIX + "excludetopten")) {
+                    if (!entry.hasPermission(Settings.PERMPREFIX + "intopten")) {
                         it.remove();
                         show = false;
                     }

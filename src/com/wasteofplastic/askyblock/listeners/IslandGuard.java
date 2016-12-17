@@ -540,6 +540,10 @@ public class IslandGuard implements Listener {
             }
         }
         Island island = plugin.getGrid().getProtectedIslandAt(animal.getLocation());
+        if (island == null) {
+            // Animal is spawning outside of an island so ignore
+            return;
+        }
         // Count how many animals are there and who is the most likely spawner if it was a player
         // This had to be reworked because the previous snowball approach doesn't work for large volumes
         List<Player> culprits = new ArrayList<Player>();
@@ -669,7 +673,8 @@ public class IslandGuard implements Listener {
         // Else, is on island
         else{
             if(e.getEntity() instanceof Monster || e.getEntity() instanceof Slime){
-                if(!plugin.getGrid().getIslandAt(e.getLocation()).getIgsFlag(Flags.allowMobSpawning)){
+                Island island = plugin.getGrid().getIslandAt(e.getLocation());
+                if(island != null && !island.getIgsFlag(Flags.allowMobSpawning)){
                     e.setCancelled(true);
                     return;
                 }

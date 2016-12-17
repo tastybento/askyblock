@@ -645,6 +645,10 @@ public class ASLocale {
 
     public String errorBlockedByAPI;
 
+    public String adminHelpcobbleStats;
+
+    public String topTenerrorExcluded;
+
     /**
      * Creates a locale object full of localized strings for a language
      * @param plugin
@@ -877,6 +881,7 @@ public class ASLocale {
             topTenGuiTitle = topTenGuiTitle.substring(0, 29);
         }
         topTenerrorNotReady = ChatColor.translateAlternateColorCodes('&', locale.getString("topTen.errorNotReady", "Top ten list not generated yet!"));
+        topTenerrorExcluded = ChatColor.translateAlternateColorCodes('&', locale.getString("topTen.errorExcluded", "FYI: You are excluded from the top ten as you do not have [perm]"));
         levelislandLevel = ChatColor.translateAlternateColorCodes('&', locale.getString("level.islandLevel", "Island level"));
         levelerrornotYourIsland = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("level.errornotYourIsland", "Only the island owner can do that."));
@@ -1145,6 +1150,9 @@ public class ASLocale {
                 .translateAlternateColorCodes('&', locale.getString("adminHelp.kick", "removes player from any team"));
         adminHelpadd = ChatColor
                 .translateAlternateColorCodes('&', locale.getString("adminHelp.add", "adds player to leader's team"));
+        adminHelpcobbleStats = ChatColor
+                .translateAlternateColorCodes('&', locale.getString("adminHelp.cobblestats", "displays magic cobble generation stats"));
+
         settingsResetInProgress = ChatColor
                 .translateAlternateColorCodes('&', locale.getString("settingsReset.inprogress", "Protection settings being reset, please wait..."));
         settingsResetDone = ChatColor

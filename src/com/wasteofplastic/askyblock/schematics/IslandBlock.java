@@ -164,6 +164,7 @@ public class IslandBlock {
         WEtoM.put("WOODEN_SHOVEL",Material.WOOD_SPADE);
         WEtoM.put("WOODEN_SLAB",Material.WOOD_STEP);
         WEtoM.put("WOODEN_SWORD",Material.WOOD_SWORD);
+        WEtoM.put("MUSHROOM_STEW",Material.MUSHROOM_SOUP);
         // Entities
         WEtoME.put("LAVASLIME", EntityType.MAGMA_CUBE);
         WEtoME.put("ENTITYHORSE", EntityType.HORSE);
