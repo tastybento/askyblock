@@ -427,18 +427,13 @@ public class LevelCalcByChunk {
                                 }
                             }
                             //plugin.getLogger().info("DEBUG: updating top ten");
-                            // Only update top ten if the asker is not the target
-                            if (sender instanceof Player) {
-                                if (!(((Player)sender).getUniqueId().equals(targetPlayer))) {
-                                    if (plugin.getPlayers().inTeam(targetPlayer)) {
-                                        UUID leader = plugin.getPlayers().getTeamLeader(targetPlayer);
-                                        if (leader != null) {
-                                            TopTen.topTenAddEntry(leader, score);
-                                        }
-                                    } else {
-                                        TopTen.topTenAddEntry(targetPlayer, score);
-                                    }
+                            if (plugin.getPlayers().inTeam(targetPlayer)) {
+                                UUID leader = plugin.getPlayers().getTeamLeader(targetPlayer);
+                                if (leader != null) {
+                                    TopTen.topTenAddEntry(leader, score);
                                 }
+                            } else {
+                                TopTen.topTenAddEntry(targetPlayer, score);
                             }
                             // Fire the level event
                             Island island = plugin.getGrid().getIsland(targetPlayer);
