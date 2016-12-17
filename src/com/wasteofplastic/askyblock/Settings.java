@@ -259,6 +259,9 @@ public class Settings {
     // Disable offline redstone
     public static boolean disableOfflineRedstone;
     
+    // Fancy island level display
+    public static boolean fancyIslandLevelDisplay;
+    
     // Falling blocked commands
     public static List<String> fallingCommandBlockList;
     public static List<String> leaveCommands;

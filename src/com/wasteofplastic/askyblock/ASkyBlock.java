@@ -1547,6 +1547,10 @@ public class ASkyBlock extends JavaPlugin {
         }
         // Disable offline redstone
         Settings.disableOfflineRedstone = getConfig().getBoolean("general.disableofflineredstone", false);
+        
+        // Fancy island level display
+        Settings.fancyIslandLevelDisplay = getConfig().getBoolean("general.fancylevelinchat", false);
+        
         // All done
         return true;
     }
