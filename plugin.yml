@@ -230,6 +230,9 @@ permissions:
           askyblock.settings.enableJoinAndLeaveIslandMessages:
             description: Allow player to change this island guard setting
             default: false
+          askyblock.settings.allowMobSpawning:
+            description: Allow player to change this island guard settings
+            default: false
       askyblock.mod.*:
         children:
           askyblock.mod.topten:
@@ -336,4 +339,7 @@ permissions:
           askyblock.admin.settingsreset:
             description: Resets all the islands to default protection settings
             default: op
-            
+          askyblock.admin.noban:
+            description: Player cannot be banned from an island
+            default: op
+           

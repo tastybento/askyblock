@@ -61,6 +61,7 @@ import org.bukkit.event.block.BlockIgniteEvent.IgniteCause;
 import org.bukkit.event.block.BlockMultiPlaceEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
@@ -632,47 +633,47 @@ public class IslandGuard implements Listener {
         if (plugin.getGrid() == null) {
             return;
         }
-        
+
         // If it is at spawn
         if(plugin.getGrid().isAtSpawn(e.getLocation())){
-        	// Deal with mobs
-        	if (e.getEntity() instanceof Monster || e.getEntity() instanceof Slime) {
-        		if (e.getSpawnReason() == SpawnReason.SPAWNER_EGG && !Settings.allowSpawnMonsterEggs) {
-        			e.setCancelled(true);
-        			return;
-        		}
-        		if (!Settings.allowSpawnMobSpawn) {
-        			// Mobs not allowed to spawn
-        			e.setCancelled(true);
-        			return;
-        		}
-        	}
+            // Deal with mobs
+            if (e.getEntity() instanceof Monster || e.getEntity() instanceof Slime) {
+                if (e.getSpawnReason() == SpawnReason.SPAWNER_EGG && !Settings.allowSpawnMonsterEggs) {
+                    e.setCancelled(true);
+                    return;
+                }
+                if (!Settings.allowSpawnMobSpawn) {
+                    // Mobs not allowed to spawn
+                    e.setCancelled(true);
+                    return;
+                }
+            }
 
-        	// If animals can spawn, check if the spawning is natural, or
-        	// egg-induced
-        	if (e.getEntity() instanceof Animals) {
-        		if (e.getSpawnReason() == SpawnReason.SPAWNER_EGG && !Settings.allowSpawnMonsterEggs) {
-        			e.setCancelled(true);
-        			return;
-        		}
-        		if (e.getSpawnReason() == SpawnReason.EGG && !Settings.allowSpawnEggs) {
-        			e.setCancelled(true);
-        		}
-        		if (!Settings.allowSpawnAnimalSpawn) {
-        			// Animals are not allowed to spawn
-        			e.setCancelled(true);
-        			return;
-        		}
-        	}
+            // If animals can spawn, check if the spawning is natural, or
+            // egg-induced
+            if (e.getEntity() instanceof Animals) {
+                if (e.getSpawnReason() == SpawnReason.SPAWNER_EGG && !Settings.allowSpawnMonsterEggs) {
+                    e.setCancelled(true);
+                    return;
+                }
+                if (e.getSpawnReason() == SpawnReason.EGG && !Settings.allowSpawnEggs) {
+                    e.setCancelled(true);
+                }
+                if (!Settings.allowSpawnAnimalSpawn) {
+                    // Animals are not allowed to spawn
+                    e.setCancelled(true);
+                    return;
+                }
+            }
         }
         // Else, is on island
         else{
-        	if(e.getEntity() instanceof Monster || e.getEntity() instanceof Slime){
-        		if(!plugin.getGrid().getIslandAt(e.getLocation()).getIgsFlag(Flags.allowMobSpawning)){
-        			e.setCancelled(true);
-        			return;
-        		}
-        	}
+            if(e.getEntity() instanceof Monster || e.getEntity() instanceof Slime){
+                if(!plugin.getGrid().getIslandAt(e.getLocation()).getIgsFlag(Flags.allowMobSpawning)){
+                    e.setCancelled(true);
+                    return;
+                }
+            }
         }
     }
 
@@ -2727,6 +2728,29 @@ public class IslandGuard implements Listener {
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * Stop redstone if team members are offline and disableOfflineRedstone is TRUE.
+     * @param e
+     */
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onBlockRedstone(BlockRedstoneEvent e){
+        if(Settings.disableOfflineRedstone) {
+            // Check world
+            if (!inWorld(e.getBlock())) {
+                return;
+            }
+            // Check if this is on an island
+            Island island = plugin.getGrid().getIslandAt(e.getBlock().getLocation());
+            if (island == null || island.isSpawn()) {
+                return;
+            }
+            for(UUID member : island.getMembers()){
+                if(plugin.getServer().getPlayer(member) != null) return;
+            }
+            e.setNewCurrent(0);
         }
     }
 }
