@@ -152,6 +152,8 @@ public class TopTen implements Listener{
                                 }
                             }
                         } catch (Exception e) {
+                            plugin.getLogger().severe("Error when reading player file. File is " + fileName);
+                            plugin.getLogger().severe("Look at the stack trace and edit the file - it probably has broken YAML in it for some reason.");
                             e.printStackTrace();
                         }
                     }
