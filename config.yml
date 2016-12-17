@@ -110,7 +110,8 @@ island:
    # allowGateUse, allowHorseInvAccess, allowHorseRiding, allowHurtMobs, allowLeashUse,
    # allowLeverButtonUse, allowMusic, allowPlaceBlocks, allowPortalUse, allowPressurePlate,
    # allowPvP, allowNetherPvP, allowRedStone, allowShearing, allowVillagerTrading
-   # allowChorusFruit, enableJoinAndLeaveIslandMessages, allowMobSpawning
+   # allowChorusFruit, enableJoinAndLeaveIslandMessages, allowMobSpawning, allowVisitorItemDrop,
+   # allowVisitorItemPickUp
    # Permissions are CASE SENSITIVE!
    
    # Island naming
@@ -190,6 +191,10 @@ island:
    enablejoinandleaveislandmessages: true
    # Allow mobs to spawn on player's island
    allowmobspawning: true
+   # Allow item drop by visitors
+   allowvisitoritemdrop: true
+   # Allow item pickup by visitors
+   allowvisitoritempickup: true
    
    # System settings - these cannot be changed by players, only viewed
    
@@ -217,10 +222,6 @@ island:
    allowfireextinguish: false
    # Allow chests to be blown up by creepers or TNT
    allowchestdamage: false
-   # Allow item drop by visitors
-   allowvisitoritemdrop: true
-   # Allow item pickup by visitors
-   allowvisitoritempickup: true
    # Allow visitors to keep their items if they die
    allowvisitorkeepinvondeath: false
    # Allow pistons to push outside of the protected area (maybe to make bridges)
@@ -341,7 +342,7 @@ general:
    # Invincible visitors - Prevent players from killing them (intentionally or by accident)
    # If they fall to the void, they get TP'd to their island.
    invinciblevisitors: false
-
+   
    # Only used if invinciblevisitors is set to TRUE
    # This allow you to customize what kind of damage visitors should not receive
    # If you want visitors to receive a listed damage, put a "#" at the start of the line

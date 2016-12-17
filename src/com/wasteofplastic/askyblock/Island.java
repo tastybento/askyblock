@@ -123,7 +123,9 @@ public class Island implements Cloneable {
         allowVillagerTrading,
         allowChorusFruit,
         enableJoinAndLeaveIslandMessages,
-        allowMobSpawning
+        allowMobSpawning, 
+        allowVisitorItemDrop,
+        allowVisitorItemPickup
     }
 
 
