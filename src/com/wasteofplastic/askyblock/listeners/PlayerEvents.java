@@ -203,7 +203,7 @@ public class PlayerEvents implements Listener {
                 return;
             }
         }
-        if (plugin.getGrid().getIslandAt(e.getItem().getLocation()).getIgsFlag(Flags.allowVisitorItemDrop) || e.getPlayer().isOp() || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
+        if ((plugin.getGrid().getIslandAt(e.getItem().getLocation()) != null && plugin.getGrid().getIslandAt(e.getItem().getLocation()).getIgsFlag(Flags.allowVisitorItemDrop)) || e.getPlayer().isOp() || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
                 || plugin.getGrid().locationIsOnIsland(e.getPlayer(), e.getItem().getLocation())) {
             return;
         }
@@ -227,7 +227,7 @@ public class PlayerEvents implements Listener {
                 return;
             }
         }
-        if (plugin.getGrid().getIslandAt(e.getItemDrop().getLocation()).getIgsFlag(Flags.allowVisitorItemDrop) || e.getPlayer().isOp() || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
+        if ((plugin.getGrid().getIslandAt(e.getItemDrop().getLocation()) != null && plugin.getGrid().getIslandAt(e.getItemDrop().getLocation()).getIgsFlag(Flags.allowVisitorItemDrop)) || e.getPlayer().isOp() || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
                 || plugin.getGrid().locationIsOnIsland(e.getPlayer(), e.getItemDrop().getLocation())) {
             return;
         }
