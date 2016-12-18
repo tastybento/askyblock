@@ -195,6 +195,8 @@ public class SettingsPanel implements Listener {
             if (hasChorusFruit) {
                 ip.add(new IPItem(Settings.allowSpawnChorusFruit, Material.CHORUS_FRUIT, plugin.myLocale(uuid).igsChorusFruit));
             }
+            ip.add(new IPItem(Settings.allowSpawnVisitorItemDrop, Material.GOLD_INGOT, plugin.myLocale(uuid).igsVisitorDrop));
+            ip.add(new IPItem(Settings.allowSpawnVisitorItemPickup, Material.DIAMOND, plugin.myLocale(uuid).igsVisitorPickUp));   
         } else {
             // Standard island
             ip.add(new IPItem(Material.MAP, plugin.myLocale(uuid).igsSettingsIslandTitle, plugin.myLocale(uuid).igsSettingsIslandDesc));
