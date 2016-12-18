@@ -117,6 +117,8 @@ public class Settings {
     public static boolean allowChorusFruit;
     public static boolean enableJoinAndLeaveIslandMessages;
     public static boolean allowMobSpawning;
+    public static boolean allowVisitorItemDrop;
+    public static boolean allowVisitorItemPickup;
 
     // System settings
     public static boolean allowChestDamage;
@@ -129,8 +131,6 @@ public class Settings {
     public static boolean allowMonsterEggs;
     public static boolean allowPistonPush;
     public static boolean allowTNTDamage;
-    public static boolean allowVisitorItemDrop;
-    public static boolean allowVisitorItemPickup;
     public static boolean allowVisitorKeepInvOnDeath;
     public static boolean restrictWither;
 

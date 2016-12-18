@@ -85,6 +85,8 @@ public class SettingsPanel implements Listener {
         }
         lookup.put( Material.NOTE_BLOCK,Flags.enableJoinAndLeaveIslandMessages);
         lookup.put(Material.MOB_SPAWNER, Flags.allowMobSpawning);
+        lookup.put(Material.GOLD_INGOT, Flags.allowVisitorItemDrop);
+        lookup.put(Material.DIAMOND, Flags.allowVisitorItemPickup);
     }
 
     public SettingsPanel(ASkyBlock plugin) {
@@ -147,8 +149,6 @@ public class SettingsPanel implements Listener {
             ip.add(new IPItem(!Settings.restrictWither, Material.SKULL_ITEM, 1, plugin.myLocale(uuid).igsWitherDamage));
             ip.add(new IPItem(Settings.allowShearing, Material.SHEARS, plugin.myLocale(uuid).igsShears));
             ip.add(new IPItem(Settings.allowTNTDamage, Material.TNT, plugin.myLocale(uuid).igsTNT));
-            ip.add(new IPItem(Settings.allowVisitorItemDrop, Material.GOLD_INGOT, plugin.myLocale(uuid).igsVisitorDrop));
-            ip.add(new IPItem(Settings.allowVisitorItemPickup, Material.DIAMOND, plugin.myLocale(uuid).igsVisitorPickUp));
             ip.add(new IPItem(Settings.allowVisitorKeepInvOnDeath, Material.IRON_CHESTPLATE, plugin.myLocale(uuid).igsVisitorKeep));
             ip.add(new IPItem(Settings.allowVillagerTrading, Material.EMERALD, plugin.myLocale(uuid).igsVillagerTrading));
             if (hasChorusFruit) {
@@ -195,6 +195,8 @@ public class SettingsPanel implements Listener {
             if (hasChorusFruit) {
                 ip.add(new IPItem(Settings.allowSpawnChorusFruit, Material.CHORUS_FRUIT, plugin.myLocale(uuid).igsChorusFruit));
             }
+            ip.add(new IPItem(Settings.allowSpawnVisitorItemDrop, Material.GOLD_INGOT, plugin.myLocale(uuid).igsVisitorDrop));
+            ip.add(new IPItem(Settings.allowSpawnVisitorItemPickup, Material.DIAMOND, plugin.myLocale(uuid).igsVisitorPickUp));   
         } else {
             // Standard island
             ip.add(new IPItem(Material.MAP, plugin.myLocale(uuid).igsSettingsIslandTitle, plugin.myLocale(uuid).igsSettingsIslandDesc));
@@ -235,6 +237,8 @@ public class SettingsPanel implements Listener {
             }
             ip.add(new IPItem(island.getIgsFlag(Flags.enableJoinAndLeaveIslandMessages), Material.NOTE_BLOCK, plugin.myLocale(uuid).igsJoinLeaveIslandMessage));
             ip.add(new IPItem(island.getIgsFlag(Flags.allowMobSpawning), Material.MOB_SPAWNER, plugin.myLocale(uuid).igsMobSpawning));
+            ip.add(new IPItem(island.getIgsFlag(Flags.allowVisitorItemDrop), Material.GOLD_INGOT, plugin.myLocale(uuid).igsVisitorDrop));
+            ip.add(new IPItem(island.getIgsFlag(Flags.allowVisitorItemPickup), Material.DIAMOND, plugin.myLocale(uuid).igsVisitorPickUp));
         }
         if (ip.size() > 0) {
             // Make sure size is a multiple of 9
