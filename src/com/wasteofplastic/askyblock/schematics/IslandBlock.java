@@ -87,6 +87,8 @@ public class IslandBlock {
         WEtoM.put("CAULDRON", Material.CAULDRON_ITEM);
         WEtoM.put("CLOCK", Material.WATCH);
         WEtoM.put("COBBLESTONE_WALL",Material.COBBLE_WALL);
+        WEtoM.put("COMMAND_BLOCK",Material.COMMAND);
+        WEtoM.put("COMMANDBLOCK_MINECART",Material.COMMAND_MINECART);
         WEtoM.put("COMPARATOR",Material.REDSTONE_COMPARATOR);
         WEtoM.put("COOKED_PORKCHOP", Material.GRILLED_PORK);
         WEtoM.put("CLOCK", Material.WATCH);
@@ -94,8 +96,10 @@ public class IslandBlock {
         WEtoM.put("DIAMOND_HORSE_ARMOR",Material.DIAMOND_BARDING);
         WEtoM.put("DIAMOND_SHOVEL",Material.DIAMOND_SPADE);
         WEtoM.put("DYE",Material.INK_SACK);
+        WEtoM.put("ENCHANTING_TABLE", Material.ENCHANTMENT_TABLE); //1.11 rename
         WEtoM.put("END_PORTAL_FRAME",Material.ENDER_PORTAL_FRAME);
-        WEtoM.put("END_STONE",Material.ENDER_STONE);
+        WEtoM.put("END_PORTAL", Material.ENDER_PORTAL); // 1.11 rename
+        WEtoM.put("END_STONE", Material.ENDER_STONE);
         WEtoM.put("EXPERIENCE_BOTTLE",Material.EXP_BOTTLE);
         WEtoM.put("FILLED_MAP",Material.MAP);
         WEtoM.put("FIRE_CHARGE",Material.FIREBALL);
@@ -170,15 +174,24 @@ public class IslandBlock {
         WEtoME.put("ENTITYHORSE", EntityType.HORSE);
         WEtoME.put("OZELOT", EntityType.OCELOT);
         WEtoME.put("MUSHROOMCOW", EntityType.MUSHROOM_COW);
+        WEtoME.put("MOOSHROOM", EntityType.MUSHROOM_COW); // 1.11 rename
         WEtoME.put("PIGZOMBIE", EntityType.PIG_ZOMBIE);
+        WEtoME.put("ZOMBIE_PIGMAN", EntityType.PIG_ZOMBIE); // 1.11 rename
         WEtoME.put("CAVESPIDER", EntityType.CAVE_SPIDER);
         WEtoME.put("XPORB", EntityType.EXPERIENCE_ORB);
+        WEtoME.put("XP_ORB", EntityType.EXPERIENCE_ORB); // 1.11 rename
         WEtoME.put("MINECARTRIDEABLE", EntityType.MINECART);
         WEtoME.put("MINECARTHOPPER", EntityType.MINECART_HOPPER);
+        WEtoME.put("HOPPER_MINECART", EntityType.MINECART_HOPPER);
         WEtoME.put("MINECARTFURNACE", EntityType.MINECART_FURNACE);
+        WEtoME.put("FURNACE_MINECART", EntityType.MINECART_FURNACE);
         WEtoME.put("MINECARTMOBSPAWNER", EntityType.MINECART_MOB_SPAWNER);
+        WEtoME.put("SPAWNER_MINECART", EntityType.MINECART_MOB_SPAWNER); // 1.11 rename
         WEtoME.put("MINECARTTNT", EntityType.MINECART_TNT);
+        WEtoME.put("TNT_MINECART", EntityType.MINECART_TNT); // 1.11
+        WEtoME.put("LEASH_KNOT",EntityType.LEASH_HITCH); // 1.11
         WEtoME.put("MINECARTCHEST", EntityType.MINECART_CHEST);
+        WEtoME.put("CHEST_MINECART", EntityType.MINECART_CHEST); //1.11 rename
         WEtoME.put("VILLAGERGOLEM", EntityType.IRON_GOLEM);
         WEtoME.put("ENDERDRAGON", EntityType.ENDER_DRAGON);
         WEtoME.put("PAINTING", EntityType.PAINTING);
@@ -187,9 +200,10 @@ public class IslandBlock {
             WEtoME.put("ENDERCRYSTAL", EntityType.ENDER_CRYSTAL);
             WEtoME.put("ARMORSTAND", EntityType.ARMOR_STAND);
         }
-        // 1.10 entities
+        // 1.10 entities and materials
         if (!Bukkit.getServer().getVersion().contains("(MC: 1.7") && !Bukkit.getServer().getVersion().contains("(MC: 1.8") && !Bukkit.getServer().getVersion().contains("(MC: 1.9")) {
             WEtoME.put("POLARBEAR", EntityType.POLAR_BEAR);
+            WEtoM.put("ENDER_CRYSTAL", Material.END_CRYSTAL); // 1.11
         }
     }
 
