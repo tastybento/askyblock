@@ -231,6 +231,23 @@ public class Settings {
     public static int breedingLimitSquid;
     public static int breedingLimitWolf;
     
+    public static int monsterLimitBlaze;
+    public static int monsterLimitCaveSpider;
+    public static int monsterLimitCreeper;
+    public static int monsterLimitEnderman;
+    public static int monsterLimitEndermite;
+    public static int monsterLimitGhast;
+    public static int monsterLimitHusk;
+    public static int monsterLimitMagmaCube;
+    public static int monsterLimitPigZombie;
+    public static int monsterLimitSkeleton;
+    public static int monsterLimitSlime;
+    public static int monsterLimitSpider;
+    public static int monsterLimitStray;
+    public static int monsterLimitWitch;
+    public static int monsterLimitZombie;
+    public static int monsterLimitZombieVillager;
+    
     // Console shows teamchat messages
     public static boolean logTeamChat;
 

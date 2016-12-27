@@ -417,6 +417,25 @@ general:
    # Note: If set to a negative number the world will use the server-wide spawn limit instead.
    monsterspawnlimit: 100
    
+   # Monster limits - works exactly like breeding limit.
+   monsterlimit:
+     BLAZE: 0
+     CAVE_SPIDER: 0
+     CREEPER: 0
+     ENDERMAN: 0
+     ENDERMITE: 0
+     GHAST: 0
+     HUSK: 0
+     MAGMA_CUBE: 0
+     PIG_ZOMBIE: 0
+     SKELETON: 0
+     SLIME: 0
+     SPIDER: 0
+     STRAY: 0
+     WITCH: 0
+     ZOMBIE: 0
+     ZOMBIE_VILLAGER: 0
+   
    # Sets the limit for number of animals that can spawn in a chunk in this world. 
    # Note: If set to a negative number the world will use the server-wide spawn limit instead.
    animalspawnlimit: 15
