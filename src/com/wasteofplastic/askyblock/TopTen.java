@@ -367,6 +367,11 @@ public class TopTen implements Listener{
         // The player that clicked the item
         Player player = (Player) event.getWhoClicked();
         event.setCancelled(true);
+        if(event.getCurrentItem() != null && event.getCurrentItem().getType().equals(Material.SKULL_ITEM) && event.getCurrentItem().hasItemMeta()){
+        	player.performCommand("is warp " + ((SkullMeta)event.getCurrentItem().getItemMeta()).getOwner());
+        	player.closeInventory();
+        	return;
+        }
         if (event.getSlotType().equals(SlotType.OUTSIDE)) {
             player.closeInventory();
             return;
