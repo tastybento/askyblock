@@ -1454,7 +1454,19 @@ public class ASkyBlock extends JavaPlugin {
             getLogger().severe("Could not parse biome " + defaultBiome + " using PLAINS instead.");
             Settings.defaultBiome = Biome.PLAINS;
         }
-        Settings.breedingLimit = getConfig().getInt("general.breedinglimit", 0);
+        Settings.breedingLimitChicken = getConfig().getInt("general.breedinglimit.CHICKEN", 0);
+        Settings.breedingLimitCow = getConfig().getInt("general.breedinglimit.COW", 0);
+        Settings.breedingLimitHorse = getConfig().getInt("general.breedinglimit.HORSE", 0);
+        Settings.breedingLimitIronGolem = getConfig().getInt("general.breedinglimit.IRONGOLEM", 0);
+        Settings.breedingLimitLlama = getConfig().getInt("general.breedinglimit.LLAMA", 0);
+        Settings.breedingLimitMushroomCow = getConfig().getInt("general.breedinglimit.MUSHROOMCOW", 0);
+        Settings.breedingLimitOcelot = getConfig().getInt("general.breedinglimit.OCELOT", 0);
+        Settings.breedingLimitPolarBear = getConfig().getInt("general.breedinglimit.POLARBEAR", 0);
+        Settings.breedingLimitRabbit = getConfig().getInt("general.breedinglimit.RABBIT", 0);
+        Settings.breedingLimitSheep = getConfig().getInt("general.breedinglimit.SHEEP", 0);
+        Settings.breedingLimitSquid = getConfig().getInt("general.breedinglimit.SQUID", 0);
+        Settings.breedingLimitWolf = getConfig().getInt("general.breedinglimit.WOLF", 0);
+
         Settings.villagerLimit = getConfig().getInt("general.villagerlimit", 0);
         Settings.limitedBlocks = new HashMap<String,Integer>();
         ConfigurationSection entityLimits = getConfig().getConfigurationSection("general.entitylimits");

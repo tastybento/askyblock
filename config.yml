@@ -341,7 +341,7 @@ general:
    # Invincible visitors - Prevent players from killing them (intentionally or by accident)
    # If they fall to the void, they get TP'd to their island.
    invinciblevisitors: false
-
+   
    # Only used if invinciblevisitors is set to TRUE
    # This allow you to customize what kind of damage visitors should not receive
    # If you want visitors to receive a listed damage, put a "#" at the start of the line
@@ -427,7 +427,20 @@ general:
    # This WILL affect mobspawn blocks AND spawn egg use. Note that hearts will
    # still appear, but breeding will not happen.
    # Limit includes nether island if nether islands are active.
-   breedinglimit: 0
+   # Villager breeding limit is set below, as it works differently. (villagerlimit)
+   breedinglimit:
+     CHICKEN: 0
+     COW: 0
+     HORSE: 0
+     IRONGOLEM: 0
+     LLAMA: 0
+     MUSHROOMCOW: 0
+     OCELOT: 0
+     POLARBEAR: 0
+     RABBIT: 0
+     SHEEP: 0
+     SQUID: 0
+     WOLF: 0
    
    # Sets the limit for number of water animals [squid] that can spawn in a chunk in this world. 
    # Note: If set to a negative number the world will use the server-wide spawn limit instead.

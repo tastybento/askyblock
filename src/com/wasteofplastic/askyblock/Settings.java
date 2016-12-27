@@ -218,7 +218,18 @@ public class Settings {
     // Island reset commands
     public static List<String> resetCommands = new ArrayList<String>();
     // Mob limits
-    public static int breedingLimit;
+    public static int breedingLimitChicken;
+    public static int breedingLimitCow;
+    public static int breedingLimitHorse;
+    public static int breedingLimitIronGolem;
+    public static int breedingLimitLlama;
+    public static int breedingLimitMushroomCow;
+    public static int breedingLimitOcelot;
+    public static int breedingLimitPolarBear;
+    public static int breedingLimitRabbit;
+    public static int breedingLimitSheep;
+    public static int breedingLimitSquid;
+    public static int breedingLimitWolf;
     
     // Console shows teamchat messages
     public static boolean logTeamChat;
