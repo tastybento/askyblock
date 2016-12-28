@@ -310,13 +310,17 @@ public class IslandBlock {
             }
         }
         //Bukkit.getLogger().info("DEBUG: creature type = " + creatureType);
+        // The mob type might be prefixed with "Minecraft:"
+        if (creatureType.startsWith("MINECRAFT:")) {
+            creatureType = creatureType.substring(10);
+        }
         if (WEtoME.containsKey(creatureType)) {
             spawnerBlockType = WEtoME.get(creatureType);
         } else {
             try {
                 spawnerBlockType = EntityType.valueOf(creatureType);
             } catch (Exception e) {
-                Bukkit.getLogger().severe("I don't know what a " + creatureType + " is... Skipping spawner setting.");
+                Bukkit.getLogger().warning("Spawner setting of " + creatureType + " is unknown for this server. Skipping.");
             }
         }
         //Bukkit.getLogger().info("DEBUG: spawnerblock type = " + spawnerBlockType);

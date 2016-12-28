@@ -362,16 +362,20 @@ public class Schematic {
                     if (entry.getKey().equals("id")) {
                         String id = ((StringTag)entry.getValue()).getValue().toUpperCase();
                         //Bukkit.getLogger().info("DEBUG: ID is '" + id + "'");
+                        // The mob type might be prefixed with "Minecraft:"
+                        if (id.startsWith("MINECRAFT:")) {
+                            id = id.substring(10);
+                        }
                         if (IslandBlock.WEtoME.containsKey(id)) {
                             //Bukkit.getLogger().info("DEBUG: id found");
                             ent.setType(IslandBlock.WEtoME.get(id));
                         } else if (!id.equalsIgnoreCase("ITEM")){
-                            //Bukkit.getLogger().info("DEBUG: id not found");
-                            try {
-                                ent.setType(EntityType.valueOf(id));
-                            } catch (Exception ex) {
-                                plugin.getLogger().warning("MobType " + id + " unknown, skipping");
-                            }
+                            for (EntityType type : EntityType.values()) {
+                                if (type.toString().equals(id)) {
+                                    ent.setType(type);
+                                    break;
+                                }
+                            }                            
                         }
                     }
 
@@ -1552,7 +1556,7 @@ public class Schematic {
      * @param cost
      */
     public void setCost(double cost) {
-       this.cost = cost;
+        this.cost = cost;
     }
 
     /**
