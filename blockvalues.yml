@@ -5,7 +5,7 @@
 # Promotes under-water development if there is a sea. Value can be fractional.
 underwater: 1.0
 
-# Value of one island level. Default 100. 
+# Value of one island level. Default 100. Minimum value is 1.
 levelcost: 100
 
 # Death penalty

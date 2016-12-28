@@ -61,6 +61,8 @@ import org.bukkit.scoreboard.Team;
 import com.wasteofplastic.askyblock.Island.Flags;
 import com.wasteofplastic.askyblock.NotSetup.Reason;
 import com.wasteofplastic.askyblock.Settings.GameType;
+import com.wasteofplastic.askyblock.Updater.UpdateResult;
+import com.wasteofplastic.askyblock.Updater.UpdateType;
 import com.wasteofplastic.askyblock.commands.AdminCmd;
 import com.wasteofplastic.askyblock.commands.Challenges;
 import com.wasteofplastic.askyblock.commands.IslandCmd;
@@ -78,6 +80,7 @@ import com.wasteofplastic.askyblock.listeners.IslandGuard1_9;
 import com.wasteofplastic.askyblock.listeners.JoinLeaveEvents;
 import com.wasteofplastic.askyblock.listeners.LavaCheck;
 import com.wasteofplastic.askyblock.listeners.NetherPortals;
+import com.wasteofplastic.askyblock.listeners.NetherSpawning;
 import com.wasteofplastic.askyblock.listeners.PlayerEvents;
 import com.wasteofplastic.askyblock.listeners.WorldEnter;
 import com.wasteofplastic.askyblock.listeners.WorldLoader;
@@ -137,7 +140,7 @@ public class ASkyBlock extends JavaPlugin {
     private boolean calculatingLevel = false;
 
     // Update object
-    private Update updateCheck = null;
+    private Updater updateCheck = null;
 
     // Messages object
     private Messages messages;
@@ -480,16 +483,43 @@ public class ASkyBlock extends JavaPlugin {
                         int count = 0;
                         @Override
                         public void run() {
-                            if (count++ > 10) {
-                                plugin.getLogger().info("No updates found. (No response from server after 10s)");
+                            if (count++ > 20) {
+                                plugin.getLogger().info("No updates found. (No response from server after 20s)");
                                 this.cancel();
                             } else {
                                 // Wait for the response
                                 if (updateCheck != null) {
-                                    if (updateCheck.isSuccess()) {
-                                        checkUpdatesNotify(null);
-                                    } else {
-                                        plugin.getLogger().info("No update.");
+                                    switch (updateCheck.getResult()) {
+                                    case DISABLED:
+                                        plugin.getLogger().info("Updating has been disabled");
+                                        break;
+                                    case FAIL_APIKEY:
+                                        plugin.getLogger().info("API key failed");
+                                        break;
+                                    case FAIL_BADID:
+                                        plugin.getLogger().info("Bad ID");
+                                        break;
+                                    case FAIL_DBO:
+                                        plugin.getLogger().info("Could not connect to updating service");
+                                        break;
+                                    case FAIL_DOWNLOAD:
+                                        plugin.getLogger().info("Downloading failed");
+                                        break;
+                                    case FAIL_NOVERSION:
+                                        plugin.getLogger().info("Could not recognize version");
+                                        break;
+                                    case NO_UPDATE:
+                                        plugin.getLogger().info("No update available.");
+                                        break;
+                                    case SUCCESS:
+                                        plugin.getLogger().info("Success!");
+                                        break;
+                                    case UPDATE_AVAILABLE:
+                                        plugin.getLogger().info("Update available " + updateCheck.getLatestName());
+                                        break;
+                                    default:
+                                        break;
+
                                     }
                                     this.cancel();
                                 }
@@ -546,88 +576,24 @@ public class ASkyBlock extends JavaPlugin {
             @Override
             public void run() {
                 if (Settings.GAMETYPE.equals(GameType.ASKYBLOCK)) {
-                    updateCheck = new Update(85189); // ASkyBlock
+                    updateCheck = new Updater(plugin, 85189, plugin.getFile(), UpdateType.NO_DOWNLOAD, true); // ASkyBlock
                 } else {
-                    updateCheck = new Update(80095); // AcidIsland
-                }
-                if (!updateCheck.isSuccess()) {
-                    updateCheck = null;
-                }
+                    updateCheck = new Updater(plugin, 80095, plugin.getFile(), UpdateType.NO_DOWNLOAD, true); // AcidIsland
+                }                
             }
         });
     }
 
     public void checkUpdatesNotify(Player p) {
-        boolean update = false;
-        final String pluginVersion = plugin.getDescription().getVersion();
-        // Check to see if the latest file is newer that this one
-        String[] split = plugin.getUpdateCheck().getVersionName().split(" V");
-        // Only do this if the format is what we expect
-        if (split.length == 2) {
-            //getLogger().info("DEBUG: " + split[1]);
-            // Need to escape the period in the regex expression
-            String[] updateVer = split[1].split("\\.");
-            //getLogger().info("DEBUG: split length = " + updateVer.length);
-            // CHeck the version #'s
-            String[] pluginVer = pluginVersion.split("\\.");
-            //getLogger().info("DEBUG: split length = " + pluginVer.length);
-            // Run through major, minor, sub
-            for (int i = 0; i < Math.max(updateVer.length, pluginVer.length); i++) {
-                try {
-                    int updateCheck = 0;
-                    if (i < updateVer.length) {
-                        updateCheck = Integer.valueOf(updateVer[i]);
-                    }
-                    int pluginCheck = 0;
-                    if (i < pluginVer.length) {
-                        pluginCheck = Integer.valueOf(pluginVer[i]);
-                    }
-                    //getLogger().info("DEBUG: update is " + updateCheck + " plugin is " + pluginCheck);
-                    if (updateCheck < pluginCheck) {
-                        //getLogger().info("DEBUG: plugin is newer!");
-                        //plugin is newer
-                        update = false;
-                        break;
-                    } else if (updateCheck > pluginCheck) {
-                        //getLogger().info("DEBUG: update is newer!");
-                        update = true;
-                        break;
-                    }
-                } catch (Exception e) {
-                    getLogger().warning("Could not determine update's version # ");
-                    getLogger().warning("Plugin version: "+ pluginVersion);
-                    getLogger().warning("Update version: " + plugin.getUpdateCheck().getVersionName());
-                    return;
-                }
-            }
-        }
-        // Show the results
-        if (p != null) {
-            if (!update) {
-                return;
-            } else {
+        if (updateCheck != null) {
+            if (updateCheck.getResult().equals(UpdateResult.UPDATE_AVAILABLE)) {
                 // Player login
-                p.sendMessage(ChatColor.GOLD + plugin.getUpdateCheck().getVersionName() + " is available! You are running " + pluginVersion);
-                if (Settings.GAMETYPE.equals(GameType.ASKYBLOCK)) {
-                    p.sendMessage(ChatColor.RED + "Update at: http://dev.bukkit.org/bukkit-plugins/skyblock");
-                } else {
-                    p.sendMessage(ChatColor.RED + "Update at: http://dev.bukkit.org/bukkit-plugins/acidisland");
-                }
-            }
-        } else {
-            // Console
-            if (!update) {
-                getLogger().info("No updates available.");
-                return;
-            } else {
-                getLogger().info(plugin.getUpdateCheck().getVersionName() + " is available! You are running " + pluginVersion);
-                if (Settings.GAMETYPE.equals(GameType.ASKYBLOCK)) {
-                    getLogger().info("Update at: http://dev.bukkit.org/bukkit-plugins/skyblock");
-                } else {
-                    getLogger().info("Update at: http://dev.bukkit.org/bukkit-plugins/acidisland");
-                }
+                p.sendMessage(ChatColor.GOLD + updateCheck.getLatestName() + " is available! You are running V" + getDescription().getVersion());
+                p.sendMessage(ChatColor.RED + "Update at:");
+                p.sendMessage(ChatColor.RED + getUpdateCheck().getLatestFileLink());
             }
         }
+        
     }
 
     /**
@@ -717,14 +683,14 @@ public class ASkyBlock extends JavaPlugin {
     /**
      * @return the updateCheck
      */
-    public Update getUpdateCheck() {
+    public Updater getUpdateCheck() {
         return updateCheck;
     }
 
     /**
      * @param updateCheck the updateCheck to set
      */
-    public void setUpdateCheck(Update updateCheck) {
+    public void setUpdateCheck(Updater updateCheck) {
         this.updateCheck = updateCheck;
     }
 
@@ -1405,6 +1371,10 @@ public class ASkyBlock extends JavaPlugin {
         Settings.teamJoinDeathReset = blockValuesConfig.getBoolean("teamjoindeathreset", true);
         Settings.underWaterMultiplier = blockValuesConfig.getDouble("underwater", 1D);
         Settings.levelCost = blockValuesConfig.getInt("levelcost", 100);
+        if (Settings.levelCost < 1) {
+            Settings.levelCost = 1;
+            getLogger().warning("levelcost in blockvalues.yml cannot be less than 1. Setting to 1.");
+        }
         Settings.blockLimits = new HashMap<MaterialData, Integer>();
         if (blockValuesConfig.isSet("limits")) {
             for (String material : blockValuesConfig.getConfigurationSection("limits").getKeys(false)) {
@@ -1577,6 +1547,8 @@ public class ASkyBlock extends JavaPlugin {
         final PluginManager manager = getServer().getPluginManager();
         // Nether portal events
         manager.registerEvents(new NetherPortals(this), this);
+        // Nether spawning events
+        manager.registerEvents(new NetherSpawning(this), this);
         // Island Protection events
         manager.registerEvents(new IslandGuard(this), this);
         // Player events
