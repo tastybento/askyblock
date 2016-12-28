@@ -120,6 +120,9 @@ public class Settings {
     public static boolean allowVisitorItemDrop;
     public static boolean allowVisitorItemPickup;
 
+    // Flymode
+    public static boolean flyTimeOutside;
+
     // System settings
     public static boolean allowChestDamage;
     public static boolean allowCreeperDamage;

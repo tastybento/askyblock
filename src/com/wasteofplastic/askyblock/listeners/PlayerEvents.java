@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -50,7 +51,11 @@ import com.wasteofplastic.askyblock.Island.Flags;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.events.IslandEnterEvent;
 import com.wasteofplastic.askyblock.events.IslandExitEvent;
+import com.wasteofplastic.askyblock.events.IslandLeaveEvent;
 import com.wasteofplastic.askyblock.util.VaultHelper;
+
+import com.wasteofplastic.askyblock.events.IslandEnterEvent;
+import com.wasteofplastic.askyblock.events.IslandExitEvent;
 
 /**
  * @author tastybento
@@ -89,6 +94,42 @@ public class PlayerEvents implements Listener {
         }
     }
 
+    /**
+     * Gives flymode if player has a specific permission and is on his island
+     * @param e
+     */
+    @EventHandler
+    public void onPlayerEnterOnIsland(IslandEnterEvent e){
+        Player p = Bukkit.getServer().getPlayer(e.getPlayer());
+        if(p.hasPermission("askyblock.islandfly") && plugin.getGrid().playerIsOnIsland(p)){
+            p.setAllowFlight(true);
+            p.setFlying(true);
+        }
+    }
+    
+    /**
+     * Removes flymode with a delay if player leave his island.
+     * @param e
+     */
+    @SuppressWarnings("deprecation")
+	@EventHandler
+    public void onPlayerLeaveIsland(IslandExitEvent e){
+    	Player p = Bukkit.getServer().getPlayer(e.getPlayer());
+        if(p.hasPermission("askyblock.islandfly") && !plugin.getGrid().playerIsOnIsland(p) && p.isFlying()){
+        	Bukkit.getScheduler().scheduleAsyncDelayedTask(plugin, new Runnable() {
+				
+				@Override
+				public void run() {
+					if(!plugin.getGrid().playerIsOnIsland(p) && p.isFlying()){
+						p.setAllowFlight(false);
+						p.setFlying(false);
+					}
+					
+				}
+			}, 20*Settings.flyTimeOutside);
+        }
+    }
+        
     /**
      * Places player back on their island if the setting is true
      * @param e

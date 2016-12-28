@@ -131,7 +131,10 @@ permissions:
         default: true
       askyblock.nohunger:
         description: Excludes player from hunger if on island
-        default: false  
+        default: false
+      askyblock.islandfly:
+        description: Allow player to fly inside his island boundaries
+        default: false
       askyblock.settings.*:
         children:
           askyblock.settings.allowAnvilUse:

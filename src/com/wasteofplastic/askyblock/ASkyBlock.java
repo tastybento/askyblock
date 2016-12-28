@@ -878,6 +878,9 @@ public class ASkyBlock extends JavaPlugin {
         if (Settings.maxHomes < 1) {
             Settings.maxHomes = 1;
         }
+	// Flymode expiration while flying oustide island boundaries
+	Settings.flyTimeOutside = getConfig().getInt("island.flytimeoutside", 0);
+	if(Settings.flyTimeOutside < 0) Settings.flyTimeOustide = 0;
         // Settings from config.yml
         Settings.worldName = getConfig().getString("general.worldName");
         // Check if the world name matches island.yml info
