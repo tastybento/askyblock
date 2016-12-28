@@ -271,7 +271,7 @@ general:
 
    # New island-style nether. Change to false for standard nether
    newnether: true
-   # Nether trees are made if a player grows a tree in the new nether (gravel and glowstone)
+   # Nether trees are made if a player grows a tree in the nether (gravel and glowstone)
    nethertrees: true  
    # Make the new nether roof, if false, there is nothing up there
    # Change to false if lag is a problem from the generation

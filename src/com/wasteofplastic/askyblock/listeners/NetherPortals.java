@@ -386,7 +386,7 @@ public class NetherPortals implements Listener {
         if (DEBUG)
             plugin.getLogger().info("DEBUG: " + e.getEventName());
 
-        if (!Settings.newNether || !Settings.netherTrees) {
+        if (!Settings.netherTrees) {
             return;
         }
         // Check world
