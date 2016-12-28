@@ -330,4 +330,5 @@ public class Settings {
     public static boolean allowSpawnFireExtinguish;
     public static boolean allowMobDamageToItemFrames;
     public static boolean kickedKeepInv;
+    public static boolean hackSkeletonSpawners;
 }
