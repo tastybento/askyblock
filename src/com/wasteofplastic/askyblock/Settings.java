@@ -121,7 +121,7 @@ public class Settings {
     public static boolean allowVisitorItemPickup;
 
     // Flymode
-    public static boolean flyTimeOutside;
+    public static int flyTimeOutside;
 
     // System settings
     public static boolean allowChestDamage;

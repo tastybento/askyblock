@@ -878,9 +878,11 @@ public class ASkyBlock extends JavaPlugin {
         if (Settings.maxHomes < 1) {
             Settings.maxHomes = 1;
         }
-	// Flymode expiration while flying oustide island boundaries
-	Settings.flyTimeOutside = getConfig().getInt("island.flytimeoutside", 0);
-	if(Settings.flyTimeOutside < 0) Settings.flyTimeOustide = 0;
+        // Flymode expiration while flying oustide island boundaries
+        Settings.flyTimeOutside = getConfig().getInt("island.flytimeoutside", 0);
+        if(Settings.flyTimeOutside < 0) {
+            Settings.flyTimeOutside = 0;
+        }
         // Settings from config.yml
         Settings.worldName = getConfig().getString("general.worldName");
         // Check if the world name matches island.yml info
@@ -1281,7 +1283,7 @@ public class ASkyBlock extends JavaPlugin {
         Settings.allowMobDamageToItemFrames = getConfig().getBoolean("island.allowitemframedamage", false);
         Settings.allowMobSpawning = getConfig().getBoolean("island.allowmobspawning", true);
 
-        // Default settings hashmap
+        // Default settings hashmap - make sure this is kept up to date with new settings
         Settings.defaultIslandSettings.clear();
         Settings.defaultIslandSettings.put(Flags.allowAnvilUse, Settings.allowAnvilUse);
         Settings.defaultIslandSettings.put(Flags.allowArmorStandUse, Settings.allowArmorStandUse);
@@ -1316,6 +1318,8 @@ public class ASkyBlock extends JavaPlugin {
         Settings.defaultIslandSettings.put(Flags.allowChorusFruit, Settings.allowChorusFruit);
         Settings.defaultIslandSettings.put(Flags.enableJoinAndLeaveIslandMessages, Settings.enableJoinAndLeaveIslandMessages);
         Settings.defaultIslandSettings.put(Flags.allowMobSpawning, Settings.allowMobSpawning);
+        Settings.defaultIslandSettings.put(Flags.allowVisitorItemDrop, Settings.allowVisitorItemDrop);
+        Settings.defaultIslandSettings.put(Flags.allowVisitorItemPickup, Settings.allowVisitorItemPickup);
 
         // Spawn Settings
         Settings.allowSpawnCreeperPain = getConfig().getBoolean("spawn.allowcreeperpain", false);
@@ -1540,10 +1544,10 @@ public class ASkyBlock extends JavaPlugin {
         }
         // Disable offline redstone
         Settings.disableOfflineRedstone = getConfig().getBoolean("general.disableofflineredstone", false);
-        
+
         // Fancy island level display
         Settings.fancyIslandLevelDisplay = getConfig().getBoolean("general.fancylevelinchat", false);
-        
+
         // All done
         return true;
     }

@@ -21,7 +21,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -42,7 +41,6 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
-import org.bukkit.util.Vector;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.InventorySave;
@@ -51,11 +49,7 @@ import com.wasteofplastic.askyblock.Island.Flags;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.events.IslandEnterEvent;
 import com.wasteofplastic.askyblock.events.IslandExitEvent;
-import com.wasteofplastic.askyblock.events.IslandLeaveEvent;
 import com.wasteofplastic.askyblock.util.VaultHelper;
-
-import com.wasteofplastic.askyblock.events.IslandEnterEvent;
-import com.wasteofplastic.askyblock.events.IslandExitEvent;
 
 /**
  * @author tastybento
@@ -98,12 +92,13 @@ public class PlayerEvents implements Listener {
      * Gives flymode if player has a specific permission and is on his island
      * @param e
      */
-    @EventHandler
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerEnterOnIsland(IslandEnterEvent e){
-        Player p = Bukkit.getServer().getPlayer(e.getPlayer());
-        if(p.hasPermission("askyblock.islandfly") && plugin.getGrid().playerIsOnIsland(p)){
-            p.setAllowFlight(true);
-            p.setFlying(true);
+        Player player = plugin.getServer().getPlayer(e.getPlayer());
+        if(VaultHelper.checkPerm(player, Settings.PERMPREFIX + "islandfly")  && plugin.getGrid().playerIsOnIsland(player)){
+            player.setAllowFlight(true);
+            // TODO: is this needed?
+            player.setFlying(true);
         }
     }
     
@@ -111,18 +106,17 @@ public class PlayerEvents implements Listener {
      * Removes flymode with a delay if player leave his island.
      * @param e
      */
-    @SuppressWarnings("deprecation")
-	@EventHandler
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerLeaveIsland(IslandExitEvent e){
-    	Player p = Bukkit.getServer().getPlayer(e.getPlayer());
-        if(p.hasPermission("askyblock.islandfly") && !plugin.getGrid().playerIsOnIsland(p) && p.isFlying()){
-        	Bukkit.getScheduler().scheduleAsyncDelayedTask(plugin, new Runnable() {
+    	final Player player = plugin.getServer().getPlayer(e.getPlayer());
+        if(VaultHelper.checkPerm(player, Settings.PERMPREFIX + "islandfly") && !plugin.getGrid().playerIsOnIsland(player) && player.isFlying()){
+        	plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
 				
 				@Override
 				public void run() {
-					if(!plugin.getGrid().playerIsOnIsland(p) && p.isFlying()){
-						p.setAllowFlight(false);
-						p.setFlying(false);
+					if(!plugin.getGrid().playerIsOnIsland(player) && player.isFlying()){
+						player.setAllowFlight(false);
+						player.setFlying(false);
 					}
 					
 				}
@@ -134,7 +128,7 @@ public class PlayerEvents implements Listener {
      * Places player back on their island if the setting is true
      * @param e
      */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerRespawn(final PlayerRespawnEvent e) {
         if (DEBUG) {
             plugin.getLogger().info(e.getEventName());
@@ -157,7 +151,7 @@ public class PlayerEvents implements Listener {
      * Places the player on the island respawn list if set
      * @param e
      */
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = false)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlayerDeath(final PlayerDeathEvent e) {
         if (DEBUG) {
             plugin.getLogger().info(e.getEventName());
@@ -189,7 +183,7 @@ public class PlayerEvents implements Listener {
      * This option helps reduce the down side of dying due to traps, etc.
      * Also handles muting of death messages
      */
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = false)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onVistorDeath(final PlayerDeathEvent e) {
         if (DEBUG) {
             plugin.getLogger().info(e.getEventName());
@@ -318,7 +312,7 @@ public class PlayerEvents implements Listener {
      * 
      * @param e
      */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerTeleport(final PlayerCommandPreprocessEvent e) {
         if (DEBUG) {
             plugin.getLogger().info(e.getEventName());
@@ -344,7 +338,7 @@ public class PlayerEvents implements Listener {
      * 
      * @param e
      */
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = false)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlayerTeleport(final PlayerTeleportEvent e) {
         if (DEBUG) {
             plugin.getLogger().info(e.getEventName());
@@ -636,7 +630,7 @@ public class PlayerEvents implements Listener {
      * Prevents visitors from using commands on islands, like /spawner
      * @param e
      */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onVisitorCommand(final PlayerCommandPreprocessEvent e) {
         if (DEBUG) {
             plugin.getLogger().info("Visitor command " + e.getEventName() + ": " + e.getMessage());
@@ -660,7 +654,7 @@ public class PlayerEvents implements Listener {
      * Prevents visitors from getting damage if invinciblevisitors option is set to TRUE
      * @param e
      */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onVisitorGetDamage(EntityDamageEvent e){
         if(!Settings.invincibleVisitors) return;
         if(!(e.getEntity() instanceof Player)) return;
