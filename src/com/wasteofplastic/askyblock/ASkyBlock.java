@@ -593,7 +593,7 @@ public class ASkyBlock extends JavaPlugin {
                 p.sendMessage(ChatColor.RED + getUpdateCheck().getLatestFileLink());
             }
         }
-        
+
     }
 
     /**
@@ -776,7 +776,8 @@ public class ASkyBlock extends JavaPlugin {
             getLogger().warning("You should back up your world before running this");
             getLogger().warning("*********************************************************");
         }
-
+        // Hack skeleton spawners for 1.11
+        Settings.hackSkeletonSpawners = getConfig().getBoolean("schematicsection.hackskeletonspawners", true);
         // Allow Obsidian Scooping
         Settings.allowObsidianScooping = getConfig().getBoolean("general.allowobsidianscooping", true);
         // Kicked players keep inventory

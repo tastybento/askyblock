@@ -167,6 +167,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
         } else {
             // It exists, so load it
             try {
+                plugin.getLogger().info("Loading default island schematic");
                 schematics.put("default",new Schematic(plugin, schematicFile));
             } catch (IOException e) {
                 plugin.getLogger().severe("Could not load default schematic!");
@@ -180,6 +181,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 
                 // Add it to schematics
                 try {
+                    plugin.getLogger().info("Loading default nether schematic");
                     Schematic netherIsland = new Schematic(plugin, netherFile);
                     netherIsland.setVisible(false);
                     schematics.put("nether", netherIsland);

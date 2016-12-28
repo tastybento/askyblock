@@ -830,6 +830,11 @@ schematicsection:
    # randomly from the list of all islands available to the player.
   chooseislandrandomly: false
 
+  # Hack skeleton spawners to also spawn wither skeletons in 1.11. This helps with
+  # older schematics that do not have explicit wither skeleton spawners. This setting
+  # is ignored by older servers.
+  hackskeletonspawners: true
+  
   # This section lists all the schematics available
   # Settings are:
   # show - whether this island will show in the GUI or not. Typically used for partner

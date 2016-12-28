@@ -57,6 +57,9 @@ public class NetherSpawning implements Listener {
     public void onSkeletonSpawn(final CreatureSpawnEvent e) {
         if (DEBUG)
             plugin.getLogger().info("DEBUG: " + e.getEventName());
+        if (!Settings.hackSkeletonSpawners) {
+            return;
+        }
         if (!hasWitherSkeleton) {
             // Only if this type of Entity exists
             return;
