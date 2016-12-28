@@ -236,7 +236,11 @@ public class Island implements Cloneable {
      */
     public void setDefaults() {
         for (Flags flag: Flags.values()) {
-            this.igs.put(flag, Settings.defaultIslandSettings.get(flag));
+            if (Settings.defaultIslandSettings.get(flag) == null) {
+                this.igs.put(flag, false);
+            } else {
+                this.igs.put(flag, Settings.defaultIslandSettings.get(flag));
+            }
         }
     }
 
@@ -547,11 +551,15 @@ public class Island implements Cloneable {
             ownerString = owner.toString();
         }
         // Personal island protection settings - serialize enum into 1's and 0's representing the boolean values
+        //plugin.getLogger().info("DEBUG: igs = " + igs.toString());
         try {
             for (Flags f: Flags.values()) {
+                //plugin.getLogger().info("DEBUG: flag f = " + f);
                 if (this.igs.containsKey(f)) {
+                    //plugin.getLogger().info("DEBUG: contains key");
                     result += this.igs.get(f) ? "1" : "0";
                 } else {
+                    //plugin.getLogger().info("DEBUG: does not contain key");
                     result += "0";
                 }
             }
