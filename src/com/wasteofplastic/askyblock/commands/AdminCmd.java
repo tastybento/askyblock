@@ -63,7 +63,7 @@ import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.PlayerCache;
 import com.wasteofplastic.askyblock.SafeSpotTeleport;
 import com.wasteofplastic.askyblock.Settings;
-import com.wasteofplastic.askyblock.Island.Flags;
+import com.wasteofplastic.askyblock.Island.SettingsFlag;
 import com.wasteofplastic.askyblock.Settings.GameType;
 import com.wasteofplastic.askyblock.TopTen;
 import com.wasteofplastic.askyblock.listeners.LavaCheck;
@@ -804,10 +804,10 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                     return true;
                 } else {
                     // Check if there is a flag here
-                    for (Flags flag: Flags.values()) {
+                    for (SettingsFlag flag: SettingsFlag.values()) {
                         if (split[1].equalsIgnoreCase(flag.toString())) {
                             sender.sendMessage(ChatColor.GREEN + plugin.myLocale().settingsResetInProgress);
-                            final Flags flagToSet = flag;
+                            final SettingsFlag flagToSet = flag;
                             plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
 
                                 @Override
@@ -828,7 +828,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                     sender.sendMessage(ChatColor.YELLOW + "/" + label + " settingsreset [help | all | flag]:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpSettingsReset);
                     sender.sendMessage(ChatColor.GREEN + "flag options: ");
                     String commaList = "all";
-                    for (Flags flag: Flags.values()) {
+                    for (SettingsFlag flag: SettingsFlag.values()) {
                         commaList += ", " + flag.toString();
                     }
                     sender.sendMessage(commaList);
@@ -2314,7 +2314,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 if (args[0].equalsIgnoreCase("settingsreset")) {
                     options.add("help");
                     options.add("all");
-                    for (Flags flag: Flags.values()) {
+                    for (SettingsFlag flag: SettingsFlag.values()) {
                         options.add(flag.toString());
                     }
                 }

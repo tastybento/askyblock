@@ -31,7 +31,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 import org.bukkit.potion.PotionEffectType;
 
-import com.wasteofplastic.askyblock.Island.Flags;
+import com.wasteofplastic.askyblock.Island.SettingsFlag;
 
 /**
  * Where all the settings are
@@ -83,7 +83,7 @@ public class Settings {
     public static int animalSpawnLimit;
     public static int waterAnimalSpawnLimit;
     // IslandGuard settings
-    public static HashMap<Flags, Boolean> defaultIslandSettings = new HashMap<Flags, Boolean>();
+    public static HashMap<SettingsFlag, Boolean> defaultIslandSettings = new HashMap<SettingsFlag, Boolean>();
     public static boolean allowAnvilUse;
     public static boolean allowArmorStandUse;
     public static boolean allowBeaconAccess;

@@ -84,48 +84,48 @@ public class Island implements Cloneable {
     // Biome
     Biome biome;
     // Island protection settings
-    private HashMap<Flags, Boolean> igs = new HashMap<Flags, Boolean>();
+    private HashMap<SettingsFlag, Boolean> igs = new HashMap<SettingsFlag, Boolean>();
     private int levelHandicap;
     /**
      * Island Guard Setting flags
      *
      */
-    public enum Flags {
-        allowAnvilUse,
-        allowArmorStandUse,
-        allowBeaconAccess,
-        allowBedUse,
-        allowBreakBlocks,
-        allowBreeding,
-        allowBrewing,
-        allowBucketUse,
-        allowChestAccess,
-        allowCrafting,
-        allowCropTrample,
-        allowDoorUse,
-        allowEnchanting,
-        allowEnderPearls,
-        allowFurnaceUse,
-        allowGateUse,
-        allowHorseInvAccess,
-        allowHorseRiding,
-        allowHurtMobs,
-        allowLeashUse,
-        allowLeverButtonUse,
-        allowMusic,
-        allowPlaceBlocks,
-        allowPortalUse,
-        allowPressurePlate,
-        allowPvP,
-        allowNetherPvP,
-        allowRedStone,
-        allowShearing,
-        allowVillagerTrading,
-        allowChorusFruit,
-        enableJoinAndLeaveIslandMessages,
-        allowMobSpawning, 
-        allowVisitorItemDrop,
-        allowVisitorItemPickup
+    public enum SettingsFlag {
+        ANVIL,
+        ARMORSTAND,
+        BEACON,
+        BED,
+        BREAKBLOCKS,
+        BREEDING,
+        BREWING,
+        BUCKET,
+        CHEST,
+        CRAFTING,
+        CROPTRAMPLE,
+        DOOR,
+        ENCHANTING,
+        ENDERPEARL,
+        FURNACE,
+        GATE,
+        HORSEINVENTORY,
+        HORSERIDING,
+        HURTMOBS,
+        LEASH,
+        LEVERBUTTON,
+        MUSIC,
+        PLACEBLOCKS,
+        PORTAL,
+        PRESSUREPLATE,
+        PVP,
+        NETHERPVP,
+        REDSTONE,
+        SHEARING,
+        VILLAGERTRADING,
+        CHORUSFRUIT,
+        ENTEREXITMESSAGES,
+        MOBSPAWNING, 
+        VISITORITEMDROP,
+        VISITORITEMPICKUP
     }
 
 
@@ -201,7 +201,7 @@ public class Island implements Cloneable {
                     // Parse the 8th string into island guard protection settings
                     int index = 0;
                     // Run through the enum and set
-                    for (Flags f : Flags.values()) {
+                    for (SettingsFlag f : SettingsFlag.values()) {
                         if (split[8].length() == index) {
                             break;
                         }
@@ -235,7 +235,7 @@ public class Island implements Cloneable {
      * Resets the island protection settings to their default as set in config.yml
      */
     public void setDefaults() {
-        for (Flags flag: Flags.values()) {
+        for (SettingsFlag flag: SettingsFlag.values()) {
             if (Settings.defaultIslandSettings.get(flag) == null) {
                 this.igs.put(flag, false);
             } else {
@@ -553,7 +553,7 @@ public class Island implements Cloneable {
         // Personal island protection settings - serialize enum into 1's and 0's representing the boolean values
         //plugin.getLogger().info("DEBUG: igs = " + igs.toString());
         try {
-            for (Flags f: Flags.values()) {
+            for (SettingsFlag f: SettingsFlag.values()) {
                 //plugin.getLogger().info("DEBUG: flag f = " + f);
                 if (this.igs.containsKey(f)) {
                     //plugin.getLogger().info("DEBUG: contains key");
@@ -576,7 +576,7 @@ public class Island implements Cloneable {
      * @param flag
      * @return true or false, or false if flag is not in the list
      */
-    public boolean getIgsFlag(Flags flag) {
+    public boolean getIgsFlag(SettingsFlag flag) {
         //plugin.getLogger().info("DEBUG: asking for " + flag + " = " + igs.get(flag));
         if (this.igs.containsKey(flag)) {
             return igs.get(flag);
@@ -589,7 +589,7 @@ public class Island implements Cloneable {
      * @param flag
      * @param value
      */
-    public void setIgsFlag(Flags flag, boolean value) {
+    public void setIgsFlag(SettingsFlag flag, boolean value) {
         this.igs.put(flag, value);
     }
 
@@ -769,7 +769,7 @@ public class Island implements Cloneable {
      * Toggles the Island Guard Flag
      * @param flag
      */
-    public void toggleIgs(Flags flag) {
+    public void toggleIgs(SettingsFlag flag) {
         if (igs.containsKey(flag)) {
             igs.put(flag, igs.get(flag) ? false : true);
         }

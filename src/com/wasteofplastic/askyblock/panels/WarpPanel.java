@@ -43,7 +43,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Island;
-import com.wasteofplastic.askyblock.Island.Flags;
+import com.wasteofplastic.askyblock.Island.SettingsFlag;
 import com.wasteofplastic.askyblock.Settings;
 
 public class WarpPanel implements Listener {
@@ -161,8 +161,8 @@ public class WarpPanel implements Listener {
             // Check for PVP and add warning
             Island island = plugin.getGrid().getIsland(playerUUID);
             if (island != null) {
-                if ((signLocation.getWorld().equals(ASkyBlock.getIslandWorld()) && island.getIgsFlag(Flags.allowPvP))
-                        || (signLocation.getWorld().equals(ASkyBlock.getNetherWorld()) && island.getIgsFlag(Flags.allowNetherPvP))) {
+                if ((signLocation.getWorld().equals(ASkyBlock.getIslandWorld()) && island.getIgsFlag(SettingsFlag.PVP))
+                        || (signLocation.getWorld().equals(ASkyBlock.getNetherWorld()) && island.getIgsFlag(SettingsFlag.NETHERPVP))) {
                     //plugin.getLogger().info("DEBUG: pvp warning added");
                     lines.add(ChatColor.RED + plugin.myLocale().igsPVP);
                 }

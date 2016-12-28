@@ -46,7 +46,7 @@ import org.bukkit.material.SimpleAttachableMaterialData;
 import org.bukkit.material.TrapDoor;
 import org.bukkit.util.Vector;
 
-import com.wasteofplastic.askyblock.Island.Flags;
+import com.wasteofplastic.askyblock.Island.SettingsFlag;
 import com.wasteofplastic.askyblock.util.Util;
 
 /**
@@ -327,7 +327,7 @@ public class GridManager {
                                                         // Parse the 8th string into island guard protection settings
                                                         int index = 0;
                                                         // Run through the enum and set
-                                                        for (Flags flag : Flags.values()) {
+                                                        for (SettingsFlag flag : SettingsFlag.values()) {
                                                             if (index < split[8].length()) {
                                                                 newIsland.setIgsFlag(flag, split[8].charAt(index++) == '1' ? true : false);
                                                             }

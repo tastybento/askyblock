@@ -33,7 +33,7 @@ import org.bukkit.inventory.ItemStack;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Island;
-import com.wasteofplastic.askyblock.Island.Flags;
+import com.wasteofplastic.askyblock.Island.SettingsFlag;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
@@ -82,7 +82,7 @@ public class IslandGuard1_8 implements Listener {
                         return;
                     }
                 } else {
-                    if (island.getMembers().contains(e.getPlayer().getUniqueId()) || island.getIgsFlag(Flags.allowArmorStandUse)) {
+                    if (island.getMembers().contains(e.getPlayer().getUniqueId()) || island.getIgsFlag(SettingsFlag.ARMORSTAND)) {
                         return;
                     }
                 }
@@ -156,7 +156,7 @@ public class IslandGuard1_8 implements Listener {
         if (inHand != null && inHand.getType().equals(Material.ARMOR_STAND)) {
             // Check island
             Island island = plugin.getGrid().getIslandAt(e.getPlayer().getLocation());
-            if (island !=null && (island.getMembers().contains(p.getUniqueId()) || island.getIgsFlag(Flags.allowPlaceBlocks))) {
+            if (island !=null && (island.getMembers().contains(p.getUniqueId()) || island.getIgsFlag(SettingsFlag.PLACEBLOCKS))) {
                 //plugin.getLogger().info("1.8 " + "DEBUG: armor stand place check");
                 if (Settings.limitedBlocks.containsKey("ARMOR_STAND") && Settings.limitedBlocks.get("ARMOR_STAND") > -1) {
                     //plugin.getLogger().info("1.8 " + "DEBUG: count armor stands");
@@ -208,7 +208,7 @@ public class IslandGuard1_8 implements Listener {
             if (island != null && island.isSpawn() && Settings.allowSpawnBreakBlocks) {
                 return;
             }
-            if (island != null && island.getIgsFlag(Flags.allowBreakBlocks)) {
+            if (island != null && island.getIgsFlag(SettingsFlag.BREAKBLOCKS)) {
                 return;
             }
             p.sendMessage(ChatColor.RED + plugin.myLocale(p.getUniqueId()).islandProtected);

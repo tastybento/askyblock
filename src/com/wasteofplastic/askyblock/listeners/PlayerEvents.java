@@ -45,7 +45,7 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.InventorySave;
 import com.wasteofplastic.askyblock.Island;
-import com.wasteofplastic.askyblock.Island.Flags;
+import com.wasteofplastic.askyblock.Island.SettingsFlag;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.events.IslandEnterEvent;
 import com.wasteofplastic.askyblock.events.IslandExitEvent;
@@ -238,7 +238,7 @@ public class PlayerEvents implements Listener {
                 return;
             }
         }
-        if ((plugin.getGrid().getIslandAt(e.getItem().getLocation()) != null && plugin.getGrid().getIslandAt(e.getItem().getLocation()).getIgsFlag(Flags.allowVisitorItemDrop)) || e.getPlayer().isOp() || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
+        if ((plugin.getGrid().getIslandAt(e.getItem().getLocation()) != null && plugin.getGrid().getIslandAt(e.getItem().getLocation()).getIgsFlag(SettingsFlag.VISITORITEMDROP)) || e.getPlayer().isOp() || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
                 || plugin.getGrid().locationIsOnIsland(e.getPlayer(), e.getItem().getLocation())) {
             return;
         }
@@ -262,7 +262,7 @@ public class PlayerEvents implements Listener {
                 return;
             }
         }
-        if ((plugin.getGrid().getIslandAt(e.getItemDrop().getLocation()) != null && plugin.getGrid().getIslandAt(e.getItemDrop().getLocation()).getIgsFlag(Flags.allowVisitorItemDrop)) || e.getPlayer().isOp() || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
+        if ((plugin.getGrid().getIslandAt(e.getItemDrop().getLocation()) != null && plugin.getGrid().getIslandAt(e.getItemDrop().getLocation()).getIgsFlag(SettingsFlag.VISITORITEMDROP)) || e.getPlayer().isOp() || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
                 || plugin.getGrid().locationIsOnIsland(e.getPlayer(), e.getItemDrop().getLocation())) {
             return;
         }
@@ -428,7 +428,7 @@ public class PlayerEvents implements Listener {
                         if (DEBUG )
                             plugin.getLogger().info("DEBUG: islandTo is regular island");
                         // Regular island
-                        if (islandTo.getIgsFlag(Flags.allowEnderPearls) || islandTo.getMembers().contains(e.getPlayer().getUniqueId())) {
+                        if (islandTo.getIgsFlag(SettingsFlag.ENDERPEARL) || islandTo.getMembers().contains(e.getPlayer().getUniqueId())) {
                             if (DEBUG )
                                 plugin.getLogger().info("DEBUG: enderpearl allowed");
                             return;
@@ -461,7 +461,7 @@ public class PlayerEvents implements Listener {
                             }
                         } else {
                             // Regular island
-                            if (!islandTo.getIgsFlag(Flags.allowChorusFruit) && !islandTo.getMembers().contains(e.getPlayer().getUniqueId())) {
+                            if (!islandTo.getIgsFlag(SettingsFlag.CHORUSFRUIT) && !islandTo.getMembers().contains(e.getPlayer().getUniqueId())) {
                                 cancel = true;
                             }
                         }
@@ -477,7 +477,7 @@ public class PlayerEvents implements Listener {
                             }
                         } else {
                             // Regular island
-                            if (!islandFrom.getIgsFlag(Flags.allowChorusFruit) && !islandFrom.getMembers().contains(e.getPlayer().getUniqueId())) {
+                            if (!islandFrom.getIgsFlag(SettingsFlag.CHORUSFRUIT) && !islandFrom.getMembers().contains(e.getPlayer().getUniqueId())) {
                                 cancel = true;
                             }
                         }

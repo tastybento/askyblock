@@ -44,7 +44,7 @@ import org.bukkit.scoreboard.Team;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Island;
-import com.wasteofplastic.askyblock.Island.Flags;
+import com.wasteofplastic.askyblock.Island.SettingsFlag;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
@@ -108,7 +108,7 @@ public class IslandGuard1_9 implements Listener {
                         return;
                     }
                 } else {
-                    if (island.getMembers().contains(player.getUniqueId()) || island.getIgsFlag(Flags.allowPlaceBlocks)) {
+                    if (island.getMembers().contains(player.getUniqueId()) || island.getIgsFlag(SettingsFlag.PLACEBLOCKS)) {
                         return;
                     }
                 }
@@ -148,7 +148,7 @@ public class IslandGuard1_9 implements Listener {
                         return;
                     }
                 } else {
-                    if (island.getMembers().contains(e.getPlayer().getUniqueId()) || island.getIgsFlag(Flags.allowBreakBlocks)) {
+                    if (island.getMembers().contains(e.getPlayer().getUniqueId()) || island.getIgsFlag(SettingsFlag.BREAKBLOCKS)) {
                         return;
                     }
                 }
@@ -179,7 +179,7 @@ public class IslandGuard1_9 implements Listener {
         if (inHand != null && inHand.getType().equals(Material.END_CRYSTAL)) {
             // Check island
             Island island = plugin.getGrid().getIslandAt(e.getPlayer().getLocation());
-            if (island !=null && (island.getMembers().contains(p.getUniqueId()) || island.getIgsFlag(Flags.allowPlaceBlocks))) {
+            if (island !=null && (island.getMembers().contains(p.getUniqueId()) || island.getIgsFlag(SettingsFlag.PLACEBLOCKS))) {
                 //plugin.getLogger().info("1.9 " +"DEBUG: armor stand place check");
                 if (Settings.limitedBlocks.containsKey("END_CRYSTAL") && Settings.limitedBlocks.get("END_CRYSTAL") > -1) {
                     //plugin.getLogger().info("1.9 " +"DEBUG: count armor stands");
@@ -263,7 +263,7 @@ public class IslandGuard1_9 implements Listener {
                 }
                 return;
             }
-            if (island != null && island.getIgsFlag(Flags.allowBreakBlocks)) {
+            if (island != null && island.getIgsFlag(SettingsFlag.BREAKBLOCKS)) {
                 if (DEBUG) {
                     plugin.getLogger().info("1.9 " +"Visitor is allowed to break blocks");
                 }

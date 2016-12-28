@@ -42,7 +42,7 @@ import org.bukkit.util.Vector;
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.GridManager;
 import com.wasteofplastic.askyblock.Island;
-import com.wasteofplastic.askyblock.Island.Flags;
+import com.wasteofplastic.askyblock.Island.SettingsFlag;
 import com.wasteofplastic.askyblock.SafeSpotTeleport;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.commands.IslandCmd;
@@ -132,7 +132,7 @@ public class NetherPortals implements Listener {
         }
         // Check if player has permission
         Island island = plugin.getGrid().getIslandAt(currentLocation);
-        if ((island == null && !Settings.allowPortalUse) || (island != null && !island.getIgsFlag(Flags.allowPortalUse))) {
+        if ((island == null && !Settings.allowPortalUse) || (island != null && !island.getIgsFlag(SettingsFlag.PORTAL))) {
             // Portal use is disallowed for visitors, but okay for ops or bypass
             // mods
             if (!event.getPlayer().isOp() && !VaultHelper.checkPerm(event.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
