@@ -389,6 +389,9 @@ public class NetherPortals implements Listener {
         if (!Settings.netherTrees) {
             return;
         }
+        if (!Settings.createNether || ASkyBlock.getNetherWorld() == null) {
+            return;
+        }
         // Check world
         if (!e.getLocation().getWorld().equals(ASkyBlock.getNetherWorld())) {
             return;
