@@ -197,6 +197,7 @@ public class ASLocale {
     public String islanderrorLevelNotReady;
     public String islanderrorInvalidPlayer;
     public String islandislandLevelis;
+    public String islandrequiredPointsToNextLevel;
     // Spawn
     public String islandhelpSpawn;
     // Teleport go
@@ -1031,7 +1032,8 @@ public class ASLocale {
         islanderrorInvalidPlayer = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("island.errorInvalidPlayer", "That player is invalid or does not have an island!"));
         islandislandLevelis = ChatColor.translateAlternateColorCodes('&', locale.getString("island.islandLevelis", "Island level is"));
-
+        islandrequiredPointsToNextLevel = ChatColor.translateAlternateColorCodes('&', locale.getString("island.requiredPointsToNextLevel", "You need [points] more points to reach level [next]!"));
+        
         invitehelp = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("invite.help", "Use [/[label] invite <playername>] to invite a player to your island.").replace("[label]", Settings.ISLANDCOMMAND));
         inviteyouCanInvite = ChatColor.translateAlternateColorCodes('&',
