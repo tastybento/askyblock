@@ -629,17 +629,32 @@ public class PlayerEvents implements Listener {
 
         if (Settings.visitorDamagePrevention.contains(e.getCause())) e.setCancelled(true);
 
-        else if(e.getCause().equals(DamageCause.VOID)){
+        else if(e.getCause().equals(DamageCause.VOID)) {
             if(plugin.getPlayers().hasIsland(p.getUniqueId())) {
-                p.teleport(plugin.getGrid().getSafeHomeLocation(p.getUniqueId(), 1));
+                Location safePlace = plugin.getGrid().getSafeHomeLocation(p.getUniqueId(), 1);
+                if (safePlace != null) {
+                    p.teleport(safePlace);
+                    // Set their fall distance to zero otherwise they crash onto their island and die
+                    p.setFallDistance(0);
+                    e.setCancelled(true);
+                    return;
+                } 
+            }
+            // No island, or no safe spot on island
+            if (plugin.getGrid().getSpawnPoint() != null) {
+                p.teleport(plugin.getGrid().getSpawnPoint());
                 // Set their fall distance to zero otherwise they crash onto their island and die
                 p.setFallDistance(0);
-            } else {
-                if (!p.performCommand("spawn")) {
-                    // If this command doesn't work, let them die otherwise they may get trapped in the void forever
-                    return;
-                }
+                e.setCancelled(true);
+                return;
             }
+            // No island spawn, try regular spawn
+            if (!p.performCommand("spawn")) {
+                // If this command doesn't work, let them die otherwise they may get trapped in the void forever
+                return;
+            }
+            // Set their fall distance to zero otherwise they crash onto their island and die
+            p.setFallDistance(0);
             e.setCancelled(true);
         }
     }

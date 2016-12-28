@@ -799,19 +799,19 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
             if (!plugin.myLocale(player.getUniqueId()).islandSubTitle.isEmpty()) {
                 //plugin.getLogger().info("DEBUG: title " + player.getName() + " subtitle {\"text\":\"" + plugin.myLocale(player.getUniqueId()).islandSubTitle + "\", \"color\":\"" + plugin.myLocale(player.getUniqueId()).islandSubTitleColor + "\"}");
                 plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(),
-                        "minecraft:title " + player.getName() + " subtitle {\"text\":\"" + plugin.myLocale(player.getUniqueId()).islandSubTitle + "\", \"color\":\"" + plugin.myLocale(player.getUniqueId()).islandSubTitleColor + "\"}");
+                        "minecraft:title " + player.getName() + " subtitle {\"text\":\"" + plugin.myLocale(player.getUniqueId()).islandSubTitle.replace("[player]", player.getName()) + "\", \"color\":\"" + plugin.myLocale(player.getUniqueId()).islandSubTitleColor + "\"}");
             }
             if (!plugin.myLocale(player.getUniqueId()).islandTitle.isEmpty()) {
                 //plugin.getLogger().info("DEBUG: title " + player.getName() + " title {\"text\":\"" + plugin.myLocale(player.getUniqueId()).islandTitle + "\", \"color\":\"" + plugin.myLocale(player.getUniqueId()).islandTitleColor + "\"}");
                 plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(),
-                        "minecraft:title " + player.getName() + " title {\"text\":\"" + plugin.myLocale(player.getUniqueId()).islandTitle + "\", \"color\":\"" + plugin.myLocale(player.getUniqueId()).islandTitleColor + "\"}");
+                        "minecraft:title " + player.getName() + " title {\"text\":\"" + plugin.myLocale(player.getUniqueId()).islandTitle.replace("[player]", player.getName()) + "\", \"color\":\"" + plugin.myLocale(player.getUniqueId()).islandTitleColor + "\"}");
             }
             if (!plugin.myLocale(player.getUniqueId()).islandDonate.isEmpty() && !plugin.myLocale(player.getUniqueId()).islandURL.isEmpty()) {
                 //plugin.getLogger().info("DEBUG: tellraw " + player.getName() + " {\"text\":\"" + plugin.myLocale(player.getUniqueId()).islandDonate + "\",\"color\":\"" + plugin.myLocale(player.getUniqueId()).islandDonateColor + "\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\""
                 //                + plugin.myLocale(player.getUniqueId()).islandURL + "\"}}");
                 plugin.getServer().dispatchCommand(
                         plugin.getServer().getConsoleSender(),
-                        "minecraft:tellraw " + player.getName() + " {\"text\":\"" + plugin.myLocale(player.getUniqueId()).islandDonate + "\",\"color\":\"" + plugin.myLocale(player.getUniqueId()).islandDonateColor + "\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\""
+                        "minecraft:tellraw " + player.getName() + " {\"text\":\"" + plugin.myLocale(player.getUniqueId()).islandDonate.replace("[player]", player.getName()) + "\",\"color\":\"" + plugin.myLocale(player.getUniqueId()).islandDonateColor + "\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\""
                                 + plugin.myLocale(player.getUniqueId()).islandURL + "\"}}");
             }
         }
@@ -1241,9 +1241,25 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                 }
                 return true;
             }
-
-            if (split[0].equalsIgnoreCase("ban")) {
-                if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.ban")) {
+            if (split[0].equalsIgnoreCase("banlist")) {
+                if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.ban")) {                   
+                    // Show banned players
+                    player.sendMessage(ChatColor.GREEN + plugin.myLocale(playerUUID).adminInfoBannedPlayers + ":");
+                    List<UUID> bannedList = plugin.getPlayers().getBanList(playerUUID);
+                    if (bannedList.isEmpty()) {
+                        player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).banNone);
+                    } else {
+                        for (UUID bannedPlayers: bannedList) {
+                            player.sendMessage(plugin.myLocale(playerUUID).helpColor + plugin.getPlayers().getName(bannedPlayers));
+                        }
+                    }
+                    return true;
+                } else {
+                    player.sendMessage(plugin.myLocale(playerUUID).errorNoPermission);
+                }
+                return true;
+            } else if (split[0].equalsIgnoreCase("ban")) {
+                if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.ban")) {                   
                     // Just show ban help
                     player.sendMessage(plugin.myLocale(playerUUID).helpColor + "/" + label + " ban <player>: " + ChatColor.WHITE + plugin.myLocale(playerUUID).islandhelpBan);
                 } else {
@@ -1653,6 +1669,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                 }
                 if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.ban")) {
                     player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " ban <player>: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpBan);
+                    player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " banlist <player>: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpBanList);
                     player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " unban <player>: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpUnban);
                 }
                 if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "coop")) {
@@ -1756,6 +1773,9 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                         player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoIsland);
                         return true;
                     } else {
+                        if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "intopten")) {
+                            player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).topTenerrorExcluded.replace("[perm]", Settings.PERMPREFIX + "intopten"));
+                        }
                         if (Settings.fastLevelCalc) {
                             calculateIslandLevel(player, playerUUID);
                             return true;
@@ -2649,6 +2669,11 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                 return true;
                             }
                             if (target != null) {
+                                // Do not ban players with the mod.noban permission
+                                if (VaultHelper.checkPerm(target, Settings.PERMPREFIX + "admin.noban")) {
+                                    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).banFail.replace("[name]", split[1]));
+                                    return true;
+                                }
                                 // Remove them from the coop list
                                 boolean coop = CoopPlay.getInstance().removeCoopPlayer(player, target);
                                 if (coop) {
@@ -3278,7 +3303,11 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.lang")) {
                 options.add("lang");
             }
-
+            if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.ban")) {
+                options.add("ban");
+                options.add("unban");
+                options.add("banlist");
+            }
             break;
         case 2: 
             if (args[0].equalsIgnoreCase("make")) {
@@ -3355,6 +3384,22 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                     && (args[0].equalsIgnoreCase("cp") || args[0].equalsIgnoreCase("controlpanel"))) {
                 options.add("on");
                 options.add("off");
+            }
+            if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.ban")
+                    && (args[0].equalsIgnoreCase("ban"))) {
+                for (Player banPlayer: plugin.getServer().getOnlinePlayers()) {
+                    if (!banPlayer.isOp() && !VaultHelper.checkPerm(banPlayer, Settings.PERMPREFIX + "admin.noban")
+                            && !banPlayer.equals(player)
+                            && !plugin.getPlayers().getMembers(playerUUID).contains(banPlayer.getUniqueId())) {
+                        options.add(banPlayer.getName());
+                    }
+                }
+            }
+            if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.ban")
+                    && (args[0].equalsIgnoreCase("unban"))) {                
+                for (UUID banPlayer: plugin.getPlayers().getBanList(playerUUID)) {                       
+                    options.add(plugin.getPlayers().getName(banPlayer));
+                }
             }
             break;
         }

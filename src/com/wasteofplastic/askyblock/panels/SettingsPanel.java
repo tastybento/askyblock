@@ -81,7 +81,7 @@ public class SettingsPanel implements Listener {
         lookup.put( Material.SHEARS,Flags.allowShearing);
         lookup.put( Material.EMERALD,Flags.allowVillagerTrading);
         if (hasChorusFruit) {
-            lookup.put( Material.CHORUS_FRUIT,Flags.allowEnderPearls);
+            lookup.put( Material.CHORUS_FRUIT,Flags.allowChorusFruit);
         }
         lookup.put( Material.NOTE_BLOCK,Flags.enableJoinAndLeaveIslandMessages);
         lookup.put(Material.MOB_SPAWNER, Flags.allowMobSpawning);
@@ -234,6 +234,7 @@ public class SettingsPanel implements Listener {
                 ip.add(new IPItem(island.getIgsFlag(Flags.allowChorusFruit), Material.CHORUS_FRUIT, plugin.myLocale(uuid).igsChorusFruit));
             }
             ip.add(new IPItem(island.getIgsFlag(Flags.enableJoinAndLeaveIslandMessages), Material.NOTE_BLOCK, plugin.myLocale(uuid).igsJoinLeaveIslandMessage));
+            ip.add(new IPItem(island.getIgsFlag(Flags.allowMobSpawning), Material.MOB_SPAWNER, plugin.myLocale(uuid).igsMobSpawning));
         }
         if (ip.size() > 0) {
             // Make sure size is a multiple of 9
@@ -311,10 +312,10 @@ public class SettingsPanel implements Listener {
         // Players can only do something if they own the island or are op
         Island island = plugin.getGrid().getIslandAt(player.getLocation());
         if (island != null && (player.isOp() || (island.getOwner() != null && island.getOwner().equals(player.getUniqueId())))) {
-            //plugin.getLogger().info("DEBUG: Check perms");
+            //plugin.getLogger().info("DEBUG: Check perm " + flag.toString());
             // Check perms
             if (player.hasPermission(Settings.PERMPREFIX + "settings." + flag.toString())) {
-                //plugin.getLogger().info("DEBUG: Player has perm");
+                //plugin.getLogger().info("DEBUG: Player has perm " + flag.toString());
                 if (flag.equals(Flags.allowPvP) || flag.equals(Flags.allowNetherPvP)) {
                     // PVP always results in an inventory closure
                     player.closeInventory();

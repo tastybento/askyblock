@@ -30,6 +30,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import com.google.common.collect.Lists;
+import com.wasteofplastic.askyblock.util.VaultHelper;
 
 /**
  * Provides a memory cache of online player information
@@ -732,6 +733,11 @@ public class PlayerCache {
         }
         addPlayer(playerUUID);
         addPlayer(targetUUID);
+        // Check if the target player has a permission bypass (admin.noban)
+        Player target = plugin.getServer().getPlayer(targetUUID);
+        if (target != null && VaultHelper.checkPerm(target, Settings.PERMPREFIX + "admin.noban")) {
+            return false;
+        }
         if (playerCache.get(playerUUID).hasIsland()) {
             // Player has island
             return playerCache.get(playerUUID).isBanned(targetUUID);

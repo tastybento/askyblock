@@ -36,6 +36,7 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.scoreboard.Scoreboard;
@@ -56,11 +57,26 @@ import com.wasteofplastic.askyblock.util.VaultHelper;
 public class IslandGuard1_9 implements Listener {
     private final ASkyBlock plugin;
     private final static boolean DEBUG = false;
+    private final static String NO_PUSH_TEAM_NAME = "ASkyBlockNP";
     private Scoreboard scoreboard;
     private Team pushTeam;
 
     public IslandGuard1_9(final ASkyBlock plugin) {
         this.plugin = plugin;
+        if (!Settings.allowPushing) {
+            // try to remove the team from the scoreboard
+            try {
+                scoreboard = plugin.getServer().getScoreboardManager().getMainScoreboard();
+                if (scoreboard != null) {
+                    Team pTeam = scoreboard.getTeam(NO_PUSH_TEAM_NAME);
+                    if (pTeam != null) {
+                        pTeam.unregister();
+                    }
+                }
+            } catch (Exception e) {
+                plugin.getLogger().warning("Problem removing no push from scoreboard.");
+            }
+        }
     }
 
     /**
@@ -143,6 +159,7 @@ public class IslandGuard1_9 implements Listener {
     }
 
     // End crystal
+    @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled=true)
     void placeEndCrystalEvent(PlayerInteractEvent e) {
         Player p = e.getPlayer();
@@ -200,18 +217,18 @@ public class IslandGuard1_9 implements Listener {
         }
         if (!(e.getEntity() instanceof EnderCrystal)) {
             if (DEBUG) {
-                plugin.getLogger().info("1.9 " +"Entity is not End crystal it is " + e.getEntityType());
+                plugin.getLogger().info("1.9 Entity is not End crystal it is " + e.getEntityType());
             }
             return;
         }
         if (DEBUG) {
-            plugin.getLogger().info("1.9 " +"Damager is " + e.getDamager());
+            plugin.getLogger().info("1.9 Damager is " + e.getDamager());
         }
         Player p = null;
         if (e.getDamager() instanceof Player) {
             p = (Player) e.getDamager();
             if (DEBUG) {
-                plugin.getLogger().info("1.9 " +"Damager is a player");
+                plugin.getLogger().info("1.9 Damager is a player");
             }
         } else if (e.getDamager() instanceof Projectile) {
             // Get the shooter
@@ -319,13 +336,27 @@ public class IslandGuard1_9 implements Listener {
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerJoin(final PlayerJoinEvent e) {
         if (Settings.allowPushing) {           
-            Team t = e.getPlayer().getScoreboard().getTeam("ASkyBlockNP");
+            Team t = e.getPlayer().getScoreboard().getTeam(NO_PUSH_TEAM_NAME);
             if (t != null) {
                 t.unregister();
             }
             return;
         }
         setPush(e.getPlayer());
+    }
+
+    /**
+     * Triggers scoreboard cleanup on Quit
+     * @param e
+     */
+    @EventHandler(priority = EventPriority.NORMAL,ignoreCancelled = true)
+    public void onPlayerQuit(PlayerQuitEvent e)
+    {
+        if(Settings.allowPushing)
+        {
+            return;
+        }
+        removePush(e.getPlayer());
     }
 
     /**
@@ -339,9 +370,9 @@ public class IslandGuard1_9 implements Listener {
             scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
         }
         if (Settings.allowPushing) {
-            if (scoreboard.getTeam("ASkyBlockNP") != null) {
+            if (scoreboard.getTeam(NO_PUSH_TEAM_NAME) != null) {
                 //plugin.getLogger().info("1.9 " +"DEBUG: unregistering the team");
-                scoreboard.getTeam("ASkyBlockNP").unregister();
+                scoreboard.getTeam(NO_PUSH_TEAM_NAME).unregister();
             }
             return;
         }
@@ -349,18 +380,41 @@ public class IslandGuard1_9 implements Listener {
         pushTeam = scoreboard.getEntryTeam(player.getName());
         if (pushTeam == null) {
             // It doesn't exist yet, so make it
-            pushTeam = scoreboard.getTeam("ASkyBlockNP");
+            pushTeam = scoreboard.getTeam(NO_PUSH_TEAM_NAME);
             if (pushTeam == null) {
-                pushTeam = scoreboard.registerNewTeam("ASkyBlockNP");
+                pushTeam = scoreboard.registerNewTeam(NO_PUSH_TEAM_NAME);
             }
             // Add the player to the team
             pushTeam.addEntry(player.getName()); 
         }
-        if (pushTeam.getName().equals("ASkyBlockNP")) {
+        if (pushTeam.getName().equals(NO_PUSH_TEAM_NAME)) {
             //plugin.getLogger().info("1.9 " +"DEBUG: pushing not allowed");
             pushTeam.setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER);               
         } else {
             //plugin.getLogger().info("1.9 " +"DEBUG: player is already in another team");
+        }
+    }
+
+    /**
+     * Handles cleaning push protection on player quit
+     * @param player
+     */
+    private void removePush(Player player)
+    {
+        try {
+            scoreboard = player.getScoreboard();
+            if(scoreboard !=null)
+            {
+                //Player Remove
+                Team pTeam = scoreboard.getTeam(NO_PUSH_TEAM_NAME);
+                if (pTeam != null) {
+                    pTeam.removeEntry(player.getName());
+                }
+            }
+        } catch (Exception e) {
+            plugin.getLogger().severe("Error trying to remove player from push scoreboard");
+            plugin.getLogger().severe(player.getName() + " : " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }

@@ -17,6 +17,8 @@ adminDeleteIsland:
   use: "Use &ldelete [name] &r&cto delete the player instead."
 adminHelp: 
   add: "adds player to leader's team"
+  addrange: "adds to or substracts from the island's protection range"
+  cobblestats: "displays magic cobble generation stats"
   clearreset: "resets the island reset limit for player"
   completeChallenge: "marks a challenge as complete"
   delete: "delete an island (removes blocks)."
@@ -86,7 +88,7 @@ adminSetHome:
 adminSetRange: 
   invalid: "Invalid range!"
   set: "Set new range to [number]"
-  tip: "Use 10 to [max]"
+  tip: "Range must be between 10 to [max]"
   warning: "Warning - range is greater than island range [max]"
   warning2: "Overlapped islands will act like spawn!"
 adminSetSpawn: 
@@ -125,9 +127,11 @@ ban:
   banned: "You are banned from [name]'s island!"
   fail: "[name] cannot be banned!"
   helpBan: "ban a player from your island."
-  helpUnban: "un-ban a player from your island"
+  helpBanList: "list banned players."
+  helpUnban: "un-ban a player from your island."
   lifted: "Ban lifted from [name]'s island!"
   liftedsuccess: "Ban lifted for [name]!"
+  none: "None"
   notbanned: "[name] is not banned!"
   notteammember: "You cannot ban a team member!"
   notyourself: "You cannot do that to yourself!"
@@ -219,6 +223,7 @@ error:
   unknownPlayer: "That player is unknown."
   useInGame: "This command must be used in-game."
   wrongWorld: "You cannot do that in this world."
+  minishopDisabled: "Minishop is disabled."
 expel: 
   expelled: "You were expelled from that island!"
   fail: "[name] cannot be expelled!"
@@ -468,7 +473,8 @@ teamchat:
   prefix: "[Team Chat]<{ISLAND_PLAYER}> "
   statusOff: "Team chat is off"
   statusOn: "Team chat is on"
-topTen: 
+topTen:
+  errorExcluded: "FYI: You are excluded from the top ten as you do not have [perm]"
   errorNotReady: "Top ten list not generated yet!"
   header: "These are the Top 10 islands:"
 warps: 
@@ -481,6 +487,7 @@ warps:
   errorNoWarpsYet: "There are no warps available yet!"
   errorNotReadyYet: "That warp is not ready yet. Try again later."
   errorNotSafe: "That warp is not safe right now. Try again later."
+  errorNotEnoughLevel: "You do not have enough island levels to create a Welcome Sign!"
   next: "Next"
   playerWarped: "[name] &2warped to your island!"
   previous: "Previous"
