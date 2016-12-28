@@ -544,7 +544,7 @@ public class GridManager {
     }
 
     /**
-     * Returns the owner of the island at location
+     * Returns the owner of the island at location or null if there is none
      * 
      * @param location
      * @return UUID of owner

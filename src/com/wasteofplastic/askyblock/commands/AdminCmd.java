@@ -66,6 +66,7 @@ import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.Island.Flags;
 import com.wasteofplastic.askyblock.Settings.GameType;
 import com.wasteofplastic.askyblock.TopTen;
+import com.wasteofplastic.askyblock.listeners.LavaCheck;
 import com.wasteofplastic.askyblock.panels.ControlPanel;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
@@ -102,6 +103,9 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
         if (!(sender instanceof Player)) {
             sender.sendMessage(ChatColor.YELLOW  + label + " clearreset <player>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpclearReset);
             sender.sendMessage(ChatColor.YELLOW  + label + " clearresetall:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpclearReset);
+            if (Settings.useMagicCobbleGen) {
+                sender.sendMessage(ChatColor.YELLOW  + label + " cobblestats: " + ChatColor.WHITE + " " + plugin.myLocale().adminHelpcobbleStats);
+            }
             sender.sendMessage(ChatColor.YELLOW  + label + " completechallenge <player> <challengename>:" + ChatColor.WHITE + " "
                     + plugin.myLocale().adminHelpcompleteChallenge);
             sender.sendMessage(ChatColor.YELLOW  + label + " delete <player>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpdelete);
@@ -140,6 +144,9 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.clearresetall") || player.isOp()) {
                 player.sendMessage(ChatColor.YELLOW + "/" + label + " clearresetall:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpclearReset);
+            }
+            if (Settings.useMagicCobbleGen && VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.cobblestats") || player.isOp()) {
+                player.sendMessage(ChatColor.YELLOW  + "/" + label + " cobblestats: " + ChatColor.WHITE + " " + plugin.myLocale().adminHelpcobbleStats);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.challenges") || player.isOp()) {
                 player.sendMessage(ChatColor.YELLOW + "/" + label + " completechallenge <player> <challengename>:" + ChatColor.WHITE + " "
@@ -210,7 +217,8 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 player.sendMessage(ChatColor.YELLOW + "/" + label + " setspawn:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpSetSpawn);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.setrange") || player.isOp()) {
-                player.sendMessage(ChatColor.YELLOW + "/" + label + " setrange:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpSetRange);
+                player.sendMessage(ChatColor.YELLOW + "/" + label + " setrange <number>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpSetRange);
+                player.sendMessage(ChatColor.YELLOW + "/" + label + " addrange <+/- number>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpAddRange);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.settingsreset") || player.isOp()) {
                 player.sendMessage(ChatColor.YELLOW + "/" + label + " settingsreset [help | all | flag]:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpSettingsReset);
@@ -262,9 +270,9 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 if (split[0].equalsIgnoreCase("reload") || split[0].equalsIgnoreCase("register") || split[0].equalsIgnoreCase("delete")
                         || split[0].equalsIgnoreCase("purge") || split[0].equalsIgnoreCase("confirm") || split[0].equalsIgnoreCase("setspawn")
                         || split[0].equalsIgnoreCase("deleteisland") || split[0].equalsIgnoreCase("setrange")
-                        || split[0].equalsIgnoreCase("reserve")
+                        || split[0].equalsIgnoreCase("reserve") || split[0].equalsIgnoreCase("addrange")
                         || split[0].equalsIgnoreCase("unregister") || split[0].equalsIgnoreCase("clearresetall")
-                        || split[0].equalsIgnoreCase("settingsreset")) {
+                        || split[0].equalsIgnoreCase("settingsreset") || split[0].equalsIgnoreCase("cobblestats")) {
                     if (!checkAdminPerms(player, split)) {
                         player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
                         return true;
@@ -317,6 +325,17 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
             help(sender, label);
             return true;
         case 1:
+            if (split[0].equalsIgnoreCase("cobblestats")) {
+                if (LavaCheck.getStats().size() == 0) {
+                    sender.sendMessage(ChatColor.RED + plugin.myLocale().banNone);
+                    return true;
+                }
+                for (Material mat : LavaCheck.getStats().elementSet()) {
+                    sender.sendMessage(mat + ": " + LavaCheck.getStats().count(mat) + "/" + LavaCheck.getStats().size() + " or " 
+                            + ((int)((double)LavaCheck.getStats().count(mat)/LavaCheck.getStats().size()*100)) + "%");
+                }
+                return true;
+            }
             if (split[0].equalsIgnoreCase("setdeaths")) {
                 sender.sendMessage(ChatColor.YELLOW  + label + " setdeaths <player> <number>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpsetDeaths);
                 return true;
@@ -1036,7 +1055,69 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                         }
                         return true;
                     }
-                }
+                } else
+                    // Add/remove protection for the island the player is on
+                    if (split[0].equalsIgnoreCase("addrange")) {
+                        if (!(sender instanceof Player)) {
+                            sender.sendMessage(ChatColor.RED + plugin.myLocale().adminLockerrorInGame);
+                            return true;
+                        }
+                        player = (Player)sender;
+                        UUID playerUUID = player.getUniqueId();
+                        Island island = plugin.getGrid().getIslandAt(player.getLocation());
+                        // Check if island exists
+                        if (island == null) {
+                            player.sendMessage(ChatColor.RED + plugin.myLocale().errorNotOnIsland);
+                            return true;
+                        } else {
+                            int newRange = island.getProtectionSize();
+                            int maxRange = Settings.islandDistance;
+                            // If spawn do something different
+                            if (island.isSpawn()) {
+                                try {
+                                    newRange = Integer.valueOf(split[1]) + island.getProtectionSize();
+                                } catch (Exception e) {
+                                    player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).adminSetRangeInvalid);
+                                    return true;
+                                }
+                                player.sendMessage(ChatColor.GREEN + plugin.myLocale(playerUUID).adminSetRangeSet.replace("[number]",String.valueOf(newRange)));
+                                if (newRange > maxRange) {
+                                    player.sendMessage(ChatColor.RED + "" + ChatColor.BOLD + plugin.myLocale(playerUUID).adminSetRangeWarning.replace("[max]"
+                                            ,String.valueOf(maxRange)));
+                                    player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).adminSetRangeWarning2);
+                                }
+                                island.setProtectionSize(newRange);
+                                player.sendMessage(ChatColor.YELLOW + plugin.myLocale().adminSetSpawncenter.replace("[location]", island.getCenter().getBlockX() + "," + island.getCenter().getBlockZ()));
+                                player.sendMessage(ChatColor.YELLOW + plugin.myLocale().adminSetSpawnlimits.replace("[min]", island.getMinX() + "," + island.getMinZ()).replace("[max]",
+                                        (island.getMinX() + island.getIslandDistance() - 1) + "," + (island.getMinZ() + island.getIslandDistance() - 1)));
+                                player.sendMessage(ChatColor.YELLOW + plugin.myLocale().adminSetSpawnrange.replace("[number]",String.valueOf(island.getProtectionSize())));
+                                player.sendMessage(ChatColor.YELLOW + plugin.myLocale().adminSetSpawncoords.replace("[min]",  island.getMinProtectedX() + ", " + island.getMinProtectedZ()).replace("[max]",
+                                        + (island.getMinProtectedX() + island.getProtectionSize() - 1) + ", "
+                                                + (island.getMinProtectedZ() + island.getProtectionSize() - 1)));
+                                if (island.isLocked()) {
+                                    player.sendMessage(ChatColor.RED + plugin.myLocale().adminSetSpawnlocked);
+                                }
+                            } else {
+                                if (!plugin.getConfig().getBoolean("island.overridelimit")) {
+                                    maxRange -= 16;
+                                }
+                                try {
+                                    newRange = Integer.valueOf(split[1]) + island.getProtectionSize();
+                                } catch (Exception e) {
+                                    player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).adminSetRangeInvalid + " "  + plugin.myLocale(playerUUID).adminSetRangeTip.replace("[max]", String.valueOf(maxRange)));
+                                    return true;
+                                }
+                                if (newRange < 10 || newRange > maxRange) {
+                                    player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).adminSetRangeInvalid + " "  + plugin.myLocale(playerUUID).adminSetRangeTip.replace("[max]", String.valueOf(maxRange)));
+                                    return true;
+                                }
+                                island.setProtectionSize(newRange);
+                                player.sendMessage(ChatColor.GREEN + plugin.myLocale(playerUUID).adminSetRangeSet.replace("[number]",String.valueOf(newRange)));
+                                showInfo(island.getOwner(), sender);
+                            }
+                            return true;
+                        }
+                    }
             if (split[0].equalsIgnoreCase("purge")) {
                 // PURGE Command
                 // Check for "allow" or "disallow" flags
@@ -1441,8 +1522,49 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 }
 
             }
-            // Set protection
-            if (split[0].equalsIgnoreCase("setrange")) {
+            // Add or remove protection range
+            if (split[0].equalsIgnoreCase("addrange")) {
+                // Convert name to a UUID
+                UUID playerUUID = plugin.getPlayers().getUUID(split[1], true);
+                // Check if player exists
+                if (!plugin.getPlayers().isAKnownPlayer(playerUUID)) {
+                    sender.sendMessage(ChatColor.RED + plugin.myLocale().errorUnknownPlayer);
+                    return true;
+                }
+                // Check if the target is in a team and if so, the leader needs to be adjusted
+                if (plugin.getPlayers().inTeam(playerUUID)) {
+                    playerUUID = plugin.getPlayers().getTeamLeader(playerUUID);
+                }
+                // Get the range that this player has now
+                Island island = plugin.getGrid().getIsland(playerUUID);
+                if (island == null) {
+                    sender.sendMessage(ChatColor.RED + plugin.myLocale().errorNoIslandOther);
+                    return true;
+                } else {
+                    int newRange = 0;
+                    int maxRange = Settings.islandDistance;
+                    if (!plugin.getConfig().getBoolean("island.overridelimit")) {
+                        maxRange -= 16;
+                    }
+                    try {
+                        newRange = Integer.valueOf(split[2]) + island.getProtectionSize();
+                    } catch (Exception e) {
+                        sender.sendMessage(ChatColor.RED + plugin.myLocale().adminSetRangeInvalid + " "  + plugin.myLocale().adminSetRangeTip.replace("[max]", String.valueOf(maxRange)));
+
+                        return true;
+                    }
+                    if (newRange < 10 || newRange > maxRange) {
+                        sender.sendMessage(ChatColor.RED + plugin.myLocale().adminSetRangeInvalid + " "  + plugin.myLocale().adminSetRangeTip.replace("[max]", String.valueOf(maxRange)));
+
+                        return true;
+                    }
+                    island.setProtectionSize(newRange);
+                    sender.sendMessage(ChatColor.GREEN + plugin.myLocale().adminSetRangeSet.replace("[number]",String.valueOf(newRange)));
+                    showInfo(playerUUID, sender);
+                    plugin.getGrid().saveGrid();
+                    return true;
+                }
+            } else if (split[0].equalsIgnoreCase("setrange")) {
                 // Convert name to a UUID
                 UUID playerUUID = plugin.getPlayers().getUUID(split[1], true);
                 // Check if player exists
@@ -1582,7 +1704,10 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                             // Player is apparently in a team, but there is no team leader
                             // Remove their team status
                             // Clear the player of all team-related items
-                            plugin.getPlayers().setLeaveTeam(playerUUID);
+                            if (!plugin.getPlayers().setLeaveTeam(playerUUID)) {
+                                sender.sendMessage(ChatColor.RED + plugin.myLocale().errorBlockedByAPI);
+                                return true;
+                            }
                             plugin.getPlayers().setHomeLocation(playerUUID, null);
                             plugin.getPlayers().setIslandLocation(playerUUID, null);
                             // Remove any warps
@@ -1593,14 +1718,20 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                         // Payer is not a team leader
                         if (!teamLeader.equals(playerUUID)) {
                             // Clear the player of all team-related items
-                            plugin.getPlayers().setLeaveTeam(playerUUID);
+                            if (!plugin.getPlayers().setLeaveTeam(playerUUID)) {
+                                sender.sendMessage(ChatColor.RED + plugin.myLocale().errorBlockedByAPI);
+                                return true;
+                            }
                             plugin.getPlayers().setHomeLocation(playerUUID, null);
                             plugin.getPlayers().setIslandLocation(playerUUID, null);
                             // Clear the leader of this player and if they now have
                             // no team, remove the team
                             plugin.getPlayers().removeMember(teamLeader, playerUUID);
                             if (plugin.getPlayers().getMembers(teamLeader).size() < 2) {
-                                plugin.getPlayers().setLeaveTeam(teamLeader);
+                                if (!plugin.getPlayers().setLeaveTeam(teamLeader)) {
+                                    sender.sendMessage(ChatColor.RED + plugin.myLocale().errorBlockedByAPI);
+                                    return true;
+                                }
                             }
                             // Remove any warps
                             plugin.getWarpSignsListener().removeWarp(playerUUID);
@@ -1686,11 +1817,13 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                     return true;
                 }
                 // If the leader's member list does not contain their own name
-                // then
-                // add it
+                // then add it
                 if (!plugin.getPlayers().getMembers(teamLeader).contains(teamLeader)) {
                     // Set up the team leader
-                    plugin.getPlayers().setJoinTeam(teamLeader, teamLeader, plugin.getPlayers().getIslandLocation(teamLeader));
+                    if (!plugin.getPlayers().setJoinTeam(teamLeader, teamLeader, plugin.getPlayers().getIslandLocation(teamLeader))) {
+                        sender.sendMessage(ChatColor.RED + plugin.myLocale().errorBlockedByAPI);
+                        return true;
+                    }
                     plugin.getPlayers().addTeamMember(teamLeader, teamLeader);
                     sender.sendMessage(ChatColor.GOLD + plugin.myLocale().adminTeamAddedLeader);
                 }
@@ -2142,14 +2275,14 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                         "delete", "completechallenge", "resetchallenge",
                         "resetallchallenges", "purge", "info", "info", "info",
                         "clearreset", "clearresetall", "setbiome", "topbreeders", "team",
-                        "name", "setdeaths", "settingsreset",
-                        "resetname", "register"));
+                        "name", "setdeaths", "settingsreset", "setrange", "addrange",
+                        "resetname", "register", "cobblestats"));
                 break;
             case 2:
                 if (args[0].equalsIgnoreCase("name") || args[0].equalsIgnoreCase("resetname") || args[0].equalsIgnoreCase("setdeaths")) {
                     options.addAll(Util.getOnlinePlayerList());
                 }
-                if (args[0].equalsIgnoreCase("lock")) {
+                if (args[0].equalsIgnoreCase("lock") || args[0].equalsIgnoreCase("setrange") || args[0].equalsIgnoreCase("addrange")) {
                     options.addAll(Util.getOnlinePlayerList());
                 }
                 if (args[0].equalsIgnoreCase("resetsign")) {
@@ -2283,6 +2416,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 }
                 if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.setrange") || player.isOp()) {
                     options.add("setrange");
+                    options.add("addrange");
                 }
                 if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.tp") || player.isOp()) {
                     options.add("tp");
@@ -2308,6 +2442,10 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 }
                 break;
             case 2:
+                if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.setrange") || player.isOp() 
+                        && (args[0].equalsIgnoreCase("setrange") || args[0].equalsIgnoreCase("addrange"))) {
+                    options.addAll(Util.getOnlinePlayerList());
+                }
                 if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.lock") || player.isOp())
                         && args[0].equalsIgnoreCase("lock")) {
                     options.addAll(Util.getOnlinePlayerList());

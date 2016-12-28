@@ -637,6 +637,18 @@ public class ASLocale {
 
     public String islandHelpSelectLanguage;
 
+    public String islandhelpBanList;
+
+    public String banNone;
+
+    public String adminHelpAddRange;
+
+    public String errorBlockedByAPI;
+
+    public String adminHelpcobbleStats;
+
+    public String topTenerrorExcluded;
+
     /**
      * Creates a locale object full of localized strings for a language
      * @param plugin
@@ -740,6 +752,7 @@ public class ASLocale {
 
         drankAcidAndDied = ChatColor.translateAlternateColorCodes('&', locale.getString("drankAcidAndDied", "drank acid and died."));
         drankAcid = ChatColor.translateAlternateColorCodes('&', locale.getString("drankAcid", "drank acid."));
+        errorBlockedByAPI = ChatColor.translateAlternateColorCodes('&', locale.getString("error.blockedbyapi", "A plugin using the API blocked this action."));
         errorTooShort = ChatColor.translateAlternateColorCodes('&', locale.getString("error.tooShort", "Too short. Minimum size is [length]."));
         errorTooLong = ChatColor.translateAlternateColorCodes('&', locale.getString("error.tooLong", "Too long. Maximum size is [length]."));
         errorUnknownPlayer = ChatColor.translateAlternateColorCodes('&', locale.getString("error.unknownPlayer", "That player is unknown."));
@@ -868,6 +881,7 @@ public class ASLocale {
             topTenGuiTitle = topTenGuiTitle.substring(0, 29);
         }
         topTenerrorNotReady = ChatColor.translateAlternateColorCodes('&', locale.getString("topTen.errorNotReady", "Top ten list not generated yet!"));
+        topTenerrorExcluded = ChatColor.translateAlternateColorCodes('&', locale.getString("topTen.errorExcluded", "FYI: You are excluded from the top ten as you do not have [perm]"));
         levelislandLevel = ChatColor.translateAlternateColorCodes('&', locale.getString("level.islandLevel", "Island level"));
         levelerrornotYourIsland = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("level.errornotYourIsland", "Only the island owner can do that."));
@@ -996,6 +1010,7 @@ public class ASLocale {
         islandhelpKick = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpKick", "remove a team member from your island."));
         islandhelpExpel = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpExpel", "force a player from your island."));
         islandhelpBan = ChatColor.translateAlternateColorCodes('&', locale.getString("ban.helpBan", "ban a player from your island."));
+        islandhelpBanList = ChatColor.translateAlternateColorCodes('&', locale.getString("ban.helpBanList", "list banned players."));
         islandhelpUnban = ChatColor.translateAlternateColorCodes('&', locale.getString("ban.helpUnban", "un-ban a player from your island."));
         islandHelpSettings = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("island.helpSettings", "see island protection and game settings"));
@@ -1121,6 +1136,8 @@ public class ASLocale {
                 locale.getString("adminHelp.setspawn", "sets the island world spawn to a location close to you"));
         adminHelpSetRange = ChatColor
                 .translateAlternateColorCodes('&', locale.getString("adminHelp.setrange", "changes the island's protection range"));
+        adminHelpAddRange = ChatColor
+                .translateAlternateColorCodes('&', locale.getString("adminHelp.addrange", "adds to or substracts from the island's protection range"));
         adminHelpsetBiome = ChatColor
                 .translateAlternateColorCodes('&', locale.getString("adminHelp.setbiome", "sets leader's island biome"));
         adminHelpsetDeaths = ChatColor
@@ -1133,6 +1150,9 @@ public class ASLocale {
                 .translateAlternateColorCodes('&', locale.getString("adminHelp.kick", "removes player from any team"));
         adminHelpadd = ChatColor
                 .translateAlternateColorCodes('&', locale.getString("adminHelp.add", "adds player to leader's team"));
+        adminHelpcobbleStats = ChatColor
+                .translateAlternateColorCodes('&', locale.getString("adminHelp.cobblestats", "displays magic cobble generation stats"));
+
         settingsResetInProgress = ChatColor
                 .translateAlternateColorCodes('&', locale.getString("settingsReset.inprogress", "Protection settings being reset, please wait..."));
         settingsResetDone = ChatColor
@@ -1268,7 +1288,8 @@ public class ASLocale {
         banBanned = ChatColor.translateAlternateColorCodes('&', locale.getString("ban.banned", "You are banned from [name]'s island!"));
         banLifted = ChatColor.translateAlternateColorCodes('&', locale.getString("ban.lifted", "Ban lifted from [name]'s island!"));
         banLiftedSuccess = ChatColor.translateAlternateColorCodes('&', locale.getString("ban.liftedsuccess", "Ban lifted for [name]!"));
-        banFail = ChatColor.translateAlternateColorCodes('&', locale.getString("banned.fail", "[name] cannot be banned!"));
+        banFail = ChatColor.translateAlternateColorCodes('&', locale.getString("ban.fail", "[name] cannot be banned!"));
+        banNone = ChatColor.translateAlternateColorCodes('&', locale.getString("ban.none", "None"));
         banNotYourself = ChatColor.translateAlternateColorCodes('&', locale.getString("ban.notyourself", "You cannot do that to yourself!"));
         banNotTeamMember = ChatColor.translateAlternateColorCodes('&', locale.getString("ban.notteammember", "You cannot ban a team member!"));
         banNotBanned = ChatColor.translateAlternateColorCodes('&', locale.getString("ban.notbanned", "[name] is not banned!"));

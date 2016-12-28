@@ -1,6 +1,6 @@
 --- 
 acidBottle: "Bouteille d'acide"
-acidBucket: "Sceau d'acide"
+acidBucket: "Seau d'acide"
 acidLore: |
     Ne tombez pas !
     Faites attention!
@@ -26,7 +26,7 @@ adminHelp:
   reload: "recharge la configuration"
   resetAllChallenges: "réinitialise tous les challenges d'un joueur"
   resetChallenge: "réinitialise un challenge"
-  resetsign: "Réinitialise le panneau ue vous regardez au propriétaire de l'île"
+  resetsign: "Réinitialise le panneau que vous regardez au propriétaire de l'île"
   setbiome: "modifie le biome d'une île"
   setrange: "modifie la distance de protection d'une île"
   setspawn: "définit l'île la plus proche comme le Spawn"
@@ -194,6 +194,7 @@ error:
   unknownPlayer: "Joueur inconnu."
   useInGame: "Cette commande doit être utilisée en jeu."
   wrongWorld: "Vous ne pouvez faire ça que dans le monde Skyblock."
+  minishopDisabled: "Le Minishop est désactivé."
 expel: 
   expelled: "Vous avez été exclu de l'île !"
   fail: "[name] ne peut pas être exclu !"
@@ -433,12 +434,13 @@ warps:
   deactivate: "Désactivation de l'ancien panneau."
   errorDoesNotExist: "Ce warp n'existe pas!"
   errorDuplicate: "Désolé! Il y a déjà un panneau ici!"
-  errorNoPerm: "You do not have permission to place Welcome Signs yet!"
+  errorNoPerm: "Vous n'avez pas encore la permission de placer un panneau de bienvenue!"
   errorNoPlace: "Vous devez être sur votre île pour placer un panneau de bienvenue !"
   errorNoRemove: "Vous pouvez seulement enlever votre propre panneau!"
   errorNoWarpsYet: "Aucun warp disponible !"
   errorNotReadyYet: "Ce warp n'est pas encore prêt. Réessayez plus tard."
   errorNotSafe: "Ce warp n'est pas sécurisé. Réessayez plus tard."
+  errorNotEnoughLevel: "Vous n'avez pas assez de niveaux d'île pour pouvoir créer un Warp!"
   next: "Suivant"
   playerWarped: "[name] &2s'est téléporté sur votre île!"
   previous: "Précédent"

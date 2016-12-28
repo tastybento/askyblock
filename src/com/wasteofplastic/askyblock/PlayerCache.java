@@ -30,6 +30,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import com.google.common.collect.Lists;
+import com.wasteofplastic.askyblock.util.VaultHelper;
 
 /**
  * Provides a memory cache of online player information
@@ -406,19 +407,26 @@ public class PlayerCache {
         }
     }
 
-    public void setJoinTeam(UUID playerUUID, UUID teamLeader, Location islandLocation) {
+    /**
+     * Puts a player in a team
+     * @param playerUUID
+     * @param teamLeader
+     * @param islandLocation
+     * @return true if successful, false if not
+     */
+    public boolean setJoinTeam(UUID playerUUID, UUID teamLeader, Location islandLocation) {
         addPlayer(playerUUID);
         addPlayer(teamLeader);
-        playerCache.get(playerUUID).setJoinTeam(teamLeader, islandLocation);
+        return playerCache.get(playerUUID).setJoinTeam(teamLeader, islandLocation);
     }
 
     /**
      * Called when a player leaves a team Resets inTeam, teamLeader,
      * islandLevel, teamIslandLocation, islandLocation and members array
      */
-    public void setLeaveTeam(UUID playerUUID) {
+    public boolean setLeaveTeam(UUID playerUUID) {
         addPlayer(playerUUID);
-        playerCache.get(playerUUID).setLeaveTeam();
+        return playerCache.get(playerUUID).setLeaveTeam();
     }
 
     /**
@@ -732,6 +740,11 @@ public class PlayerCache {
         }
         addPlayer(playerUUID);
         addPlayer(targetUUID);
+        // Check if the target player has a permission bypass (admin.noban)
+        Player target = plugin.getServer().getPlayer(targetUUID);
+        if (target != null && VaultHelper.checkPerm(target, Settings.PERMPREFIX + "admin.noban")) {
+            return false;
+        }
         if (playerCache.get(playerUUID).hasIsland()) {
             // Player has island
             return playerCache.get(playerUUID).isBanned(targetUUID);

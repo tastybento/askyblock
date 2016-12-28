@@ -31,6 +31,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
@@ -40,6 +42,7 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.util.Vector;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.InventorySave;
@@ -241,7 +244,7 @@ public class PlayerEvents implements Listener {
                 return;
             }
         }
-        if (Settings.allowVisitorItemPickup || e.getPlayer().isOp() || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
+        if ((plugin.getGrid().getIslandAt(e.getItem().getLocation()) != null && plugin.getGrid().getIslandAt(e.getItem().getLocation()).getIgsFlag(Flags.allowVisitorItemDrop)) || e.getPlayer().isOp() || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
                 || plugin.getGrid().locationIsOnIsland(e.getPlayer(), e.getItem().getLocation())) {
             return;
         }
@@ -265,7 +268,7 @@ public class PlayerEvents implements Listener {
                 return;
             }
         }
-        if (Settings.allowVisitorItemDrop || e.getPlayer().isOp() || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
+        if ((plugin.getGrid().getIslandAt(e.getItemDrop().getLocation()) != null && plugin.getGrid().getIslandAt(e.getItemDrop().getLocation()).getIgsFlag(Flags.allowVisitorItemDrop)) || e.getPlayer().isOp() || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
                 || plugin.getGrid().locationIsOnIsland(e.getPlayer(), e.getItemDrop().getLocation())) {
             return;
         }
@@ -653,4 +656,47 @@ public class PlayerEvents implements Listener {
         }
     }
 
+    /**
+     * Prevents visitors from getting damage if invinciblevisitors option is set to TRUE
+     * @param e
+     */
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
+    public void onVisitorGetDamage(EntityDamageEvent e){
+        if(!Settings.invincibleVisitors) return;
+        if(!(e.getEntity() instanceof Player)) return;
+
+        Player p = (Player) e.getEntity();
+        if (!IslandGuard.inWorld(p) || plugin.getGrid().locationIsOnIsland(p, p.getLocation())) return;
+
+        if (Settings.visitorDamagePrevention.contains(e.getCause())) e.setCancelled(true);
+
+        else if(e.getCause().equals(DamageCause.VOID)) {
+            if(plugin.getPlayers().hasIsland(p.getUniqueId())) {
+                Location safePlace = plugin.getGrid().getSafeHomeLocation(p.getUniqueId(), 1);
+                if (safePlace != null) {
+                    p.teleport(safePlace);
+                    // Set their fall distance to zero otherwise they crash onto their island and die
+                    p.setFallDistance(0);
+                    e.setCancelled(true);
+                    return;
+                } 
+            }
+            // No island, or no safe spot on island
+            if (plugin.getGrid().getSpawnPoint() != null) {
+                p.teleport(plugin.getGrid().getSpawnPoint());
+                // Set their fall distance to zero otherwise they crash onto their island and die
+                p.setFallDistance(0);
+                e.setCancelled(true);
+                return;
+            }
+            // No island spawn, try regular spawn
+            if (!p.performCommand("spawn")) {
+                // If this command doesn't work, let them die otherwise they may get trapped in the void forever
+                return;
+            }
+            // Set their fall distance to zero otherwise they crash onto their island and die
+            p.setFallDistance(0);
+            e.setCancelled(true);
+        }
+    }
 }

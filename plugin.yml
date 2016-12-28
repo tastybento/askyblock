@@ -126,9 +126,9 @@ permissions:
           askyblock.craft.dirt:
             description: Allows tilling of coarse dirt into dirt
             default: false
-      askyblock.excludetopten:
-        description: Excludes player from top ten
-        default: false
+      askyblock.intopten:
+        description: Includes player in top ten
+        default: true
       askyblock.nohunger:
         description: Excludes player from hunger if on island
         default: false
@@ -232,6 +232,9 @@ permissions:
             default: false
           askyblock.settings.enableJoinAndLeaveIslandMessages:
             description: Allow player to change this island guard setting
+            default: false
+          askyblock.settings.allowMobSpawning:
+            description: Allow player to change this island guard settings
             default: false
       askyblock.mod.*:
         children:
@@ -339,4 +342,10 @@ permissions:
           askyblock.admin.settingsreset:
             description: Resets all the islands to default protection settings
             default: op
-            
+          askyblock.admin.noban:
+            description: Player cannot be banned from an island
+            default: op
+          askyblock.admin.cobblestats:
+            description: Displays magic cobble gen stats
+            default: op
+           
