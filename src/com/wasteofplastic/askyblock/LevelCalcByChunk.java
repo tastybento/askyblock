@@ -418,7 +418,10 @@ public class LevelCalcByChunk {
                                             }
                                             sender.sendMessage(message);
                                             //Send player how many points are required to reach next island level
-                                            int requiredPoints = (Settings.levelCost * (plugin.getPlayers().getIslandLevel(targetPlayer) + 1)) - ((blocks * levelMultiplier) - (deathHandicap * Settings.deathpenalty));
+                                            int requiredPoints = (Settings.levelCost * (plugin.getPlayers().getIslandLevel(targetPlayer) + 1 + levelHandicap)) - ((blocks * levelMultiplier) - (deathHandicap * Settings.deathpenalty));
+                                            
+                                            
+                                            
                                             String toNextLevel = ChatColor.GREEN + plugin.myLocale(((Player)sender).getUniqueId()).islandrequiredPointsToNextLevel.replace("[points]", String.valueOf(requiredPoints));
                                             toNextLevel = toNextLevel.replace("[next]", String.valueOf(plugin.getPlayers().getIslandLevel(targetPlayer) + 1));
                                             sender.sendMessage(toNextLevel);
