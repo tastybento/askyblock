@@ -495,8 +495,9 @@ general:
    startingmoney: 10.00
 
    # Reset Challenges - if this is true, player's challenges will reset when they
-   # reset an island
-   resetchallenges: true
+   # reset an island or if they are kicked or leave a team. Prevents exploiting the
+   # challenges by doing them repeatedly.
+   resetchallenges: false
 
    # Reset inventory - if true, the player's inventory will be cleared when they start
    # or restart and island. Default is true.
