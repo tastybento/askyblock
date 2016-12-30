@@ -334,4 +334,5 @@ public class Settings {
     public static boolean allowMobDamageToItemFrames;
     public static boolean kickedKeepInv;
     public static boolean hackSkeletonSpawners;
+    public static HashMap<EntityType, Integer> entityLimits;
 }

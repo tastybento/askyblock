@@ -72,6 +72,7 @@ import com.wasteofplastic.askyblock.generators.ChunkGeneratorWorld;
 import com.wasteofplastic.askyblock.listeners.AcidEffect;
 import com.wasteofplastic.askyblock.listeners.ChatListener;
 import com.wasteofplastic.askyblock.listeners.CleanSuperFlat;
+import com.wasteofplastic.askyblock.listeners.EntitySpawning;
 import com.wasteofplastic.askyblock.listeners.FlyingMobEvents;
 import com.wasteofplastic.askyblock.listeners.HeroChatListener;
 import com.wasteofplastic.askyblock.listeners.IslandGuard;
@@ -1454,6 +1455,7 @@ public class ASkyBlock extends JavaPlugin {
         Settings.breedingLimit = getConfig().getInt("general.breedinglimit", 0);
         Settings.villagerLimit = getConfig().getInt("general.villagerlimit", 0);
         Settings.limitedBlocks = new HashMap<String,Integer>();
+        Settings.entityLimits = new HashMap<EntityType, Integer>();
         ConfigurationSection entityLimits = getConfig().getConfigurationSection("general.entitylimits");
         if (entityLimits != null) {
             for (String entity: entityLimits.getKeys(false)) {
@@ -1462,7 +1464,13 @@ public class ASkyBlock extends JavaPlugin {
                     getLogger().info(entity.toUpperCase() + " will be limited to " + limit);
                 }
                 if (Material.getMaterial(entity.toUpperCase()) == null) {
-                    getLogger().warning("general.entitylimits section has unknown entity type: " + entity.toUpperCase() + " skipping...");
+                    // Check if this is a living entity
+                    EntityType type = EntityType.valueOf(entity.toUpperCase());
+                    if (type != null && type.isAlive()) {
+                        Settings.entityLimits.put(type, limit);
+                    } else {
+                        getLogger().warning("general.entitylimits section has unknown entity type: " + entity.toUpperCase() + " skipping...");
+                    }
                 } else if (limit > -1) {
                     Settings.limitedBlocks.put(entity.toUpperCase(), limit);
                     if (entity.equalsIgnoreCase("REDSTONE_COMPARATOR")) {
@@ -1609,8 +1617,8 @@ public class ASkyBlock extends JavaPlugin {
         if (Settings.recoverSuperFlat) {
             manager.registerEvents(new CleanSuperFlat(), this);
         }
-        // World loader
-        //manager.registerEvents(new WorldLoader(this), this);
+        // Entity limits
+        manager.registerEvents(new EntitySpawning(this), this);
     }
 
 
