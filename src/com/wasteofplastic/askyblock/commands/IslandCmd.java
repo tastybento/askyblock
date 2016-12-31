@@ -2318,7 +2318,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                         }
                                         boolean pvp = false;
                                         if ((warpSpot.getWorld().equals(ASkyBlock.getIslandWorld()) && island.getIgsFlag(SettingsFlag.PVP)) 
-                                                || (warpSpot.getWorld().equals(ASkyBlock.getNetherWorld()) && island.getIgsFlag(SettingsFlag.NETHERPVP))) {
+                                                || (warpSpot.getWorld().equals(ASkyBlock.getNetherWorld()) && island.getIgsFlag(SettingsFlag.NETHER_PVP))) {
                                             pvp = true;
                                         }
                                         // Find out which direction the warp is facing

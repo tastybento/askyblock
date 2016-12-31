@@ -48,6 +48,7 @@ import org.bukkit.util.Vector;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Settings;
+import com.wasteofplastic.askyblock.Island.SettingsFlag;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
 /**
@@ -241,7 +242,7 @@ public class AcidEffect implements Listener {
         }
         // Check if they are in spawn and therefore water above sea-level is not
         // acid
-        if (Settings.allowSpawnNoAcidWater) {
+        if (!Settings.spawnSettings.get(SettingsFlag.ACID_DAMAGE)) {
             // plugin.getLogger().info("DEBUG: no acid water is true");
             // Check if the player is above sealevel because the sea is always
             // acid

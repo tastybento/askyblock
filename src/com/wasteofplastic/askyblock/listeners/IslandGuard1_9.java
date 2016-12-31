@@ -104,11 +104,11 @@ public class IslandGuard1_9 implements Listener {
             Island island = plugin.getGrid().getIslandAt(player.getLocation());
             if (island !=null) {
                 if (island.isSpawn()) {
-                    if (Settings.allowSpawnPlaceBlocks) {
+                    if (Settings.spawnSettings.get(SettingsFlag.PLACE_BLOCKS)) {
                         return;
                     }
                 } else {
-                    if (island.getMembers().contains(player.getUniqueId()) || island.getIgsFlag(SettingsFlag.PLACEBLOCKS)) {
+                    if (island.getMembers().contains(player.getUniqueId()) || island.getIgsFlag(SettingsFlag.PLACE_BLOCKS)) {
                         return;
                     }
                 }
@@ -144,11 +144,11 @@ public class IslandGuard1_9 implements Listener {
             Island island = plugin.getGrid().getIslandAt(e.getRightClicked().getLocation());
             if (island !=null) {
                 if (island.isSpawn()) {
-                    if (Settings.allowSpawnBreakBlocks) {
+                    if (Settings.spawnSettings.get(SettingsFlag.BREAK_BLOCKS)) {
                         return;
                     }
                 } else {
-                    if (island.getMembers().contains(e.getPlayer().getUniqueId()) || island.getIgsFlag(SettingsFlag.BREAKBLOCKS)) {
+                    if (island.getMembers().contains(e.getPlayer().getUniqueId()) || island.getIgsFlag(SettingsFlag.BREAK_BLOCKS)) {
                         return;
                     }
                 }
@@ -179,7 +179,7 @@ public class IslandGuard1_9 implements Listener {
         if (inHand != null && inHand.getType().equals(Material.END_CRYSTAL)) {
             // Check island
             Island island = plugin.getGrid().getIslandAt(e.getPlayer().getLocation());
-            if (island !=null && (island.getMembers().contains(p.getUniqueId()) || island.getIgsFlag(SettingsFlag.PLACEBLOCKS))) {
+            if (island !=null && (island.getMembers().contains(p.getUniqueId()) || island.getIgsFlag(SettingsFlag.PLACE_BLOCKS))) {
                 //plugin.getLogger().info("1.9 " +"DEBUG: armor stand place check");
                 if (Settings.limitedBlocks.containsKey("END_CRYSTAL") && Settings.limitedBlocks.get("END_CRYSTAL") > -1) {
                     //plugin.getLogger().info("1.9 " +"DEBUG: count armor stands");
@@ -257,13 +257,13 @@ public class IslandGuard1_9 implements Listener {
             }
             // Check island
             Island island = plugin.getGrid().getIslandAt(e.getEntity().getLocation());
-            if (island != null && island.isSpawn() && Settings.allowSpawnBreakBlocks) {
+            if (island != null && island.isSpawn() && Settings.spawnSettings.get(SettingsFlag.BREAK_BLOCKS)) {
                 if (DEBUG) {
                     plugin.getLogger().info("1.9 " +"Spawn and breaking blocks is allowed");
                 }
                 return;
             }
-            if (island != null && island.getIgsFlag(SettingsFlag.BREAKBLOCKS)) {
+            if (island != null && island.getIgsFlag(SettingsFlag.BREAK_BLOCKS)) {
                 if (DEBUG) {
                     plugin.getLogger().info("1.9 " +"Visitor is allowed to break blocks");
                 }

@@ -88,44 +88,189 @@ public class Island implements Cloneable {
     private int levelHandicap;
     /**
      * Island Guard Setting flags
-     *
+     * Covers island, spawn and system settings
      */
     public enum SettingsFlag {
+        /**
+         * Water is acid above sea level
+         */
+        ACID_DAMAGE,
+        /**
+         * Anvil use
+         */
         ANVIL,
-        ARMORSTAND,
+        /**
+         * Armor stand use
+         */
+        ARMOR_STAND,
+        /**
+         * Beacon use
+         */
         BEACON,
+        /**
+         * Bed use
+         */
         BED,
-        BREAKBLOCKS,
+        /**
+         * Can break blocks
+         */
+        BREAK_BLOCKS,
+        /**
+         * Can breed animals
+         */
         BREEDING,
+        /**
+         * Can use brewing stand
+         */
         BREWING,
+        /**
+         * Can empty or fill buckets
+         */
         BUCKET,
+        /**
+         * Can collect lava
+         */
+        COLLECT_LAVA,
+        /**
+         * Can collect water
+         */
+        COLLECT_WATER,
+        /**
+         * Can open chests or hoppers or dispensers
+         */
         CHEST,
+        /**
+         * Can use the work bench
+         */
         CRAFTING,
-        CROPTRAMPLE,
+        /**
+         * Allow creepers to hurt players (but not damage blocks)
+         */
+        CREEPER_PAIN,
+        /**
+         * Can trample crops
+         */
+        CROP_TRAMPLE,
+        /**
+         * Can open doors or trapdoors
+         */
         DOOR,
+        /**
+         * Chicken eggs can be thrown
+         */
+        EGGS,
+        /**
+         * Can use the enchanting table
+         */
         ENCHANTING,
+        /**
+         * Can throw ender pearls
+         */
         ENDERPEARL,
+        /**
+         * Can extinguish fires by punching them
+         */
+        FIRE_EXTINGUISH,
+        /**
+         * Can use furnaces
+         */
         FURNACE,
+        /**
+         * Can use gates
+         */
         GATE,
-        HORSEINVENTORY,
-        HORSERIDING,
-        HURTMOBS,
+        /**
+         * Can open horse or other animal inventories, e.g. llama
+         */
+        HORSE_INVENTORY,
+        /**
+         * Can ride an animal
+         */
+        HORSE_RIDING,
+        /**
+         * Can hurt friendly mobs, e.g. cows
+         */
+        HURT_MOBS,
+        /**
+         * Can hurt monsters
+         */
+        HURT_MONSTERS,
+        /**
+         * Can leash or unleash animals
+         */
         LEASH,
-        LEVERBUTTON,
+        /**
+         * Can use buttons or levers
+         */
+        LEVER_BUTTON,
+        /**
+         * Animals, etc. can spawn
+         */
+        MOB_SPAWN,
+        /**
+         * Monsters can spawn
+         */
+        MONSTER_SPAWN,
+        /**
+         * Can operate jukeboxes, note boxes etc.
+         */
         MUSIC,
-        PLACEBLOCKS,
+        /**
+         * Can place blocks
+         */
+        PLACE_BLOCKS,
+        /**
+         * Can go through portals
+         */
         PORTAL,
-        PRESSUREPLATE,
+        /**
+         * Will activate pressure plates
+         */
+        PRESSURE_PLATE,
+        /**
+         * Can do PVP in the overworld
+         */
         PVP,
-        NETHERPVP,
+        /**
+         * Cows can be milked
+         */
+        MILKING,
+        /**
+         * Can do PVP in the nether
+         */
+        NETHER_PVP,
+        /**
+         * Can interact with redstone items, like diodes
+         */
         REDSTONE,
+        /**
+         * Spawn eggs can be used
+         */
+        SPAWN_EGGS,
+        /**
+         * Can shear sheep
+         */
         SHEARING,
-        VILLAGERTRADING,
-        CHORUSFRUIT,
-        ENTEREXITMESSAGES,
-        MOBSPAWNING, 
-        VISITORITEMDROP,
-        VISITORITEMPICKUP
+        /**
+         * Can trade with villagers
+         */
+        VILLAGER_TRADING,
+        /**
+         * Can eat and teleport with chorus fruit
+         */
+        CHORUS_FRUIT,
+        /**
+         * Can toggle enter/exit names to island
+         */
+        ENTER_EXIT_MESSAGES,
+        /**
+         * Visitors can drop items
+         */
+        VISITOR_ITEM_DROP,
+        /**
+         * Visitors can pick up items
+         */
+        VISITOR_ITEM_PICKUP
     }
 
 

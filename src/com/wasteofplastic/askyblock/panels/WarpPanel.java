@@ -162,7 +162,7 @@ public class WarpPanel implements Listener {
             Island island = plugin.getGrid().getIsland(playerUUID);
             if (island != null) {
                 if ((signLocation.getWorld().equals(ASkyBlock.getIslandWorld()) && island.getIgsFlag(SettingsFlag.PVP))
-                        || (signLocation.getWorld().equals(ASkyBlock.getNetherWorld()) && island.getIgsFlag(SettingsFlag.NETHERPVP))) {
+                        || (signLocation.getWorld().equals(ASkyBlock.getNetherWorld()) && island.getIgsFlag(SettingsFlag.NETHER_PVP))) {
                     //plugin.getLogger().info("DEBUG: pvp warning added");
                     lines.add(ChatColor.RED + plugin.myLocale().igsPVP);
                 }

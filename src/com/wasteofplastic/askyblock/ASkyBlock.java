@@ -1234,94 +1234,32 @@ public class ASkyBlock extends JavaPlugin {
             // Nothing in the chest
             Settings.chestItems = new ItemStack[0];
         }
-        Settings.allowPvP = getConfig().getBoolean("island.allowPvP", false);
-        Settings.allowNetherPvP = getConfig().getBoolean("island.allowNetherPvP", false);
-        Settings.allowBreakBlocks = getConfig().getBoolean("island.allowbreakblocks", false);
-        Settings.allowPlaceBlocks = getConfig().getBoolean("island.allowplaceblocks", false);
-        Settings.allowBedUse = getConfig().getBoolean("island.allowbeduse", false);
-        Settings.allowBucketUse = getConfig().getBoolean("island.allowbucketuse", false);
-        Settings.allowShearing = getConfig().getBoolean("island.allowshearing", false);
-        Settings.allowEnderPearls = getConfig().getBoolean("island.allowenderpearls", false);
-        Settings.allowDoorUse = getConfig().getBoolean("island.allowdooruse", false);
-        Settings.allowLeverButtonUse = getConfig().getBoolean("island.allowleverbuttonuse", false);
-        Settings.allowCropTrample = getConfig().getBoolean("island.allowcroptrample", false);
-        Settings.allowChestAccess = getConfig().getBoolean("island.allowchestaccess", false);
-        Settings.allowFurnaceUse = getConfig().getBoolean("island.allowfurnaceuse", false);
-        Settings.allowRedStone = getConfig().getBoolean("island.allowredstone", false);
-        Settings.allowMusic = getConfig().getBoolean("island.allowmusic", false);
-        Settings.allowCrafting = getConfig().getBoolean("island.allowcrafting", false);
-        Settings.allowBrewing = getConfig().getBoolean("island.allowbrewing", false);
-        Settings.allowGateUse = getConfig().getBoolean("island.allowgateuse", false);
-        Settings.allowHurtMobs = getConfig().getBoolean("island.allowhurtmobs", true);
+        // System settings
         Settings.endermanDeathDrop = getConfig().getBoolean("island.endermandeathdrop", true);
         Settings.allowEndermanGriefing = getConfig().getBoolean("island.allowendermangriefing", true);
         Settings.allowCreeperDamage = getConfig().getBoolean("island.allowcreeperdamage", true);
         Settings.allowCreeperGriefing = getConfig().getBoolean("island.allowcreepergriefing", false);
         Settings.allowTNTDamage = getConfig().getBoolean("island.allowtntdamage", false);
         Settings.allowMonsterEggs = getConfig().getBoolean("island.allowspawneggs", false);
-        Settings.allowBreeding = getConfig().getBoolean("island.allowbreeding", false);
         Settings.allowFire = getConfig().getBoolean("island.allowfire", false);
         Settings.allowFireSpread = getConfig().getBoolean("island.allowfirespread", false);
         Settings.allowFireExtinguish = getConfig().getBoolean("island.allowfireextinguish", false);
         Settings.allowChestDamage = getConfig().getBoolean("island.allowchestdamage", false);
-        Settings.allowLeashUse = getConfig().getBoolean("island.allowleashuse", false);
         Settings.allowHurtMonsters = getConfig().getBoolean("island.allowhurtmonsters", true);
-        Settings.allowEnchanting = getConfig().getBoolean("island.allowenchanting", true);
-        Settings.allowAnvilUse = getConfig().getBoolean("island.allowanviluse", true);
         Settings.allowVisitorKeepInvOnDeath = getConfig().getBoolean("island.allowvisitorkeepinvondeath", false);
-        Settings.allowVisitorItemDrop = getConfig().getBoolean("island.allowvisitoritemdrop", true);
-        Settings.allowVisitorItemPickup = getConfig().getBoolean("island.allowvisitoritempickup", true);
-        Settings.allowArmorStandUse = getConfig().getBoolean("island.allowarmorstanduse", false);
-        Settings.allowBeaconAccess = getConfig().getBoolean("island.allowbeaconaccess", false);
-        Settings.allowPortalUse = getConfig().getBoolean("island.allowportaluse", true);
-        Settings.allowPressurePlate = getConfig().getBoolean("island.allowpressureplates", true);
         Settings.allowPistonPush = getConfig().getBoolean("island.allowpistonpush", true);
-        Settings.allowHorseRiding = getConfig().getBoolean("island.allowhorseriding", false);
-        Settings.allowHorseInvAccess = getConfig().getBoolean("island.allowhorseinventoryaccess", false);
-        Settings.allowVillagerTrading = getConfig().getBoolean("island.allowvillagertrading", true);
-        Settings.allowChorusFruit = getConfig().getBoolean("island.allowchorusfruit", false);
-        Settings.enableJoinAndLeaveIslandMessages = getConfig().getBoolean("island.enablejoinandleaveislandmessages", true);
         Settings.allowMobDamageToItemFrames = getConfig().getBoolean("island.allowitemframedamage", false);
-        Settings.allowMobSpawning = getConfig().getBoolean("island.allowmobspawning", true);
 
         // Default settings hashmap - make sure this is kept up to date with new settings
         Settings.defaultIslandSettings.clear();
-        Settings.defaultIslandSettings.put(SettingsFlag.ANVIL, Settings.allowAnvilUse);
-        Settings.defaultIslandSettings.put(SettingsFlag.ARMORSTAND, Settings.allowArmorStandUse);
-        Settings.defaultIslandSettings.put(SettingsFlag.BEACON, Settings.allowBeaconAccess);
-        Settings.defaultIslandSettings.put(SettingsFlag.BED, Settings.allowBedUse);
-        Settings.defaultIslandSettings.put(SettingsFlag.BREAKBLOCKS, Settings.allowBreakBlocks);
-        Settings.defaultIslandSettings.put(SettingsFlag.BREEDING, Settings.allowBreeding);
-        Settings.defaultIslandSettings.put(SettingsFlag.BREWING, Settings.allowBrewing);
-        Settings.defaultIslandSettings.put(SettingsFlag.BUCKET, Settings.allowBucketUse);
-        Settings.defaultIslandSettings.put(SettingsFlag.CHEST, Settings.allowChestAccess);
-        Settings.defaultIslandSettings.put(SettingsFlag.CRAFTING, Settings.allowCrafting);
-        Settings.defaultIslandSettings.put(SettingsFlag.CROPTRAMPLE, Settings.allowCropTrample);
-        Settings.defaultIslandSettings.put(SettingsFlag.DOOR, Settings.allowDoorUse);
-        Settings.defaultIslandSettings.put(SettingsFlag.ENCHANTING, Settings.allowEnchanting);
-        Settings.defaultIslandSettings.put(SettingsFlag.ENDERPEARL, Settings.allowEnderPearls);
-        Settings.defaultIslandSettings.put(SettingsFlag.FURNACE, Settings.allowFurnaceUse);
-        Settings.defaultIslandSettings.put(SettingsFlag.GATE, Settings.allowGateUse);
-        Settings.defaultIslandSettings.put(SettingsFlag.HORSEINVENTORY, Settings.allowHorseInvAccess);
-        Settings.defaultIslandSettings.put(SettingsFlag.HORSERIDING, Settings.allowHorseRiding);
-        Settings.defaultIslandSettings.put(SettingsFlag.HURTMOBS, Settings.allowHurtMobs);
-        Settings.defaultIslandSettings.put(SettingsFlag.LEASH, Settings.allowLeashUse);
-        Settings.defaultIslandSettings.put(SettingsFlag.LEVERBUTTON, Settings.allowLeverButtonUse);
-        Settings.defaultIslandSettings.put(SettingsFlag.MUSIC, Settings.allowMusic);
-        Settings.defaultIslandSettings.put(SettingsFlag.PLACEBLOCKS, Settings.allowPlaceBlocks);
-        Settings.defaultIslandSettings.put(SettingsFlag.PORTAL, Settings.allowPortalUse);
-        Settings.defaultIslandSettings.put(SettingsFlag.PRESSUREPLATE, Settings.allowPressurePlate);
-        Settings.defaultIslandSettings.put(SettingsFlag.PVP, Settings.allowPvP);
-        Settings.defaultIslandSettings.put(SettingsFlag.NETHERPVP, Settings.allowNetherPvP);
-        Settings.defaultIslandSettings.put(SettingsFlag.REDSTONE, Settings.allowRedStone);
-        Settings.defaultIslandSettings.put(SettingsFlag.SHEARING, Settings.allowShearing);
-        Settings.defaultIslandSettings.put(SettingsFlag.VILLAGERTRADING, Settings.allowVillagerTrading);
-        Settings.defaultIslandSettings.put(SettingsFlag.CHORUSFRUIT, Settings.allowChorusFruit);
-        Settings.defaultIslandSettings.put(SettingsFlag.ENTEREXITMESSAGES, Settings.enableJoinAndLeaveIslandMessages);
-        Settings.defaultIslandSettings.put(SettingsFlag.MOBSPAWNING, Settings.allowMobSpawning);
-        Settings.defaultIslandSettings.put(SettingsFlag.VISITORITEMDROP, Settings.allowVisitorItemDrop);
-        Settings.defaultIslandSettings.put(SettingsFlag.VISITORITEMPICKUP, Settings.allowVisitorItemPickup);
-
+        for (SettingsFlag flag: SettingsFlag.values()) {
+            Settings.defaultIslandSettings.put(flag, getConfig().getBoolean("island.settings." + flag.name(), false));
+        }
+        Settings.spawnSettings.clear();
+        for (SettingsFlag flag: SettingsFlag.values()) {
+            Settings.spawnSettings.put(flag, getConfig().getBoolean("spawn." + flag.name(), false));
+        }
+/*
         // Spawn Settings
         Settings.allowSpawnCreeperPain = getConfig().getBoolean("spawn.allowcreeperpain", false);
         Settings.allowSpawnHorseRiding = getConfig().getBoolean("spawn.allowhorseriding", false);
@@ -1363,7 +1301,7 @@ public class ASkyBlock extends JavaPlugin {
         Settings.allowSpawnVillagerTrading = getConfig().getBoolean("spawn.allowvillagertrading", false);
         Settings.allowSpawnChorusFruit = getConfig().getBoolean("spawn.allowchorusfruit", false);
         Settings.allowSpawnFireExtinguish = getConfig().getBoolean("spawn.allowfireextinguish", false);
-
+*/
         // Challenges
         getChallenges();
         // Challenge completion

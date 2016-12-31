@@ -233,12 +233,12 @@ public class PlayerEvents implements Listener {
             return;
         }
         if (plugin.getGrid().isAtSpawn(e.getItem().getLocation())) {
-            if (Settings.allowSpawnVisitorItemPickup || e.getPlayer().isOp() || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
+            if (Settings.spawnSettings.get(SettingsFlag.VISITOR_ITEM_PICKUP) || e.getPlayer().isOp() || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
                     || plugin.getGrid().locationIsOnIsland(e.getPlayer(), e.getItem().getLocation())) {
                 return;
             }
         }
-        if ((plugin.getGrid().getIslandAt(e.getItem().getLocation()) != null && plugin.getGrid().getIslandAt(e.getItem().getLocation()).getIgsFlag(SettingsFlag.VISITORITEMDROP)) || e.getPlayer().isOp() || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
+        if ((plugin.getGrid().getIslandAt(e.getItem().getLocation()) != null && plugin.getGrid().getIslandAt(e.getItem().getLocation()).getIgsFlag(SettingsFlag.VISITOR_ITEM_DROP)) || e.getPlayer().isOp() || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
                 || plugin.getGrid().locationIsOnIsland(e.getPlayer(), e.getItem().getLocation())) {
             return;
         }
@@ -257,12 +257,12 @@ public class PlayerEvents implements Listener {
             return;
         }
         if (plugin.getGrid().isAtSpawn(e.getItemDrop().getLocation())) {
-            if (Settings.allowSpawnVisitorItemDrop || e.getPlayer().isOp() || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
+            if (Settings.spawnSettings.get(SettingsFlag.VISITOR_ITEM_DROP) || e.getPlayer().isOp() || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
                     || plugin.getGrid().locationIsOnIsland(e.getPlayer(), e.getItemDrop().getLocation())) {
                 return;
             }
         }
-        if ((plugin.getGrid().getIslandAt(e.getItemDrop().getLocation()) != null && plugin.getGrid().getIslandAt(e.getItemDrop().getLocation()).getIgsFlag(SettingsFlag.VISITORITEMDROP)) || e.getPlayer().isOp() || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
+        if ((plugin.getGrid().getIslandAt(e.getItemDrop().getLocation()) != null && plugin.getGrid().getIslandAt(e.getItemDrop().getLocation()).getIgsFlag(SettingsFlag.VISITOR_ITEM_DROP)) || e.getPlayer().isOp() || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
                 || plugin.getGrid().locationIsOnIsland(e.getPlayer(), e.getItemDrop().getLocation())) {
             return;
         }
@@ -408,7 +408,7 @@ public class PlayerEvents implements Listener {
                     plugin.getLogger().info("DEBUG: Enderpearl");
 
                 if (islandTo == null) {
-                    if (Settings.allowEnderPearls) {
+                    if (Settings.defaultIslandSettings.get(SettingsFlag.ENDERPEARL)) {
                         return;
                     }
                 } else {
@@ -419,7 +419,7 @@ public class PlayerEvents implements Listener {
                         if (DEBUG)
                             plugin.getLogger().info("DEBUG: islandTo is spawn");
 
-                        if (Settings.allowSpawnEnderPearls) {
+                        if (Settings.spawnSettings.get(SettingsFlag.ENDERPEARL)) {
                             if (DEBUG )
                                 plugin.getLogger().info("DEBUG: spawn enderpearl allowed");
                             return;
@@ -451,33 +451,33 @@ public class PlayerEvents implements Listener {
                     boolean cancel = false;
                     // Check both from and to islands
                     if (islandTo == null) {
-                        if (!Settings.allowChorusFruit) {
+                        if (!Settings.defaultIslandSettings.get(SettingsFlag.CHORUS_FRUIT)) {
                             cancel = true;
                         }
                     } else {
                         if (islandTo.isSpawn()) {
-                            if (!Settings.allowSpawnChorusFruit) {
+                            if (!Settings.spawnSettings.get(SettingsFlag.CHORUS_FRUIT)) {
                                 cancel = true;
                             }
                         } else {
                             // Regular island
-                            if (!islandTo.getIgsFlag(SettingsFlag.CHORUSFRUIT) && !islandTo.getMembers().contains(e.getPlayer().getUniqueId())) {
+                            if (!islandTo.getIgsFlag(SettingsFlag.CHORUS_FRUIT) && !islandTo.getMembers().contains(e.getPlayer().getUniqueId())) {
                                 cancel = true;
                             }
                         }
                     }
                     if (islandFrom == null) {
-                        if (!Settings.allowChorusFruit) {
+                        if (!Settings.defaultIslandSettings.get(SettingsFlag.CHORUS_FRUIT)) {
                             cancel = true;
                         }
                     } else {
                         if (islandFrom.isSpawn()) {
-                            if (!Settings.allowSpawnChorusFruit) {
+                            if (!Settings.spawnSettings.get(SettingsFlag.CHORUS_FRUIT)) {
                                 cancel = true;
                             }
                         } else {
                             // Regular island
-                            if (!islandFrom.getIgsFlag(SettingsFlag.CHORUSFRUIT) && !islandFrom.getMembers().contains(e.getPlayer().getUniqueId())) {
+                            if (!islandFrom.getIgsFlag(SettingsFlag.CHORUS_FRUIT) && !islandFrom.getMembers().contains(e.getPlayer().getUniqueId())) {
                                 cancel = true;
                             }
                         }

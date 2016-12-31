@@ -78,11 +78,11 @@ public class IslandGuard1_8 implements Listener {
             Island island = plugin.getGrid().getIslandAt(e.getRightClicked().getLocation());
             if (island !=null) {
                 if (island.isSpawn()) {
-                    if (Settings.allowSpawnArmorStandUse) {
+                    if (Settings.spawnSettings.get(SettingsFlag.ARMOR_STAND)) {
                         return;
                     }
                 } else {
-                    if (island.getMembers().contains(e.getPlayer().getUniqueId()) || island.getIgsFlag(SettingsFlag.ARMORSTAND)) {
+                    if (island.getMembers().contains(e.getPlayer().getUniqueId()) || island.getIgsFlag(SettingsFlag.ARMOR_STAND)) {
                         return;
                     }
                 }
@@ -156,7 +156,7 @@ public class IslandGuard1_8 implements Listener {
         if (inHand != null && inHand.getType().equals(Material.ARMOR_STAND)) {
             // Check island
             Island island = plugin.getGrid().getIslandAt(e.getPlayer().getLocation());
-            if (island !=null && (island.getMembers().contains(p.getUniqueId()) || island.getIgsFlag(SettingsFlag.PLACEBLOCKS))) {
+            if (island !=null && (island.getMembers().contains(p.getUniqueId()) || island.getIgsFlag(SettingsFlag.PLACE_BLOCKS))) {
                 //plugin.getLogger().info("1.8 " + "DEBUG: armor stand place check");
                 if (Settings.limitedBlocks.containsKey("ARMOR_STAND") && Settings.limitedBlocks.get("ARMOR_STAND") > -1) {
                     //plugin.getLogger().info("1.8 " + "DEBUG: count armor stands");
@@ -205,10 +205,10 @@ public class IslandGuard1_8 implements Listener {
             }
             // Check island
             Island island = plugin.getGrid().getIslandAt(e.getEntity().getLocation());
-            if (island != null && island.isSpawn() && Settings.allowSpawnBreakBlocks) {
+            if (island != null && island.isSpawn() && Settings.spawnSettings.get(SettingsFlag.BREAK_BLOCKS)) {
                 return;
             }
-            if (island != null && island.getIgsFlag(SettingsFlag.BREAKBLOCKS)) {
+            if (island != null && island.getIgsFlag(SettingsFlag.BREAK_BLOCKS)) {
                 return;
             }
             p.sendMessage(ChatColor.RED + plugin.myLocale(p.getUniqueId()).islandProtected);

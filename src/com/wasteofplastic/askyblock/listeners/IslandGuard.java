@@ -173,11 +173,11 @@ public class IslandGuard implements Listener {
         if (event.getInventory().getHolder() instanceof Animals) {
             Island island = plugin.getGrid().getProtectedIslandAt(event.getWhoClicked().getLocation());
             // Spawn
-            if (island != null && island.isSpawn() && Settings.allowSpawnHorseInvAccess) {
+            if (island != null && island.isSpawn() && Settings.spawnSettings.get(SettingsFlag.HORSE_INVENTORY)) {
                 return;
             }
             // Normal island
-            if (island != null && (island.getIgsFlag(SettingsFlag.HORSEINVENTORY) || island.getMembers().contains(event.getWhoClicked().getUniqueId()))){
+            if (island != null && (island.getIgsFlag(SettingsFlag.HORSE_INVENTORY) || island.getMembers().contains(event.getWhoClicked().getUniqueId()))){
                 return;
             }
             // Elsewhere - not allowed
@@ -217,16 +217,16 @@ public class IslandGuard implements Listener {
             }
             Island island = plugin.getGrid().getProtectedIslandAt(e.getVehicle().getLocation());
             if (island == null) {
-                if (!Settings.allowBreakBlocks) {
+                if (!Settings.defaultIslandSettings.get(SettingsFlag.BREAK_BLOCKS)) {
                     p.sendMessage(ChatColor.RED + plugin.myLocale(p.getUniqueId()).islandProtected);
                     e.setCancelled(true);
                 }
                 return;
             }
-            if (Settings.allowSpawnBreakBlocks && island.isSpawn()) {
+            if (Settings.spawnSettings.get(SettingsFlag.BREAK_BLOCKS) && island.isSpawn()) {
                 return;
             }
-            if (island.getIgsFlag(SettingsFlag.BREAKBLOCKS) || island.getMembers().contains(p.getUniqueId())) {
+            if (island.getIgsFlag(SettingsFlag.BREAK_BLOCKS) || island.getMembers().contains(p.getUniqueId())) {
                 return;
             }
             // Not allowed
@@ -294,7 +294,7 @@ public class IslandGuard implements Listener {
                 }
             } else {
                 if (!plugin.myLocale(player.getUniqueId()).lockNowEntering.isEmpty()) {
-                    if(islandTo.getIgsFlag(SettingsFlag.ENTEREXITMESSAGES)) player.sendMessage(plugin.myLocale(player.getUniqueId()).lockNowEntering.replace("[name]", plugin.getGrid().getIslandName(islandTo.getOwner())));
+                    if(islandTo.getIgsFlag(SettingsFlag.ENTER_EXIT_MESSAGES)) player.sendMessage(plugin.myLocale(player.getUniqueId()).lockNowEntering.replace("[name]", plugin.getGrid().getIslandName(islandTo.getOwner())));
                 }
             }
         } else if (islandTo == null && islandFrom != null && (islandFrom.getOwner() != null || islandFrom.isSpawn())) {
@@ -306,7 +306,7 @@ public class IslandGuard implements Listener {
                 }
             } else {
                 if (!plugin.myLocale(player.getUniqueId()).lockNowLeaving.isEmpty()) {
-                    if(islandFrom.getIgsFlag(SettingsFlag.ENTEREXITMESSAGES)) player.sendMessage(plugin.myLocale(player.getUniqueId()).lockNowLeaving.replace("[name]", plugin.getGrid().getIslandName(islandFrom.getOwner())));
+                    if(islandFrom.getIgsFlag(SettingsFlag.ENTER_EXIT_MESSAGES)) player.sendMessage(plugin.myLocale(player.getUniqueId()).lockNowLeaving.replace("[name]", plugin.getGrid().getIslandName(islandFrom.getOwner())));
                 }
             }
         } else if (islandTo != null && islandFrom !=null && !islandTo.equals(islandFrom)) {
@@ -318,7 +318,7 @@ public class IslandGuard implements Listener {
                 }
             } else if (islandFrom.getOwner() != null){
                 if (!plugin.myLocale(player.getUniqueId()).lockNowLeaving.isEmpty()) {
-                    if(islandFrom.getIgsFlag(SettingsFlag.ENTEREXITMESSAGES)) player.sendMessage(plugin.myLocale(player.getUniqueId()).lockNowLeaving.replace("[name]", plugin.getGrid().getIslandName(islandFrom.getOwner())));
+                    if(islandFrom.getIgsFlag(SettingsFlag.ENTER_EXIT_MESSAGES)) player.sendMessage(plugin.myLocale(player.getUniqueId()).lockNowLeaving.replace("[name]", plugin.getGrid().getIslandName(islandFrom.getOwner())));
                 }
             }
             if (islandTo.isSpawn()) {
@@ -327,7 +327,7 @@ public class IslandGuard implements Listener {
                 }
             } else if (islandTo.getOwner() != null) {
                 if (!plugin.myLocale(player.getUniqueId()).lockNowEntering.isEmpty()) {
-                    if(islandTo.getIgsFlag(SettingsFlag.ENTEREXITMESSAGES)) player.sendMessage(plugin.myLocale(player.getUniqueId()).lockNowEntering.replace("[name]", plugin.getGrid().getIslandName(islandTo.getOwner())));
+                    if(islandTo.getIgsFlag(SettingsFlag.ENTER_EXIT_MESSAGES)) player.sendMessage(plugin.myLocale(player.getUniqueId()).lockNowEntering.replace("[name]", plugin.getGrid().getIslandName(islandTo.getOwner())));
                 }
             }
         }
@@ -406,7 +406,7 @@ public class IslandGuard implements Listener {
                 }
             } else {
                 if (!plugin.myLocale(e.getPlayer().getUniqueId()).lockNowEntering.isEmpty()) {
-                    if(islandTo.getIgsFlag(SettingsFlag.ENTEREXITMESSAGES)) e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).lockNowEntering.replace("[name]", plugin.getGrid().getIslandName(islandTo.getOwner())));
+                    if(islandTo.getIgsFlag(SettingsFlag.ENTER_EXIT_MESSAGES)) e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).lockNowEntering.replace("[name]", plugin.getGrid().getIslandName(islandTo.getOwner())));
                 }
             }
             // Fire entry event
@@ -421,7 +421,7 @@ public class IslandGuard implements Listener {
                 }
             } else {
                 if (!plugin.myLocale(e.getPlayer().getUniqueId()).lockNowLeaving.isEmpty()) {
-                    if(islandFrom.getIgsFlag(SettingsFlag.ENTEREXITMESSAGES)) e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).lockNowLeaving.replace("[name]", plugin.getGrid().getIslandName(islandFrom.getOwner())));
+                    if(islandFrom.getIgsFlag(SettingsFlag.ENTER_EXIT_MESSAGES)) e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).lockNowLeaving.replace("[name]", plugin.getGrid().getIslandName(islandFrom.getOwner())));
                 }
             }
             // Fire exit event
@@ -433,12 +433,12 @@ public class IslandGuard implements Listener {
                 // Leaving
                 e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).lockLeavingSpawn);
             } else if (islandFrom.getOwner() != null) {
-                if(islandFrom.getIgsFlag(SettingsFlag.ENTEREXITMESSAGES)) e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).lockNowLeaving.replace("[name]", plugin.getGrid().getIslandName(islandFrom.getOwner())));
+                if(islandFrom.getIgsFlag(SettingsFlag.ENTER_EXIT_MESSAGES)) e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).lockNowLeaving.replace("[name]", plugin.getGrid().getIslandName(islandFrom.getOwner())));
             }
             if (islandTo.isSpawn()) {
                 e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).lockEnteringSpawn);
             } else if (islandTo.getOwner() != null) {
-                if(islandTo.getIgsFlag(SettingsFlag.ENTEREXITMESSAGES)) e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).lockNowEntering.replace("[name]", plugin.getGrid().getIslandName(islandTo.getOwner())));
+                if(islandTo.getIgsFlag(SettingsFlag.ENTER_EXIT_MESSAGES)) e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).lockNowEntering.replace("[name]", plugin.getGrid().getIslandName(islandTo.getOwner())));
             }
             // Fire exit event
             final IslandExitEvent event = new IslandExitEvent(e.getPlayer().getUniqueId(), islandTo, e.getTo());
@@ -642,11 +642,11 @@ public class IslandGuard implements Listener {
         if(plugin.getGrid().isAtSpawn(e.getLocation())){
             // Deal with mobs
             if (e.getEntity() instanceof Monster || e.getEntity() instanceof Slime) {
-                if (e.getSpawnReason() == SpawnReason.SPAWNER_EGG && !Settings.allowSpawnMonsterEggs) {
+                if (e.getSpawnReason() == SpawnReason.SPAWNER_EGG && !Settings.spawnSettings.get(SettingsFlag.SPAWN_EGGS)) {
                     e.setCancelled(true);
                     return;
                 }
-                if (!Settings.allowSpawnMobSpawn) {
+                if (!Settings.spawnSettings.get(SettingsFlag.MONSTER_SPAWN)) {
                     // Mobs not allowed to spawn
                     e.setCancelled(true);
                     return;
@@ -656,14 +656,14 @@ public class IslandGuard implements Listener {
             // If animals can spawn, check if the spawning is natural, or
             // egg-induced
             if (e.getEntity() instanceof Animals) {
-                if (e.getSpawnReason() == SpawnReason.SPAWNER_EGG && !Settings.allowSpawnMonsterEggs) {
+                if (e.getSpawnReason() == SpawnReason.SPAWNER_EGG && !Settings.spawnSettings.get(SettingsFlag.SPAWN_EGGS)) {
                     e.setCancelled(true);
                     return;
                 }
-                if (e.getSpawnReason() == SpawnReason.EGG && !Settings.allowSpawnEggs) {
+                if (e.getSpawnReason() == SpawnReason.EGG && !Settings.spawnSettings.get(SettingsFlag.SPAWN_EGGS)) {
                     e.setCancelled(true);
                 }
-                if (!Settings.allowSpawnAnimalSpawn) {
+                if (!Settings.spawnSettings.get(SettingsFlag.MOB_SPAWN)) {
                     // Animals are not allowed to spawn
                     e.setCancelled(true);
                     return;
@@ -674,7 +674,7 @@ public class IslandGuard implements Listener {
         else{
             if(e.getEntity() instanceof Monster || e.getEntity() instanceof Slime){
                 Island island = plugin.getGrid().getIslandAt(e.getLocation());
-                if(island != null && !island.getIgsFlag(SettingsFlag.MOBSPAWNING)){
+                if(island != null && !island.getIgsFlag(SettingsFlag.MONSTER_SPAWN)){
                     e.setCancelled(true);
                     return;
                 }
@@ -901,11 +901,11 @@ public class IslandGuard implements Listener {
             }
             // Spawn island check
             Island island = plugin.getGrid().getProtectedIslandAt(e.getBlock().getLocation());
-            if (island != null && island.isSpawn() && Settings.allowSpawnBreakBlocks) {
+            if (island != null && island.isSpawn() && Settings.spawnSettings.get(SettingsFlag.BREAK_BLOCKS)) {
                 return;
             }
             // Home island check
-            if (island != null && (island.getIgsFlag(SettingsFlag.BREAKBLOCKS) || island.getMembers().contains(e.getPlayer().getUniqueId()))) {
+            if (island != null && (island.getIgsFlag(SettingsFlag.BREAK_BLOCKS) || island.getMembers().contains(e.getPlayer().getUniqueId()))) {
                 return;
             }
             // Everyone else - not allowed
@@ -1029,7 +1029,7 @@ public class IslandGuard implements Listener {
             return;
         }
         // Check for creeper damage at spawn
-        if (island != null && island.isSpawn() && e.getDamager().getType().equals(EntityType.CREEPER) && Settings.allowSpawnCreeperPain) {
+        if (island != null && island.isSpawn() && e.getDamager().getType().equals(EntityType.CREEPER) && Settings.spawnSettings.get(SettingsFlag.CREEPER_PAIN)) {
             return;
         }
         // Stop Creeper damager if it is disallowed
@@ -1109,11 +1109,11 @@ public class IslandGuard implements Listener {
         // Check to see if it's an item frame
         if (e.getEntity() instanceof ItemFrame || e.getEntityType().toString().endsWith("STAND")) {
             // Spawn check
-            if (Settings.allowSpawnBreakBlocks && island != null && island.isSpawn()) {
+            if (Settings.spawnSettings.get(SettingsFlag.BREAK_BLOCKS) && island != null && island.isSpawn()) {
                 return;
             }
             // Normal island check
-            if (island != null && (island.getIgsFlag(SettingsFlag.BREAKBLOCKS) || island.getMembers().contains(attacker.getUniqueId()))) {
+            if (island != null && (island.getIgsFlag(SettingsFlag.BREAK_BLOCKS) || island.getMembers().contains(attacker.getUniqueId()))) {
                 return;
             }
             // Else not allowed
@@ -1156,11 +1156,11 @@ public class IslandGuard implements Listener {
         if (e.getEntity() instanceof Animals || e.getEntity() instanceof IronGolem || e.getEntity() instanceof Snowman
                 || e.getEntity() instanceof Villager) {
             // Spawn check
-            if (island != null && island.isSpawn() && Settings.allowSpawnAnimalKilling) {
+            if (island != null && island.isSpawn() && Settings.spawnSettings.get(SettingsFlag.HURT_MOBS)) {
                 return;
             }
             // Normal island check
-            if (island != null && (island.getIgsFlag(SettingsFlag.HURTMOBS) || island.getMembers().contains(attacker.getUniqueId()))) {
+            if (island != null && (island.getIgsFlag(SettingsFlag.HURT_MOBS) || island.getMembers().contains(attacker.getUniqueId()))) {
                 return;
             }
             if (DEBUG)
@@ -1176,9 +1176,9 @@ public class IslandGuard implements Listener {
         // Establish whether PVP is allowed or not.
         boolean pvp = false;
         // On an island or at spawn
-        if (island != null && island.isSpawn() && Settings.allowSpawnPVP) {
+        if (island != null && island.isSpawn() && Settings.spawnSettings.get(SettingsFlag.PVP)) {
             pvp = true;
-        } else if ((inNether && island != null && island.getIgsFlag(SettingsFlag.NETHERPVP) || (!inNether && island != null && island.getIgsFlag(SettingsFlag.PVP)))) {
+        } else if ((inNether && island != null && island.getIgsFlag(SettingsFlag.NETHER_PVP) || (!inNether && island != null && island.getIgsFlag(SettingsFlag.PVP)))) {
             if (DEBUG) plugin.getLogger().info("DEBUG: PVP allowed");
             pvp = true;
         }
@@ -1226,17 +1226,17 @@ public class IslandGuard implements Listener {
             Island island = plugin.getGrid().getProtectedIslandAt(e.getBlock().getLocation());
             // Outside of island protection zone
             if (island == null) {
-                if (!Settings.allowPlaceBlocks) {
+                if (!Settings.defaultIslandSettings.get(SettingsFlag.PLACE_BLOCKS)) {
                     e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                     e.setCancelled(true);
                 }
                 return;
             }
             // Spawn - prevent
-            if (island.isSpawn() && Settings.allowSpawnPlaceBlocks) {
+            if (island.isSpawn() && Settings.spawnSettings.get(SettingsFlag.PLACE_BLOCKS)) {
                 return;
             }
-            if (island.getIgsFlag(SettingsFlag.PLACEBLOCKS) || island.getMembers().contains(e.getPlayer().getUniqueId()))  {
+            if (island.getIgsFlag(SettingsFlag.PLACE_BLOCKS) || island.getMembers().contains(e.getPlayer().getUniqueId()))  {
                 // Check how many placed
                 //plugin.getLogger().info("DEBUG: block placed " + e.getBlock().getType());
                 String type = e.getBlock().getType().toString();
@@ -1290,7 +1290,7 @@ public class IslandGuard implements Listener {
             }
             Island island = plugin.getGrid().getProtectedIslandAt(e.getBlock().getLocation());
             if (island == null) {
-                if (!Settings.allowPlaceBlocks) {
+                if (!Settings.defaultIslandSettings.get(SettingsFlag.PLACE_BLOCKS)) {
                     e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                     e.setCancelled(true);
                 }
@@ -1298,10 +1298,10 @@ public class IslandGuard implements Listener {
             }
             // Island exists
             // Spawn - prevent
-            if (island.isSpawn() && Settings.allowSpawnPlaceBlocks) {
+            if (island.isSpawn() && Settings.spawnSettings.get(SettingsFlag.PLACE_BLOCKS)) {
                 return;
             }
-            if (island.getIgsFlag(SettingsFlag.PLACEBLOCKS) || island.getMembers().contains(e.getPlayer().getUniqueId()))  {
+            if (island.getIgsFlag(SettingsFlag.PLACE_BLOCKS) || island.getMembers().contains(e.getPlayer().getUniqueId()))  {
                 // Check how many placed
                 //plugin.getLogger().info("DEBUG: block placed " + e.getBlock().getType());
                 String type = e.getBlock().getType().toString();
@@ -1352,7 +1352,7 @@ public class IslandGuard implements Listener {
             // Island exists, check for leash use
             if (e.getEntity() != null && e.getEntity().getType().equals(EntityType.LEASH_HITCH)) {
                 if (island != null && island.isSpawn()) {
-                    if (!Settings.allowSpawnLeashUse) {
+                    if (!Settings.spawnSettings.get(SettingsFlag.LEASH)) {
                         // Visitor
                         e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                         e.setCancelled(true);
@@ -1390,14 +1390,14 @@ public class IslandGuard implements Listener {
             Island island = plugin.getGrid().getProtectedIslandAt(e.getBlock().getLocation());
             // Outside of island protection zone
             if (island == null) {
-                if (!Settings.allowPlaceBlocks) {
+                if (!Settings.defaultIslandSettings.get(SettingsFlag.PLACE_BLOCKS)) {
                     e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                     e.setCancelled(true);
                 }
                 return;
             }
             if (island.isSpawn()) {
-                if (Settings.allowSpawnPlaceBlocks) {
+                if (Settings.spawnSettings.get(SettingsFlag.PLACE_BLOCKS)) {
                     return;
                 } else {
                     // Visitor
@@ -1406,7 +1406,7 @@ public class IslandGuard implements Listener {
                     return;
                 }
             } else {
-                if (island.getIgsFlag(SettingsFlag.PLACEBLOCKS) || island.getMembers().contains(e.getPlayer().getUniqueId()))  {
+                if (island.getIgsFlag(SettingsFlag.PLACE_BLOCKS) || island.getMembers().contains(e.getPlayer().getUniqueId()))  {
                     // Check how many placed
                     String type = e.getEntity().getType().toString();
                     if (e.getEntity().getType().equals(EntityType.ITEM_FRAME) || e.getEntity().getType().equals(EntityType.PAINTING)) {
@@ -1444,10 +1444,10 @@ public class IslandGuard implements Listener {
                 return;
             }
             Island island = plugin.getGrid().getProtectedIslandAt(e.getPlayer().getLocation());
-            if (island == null && Settings.allowBedUse) {
+            if (island == null && Settings.defaultIslandSettings.get(SettingsFlag.BED)) {
                 return;
             }
-            if (island != null && island.isSpawn() && Settings.allowSpawnBedUse) {
+            if (island != null && island.isSpawn() && Settings.spawnSettings.get(SettingsFlag.BED)) {
                 return;
             }
             if (island != null && (island.getIgsFlag(SettingsFlag.BED) || island.getMembers().contains(e.getPlayer().getUniqueId()))) {
@@ -1505,17 +1505,17 @@ public class IslandGuard implements Listener {
                 }
                 // Check home island
                 Island island = plugin.getGrid().getProtectedIslandAt(e.getEntity().getLocation());
-                if (island == null && Settings.allowBreakBlocks) {
+                if (island == null && Settings.defaultIslandSettings.get(SettingsFlag.BREAK_BLOCKS)) {
                     return;
                 }
                 // Not allowed outside of a protected island
                 if (island != null) {
                     // Check spawn
-                    if (Settings.allowSpawnBreakBlocks && island.isSpawn()) {
+                    if (Settings.spawnSettings.get(SettingsFlag.BREAK_BLOCKS) && island.isSpawn()) {
                         return;
                     }
                     // Check island
-                    if (island.getIgsFlag(SettingsFlag.BREAKBLOCKS) || island.getMembers().contains(p.getUniqueId())) {
+                    if (island.getIgsFlag(SettingsFlag.BREAK_BLOCKS) || island.getMembers().contains(p.getUniqueId())) {
                         return;
                     }
                 }
@@ -1545,10 +1545,10 @@ public class IslandGuard implements Listener {
                 }
                 // Check home island
                 Island island = plugin.getGrid().getProtectedIslandAt(e.getEntity().getLocation());
-                if (island == null && Settings.allowLeashUse) {
+                if (island == null && Settings.defaultIslandSettings.get(SettingsFlag.LEASH)) {
                     return;
                 }
-                if (island != null && island.isSpawn() && Settings.allowSpawnLeashUse) {
+                if (island != null && island.isSpawn() && Settings.spawnSettings.get(SettingsFlag.LEASH)) {
                     return;
                 }
                 if (island != null && (island.getIgsFlag(SettingsFlag.LEASH) || island.getMembers().contains(player.getUniqueId()))) {
@@ -1580,10 +1580,10 @@ public class IslandGuard implements Listener {
                 }
                 // Check home island
                 Island island = plugin.getGrid().getProtectedIslandAt(e.getEntity().getLocation());
-                if (island == null && Settings.allowLeashUse) {
+                if (island == null && Settings.defaultIslandSettings.get(SettingsFlag.LEASH)) {
                     return;
                 }
-                if (island != null && island.isSpawn() && Settings.allowSpawnLeashUse) {
+                if (island != null && island.isSpawn() && Settings.spawnSettings.get(SettingsFlag.LEASH)) {
                     return;
                 }
                 if (island != null && (island.getIgsFlag(SettingsFlag.LEASH) || island.getMembers().contains(player.getUniqueId()))) {
@@ -1680,7 +1680,7 @@ public class IslandGuard implements Listener {
                         return;
                     }
                 } else {
-                    if (Settings.allowBucketUse) {
+                    if (Settings.defaultIslandSettings.get(SettingsFlag.BUCKET)) {
                         return;
                     }
                 }
@@ -1730,13 +1730,13 @@ public class IslandGuard implements Listener {
             if (island != null) {
                 // Spawn check
                 if (island.isSpawn()) {
-                    if (Settings.allowSpawnLavaCollection && e.getItemStack().getType().equals(Material.LAVA_BUCKET)) {
+                    if (Settings.spawnSettings.get(SettingsFlag.COLLECT_LAVA) && e.getItemStack().getType().equals(Material.LAVA_BUCKET)) {
                         return;
                     }
-                    if (Settings.allowSpawnWaterCollection && e.getItemStack().getType().equals(Material.WATER_BUCKET)) {
+                    if (Settings.spawnSettings.get(SettingsFlag.COLLECT_WATER) && e.getItemStack().getType().equals(Material.WATER_BUCKET)) {
                         return;
                     }
-                    if (Settings.allowSpawnMilking && e.getItemStack().getType().equals(Material.MILK_BUCKET)) {
+                    if (Settings.spawnSettings.get(SettingsFlag.MILKING) && e.getItemStack().getType().equals(Material.MILK_BUCKET)) {
                         return;
                     }
                 }
@@ -1746,7 +1746,7 @@ public class IslandGuard implements Listener {
                 }
             } else {
                 // Null
-                if (Settings.allowBucketUse) {
+                if (Settings.defaultIslandSettings.get(SettingsFlag.BUCKET)) {
                     return;
                 }
             }
@@ -1768,7 +1768,7 @@ public class IslandGuard implements Listener {
                 return;
             }
             Island island = plugin.getGrid().getProtectedIslandAt(e.getEntity().getLocation());
-            if (island != null && island.isSpawn() && Settings.allowSpawnShearing) {
+            if (island != null && island.isSpawn() && Settings.spawnSettings.get(SettingsFlag.SHEARING)) {
                 return;
             }
             if (island != null && (island.getIgsFlag(SettingsFlag.SHEARING) || island.getMembers().contains(e.getPlayer().getUniqueId()))) {
@@ -1831,7 +1831,7 @@ public class IslandGuard implements Listener {
                     if (DEBUG)
                         plugin.getLogger().info("DEBUG: fire found");
                     if (island != null && island.isSpawn()) {
-                        if (!Settings.allowSpawnFireExtinguish) {
+                        if (!Settings.spawnSettings.get(SettingsFlag.FIRE_EXTINGUISH)) {
                             e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                             e.setCancelled(true);
                             return;
@@ -1852,7 +1852,7 @@ public class IslandGuard implements Listener {
             // Handle Shulker Boxes
             if (e.getClickedBlock().getType().toString().contains("BOX")) {
                 if (island == null) {
-                    if (Settings.allowChestAccess) {
+                    if (Settings.defaultIslandSettings.get(SettingsFlag.CHEST)) {
                         return;
                     } else {
                         e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
@@ -1860,7 +1860,7 @@ public class IslandGuard implements Listener {
                         return;
                     }
                 }
-                if ((island.isSpawn() && !Settings.allowSpawnChestAccess) || (!island.isSpawn() && !island.getIgsFlag(SettingsFlag.CHEST))) {
+                if ((island.isSpawn() && !Settings.spawnSettings.get(SettingsFlag.CHEST)) || (!island.isSpawn() && !island.getIgsFlag(SettingsFlag.CHEST))) {
                     e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                     e.setCancelled(true);
                     return;
@@ -1875,7 +1875,7 @@ public class IslandGuard implements Listener {
             case JUNGLE_DOOR:
             case TRAP_DOOR:
                 if (island == null) {
-                    if (Settings.allowDoorUse) {
+                    if (Settings.defaultIslandSettings.get(SettingsFlag.DOOR)) {
                         return;
                     } else {
                         e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
@@ -1883,7 +1883,7 @@ public class IslandGuard implements Listener {
                         return;
                     }
                 }
-                if ((island.isSpawn() && !Settings.allowSpawnDoorUse) || (!island.isSpawn() && !island.getIgsFlag(SettingsFlag.DOOR))) {
+                if ((island.isSpawn() && !Settings.spawnSettings.get(SettingsFlag.DOOR)) || (!island.isSpawn() && !island.getIgsFlag(SettingsFlag.DOOR))) {
                     e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                     e.setCancelled(true);
                     return;
@@ -1896,7 +1896,7 @@ public class IslandGuard implements Listener {
             case BIRCH_FENCE_GATE:
             case JUNGLE_FENCE_GATE:
                 if (island == null) {
-                    if (Settings.allowGateUse) {
+                    if (Settings.defaultIslandSettings.get(SettingsFlag.GATE)) {
                         return;
                     } else {
                         e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
@@ -1904,7 +1904,7 @@ public class IslandGuard implements Listener {
                         return;
                     }
                 }
-                if ((island.isSpawn() && !Settings.allowSpawnGateUse) || (!island.isSpawn() && !island.getIgsFlag(SettingsFlag.GATE))) {
+                if ((island.isSpawn() && !Settings.spawnSettings.get(SettingsFlag.GATE)) || (!island.isSpawn() && !island.getIgsFlag(SettingsFlag.GATE))) {
                     e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                     e.setCancelled(true);
                     return;
@@ -1920,7 +1920,7 @@ public class IslandGuard implements Listener {
             case HOPPER_MINECART:
             case STORAGE_MINECART:
                 if (island == null) {
-                    if (Settings.allowChestAccess) {
+                    if (Settings.defaultIslandSettings.get(SettingsFlag.CHEST)) {
                         return;
                     } else {
                         e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
@@ -1928,7 +1928,7 @@ public class IslandGuard implements Listener {
                         return;
                     }
                 }
-                if ((island.isSpawn() && !Settings.allowSpawnChestAccess) || (!island.isSpawn() && !island.getIgsFlag(SettingsFlag.CHEST))) {
+                if ((island.isSpawn() && !Settings.spawnSettings.get(SettingsFlag.CHEST)) || (!island.isSpawn() && !island.getIgsFlag(SettingsFlag.CHEST))) {
                     e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                     e.setCancelled(true);
                     return;
@@ -1936,7 +1936,7 @@ public class IslandGuard implements Listener {
                 break;
             case SOIL:
                 if (island == null) {
-                    if (Settings.allowCropTrample) {
+                    if (Settings.defaultIslandSettings.get(SettingsFlag.CROP_TRAMPLE)) {
                         return;
                     } else {
                         e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
@@ -1944,7 +1944,7 @@ public class IslandGuard implements Listener {
                         return;
                     }
                 }
-                if ((!island.isSpawn() && !island.getIgsFlag(SettingsFlag.CROPTRAMPLE)) || (island.isSpawn() && !Settings.allowSpawnCropTrample)) {
+                if ((!island.isSpawn() && !island.getIgsFlag(SettingsFlag.CROP_TRAMPLE)) || (island.isSpawn() && !Settings.spawnSettings.get(SettingsFlag.CROP_TRAMPLE))) {
                     e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                     e.setCancelled(true);
                     return;
@@ -1953,7 +1953,7 @@ public class IslandGuard implements Listener {
             case BREWING_STAND:
             case CAULDRON:
                 if (island == null) {
-                    if (Settings.allowBrewing) {
+                    if (Settings.defaultIslandSettings.get(SettingsFlag.BREWING)) {
                         return;
                     } else {
                         e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
@@ -1961,7 +1961,7 @@ public class IslandGuard implements Listener {
                         return;
                     }
                 }
-                if ((island.isSpawn() && !Settings.allowSpawnBrewing) || (!island.isSpawn() && !island.getIgsFlag(SettingsFlag.BREWING))) {
+                if ((island.isSpawn() && !Settings.spawnSettings.get(SettingsFlag.BREWING)) || (!island.isSpawn() && !island.getIgsFlag(SettingsFlag.BREWING))) {
                     e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                     e.setCancelled(true);
                     return;
@@ -1975,7 +1975,7 @@ public class IslandGuard implements Listener {
             case DAYLIGHT_DETECTOR:
             case DAYLIGHT_DETECTOR_INVERTED:
                 if (island == null) {
-                    if (Settings.allowRedStone) {
+                    if (Settings.defaultIslandSettings.get(SettingsFlag.REDSTONE)) {
                         return;
                     } else {
                         e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
@@ -1983,7 +1983,7 @@ public class IslandGuard implements Listener {
                         return;
                     }
                 }
-                if ((island.isSpawn() && !Settings.allowSpawnRedStone) || (!island.isSpawn() && !island.getIgsFlag(SettingsFlag.REDSTONE))) {
+                if ((island.isSpawn() && !Settings.spawnSettings.get(SettingsFlag.REDSTONE)) || (!island.isSpawn() && !island.getIgsFlag(SettingsFlag.REDSTONE))) {
                     e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                     e.setCancelled(true);
                     return;
@@ -1991,7 +1991,7 @@ public class IslandGuard implements Listener {
                 break;
             case ENCHANTMENT_TABLE:
                 if (island == null) {
-                    if (Settings.allowEnchanting) {
+                    if (Settings.defaultIslandSettings.get(SettingsFlag.ENCHANTING)) {
                         return;
                     } else {
                         e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
@@ -1999,7 +1999,7 @@ public class IslandGuard implements Listener {
                         return;
                     }
                 }
-                if ((island.isSpawn() && !Settings.allowSpawnEnchanting) || (!island.isSpawn() && !island.getIgsFlag(SettingsFlag.ENCHANTING))) {
+                if ((island.isSpawn() && !Settings.spawnSettings.get(SettingsFlag.ENCHANTING)) || (!island.isSpawn() && !island.getIgsFlag(SettingsFlag.ENCHANTING))) {
                     e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                     e.setCancelled(true);
                     return;
@@ -2008,7 +2008,7 @@ public class IslandGuard implements Listener {
             case FURNACE:
             case BURNING_FURNACE:
                 if (island == null) {
-                    if (Settings.allowFurnaceUse) {
+                    if (Settings.defaultIslandSettings.get(SettingsFlag.FURNACE)) {
                         return;
                     } else {
                         e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
@@ -2016,7 +2016,7 @@ public class IslandGuard implements Listener {
                         return;
                     }
                 }
-                if ((island.isSpawn() && !Settings.allowSpawnFurnaceUse) || (!island.isSpawn() && !island.getIgsFlag(SettingsFlag.FURNACE))) {
+                if ((island.isSpawn() && !Settings.spawnSettings.get(SettingsFlag.FURNACE)) || (!island.isSpawn() && !island.getIgsFlag(SettingsFlag.FURNACE))) {
                     e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                     e.setCancelled(true);
                     return;
@@ -2029,7 +2029,7 @@ public class IslandGuard implements Listener {
             case JUKEBOX:
             case NOTE_BLOCK:
                 if (island == null) {
-                    if (Settings.allowMusic) {
+                    if (Settings.defaultIslandSettings.get(SettingsFlag.MUSIC)) {
                         return;
                     } else {
                         e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
@@ -2037,7 +2037,7 @@ public class IslandGuard implements Listener {
                         return;
                     }
                 }
-                if ((island.isSpawn() && !Settings.allowSpawnMusic) || (!island.isSpawn() && !island.getIgsFlag(SettingsFlag.MUSIC))) {
+                if ((island.isSpawn() && !Settings.spawnSettings.get(SettingsFlag.MUSIC)) || (!island.isSpawn() && !island.getIgsFlag(SettingsFlag.MUSIC))) {
                     e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                     e.setCancelled(true);
                     return;
@@ -2049,7 +2049,7 @@ public class IslandGuard implements Listener {
             case WOOD_BUTTON:
             case LEVER:
                 if (island == null) {
-                    if (Settings.allowLeverButtonUse) {
+                    if (Settings.defaultIslandSettings.get(SettingsFlag.LEVER_BUTTON)) {
                         return;
                     } else {
                         e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
@@ -2057,7 +2057,7 @@ public class IslandGuard implements Listener {
                         return;
                     }
                 }
-                if ((island.isSpawn() && !Settings.allowSpawnLeverButtonUse) || (!island.isSpawn() && !island.getIgsFlag(SettingsFlag.LEVERBUTTON))) {
+                if ((island.isSpawn() && !Settings.spawnSettings.get(SettingsFlag.LEVER_BUTTON)) || (!island.isSpawn() && !island.getIgsFlag(SettingsFlag.LEVER_BUTTON))) {
                     e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                     e.setCancelled(true);
                     return;
@@ -2067,7 +2067,7 @@ public class IslandGuard implements Listener {
                 break;
             case WORKBENCH:
                 if (island == null) {
-                    if (Settings.allowCrafting) {
+                    if (Settings.defaultIslandSettings.get(SettingsFlag.CRAFTING)) {
                         return;
                     } else {
                         e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
@@ -2075,7 +2075,7 @@ public class IslandGuard implements Listener {
                         return;
                     }
                 }
-                if ((island.isSpawn() && !Settings.allowSpawnCrafting) || (!island.isSpawn() && !island.getIgsFlag(SettingsFlag.CRAFTING))) {
+                if ((island.isSpawn() && !Settings.spawnSettings.get(SettingsFlag.CRAFTING)) || (!island.isSpawn() && !island.getIgsFlag(SettingsFlag.CRAFTING))) {
                     e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                     e.setCancelled(true);
                     return;
@@ -2083,7 +2083,7 @@ public class IslandGuard implements Listener {
                 break;
             case ANVIL:
                 if (island == null) {
-                    if (Settings.allowAnvilUse) {
+                    if (Settings.defaultIslandSettings.get(SettingsFlag.ANVIL)) {
                         return;
                     } else {
                         e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
@@ -2091,7 +2091,7 @@ public class IslandGuard implements Listener {
                         return;
                     }
                 }
-                if ((island.isSpawn() && !Settings.allowSpawnAnvilUse) || (!island.isSpawn() && !island.getIgsFlag(SettingsFlag.ANVIL))) {
+                if ((island.isSpawn() && !Settings.spawnSettings.get(SettingsFlag.ANVIL)) || (!island.isSpawn() && !island.getIgsFlag(SettingsFlag.ANVIL))) {
                     e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                     e.setCancelled(true);
                     return;
@@ -2103,20 +2103,20 @@ public class IslandGuard implements Listener {
             case ACTIVATOR_RAIL:
                 // If they are not on an island, it's protected
                 if (island == null) {
-                    if (!Settings.allowPlaceBlocks) {
+                    if (!Settings.defaultIslandSettings.get(SettingsFlag.PLACE_BLOCKS)) {
                         e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                         e.setCancelled(true);
                     }
                     return;
                 }
                 if (island.isSpawn()) {
-                    if (!Settings.allowSpawnPlaceBlocks) {
+                    if (!Settings.spawnSettings.get(SettingsFlag.PLACE_BLOCKS)) {
                         e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                         e.setCancelled(true);
                         e.getPlayer().updateInventory();
                         return;
                     }
-                } else if (!island.getIgsFlag(SettingsFlag.PLACEBLOCKS)) {
+                } else if (!island.getIgsFlag(SettingsFlag.PLACE_BLOCKS)) {
                     if (e.getMaterial() == Material.MINECART || e.getMaterial() == Material.STORAGE_MINECART || e.getMaterial() == Material.HOPPER_MINECART
                             || e.getMaterial() == Material.EXPLOSIVE_MINECART || e.getMaterial() == Material.POWERED_MINECART) {
                         e.setCancelled(true);
@@ -2127,7 +2127,7 @@ public class IslandGuard implements Listener {
                 }
             case BEACON:
                 if (island == null) {
-                    if (Settings.allowBeaconAccess) {
+                    if (Settings.defaultIslandSettings.get(SettingsFlag.BEACON)) {
                         return;
                     } else {
                         e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
@@ -2136,7 +2136,7 @@ public class IslandGuard implements Listener {
                     }
                 }
                 if (island.isSpawn()) {
-                    if (!Settings.allowSpawnBeaconAccess) {
+                    if (!Settings.spawnSettings.get(SettingsFlag.BEACON)) {
                         e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                         e.setCancelled(true);
                         return;
@@ -2150,7 +2150,7 @@ public class IslandGuard implements Listener {
             case CAKE_BLOCK:
             case DRAGON_EGG:
                 if (island == null) {
-                    if (Settings.allowBreakBlocks) {
+                    if (Settings.defaultIslandSettings.get(SettingsFlag.BREAK_BLOCKS)) {
                         return;
                     } else {
                         e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
@@ -2159,12 +2159,12 @@ public class IslandGuard implements Listener {
                     }
                 }
                 if (island.isSpawn()) {
-                    if (!Settings.allowSpawnBreakBlocks) {
+                    if (!Settings.spawnSettings.get(SettingsFlag.BREAK_BLOCKS)) {
                         e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                         e.setCancelled(true);
                         return;
                     }
-                } else if (!island.getIgsFlag(SettingsFlag.BREAKBLOCKS)) {
+                } else if (!island.getIgsFlag(SettingsFlag.BREAK_BLOCKS)) {
                     e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                     e.setCancelled(true);
                     return;
@@ -2180,7 +2180,7 @@ public class IslandGuard implements Listener {
                     e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                     e.setCancelled(true);
                     return;
-                } else if (!island.getIgsFlag(SettingsFlag.BREAKBLOCKS)) {
+                } else if (!island.getIgsFlag(SettingsFlag.BREAK_BLOCKS)) {
                     e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                     e.setCancelled(true);
                     return;
@@ -2215,7 +2215,7 @@ public class IslandGuard implements Listener {
                 e.setCancelled(true);
                 return;
             } else if (e.getMaterial().equals(Material.ENDER_PEARL)) {
-                if ((!island.isSpawn() && !island.getIgsFlag(SettingsFlag.ENDERPEARL)) || (island.isSpawn() && !Settings.allowSpawnEnderPearls)) {
+                if ((!island.isSpawn() && !island.getIgsFlag(SettingsFlag.ENDERPEARL)) || (island.isSpawn() && !Settings.spawnSettings.get(SettingsFlag.ENDERPEARL))) {
                     e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                     e.setCancelled(true);
                 }
@@ -2246,11 +2246,11 @@ public class IslandGuard implements Listener {
                             inNether = true;
                         }
                         // Check spawn PVP
-                        if (island.isSpawn() && Settings.allowSpawnPVP) {
+                        if (island.isSpawn() && Settings.spawnSettings.get(SettingsFlag.PVP)) {
                             return;
                         }
                         // Normal island
-                        if ((inNether && island.getIgsFlag(SettingsFlag.NETHERPVP) || (!inNether && island.getIgsFlag(SettingsFlag.PVP)))) {
+                        if ((inNether && island.getIgsFlag(SettingsFlag.NETHER_PVP) || (!inNether && island.getIgsFlag(SettingsFlag.PVP)))) {
                             return;
                         }
                         // Not allowed
@@ -2344,20 +2344,20 @@ public class IslandGuard implements Listener {
                         plugin.getLogger().info("DEBUG: island is not null");
                         if (island.isSpawn()) {
                             plugin.getLogger().info("DEBUG: island is spawn");
-                            plugin.getLogger().info("DEBUG: villager trading is " + Settings.allowSpawnVillagerTrading);
+                            plugin.getLogger().info("DEBUG: villager trading is " + Settings.spawnSettings.get(SettingsFlag.VILLAGER_TRADING));
                         } else {
                             plugin.getLogger().info("DEBUG: island is not spawn");
-                            plugin.getLogger().info("DEBUG: villager trading is " + island.getIgsFlag(SettingsFlag.VILLAGERTRADING));
+                            plugin.getLogger().info("DEBUG: villager trading is " + island.getIgsFlag(SettingsFlag.VILLAGER_TRADING));
                         }
                     }
                     if (island.isSpawn()) {
-                        if (!Settings.allowSpawnVillagerTrading) {
+                        if (!Settings.spawnSettings.get(SettingsFlag.VILLAGER_TRADING)) {
                             e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                             e.setCancelled(true);
                         }
                         return;
                     }
-                    if ((!island.getIgsFlag(SettingsFlag.VILLAGERTRADING) && !island.getMembers().contains(p.getUniqueId()))) {
+                    if ((!island.getIgsFlag(SettingsFlag.VILLAGER_TRADING) && !island.getMembers().contains(p.getUniqueId()))) {
                         e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                         e.setCancelled(true);
                         return;
@@ -2376,14 +2376,14 @@ public class IslandGuard implements Listener {
             if (p.getItemInHand() != null && e.getRightClicked() instanceof Animals) {
                 Material type = p.getItemInHand().getType();
                 if (type == Material.EGG || type == Material.WHEAT || type == Material.CARROT_ITEM || type == Material.SEEDS) {
-                    if (island == null && !Settings.allowBreeding) {
+                    if (island == null && !Settings.defaultIslandSettings.get(SettingsFlag.BREEDING)) {
                         e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                         e.setCancelled(true);
                         return;
                     }
                     if (island != null) {
                         if (island.isSpawn()) {
-                            if (!Settings.allowSpawnBreeding) {
+                            if (!Settings.spawnSettings.get(SettingsFlag.BREEDING)) {
                                 e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                                 e.setCancelled(true);
                                 return;
@@ -2417,35 +2417,35 @@ public class IslandGuard implements Listener {
             case LLAMA:
             case HORSE:
                 //plugin.getLogger().info("Horse riding");
-                if (island == null && !Settings.allowHorseRiding) {
+                if (island == null && !Settings.defaultIslandSettings.get(SettingsFlag.HORSE_RIDING)) {
                     e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                     e.setCancelled(true);
                 }
                 if (island != null && island.isSpawn()) {
                     //plugin.getLogger().info("Horse riding in spawn");
-                    if (!Settings.allowSpawnHorseRiding) {
+                    if (!Settings.spawnSettings.get(SettingsFlag.HORSE_RIDING)) {
                         //plugin.getLogger().info("Horse riding not allowed at spawn");
                         e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                         e.setCancelled(true);
                     }
-                } else if (island != null && !island.getIgsFlag(SettingsFlag.HORSERIDING)) {
+                } else if (island != null && !island.getIgsFlag(SettingsFlag.HORSE_RIDING)) {
                     e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                     e.setCancelled(true);
                 }
                 break;
             case ITEM_FRAME:
                 // This is to place items in an item frame
-                if (island == null && !Settings.allowPlaceBlocks) {
+                if (island == null && !Settings.defaultIslandSettings.get(SettingsFlag.PLACE_BLOCKS)) {
                     e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                     e.setCancelled(true);
                 }
                 if (island != null) {
                     if (island.isSpawn()) {
-                        if (!Settings.allowSpawnPlaceBlocks) {
+                        if (!Settings.spawnSettings.get(SettingsFlag.PLACE_BLOCKS)) {
                             e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                             e.setCancelled(true);
                         }
-                    } else if (!island.getIgsFlag(SettingsFlag.PLACEBLOCKS)) {
+                    } else if (!island.getIgsFlag(SettingsFlag.PLACE_BLOCKS)) {
                         e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                         e.setCancelled(true);
                     }
@@ -2455,13 +2455,13 @@ public class IslandGuard implements Listener {
             case MINECART_FURNACE:
             case MINECART_HOPPER:
                 //plugin.getLogger().info("Minecarts");
-                if (island == null && !Settings.allowChestAccess) {
+                if (island == null && !Settings.defaultIslandSettings.get(SettingsFlag.CHEST)) {
                     e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                     e.setCancelled(true);
                 }
                 if (island != null) {
                     if (island.isSpawn()) {
-                        if (!Settings.allowSpawnChestAccess) {
+                        if (!Settings.spawnSettings.get(SettingsFlag.CHEST)) {
                             e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                             e.setCancelled(true);
                         }
@@ -2549,16 +2549,16 @@ public class IslandGuard implements Listener {
         }
         // Check island
         Island island = plugin.getGrid().getProtectedIslandAt(e.getPlayer().getLocation());
-        if ((island == null && Settings.allowPressurePlate)) {
+        if ((island == null && Settings.defaultIslandSettings.get(SettingsFlag.PRESSURE_PLATE))) {
             return;
         }
         // Check for spawn
         //plugin.getLogger().info("DEBUG: " + Settings.allowSpawnPressurePlate);
         //plugin.getLogger().info("DEBUG: " + plugin.getGrid().isAtSpawn(e.getPlayer().getLocation()));
-        if (island != null && Settings.allowSpawnPressurePlate && island.isSpawn()) {
+        if (island != null && Settings.spawnSettings.get(SettingsFlag.PRESSURE_PLATE) && island.isSpawn()) {
             return;
         }
-        if (island != null && !island.isSpawn() && island.getIgsFlag(SettingsFlag.PRESSUREPLATE)) {
+        if (island != null && !island.isSpawn() && island.getIgsFlag(SettingsFlag.PRESSURE_PLATE)) {
             return;
         }
         // Block action
