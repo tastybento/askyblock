@@ -740,8 +740,6 @@ spawn:
   BREEDING: false
   # Allow visitors to use cauldrons and brewing stands
   BREWING: true
-  # Allow visitors to use buckets, either fill or dump them
-  BUCKET: false
   # Collect Lava
   COLLECT_LAVA: false
   # Collect water

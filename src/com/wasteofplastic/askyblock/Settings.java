@@ -91,8 +91,6 @@ public class Settings {
      */
     public static HashMap<SettingsFlag, Boolean> spawnSettings = new HashMap<SettingsFlag, Boolean>();
 
-    //public static boolean allowMobSpawning;
-
     // Flymode
     public static int flyTimeOutside;
 
@@ -133,47 +131,7 @@ public class Settings {
     public static boolean islandRemoveMobs;
     public static int island_level;
     public static boolean resetChallenges;
-    // Spawn fields
-    /*
-    public static boolean allowSpawnDoorUse;
-    public static boolean allowSpawnLeverButtonUse;
-    public static boolean allowSpawnChestAccess;
-    public static boolean allowSpawnFurnaceUse;
-    public static boolean allowSpawnRedStone;
-    public static boolean allowSpawnMusic;
-    public static boolean allowSpawnCrafting;
-    public static boolean allowSpawnBrewing;
-    public static boolean allowSpawnGateUse;
-    public static boolean allowSpawnMobSpawn;
-    public static boolean allowSpawnNoAcidWater;
-    public static boolean allowSpawnEnchanting;
-    public static boolean allowSpawnAnvilUse;
-    public static boolean allowSpawnBeaconAccess;
-    public static boolean allowSpawnAnimalSpawn;
-    public static boolean allowSpawnAnimalKilling;
-    public static boolean allowSpawnMobKilling;
-    public static boolean allowSpawnMilking;
-    public static boolean allowSpawnBreakBlocks;
-    public static boolean allowSpawnPlaceBlocks;
-    public static boolean allowSpawnEggs;
-    public static boolean allowSpawnPVP;
-    public static boolean allowSpawnLavaCollection;
-    public static boolean allowSpawnWaterCollection;
-    public static boolean allowSpawnMonsterEggs;
-    public static boolean allowSpawnHorseInvAccess;
-    public static boolean allowSpawnHorseRiding;
-    public static boolean allowSpawnPressurePlate;
-    public static boolean allowSpawnVisitorItemDrop;
-    public static boolean allowSpawnVisitorItemPickup;
-    public static boolean allowSpawnArmorStandUse;
-    public static boolean allowSpawnBedUse;
-    public static boolean allowSpawnBreeding;
-    public static boolean allowSpawnCropTrample;
-    public static boolean allowSpawnEnderPearls;
-    public static boolean allowSpawnLeashUse;
-    public static boolean allowSpawnShearing;
-    public static boolean allowSpawnChorusFruit;
-*/
+
     // Levels
     public static HashMap<MaterialData, Integer> blockLimits;
     public static HashMap<MaterialData, Integer> blockValues;
