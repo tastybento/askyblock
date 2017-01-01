@@ -1259,49 +1259,6 @@ public class ASkyBlock extends JavaPlugin {
         for (SettingsFlag flag: SettingsFlag.values()) {
             Settings.spawnSettings.put(flag, getConfig().getBoolean("spawn." + flag.name(), false));
         }
-/*
-        // Spawn Settings
-        Settings.allowSpawnCreeperPain = getConfig().getBoolean("spawn.allowcreeperpain", false);
-        Settings.allowSpawnHorseRiding = getConfig().getBoolean("spawn.allowhorseriding", false);
-        Settings.allowSpawnHorseInvAccess = getConfig().getBoolean("spawn.allowhorseinventoryaccess", false);
-        Settings.allowSpawnPressurePlate = getConfig().getBoolean("spawn.allowpressureplates", true);
-        Settings.allowSpawnDoorUse = getConfig().getBoolean("spawn.allowdooruse", true);
-        Settings.allowSpawnLeverButtonUse = getConfig().getBoolean("spawn.allowleverbuttonuse", true);
-        Settings.allowSpawnChestAccess = getConfig().getBoolean("spawn.allowchestaccess", true);
-        Settings.allowSpawnFurnaceUse = getConfig().getBoolean("spawn.allowfurnaceuse", true);
-        Settings.allowSpawnRedStone = getConfig().getBoolean("spawn.allowredstone", false);
-        Settings.allowSpawnMusic = getConfig().getBoolean("spawn.allowmusic", true);
-        Settings.allowSpawnCrafting = getConfig().getBoolean("spawn.allowcrafting", true);
-        Settings.allowSpawnBrewing = getConfig().getBoolean("spawn.allowbrewing", true);
-        Settings.allowSpawnGateUse = getConfig().getBoolean("spawn.allowgateuse", true);
-        Settings.allowSpawnMobSpawn = getConfig().getBoolean("spawn.allowmobspawn", false);
-        Settings.allowSpawnAnimalSpawn = getConfig().getBoolean("spawn.allowanimalspawn", true);
-        Settings.allowSpawnAnimalKilling = getConfig().getBoolean("spawn.allowanimalkilling", false);
-        Settings.allowSpawnMobKilling = getConfig().getBoolean("spawn.allowmobkilling", true);
-        Settings.allowSpawnMonsterEggs = getConfig().getBoolean("spawn.allowspawneggs", false);
-        Settings.allowSpawnEggs = getConfig().getBoolean("spawn.alloweggs", false);
-        Settings.allowSpawnBreakBlocks = getConfig().getBoolean("spawn.allowbreakblocks", false);
-        Settings.allowSpawnPlaceBlocks = getConfig().getBoolean("spawn.allowplaceblocks", false);
-        Settings.allowSpawnNoAcidWater = getConfig().getBoolean("spawn.allowspawnnoacidwater", false);
-        Settings.allowSpawnEnchanting = getConfig().getBoolean("spawn.allowenchanting", true);
-        Settings.allowSpawnAnvilUse = getConfig().getBoolean("spawn.allowanviluse", true);
-        Settings.allowSpawnBeaconAccess = getConfig().getBoolean("spawn.allowbeaconaccess", false);
-        Settings.allowSpawnPVP = getConfig().getBoolean("spawn.allowPVP", false);
-        Settings.allowSpawnMilking = getConfig().getBoolean("spawn.allowmilking", false);
-        Settings.allowSpawnLavaCollection = getConfig().getBoolean("spawn.allowlavacollection", false);
-        Settings.allowSpawnWaterCollection = getConfig().getBoolean("spawn.allowwatercollection", false);
-        Settings.allowSpawnVisitorItemDrop = getConfig().getBoolean("spawn.allowvisitoritemdrop", true);
-        Settings.allowSpawnVisitorItemPickup = getConfig().getBoolean("spawn.allowvisitoritempickup", true);
-        Settings.allowSpawnArmorStandUse = getConfig().getBoolean("spawn.allowarmorstanduse",false);
-        Settings.allowSpawnBedUse = getConfig().getBoolean("spawn.allowbeduse",false);
-        Settings.allowSpawnBreeding = getConfig().getBoolean("spawn.allowbreeding",false);
-        Settings.allowSpawnCropTrample = getConfig().getBoolean("spawn.allowcroptrample",false);
-        Settings.allowSpawnEnderPearls = getConfig().getBoolean("spawn.allowenderpearls",false);
-        Settings.allowSpawnLeashUse = getConfig().getBoolean("spawn.allowleashuse",false);
-        Settings.allowSpawnVillagerTrading = getConfig().getBoolean("spawn.allowvillagertrading", false);
-        Settings.allowSpawnChorusFruit = getConfig().getBoolean("spawn.allowchorusfruit", false);
-        Settings.allowSpawnFireExtinguish = getConfig().getBoolean("spawn.allowfireextinguish", false);
-*/
         // Challenges
         getChallenges();
         // Challenge completion

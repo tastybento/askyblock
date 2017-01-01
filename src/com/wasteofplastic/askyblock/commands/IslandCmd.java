@@ -1315,6 +1315,8 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                         try {
                             player.openInventory(plugin.getSettingsPanel().islandGuardPanel(player));
                         } catch (Exception e) {
+                            // TODO: remove debug
+                            //e.printStackTrace();
                             player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorCommandNotReady);
                         }
                     } else {
@@ -2357,7 +2359,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                                     warpSpot.getBlockZ() + 0.5D);
                                             player.teleport(actualWarp);
                                             if (pvp) {
-                                                player.sendMessage(ChatColor.BOLD + "" + ChatColor.RED + plugin.myLocale(player.getUniqueId()).igsPVP + " " + plugin.myLocale(player.getUniqueId()).igsAllowed);
+                                                player.sendMessage(ChatColor.BOLD + "" + ChatColor.RED + plugin.myLocale(player.getUniqueId()).igs.get(SettingsFlag.PVP) + " " + plugin.myLocale(player.getUniqueId()).igsAllowed);
                                                 if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
                                                     player.getWorld().playSound(player.getLocation(), Sound.valueOf("ARROW_HIT"), 1F, 1F);
                                                 } else {
@@ -3021,7 +3023,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                 inFront.getBlockZ() + 0.5D, yaw, 30F);
         player.teleport(actualWarp);
         if (pvp) {
-            player.sendMessage(ChatColor.BOLD + "" + ChatColor.RED + plugin.myLocale(player.getUniqueId()).igsPVP + " " + plugin.myLocale(player.getUniqueId()).igsAllowed);
+            player.sendMessage(ChatColor.BOLD + "" + ChatColor.RED + plugin.myLocale(player.getUniqueId()).igs.get(SettingsFlag.PVP) + " " + plugin.myLocale(player.getUniqueId()).igsAllowed);
             if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
                 player.getWorld().playSound(player.getLocation(), Sound.valueOf("ARROW_HIT"), 1F, 1F);
             } else {

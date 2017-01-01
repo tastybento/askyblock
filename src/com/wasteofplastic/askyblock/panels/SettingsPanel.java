@@ -35,6 +35,8 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.inventory.Inventory;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.Island.SettingsFlag;
@@ -43,15 +45,19 @@ import com.wasteofplastic.askyblock.Settings;
 public class SettingsPanel implements Listener {
     // Island Guard Settings Panel
     private ASkyBlock plugin;
-    private Class<?> clazz;
     private static boolean hasChorusFruit;
+    private static boolean hasArmorStand;
     private HashMap<UUID,Long> pvpCoolDown = new HashMap<UUID,Long>();
 
-    private static HashMap<Material,SettingsFlag> lookup = new HashMap<Material,SettingsFlag>();
+    private static BiMap<Material,SettingsFlag> lookup = HashBiMap.create();
     static {
+        // Find out if these exist
         hasChorusFruit = (Material.getMaterial("CHORUS_FRUIT") != null);
-
+        hasArmorStand = (Material.getMaterial("ARMOR_STAND") != null);
+        // No icon or flag can be the same, they must all be unique because this is a bimap.
         lookup.put( Material.ANVIL,SettingsFlag.ANVIL);
+        if (hasArmorStand)
+            lookup.put(Material.ARMOR_STAND, SettingsFlag.ARMOR_STAND);
         lookup.put( Material.BEACON,SettingsFlag.BEACON);
         lookup.put( Material.BED,SettingsFlag.BED);
         lookup.put( Material.STONE,SettingsFlag.BREAK_BLOCKS);
@@ -91,11 +97,6 @@ public class SettingsPanel implements Listener {
 
     public SettingsPanel(ASkyBlock plugin) {
         this.plugin = plugin;
-        try {
-            clazz = Class.forName("org.bukkit.entity.ArmorStand");
-        } catch (Exception e) {
-            clazz = null;
-        }
         //plugin.getLogger().info("DEBUG: Settings Panel loaded");
     }
 
@@ -112,134 +113,56 @@ public class SettingsPanel implements Listener {
         Inventory newPanel = null;
         if (island == null) {
             ip.add(new IPItem(Material.MAP, plugin.myLocale(uuid).igsSettingsGeneralTitle, plugin.myLocale(uuid).igsSettingsGeneralDesc));
-            // General settings
-            ip.add(new IPItem(Settings.defaultIslandSettings.get(SettingsFlag.ANVIL), Material.ANVIL, plugin.myLocale(uuid).igsAnvil));
-            if (clazz != null) {
-                ip.add(new IPItem(Settings.defaultIslandSettings.get(SettingsFlag.ARMOR_STAND), Material.ARMOR_STAND, plugin.myLocale(uuid).igsArmorStand));
+            // General settings all enum            
+            for (SettingsFlag flag : SettingsFlag.values()) {
+                if (flag.equals(SettingsFlag.ARMOR_STAND) && !hasArmorStand)
+                    continue;
+                if (flag.equals(SettingsFlag.CHORUS_FRUIT) && !hasChorusFruit)
+                    continue;
+                if (Settings.defaultIslandSettings.containsKey(flag) && lookup.inverse().containsKey(flag) && plugin.myLocale(uuid).igs.containsKey(flag)) {
+                    ip.add(new IPItem(Settings.defaultIslandSettings.get(flag), lookup.inverse().get(flag), plugin.myLocale(uuid).igs.get(flag)));
+                }
             }
-            ip.add(new IPItem(Settings.defaultIslandSettings.get(SettingsFlag.BEACON), Material.BEACON, plugin.myLocale(uuid).igsBeacon));
-            ip.add(new IPItem(Settings.defaultIslandSettings.get(SettingsFlag.BED), Material.BED, plugin.myLocale(uuid).igsBed));
-            ip.add(new IPItem(Settings.defaultIslandSettings.get(SettingsFlag.BREAK_BLOCKS), Material.STONE, plugin.myLocale(uuid).igsBreakBlocks));
-            ip.add(new IPItem(Settings.defaultIslandSettings.get(SettingsFlag.BREEDING), Material.CARROT_ITEM, plugin.myLocale(uuid).igsBreeding));
-            ip.add(new IPItem(Settings.defaultIslandSettings.get(SettingsFlag.BREWING), Material.BREWING_STAND_ITEM, plugin.myLocale(uuid).igsBrewing));
-            ip.add(new IPItem(Settings.defaultIslandSettings.get(SettingsFlag.BUCKET), Material.LAVA_BUCKET, plugin.myLocale(uuid).igsBucket));
-            ip.add(new IPItem(Settings.defaultIslandSettings.get(SettingsFlag.CHEST), Material.CHEST, plugin.myLocale(uuid).igsChest));
+            // System settings that are visible to users
             ip.add(new IPItem(Settings.allowChestDamage, Material.CHEST, plugin.myLocale(uuid).igsChestDamage));
-            ip.add(new IPItem(Settings.defaultIslandSettings.get(SettingsFlag.CRAFTING), Material.WORKBENCH, plugin.myLocale(uuid).igsWorkbench));
             ip.add(new IPItem(Settings.allowCreeperDamage, Material.SKULL_ITEM, 4, plugin.myLocale(uuid).igsCreeperDamage));
             ip.add(new IPItem(Settings.allowCreeperGriefing, Material.SKULL_ITEM, 4, plugin.myLocale(uuid).igsCreeperGriefing));
-            ip.add(new IPItem(Settings.defaultIslandSettings.get(SettingsFlag.CROP_TRAMPLE), Material.WHEAT, plugin.myLocale(uuid).igsCropTrampling));
-            ip.add(new IPItem(Settings.defaultIslandSettings.get(SettingsFlag.DOOR), Material.WOOD_DOOR, plugin.myLocale(uuid).igsDoor));
-            ip.add(new IPItem(Settings.defaultIslandSettings.get(SettingsFlag.ENCHANTING), Material.ENCHANTMENT_TABLE, plugin.myLocale(uuid).igsEnchanting));
-            ip.add(new IPItem(Settings.defaultIslandSettings.get(SettingsFlag.ENDERPEARL), Material.ENDER_PEARL,plugin.myLocale(uuid).igsEnderPearl));
-            ip.add(new IPItem(Settings.defaultIslandSettings.get(SettingsFlag.FURNACE), Material.FURNACE, plugin.myLocale(uuid).igsFurnace));
-            ip.add(new IPItem(Settings.defaultIslandSettings.get(SettingsFlag.GATE), Material.FENCE_GATE, plugin.myLocale(uuid).igsGate));
-            ip.add(new IPItem(Settings.defaultIslandSettings.get(SettingsFlag.HORSE_INVENTORY), Material.GOLD_BARDING, plugin.myLocale(uuid).igsHorseInvAccess));
-            ip.add(new IPItem(Settings.defaultIslandSettings.get(SettingsFlag.HORSE_RIDING), Material.DIAMOND_BARDING, plugin.myLocale(uuid).igsHorseRiding));
-            ip.add(new IPItem(Settings.defaultIslandSettings.get(SettingsFlag.HURT_MOBS), Material.EGG, plugin.myLocale(uuid).igsHurtAnimals));
-            ip.add(new IPItem(Settings.defaultIslandSettings.get(SettingsFlag.LEASH), Material.LEASH, plugin.myLocale(uuid).igsLeash));
-            ip.add(new IPItem(Settings.defaultIslandSettings.get(SettingsFlag.LEVER_BUTTON), Material.LEVER, plugin.myLocale(uuid).igsLever));
-            ip.add(new IPItem(Settings.defaultIslandSettings.get(SettingsFlag.MUSIC), Material.JUKEBOX, plugin.myLocale(uuid).igsJukebox));
-            ip.add(new IPItem(Settings.defaultIslandSettings.get(SettingsFlag.PLACE_BLOCKS), Material.DIRT, plugin.myLocale(uuid).igsPlaceBlocks));
-            ip.add(new IPItem(Settings.defaultIslandSettings.get(SettingsFlag.PORTAL), Material.OBSIDIAN, plugin.myLocale(uuid).igsPortalUse));
-            ip.add(new IPItem(Settings.defaultIslandSettings.get(SettingsFlag.PRESSURE_PLATE), Material.GOLD_PLATE, plugin.myLocale(uuid).igsPressurePlate));
-            ip.add(new IPItem(Settings.defaultIslandSettings.get(SettingsFlag.PVP), Material.ARROW, plugin.myLocale(uuid).igsPVP));
-            ip.add(new IPItem(Settings.defaultIslandSettings.get(SettingsFlag.NETHER_PVP), Material.NETHERRACK, plugin.myLocale(uuid).igsNetherPVP));
-            ip.add(new IPItem(Settings.defaultIslandSettings.get(SettingsFlag.REDSTONE), Material.REDSTONE_COMPARATOR, plugin.myLocale(uuid).igsRedstone));
             ip.add(new IPItem(!Settings.restrictWither, Material.SKULL_ITEM, 1, plugin.myLocale(uuid).igsWitherDamage));
-            ip.add(new IPItem(Settings.defaultIslandSettings.get(SettingsFlag.SHEARING), Material.SHEARS, plugin.myLocale(uuid).igsShears));
             ip.add(new IPItem(Settings.allowTNTDamage, Material.TNT, plugin.myLocale(uuid).igsTNT));
             ip.add(new IPItem(Settings.allowVisitorKeepInvOnDeath, Material.IRON_CHESTPLATE, plugin.myLocale(uuid).igsVisitorKeep));
-            ip.add(new IPItem(Settings.defaultIslandSettings.get(SettingsFlag.VILLAGER_TRADING), Material.EMERALD, plugin.myLocale(uuid).igsVillagerTrading));
-            if (hasChorusFruit) {
-                ip.add(new IPItem(Settings.defaultIslandSettings.get(SettingsFlag.CHORUS_FRUIT), Material.CHORUS_FRUIT, plugin.myLocale(uuid).igsChorusFruit));
-            }
-            // Place new settings here
-            ip.add(new IPItem(Settings.defaultIslandSettings.get(SettingsFlag.ENTER_EXIT_MESSAGES), Material.NOTE_BLOCK, plugin.myLocale(uuid).igsJoinLeaveIslandMessage));
-            ip.add(new IPItem(Settings.defaultIslandSettings.get(SettingsFlag.MONSTER_SPAWN), Material.MOB_SPAWNER, plugin.myLocale(uuid).igsMobSpawning));
         } else if (island.isSpawn()) {
             ip.add(new IPItem(Material.MAP, plugin.myLocale(uuid).igsSettingsSpawnTitle, plugin.myLocale(uuid).igsSettingsSpawnDesc));
             // Spawn settings
+            for (SettingsFlag flag : SettingsFlag.values()) {
+                // Settings not in spawn
+                if (flag.equals(SettingsFlag.BUCKET) || flag.equals(SettingsFlag.NETHER_PVP) 
+                        || flag.equals(SettingsFlag.ENTER_EXIT_MESSAGES) || flag.equals(SettingsFlag.MOB_SPAWN))
+                    continue;
+                // Server-specific settings
+                if (flag.equals(SettingsFlag.ARMOR_STAND) && !hasArmorStand)
+                    continue;
+                if (flag.equals(SettingsFlag.CHORUS_FRUIT) && !hasChorusFruit)
+                    continue;
+                if (Settings.spawnSettings.containsKey(flag) && Settings.spawnSettings.get(flag)
+                        && lookup.inverse().containsKey(flag) && plugin.myLocale(uuid).igs.containsKey(flag)) {
+                    ip.add(new IPItem(Settings.spawnSettings.get(flag), lookup.inverse().get(flag), plugin.myLocale(uuid).igs.get(flag)));
+                }
+            }
             // TODO: convert to use default spawn settings, not default island settings
-            ip.add(new IPItem(Settings.spawnSettings.get(SettingsFlag.ANVIL), Material.ANVIL, plugin.myLocale(uuid).igsAnvil));
-            if (clazz != null) {
-                ip.add(new IPItem(Settings.spawnSettings.get(SettingsFlag.ARMOR_STAND), Material.ARMOR_STAND, plugin.myLocale(uuid).igsArmorStand));
-            }
-            ip.add(new IPItem(Settings.spawnSettings.get(SettingsFlag.BEACON), Material.BEACON, plugin.myLocale(uuid).igsBeacon));
-            ip.add(new IPItem(Settings.spawnSettings.get(SettingsFlag.BED), Material.BED, plugin.myLocale(uuid).igsBed));
-            ip.add(new IPItem(Settings.spawnSettings.get(SettingsFlag.BREAK_BLOCKS), Material.STONE, plugin.myLocale(uuid).igsBreakBlocks));
-            ip.add(new IPItem(Settings.spawnSettings.get(SettingsFlag.BREEDING), Material.CARROT_ITEM, plugin.myLocale(uuid).igsBreeding));
-            ip.add(new IPItem(Settings.spawnSettings.get(SettingsFlag.BREWING), Material.BREWING_STAND_ITEM, plugin.myLocale(uuid).igsBrewing));
-            ip.add(new IPItem(Settings.defaultIslandSettings.get(SettingsFlag.BUCKET), Material.LAVA_BUCKET, plugin.myLocale(uuid).igsBucket));
-            ip.add(new IPItem(Settings.spawnSettings.get(SettingsFlag.CHEST), Material.CHEST, plugin.myLocale(uuid).igsChest));
-            ip.add(new IPItem(Settings.spawnSettings.get(SettingsFlag.CRAFTING), Material.WORKBENCH, plugin.myLocale(uuid).igsWorkbench));
-            ip.add(new IPItem(Settings.spawnSettings.get(SettingsFlag.CROP_TRAMPLE), Material.WHEAT, plugin.myLocale(uuid).igsCropTrampling));
-            ip.add(new IPItem(Settings.spawnSettings.get(SettingsFlag.DOOR), Material.WOOD_DOOR, plugin.myLocale(uuid).igsDoor));
-            ip.add(new IPItem(Settings.spawnSettings.get(SettingsFlag.ENCHANTING), Material.ENCHANTMENT_TABLE, plugin.myLocale(uuid).igsEnchanting));
-            ip.add(new IPItem(Settings.spawnSettings.get(SettingsFlag.ENDERPEARL), Material.ENDER_PEARL,plugin.myLocale(uuid).igsEnderPearl));
-            ip.add(new IPItem(Settings.spawnSettings.get(SettingsFlag.FURNACE), Material.FURNACE, plugin.myLocale(uuid).igsFurnace));
-            ip.add(new IPItem(Settings.spawnSettings.get(SettingsFlag.GATE), Material.FENCE_GATE, plugin.myLocale(uuid).igsGate));
-            ip.add(new IPItem(Settings.spawnSettings.get(SettingsFlag.HORSE_INVENTORY), Material.GOLD_BARDING, plugin.myLocale(uuid).igsHorseInvAccess));
-            ip.add(new IPItem(Settings.spawnSettings.get(SettingsFlag.HORSE_RIDING), Material.DIAMOND_BARDING, plugin.myLocale(uuid).igsHorseRiding));
-            ip.add(new IPItem(Settings.spawnSettings.get(SettingsFlag.HURT_MOBS), Material.EGG, plugin.myLocale(uuid).igsHurtAnimals));
-            ip.add(new IPItem(Settings.spawnSettings.get(SettingsFlag.LEASH), Material.LEASH, plugin.myLocale(uuid).igsLeash));
-            ip.add(new IPItem(Settings.spawnSettings.get(SettingsFlag.LEVER_BUTTON), Material.LEVER, plugin.myLocale(uuid).igsLever));
-            ip.add(new IPItem(Settings.spawnSettings.get(SettingsFlag.MUSIC), Material.JUKEBOX, plugin.myLocale(uuid).igsJukebox));
-            ip.add(new IPItem(Settings.spawnSettings.get(SettingsFlag.PLACE_BLOCKS), Material.DIRT, plugin.myLocale(uuid).igsPlaceBlocks));
-            ip.add(new IPItem(Settings.defaultIslandSettings.get(SettingsFlag.PORTAL), Material.OBSIDIAN, plugin.myLocale(uuid).igsPortalUse));
-            ip.add(new IPItem(Settings.spawnSettings.get(SettingsFlag.PRESSURE_PLATE), Material.GOLD_PLATE, plugin.myLocale(uuid).igsPressurePlate));
-            ip.add(new IPItem(Settings.spawnSettings.get(SettingsFlag.PVP), Material.ARROW, plugin.myLocale(uuid).igsPVP));
-            //ip.add(new IPItem(Settings.defaultIslandSettings.get(SettingsFlag.NETHER_PVP), Material.NETHERRACK, plugin.myLocale(uuid).igsNetherPVP));
-            ip.add(new IPItem(Settings.spawnSettings.get(SettingsFlag.REDSTONE), Material.REDSTONE_COMPARATOR, plugin.myLocale(uuid).igsRedstone));
-            ip.add(new IPItem(Settings.spawnSettings.get(SettingsFlag.SHEARING), Material.SHEARS, plugin.myLocale(uuid).igsShears));
-            ip.add(new IPItem(Settings.spawnSettings.get(SettingsFlag.VILLAGER_TRADING), Material.EMERALD, plugin.myLocale(uuid).igsVillagerTrading));
-            if (hasChorusFruit) {
-                ip.add(new IPItem(Settings.spawnSettings.get(SettingsFlag.CHORUS_FRUIT), Material.CHORUS_FRUIT, plugin.myLocale(uuid).igsChorusFruit));
-            }
-            ip.add(new IPItem(Settings.spawnSettings.get(SettingsFlag.VISITOR_ITEM_DROP), Material.GOLD_INGOT, plugin.myLocale(uuid).igsVisitorDrop));
-            ip.add(new IPItem(Settings.spawnSettings.get(SettingsFlag.VISITOR_ITEM_PICKUP), Material.DIAMOND, plugin.myLocale(uuid).igsVisitorPickUp));   
+            //ip.add(new IPItem(Settings.defaultIslandSettings.get(SettingsFlag.PORTAL), Material.OBSIDIAN, plugin.myLocale(uuid).igsPortalUse));
         } else {
             // Standard island
             ip.add(new IPItem(Material.MAP, plugin.myLocale(uuid).igsSettingsIslandTitle, plugin.myLocale(uuid).igsSettingsIslandDesc));
-            ip.add(new IPItem(island.getIgsFlag(SettingsFlag.ANVIL), Material.ANVIL, plugin.myLocale(uuid).igsAnvil));
-            if (clazz != null) {
-                ip.add(new IPItem(island.getIgsFlag(SettingsFlag.ARMOR_STAND), Material.ARMOR_STAND, plugin.myLocale(uuid).igsArmorStand));
+            for (SettingsFlag flag : SettingsFlag.values()) {
+                // Server-specific settings
+                if (flag.equals(SettingsFlag.ARMOR_STAND) && !hasArmorStand)
+                    continue;
+                if (flag.equals(SettingsFlag.CHORUS_FRUIT) && !hasChorusFruit)
+                    continue;
+                if (Settings.defaultIslandSettings.containsKey(flag) && lookup.inverse().containsKey(flag) && plugin.myLocale(uuid).igs.containsKey(flag)) {
+                    ip.add(new IPItem(island.getIgsFlag(flag), lookup.inverse().get(flag), plugin.myLocale(uuid).igs.get(flag)));
+                }
             }
-            ip.add(new IPItem(island.getIgsFlag(SettingsFlag.BEACON), Material.BEACON, plugin.myLocale(uuid).igsBeacon));
-            ip.add(new IPItem(island.getIgsFlag(SettingsFlag.BED), Material.BED, plugin.myLocale(uuid).igsBed));
-            ip.add(new IPItem(island.getIgsFlag(SettingsFlag.BREAK_BLOCKS), Material.STONE, plugin.myLocale(uuid).igsBreakBlocks));
-            ip.add(new IPItem(island.getIgsFlag(SettingsFlag.BREEDING), Material.CARROT_ITEM, plugin.myLocale(uuid).igsBreeding));
-            ip.add(new IPItem(island.getIgsFlag(SettingsFlag.BREWING), Material.BREWING_STAND_ITEM, plugin.myLocale(uuid).igsBrewing));
-            ip.add(new IPItem(island.getIgsFlag(SettingsFlag.BUCKET), Material.LAVA_BUCKET, plugin.myLocale(uuid).igsBucket));
-            ip.add(new IPItem(island.getIgsFlag(SettingsFlag.CHEST), Material.CHEST, plugin.myLocale(uuid).igsChest));
-            ip.add(new IPItem(island.getIgsFlag(SettingsFlag.CRAFTING), Material.WORKBENCH, plugin.myLocale(uuid).igsWorkbench));
-            ip.add(new IPItem(island.getIgsFlag(SettingsFlag.CROP_TRAMPLE), Material.WHEAT, plugin.myLocale(uuid).igsCropTrampling));
-            ip.add(new IPItem(island.getIgsFlag(SettingsFlag.DOOR), Material.WOOD_DOOR, plugin.myLocale(uuid).igsDoor));
-            ip.add(new IPItem(island.getIgsFlag(SettingsFlag.ENCHANTING), Material.ENCHANTMENT_TABLE, plugin.myLocale(uuid).igsEnchanting));
-            ip.add(new IPItem(island.getIgsFlag(SettingsFlag.ENDERPEARL), Material.ENDER_PEARL,plugin.myLocale(uuid).igsEnderPearl));
-            ip.add(new IPItem(island.getIgsFlag(SettingsFlag.FURNACE), Material.FURNACE, plugin.myLocale(uuid).igsFurnace));
-            ip.add(new IPItem(island.getIgsFlag(SettingsFlag.GATE), Material.FENCE_GATE, plugin.myLocale(uuid).igsGate));
-            ip.add(new IPItem(island.getIgsFlag(SettingsFlag.HORSE_INVENTORY), Material.GOLD_BARDING, plugin.myLocale(uuid).igsHorseInvAccess));
-            ip.add(new IPItem(island.getIgsFlag(SettingsFlag.HORSE_RIDING), Material.DIAMOND_BARDING, plugin.myLocale(uuid).igsHorseRiding));
-            ip.add(new IPItem(island.getIgsFlag(SettingsFlag.HURT_MOBS), Material.EGG, plugin.myLocale(uuid).igsHurtAnimals));
-            ip.add(new IPItem(island.getIgsFlag(SettingsFlag.LEASH), Material.LEASH, plugin.myLocale(uuid).igsLeash));
-            ip.add(new IPItem(island.getIgsFlag(SettingsFlag.LEVER_BUTTON), Material.LEVER, plugin.myLocale(uuid).igsLever));
-            ip.add(new IPItem(island.getIgsFlag(SettingsFlag.MUSIC), Material.JUKEBOX, plugin.myLocale(uuid).igsJukebox));
-            ip.add(new IPItem(island.getIgsFlag(SettingsFlag.PLACE_BLOCKS), Material.DIRT, plugin.myLocale(uuid).igsPlaceBlocks));
-            ip.add(new IPItem(island.getIgsFlag(SettingsFlag.PORTAL), Material.OBSIDIAN, plugin.myLocale(uuid).igsPortalUse));
-            ip.add(new IPItem(island.getIgsFlag(SettingsFlag.PRESSURE_PLATE), Material.GOLD_PLATE, plugin.myLocale(uuid).igsPressurePlate));
-            ip.add(new IPItem(island.getIgsFlag(SettingsFlag.PVP), Material.ARROW, plugin.myLocale(uuid).igsPVP));
-            ip.add(new IPItem(island.getIgsFlag(SettingsFlag.NETHER_PVP), Material.NETHERRACK, plugin.myLocale(uuid).igsNetherPVP));
-            ip.add(new IPItem(island.getIgsFlag(SettingsFlag.REDSTONE), Material.REDSTONE_COMPARATOR, plugin.myLocale(uuid).igsRedstone));
-            ip.add(new IPItem(island.getIgsFlag(SettingsFlag.SHEARING), Material.SHEARS, plugin.myLocale(uuid).igsShears));
-            ip.add(new IPItem(island.getIgsFlag(SettingsFlag.VILLAGER_TRADING), Material.EMERALD, plugin.myLocale(uuid).igsVillagerTrading));
-            if (hasChorusFruit) {
-                ip.add(new IPItem(island.getIgsFlag(SettingsFlag.CHORUS_FRUIT), Material.CHORUS_FRUIT, plugin.myLocale(uuid).igsChorusFruit));
-            }
-            ip.add(new IPItem(island.getIgsFlag(SettingsFlag.ENTER_EXIT_MESSAGES), Material.NOTE_BLOCK, plugin.myLocale(uuid).igsJoinLeaveIslandMessage));
-            ip.add(new IPItem(island.getIgsFlag(SettingsFlag.MONSTER_SPAWN), Material.MOB_SPAWNER, plugin.myLocale(uuid).igsMobSpawning));
-            ip.add(new IPItem(island.getIgsFlag(SettingsFlag.VISITOR_ITEM_DROP), Material.GOLD_INGOT, plugin.myLocale(uuid).igsVisitorDrop));
-            ip.add(new IPItem(island.getIgsFlag(SettingsFlag.VISITOR_ITEM_PICKUP), Material.DIAMOND, plugin.myLocale(uuid).igsVisitorPickUp));
         }
         if (ip.size() > 0) {
             // Make sure size is a multiple of 9
@@ -294,7 +217,7 @@ public class SettingsPanel implements Listener {
             return;
         }
         // 1.7.x server
-        if (clazz == null && slot > lookup.size()) {
+        if (!hasArmorStand && slot > lookup.size()) {
             return;
         }
         // 1.8.x server
@@ -306,7 +229,7 @@ public class SettingsPanel implements Listener {
         if (lookup.containsKey(event.getCurrentItem().getType())) {
             // All other items
             flag = lookup.get(event.getCurrentItem().getType());
-        } else if (clazz != null && event.getCurrentItem().getType() == Material.ARMOR_STAND) {
+        } else if (hasArmorStand && event.getCurrentItem().getType() == Material.ARMOR_STAND) {
             // Special handling to avoid errors on 1.7.x servers
             flag = SettingsFlag.ARMOR_STAND;
         }
@@ -347,11 +270,11 @@ public class SettingsPanel implements Listener {
                         for (Player p : plugin.getServer().getOnlinePlayers()) {
                             if (island.onIsland(p.getLocation())) {
                                 if (flag.equals(SettingsFlag.NETHER_PVP)) {
-                                    p.sendMessage(ChatColor.RED + "" + ChatColor.BOLD + plugin.myLocale(p.getUniqueId()).igsNetherPVP + " " + plugin.myLocale(p.getUniqueId()).igsAllowed);
+                                    p.sendMessage(ChatColor.RED + "" + ChatColor.BOLD + plugin.myLocale(p.getUniqueId()).igs.get(SettingsFlag.NETHER_PVP) + " " + plugin.myLocale(p.getUniqueId()).igsAllowed);
                                 } else {
-                                    p.sendMessage(ChatColor.RED + "" + ChatColor.BOLD + plugin.myLocale(p.getUniqueId()).igsPVP + " " + plugin.myLocale(p.getUniqueId()).igsAllowed);
+                                    p.sendMessage(ChatColor.RED + "" + ChatColor.BOLD + plugin.myLocale(p.getUniqueId()).igs.get(SettingsFlag.PVP) + " " + plugin.myLocale(p.getUniqueId()).igsAllowed);
                                 }
-                                
+
                                 if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
                                     player.getWorld().playSound(player.getLocation(), Sound.valueOf("ARROW_HIT"), 1F, 1F);
                                 } else {
@@ -398,16 +321,16 @@ public class SettingsPanel implements Listener {
                             if (island.onIsland(p.getLocation())) {
                                 // Deactivate PVP
                                 if (flag.equals(SettingsFlag.NETHER_PVP)) {
-                                    p.sendMessage(ChatColor.GREEN + plugin.myLocale(p.getUniqueId()).igsNetherPVP + " " + plugin.myLocale(p.getUniqueId()).igsDisallowed);
+                                    p.sendMessage(ChatColor.GREEN + plugin.myLocale(p.getUniqueId()).igs.get(SettingsFlag.NETHER_PVP) + " " + plugin.myLocale(p.getUniqueId()).igsDisallowed);
                                 } else {
-                                    p.sendMessage(ChatColor.GREEN + plugin.myLocale(p.getUniqueId()).igsPVP + " " + plugin.myLocale(p.getUniqueId()).igsDisallowed);
+                                    p.sendMessage(ChatColor.GREEN + plugin.myLocale(p.getUniqueId()).igs.get(SettingsFlag.PVP) + " " + plugin.myLocale(p.getUniqueId()).igsDisallowed);
                                 }
                                 if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
                                     p.getWorld().playSound(p.getLocation(), Sound.valueOf("FIREWORK_TWINKLE"), 1F, 1F);
                                 } else {
                                     p.getWorld().playSound(p.getLocation(), Sound.ENTITY_FIREWORK_TWINKLE, 1F, 1F);
                                 }
-                                
+
                             }
                         }
                     }
