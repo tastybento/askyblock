@@ -1036,9 +1036,6 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                                 player.sendMessage(ChatColor.RED + plugin.myLocale().adminSetSpawnlocked);
                             }
                         } else {
-                            if (!plugin.getConfig().getBoolean("island.overridelimit")) {
-                                maxRange -= 16;
-                            }
                             try {
                                 newRange = Integer.valueOf(split[1]);
                             } catch (Exception e) {
@@ -1098,9 +1095,6 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                                     player.sendMessage(ChatColor.RED + plugin.myLocale().adminSetSpawnlocked);
                                 }
                             } else {
-                                if (!plugin.getConfig().getBoolean("island.overridelimit")) {
-                                    maxRange -= 16;
-                                }
                                 try {
                                     newRange = Integer.valueOf(split[1]) + island.getProtectionSize();
                                 } catch (Exception e) {
@@ -1543,9 +1537,6 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 } else {
                     int newRange = 0;
                     int maxRange = Settings.islandDistance;
-                    if (!plugin.getConfig().getBoolean("island.overridelimit")) {
-                        maxRange -= 16;
-                    }
                     try {
                         newRange = Integer.valueOf(split[2]) + island.getProtectionSize();
                     } catch (Exception e) {
@@ -1584,9 +1575,6 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 } else {
                     int newRange = 0;
                     int maxRange = Settings.islandDistance;
-                    if (!plugin.getConfig().getBoolean("island.overridelimit")) {
-                        maxRange -= 16;
-                    }
                     try {
                         newRange = Integer.valueOf(split[2]);
                     } catch (Exception e) {

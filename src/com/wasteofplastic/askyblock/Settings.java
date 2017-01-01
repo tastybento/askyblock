@@ -236,7 +236,6 @@ public class Settings {
     public static HashMap<String,Integer> limitedBlocks;
     public static long pvpRestartCooldown;
     public static long backupDuration;
-    public static boolean cleanUpBlocks;
     public static boolean acidBottle;
     public static boolean useOwnGenerator;
     public static List<String> freeLevels = new ArrayList<String>();

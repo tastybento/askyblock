@@ -48,6 +48,11 @@ public class DeleteIslandChunk {
         final World world = island.getCenter().getWorld();
         if (world == null)
             return;
+        // Determine if blocks need to be cleaned up or not
+        boolean cleanUpBlocks = false;
+        if (Settings.islandDistance - island.getProtectionSize() < 16) {
+            cleanUpBlocks = true;
+        }
         int range = island.getProtectionSize() / 2 * +1;
         final int minx = island.getMinProtectedX();
         final int minz = island.getMinProtectedZ();
@@ -109,7 +114,7 @@ public class DeleteIslandChunk {
                     }
                 } else {
                     // Add to clear up list if requested
-                    if (Settings.cleanUpBlocks) {
+                    if (cleanUpBlocks) {
                         chunksToClear.add(new Pair(x,z));
                     }
                 }

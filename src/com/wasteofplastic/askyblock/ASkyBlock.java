@@ -936,6 +936,18 @@ public class ASkyBlock extends JavaPlugin {
             Settings.islandDistance = 50;
             getLogger().info("Setting minimum island distance to 50");
         }
+        Settings.island_protectionRange = getConfig().getInt("island.protectionRange", 100);
+        if (Settings.island_protectionRange % 2 != 0) {
+            Settings.island_protectionRange--;
+            getLogger().warning("Protection range must be even, using " + Settings.island_protectionRange);
+        }
+        if (Settings.island_protectionRange > Settings.islandDistance) {
+            getLogger().warning("Protection range cannot be > island distance. Setting them to be equal.");
+            Settings.island_protectionRange = Settings.islandDistance;
+        }
+        if (Settings.island_protectionRange < 0) {
+            Settings.island_protectionRange = 0;
+        }
         Settings.islandXOffset = getConfig().getInt("island.xoffset", 0);
         if (Settings.islandXOffset < 0) {
             Settings.islandXOffset = 0;
@@ -1065,26 +1077,6 @@ public class ASkyBlock extends JavaPlugin {
             Settings.abandonedIslandLevel = 0;
         }
 
-        Settings.island_protectionRange = getConfig().getInt("island.protectionRange", 100);
-        if (Settings.island_protectionRange % 2 != 0) {
-            Settings.island_protectionRange--;
-            getLogger().warning("Protection range must be even, using " + Settings.island_protectionRange);
-        }
-        if (Settings.island_protectionRange > Settings.islandDistance) {
-            if (!getConfig().getBoolean("island.overridelimit", false)) {
-                if (Settings.island_protectionRange > (Settings.islandDistance - 16)) {
-                    Settings.island_protectionRange = Settings.islandDistance - 16;
-                    getLogger().warning(
-                            "*** Island protection range must be " + (Settings.islandDistance - 16) + " or less, (island range -16). Setting to: "
-                                    + Settings.island_protectionRange);
-                }
-            } else {
-                Settings.island_protectionRange = Settings.islandDistance;
-            }
-        }
-        if (Settings.island_protectionRange < 0) {
-            Settings.island_protectionRange = 0;
-        }
         Settings.resetChallenges = getConfig().getBoolean("general.resetchallenges", true);
         Settings.resetMoney = getConfig().getBoolean("general.resetmoney", true);
         Settings.clearInventory = getConfig().getBoolean("general.resetinventory", true);
@@ -1394,7 +1386,6 @@ public class ASkyBlock extends JavaPlugin {
         Settings.removeCompleteOntimeChallenges = getConfig().getBoolean("general.removecompleteonetimechallenges", false);
         Settings.addCompletedGlow = getConfig().getBoolean("general.addcompletedglow", true);
         // Clean up blocks around edges when deleting islands
-        Settings.cleanUpBlocks = getConfig().getBoolean("island.cleanupblocks",false);
         Settings.cleanRate = getConfig().getInt("island.cleanrate", 2);
         if (Settings.cleanRate < 1) {
             Settings.cleanRate = 1;
