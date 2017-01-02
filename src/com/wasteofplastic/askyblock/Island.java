@@ -18,6 +18,7 @@
 package com.wasteofplastic.askyblock;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -83,7 +84,23 @@ public class Island implements Cloneable {
     private Multiset<Material> tileEntityCount = HashMultiset.create();
     // Biome
     Biome biome;
+
+    // Legacy settings up to V3.0.5.1 for backwards compatibility. In new islands.yml, the key is stored in the file.
+    // This is the order of the 0's and 1's in the settings field of the islands.yml file. New settings will follow the SettingsFlag enum.
+    private enum LegacySettingsFlag {
+        ANVIL, ARMOR_STAND, BEACON,BED, BREAK_BLOCKS, BREEDING, BREWING, 
+        BUCKET, COLLECT_LAVA, COLLECT_WATER, CHEST, CRAFTING, 
+        CROP_TRAMPLE, DOOR, ENCHANTING, ENDERPEARL, FURNACE, 
+        GATE, HORSE_INVENTORY, HORSE_RIDING, HURT_MOBS, LEASH, LEVER_BUTTON, MUSIC, 
+        PLACE_BLOCKS, PORTAL, PRESSURE_PLATE, PVP, NETHER_PVP, REDSTONE, SHEARING,
+        VILLAGER_TRADING, CHORUS_FRUIT, ENTER_EXIT_MESSAGES, MONSTER_SPAWN;
+    }
     // Island protection settings
+    private static List<String> islandSettingsKey = new ArrayList<String>();
+    static {
+        islandSettingsKey.clear();
+        islandSettingsKey.add("");
+    }
     private HashMap<SettingsFlag, Boolean> igs = new HashMap<SettingsFlag, Boolean>();
     private int levelHandicap;
     /**
@@ -171,6 +188,10 @@ public class Island implements Cloneable {
          * Can extinguish fires by punching them
          */
         FIRE_EXTINGUISH,
+        /**
+         * Allow fire spread
+         */
+        FIRE_SPREAD,
         /**
          * Can use furnaces
          */
@@ -278,8 +299,9 @@ public class Island implements Cloneable {
      * New island by loading islands.yml
      * @param plugin
      * @param serial
+     * @param settingsKey 
      */
-    public Island(ASkyBlock plugin, String serial) {
+    public Island(ASkyBlock plugin, String serial, List<String> settingsKey) {
         this.plugin = plugin;
         // Bukkit.getLogger().info("DEBUG: adding serialized island to grid ");
         // Deserialize
@@ -339,18 +361,40 @@ public class Island implements Cloneable {
             // Check if protection options there
             if (!isSpawn) {
                 //plugin.getLogger().info("DEBUG: NOT SPAWN owner is " + owner + " location " + center);
-                // Set defaults
-                setDefaults();
+                // Set island guard setting defaults
+                setIgsDefaults();
                 // Load settings
                 if (split.length > 8) {
                     // Parse the 8th string into island guard protection settings
-                    int index = 0;
-                    // Run through the enum and set
-                    for (SettingsFlag f : SettingsFlag.values()) {
-                        if (split[8].length() == index) {
-                            break;
+                    // Try to get key from settingsKey
+                    if (settingsKey.isEmpty() && split[8].length() == LegacySettingsFlag.values().length) {
+                        // Legacy settings V3.0.5.3 and before
+                        int index = 0;
+                        // Run through the enum and set
+                        for (LegacySettingsFlag f : LegacySettingsFlag.values()) {
+                            if (split[8].length() == index) {
+                                break;
+                            }
+                            // Convert to new SettingsFlag enum
+                            SettingsFlag flag = SettingsFlag.valueOf(f.name());
+                            this.igs.put(flag, split[8].charAt(index++) == '1' ? true : false);
                         }
-                        this.igs.put(f, split[8].charAt(index++) == '1' ? true : false);
+                    } else {
+                        // Post V3.0.6
+                        if (!settingsKey.isEmpty()) {
+                            // Normal operation
+                            int index = 0;
+                            // Run through the enum and set
+                            for (String f : settingsKey) {
+                                // Convert to new SettingsFlag enum
+                                try {
+                                    SettingsFlag flag = SettingsFlag.valueOf(f);
+                                    this.igs.put(flag, split[8].charAt(index++) == '1' ? true : false);
+                                } catch (Exception e) {
+                                    // Does not exist
+                                }
+                            }
+                        } // else, just use the defaults
                     }
                 }
                 // Get the biome
@@ -379,9 +423,10 @@ public class Island implements Cloneable {
     /**
      * Resets the island protection settings to their default as set in config.yml
      */
-    public void setDefaults() {
+    public void setIgsDefaults() {
         for (SettingsFlag flag: SettingsFlag.values()) {
             if (Settings.defaultIslandSettings.get(flag) == null) {
+                // Default default
                 this.igs.put(flag, false);
             } else {
                 this.igs.put(flag, Settings.defaultIslandSettings.get(flag));
@@ -417,7 +462,7 @@ public class Island implements Cloneable {
         this.votes = 0;
         this.owner = owner;
         // Island Guard Settings
-        setDefaults();
+        setIgsDefaults();
     }
 
     /* (non-Javadoc)

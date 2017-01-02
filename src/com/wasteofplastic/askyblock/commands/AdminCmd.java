@@ -793,10 +793,10 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                         @Override
                         public void run() {
                             for (Island island : plugin.getGrid().getOwnedIslands().values()) {
-                                island.setDefaults();
+                                island.setIgsDefaults();
                             }
                             for (Island island : plugin.getGrid().getUnownedIslands().values()) {
-                                island.setDefaults();
+                                island.setIgsDefaults();
                             }
                             sender.sendMessage(ChatColor.GREEN + plugin.myLocale().settingsResetDone);
                             plugin.getGrid().saveGrid();
