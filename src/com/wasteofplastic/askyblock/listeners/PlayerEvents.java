@@ -641,7 +641,7 @@ public class PlayerEvents implements Listener {
                 } 
             }
             // No island, or no safe spot on island
-            if (plugin.getGrid().getSpawnPoint() != null) {
+            if (plugin.getGrid().getSpawn() != null) {
                 p.teleport(plugin.getGrid().getSpawnPoint());
                 // Set their fall distance to zero otherwise they crash onto their island and die
                 p.setFallDistance(0);
