@@ -444,6 +444,8 @@ general:
    # Use this section to limit how many entities can be added to an island.
    # 0 means the item will be blocked from placement completely.
    # Uncomment to set the limit. The numbers are just suggested values.
+   # The limit is per-world, so a hopper limit of 30 means up to 30 in the overworld and
+   # up to 30 in the nether.
    entitylimits:
      # Mobs, animals and other living entities
      #BAT: 10
