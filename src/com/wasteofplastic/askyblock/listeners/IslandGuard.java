@@ -1816,37 +1816,45 @@ public class IslandGuard implements Listener {
                 plugin.getLogger().info("DEBUG: Material " + e.getMaterial());
             }
             // Look along player's sight line to see if any blocks are fire
-            BlockIterator iter = new BlockIterator(e.getPlayer(), 10);
-            Block lastBlock = iter.next();
-            while (iter.hasNext()) {
-                lastBlock = iter.next();
-                if (DEBUG)
-                    plugin.getLogger().info("DEBUG: lastBlock = " + lastBlock.toString());
-                if (lastBlock.equals(e.getClickedBlock())) {
+            try {
+                BlockIterator iter = new BlockIterator(e.getPlayer(), 10);
+                Block lastBlock = iter.next();
+                while (iter.hasNext()) {
+                    lastBlock = iter.next();
                     if (DEBUG)
-                        plugin.getLogger().info("DEBUG: found clicked block");
-                    continue;
-                }
-                if (lastBlock.getType().equals(Material.FIRE)) {
-                    if (DEBUG)
-                        plugin.getLogger().info("DEBUG: fire found");
-                    if (island != null && island.isSpawn()) {
-                        if (!Settings.allowSpawnFireExtinguish) {
-                            e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
-                            e.setCancelled(true);
-                            return;
-                        }
-                    } else {
-                        if (Settings.allowFireExtinguish) {
-                            if (DEBUG)
-                                plugin.getLogger().info("DEBUG: extinguishing is allowed");
-                            continue;
+                        plugin.getLogger().info("DEBUG: lastBlock = " + lastBlock.toString());
+                    if (lastBlock.equals(e.getClickedBlock())) {
+                        if (DEBUG)
+                            plugin.getLogger().info("DEBUG: found clicked block");
+                        continue;
+                    }
+                    if (lastBlock.getType().equals(Material.FIRE)) {
+                        if (DEBUG)
+                            plugin.getLogger().info("DEBUG: fire found");
+                        if (island != null && island.isSpawn()) {
+                            if (!Settings.allowSpawnFireExtinguish) {
+                                e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
+                                e.setCancelled(true);
+                                return;
+                            }
                         } else {
-                            e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
-                            e.setCancelled(true);
-                            return;
+                            if (Settings.allowFireExtinguish) {
+                                if (DEBUG)
+                                    plugin.getLogger().info("DEBUG: extinguishing is allowed");
+                                continue;
+                            } else {
+                                e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
+                                e.setCancelled(true);
+                                return;
+                            }
                         }
                     }
+                }
+            } catch (Exception ex) {
+                // To catch at block iterator exceptions that can happen in the void or at the very top of blocks
+                if (DEBUG) {
+                    plugin.getLogger().info("DEBUG: block iterator error");
+                    ex.printStackTrace(); 
                 }
             }
             // Handle Shulker Boxes
