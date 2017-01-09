@@ -827,7 +827,7 @@ public class GridManager {
     }
 
     /**
-     * @return the spawn
+     * @return the spawn or null if spawn does not exist
      */
     public Island getSpawn() {
         return spawn;
@@ -1643,10 +1643,12 @@ public class GridManager {
     }
 
     /**
-     * @return the spawnPoint
+     * @return the spawnPoint or null if spawn does not exist
      */
     public Location getSpawnPoint() {
         //plugin.getLogger().info("DEBUG: getting spawn point : " + spawn.getSpawnPoint());
+        if (spawn == null)
+            return null;
         return spawn.getSpawnPoint();
     }
 
