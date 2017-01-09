@@ -75,7 +75,7 @@ public class ChatListener implements Listener {
     }
 
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onChat(final AsyncPlayerChatEvent event) {
         if (DEBUG)
             plugin.getLogger().info("DEBUG: " + event.getEventName());
