@@ -266,4 +266,5 @@ public class Settings {
     public static boolean kickedKeepInv;
     public static boolean hackSkeletonSpawners;
     public static HashMap<EntityType, Integer> entityLimits;
+    public static long acidItemDestroyTime;
 }

@@ -389,6 +389,11 @@ general:
    animaldamage: 0
    # Damage chickens in acid - true or false - chickens tend to go swimming...
    damagechickens: false
+   # Destroy items in water after this many seconds. Timing is variable and may occur
+   # up to 2x this time. If 0, items will not be removed. Acid damage does not need to
+   # be on for this setting to work. i.e., it'll work with water too.
+   # Items fizz when they are destroyed.
+   itemdestroyafter: 0
 
    # Damage type to apply in addition to acid damage
    # Types can be : SLOW, SLOW_DIGGING, CONFUSION,BLINDNESS, HUNGER, WEAKNESS and POISON

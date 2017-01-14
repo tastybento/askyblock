@@ -664,6 +664,8 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                     plugin.setUpdateCheck(null);
                 }
                 plugin.getIslandCmd().loadSchematics();
+                if (plugin.getAcidTask() != null)
+                    plugin.getAcidTask().runAcidItemRemovalTask();
                 sender.sendMessage(ChatColor.YELLOW + plugin.myLocale().reloadconfigReloaded);
                 return true;
             } else if (split[0].equalsIgnoreCase("topten")) {

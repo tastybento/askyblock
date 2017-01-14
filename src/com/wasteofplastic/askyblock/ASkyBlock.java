@@ -37,11 +37,7 @@ import org.bukkit.WorldType;
 import org.bukkit.block.Biome;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Animals;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Guardian;
-import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -154,6 +150,9 @@ public class ASkyBlock extends JavaPlugin {
 
     // Settings panel object
     private SettingsPanel settingsPanel;
+    
+    // Acid Item Removal Task
+    AcidTask acidTask;
 
     /**
      * Returns the World object for the island world named in config.yml.
@@ -528,40 +527,10 @@ public class ASkyBlock extends JavaPlugin {
                         }
                     }.runTaskTimer(plugin, 0L, 20L); // Check status every second
                 }
-                // This part will kill monsters if they fall into the water
-                // because it
-                // is acid
-                if (Settings.mobAcidDamage > 0D || Settings.animalAcidDamage > 0D) {
-                    getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
-                        @Override
-                        public void run() {
-                            List<Entity> entList = islandWorld.getEntities();
-                            for (Entity current : entList) {
-                                if (plugin.isOnePointEight() && current instanceof Guardian) {
-                                    // Guardians are immune to acid too
-                                    continue;
-                                }
-                                if ((current instanceof Monster) && Settings.mobAcidDamage > 0D) {
-                                    if ((current.getLocation().getBlock().getType() == Material.WATER)
-                                            || (current.getLocation().getBlock().getType() == Material.STATIONARY_WATER)) {
-                                        ((Monster) current).damage(Settings.mobAcidDamage);
-                                        // getLogger().info("Killing monster");
-                                    }
-                                } else if ((current instanceof Animals) && Settings.animalAcidDamage > 0D) {
-                                    if ((current.getLocation().getBlock().getType() == Material.WATER)
-                                            || (current.getLocation().getBlock().getType() == Material.STATIONARY_WATER)) {
-                                        if (!current.getType().equals(EntityType.CHICKEN)) {
-                                            ((Animals) current).damage(Settings.animalAcidDamage);
-                                        } else if (Settings.damageChickens) {
-                                            ((Animals) current).damage(Settings.animalAcidDamage);
-                                        }
-                                        // getLogger().info("Killing animal");
-                                    }
-                                }
-                            }
-                        }
-                    }, 0L, 20L);
-                }
+                
+                // Run acid tasks
+                acidTask = new AcidTask(plugin);
+
             }
         });
     }
@@ -777,6 +746,8 @@ public class ASkyBlock extends JavaPlugin {
             getLogger().warning("You should back up your world before running this");
             getLogger().warning("*********************************************************");
         }
+        // Destroy items in acid timer
+        Settings.acidItemDestroyTime = getConfig().getLong("general.itemdestroyafter",0L) * 20L;
         // Hack skeleton spawners for 1.11
         Settings.hackSkeletonSpawners = getConfig().getBoolean("schematicsection.hackskeletonspawners", true);
         // Allow Obsidian Scooping
@@ -1698,5 +1669,12 @@ public class ASkyBlock extends JavaPlugin {
      */
     public HashMap<String, ASLocale> getAvailableLocales() {
         return availableLocales;
+    }
+
+    /**
+     * @return the acidTask
+     */
+    public AcidTask getAcidTask() {
+        return acidTask;
     }
 }
