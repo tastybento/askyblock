@@ -193,9 +193,14 @@ island:
    # PVP cooldown in seconds. Players cannot toggle PVP off and on until this timeout
    pvpcooldown: 60
    
-   # How many seconds will the player keeps his flymode while flying outside his island?
+   # How many seconds will the player keeps his flymode while flying outside his island.
    # Negative value will be considered as 0.
    flytimeoutside: 0
+   
+   # The permissions listed below will be given to the player while he is inside his island.
+   # They will be automatically revoked when he leaves his island.
+   islandtemporaryperms:
+   #- "amazing.permission"
    
    # System settings - these cannot be changed by players, only viewed
    
