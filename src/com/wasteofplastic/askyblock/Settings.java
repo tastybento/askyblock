@@ -93,6 +93,9 @@ public class Settings {
 
     // Flymode
     public static int flyTimeOutside;
+    
+    // Temporary Permissions
+    public static List<String> temporaryPermissions;
 
     // System settings
     public static boolean allowChestDamage;
