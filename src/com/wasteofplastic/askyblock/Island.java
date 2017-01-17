@@ -157,6 +157,10 @@ public class Island implements Cloneable {
          */
         CHEST,
         /**
+         * Can eat and teleport with chorus fruit
+         */
+        CHORUS_FRUIT,
+        /**
          * Can use the work bench
          */
         CRAFTING,
@@ -184,6 +188,10 @@ public class Island implements Cloneable {
          * Can throw ender pearls
          */
         ENDERPEARL,
+        /**
+         * Can toggle enter/exit names to island
+         */
+        ENTER_EXIT_MESSAGES,
         /**
          * Can extinguish fires by punching them
          */
@@ -277,14 +285,6 @@ public class Island implements Cloneable {
          */
         VILLAGER_TRADING,
         /**
-         * Can eat and teleport with chorus fruit
-         */
-        CHORUS_FRUIT,
-        /**
-         * Can toggle enter/exit names to island
-         */
-        ENTER_EXIT_MESSAGES,
-        /**
          * Visitors can drop items
          */
         VISITOR_ITEM_DROP,
@@ -359,77 +359,59 @@ public class Island implements Cloneable {
                 }
             }
             // Check if protection options there
-            if (!isSpawn) {
-                //plugin.getLogger().info("DEBUG: NOT SPAWN owner is " + owner + " location " + center);
-                // Set island guard setting defaults
-                setIgsDefaults();
-                // Load settings
-                if (split.length > 8) {
-                    // Parse the 8th string into island guard protection settings
-                    // Try to get key from settingsKey
-                    if (settingsKey.isEmpty() && split[8].length() == LegacySettingsFlag.values().length) {
-                        // Legacy settings V3.0.5.3 and before
-                        int index = 0;
-                        // Run through the enum and set
-                        for (LegacySettingsFlag f : LegacySettingsFlag.values()) {
-                            if (split[8].length() == index) {
-                                break;
-                            }
-                            // Convert to new SettingsFlag enum
-                            SettingsFlag flag = SettingsFlag.valueOf(f.name());
-                            this.igs.put(flag, split[8].charAt(index++) == '1' ? true : false);
-                        }
-                    } else {
-                        // Post V3.0.6
-                        if (!settingsKey.isEmpty()) {
-                            // Normal operation
-                            int index = 0;
-                            // Run through the enum and set
-                            for (String f : settingsKey) {
-                                // Convert to new SettingsFlag enum
-                                try {
-                                    SettingsFlag flag = SettingsFlag.valueOf(f);
-                                    this.igs.put(flag, split[8].charAt(index++) == '1' ? true : false);
-                                } catch (Exception e) {
-                                    // Does not exist
-                                }
-                            }
-                        } // else, just use the defaults
-                    }
-                }
-                // Get the biome
-                if (split.length > 9) {
-                    try {
-                        biome = Biome.valueOf(split[9]);
+            if (split.length > 8) {
+                setSettings(split[8], settingsKey);
+            } else {
+                setSettings(null, settingsKey);
+            }
 
-                    } catch (IllegalArgumentException ee) {
-                        // Unknown biome
-                    }
-                }
-                // Get island level handicap
-                if (split.length > 10) {
-                    try {
-                        this.levelHandicap = Integer.valueOf(split[10]);
-                    } catch (Exception e) {
-                        this.levelHandicap = 0;
-                    }
+            // Get the biome
+            if (split.length > 9) {
+                try {
+                    biome = Biome.valueOf(split[9]);
+
+                } catch (IllegalArgumentException ee) {
+                    // Unknown biome
                 }
             }
+            // Get island level handicap
+            if (split.length > 10) {
+                try {
+                    this.levelHandicap = Integer.valueOf(split[10]);
+                } catch (Exception e) {
+                    this.levelHandicap = 0;
+                }
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     /**
-     * Resets the island protection settings to their default as set in config.yml
+     * Resets the protection settings to their default as set in config.yml for this island
      */
     public void setIgsDefaults() {
         for (SettingsFlag flag: SettingsFlag.values()) {
-            if (Settings.defaultIslandSettings.get(flag) == null) {
+            if (!Settings.defaultIslandSettings.containsKey(flag)) {
                 // Default default
                 this.igs.put(flag, false);
             } else {
                 this.igs.put(flag, Settings.defaultIslandSettings.get(flag));
+            }
+        }
+    }
+    
+    /**
+     * Reset spawn protection settings to their default as set in config.yml for this island
+     */
+    public void setSpawnDefaults() {
+        for (SettingsFlag flag: SettingsFlag.values()) {
+            if (!Settings.defaultSpawnSettings.containsKey(flag)) {
+                // Default default
+                this.igs.put(flag, false);
+            } else {
+                this.igs.put(flag, Settings.defaultSpawnSettings.get(flag));
             }
         }
     }
@@ -740,6 +722,16 @@ public class Island implements Cloneable {
         if (owner != null) {
             ownerString = owner.toString();
         }
+
+        return center.getBlockX() + ":" + center.getBlockY() + ":" + center.getBlockZ() + ":" + protectionRange + ":" 
+        + islandDistance + ":" + ownerString + ":" + locked + ":" + purgeProtected + ":" + getSettings() + ":" + getBiome().toString() + ":" + levelHandicap;
+    }
+
+    /**
+     * @return Serialized set of settings
+     */
+    public String getSettings() {
+        String result = "";
         // Personal island protection settings - serialize enum into 1's and 0's representing the boolean values
         //plugin.getLogger().info("DEBUG: igs = " + igs.toString());
         try {
@@ -757,8 +749,7 @@ public class Island implements Cloneable {
             e.printStackTrace();
             result = "";
         }
-        return center.getBlockX() + ":" + center.getBlockY() + ":" + center.getBlockZ() + ":" + protectionRange + ":" 
-        + islandDistance + ":" + ownerString + ":" + locked + ":" + purgeProtected + ":" + result + ":" + getBiome().toString() + ":" + levelHandicap;
+        return result;
     }
 
     /**
@@ -995,5 +986,52 @@ public class Island implements Cloneable {
      */
     public void setLevelHandicap(int levelHandicap) {
         this.levelHandicap = levelHandicap;
+    }
+
+    /**
+     * Sets the settings for the island. If the island is spawn, then default spawn settings will be used
+     * @param settings
+     * @param settingsKey
+     */
+    public void setSettings(String settings, List<String> settingsKey) {
+        if (isSpawn) {
+            setSpawnDefaults();
+        } else {
+            setIgsDefaults();
+        }
+        if(settings == null || settings.isEmpty())
+            return;
+        // Parse the 8th string into island guard protection settings
+        // Try to get key from settingsKey
+        if (settingsKey.isEmpty() && settings.length() == LegacySettingsFlag.values().length) {
+            // Legacy settings V3.0.5.3 and before
+            int index = 0;
+            // Run through the enum and set
+            for (LegacySettingsFlag f : LegacySettingsFlag.values()) {
+                if (settings.length() == index) {
+                    break;
+                }
+                // Convert to new SettingsFlag enum
+                SettingsFlag flag = SettingsFlag.valueOf(f.name());
+                this.igs.put(flag, settings.charAt(index++) == '1' ? true : false);
+            }
+        } else {
+            // Post V3.0.6
+            if (!settingsKey.isEmpty()) {
+                // Normal operation
+                int index = 0;
+                // Run through the enum and set
+                for (String f : settingsKey) {
+                    // Convert to new SettingsFlag enum
+                    try {
+                        SettingsFlag flag = SettingsFlag.valueOf(f);
+                        this.igs.put(flag, settings.charAt(index++) == '1' ? true : false);
+                    } catch (Exception e) {
+                        // Does not exist
+                    }
+                }
+            } // else, just use the defaults
+        }
+
     }
 }

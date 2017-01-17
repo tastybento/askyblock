@@ -103,14 +103,8 @@ public class IslandGuard1_9 implements Listener {
             // Check island
             Island island = plugin.getGrid().getIslandAt(player.getLocation());
             if (island !=null) {
-                if (island.isSpawn()) {
-                    if (Settings.spawnSettings.get(SettingsFlag.PLACE_BLOCKS)) {
-                        return;
-                    }
-                } else {
-                    if (island.getMembers().contains(player.getUniqueId()) || island.getIgsFlag(SettingsFlag.PLACE_BLOCKS)) {
-                        return;
-                    }
+                if (island.getMembers().contains(player.getUniqueId()) || island.getIgsFlag(SettingsFlag.PLACE_BLOCKS)) {
+                    return;
                 }
             }
             // Silently cancel the event
@@ -143,14 +137,8 @@ public class IslandGuard1_9 implements Listener {
             // Check island
             Island island = plugin.getGrid().getIslandAt(e.getRightClicked().getLocation());
             if (island !=null) {
-                if (island.isSpawn()) {
-                    if (Settings.spawnSettings.get(SettingsFlag.BREAK_BLOCKS)) {
-                        return;
-                    }
-                } else {
-                    if (island.getMembers().contains(e.getPlayer().getUniqueId()) || island.getIgsFlag(SettingsFlag.BREAK_BLOCKS)) {
-                        return;
-                    }
+                if (island.getMembers().contains(e.getPlayer().getUniqueId()) || island.getIgsFlag(SettingsFlag.BREAK_BLOCKS)) {
+                    return;
                 }
             }
             e.setCancelled(true);
@@ -257,12 +245,6 @@ public class IslandGuard1_9 implements Listener {
             }
             // Check island
             Island island = plugin.getGrid().getIslandAt(e.getEntity().getLocation());
-            if (island != null && island.isSpawn() && Settings.spawnSettings.get(SettingsFlag.BREAK_BLOCKS)) {
-                if (DEBUG) {
-                    plugin.getLogger().info("1.9 " +"Spawn and breaking blocks is allowed");
-                }
-                return;
-            }
             if (island != null && island.getIgsFlag(SettingsFlag.BREAK_BLOCKS)) {
                 if (DEBUG) {
                     plugin.getLogger().info("1.9 " +"Visitor is allowed to break blocks");

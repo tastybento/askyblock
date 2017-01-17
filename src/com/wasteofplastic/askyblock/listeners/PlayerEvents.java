@@ -101,29 +101,29 @@ public class PlayerEvents implements Listener {
             player.setFlying(true);
         }
     }
-    
+
     /**
      * Removes flymode with a delay if player leave his island.
      * @param e
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerLeaveIsland(IslandExitEvent e){
-    	final Player player = plugin.getServer().getPlayer(e.getPlayer());
+        final Player player = plugin.getServer().getPlayer(e.getPlayer());
         if(VaultHelper.checkPerm(player, Settings.PERMPREFIX + "islandfly") && !plugin.getGrid().playerIsOnIsland(player) && player.isFlying()){
-        	plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-				
-				@Override
-				public void run() {
-					if(!plugin.getGrid().playerIsOnIsland(player) && player.isFlying()){
-						player.setAllowFlight(false);
-						player.setFlying(false);
-					}
-					
-				}
-			}, 20*Settings.flyTimeOutside);
+            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+
+                @Override
+                public void run() {
+                    if(!plugin.getGrid().playerIsOnIsland(player) && player.isFlying()){
+                        player.setAllowFlight(false);
+                        player.setFlying(false);
+                    }
+
+                }
+            }, 20*Settings.flyTimeOutside);
         }
     }
-        
+
     /**
      * Places player back on their island if the setting is true
      * @param e
@@ -232,13 +232,9 @@ public class PlayerEvents implements Listener {
         if (!IslandGuard.inWorld(e.getPlayer())) {
             return;
         }
-        if (plugin.getGrid().isAtSpawn(e.getItem().getLocation())) {
-            if (Settings.spawnSettings.get(SettingsFlag.VISITOR_ITEM_PICKUP) || e.getPlayer().isOp() || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
-                    || plugin.getGrid().locationIsOnIsland(e.getPlayer(), e.getItem().getLocation())) {
-                return;
-            }
-        }
-        if ((plugin.getGrid().getIslandAt(e.getItem().getLocation()) != null && plugin.getGrid().getIslandAt(e.getItem().getLocation()).getIgsFlag(SettingsFlag.VISITOR_ITEM_DROP)) || e.getPlayer().isOp() || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
+        Island island = plugin.getGrid().getIslandAt(e.getItem().getLocation());
+        if ((island != null && island.getIgsFlag(SettingsFlag.VISITOR_ITEM_PICKUP)) 
+                || e.getPlayer().isOp() || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
                 || plugin.getGrid().locationIsOnIsland(e.getPlayer(), e.getItem().getLocation())) {
             return;
         }
@@ -256,13 +252,9 @@ public class PlayerEvents implements Listener {
         if (!IslandGuard.inWorld(e.getPlayer())) {
             return;
         }
-        if (plugin.getGrid().isAtSpawn(e.getItemDrop().getLocation())) {
-            if (Settings.spawnSettings.get(SettingsFlag.VISITOR_ITEM_DROP) || e.getPlayer().isOp() || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
-                    || plugin.getGrid().locationIsOnIsland(e.getPlayer(), e.getItemDrop().getLocation())) {
-                return;
-            }
-        }
-        if ((plugin.getGrid().getIslandAt(e.getItemDrop().getLocation()) != null && plugin.getGrid().getIslandAt(e.getItemDrop().getLocation()).getIgsFlag(SettingsFlag.VISITOR_ITEM_DROP)) || e.getPlayer().isOp() || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
+        Island island = plugin.getGrid().getIslandAt(e.getItemDrop().getLocation());
+        if ((island != null && island.getIgsFlag(SettingsFlag.VISITOR_ITEM_DROP)) 
+                || e.getPlayer().isOp() || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
                 || plugin.getGrid().locationIsOnIsland(e.getPlayer(), e.getItemDrop().getLocation())) {
             return;
         }
@@ -414,25 +406,12 @@ public class PlayerEvents implements Listener {
                 } else {
                     if (DEBUG )
                         plugin.getLogger().info("DEBUG: islandTo is not null enderpearl");
-
-                    if (islandTo.isSpawn()) {
-                        if (DEBUG)
-                            plugin.getLogger().info("DEBUG: islandTo is spawn");
-
-                        if (Settings.spawnSettings.get(SettingsFlag.ENDERPEARL)) {
-                            if (DEBUG )
-                                plugin.getLogger().info("DEBUG: spawn enderpearl allowed");
-                            return;
-                        }
-                    } else {
+                    if (DEBUG )
+                        plugin.getLogger().info("DEBUG: islandTo is regular island");
+                    if (islandTo.getIgsFlag(SettingsFlag.ENDERPEARL) || islandTo.getMembers().contains(e.getPlayer().getUniqueId())) {
                         if (DEBUG )
-                            plugin.getLogger().info("DEBUG: islandTo is regular island");
-                        // Regular island
-                        if (islandTo.getIgsFlag(SettingsFlag.ENDERPEARL) || islandTo.getMembers().contains(e.getPlayer().getUniqueId())) {
-                            if (DEBUG )
-                                plugin.getLogger().info("DEBUG: enderpearl allowed");
-                            return;
-                        }
+                            plugin.getLogger().info("DEBUG: enderpearl allowed");
+                        return;
                     }
                 }
                 if (DEBUG )
@@ -455,15 +434,8 @@ public class PlayerEvents implements Listener {
                             cancel = true;
                         }
                     } else {
-                        if (islandTo.isSpawn()) {
-                            if (!Settings.spawnSettings.get(SettingsFlag.CHORUS_FRUIT)) {
-                                cancel = true;
-                            }
-                        } else {
-                            // Regular island
-                            if (!islandTo.getIgsFlag(SettingsFlag.CHORUS_FRUIT) && !islandTo.getMembers().contains(e.getPlayer().getUniqueId())) {
-                                cancel = true;
-                            }
+                        if (!islandTo.getIgsFlag(SettingsFlag.CHORUS_FRUIT) && !islandTo.getMembers().contains(e.getPlayer().getUniqueId())) {
+                            cancel = true;
                         }
                     }
                     if (islandFrom == null) {
@@ -471,15 +443,8 @@ public class PlayerEvents implements Listener {
                             cancel = true;
                         }
                     } else {
-                        if (islandFrom.isSpawn()) {
-                            if (!Settings.spawnSettings.get(SettingsFlag.CHORUS_FRUIT)) {
-                                cancel = true;
-                            }
-                        } else {
-                            // Regular island
-                            if (!islandFrom.getIgsFlag(SettingsFlag.CHORUS_FRUIT) && !islandFrom.getMembers().contains(e.getPlayer().getUniqueId())) {
-                                cancel = true;
-                            }
+                        if (!islandFrom.getIgsFlag(SettingsFlag.CHORUS_FRUIT) && !islandFrom.getMembers().contains(e.getPlayer().getUniqueId())) {
+                            cancel = true;
                         }
                     }
                     if (cancel) {

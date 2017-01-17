@@ -287,10 +287,12 @@ public class Players {
         // Island info - to be used if the island.yml file is removed
         playerInfo.set("islandInfo",null);
         if (hasIsland) {
-            Island island = plugin.getGrid().getIsland(uuid);
-            if (island != null) {
-                playerInfo.set("islandInfo", island.save());
-            } 
+            if (plugin.getGrid() != null) {
+                Island island = plugin.getGrid().getIsland(uuid);
+                if (island != null) {
+                    playerInfo.set("islandInfo", island.save());
+                } 
+            }
         }
         // Control panel
         playerInfo.set("useControlPanel", useControlPanel);
@@ -873,13 +875,13 @@ public class Players {
     public List<String> getChallengesDone() {
         List<String> result = new ArrayList<String>();
         for (Entry<String, Boolean> en : challengeList.entrySet()) {
-           if (en.getValue()) {
-               result.add(en.getKey());
-           }
+            if (en.getValue()) {
+                result.add(en.getKey());
+            }
         }
         return result;
     }
-    
+
     /**
      * @return a list of challenges this player has not completed
      * Used by the complete admin command
@@ -887,9 +889,9 @@ public class Players {
     public List<String> getChallengesNotDone() {
         List<String> result = new ArrayList<String>();
         for (Entry<String, Boolean> en : challengeList.entrySet()) {
-           if (!en.getValue()) {
-               result.add(en.getKey());
-           }
+            if (!en.getValue()) {
+                result.add(en.getKey());
+            }
         }
         return result;
     }

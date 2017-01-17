@@ -549,6 +549,8 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 if (newSpawn == null) {
                     // Make the new spawn
                     newSpawn = plugin.getGrid().addIsland(closestIsland.getBlockX(), closestIsland.getBlockZ());
+                    // Set the default spawn island settings
+                    newSpawn.setSpawnDefaults();
                 }
                 plugin.getGrid().setSpawn(newSpawn);
                 plugin.getGrid().setSpawnPoint(player.getLocation());
@@ -564,6 +566,8 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 if (newSpawn.isLocked()) {
                     player.sendMessage(ChatColor.RED + plugin.myLocale().adminSetSpawnlocked);
                 }
+                // Save grid async
+                plugin.getGrid().saveGrid(true);
                 return true;
             } else if (split[0].equalsIgnoreCase("info") || split[0].equalsIgnoreCase("setrange")) {
                 // Find the closest island

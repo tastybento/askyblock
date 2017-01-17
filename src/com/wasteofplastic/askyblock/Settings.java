@@ -89,7 +89,7 @@ public class Settings {
     /**
      * Default spawn protection settings
      */
-    public static HashMap<SettingsFlag, Boolean> spawnSettings = new HashMap<SettingsFlag, Boolean>();
+    public static HashMap<SettingsFlag, Boolean> defaultSpawnSettings = new HashMap<SettingsFlag, Boolean>();
 
     // Flymode
     public static int flyTimeOutside;

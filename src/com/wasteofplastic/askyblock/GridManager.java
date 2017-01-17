@@ -20,7 +20,6 @@ package com.wasteofplastic.askyblock;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -34,6 +33,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -118,25 +118,59 @@ public class GridManager {
                         settingsKey = islandYaml.getStringList(SETTINGS_KEY);
                         // Check the key is valid, if not, all previous settings are wiped.
                         check:
-                        for (String key: settingsKey) {
-                            boolean found = false;
-                            for (SettingsFlag flag: SettingsFlag.values()) {
-                                if (flag.toString().equals(key)) {
-                                    found = true;
-                                    break;
-                                }                               
+                            for (String key: settingsKey) {
+                                boolean found = false;
+                                for (SettingsFlag flag: SettingsFlag.values()) {
+                                    if (flag.toString().equals(key)) {
+                                        found = true;
+                                        break;
+                                    }                               
+                                }
+                                if (!found) {
+                                    plugin.getLogger().severe(ISLANDS_FILENAME + " has an invalid settings key, all island settings will be default, sorry.");
+                                    settingsKey.clear();
+                                    break check;
+                                }
                             }
-                            if (!found) {
-                                plugin.getLogger().severe(ISLANDS_FILENAME + " has an invalid settings key, all island settings will be default, sorry.");
-                                settingsKey.clear();
-                                break check;
-                            }
-                        }
                     }
+                    // Load spawn, if it exists - V3.0.6 onwards
+                    if (islandYaml.contains("spawn")) {
+                        Location spawnLoc = Util.getLocationString(islandYaml.getString("spawn.location"));
+                        // Validate entries
+                        if (spawnLoc != null && spawnLoc.getWorld() != null && spawnLoc.getWorld().equals(ASkyBlock.getIslandWorld())) {
+                            Location spawnPoint = Util.getLocationString(islandYaml.getString("spawn.spawnpoint"));
+                            int range = islandYaml.getInt("spawn.range", Settings.island_protectionRange);
+                            if (range < 0) {
+                                range = Settings.island_protectionRange;
+                            }
+                            boolean locked = islandYaml.getBoolean("spawn.locked");
+                            String biomeString = islandYaml.getString("spawn.biome");
+                            Biome biome = Biome.PLAINS;
+                            try {
+                                biome = Biome.valueOf(biomeString);
+                            } catch (Exception e) {}
+                            String spawnSettings = islandYaml.getString("spawn.settings");
+                            
+                            // Make the spawn
+                            Island newSpawn = new Island(plugin, spawnLoc.getBlockX(), spawnLoc.getBlockZ());
+                            newSpawn.setSpawn(true);
+                            if (spawnPoint != null)
+                                newSpawn.setSpawnPoint(spawnPoint);
+                            newSpawn.setProtectionSize(range);
+                            newSpawn.setBiome(biome);
+                            newSpawn.setLocked(locked);
+                            newSpawn.setSettings(spawnSettings, settingsKey);
+                            spawn = newSpawn;
+                        }
+
+                    }
+                    // Load the islands
                     islandList = islandYaml.getStringList(Settings.worldName);
                     for (String island : islandList) {
                         Island newIsland = addIsland(island, settingsKey);
-                        ownershipMap.put(newIsland.getOwner(), newIsland);
+                        if (newIsland.getOwner() != null) {
+                            ownershipMap.put(newIsland.getOwner(), newIsland);
+                        }
                         if (newIsland.isSpawn()) {
                             spawn = newIsland;
                         }
@@ -441,7 +475,7 @@ public class GridManager {
 
     /**
      * Saves the grid. Option to save sync or async.
-     * Asymc cannot be used when disabling the plugin
+     * Async cannot be used when disabling the plugin
      * @param async
      */
     public void saveGrid(boolean async) {
@@ -458,7 +492,17 @@ public class GridManager {
         for (int x : islandGrid.keySet()) {
             for (int z : islandGrid.get(x).keySet()) {
                 Island island = islandGrid.get(x).get(z);
-                islandList.add(island.save());
+                if (!island.isSpawn()) {
+                    islandList.add(island.save());
+                } else {
+                    // Spawn
+                    islandYaml.set("spawn.location", Util.getStringLocation(island.getCenter()));
+                    islandYaml.set("spawn.spawnpoint", Util.getStringLocation(island.getSpawnPoint()));
+                    islandYaml.set("spawn.range", island.getProtectionSize());
+                    islandYaml.set("spawn.locked", island.isLocked());
+                    islandYaml.set("spawn.biome", island.getBiome().toString());
+                    islandYaml.set("spawn.settings", island.getSettings());                    
+                }
             }
         }
         islandYaml.set(Settings.worldName, islandList);

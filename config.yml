@@ -745,6 +745,8 @@ spawn:
   COLLECT_WATER: false
   # Allow visitors to access chests of any kind, droppers, dispensers and hoppers
   CHEST: true
+  # Allow visitors to eat/use chorus fruit
+  CHORUS_FRUIT: false
   # Allow visitors to use crafting benches
   CRAFTING: true
   # Allow creepers to hurt players (but not damage blocks)

@@ -77,14 +77,8 @@ public class IslandGuard1_8 implements Listener {
             // Check island
             Island island = plugin.getGrid().getIslandAt(e.getRightClicked().getLocation());
             if (island !=null) {
-                if (island.isSpawn()) {
-                    if (Settings.spawnSettings.get(SettingsFlag.ARMOR_STAND)) {
-                        return;
-                    }
-                } else {
-                    if (island.getMembers().contains(e.getPlayer().getUniqueId()) || island.getIgsFlag(SettingsFlag.ARMOR_STAND)) {
-                        return;
-                    }
+                if (island.getMembers().contains(e.getPlayer().getUniqueId()) || island.getIgsFlag(SettingsFlag.ARMOR_STAND)) {
+                    return;
                 }
             }
             // plugin.getLogger().info("1.8 " + "DEBUG: Armor stand clicked off island");
@@ -205,9 +199,6 @@ public class IslandGuard1_8 implements Listener {
             }
             // Check island
             Island island = plugin.getGrid().getIslandAt(e.getEntity().getLocation());
-            if (island != null && island.isSpawn() && Settings.spawnSettings.get(SettingsFlag.BREAK_BLOCKS)) {
-                return;
-            }
             if (island != null && island.getIgsFlag(SettingsFlag.BREAK_BLOCKS)) {
                 return;
             }

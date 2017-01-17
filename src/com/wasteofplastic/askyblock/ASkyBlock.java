@@ -150,7 +150,7 @@ public class ASkyBlock extends JavaPlugin {
 
     // Settings panel object
     private SettingsPanel settingsPanel;
-    
+
     // Acid Item Removal Task
     AcidTask acidTask;
 
@@ -527,7 +527,7 @@ public class ASkyBlock extends JavaPlugin {
                         }
                     }.runTaskTimer(plugin, 0L, 20L); // Check status every second
                 }
-                
+
                 // Run acid tasks
                 acidTask = new AcidTask(plugin);
 
@@ -1216,12 +1216,17 @@ public class ASkyBlock extends JavaPlugin {
         // Default settings hashmap - make sure this is kept up to date with new settings
         Settings.defaultIslandSettings.clear();
         for (SettingsFlag flag: SettingsFlag.values()) {
-            Settings.defaultIslandSettings.put(flag, getConfig().getBoolean("island.settings." + flag.name(), false));
+            if (getConfig().getConfigurationSection("island.settings").contains(flag.name())) {
+                Settings.defaultIslandSettings.put(flag, getConfig().getBoolean("island.settings." + flag.name(), false));
+            }
         }
-        Settings.spawnSettings.clear();
+        Settings.defaultSpawnSettings.clear();
         for (SettingsFlag flag: SettingsFlag.values()) {
-            Settings.spawnSettings.put(flag, getConfig().getBoolean("spawn." + flag.name(), false));
+            if (getConfig().getConfigurationSection("spawn").contains(flag.name())) {
+                Settings.defaultSpawnSettings.put(flag, getConfig().getBoolean("spawn." + flag.name()));
+            }
         }
+
         // Challenges
         getChallenges();
         // Challenge completion

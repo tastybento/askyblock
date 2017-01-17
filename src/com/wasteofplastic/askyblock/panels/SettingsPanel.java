@@ -55,44 +55,55 @@ public class SettingsPanel implements Listener {
         hasChorusFruit = (Material.getMaterial("CHORUS_FRUIT") != null);
         hasArmorStand = (Material.getMaterial("ARMOR_STAND") != null);
         // No icon or flag can be the same, they must all be unique because this is a bimap.
-        lookup.put( Material.ANVIL,SettingsFlag.ANVIL);
+        lookup.put(Material.POTION, SettingsFlag.ACID_DAMAGE);
+        lookup.put(Material.ANVIL,SettingsFlag.ANVIL);
         if (hasArmorStand)
             lookup.put(Material.ARMOR_STAND, SettingsFlag.ARMOR_STAND);
-        lookup.put( Material.BEACON,SettingsFlag.BEACON);
-        lookup.put( Material.BED,SettingsFlag.BED);
-        lookup.put( Material.STONE,SettingsFlag.BREAK_BLOCKS);
-        lookup.put( Material.CARROT_ITEM,SettingsFlag.BREEDING);
-        lookup.put( Material.BREWING_STAND_ITEM,SettingsFlag.BREWING);
-        lookup.put( Material.LAVA_BUCKET,SettingsFlag.BUCKET);
-        lookup.put( Material.CHEST,SettingsFlag.CHEST);
-        lookup.put( Material.WORKBENCH,SettingsFlag.CRAFTING);
-        lookup.put( Material.WHEAT,SettingsFlag.CROP_TRAMPLE);
-        lookup.put( Material.WOOD_DOOR,SettingsFlag.DOOR);
-        lookup.put( Material.ENCHANTMENT_TABLE,SettingsFlag.ENCHANTING);
-        lookup.put( Material.ENDER_PEARL,SettingsFlag.ENDERPEARL);
-        lookup.put( Material.FURNACE,SettingsFlag.FURNACE);
-        lookup.put( Material.FENCE_GATE,SettingsFlag.GATE);
-        lookup.put( Material.GOLD_BARDING,SettingsFlag.HORSE_INVENTORY);
-        lookup.put( Material.DIAMOND_BARDING,SettingsFlag.HORSE_RIDING);
-        lookup.put( Material.EGG,SettingsFlag.HURT_MOBS);
-        lookup.put( Material.LEASH,SettingsFlag.LEASH);
-        lookup.put( Material.LEVER,SettingsFlag.LEVER_BUTTON);
-        lookup.put( Material.JUKEBOX,SettingsFlag.MUSIC);
-        lookup.put( Material.DIRT,SettingsFlag.PLACE_BLOCKS);
-        lookup.put( Material.OBSIDIAN,SettingsFlag.PORTAL);
-        lookup.put( Material.GOLD_PLATE,SettingsFlag.PRESSURE_PLATE);
-        lookup.put( Material.ARROW,SettingsFlag.PVP);
-        lookup.put( Material.NETHERRACK,SettingsFlag.NETHER_PVP);
-        lookup.put( Material.REDSTONE_COMPARATOR,SettingsFlag.REDSTONE);
-        lookup.put( Material.SHEARS,SettingsFlag.SHEARING);
-        lookup.put( Material.EMERALD,SettingsFlag.VILLAGER_TRADING);
+        lookup.put(Material.BEACON,SettingsFlag.BEACON);
+        lookup.put(Material.BED,SettingsFlag.BED);
+        lookup.put(Material.STONE,SettingsFlag.BREAK_BLOCKS);
+        lookup.put(Material.CARROT_ITEM,SettingsFlag.BREEDING);
+        lookup.put(Material.BREWING_STAND_ITEM,SettingsFlag.BREWING);
+        lookup.put(Material.LAVA_BUCKET,SettingsFlag.BUCKET);
+        lookup.put(Material.CHEST,SettingsFlag.CHEST);
         if (hasChorusFruit) {
-            lookup.put( Material.CHORUS_FRUIT,SettingsFlag.CHORUS_FRUIT);
+            lookup.put(Material.CHORUS_FRUIT,SettingsFlag.CHORUS_FRUIT);
         }
-        lookup.put( Material.NOTE_BLOCK,SettingsFlag.ENTER_EXIT_MESSAGES);
+        lookup.put(Material.LAVA_BUCKET, SettingsFlag.COLLECT_LAVA);
+        lookup.put(Material.WATER_BUCKET, SettingsFlag.COLLECT_WATER);
+        lookup.put(Material.WORKBENCH,SettingsFlag.CRAFTING);
+        lookup.put(Material.TNT,SettingsFlag.CREEPER_PAIN);
+        lookup.put(Material.WHEAT,SettingsFlag.CROP_TRAMPLE);
+        lookup.put(Material.WOOD_DOOR, SettingsFlag.DOOR);
+        lookup.put(Material.EGG, SettingsFlag.EGGS);
+        lookup.put(Material.ENCHANTMENT_TABLE,SettingsFlag.ENCHANTING);
+        lookup.put(Material.ENDER_PEARL,SettingsFlag.ENDERPEARL);
+        lookup.put(Material.SIGN,SettingsFlag.ENTER_EXIT_MESSAGES);
+        lookup.put(Material.ICE, SettingsFlag.FIRE_EXTINGUISH);
+        lookup.put(Material.TORCH, SettingsFlag.FIRE_SPREAD);
+        lookup.put(Material.FURNACE,SettingsFlag.FURNACE);
+        lookup.put(Material.FENCE_GATE,SettingsFlag.GATE);
+        lookup.put(Material.GOLD_BARDING,SettingsFlag.HORSE_INVENTORY);
+        lookup.put(Material.DIAMOND_BARDING,SettingsFlag.HORSE_RIDING);
+        lookup.put(Material.WOOD_SWORD, SettingsFlag.HURT_MOBS);
+        lookup.put(Material.IRON_SWORD, SettingsFlag.HURT_MONSTERS);
+        lookup.put(Material.LEASH,SettingsFlag.LEASH);
+        lookup.put(Material.LEVER,SettingsFlag.LEVER_BUTTON);
+        lookup.put(Material.MILK_BUCKET,SettingsFlag.MILKING);
+        lookup.put(Material.CARROT_ITEM, SettingsFlag.MOB_SPAWN);
         lookup.put(Material.MOB_SPAWNER, SettingsFlag.MONSTER_SPAWN);
+        lookup.put(Material.JUKEBOX,SettingsFlag.MUSIC);
+        lookup.put(Material.NETHERRACK,SettingsFlag.NETHER_PVP);
+        lookup.put(Material.DIRT,SettingsFlag.PLACE_BLOCKS);
+        lookup.put(Material.OBSIDIAN,SettingsFlag.PORTAL);
+        lookup.put(Material.GOLD_PLATE,SettingsFlag.PRESSURE_PLATE);
+        lookup.put(Material.ARROW,SettingsFlag.PVP);
+        lookup.put(Material.REDSTONE_COMPARATOR,SettingsFlag.REDSTONE);
+        lookup.put(Material.SHEARS,SettingsFlag.SHEARING);
+        lookup.put(Material.MONSTER_EGG, SettingsFlag.SPAWN_EGGS);
+        lookup.put(Material.EMERALD,SettingsFlag.VILLAGER_TRADING);
         lookup.put(Material.GOLD_INGOT, SettingsFlag.VISITOR_ITEM_DROP);
-        lookup.put(Material.DIAMOND, SettingsFlag.VISITOR_ITEM_PICKUP);
+        lookup.put(Material.DIAMOND, SettingsFlag.VISITOR_ITEM_PICKUP);        
     }
 
     public SettingsPanel(ASkyBlock plugin) {
@@ -133,32 +144,18 @@ public class SettingsPanel implements Listener {
         } else if (island.isSpawn()) {
             ip.add(new IPItem(Material.MAP, plugin.myLocale(uuid).igsSettingsSpawnTitle, plugin.myLocale(uuid).igsSettingsSpawnDesc));
             // Spawn settings
-            for (SettingsFlag flag : SettingsFlag.values()) {
-                // Settings not in spawn
-                if (flag.equals(SettingsFlag.BUCKET) || flag.equals(SettingsFlag.NETHER_PVP) 
-                        || flag.equals(SettingsFlag.ENTER_EXIT_MESSAGES) || flag.equals(SettingsFlag.MOB_SPAWN))
+            for (SettingsFlag flag : Settings.defaultSpawnSettings.keySet()) {
+                //plugin.getLogger().info("DEBUG: " + flag.toString());
+                if (flag.equals(SettingsFlag.ACID_DAMAGE) && Settings.acidDamage == 0)
                     continue;
-                // Server-specific settings
-                if (flag.equals(SettingsFlag.ARMOR_STAND) && !hasArmorStand)
-                    continue;
-                if (flag.equals(SettingsFlag.CHORUS_FRUIT) && !hasChorusFruit)
-                    continue;
-                if (Settings.spawnSettings.containsKey(flag) && Settings.spawnSettings.get(flag)
-                        && lookup.inverse().containsKey(flag) && plugin.myLocale(uuid).igs.containsKey(flag)) {
-                    ip.add(new IPItem(Settings.spawnSettings.get(flag), lookup.inverse().get(flag), plugin.myLocale(uuid).igs.get(flag)));
+                if (lookup.inverse().containsKey(flag) && plugin.myLocale(uuid).igs.containsKey(flag)) {
+                    ip.add(new IPItem(island.getIgsFlag(flag), lookup.inverse().get(flag), plugin.myLocale(uuid).igs.get(flag)));
                 }
             }
-            // TODO: convert to use default spawn settings, not default island settings
-            //ip.add(new IPItem(Settings.defaultIslandSettings.get(SettingsFlag.PORTAL), Material.OBSIDIAN, plugin.myLocale(uuid).igsPortalUse));
         } else {
             // Standard island
             ip.add(new IPItem(Material.MAP, plugin.myLocale(uuid).igsSettingsIslandTitle, plugin.myLocale(uuid).igsSettingsIslandDesc));
-            for (SettingsFlag flag : SettingsFlag.values()) {
-                // Server-specific settings
-                if (flag.equals(SettingsFlag.ARMOR_STAND) && !hasArmorStand)
-                    continue;
-                if (flag.equals(SettingsFlag.CHORUS_FRUIT) && !hasChorusFruit)
-                    continue;
+            for (SettingsFlag flag : Settings.defaultIslandSettings.keySet()) {
                 if (Settings.defaultIslandSettings.containsKey(flag) && lookup.inverse().containsKey(flag) && plugin.myLocale(uuid).igs.containsKey(flag)) {
                     ip.add(new IPItem(island.getIgsFlag(flag), lookup.inverse().get(flag), plugin.myLocale(uuid).igs.get(flag)));
                 }
@@ -233,6 +230,7 @@ public class SettingsPanel implements Listener {
             // Special handling to avoid errors on 1.7.x servers
             flag = SettingsFlag.ARMOR_STAND;
         }
+        plugin.getLogger().info("DEBUG: flag is " + flag);
         // If flag is null, do nothing
         if (flag == null) {
             return;
@@ -240,10 +238,10 @@ public class SettingsPanel implements Listener {
         // Players can only do something if they own the island or are op
         Island island = plugin.getGrid().getIslandAt(player.getLocation());
         if (island != null && (player.isOp() || (island.getOwner() != null && island.getOwner().equals(player.getUniqueId())))) {
-            //plugin.getLogger().info("DEBUG: Check perm " + flag.toString());
+            plugin.getLogger().info("DEBUG: Check perm " + flag.toString());
             // Check perms
             if (player.hasPermission(Settings.PERMPREFIX + "settings." + flag.toString())) {
-                //plugin.getLogger().info("DEBUG: Player has perm " + flag.toString());
+                plugin.getLogger().info("DEBUG: Player has perm " + flag.toString());
                 if (flag.equals(SettingsFlag.PVP) || flag.equals(SettingsFlag.NETHER_PVP)) {
                     // PVP always results in an inventory closure
                     player.closeInventory();
