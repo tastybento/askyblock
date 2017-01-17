@@ -89,38 +89,53 @@ public class PlayerEvents implements Listener {
     }
 
     /**
+     * Gives temporary perms
      * Gives flymode if player has a specific permission and is on his island
      * @param e
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerEnterOnIsland(IslandEnterEvent e){
         Player player = plugin.getServer().getPlayer(e.getPlayer());
-        if(VaultHelper.checkPerm(player, Settings.PERMPREFIX + "islandfly")  && plugin.getGrid().playerIsOnIsland(player)){
-            player.setAllowFlight(true);
-            // TODO: is this needed?
-            player.setFlying(true);
+        if(plugin.getGrid().playerIsOnIsland(player)){
+            if(VaultHelper.checkPerm(player, Settings.PERMPREFIX + "islandfly")){
+                player.setAllowFlight(true);
+                // TODO: is this needed?
+                player.setFlying(true);
+            }
+
+            for(String perm : Settings.temporaryPermissions){
+                VaultHelper.addPerm(player, perm);
+            }
         }
     }
 
     /**
+     * Revoke temporary perms
      * Removes flymode with a delay if player leave his island.
      * @param e
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerLeaveIsland(IslandExitEvent e){
         final Player player = plugin.getServer().getPlayer(e.getPlayer());
-        if(VaultHelper.checkPerm(player, Settings.PERMPREFIX + "islandfly") && !plugin.getGrid().playerIsOnIsland(player) && player.isFlying()){
-            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+        if(!plugin.getGrid().playerIsOnIsland(player)){
+            if(VaultHelper.checkPerm(player, Settings.PERMPREFIX + "islandfly") && player.isFlying()
+                    && player.getGameMode().equals(GameMode.SURVIVAL)){
+                plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
 
-                @Override
-                public void run() {
-                    if(!plugin.getGrid().playerIsOnIsland(player) && player.isFlying()){
-                        player.setAllowFlight(false);
-                        player.setFlying(false);
+                    @Override
+                    public void run() {
+                        if(!plugin.getGrid().playerIsOnIsland(player) && player.isFlying()){
+                            player.setAllowFlight(false);
+                            player.setFlying(false);
+                        }
+
                     }
+                }, 20*Settings.flyTimeOutside);
+            }
 
-                }
-            }, 20*Settings.flyTimeOutside);
+            for(String perm : Settings.temporaryPermissions){
+                VaultHelper.removePerm(player, perm);
+            }
         }
     }
 

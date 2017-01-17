@@ -855,6 +855,10 @@ public class ASkyBlock extends JavaPlugin {
         if(Settings.flyTimeOutside < 0) {
             Settings.flyTimeOutside = 0;
         }
+	
+	// Temporary Permissions while inside island
+	Settings.temporaryPermissions = getConfig().getStringList("island.islandtemporaryperms");
+	
         // Settings from config.yml
         Settings.worldName = getConfig().getString("general.worldName");
         // Check if the world name matches island.yml info
