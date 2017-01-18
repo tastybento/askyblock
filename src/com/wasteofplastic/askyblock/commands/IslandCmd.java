@@ -73,7 +73,7 @@ import com.wasteofplastic.askyblock.CoopPlay;
 import com.wasteofplastic.askyblock.DeleteIslandChunk;
 import com.wasteofplastic.askyblock.GridManager;
 import com.wasteofplastic.askyblock.Island;
-import com.wasteofplastic.askyblock.Island.Flags;
+import com.wasteofplastic.askyblock.Island.SettingsFlag;
 import com.wasteofplastic.askyblock.LevelCalc;
 import com.wasteofplastic.askyblock.LevelCalcByChunk;
 import com.wasteofplastic.askyblock.Settings;
@@ -164,10 +164,12 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                 // built-in island generation
                 schematics.put("default",new Schematic(plugin));
             }
+            plugin.getLogger().info("Loaded default nether schematic");
         } else {
             // It exists, so load it
             try {
                 schematics.put("default",new Schematic(plugin, schematicFile));
+                plugin.getLogger().info("Loaded default island schematic.");
             } catch (IOException e) {
                 plugin.getLogger().severe("Could not load default schematic!");
                 e.printStackTrace();
@@ -183,6 +185,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                     Schematic netherIsland = new Schematic(plugin, netherFile);
                     netherIsland.setVisible(false);
                     schematics.put("nether", netherIsland);
+                    plugin.getLogger().info("Loaded default nether schematic.");
                 } catch (IOException e) {
                     plugin.getLogger().severe("Could not load default nether schematic!");
                     e.printStackTrace();
@@ -196,6 +199,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                 Schematic netherIsland = new Schematic(plugin, netherFile);
                 netherIsland.setVisible(false);
                 schematics.put("nether", netherIsland);
+                plugin.getLogger().info("Loaded default nether schematic.");
             } catch (IOException e) {
                 plugin.getLogger().severe("Could not load default nether schematic!");
                 e.printStackTrace();
@@ -1311,6 +1315,8 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                         try {
                             player.openInventory(plugin.getSettingsPanel().islandGuardPanel(player));
                         } catch (Exception e) {
+                            // TODO: remove debug
+                            //e.printStackTrace();
                             player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorCommandNotReady);
                         }
                     } else {
@@ -1427,7 +1433,12 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                     }
                     if (player.getWorld().equals(ASkyBlock.getIslandWorld()) || player.getWorld().equals(ASkyBlock.getNetherWorld())) {	
                         if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.minishop")) {
-                            player.openInventory(ControlPanel.miniShop);
+                            if (ControlPanel.miniShop != null) {
+                                player.openInventory(ControlPanel.miniShop);
+                            } else {
+                                player.sendMessage(plugin.myLocale(playerUUID).errorCommandNotReady);
+                                plugin.getLogger().severe("Player tried to open the minishop, but it does not exist. Look for errors in the console about the minishop loading.");
+                            }
                             return true;
                         }
                     } else {
@@ -2308,8 +2319,8 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                             }
                                         }
                                         boolean pvp = false;
-                                        if ((warpSpot.getWorld().equals(ASkyBlock.getIslandWorld()) && island.getIgsFlag(Flags.allowPvP)) 
-                                                || (warpSpot.getWorld().equals(ASkyBlock.getNetherWorld()) && island.getIgsFlag(Flags.allowNetherPvP))) {
+                                        if ((warpSpot.getWorld().equals(ASkyBlock.getIslandWorld()) && island.getIgsFlag(SettingsFlag.PVP)) 
+                                                || (warpSpot.getWorld().equals(ASkyBlock.getNetherWorld()) && island.getIgsFlag(SettingsFlag.NETHER_PVP))) {
                                             pvp = true;
                                         }
                                         // Find out which direction the warp is facing
@@ -2348,7 +2359,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                                     warpSpot.getBlockZ() + 0.5D);
                                             player.teleport(actualWarp);
                                             if (pvp) {
-                                                player.sendMessage(ChatColor.BOLD + "" + ChatColor.RED + plugin.myLocale(player.getUniqueId()).igsPVP + " " + plugin.myLocale(player.getUniqueId()).igsAllowed);
+                                                player.sendMessage(ChatColor.BOLD + "" + ChatColor.RED + plugin.myLocale(player.getUniqueId()).igs.get(SettingsFlag.PVP) + " " + plugin.myLocale(player.getUniqueId()).igsAllowed);
                                                 if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
                                                     player.getWorld().playSound(player.getLocation(), Sound.valueOf("ARROW_HIT"), 1F, 1F);
                                                 } else {
@@ -3012,7 +3023,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                 inFront.getBlockZ() + 0.5D, yaw, 30F);
         player.teleport(actualWarp);
         if (pvp) {
-            player.sendMessage(ChatColor.BOLD + "" + ChatColor.RED + plugin.myLocale(player.getUniqueId()).igsPVP + " " + plugin.myLocale(player.getUniqueId()).igsAllowed);
+            player.sendMessage(ChatColor.BOLD + "" + ChatColor.RED + plugin.myLocale(player.getUniqueId()).igs.get(SettingsFlag.PVP) + " " + plugin.myLocale(player.getUniqueId()).igsAllowed);
             if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
                 player.getWorld().playSound(player.getLocation(), Sound.valueOf("ARROW_HIT"), 1F, 1F);
             } else {

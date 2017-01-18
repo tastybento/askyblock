@@ -18,6 +18,7 @@ package com.wasteofplastic.askyblock;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
@@ -25,6 +26,8 @@ import java.util.Set;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+
+import com.wasteofplastic.askyblock.Island.SettingsFlag;
 
 
 /**
@@ -197,6 +200,7 @@ public class ASLocale {
     public String islanderrorLevelNotReady;
     public String islanderrorInvalidPlayer;
     public String islandislandLevelis;
+    public String islandrequiredPointsToNextLevel;
     // Spawn
     public String islandhelpSpawn;
     // Teleport go
@@ -448,50 +452,18 @@ public class ASLocale {
     public String challengescompletedtimes;
     public String targetInNoPVPArea;
     // Island Guard Settings
+    public HashMap<SettingsFlag, String> igs;
     public String igsTitle;
     public String igsAllowed;
     public String igsDisallowed;
-    public String igsArmorStand;
-    public String igsBeacon;
-    public String igsBed;
-    public String igsBreakBlocks;
-    public String igsBreeding;
-    public String igsBrewing;
-    public String igsBucket;
-    public String igsChest;
     public String igsChestDamage;
-    public String igsWorkbench;
-    public String igsCropTrampling;
-    public String igsDoor;
-    public String igsEnchanting;
-    public String igsEnderPearl;
     public String igsFire;
-    public String igsFurnace;
-    public String igsGate;
-    public String igsHurtAnimals;
-    public String igsHurtMobs;
     public String igsCreeperDamage;
     public String igsCreeperGriefing;
     public String igsWitherDamage;
-    public String igsLeash;
-    public String igsLever;
-    public String igsSpawnEgg;
-    public String igsJukebox;
-    public String igsPlaceBlocks;
-    public String igsPortalUse;
-    public String igsPVP;
-    public String igsRedstone;
-    public String igsShears;
     public String igsTeleport;
     public String igsTNT;
-    public String igsVisitorDrop;
-    public String igsVisitorPickUp;
     public String igsVisitorKeep;
-    public String igsNetherPVP;
-    public String igsAnvil;
-    public String igsHorseRiding;
-    public String igsHorseInvAccess;
-    public String igsPressurePlate;
     public String igsPistonPush;
     public String igsSettingsGeneralTitle;
     public String igsSettingsGeneralDesc;
@@ -499,10 +471,6 @@ public class ASLocale {
     public String igsSettingsIslandDesc;
     public String igsSettingsSpawnTitle;
     public String igsSettingsSpawnDesc;
-    public String igsVillagerTrading;
-    public String igsChorusFruit;
-    public String igsJoinLeaveIslandMessage;
-    public String igsMobSpawning;
     
     public String setHomeerrorNumHomes;
     public String schematicsTitle;
@@ -649,6 +617,7 @@ public class ASLocale {
 
     public String topTenerrorExcluded;
 
+
     /**
      * Creates a locale object full of localized strings for a language
      * @param plugin
@@ -776,41 +745,65 @@ public class ASLocale {
         if (igsTitle.length() > 30) {
             igsTitle = igsTitle.substring(0,29);
         }
-        igsAnvil = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.anvil", "Anvil Use"));
         igsAllowed = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.allowed", "Allowed"));
         igsDisallowed = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.disallowed", "Disallowed"));
-        igsArmorStand = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.armorstand", "Armor Stand use"));
-        igsBeacon = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.beacon", "Beacon use"));
-        igsBed = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.bed", "Bed use"));
-        igsBreakBlocks = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.breakblocks", "Break blocks"));
-        igsBreeding = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.breeding", "Breeding"));
-        igsBrewing = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.brewingstand", "Potion Brewing"));
-        igsBucket = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.bucket", "Bucket use"));
-        igsChest = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.chest", "Chest use"));
+
+        igs = new HashMap<SettingsFlag, String>();
+        igs.put(SettingsFlag.ACID_DAMAGE, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.aciddamage", "Acid Damage")));
+        igs.put(SettingsFlag.ANVIL, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.anvil", "Anvil Use")));
+        igs.put(SettingsFlag.ARMOR_STAND, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.armorstand", "Armor Stand use")));
+        igs.put(SettingsFlag.BEACON, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.beacon", "Beacon use")));
+        igs.put(SettingsFlag.BED, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.bed", "Bed use")));
+        igs.put(SettingsFlag.BREAK_BLOCKS, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.breakblocks", "Break blocks")));
+        igs.put(SettingsFlag.BREEDING, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.breeding", "Breeding")));
+        igs.put(SettingsFlag.BREWING, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.brewingstand", "Potion Brewing")));
+        igs.put(SettingsFlag.BUCKET, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.bucket", "Bucket use")));
+        igs.put(SettingsFlag.COLLECT_LAVA, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.collectlava", "Lava collection")));
+        igs.put(SettingsFlag.COLLECT_WATER, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.collectwater", "Water collection")));
+        igs.put(SettingsFlag.CHEST, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.chest", "Chest use")));
+        igs.put(SettingsFlag.CHORUS_FRUIT, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.chorusfruit", "Chorus Fruit Use")));
+        igs.put(SettingsFlag.CRAFTING, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.workbench", "Workbench use")));
+        igs.put(SettingsFlag.CREEPER_PAIN, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.creeperpain", "Creeper explosions hurt")));
+        igs.put(SettingsFlag.CROP_TRAMPLE, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.croptrample", "Crop trampling")));
+        igs.put(SettingsFlag.DOOR, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.door", "Door use")));
+        igs.put(SettingsFlag.EGGS, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.eggs", "Egg throwing")));
+        igs.put(SettingsFlag.ENCHANTING, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.enchantingtable", "Enchanting table use")));
+        igs.put(SettingsFlag.ENDERPEARL, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.enderpearl", "Enderpearl use")));
+        igs.put(SettingsFlag.ENTER_EXIT_MESSAGES, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.joinleaveislandmessages", "Enable Join & Leave Island Messages")));
+        igs.put(SettingsFlag.FIRE_EXTINGUISH, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.fireextinguish", "Fire extinguish")));
+        igs.put(SettingsFlag.FIRE_SPREAD, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.firespread", "Fire spread")));
+        igs.put(SettingsFlag.FURNACE, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.furnace", "Furnace use")));
+        igs.put(SettingsFlag.GATE, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.gate", "Gate use")));
+        igs.put(SettingsFlag.HORSE_INVENTORY, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.horseinventoryaccess", "Horse inv access when riding")));   
+        igs.put(SettingsFlag.HORSE_RIDING, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.horseriding", "Horse riding")));   
+        igs.put(SettingsFlag.HURT_MOBS, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.hurtanimals", "Hurting animals")));
+        igs.put(SettingsFlag.HURT_MONSTERS, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.hurtmonsters", "Hurting monsters")));
+        igs.put(SettingsFlag.LEASH, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.leash", "Leash use")));
+        igs.put(SettingsFlag.LEVER_BUTTON, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.lever", "Lever or Button Use")));
+        igs.put(SettingsFlag.MOB_SPAWN, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.animalspawning", "Allow/Disallow Animal Spawning")));
+        igs.put(SettingsFlag.MONSTER_SPAWN, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.monsterspawning", "Allow/Disallow Monster Spawning")));
+        igs.put(SettingsFlag.MUSIC, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.jukebox", "Jukebox use")));
+        igs.put(SettingsFlag.PLACE_BLOCKS, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.placeblocks", "Place blocks")));
+        igs.put(SettingsFlag.PORTAL, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.portaluse", "Portal use")));
+        igs.put(SettingsFlag.PRESSURE_PLATE, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.pressureplate", "Activate pressure plates")));   
+        igs.put(SettingsFlag.PVP, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.pvp", "PvP")));
+        igs.put(SettingsFlag.MILKING, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.milking", "Milking")));   
+        igs.put(SettingsFlag.NETHER_PVP, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.netherpvp", "Nether PvP")));
+        igs.put(SettingsFlag.REDSTONE, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.redstone", "Redstone use")));
+        igs.put(SettingsFlag.SPAWN_EGGS, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.spawnegg", "Spawn egg use")));
+        igs.put(SettingsFlag.SHEARING, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.shears", "Shears use")));
+        igs.put(SettingsFlag.VILLAGER_TRADING, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.villagertrading", "Villager trading")));
+        igs.put(SettingsFlag.VISITOR_ITEM_DROP, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.visitordrop", "Visitor item dropping")));
+        igs.put(SettingsFlag.VISITOR_ITEM_PICKUP, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.visitorpickup", "Visitor item pick-up")));
+
         igsChestDamage = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.chestdamage", "Chest damage by TNT"));
-        igsWorkbench = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.workbench", "Workbench use"));
-        igsCropTrampling = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.croptrample", "Crop trampling"));
-        igsDoor = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.door", "Door use"));
-        igsEnchanting = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.enchantingtable", "Enchanting table use"));
-        igsEnderPearl = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.enderpearl", "Enderpearl use"));
-        igsFire = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.fire", "Fire"));
-        igsFurnace = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.furnace", "Furnace use"));
-        igsGate = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.gate", "Gate use"));
-        igsHurtAnimals = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.hurtanimals", "Hurting animals"));
-        igsHurtMobs = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.hurtmonsters", "Hurting monsters"));
         igsCreeperDamage = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.creeperdamage", "Creeper damage"));
         igsCreeperGriefing = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.creepergriefing", "Creeper griefing"));
         igsWitherDamage = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.withergriefing", "Wither griefing"));
-        igsLeash = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.leash", "Leash use"));
-        igsLever = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.lever", "Lever or Button Use"));
-        igsSpawnEgg = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.spawnegg", "Spawn egg use"));
-        igsJukebox = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.jukebox", "Jukebox use"));
-        igsPlaceBlocks = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.placeblocks", "Place blocks"));
-        igsPortalUse = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.portaluse", "Portal use"));
-        igsPVP = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.pvp", "PvP"));
-        igsNetherPVP = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.netherpvp", "Nether PvP"));
-        igsRedstone = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.redstone", "Redstone use"));
-        igsShears = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.shears", "Shears use"));
+        igsFire = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.fire", "Fire"));
+        igsTNT = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.TNTdamage", "TNT Damage"));
+        igsPistonPush = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.pistonpush", "Pistons can push blocks outside island area")); 
+        igsVisitorKeep = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.visitorkeepitems", "Visitor keep item on death"));   
         igsSettingsGeneralTitle = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.settingsgeneraltitle", "General Island World Settings"));
         if (igsSettingsGeneralTitle.length() > 30) {
             igsSettingsGeneralTitle = igsSettingsGeneralTitle.substring(0,29);
@@ -827,19 +820,7 @@ public class ASLocale {
         }
         igsSettingsSpawnDesc = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.settingsspawndesc", "These rules apply at spawn."));
         igsTeleport = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.teleportwhenfalling", "Teleport when falling"));
-        igsTNT = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.TNTdamage", "TNT Damage"));
-        igsVisitorDrop = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.visitordrop", "Visitor item dropping"));
-        igsVisitorPickUp = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.visitorpickup", "Visitor item pick-up"));
-        igsVisitorKeep = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.visitorkeepitems", "Visitor keep item on death"));	
-        igsHorseRiding = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.horseriding", "Horse riding"));	
-        igsHorseInvAccess = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.horseinventoryaccess", "Horse inv access when riding"));	
-        igsPressurePlate = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.pressureplate", "Activate pressure plates"));	
-        igsPistonPush = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.pistonpush", "Pistons can push blocks outside island area"));	
-        igsVillagerTrading = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.villagertrading", "Villager trading"));
-        igsChorusFruit = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.chorusfruit", "Chorus Fruit Use"));
-        igsJoinLeaveIslandMessage = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.joinleaveislandmessages", "Enable Join & Leave Island Messages"));
-        igsMobSpawning = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.mobspawning", "Allow/Disallow Mob Spawning"));
-        
+
         lavaTip = ChatColor.translateAlternateColorCodes('&', locale.getString("lavaTip", "Changing obsidian back into lava. Be careful!"));
         warpswelcomeLine = ChatColor.translateAlternateColorCodes('&', locale.getString("warps.welcomeLine", "[WELCOME]"));
         warpswarpTip = ChatColor.translateAlternateColorCodes('&',
@@ -1031,7 +1012,8 @@ public class ASLocale {
         islanderrorInvalidPlayer = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("island.errorInvalidPlayer", "That player is invalid or does not have an island!"));
         islandislandLevelis = ChatColor.translateAlternateColorCodes('&', locale.getString("island.islandLevelis", "Island level is"));
-
+        islandrequiredPointsToNextLevel = ChatColor.translateAlternateColorCodes('&', locale.getString("island.requiredPointsToNextLevel", "You need [points] more points to reach level [next]!"));
+        
         invitehelp = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("invite.help", "Use [/[label] invite <playername>] to invite a player to your island.").replace("[label]", Settings.ISLANDCOMMAND));
         inviteyouCanInvite = ChatColor.translateAlternateColorCodes('&',

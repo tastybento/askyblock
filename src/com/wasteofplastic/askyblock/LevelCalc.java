@@ -203,6 +203,11 @@ public class LevelCalc extends BukkitRunnable {
                             message += " " + plugin.myLocale(((Player)asker).getUniqueId()).levelDeaths.replace("[number]", String.valueOf(plugin.getPlayers().getDeaths(targetPlayer)));
                         }
                         asker.sendMessage(message);
+                        //Send player how many points are required to reach next island level
+                        int requiredPoints = (Settings.levelCost * (plugin.getPlayers().getIslandLevel(targetPlayer) + 1)) - ((blockCount+islandLevelHandicap)*Settings.levelCost);
+                        String toNextLevel = ChatColor.GREEN + plugin.myLocale(((Player)asker).getUniqueId()).islandrequiredPointsToNextLevel.replace("[points]", String.valueOf(requiredPoints));
+                        toNextLevel = toNextLevel.replace("[next]", String.valueOf(plugin.getPlayers().getIslandLevel(targetPlayer) + 1));
+                        asker.sendMessage(toNextLevel);
                     }
                 }
 

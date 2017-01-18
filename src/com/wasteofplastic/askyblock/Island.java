@@ -18,6 +18,7 @@
 package com.wasteofplastic.askyblock;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -83,49 +84,214 @@ public class Island implements Cloneable {
     private Multiset<Material> tileEntityCount = HashMultiset.create();
     // Biome
     Biome biome;
+
+    // Legacy settings up to V3.0.5.1 for backwards compatibility. In new islands.yml, the key is stored in the file.
+    // This is the order of the 0's and 1's in the settings field of the islands.yml file. New settings will follow the SettingsFlag enum.
+    private enum LegacySettingsFlag {
+        ANVIL, ARMOR_STAND, BEACON,BED, BREAK_BLOCKS, BREEDING, BREWING, 
+        BUCKET, COLLECT_LAVA, COLLECT_WATER, CHEST, CRAFTING, 
+        CROP_TRAMPLE, DOOR, ENCHANTING, ENDERPEARL, FURNACE, 
+        GATE, HORSE_INVENTORY, HORSE_RIDING, HURT_MOBS, LEASH, LEVER_BUTTON, MUSIC, 
+        PLACE_BLOCKS, PORTAL, PRESSURE_PLATE, PVP, NETHER_PVP, REDSTONE, SHEARING,
+        VILLAGER_TRADING, CHORUS_FRUIT, ENTER_EXIT_MESSAGES, MONSTER_SPAWN;
+    }
     // Island protection settings
-    private HashMap<Flags, Boolean> igs = new HashMap<Flags, Boolean>();
+    private static List<String> islandSettingsKey = new ArrayList<String>();
+    static {
+        islandSettingsKey.clear();
+        islandSettingsKey.add("");
+    }
+    private HashMap<SettingsFlag, Boolean> igs = new HashMap<SettingsFlag, Boolean>();
     private int levelHandicap;
     /**
      * Island Guard Setting flags
-     *
+     * Covers island, spawn and system settings
      */
-    public enum Flags {
-        allowAnvilUse,
-        allowArmorStandUse,
-        allowBeaconAccess,
-        allowBedUse,
-        allowBreakBlocks,
-        allowBreeding,
-        allowBrewing,
-        allowBucketUse,
-        allowChestAccess,
-        allowCrafting,
-        allowCropTrample,
-        allowDoorUse,
-        allowEnchanting,
-        allowEnderPearls,
-        allowFurnaceUse,
-        allowGateUse,
-        allowHorseInvAccess,
-        allowHorseRiding,
-        allowHurtMobs,
-        allowLeashUse,
-        allowLeverButtonUse,
-        allowMusic,
-        allowPlaceBlocks,
-        allowPortalUse,
-        allowPressurePlate,
-        allowPvP,
-        allowNetherPvP,
-        allowRedStone,
-        allowShearing,
-        allowVillagerTrading,
-        allowChorusFruit,
-        enableJoinAndLeaveIslandMessages,
-        allowMobSpawning, 
-        allowVisitorItemDrop,
-        allowVisitorItemPickup
+    public enum SettingsFlag {
+        /**
+         * Water is acid above sea level
+         */
+        ACID_DAMAGE,
+        /**
+         * Anvil use
+         */
+        ANVIL,
+        /**
+         * Armor stand use
+         */
+        ARMOR_STAND,
+        /**
+         * Beacon use
+         */
+        BEACON,
+        /**
+         * Bed use
+         */
+        BED,
+        /**
+         * Can break blocks
+         */
+        BREAK_BLOCKS,
+        /**
+         * Can breed animals
+         */
+        BREEDING,
+        /**
+         * Can use brewing stand
+         */
+        BREWING,
+        /**
+         * Can empty or fill buckets
+         */
+        BUCKET,
+        /**
+         * Can collect lava
+         */
+        COLLECT_LAVA,
+        /**
+         * Can collect water
+         */
+        COLLECT_WATER,
+        /**
+         * Can open chests or hoppers or dispensers
+         */
+        CHEST,
+        /**
+         * Can eat and teleport with chorus fruit
+         */
+        CHORUS_FRUIT,
+        /**
+         * Can use the work bench
+         */
+        CRAFTING,
+        /**
+         * Allow creepers to hurt players (but not damage blocks)
+         */
+        CREEPER_PAIN,
+        /**
+         * Can trample crops
+         */
+        CROP_TRAMPLE,
+        /**
+         * Can open doors or trapdoors
+         */
+        DOOR,
+        /**
+         * Chicken eggs can be thrown
+         */
+        EGGS,
+        /**
+         * Can use the enchanting table
+         */
+        ENCHANTING,
+        /**
+         * Can throw ender pearls
+         */
+        ENDERPEARL,
+        /**
+         * Can toggle enter/exit names to island
+         */
+        ENTER_EXIT_MESSAGES,
+        /**
+         * Can extinguish fires by punching them
+         */
+        FIRE_EXTINGUISH,
+        /**
+         * Allow fire spread
+         */
+        FIRE_SPREAD,
+        /**
+         * Can use furnaces
+         */
+        FURNACE,
+        /**
+         * Can use gates
+         */
+        GATE,
+        /**
+         * Can open horse or other animal inventories, e.g. llama
+         */
+        HORSE_INVENTORY,
+        /**
+         * Can ride an animal
+         */
+        HORSE_RIDING,
+        /**
+         * Can hurt friendly mobs, e.g. cows
+         */
+        HURT_MOBS,
+        /**
+         * Can hurt monsters
+         */
+        HURT_MONSTERS,
+        /**
+         * Can leash or unleash animals
+         */
+        LEASH,
+        /**
+         * Can use buttons or levers
+         */
+        LEVER_BUTTON,
+        /**
+         * Animals, etc. can spawn
+         */
+        MOB_SPAWN,
+        /**
+         * Monsters can spawn
+         */
+        MONSTER_SPAWN,
+        /**
+         * Can operate jukeboxes, note boxes etc.
+         */
+        MUSIC,
+        /**
+         * Can place blocks
+         */
+        PLACE_BLOCKS,
+        /**
+         * Can go through portals
+         */
+        PORTAL,
+        /**
+         * Will activate pressure plates
+         */
+        PRESSURE_PLATE,
+        /**
+         * Can do PVP in the overworld
+         */
+        PVP,
+        /**
+         * Cows can be milked
+         */
+        MILKING,
+        /**
+         * Can do PVP in the nether
+         */
+        NETHER_PVP,
+        /**
+         * Can interact with redstone items, like diodes
+         */
+        REDSTONE,
+        /**
+         * Spawn eggs can be used
+         */
+        SPAWN_EGGS,
+        /**
+         * Can shear sheep
+         */
+        SHEARING,
+        /**
+         * Can trade with villagers
+         */
+        VILLAGER_TRADING,
+        /**
+         * Visitors can drop items
+         */
+        VISITOR_ITEM_DROP,
+        /**
+         * Visitors can pick up items
+         */
+        VISITOR_ITEM_PICKUP
     }
 
 
@@ -133,8 +299,9 @@ public class Island implements Cloneable {
      * New island by loading islands.yml
      * @param plugin
      * @param serial
+     * @param settingsKey 
      */
-    public Island(ASkyBlock plugin, String serial) {
+    public Island(ASkyBlock plugin, String serial, List<String> settingsKey) {
         this.plugin = plugin;
         // Bukkit.getLogger().info("DEBUG: adding serialized island to grid ");
         // Deserialize
@@ -192,51 +359,60 @@ public class Island implements Cloneable {
                 }
             }
             // Check if protection options there
-            if (!isSpawn) {
-                //plugin.getLogger().info("DEBUG: NOT SPAWN owner is " + owner + " location " + center);
-                // Set defaults
-                setDefaults();
-                // Load settings
-                if (split.length > 8) {
-                    // Parse the 8th string into island guard protection settings
-                    int index = 0;
-                    // Run through the enum and set
-                    for (Flags f : Flags.values()) {
-                        if (split[8].length() == index) {
-                            break;
-                        }
-                        this.igs.put(f, split[8].charAt(index++) == '1' ? true : false);
-                    }
-                }
-                // Get the biome
-                if (split.length > 9) {
-                    try {
-                        biome = Biome.valueOf(split[9]);
+            if (split.length > 8) {
+                setSettings(split[8], settingsKey);
+            } else {
+                setSettings(null, settingsKey);
+            }
 
-                    } catch (IllegalArgumentException ee) {
-                        // Unknown biome
-                    }
-                }
-                // Get island level handicap
-                if (split.length > 10) {
-                    try {
-                        this.levelHandicap = Integer.valueOf(split[10]);
-                    } catch (Exception e) {
-                        this.levelHandicap = 0;
-                    }
+            // Get the biome
+            if (split.length > 9) {
+                try {
+                    biome = Biome.valueOf(split[9]);
+
+                } catch (IllegalArgumentException ee) {
+                    // Unknown biome
                 }
             }
+            // Get island level handicap
+            if (split.length > 10) {
+                try {
+                    this.levelHandicap = Integer.valueOf(split[10]);
+                } catch (Exception e) {
+                    this.levelHandicap = 0;
+                }
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     /**
-     * Resets the island protection settings to their default as set in config.yml
+     * Resets the protection settings to their default as set in config.yml for this island
      */
-    public void setDefaults() {
-        for (Flags flag: Flags.values()) {
-            this.igs.put(flag, Settings.defaultIslandSettings.get(flag));
+    public void setIgsDefaults() {
+        for (SettingsFlag flag: SettingsFlag.values()) {
+            if (!Settings.defaultIslandSettings.containsKey(flag)) {
+                // Default default
+                this.igs.put(flag, false);
+            } else {
+                this.igs.put(flag, Settings.defaultIslandSettings.get(flag));
+            }
+        }
+    }
+    
+    /**
+     * Reset spawn protection settings to their default as set in config.yml for this island
+     */
+    public void setSpawnDefaults() {
+        for (SettingsFlag flag: SettingsFlag.values()) {
+            if (!Settings.defaultSpawnSettings.containsKey(flag)) {
+                // Default default
+                this.igs.put(flag, false);
+            } else {
+                this.igs.put(flag, Settings.defaultSpawnSettings.get(flag));
+            }
         }
     }
 
@@ -268,7 +444,7 @@ public class Island implements Cloneable {
         this.votes = 0;
         this.owner = owner;
         // Island Guard Settings
-        setDefaults();
+        setIgsDefaults();
     }
 
     /* (non-Javadoc)
@@ -546,12 +722,26 @@ public class Island implements Cloneable {
         if (owner != null) {
             ownerString = owner.toString();
         }
+
+        return center.getBlockX() + ":" + center.getBlockY() + ":" + center.getBlockZ() + ":" + protectionRange + ":" 
+        + islandDistance + ":" + ownerString + ":" + locked + ":" + purgeProtected + ":" + getSettings() + ":" + getBiome().toString() + ":" + levelHandicap;
+    }
+
+    /**
+     * @return Serialized set of settings
+     */
+    public String getSettings() {
+        String result = "";
         // Personal island protection settings - serialize enum into 1's and 0's representing the boolean values
+        //plugin.getLogger().info("DEBUG: igs = " + igs.toString());
         try {
-            for (Flags f: Flags.values()) {
+            for (SettingsFlag f: SettingsFlag.values()) {
+                //plugin.getLogger().info("DEBUG: flag f = " + f);
                 if (this.igs.containsKey(f)) {
+                    //plugin.getLogger().info("DEBUG: contains key");
                     result += this.igs.get(f) ? "1" : "0";
                 } else {
+                    //plugin.getLogger().info("DEBUG: does not contain key");
                     result += "0";
                 }
             }
@@ -559,8 +749,7 @@ public class Island implements Cloneable {
             e.printStackTrace();
             result = "";
         }
-        return center.getBlockX() + ":" + center.getBlockY() + ":" + center.getBlockZ() + ":" + protectionRange + ":" 
-        + islandDistance + ":" + ownerString + ":" + locked + ":" + purgeProtected + ":" + result + ":" + getBiome().toString() + ":" + levelHandicap;
+        return result;
     }
 
     /**
@@ -568,7 +757,7 @@ public class Island implements Cloneable {
      * @param flag
      * @return true or false, or false if flag is not in the list
      */
-    public boolean getIgsFlag(Flags flag) {
+    public boolean getIgsFlag(SettingsFlag flag) {
         //plugin.getLogger().info("DEBUG: asking for " + flag + " = " + igs.get(flag));
         if (this.igs.containsKey(flag)) {
             return igs.get(flag);
@@ -581,7 +770,7 @@ public class Island implements Cloneable {
      * @param flag
      * @param value
      */
-    public void setIgsFlag(Flags flag, boolean value) {
+    public void setIgsFlag(SettingsFlag flag, boolean value) {
         this.igs.put(flag, value);
     }
 
@@ -761,7 +950,7 @@ public class Island implements Cloneable {
      * Toggles the Island Guard Flag
      * @param flag
      */
-    public void toggleIgs(Flags flag) {
+    public void toggleIgs(SettingsFlag flag) {
         if (igs.containsKey(flag)) {
             igs.put(flag, igs.get(flag) ? false : true);
         }
@@ -797,5 +986,52 @@ public class Island implements Cloneable {
      */
     public void setLevelHandicap(int levelHandicap) {
         this.levelHandicap = levelHandicap;
+    }
+
+    /**
+     * Sets the settings for the island. If the island is spawn, then default spawn settings will be used
+     * @param settings
+     * @param settingsKey
+     */
+    public void setSettings(String settings, List<String> settingsKey) {
+        if (isSpawn) {
+            setSpawnDefaults();
+        } else {
+            setIgsDefaults();
+        }
+        if(settings == null || settings.isEmpty())
+            return;
+        // Parse the 8th string into island guard protection settings
+        // Try to get key from settingsKey
+        if (settingsKey.isEmpty() && settings.length() == LegacySettingsFlag.values().length) {
+            // Legacy settings V3.0.5.3 and before
+            int index = 0;
+            // Run through the enum and set
+            for (LegacySettingsFlag f : LegacySettingsFlag.values()) {
+                if (settings.length() == index) {
+                    break;
+                }
+                // Convert to new SettingsFlag enum
+                SettingsFlag flag = SettingsFlag.valueOf(f.name());
+                this.igs.put(flag, settings.charAt(index++) == '1' ? true : false);
+            }
+        } else {
+            // Post V3.0.6
+            if (!settingsKey.isEmpty()) {
+                // Normal operation
+                int index = 0;
+                // Run through the enum and set
+                for (String f : settingsKey) {
+                    // Convert to new SettingsFlag enum
+                    try {
+                        SettingsFlag flag = SettingsFlag.valueOf(f);
+                        this.igs.put(flag, settings.charAt(index++) == '1' ? true : false);
+                    } catch (Exception e) {
+                        // Does not exist
+                    }
+                }
+            } // else, just use the defaults
+        }
+
     }
 }

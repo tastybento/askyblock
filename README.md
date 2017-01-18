@@ -2,9 +2,13 @@
 ASkyBlock
 ==========
 
-A skyblock Bukkit plugin for Minecraft.
+A Skyblock Bukkit plugin for Minecraft.
 
 This is a survival game where the player starts with an island in the sky.
+
+Test Server
+===========
+A test server running the latest version is usually available as askyblock.com. Note that it may be RESET AT ANY TIME so don't use it to play too much as you may feel terrible loss and frustration. ;-)
 
 
 Note for developers

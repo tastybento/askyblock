@@ -52,12 +52,19 @@
 		</resources>
 		<plugins>
 			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.5</version>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>3.0.2</version>
 				<configuration>
 					<nonFilteredFileExtensions>
 						<nonFilteredFileExtension>schematic</nonFilteredFileExtension>
 					</nonFilteredFileExtensions>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.5</version>
+				<configuration>
 					<source>1.7</source>
 					<target>1.7</target>
 				</configuration>
@@ -68,7 +75,7 @@
 		<dependency>
 			<groupId>org.bukkit</groupId>
 			<artifactId>bukkit</artifactId>
-			<version>1.11-R0.1-SNAPSHOT</version>
+			<version>1.11.2-R0.1-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -104,21 +111,21 @@
 			<systemPath>${server.jars}/spigot-1.9.4.jar</systemPath>
 			<version>1.9.4</version>
 		</dependency>
-        <dependency>
-            <groupId>spigotmc.org</groupId>
-            <artifactId>spigot-1.10</artifactId>
-            <scope>system</scope>
-            <systemPath>${server.jars}/spigot-1.10.jar</systemPath>
-            <version>1.10</version>
-        </dependency>
-        <dependency>
-            <groupId>spigotmc.org</groupId>
-            <artifactId>spigot-1.11</artifactId>
-            <scope>system</scope>
-            <systemPath>${server.jars}/spigot-1.11.jar</systemPath>
-            <version>1.11</version>
-        </dependency>
-        <dependency>
+		<dependency>
+			<groupId>spigotmc.org</groupId>
+			<artifactId>spigot-1.10</artifactId>
+			<scope>system</scope>
+			<systemPath>${server.jars}/spigot-1.10.jar</systemPath>
+			<version>1.10</version>
+		</dependency>
+		<dependency>
+			<groupId>spigotmc.org</groupId>
+			<artifactId>spigot-1.11</artifactId>
+			<scope>system</scope>
+			<systemPath>${server.jars}/spigot-1.11.jar</systemPath>
+			<version>1.11</version>
+		</dependency>
+		<dependency>
 			<groupId>spigotmc.org</groupId>
 			<artifactId>spigot-1.9</artifactId>
 			<scope>system</scope>
@@ -181,9 +188,9 @@
 			<url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
 		</repository>
 		<repository>
-            <id>vault-repo</id>
-            <url>http://nexus.hc.to/content/repositories/pub_releases</url>
-        </repository>
+			<id>vault-repo</id>
+			<url>http://nexus.hc.to/content/repositories/pub_releases</url>
+		</repository>
 		<repository>
 			<id>worldedit-repo</id>
 			<url>http://maven.sk89q.com/repo/</url>
