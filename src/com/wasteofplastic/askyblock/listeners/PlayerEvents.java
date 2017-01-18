@@ -60,6 +60,7 @@ public class PlayerEvents implements Listener {
     private static final boolean DEBUG = false;
     // A set of falling players
     private static HashSet<UUID> fallingPlayers = new HashSet<UUID>();
+    private static HashMap<UUID, List<String>> temporaryPerms = new HashMap<UUID, List<String>>();
     private List<UUID> respawn;
 
     public PlayerEvents(final ASkyBlock plugin) {
@@ -104,7 +105,14 @@ public class PlayerEvents implements Listener {
             }
 
             for(String perm : Settings.temporaryPermissions){
-                VaultHelper.addPerm(player, perm);
+                if(!VaultHelper.checkPerm(player, perm)){
+                    VaultHelper.addPerm(player, perm);
+                    
+                    List<String> perms = new ArrayList<String>();
+                    if(temporaryPerms.contains(player.getUniqueId())) perms = temporaryPerms.get(player.getUniqueId());
+                    perms.add(perm);
+                    temporaryPerms.put(player.getUniqueId(), perms);
+                }
             }
         }
     }
@@ -134,7 +142,14 @@ public class PlayerEvents implements Listener {
             }
 
             for(String perm : Settings.temporaryPermissions){
-                VaultHelper.removePerm(player, perm);
+                if(temporaryPerms.contains(player.getUniqueId()) && VaultHelper.checkPerm(player, perm)){
+                    VaultHelper.removePerm(player, perm);
+                    
+                    List<String> perms = temporaryPerms.get(player.getUniqueId());
+                    perms.remove(perm);
+                    if(perms.isEmpty()) temporaryPerms.remove(player.getUniqueId());
+                    else temporaryPerms.put(player.getUniqueId(), perms);
+                }
             }
         }
     }
