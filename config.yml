@@ -25,8 +25,7 @@ island:
    distance: 200
 
    # Default protection range (even number). Min = 0, Recommended = 100
-   # Value must be at least 16 blocks less than the island distance unless you set
-   # overridelimit: true below.
+   # Value must be at least 16 blocks less than the island distance.
    # Use this permission to set for different groups: askyblock.island.range.<number>
    # Larger values will take longer to calculate the island level
    # Admins can change protection sizes for players individually using /asadmin setrange
