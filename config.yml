@@ -726,7 +726,7 @@ general:
    # auto-saved to config.new.yml.
    version: ${version}
 
-# Spawn protection options - different to regular islands
+# Default spawn protection settings. Once spawn is made, the GUI determines the settings.
 spawn:
   # Acid is damage above sea level
   ACID_DAMAGE: false
