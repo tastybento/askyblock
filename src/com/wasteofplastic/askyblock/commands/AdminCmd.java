@@ -653,6 +653,8 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 return true;
 
             } else if (split[0].equalsIgnoreCase("reload")) {
+                // Remove temp permissions
+                plugin.getPlayerEvents().removeAllTempPerms();
                 plugin.reloadConfig();
                 plugin.loadPluginConfig();
                 plugin.getChallenges().reloadChallengeConfig();
@@ -670,6 +672,9 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 plugin.getIslandCmd().loadSchematics();
                 if (plugin.getAcidTask() != null)
                     plugin.getAcidTask().runAcidItemRemovalTask();
+                // Give back any temporary permissions
+                plugin.getPlayerEvents().giveAllTempPerms();
+                
                 sender.sendMessage(ChatColor.YELLOW + plugin.myLocale().reloadconfigReloaded);
                 return true;
             } else if (split[0].equalsIgnoreCase("topten")) {

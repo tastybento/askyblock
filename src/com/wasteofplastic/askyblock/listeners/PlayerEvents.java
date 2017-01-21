@@ -17,8 +17,10 @@
 package com.wasteofplastic.askyblock.listeners;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.UUID;
 
 import org.bukkit.ChatColor;
@@ -38,8 +40,8 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
-import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
@@ -67,6 +69,57 @@ public class PlayerEvents implements Listener {
     public PlayerEvents(final ASkyBlock plugin) {
         this.plugin = plugin;
         respawn = new ArrayList<UUID>();
+    }
+
+    /**
+     * Removes all temp perms. Used when the server is shutting down and players are still online.
+     */
+    public void removeAllTempPerms() {
+        for (Entry<UUID, List<String>> en : temporaryPerms.entrySet()) {
+            Player player = plugin.getServer().getPlayer(en.getKey());
+            if (player != null) {
+                for (String perm: en.getValue()) {
+                    VaultHelper.removePerm(player, perm);
+                }
+            } else {
+                String playerName = plugin.getTinyDB().getPlayerName(en.getKey());
+                plugin.getLogger().warning(playerName + ", (" + en.getKey().toString() + ")");
+                plugin.getLogger().warning("Had these temporary perms that could not be removed because they are offline:");
+                for (String perm: en.getValue()) {
+                    plugin.getLogger().warning(perm);
+                }
+                plugin.getLogger().warning("These should be removed manually.");
+            }
+        }
+    }
+
+    /**
+     * Gives temporary perms to players who are online when the server is reloaded or the plugin reloaded.
+     */
+    public void giveAllTempPerms() {
+        if (plugin.getGrid() == null) {
+            return;
+        }
+        for (Player player : plugin.getServer().getOnlinePlayers()) {
+            if(plugin.getGrid().playerIsOnIsland(player)){
+                if(VaultHelper.checkPerm(player, Settings.PERMPREFIX + "islandfly")){
+                    player.setAllowFlight(true);
+                    // TODO: is this needed?
+                    player.setFlying(true);
+                }
+
+                for(String perm : Settings.temporaryPermissions){
+                    if(!VaultHelper.checkPerm(player, perm)){
+                        VaultHelper.addPerm(player, perm);
+
+                        List<String> perms = new ArrayList<String>();
+                        if(temporaryPerms.containsKey(player.getUniqueId())) perms = temporaryPerms.get(player.getUniqueId());
+                        perms.add(perm);
+                        temporaryPerms.put(player.getUniqueId(), perms);
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -108,9 +161,9 @@ public class PlayerEvents implements Listener {
             for(String perm : Settings.temporaryPermissions){
                 if(!VaultHelper.checkPerm(player, perm)){
                     VaultHelper.addPerm(player, perm);
-                    
+
                     List<String> perms = new ArrayList<String>();
-                    if(temporaryPerms.contains(player.getUniqueId())) perms = temporaryPerms.get(player.getUniqueId());
+                    if(temporaryPerms.containsKey(player.getUniqueId())) perms = temporaryPerms.get(player.getUniqueId());
                     perms.add(perm);
                     temporaryPerms.put(player.getUniqueId(), perms);
                 }
@@ -143,9 +196,9 @@ public class PlayerEvents implements Listener {
             }
 
             for(String perm : Settings.temporaryPermissions){
-                if(temporaryPerms.contains(player.getUniqueId()) && VaultHelper.checkPerm(player, perm)){
+                if(temporaryPerms.containsKey(player.getUniqueId()) && VaultHelper.checkPerm(player, perm)){
                     VaultHelper.removePerm(player, perm);
-                    
+
                     List<String> perms = temporaryPerms.get(player.getUniqueId());
                     perms.remove(perm);
                     if(perms.isEmpty()) temporaryPerms.remove(player.getUniqueId());
@@ -154,7 +207,7 @@ public class PlayerEvents implements Listener {
             }
         }
     }
-        
+
     /**
      * Removes temporary perms when the player log out
      * @param e
@@ -162,8 +215,8 @@ public class PlayerEvents implements Listener {
     @EventHandler
     public void onPlayerLeave(PlayerQuitEvent e){
         Player player = e.getPlayer();
-        
-        if(temporaryPerms.contains(player.getUniqueId())){
+
+        if(temporaryPerms.containsKey(player.getUniqueId())){
             for(String perm : temporaryPerms.get(player.getUniqueId())){
                 VaultHelper.removePerm(player, perm);
             }
