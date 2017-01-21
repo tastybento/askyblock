@@ -486,10 +486,10 @@ public class IslandGuard implements Listener {
             for (Entity player: players) {
                 if (player instanceof Player) {
                     Player p = (Player) player;
-                    p.sendMessage(ChatColor.RED + plugin.myLocale(island.getOwner()).villagerLimitError.replace("[number]", String.valueOf(Settings.villagerLimit)));
+                    p.sendMessage(ChatColor.RED + plugin.myLocale(island.getOwner()).villagerLimitError.replace("[number]", String.valueOf(limit)));
                 }
             }
-            plugin.getMessages().tellTeam(island.getOwner(), ChatColor.RED + plugin.myLocale(island.getOwner()).villagerLimitError.replace("[number]", String.valueOf(Settings.villagerLimit)));
+            plugin.getMessages().tellTeam(island.getOwner(), ChatColor.RED + plugin.myLocale(island.getOwner()).villagerLimitError.replace("[number]", String.valueOf(limit)));
             if (e.getSpawnReason().equals(SpawnReason.CURED)) {
                 // Easter Egg. Or should I say Easter Apple?
                 ItemStack goldenApple = new ItemStack(Material.GOLDEN_APPLE);
