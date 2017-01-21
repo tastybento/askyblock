@@ -39,6 +39,7 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
@@ -151,6 +152,22 @@ public class PlayerEvents implements Listener {
                     else temporaryPerms.put(player.getUniqueId(), perms);
                 }
             }
+        }
+    }
+        
+    /**
+     * Removes temporary perms when the player log out
+     * @param e
+     */
+    @EventHandler
+    public void onPlayerLeave(PlayerQuitEvent e){
+        Player player = e.getPlayer();
+        
+        if(temporaryPerms.contains(player.getUniqueId())){
+            for(String perm : temporaryPerms.get(player.getUniqueId())){
+                VaultHelper.removePerm(player, perm);
+            }
+            temporaryPerms.remove(player.getUniqueId());
         }
     }
 
