@@ -41,7 +41,6 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
-import org.bukkit.util.Vector;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.InventorySave;
@@ -93,7 +92,7 @@ public class PlayerEvents implements Listener {
      * Places player back on their island if the setting is true
      * @param e
      */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerRespawn(final PlayerRespawnEvent e) {
         if (DEBUG) {
             plugin.getLogger().info(e.getEventName());
@@ -116,7 +115,7 @@ public class PlayerEvents implements Listener {
      * Places the player on the island respawn list if set
      * @param e
      */
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = false)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlayerDeath(final PlayerDeathEvent e) {
         if (DEBUG) {
             plugin.getLogger().info(e.getEventName());
@@ -148,7 +147,7 @@ public class PlayerEvents implements Listener {
      * This option helps reduce the down side of dying due to traps, etc.
      * Also handles muting of death messages
      */
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = false)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onVistorDeath(final PlayerDeathEvent e) {
         if (DEBUG) {
             plugin.getLogger().info(e.getEventName());
@@ -277,7 +276,7 @@ public class PlayerEvents implements Listener {
      * 
      * @param e
      */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerTeleport(final PlayerCommandPreprocessEvent e) {
         if (DEBUG) {
             plugin.getLogger().info(e.getEventName());
@@ -303,7 +302,7 @@ public class PlayerEvents implements Listener {
      * 
      * @param e
      */
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = false)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlayerTeleport(final PlayerTeleportEvent e) {
         if (DEBUG) {
             plugin.getLogger().info(e.getEventName());
@@ -595,7 +594,7 @@ public class PlayerEvents implements Listener {
      * Prevents visitors from using commands on islands, like /spawner
      * @param e
      */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onVisitorCommand(final PlayerCommandPreprocessEvent e) {
         if (DEBUG) {
             plugin.getLogger().info("Visitor command " + e.getEventName() + ": " + e.getMessage());
@@ -619,7 +618,7 @@ public class PlayerEvents implements Listener {
      * Prevents visitors from getting damage if invinciblevisitors option is set to TRUE
      * @param e
      */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onVisitorGetDamage(EntityDamageEvent e){
         if(!Settings.invincibleVisitors) return;
         if(!(e.getEntity() instanceof Player)) return;
