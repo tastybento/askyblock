@@ -76,6 +76,11 @@ public class CoopPlay {
             islandLoc = plugin.getPlayers().getTeamIslandLocation(requester.getUniqueId());
             // Tell the team owner
             UUID leaderUUID = plugin.getPlayers().getTeamLeader(requester.getUniqueId());
+            // Check if only leader can coop
+            if(Settings.onlyLeaderCanCoop && (!requester.getUniqueId().equals(leaderUUID))){
+            	requester.sendMessage(ChatColor.RED + plugin.myLocale(requester.getUniqueId()).cannotCoop);
+            	return false;
+            }
             // Tell all the team members
             for (UUID member : plugin.getPlayers().getMembers(leaderUUID)) {
                 // plugin.getLogger().info("DEBUG: " + member.toString());

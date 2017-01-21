@@ -417,6 +417,7 @@ public class ASLocale {
     public String islandhelpCoop;
     public String coopInvited;
     public String coopUseExpel;
+    public String cannotCoop;
 
     public String errorWrongWorld;
     public String islandcannotTeleport;
@@ -1293,6 +1294,7 @@ public class ASLocale {
         islandhelpListCoops = ChatColor.translateAlternateColorCodes('&',locale.getString("coop.listcoops", "list coop players"));
         coopInvited = ChatColor.translateAlternateColorCodes('&', locale.getString("coop.invited", "[name] made [player] a coop player!"));
         coopUseExpel = ChatColor.translateAlternateColorCodes('&', locale.getString("coop.useexpel", "Use expel to remove."));
+        cannotCoop = ChatColor.translateAlternateColorCodes('&', locale.getString("coop.cannotcoop", "Only island leader can coop a player."));
         lockIslandLocked = ChatColor.translateAlternateColorCodes('&', locale.getString("lock.islandlocked", "Island is locked to visitors"));
         lockNowEntering = ChatColor.translateAlternateColorCodes('&', locale.getString("lock.nowentering", "Now entering [name]'s island"));
         lockNowLeaving = ChatColor.translateAlternateColorCodes('&', locale.getString("lock.nowleaving", "Now leaving [name]'s island"));

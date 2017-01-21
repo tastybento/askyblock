@@ -124,6 +124,7 @@ public class Settings {
     public static boolean resetMoney;
     public static boolean damageOps;
     public static boolean endermanDeathDrop;
+    public static boolean onlyLeaderCanCoop;
     
     // Invincible visitor
     public static boolean invincibleVisitors;

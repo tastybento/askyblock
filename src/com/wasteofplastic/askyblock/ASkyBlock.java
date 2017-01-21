@@ -766,6 +766,8 @@ public class ASkyBlock extends JavaPlugin {
         Settings.debug = getConfig().getInt("debug", 0);
         // Persistent coops
         Settings.persistantCoops = getConfig().getBoolean("general.persistentcoops");
+        // Only leader can coop
+        Settings.onlyLeaderCanCoop = getConfig().getBoolean("general.onlyleadercancoop", false);
         // Level logging
         Settings.levelLogging = getConfig().getBoolean("general.levellogging");
         // Allow pushing
