@@ -73,7 +73,7 @@ import com.wasteofplastic.askyblock.CoopPlay;
 import com.wasteofplastic.askyblock.DeleteIslandChunk;
 import com.wasteofplastic.askyblock.GridManager;
 import com.wasteofplastic.askyblock.Island;
-import com.wasteofplastic.askyblock.Island.Flags;
+import com.wasteofplastic.askyblock.Island.SettingsFlag;
 import com.wasteofplastic.askyblock.LevelCalc;
 import com.wasteofplastic.askyblock.LevelCalcByChunk;
 import com.wasteofplastic.askyblock.Settings;
@@ -164,10 +164,12 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                 // built-in island generation
                 schematics.put("default",new Schematic(plugin));
             }
+            plugin.getLogger().info("Loaded default nether schematic");
         } else {
             // It exists, so load it
             try {
                 schematics.put("default",new Schematic(plugin, schematicFile));
+                plugin.getLogger().info("Loaded default island schematic.");
             } catch (IOException e) {
                 plugin.getLogger().severe("Could not load default schematic!");
                 e.printStackTrace();
@@ -183,6 +185,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                     Schematic netherIsland = new Schematic(plugin, netherFile);
                     netherIsland.setVisible(false);
                     schematics.put("nether", netherIsland);
+                    plugin.getLogger().info("Loaded default nether schematic.");
                 } catch (IOException e) {
                     plugin.getLogger().severe("Could not load default nether schematic!");
                     e.printStackTrace();
@@ -196,6 +199,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                 Schematic netherIsland = new Schematic(plugin, netherFile);
                 netherIsland.setVisible(false);
                 schematics.put("nether", netherIsland);
+                plugin.getLogger().info("Loaded default nether schematic.");
             } catch (IOException e) {
                 plugin.getLogger().severe("Could not load default nether schematic!");
                 e.printStackTrace();
@@ -518,7 +522,9 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
         // Set the player's team giving the team leader's name and the team's
         // island
         // location
-        plugin.getPlayers().setJoinTeam(playerUUID, teamLeader, plugin.getPlayers().getIslandLocation(teamLeader));
+        if (!plugin.getPlayers().setJoinTeam(playerUUID, teamLeader, plugin.getPlayers().getIslandLocation(teamLeader))) {
+            return false;
+        }
         // If the player's name and the team leader are NOT the same when this
         // method is called then set the player's home location to the leader's
         // home location
@@ -555,14 +561,17 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
      * 
      * @param playerUUID
      * @param teamLeader
+     * @return true if successful, false if not
      */
-    public void removePlayerFromTeam(final UUID playerUUID, final UUID teamLeader) {
+    public boolean removePlayerFromTeam(final UUID playerUUID, final UUID teamLeader) {
         // Remove player from the team
         plugin.getPlayers().removeMember(teamLeader, playerUUID);
         // If player is online
         // If player is not the leader of their own team
         if (!playerUUID.equals(teamLeader)) {
-            plugin.getPlayers().setLeaveTeam(playerUUID);
+            if (!plugin.getPlayers().setLeaveTeam(playerUUID)) {
+                return false;
+            }
             //plugin.getPlayers().setHomeLocation(player, null);
             plugin.getPlayers().clearHomeLocations(playerUUID);
             plugin.getPlayers().setIslandLocation(playerUUID, null);
@@ -582,11 +591,14 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
             final IslandLeaveEvent event = new IslandLeaveEvent(playerUUID, island);
             plugin.getServer().getPluginManager().callEvent(event);
         } else {
-            // Ex-Leaders keeps their island, but the rest of the team items are
+            // Ex-Leaders keeps their island, but the rest of the team members are
             // removed
-            plugin.getPlayers().setLeaveTeam(playerUUID);
+            if (!plugin.getPlayers().setLeaveTeam(playerUUID)) {
+                // Event was cancelled for some reason
+                return false;
+            }
         }
-
+        return true;
     }
 
     /**
@@ -1303,6 +1315,8 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                         try {
                             player.openInventory(plugin.getSettingsPanel().islandGuardPanel(player));
                         } catch (Exception e) {
+                            // TODO: remove debug
+                            //e.printStackTrace();
                             player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorCommandNotReady);
                         }
                     } else {
@@ -1419,7 +1433,12 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                     }
                     if (player.getWorld().equals(ASkyBlock.getIslandWorld()) || player.getWorld().equals(ASkyBlock.getNetherWorld())) {	
                         if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.minishop")) {
-                            player.openInventory(ControlPanel.miniShop);
+                            if (ControlPanel.miniShop != null) {
+                                player.openInventory(ControlPanel.miniShop);
+                            } else {
+                                player.sendMessage(plugin.myLocale(playerUUID).errorCommandNotReady);
+                                plugin.getLogger().severe("Player tried to open the minishop, but it does not exist. Look for errors in the console about the minishop loading.");
+                            }
                             return true;
                         }
                     } else {
@@ -1927,6 +1946,12 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                 player.sendMessage(ChatColor.YELLOW + plugin.myLocale(player.getUniqueId()).leaveerrorYouAreTheLeader);
                                 return true;
                             }
+                            // Remove from team
+                            if (!removePlayerFromTeam(playerUUID, teamLeader)) {
+                                //player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).leaveerrorYouCannotLeaveIsland);
+                                // If this is canceled, fail silently
+                                return true;
+                            }
                             // Clear any coop inventories
                             // CoopPlay.getInstance().returnAllInventories(player);
                             // Remove any of the target's coop invitees and grab
@@ -1937,8 +1962,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                             // Log the location that this player left so they
                             // cannot join again before the cool down ends
                             plugin.getPlayers().startInviteCoolDownTimer(playerUUID, plugin.getPlayers().getTeamIslandLocation(teamLeader));
-                            // Remove from team
-                            removePlayerFromTeam(playerUUID, teamLeader);
+
                             // Remove any warps
                             plugin.getWarpSignsListener().removeWarp(playerUUID);
                             player.sendMessage(ChatColor.YELLOW + plugin.myLocale(player.getUniqueId()).leaveyouHaveLeftTheIsland);
@@ -1954,7 +1978,10 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                             // teamMembers.remove(playerUUID);
                             if (teamMembers.size() < 2) {
                                 // plugin.getLogger().info("DEBUG: Party is less than 2 - removing leader from team");
-                                removePlayerFromTeam(teamLeader, teamLeader);
+                                if (!removePlayerFromTeam(teamLeader, teamLeader)) {
+                                    // If this is canceled, return silently.
+                                    return true;
+                                }
                             }
                             // Clear all player variables and save
                             plugin.resetPlayer(player);
@@ -2292,8 +2319,8 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                             }
                                         }
                                         boolean pvp = false;
-                                        if ((warpSpot.getWorld().equals(ASkyBlock.getIslandWorld()) && island.getIgsFlag(Flags.allowPvP)) 
-                                                || (warpSpot.getWorld().equals(ASkyBlock.getNetherWorld()) && island.getIgsFlag(Flags.allowNetherPvP))) {
+                                        if ((warpSpot.getWorld().equals(ASkyBlock.getIslandWorld()) && island.getIgsFlag(SettingsFlag.PVP)) 
+                                                || (warpSpot.getWorld().equals(ASkyBlock.getNetherWorld()) && island.getIgsFlag(SettingsFlag.NETHER_PVP))) {
                                             pvp = true;
                                         }
                                         // Find out which direction the warp is facing
@@ -2332,7 +2359,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                                     warpSpot.getBlockZ() + 0.5D);
                                             player.teleport(actualWarp);
                                             if (pvp) {
-                                                player.sendMessage(ChatColor.BOLD + "" + ChatColor.RED + plugin.myLocale(player.getUniqueId()).igsPVP + " " + plugin.myLocale(player.getUniqueId()).igsAllowed);
+                                                player.sendMessage(ChatColor.BOLD + "" + ChatColor.RED + plugin.myLocale(player.getUniqueId()).igs.get(SettingsFlag.PVP) + " " + plugin.myLocale(player.getUniqueId()).igsAllowed);
                                                 if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
                                                     player.getWorld().playSound(player.getLocation(), Sound.valueOf("ARROW_HIT"), 1F, 1F);
                                                 } else {
@@ -2530,10 +2557,11 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                 }
                             }
                             // Add target to coop list
-                            CoopPlay.getInstance().addCoopPlayer(player, target);
-                            // Tell everyone what happened
-                            player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).coopSuccess.replace("[name]", target.getDisplayName()));
-                            target.sendMessage(ChatColor.GREEN + plugin.myLocale(targetPlayerUUID).coopMadeYouCoop.replace("[name]", player.getDisplayName()));
+                            if (CoopPlay.getInstance().addCoopPlayer(player, target)) {
+                                // Tell everyone what happened
+                                player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).coopSuccess.replace("[name]", target.getDisplayName()));
+                                target.sendMessage(ChatColor.GREEN + plugin.myLocale(targetPlayerUUID).coopMadeYouCoop.replace("[name]", player.getDisplayName()));
+                            } // else fail silently
                             return true;
                         } else if (split[0].equalsIgnoreCase("expel")) {
                             if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.expel")) {
@@ -2790,6 +2818,12 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                     // If target is online
                                     Player target = plugin.getServer().getPlayer(targetPlayer);
                                     if (target != null) {
+                                        // Try to kick player
+                                        if (!removePlayerFromTeam(targetPlayer, teamLeader)) {
+                                            //player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).leaveerrorYouCannotLeaveIsland);
+                                            // If this is canceled, fail silently
+                                            return true;
+                                        }
                                         // plugin.getLogger().info("DEBUG: player is online");
                                         target.sendMessage(ChatColor.RED + plugin.myLocale(targetPlayer).kicknameRemovedYou.replace("[name]", player.getName()));
                                         // Log the location that this player left so they
@@ -2858,10 +2892,13 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                     plugin.getWarpSignsListener().removeWarp(targetPlayer);
                                     // Tell leader they removed the player
                                     player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).kicknameRemoved.replace("[name]", split[1]));
-                                    removePlayerFromTeam(targetPlayer, teamLeader);
+                                    //removePlayerFromTeam(targetPlayer, teamLeader);
                                     teamMembers.remove(targetPlayer);
                                     if (teamMembers.size() < 2) {
-                                        removePlayerFromTeam(player.getUniqueId(), teamLeader);
+                                        if (!removePlayerFromTeam(player.getUniqueId(), teamLeader)) {
+                                            // If cancelled, return silently
+                                            return true;
+                                        }
                                     }
                                     plugin.getPlayers().save(targetPlayer);
                                 } else {
@@ -2906,15 +2943,22 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                                 plugin.getMessages().setMessage(targetPlayer, plugin.myLocale(player.getUniqueId()).makeLeaderyouAreNowTheOwner);
                                                 // .makeLeadererrorPlayerMustBeOnline
                                             }
-                                            player.sendMessage(ChatColor.GREEN
-                                                    + plugin.myLocale(player.getUniqueId()).makeLeadernameIsNowTheOwner.replace("[name]", plugin.getPlayers().getName(targetPlayer)));
                                             // targetPlayer is the new leader
                                             // plugin.getLogger().info("DEBUG: " +
                                             // plugin.getPlayers().getIslandLevel(teamLeader));
                                             // Remove the target player from the team
-                                            removePlayerFromTeam(targetPlayer, teamLeader);
+                                            if (!removePlayerFromTeam(targetPlayer, teamLeader)) {
+                                                // If cancelled, return silently
+                                                return true;
+                                            }
                                             // Remove the leader from the team
-                                            removePlayerFromTeam(teamLeader, teamLeader);
+                                            if (!removePlayerFromTeam(teamLeader, teamLeader)) {
+                                                // If cancelled, return silently
+                                                return true;
+                                            }
+                                            player.sendMessage(ChatColor.GREEN
+                                                    + plugin.myLocale(player.getUniqueId()).makeLeadernameIsNowTheOwner.replace("[name]", plugin.getPlayers().getName(targetPlayer)));
+
                                             // plugin.getLogger().info("DEBUG: " +
                                             // plugin.getPlayers().getIslandLevel(teamLeader));
                                             // Transfer the data from the old leader to the
@@ -2979,7 +3023,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                 inFront.getBlockZ() + 0.5D, yaw, 30F);
         player.teleport(actualWarp);
         if (pvp) {
-            player.sendMessage(ChatColor.BOLD + "" + ChatColor.RED + plugin.myLocale(player.getUniqueId()).igsPVP + " " + plugin.myLocale(player.getUniqueId()).igsAllowed);
+            player.sendMessage(ChatColor.BOLD + "" + ChatColor.RED + plugin.myLocale(player.getUniqueId()).igs.get(SettingsFlag.PVP) + " " + plugin.myLocale(player.getUniqueId()).igsAllowed);
             if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
                 player.getWorld().playSound(player.getLocation(), Sound.valueOf("ARROW_HIT"), 1F, 1F);
             } else {

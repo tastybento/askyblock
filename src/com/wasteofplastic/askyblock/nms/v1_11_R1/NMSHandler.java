@@ -18,6 +18,7 @@
 package com.wasteofplastic.askyblock.nms.v1_11_R1;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -45,6 +46,14 @@ import com.wasteofplastic.org.jnbt.StringTag;
 import com.wasteofplastic.org.jnbt.Tag;
 
 public class NMSHandler implements NMSAbstraction {
+
+    private static HashMap<EntityType, String> bToMConversion;
+
+    static {
+        bToMConversion = new HashMap<EntityType, String> ();
+        bToMConversion.put(EntityType.MUSHROOM_COW, "mooshroom");
+        bToMConversion.put(EntityType.PIG_ZOMBIE, "zombie_pigman");
+    }
 
     @Override
     public void setBlockSuperFast(Block b, int blockId, byte data, boolean applyPhysics) {
@@ -183,7 +192,7 @@ public class NMSHandler implements NMSAbstraction {
         Bukkit.getLogger().warning("Potion in schematic is pre-V1.9 format and will just be water.");
         return chestItem;
     }
-    
+
     /**
      * Get spawn egg
      * @param type
@@ -200,7 +209,11 @@ public class NMSHandler implements NMSAbstraction {
         }
         //Bukkit.getLogger().info("DEBUG: tag = " + tagCompound);
         NBTTagCompound id = new NBTTagCompound();
-        id.setString("id", "minecraft:" + type.toString().toLowerCase());
+        if (!bToMConversion.containsKey(type)) {
+            id.setString("id", "minecraft:" + type.toString().toLowerCase());
+        } else {
+            id.setString("id", "minecraft:" + bToMConversion.get(type));
+        }
         tagCompound.set("EntityTag", id);
         stack.setTag(tagCompound);
         //Bukkit.getLogger().info("DEBUG: after tag = " + tagCompound);

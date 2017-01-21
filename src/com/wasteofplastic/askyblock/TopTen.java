@@ -152,6 +152,8 @@ public class TopTen implements Listener{
                                 }
                             }
                         } catch (Exception e) {
+                            plugin.getLogger().severe("Error when reading player file. File is " + fileName);
+                            plugin.getLogger().severe("Look at the stack trace and edit the file - it probably has broken YAML in it for some reason.");
                             e.printStackTrace();
                         }
                     }
@@ -367,6 +369,11 @@ public class TopTen implements Listener{
         // The player that clicked the item
         Player player = (Player) event.getWhoClicked();
         event.setCancelled(true);
+        if(event.getCurrentItem() != null && event.getCurrentItem().getType().equals(Material.SKULL_ITEM) && event.getCurrentItem().hasItemMeta()){
+        	player.performCommand("is warp " + ((SkullMeta)event.getCurrentItem().getItemMeta()).getOwner());
+        	player.closeInventory();
+        	return;
+        }
         if (event.getSlotType().equals(SlotType.OUTSIDE)) {
             player.closeInventory();
             return;

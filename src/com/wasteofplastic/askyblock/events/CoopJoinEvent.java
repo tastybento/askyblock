@@ -19,6 +19,8 @@ package com.wasteofplastic.askyblock.events;
 
 import java.util.UUID;
 
+import org.bukkit.event.Cancellable;
+
 import com.wasteofplastic.askyblock.Island;
 
 /**
@@ -27,9 +29,10 @@ import com.wasteofplastic.askyblock.Island;
  * @author tastybento
  * 
  */
-public class CoopJoinEvent extends ASkyBlockEvent {
+public class CoopJoinEvent extends ASkyBlockEvent implements Cancellable {
 
     private final UUID inviter;
+    private boolean cancelled;
 
 
     /**
@@ -50,6 +53,16 @@ public class CoopJoinEvent extends ASkyBlockEvent {
      */
     public UUID getInviter() {
         return inviter;
+    }
+
+    @Override
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    @Override
+    public void setCancelled(boolean cancel) {
+        this.cancelled = cancel;   
     }
 
 }

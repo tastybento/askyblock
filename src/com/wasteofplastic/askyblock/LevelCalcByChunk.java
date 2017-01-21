@@ -371,6 +371,7 @@ public class LevelCalcByChunk {
                     }
 
                     // Return to main thread
+                    final int blocks = blockCount;
                     plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
 
                         @Override
@@ -416,6 +417,14 @@ public class LevelCalcByChunk {
                                                 message += " " + plugin.myLocale(((Player)sender).getUniqueId()).levelDeaths.replace("[number]", String.valueOf(plugin.getPlayers().getDeaths(targetPlayer)));
                                             }
                                             sender.sendMessage(message);
+                                            //Send player how many points are required to reach next island level
+                                            int requiredPoints = (Settings.levelCost * (plugin.getPlayers().getIslandLevel(targetPlayer) + 1 + levelHandicap)) - ((blocks * levelMultiplier) - (deathHandicap * Settings.deathpenalty));
+                                            
+                                            
+                                            
+                                            String toNextLevel = ChatColor.GREEN + plugin.myLocale(((Player)sender).getUniqueId()).islandrequiredPointsToNextLevel.replace("[points]", String.valueOf(requiredPoints));
+                                            toNextLevel = toNextLevel.replace("[next]", String.valueOf(plugin.getPlayers().getIslandLevel(targetPlayer) + 1));
+                                            sender.sendMessage(toNextLevel);
                                         }
                                     } else {
                                         if (((Player)sender).isOnline()) {

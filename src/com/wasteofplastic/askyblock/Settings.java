@@ -31,7 +31,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 import org.bukkit.potion.PotionEffectType;
 
-import com.wasteofplastic.askyblock.Island.Flags;
+import com.wasteofplastic.askyblock.Island.SettingsFlag;
 
 /**
  * Where all the settings are
@@ -82,41 +82,20 @@ public class Settings {
     public static int monsterSpawnLimit;
     public static int animalSpawnLimit;
     public static int waterAnimalSpawnLimit;
-    // IslandGuard settings
-    public static HashMap<Flags, Boolean> defaultIslandSettings = new HashMap<Flags, Boolean>();
-    public static boolean allowAnvilUse;
-    public static boolean allowArmorStandUse;
-    public static boolean allowBeaconAccess;
-    public static boolean allowBedUse;
-    public static boolean allowBreakBlocks;
-    public static boolean allowBreeding;
-    public static boolean allowBrewing;
-    public static boolean allowBucketUse;
-    public static boolean allowChestAccess;
-    public static boolean allowCrafting;
-    public static boolean allowCropTrample;
-    public static boolean allowDoorUse;
-    public static boolean allowEnchanting;
-    public static boolean allowEnderPearls;
-    public static boolean allowFurnaceUse;
-    public static boolean allowGateUse;
-    public static boolean allowHorseInvAccess;
-    public static boolean allowHorseRiding;
-    public static boolean allowHurtMobs;
-    public static boolean allowLeashUse;
-    public static boolean allowLeverButtonUse;
-    public static boolean allowMusic;
-    public static boolean allowPlaceBlocks;
-    public static boolean allowPortalUse;
-    public static boolean allowPressurePlate;
-    public static boolean allowPvP;
-    public static boolean allowNetherPvP;
-    public static boolean allowRedStone;
-    public static boolean allowShearing;
-    public static boolean allowVillagerTrading;
-    public static boolean allowChorusFruit;
-    public static boolean enableJoinAndLeaveIslandMessages;
-    public static boolean allowMobSpawning;
+    /**
+     * Default island protection settings
+     */
+    public static HashMap<SettingsFlag, Boolean> defaultIslandSettings = new HashMap<SettingsFlag, Boolean>();
+    /**
+     * Default spawn protection settings
+     */
+    public static HashMap<SettingsFlag, Boolean> defaultSpawnSettings = new HashMap<SettingsFlag, Boolean>();
+
+    // Flymode
+    public static int flyTimeOutside;
+    
+    // Temporary Permissions
+    public static List<String> temporaryPermissions;
 
     // System settings
     public static boolean allowChestDamage;
@@ -129,8 +108,6 @@ public class Settings {
     public static boolean allowMonsterEggs;
     public static boolean allowPistonPush;
     public static boolean allowTNTDamage;
-    public static boolean allowVisitorItemDrop;
-    public static boolean allowVisitorItemPickup;
     public static boolean allowVisitorKeepInvOnDeath;
     public static boolean restrictWither;
 
@@ -157,45 +134,6 @@ public class Settings {
     public static boolean islandRemoveMobs;
     public static int island_level;
     public static boolean resetChallenges;
-    // Spawn fields
-    public static boolean allowSpawnDoorUse;
-    public static boolean allowSpawnLeverButtonUse;
-    public static boolean allowSpawnChestAccess;
-    public static boolean allowSpawnFurnaceUse;
-    public static boolean allowSpawnRedStone;
-    public static boolean allowSpawnMusic;
-    public static boolean allowSpawnCrafting;
-    public static boolean allowSpawnBrewing;
-    public static boolean allowSpawnGateUse;
-    public static boolean allowSpawnMobSpawn;
-    public static boolean allowSpawnNoAcidWater;
-    public static boolean allowSpawnEnchanting;
-    public static boolean allowSpawnAnvilUse;
-    public static boolean allowSpawnBeaconAccess;
-    public static boolean allowSpawnAnimalSpawn;
-    public static boolean allowSpawnAnimalKilling;
-    public static boolean allowSpawnMobKilling;
-    public static boolean allowSpawnMilking;
-    public static boolean allowSpawnBreakBlocks;
-    public static boolean allowSpawnPlaceBlocks;
-    public static boolean allowSpawnEggs;
-    public static boolean allowSpawnPVP;
-    public static boolean allowSpawnLavaCollection;
-    public static boolean allowSpawnWaterCollection;
-    public static boolean allowSpawnMonsterEggs;
-    public static boolean allowSpawnHorseInvAccess;
-    public static boolean allowSpawnHorseRiding;
-    public static boolean allowSpawnPressurePlate;
-    public static boolean allowSpawnVisitorItemDrop;
-    public static boolean allowSpawnVisitorItemPickup;
-    public static boolean allowSpawnArmorStandUse;
-    public static boolean allowSpawnBedUse;
-    public static boolean allowSpawnBreeding;
-    public static boolean allowSpawnCropTrample;
-    public static boolean allowSpawnEnderPearls;
-    public static boolean allowSpawnLeashUse;
-    public static boolean allowSpawnShearing;
-    public static boolean allowSpawnChorusFruit;
 
     // Levels
     public static HashMap<MaterialData, Integer> blockLimits;
@@ -259,6 +197,9 @@ public class Settings {
     // Disable offline redstone
     public static boolean disableOfflineRedstone;
     
+    // Fancy island level display
+    public static boolean fancyIslandLevelDisplay;
+    
     // Falling blocked commands
     public static List<String> fallingCommandBlockList;
     public static List<String> leaveCommands;
@@ -298,7 +239,6 @@ public class Settings {
     public static HashMap<String,Integer> limitedBlocks;
     public static long pvpRestartCooldown;
     public static long backupDuration;
-    public static boolean cleanUpBlocks;
     public static boolean acidBottle;
     public static boolean useOwnGenerator;
     public static List<String> freeLevels = new ArrayList<String>();
@@ -307,7 +247,7 @@ public class Settings {
     public static boolean recoverSuperFlat;
     protected static boolean levelLogging;
     public static boolean persistantCoops;
-    public static boolean allowSpawnCreeperPain;
+    //public static boolean allowSpawnCreeperPain;
     public static List<String> teamStartCommands;
     public static int minNameLength;
     public static int maxNameLength;
@@ -318,13 +258,16 @@ public class Settings {
     public static boolean teamJoinDeathReset;
     public static boolean allowAutoActivator;
     public static boolean netherRoof;
-    public static boolean allowSpawnVillagerTrading;
+    //public static boolean allowSpawnVillagerTrading;
     public static String chatLevelPrefix;
     public static String chatChallengeLevelPrefix;
     public static String chatIslandPlayer;
     public static boolean allowObsidianScooping;
     public static boolean allowFireExtinguish;
-    public static boolean allowSpawnFireExtinguish;
+    //public static boolean allowSpawnFireExtinguish;
     public static boolean allowMobDamageToItemFrames;
     public static boolean kickedKeepInv;
+    public static boolean hackSkeletonSpawners;
+    public static HashMap<EntityType, Integer> entityLimits;
+    public static long acidItemDestroyTime;
 }

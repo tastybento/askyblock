@@ -19,6 +19,8 @@ package com.wasteofplastic.askyblock.events;
 
 import java.util.UUID;
 
+import org.bukkit.event.Cancellable;
+
 import com.wasteofplastic.askyblock.Island;
 
 
@@ -27,10 +29,13 @@ import com.wasteofplastic.askyblock.Island;
  * @author tastybento
  *
  */
-public class CoopLeaveEvent extends ASkyBlockEvent {
+public class CoopLeaveEvent extends ASkyBlockEvent implements Cancellable {
     private final UUID expeller;
+    private boolean cancelled;
 
     /**
+     * Note that not all coop leaving events can be cancelled because they could be due to bigger events than
+     * coop, e.g., an island being reset.
      * @param expelledPlayer
      * @param expellingPlayer
      * @param island
@@ -49,5 +54,17 @@ public class CoopLeaveEvent extends ASkyBlockEvent {
         return expeller;
     }
 
+    @Override
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    /* (non-Javadoc)
+     * @see org.bukkit.event.Cancellable#setCancelled(boolean)
+     */
+    @Override
+    public void setCancelled(boolean cancel) {
+        this.cancelled = cancel;   
+    }
 
 }

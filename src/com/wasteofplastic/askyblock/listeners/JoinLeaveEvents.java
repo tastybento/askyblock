@@ -245,11 +245,6 @@ public class JoinLeaveEvents implements Listener {
                                 if (DEBUG)
                                     plugin.getLogger().warning("Login range setting: Protection range must be even, using " + range + " for " + player.getName());
                             }
-                            if (range > (Settings.islandDistance - 16) && !plugin.getConfig().getBoolean("island.overridelimit", false)) {
-                                range = Settings.islandDistance - 16;
-                                if (DEBUG)
-                                    plugin.getLogger().warning("Login range setting: Island protection range must be " + (Settings.islandDistance - 16) + " or less, (island range -16). Setting to: "+ range);
-                            }
                             if (range > islandByOwner.getProtectionSize()) {
                                 plugin.getLogger().info(
                                         "Login range setting: Island protection range increased from " + islandByOwner.getProtectionSize() + " to "

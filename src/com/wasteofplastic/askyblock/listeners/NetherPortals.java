@@ -42,7 +42,7 @@ import org.bukkit.util.Vector;
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.GridManager;
 import com.wasteofplastic.askyblock.Island;
-import com.wasteofplastic.askyblock.Island.Flags;
+import com.wasteofplastic.askyblock.Island.SettingsFlag;
 import com.wasteofplastic.askyblock.SafeSpotTeleport;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.commands.IslandCmd;
@@ -132,18 +132,17 @@ public class NetherPortals implements Listener {
         }
         // Check if player has permission
         Island island = plugin.getGrid().getIslandAt(currentLocation);
-        if ((island == null && !Settings.allowPortalUse) || (island != null && !island.getIgsFlag(Flags.allowPortalUse))) {
+        if ((island == null && !Settings.defaultIslandSettings.get(SettingsFlag.PORTAL)) 
+                || (island != null && !island.getIgsFlag(SettingsFlag.PORTAL))) {
             // Portal use is disallowed for visitors, but okay for ops or bypass
             // mods
-            if (!event.getPlayer().isOp() && !VaultHelper.checkPerm(event.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
-                // Portals use is always allowed around the spawn
-                if (!plugin.getGrid().locationIsOnIsland(event.getPlayer(), event.getPlayer().getLocation())
-                        && !plugin.getGrid().isAtSpawn(event.getPlayer().getLocation())) {
-                    event.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(event.getPlayer().getUniqueId()).islandProtected);
-                    event.setCancelled(true);
-                    return;
-                }
+            if (event.getPlayer().isOp() || VaultHelper.checkPerm(event.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
+                return;
             }
+            // Portals use is not allowed
+            event.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(event.getPlayer().getUniqueId()).islandProtected);
+            event.setCancelled(true);
+            return;
         }
         // Determine what portal it is
         switch (event.getCause()) {
@@ -386,7 +385,10 @@ public class NetherPortals implements Listener {
         if (DEBUG)
             plugin.getLogger().info("DEBUG: " + e.getEventName());
 
-        if (!Settings.newNether || !Settings.netherTrees) {
+        if (!Settings.netherTrees) {
+            return;
+        }
+        if (!Settings.createNether || ASkyBlock.getNetherWorld() == null) {
             return;
         }
         // Check world
