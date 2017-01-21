@@ -63,7 +63,7 @@ public class NetherPortals implements Listener {
      * 
      * @param event
      */
-    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onEntityPortal(EntityPortalEvent event) {
         if (DEBUG)
             plugin.getLogger().info("DEBUG: nether portal entity " + event.getFrom().getBlock().getType());
