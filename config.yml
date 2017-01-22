@@ -666,6 +666,10 @@ general:
    # If you change this, change the text in the locale files about coop ending due to
    # log out.
    persistentcoops: false
+   
+   # Only allow the island leader to coop players.
+   # Island members wont be able to coop other players.
+   onlyleadercancoop: false
       
    # Allow FTB Autonomous Activator to work (will allow a pseudo player [CoFH] to place and break blocks and hang items)
    autoactivator: false

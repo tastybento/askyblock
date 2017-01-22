@@ -153,6 +153,9 @@ public class ASkyBlock extends JavaPlugin {
 
     // Acid Item Removal Task
     AcidTask acidTask;
+    
+    // Player events listener
+    private PlayerEvents playerEvents;
 
     /**
      * Returns the World object for the island world named in config.yml.
@@ -249,6 +252,10 @@ public class ASkyBlock extends JavaPlugin {
             }
             // Save the coops
             CoopPlay.getInstance().saveCoops();
+            // Remove temporary perms
+            if (playerEvents != null) {
+                playerEvents.removeAllTempPerms();
+            }
         } catch (final Exception e) {
             getLogger().severe("Something went wrong saving files!");
             e.printStackTrace();
@@ -471,6 +478,9 @@ public class ASkyBlock extends JavaPlugin {
                         if (Settings.persistantCoops) {
                             CoopPlay.getInstance().loadCoops();
                         }
+                        // Give temp permissions
+                        playerEvents.giveAllTempPerms();
+                        
                         getLogger().info("All files loaded. Ready to play...");
                         // Fire event
                         getServer().getPluginManager().callEvent(new ReadyEvent());
@@ -766,6 +776,8 @@ public class ASkyBlock extends JavaPlugin {
         Settings.debug = getConfig().getInt("debug", 0);
         // Persistent coops
         Settings.persistantCoops = getConfig().getBoolean("general.persistentcoops");
+        // Only leader can coop
+        Settings.onlyLeaderCanCoop = getConfig().getBoolean("general.onlyleadercancoop", false);
         // Level logging
         Settings.levelLogging = getConfig().getBoolean("general.levellogging");
         // Allow pushing
@@ -1438,7 +1450,8 @@ public class ASkyBlock extends JavaPlugin {
         // Island Protection events
         manager.registerEvents(new IslandGuard(this), this);
         // Player events
-        manager.registerEvents(new PlayerEvents(this), this);
+        playerEvents = new PlayerEvents(this);
+        manager.registerEvents(playerEvents, this);
         // New V1.8 events
         if (onePointEight) {
             manager.registerEvents(new IslandGuard1_8(this), this);
@@ -1685,5 +1698,12 @@ public class ASkyBlock extends JavaPlugin {
      */
     public AcidTask getAcidTask() {
         return acidTask;
+    }
+
+    /**
+     * @return the playerEvents
+     */
+    public PlayerEvents getPlayerEvents() {
+        return playerEvents;
     }
 }

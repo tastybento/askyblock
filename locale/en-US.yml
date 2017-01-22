@@ -188,7 +188,8 @@ completechallenge:
   errorChallengeDoesNotExist: "Challenge doesn't exist or is already completed"
 confirm: 
   errorTimeLimitExpired: "Time limit expired! Issue command again."
-coop: 
+coop:
+  cannotcoop: "Only island leader can coop a player." 
   help: "give a player full access to your island"
   invited: "[name] made [player] a coop player!"
   listcoops: "list coop players"

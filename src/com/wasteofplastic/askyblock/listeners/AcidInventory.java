@@ -64,7 +64,7 @@ public class AcidInventory implements Listener {
      * 
      * @param e
      */
-    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onInventoryOpen(InventoryOpenEvent e) {
         if (DEBUG)
             plugin.getLogger().info("DEBUG: " + e.getEventName());
@@ -132,7 +132,7 @@ public class AcidInventory implements Listener {
      * 
      * @param e
      */
-    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onBucketFill(PlayerBucketFillEvent e) {
         if (DEBUG)
             plugin.getLogger().info("Player filled the bucket");
@@ -157,7 +157,7 @@ public class AcidInventory implements Listener {
      * 
      * @param e
      */
-    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onWaterBottleDrink(final PlayerItemConsumeEvent e) {
         if (Settings.acidDamage == 0D || !Settings.acidBottle)
             return;
@@ -193,7 +193,7 @@ public class AcidInventory implements Listener {
      * 
      * @param e
      */
-    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onBrewComplete(final BrewEvent e) {
         if (DEBUG)
             plugin.getLogger().info("DEBUG: " + e.getEventName());
@@ -220,7 +220,7 @@ public class AcidInventory implements Listener {
     /**
      * Event that covers filling a bottle
      */
-    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onWaterBottleFill(final PlayerInteractEvent e) {
         if (DEBUG)
             plugin.getLogger().info("DEBUG: " + e.getEventName());
