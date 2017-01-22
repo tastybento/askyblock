@@ -689,6 +689,10 @@ general:
    # Default is false, because it highly changes the gameplay.
    usemagiccobblegen: false
    
+   # If set to true, Magic Cobblestone Generator will only work at spawn
+   # Beware! Spawn MUST be in the same world that islands to work.
+   magiccobblegenonlyatspawn: false
+   
    # This won't be considered if usemagiccobblegen is set to false.
    # You can add, remove a block or modify its probability to be generated.
    # You can also set different probabilities from specified minimum levels
