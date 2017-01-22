@@ -1398,35 +1398,39 @@ public class ASkyBlock extends JavaPlugin {
         }
         // Magic Cobble Generator
         Settings.useMagicCobbleGen = getConfig().getBoolean("general.usemagiccobblegen", false);
-        if(Settings.useMagicCobbleGen && getConfig().isSet("general.magiccobblegenchances")){
-            //getLogger().info("DEBUG: magic cobble gen enabled and chances section found");
-            Settings.magicCobbleGenChances = new TreeMap<Integer, TreeMap<Double,Material>>();
-            for(String level : getConfig().getConfigurationSection("general.magiccobblegenchances").getKeys(false)){
-                int levelInt = 0;
-                try{
-                    if(level.equals("default")) {
-                        levelInt = Integer.MIN_VALUE;
-                    } else {
-                        levelInt = Integer.parseInt(level);
-                    } 
-                    TreeMap<Double,Material> blockMapTree = new TreeMap<Double, Material>();
-                    double chanceTotal = 0;
-                    for(String block : getConfig().getConfigurationSection("general.magiccobblegenchances." + level).getKeys(false)){
-                        double chance = getConfig().getDouble("general.magiccobblegenchances." + level + "." + block, 0D);
-                        if(chance > 0 && Material.getMaterial(block) != null && Material.getMaterial(block).isBlock()) {
-                            // Store the cumulative chance in the treemap. It does not need to add up to 100%
-                            chanceTotal += chance;
-                            blockMapTree.put(chanceTotal, Material.getMaterial(block));
-                        }
-                    }
-                    if (!blockMapTree.isEmpty()) {
-                        Settings.magicCobbleGenChances.put(levelInt, blockMapTree);
-                    }
-                } catch(NumberFormatException e){
-                    // Putting the catch here means that an invalid level is skipped completely
-                    getLogger().severe("Unknown level '" + level + "' listed in magiccobblegenchances section! Must be an integer or 'default'. Skipping...");
-                }
-            }
+        if(Settings.useMagicCobbleGen){
+        	Settings.magicCobbleGenOnlyAtSpawn = getConfig().getBoolean("general.magiccobblegenonlyatspawn", false);
+        	if(getConfig().isSet("general.magiccobblegenchances")){
+        		//getLogger().info("DEBUG: magic cobble gen enabled and chances section found");
+
+        		Settings.magicCobbleGenChances = new TreeMap<Integer, TreeMap<Double,Material>>();
+        		for(String level : getConfig().getConfigurationSection("general.magiccobblegenchances").getKeys(false)){
+        			int levelInt = 0;
+        			try{
+        				if(level.equals("default")) {
+        					levelInt = Integer.MIN_VALUE;
+        				} else {
+        					levelInt = Integer.parseInt(level);
+        				} 
+        				TreeMap<Double,Material> blockMapTree = new TreeMap<Double, Material>();
+        				double chanceTotal = 0;
+        				for(String block : getConfig().getConfigurationSection("general.magiccobblegenchances." + level).getKeys(false)){
+        					double chance = getConfig().getDouble("general.magiccobblegenchances." + level + "." + block, 0D);
+        					if(chance > 0 && Material.getMaterial(block) != null && Material.getMaterial(block).isBlock()) {
+        						// Store the cumulative chance in the treemap. It does not need to add up to 100%
+        						chanceTotal += chance;
+        						blockMapTree.put(chanceTotal, Material.getMaterial(block));
+        					}
+        				}
+        				if (!blockMapTree.isEmpty()) {
+        					Settings.magicCobbleGenChances.put(levelInt, blockMapTree);
+        				}
+        			} catch(NumberFormatException e){
+        				// Putting the catch here means that an invalid level is skipped completely
+        				getLogger().severe("Unknown level '" + level + "' listed in magiccobblegenchances section! Must be an integer or 'default'. Skipping...");
+        			}
+        		}
+        	}
         }
         // Disable offline redstone
         Settings.disableOfflineRedstone = getConfig().getBoolean("general.disableofflineredstone", false);
