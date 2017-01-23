@@ -255,11 +255,12 @@ public class Players {
         // Save the challenges
         playerInfo.set("challenges",null);
         for (String challenge : challengeList.keySet()) {
-            //plugin.getLogger().info("DEBUG: " + challenge + "  --> " + challengeList.get(challenge));
-            playerInfo.set("challenges.status." + challenge.replace(".","[dot]"), challengeList.get(challenge));
+            if (!challenge.isEmpty())
+                playerInfo.set("challenges.status." + challenge.replace(".","[dot]"), challengeList.get(challenge));
         }
         for (String challenge : challengeListTimes.keySet()) {
-            playerInfo.set("challenges.times." + challenge.replace(".","[dot]"), challengeListTimes.get(challenge));
+            if (!challenge.isEmpty())
+                playerInfo.set("challenges.times." + challenge.replace(".","[dot]"), challengeListTimes.get(challenge));
         }
         // Check what the global limit is
         if (Settings.resetLimit < this.resetsLeft) {
@@ -366,7 +367,7 @@ public class Players {
      * @param challenge
      */
     public void completeChallenge(final String challenge) {
-        // plugin.getLogger().info("DEBUG: Complete challenge");
+        //plugin.getLogger().info("DEBUG: Complete challenge");
         challengeList.put(challenge.toLowerCase(), true);
         // Count how many times the challenge has been done
         int times = 0;
@@ -558,6 +559,7 @@ public class Players {
      * @param challenge
      */
     public void resetChallenge(final String challenge) {
+        //plugin.getLogger().info("DEBUG: reset challenge");
         challengeList.put(challenge, false);
         challengeListTimes.put(challenge, 0);
     }
