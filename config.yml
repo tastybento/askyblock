@@ -304,6 +304,10 @@ general:
    # If true, the plugin will run the level command for the player when they login
    # If the command is busy, it will fail silently
    loginlevel: false
+   
+   # If TRUE, nether island will count in level calculation.
+   # Block values are the same than in the Overworld.
+   nethercountinlevel: false
 
    #How many resets a player is allowed (override with /asadmin clearreset <player>
    #Value of -1 means unlimited, 0 means hardcore - no resets.

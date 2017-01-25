@@ -111,6 +111,7 @@ public class LevelCalcByChunk {
             final int deathHandicap = deaths;
             // Check if player's island world is the nether or overworld and adjust accordingly
             final World world = plugin.getPlayers().getIslandLocation(targetPlayer).getWorld();
+            final World nether = ASkyBlock.getNetherWorld();
             // Get the chunks
             //long nano = System.nanoTime();
             Set<ChunkSnapshot> chunkSnapshot = new HashSet<ChunkSnapshot>();
@@ -124,8 +125,17 @@ public class LevelCalcByChunk {
                         chunkSnapshot.add(world.getBlockAt(x, 0, z).getChunk().getChunkSnapshot());
                     }                                       
                     //plugin.getLogger().info("DEBUG: getting chunk at " + x + ", " + z);
+                    if (!nether.getBlockAt(x, 0, z).getChunk().isLoaded()){
+                    	nether.getBlockAt(x, 0, z).getChunk().load();
+                    	chunkSnapshot.add(nether.getBlockAt(x, 0, z).getChunk().getChunkSnapshot());
+                    	nether.getBlockAt(x, 0, z).getChunk().unload();
+                    } else {
+                    	chunkSnapshot.add(nether.getBlockAt(x, 0, z).getChunk().getChunkSnapshot());
+                    }
                 }
             }
+            
+            
             //plugin.getLogger().info("DEBUG: time = " + (System.nanoTime() - nano) / 1000000 + " ms");
             //plugin.getLogger().info("DEBUG: size of chunk ss = " + chunkSnapshot.size());
             final Set<ChunkSnapshot> finalChunk = chunkSnapshot;

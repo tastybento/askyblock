@@ -271,4 +271,5 @@ public class Settings {
     public static boolean hackSkeletonSpawners;
     public static HashMap<EntityType, Integer> entityLimits;
     public static long acidItemDestroyTime;
+    public static boolean countNetherInLevelCalc;
 }
