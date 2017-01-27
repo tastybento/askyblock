@@ -153,7 +153,7 @@ public class ASkyBlock extends JavaPlugin {
 
     // Acid Item Removal Task
     AcidTask acidTask;
-    
+
     // Player events listener
     private PlayerEvents playerEvents;
 
@@ -480,7 +480,7 @@ public class ASkyBlock extends JavaPlugin {
                         }
                         // Give temp permissions
                         playerEvents.giveAllTempPerms();
-                        
+
                         getLogger().info("All files loaded. Ready to play...");
                         // Fire event
                         getServer().getPluginManager().callEvent(new ReadyEvent());
@@ -706,15 +706,20 @@ public class ASkyBlock extends JavaPlugin {
         // Add this to the config      
         FileLister fl = new FileLister(this);
         try {
+            // Default is locale.yml
+            availableLocales.put("locale", new ASLocale(this, "locale", 0));
             int index = 1;
             for (String code: fl.list()) {
-                availableLocales.put(code, new ASLocale(this,code, index++)); 
+                // Do some checking that the code is valid
+                if (code.length() == 5 && code.charAt(2) == '-') {
+                    availableLocales.put(code, new ASLocale(this,code, index++)); 
+                } else {
+                    getLogger().severe(code + ".yml is not a valid locale file name. Skipping...");
+                }
             }
         } catch (IOException e1) {
             getLogger().severe("Could not add locales!");
         }
-        // Default is locale.yml
-        availableLocales.put("locale", new ASLocale(this, "locale", 0));
         // Assign settings
         String configVersion = getConfig().getString("general.version", "");
         //getLogger().info("DEBUG: config ver length " + configVersion.split("\\.").length);
@@ -867,10 +872,10 @@ public class ASkyBlock extends JavaPlugin {
         if(Settings.flyTimeOutside < 0) {
             Settings.flyTimeOutside = 0;
         }
-	
-	// Temporary Permissions while inside island
-	Settings.temporaryPermissions = getConfig().getStringList("island.islandtemporaryperms");
-	
+
+        // Temporary Permissions while inside island
+        Settings.temporaryPermissions = getConfig().getStringList("island.islandtemporaryperms");
+
         // Settings from config.yml
         Settings.worldName = getConfig().getString("general.worldName");
         // Check if the world name matches island.yml info
@@ -1399,38 +1404,38 @@ public class ASkyBlock extends JavaPlugin {
         // Magic Cobble Generator
         Settings.useMagicCobbleGen = getConfig().getBoolean("general.usemagiccobblegen", false);
         if(Settings.useMagicCobbleGen){
-        	Settings.magicCobbleGenOnlyAtSpawn = getConfig().getBoolean("general.magiccobblegenonlyatspawn", false);
-        	if(getConfig().isSet("general.magiccobblegenchances")){
-        		//getLogger().info("DEBUG: magic cobble gen enabled and chances section found");
+            Settings.magicCobbleGenOnlyAtSpawn = getConfig().getBoolean("general.magiccobblegenonlyatspawn", false);
+            if(getConfig().isSet("general.magiccobblegenchances")){
+                //getLogger().info("DEBUG: magic cobble gen enabled and chances section found");
 
-        		Settings.magicCobbleGenChances = new TreeMap<Integer, TreeMap<Double,Material>>();
-        		for(String level : getConfig().getConfigurationSection("general.magiccobblegenchances").getKeys(false)){
-        			int levelInt = 0;
-        			try{
-        				if(level.equals("default")) {
-        					levelInt = Integer.MIN_VALUE;
-        				} else {
-        					levelInt = Integer.parseInt(level);
-        				} 
-        				TreeMap<Double,Material> blockMapTree = new TreeMap<Double, Material>();
-        				double chanceTotal = 0;
-        				for(String block : getConfig().getConfigurationSection("general.magiccobblegenchances." + level).getKeys(false)){
-        					double chance = getConfig().getDouble("general.magiccobblegenchances." + level + "." + block, 0D);
-        					if(chance > 0 && Material.getMaterial(block) != null && Material.getMaterial(block).isBlock()) {
-        						// Store the cumulative chance in the treemap. It does not need to add up to 100%
-        						chanceTotal += chance;
-        						blockMapTree.put(chanceTotal, Material.getMaterial(block));
-        					}
-        				}
-        				if (!blockMapTree.isEmpty()) {
-        					Settings.magicCobbleGenChances.put(levelInt, blockMapTree);
-        				}
-        			} catch(NumberFormatException e){
-        				// Putting the catch here means that an invalid level is skipped completely
-        				getLogger().severe("Unknown level '" + level + "' listed in magiccobblegenchances section! Must be an integer or 'default'. Skipping...");
-        			}
-        		}
-        	}
+                Settings.magicCobbleGenChances = new TreeMap<Integer, TreeMap<Double,Material>>();
+                for(String level : getConfig().getConfigurationSection("general.magiccobblegenchances").getKeys(false)){
+                    int levelInt = 0;
+                    try{
+                        if(level.equals("default")) {
+                            levelInt = Integer.MIN_VALUE;
+                        } else {
+                            levelInt = Integer.parseInt(level);
+                        } 
+                        TreeMap<Double,Material> blockMapTree = new TreeMap<Double, Material>();
+                        double chanceTotal = 0;
+                        for(String block : getConfig().getConfigurationSection("general.magiccobblegenchances." + level).getKeys(false)){
+                            double chance = getConfig().getDouble("general.magiccobblegenchances." + level + "." + block, 0D);
+                            if(chance > 0 && Material.getMaterial(block) != null && Material.getMaterial(block).isBlock()) {
+                                // Store the cumulative chance in the treemap. It does not need to add up to 100%
+                                chanceTotal += chance;
+                                blockMapTree.put(chanceTotal, Material.getMaterial(block));
+                            }
+                        }
+                        if (!blockMapTree.isEmpty()) {
+                            Settings.magicCobbleGenChances.put(levelInt, blockMapTree);
+                        }
+                    } catch(NumberFormatException e){
+                        // Putting the catch here means that an invalid level is skipped completely
+                        getLogger().severe("Unknown level '" + level + "' listed in magiccobblegenchances section! Must be an integer or 'default'. Skipping...");
+                    }
+                }
+            }
         }
         // Disable offline redstone
         Settings.disableOfflineRedstone = getConfig().getBoolean("general.disableofflineredstone", false);
