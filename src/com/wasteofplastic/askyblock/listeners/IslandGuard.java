@@ -2123,24 +2123,33 @@ public class IslandGuard implements Listener {
             }
         }
         // Check for disallowed in-hand items
-        //plugin.getLogger().info("Material = " + e.getMaterial());
-        //plugin.getLogger().info("in hand = " + e.getPlayer().getItemInHand().toString());
+        if (DEBUG) {
+            plugin.getLogger().info("Material = " + e.getMaterial());
+            plugin.getLogger().info("in hand = " + e.getPlayer().getItemInHand().toString());
+        }
         if (e.getMaterial() != null) {
             // This check protects against an exploit in 1.7.9 against cactus
             // and sugar cane
             if (e.getMaterial() == Material.WOOD_DOOR || e.getMaterial() == Material.CHEST
                     || e.getMaterial() == Material.TRAPPED_CHEST || e.getMaterial() == Material.IRON_DOOR) {
-                e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
-                e.setCancelled(true);
-                e.getPlayer().updateInventory();
-                return;
+                if ((island == null && Settings.defaultIslandSettings.get(SettingsFlag.PLACE_BLOCKS))
+                        || (island !=null && !island.getIgsFlag(SettingsFlag.PLACE_BLOCKS))) {
+                    e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
+                    e.setCancelled(true);
+                    e.getPlayer().updateInventory();
+                    return;
+                }
             } else if (e.getMaterial().name().contains("BOAT") && (e.getClickedBlock() != null && !e.getClickedBlock().isLiquid())) {
                 // Trying to put a boat on non-liquid
-                e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
-                e.setCancelled(true);
-                return;
+                if ((island == null && Settings.defaultIslandSettings.get(SettingsFlag.PLACE_BLOCKS))
+                        || (island !=null && !island.getIgsFlag(SettingsFlag.PLACE_BLOCKS))) {
+                    e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
+                    e.setCancelled(true);
+                    return;
+                }
             } else if (e.getMaterial().equals(Material.ENDER_PEARL)) {
-                if (!island.getIgsFlag(SettingsFlag.ENDERPEARL)) {
+                if ((island == null && Settings.defaultIslandSettings.get(SettingsFlag.ENDER_PEARL))
+                        || (island !=null && !island.getIgsFlag(SettingsFlag.ENDER_PEARL))) {
                     e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                     e.setCancelled(true);
                 }
@@ -2154,7 +2163,8 @@ public class IslandGuard implements Listener {
             } else if (e.getMaterial().equals(Material.MONSTER_EGG)) {
                 if (DEBUG)
                     plugin.getLogger().info("DEBUG: allowMonsterEggs = " + island.getIgsFlag(SettingsFlag.SPAWN_EGGS));
-                if (!island.getIgsFlag(SettingsFlag.SPAWN_EGGS)) {
+                if ((island == null && Settings.defaultIslandSettings.get(SettingsFlag.SPAWN_EGGS))
+                        || (island !=null && !island.getIgsFlag(SettingsFlag.SPAWN_EGGS))) {
                     e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                     e.setCancelled(true);
                 }
@@ -2171,8 +2181,15 @@ public class IslandGuard implements Listener {
                             inNether = true;
                         }
                         // Check PVP
-                        if ((inNether && island.getIgsFlag(SettingsFlag.NETHER_PVP) || (!inNether && island.getIgsFlag(SettingsFlag.PVP)))) {
-                            return;
+                        if (island == null) {
+                            if ((inNether && Settings.defaultIslandSettings.get(SettingsFlag.NETHER_PVP) 
+                                    || (!inNether && Settings.defaultIslandSettings.get(SettingsFlag.PVP)))) {
+                                return;
+                            }
+                        } else {
+                            if ((inNether && island.getIgsFlag(SettingsFlag.NETHER_PVP) || (!inNether && island.getIgsFlag(SettingsFlag.PVP)))) {
+                                return;
+                            }
                         }
                         // Not allowed
                         e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
