@@ -49,6 +49,9 @@ public class SettingsPanel implements Listener {
     private static boolean hasArmorStand;
     private HashMap<UUID,Long> pvpCoolDown = new HashMap<UUID,Long>();
 
+    /**
+     * Lookup table of Material to SettingsFlag
+     */
     private static BiMap<Material,SettingsFlag> lookup = HashBiMap.create();
     static {
         // Find out if these exist
@@ -90,7 +93,7 @@ public class SettingsPanel implements Listener {
         lookup.put(Material.LEASH,SettingsFlag.LEASH);
         lookup.put(Material.LEVER,SettingsFlag.LEVER_BUTTON);
         lookup.put(Material.MILK_BUCKET,SettingsFlag.MILKING);
-        lookup.put(Material.CARROT_ITEM, SettingsFlag.MOB_SPAWN);
+        lookup.put(Material.POTATO_ITEM, SettingsFlag.MOB_SPAWN);
         lookup.put(Material.MOB_SPAWNER, SettingsFlag.MONSTER_SPAWN);
         lookup.put(Material.JUKEBOX,SettingsFlag.MUSIC);
         lookup.put(Material.NETHERRACK,SettingsFlag.NETHER_PVP);
@@ -129,16 +132,16 @@ public class SettingsPanel implements Listener {
                 if (flag.equals(SettingsFlag.ACID_DAMAGE) && Settings.acidDamage == 0)
                     continue;
                 if (Settings.defaultWorldSettings.containsKey(flag) && lookup.inverse().containsKey(flag) && plugin.myLocale(uuid).igs.containsKey(flag)) {
-                    ip.add(new IPItem(Settings.defaultWorldSettings.get(flag), lookup.inverse().get(flag), plugin.myLocale(uuid).igs.get(flag)));
+                    ip.add(new IPItem(Settings.defaultWorldSettings.get(flag), lookup.inverse().get(flag), plugin.myLocale(uuid).igs.get(flag),uuid));
                 }
             }
             // System settings that are visible to users
-            ip.add(new IPItem(Settings.allowChestDamage, Material.CHEST, plugin.myLocale(uuid).igsChestDamage));
-            ip.add(new IPItem(Settings.allowCreeperDamage, Material.SKULL_ITEM, 4, plugin.myLocale(uuid).igsCreeperDamage));
-            ip.add(new IPItem(Settings.allowCreeperGriefing, Material.SKULL_ITEM, 4, plugin.myLocale(uuid).igsCreeperGriefing));
-            ip.add(new IPItem(!Settings.restrictWither, Material.SKULL_ITEM, 1, plugin.myLocale(uuid).igsWitherDamage));
-            ip.add(new IPItem(Settings.allowTNTDamage, Material.TNT, plugin.myLocale(uuid).igsTNT));
-            ip.add(new IPItem(Settings.allowVisitorKeepInvOnDeath, Material.IRON_CHESTPLATE, plugin.myLocale(uuid).igsVisitorKeep));
+            ip.add(new IPItem(Settings.allowChestDamage, Material.CHEST, plugin.myLocale(uuid).igsChestDamage, uuid));
+            ip.add(new IPItem(Settings.allowCreeperDamage, Material.SKULL_ITEM, 4, plugin.myLocale(uuid).igsCreeperDamage, uuid));
+            ip.add(new IPItem(Settings.allowCreeperGriefing, Material.SKULL_ITEM, 4, plugin.myLocale(uuid).igsCreeperGriefing, uuid));
+            ip.add(new IPItem(!Settings.restrictWither, Material.SKULL_ITEM, 1, plugin.myLocale(uuid).igsWitherDamage, uuid));
+            ip.add(new IPItem(Settings.allowTNTDamage, Material.TNT, plugin.myLocale(uuid).igsTNT, uuid));
+            ip.add(new IPItem(Settings.allowVisitorKeepInvOnDeath, Material.IRON_CHESTPLATE, plugin.myLocale(uuid).igsVisitorKeep, uuid));
         } else if (island.isSpawn()) {
             ip.add(new IPItem(Material.MAP, plugin.myLocale(uuid).igsSettingsSpawnTitle, plugin.myLocale(uuid).igsSettingsSpawnDesc));
             // Spawn settings
@@ -147,7 +150,7 @@ public class SettingsPanel implements Listener {
                 if (flag.equals(SettingsFlag.ACID_DAMAGE) && Settings.acidDamage == 0)
                     continue;
                 if (lookup.inverse().containsKey(flag) && plugin.myLocale(uuid).igs.containsKey(flag)) {
-                    ip.add(new IPItem(island.getIgsFlag(flag), lookup.inverse().get(flag), plugin.myLocale(uuid).igs.get(flag)));
+                    ip.add(new IPItem(island.getIgsFlag(flag), lookup.inverse().get(flag), plugin.myLocale(uuid).igs.get(flag), uuid));
                 }
             }
         } else {
@@ -156,8 +159,12 @@ public class SettingsPanel implements Listener {
             for (SettingsFlag flag : Settings.visitorSettings.keySet()) {
                 if (flag.equals(SettingsFlag.ACID_DAMAGE) && Settings.acidDamage == 0)
                     continue;
-                if (plugin.myLocale(uuid).igs.containsKey(flag)) {
-                    ip.add(new IPItem(island.getIgsFlag(flag), lookup.inverse().get(flag), plugin.myLocale(uuid).igs.get(flag)));
+                if (lookup.inverse().get(flag) == null) {
+                    plugin.getLogger().severe(flag + " is missing an icon");
+                } else {
+                    if (plugin.myLocale(uuid).igs.containsKey(flag)) {
+                        ip.add(new IPItem(island.getIgsFlag(flag), lookup.inverse().get(flag), plugin.myLocale(uuid).igs.get(flag), uuid));
+                    }
                 }
             }
         }
@@ -238,10 +245,10 @@ public class SettingsPanel implements Listener {
         // Players can only do something if they own the island or are op
         Island island = plugin.getGrid().getIslandAt(player.getLocation());
         if (island != null && (player.isOp() || (island.getOwner() != null && island.getOwner().equals(player.getUniqueId())))) {
-            plugin.getLogger().info("DEBUG: Check perm " + flag.toString());
+            //plugin.getLogger().info("DEBUG: Check perm " + flag.toString());
             // Check perms
             if (player.hasPermission(Settings.PERMPREFIX + "settings." + flag.toString())) {
-                plugin.getLogger().info("DEBUG: Player has perm " + flag.toString());
+                //plugin.getLogger().info("DEBUG: Player has perm " + flag.toString());
                 if (flag.equals(SettingsFlag.PVP) || flag.equals(SettingsFlag.NETHER_PVP)) {
                     // PVP always results in an inventory closure
                     player.closeInventory();
