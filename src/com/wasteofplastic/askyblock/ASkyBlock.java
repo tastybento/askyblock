@@ -711,10 +711,12 @@ public class ASkyBlock extends JavaPlugin {
             int index = 1;
             for (String code: fl.list()) {
                 // Do some checking that the code is valid
-                if (code.length() == 5 && code.charAt(2) == '-') {
-                    availableLocales.put(code, new ASLocale(this,code, index++)); 
-                } else {
-                    getLogger().severe(code + ".yml is not a valid locale file name. Skipping...");
+                if (!code.equals("locale")) {
+                    if (code.length() == 5 && code.charAt(2) == '-') {
+                        availableLocales.put(code, new ASLocale(this,code, index++)); 
+                    } else {
+                        getLogger().severe(code + ".yml is not a valid locale file name. Skipping...");
+                    }
                 }
             }
         } catch (IOException e1) {

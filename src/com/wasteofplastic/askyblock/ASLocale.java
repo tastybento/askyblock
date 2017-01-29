@@ -618,6 +618,10 @@ public class ASLocale {
 
     public String topTenerrorExcluded;
 
+    public String leaveWarning;
+
+    public String leaveCanceled;
+
 
     /**
      * Creates a locale object full of localized strings for a language
@@ -1065,6 +1069,10 @@ public class ASLocale {
                 locale.getString("leave.errorYouMustBeInWorld", "You must be in the island world to leave your team!"));
         leaveerrorLeadersCannotLeave = ChatColor.translateAlternateColorCodes('&', locale.getString("leave.errorLeadersCannotLeave",
                 "Leaders cannot leave an island. Make someone else the leader fist using /[label] makeleader <player>").replace("[label]", Settings.ISLANDCOMMAND));
+        leaveWarning = ChatColor.translateAlternateColorCodes('&', locale.getString("leave.warning",
+                "Are you sure you want to leave the team? Type '[label] leave' again to confirm.").replace("[label]", Settings.ISLANDCOMMAND));
+        leaveCanceled = ChatColor.translateAlternateColorCodes('&',
+                locale.getString("leave.canceled", "Leave canceled"));
         teamlistingMembers = ChatColor.translateAlternateColorCodes('&', locale.getString("team.listingMembers", "Listing your island members"));
         kickerrorPlayerNotInTeam = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("kick.errorPlayerNotInTeam", "That player is not in your team!"));

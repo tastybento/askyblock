@@ -64,6 +64,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionType;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
@@ -115,6 +116,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
     // To choose an island randomly
     private final Random random = new Random();
     private HashMap<UUID, Location> islandSpot = new HashMap<UUID, Location>();
+    private List<UUID> leavingPlayers = new ArrayList<UUID>();
 
     /**
      * Constructor
@@ -1946,6 +1948,26 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                 player.sendMessage(ChatColor.YELLOW + plugin.myLocale(player.getUniqueId()).leaveerrorYouAreTheLeader);
                                 return true;
                             }
+                            // Check for confirmation
+                            if (!leavingPlayers.contains(playerUUID)) {
+                                leavingPlayers.add(playerUUID);
+                                player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).leaveWarning);
+                                new BukkitRunnable() {
+
+                                    @Override
+                                    public void run() {
+                                        // If the player is still on the list, remove them and cancel the leave
+                                        if (leavingPlayers.contains(playerUUID)) {
+                                            leavingPlayers.remove(playerUUID);
+                                            player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).leaveCanceled);
+                                        }
+                                    }
+
+                                }.runTaskLater(plugin, Settings.resetConfirmWait * 20L);
+                                return true; 
+                            }
+                            // Remove from confirmation list
+                            leavingPlayers.remove(playerUUID);
                             // Remove from team
                             if (!removePlayerFromTeam(playerUUID, teamLeader)) {
                                 //player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).leaveerrorYouCannotLeaveIsland);

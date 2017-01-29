@@ -374,12 +374,14 @@ kick:
   nameRemoved: "[name] has been removed from the island."
   nameRemovedYou: "[name] has removed you from their island!"
 lavaTip: "Tip: If obsidian was not intended, it can be scooped back up again with a bucket."
-leave: 
+leave:
+  canceled: "Leave canceled"
   errorLeadersCannotLeave: "Leaders cannot leave an island. Make someone else the leader first."
   errorYouAreTheLeader: "You cannot leave because you are the leader. Make someone the leader first."
   errorYouCannotLeaveIsland: "You can't leave your island if you are the only person. Try restart if you want a new one!"
   errorYouMustBeInWorld: "You must be in the island world to leave your team!"
   nameHasLeftYourIsland: "[name] has left your island!"
+  warning: "Are you sure you want to leave the team? Type '[label] leave' again to confirm."
   youHaveLeftTheIsland: "You have left the island and returned to the player spawn."
 level: 
   calculating: "Calculating island level. This will take a few seconds..."
