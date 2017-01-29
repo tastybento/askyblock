@@ -1234,20 +1234,20 @@ public class ASkyBlock extends JavaPlugin {
         Settings.allowPistonPush = getConfig().getBoolean("island.allowpistonpush", true);
         Settings.allowMobDamageToItemFrames = getConfig().getBoolean("island.allowitemframedamage", false);
 
-        // Default settings hashmap - make sure this is kept up to date with new settings
+        // Default settings hashmaps - make sure this is kept up to date with new settings
+        // If a setting is not listed, the world default is used
+        Settings.defaultWorldSettings.clear();
         Settings.defaultIslandSettings.clear();
-        for (SettingsFlag flag: SettingsFlag.values()) {
-            if (getConfig().getConfigurationSection("island.settings").contains(flag.name())) {
-                Settings.defaultIslandSettings.put(flag, getConfig().getBoolean("island.settings." + flag.name(), false));
-            }
-        }
         Settings.defaultSpawnSettings.clear();
+        Settings.visitorSettings.clear();
         for (SettingsFlag flag: SettingsFlag.values()) {
-            if (getConfig().getConfigurationSection("spawn").contains(flag.name())) {
-                Settings.defaultSpawnSettings.put(flag, getConfig().getBoolean("spawn." + flag.name()));
+            Settings.defaultWorldSettings.put(flag, getConfig().getBoolean("protection.world." + flag.name()));
+            Settings.defaultIslandSettings.put(flag, getConfig().getBoolean("protection.island." + flag.name(), Settings.defaultWorldSettings.get(flag)));
+            Settings.defaultSpawnSettings.put(flag, Settings.defaultWorldSettings.get(flag));
+            if (getConfig().contains("protection.island." + flag.name())) {
+                Settings.visitorSettings.put(flag, Settings.defaultIslandSettings.get(flag));
             }
         }
-
         // Challenges
         getChallenges();
         // Challenge completion

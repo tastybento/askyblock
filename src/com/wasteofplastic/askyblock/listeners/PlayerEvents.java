@@ -500,7 +500,7 @@ public class PlayerEvents implements Listener {
                     plugin.getLogger().info("DEBUG: Enderpearl");
 
                 if (islandTo == null) {
-                    if (Settings.defaultIslandSettings.get(SettingsFlag.ENDERPEARL)) {
+                    if (Settings.defaultWorldSettings.get(SettingsFlag.ENDER_PEARL)) {
                         return;
                     }
                 } else {
@@ -508,7 +508,7 @@ public class PlayerEvents implements Listener {
                         plugin.getLogger().info("DEBUG: islandTo is not null enderpearl");
                     if (DEBUG )
                         plugin.getLogger().info("DEBUG: islandTo is regular island");
-                    if (islandTo.getIgsFlag(SettingsFlag.ENDERPEARL) || islandTo.getMembers().contains(e.getPlayer().getUniqueId())) {
+                    if (islandTo.getIgsFlag(SettingsFlag.ENDER_PEARL) || islandTo.getMembers().contains(e.getPlayer().getUniqueId())) {
                         if (DEBUG )
                             plugin.getLogger().info("DEBUG: enderpearl allowed");
                         return;
@@ -530,7 +530,7 @@ public class PlayerEvents implements Listener {
                     boolean cancel = false;
                     // Check both from and to islands
                     if (islandTo == null) {
-                        if (!Settings.defaultIslandSettings.get(SettingsFlag.CHORUS_FRUIT)) {
+                        if (!Settings.defaultWorldSettings.get(SettingsFlag.CHORUS_FRUIT)) {
                             cancel = true;
                         }
                     } else {
@@ -539,7 +539,7 @@ public class PlayerEvents implements Listener {
                         }
                     }
                     if (islandFrom == null) {
-                        if (!Settings.defaultIslandSettings.get(SettingsFlag.CHORUS_FRUIT)) {
+                        if (!Settings.defaultWorldSettings.get(SettingsFlag.CHORUS_FRUIT)) {
                             cancel = true;
                         }
                     } else {

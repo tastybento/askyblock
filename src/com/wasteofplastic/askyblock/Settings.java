@@ -83,6 +83,11 @@ public class Settings {
     public static int animalSpawnLimit;
     public static int waterAnimalSpawnLimit;
     /**
+     * Default world protection settings
+     */
+    public static HashMap<SettingsFlag, Boolean> defaultWorldSettings = new HashMap<SettingsFlag, Boolean>();
+
+    /**
      * Default island protection settings
      */
     public static HashMap<SettingsFlag, Boolean> defaultIslandSettings = new HashMap<SettingsFlag, Boolean>();
@@ -90,7 +95,10 @@ public class Settings {
      * Default spawn protection settings
      */
     public static HashMap<SettingsFlag, Boolean> defaultSpawnSettings = new HashMap<SettingsFlag, Boolean>();
-
+    /**
+     * Visitors settings to show in the GUI
+     */
+    public static HashMap<SettingsFlag, Boolean> visitorSettings = new HashMap<SettingsFlag, Boolean>();
     // Flymode
     public static int flyTimeOutside;
     

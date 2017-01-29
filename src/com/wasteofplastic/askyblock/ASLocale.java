@@ -769,7 +769,7 @@ public class ASLocale {
         igs.put(SettingsFlag.DOOR, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.door", "Door use")));
         igs.put(SettingsFlag.EGGS, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.eggs", "Egg throwing")));
         igs.put(SettingsFlag.ENCHANTING, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.enchantingtable", "Enchanting table use")));
-        igs.put(SettingsFlag.ENDERPEARL, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.enderpearl", "Enderpearl use")));
+        igs.put(SettingsFlag.ENDER_PEARL, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.enderpearl", "Enderpearl use")));
         igs.put(SettingsFlag.ENTER_EXIT_MESSAGES, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.joinleaveislandmessages", "Enable Join & Leave Island Messages")));
         igs.put(SettingsFlag.FIRE_EXTINGUISH, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.fireextinguish", "Fire extinguish")));
         igs.put(SettingsFlag.FIRE_SPREAD, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.firespread", "Fire spread")));

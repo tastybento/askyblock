@@ -187,11 +187,15 @@ public class Island implements Cloneable {
         /**
          * Can throw ender pearls
          */
-        ENDERPEARL,
+        ENDER_PEARL,
         /**
          * Can toggle enter/exit names to island
          */
         ENTER_EXIT_MESSAGES,
+        /**
+         * Fire use/placement in general
+         */
+        FIRE,
         /**
          * Can extinguish fires by punching them
          */
@@ -235,6 +239,10 @@ public class Island implements Cloneable {
         /**
          * Animals, etc. can spawn
          */
+        MILKING,
+        /**
+         * Can do PVP in the nether
+         */
         MOB_SPAWN,
         /**
          * Monsters can spawn
@@ -246,6 +254,10 @@ public class Island implements Cloneable {
         MUSIC,
         /**
          * Can place blocks
+         */
+        NETHER_PVP,
+        /**
+         * Can interact with redstone items, like diodes
          */
         PLACE_BLOCKS,
         /**
@@ -262,14 +274,6 @@ public class Island implements Cloneable {
         PVP,
         /**
          * Cows can be milked
-         */
-        MILKING,
-        /**
-         * Can do PVP in the nether
-         */
-        NETHER_PVP,
-        /**
-         * Can interact with redstone items, like diodes
          */
         REDSTONE,
         /**

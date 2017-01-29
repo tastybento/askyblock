@@ -77,7 +77,7 @@ public class SettingsPanel implements Listener {
         lookup.put(Material.WOOD_DOOR, SettingsFlag.DOOR);
         lookup.put(Material.EGG, SettingsFlag.EGGS);
         lookup.put(Material.ENCHANTMENT_TABLE,SettingsFlag.ENCHANTING);
-        lookup.put(Material.ENDER_PEARL,SettingsFlag.ENDERPEARL);
+        lookup.put(Material.ENDER_PEARL,SettingsFlag.ENDER_PEARL);
         lookup.put(Material.SIGN,SettingsFlag.ENTER_EXIT_MESSAGES);
         lookup.put(Material.ICE, SettingsFlag.FIRE_EXTINGUISH);
         lookup.put(Material.TORCH, SettingsFlag.FIRE_SPREAD);
@@ -126,12 +126,10 @@ public class SettingsPanel implements Listener {
             ip.add(new IPItem(Material.MAP, plugin.myLocale(uuid).igsSettingsGeneralTitle, plugin.myLocale(uuid).igsSettingsGeneralDesc));
             // General settings all enum            
             for (SettingsFlag flag : SettingsFlag.values()) {
-                if (flag.equals(SettingsFlag.ARMOR_STAND) && !hasArmorStand)
+                if (flag.equals(SettingsFlag.ACID_DAMAGE) && Settings.acidDamage == 0)
                     continue;
-                if (flag.equals(SettingsFlag.CHORUS_FRUIT) && !hasChorusFruit)
-                    continue;
-                if (Settings.defaultIslandSettings.containsKey(flag) && lookup.inverse().containsKey(flag) && plugin.myLocale(uuid).igs.containsKey(flag)) {
-                    ip.add(new IPItem(Settings.defaultIslandSettings.get(flag), lookup.inverse().get(flag), plugin.myLocale(uuid).igs.get(flag)));
+                if (Settings.defaultWorldSettings.containsKey(flag) && lookup.inverse().containsKey(flag) && plugin.myLocale(uuid).igs.containsKey(flag)) {
+                    ip.add(new IPItem(Settings.defaultWorldSettings.get(flag), lookup.inverse().get(flag), plugin.myLocale(uuid).igs.get(flag)));
                 }
             }
             // System settings that are visible to users
@@ -155,8 +153,10 @@ public class SettingsPanel implements Listener {
         } else {
             // Standard island
             ip.add(new IPItem(Material.MAP, plugin.myLocale(uuid).igsSettingsIslandTitle, plugin.myLocale(uuid).igsSettingsIslandDesc));
-            for (SettingsFlag flag : Settings.defaultIslandSettings.keySet()) {
-                if (Settings.defaultIslandSettings.containsKey(flag) && lookup.inverse().containsKey(flag) && plugin.myLocale(uuid).igs.containsKey(flag)) {
+            for (SettingsFlag flag : Settings.visitorSettings.keySet()) {
+                if (flag.equals(SettingsFlag.ACID_DAMAGE) && Settings.acidDamage == 0)
+                    continue;
+                if (plugin.myLocale(uuid).igs.containsKey(flag)) {
                     ip.add(new IPItem(island.getIgsFlag(flag), lookup.inverse().get(flag), plugin.myLocale(uuid).igs.get(flag)));
                 }
             }
@@ -230,7 +230,7 @@ public class SettingsPanel implements Listener {
             // Special handling to avoid errors on 1.7.x servers
             flag = SettingsFlag.ARMOR_STAND;
         }
-        plugin.getLogger().info("DEBUG: flag is " + flag);
+        //plugin.getLogger().info("DEBUG: flag is " + flag);
         // If flag is null, do nothing
         if (flag == null) {
             return;
