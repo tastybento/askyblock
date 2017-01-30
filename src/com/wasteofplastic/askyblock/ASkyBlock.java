@@ -1228,7 +1228,6 @@ public class ASkyBlock extends JavaPlugin {
         Settings.allowTNTDamage = getConfig().getBoolean("island.allowtntdamage", false);
         Settings.allowMonsterEggs = getConfig().getBoolean("island.allowspawneggs", false);
         Settings.allowFire = getConfig().getBoolean("island.allowfire", false);
-        Settings.allowFireSpread = getConfig().getBoolean("island.allowfirespread", false);
         Settings.allowFireExtinguish = getConfig().getBoolean("island.allowfireextinguish", false);
         Settings.allowChestDamage = getConfig().getBoolean("island.allowchestdamage", false);
         Settings.allowHurtMonsters = getConfig().getBoolean("island.allowhurtmonsters", true);

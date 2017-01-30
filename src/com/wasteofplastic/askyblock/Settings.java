@@ -111,7 +111,7 @@ public class Settings {
     public static boolean allowCreeperGriefing;
     public static boolean allowEndermanGriefing;
     public static boolean allowFire;
-    public static boolean allowFireSpread;
+    //public static boolean allowFireSpread;
     public static boolean allowHurtMonsters;
     public static boolean allowMonsterEggs;
     public static boolean allowPistonPush;

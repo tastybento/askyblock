@@ -202,6 +202,23 @@ public class IslandGuard implements Listener {
         return false;
     }
 
+    /**
+     * Action allowed in this location
+     * @param location
+     * @param flag
+     * @return true if allowed
+     */
+    private boolean actionAllowed(Location location, SettingsFlag flag) {
+        Island island = plugin.getGrid().getProtectedIslandAt(location);
+        if (island != null && island.getIgsFlag(flag)){
+            return true;
+        }
+        if (island == null && Settings.defaultWorldSettings.get(flag)) {
+            return true;
+        }
+        return false;
+    }
+
     /*
      * For testing only
      * @EventHandler()
@@ -2306,13 +2323,16 @@ public class IslandGuard implements Listener {
      * Prevents fire spread
      * @param e
      */
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onBlockBurn(BlockBurnEvent e) {
         if (DEBUG) {
             plugin.getLogger().info(e.getEventName());
         }
-        if (Settings.allowFireSpread || !inWorld(e.getBlock())) {
+        if (!inWorld(e.getBlock())) {
             //plugin.getLogger().info("DEBUG: Not in world");
+            return;
+        }
+        if (actionAllowed(e.getBlock().getLocation(), SettingsFlag.FIRE_SPREAD)) {
             return;
         }
         e.setCancelled(true);
@@ -2322,32 +2342,38 @@ public class IslandGuard implements Listener {
      * Prevent fire spread
      * @param e
      */
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onBlockSpread(BlockSpreadEvent e) {
         if (DEBUG) {
             plugin.getLogger().info(e.getEventName());
             plugin.getLogger().info(e.getSource().getType().toString());
         }
-        if (Settings.allowFireSpread || !inWorld(e.getBlock())) {
-            //plugin.getLogger().info("DEBUG: Not in world");
-            return;
-        }
         if (e.getSource().getType() == Material.FIRE) {
+            if (!inWorld(e.getBlock())) {
+                //plugin.getLogger().info("DEBUG: Not in world");
+                return;
+            }
+            if (actionAllowed(e.getBlock().getLocation(), SettingsFlag.FIRE_SPREAD)) {
+                return;
+            }
             e.setCancelled(true);
         }
     }
 
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onBlockIgnite(BlockIgniteEvent e) {
         if (DEBUG) {
             plugin.getLogger().info(e.getEventName());
             plugin.getLogger().info(e.getCause().name());
         }
-        if (Settings.allowFire || !inWorld(e.getBlock())) {
-            //plugin.getLogger().info("DEBUG: Not in world");
-            return;
-        }
-        if (!Settings.allowFireSpread && e.getCause() != null && e.getCause().equals(IgniteCause.LAVA)) {
+        if (e.getCause() != null && e.getCause().equals(IgniteCause.LAVA)) {
+            if (!inWorld(e.getBlock())) {
+                //plugin.getLogger().info("DEBUG: Not in world");
+                return;
+            }
+            if (actionAllowed(e.getBlock().getLocation(), SettingsFlag.FIRE_SPREAD)) {
+                return;
+            }
             if (DEBUG) {
                 plugin.getLogger().info("Fire spread not allowed, stopping LAVA ignition");
             }

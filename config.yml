@@ -213,8 +213,6 @@ protection:
      ENCHANTING: true
      # Allow enderpearl throwing
      ENDER_PEARL: false
-     # Enable or disable join/leave messages from the player's island
-     ENTER_EXIT_MESSAGES: true
      # Can extinguish fires by punching them
      FIRE_EXTINGUISH: false
      # Allow fire spreading
@@ -265,35 +263,39 @@ protection:
      VISITOR_ITEM_DROP: true
      # Allow item pickup
      VISITOR_ITEM_PICKUP: true
-   # Settings for island visitors.
+   # Settings for islands. Some are for visitors, some for the island itself.
    # If setting is not listed, it will not show in GUI and the world default will be used.
    # Add settings here to give the player the ability to change them in the GUI. 
    island:
-     # Allow anvil use
+     # Allow visitor anvil use
      ANVIL: true
-     # Allow armor stand use (1.8+ only)
+     # Allow visitor armor stand use (1.8+ only)
      ARMOR_STAND: false
-     # Allow beacon use
+     # Allow visitor beacon use
      BEACON: false
-     # Allow bed use
+     # Allow visitor bed use
      BED: false
-     # Allow block breaking, or other damage
+     # Allow visitor block breaking, or other damage
      BREAK_BLOCKS: false
-     # Allow animal breeding
+     # Allow visitor animal breeding
      BREEDING: false
-     # Allow use of cauldrons and brewing stands
+     # Allow visitor use of cauldrons and brewing stands
      BREWING: false
-     # Allow access chests of any kind, droppers, dispensers and hoppers
+     # Allow visitor access chests of any kind, droppers, dispensers and hoppers
      CHEST: false
      # Allow visitors to use crafting benches
      CRAFTING: true
-     # Allow use of doors or trapdoors. Not including redstone activations.
+     # Allow visitor use of doors or trapdoors. Not including redstone activations.
      DOOR: true
-     # Allow chicken egg throwing
+     # Allow visitor chicken egg throwing
      EGGS: false
      # Allow visitors to use enchanting tables
      ENCHANTING: true
-     # Allow furnace use
+     # Enable or disable join/leave messages from the player's island
+     ENTER_EXIT_MESSAGES: true
+     # Allow fire spreading.
+     FIRE_SPREAD: false
+     # Allow visitor furnace use
      FURNACE: true
      # Allow portal use by visitors
      PORTAL: true
