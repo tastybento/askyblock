@@ -58,55 +58,56 @@ public class SettingsPanel implements Listener {
         hasChorusFruit = (Material.getMaterial("CHORUS_FRUIT") != null);
         hasArmorStand = (Material.getMaterial("ARMOR_STAND") != null);
         // No icon or flag can be the same, they must all be unique because this is a bimap.
-        lookup.put(Material.POTION, SettingsFlag.ACID_DAMAGE);
-        lookup.put(Material.ANVIL,SettingsFlag.ANVIL);
+        // Developer - if you add a setting but don't see it appear in the GUI, make sure there's a locale settings for it!
         if (hasArmorStand)
             lookup.put(Material.ARMOR_STAND, SettingsFlag.ARMOR_STAND);
-        lookup.put(Material.BEACON,SettingsFlag.BEACON);
-        lookup.put(Material.BED,SettingsFlag.BED);
-        lookup.put(Material.STONE,SettingsFlag.BREAK_BLOCKS);
-        lookup.put(Material.CARROT_ITEM,SettingsFlag.BREEDING);
-        lookup.put(Material.BREWING_STAND_ITEM,SettingsFlag.BREWING);
-        lookup.put(Material.LAVA_BUCKET,SettingsFlag.BUCKET);
-        lookup.put(Material.CHEST,SettingsFlag.CHEST);
-        if (hasChorusFruit) {
-            lookup.put(Material.CHORUS_FRUIT,SettingsFlag.CHORUS_FRUIT);
-        }
-        lookup.put(Material.LAVA_BUCKET, SettingsFlag.COLLECT_LAVA);
-        lookup.put(Material.WATER_BUCKET, SettingsFlag.COLLECT_WATER);
-        lookup.put(Material.WORKBENCH,SettingsFlag.CRAFTING);
-        lookup.put(Material.TNT,SettingsFlag.CREEPER_PAIN);
-        lookup.put(Material.WHEAT,SettingsFlag.CROP_TRAMPLE);
-        lookup.put(Material.WOOD_DOOR, SettingsFlag.DOOR);
+        if (hasChorusFruit)
+            lookup.put(Material.CHORUS_FRUIT, SettingsFlag.CHORUS_FRUIT);
+        lookup.put(Material.ANVIL, SettingsFlag.ANVIL);
+        lookup.put(Material.ARROW, SettingsFlag.PVP);
+        lookup.put(Material.BEACON, SettingsFlag.BEACON);
+        lookup.put(Material.BED, SettingsFlag.BED);
+        lookup.put(Material.BREWING_STAND_ITEM, SettingsFlag.BREWING);
+        lookup.put(Material.BUCKET, SettingsFlag.BUCKET);
+        lookup.put(Material.CARROT_ITEM, SettingsFlag.BREEDING);
+        lookup.put(Material.CHEST, SettingsFlag.CHEST);
+        lookup.put(Material.DIAMOND_BARDING, SettingsFlag.HORSE_RIDING);
+        lookup.put(Material.DIAMOND, SettingsFlag.VISITOR_ITEM_PICKUP);    
+        lookup.put(Material.DIRT, SettingsFlag.PLACE_BLOCKS);
         lookup.put(Material.EGG, SettingsFlag.EGGS);
-        lookup.put(Material.ENCHANTMENT_TABLE,SettingsFlag.ENCHANTING);
-        lookup.put(Material.ENDER_PEARL,SettingsFlag.ENDER_PEARL);
-        lookup.put(Material.SIGN,SettingsFlag.ENTER_EXIT_MESSAGES);
-        lookup.put(Material.ICE, SettingsFlag.FIRE_EXTINGUISH);
-        lookup.put(Material.TORCH, SettingsFlag.FIRE_SPREAD);
-        lookup.put(Material.FURNACE,SettingsFlag.FURNACE);
-        lookup.put(Material.FENCE_GATE,SettingsFlag.GATE);
-        lookup.put(Material.GOLD_BARDING,SettingsFlag.HORSE_INVENTORY);
-        lookup.put(Material.DIAMOND_BARDING,SettingsFlag.HORSE_RIDING);
-        lookup.put(Material.WOOD_SWORD, SettingsFlag.HURT_MOBS);
-        lookup.put(Material.IRON_SWORD, SettingsFlag.HURT_MONSTERS);
-        lookup.put(Material.LEASH,SettingsFlag.LEASH);
-        lookup.put(Material.LEVER,SettingsFlag.LEVER_BUTTON);
-        lookup.put(Material.MILK_BUCKET,SettingsFlag.MILKING);
-        lookup.put(Material.POTATO_ITEM, SettingsFlag.MOB_SPAWN);
-        lookup.put(Material.MOB_SPAWNER, SettingsFlag.MONSTER_SPAWN);
-        lookup.put(Material.JUKEBOX,SettingsFlag.MUSIC);
-        lookup.put(Material.NETHERRACK,SettingsFlag.NETHER_PVP);
-        lookup.put(Material.DIRT,SettingsFlag.PLACE_BLOCKS);
-        lookup.put(Material.OBSIDIAN,SettingsFlag.PORTAL);
-        lookup.put(Material.GOLD_PLATE,SettingsFlag.PRESSURE_PLATE);
-        lookup.put(Material.ARROW,SettingsFlag.PVP);
-        lookup.put(Material.REDSTONE_COMPARATOR,SettingsFlag.REDSTONE);
-        lookup.put(Material.SHEARS,SettingsFlag.SHEARING);
-        lookup.put(Material.MONSTER_EGG, SettingsFlag.SPAWN_EGGS);
-        lookup.put(Material.EMERALD,SettingsFlag.VILLAGER_TRADING);
+        lookup.put(Material.EMERALD, SettingsFlag.VILLAGER_TRADING);
+        lookup.put(Material.ENCHANTMENT_TABLE, SettingsFlag.ENCHANTING);
+        lookup.put(Material.ENDER_PEARL, SettingsFlag.ENDER_PEARL);
+        lookup.put(Material.FENCE_GATE, SettingsFlag.GATE);
+        lookup.put(Material.FLINT_AND_STEEL, SettingsFlag.FIRE);
+        lookup.put(Material.FURNACE, SettingsFlag.FURNACE);
+        lookup.put(Material.GOLD_BARDING, SettingsFlag.HORSE_INVENTORY);
         lookup.put(Material.GOLD_INGOT, SettingsFlag.VISITOR_ITEM_DROP);
-        lookup.put(Material.DIAMOND, SettingsFlag.VISITOR_ITEM_PICKUP);        
+        lookup.put(Material.GOLD_PLATE, SettingsFlag.PRESSURE_PLATE);
+        lookup.put(Material.ICE, SettingsFlag.FIRE_EXTINGUISH);
+        lookup.put(Material.IRON_SWORD, SettingsFlag.HURT_MONSTERS);
+        lookup.put(Material.JUKEBOX, SettingsFlag.MUSIC);
+        lookup.put(Material.LAVA_BUCKET, SettingsFlag.COLLECT_LAVA);
+        lookup.put(Material.LEASH, SettingsFlag.LEASH);
+        lookup.put(Material.LEVER, SettingsFlag.LEVER_BUTTON);
+        lookup.put(Material.MILK_BUCKET, SettingsFlag.MILKING);
+        lookup.put(Material.MOB_SPAWNER, SettingsFlag.MONSTER_SPAWN);
+        lookup.put(Material.MONSTER_EGG, SettingsFlag.SPAWN_EGGS);
+        lookup.put(Material.NETHERRACK, SettingsFlag.NETHER_PVP);
+        lookup.put(Material.OBSIDIAN, SettingsFlag.PORTAL);
+        lookup.put(Material.POTATO_ITEM, SettingsFlag.MOB_SPAWN);
+        lookup.put(Material.POTION, SettingsFlag.ACID_DAMAGE);
+        lookup.put(Material.REDSTONE_COMPARATOR, SettingsFlag.REDSTONE);
+        lookup.put(Material.SHEARS, SettingsFlag.SHEARING);
+        lookup.put(Material.SIGN, SettingsFlag.ENTER_EXIT_MESSAGES);
+        lookup.put(Material.STONE, SettingsFlag.BREAK_BLOCKS);
+        lookup.put(Material.TNT, SettingsFlag.CREEPER_PAIN);
+        lookup.put(Material.TORCH, SettingsFlag.FIRE_SPREAD);
+        lookup.put(Material.WATER_BUCKET, SettingsFlag.COLLECT_WATER);
+        lookup.put(Material.WHEAT, SettingsFlag.CROP_TRAMPLE);
+        lookup.put(Material.WOOD_DOOR, SettingsFlag.DOOR);
+        lookup.put(Material.WOOD_SWORD, SettingsFlag.HURT_MOBS);
+        lookup.put(Material.WORKBENCH, SettingsFlag.CRAFTING);
     }
 
     public SettingsPanel(ASkyBlock plugin) {

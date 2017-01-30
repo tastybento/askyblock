@@ -111,11 +111,6 @@ island:
    #- "amazing.permission"
    
    # System settings - these cannot be changed by players, only viewed
-   
-   # Allow monsters to be hurt (creepers,slimes, etc.)
-   # Don't change this to false unless you accept that island visitors will not be
-   # able to defend themselves!
-   allowhurtmonsters: true
    # Allow Enderman Griefing (default is to allow, see next setting)
    allowendermangriefing: true
    # Make enderman drop the block he is holding if he dies (recommended)
@@ -126,12 +121,6 @@ island:
    allowcreepergriefing: false 
    # Allow TNT damage to blocks (stops players using TNT to destroy other's islands)
    allowtntdamage: false
-   # Allow spawn egg use
-   allowspawneggs: true
-   # Allow use of Flint & Steel by visitors
-   allowfire: false
-   # Allow fire spread (global - not just for visitors)
-   allowfirespread: false
    # Allow fire extinguishing by visitors
    allowfireextinguish: false
    # Allow chests to be blown up by creepers or TNT
@@ -148,7 +137,7 @@ protection:
    # Protection Setting Flags:
    # ACID_DAMAGE, ANVIL, ARMOR_STAND, BEACON, BED, BREAK_BLOCKS, BREEDING, BREWING, 
    # BUCKET, COLLECT_LAVA, COLLECT_WATER, CHEST, CHORUS_FRUIT, CRAFTING, CROP_TRAMPLE, 
-   # DOOR, EGGS, ENCHANTING, ENDER_PEARL, ENTER_EXIT_MESSAGES, FIRE_EXTINGUISH, 
+   # DOOR, EGGS, ENCHANTING, ENDER_PEARL, ENTER_EXIT_MESSAGES, FIRE, FIRE_EXTINGUISH, 
    # FIRE_SPREAD, FURNACE, GATE, HORSE_INVENTORY, HORSE_RIDING, HURT_MOBS, LEASH,
    # LEVER_BUTTON, MOB_SPAWN, MUSIC, PLACE_BLOCKS, PORTAL, PRESSURE_PLATE, PVP,
    # MILKING, NETHER_PVP, REDSTONE, SPAWN_EGGS, SHEARING, VILLAGER_TRADING,
@@ -157,21 +146,10 @@ protection:
    # Players can be given the ability to change settings in the GUI with permissions
    # e.g. askyblock.settings.PVP or all settings with askyblock.settings.*
    # Permissions are CASE SENSITIVE!
-
-   # Default island protection settings. Once an island is made, changing these will
-   # have no effect unless admin runs the reset settings command.
-   # If a flag is not listed, the world default will be used and the setting will not
-   # be in the GUI.
-   # 
-   # Format:
-   # FLAG: (true/false)
    #
    # World defaults.
-   # Applies everywhere except islands and spawn island.
+   # Applies everywhere and are the default for islands and spawn.
    # If not listed, default is false.
-   # If a spawn is created, it will use these settings until changed by GUI.
-   # Once islands are made, the GUI determines the settings unless admin uses
-   # the resetsettings admin command.
    world:
      # Acid causes damage above sea-level (if acid is active)
      ACID_DAMAGE: true
@@ -213,6 +191,8 @@ protection:
      ENCHANTING: true
      # Allow enderpearl throwing
      ENDER_PEARL: false
+     # Allow fire (flint & steel use, TNT priming) Making portals is allowed.
+     FIRE: false
      # Can extinguish fires by punching them
      FIRE_EXTINGUISH: false
      # Allow fire spreading
@@ -293,7 +273,9 @@ protection:
      ENCHANTING: true
      # Enable or disable join/leave messages from the player's island
      ENTER_EXIT_MESSAGES: true
-     # Allow fire spreading.
+     # Allow fire
+     FIRE: false
+     # Allow fire spreading
      FIRE_SPREAD: false
      # Allow visitor furnace use
      FURNACE: true

@@ -18,7 +18,6 @@
 package com.wasteofplastic.askyblock;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -405,7 +404,7 @@ public class Island implements Cloneable {
             }
         }
     }
-    
+
     /**
      * Reset spawn protection settings to their default as set in config.yml for this island
      */
@@ -1017,7 +1016,10 @@ public class Island implements Cloneable {
                 }
                 // Convert to new SettingsFlag enum
                 SettingsFlag flag = SettingsFlag.valueOf(f.name());
-                this.igs.put(flag, settings.charAt(index++) == '1' ? true : false);
+                // Check that this setting is allowed for islands
+                if (Settings.visitorSettings.containsKey(flag)) {
+                    this.igs.put(flag, settings.charAt(index++) == '1' ? true : false);
+                }
             }
         } else {
             // Post V3.0.6
@@ -1029,7 +1031,10 @@ public class Island implements Cloneable {
                     // Convert to new SettingsFlag enum
                     try {
                         SettingsFlag flag = SettingsFlag.valueOf(f);
-                        this.igs.put(flag, settings.charAt(index++) == '1' ? true : false);
+                        // Check that this setting is allowed for islands
+                        if (Settings.visitorSettings.containsKey(flag)) {
+                            this.igs.put(flag, settings.charAt(index++) == '1' ? true : false);
+                        } // else keep the default
                     } catch (Exception e) {
                         // Does not exist
                     }

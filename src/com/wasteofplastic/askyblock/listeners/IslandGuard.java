@@ -57,7 +57,6 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
-import org.bukkit.event.block.BlockIgniteEvent.IgniteCause;
 import org.bukkit.event.block.BlockMultiPlaceEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -89,6 +88,7 @@ import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 import org.bukkit.potion.Potion;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 
@@ -188,6 +188,9 @@ public class IslandGuard implements Listener {
      * @return true if allowed
      */
     private boolean actionAllowed(Player player, Location location, SettingsFlag flag) {
+        if (player == null) {
+            return actionAllowed(location, flag);
+        }
         // This permission bypasses protection
         if (player.isOp() || VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.bypassprotect")) {
             return true;
@@ -1126,7 +1129,7 @@ public class IslandGuard implements Listener {
                 // Members always allowed
                 return;
             }
-            if (Settings.allowHurtMonsters) {
+            if (actionAllowed(attacker, e.getEntity().getLocation(), SettingsFlag.HURT_MONSTERS)) {
                 // Check for visitors setting creepers alight using flint steel
                 if (!Settings.allowCreeperGriefing && e.getEntity() instanceof Creeper) {
                     ItemStack holding = attacker.getItemInHand();
@@ -2096,9 +2099,16 @@ public class IslandGuard implements Listener {
                 }
                 return;
             } else if (e.getMaterial().equals(Material.FLINT_AND_STEEL)) {
-                if (!Settings.allowFire) {
-                    e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
-                    e.setCancelled(true);
+                plugin.getLogger().info("DEBUG: flint & steel");
+                if (e.getClickedBlock() != null) {
+                    if (e.getMaterial().equals(Material.OBSIDIAN)) {
+                        plugin.getLogger().info("DEBUG: flint & steel on obsidian");
+                        //return;
+                    }
+                    if (!actionAllowed(e.getPlayer(), e.getClickedBlock().getLocation(), SettingsFlag.FIRE)) {
+                        e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
+                        e.setCancelled(true);
+                    }
                 }
                 return;
             } else if (e.getMaterial().equals(Material.MONSTER_EGG)) {
@@ -2360,24 +2370,88 @@ public class IslandGuard implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onBlockIgnite(BlockIgniteEvent e) {
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onBlockIgnite(final BlockIgniteEvent e) {
         if (DEBUG) {
             plugin.getLogger().info(e.getEventName());
             plugin.getLogger().info(e.getCause().name());
         }
-        if (e.getCause() != null && e.getCause().equals(IgniteCause.LAVA)) {
-            if (!inWorld(e.getBlock())) {
-                //plugin.getLogger().info("DEBUG: Not in world");
-                return;
+        if (!inWorld(e.getBlock())) {
+            //plugin.getLogger().info("DEBUG: Not in world");
+            return;
+        }
+        // Check if this is a portal lighting
+        if (e.getBlock() != null && e.getBlock().getType().equals(Material.OBSIDIAN)) {
+            if (DEBUG)
+                plugin.getLogger().info("DEBUG: portal lighting");
+            return;
+        }
+        if (e.getCause() != null) {
+            if (DEBUG)
+                plugin.getLogger().info("DEBUG: ignite cause = " + e.getCause());
+            switch (e.getCause()) {
+            case ENDER_CRYSTAL:
+            case EXPLOSION:
+            case FIREBALL:
+            case LIGHTNING:
+                if (!actionAllowed(e.getBlock().getLocation(), SettingsFlag.FIRE)) {
+                    if (DEBUG)
+                        plugin.getLogger().info("DEBUG: canceling fire");
+                    e.setCancelled(true);
+                }
+                break;
+            case FLINT_AND_STEEL:
+                Set<Material> transparent = new HashSet<Material>();
+                transparent.add(Material.AIR);
+                if (DEBUG) {
+                    plugin.getLogger().info("DEBUG: block = " + e.getBlock());
+                    plugin.getLogger().info("DEBUG: target block = " + e.getPlayer().getTargetBlock(transparent, 10));
+                }
+                // Check if this is allowed
+                if (e.getPlayer().isOp() || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypass")) {
+                    return;
+                }
+                if (!actionAllowed(e.getBlock().getLocation(), SettingsFlag.FIRE)) {
+                    if (DEBUG)
+                        plugin.getLogger().info("DEBUG: canceling fire");
+                    // Get target block
+                    Block targetBlock = e.getPlayer().getTargetBlock(transparent, 10);
+                    if (targetBlock.getType().equals(Material.OBSIDIAN)) {
+                        final MaterialData md = new MaterialData(e.getBlock().getType(), e.getBlock().getData());
+                        new BukkitRunnable() {
+
+                            @Override
+                            public void run() {
+                                if (e.getBlock().getType().equals(Material.FIRE)) {
+                                    e.getBlock().setType(md.getItemType());
+                                    e.getBlock().setData(md.getData());
+                                }
+
+                            }
+                        }.runTask(plugin);
+                    } else {
+                        e.setCancelled(true);
+                    }
+                }
+                break; 
+
+            case LAVA:
+            case SPREAD:
+                // Check if this is a portal lighting
+                if (e.getBlock() != null && e.getBlock().getType().equals(Material.OBSIDIAN)) {
+                    if (DEBUG)
+                        plugin.getLogger().info("DEBUG: obsidian lighting");
+                    return;
+                }
+                if (!actionAllowed(e.getBlock().getLocation(), SettingsFlag.FIRE_SPREAD)) {
+                    if (DEBUG)
+                        plugin.getLogger().info("DEBUG: canceling fire spread");
+                    e.setCancelled(true);
+                }
+                break;
+            default:
+                break;
             }
-            if (actionAllowed(e.getBlock().getLocation(), SettingsFlag.FIRE_SPREAD)) {
-                return;
-            }
-            if (DEBUG) {
-                plugin.getLogger().info("Fire spread not allowed, stopping LAVA ignition");
-            }
-            e.setCancelled(true);
         }
     }
 
@@ -2527,7 +2601,7 @@ public class IslandGuard implements Listener {
             plugin.getLogger().info("DEBUG: entity = " + e.getEntityType());
             plugin.getLogger().info("DEBUG: material changing to " + e.getTo());
         }
-        if (Settings.allowFire) {
+        if (actionAllowed(e.getEntity().getLocation(), SettingsFlag.FIRE)) {
             return;
         }
         if (e.getBlock() == null) {

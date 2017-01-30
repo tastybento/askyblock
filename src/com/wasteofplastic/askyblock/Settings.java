@@ -110,10 +110,6 @@ public class Settings {
     public static boolean allowCreeperDamage;
     public static boolean allowCreeperGriefing;
     public static boolean allowEndermanGriefing;
-    public static boolean allowFire;
-    //public static boolean allowFireSpread;
-    public static boolean allowHurtMonsters;
-    public static boolean allowMonsterEggs;
     public static boolean allowPistonPush;
     public static boolean allowTNTDamage;
     public static boolean allowVisitorKeepInvOnDeath;

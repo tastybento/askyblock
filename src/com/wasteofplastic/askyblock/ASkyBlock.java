@@ -1226,11 +1226,8 @@ public class ASkyBlock extends JavaPlugin {
         Settings.allowCreeperDamage = getConfig().getBoolean("island.allowcreeperdamage", true);
         Settings.allowCreeperGriefing = getConfig().getBoolean("island.allowcreepergriefing", false);
         Settings.allowTNTDamage = getConfig().getBoolean("island.allowtntdamage", false);
-        Settings.allowMonsterEggs = getConfig().getBoolean("island.allowspawneggs", false);
-        Settings.allowFire = getConfig().getBoolean("island.allowfire", false);
         Settings.allowFireExtinguish = getConfig().getBoolean("island.allowfireextinguish", false);
         Settings.allowChestDamage = getConfig().getBoolean("island.allowchestdamage", false);
-        Settings.allowHurtMonsters = getConfig().getBoolean("island.allowhurtmonsters", true);
         Settings.allowVisitorKeepInvOnDeath = getConfig().getBoolean("island.allowvisitorkeepinvondeath", false);
         Settings.allowPistonPush = getConfig().getBoolean("island.allowpistonpush", true);
         Settings.allowMobDamageToItemFrames = getConfig().getBoolean("island.allowitemframedamage", false);
@@ -1243,10 +1240,15 @@ public class ASkyBlock extends JavaPlugin {
         Settings.visitorSettings.clear();
         for (SettingsFlag flag: SettingsFlag.values()) {
             Settings.defaultWorldSettings.put(flag, getConfig().getBoolean("protection.world." + flag.name()));
-            Settings.defaultIslandSettings.put(flag, getConfig().getBoolean("protection.island." + flag.name(), Settings.defaultWorldSettings.get(flag)));
             Settings.defaultSpawnSettings.put(flag, Settings.defaultWorldSettings.get(flag));
             if (getConfig().contains("protection.island." + flag.name())) {
+                // Only items in the config.yml can be per island customized
                 Settings.visitorSettings.put(flag, Settings.defaultIslandSettings.get(flag));
+                // (The default value listed here should never be used because by definition, the flag name exists)
+                Settings.defaultIslandSettings.put(flag, getConfig().getBoolean("protection.island." + flag.name(), Settings.defaultWorldSettings.get(flag)));
+            } else {
+                // If not in the list in config.yml, then the island gets the world default
+                Settings.defaultIslandSettings.put(flag, Settings.defaultWorldSettings.get(flag));
             }
         }
         // Challenges
