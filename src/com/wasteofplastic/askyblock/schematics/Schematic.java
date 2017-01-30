@@ -1021,11 +1021,11 @@ public class Schematic {
             // Check distance. If it's too close, warp to spawn to try to clear the client's cache
             //plugin.getLogger().info("DEBUG: view dist = " + plugin.getServer().getViewDistance());
             if (player.getWorld().equals(world)) {
-                plugin.getLogger().info("DEBUG: same world");
+                //plugin.getLogger().info("DEBUG: same world");
                 int distSq = (int)((player.getLocation().distanceSquared(loc) - (Settings.islandDistance * Settings.islandDistance)/16));
-                plugin.getLogger().info("DEBUG:  distsq = " + distSq);
+                //plugin.getLogger().info("DEBUG:  distsq = " + distSq);
                 if (plugin.getServer().getViewDistance() * plugin.getServer().getViewDistance() < distSq) {
-                    plugin.getLogger().info("DEBUG: teleporting");
+                    //plugin.getLogger().info("DEBUG: teleporting");
                     player.teleport(world.getSpawnLocation());
                 }
             }
