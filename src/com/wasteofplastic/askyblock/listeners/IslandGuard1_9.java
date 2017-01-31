@@ -40,6 +40,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.scoreboard.Team;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
@@ -66,11 +67,14 @@ public class IslandGuard1_9 implements Listener {
         if (!Settings.allowPushing) {
             // try to remove the team from the scoreboard
             try {
-                scoreboard = plugin.getServer().getScoreboardManager().getMainScoreboard();
-                if (scoreboard != null) {
-                    Team pTeam = scoreboard.getTeam(NO_PUSH_TEAM_NAME);
-                    if (pTeam != null) {
-                        pTeam.unregister();
+                ScoreboardManager manager = plugin.getServer().getScoreboardManager();
+                if (manager != null) {
+                    Scoreboard scoreboard = manager.getMainScoreboard();
+                    if (scoreboard != null) {
+                        Team pTeam = scoreboard.getTeam(NO_PUSH_TEAM_NAME);
+                        if (pTeam != null) {
+                            pTeam.unregister();
+                        }
                     }
                 }
             } catch (Exception e) {

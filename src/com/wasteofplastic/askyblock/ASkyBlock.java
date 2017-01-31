@@ -52,6 +52,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.scoreboard.Team;
 
 import com.wasteofplastic.askyblock.Island.SettingsFlag;
@@ -792,11 +793,14 @@ public class ASkyBlock extends JavaPlugin {
         // try to remove the team from the scoreboard
         if (Settings.allowPushing) {
             try {
-                Scoreboard scoreboard = getServer().getScoreboardManager().getMainScoreboard();
-                if (scoreboard != null) {
-                    Team pTeam = scoreboard.getTeam(NO_PUSH_TEAM_NAME);
-                    if (pTeam != null) {
-                        pTeam.unregister();
+                ScoreboardManager manager = getServer().getScoreboardManager();
+                if (manager != null) {
+                    Scoreboard scoreboard = manager.getMainScoreboard();
+                    if (scoreboard != null) {
+                        Team pTeam = scoreboard.getTeam(NO_PUSH_TEAM_NAME);
+                        if (pTeam != null) {
+                            pTeam.unregister();
+                        }
                     }
                 }
             } catch (Exception e) {
