@@ -788,6 +788,8 @@ public class ASkyBlock extends JavaPlugin {
         Settings.onlyLeaderCanCoop = getConfig().getBoolean("general.onlyleadercancoop", false);
         // Level logging
         Settings.levelLogging = getConfig().getBoolean("general.levellogging");
+        // Nether island count in level calculation
+        Settings.countNetherInLevelCalc = getConfig().getBoolean("general.nethercountinlevel", false);
         // Allow pushing
         Settings.allowPushing = getConfig().getBoolean("general.allowpushing", true);
         // try to remove the team from the scoreboard
