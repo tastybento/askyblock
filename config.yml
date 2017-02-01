@@ -393,9 +393,6 @@ general:
    - spawner
    - spawnmob
 
-   # Ops receive damage from acid (Set to true if you want Ops to play properly)
-   damageops: false
-   
    # Invincible visitors - Prevent players from killing them (intentionally or by accident)
    # If they fall to the void, they get TP'd to their island.
    invinciblevisitors: false
@@ -432,6 +429,8 @@ general:
    # 1.11+ only
    - CRAMMING
 
+   # Acid Section - for AcidIsland, but can be used in ASkyBlock as well.
+   #
    # Acid damage to player per second by being in acid if they have no armor on.
    # A fully health player has 20 health points. Players will regen some health
    # so the default will give players about 3 seconds to get out the acid
@@ -450,7 +449,13 @@ general:
    # be on for this setting to work. i.e., it'll work with water too.
    # Items fizz when they are destroyed.
    itemdestroyafter: 0
-
+   # Ops receive damage from acid (Set to true if you want Ops to play properly)
+   damageops: false
+   # Armor protection.
+   # Protect players from acid rain if they have a helmet on
+   helmetprotection: true
+   # Protect players from all acid if they have a full set of armor on
+   fullarmorprotection: false
    # Damage type to apply in addition to acid damage
    # Types can be : SLOW, SLOW_DIGGING, CONFUSION,BLINDNESS, HUNGER, WEAKNESS and POISON
    # If you just want these to act, then make the acid damage 0 above

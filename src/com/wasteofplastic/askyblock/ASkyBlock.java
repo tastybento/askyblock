@@ -764,6 +764,9 @@ public class ASkyBlock extends JavaPlugin {
             getLogger().warning("You should back up your world before running this");
             getLogger().warning("*********************************************************");
         }
+        // Helmet and full armor acid protection options
+        Settings.helmetProtection = getConfig().getBoolean("general.helmetprotection", true);
+        Settings.fullArmorProtection = getConfig().getBoolean("general.fullarmorprotection", false);
         // Destroy items in acid timer
         Settings.acidItemDestroyTime = getConfig().getLong("general.itemdestroyafter",0L) * 20L;
         // Hack skeleton spawners for 1.11
