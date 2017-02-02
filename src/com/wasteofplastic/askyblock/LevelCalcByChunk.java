@@ -64,7 +64,6 @@ public class LevelCalcByChunk {
      * @param plugin
      * @param targetPlayer - UUID of island owner or team member
      * @param sender - requester of the level calculation, if anyone
-     * @param silent - if true, calculation will be done silently
      * @param report - provide a report to the asker
      */
     public LevelCalcByChunk(final ASkyBlock plugin, final UUID targetPlayer, final CommandSender sender, final boolean report) {

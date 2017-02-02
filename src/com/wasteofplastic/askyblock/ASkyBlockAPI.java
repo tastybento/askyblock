@@ -113,7 +113,7 @@ public class ASkyBlockAPI {
      * @return true if player has an island, false if not
      */
     public boolean calculateIslandLevel(UUID playerUUID) {
-        if (plugin.getPlayers().inTeam(playerUUID) && !plugin.getPlayers().hasIsland(playerUUID)) {		
+        if (plugin.getPlayers().hasIsland(playerUUID) || plugin.getPlayers().inTeam(playerUUID)) {		
             new LevelCalcByChunk(plugin, playerUUID, null, false);
             return true;
         }
