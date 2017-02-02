@@ -47,7 +47,10 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.Island;
+import com.wasteofplastic.askyblock.Island.SettingsFlag;
 import com.wasteofplastic.askyblock.Settings;
+import com.wasteofplastic.askyblock.Settings.GameType;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
 /**
@@ -88,7 +91,7 @@ public class AcidEffect implements Listener {
             return;
         }
         // Check that they are in the ASkyBlock world
-        if (!player.getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+        if (!player.getWorld().equals(ASkyBlock.getIslandWorld())) {
             return;
         }        
         // Return if players are immune
@@ -103,6 +106,12 @@ public class AcidEffect implements Listener {
         if (player.getGameMode().equals(GameMode.CREATIVE)) {
             return;
         }
+
+        /*
+        if (!e.getTo().toVector().equals(e.getFrom().toVector())) {
+            // Head movements only
+            return;
+        }*/
         if (DEBUG)
             plugin.getLogger().info("DEBUG: Acid Effect " + e.getEventName());
 
@@ -117,240 +126,227 @@ public class AcidEffect implements Listener {
             Biome biome = playerLoc.getBlock().getBiome();
             if (biome != Biome.DESERT && biome != Biome.DESERT_HILLS 
                     && biome != Biome.SAVANNA && biome != Biome.MESA && biome != Biome.HELL) {
-                // plugin.getLogger().info("Rain damage = " + Settings.rainDamage);
-                boolean hitByRain = true;
-                // Check if all air above player
-                for (int y = playerLoc.getBlockY() + 2; y < playerLoc.getWorld().getMaxHeight(); y++) {
-                    if (!playerLoc.getWorld().getBlockAt(playerLoc.getBlockX(), y, playerLoc.getBlockZ()).getType().equals(Material.AIR)) {
-                        hitByRain = false;
-                        break;
-                    }
-                }
-                if (!hitByRain) {
+                if (isSafeFromRain(player)) {
                     // plugin.getLogger().info("DEBUG: not hit by rain");
                     wetPlayers.remove(player);
                 } else {
                     // plugin.getLogger().info("DEBUG: hit by rain");
-                    // Check if player has an active water potion or not
-                    boolean acidPotion = false;
-                    Collection<PotionEffect> activePotions = player.getActivePotionEffects();
-                    for (PotionEffect s : activePotions) {
-                        // plugin.getLogger().info("Potion is : " +
-                        // s.getType().toString());
-                        if (s.getType().equals(PotionEffectType.WATER_BREATHING)) {
-                            // Safe!
-                            acidPotion = true;
-                            // plugin.getLogger().info("Water breathing potion protection!");
-                        }
-                    }
-                    if (acidPotion) {
-                        // plugin.getLogger().info("DEBUG: Acid potion active");
-                        wetPlayers.remove(player);
-                    } else {
-                        // plugin.getLogger().info("DEBUG: no acid potion");
-                        if (!wetPlayers.contains(player)) {
-                            // plugin.getLogger().info("DEBUG: Start hurting player");
-                            // Start hurting them
-                            // Add to the list
-                            wetPlayers.add(player);
-                            // This runnable continuously hurts the player even if
-                            // they are not
-                            // moving but are in acid rain.
-                            new BukkitRunnable() {
-                                @Override
-                                public void run() {
-                                    // Check if it is still raining or player is
-                                    // dead
-                                    if (!isRaining || player.isDead()) {
-                                        // plugin.getLogger().info("DEBUG: Player is dead or it has stopped raining");
-                                        wetPlayers.remove(player);
-                                        this.cancel();
-                                        // Check they are still in this world
-                                    } else if (player.getLocation().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
-                                        // Check if they have drunk a potion
-                                        // Check if player has an active water
-                                        // potion or not
-                                        Collection<PotionEffect> activePotions = player.getActivePotionEffects();
-                                        for (PotionEffect s : activePotions) {
-                                            // plugin.getLogger().info("Potion is : "
-                                            // +
-                                            // s.getType().toString());
-                                            if (s.getType().equals(PotionEffectType.WATER_BREATHING)) {
-                                                // Safe!
-                                                // plugin.getLogger().info("DEBUG: Acid potion active");
-                                                wetPlayers.remove(player);
-                                                this.cancel();
-                                                return;
-                                                // plugin.getLogger().info("Water breathing potion protection!");
-                                            }
-                                        }
-                                        // Check if they are still in rain
-                                        // Check if all air above player
-                                        for (int y = player.getLocation().getBlockY() + 2; y < player.getLocation().getWorld().getMaxHeight(); y++) {
-                                            if (!player.getLocation().getWorld().getBlockAt(player.getLocation().getBlockX(), y, player.getLocation().getBlockZ())
-                                                    .getType().equals(Material.AIR)) {
-                                                // Safe!
-                                                wetPlayers.remove(player);
-                                                this.cancel();
-                                                return;
-                                            }
-                                        }
-                                        // Apply damage if there is any - no potion
-                                        // damage for rain
-                                        if (Settings.rainDamage > 0D) {
-                                            double health = player.getHealth() - (Settings.rainDamage - Settings.rainDamage * getDamageReduced(player));
-                                            if (health < 0D) {
-                                                health = 0D;
-                                            } else if (health > player.getMaxHealth()) {
-                                                health = player.getMaxHealth();
-                                            }
-                                            player.setHealth(health);
-                                            if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
-                                                player.getWorld().playSound(playerLoc, Sound.valueOf("FIZZ"), 3F, 3F);
-                                            } else {
-                                                player.getWorld().playSound(playerLoc, Sound.ENTITY_CREEPER_PRIMED, 3F, 3F);
-                                            }
-                                        }
+                    if (!wetPlayers.contains(player)) {
+                        // plugin.getLogger().info("DEBUG: Start hurting player");
+                        // Start hurting them
+                        // Add to the list
+                        wetPlayers.add(player);
+                        // This runnable continuously hurts the player even if
+                        // they are not
+                        // moving but are in acid rain.
+                        new BukkitRunnable() {
+                            @Override
+                            public void run() {
+                                // Check if it is still raining or player is safe or dead or there is no damage
+                                if (!isRaining || player.isDead() || isSafeFromRain(player) || Settings.rainDamage <= 0D) {
+                                    // plugin.getLogger().info("DEBUG: Player is dead or it has stopped raining");
+                                    wetPlayers.remove(player);
+                                    this.cancel();
+                                    // Check they are still in this world
+                                } else {
+                                    double health = player.getHealth() - (Settings.rainDamage - Settings.rainDamage * getDamageReduced(player));
+                                    if (health < 0D) {
+                                        health = 0D;
+                                    } else if (health > player.getMaxHealth()) {
+                                        health = player.getMaxHealth();
+                                    }
+                                    player.setHealth(health);
+                                    if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
+                                        player.getWorld().playSound(playerLoc, Sound.valueOf("FIZZ"), 3F, 3F);
                                     } else {
-                                        // plugin.getLogger().info("DEBUG: Player no longer in acid world");
-                                        wetPlayers.remove(player);
-                                        // plugin.getLogger().info("Cancelled!");
-                                        this.cancel();
+                                        player.getWorld().playSound(playerLoc, Sound.ENTITY_CREEPER_PRIMED, 3F, 3F);
                                     }
                                 }
-                            }.runTaskTimer(plugin, 0L, 20L);
-                        }
+                            }
+                        }.runTaskTimer(plugin, 0L, 20L);
                     }
                 }
             }
         }
 
-        // If they are not in liquid, then return
-        if (!block.isLiquid() && !head.isLiquid()) {
-            return;
-        }
         // Find out if they are at the bottom of the sea and if so bounce them
         // back up
-        if (playerLoc.getBlockY() < 1) {
+        if (playerLoc.getBlockY() < 1 && Settings.GAMETYPE.equals(GameType.ACIDISLAND)) {
             final Vector v = new Vector(player.getVelocity().getX(), 1D, player.getVelocity().getZ());
             player.setVelocity(v);
         }
         // If they are already burning in acid then return
         if (burningPlayers.contains(player)) {
+            if (DEBUG)
+                plugin.getLogger().info("DEBUG: already burning in acid");
             return;
         }
-        // Check if they are in spawn and therefore water above sea-level is not
-        // acid
-        if (Settings.allowSpawnNoAcidWater) {
-            // plugin.getLogger().info("DEBUG: no acid water is true");
-            // Check if the player is above sealevel because the sea is always
-            // acid
-            if (playerLoc.getBlockY() > Settings.sea_level) {
-                // plugin.getLogger().info("DEBUG: player is above sea level");
-                if (plugin.getGrid().isAtSpawn(playerLoc)) {
-                    // plugin.getLogger().info("DEBUG: player is at spawn");
-                    return;
-                }
-            }
-        }
         // plugin.getLogger().info("DEBUG: no acid water is false");
-        // Check if they are in water
-        if (block.getType().equals(Material.STATIONARY_WATER) || block.getType().equals(Material.WATER)
-                || head.getType().equals(Material.STATIONARY_WATER) || head.getType().equals(Material.WATER)) {
-            //plugin.getLogger().info("DEBUG: head = " + head.getType() + " body = " + block.getType());
-            // Check if player has just exited a boat - in which case, they are
-            // immune for 1 tick
-            // This is needed because safeboat.java cannot teleport the player
-            // for 1 tick
-            // Don't remove this!!
-            // if (SafeBoat.exitedBoat(player)) {
-            // return;
-            // }
-            // Check if player is in a boat
-            Entity playersVehicle = player.getVehicle();
-            if (playersVehicle != null) {
-                // They are in a Vehicle
-                if (playersVehicle.getType().equals(EntityType.BOAT)) {
-                    // I'M ON A BOAT! I'M ON A BOAT! A %^&&* BOAT!
-                    return;
-                }
-            }
-            // Check if player has an active water potion or not
-            Collection<PotionEffect> activePotions = player.getActivePotionEffects();
-            for (PotionEffect s : activePotions) {
-                // plugin.getLogger().info("Potion is : " +
-                // s.getType().toString());
-                if (s.getType().equals(PotionEffectType.WATER_BREATHING)) {
-                    // Safe!
-                    //plugin.getLogger().info("DEBUG: Water breathing potion protection!");
-                    return;
-                }
-            }
-            // ACID!
-            //plugin.getLogger().info("DEBUG: Acid!");
-            // Put the player into the acid list
-            burningPlayers.add(player);
-            // This runnable continuously hurts the player even if they are not
-            // moving but are in acid.
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    if (player.isDead()) {
-                        burningPlayers.remove(player);
-                        this.cancel();
-                    } else if ((player.getLocation().getBlock().isLiquid() || player.getLocation().getBlock().getRelative(BlockFace.UP).isLiquid())
-                            && player.getLocation().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
-                        // plugin.getLogger().info("Damage setting = " +
-                        // Settings.acidDamage);
-                        // plugin.getLogger().info("Damage to player = " +
-                        // (Settings.general_acidDamage -
-                        // Settings.general_acidDamage *
-                        // getDamageReduced(player)));
-                        // plugin.getLogger().info("Player health is " +
-                        // player.getHealth());
-                        // Apply additional potion effects
-                        // plugin.getLogger().info("Potion damage " +
-                        // Settings.acidDamageType.toString());
-                        if (!Settings.acidDamageType.isEmpty()) {
-                            for (PotionEffectType t : Settings.acidDamageType) {
-                                // plugin.getLogger().info("Applying " +
-                                // t.toString());
-                                // player.addPotionEffect(new PotionEffect(t,
-                                // 20, amplifier));
-                                if (t.equals(PotionEffectType.BLINDNESS) || t.equals(PotionEffectType.CONFUSION) || t.equals(PotionEffectType.HUNGER)
-                                        || t.equals(PotionEffectType.SLOW) || t.equals(PotionEffectType.SLOW_DIGGING) || t.equals(PotionEffectType.WEAKNESS)) {
-                                    player.addPotionEffect(new PotionEffect(t, 600, 1));
-                                } else {
-                                    // Poison
-                                    player.addPotionEffect(new PotionEffect(t, 200, 1));
-                                }
-                            }
-                        }
-                        // double health = player.getHealth();
-                        // Apply damage if there is any
-                        if (Settings.acidDamage > 0D) {
-                            double health = player.getHealth() - (Settings.acidDamage - Settings.acidDamage * getDamageReduced(player));
-                            if (health < 0D) {
-                                health = 0D;
-                            } else if (health > player.getMaxHealth()) {
-                                health = player.getMaxHealth();
-                            }
-                            player.setHealth(health);
-                            if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
-                                player.getWorld().playSound(playerLoc, Sound.valueOf("FIZZ"), 3F, 3F);
-                            } else {
-                                player.getWorld().playSound(playerLoc, Sound.ENTITY_CREEPER_PRIMED, 3F, 3F);
-                            }
-                        }
-
-                    } else {
-                        burningPlayers.remove(player);
-                        // plugin.getLogger().info("Cancelled!");
-                        this.cancel();
-                    }
-                }
-            }.runTaskTimer(plugin, 0L, 20L);
+        if (isSafeFromAcid(player)) {
+            if (DEBUG)
+                plugin.getLogger().info("DEBUG: safe from acid");
+            return;
         }
+        // ACID!
+        //plugin.getLogger().info("DEBUG: Acid!");
+        // Put the player into the acid list
+        burningPlayers.add(player);
+        // This runnable continuously hurts the player even if they are not
+        // moving but are in acid.
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (player.isDead() || isSafeFromAcid(player)) {
+                    burningPlayers.remove(player);
+                    this.cancel();
+                } else {
+                    if (!Settings.acidDamageType.isEmpty()) {
+                        for (PotionEffectType t : Settings.acidDamageType) {
+                            if (t.equals(PotionEffectType.BLINDNESS) || t.equals(PotionEffectType.CONFUSION) || t.equals(PotionEffectType.HUNGER)
+                                    || t.equals(PotionEffectType.SLOW) || t.equals(PotionEffectType.SLOW_DIGGING) || t.equals(PotionEffectType.WEAKNESS)) {
+                                player.addPotionEffect(new PotionEffect(t, 600, 1));
+                            } else {
+                                // Poison
+                                player.addPotionEffect(new PotionEffect(t, 200, 1));
+                            }
+                        }
+                    }
+                    // Apply damage if there is any
+                    if (Settings.acidDamage > 0D) {
+                        double health = player.getHealth() - (Settings.acidDamage - Settings.acidDamage * getDamageReduced(player));
+                        if (health < 0D) {
+                            health = 0D;
+                        } else if (health > player.getMaxHealth()) {
+                            health = player.getMaxHealth();
+                        }
+                        player.setHealth(health);
+                        if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
+                            player.getWorld().playSound(playerLoc, Sound.valueOf("FIZZ"), 3F, 3F);
+                        } else {
+                            player.getWorld().playSound(playerLoc, Sound.ENTITY_CREEPER_PRIMED, 3F, 3F);
+                        }
+                    }
+
+                }
+            }
+        }.runTaskTimer(plugin, 0L, 20L);
+    }
+
+    /**
+     * Check if player is safe from rain
+     * @param player
+     * @return true if they are safe
+     */
+    private boolean isSafeFromRain(Player player) {
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: safe from acid rain");
+        if (!player.getWorld().equals(ASkyBlock.getIslandWorld())) {
+            if (DEBUG)
+                plugin.getLogger().info("DEBUG: wrong world");
+            return true;
+        }
+        // Check if player has a helmet on and helmet protection is true
+        if (Settings.helmetProtection && (player.getInventory().getHelmet() != null 
+                && player.getInventory().getHelmet().getType().name().contains("HELMET"))) {
+            if (DEBUG)
+                plugin.getLogger().info("DEBUG: wearing helmet.");
+            return true;
+        }
+        // Check potions
+        Collection<PotionEffect> activePotions = player.getActivePotionEffects();
+        for (PotionEffect s : activePotions) {
+            if (s.getType().equals(PotionEffectType.WATER_BREATHING)) {
+                // Safe!
+                if (DEBUG)
+                    plugin.getLogger().info("DEBUG: potion");
+                return true;
+            }
+        }
+        // Check if all air above player
+        for (int y = player.getLocation().getBlockY() + 2; y < player.getLocation().getWorld().getMaxHeight(); y++) {
+            if (!player.getLocation().getWorld().getBlockAt(player.getLocation().getBlockX(), y, player.getLocation().getBlockZ()).getType().equals(Material.AIR)) {
+                if (DEBUG)
+                    plugin.getLogger().info("DEBUG: something other than air above player");
+                return true;
+            }
+        }
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: acid rain damage");
+        return false;
+    }
+
+    /**
+     * Check if player can be burned by acid
+     * @param player
+     * @return true if player is not safe
+     */
+    private boolean isSafeFromAcid(Player player) {
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: safe from acid");
+        if (!player.getWorld().equals(ASkyBlock.getIslandWorld())) {
+            if (DEBUG)
+                plugin.getLogger().info("DEBUG: wrong world");
+            return true;
+        }
+        // In liquid
+        if (!player.getLocation().getBlock().isLiquid() && !player.getLocation().getBlock().getRelative(BlockFace.UP).isLiquid()) {
+            if (DEBUG)
+                plugin.getLogger().info("DEBUG: not in liquid " + player.getLocation().getBlock().isLiquid() + " " + player.getLocation().getBlock().getRelative(BlockFace.UP).isLiquid());
+            return true;
+        }
+        // Check if player is in a boat
+        Entity playersVehicle = player.getVehicle();
+        if (playersVehicle != null) {
+            // They are in a Vehicle
+            if (playersVehicle.getType().equals(EntityType.BOAT)) {
+                // I'M ON A BOAT! I'M ON A BOAT! A %^&&* BOAT!
+                if (DEBUG)
+                    plugin.getLogger().info("DEBUG: boat");
+                return true;
+            }
+        }
+        // Check if full armor protects
+        if (Settings.fullArmorProtection) {
+            boolean fullArmor = true;
+            for (ItemStack item : player.getInventory().getArmorContents()) {
+                if (item == null || (item != null && item.getType().equals(Material.AIR))) {
+                    fullArmor = false;
+                    break;
+                }
+            }
+            if (fullArmor) {
+                if (DEBUG)
+                    plugin.getLogger().info("DEBUG: full armor");
+                return true;
+            }
+        }
+        // Check if player has an active water potion or not
+        Collection<PotionEffect> activePotions = player.getActivePotionEffects();
+        for (PotionEffect s : activePotions) {
+            // plugin.getLogger().info("Potion is : " +
+            // s.getType().toString());
+            if (s.getType().equals(PotionEffectType.WATER_BREATHING)) {
+                // Safe!
+                if (DEBUG)
+                    plugin.getLogger().info("DEBUG: Water breathing potion protection!");
+                return true;
+            }
+        }
+        // Check if water above sea-level is not acid
+        Island island = plugin.getGrid().getIslandAt(player.getLocation());
+        if (island != null && !island.getIgsFlag(SettingsFlag.ACID_DAMAGE) && player.getLocation().getBlockY() > Settings.sea_level) {
+            if (DEBUG)
+                plugin.getLogger().info("DEBUG:no acid damage above sea level 1");
+            return true;
+        }
+        if (island == null && !Settings.defaultWorldSettings.get(SettingsFlag.ACID_DAMAGE) && player.getLocation().getBlockY() > Settings.sea_level) {
+            if (DEBUG)
+                plugin.getLogger().info("DEBUG: no acid damage above sea level");
+            return true;
+        }
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: burn in acid");
+        return false;
     }
 
     /**

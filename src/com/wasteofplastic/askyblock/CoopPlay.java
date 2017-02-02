@@ -66,8 +66,9 @@ public class CoopPlay {
      * 
      * @param requester
      * @param newPlayer
+     * @return true if successful, otherwise false
      */
-    public void addCoopPlayer(Player requester, Player newPlayer) {
+    public boolean addCoopPlayer(Player requester, Player newPlayer) {
         // plugin.getLogger().info("DEBUG: adding coop player");
         // Find out which island this coop player is being requested to join
         Location islandLoc = null;
@@ -75,6 +76,11 @@ public class CoopPlay {
             islandLoc = plugin.getPlayers().getTeamIslandLocation(requester.getUniqueId());
             // Tell the team owner
             UUID leaderUUID = plugin.getPlayers().getTeamLeader(requester.getUniqueId());
+            // Check if only leader can coop
+            if(Settings.onlyLeaderCanCoop && (!requester.getUniqueId().equals(leaderUUID))){
+            	requester.sendMessage(ChatColor.RED + plugin.myLocale(requester.getUniqueId()).cannotCoop);
+            	return false;
+            }
             // Tell all the team members
             for (UUID member : plugin.getPlayers().getMembers(leaderUUID)) {
                 // plugin.getLogger().info("DEBUG: " + member.toString());
@@ -97,6 +103,12 @@ public class CoopPlay {
             islandLoc = plugin.getPlayers().getIslandLocation(requester.getUniqueId());
         }
         Island coopIsland = plugin.getGrid().getIslandAt(islandLoc);
+        // Fire event and check if it is cancelled
+        final CoopJoinEvent event = new CoopJoinEvent(newPlayer.getUniqueId(), coopIsland, requester.getUniqueId());
+        plugin.getServer().getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
+            return false;
+        }
         // Add the coop to the list. If the location already exists then the new
         // requester will replace the old
         if (coopPlayers.containsKey(newPlayer.getUniqueId())) {
@@ -109,9 +121,7 @@ public class CoopPlay {
             loc.put(coopIsland.getCenter(), requester.getUniqueId());
             coopPlayers.put(newPlayer.getUniqueId(), loc);
         }
-        // Fire event
-        final CoopJoinEvent event = new CoopJoinEvent(newPlayer.getUniqueId(), coopIsland, requester.getUniqueId());
-        plugin.getServer().getPluginManager().callEvent(event);
+        return true;
     }
 
     /**
@@ -173,6 +183,7 @@ public class CoopPlay {
                 // Fire event
                 final CoopLeaveEvent event = new CoopLeaveEvent(player, inviter, island);
                 plugin.getServer().getPluginManager().callEvent(event);
+                // Cannot be cancelled
             }
             coopPlayer.remove(island.getCenter());
         }
@@ -189,13 +200,22 @@ public class CoopPlay {
         Island coopIsland = plugin.getGrid().getIsland(player.getUniqueId());
         if (coopPlayers.get(player.getUniqueId()) != null) {
             //plugin.getLogger().info("DEBUG: " + player.getName() + " is a member of a coop");
+            boolean notCancelled = false;
             for (UUID inviter : coopPlayers.get(player.getUniqueId()).values()) {
                 // Fire event
                 //plugin.getLogger().info("DEBUG: removing invite from " + plugin.getServer().getPlayer(inviter).getName());
                 final CoopLeaveEvent event = new CoopLeaveEvent(player.getUniqueId(), inviter, coopIsland);
                 plugin.getServer().getPluginManager().callEvent(event);
+                if (!event.isCancelled()) {
+                    coopPlayers.get(player.getUniqueId()).remove(inviter);
+                } else {
+                    notCancelled = true;
+                }
             }
-            coopPlayers.remove(player.getUniqueId());
+            // If the event was never cancelled, then delete the entry fully just in case. May not be needed.
+            if (notCancelled) {
+                coopPlayers.remove(player.getUniqueId());
+            }
         }
     }
 
@@ -288,20 +308,22 @@ public class CoopPlay {
                 Entry<Location, UUID> entry = en.next();
                 // Check if this invite was sent by clearer
                 if (entry.getValue().equals(clearer.getUniqueId())) {
-                    // Yes, so get the invitee (target)
-                    Player target = plugin.getServer().getPlayer(playerUUID);
-                    if (target != null) {
-                        target.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).coopRemoved.replace("[name]", clearer.getDisplayName()));
-                    } else {
-                        plugin.getMessages().setMessage(playerUUID, ChatColor.RED + plugin.myLocale(playerUUID).coopRemoved.replace("[name]", clearer.getDisplayName()));
-                    }
                     // Fire event
                     final CoopLeaveEvent event = new CoopLeaveEvent(playerUUID, clearer.getUniqueId(), coopIsland);
                     plugin.getServer().getPluginManager().callEvent(event);
-                    // Mark them as no longer on a coop island
-                    // setOnCoopIsland(players, null);
-                    // Remove this entry
-                    en.remove();
+                    if (!event.isCancelled()) {
+                        // Yes, so get the invitee (target)
+                        Player target = plugin.getServer().getPlayer(playerUUID);
+                        if (target != null) {
+                            target.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).coopRemoved.replace("[name]", clearer.getDisplayName()));
+                        } else {
+                            plugin.getMessages().setMessage(playerUUID, ChatColor.RED + plugin.myLocale(playerUUID).coopRemoved.replace("[name]", clearer.getDisplayName()));
+                        }
+                        // Mark them as no longer on a coop island
+                        // setOnCoopIsland(players, null);
+                        // Remove this entry
+                        en.remove();
+                    } // else do not remove
                 }
             }
         }
@@ -322,6 +344,7 @@ public class CoopPlay {
             // Fire event
             final CoopLeaveEvent event = new CoopLeaveEvent(coopPlayer.get(island), coopIsland.getOwner(), coopIsland);
             plugin.getServer().getPluginManager().callEvent(event);
+            // Cannot be cancelled
             coopPlayer.remove(island);
         }
     }
@@ -345,10 +368,12 @@ public class CoopPlay {
         if (coopPlayers.containsKey(targetPlayerUUID)) {
             Island coopIsland = plugin.getGrid().getIsland(requester.getUniqueId());
             if (coopIsland != null) {
-                removed = coopPlayers.get(targetPlayerUUID).remove(coopIsland.getCenter()) != null ? true: false;
                 // Fire event
                 final CoopLeaveEvent event = new CoopLeaveEvent(targetPlayerUUID, requester.getUniqueId(), coopIsland);
                 plugin.getServer().getPluginManager().callEvent(event);
+                if (!event.isCancelled()) {
+                    removed = coopPlayers.get(targetPlayerUUID).remove(coopIsland.getCenter()) != null ? true: false;
+                }
             }
         }
         return removed;

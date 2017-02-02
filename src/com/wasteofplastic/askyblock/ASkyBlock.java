@@ -37,11 +37,7 @@ import org.bukkit.WorldType;
 import org.bukkit.block.Biome;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Animals;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Guardian;
-import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -56,9 +52,10 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.scoreboard.Team;
 
-import com.wasteofplastic.askyblock.Island.Flags;
+import com.wasteofplastic.askyblock.Island.SettingsFlag;
 import com.wasteofplastic.askyblock.NotSetup.Reason;
 import com.wasteofplastic.askyblock.Settings.GameType;
 import com.wasteofplastic.askyblock.Updater.UpdateResult;
@@ -72,6 +69,7 @@ import com.wasteofplastic.askyblock.generators.ChunkGeneratorWorld;
 import com.wasteofplastic.askyblock.listeners.AcidEffect;
 import com.wasteofplastic.askyblock.listeners.ChatListener;
 import com.wasteofplastic.askyblock.listeners.CleanSuperFlat;
+import com.wasteofplastic.askyblock.listeners.EntitySpawning;
 import com.wasteofplastic.askyblock.listeners.FlyingMobEvents;
 import com.wasteofplastic.askyblock.listeners.HeroChatListener;
 import com.wasteofplastic.askyblock.listeners.IslandGuard;
@@ -153,6 +151,12 @@ public class ASkyBlock extends JavaPlugin {
 
     // Settings panel object
     private SettingsPanel settingsPanel;
+
+    // Acid Item Removal Task
+    AcidTask acidTask;
+
+    // Player events listener
+    private PlayerEvents playerEvents;
 
     /**
      * Returns the World object for the island world named in config.yml.
@@ -249,6 +253,10 @@ public class ASkyBlock extends JavaPlugin {
             }
             // Save the coops
             CoopPlay.getInstance().saveCoops();
+            // Remove temporary perms
+            if (playerEvents != null) {
+                playerEvents.removeAllTempPerms();
+            }
         } catch (final Exception e) {
             getLogger().severe("Something went wrong saving files!");
             e.printStackTrace();
@@ -471,6 +479,9 @@ public class ASkyBlock extends JavaPlugin {
                         if (Settings.persistantCoops) {
                             CoopPlay.getInstance().loadCoops();
                         }
+                        // Give temp permissions
+                        playerEvents.giveAllTempPerms();
+
                         getLogger().info("All files loaded. Ready to play...");
                         // Fire event
                         getServer().getPluginManager().callEvent(new ReadyEvent());
@@ -527,40 +538,10 @@ public class ASkyBlock extends JavaPlugin {
                         }
                     }.runTaskTimer(plugin, 0L, 20L); // Check status every second
                 }
-                // This part will kill monsters if they fall into the water
-                // because it
-                // is acid
-                if (Settings.mobAcidDamage > 0D || Settings.animalAcidDamage > 0D) {
-                    getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
-                        @Override
-                        public void run() {
-                            List<Entity> entList = islandWorld.getEntities();
-                            for (Entity current : entList) {
-                                if (plugin.isOnePointEight() && current instanceof Guardian) {
-                                    // Guardians are immune to acid too
-                                    continue;
-                                }
-                                if ((current instanceof Monster) && Settings.mobAcidDamage > 0D) {
-                                    if ((current.getLocation().getBlock().getType() == Material.WATER)
-                                            || (current.getLocation().getBlock().getType() == Material.STATIONARY_WATER)) {
-                                        ((Monster) current).damage(Settings.mobAcidDamage);
-                                        // getLogger().info("Killing monster");
-                                    }
-                                } else if ((current instanceof Animals) && Settings.animalAcidDamage > 0D) {
-                                    if ((current.getLocation().getBlock().getType() == Material.WATER)
-                                            || (current.getLocation().getBlock().getType() == Material.STATIONARY_WATER)) {
-                                        if (!current.getType().equals(EntityType.CHICKEN)) {
-                                            ((Animals) current).damage(Settings.animalAcidDamage);
-                                        } else if (Settings.damageChickens) {
-                                            ((Animals) current).damage(Settings.animalAcidDamage);
-                                        }
-                                        // getLogger().info("Killing animal");
-                                    }
-                                }
-                            }
-                        }
-                    }, 0L, 20L);
-                }
+
+                // Run acid tasks
+                acidTask = new AcidTask(plugin);
+
             }
         });
     }
@@ -726,15 +707,22 @@ public class ASkyBlock extends JavaPlugin {
         // Add this to the config      
         FileLister fl = new FileLister(this);
         try {
+            // Default is locale.yml
+            availableLocales.put("locale", new ASLocale(this, "locale", 0));
             int index = 1;
             for (String code: fl.list()) {
-                availableLocales.put(code, new ASLocale(this,code, index++)); 
+                // Do some checking that the code is valid
+                if (!code.equals("locale")) {
+                    if (code.length() == 5 && code.charAt(2) == '-') {
+                        availableLocales.put(code, new ASLocale(this,code, index++)); 
+                    } else {
+                        getLogger().severe(code + ".yml is not a valid locale file name. Skipping...");
+                    }
+                }
             }
         } catch (IOException e1) {
             getLogger().severe("Could not add locales!");
         }
-        // Default is locale.yml
-        availableLocales.put("locale", new ASLocale(this, "locale", 0));
         // Assign settings
         String configVersion = getConfig().getString("general.version", "");
         //getLogger().info("DEBUG: config ver length " + configVersion.split("\\.").length);
@@ -776,6 +764,11 @@ public class ASkyBlock extends JavaPlugin {
             getLogger().warning("You should back up your world before running this");
             getLogger().warning("*********************************************************");
         }
+        // Helmet and full armor acid protection options
+        Settings.helmetProtection = getConfig().getBoolean("general.helmetprotection", true);
+        Settings.fullArmorProtection = getConfig().getBoolean("general.fullarmorprotection", false);
+        // Destroy items in acid timer
+        Settings.acidItemDestroyTime = getConfig().getLong("general.itemdestroyafter",0L) * 20L;
         // Hack skeleton spawners for 1.11
         Settings.hackSkeletonSpawners = getConfig().getBoolean("schematicsection.hackskeletonspawners", true);
         // Allow Obsidian Scooping
@@ -794,6 +787,8 @@ public class ASkyBlock extends JavaPlugin {
         Settings.debug = getConfig().getInt("debug", 0);
         // Persistent coops
         Settings.persistantCoops = getConfig().getBoolean("general.persistentcoops");
+        // Only leader can coop
+        Settings.onlyLeaderCanCoop = getConfig().getBoolean("general.onlyleadercancoop", false);
         // Level logging
         Settings.levelLogging = getConfig().getBoolean("general.levellogging");
         // Allow pushing
@@ -801,11 +796,14 @@ public class ASkyBlock extends JavaPlugin {
         // try to remove the team from the scoreboard
         if (Settings.allowPushing) {
             try {
-                Scoreboard scoreboard = getServer().getScoreboardManager().getMainScoreboard();
-                if (scoreboard != null) {
-                    Team pTeam = scoreboard.getTeam(NO_PUSH_TEAM_NAME);
-                    if (pTeam != null) {
-                        pTeam.unregister();
+                ScoreboardManager manager = getServer().getScoreboardManager();
+                if (manager != null) {
+                    Scoreboard scoreboard = manager.getMainScoreboard();
+                    if (scoreboard != null) {
+                        Team pTeam = scoreboard.getTeam(NO_PUSH_TEAM_NAME);
+                        if (pTeam != null) {
+                            pTeam.unregister();
+                        }
                     }
                 }
             } catch (Exception e) {
@@ -878,6 +876,15 @@ public class ASkyBlock extends JavaPlugin {
         if (Settings.maxHomes < 1) {
             Settings.maxHomes = 1;
         }
+        // Flymode expiration while flying oustide island boundaries
+        Settings.flyTimeOutside = getConfig().getInt("island.flytimeoutside", 0);
+        if(Settings.flyTimeOutside < 0) {
+            Settings.flyTimeOutside = 0;
+        }
+
+        // Temporary Permissions while inside island
+        Settings.temporaryPermissions = getConfig().getStringList("island.islandtemporaryperms");
+
         // Settings from config.yml
         Settings.worldName = getConfig().getString("general.worldName");
         // Check if the world name matches island.yml info
@@ -929,6 +936,18 @@ public class ASkyBlock extends JavaPlugin {
         if (Settings.islandDistance < 50) {
             Settings.islandDistance = 50;
             getLogger().info("Setting minimum island distance to 50");
+        }
+        Settings.island_protectionRange = getConfig().getInt("island.protectionRange", 100);
+        if (Settings.island_protectionRange % 2 != 0) {
+            Settings.island_protectionRange--;
+            getLogger().warning("Protection range must be even, using " + Settings.island_protectionRange);
+        }
+        if (Settings.island_protectionRange > Settings.islandDistance) {
+            getLogger().warning("Protection range cannot be > island distance. Setting them to be equal.");
+            Settings.island_protectionRange = Settings.islandDistance;
+        }
+        if (Settings.island_protectionRange < 0) {
+            Settings.island_protectionRange = 0;
         }
         Settings.islandXOffset = getConfig().getInt("island.xoffset", 0);
         if (Settings.islandXOffset < 0) {
@@ -1059,26 +1078,6 @@ public class ASkyBlock extends JavaPlugin {
             Settings.abandonedIslandLevel = 0;
         }
 
-        Settings.island_protectionRange = getConfig().getInt("island.protectionRange", 100);
-        if (Settings.island_protectionRange % 2 != 0) {
-            Settings.island_protectionRange--;
-            getLogger().warning("Protection range must be even, using " + Settings.island_protectionRange);
-        }
-        if (Settings.island_protectionRange > Settings.islandDistance) {
-            if (!getConfig().getBoolean("island.overridelimit", false)) {
-                if (Settings.island_protectionRange > (Settings.islandDistance - 16)) {
-                    Settings.island_protectionRange = Settings.islandDistance - 16;
-                    getLogger().warning(
-                            "*** Island protection range must be " + (Settings.islandDistance - 16) + " or less, (island range -16). Setting to: "
-                                    + Settings.island_protectionRange);
-                }
-            } else {
-                Settings.island_protectionRange = Settings.islandDistance;
-            }
-        }
-        if (Settings.island_protectionRange < 0) {
-            Settings.island_protectionRange = 0;
-        }
         Settings.resetChallenges = getConfig().getBoolean("general.resetchallenges", true);
         Settings.resetMoney = getConfig().getBoolean("general.resetmoney", true);
         Settings.clearInventory = getConfig().getBoolean("general.resetinventory", true);
@@ -1228,134 +1227,37 @@ public class ASkyBlock extends JavaPlugin {
             // Nothing in the chest
             Settings.chestItems = new ItemStack[0];
         }
-        Settings.allowPvP = getConfig().getBoolean("island.allowPvP", false);
-        Settings.allowNetherPvP = getConfig().getBoolean("island.allowNetherPvP", false);
-        Settings.allowBreakBlocks = getConfig().getBoolean("island.allowbreakblocks", false);
-        Settings.allowPlaceBlocks = getConfig().getBoolean("island.allowplaceblocks", false);
-        Settings.allowBedUse = getConfig().getBoolean("island.allowbeduse", false);
-        Settings.allowBucketUse = getConfig().getBoolean("island.allowbucketuse", false);
-        Settings.allowShearing = getConfig().getBoolean("island.allowshearing", false);
-        Settings.allowEnderPearls = getConfig().getBoolean("island.allowenderpearls", false);
-        Settings.allowDoorUse = getConfig().getBoolean("island.allowdooruse", false);
-        Settings.allowLeverButtonUse = getConfig().getBoolean("island.allowleverbuttonuse", false);
-        Settings.allowCropTrample = getConfig().getBoolean("island.allowcroptrample", false);
-        Settings.allowChestAccess = getConfig().getBoolean("island.allowchestaccess", false);
-        Settings.allowFurnaceUse = getConfig().getBoolean("island.allowfurnaceuse", false);
-        Settings.allowRedStone = getConfig().getBoolean("island.allowredstone", false);
-        Settings.allowMusic = getConfig().getBoolean("island.allowmusic", false);
-        Settings.allowCrafting = getConfig().getBoolean("island.allowcrafting", false);
-        Settings.allowBrewing = getConfig().getBoolean("island.allowbrewing", false);
-        Settings.allowGateUse = getConfig().getBoolean("island.allowgateuse", false);
-        Settings.allowHurtMobs = getConfig().getBoolean("island.allowhurtmobs", true);
+        // System settings
         Settings.endermanDeathDrop = getConfig().getBoolean("island.endermandeathdrop", true);
         Settings.allowEndermanGriefing = getConfig().getBoolean("island.allowendermangriefing", true);
         Settings.allowCreeperDamage = getConfig().getBoolean("island.allowcreeperdamage", true);
         Settings.allowCreeperGriefing = getConfig().getBoolean("island.allowcreepergriefing", false);
         Settings.allowTNTDamage = getConfig().getBoolean("island.allowtntdamage", false);
-        Settings.allowMonsterEggs = getConfig().getBoolean("island.allowspawneggs", false);
-        Settings.allowBreeding = getConfig().getBoolean("island.allowbreeding", false);
-        Settings.allowFire = getConfig().getBoolean("island.allowfire", false);
-        Settings.allowFireSpread = getConfig().getBoolean("island.allowfirespread", false);
         Settings.allowFireExtinguish = getConfig().getBoolean("island.allowfireextinguish", false);
         Settings.allowChestDamage = getConfig().getBoolean("island.allowchestdamage", false);
-        Settings.allowLeashUse = getConfig().getBoolean("island.allowleashuse", false);
-        Settings.allowHurtMonsters = getConfig().getBoolean("island.allowhurtmonsters", true);
-        Settings.allowEnchanting = getConfig().getBoolean("island.allowenchanting", true);
-        Settings.allowAnvilUse = getConfig().getBoolean("island.allowanviluse", true);
         Settings.allowVisitorKeepInvOnDeath = getConfig().getBoolean("island.allowvisitorkeepinvondeath", false);
-        Settings.allowVisitorItemDrop = getConfig().getBoolean("island.allowvisitoritemdrop", true);
-        Settings.allowVisitorItemPickup = getConfig().getBoolean("island.allowvisitoritempickup", true);
-        Settings.allowArmorStandUse = getConfig().getBoolean("island.allowarmorstanduse", false);
-        Settings.allowBeaconAccess = getConfig().getBoolean("island.allowbeaconaccess", false);
-        Settings.allowPortalUse = getConfig().getBoolean("island.allowportaluse", true);
-        Settings.allowPressurePlate = getConfig().getBoolean("island.allowpressureplates", true);
         Settings.allowPistonPush = getConfig().getBoolean("island.allowpistonpush", true);
-        Settings.allowHorseRiding = getConfig().getBoolean("island.allowhorseriding", false);
-        Settings.allowHorseInvAccess = getConfig().getBoolean("island.allowhorseinventoryaccess", false);
-        Settings.allowVillagerTrading = getConfig().getBoolean("island.allowvillagertrading", true);
-        Settings.allowChorusFruit = getConfig().getBoolean("island.allowchorusfruit", false);
-        Settings.enableJoinAndLeaveIslandMessages = getConfig().getBoolean("island.enablejoinandleaveislandmessages", true);
         Settings.allowMobDamageToItemFrames = getConfig().getBoolean("island.allowitemframedamage", false);
-        Settings.allowMobSpawning = getConfig().getBoolean("island.allowmobspawning", true);
 
-        // Default settings hashmap
+        // Default settings hashmaps - make sure this is kept up to date with new settings
+        // If a setting is not listed, the world default is used
+        Settings.defaultWorldSettings.clear();
         Settings.defaultIslandSettings.clear();
-        Settings.defaultIslandSettings.put(Flags.allowAnvilUse, Settings.allowAnvilUse);
-        Settings.defaultIslandSettings.put(Flags.allowArmorStandUse, Settings.allowArmorStandUse);
-        Settings.defaultIslandSettings.put(Flags.allowBeaconAccess, Settings.allowBeaconAccess);
-        Settings.defaultIslandSettings.put(Flags.allowBedUse, Settings.allowBedUse);
-        Settings.defaultIslandSettings.put(Flags.allowBreakBlocks, Settings.allowBreakBlocks);
-        Settings.defaultIslandSettings.put(Flags.allowBreeding, Settings.allowBreeding);
-        Settings.defaultIslandSettings.put(Flags.allowBrewing, Settings.allowBrewing);
-        Settings.defaultIslandSettings.put(Flags.allowBucketUse, Settings.allowBucketUse);
-        Settings.defaultIslandSettings.put(Flags.allowChestAccess, Settings.allowChestAccess);
-        Settings.defaultIslandSettings.put(Flags.allowCrafting, Settings.allowCrafting);
-        Settings.defaultIslandSettings.put(Flags.allowCropTrample, Settings.allowCropTrample);
-        Settings.defaultIslandSettings.put(Flags.allowDoorUse, Settings.allowDoorUse);
-        Settings.defaultIslandSettings.put(Flags.allowEnchanting, Settings.allowEnchanting);
-        Settings.defaultIslandSettings.put(Flags.allowEnderPearls, Settings.allowEnderPearls);
-        Settings.defaultIslandSettings.put(Flags.allowFurnaceUse, Settings.allowFurnaceUse);
-        Settings.defaultIslandSettings.put(Flags.allowGateUse, Settings.allowGateUse);
-        Settings.defaultIslandSettings.put(Flags.allowHorseInvAccess, Settings.allowHorseInvAccess);
-        Settings.defaultIslandSettings.put(Flags.allowHorseRiding, Settings.allowHorseRiding);
-        Settings.defaultIslandSettings.put(Flags.allowHurtMobs, Settings.allowHurtMobs);
-        Settings.defaultIslandSettings.put(Flags.allowLeashUse, Settings.allowLeashUse);
-        Settings.defaultIslandSettings.put(Flags.allowLeverButtonUse, Settings.allowLeverButtonUse);
-        Settings.defaultIslandSettings.put(Flags.allowMusic, Settings.allowMusic);
-        Settings.defaultIslandSettings.put(Flags.allowPlaceBlocks, Settings.allowPlaceBlocks);
-        Settings.defaultIslandSettings.put(Flags.allowPortalUse, Settings.allowPortalUse);
-        Settings.defaultIslandSettings.put(Flags.allowPressurePlate, Settings.allowPressurePlate);
-        Settings.defaultIslandSettings.put(Flags.allowPvP, Settings.allowPvP);
-        Settings.defaultIslandSettings.put(Flags.allowNetherPvP, Settings.allowNetherPvP);
-        Settings.defaultIslandSettings.put(Flags.allowRedStone, Settings.allowRedStone);
-        Settings.defaultIslandSettings.put(Flags.allowShearing, Settings.allowShearing);
-        Settings.defaultIslandSettings.put(Flags.allowVillagerTrading, Settings.allowVillagerTrading);
-        Settings.defaultIslandSettings.put(Flags.allowChorusFruit, Settings.allowChorusFruit);
-        Settings.defaultIslandSettings.put(Flags.enableJoinAndLeaveIslandMessages, Settings.enableJoinAndLeaveIslandMessages);
-        Settings.defaultIslandSettings.put(Flags.allowMobSpawning, Settings.allowMobSpawning);
-
-        // Spawn Settings
-        Settings.allowSpawnCreeperPain = getConfig().getBoolean("spawn.allowcreeperpain", false);
-        Settings.allowSpawnHorseRiding = getConfig().getBoolean("spawn.allowhorseriding", false);
-        Settings.allowSpawnHorseInvAccess = getConfig().getBoolean("spawn.allowhorseinventoryaccess", false);
-        Settings.allowSpawnPressurePlate = getConfig().getBoolean("spawn.allowpressureplates", true);
-        Settings.allowSpawnDoorUse = getConfig().getBoolean("spawn.allowdooruse", true);
-        Settings.allowSpawnLeverButtonUse = getConfig().getBoolean("spawn.allowleverbuttonuse", true);
-        Settings.allowSpawnChestAccess = getConfig().getBoolean("spawn.allowchestaccess", true);
-        Settings.allowSpawnFurnaceUse = getConfig().getBoolean("spawn.allowfurnaceuse", true);
-        Settings.allowSpawnRedStone = getConfig().getBoolean("spawn.allowredstone", false);
-        Settings.allowSpawnMusic = getConfig().getBoolean("spawn.allowmusic", true);
-        Settings.allowSpawnCrafting = getConfig().getBoolean("spawn.allowcrafting", true);
-        Settings.allowSpawnBrewing = getConfig().getBoolean("spawn.allowbrewing", true);
-        Settings.allowSpawnGateUse = getConfig().getBoolean("spawn.allowgateuse", true);
-        Settings.allowSpawnMobSpawn = getConfig().getBoolean("spawn.allowmobspawn", false);
-        Settings.allowSpawnAnimalSpawn = getConfig().getBoolean("spawn.allowanimalspawn", true);
-        Settings.allowSpawnAnimalKilling = getConfig().getBoolean("spawn.allowanimalkilling", false);
-        Settings.allowSpawnMobKilling = getConfig().getBoolean("spawn.allowmobkilling", true);
-        Settings.allowSpawnMonsterEggs = getConfig().getBoolean("spawn.allowspawneggs", false);
-        Settings.allowSpawnEggs = getConfig().getBoolean("spawn.alloweggs", false);
-        Settings.allowSpawnBreakBlocks = getConfig().getBoolean("spawn.allowbreakblocks", false);
-        Settings.allowSpawnPlaceBlocks = getConfig().getBoolean("spawn.allowplaceblocks", false);
-        Settings.allowSpawnNoAcidWater = getConfig().getBoolean("spawn.allowspawnnoacidwater", false);
-        Settings.allowSpawnEnchanting = getConfig().getBoolean("spawn.allowenchanting", true);
-        Settings.allowSpawnAnvilUse = getConfig().getBoolean("spawn.allowanviluse", true);
-        Settings.allowSpawnBeaconAccess = getConfig().getBoolean("spawn.allowbeaconaccess", false);
-        Settings.allowSpawnPVP = getConfig().getBoolean("spawn.allowPVP", false);
-        Settings.allowSpawnMilking = getConfig().getBoolean("spawn.allowmilking", false);
-        Settings.allowSpawnLavaCollection = getConfig().getBoolean("spawn.allowlavacollection", false);
-        Settings.allowSpawnWaterCollection = getConfig().getBoolean("spawn.allowwatercollection", false);
-        Settings.allowSpawnVisitorItemDrop = getConfig().getBoolean("spawn.allowvisitoritemdrop", true);
-        Settings.allowSpawnVisitorItemPickup = getConfig().getBoolean("spawn.allowvisitoritempickup", true);
-        Settings.allowSpawnArmorStandUse = getConfig().getBoolean("spawn.allowarmorstanduse",false);
-        Settings.allowSpawnBedUse = getConfig().getBoolean("spawn.allowbeduse",false);
-        Settings.allowSpawnBreeding = getConfig().getBoolean("spawn.allowbreeding",false);
-        Settings.allowSpawnCropTrample = getConfig().getBoolean("spawn.allowcroptrample",false);
-        Settings.allowSpawnEnderPearls = getConfig().getBoolean("spawn.allowenderpearls",false);
-        Settings.allowSpawnLeashUse = getConfig().getBoolean("spawn.allowleashuse",false);
-        Settings.allowSpawnVillagerTrading = getConfig().getBoolean("spawn.allowvillagertrading", false);
-        Settings.allowSpawnChorusFruit = getConfig().getBoolean("spawn.allowchorusfruit", false);
-        Settings.allowSpawnFireExtinguish = getConfig().getBoolean("spawn.allowfireextinguish", false);
-
+        Settings.defaultSpawnSettings.clear();
+        Settings.visitorSettings.clear();
+        for (SettingsFlag flag: SettingsFlag.values()) {
+            Settings.defaultWorldSettings.put(flag, getConfig().getBoolean("protection.world." + flag.name()));
+            Settings.defaultSpawnSettings.put(flag, Settings.defaultWorldSettings.get(flag));
+            if (getConfig().contains("protection.island." + flag.name())) {
+                // Only items in the config.yml can be per island customized
+                Settings.visitorSettings.put(flag, Settings.defaultIslandSettings.get(flag));
+                // (The default value listed here should never be used because by definition, the flag name exists)
+                Settings.defaultIslandSettings.put(flag, getConfig().getBoolean("protection.island." + flag.name(), Settings.defaultWorldSettings.get(flag)));
+            } else {
+                // If not in the list in config.yml, then the island gets the world default
+                Settings.defaultIslandSettings.put(flag, Settings.defaultWorldSettings.get(flag));
+            }
+        }
         // Challenges
         getChallenges();
         // Challenge completion
@@ -1447,6 +1349,7 @@ public class ASkyBlock extends JavaPlugin {
         Settings.breedingLimit = getConfig().getInt("general.breedinglimit", 0);
         Settings.villagerLimit = getConfig().getInt("general.villagerlimit", 0);
         Settings.limitedBlocks = new HashMap<String,Integer>();
+        Settings.entityLimits = new HashMap<EntityType, Integer>();
         ConfigurationSection entityLimits = getConfig().getConfigurationSection("general.entitylimits");
         if (entityLimits != null) {
             for (String entity: entityLimits.getKeys(false)) {
@@ -1455,7 +1358,13 @@ public class ASkyBlock extends JavaPlugin {
                     getLogger().info(entity.toUpperCase() + " will be limited to " + limit);
                 }
                 if (Material.getMaterial(entity.toUpperCase()) == null) {
-                    getLogger().warning("general.entitylimits section has unknown entity type: " + entity.toUpperCase() + " skipping...");
+                    // Check if this is a living entity
+                    EntityType type = EntityType.valueOf(entity.toUpperCase());
+                    if (type != null && type.isAlive()) {
+                        Settings.entityLimits.put(type, limit);
+                    } else {
+                        getLogger().warning("general.entitylimits section has unknown entity type: " + entity.toUpperCase() + " skipping...");
+                    }
                 } else if (limit > -1) {
                     Settings.limitedBlocks.put(entity.toUpperCase(), limit);
                     if (entity.equalsIgnoreCase("REDSTONE_COMPARATOR")) {
@@ -1484,7 +1393,6 @@ public class ASkyBlock extends JavaPlugin {
         Settings.removeCompleteOntimeChallenges = getConfig().getBoolean("general.removecompleteonetimechallenges", false);
         Settings.addCompletedGlow = getConfig().getBoolean("general.addcompletedglow", true);
         // Clean up blocks around edges when deleting islands
-        Settings.cleanUpBlocks = getConfig().getBoolean("island.cleanupblocks",false);
         Settings.cleanRate = getConfig().getInt("island.cleanrate", 2);
         if (Settings.cleanRate < 1) {
             Settings.cleanRate = 1;
@@ -1505,38 +1413,46 @@ public class ASkyBlock extends JavaPlugin {
         }
         // Magic Cobble Generator
         Settings.useMagicCobbleGen = getConfig().getBoolean("general.usemagiccobblegen", false);
-        if(Settings.useMagicCobbleGen && getConfig().isSet("general.magiccobblegenchances")){
-            //getLogger().info("DEBUG: magic cobble gen enabled and chances section found");
-            Settings.magicCobbleGenChances = new TreeMap<Integer, TreeMap<Double,Material>>();
-            for(String level : getConfig().getConfigurationSection("general.magiccobblegenchances").getKeys(false)){
-                int levelInt = 0;
-                try{
-                    if(level.equals("default")) {
-                        levelInt = Integer.MIN_VALUE;
-                    } else {
-                        levelInt = Integer.parseInt(level);
-                    } 
-                    TreeMap<Double,Material> blockMapTree = new TreeMap<Double, Material>();
-                    double chanceTotal = 0;
-                    for(String block : getConfig().getConfigurationSection("general.magiccobblegenchances." + level).getKeys(false)){
-                        double chance = getConfig().getDouble("general.magiccobblegenchances." + level + "." + block, 0D);
-                        if(chance > 0 && Material.getMaterial(block) != null && Material.getMaterial(block).isBlock()) {
-                            // Store the cumulative chance in the treemap. It does not need to add up to 100%
-                            chanceTotal += chance;
-                            blockMapTree.put(chanceTotal, Material.getMaterial(block));
+        if(Settings.useMagicCobbleGen){
+            Settings.magicCobbleGenOnlyAtSpawn = getConfig().getBoolean("general.magiccobblegenonlyatspawn", false);
+            if(getConfig().isSet("general.magiccobblegenchances")){
+                //getLogger().info("DEBUG: magic cobble gen enabled and chances section found");
+
+                Settings.magicCobbleGenChances = new TreeMap<Integer, TreeMap<Double,Material>>();
+                for(String level : getConfig().getConfigurationSection("general.magiccobblegenchances").getKeys(false)){
+                    int levelInt = 0;
+                    try{
+                        if(level.equals("default")) {
+                            levelInt = Integer.MIN_VALUE;
+                        } else {
+                            levelInt = Integer.parseInt(level);
+                        } 
+                        TreeMap<Double,Material> blockMapTree = new TreeMap<Double, Material>();
+                        double chanceTotal = 0;
+                        for(String block : getConfig().getConfigurationSection("general.magiccobblegenchances." + level).getKeys(false)){
+                            double chance = getConfig().getDouble("general.magiccobblegenchances." + level + "." + block, 0D);
+                            if(chance > 0 && Material.getMaterial(block) != null && Material.getMaterial(block).isBlock()) {
+                                // Store the cumulative chance in the treemap. It does not need to add up to 100%
+                                chanceTotal += chance;
+                                blockMapTree.put(chanceTotal, Material.getMaterial(block));
+                            }
                         }
+                        if (!blockMapTree.isEmpty()) {
+                            Settings.magicCobbleGenChances.put(levelInt, blockMapTree);
+                        }
+                    } catch(NumberFormatException e){
+                        // Putting the catch here means that an invalid level is skipped completely
+                        getLogger().severe("Unknown level '" + level + "' listed in magiccobblegenchances section! Must be an integer or 'default'. Skipping...");
                     }
-                    if (!blockMapTree.isEmpty()) {
-                        Settings.magicCobbleGenChances.put(levelInt, blockMapTree);
-                    }
-                } catch(NumberFormatException e){
-                    // Putting the catch here means that an invalid level is skipped completely
-                    getLogger().severe("Unknown level '" + level + "' listed in magiccobblegenchances section! Must be an integer or 'default'. Skipping...");
                 }
             }
         }
         // Disable offline redstone
         Settings.disableOfflineRedstone = getConfig().getBoolean("general.disableofflineredstone", false);
+
+        // Fancy island level display
+        Settings.fancyIslandLevelDisplay = getConfig().getBoolean("general.fancylevelinchat", false);
+
         // All done
         return true;
     }
@@ -1553,7 +1469,8 @@ public class ASkyBlock extends JavaPlugin {
         // Island Protection events
         manager.registerEvents(new IslandGuard(this), this);
         // Player events
-        manager.registerEvents(new PlayerEvents(this), this);
+        playerEvents = new PlayerEvents(this);
+        manager.registerEvents(playerEvents, this);
         // New V1.8 events
         if (onePointEight) {
             manager.registerEvents(new IslandGuard1_8(this), this);
@@ -1598,8 +1515,8 @@ public class ASkyBlock extends JavaPlugin {
         if (Settings.recoverSuperFlat) {
             manager.registerEvents(new CleanSuperFlat(), this);
         }
-        // World loader
-        //manager.registerEvents(new WorldLoader(this), this);
+        // Entity limits
+        manager.registerEvents(new EntitySpawning(this), this);
     }
 
 
@@ -1793,5 +1710,19 @@ public class ASkyBlock extends JavaPlugin {
      */
     public HashMap<String, ASLocale> getAvailableLocales() {
         return availableLocales;
+    }
+
+    /**
+     * @return the acidTask
+     */
+    public AcidTask getAcidTask() {
+        return acidTask;
+    }
+
+    /**
+     * @return the playerEvents
+     */
+    public PlayerEvents getPlayerEvents() {
+        return playerEvents;
     }
 }

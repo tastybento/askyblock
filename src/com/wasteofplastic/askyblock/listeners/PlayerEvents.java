@@ -17,8 +17,10 @@
 package com.wasteofplastic.askyblock.listeners;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.UUID;
 
 import org.bukkit.ChatColor;
@@ -38,15 +40,15 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
-import org.bukkit.util.Vector;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.InventorySave;
 import com.wasteofplastic.askyblock.Island;
-import com.wasteofplastic.askyblock.Island.Flags;
+import com.wasteofplastic.askyblock.Island.SettingsFlag;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.events.IslandEnterEvent;
 import com.wasteofplastic.askyblock.events.IslandExitEvent;
@@ -61,11 +63,63 @@ public class PlayerEvents implements Listener {
     private static final boolean DEBUG = false;
     // A set of falling players
     private static HashSet<UUID> fallingPlayers = new HashSet<UUID>();
+    private static HashMap<UUID, List<String>> temporaryPerms = new HashMap<UUID, List<String>>();
     private List<UUID> respawn;
 
     public PlayerEvents(final ASkyBlock plugin) {
         this.plugin = plugin;
         respawn = new ArrayList<UUID>();
+    }
+
+    /**
+     * Removes all temp perms. Used when the server is shutting down and players are still online.
+     */
+    public void removeAllTempPerms() {
+        for (Entry<UUID, List<String>> en : temporaryPerms.entrySet()) {
+            Player player = plugin.getServer().getPlayer(en.getKey());
+            if (player != null) {
+                for (String perm: en.getValue()) {
+                    VaultHelper.removePerm(player, perm);
+                }
+            } else {
+                String playerName = plugin.getTinyDB().getPlayerName(en.getKey());
+                plugin.getLogger().warning(playerName + ", (" + en.getKey().toString() + ")");
+                plugin.getLogger().warning("Had these temporary perms that could not be removed because they are offline:");
+                for (String perm: en.getValue()) {
+                    plugin.getLogger().warning(perm);
+                }
+                plugin.getLogger().warning("These should be removed manually.");
+            }
+        }
+    }
+
+    /**
+     * Gives temporary perms to players who are online when the server is reloaded or the plugin reloaded.
+     */
+    public void giveAllTempPerms() {
+        if (plugin.getGrid() == null) {
+            return;
+        }
+        for (Player player : plugin.getServer().getOnlinePlayers()) {
+            if(plugin.getGrid().playerIsOnIsland(player)){
+                if(VaultHelper.checkPerm(player, Settings.PERMPREFIX + "islandfly")){
+                    player.setAllowFlight(true);
+                    // TODO: is this needed?
+                    player.setFlying(true);
+                }
+
+                for(String perm : Settings.temporaryPermissions){
+                    if(!VaultHelper.checkPerm(player, perm)){
+                        VaultHelper.addPerm(player, perm);
+
+                        List<String> perms = new ArrayList<String>();
+                        if(temporaryPerms.containsKey(player.getUniqueId())) perms = temporaryPerms.get(player.getUniqueId());
+                        perms.add(perm);
+                        temporaryPerms.put(player.getUniqueId(), perms);
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -90,10 +144,91 @@ public class PlayerEvents implements Listener {
     }
 
     /**
+     * Gives temporary perms
+     * Gives flymode if player has a specific permission and is on his island
+     * @param e
+     */
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onPlayerEnterOnIsland(IslandEnterEvent e){
+        Player player = plugin.getServer().getPlayer(e.getPlayer());
+        if(plugin.getGrid().playerIsOnIsland(player)){
+            if(VaultHelper.checkPerm(player, Settings.PERMPREFIX + "islandfly")){
+                player.setAllowFlight(true);
+                // TODO: is this needed?
+                player.setFlying(true);
+            }
+
+            for(String perm : Settings.temporaryPermissions){
+                if(!VaultHelper.checkPerm(player, perm)){
+                    VaultHelper.addPerm(player, perm);
+
+                    List<String> perms = new ArrayList<String>();
+                    if(temporaryPerms.containsKey(player.getUniqueId())) perms = temporaryPerms.get(player.getUniqueId());
+                    perms.add(perm);
+                    temporaryPerms.put(player.getUniqueId(), perms);
+                }
+            }
+        }
+    }
+
+    /**
+     * Revoke temporary perms
+     * Removes flymode with a delay if player leave his island.
+     * @param e
+     */
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onPlayerLeaveIsland(IslandExitEvent e){
+        final Player player = plugin.getServer().getPlayer(e.getPlayer());
+        if(!plugin.getGrid().playerIsOnIsland(player)){
+            if(VaultHelper.checkPerm(player, Settings.PERMPREFIX + "islandfly") && player.isFlying()
+                    && player.getGameMode().equals(GameMode.SURVIVAL)){
+                plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+
+                    @Override
+                    public void run() {
+                        if(!plugin.getGrid().playerIsOnIsland(player) && player.isFlying()){
+                            player.setAllowFlight(false);
+                            player.setFlying(false);
+                        }
+
+                    }
+                }, 20*Settings.flyTimeOutside);
+            }
+
+            for(String perm : Settings.temporaryPermissions){
+                if(temporaryPerms.containsKey(player.getUniqueId()) && VaultHelper.checkPerm(player, perm)){
+                    VaultHelper.removePerm(player, perm);
+
+                    List<String> perms = temporaryPerms.get(player.getUniqueId());
+                    perms.remove(perm);
+                    if(perms.isEmpty()) temporaryPerms.remove(player.getUniqueId());
+                    else temporaryPerms.put(player.getUniqueId(), perms);
+                }
+            }
+        }
+    }
+
+    /**
+     * Removes temporary perms when the player log out
+     * @param e
+     */
+    @EventHandler
+    public void onPlayerLeave(PlayerQuitEvent e){
+        Player player = e.getPlayer();
+
+        if(temporaryPerms.containsKey(player.getUniqueId())){
+            for(String perm : temporaryPerms.get(player.getUniqueId())){
+                VaultHelper.removePerm(player, perm);
+            }
+            temporaryPerms.remove(player.getUniqueId());
+        }
+    }
+
+    /**
      * Places player back on their island if the setting is true
      * @param e
      */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerRespawn(final PlayerRespawnEvent e) {
         if (DEBUG) {
             plugin.getLogger().info(e.getEventName());
@@ -116,7 +251,7 @@ public class PlayerEvents implements Listener {
      * Places the player on the island respawn list if set
      * @param e
      */
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = false)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlayerDeath(final PlayerDeathEvent e) {
         if (DEBUG) {
             plugin.getLogger().info(e.getEventName());
@@ -148,7 +283,7 @@ public class PlayerEvents implements Listener {
      * This option helps reduce the down side of dying due to traps, etc.
      * Also handles muting of death messages
      */
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = false)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onVistorDeath(final PlayerDeathEvent e) {
         if (DEBUG) {
             plugin.getLogger().info(e.getEventName());
@@ -197,13 +332,9 @@ public class PlayerEvents implements Listener {
         if (!IslandGuard.inWorld(e.getPlayer())) {
             return;
         }
-        if (plugin.getGrid().isAtSpawn(e.getItem().getLocation())) {
-            if (Settings.allowSpawnVisitorItemPickup || e.getPlayer().isOp() || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
-                    || plugin.getGrid().locationIsOnIsland(e.getPlayer(), e.getItem().getLocation())) {
-                return;
-            }
-        }
-        if (Settings.allowVisitorItemPickup || e.getPlayer().isOp() || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
+        Island island = plugin.getGrid().getIslandAt(e.getItem().getLocation());
+        if ((island != null && island.getIgsFlag(SettingsFlag.VISITOR_ITEM_PICKUP)) 
+                || e.getPlayer().isOp() || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
                 || plugin.getGrid().locationIsOnIsland(e.getPlayer(), e.getItem().getLocation())) {
             return;
         }
@@ -221,13 +352,9 @@ public class PlayerEvents implements Listener {
         if (!IslandGuard.inWorld(e.getPlayer())) {
             return;
         }
-        if (plugin.getGrid().isAtSpawn(e.getItemDrop().getLocation())) {
-            if (Settings.allowSpawnVisitorItemDrop || e.getPlayer().isOp() || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
-                    || plugin.getGrid().locationIsOnIsland(e.getPlayer(), e.getItemDrop().getLocation())) {
-                return;
-            }
-        }
-        if (Settings.allowVisitorItemDrop || e.getPlayer().isOp() || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
+        Island island = plugin.getGrid().getIslandAt(e.getItemDrop().getLocation());
+        if ((island != null && island.getIgsFlag(SettingsFlag.VISITOR_ITEM_DROP)) 
+                || e.getPlayer().isOp() || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
                 || plugin.getGrid().locationIsOnIsland(e.getPlayer(), e.getItemDrop().getLocation())) {
             return;
         }
@@ -277,7 +404,7 @@ public class PlayerEvents implements Listener {
      * 
      * @param e
      */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerTeleport(final PlayerCommandPreprocessEvent e) {
         if (DEBUG) {
             plugin.getLogger().info(e.getEventName());
@@ -303,7 +430,7 @@ public class PlayerEvents implements Listener {
      * 
      * @param e
      */
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = false)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlayerTeleport(final PlayerTeleportEvent e) {
         if (DEBUG) {
             plugin.getLogger().info(e.getEventName());
@@ -373,31 +500,18 @@ public class PlayerEvents implements Listener {
                     plugin.getLogger().info("DEBUG: Enderpearl");
 
                 if (islandTo == null) {
-                    if (Settings.allowEnderPearls) {
+                    if (Settings.defaultWorldSettings.get(SettingsFlag.ENDER_PEARL)) {
                         return;
                     }
                 } else {
                     if (DEBUG )
                         plugin.getLogger().info("DEBUG: islandTo is not null enderpearl");
-
-                    if (islandTo.isSpawn()) {
-                        if (DEBUG)
-                            plugin.getLogger().info("DEBUG: islandTo is spawn");
-
-                        if (Settings.allowSpawnEnderPearls) {
-                            if (DEBUG )
-                                plugin.getLogger().info("DEBUG: spawn enderpearl allowed");
-                            return;
-                        }
-                    } else {
+                    if (DEBUG )
+                        plugin.getLogger().info("DEBUG: islandTo is regular island");
+                    if (islandTo.getIgsFlag(SettingsFlag.ENDER_PEARL) || islandTo.getMembers().contains(e.getPlayer().getUniqueId())) {
                         if (DEBUG )
-                            plugin.getLogger().info("DEBUG: islandTo is regular island");
-                        // Regular island
-                        if (islandTo.getIgsFlag(Flags.allowEnderPearls) || islandTo.getMembers().contains(e.getPlayer().getUniqueId())) {
-                            if (DEBUG )
-                                plugin.getLogger().info("DEBUG: enderpearl allowed");
-                            return;
-                        }
+                            plugin.getLogger().info("DEBUG: enderpearl allowed");
+                        return;
                     }
                 }
                 if (DEBUG )
@@ -416,35 +530,21 @@ public class PlayerEvents implements Listener {
                     boolean cancel = false;
                     // Check both from and to islands
                     if (islandTo == null) {
-                        if (!Settings.allowChorusFruit) {
+                        if (!Settings.defaultWorldSettings.get(SettingsFlag.CHORUS_FRUIT)) {
                             cancel = true;
                         }
                     } else {
-                        if (islandTo.isSpawn()) {
-                            if (!Settings.allowSpawnChorusFruit) {
-                                cancel = true;
-                            }
-                        } else {
-                            // Regular island
-                            if (!islandTo.getIgsFlag(Flags.allowChorusFruit) && !islandTo.getMembers().contains(e.getPlayer().getUniqueId())) {
-                                cancel = true;
-                            }
+                        if (!islandTo.getIgsFlag(SettingsFlag.CHORUS_FRUIT) && !islandTo.getMembers().contains(e.getPlayer().getUniqueId())) {
+                            cancel = true;
                         }
                     }
                     if (islandFrom == null) {
-                        if (!Settings.allowChorusFruit) {
+                        if (!Settings.defaultWorldSettings.get(SettingsFlag.CHORUS_FRUIT)) {
                             cancel = true;
                         }
                     } else {
-                        if (islandFrom.isSpawn()) {
-                            if (!Settings.allowSpawnChorusFruit) {
-                                cancel = true;
-                            }
-                        } else {
-                            // Regular island
-                            if (!islandFrom.getIgsFlag(Flags.allowChorusFruit) && !islandFrom.getMembers().contains(e.getPlayer().getUniqueId())) {
-                                cancel = true;
-                            }
+                        if (!islandFrom.getIgsFlag(SettingsFlag.CHORUS_FRUIT) && !islandFrom.getMembers().contains(e.getPlayer().getUniqueId())) {
+                            cancel = true;
                         }
                     }
                     if (cancel) {
@@ -595,7 +695,7 @@ public class PlayerEvents implements Listener {
      * Prevents visitors from using commands on islands, like /spawner
      * @param e
      */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onVisitorCommand(final PlayerCommandPreprocessEvent e) {
         if (DEBUG) {
             plugin.getLogger().info("Visitor command " + e.getEventName() + ": " + e.getMessage());
@@ -619,7 +719,7 @@ public class PlayerEvents implements Listener {
      * Prevents visitors from getting damage if invinciblevisitors option is set to TRUE
      * @param e
      */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onVisitorGetDamage(EntityDamageEvent e){
         if(!Settings.invincibleVisitors) return;
         if(!(e.getEntity() instanceof Player)) return;

@@ -17,6 +17,7 @@
 
 package com.wasteofplastic.askyblock.listeners;
 
+import java.text.DecimalFormat;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -49,33 +50,34 @@ import com.wasteofplastic.askyblock.Settings;
  */
 public class ChatListener implements Listener {
 
-    private ASkyBlock plugin;
-    private ConcurrentHashMap<UUID,Boolean> teamChatUsers;
-    private ConcurrentHashMap<UUID,String> playerLevels;
-    private ConcurrentHashMap<UUID,String> playerChallengeLevels;
-    // List of which admins are spying or not on team chat
-    private Set<UUID> spies;
-    private static final boolean DEBUG = false;
+	private ASkyBlock plugin;
+	private ConcurrentHashMap<UUID,Boolean> teamChatUsers;
+	private ConcurrentHashMap<UUID,String> playerLevels;
+	private ConcurrentHashMap<UUID,String> playerChallengeLevels;
+	// List of which admins are spying or not on team chat
+	private Set<UUID> spies;
+	private static final boolean DEBUG = false;
 
-    /**
-     * @param plugin
-     */
-    public ChatListener(ASkyBlock plugin) {
-        this.teamChatUsers = new ConcurrentHashMap<UUID,Boolean>();
-        this.playerLevels = new ConcurrentHashMap<UUID,String>();
-        this.playerChallengeLevels = new ConcurrentHashMap<UUID,String>();
-        this.plugin = plugin;
-        // Add all online player Levels
-        for (Player player : plugin.getServer().getOnlinePlayers()) {
-            playerLevels.put(player.getUniqueId(), String.valueOf(plugin.getPlayers().getIslandLevel(player.getUniqueId())));
-            playerChallengeLevels.put(player.getUniqueId(), plugin.getChallenges().getChallengeLevel(player));
-        }
-        // Initialize spies
-        spies = new HashSet<UUID>();
-    }
+	/**
+	 * @param plugin
+	 */
+	public ChatListener(ASkyBlock plugin) {
+		this.teamChatUsers = new ConcurrentHashMap<UUID,Boolean>();
+		this.playerLevels = new ConcurrentHashMap<UUID,String>();
+		this.playerChallengeLevels = new ConcurrentHashMap<UUID,String>();
+		this.plugin = plugin;
+		// Add all online player Levels
+		for (Player player : plugin.getServer().getOnlinePlayers()) {
+			playerLevels.put(player.getUniqueId(), String.valueOf(plugin.getPlayers().getIslandLevel(player.getUniqueId())));
+			playerChallengeLevels.put(player.getUniqueId(), plugin.getChallenges().getChallengeLevel(player));
+		}
+		// Initialize spies
+		spies = new HashSet<UUID>();
+	}
 
 
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onChat(final AsyncPlayerChatEvent event) {
         if (DEBUG)
             plugin.getLogger().info("DEBUG: " + event.getEventName());
@@ -105,124 +107,124 @@ public class ChatListener implements Listener {
         }
     }
 
-    private void teamChat(final AsyncPlayerChatEvent event, String message) {
-        Player player = event.getPlayer();
-        UUID playerUUID = player.getUniqueId();
-        //Bukkit.getLogger().info("DEBUG: post: " + message);
-        // Is team chat on for this player
-        // Find out if this player is in a team (should be if team chat is on)
-        // TODO: remove when player resets or leaves team
-        if (plugin.getPlayers().inTeam(playerUUID)) {
-            List<UUID> teamMembers = plugin.getPlayers().getMembers(player.getUniqueId());
-            // Tell only the team members if they are online
-            boolean onLine = false;
-            message = plugin.myLocale(playerUUID).teamChatPrefix.replace(Settings.chatIslandPlayer,player.getDisplayName()) + message;
-            for (UUID teamMember : teamMembers) {
-                Player teamPlayer = plugin.getServer().getPlayer(teamMember);
-                if (teamPlayer != null) {
-                    teamPlayer.sendMessage(message);
-                    if (!teamMember.equals(playerUUID)) {
-                        onLine = true;
-                    }
-                }
-            }
-            // Spy function
-            if (onLine) {
-                for (Player onlinePlayer: plugin.getServer().getOnlinePlayers()) {
-                    if (spies.contains(onlinePlayer.getUniqueId()) && onlinePlayer.hasPermission(Settings.PERMPREFIX + "mod.spy")) {
-                        onlinePlayer.sendMessage(ChatColor.RED + "[TCSpy] " + ChatColor.WHITE + message);
-                    }
-                }
-                //Log teamchat
-                if(Settings.logTeamChat) plugin.getLogger().info(ChatColor.stripColor(message));
-            }
-            if (!onLine) {
-                player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).teamChatNoTeamAround);
-                player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).teamChatStatusOff);
-                teamChatUsers.remove(playerUUID);
-            }
-        } else {
-            player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).teamChatNoTeamAround);
-            player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).teamChatStatusOff);
-            // Not in a team any more so delete
-            teamChatUsers.remove(playerUUID);
-        }
-    }
+	private void teamChat(final AsyncPlayerChatEvent event, String message) {
+		Player player = event.getPlayer();
+		UUID playerUUID = player.getUniqueId();
+		//Bukkit.getLogger().info("DEBUG: post: " + message);
+		// Is team chat on for this player
+		// Find out if this player is in a team (should be if team chat is on)
+		// TODO: remove when player resets or leaves team
+		if (plugin.getPlayers().inTeam(playerUUID)) {
+			List<UUID> teamMembers = plugin.getPlayers().getMembers(player.getUniqueId());
+			// Tell only the team members if they are online
+			boolean onLine = false;
+			message = plugin.myLocale(playerUUID).teamChatPrefix.replace(Settings.chatIslandPlayer,player.getDisplayName()) + message;
+			for (UUID teamMember : teamMembers) {
+				Player teamPlayer = plugin.getServer().getPlayer(teamMember);
+				if (teamPlayer != null) {
+					teamPlayer.sendMessage(message);
+					if (!teamMember.equals(playerUUID)) {
+						onLine = true;
+					}
+				}
+			}
+			// Spy function
+			if (onLine) {
+				for (Player onlinePlayer: plugin.getServer().getOnlinePlayers()) {
+					if (spies.contains(onlinePlayer.getUniqueId()) && onlinePlayer.hasPermission(Settings.PERMPREFIX + "mod.spy")) {
+						onlinePlayer.sendMessage(ChatColor.RED + "[TCSpy] " + ChatColor.WHITE + message);
+					}
+				}
+				//Log teamchat
+				if(Settings.logTeamChat) plugin.getLogger().info(ChatColor.stripColor(message));
+			}
+			if (!onLine) {
+				player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).teamChatNoTeamAround);
+				player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).teamChatStatusOff);
+				teamChatUsers.remove(playerUUID);
+			}
+		} else {
+			player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).teamChatNoTeamAround);
+			player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).teamChatStatusOff);
+			// Not in a team any more so delete
+			teamChatUsers.remove(playerUUID);
+		}
+	}
 
-    /**
-     * Adds player to team chat
-     * @param playerUUID
-     */
-    public void setPlayer(UUID playerUUID) {
-        this.teamChatUsers.put(playerUUID,true);
-    }
+	/**
+	 * Adds player to team chat
+	 * @param playerUUID
+	 */
+	public void setPlayer(UUID playerUUID) {
+		this.teamChatUsers.put(playerUUID,true);
+	}
 
-    /**
-     * Removes player from team chat
-     * @param playerUUID
-     */
-    public void unSetPlayer(UUID playerUUID) {
-        this.teamChatUsers.remove(playerUUID);
-    }
+	/**
+	 * Removes player from team chat
+	 * @param playerUUID
+	 */
+	public void unSetPlayer(UUID playerUUID) {
+		this.teamChatUsers.remove(playerUUID);
+	}
 
-    /**
-     * Whether the player has team chat on or not
-     * @param playerUUID
-     * @return true if team chat is on
-     */
-    public boolean isTeamChat(UUID playerUUID) {
-        return this.teamChatUsers.containsKey(playerUUID);
-    }
+	/**
+	 * Whether the player has team chat on or not
+	 * @param playerUUID
+	 * @return true if team chat is on
+	 */
+	public boolean isTeamChat(UUID playerUUID) {
+		return this.teamChatUsers.containsKey(playerUUID);
+	}
 
-    /**
-     * Store the player's level for use in their chat tag
-     * @param playerUUID
-     * @param level
-     */
-    public void setPlayerLevel(UUID playerUUID, int level) {
-        //plugin.getLogger().info("DEBUG: putting " + playerUUID.toString() + " Level " + level);
-        playerLevels.put(playerUUID, String.valueOf(level));
-    }
+	/**
+	 * Store the player's level for use in their chat tag
+	 * @param playerUUID
+	 * @param level
+	 */
+	public void setPlayerLevel(UUID playerUUID, int level) {
+		//plugin.getLogger().info("DEBUG: putting " + playerUUID.toString() + " Level " + level);
+		playerLevels.put(playerUUID, String.valueOf(level));
+	}
 
-    /**
-     * Store the player's challenge level for use in their chat tag
-     * @param player
-     */
-    public void setPlayerChallengeLevel(Player player) {
-        //plugin.getLogger().info("DEBUG: setting player's challenge level to " + plugin.getChallenges().getChallengeLevel(player));
-        playerChallengeLevels.put(player.getUniqueId(), plugin.getChallenges().getChallengeLevel(player));
-    }
-    
-    /**
-     * Return the player's level for use in chat - async safe
-     * @param playerUUID
-     * @return Player's level as string
-     */
-    public String getPlayerLevel(UUID playerUUID) {
-        return playerLevels.get(playerUUID);
-    }
+	/**
+	 * Store the player's challenge level for use in their chat tag
+	 * @param player
+	 */
+	public void setPlayerChallengeLevel(Player player) {
+		//plugin.getLogger().info("DEBUG: setting player's challenge level to " + plugin.getChallenges().getChallengeLevel(player));
+		playerChallengeLevels.put(player.getUniqueId(), plugin.getChallenges().getChallengeLevel(player));
+	}
 
-    /**
-     * Return the player's challenge level for use in chat - async safe
-     * @param playerUUID
-     * @return challenge level as string
-     */
-    public String getPlayerChallengeLevel(UUID playerUUID) {
-        return playerChallengeLevels.get(playerUUID);
-    }
+	/**
+	 * Return the player's level for use in chat - async safe
+	 * @param playerUUID
+	 * @return Player's level as string
+	 */
+	public String getPlayerLevel(UUID playerUUID) {
+		return playerLevels.get(playerUUID);
+	}
 
-    /**
-     * Toggles team chat spy. Spy must also have the spy permission to see chats
-     * @param playerUUID
-     * @return true if toggled on, false if toggled off
-     */
-    public boolean toggleSpy(UUID playerUUID) {
-        if (spies.contains(playerUUID)) {
-            spies.remove(playerUUID);
-            return false;
-        } else {
-            spies.add(playerUUID);
-            return true;
-        }
-    }
+	/**
+	 * Return the player's challenge level for use in chat - async safe
+	 * @param playerUUID
+	 * @return challenge level as string
+	 */
+	public String getPlayerChallengeLevel(UUID playerUUID) {
+		return playerChallengeLevels.get(playerUUID);
+	}
+
+	/**
+	 * Toggles team chat spy. Spy must also have the spy permission to see chats
+	 * @param playerUUID
+	 * @return true if toggled on, false if toggled off
+	 */
+	public boolean toggleSpy(UUID playerUUID) {
+		if (spies.contains(playerUUID)) {
+			spies.remove(playerUUID);
+			return false;
+		} else {
+			spies.add(playerUUID);
+			return true;
+		}
+	}
 }

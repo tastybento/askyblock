@@ -1965,7 +1965,12 @@ public class Challenges implements CommandExecutor, TabCompleter {
             challengeFile.setDefaults(defConfig);
         }*/
         Settings.challengeList = getChallengeConfig().getConfigurationSection("challenges.challengeList").getKeys(false);
-        Settings.challengeLevels = Arrays.asList(getChallengeConfig().getString("challenges.levels","").split(" "));
+        // This code below handles the edge case where the levels is set to ''
+        if (getChallengeConfig().getString("challenges.levels","").isEmpty()) {
+            Settings.challengeLevels = new ArrayList<String>();
+        } else {
+            Settings.challengeLevels = Arrays.asList(getChallengeConfig().getString("challenges.levels","").split(" "));
+        }
         Settings.freeLevels = Arrays.asList(getChallengeConfig().getString("challenges.freelevels","").split(" "));
         Settings.waiverAmount = getChallengeConfig().getInt("challenges.waiveramount", 1);
         if (Settings.waiverAmount < 0) {

@@ -37,6 +37,7 @@ import org.bukkit.scheduler.BukkitTask;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.ASkyBlockAPI;
 import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.Settings;
 
@@ -130,6 +131,11 @@ public class LavaCheck implements Listener {
         if (plugin.isNewIsland()) {
             //plugin.getLogger().info("DEBUG: new island in creation");
             return;
+        }
+
+        // If only at spawn, do nothing if we're not at spawn
+        if(Settings.magicCobbleGenOnlyAtSpawn && (!ASkyBlockAPI.getInstance().isAtSpawn(e.getBlock().getLocation()))){
+        	return;
         }
 
         final Block b = e.getBlock();

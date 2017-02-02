@@ -561,19 +561,21 @@ public class IslandBlock {
             CreatureSpawner cs = (CreatureSpawner)block.getState();
             cs.setSpawnedType(spawnerBlockType);
         } else if (!chestContents.isEmpty()) {
-            // Check if this is a double chest
-            Chest chestBlock = (Chest) block.getState();
-            InventoryHolder iH = chestBlock.getInventory().getHolder();
-            if (iH instanceof DoubleChest) {
-                //Bukkit.getLogger().info("DEBUG: double chest");
-                DoubleChest doubleChest = (DoubleChest) iH;
-                for (ItemStack chestItem: chestContents.values()) {
-                    doubleChest.getInventory().addItem(chestItem);
-                }
-            } else {
-                // Signle chest
-                for (Entry<Byte, ItemStack> en : chestContents.entrySet()) {
-                    chestBlock.getInventory().setItem(en.getKey(), en.getValue());
+            if (block.getType().equals(Material.CHEST)) {
+                // Check if this is a double chest
+                Chest chestBlock = (Chest) block.getState();
+                InventoryHolder iH = chestBlock.getInventory().getHolder();
+                if (iH instanceof DoubleChest) {
+                    //Bukkit.getLogger().info("DEBUG: double chest");
+                    DoubleChest doubleChest = (DoubleChest) iH;
+                    for (ItemStack chestItem: chestContents.values()) {
+                        doubleChest.getInventory().addItem(chestItem);
+                    }
+                } else {
+                    // Signle chest
+                    for (Entry<Byte, ItemStack> en : chestContents.entrySet()) {
+                        chestBlock.getInventory().setItem(en.getKey(), en.getValue());
+                    }
                 }
             }
         }

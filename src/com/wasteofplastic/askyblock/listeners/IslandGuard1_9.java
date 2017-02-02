@@ -40,11 +40,12 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.scoreboard.Team;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Island;
-import com.wasteofplastic.askyblock.Island.Flags;
+import com.wasteofplastic.askyblock.Island.SettingsFlag;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
@@ -66,11 +67,14 @@ public class IslandGuard1_9 implements Listener {
         if (!Settings.allowPushing) {
             // try to remove the team from the scoreboard
             try {
-                scoreboard = plugin.getServer().getScoreboardManager().getMainScoreboard();
-                if (scoreboard != null) {
-                    Team pTeam = scoreboard.getTeam(NO_PUSH_TEAM_NAME);
-                    if (pTeam != null) {
-                        pTeam.unregister();
+                ScoreboardManager manager = plugin.getServer().getScoreboardManager();
+                if (manager != null) {
+                    Scoreboard scoreboard = manager.getMainScoreboard();
+                    if (scoreboard != null) {
+                        Team pTeam = scoreboard.getTeam(NO_PUSH_TEAM_NAME);
+                        if (pTeam != null) {
+                            pTeam.unregister();
+                        }
                     }
                 }
             } catch (Exception e) {
@@ -102,15 +106,12 @@ public class IslandGuard1_9 implements Listener {
             }
             // Check island
             Island island = plugin.getGrid().getIslandAt(player.getLocation());
+            if (island == null && Settings.defaultWorldSettings.get(SettingsFlag.PLACE_BLOCKS)) {
+                return;
+            }
             if (island !=null) {
-                if (island.isSpawn()) {
-                    if (Settings.allowSpawnPlaceBlocks) {
-                        return;
-                    }
-                } else {
-                    if (island.getMembers().contains(player.getUniqueId()) || island.getIgsFlag(Flags.allowPlaceBlocks)) {
-                        return;
-                    }
+                if (island.getMembers().contains(player.getUniqueId()) || island.getIgsFlag(SettingsFlag.PLACE_BLOCKS)) {
+                    return;
                 }
             }
             // Silently cancel the event
@@ -142,15 +143,12 @@ public class IslandGuard1_9 implements Listener {
         if (e.getRightClicked() != null && e.getRightClicked().getType().equals(EntityType.ENDER_CRYSTAL)) {
             // Check island
             Island island = plugin.getGrid().getIslandAt(e.getRightClicked().getLocation());
+            if (island == null && Settings.defaultWorldSettings.get(SettingsFlag.BREAK_BLOCKS)) {
+                return;
+            }
             if (island !=null) {
-                if (island.isSpawn()) {
-                    if (Settings.allowSpawnBreakBlocks) {
-                        return;
-                    }
-                } else {
-                    if (island.getMembers().contains(e.getPlayer().getUniqueId()) || island.getIgsFlag(Flags.allowBreakBlocks)) {
-                        return;
-                    }
+                if (island.getMembers().contains(e.getPlayer().getUniqueId()) || island.getIgsFlag(SettingsFlag.BREAK_BLOCKS)) {
+                    return;
                 }
             }
             e.setCancelled(true);
@@ -179,7 +177,10 @@ public class IslandGuard1_9 implements Listener {
         if (inHand != null && inHand.getType().equals(Material.END_CRYSTAL)) {
             // Check island
             Island island = plugin.getGrid().getIslandAt(e.getPlayer().getLocation());
-            if (island !=null && (island.getMembers().contains(p.getUniqueId()) || island.getIgsFlag(Flags.allowPlaceBlocks))) {
+            if (island == null && Settings.defaultWorldSettings.get(SettingsFlag.PLACE_BLOCKS)) {
+                return;
+            }
+            if (island !=null && (island.getMembers().contains(p.getUniqueId()) || island.getIgsFlag(SettingsFlag.PLACE_BLOCKS))) {
                 //plugin.getLogger().info("1.9 " +"DEBUG: armor stand place check");
                 if (Settings.limitedBlocks.containsKey("END_CRYSTAL") && Settings.limitedBlocks.get("END_CRYSTAL") > -1) {
                     //plugin.getLogger().info("1.9 " +"DEBUG: count armor stands");
@@ -257,13 +258,10 @@ public class IslandGuard1_9 implements Listener {
             }
             // Check island
             Island island = plugin.getGrid().getIslandAt(e.getEntity().getLocation());
-            if (island != null && island.isSpawn() && Settings.allowSpawnBreakBlocks) {
-                if (DEBUG) {
-                    plugin.getLogger().info("1.9 " +"Spawn and breaking blocks is allowed");
-                }
+            if (island == null && Settings.defaultWorldSettings.get(SettingsFlag.BREAK_BLOCKS)) {
                 return;
             }
-            if (island != null && island.getIgsFlag(Flags.allowBreakBlocks)) {
+            if (island != null && island.getIgsFlag(SettingsFlag.BREAK_BLOCKS)) {
                 if (DEBUG) {
                     plugin.getLogger().info("1.9 " +"Visitor is allowed to break blocks");
                 }
