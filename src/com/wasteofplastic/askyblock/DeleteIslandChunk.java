@@ -173,14 +173,17 @@ public class DeleteIslandChunk {
                                             break;
                                         case AIR:   
                                             if (setTo.equals(Material.STATIONARY_WATER)) {
-                                                nms.setBlockSuperFast(b, setTo.getId(), (byte)0, false);
+                                                b.setType(setTo);
+                                                //nms.setBlockSuperFast(b, setTo.getId(), (byte)0, false);
                                             }
                                         case STATIONARY_WATER:
                                             if (setTo.equals(Material.AIR)) {
-                                                nms.setBlockSuperFast(b, setTo.getId(), (byte)0, false);
+                                                b.setType(setTo);
+                                                //nms.setBlockSuperFast(b, setTo.getId(), (byte)0, false);
                                             }
                                         default:
-                                            nms.setBlockSuperFast(b, setTo.getId(), (byte)0, false);
+                                            b.setType(setTo);
+                                            //nms.setBlockSuperFast(b, setTo.getId(), (byte)0, false);
                                             break;
                                         }
                                         // Nether, if it exists
@@ -202,7 +205,8 @@ public class DeleteIslandChunk {
                                                     b.setType(setTo);
                                                     break;
                                                  default:
-                                                    nms.setBlockSuperFast(b, setTo.getId(), (byte)0, false);
+                                                    b.setType(setTo);
+                                                    //nms.setBlockSuperFast(b, setTo.getId(), (byte)0, false);
                                                     break;
                                                 }
                                             }

@@ -909,8 +909,6 @@ schematicsection:
   #                   the contents will come from the schematic.
   # partnerSchematic - the island that will be pasted in the Nether.
   # biome - the biome this island should have. All pasted blocks will have this biome.
-  # These next settings may cause lag if true. Default is false. Use judiciously.
-  # pasteentities - if the schematic has entities in it (mobs) this will paste them.
   # usephysics - if true, causes lava or water to flow after being pasted.
   # pasteair - Only set to true if you need to paste below sea level.
   # permission - the permission required to use this schematic. It can be anything you like
@@ -951,9 +949,6 @@ schematicsection:
       useDefaultChest: false
       # The partner to this schematic is the default island
       partnerSchematic: default
-      # Schematics can include entities (mobs) in them and if pasteentities is true,
-      # mobs will be pasted. 
-      pasteentities: true
       # Usephysics causes lava or water to flow after being pasted. Change to false
       # if it lags
       usephysics: true
@@ -1018,10 +1013,6 @@ schematicsection:
       #- ICE:1
       # Schematics that require water or lava to hover can prevent physics when pasting
       usephysics: false
-      # Schematics may include entities (mobs) in them and if pasteentities is true,
-      # mobs will be pasted.
-      # Example: Setting this to true for this schematic will give a wolf.
-      pasteentities: false
       partnerSchematic: nether
       #permission: any.perm.you.like
       # This optional block determines where the player will spawn. It must be unique in

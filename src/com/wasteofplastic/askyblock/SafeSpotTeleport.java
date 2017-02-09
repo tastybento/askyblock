@@ -18,7 +18,9 @@
 package com.wasteofplastic.askyblock;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.bukkit.ChatColor;
 import org.bukkit.ChunkSnapshot;
@@ -37,6 +39,10 @@ import org.bukkit.util.Vector;
  */
 public class SafeSpotTeleport {
 
+    /**
+     * The maximum number of chunks around the location radius to search. If this is too big, servers crash.
+     */
+    private static final int MAX_SEARCH_RANGE = 6;
     //private NMSAbstraction nms;
     //private ASkyBlock plugin;
     /**
@@ -96,12 +102,18 @@ public class SafeSpotTeleport {
                     }
                 }
             }
-            // Add the rest of the island protected area
-            for (int x = island.getMinProtectedX() /16; x <= (island.getMinProtectedX() + island.getProtectionSize() - 1)/16; x++) {
-                for (int z = island.getMinProtectedZ() /16; z <= (island.getMinProtectedZ() + island.getProtectionSize() - 1)/16; z++) {
-                    // This includes the center spots again, so is not as efficient...
-                    chunkSnapshot.add(world.getChunkAt(x, z).getChunkSnapshot());
-                }  
+            // Add more chunks around
+            int minX = (Math.max(island.getMinProtectedX(), island.getCenter().getBlockX() - MAX_SEARCH_RANGE) / 16);
+            int minZ = (Math.max(island.getMinProtectedZ(), island.getCenter().getBlockZ() - MAX_SEARCH_RANGE) / 16);
+            int maxX = (Math.min(island.getMinProtectedX() + island.getProtectionSize(), island.getCenter().getBlockX() + MAX_SEARCH_RANGE)/16);
+            int maxZ = (Math.min(island.getMinProtectedZ() + island.getProtectionSize(), island.getCenter().getBlockZ() + MAX_SEARCH_RANGE)/16);
+            for (int x = minX; x <= maxX; x++) {
+                for (int z = minZ; z <= maxZ; z++) {
+                    ChunkSnapshot snap = world.getChunkAt(x, z).getChunkSnapshot();
+                    if (!chunkSnapshot.contains(snap)) {
+                        chunkSnapshot.add(snap);
+                    }
+                }
             }
             //plugin.getLogger().info("DEBUG: size of chunk ss = " + chunkSnapshot.size());
             final List<ChunkSnapshot> finalChunk = chunkSnapshot;

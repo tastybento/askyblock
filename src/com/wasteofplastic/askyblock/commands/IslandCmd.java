@@ -85,6 +85,7 @@ import com.wasteofplastic.askyblock.events.IslandNewEvent;
 import com.wasteofplastic.askyblock.events.IslandResetEvent;
 import com.wasteofplastic.askyblock.listeners.PlayerEvents;
 import com.wasteofplastic.askyblock.panels.ControlPanel;
+import com.wasteofplastic.askyblock.panels.SetBiome;
 import com.wasteofplastic.askyblock.schematics.Schematic;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
@@ -212,7 +213,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
             schematics.get("default").setName("Island");
             schematics.get("default").setDescription("");
             schematics.get("default").setPartnerName("nether");
-            schematics.get("default").setBiome(Settings.defaultBiome);
+            //schematics.get("default").setBiome(Settings.defaultBiome);
             schematics.get("default").setIcon(Material.GRASS);
             if (Settings.chestItems.length == 0) {
                 schematics.get("default").setUseDefaultChest(false);
@@ -226,7 +227,6 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
             schematics.get("nether").setBiome(Biome.HELL);
             schematics.get("nether").setIcon(Material.NETHERRACK);
             schematics.get("nether").setVisible(false);
-            schematics.get("nether").setPasteEntities(true);
             if (Settings.chestItems.length == 0) {
                 schematics.get("nether").setUseDefaultChest(false);
             }
@@ -348,20 +348,21 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                         // Use default chest
                         newSchem.setUseDefaultChest(schemSection.getBoolean("schematics." + key + ".useDefaultChest", true));
                         // Biomes - overrides default if it exists
-                        String biomeString = schemSection.getString("schematics." + key + ".biome",Settings.defaultBiome.toString());
                         Biome biome = null;
-                        try {
-                            biome = Biome.valueOf(biomeString);
-                            newSchem.setBiome(biome);
-                        } catch (Exception e) {
-                            plugin.getLogger().severe("Could not parse biome " + biomeString + " using default instead.");
+                        if (schemSection.contains("schematics." + key + ".biome")) {
+                            String biomeString = schemSection.getString("schematics." + key + ".biome");
+
+                            try {
+                                biome = Biome.valueOf(biomeString);
+                                newSchem.setBiome(biome);
+                            } catch (Exception e) {
+                                plugin.getLogger().severe("Could not parse biome " + biomeString + " using default instead.");
+                            }
                         }
                         // Use physics - overrides default if it exists
                         newSchem.setUsePhysics(schemSection.getBoolean("schematics." + key + ".usephysics",Settings.usePhysics));	    
-                        // Paste Entities or not
-                        newSchem.setPasteEntities(schemSection.getBoolean("schematics." + key + ".pasteentities",false));
                         // Paste air or not. Default is false - huge performance savings!
-                        //newSchem.setPasteAir(schemSection.getBoolean("schematics." + key + ".pasteair",false));	    
+                        newSchem.setPasteAir(schemSection.getBoolean("schematics." + key + ".pasteair",false));	    
                         // Visible in GUI or not
                         newSchem.setVisible(schemSection.getBoolean("schematics." + key + ".show",true));
                         // Partner schematic
@@ -623,7 +624,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                 // Only add if it's visible
                 if (schematic.isVisible()) {
                     // Check if it's a nether island, but the nether is not enables
-                    if (schematic.getBiome().equals(Biome.HELL)) {
+                    if (schematic.getBiome() != null && schematic.getBiome().equals(Biome.HELL)) {
                         if (Settings.createNether && Settings.newNether && ASkyBlock.getNetherWorld() != null) {
                             result.add(schematic);
                         }
@@ -753,23 +754,10 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
         myIsland.setLevelHandicap(schematic.getLevelHandicap());
         // Save the player so that if the server is reset weird things won't happen
         plugin.getPlayers().save(playerUUID);
-        /*
-	if (firstTime) {
-	    plugin.getLogger().info("First time teleport");
-	    plugin.getGrid().homeTeleport(player);
-	}*/
-
-        // Delayed teleport so that the island pasting can be completed.
-        /*
-	plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
-
-	    @Override
-	    public void run() {
-		// New island teleport
-		plugin.getGrid().homeTeleport(player);
-
-	    }}, 40L);
-         */
+        // Set the island biome
+        if (schematic.getBiome() != null) {
+            new SetBiome(plugin, myIsland, schematic.getBiome());
+        }
         // Reset any inventory, etc. This is done AFTER the teleport because other plugins may switch out inventory based on world
         plugin.resetPlayer(player);
         // Reset money if required
@@ -801,10 +789,10 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
             range--;
             plugin.getLogger().warning("Protection range must be even, using " + range + " for " + player.getName());
         }
-        if (range > (Settings.islandDistance - 16) && !plugin.getConfig().getBoolean("island.overridelimit", false)) {
-            range = Settings.islandDistance - 16;
+        if (range > Settings.islandDistance) {
+            range = Settings.islandDistance;
             plugin.getLogger().warning(
-                    "Island protection range must be " + (Settings.islandDistance - 16) + " or less, (island range -16). Setting to: "
+                    "Island protection range must be " + Settings.islandDistance + " or less. Setting to: "
                             + range);
         }
         myIsland.setProtectionSize(range);

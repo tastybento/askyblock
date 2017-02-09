@@ -45,6 +45,7 @@ import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 import org.bukkit.material.SpawnEgg;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
@@ -271,6 +272,17 @@ public class ASkyBlock extends JavaPlugin {
     public void onEnable() {
         // instance of this plugin
         plugin = this;
+        // Check if WorldEdit is loaded
+        PluginManager manager = getServer().getPluginManager();
+        // Check for ASkyBlock
+        if (manager.getPlugin("WorldEdit") == null) {
+            getLogger().severe("WorldEdit not loaded. Disabling plugin");
+            return;
+        }
+        if (manager.getPlugin("Vault") == null) {
+            getLogger().severe("Vault not loaded. Disabling plugin");
+            return;
+        }
         // Check server version - check for a class that only 1.8 has
         Class<?> clazz;
         try {
@@ -347,31 +359,7 @@ public class ASkyBlock extends JavaPlugin {
             playersFolder.mkdir();
         }
         players = new PlayerCache(this);
-        // Set up commands for this plugin
-        islandCmd = new IslandCmd(this);
-        if (Settings.GAMETYPE.equals(Settings.GameType.ASKYBLOCK)) {
-            AdminCmd adminCmd = new AdminCmd(this);
 
-            getCommand("island").setExecutor(islandCmd);
-            getCommand("island").setTabCompleter(islandCmd);
-
-            getCommand("asc").setExecutor(getChallenges());
-            getCommand("asc").setTabCompleter(getChallenges());
-
-            getCommand("asadmin").setExecutor(adminCmd);
-            getCommand("asadmin").setTabCompleter(adminCmd);
-        } else {
-            AdminCmd adminCmd = new AdminCmd(this);
-
-            getCommand("ai").setExecutor(islandCmd);
-            getCommand("ai").setTabCompleter(islandCmd);
-
-            getCommand("aic").setExecutor(getChallenges());
-            getCommand("aic").setTabCompleter(getChallenges());
-
-            getCommand("acid").setExecutor(adminCmd);
-            getCommand("acid").setTabCompleter(adminCmd);
-        }
         // Register events that this plugin uses
         // registerEvents();
         // Load messages
@@ -425,6 +413,31 @@ public class ASkyBlock extends JavaPlugin {
                     } catch (Exception e) {
                         plugin.getLogger().severe("Could not register with Herochat");
                     }
+                }
+                // Set up commands for this plugin
+                islandCmd = new IslandCmd(plugin);
+                if (Settings.GAMETYPE.equals(Settings.GameType.ASKYBLOCK)) {
+                    AdminCmd adminCmd = new AdminCmd(plugin);
+
+                    getCommand("island").setExecutor(islandCmd);
+                    getCommand("island").setTabCompleter(islandCmd);
+
+                    getCommand("asc").setExecutor(getChallenges());
+                    getCommand("asc").setTabCompleter(getChallenges());
+
+                    getCommand("asadmin").setExecutor(adminCmd);
+                    getCommand("asadmin").setTabCompleter(adminCmd);
+                } else {
+                    AdminCmd adminCmd = new AdminCmd(plugin);
+
+                    getCommand("ai").setExecutor(islandCmd);
+                    getCommand("ai").setTabCompleter(islandCmd);
+
+                    getCommand("aic").setExecutor(getChallenges());
+                    getCommand("aic").setTabCompleter(getChallenges());
+
+                    getCommand("acid").setExecutor(adminCmd);
+                    getCommand("acid").setTabCompleter(adminCmd);
                 }
                 // Run these one tick later to ensure worlds are loaded.
                 getServer().getScheduler().runTask(plugin, new Runnable() {

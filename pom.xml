@@ -84,11 +84,9 @@
 			<version>LATEST</version>
 		</dependency>
 		<dependency>
-			<groupId>com.sk89q</groupId>
-			<artifactId>worldguard</artifactId>
-			<version>LATEST</version>
-			<scope>provided</scope>
-			<type>jar</type>
+			<groupId>com.sk89q.worldedit</groupId>
+			<artifactId>worldedit-bukkit</artifactId>
+			<version>6.1.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>bukkit.org</groupId>
@@ -192,9 +190,17 @@
 			<url>http://nexus.hc.to/content/repositories/pub_releases</url>
 		</repository>
 		<repository>
-			<id>worldedit-repo</id>
-			<url>http://maven.sk89q.com/repo/</url>
+			<id>sk89q-snapshots</id>
+			<url>http://maven.sk89q.com/artifactory/repo</url>
+			<releases>
+				<enabled>true</enabled> <!-- releases enabled: this specific repository also hosts release versions -->
+			</releases>
+			<snapshots>
+				<enabled>true</enabled> <!-- snapshots enabled: we declare a SNAPSHOT repository because we need 
+					to download a SNAPSHOT dependency -->
+			</snapshots>
 		</repository>
+
 	</repositories>
-	<version>3.0.6</version>
+	<version>4.0</version>
 </project>
