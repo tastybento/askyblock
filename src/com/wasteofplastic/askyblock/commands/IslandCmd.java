@@ -570,7 +570,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
         plugin.getPlayers().removeMember(teamLeader, playerUUID);
         // If player is online
         // If player is not the leader of their own team
-        if (!playerUUID.equals(teamLeader)) {
+        if (teamLeader == null || !playerUUID.equals(teamLeader)) {
             if (!plugin.getPlayers().setLeaveTeam(playerUUID)) {
                 return false;
             }
@@ -589,9 +589,11 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                 runCommands(Settings.leaveCommands, offlinePlayer);
             }
             // Fire event
-            final Island island = plugin.getGrid().getIsland(teamLeader);
-            final IslandLeaveEvent event = new IslandLeaveEvent(playerUUID, island);
-            plugin.getServer().getPluginManager().callEvent(event);
+            if (teamLeader != null) {
+                final Island island = plugin.getGrid().getIsland(teamLeader);
+                final IslandLeaveEvent event = new IslandLeaveEvent(playerUUID, island);
+                plugin.getServer().getPluginManager().callEvent(event);
+            }
         } else {
             // Ex-Leaders keeps their island, but the rest of the team members are
             // removed
@@ -1944,7 +1946,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                             (Settings.createNether && Settings.newNether && 
                                     ASkyBlock.getNetherWorld() != null && player.getWorld().equals(ASkyBlock.getNetherWorld()))) {
                         if (plugin.getPlayers().inTeam(playerUUID)) {
-                            if (plugin.getPlayers().getTeamLeader(playerUUID).equals(playerUUID)) {
+                            if (plugin.getPlayers().getTeamLeader(playerUUID) != null && plugin.getPlayers().getTeamLeader(playerUUID).equals(playerUUID)) {
                                 player.sendMessage(ChatColor.YELLOW + plugin.myLocale(player.getUniqueId()).leaveerrorYouAreTheLeader);
                                 return true;
                             }

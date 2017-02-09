@@ -158,7 +158,8 @@ public class JoinLeaveEvents implements Listener {
             loc = players.getTeamIslandLocation(playerUUID);
             leader = players.getTeamLeader(playerUUID);
             if (leader == null) {
-                plugin.getLogger().severe("Player "+ player.getName() + " is in a team but leader's UUID is missing.");
+                plugin.getLogger().severe("Player "+ player.getName() + " is in a team but leader's UUID is missing. Leaving team.");
+                players.setLeaveTeam(playerUUID);
             }
         }
         // If the player has an island location of some kind

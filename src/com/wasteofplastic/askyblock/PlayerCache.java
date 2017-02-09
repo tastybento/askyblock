@@ -454,9 +454,13 @@ public class PlayerCache {
     }
 
     public void removeMember(UUID teamLeader, UUID playerUUID) {
-        addPlayer(teamLeader);
+        if (teamLeader != null) {
+            addPlayer(teamLeader);
+        }
         addPlayer(playerUUID);
-        playerCache.get(teamLeader).removeMember(playerUUID);
+        if (teamLeader != null) {
+            playerCache.get(teamLeader).removeMember(playerUUID);
+        }
         // Remove from team chat too
         plugin.getChatListener().unSetPlayer(playerUUID);
     }
