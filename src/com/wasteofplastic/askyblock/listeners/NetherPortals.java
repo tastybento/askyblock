@@ -133,16 +133,13 @@ public class NetherPortals implements Listener {
         // Check if player has permission
         Island island = plugin.getGrid().getIslandAt(currentLocation);
         if ((island == null && !Settings.defaultWorldSettings.get(SettingsFlag.PORTAL)) 
-                || (island != null && !island.getIgsFlag(SettingsFlag.PORTAL))) {
-            // Portal use is disallowed for visitors, but okay for ops or bypass
-            // mods
-            if (event.getPlayer().isOp() || VaultHelper.checkPerm(event.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
+                || (island != null && !(island.getIgsFlag(SettingsFlag.PORTAL) || island.getMembers().contains(event.getPlayer().getUniqueId())))) {
+            // Portals use is not allowed
+            if (!event.getPlayer().isOp() && !VaultHelper.checkPerm(event.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
+                event.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(event.getPlayer().getUniqueId()).islandProtected);
+                event.setCancelled(true);
                 return;
             }
-            // Portals use is not allowed
-            event.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(event.getPlayer().getUniqueId()).islandProtected);
-            event.setCancelled(true);
-            return;
         }
         // Determine what portal it is
         switch (event.getCause()) {
