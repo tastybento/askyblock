@@ -103,9 +103,11 @@ public class Schematic {
     private int durability;
     private int levelHandicap;
     private double cost;
-    private ClipboardHolder clipboardHolder;
     private Vector minPoint;
     private boolean pasteAir;
+    private EditSession editSession;
+    private ClipboardHolder clipboardHolder;
+    private WorldEditPlugin we;
 
     public Schematic(ASkyBlock plugin) {
         this.plugin = plugin;
@@ -135,7 +137,6 @@ public class Schematic {
         partnerName = "";
     }
 
-    @SuppressWarnings("deprecation")
     public Schematic(ASkyBlock plugin, File file) throws IOException {
         this.plugin = plugin;
         // Initialize
@@ -161,11 +162,19 @@ public class Schematic {
         playerSpawn = null;
         //playerSpawnBlock = null;
         partnerName = "";
-
         this.file = file;
+        we = (WorldEditPlugin) Bukkit.getPluginManager().getPlugin("WorldEdit");
+    }
+
+    /**
+     * Loads the schematic into memory
+     * @throws IOException
+     */
+    @SuppressWarnings("deprecation")
+    public void loadSchematic() throws IOException {
+        plugin.getLogger().info("DEBUG: loading schematic");
         // This section uses WorldEdit to load the schematic into memory.
         // This is done so that the schematic can be pasted when required.
-        WorldEditPlugin we = (WorldEditPlugin) Bukkit.getPluginManager().getPlugin("WorldEdit");
         if (we != null) {
             Closer closer = Closer.create();
             FileInputStream fileIn = new FileInputStream(file);
@@ -181,82 +190,81 @@ public class Schematic {
             fileIn.close();
             bufIn.close();
             closer.close();
+
+
+            // Check for key blocks
+            // Find top most bedrock - this is the key stone
+            // Find top most chest
+            // Find top most grass
+            minPoint = new Vector(clipboardHolder.getClipboard().getMinimumPoint().getBlockX(),
+                    clipboardHolder.getClipboard().getMinimumPoint().getBlockY(),
+                    clipboardHolder.getClipboard().getMinimumPoint().getBlockZ());
+            List<Vector> grassBlocks = new ArrayList<Vector>();
+            for (int y = clipboardHolder.getClipboard().getMinimumPoint().getBlockY(); y <= clipboardHolder.getClipboard().getMaximumPoint().getBlockY(); y ++) {
+                for (int x = clipboardHolder.getClipboard().getMinimumPoint().getBlockX(); x <= clipboardHolder.getClipboard().getMaximumPoint().getBlockX(); x++) {
+                    for (int z = clipboardHolder.getClipboard().getMinimumPoint().getBlockZ(); z <= clipboardHolder.getClipboard().getMaximumPoint().getBlockZ(); z++) {
+                        BaseBlock block = clipboardHolder.getClipboard().getLazyBlock(new com.sk89q.worldedit.Vector(x,y,z));
+                        if (block.getId() == Material.BEDROCK.getId()) {
+                            // Last bedrock
+                            if (bedrock == null || bedrock.getY() < y) {
+                                bedrock = new Vector(x,y,z);
+                                bedrock.subtract(minPoint);
+                                //Bukkit.getLogger().info("DEBUG higher bedrock found:" + bedrock.toString());
+                            }
+                        } else if (block.getId() == Material.CHEST.getId()) {
+                            // Last chest
+                            if (chest == null || chest.getY() < y) {
+                                chest = new Vector(x, y, z);
+                                chest.subtract(minPoint);
+                                //Bukkit.getLogger().info("DEBUG: Chest relative location is " + chest.toString());
+                            }
+                        } else if (block.getId() == Material.SIGN_POST.getId()) {
+                            //Bukkit.getLogger().info("DEBUG: sign:" + welcomeSign);
+                            // Sign
+                            if (welcomeSign == null || welcomeSign.getY() < y) {
+                                welcomeSign = new Vector(x, y, z);
+                                welcomeSign.subtract(minPoint);
+                                //Bukkit.getLogger().info("DEBUG: higher sign found:" + welcomeSign.toString());
+                            }
+                        } else if (block.getId() == Material.GRASS.getId()) {
+                            // Grass
+                            grassBlocks.add((new Vector(x, y, z)).subtract(minPoint));
+                        } 
+                    }
+                }
+            }
+            if (bedrock == null) {
+                Bukkit.getLogger().severe("Schematic must have at least one bedrock in it!");
+                throw new IOException();
+            }
+            // Find other key blocks
+            if (!grassBlocks.isEmpty()) {
+                // Sort by height
+                List<Vector> sorted = new ArrayList<Vector>();
+                for (Vector v : grassBlocks) {
+                    // Add to sorted list
+                    boolean inserted = false;
+                    for (int i = 0; i < sorted.size(); i++) {
+                        if (v.getBlockY() > sorted.get(i).getBlockY()) {
+                            sorted.add(i, v);
+                            inserted = true;
+                            break;
+                        }
+                    }
+                    if (!inserted) {
+                        // just add to the end of the list
+                        sorted.add(v);
+                    }
+                }
+                topGrass = sorted.get(0);
+            } else {
+                topGrass = null;
+            }
         } else {
             throw new IOException("WorldEdit not loaded!");
         }
-
-
-        // Check for key blocks
-        // Find top most bedrock - this is the key stone
-        // Find top most chest
-        // Find top most grass
-        minPoint = new Vector(clipboardHolder.getClipboard().getMinimumPoint().getBlockX(),
-                clipboardHolder.getClipboard().getMinimumPoint().getBlockY(),
-                clipboardHolder.getClipboard().getMinimumPoint().getBlockZ());
-        List<Vector> grassBlocks = new ArrayList<Vector>();
-        for (int y = clipboardHolder.getClipboard().getMinimumPoint().getBlockY(); y <= clipboardHolder.getClipboard().getMaximumPoint().getBlockY(); y ++) {
-            for (int x = clipboardHolder.getClipboard().getMinimumPoint().getBlockX(); x <= clipboardHolder.getClipboard().getMaximumPoint().getBlockX(); x++) {
-                for (int z = clipboardHolder.getClipboard().getMinimumPoint().getBlockZ(); z <= clipboardHolder.getClipboard().getMaximumPoint().getBlockZ(); z++) {
-                    BaseBlock block = clipboardHolder.getClipboard().getLazyBlock(new com.sk89q.worldedit.Vector(x,y,z));
-                    if (block.getId() == Material.BEDROCK.getId()) {
-                        // Last bedrock
-                        if (bedrock == null || bedrock.getY() < y) {
-                            bedrock = new Vector(x,y,z);
-                            bedrock.subtract(minPoint);
-                            //Bukkit.getLogger().info("DEBUG higher bedrock found:" + bedrock.toString());
-                        }
-                    } else if (block.getId() == Material.CHEST.getId()) {
-                        // Last chest
-                        if (chest == null || chest.getY() < y) {
-                            chest = new Vector(x, y, z);
-                            chest.subtract(minPoint);
-                            //Bukkit.getLogger().info("DEBUG: Chest relative location is " + chest.toString());
-                        }
-                    } else if (block.getId() == Material.SIGN_POST.getId()) {
-                        //Bukkit.getLogger().info("DEBUG: sign:" + welcomeSign);
-                        // Sign
-                        if (welcomeSign == null || welcomeSign.getY() < y) {
-                            welcomeSign = new Vector(x, y, z);
-                            welcomeSign.subtract(minPoint);
-                            //Bukkit.getLogger().info("DEBUG: higher sign found:" + welcomeSign.toString());
-                        }
-                    } else if (block.getId() == Material.GRASS.getId()) {
-                        // Grass
-                        grassBlocks.add((new Vector(x, y, z)).subtract(minPoint));
-                    } 
-                }
-            }
-        }
-        if (bedrock == null) {
-            Bukkit.getLogger().severe("Schematic must have at least one bedrock in it!");
-            throw new IOException();
-        }
-        // Find other key blocks
-        if (!grassBlocks.isEmpty()) {
-            // Sort by height
-            List<Vector> sorted = new ArrayList<Vector>();
-            for (Vector v : grassBlocks) {
-                // Add to sorted list
-                boolean inserted = false;
-                for (int i = 0; i < sorted.size(); i++) {
-                    if (v.getBlockY() > sorted.get(i).getBlockY()) {
-                        sorted.add(i, v);
-                        inserted = true;
-                        break;
-                    }
-                }
-                if (!inserted) {
-                    // just add to the end of the list
-                    sorted.add(v);
-                }
-            }
-            topGrass = sorted.get(0);
-        } else {
-            topGrass = null;
-        }
-        //Bukkit.getLogger().info("DEBUG: topgrass = " + topGrass);
+        plugin.getLogger().info("DEBUG: loaded schematic");
     }
-
 
     /**
      * Creates an island block by block
@@ -586,34 +594,36 @@ public class Schematic {
             }
             return;
         }
-        // Use WorldEdit to paste the schematic already loaded in the clipboardHolder
-        WorldEditPlugin we = (WorldEditPlugin) plugin.getServer().getPluginManager().getPlugin("WorldEdit");
-        if (we != null) {
-            com.sk89q.worldedit.world.World world = LocalWorldAdapter.adapt(new BukkitWorld(loc.getWorld()));
-            try {
-                // Obtain the size of the schematic and create an edit session with that number of blocks reserved.
-                Region region = clipboardHolder.getClipboard().getRegion();
-                EditSession editSession = we.getWorldEdit().getEditSessionFactory().getEditSession(world, region.getWidth() * region.getHeight() * region.getLength());
-                // This enables some kind of queuing in WE. 
-                editSession.enableQueue();
-                // This sets the origin of the schematic to the minimum point.
-                clipboardHolder.getClipboard().setOrigin(clipboardHolder.getClipboard().getMinimumPoint());
-                // This actually pastes the clipboard to the world. The location is shifted so that the bedrock block is
-                // at the island's center point
-                // TODO: make paste air blocks a setting
-                editSession.setFastMode(!usePhysics);
-                Operations.completeLegacy(clipboardHolder.createPaste(editSession, editSession.getWorld().getWorldData())
-                        .to(BukkitUtil.toVector(loc).subtract(BukkitUtil.toVector(bedrock)))
-                        .ignoreAirBlocks(pasteAir)
-                        .build());
-                editSession.flushQueue();
-            }
-            catch (MaxChangedBlocksException e)
-            {
-                plugin.getLogger().severe("Too many blocks changed.");
-            }
+        plugin.getLogger().info("DEBUG: Pasting schematic air paste = " + pasteAir);
+        long nano = System.currentTimeMillis();
+        com.sk89q.worldedit.world.World world = LocalWorldAdapter.adapt(new BukkitWorld(ASkyBlock.getIslandWorld()));
+        //Bukkit.getLogger().info("DEBUG: topgrass = " + topGrass);
+        if (biome != null && biome.equals(Biome.HELL) && Settings.createNether && Settings.newNether && ASkyBlock.getNetherWorld() != null) {
+            world = LocalWorldAdapter.adapt(new BukkitWorld(ASkyBlock.getNetherWorld()));
         }
-
+        // Obtain the size of the schematic and create an edit session with that number of blocks reserved.
+        Region region = clipboardHolder.getClipboard().getRegion();
+        editSession = we.getWorldEdit().getEditSessionFactory().getEditSession(world, region.getWidth() * region.getHeight() * region.getLength());
+        // This enables some kind of queuing in WE. 
+        editSession.enableQueue();
+        // This sets the origin of the schematic to the minimum point.
+        clipboardHolder.getClipboard().setOrigin(clipboardHolder.getClipboard().getMinimumPoint());
+        editSession.setFastMode(!usePhysics);
+        // Paste schematic using WorldEdit
+        try {
+            Operations.completeLegacy(clipboardHolder.createPaste(editSession, editSession.getWorld().getWorldData())
+                    .to(BukkitUtil.toVector(loc).subtract(BukkitUtil.toVector(bedrock)))
+                    .ignoreAirBlocks(pasteAir)
+                    .build());
+            editSession.flushQueue();
+        }
+        catch (MaxChangedBlocksException e)
+        {
+            plugin.getLogger().severe("Too many blocks changed.");
+            e.printStackTrace();
+            return;
+        }
+        plugin.getLogger().info("DEBUG: " + (System.currentTimeMillis()-nano));
         // Place a helpful sign in front of player 
         //plugin.getLogger().info("DEBUG: welcome sign = " + welcomeSign);
         if (welcomeSign != null) {
@@ -662,9 +672,8 @@ public class Schematic {
         }
 
         if (teleport) {
-            World world = loc.getWorld();
-            if (player.getWorld().equals(world)) {
-                player.teleport(world.getSpawnLocation());
+            if (player.getWorld().equals(loc.getWorld())) {
+                player.teleport(loc.getWorld().getSpawnLocation());
             }
             if (playerSpawn == null) {
                 plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
@@ -701,6 +710,7 @@ public class Schematic {
                 }, 40L);
             }
         }
+        plugin.getLogger().info("DEBUG: Second time " + (System.currentTimeMillis()-nano));
     }
 
     /**

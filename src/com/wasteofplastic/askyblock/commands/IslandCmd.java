@@ -34,6 +34,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
+import java.util.WeakHashMap;
 
 import net.milkbowl.vault.economy.EconomyResponse;
 
@@ -92,10 +93,10 @@ import com.wasteofplastic.askyblock.util.VaultHelper;
 
 public class IslandCmd implements CommandExecutor, TabCompleter {
     public boolean levelCalcFreeFlag = true;
-    private static HashMap<String, Schematic> schematics = new HashMap<String, Schematic>();
+    private static Map<String, Schematic> schematics = new WeakHashMap<String, Schematic>();
     private ASkyBlock plugin;
     // The island reset confirmation
-    private HashMap<UUID, Boolean> confirm = new HashMap<UUID, Boolean>();
+    private Map<UUID, Boolean> confirm = new HashMap<UUID, Boolean>();
     // Last island
     Location last = null;
     // List of players in the middle of choosing an island schematic
@@ -105,18 +106,18 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
      * Invite list - invited player name string (key), inviter name string
      * (value)
      */
-    private final HashMap<UUID, UUID> inviteList = new HashMap<UUID, UUID>();
+    private final Map<UUID, UUID> inviteList = new HashMap<UUID, UUID>();
     // private PlayerCache players;
     // The time a player has to wait until they can reset their island again
-    private HashMap<UUID, Long> resetWaitTime = new HashMap<UUID, Long>();
+    private Map<UUID, Long> resetWaitTime = new HashMap<UUID, Long>();
     // Level calc cool down
-    private HashMap<UUID, Long> levelWaitTime = new HashMap<UUID, Long>();
+    private Map<UUID, Long> levelWaitTime = new HashMap<UUID, Long>();
 
     // Level calc checker
     BukkitTask checker = null;
     // To choose an island randomly
     private final Random random = new Random();
-    private HashMap<UUID, Location> islandSpot = new HashMap<UUID, Location>();
+    private Map<UUID, Location> islandSpot = new HashMap<UUID, Location>();
     private List<UUID> leavingPlayers = new ArrayList<UUID>();
 
     /**
@@ -156,7 +157,10 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                 plugin.saveResource("schematics/island.schematic", false);
                 // Add it to schematics
                 try {
-                    schematics.put("default",new Schematic(plugin, schematicFile));
+                    Schematic defaultIsland = new Schematic(plugin, schematicFile);
+                    defaultIsland.loadSchematic();
+                    schematics.put("default",defaultIsland);
+
                 } catch (IOException e) {
                     plugin.getLogger().severe("Could not load default schematic!");
                     e.printStackTrace();
@@ -171,7 +175,9 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
         } else {
             // It exists, so load it
             try {
-                schematics.put("default",new Schematic(plugin, schematicFile));
+                Schematic defaultIsland = new Schematic(plugin, schematicFile);
+                defaultIsland.loadSchematic();
+                schematics.put("default",defaultIsland);
                 plugin.getLogger().info("Loaded default island schematic.");
             } catch (IOException e) {
                 plugin.getLogger().severe("Could not load default schematic!");
@@ -182,11 +188,12 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
         if (!netherFile.exists()) {
             if (plugin.getResource("schematics/nether.schematic") != null) {
                 plugin.saveResource("schematics/nether.schematic", false);
-
                 // Add it to schematics
                 try {
                     Schematic netherIsland = new Schematic(plugin, netherFile);
                     netherIsland.setVisible(false);
+                    netherIsland.setBiome(Biome.HELL);
+                    netherIsland.loadSchematic();
                     schematics.put("nether", netherIsland);
                     plugin.getLogger().info("Loaded default nether schematic.");
                 } catch (IOException e) {
@@ -198,9 +205,12 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
             }
         } else {
             // It exists, so load it
+            // Add it to schematics
             try {
                 Schematic netherIsland = new Schematic(plugin, netherFile);
                 netherIsland.setVisible(false);
+                netherIsland.setBiome(Biome.HELL);
+                netherIsland.loadSchematic();
                 schematics.put("nether", netherIsland);
                 plugin.getLogger().info("Loaded default nether schematic.");
             } catch (IOException e) {
@@ -233,33 +243,8 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
         }
 
         // Load the schematics from config.yml
-        ConfigurationSection schemSection = plugin.getConfig().getConfigurationSection("schematicsection");
-        if (plugin.getConfig().contains("general.schematics")) {
-            tip();
-            // Load the schematics in this section 
-            int count = 1;
-            for (String perms: plugin.getConfig().getConfigurationSection("general.schematics").getKeys(true)) {
-                // See if the file exists
-                String fileName = plugin.getConfig().getString("general.schematics." + perms);
-                File schem = new File(plugin.getDataFolder(), fileName);
-                if (schem.exists()) {
-                    plugin.getLogger().info("Loading schematic " + fileName + " for permission " + perms);
-                    Schematic schematic;
-                    try {
-                        schematic = new Schematic(plugin, schem);
-                        schematic.setPerm(perms);
-                        schematic.setHeading(perms);
-                        schematic.setName("#" + count++);
-                        if (!schematic.isVisible()) {
-                            plugin.getLogger().info("Schematic " + fileName + " will not be shown on the GUI");  
-                        }
-                        schematics.put(perms, schematic);
-                    } catch (IOException e) {
-                        plugin.getLogger().severe("Could not load schematic " + fileName + " due to error. Skipping...");
-                    }
-                } // Cannot declare a not-found because get keys gets some additional non-wanted strings
-            }
-        } else if (plugin.getConfig().contains("schematicsection")) {
+        if (plugin.getConfig().contains("schematicsection")) {
+            ConfigurationSection schemSection = plugin.getConfig().getConfigurationSection("schematicsection");
             Settings.useSchematicPanel = schemSection.getBoolean("useschematicspanel", false);
             Settings.chooseIslandRandomly = schemSection.getBoolean("chooseislandrandomly", false);
             // Section exists, so go through the various sections
@@ -351,7 +336,6 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                         Biome biome = null;
                         if (schemSection.contains("schematics." + key + ".biome")) {
                             String biomeString = schemSection.getString("schematics." + key + ".biome");
-
                             try {
                                 biome = Biome.valueOf(biomeString);
                                 newSchem.setBiome(biome);
@@ -456,7 +440,6 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                     // e.printStackTrace();
                                 }
                             }
-
                             // Store it
                             newSchem.setDefaultChestItems(tempChest);
                         }
@@ -484,7 +467,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                         }
                         // Level handicap
                         newSchem.setLevelHandicap(schemSection.getInt("schematics." + key + ".levelHandicap", 0));
-
+                        
                         // Store it
                         schematics.put(key, newSchem);
                         if (perm.isEmpty()) {
@@ -493,11 +476,17 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                             perm = "player with " + perm + " permission";
                         }
                         plugin.getLogger().info("Loading schematic " + name + " (" + filename + ") for " + perm + ", order " + newSchem.getOrder());
+                        // Load the schematic from the file system
+                        try {
+                        newSchem.loadSchematic();
+                        } catch (Exception ex) {
+                            plugin.getLogger().severe("Error trying to load the schematic " + filename +"!");
+                        }
                     } else {
                         plugin.getLogger().warning("Could not find " + filename + " in the schematics folder! Skipping...");
                     }
                 } catch (IOException e) {
-                    plugin.getLogger().info("Error loading schematic in section " + key + ". Skipping...");
+                    plugin.getLogger().warning("Error loading schematic in section " + key + ". Skipping...");
                 }
             }
             if (schematics.isEmpty()) {
@@ -508,10 +497,10 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 
     private void tip() {
         // There is no section in config.yml. Save the default schematic anyway
-        plugin.getLogger().warning("***************************************************************");
-        plugin.getLogger().warning("* 'schematics' section in config.yml has been deprecated.     *");
-        plugin.getLogger().warning("* See 'schematicsection' in config.new.yml for replacement.   *");
-        plugin.getLogger().warning("***************************************************************");
+        plugin.getLogger().warning("*******************************************************************");
+        plugin.getLogger().warning("* 'schematics' section in config.yml is not supported anymore     *");
+        plugin.getLogger().warning("* See 'schematicsection' in config.new.yml for replacement.       *");
+        plugin.getLogger().warning("*******************************************************************");
     }
 
     /**
@@ -650,7 +639,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
     /**
      * @return the schematics
      */
-    public static HashMap<String, Schematic> getSchematics() {
+    public static Map<String, Schematic> getSchematics() {
         return schematics;
     }
 
@@ -839,6 +828,8 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
      * @param player
      */
     private void pastePartner(final Schematic schematic, final Location loc, final Player player) {
+        schematic.pasteSchematic(loc, player, false);
+        /*
         plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
 
             @Override
@@ -846,7 +837,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                 schematic.pasteSchematic(loc, player, false);
 
             }}, 60L);
-
+         */
     }
 
     /**
