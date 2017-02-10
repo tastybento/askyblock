@@ -185,8 +185,9 @@ public class WarpPanel implements Listener {
         // Create the warp panels
         if (DEBUG)
             plugin.getLogger().info("DEBUG: warps size = " + activeWarps.size());
-        int panelNumber = activeWarps.size() / (PANELSIZE-2);
-        int remainder = (activeWarps.size() % (PANELSIZE-2)) + 8 + 2;
+        int size = activeWarps.size();
+        int panelNumber = size / (PANELSIZE-2);
+        int remainder = (size % (PANELSIZE-2)) + 8 + 2;
         remainder -= (remainder % 9);
         if (DEBUG)
             plugin.getLogger().info("DEBUG: panel number = " + panelNumber + " remainder = " + remainder);
@@ -208,6 +209,7 @@ public class WarpPanel implements Listener {
             ItemStack icon = cachedWarps.get(playerUUID);
             if (icon != null) {
                 warpPanel.get(panelNumber).setItem(slot++, icon);
+
                 // Check if the panel is full
                 if (slot == PANELSIZE-2) {
                     // Add navigation buttons
@@ -280,10 +282,10 @@ public class WarpPanel implements Listener {
             if (DEBUG)
                 plugin.getLogger().info("DEBUG: command = " + command);
             if (command != null) {
-                if (command.equalsIgnoreCase(plugin.myLocale().warpsNext)) {
+                if (command.equalsIgnoreCase(ChatColor.stripColor(plugin.myLocale().warpsNext))) {
                     player.closeInventory();
                     player.performCommand(Settings.ISLANDCOMMAND + " warps " + (panelNumber+1));
-                } else if (command.equalsIgnoreCase(plugin.myLocale().warpsPrevious)) {
+                } else if (command.equalsIgnoreCase(ChatColor.stripColor(plugin.myLocale().warpsPrevious))) {
                     player.closeInventory();
                     player.performCommand(Settings.ISLANDCOMMAND + " warps " + (panelNumber-1));
                 } else {

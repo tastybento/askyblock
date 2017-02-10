@@ -46,6 +46,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
@@ -1809,8 +1810,8 @@ public class Challenges implements CommandExecutor, TabCompleter {
             // Complete! Make the icon glow
             ItemMeta im = icon.getItemMeta();
             im.addEnchant(Enchantment.ARROW_DAMAGE, 0, true);
+            im.addItemFlags(ItemFlag.HIDE_ENCHANTS);
             icon.setItemMeta(im);
-            icon.removeEnchantment(Enchantment.ARROW_DAMAGE);
             complete = true;
         }
         boolean repeatable = false;
