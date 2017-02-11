@@ -588,6 +588,14 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                 // If offline, all commands are run, sorry
                 runCommands(Settings.leaveCommands, offlinePlayer);
             }
+            // Deduct a reset
+            if (Settings.leaversLoseReset && Settings.resetLimit >= 0) {
+                int resetsLeft = plugin.getPlayers().getResetsLeft(playerUUID);
+                if (resetsLeft > 0) {
+                    resetsLeft--;
+                    plugin.getPlayers().setResetsLeft(playerUUID, resetsLeft);
+                }
+            }
             // Fire event
             if (teamLeader != null) {
                 final Island island = plugin.getGrid().getIsland(teamLeader);
@@ -1147,8 +1155,6 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                 return true;
             }
         }
-
-
         // The target player's UUID
         UUID targetPlayer = null;
         // Check if a player has an island or is in a team
@@ -1161,6 +1167,11 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                 if (Settings.maxIslands > 0 && plugin.getGrid().getIslandCount() > Settings.maxIslands) {
                     player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorMaxIslands);
                     return true;
+                }
+                // Check if player has resets left
+                if (plugin.getPlayers().getResetsLeft(playerUUID) == 0) {
+                    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).islandResetNoMore);
+                    return true;  
                 }
                 // Create new island for player
                 player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).islandnew);

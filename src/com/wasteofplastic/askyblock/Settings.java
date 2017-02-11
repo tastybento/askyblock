@@ -280,4 +280,5 @@ public class Settings {
     public static boolean fullArmorProtection;
     public static String defaultLanguage;
     public static boolean showInActionBar;
+    public static boolean leaversLoseReset;
 }

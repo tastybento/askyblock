@@ -768,6 +768,8 @@ public class ASkyBlock extends JavaPlugin {
             getLogger().warning("You should back up your world before running this");
             getLogger().warning("*********************************************************");
         }
+        // Leavers lose resets
+        Settings.leaversLoseReset = getConfig().getBoolean("general.leaversloseresets", true);
         // Action bar settings
         Settings.showInActionBar = getConfig().getBoolean("general.showinactionbar",true);
         // Helmet and full armor acid protection options
@@ -998,11 +1000,11 @@ public class ASkyBlock extends JavaPlugin {
                 Settings.rainDamage = 0D;
             }
             // The island's center is actually 5 below sea level
-            Settings.sea_level = getConfig().getInt("general.sealevel", 50);
+            Settings.sea_level = getConfig().getInt("island.sealevel", 50);
             if (Settings.sea_level < 0) {
                 Settings.sea_level = 0;
             }
-            Settings.island_level = getConfig().getInt("general.islandlevel", 50) - 5;
+            Settings.island_level = getConfig().getInt("island.islandlevel", 50) - 5;
             if (Settings.island_level < 0) {
                 Settings.island_level = 0;
             }
@@ -1101,24 +1103,24 @@ public class ASkyBlock extends JavaPlugin {
             Settings.netherSpawnRadius = 100;
         }
 
-        Settings.resetWait = getConfig().getInt("general.resetwait", 300);
+        Settings.resetWait = getConfig().getInt("island.resetwait", 300);
         if (Settings.resetWait < 0) {
             Settings.resetWait = 0;
         }
-        Settings.resetLimit = getConfig().getInt("general.resetlimit", 0);
+        Settings.resetLimit = getConfig().getInt("island.resetlimit", 0);
         if (Settings.resetWait < 0) {
             Settings.resetWait = -1;
         }
-        Settings.inviteWait = getConfig().getInt("general.invitewait", 60);
+        Settings.inviteWait = getConfig().getInt("island.invitewait", 60);
         if (Settings.inviteWait < 0) {
             Settings.inviteWait = 0;
         }
-        Settings.levelWait = getConfig().getInt("general.levelwait", 60);
+        Settings.levelWait = getConfig().getInt("island.levelwait", 60);
         if (Settings.levelWait < 0) {
             Settings.levelWait = 0;
         }
         // Seconds to wait for a confirmation of reset
-        Settings.resetConfirmWait = getConfig().getInt("general.resetconfirmwait", 10);
+        Settings.resetConfirmWait = getConfig().getInt("island.resetconfirmwait", 10);
         if (Settings.resetConfirmWait < 0) {
             Settings.resetConfirmWait = 0;
         }

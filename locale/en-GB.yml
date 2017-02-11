@@ -292,6 +292,7 @@ island:
   resetNoMore: "No more resets are allowed for your island!"
   resetOnlyOwner: "Only the owner may restart this island. Leave this island in order to start your own (/[label] leave)."
   resetPleaseWait: "Please wait, generating new island"
+  resetsLeft: "Resets left"
   resetTo: "Cleared reset limit"
   resetWait: "You have to wait [time] seconds before you can do that again."
   resetYouHave: "You have [number] resets left."
@@ -300,6 +301,7 @@ island:
   teleport: "Teleporting you to your island. (/[label] help for more info)"
   title: "A SkyBlock"
   titlecolor: "gold"
+  unlimited: "Unlimited"
   url: ""
 islandProtected: "Island protected."
 islandguardsettings: 

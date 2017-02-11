@@ -280,6 +280,10 @@ public class JoinLeaveEvents implements Listener {
                 }
             }
         }
+        // Reset resets if the admin changes it to or from unlimited
+        if (Settings.resetLimit < players.getResetsLeft(playerUUID)  || (Settings.resetLimit >= 0 && players.getResetsLeft(playerUUID) < 0)) {
+            players.setResetsLeft(playerUUID, Settings.resetLimit);
+        }
         if (DEBUG)
             plugin.getLogger().info("DEBUG: Setting player's name");
         // Set the player's name (it may have changed), but only if it isn't empty

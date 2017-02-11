@@ -674,7 +674,15 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                     plugin.getAcidTask().runAcidItemRemovalTask();
                 // Give back any temporary permissions
                 plugin.getPlayerEvents().giveAllTempPerms();
-                
+                // Reset resets if the admin changes it to or from unlimited
+                for (Player players: plugin.getServer().getOnlinePlayers()) {
+                    UUID playerUUID = players.getUniqueId();
+                    if (plugin.getPlayers().hasIsland(playerUUID) || plugin.getPlayers().inTeam(playerUUID)) {
+                        if (Settings.resetLimit < plugin.getPlayers().getResetsLeft(playerUUID) || (Settings.resetLimit >= 0 && plugin.getPlayers().getResetsLeft(playerUUID) < 0)) {
+                            plugin.getPlayers().setResetsLeft(playerUUID, Settings.resetLimit);
+                        }
+                    }
+                }
                 sender.sendMessage(ChatColor.YELLOW + plugin.myLocale().reloadconfigReloaded);
                 return true;
             } else if (split[0].equalsIgnoreCase("topten")) {
@@ -2050,6 +2058,11 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
         } catch (Exception e) {
         }
         sender.sendMessage(ChatColor.GREEN + plugin.myLocale().deaths + ": " + plugin.getPlayers().getDeaths(playerUUID));
+        String resetsLeft = plugin.myLocale().unlimited;
+        if (plugin.getPlayers().getResetsLeft(playerUUID) >= 0) {
+            resetsLeft = String.valueOf(plugin.getPlayers().getResetsLeft(playerUUID)) + " / " + String.valueOf(Settings.resetLimit);
+        }
+        sender.sendMessage(ChatColor.GREEN + plugin.myLocale().resetsLeft + ": " + resetsLeft);
         Location islandLoc = null;
         // Teams
         if (plugin.getPlayers().inTeam(playerUUID)) {
