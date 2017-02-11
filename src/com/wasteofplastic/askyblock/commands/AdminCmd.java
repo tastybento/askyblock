@@ -1449,6 +1449,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 if (sender instanceof Player) {
                     // Convert name to a UUID
                     final UUID playerUUID = plugin.getPlayers().getUUID(split[1], true);
+                    //plugin.getLogger().info("DEBUG: UUID is " + playerUUID);
                     if (!plugin.getPlayers().isAKnownPlayer(playerUUID)) {
                         sender.sendMessage(ChatColor.RED + plugin.myLocale().errorUnknownPlayer);
                         return true;

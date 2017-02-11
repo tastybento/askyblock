@@ -58,6 +58,7 @@ public class PlayerCache {
                     playerInf.save();
                 }
                 // Add this player to the online cache
+                //plugin.getLogger().info("DEBUG: added player " + p.getUniqueId());
                 playerCache.put(p.getUniqueId(), playerInf);
             }
         }
@@ -76,7 +77,7 @@ public class PlayerCache {
      */
 
     public void addPlayer(final UUID playerUUID) {
-        // plugin.getLogger().info("DEBUG: added player");
+        //plugin.getLogger().info("DEBUG: added player " + playerUUID);
         if (!playerCache.containsKey(playerUUID)) {
             final Players player = new Players(plugin, playerUUID);
             playerCache.put(playerUUID, player);
@@ -140,24 +141,13 @@ public class PlayerCache {
             return true;
         } else {
             // Get the file system
-            final File folder = plugin.getPlayersFolder();
-            final File[] files = folder.listFiles();
-            // Go through the native YAML files
-            for (final File f : files) {
-                // Need to remove the .yml suffix
-                if (f.getName().endsWith(".yml")) {
-                    try {
-                        if (UUID.fromString(f.getName().substring(0, f.getName().length() - 4)).equals(uniqueID)) {
-                            return true;
-                        }
-                    } catch (Exception e) {
-                        plugin.getLogger().warning("Problem with " + f.getName());
-                    }
-                }
+            try {
+            final File file = new File(plugin.getPlayersFolder(), uniqueID.toString() + ".yml");
+            return file.exists();
+            } catch (Exception e) {
+                return false;
             }
         }
-        // Not found, sorry.
-        return false;
     }
 
     /**
@@ -516,18 +506,23 @@ public class PlayerCache {
      */
     @SuppressWarnings("deprecation")
     public UUID getUUID(String string, boolean adminCheck) {
-        for (UUID id : playerCache.keySet()) {
-            String name = playerCache.get(id).getPlayerName();
-            // plugin.getLogger().info("DEBUG: Testing name " + name);
-            if (name != null && name.equalsIgnoreCase(string)) {
-                return id;
-            }
-        }
         // Look in the database if it ready
         if (plugin.getTinyDB() != null && plugin.getTinyDB().isDbReady()) {
             UUID result = plugin.getTinyDB().getPlayerUUID(string);
             if (result != null) {
                 return result;
+            }
+        }
+        // This goes after the database because it is possible for islands that have a duplicate name to be in
+        // the cache. For example, Bill had an island but left. Bill changes his name to Bob. Then Alice changes
+        // her name to Bill and logs into the game. There are now two islands with owner names called "Bill"
+        // The name database will ensure the names are updated.
+        for (UUID id : playerCache.keySet()) {
+            String name = playerCache.get(id).getPlayerName();
+            //plugin.getLogger().info("DEBUG: Testing name " + name);
+            if (name != null && name.equalsIgnoreCase(string)) {
+                //plugin.getLogger().info("DEBUG: found it! " + id);
+                return id;
             }
         }
         // Try the server
