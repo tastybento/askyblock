@@ -378,7 +378,7 @@ public class ASkyBlock extends JavaPlugin {
         messages = new Messages(this);
         messages.loadMessages();
         // Register world load event
-        if (getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
+        if (getServer().getVersion().contains("(MC: 1.8") || getServer().getVersion().contains("(MC: 1.7")) {
             getServer().getPluginManager().registerEvents(new WorldLoader(this), this);
         }
         // Metrics
@@ -426,6 +426,14 @@ public class ASkyBlock extends JavaPlugin {
                         plugin.getLogger().severe("Could not register with Herochat");
                     }
                 }
+
+                // Run game rule to keep things quiet
+                try {
+                    getLogger().info("Silencing command feedback for Ops...");
+                    getServer().dispatchCommand(getServer().getConsoleSender(), "minecraft:gamerule sendCommandFeedback false");
+                    getLogger().info("If you do not want this, do /gamerule sendCommandFeedback true");
+                } catch (Exception e) {} // do nothing
+
                 // Run these one tick later to ensure worlds are loaded.
                 getServer().getScheduler().runTask(plugin, new Runnable() {
                     @Override
@@ -760,6 +768,8 @@ public class ASkyBlock extends JavaPlugin {
             getLogger().warning("You should back up your world before running this");
             getLogger().warning("*********************************************************");
         }
+        // Action bar settings
+        Settings.showInActionBar = getConfig().getBoolean("general.showinactionbar",true);
         // Helmet and full armor acid protection options
         Settings.helmetProtection = getConfig().getBoolean("general.helmetprotection", true);
         Settings.fullArmorProtection = getConfig().getBoolean("general.fullarmorprotection", false);

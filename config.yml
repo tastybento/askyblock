@@ -288,7 +288,7 @@ protection:
 
 # General Settings
 general:
-   # Default language
+   # Default language for new players.
    # This is the filename in the locale folder without .yml.
    # If this does not exist, the default en-US will be used.
    defaultlanguage: en-US
@@ -297,6 +297,10 @@ general:
    # version available. It contacts dev.bukkit.org to request the latest version
    # info. It does not download the latest version or change any files
    checkupdates: true
+   
+   # Show enter/exit notices in Action Bar (11.1+)
+   # Only shows if notices are enabled in settings
+   showinactionbar: true
 
    # Sea level height (don't changes this mid-game unless you delete the world)
    # Minimum is 0, which means you are playing sky block!

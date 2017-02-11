@@ -279,4 +279,5 @@ public class Settings {
     public static boolean helmetProtection;
     public static boolean fullArmorProtection;
     public static String defaultLanguage;
+    public static boolean showInActionBar;
 }
