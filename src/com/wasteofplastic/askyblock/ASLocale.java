@@ -636,9 +636,9 @@ public class ASLocale {
         this.localeName = localeName;
         getLocale(localeName);
         loadLocale();
-        if (!localeName.equalsIgnoreCase("locale")) {
-            localeObject = new Locale(localeName.substring(0, 2), localeName.substring(3, 5));
-        }       
+        //if (!localeName.equalsIgnoreCase("locale")) {
+        localeObject = new Locale(localeName.substring(0, 2), localeName.substring(3, 5));
+        //}       
     }
 
     /**
@@ -675,20 +675,7 @@ public class ASLocale {
                 locale = YamlConfiguration.loadConfiguration(localeFile);
                 //locale.setDefaults(defLocale);
             } else {
-                // Use the default file
-                localeFile = new File(plugin.getDataFolder() + File.separator + "locale", "locale.yml");
-                if (localeFile.exists()) {
-                    locale = YamlConfiguration.loadConfiguration(localeFile);
-                } else {
-                    // Look for defaults in the jar                    
-                    if (plugin.getResource("locale/locale.yml") != null) {
-                        plugin.saveResource("locale/locale.yml", true);
-                        localeFile = new File(plugin.getDataFolder() + File.separator + "locale", "locale.yml");
-                        locale = YamlConfiguration.loadConfiguration(localeFile);
-                    } else {
-                        plugin.getLogger().severe("Could not find any locale file!");
-                    }
-                }
+                plugin.getLogger().severe("Could not find locale file! " + localeName);
             }
         }
     }

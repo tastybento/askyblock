@@ -700,22 +700,25 @@ public class ASkyBlock extends JavaPlugin {
         } catch (final Exception e) {
             e.printStackTrace();
         }
-        //CompareConfigs.compareConfigs();
-        // Get the localization strings
-        // Look in the locale folder. If it is not there, then 
-        //getLocale();
-        // Add this to the config      
+        // Get the default language
+        Settings.defaultLanguage = getConfig().getString("general.defaultlanguage", "en-US");
+        availableLocales.clear();
         FileLister fl = new FileLister(this);
         try {
             int index = 1;
             for (String code: fl.list()) {
-                availableLocales.put(code, new ASLocale(this,code, index++));
+                //getLogger().info("DEBUG: lang file = " + code);
+                availableLocales.put(code, new ASLocale(this, code, index++));
             }
         } catch (IOException e1) {
             getLogger().severe("Could not add locales!");
         }
-        // Default is locale.yml
-        availableLocales.put("locale", new ASLocale(this, "locale", 0));
+        if (!availableLocales.containsKey(Settings.defaultLanguage)) {
+            getLogger().severe("'" + Settings.defaultLanguage + ".yml' not found in /locale folder. Using /locale/en-US.yml");
+            Settings.defaultLanguage = "en-US";
+            availableLocales.put(Settings.defaultLanguage, new ASLocale(this, Settings.defaultLanguage, 0));
+        }
+
         // Assign settings
         String configVersion = getConfig().getString("general.version", "");
         //getLogger().info("DEBUG: config ver length " + configVersion.split("\\.").length);
@@ -1621,7 +1624,7 @@ public class ASkyBlock extends JavaPlugin {
     public ASLocale myLocale(UUID player) {
         String locale = players.getLocale(player);
         if (locale.isEmpty() || !availableLocales.containsKey(locale)) {
-            return availableLocales.get("locale");
+            return availableLocales.get(Settings.defaultLanguage);
         }
         return availableLocales.get(locale);
     }
@@ -1630,7 +1633,7 @@ public class ASkyBlock extends JavaPlugin {
      * @return System locale
      */
     public ASLocale myLocale() {
-        return availableLocales.get("locale");
+        return availableLocales.get(Settings.defaultLanguage);
     }
 
     /**

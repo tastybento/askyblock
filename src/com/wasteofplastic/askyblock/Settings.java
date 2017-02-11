@@ -278,4 +278,5 @@ public class Settings {
     public static long acidItemDestroyTime;
     public static boolean helmetProtection;
     public static boolean fullArmorProtection;
+    public static String defaultLanguage;
 }

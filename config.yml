@@ -288,6 +288,11 @@ protection:
 
 # General Settings
 general:
+   # Default language
+   # This is the filename in the locale folder without .yml.
+   # If this does not exist, the default en-US will be used.
+   defaultlanguage: en-US
+   
    # Check for updates - this will tell Ops and the console if there is a new
    # version available. It contacts dev.bukkit.org to request the latest version
    # info. It does not download the latest version or change any files
