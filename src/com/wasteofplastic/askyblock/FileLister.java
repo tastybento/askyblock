@@ -9,29 +9,36 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class FileLister {
     private final ASkyBlock plugin;
     private final static String FOLDERPATH = "locale";
 
-   public FileLister(ASkyBlock plugin) {
+    public FileLister(ASkyBlock plugin) {
         this.plugin = plugin;
     }
 
-   public List<String> list() throws IOException {
+    public List<String> list() throws IOException {
         List<String> result = new ArrayList<String>();
-        
+
         // Check if the locale folder exists
+        // If it does exist, then no files from the JAR will be added if they are missing.
+        // In this way, admins can remove access to locale files they do not want
         File localeDir = new File(plugin.getDataFolder(), FOLDERPATH);
         if (localeDir.exists()) {
             FilenameFilter ymlFilter = new FilenameFilter() {
                 @Override
                 public boolean accept(File dir, String name) {
                     String lowercaseName = name.toLowerCase();
-                    if (lowercaseName.endsWith(".yml")) {
+                    //plugin.getLogger().info("DEBUG: filename = " + name);
+                    if (lowercaseName.endsWith(".yml") && name.length() == 9 && name.substring(2,3).equals("-")) {
                         return true;
                     } else {
+                        if (lowercaseName.endsWith(".yml") && !lowercaseName.equals("locale.yml")) {
+                            plugin.getLogger().severe("Filename '" + name + "' is not in the correct format for a locale file - skipping...");
+                        }
                         return false;
                     }
                 }
@@ -39,6 +46,7 @@ public final class FileLister {
             for (String fileName : localeDir.list(ymlFilter)) {
                 result.add(fileName.replace(".yml", ""));
             }
+            // Finish if there are any files in this folder
             if (!result.isEmpty())
                 return result;
         }
@@ -74,8 +82,12 @@ public final class FileLister {
                 continue;
             }
 
+            //plugin.getLogger().info("DEBUG: jar filename = " + entry.getName());
             if (entry.getName().endsWith(".yml")) {
-                result.add((entry.getName().replace(".yml","")).replace("locale/", ""));
+                String name = entry.getName().replace(".yml","").replace("locale/", "");
+                if (name.length() == 5 && name.substring(2,3).equals("-")) {
+                    result.add(name);
+                }
             }
 
         }

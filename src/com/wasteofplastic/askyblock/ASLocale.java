@@ -17,6 +17,7 @@
 package com.wasteofplastic.askyblock;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -374,7 +375,7 @@ public class ASLocale {
     public String minishopBuyProblem;
     public String minishopYouCannotAfford;
     public String errorMinishopDisabled;
-    
+
     // Sign
     public String signLine1;
     public String signLine2;
@@ -472,7 +473,7 @@ public class ASLocale {
     public String igsSettingsIslandDesc;
     public String igsSettingsSpawnTitle;
     public String igsSettingsSpawnDesc;
-    
+
     public String setHomeerrorNumHomes;
     public String schematicsTitle;
     public String islandhelpBan;
@@ -840,7 +841,7 @@ public class ASLocale {
         warpserrorNoPerm = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("warps.errorNoPerm", "You do not have permission to place Welcome Signs yet!"));
         warpserrorNotEnoughLevel = ChatColor.translateAlternateColorCodes('&', 
-        		locale.getString("warps.errorNotEnoughLevel", "You do not have enough island levels to create a Welcome Sign!"));
+                locale.getString("warps.errorNotEnoughLevel", "You do not have enough island levels to create a Welcome Sign!"));
         warpserrorNoPlace = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("warps.errorNoPlace", "You must be on your island to place a Welcome Sign!"));
         warpserrorDuplicate = ChatColor.translateAlternateColorCodes('&',
@@ -1006,7 +1007,7 @@ public class ASLocale {
         adminHelpName = ChatColor.translateAlternateColorCodes('&', locale.getString("adminHelp.name", "Set name of player's island"));
         adminHelpResetName = ChatColor.translateAlternateColorCodes('&', locale.getString("adminHelp.resetname", "Reset name of player's island"));
         islandHelpSelectLanguage = ChatColor.translateAlternateColorCodes('&', locale.getString("islandHelp.selectlanguage", "Select Language"));
-       
+
         islandhelpAcceptReject = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("island.helpAcceptReject", "accept or reject an invitation."));
         islandhelpMakeLeader = ChatColor
@@ -1019,7 +1020,7 @@ public class ASLocale {
                 locale.getString("island.errorInvalidPlayer", "That player is invalid or does not have an island!"));
         islandislandLevelis = ChatColor.translateAlternateColorCodes('&', locale.getString("island.islandLevelis", "Island level is"));
         islandrequiredPointsToNextLevel = ChatColor.translateAlternateColorCodes('&', locale.getString("island.requiredPointsToNextLevel", "You need [points] more points to reach level [next]!"));
-        
+
         invitehelp = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("invite.help", "Use [/[label] invite <playername>] to invite a player to your island.").replace("[label]", Settings.ISLANDCOMMAND));
         inviteyouCanInvite = ChatColor.translateAlternateColorCodes('&',

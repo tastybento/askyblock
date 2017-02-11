@@ -707,22 +707,15 @@ public class ASkyBlock extends JavaPlugin {
         // Add this to the config      
         FileLister fl = new FileLister(this);
         try {
-            // Default is locale.yml
-            availableLocales.put("locale", new ASLocale(this, "locale", 0));
             int index = 1;
             for (String code: fl.list()) {
-                // Do some checking that the code is valid
-                if (!code.equals("locale")) {
-                    if (code.length() == 5 && code.charAt(2) == '-') {
-                        availableLocales.put(code, new ASLocale(this,code, index++)); 
-                    } else {
-                        getLogger().severe(code + ".yml is not a valid locale file name. Skipping...");
-                    }
-                }
+                availableLocales.put(code, new ASLocale(this,code, index++));
             }
         } catch (IOException e1) {
             getLogger().severe("Could not add locales!");
         }
+        // Default is locale.yml
+        availableLocales.put("locale", new ASLocale(this, "locale", 0));
         // Assign settings
         String configVersion = getConfig().getString("general.version", "");
         //getLogger().info("DEBUG: config ver length " + configVersion.split("\\.").length);
