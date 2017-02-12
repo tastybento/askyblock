@@ -1560,7 +1560,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                     }
                 }
             } else if (split[0].equalsIgnoreCase("restart") || split[0].equalsIgnoreCase("reset")) {
-                if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.sethome")) {
+                if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.reset")) {
                     player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
                     return true; 
                 }
