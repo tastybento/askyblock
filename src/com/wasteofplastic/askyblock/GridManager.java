@@ -488,6 +488,8 @@ public class GridManager {
         }
         islandYaml.set(SETTINGS_KEY, islandSettings);
         // Save the settings
+        // TODO: Debug to check spawn is saved.
+        boolean savedSpawn = false;
         List<String> islandList = new ArrayList<String>();
         for (int x : islandGrid.keySet()) {
             for (int z : islandGrid.get(x).keySet()) {
@@ -496,6 +498,7 @@ public class GridManager {
                     islandList.add(island.save());
                 } else {
                     // Spawn
+                    savedSpawn = true;
                     islandYaml.set("spawn.location", Util.getStringLocation(island.getCenter()));
                     islandYaml.set("spawn.spawnpoint", Util.getStringLocation(island.getSpawnPoint()));
                     islandYaml.set("spawn.range", island.getProtectionSize());
@@ -504,6 +507,17 @@ public class GridManager {
                     islandYaml.set("spawn.settings", island.getSettings());                    
                 }
             }
+        }
+        if (!savedSpawn && getSpawn() != null) {
+            plugin.getLogger().severe("****************************");
+            plugin.getLogger().severe("DID NOT SAVE SPAWN!!!");
+            plugin.getLogger().severe("****************************");
+            islandYaml.set("spawn.location", Util.getStringLocation(getSpawn().getCenter()));
+            islandYaml.set("spawn.spawnpoint", Util.getStringLocation(getSpawn().getSpawnPoint()));
+            islandYaml.set("spawn.range", getSpawn().getProtectionSize());
+            islandYaml.set("spawn.locked", getSpawn().isLocked());
+            islandYaml.set("spawn.biome", getSpawn().getBiome().toString());
+            islandYaml.set("spawn.settings", getSpawn().getSettings());  
         }
         islandYaml.set(Settings.worldName, islandList);
         // Save the file

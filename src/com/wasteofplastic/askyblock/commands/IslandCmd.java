@@ -1179,9 +1179,15 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                 chooseIsland(player);
                 return true;
             } else {
+                // Teleporting to island
                 if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.controlpanel") && plugin.getPlayers().getControlPanel(playerUUID)) {
                     player.performCommand(Settings.ISLANDCOMMAND + " cp");
                 } else {
+                    // Check permission
+                    if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.go")) {
+                        player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
+                        return true;
+                    }
                     if (!player.getWorld().getName().equalsIgnoreCase(Settings.worldName) || Settings.allowTeleportWhenFalling
                             || !PlayerEvents.isFalling(playerUUID) || (player.isOp() && !Settings.damageOps)) {
                         // Teleport home
@@ -1554,6 +1560,10 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                     }
                 }
             } else if (split[0].equalsIgnoreCase("restart") || split[0].equalsIgnoreCase("reset")) {
+                if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.sethome")) {
+                    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
+                    return true; 
+                }
                 // Check this player has an island
                 if (!plugin.getPlayers().hasIsland(playerUUID)) {
                     // No so just start an island
@@ -1686,18 +1696,20 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                         maxHomes = 1;
                     }
                 }
-                if (maxHomes > 1 && VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.sethome")) {
+                if (maxHomes > 1 && VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.go")) {
                     player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " go <1 - " + maxHomes + ">: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpTeleport);
-                } else {
+                } else if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.go")) {
                     player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " go: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpTeleport);
                 }
-                if (plugin.getGrid() != null && plugin.getGrid().getSpawn() != null) {
+                if (plugin.getGrid() != null && plugin.getGrid().getSpawn() != null && VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.spawn")) {
                     player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " spawn: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpSpawn);
                 }
                 if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.controlpanel")) {
                     player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " controlpanel or cp [on/off]: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpControlPanel);
                 }
-                player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " restart: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpRestart);
+                if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.reset")) {
+                    player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " reset: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpRestart);
+                }
                 if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.sethome")) {
                     if (maxHomes > 1) {
                         player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " sethome <1 - " + maxHomes + ">: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpSetHome);
@@ -1721,7 +1733,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                 }
                 if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.value")) {
                     player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " value: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpValue);
-                    }
+                }
                 if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.warp")) {
                     player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " warps: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpWarps);
                     player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " warp <player>: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpWarp);
@@ -1834,14 +1846,18 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                     return true;
                 }
             } else if (split[0].equalsIgnoreCase("spawn") && plugin.getGrid().getSpawn() != null) {
-                // go to spawn
-                Location l = ASkyBlock.getIslandWorld().getSpawnLocation();
-                l.add(new Vector(0.5,0,0.5));
-                Island spawn = plugin.getGrid().getSpawn();
-                if (spawn != null && spawn.getSpawnPoint() != null) {
-                    l = spawn.getSpawnPoint();
-                }	
-                player.teleport(l);
+                if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.spawn")) {
+                    // go to spawn
+                    Location l = ASkyBlock.getIslandWorld().getSpawnLocation();
+                    l.add(new Vector(0.5,0,0.5));
+                    Island spawn = plugin.getGrid().getSpawn();
+                    if (spawn != null && spawn.getSpawnPoint() != null) {
+                        l = spawn.getSpawnPoint();
+                    }	
+                    player.teleport(l);
+                } else {
+                    player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).errorNoPermission);  
+                }
                 return true;
             } else if (split[0].equalsIgnoreCase("top")) {
                 if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.topten")) {
@@ -3357,11 +3373,11 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
         String lastArg = (args.length != 0 ? args[args.length - 1] : "");
 
         switch (args.length) {
-        case 0: 
+        case 0:
         case 1: 
             options.add("help"); //No permission needed.
             //options.add("make"); //Make is currently a private command never accessible to the player
-            if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.sethome")) {
+            if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.go")) {
                 options.add("go");
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.name") && plugin.getPlayers().hasIsland(player.getUniqueId())) {
@@ -3375,7 +3391,9 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                 options.add("controlpanel");
                 options.add("cp");
             }
-            options.add("restart"); //No permission needed.
+            if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.reset")) {
+                options.add("reset");
+            }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.sethome")) {
                 options.add("sethome");
             }
@@ -3436,6 +3454,13 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                 options.add("ban");
                 options.add("unban");
                 options.add("banlist");
+            }
+            if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.value")) {
+                options.add("value");
+            }
+            if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.spawn") 
+                    && plugin.getGrid() != null && plugin.getGrid().getSpawn() != null) {
+                options.add("spawn");
             }
             break;
         case 2: 

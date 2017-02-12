@@ -81,7 +81,13 @@ permissions:
             default: false
           askyblock.island.value:
             description: Player can see the value of a block
-            default: false
+            default: true
+          askyblock.island.spawn:
+            description: Player can use the island spawn command if spawn exists
+            default: true
+          askyblock.island.reset:
+            description: Player can use the island reset or restart command
+            default: true  
       askyblock.team.*:
         children:
           askyblock.team.create:
