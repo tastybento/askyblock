@@ -1,5 +1,8 @@
 # This file lists the values for various blocks that are used to calculate the
 # island level. Level = total of all blocks in island boundary / 100.
+# Players with the permission askyblock.island.multiplier.# will have their blocks
+# multiplied in value by that amount.
+
 # Underwater block multiplier
 # If blocks are below sea-level, they can have a higher value. e.g. 2x
 # Promotes under-water development if there is a sea. Value can be fractional.

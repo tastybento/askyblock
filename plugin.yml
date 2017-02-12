@@ -79,6 +79,9 @@ permissions:
           askyblock.island.name:
             description: Player can set the name of their island
             default: false
+          askyblock.island.value:
+            description: Player can see the value of a block
+            default: false
       askyblock.team.*:
         children:
           askyblock.team.create:

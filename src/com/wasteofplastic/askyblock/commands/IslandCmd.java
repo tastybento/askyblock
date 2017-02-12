@@ -61,6 +61,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.MaterialData;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionType;
@@ -1195,7 +1196,53 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                 return true;
             }
         case 1:
-            if (split[0].equalsIgnoreCase("name")) {
+            if (split[0].equalsIgnoreCase("value")) {
+                // Explain command
+                if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.value")) {
+                    // Check they are on their island
+                    if (!plugin.getGrid().playerIsOnIsland(player)) {
+                        player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNotOnIsland);
+                        return true;
+                    }
+                    ItemStack item = player.getItemInHand();
+                    double multiplier = 1;
+                    if (item != null && item.getType().isBlock()) {
+                        // Get permission multiplier                
+                        for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
+                            if (perms.getPermission().startsWith(Settings.PERMPREFIX + "island.multiplier.")) {
+                                // Get the max value should there be more than one
+                                multiplier = Math.max(multiplier, Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "island.multiplier.")[1]));
+                            }
+                            // Do some sanity checking
+                            if (multiplier < 1) {
+                                multiplier = 1;
+                            }
+                        }
+                        // Player height
+                        if (player.getLocation().getBlockY() < Settings.sea_level) {
+                            multiplier *= Settings.underWaterMultiplier;
+                        }
+                        // Get the value. Try the specific item
+                        int value = 0;
+                        if (Settings.blockValues.containsKey(item.getData())) {
+                            value = (int)((double)Settings.blockValues.get(item.getData()) * multiplier);
+                        } else if (Settings.blockValues.containsKey(new MaterialData(item.getType()))) {
+                            value = (int)((double)Settings.blockValues.get(new MaterialData(item.getType())) * multiplier);
+                        }
+                        if (value > 0) {
+                            // [name] placed here may be worth [value]
+                            player.sendMessage(ChatColor.GREEN + (plugin.myLocale(player.getUniqueId()).islandblockValue.replace("[name]", Util.prettifyText(item.getType().name())).replace("[value]", String.valueOf(value))));
+                        } else {
+                            // [name] is worthless
+                            player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).islandblockWorthless.replace("[name]", Util.prettifyText(item.getType().name())));
+                        }
+                    } else {
+                        // That is not a block
+                        player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNotABlock);
+                    }
+                    return true;
+                }
+            } else if (split[0].equalsIgnoreCase("name")) {
                 // Explain command
                 if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.name")
                         && plugin.getPlayers().hasIsland(playerUUID)) {
@@ -1672,6 +1719,9 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                 if (Settings.useEconomy && VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.minishop")) {
                     player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " minishop or ms: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpMiniShop);
                 }
+                if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.value")) {
+                    player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " value: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpValue);
+                    }
                 if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.warp")) {
                     player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " warps: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpWarps);
                     player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " warp <player>: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpWarp);

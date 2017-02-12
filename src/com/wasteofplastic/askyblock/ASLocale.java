@@ -627,6 +627,14 @@ public class ASLocale {
 
     public String resetsLeft;
 
+    public String islandblockValue;
+
+    public String islandblockWorthless;
+
+    public String errorNotABlock;
+
+    public String islandhelpValue;
+
 
     /**
      * Creates a locale object full of localized strings for a language
@@ -725,6 +733,7 @@ public class ASLocale {
         errorNoPermission = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("error.noPermission", "You don't have permission to use that command!"));
         errorNoIsland = ChatColor.translateAlternateColorCodes('&', locale.getString("error.noIsland", "You do not have an island!"));
+        errorNotABlock = ChatColor.translateAlternateColorCodes('&', locale.getString("error.notABlock", "That is not a block"));
         errorNoIslandOther = ChatColor
                 .translateAlternateColorCodes('&', locale.getString("error.noIslandOther", "That player does not have an island!"));
         // "You must be on your island to use this command."
@@ -967,6 +976,10 @@ public class ASLocale {
                 locale.getString("island.resetWait", "You have to wait [time] seconds before you can do that again."));
         islandresetConfirm = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("island.resetConfirm", "Type /[label] confirm within [seconds] seconds to delete your island and restart!").replace("[label]", Settings.ISLANDCOMMAND));
+        islandblockValue = ChatColor.translateAlternateColorCodes('&',
+                locale.getString("island.blockValue", "[name] placed here may be worth [value]"));
+        islandblockWorthless = ChatColor.translateAlternateColorCodes('&',
+                locale.getString("island.blockWorthless", "[name] is worthless"));
         islandhelpIsland = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("island.helpIsland", "start an island, or teleport to your island."));
         islandhelpTeleport = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpTeleport", "teleport to your island."));
@@ -981,6 +994,7 @@ public class ASLocale {
         islandhelpLevelPlayer = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("island.helpLevelPlayer", "see another player's island level."));
         islandhelpTop = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpTop", "see the top ranked islands."));
+        islandhelpValue = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpValue", "see island level value of block in hand"));
         islandhelpWarps = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpWarps", "Lists all available welcome-sign warps."));
         islandhelpWarp = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpWarp", "Warp to <player>'s welcome sign."));
         islandhelpTeam = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpTeam", "view your team information."));
