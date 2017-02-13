@@ -992,11 +992,13 @@ public class Island implements Cloneable {
     }
 
     /**
-     * Sets the settings for the island. If the island is spawn, then default spawn settings will be used
+     * Sets the settings for the island.
      * @param settings
      * @param settingsKey
      */
     public void setSettings(String settings, List<String> settingsKey) {
+
+        // Start with defaults
         if (isSpawn) {
             setSpawnDefaults();
         } else {
@@ -1004,42 +1006,16 @@ public class Island implements Cloneable {
         }
         if(settings == null || settings.isEmpty())
             return;
-        // Parse the 8th string into island guard protection settings
-        // Try to get key from settingsKey
-        if (settingsKey.isEmpty() && settings.length() == LegacySettingsFlag.values().length) {
-            // Legacy settings V3.0.5.3 and before
-            int index = 0;
-            // Run through the enum and set
-            for (LegacySettingsFlag f : LegacySettingsFlag.values()) {
-                if (settings.length() == index) {
-                    break;
-                }
-                // Convert to new SettingsFlag enum
-                SettingsFlag flag = SettingsFlag.valueOf(f.name());
-                // Check that this setting is allowed for islands
-                if (Settings.visitorSettings.containsKey(flag)) {
-                    this.igs.put(flag, settings.charAt(index++) == '1' ? true : false);
-                }
+        if (settingsKey.size() != settings.length()) {
+            plugin.getLogger().severe("Island settings does not match settings key in islands.yml. Using defaults.");
+            return;
+        }
+        for (int i = 0; i < settingsKey.size(); i++) {
+            if (settings.charAt(i) == '0') {
+                this.setIgsFlag(SettingsFlag.valueOf(settingsKey.get(i)), false);
+            } else {
+                this.setIgsFlag(SettingsFlag.valueOf(settingsKey.get(i)), true);
             }
-        } else {
-            // Post V3.0.6
-            if (!settingsKey.isEmpty()) {
-                // Normal operation
-                int index = 0;
-                // Run through the enum and set
-                for (String f : settingsKey) {
-                    // Convert to new SettingsFlag enum
-                    try {
-                        SettingsFlag flag = SettingsFlag.valueOf(f);
-                        // Check that this setting is allowed for islands
-                        if (Settings.visitorSettings.containsKey(flag)) {
-                            this.igs.put(flag, settings.charAt(index++) == '1' ? true : false);
-                        } // else keep the default
-                    } catch (Exception e) {
-                        // Does not exist
-                    }
-                }
-            } // else, just use the defaults
         }
 
     }
