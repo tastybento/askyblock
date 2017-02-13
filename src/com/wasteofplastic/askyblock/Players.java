@@ -43,6 +43,7 @@ public class Players {
     private YamlConfiguration playerInfo;
     private HashMap<String, Boolean> challengeList;
     private HashMap<String, Integer> challengeListTimes;
+    private HashMap<String, Long> challengeListTimestamp;
     private boolean hasIsland;
     private boolean inTeam;
     //private String homeLocation;
@@ -80,6 +81,7 @@ public class Players {
         this.teamIslandLocation = null;
         this.challengeList = new HashMap<String, Boolean>();
         this.challengeListTimes = new HashMap<String, Integer>();
+        this.challengeListTimestamp = new HashMap<String, Long>();
         this.islandLevel = 0;
         this.playerName = "";
         this.resetsLeft = Settings.resetLimit;
@@ -168,11 +170,13 @@ public class Players {
             // If they are in the list, then use the value, otherwise use false
             challengeList.put(challenge.toLowerCase(), playerInfo.getBoolean("challenges.status." + challenge.toLowerCase().replace(".", "[dot]"), false));
             challengeListTimes.put(challenge.toLowerCase(), playerInfo.getInt("challenges.times." + challenge.toLowerCase().replace(".", "[dot]"), 0));
+            challengeListTimestamp.put(challenge.toLowerCase(), playerInfo.getLong("challenges.timestamp." + challenge.toLowerCase().replace(".", "[dot]"), 0));
         }
         for (String challenge : Settings.challengeLevels) {
             // If they are in the list, then use the value, otherwise use false
             challengeList.put(challenge.toLowerCase(), playerInfo.getBoolean("challenges.status." + challenge.toLowerCase().replace(".", "[dot]"), false));
             challengeListTimes.put(challenge.toLowerCase(), playerInfo.getInt("challenges.times." + challenge.toLowerCase().replace(".", "[dot]"), 0));
+            challengeListTimestamp.put(challenge.toLowerCase(), playerInfo.getLong("challenges.timestamp." + challenge.toLowerCase().replace(".", "[dot]"), 0));
         }
         // Load reset limit
         this.resetsLeft = playerInfo.getInt("resetsLeft", Settings.resetLimit);
@@ -262,6 +266,10 @@ public class Players {
             if (!challenge.isEmpty())
                 playerInfo.set("challenges.times." + challenge.replace(".","[dot]"), challengeListTimes.get(challenge));
         }
+        for (String challenge : challengeListTimestamp.keySet()) {
+            if (!challenge.isEmpty())
+                playerInfo.set("challenges.timestamp." + challenge.replace(".","[dot]"), challengeListTimestamp.get(challenge));
+        }
         // Check what the global limit is
         if (Settings.resetLimit < this.resetsLeft) {
             this.resetsLeft = Settings.resetLimit;
@@ -331,8 +339,16 @@ public class Players {
      * @param challenge
      * @return true if the challenge is listed as complete, false if not
      */
-    public boolean checkChallenge(final String challenge) {
-        if (challengeList.containsKey(challenge.toLowerCase())) {
+    public boolean checkChallenge(String challenge) {
+        challenge = challenge.toLowerCase();
+        if (challengeList.containsKey(challenge)) {
+            // Check if the challenge has been globally reset
+            long timestamp = challengeListTimestamp.get(challenge);
+            if (plugin.getChallenges().isChallengeReset(challenge, timestamp)) {
+                this.resetChallenge(challenge);
+                return false;
+            }
+            // It has not been globally reset
             // plugin.getLogger().info("DEBUG: " + challenge + ":" +
             // challengeList.get(challenge.toLowerCase()).booleanValue() );
             return challengeList.get(challenge.toLowerCase()).booleanValue();
@@ -378,6 +394,8 @@ public class Players {
         challengeListTimes.put(challenge.toLowerCase(), times);
         // plugin.getLogger().info("DEBUG: complete " + challenge + ":" +
         // challengeListTimes.get(challenge.toLowerCase()).intValue() );
+        // Add timestamp
+        challengeListTimestamp.put(challenge, System.currentTimeMillis());
     }
 
     public boolean hasIsland() {

@@ -34,6 +34,7 @@ import java.util.Scanner;
 import java.util.TreeMap;
 import java.util.UUID;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -46,6 +47,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -325,6 +327,13 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
             help(sender, label);
             return true;
         case 1:
+            if (split[0].equalsIgnoreCase("listchallengeresets")) {
+                // Reset the challenge now
+                for (String challenge : plugin.getChallenges().getRepeatingChallengeResets()) {
+                    sender.sendMessage(ChatColor.GREEN + challenge);
+                }
+                return true;
+            } else
             if (split[0].equalsIgnoreCase("cobblestats")) {
                 if (LavaCheck.getStats().size() == 0) {
                     sender.sendMessage(ChatColor.RED + plugin.myLocale().banNone);
@@ -804,56 +813,81 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                     }
                 }
             }
-            if (split[0].equalsIgnoreCase("settingsreset")) {
-                if (split[1].equalsIgnoreCase("all")) {
-                    sender.sendMessage(ChatColor.GREEN + plugin.myLocale().settingsResetInProgress);
-                    plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
-
-                        @Override
-                        public void run() {
-                            for (Island island : plugin.getGrid().getOwnedIslands().values()) {
-                                island.setIgsDefaults();
-                            }
-                            for (Island island : plugin.getGrid().getUnownedIslands().values()) {
-                                island.setIgsDefaults();
-                            }
-                            sender.sendMessage(ChatColor.GREEN + plugin.myLocale().settingsResetDone);
-                            plugin.getGrid().saveGrid();
-                        }});
-                    return true;
-                } else {
-                    // Check if there is a flag here
-                    for (SettingsFlag flag: SettingsFlag.values()) {
-                        if (split[1].equalsIgnoreCase(flag.toString())) {
-                            sender.sendMessage(ChatColor.GREEN + plugin.myLocale().settingsResetInProgress);
-                            final SettingsFlag flagToSet = flag;
-                            plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
-
-                                @Override
-                                public void run() {
-                                    for (Island island : plugin.getGrid().getOwnedIslands().values()) {
-                                        island.setIgsFlag(flagToSet, Settings.defaultIslandSettings.get(flagToSet));
-                                    }
-                                    for (Island island : plugin.getGrid().getUnownedIslands().values()) {
-                                        island.setIgsFlag(flagToSet, Settings.defaultIslandSettings.get(flagToSet));
-                                    }
-                                    sender.sendMessage(ChatColor.GREEN + plugin.myLocale().settingsResetDone);
-                                    plugin.getGrid().saveGrid();
-                                }});
-                            return true;
-                        }
-                    }
-                    // Show help
-                    sender.sendMessage(ChatColor.YELLOW + "/" + label + " settingsreset [help | all | flag]:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpSettingsReset);
-                    sender.sendMessage(ChatColor.GREEN + "flag options: ");
-                    String commaList = "all";
-                    for (SettingsFlag flag: SettingsFlag.values()) {
-                        commaList += ", " + flag.toString();
-                    }
-                    sender.sendMessage(commaList);
+            
+            if (split[0].equalsIgnoreCase("clearchallengereset")) {
+                split[1] = split[1].toLowerCase();
+                if (!Settings.challengeList.contains(split[1])) {
+                    sender.sendMessage(ChatColor.RED + plugin.myLocale().resetChallengeerrorChallengeDoesNotExist);
                     return true;
                 }
-            }
+
+                // Clear challenge reset
+                plugin.getChallenges().clearChallengeReset(split[1]);
+                sender.sendMessage(ChatColor.GREEN + plugin.myLocale().generalSuccess);
+
+                return true;
+            }if (split[0].equalsIgnoreCase("resetchallengeforall")) {
+                if (!Settings.challengeList.contains(split[1].toLowerCase())) {
+                    sender.sendMessage(ChatColor.RED + plugin.myLocale().resetChallengeerrorChallengeDoesNotExist);
+                    return true;
+                }
+
+                // Reset the challenge now
+                plugin.getChallenges().resetChallengeForAll(split[1].toLowerCase(), 0L, "");
+                sender.sendMessage(ChatColor.GREEN + plugin.myLocale().generalSuccess);
+
+                return true;
+            } else
+                if (split[0].equalsIgnoreCase("settingsreset")) {
+                    if (split[1].equalsIgnoreCase("all")) {
+                        sender.sendMessage(ChatColor.GREEN + plugin.myLocale().settingsResetInProgress);
+                        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+
+                            @Override
+                            public void run() {
+                                for (Island island : plugin.getGrid().getOwnedIslands().values()) {
+                                    island.setIgsDefaults();
+                                }
+                                for (Island island : plugin.getGrid().getUnownedIslands().values()) {
+                                    island.setIgsDefaults();
+                                }
+                                sender.sendMessage(ChatColor.GREEN + plugin.myLocale().settingsResetDone);
+                                plugin.getGrid().saveGrid();
+                            }});
+                        return true;
+                    } else {
+                        // Check if there is a flag here
+                        for (SettingsFlag flag: SettingsFlag.values()) {
+                            if (split[1].equalsIgnoreCase(flag.toString())) {
+                                sender.sendMessage(ChatColor.GREEN + plugin.myLocale().settingsResetInProgress);
+                                final SettingsFlag flagToSet = flag;
+                                plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+
+                                    @Override
+                                    public void run() {
+                                        for (Island island : plugin.getGrid().getOwnedIslands().values()) {
+                                            island.setIgsFlag(flagToSet, Settings.defaultIslandSettings.get(flagToSet));
+                                        }
+                                        for (Island island : plugin.getGrid().getUnownedIslands().values()) {
+                                            island.setIgsFlag(flagToSet, Settings.defaultIslandSettings.get(flagToSet));
+                                        }
+                                        sender.sendMessage(ChatColor.GREEN + plugin.myLocale().settingsResetDone);
+                                        plugin.getGrid().saveGrid();
+                                    }});
+                                return true;
+                            }
+                        }
+                        // Show help
+                        sender.sendMessage(ChatColor.YELLOW + "/" + label + " settingsreset [help | all | flag]:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpSettingsReset);
+                        sender.sendMessage(ChatColor.GREEN + "flag options: ");
+                        String commaList = "all";
+                        for (SettingsFlag flag: SettingsFlag.values()) {
+                            commaList += ", " + flag.toString();
+                        }
+                        sender.sendMessage(commaList);
+                        return true;
+                    }
+                }
             // Resetsign <player> - makes a warp sign for player
             if (split[0].equalsIgnoreCase("resetsign")) {
                 // Find the closest island
@@ -1516,8 +1550,49 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 return false;
             }
         case 3:
+            if (split[0].equalsIgnoreCase("resetchallengeforall")) {
+                if (!Settings.challengeList.contains(split[1].toLowerCase())) {
+                    sender.sendMessage(ChatColor.RED + plugin.myLocale().resetChallengeerrorChallengeDoesNotExist);
+                    return true;
+                }
+                // Convert repeat to time in millis
+                split[2].trim();
+                //plugin.getLogger().info("DEBUG: " + split[2]);
+                if (split[2].length() > 1 && (split[2].toLowerCase().endsWith("m") || split[2].toLowerCase().endsWith("h") || split[2].toLowerCase().endsWith("d"))) {
+                    char unit = split[2].charAt(split[2].length()-1);
+                    String value = split[2].substring(0, split[2].length()-1);
+                    try {
+                        long repeat = 0;
+                        int number = Integer.valueOf(value);
+                        switch (unit) {
+                        case 'm':
+                            // Minutes
+                            repeat = 60000 * number;
+                            break;
+                        case 'h':
+                            repeat = 60000 * 60 * number;
+                            break;
+                        case 'd':
+                            repeat = 60000 * 60 * 24 * number;
+                            break;
+                        }
+                        // Reset all the players online
+                        plugin.getChallenges().resetChallengeForAll(split[1].toLowerCase(), repeat, split[2]);
+                        sender.sendMessage(ChatColor.GREEN + plugin.myLocale().generalSuccess);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        sender.sendMessage(ChatColor.RED + "Format for repeat time must is [integer number][m/h/d] (minutes, hours, days), e.g. 5h");
+                        return true; 
+                    }
+                } else {
+                    sender.sendMessage(ChatColor.RED + "Format for repeat time must is [integer number][m/h/d] (minutes, hours, days), e.g. 5h");
+                    return true;
+                }
+
+                return true;
+            }
             // Confirm purge unowned
-            if (split[0].equalsIgnoreCase("purge")) {
+            else if (split[0].equalsIgnoreCase("purge")) {
                 if (purgeFlag) {
                     sender.sendMessage(ChatColor.RED + plugin.myLocale().purgealreadyRunning);
                     return true;
@@ -2285,11 +2360,11 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
             case 0:
             case 1:
                 options.addAll(Arrays.asList("reload", "topten", "unregister",
-                        "delete", "completechallenge", "resetchallenge",
-                        "resetallchallenges", "purge", "info", "info", "info",
+                        "delete", "completechallenge", "resetchallenge", "resetchallengeforall",
+                        "resetallchallenges", "purge", "info", "info", "info", "listchallengeresets",
                         "clearreset", "clearresetall", "setbiome", "topbreeders", "team",
                         "name", "setdeaths", "settingsreset", "setrange", "addrange",
-                        "resetname", "register", "cobblestats"));
+                        "resetname", "register", "cobblestats", "clearchallengereset"));
                 break;
             case 2:
                 if (args[0].equalsIgnoreCase("name") || args[0].equalsIgnoreCase("resetname") || args[0].equalsIgnoreCase("setdeaths")) {
@@ -2330,6 +2405,12 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                     for (SettingsFlag flag: SettingsFlag.values()) {
                         options.add(flag.toString());
                     }
+                }
+                if (args[0].equalsIgnoreCase("resetchallengeforall")) {
+                    options.addAll(Settings.challengeList);
+                }
+                if (args[0].equalsIgnoreCase("clearchallengereset")) {
+                    options.addAll(plugin.getChallenges().getRepeatingChallengeResetsRaw());
                 }
                 break;
             case 3:

@@ -20,11 +20,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.UUID;
 
 import net.milkbowl.vault.economy.EconomyResponse;
@@ -75,6 +78,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
     // Database of challenges
     private static LinkedHashMap<String, List<String>> challengeList = new LinkedHashMap<String, List<String>>();
     private HashMap<UUID, List<CPItem>> playerChallengeGUI = new HashMap<UUID, List<CPItem>>();
+    private YamlConfiguration resettingChallenges;
     // Where challenges are stored
     private static FileConfiguration challengeFile = null;
     private static File challengeConfigFile = null;
@@ -83,6 +87,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
         this.plugin = plugin;
         saveDefaultChallengeConfig();
         reloadChallengeConfig();
+        resettingChallenges = Util.loadYamlFile("challengeresets.yml");
     }
 
     /*
@@ -2084,4 +2089,93 @@ public class Challenges implements CommandExecutor, TabCompleter {
     public static LinkedHashMap<String, List<String>> getChallengeList(){
         return challengeList;
     }
+
+    /**
+     * Records the reseting challenge
+     * @param lowerCase
+     */
+    public void resetChallengeForAll(String challenge, long repeat, String entry) {
+        resettingChallenges.set(challenge + ".resettime", System.currentTimeMillis());
+        // TODO: store this entry
+        resettingChallenges.set(challenge + ".repeat", repeat);
+        resettingChallenges.set(challenge + ".duration", entry);
+        Util.saveYamlFile(resettingChallenges, "challengeresets.yml");
+    }
+
+    /**
+     * Checks if a challenge has been reset or not since timestamp
+     * @param challenge
+     * @param timestamp of when challenge was last completed
+     * @return true if reset, false if not
+     */
+    public boolean isChallengeReset(String challenge, long timestamp) {
+        if (resettingChallenges.contains(challenge)) {
+            // Check timestamp
+            long timeToCheck = resettingChallenges.getLong(challenge + ".resettime");
+            long repeat = resettingChallenges.getLong(challenge + ".repeat");
+            //plugin.getLogger().info("DEBUG: repeat = " + repeat);
+            if (repeat > 0) {
+                // TODO: this should be done mathematically, but I'm too tired...
+                int numberOfPeriods = (int)((double)(System.currentTimeMillis() - timeToCheck)/repeat);
+                //plugin.getLogger().info("DEBUG: time diff = " + ((double)(System.currentTimeMillis() - timeToCheck)));
+                //plugin.getLogger().info("DEBUG: number of periods = " + numberOfPeriods);
+                timeToCheck = timeToCheck + numberOfPeriods * repeat;
+                //plugin.getLogger().info("DEBUG: new time to check = " + timeToCheck);
+                /*
+                // Advance the reset time to just before the last one
+                while (System.currentTimeMillis() > timeToCheck + repeat) {
+                    timeToCheck += repeat;
+                }
+                timeToCheck -= repeat;
+                 */
+                resettingChallenges.set(challenge + ".resettime", timeToCheck);
+                Util.saveYamlFile(resettingChallenges, "challengeresets.yml");
+            }
+            if (timeToCheck > timestamp) {
+                // Timestamp is older than reset time
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @return formatted list of reset challenges and their duration
+     */
+    public List<String> getRepeatingChallengeResets() {
+        List<String> result = new ArrayList<String>();
+        for (String challenge : resettingChallenges.getKeys(false)) {
+            long resetTime = resettingChallenges.getLong(challenge + ".resettime");
+            Date date = new Date(resetTime);
+
+            String duration = resettingChallenges.getString(challenge + ".duration","");
+            if (!duration.isEmpty()) {
+                duration = " Repeating: " + duration;
+            }
+            result.add(challenge + ": Reset on " + date.toString() + duration);
+        }
+        if (result.isEmpty()) {
+            result.add(plugin.myLocale().banNone);
+        }
+        return result;
+    }
+    
+    /**
+     * @return set of any challenges in the reset list
+     */
+    public Set<String> getRepeatingChallengeResetsRaw() {
+        return resettingChallenges.getKeys(false);
+    }
+
+    /**
+     * Clears the challenge from the reset list
+     * @param challenge
+     */
+    public void clearChallengeReset(String challenge) {
+        if (resettingChallenges.contains(challenge)) {
+            resettingChallenges.set(challenge, null);
+            Util.saveYamlFile(resettingChallenges, "challengeresets.yml");
+        }
+    }
+
 }
