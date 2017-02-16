@@ -795,6 +795,8 @@ protection:
      PRESSURE_PLATE: false
      # Allow visitors to shear sheep
      SHEARING: false
+     # Spawn eggs can be used by owners
+     SPAWN_EGGS: true
 
 # This section contains the biomes that can be bought or used
 biomesettings:

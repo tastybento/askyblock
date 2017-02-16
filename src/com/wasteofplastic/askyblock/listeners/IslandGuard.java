@@ -680,72 +680,17 @@ public class IslandGuard implements Listener {
         if (DEBUG2) {
             plugin.getLogger().info("on Mob spawn" + e.getEventName());
         }
-        // If not in the right world, return
-        if (!e.getEntity().getWorld().equals(ASkyBlock.getIslandWorld())) {
-            return;
-        }
         // if grid is not loaded yet, return.
         if (plugin.getGrid() == null) {
             return;
         }
-        // Determine flags
-        boolean spawnEggsFlag = Settings.defaultWorldSettings.get(SettingsFlag.SPAWN_EGGS);
-        boolean eggsFlag = Settings.defaultWorldSettings.get(SettingsFlag.EGGS);
-        boolean mobSpawn = Settings.defaultWorldSettings.get(SettingsFlag.MOB_SPAWN);
-        boolean monsterSpawn = Settings.defaultWorldSettings.get(SettingsFlag.MONSTER_SPAWN);
-
-        Island island = plugin.getGrid().getIslandAt(e.getLocation());    
-        if (island != null) {
-            spawnEggsFlag = island.getIgsFlag(SettingsFlag.SPAWN_EGGS);
-            eggsFlag = island.getIgsFlag(SettingsFlag.EGGS);
-            mobSpawn = island.getIgsFlag(SettingsFlag.MOB_SPAWN);
-            monsterSpawn = island.getIgsFlag(SettingsFlag.MONSTER_SPAWN);
-            if (DEBUG2) {
-                plugin.getLogger().info("Island settings are :");
-                plugin.getLogger().info("Island is spawn: " + island.isSpawn());
-                plugin.getLogger().info("Spawn eggs: " + island.getIgsFlag(SettingsFlag.SPAWN_EGGS));
-                plugin.getLogger().info("Eggs: " + island.getIgsFlag(SettingsFlag.EGGS));
-                plugin.getLogger().info("Monsters can spawn naturally: " + island.getIgsFlag(SettingsFlag.MONSTER_SPAWN));
-                plugin.getLogger().info("Animals can spawn naturally: " + island.getIgsFlag(SettingsFlag.MOB_SPAWN));
-            }
-        }
-
-        if (e.getSpawnReason() == SpawnReason.SPAWNER_EGG) {
-            if (!spawnEggsFlag) {
-                // Tell player
-                for (Entity player: e.getLocation().getWorld().getNearbyEntities(e.getLocation(), 8, 8, 8)) {
-                    if (player instanceof Player) {
-                        if (((Player) player).getInventory().getItemInHand().getType().equals(Material.MONSTER_EGG)) {
-                            player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).islandProtected);
-                        }
-                    }
-                }
-                if (DEBUG2)
-                    plugin.getLogger().info("Animal spawn egg cancelled.");
-                e.setCancelled(true);
-            }
+        // If not in the right world, return
+        if (!inWorld(e.getEntity())) {
             return;
         }
-        if (e.getSpawnReason() == SpawnReason.EGG) {
-            if (!eggsFlag) {
-                // Tell player
-                for (Entity player: e.getLocation().getWorld().getNearbyEntities(e.getLocation(), 8, 8, 8)) {
-                    if (player instanceof Player) {
-                        if (((Player) player).getInventory().getItemInHand().getType().equals(Material.MONSTER_EGG)) {
-                            player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).islandProtected);
-                        }
-                    }
-                }
-                if (DEBUG2)
-                    plugin.getLogger().info("Egg cancelled.");
-                e.setCancelled(true);
-            }
-            return;
-        }
-
         // Deal with natural spawning
         if (e.getEntity() instanceof Monster || e.getEntity() instanceof Slime) {
-            if (!monsterSpawn) {
+            if (!actionAllowed(e.getLocation(), SettingsFlag.MONSTER_SPAWN)) {
                 if (DEBUG2)
                     plugin.getLogger().info("Natural monster spawn cancelled.");
                 // Mobs not allowed to spawn
@@ -754,7 +699,7 @@ public class IslandGuard implements Listener {
             }
         }
         if (e.getEntity() instanceof Animals) {
-            if (!mobSpawn) {
+            if (!actionAllowed(e.getLocation(), SettingsFlag.MOB_SPAWN)) {
                 // Animals are not allowed to spawn
                 if (DEBUG2)
                     plugin.getLogger().info("Natural animal spawn cancelled.");
@@ -2144,8 +2089,7 @@ public class IslandGuard implements Listener {
             } else if (e.getMaterial().equals(Material.MONSTER_EGG)) {
                 if (DEBUG)
                     plugin.getLogger().info("DEBUG: allowMonsterEggs = " + island.getIgsFlag(SettingsFlag.SPAWN_EGGS));
-                if ((island == null && Settings.defaultWorldSettings.get(SettingsFlag.SPAWN_EGGS))
-                        || (island !=null && !island.getIgsFlag(SettingsFlag.SPAWN_EGGS))) {
+                if (!actionAllowed(e.getPlayer(),e.getClickedBlock().getLocation(),SettingsFlag.SPAWN_EGGS)) {
                     e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                     e.setCancelled(true);
                 }
@@ -2579,7 +2523,7 @@ public class IslandGuard implements Listener {
         if (island == null) {
             return;
         }
-        if (!island.getIgsFlag(SettingsFlag.BREEDING)) {
+        if (!island.getIgsFlag(SettingsFlag.EGGS)) {
             e.setHatching(false);
             e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
             //e.getPlayer().updateInventory();
