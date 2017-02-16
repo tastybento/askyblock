@@ -635,6 +635,8 @@ public class ASLocale {
 
     public String islandhelpValue;
 
+    public String adminSetRangeUpdated;
+
 
     /**
      * Creates a locale object full of localized strings for a language
@@ -1402,6 +1404,8 @@ public class ASLocale {
         generalSuccess = ChatColor.translateAlternateColorCodes('&', locale.getString("general.success", "Success!"));
         adminHelpReserve = ChatColor.translateAlternateColorCodes('&', locale.getString("adminHelp.reserve", "reserves this spot for player's next island"));
         adminReserveIslandExists = ChatColor.translateAlternateColorCodes('&', locale.getString("adminReserve.islandExists", "There is an island here already! Register the player instead!"));
+        adminSetRangeUpdated = ChatColor.translateAlternateColorCodes('&', locale.getString("adminSetRange.updated", "Island range updated to [number]"));
+
     }
 
     /**

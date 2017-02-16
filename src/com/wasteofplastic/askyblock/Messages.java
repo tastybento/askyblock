@@ -195,8 +195,16 @@ public class Messages {
                 return false;
             }
         }
-        // Player is offline so store the message
-        // getLogger().info("DEBUG: player is offline - storing message");
+        storeMessage(playerUUID, message);
+        return true;
+    }
+
+    /**
+     * Stores a message without any online check
+     * @param playerUUID
+     * @param message
+     */
+    public void storeMessage(UUID playerUUID, String message) {
         List<String> playerMessages = get(playerUUID);
         if (playerMessages != null) {
             playerMessages.add(message);
@@ -204,7 +212,5 @@ public class Messages {
             playerMessages = new ArrayList<String>(Arrays.asList(message));
         }
         put(playerUUID, playerMessages);
-        return true;
     }
-
 }

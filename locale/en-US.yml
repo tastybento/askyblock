@@ -89,6 +89,7 @@ adminSetRange:
   invalid: "Invalid range!"
   set: "Set new range to [number]"
   tip: "Range must be between 10 to [max]"
+  updated: "Island range updated to [number]"
   warning: "Warning - range is greater than island range [max]"
   warning2: "Overlapped islands will act like spawn!"
 adminSetSpawn: 

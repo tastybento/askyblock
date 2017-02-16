@@ -3037,13 +3037,6 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                     if (teamLeader.equals(player.getUniqueId())) {
                                         if (teamMembers.contains(targetPlayer)) {
 
-                                            // Check if online
-                                            if (plugin.getServer().getPlayer(targetPlayer) != null) {
-                                                plugin.getServer().getPlayer(targetPlayer).sendMessage(ChatColor.GREEN + plugin.myLocale(targetPlayer).makeLeaderyouAreNowTheOwner);
-                                            } else {
-                                                plugin.getMessages().setMessage(targetPlayer, plugin.myLocale(player.getUniqueId()).makeLeaderyouAreNowTheOwner);
-                                                // .makeLeadererrorPlayerMustBeOnline
-                                            }
                                             // targetPlayer is the new leader
                                             // plugin.getLogger().info("DEBUG: " +
                                             // plugin.getPlayers().getIslandLevel(teamLeader));
@@ -3068,6 +3061,51 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                             // Create a new team with
                                             addPlayertoTeam(player.getUniqueId(), targetPlayer);
                                             addPlayertoTeam(targetPlayer, targetPlayer);
+
+                                            // Check if online
+                                            Player target = plugin.getServer().getPlayer(targetPlayer);
+                                            if (target == null) {
+                                                plugin.getMessages().setMessage(targetPlayer, plugin.myLocale(player.getUniqueId()).makeLeaderyouAreNowTheOwner);
+
+                                            } else {
+                                                // Online
+                                                plugin.getServer().getPlayer(targetPlayer).sendMessage(ChatColor.GREEN + plugin.myLocale(targetPlayer).makeLeaderyouAreNowTheOwner);
+                                                // Check if new leader has a lower range permission than the island size
+                                                boolean hasARangePerm = false;
+                                                int range = 0;
+                                                for (PermissionAttachmentInfo perms : target.getEffectivePermissions()) {
+                                                    if (perms.getPermission().startsWith(Settings.PERMPREFIX + "island.range.")) {
+                                                        if (perms.getPermission().contains(Settings.PERMPREFIX + "island.range.*")) {
+                                                            // Ignore
+                                                            break;
+                                                        } else {
+                                                            hasARangePerm = true;
+                                                            String[] spl = perms.getPermission().split(Settings.PERMPREFIX + "island.range.");
+                                                            if (spl.length > 1) {
+                                                                range = Math.max(range, Integer.valueOf(spl[1]));
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                                // Only set the island range if the player has a perm to override the default
+                                                if (hasARangePerm) {
+                                                    // Do some sanity checking
+                                                    if (range % 2 != 0) {
+                                                        range--;
+                                                    }
+                                                    // Get island range
+                                                    Island islandByOwner = plugin.getGrid().getIsland(targetPlayer);
+                                                    // Range can go up or down
+                                                    if (range != islandByOwner.getProtectionSize()) {
+                                                        player.sendMessage(ChatColor.GOLD + plugin.myLocale(targetPlayer).adminSetRangeUpdated.replace("[number]", String.valueOf(range)));
+                                                        target.sendMessage(ChatColor.GOLD + plugin.myLocale(targetPlayer).adminSetRangeUpdated.replace("[number]", String.valueOf(range)));
+                                                        plugin.getLogger().info(
+                                                                "Makeleader: Island protection range changed from " + islandByOwner.getProtectionSize() + " to "
+                                                                        + range + " for " + player.getName() + " due to permission.");
+                                                    }
+                                                    islandByOwner.setProtectionSize(range);
+                                                }
+                                            }
                                             plugin.getGrid().saveGrid();
                                             return true;
                                         }
