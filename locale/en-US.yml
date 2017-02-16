@@ -27,6 +27,7 @@ adminHelp:
   infoisland: "provide info on the nearest island"
   kick: "removes player from any team"
   level: "provide detailed island level report on player"
+  listChallengeResets: "lists challenge reset schedules, if any"
   lock: "locks/unlocks player's island"
   purge: "delete inactive islands older than [TimeInDays]."
   purgeallowdisallow: "allow/disallow island to be purged if it meets purge criteria"
@@ -37,6 +38,7 @@ adminHelp:
   reload: "reload configuration from file."
   resetAllChallenges: "resets all of the player's challenges"
   resetChallenge: "marks a challenge as incomplete"
+  resetChallengeForAll: "globally resets a challenge for every player with an optional repetition"
   resetname: "Reset name of player's island"
   resetsign: "Resets the sign you are looking at to the island owner"
   setbiome: "sets leader's island biome"
@@ -75,6 +77,10 @@ adminRegister:
   noIsland: "There is no known island in this area!"
   notSpawn: "You cannot take ownership of spawn!"
   taking: "Taking ownership away from [name]"
+adminResetChallengeForAll:
+  error: "Format for repeat time must is [integer number][m/h/d] (minutes, hours, days), e.g. 5h"
+  repeating: "Repeating [duration]"
+  reset: "Reset [date]"
 adminResetSign: 
   errorExists: "That warp sign is already active and owned by [name]"
   found: "Warp sign found!"

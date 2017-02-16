@@ -103,12 +103,13 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 
     private void help(CommandSender sender, String label) {
         if (!(sender instanceof Player)) {
+            sender.sendMessage(ChatColor.YELLOW  + label + " clearchallengereset <challenge>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpclearChallengeReset);
             sender.sendMessage(ChatColor.YELLOW  + label + " clearreset <player>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpclearReset);
             sender.sendMessage(ChatColor.YELLOW  + label + " clearresetall:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpclearReset);
             if (Settings.useMagicCobbleGen) {
                 sender.sendMessage(ChatColor.YELLOW  + label + " cobblestats: " + ChatColor.WHITE + " " + plugin.myLocale().adminHelpcobbleStats);
             }
-            sender.sendMessage(ChatColor.YELLOW  + label + " completechallenge <player> <challengename>:" + ChatColor.WHITE + " "
+            sender.sendMessage(ChatColor.YELLOW  + label + " completechallenge <player> <challenge>:" + ChatColor.WHITE + " "
                     + plugin.myLocale().adminHelpcompleteChallenge);
             sender.sendMessage(ChatColor.YELLOW  + label + " delete <player>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpdelete);
             sender.sendMessage(ChatColor.YELLOW  + label + " info <player>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpinfo);
@@ -117,13 +118,16 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
             if (!plugin.getServer().getVersion().contains("(MC: 1.7")) {
                 sender.sendMessage(ChatColor.YELLOW  + label + " level <player>: " + ChatColor.WHITE + " " + plugin.myLocale().adminHelplevel);
             }
+            sender.sendMessage(ChatColor.YELLOW  + label + " listchallengeresets: " + ChatColor.WHITE + " " + plugin.myLocale().adminHelplistChallengeResets);
             sender.sendMessage(ChatColor.YELLOW  + label + " lock <player>: " + ChatColor.WHITE + " " + plugin.myLocale().adminHelplock);
             sender.sendMessage(ChatColor.YELLOW  + label + " purge [TimeInDays]:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelppurge);
             sender.sendMessage(ChatColor.YELLOW  + label + " name <player> <island name>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpName);
             sender.sendMessage(ChatColor.YELLOW  + label + " reload:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpreload);
             sender.sendMessage(ChatColor.YELLOW  + label + " resetallchallenges <player>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpresetAllChallenges);
-            sender.sendMessage(ChatColor.YELLOW  + label + " resetchallenge <player> <challengename>:" + ChatColor.WHITE + " "
+            sender.sendMessage(ChatColor.YELLOW  + label + " resetchallenge <player> <challenge>:" + ChatColor.WHITE + " "
                     + plugin.myLocale().adminHelpresetChallenge);
+            sender.sendMessage(ChatColor.YELLOW  + label + " resetchallengeforall <challenge> [time][m/h/d]:" + ChatColor.WHITE + " "
+                    + plugin.myLocale().adminHelpresetChallengeForAll);           
             sender.sendMessage(ChatColor.YELLOW  + label + " resethome <player>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpResetHome);
             sender.sendMessage(ChatColor.YELLOW  + label + " resetname <player>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpResetName);
             sender.sendMessage(ChatColor.YELLOW  + label + " setbiome <leader> <biome>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpsetBiome);
@@ -141,6 +145,9 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
             // Listed in alphabetical order
             Player player = (Player) sender;
             player.sendMessage(plugin.myLocale(player.getUniqueId()).adminHelpHelp);
+            if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.challenges") || player.isOp()) {
+                player.sendMessage(ChatColor.YELLOW + "/" + label + " clearchallengereset <challenge>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpclearChallengeReset);
+            }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.clearreset") || player.isOp()) {
                 player.sendMessage(ChatColor.YELLOW + "/" + label + " clearreset <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpclearReset);
             }
@@ -148,7 +155,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 player.sendMessage(ChatColor.YELLOW + "/" + label + " clearresetall:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpclearReset);
             }
             if (Settings.useMagicCobbleGen && VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.cobblestats") || player.isOp()) {
-                player.sendMessage(ChatColor.YELLOW  + "/" + label + " cobblestats: " + ChatColor.WHITE + " " + plugin.myLocale().adminHelpcobbleStats);
+                player.sendMessage(ChatColor.YELLOW  + "/" + label + " cobblestats: " + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpcobbleStats);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.challenges") || player.isOp()) {
                 player.sendMessage(ChatColor.YELLOW + "/" + label + " completechallenge <player> <challengename>:" + ChatColor.WHITE + " "
@@ -166,6 +173,9 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 player.sendMessage(ChatColor.YELLOW + "/" + label + " info <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpinfo);
                 player.sendMessage(ChatColor.YELLOW + "/" + label + " info challenges <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpinfo);
 
+            }
+            if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.challenges") || player.isOp()) {
+                player.sendMessage(ChatColor.YELLOW + "/" + label + " listchallengeresets: " + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelplistChallengeResets);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.lock") || player.isOp()) {
                 player.sendMessage(ChatColor.YELLOW + "/" + label + " lock <player>: " + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelplock);
@@ -191,8 +201,8 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.challenges") || player.isOp()) {
                 player.sendMessage(ChatColor.YELLOW + "/" + label + " resetchallenge <player> <challengename>:" + ChatColor.WHITE + " "
                         + plugin.myLocale(player.getUniqueId()).adminHelpresetChallenge);
-            }
-            if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.challenges") || player.isOp()) {
+                player.sendMessage(ChatColor.YELLOW + "/" + label + " resetchallengeforall <challenge> [time][m/h/d]:" + ChatColor.WHITE + " "
+                        + plugin.myLocale(player.getUniqueId()).adminHelpresetChallengeForAll);
                 player.sendMessage(ChatColor.YELLOW + "/" + label + " resetallchallenges <player>:" + ChatColor.WHITE + " "
                         + plugin.myLocale(player.getUniqueId()).adminHelpresetAllChallenges);
             }
@@ -334,17 +344,17 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 }
                 return true;
             } else
-            if (split[0].equalsIgnoreCase("cobblestats")) {
-                if (LavaCheck.getStats().size() == 0) {
-                    sender.sendMessage(ChatColor.RED + plugin.myLocale().banNone);
+                if (split[0].equalsIgnoreCase("cobblestats")) {
+                    if (LavaCheck.getStats().size() == 0) {
+                        sender.sendMessage(ChatColor.RED + plugin.myLocale().banNone);
+                        return true;
+                    }
+                    for (Material mat : LavaCheck.getStats().elementSet()) {
+                        sender.sendMessage(mat + ": " + LavaCheck.getStats().count(mat) + "/" + LavaCheck.getStats().size() + " or " 
+                                + ((int)((double)LavaCheck.getStats().count(mat)/LavaCheck.getStats().size()*100)) + "%");
+                    }
                     return true;
                 }
-                for (Material mat : LavaCheck.getStats().elementSet()) {
-                    sender.sendMessage(mat + ": " + LavaCheck.getStats().count(mat) + "/" + LavaCheck.getStats().size() + " or " 
-                            + ((int)((double)LavaCheck.getStats().count(mat)/LavaCheck.getStats().size()*100)) + "%");
-                }
-                return true;
-            }
             if (split[0].equalsIgnoreCase("setdeaths")) {
                 sender.sendMessage(ChatColor.YELLOW  + label + " setdeaths <player> <number>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpsetDeaths);
                 return true;
@@ -813,7 +823,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                     }
                 }
             }
-            
+
             if (split[0].equalsIgnoreCase("clearchallengereset")) {
                 split[1] = split[1].toLowerCase();
                 if (!Settings.challengeList.contains(split[1])) {
@@ -826,7 +836,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 sender.sendMessage(ChatColor.GREEN + plugin.myLocale().generalSuccess);
 
                 return true;
-            }if (split[0].equalsIgnoreCase("resetchallengeforall")) {
+            } else if (split[0].equalsIgnoreCase("resetchallengeforall")) {
                 if (!Settings.challengeList.contains(split[1].toLowerCase())) {
                     sender.sendMessage(ChatColor.RED + plugin.myLocale().resetChallengeerrorChallengeDoesNotExist);
                     return true;
@@ -1581,11 +1591,11 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                         sender.sendMessage(ChatColor.GREEN + plugin.myLocale().generalSuccess);
                     } catch (Exception e) {
                         e.printStackTrace();
-                        sender.sendMessage(ChatColor.RED + "Format for repeat time must is [integer number][m/h/d] (minutes, hours, days), e.g. 5h");
+                        sender.sendMessage(ChatColor.RED + plugin.myLocale().adminResetChallengeForAllError);
                         return true; 
                     }
                 } else {
-                    sender.sendMessage(ChatColor.RED + "Format for repeat time must is [integer number][m/h/d] (minutes, hours, days), e.g. 5h");
+                    sender.sendMessage(ChatColor.RED + plugin.myLocale().adminResetChallengeForAllError);
                     return true;
                 }
 
@@ -2492,6 +2502,9 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                     options.add("completechallenge");
                     options.add("resetchallenge");
                     options.add("resetallchallenges");
+                    options.add("listchallengeresets");
+                    options.add("resetchallengeforall");
+                    options.add("clearchallengereset");
                 }
                 if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.info") || player.isOp()) {
                     options.add("info");
@@ -2563,6 +2576,14 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.challenges") || player.isOp())
                         && args[0].equalsIgnoreCase("resetallchallenges")) {
                     options.addAll(Util.getOnlinePlayerList());
+                }
+                if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.challenges") || player.isOp())
+                        && args[0].equalsIgnoreCase("resetchallengeforall")) {
+                    options.addAll(Settings.challengeList);
+                }
+                if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.challenges") || player.isOp())
+                        && args[0].equalsIgnoreCase("clearchallengereset")) {
+                    options.addAll(plugin.getChallenges().getRepeatingChallengeResetsRaw());
                 }
                 if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.info") || player.isOp())
                         && args[0].equalsIgnoreCase("info")) {

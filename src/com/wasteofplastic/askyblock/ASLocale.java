@@ -637,6 +637,18 @@ public class ASLocale {
 
     public String adminSetRangeUpdated;
 
+    public String adminResetChallengeForAllError;
+
+    public String adminHelpresetChallengeForAll;
+
+    public String adminHelplistChallengeResets;
+
+    public String adminHelpclearChallengeReset;
+
+    public String adminResetChallengeForAllRepeating;
+
+    public String adminResetChallengeForAllReset;
+
 
     /**
      * Creates a locale object full of localized strings for a language
@@ -1118,10 +1130,15 @@ public class ASLocale {
         adminHelpunregister = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("adminHelp.unregister", "deletes a player without deleting the island blocks"));
         adminHelpdelete = ChatColor.translateAlternateColorCodes('&', locale.getString("adminHelp.delete", "delete an island (removes blocks)"));
+        adminHelpclearChallengeReset = ChatColor.translateAlternateColorCodes('&', locale.getString("adminHelp.clearChallengeReset", "clear a global challenge reset")); 
         adminHelpcompleteChallenge = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("adminHelp.completeChallenge", "marks a challenge as complete"));
         adminHelpresetChallenge = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("adminHelp.resetChallenge", "marks a challenge as incomplete"));
+        adminHelpresetChallengeForAll = ChatColor.translateAlternateColorCodes('&',
+                locale.getString("adminHelp.resetChallengeForAll", "globally resets a challenge for every player with an optional repetition"));
+        adminHelplistChallengeResets = ChatColor.translateAlternateColorCodes('&',
+                locale.getString("adminHelp.listChallengeResets", "lists challenge reset schedules, if any"));
         adminHelpresetAllChallenges = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("adminHelp.resetAllChallenges", "resets all of the player's challenges"));
         adminHelppurge = ChatColor.translateAlternateColorCodes('&',
@@ -1362,6 +1379,9 @@ public class ASLocale {
         adminSetHomeNoneFound = ChatColor.translateAlternateColorCodes('&', locale.getString("adminSetHome.noneFound", "No safe location found!"));
         adminSetHomeHomeSet = ChatColor.translateAlternateColorCodes('&', locale.getString("adminSetHome.homeSet", "Home set to [location]"));
         adminSetHomeNotOnPlayersIsland = ChatColor.translateAlternateColorCodes('&', locale.getString("adminSetHome.notOnPlayersIsland", "You are not on the player's island"));
+        adminResetChallengeForAllError = ChatColor.translateAlternateColorCodes('&', locale.getString("adminResetChallengeForAll.error", "Format for repeat time must is [integer number][m/h/d] (minutes, hours, days), e.g. 5h"));
+        adminResetChallengeForAllRepeating = ChatColor.translateAlternateColorCodes('&', locale.getString("adminResetChallengeForAll.repeating", "Repeating [duration]"));
+        adminResetChallengeForAllReset = ChatColor.translateAlternateColorCodes('&', locale.getString("adminResetChallengeForAll.reset", "Reset [date]"));       
         adminHelpResetSign = ChatColor.translateAlternateColorCodes('&', locale.getString("adminHelp.resetSign", "Resets the sign you are looking at to the island owner"));
         adminResetSignNoSign = ChatColor.translateAlternateColorCodes('&', locale.getString("adminResetSign.noSign", "You must be looking at a sign post to run this command."));
         adminResetSignFound = ChatColor.translateAlternateColorCodes('&', locale.getString("adminResetSign.found", "Warp Sign found!"));

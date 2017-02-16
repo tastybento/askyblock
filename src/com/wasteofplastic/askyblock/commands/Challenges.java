@@ -2150,9 +2150,9 @@ public class Challenges implements CommandExecutor, TabCompleter {
 
             String duration = resettingChallenges.getString(challenge + ".duration","");
             if (!duration.isEmpty()) {
-                duration = " Repeating: " + duration;
+                duration = plugin.myLocale().adminResetChallengeForAllRepeating.replace("[duration]", duration);
             }
-            result.add(challenge + ": Reset on " + date.toString() + duration);
+            result.add(challenge + ": " + plugin.myLocale().adminResetChallengeForAllReset.replace("[date]",date.toString()) + " " + duration);
         }
         if (result.isEmpty()) {
             result.add(plugin.myLocale().banNone);
