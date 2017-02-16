@@ -475,4 +475,22 @@ public class ASkyBlockAPI {
     public LinkedHashMap<String, List<String>> getAllChallenges(){
     	return Challenges.getChallengeList();
     }
+    
+    /**
+     * Get the number of resets left for this player
+     * @param playerUUID
+     * @return Number of resets left
+     */
+    public int getResetsLeft(UUID playerUUID) {
+        return plugin.getPlayers().getResetsLeft(playerUUID);
+    }
+    
+    /**
+     * Set the number of resets left for this player
+     * @param playerUUID
+     * @param resets
+     */
+    public void setResetsLeft(UUID playerUUID, int resets) {
+        plugin.getPlayers().setResetsLeft(playerUUID, resets);
+    }
 }
