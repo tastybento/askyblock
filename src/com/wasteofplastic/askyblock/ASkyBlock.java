@@ -577,9 +577,9 @@ public class ASkyBlock extends JavaPlugin {
         if (updateCheck != null) {
             if (updateCheck.getResult().equals(UpdateResult.UPDATE_AVAILABLE)) {
                 // Player login
-                p.sendMessage(ChatColor.GOLD + updateCheck.getLatestName() + " is available! You are running V" + getDescription().getVersion());
-                p.sendMessage(ChatColor.RED + "Update at:");
-                p.sendMessage(ChatColor.RED + getUpdateCheck().getLatestFileLink());
+                Util.sendMessage(p, ChatColor.GOLD + updateCheck.getLatestName() + " is available! You are running V" + getDescription().getVersion());
+                Util.sendMessage(p, ChatColor.RED + "Update at:");
+                Util.sendMessage(p, ChatColor.RED + getUpdateCheck().getLatestFileLink());
             }
         }
 

@@ -41,6 +41,7 @@ import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.Island.SettingsFlag;
 import com.wasteofplastic.askyblock.Settings;
+import com.wasteofplastic.askyblock.util.Util;
 
 public class SettingsPanel implements Listener {
     // Island Guard Settings Panel
@@ -266,7 +267,7 @@ public class SettingsPanel implements Listener {
                             long secondsLeft = Settings.pvpRestartCooldown - (System.currentTimeMillis() - setTime) / 1000;
                             //plugin.getLogger().info("DEBUG: seconds left = " + secondsLeft);
                             if (secondsLeft > 0) {
-                                player.sendMessage(ChatColor.RED + "You must wait " + secondsLeft + " seconds until you can do that again!");
+                                Util.sendMessage(player, ChatColor.RED + "You must wait " + secondsLeft + " seconds until you can do that again!");
                                 return;
                             }
                             // Tidy up
@@ -276,9 +277,9 @@ public class SettingsPanel implements Listener {
                         for (Player p : plugin.getServer().getOnlinePlayers()) {
                             if (island.onIsland(p.getLocation())) {
                                 if (flag.equals(SettingsFlag.NETHER_PVP)) {
-                                    p.sendMessage(ChatColor.RED + "" + ChatColor.BOLD + plugin.myLocale(p.getUniqueId()).igs.get(SettingsFlag.NETHER_PVP) + " " + plugin.myLocale(p.getUniqueId()).igsAllowed);
+                                    Util.sendMessage(p, ChatColor.RED + "" + ChatColor.BOLD + plugin.myLocale(p.getUniqueId()).igs.get(SettingsFlag.NETHER_PVP) + " " + plugin.myLocale(p.getUniqueId()).igsAllowed);
                                 } else {
-                                    p.sendMessage(ChatColor.RED + "" + ChatColor.BOLD + plugin.myLocale(p.getUniqueId()).igs.get(SettingsFlag.PVP) + " " + plugin.myLocale(p.getUniqueId()).igsAllowed);
+                                    Util.sendMessage(p, ChatColor.RED + "" + ChatColor.BOLD + plugin.myLocale(p.getUniqueId()).igs.get(SettingsFlag.PVP) + " " + plugin.myLocale(p.getUniqueId()).igsAllowed);
                                 }
 
                                 if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
@@ -327,9 +328,9 @@ public class SettingsPanel implements Listener {
                             if (island.onIsland(p.getLocation())) {
                                 // Deactivate PVP
                                 if (flag.equals(SettingsFlag.NETHER_PVP)) {
-                                    p.sendMessage(ChatColor.GREEN + plugin.myLocale(p.getUniqueId()).igs.get(SettingsFlag.NETHER_PVP) + " " + plugin.myLocale(p.getUniqueId()).igsDisallowed);
+                                    Util.sendMessage(p, ChatColor.GREEN + plugin.myLocale(p.getUniqueId()).igs.get(SettingsFlag.NETHER_PVP) + " " + plugin.myLocale(p.getUniqueId()).igsDisallowed);
                                 } else {
-                                    p.sendMessage(ChatColor.GREEN + plugin.myLocale(p.getUniqueId()).igs.get(SettingsFlag.PVP) + " " + plugin.myLocale(p.getUniqueId()).igsDisallowed);
+                                    Util.sendMessage(p, ChatColor.GREEN + plugin.myLocale(p.getUniqueId()).igs.get(SettingsFlag.PVP) + " " + plugin.myLocale(p.getUniqueId()).igsDisallowed);
                                 }
                                 if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
                                     p.getWorld().playSound(p.getLocation(), Sound.valueOf("FIREWORK_TWINKLE"), 1F, 1F);

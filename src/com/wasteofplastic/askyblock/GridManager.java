@@ -20,7 +20,6 @@ package com.wasteofplastic.askyblock;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -35,7 +34,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -1259,9 +1257,9 @@ public class GridManager {
         player.teleport(home);
         //player.sendBlockChange(home, Material.GLOWSTONE, (byte)0);
         if (number ==1 ) {
-            player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).islandteleport);
+            Util.sendMessage(player, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).islandteleport);
         } else {
-            player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).islandteleport + " #" + number);
+            Util.sendMessage(player, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).islandteleport + " #" + number);
         }
         return true;
 
@@ -1275,19 +1273,19 @@ public class GridManager {
     public void homeSet(Player player, int number) {
         // Check if player is in their home world        
         if (!player.getWorld().equals(plugin.getPlayers().getIslandLocation(player.getUniqueId()).getWorld())) {
-            player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).setHomeerrorNotOnIsland);
+            Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).setHomeerrorNotOnIsland);
             return; 
         }
         // Check if player is on island, ignore coops
         if (!plugin.getGrid().playerIsOnIsland(player, false)) {
-            player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).setHomeerrorNotOnIsland);
+            Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).setHomeerrorNotOnIsland);
             return;
         }
         plugin.getPlayers().setHomeLocation(player.getUniqueId(), player.getLocation(), number);
         if (number == 1) {
-            player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).setHomehomeSet);
+            Util.sendMessage(player, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).setHomehomeSet);
         } else {
-            player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).setHomehomeSet + " #" + number);
+            Util.sendMessage(player, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).setHomehomeSet + " #" + number);
         }
     }
 

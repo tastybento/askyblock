@@ -43,6 +43,7 @@ import com.google.common.collect.Multiset;
 import com.google.common.collect.Multiset.Entry;
 import com.google.common.collect.Multisets;
 import com.wasteofplastic.askyblock.events.IslandLevelEvent;
+import com.wasteofplastic.askyblock.util.Util;
 
 /**
  * A class that calculates the level of an island very quickly by copying island
@@ -68,7 +69,7 @@ public class LevelCalcByChunk {
      */
     public LevelCalcByChunk(final ASkyBlock plugin, final UUID targetPlayer, final CommandSender sender, final boolean report) {
         if (report && plugin.getServer().getVersion().contains("(MC: 1.7")) { 
-            sender.sendMessage(ChatColor.RED + "This option is not available in V1.7 servers, sorry.");
+            Util.sendMessage(sender, ChatColor.RED + "This option is not available in V1.7 servers, sorry.");
             return;
         }
         //plugin.getLogger().info("DEBUG: running level calc " + silent);
@@ -396,10 +397,10 @@ public class LevelCalcByChunk {
                                 if (!(sender instanceof Player)) {
                                     // Console  
                                     if (!report) {
-                                        sender.sendMessage(ChatColor.GREEN + plugin.myLocale().islandislandLevelis + " " + ChatColor.WHITE + plugin.getPlayers().getIslandLevel(targetPlayer));
+                                        Util.sendMessage(sender, ChatColor.GREEN + plugin.myLocale().islandislandLevelis + " " + ChatColor.WHITE + plugin.getPlayers().getIslandLevel(targetPlayer));
                                     } else {
                                         for (String line: reportLines) {
-                                            sender.sendMessage(line);
+                                            Util.sendMessage(sender, line);
                                         }
                                     }
                                 } else {
@@ -415,7 +416,7 @@ public class LevelCalcByChunk {
                                             if (Settings.deathpenalty != 0) {
                                                 message += " " + plugin.myLocale(((Player)sender).getUniqueId()).levelDeaths.replace("[number]", String.valueOf(plugin.getPlayers().getDeaths(targetPlayer)));
                                             }
-                                            sender.sendMessage(message);
+                                            Util.sendMessage(sender, message);
                                             //Send player how many points are required to reach next island level
                                             int requiredPoints = (Settings.levelCost * (plugin.getPlayers().getIslandLevel(targetPlayer) + 1 + levelHandicap)) - ((blocks * levelMultiplier) - (deathHandicap * Settings.deathpenalty));
                                             
@@ -423,12 +424,12 @@ public class LevelCalcByChunk {
                                             
                                             String toNextLevel = ChatColor.GREEN + plugin.myLocale(((Player)sender).getUniqueId()).islandrequiredPointsToNextLevel.replace("[points]", String.valueOf(requiredPoints));
                                             toNextLevel = toNextLevel.replace("[next]", String.valueOf(plugin.getPlayers().getIslandLevel(targetPlayer) + 1));
-                                            sender.sendMessage(toNextLevel);
+                                            Util.sendMessage(sender, toNextLevel);
                                         }
                                     } else {
                                         if (((Player)sender).isOnline()) {
                                             for (String line: reportLines) {
-                                                sender.sendMessage(line);
+                                                Util.sendMessage(sender, line);
                                             }
                                         }
                                     }

@@ -51,6 +51,7 @@ import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.Island.SettingsFlag;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.Settings.GameType;
+import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
 /**
@@ -386,7 +387,7 @@ public class AcidEffect implements Listener {
                     }
                 }
                 if (!otherOb) {
-                    e.getPlayer().sendMessage(ChatColor.YELLOW + plugin.myLocale(e.getPlayer().getUniqueId()).changingObsidiantoLava);
+                    Util.sendMessage(e.getPlayer(), ChatColor.YELLOW + plugin.myLocale(e.getPlayer().getUniqueId()).changingObsidiantoLava);
                     e.getPlayer().getInventory().setItemInHand(null);
                     // e.getPlayer().getInventory().removeItem(new
                     // ItemStack(Material.BUCKET, 1));

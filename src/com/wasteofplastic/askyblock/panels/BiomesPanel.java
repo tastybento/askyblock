@@ -119,7 +119,7 @@ public class BiomesPanel implements Listener {
             }
             return newPanel;
         } else {
-            player.sendMessage(ChatColor.RED + plugin.myLocale().errorCommandNotReady);
+            Util.sendMessage(player, ChatColor.RED + plugin.myLocale().errorCommandNotReady);
             plugin.getLogger().warning("There are no biomes in config.yml so /island biomes will not work!");
         }
         return null;
@@ -166,16 +166,16 @@ public class BiomesPanel implements Listener {
             // Check this player has an island
             Island island = plugin.getGrid().getIsland(playerUUID);
             if (island == null) {
-                player.sendMessage(ChatColor.RED + plugin.myLocale().errorNoIsland);
+                Util.sendMessage(player, ChatColor.RED + plugin.myLocale().errorNoIsland);
                 return;
             }
             // Check ownership
             if (!island.getOwner().equals(playerUUID)) {
-                player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).levelerrornotYourIsland);
+                Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).levelerrornotYourIsland);
                 return; 
             }
             if (!plugin.getGrid().playerIsOnIsland(player)) {
-                player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).challengeserrorNotOnIsland);
+                Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).challengeserrorNotOnIsland);
                 return;
             }
             Biome biome = thisPanel.get(slot).getBiome();
@@ -186,11 +186,11 @@ public class BiomesPanel implements Listener {
                     double cost = thisPanel.get(slot).getPrice();
                     if (cost > 0D) {
                         if (!VaultHelper.econ.has(player, Settings.worldName, cost)) {
-                            player.sendMessage(ChatColor.RED + plugin.myLocale().minishopYouCannotAfford.replace("[description]", VaultHelper.econ.format(cost)));
+                            Util.sendMessage(player, ChatColor.RED + plugin.myLocale().minishopYouCannotAfford.replace("[description]", VaultHelper.econ.format(cost)));
                             return;
                         } else {
                             VaultHelper.econ.withdrawPlayer(player, Settings.worldName, cost);
-                            player.sendMessage(ChatColor.GREEN + plugin.myLocale().biomeYouBought.replace("[cost]", VaultHelper.econ.format(cost)));
+                            Util.sendMessage(player, ChatColor.GREEN + plugin.myLocale().biomeYouBought.replace("[cost]", VaultHelper.econ.format(cost)));
                         }
                     }
                 }
@@ -199,7 +199,7 @@ public class BiomesPanel implements Listener {
             player.closeInventory(); // Closes the inventory
             // Actually set the biome
             setIslandBiome(island, biome);
-            player.sendMessage(ChatColor.GREEN + plugin.myLocale().biomeSet.replace("[biome]", thisPanel.get(slot).getName()));
+            Util.sendMessage(player, ChatColor.GREEN + plugin.myLocale().biomeSet.replace("[biome]", thisPanel.get(slot).getName()));
         }
         return;
     }

@@ -94,12 +94,12 @@ public class WarpSigns implements Listener {
                                 Bukkit.getPluginManager().callEvent(new WarpRemoveEvent(plugin, s.getLocation(), player.getUniqueId()));
                             } else if (player.isOp()  || player.hasPermission(Settings.PERMPREFIX + "mod.removesign")) {
                                 // Op or mod removed sign
-                                player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).warpsremoved);
+                                Util.sendMessage(player, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).warpsremoved);
                                 removeWarp(s.getLocation());
                                 Bukkit.getPluginManager().callEvent(new WarpRemoveEvent(plugin, s.getLocation(), player.getUniqueId()));
                             } else {
                                 // Someone else's sign - not allowed
-                                player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorNoRemove);
+                                Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorNoRemove);
                                 e.setCancelled(true);
                             }
                         }
@@ -130,16 +130,16 @@ public class WarpSigns implements Listener {
                     //plugin.getLogger().info("DEBUG: Welcome sign detected");
                     // Welcome sign detected - check permissions
                     if (!(VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.addwarp"))) {
-                        player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorNoPerm);
+                        Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorNoPerm);
                         return;
                     }
                     if(!(ASkyBlockAPI.getInstance().getIslandLevel(player.getUniqueId()) > Settings.warpLevelsRestriction)){
-                        player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorNotEnoughLevel);
+                        Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorNotEnoughLevel);
                     	return;
                     }
                     // Check that the player is on their island
                     if (!(plugin.getGrid().playerIsOnIsland(player))) {
-                        player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorNoPlace);
+                        Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorNoPlace);
                         e.setLine(0, ChatColor.RED + plugin.myLocale().warpswelcomeLine);
                         return;
                     }
@@ -150,13 +150,13 @@ public class WarpSigns implements Listener {
                         // First time the sign has been placed or this is a new
                         // sign
                         if (addWarp(player.getUniqueId(), e.getBlock().getLocation())) {
-                            player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).warpssuccess);
+                            Util.sendMessage(player, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).warpssuccess);
                             e.setLine(0, ChatColor.GREEN + plugin.myLocale().warpswelcomeLine);
                             for (int i = 1; i<4; i++) {
                                 e.setLine(i, ChatColor.translateAlternateColorCodes('&', e.getLine(i)));
                             }
                         } else {
-                            player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorDuplicate);
+                            Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorDuplicate);
                             e.setLine(0, ChatColor.RED + plugin.myLocale().warpswelcomeLine);
                             for (int i = 1; i<4; i++) {
                                 e.setLine(i, ChatColor.translateAlternateColorCodes('&', e.getLine(i)));
@@ -178,7 +178,7 @@ public class WarpSigns implements Listener {
                                     //plugin.getLogger().info("DEBUG: Old sign had a green welcome");
                                     oldSign.setLine(0, ChatColor.RED + plugin.myLocale().warpswelcomeLine);
                                     oldSign.update();
-                                    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpsdeactivate);
+                                    Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpsdeactivate);
                                     removeWarp(player.getUniqueId());
                                     Bukkit.getPluginManager().callEvent(new WarpRemoveEvent(plugin, oldSign.getLocation(), player.getUniqueId()));
                                 }
@@ -186,10 +186,10 @@ public class WarpSigns implements Listener {
                         }
                         // Set up the warp
                         if (addWarp(player.getUniqueId(), e.getBlock().getLocation())) {
-                            player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).warpssuccess);
+                            Util.sendMessage(player, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).warpssuccess);
                             e.setLine(0, ChatColor.GREEN + plugin.myLocale().warpswelcomeLine);
                         } else {
-                            player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorDuplicate);
+                            Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorDuplicate);
                             e.setLine(0, ChatColor.RED + plugin.myLocale().warpswelcomeLine);
                         }
                     }
@@ -360,7 +360,7 @@ public class WarpSigns implements Listener {
                 Player p = plugin.getServer().getPlayer(en.getKey());
                 if (p != null) {
                     // Inform the player
-                    p.sendMessage(ChatColor.RED + plugin.myLocale(p.getUniqueId()).warpssignRemoved);
+                    Util.sendMessage(p, ChatColor.RED + plugin.myLocale(p.getUniqueId()).warpssignRemoved);
                 } else {
                     plugin.getMessages().setMessage(en.getKey(), ChatColor.RED + plugin.myLocale(en.getKey()).warpssignRemoved);
                 }

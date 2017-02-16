@@ -45,6 +45,7 @@ import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.Island.SettingsFlag;
 import com.wasteofplastic.askyblock.Settings;
+import com.wasteofplastic.askyblock.util.Util;
 
 public class WarpPanel implements Listener {
     private ASkyBlock plugin;
@@ -290,7 +291,7 @@ public class WarpPanel implements Listener {
                     player.performCommand(Settings.ISLANDCOMMAND + " warps " + (panelNumber-1));
                 } else {
                     player.closeInventory();
-                    player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).warpswarpToPlayersSign.replace("<player>", command));
+                    Util.sendMessage(player, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).warpswarpToPlayersSign.replace("<player>", command));
                     player.performCommand(Settings.ISLANDCOMMAND + " warp " + command);
                 }
             }

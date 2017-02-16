@@ -369,7 +369,7 @@ public class ControlPanel implements Listener {
                     }
                     // player.closeInventory(); // Closes the inventory
                     if (!message.isEmpty()) {
-                        player.sendMessage(message);
+                        Util.sendMessage(player, message);
                     }
                 }
             }

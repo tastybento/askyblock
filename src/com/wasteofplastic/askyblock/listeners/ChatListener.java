@@ -17,7 +17,6 @@
 
 package com.wasteofplastic.askyblock.listeners;
 
-import java.text.DecimalFormat;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -34,6 +33,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Settings;
+import com.wasteofplastic.askyblock.util.Util;
 
 /**
  * This class is to catch chats and do two things: (1) substitute in the island level to the chat string
@@ -122,7 +122,7 @@ public class ChatListener implements Listener {
 			for (UUID teamMember : teamMembers) {
 				Player teamPlayer = plugin.getServer().getPlayer(teamMember);
 				if (teamPlayer != null) {
-					teamPlayer.sendMessage(message);
+					Util.sendMessage(teamPlayer, message);
 					if (!teamMember.equals(playerUUID)) {
 						onLine = true;
 					}
@@ -132,20 +132,20 @@ public class ChatListener implements Listener {
 			if (onLine) {
 				for (Player onlinePlayer: plugin.getServer().getOnlinePlayers()) {
 					if (spies.contains(onlinePlayer.getUniqueId()) && onlinePlayer.hasPermission(Settings.PERMPREFIX + "mod.spy")) {
-						onlinePlayer.sendMessage(ChatColor.RED + "[TCSpy] " + ChatColor.WHITE + message);
+						Util.sendMessage(onlinePlayer, ChatColor.RED + "[TCSpy] " + ChatColor.WHITE + message);
 					}
 				}
 				//Log teamchat
 				if(Settings.logTeamChat) plugin.getLogger().info(ChatColor.stripColor(message));
 			}
 			if (!onLine) {
-				player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).teamChatNoTeamAround);
-				player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).teamChatStatusOff);
+				Util.sendMessage(player, ChatColor.RED + plugin.myLocale(playerUUID).teamChatNoTeamAround);
+				Util.sendMessage(player, ChatColor.RED + plugin.myLocale(playerUUID).teamChatStatusOff);
 				teamChatUsers.remove(playerUUID);
 			}
 		} else {
-			player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).teamChatNoTeamAround);
-			player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).teamChatStatusOff);
+			Util.sendMessage(player, ChatColor.RED + plugin.myLocale(playerUUID).teamChatNoTeamAround);
+			Util.sendMessage(player, ChatColor.RED + plugin.myLocale(playerUUID).teamChatStatusOff);
 			// Not in a team any more so delete
 			teamChatUsers.remove(playerUUID);
 		}

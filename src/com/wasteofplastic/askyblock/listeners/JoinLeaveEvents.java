@@ -40,6 +40,7 @@ import com.wasteofplastic.askyblock.PlayerCache;
 import com.wasteofplastic.askyblock.Scoreboards;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.TopTen;
+import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
 public class JoinLeaveEvents implements Listener {
@@ -310,7 +311,7 @@ public class JoinLeaveEvents implements Listener {
                     && !VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.bypassprotect")) {
                 if (DEBUG)
                     plugin.getLogger().info("DEBUG: No bypass - teleporting");
-                player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).lockIslandLocked);
+                Util.sendMessage(player, ChatColor.RED + plugin.myLocale(playerUUID).lockIslandLocked);
                 plugin.getGrid().homeTeleport(player);
             }
         }
@@ -337,10 +338,10 @@ public class JoinLeaveEvents implements Listener {
             plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
                 @Override
                 public void run() {
-                    player.sendMessage(ChatColor.AQUA + plugin.myLocale(playerUUID).newsHeadline);
+                    Util.sendMessage(player, ChatColor.AQUA + plugin.myLocale(playerUUID).newsHeadline);
                     int i = 1;
                     for (String message : messages) {
-                        player.sendMessage(i++ + ": " + message);
+                        Util.sendMessage(player, i++ + ": " + message);
                     }
                     // Clear the messages
                     plugin.getMessages().clearMessages(playerUUID);

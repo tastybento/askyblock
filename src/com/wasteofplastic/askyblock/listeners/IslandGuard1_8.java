@@ -96,7 +96,7 @@ public class IslandGuard1_8 implements Listener {
                 return;
             }
             e.setCancelled(true);
-            e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
+            Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
         }
     }
 
@@ -173,7 +173,7 @@ public class IslandGuard1_8 implements Listener {
                     int count = island.getTileEntityCount(Material.ARMOR_STAND);
                     //plugin.getLogger().info("1.8 " + "DEBUG: count is " + count + " limit is " + Settings.limitedBlocks.get("ARMOR_STAND"));
                     if (Settings.limitedBlocks.get("ARMOR_STAND") <= count) {
-                        e.getPlayer().sendMessage(ChatColor.RED + (plugin.myLocale(e.getPlayer().getUniqueId()).entityLimitReached.replace("[entity]",
+                        Util.sendMessage(e.getPlayer(), ChatColor.RED + (plugin.myLocale(e.getPlayer().getUniqueId()).entityLimitReached.replace("[entity]",
                                 Util.prettifyText(Material.ARMOR_STAND.toString()))).replace("[number]", String.valueOf(Settings.limitedBlocks.get("ARMOR_STAND"))));
                         e.setCancelled(true);
                         return;
@@ -183,7 +183,7 @@ public class IslandGuard1_8 implements Listener {
             }
             // plugin.getLogger().info("1.8 " + "DEBUG: stand place cancelled");
             e.setCancelled(true);
-            e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
+            Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
             e.getPlayer().updateInventory();
         }
 
@@ -221,7 +221,7 @@ public class IslandGuard1_8 implements Listener {
             if (island != null && island.getIgsFlag(SettingsFlag.BREAK_BLOCKS)) {
                 return;
             }
-            p.sendMessage(ChatColor.RED + plugin.myLocale(p.getUniqueId()).islandProtected);
+            Util.sendMessage(p, ChatColor.RED + plugin.myLocale(p.getUniqueId()).islandProtected);
             e.setCancelled(true);
         }
     }

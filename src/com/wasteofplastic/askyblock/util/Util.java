@@ -27,6 +27,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
@@ -332,6 +333,17 @@ public class Util {
             return (NMSAbstraction) clazz.getConstructor().newInstance();
         } else {
             throw new IllegalStateException("Class " + clazz.getName() + " does not implement NMSAbstraction");
+        }
+    }
+    
+    /**
+     * Send a message to sender if message is not empty. Does not include color codes or spaces
+     * @param sender
+     * @param message
+     */
+    public static void sendMessage(CommandSender sender, String message) {
+        if (!ChatColor.stripColor(message).trim().isEmpty()) {
+            sender.sendMessage(message);
         }
     }
 }

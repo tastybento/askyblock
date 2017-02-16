@@ -166,7 +166,7 @@ public class TopTen implements Listener{
                     @Override
                     public void run() {
                         if (sender != null) {
-                            sender.sendMessage(ChatColor.YELLOW + plugin.myLocale().adminTopTenfinished);
+                            Util.sendMessage(sender, ChatColor.YELLOW + plugin.myLocale().adminTopTenfinished);
                         } else {
                             plugin.getLogger().warning("Completed top ten creation.");
                         }
@@ -246,10 +246,10 @@ public class TopTen implements Listener{
     public static boolean topTenShow(final Player player) {
         // Old chat display
         if(Settings.displayIslandTopTenInChat){
-            player.sendMessage(ChatColor.GOLD + plugin.myLocale(player.getUniqueId()).topTenheader);
+            Util.sendMessage(player, ChatColor.GOLD + plugin.myLocale(player.getUniqueId()).topTenheader);
             if (topTenList == null) {
                 topTenCreate();
-                // player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).topTenerrorNotReady);
+                // Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).topTenerrorNotReady);
                 // return true;
             }
             topTenList = MapUtil.sortByValue(topTenList);
@@ -280,11 +280,11 @@ public class TopTen implements Listener{
                         if (memberList.length() > 2) {
                             memberList = memberList.substring(0, memberList.length() - 2);
                         }
-                        player.sendMessage(ChatColor.AQUA + "#" + i + ": " + plugin.getGrid().getIslandName(playerUUID) + ChatColor.AQUA + " (" + memberList + ") - "
+                        Util.sendMessage(player, ChatColor.AQUA + "#" + i + ": " + plugin.getGrid().getIslandName(playerUUID) + ChatColor.AQUA + " (" + memberList + ") - "
                                 + plugin.myLocale(player.getUniqueId()).levelislandLevel + " " + m.getValue());
                     } else {
                         // Island name + Island level
-                        player.sendMessage(ChatColor.AQUA + "#" + i + ": " + plugin.getGrid().getIslandName(playerUUID) + ChatColor.AQUA +  " - " + plugin.myLocale(player.getUniqueId()).levelislandLevel + " "
+                        Util.sendMessage(player, ChatColor.AQUA + "#" + i + ": " + plugin.getGrid().getIslandName(playerUUID) + ChatColor.AQUA +  " - " + plugin.myLocale(player.getUniqueId()).levelislandLevel + " "
                                 + m.getValue());
                     }
                     if (i++ == 10) {

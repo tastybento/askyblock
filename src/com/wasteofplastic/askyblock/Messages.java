@@ -173,7 +173,7 @@ public class Messages {
             // getLogger().info("DEBUG: trying UUID " + member.toString());
             if (!member.equals(playerUUID) && plugin.getServer().getPlayer(member) != null) {
                 // Online player
-                plugin.getServer().getPlayer(member).sendMessage(message);
+                Util.sendMessage(plugin.getServer().getPlayer(member), message);
             }
         }
     }
@@ -191,7 +191,7 @@ public class Messages {
         // Check if player is online
         if (player != null) {
             if (player.isOnline()) {
-                // player.sendMessage(message);
+                // Util.sendMessage(player, message);
                 return false;
             }
         }

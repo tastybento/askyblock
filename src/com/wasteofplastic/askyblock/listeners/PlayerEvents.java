@@ -52,6 +52,7 @@ import com.wasteofplastic.askyblock.Island.SettingsFlag;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.events.IslandEnterEvent;
 import com.wasteofplastic.askyblock.events.IslandExitEvent;
+import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
 /**
@@ -358,7 +359,7 @@ public class PlayerEvents implements Listener {
                 || plugin.getGrid().locationIsOnIsland(e.getPlayer(), e.getItemDrop().getLocation())) {
             return;
         }
-        e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
+        Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
         e.setCancelled(true);
     }
 
@@ -419,8 +420,8 @@ public class PlayerEvents implements Listener {
         // e.getMessage().substring(1).toLowerCase() + "'");
         if (isFalling(e.getPlayer().getUniqueId()) && (Settings.fallingCommandBlockList.contains("*") || Settings.fallingCommandBlockList.contains(e.getMessage().substring(1).toLowerCase()))) {
             // Sorry you are going to die
-            e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).errorNoPermission); 
-            e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).islandcannotTeleport);
+            Util.sendMessage(e.getPlayer(), plugin.myLocale(e.getPlayer().getUniqueId()).errorNoPermission); 
+            Util.sendMessage(e.getPlayer(), plugin.myLocale(e.getPlayer().getUniqueId()).islandcannotTeleport);
             e.setCancelled(true);
         }
     }
@@ -469,7 +470,7 @@ public class PlayerEvents implements Listener {
                 if (DEBUG)
                     plugin.getLogger().info("DEBUG: player is falling");
                 // Sorry you are going to die
-                e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).islandcannotTeleport);
+                Util.sendMessage(e.getPlayer(), plugin.myLocale(e.getPlayer().getUniqueId()).islandcannotTeleport);
                 e.setCancelled(true);
                 // Check if the player is in the void and kill them just in case
                 if (e.getPlayer().getLocation().getBlockY() < 0) {
@@ -516,7 +517,7 @@ public class PlayerEvents implements Listener {
                 }
                 if (DEBUG )
                     plugin.getLogger().info("DEBUG: enderpearl not allowed");
-                e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
+                Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                 e.setCancelled(true);
                 return;
             } else if (!plugin.getServer().getVersion().contains("(MC: 1.8")
@@ -548,7 +549,7 @@ public class PlayerEvents implements Listener {
                         }
                     }
                     if (cancel) {
-                        e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
+                        Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                         e.setCancelled(true);
                     }
                     return;
@@ -573,7 +574,7 @@ public class PlayerEvents implements Listener {
                 plugin.getLogger().info("DEBUG: entering");
             // Entering
             if (islandTo.isLocked() || plugin.getPlayers().isBanned(islandTo.getOwner(),e.getPlayer().getUniqueId())) {
-                e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).lockIslandLocked);
+                Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).lockIslandLocked);
                 if (!plugin.getGrid().locationIsOnIsland(e.getPlayer(), e.getTo()) && !e.getPlayer().isOp()
                         && !VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
                         && !VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypasslock")) {
@@ -587,13 +588,13 @@ public class PlayerEvents implements Listener {
                 if (DEBUG )
                     plugin.getLogger().info("DEBUG: islandTo is locked spawn");
                 if (!plugin.myLocale(e.getPlayer().getUniqueId()).lockEnteringSpawn.isEmpty()) {
-                    e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).lockEnteringSpawn);
+                    Util.sendMessage(e.getPlayer(), plugin.myLocale(e.getPlayer().getUniqueId()).lockEnteringSpawn);
                 }
             } else {
                 if (DEBUG )
                     plugin.getLogger().info("DEBUG: islandTo is locked regular");
                 if (!plugin.myLocale(e.getPlayer().getUniqueId()).lockNowEntering.isEmpty()) {
-                    e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).lockNowEntering.replace("[name]", plugin.getGrid().getIslandName(islandTo.getOwner())));
+                    Util.sendMessage(e.getPlayer(), plugin.myLocale(e.getPlayer().getUniqueId()).lockNowEntering.replace("[name]", plugin.getGrid().getIslandName(islandTo.getOwner())));
                 }
             }
             // Fire entry event
@@ -608,13 +609,13 @@ public class PlayerEvents implements Listener {
                     plugin.getLogger().info("DEBUG: leaving spawn");
                 // Leaving
                 if (!plugin.myLocale(e.getPlayer().getUniqueId()).lockLeavingSpawn.isEmpty()) {
-                    e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).lockLeavingSpawn);
+                    Util.sendMessage(e.getPlayer(), plugin.myLocale(e.getPlayer().getUniqueId()).lockLeavingSpawn);
                 }
             } else {
                 if (DEBUG )
                     plugin.getLogger().info("DEBUG: leaving locked");
                 if (!plugin.myLocale(e.getPlayer().getUniqueId()).lockNowLeaving.isEmpty()) {
-                    e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).lockNowLeaving.replace("[name]", plugin.getGrid().getIslandName(islandFrom.getOwner())));
+                    Util.sendMessage(e.getPlayer(), plugin.myLocale(e.getPlayer().getUniqueId()).lockNowLeaving.replace("[name]", plugin.getGrid().getIslandName(islandFrom.getOwner())));
                 }
             }
             // Fire exit event
@@ -626,7 +627,7 @@ public class PlayerEvents implements Listener {
             // Teleporting from one islands to another
             // Entering
             if (islandTo.isLocked() || plugin.getPlayers().isBanned(islandTo.getOwner(),e.getPlayer().getUniqueId())) {
-                e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).lockIslandLocked);
+                Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).lockIslandLocked);
                 if (!plugin.getGrid().locationIsOnIsland(e.getPlayer(), e.getTo()) && !e.getPlayer().isOp()
                         && !VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
                         && !VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypasslock")) {
@@ -638,14 +639,14 @@ public class PlayerEvents implements Listener {
             }            
             if (islandFrom.isSpawn()) {
                 // Leaving
-                e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).lockLeavingSpawn);
+                Util.sendMessage(e.getPlayer(), plugin.myLocale(e.getPlayer().getUniqueId()).lockLeavingSpawn);
             } else if (islandFrom.getOwner() != null) {
-                e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).lockNowLeaving.replace("[name]", plugin.getGrid().getIslandName(islandFrom.getOwner())));
+                Util.sendMessage(e.getPlayer(), plugin.myLocale(e.getPlayer().getUniqueId()).lockNowLeaving.replace("[name]", plugin.getGrid().getIslandName(islandFrom.getOwner())));
             }
             if (islandTo.isSpawn()) {
-                e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).lockEnteringSpawn);
+                Util.sendMessage(e.getPlayer(), plugin.myLocale(e.getPlayer().getUniqueId()).lockEnteringSpawn);
             } else if (islandTo.getOwner() != null) {
-                e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).lockNowEntering.replace("[name]", plugin.getGrid().getIslandName(islandTo.getOwner())));
+                Util.sendMessage(e.getPlayer(), plugin.myLocale(e.getPlayer().getUniqueId()).lockNowEntering.replace("[name]", plugin.getGrid().getIslandName(islandTo.getOwner())));
             }
             // Fire exit event
             final IslandExitEvent event = new IslandExitEvent(e.getPlayer().getUniqueId(), islandTo, e.getTo());
@@ -710,7 +711,7 @@ public class PlayerEvents implements Listener {
         //plugin.getLogger().info(Settings.visitorCommandBlockList.toString());
         String[] args = e.getMessage().substring(1).toLowerCase().split(" ");
         if (Settings.visitorCommandBlockList.contains(args[0])) {
-            e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
+            Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
             e.setCancelled(true);
         }
     }
