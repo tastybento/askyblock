@@ -1052,12 +1052,14 @@ public class IslandGuard implements Listener {
         }
         // Get the real attacker
         boolean flamingArrow = false;
+        boolean projectile = false;
         Player attacker = null;
         if (e.getDamager() instanceof Player) {
             attacker = (Player)e.getDamager();
         } else if (e.getDamager() instanceof Projectile) {
             if (DEBUG)
                 plugin.getLogger().info("DEBUG: Projectile damage");
+            projectile = true;
             // Find out who fired the arrow
             Projectile p = (Projectile) e.getDamager();
             if (DEBUG)
@@ -1094,6 +1096,8 @@ public class IslandGuard implements Listener {
             attacker.sendMessage(ChatColor.RED + plugin.myLocale(attacker.getUniqueId()).islandProtected);
             if (flamingArrow)
                 e.getEntity().setFireTicks(0);
+            if (projectile)
+                e.getDamager().remove();
             e.setCancelled(true);
             return;
         }
@@ -1122,6 +1126,8 @@ public class IslandGuard implements Listener {
             attacker.sendMessage(ChatColor.RED + plugin.myLocale(attacker.getUniqueId()).islandProtected);
             if (flamingArrow)
                 e.getEntity().setFireTicks(0);
+            if (projectile)
+                e.getDamager().remove();
             e.setCancelled(true);
             return;
         }
@@ -1138,6 +1144,8 @@ public class IslandGuard implements Listener {
             attacker.sendMessage(ChatColor.RED + plugin.myLocale(attacker.getUniqueId()).islandProtected);
             if (flamingArrow)
                 e.getEntity().setFireTicks(0);
+            if (projectile)
+                e.getDamager().remove();
             e.setCancelled(true);
             return;
         }
@@ -1157,6 +1165,8 @@ public class IslandGuard implements Listener {
                 attacker.sendMessage(ChatColor.RED + plugin.myLocale(attacker.getUniqueId()).targetInNoPVPArea);
                 if (flamingArrow)
                     e.getEntity().setFireTicks(0);
+                if (projectile)
+                    e.getDamager().remove();
                 e.setCancelled(true);
                 return;
             }
