@@ -1033,6 +1033,7 @@ public class Schematic {
 
                 @Override
                 public void run() {
+                    player.setFallDistance(0F);
                     plugin.getGrid().homeTeleport(player);
                     plugin.getPlayers().setInTeleport(player.getUniqueId(), false);
                 }}, 10L);
@@ -1046,6 +1047,17 @@ public class Schematic {
                 }
             }, 40L);
         }
+        // Set the bedrock block meta data to the original spawn location
+        // Doesn't survive a server restart. TODO: change to add this info elsewhere.
+        /*
+        if (playerSpawn != null) {
+            blockToChange = loc.getBlock();
+            if (blockToChange.getType().equals(Material.BEDROCK)) {
+                String spawnLoc = Util.getStringLocation(loc.clone().add(playerSpawn).add(new Vector(0.5D,0D,0.5D)));
+                blockToChange.setMetadata("playerSpawn", new FixedMetadataValue(plugin, spawnLoc));
+            }
+        }
+        */
     }
     /**
      * This method prepares to pastes a schematic.

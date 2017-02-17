@@ -37,6 +37,7 @@ import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.world.StructureGrowEvent;
+import org.bukkit.metadata.MetadataValue;
 import org.bukkit.util.Vector;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
@@ -249,6 +250,24 @@ public class NetherPortals implements Listener {
                     if (DEBUG)
                         plugin.getLogger().info("DEBUG: Teleporting to " + event.getFrom().toVector().toLocation(ASkyBlock.getNetherWorld()));
                     event.setCancelled(true);
+                    // Find out if there's a spawn point in the bedrock
+                    // TODO: use different location to store this info
+                    /*
+                    if (netherIsland.getBlock().hasMetadata("playerSpawn")) {
+                        for (MetadataValue meta : netherIsland.getBlock().getMetadata("playerSpawn")) {
+                            if (meta.getOwningPlugin().equals(plugin)) {
+                                Location spawnLoc = Util.getLocationString(meta.asString());
+                                if (spawnLoc != null) {
+                                    plugin.getGrid();
+                                    if (GridManager.isSafeLocation(spawnLoc)) {
+                                        event.getPlayer().teleport(spawnLoc);
+                                        return;
+                                    }
+                                }
+                            }
+                        } 
+                    }
+                    */
                     // Teleport using the new safeSpot teleport
                     new SafeSpotTeleport(plugin, event.getPlayer(), netherIsland);
                     return;
