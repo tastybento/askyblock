@@ -357,6 +357,7 @@ public class TopTen implements Listener{
         topTenList.remove(owner);
     }
 
+    @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled=true)
     public void onInventoryClick(InventoryClickEvent event) {
         Inventory inventory = event.getInventory(); // The inventory that was clicked in
@@ -369,6 +370,7 @@ public class TopTen implements Listener{
         // The player that clicked the item
         Player player = (Player) event.getWhoClicked();
         event.setCancelled(true);
+        player.updateInventory();
         if(event.getCurrentItem() != null && event.getCurrentItem().getType().equals(Material.SKULL_ITEM) && event.getCurrentItem().hasItemMeta()){
         	player.performCommand("is warp " + ((SkullMeta)event.getCurrentItem().getItemMeta()).getOwner());
         	player.closeInventory();
@@ -380,7 +382,6 @@ public class TopTen implements Listener{
         }
         if (event.getClick().equals(ClickType.SHIFT_RIGHT)) {
             player.closeInventory();
-            player.updateInventory();
             return;
         }
     }
