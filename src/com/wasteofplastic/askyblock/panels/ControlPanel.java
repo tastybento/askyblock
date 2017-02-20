@@ -81,7 +81,6 @@ public class ControlPanel implements Listener {
     public static HashMap<String, Inventory> controlPanel = new HashMap<String, Inventory>();
 
     public static Inventory miniShop;
-    private static boolean cpPanelDefaultChanged;
 
     // The first parameter, is the inventory owner. I make it null to let
     // everyone use it.
@@ -207,6 +206,7 @@ public class ControlPanel implements Listener {
         }
     }
 
+    @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled=true)
     public void onInventoryClick(InventoryClickEvent event) {
         if (DEBUG)
@@ -434,10 +434,4 @@ public class ControlPanel implements Listener {
         return defaultPanelName;
     }
 
-    /**
-     * @return the cpPanelDefaultChanged
-     */
-    public static boolean isCpPanelDefaultChanged() {
-        return cpPanelDefaultChanged;
-    }
 }
