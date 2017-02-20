@@ -11,6 +11,7 @@ acidLore: |
     Do
     not drink!
     Beware!
+
 adminDeleteIsland: 
   error: "Use &ldeleteisland confirm &r&cto delete the island you are on."
   noid: "Cannot identify island."
@@ -54,7 +55,10 @@ adminHelp:
   unregister: "deletes a player without deleting the island blocks"
 adminInfo: 
   bannedPlayers: "Banned players"
+  errorNullTeamLeader: "Team leader should be null!"
+  errorTeamMembersExist: "Player has team members, but shouldn't!"
   hoppers: "Island has [number] hoppers"
+  islandLocation: "Island Location"
   isLocked: "Island is locked"
   isProtected: "Island is purge protected"
   isSpawn: "Island is spawn"
@@ -86,6 +90,8 @@ adminResetSign:
   found: "Warp sign found!"
   noSign: "You must be looking at a sign post to run this command."
   rescued: "Warp sign rescued and assigned to [name]"
+adminReserve:
+  islandExists: "There is an island here already! Register the player instead!"
 adminSetHome: 
   homeSet: "Home set to [location]"
   noneFound: "No safe location found!"
@@ -219,13 +225,13 @@ drankAcidAndDied: "just drank acid and died."
 error:
   blockedbyapi: "A plugin using the API blocked this action." 
   commandNotReady: "You can't use that command right now."
+  maxIslands: "The world is full of islands! Try again later!"
   noIsland: "You do not have an island!"
   noIslandOther: "That player does not have an island!"
   noPermission: "You don't have permission to use that command!"
   notABlock: "That is not a block"
   noTeam: "Player is not in a team."
   notOnIsland: "You are not in an island space!"
-  maxIslands: "The world is full of islands! Try again later!"
   offlinePlayer: "That player is offline or doesn't exist."
   tooLong: "Too long. Maximum size is [length]."
   tooShort: "Too short. Minimum size is [length]."
@@ -240,6 +246,8 @@ expel:
   notonisland: "Player is not trespassing on your island!"
   notyourself: "You cannot expel yourself!"
   success: "You expelled [name]!"
+general:
+  success: "Success!"
 invite: 
   errorCantJoinIsland: "You couldn't join the island, maybe it's full."
   errorCoolDown: "You can invite that player again in [time] minutes"
@@ -319,6 +327,7 @@ islandguardsettings:
   TNTdamage: "TNT Damage"
   allowed: "Allowed"
   aciddamage: "Acid damage"
+  animalspawning: "Allow/Disallow Animal Spawning"
   anvil: "Anvil use"
   armorstand: "Armour Stand use"
   beacon: "Beacon use"
@@ -502,6 +511,7 @@ teamchat:
 topTen:
   errorExcluded: "FYI: You are excluded from the top ten as you do not have [perm]"
   errorNotReady: "Top ten list not generated yet!"
+  guiTitle: "Top 10 Islands"
   header: "These are the Top 10 islands:"
 warps: 
   deactivate: "Deactivating old sign!"

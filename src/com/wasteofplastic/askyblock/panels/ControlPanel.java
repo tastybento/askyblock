@@ -81,6 +81,7 @@ public class ControlPanel implements Listener {
     public static HashMap<String, Inventory> controlPanel = new HashMap<String, Inventory>();
 
     public static Inventory miniShop;
+    private static boolean cpPanelDefaultChanged;
 
     // The first parameter, is the inventory owner. I make it null to let
     // everyone use it.
@@ -156,50 +157,52 @@ public class ControlPanel implements Listener {
         for (String panel : controlPanels.getKeys(false)) {
             // plugin.getLogger().info("DEBUG: Panel " + panel);
             ConfigurationSection panelConf = cpFile.getConfigurationSection(panel);
-            // New panel map
-            HashMap<Integer, CPItem> cp = new HashMap<Integer, CPItem>();
-            String panelName = ChatColor.translateAlternateColorCodes('&', panelConf.getString("panelname", "Commands"));
-            if (panel.equalsIgnoreCase("default")) {
-                defaultPanelName = panelName;
-            }
-            // plugin.getLogger().info("DEBUG: Panel section " + panelName);
-            // plugin.getLogger().info("DEBUG: putting panel " +
-            // newPanel.getName());
-            ConfigurationSection buttons = cpFile.getConfigurationSection(panel + ".buttons");
-            if (buttons != null) {
-                // Get how many buttons can be in the CP
-                int size = buttons.getKeys(false).size() + 8;
-                size -= (size % 9);
-                // Add inventory to map of inventories
-                controlPanel.put(panelName, Bukkit.createInventory(null, size, panelName));
-                // Run through buttons
-                int slot = 0;
-                for (String item : buttons.getKeys(false)) {
-                    try {
-                        String m = buttons.getString(item + ".material", "BOOK");
-                        // Split off damage
-                        String[] icon = m.split(":");
-                        // plugin.getLogger().info("Material = " + m);
-                        Material material = Material.matchMaterial(icon[0]);
-                        String description = ChatColor.translateAlternateColorCodes('&',buttons.getString(item + ".description", ""));
-                        String command = buttons.getString(item + ".command", "").replace("[island]", Settings.ISLANDCOMMAND);
-                        String nextSection = buttons.getString(item + ".nextsection", "");
-                        ItemStack i = new ItemStack(material);
-                        if (icon.length == 2) {
-                            i.setDurability(Short.parseShort(icon[1]));
-                        }
-                        CPItem cpItem = new CPItem(i, description, command, nextSection);
-                        cp.put(slot, cpItem);
-                        controlPanel.get(panelName).setItem(slot, cpItem.getItem());
-                        slot++;
-                    } catch (Exception e) {
-                        plugin.getLogger().warning("Problem loading control panel " + panel + " item #" + slot);
-                        plugin.getLogger().warning(e.getMessage());
-                        e.printStackTrace();
-                    }
+            if (panelConf != null) {
+                // New panel map
+                HashMap<Integer, CPItem> cp = new HashMap<Integer, CPItem>();
+                String panelName = ChatColor.translateAlternateColorCodes('&', panelConf.getString("panelname", "Commands"));
+                if (panel.equalsIgnoreCase("default")) {
+                    defaultPanelName = panelName;
                 }
-                // Add overall control panel
-                panels.put(panelName, cp);
+                // plugin.getLogger().info("DEBUG: Panel section " + panelName);
+                // plugin.getLogger().info("DEBUG: putting panel " +
+                // newPanel.getName());
+                ConfigurationSection buttons = cpFile.getConfigurationSection(panel + ".buttons");
+                if (buttons != null) {
+                    // Get how many buttons can be in the CP
+                    int size = buttons.getKeys(false).size() + 8;
+                    size -= (size % 9);
+                    // Add inventory to map of inventories
+                    controlPanel.put(panelName, Bukkit.createInventory(null, size, panelName));
+                    // Run through buttons
+                    int slot = 0;
+                    for (String item : buttons.getKeys(false)) {
+                        try {
+                            String m = buttons.getString(item + ".material", "BOOK");
+                            // Split off damage
+                            String[] icon = m.split(":");
+                            // plugin.getLogger().info("Material = " + m);
+                            Material material = Material.matchMaterial(icon[0]);
+                            String description = ChatColor.translateAlternateColorCodes('&',buttons.getString(item + ".description", ""));
+                            String command = buttons.getString(item + ".command", "").replace("[island]", Settings.ISLANDCOMMAND);
+                            String nextSection = buttons.getString(item + ".nextsection", "");
+                            ItemStack i = new ItemStack(material);
+                            if (icon.length == 2) {
+                                i.setDurability(Short.parseShort(icon[1]));
+                            }
+                            CPItem cpItem = new CPItem(i, description, command, nextSection);
+                            cp.put(slot, cpItem);
+                            controlPanel.get(panelName).setItem(slot, cpItem.getItem());
+                            slot++;
+                        } catch (Exception e) {
+                            plugin.getLogger().warning("Problem loading control panel " + panel + " item #" + slot);
+                            plugin.getLogger().warning(e.getMessage());
+                            e.printStackTrace();
+                        }
+                    }
+                    // Add overall control panel
+                    panels.put(panelName, cp);
+                }
             }
         }
     }
@@ -263,7 +266,7 @@ public class ControlPanel implements Listener {
                     plugin.getLogger().info("DEBUG same");
                 } else {
                     plugin.getLogger().info("DEBUG not same");
-                   
+
                 }*/
                 // END TEST
                 //plugin.getLogger().info("DEBUG: CP Item is " + item.getItem().toString());
@@ -357,7 +360,7 @@ public class ControlPanel implements Listener {
                             message = plugin.myLocale().minishopYouSold.replace("[number]", Integer.toString(item.getQuantity()));
                             message = message.replace("[description]", item.getDescription());
                             message = message.replace("[price]", VaultHelper.econ.format(item.getSellPrice()));
-                         // Fire event
+                            // Fire event
                             MiniShopEvent shopEvent = new MiniShopEvent(player.getUniqueId(), item, TransactionType.SELL);
                             plugin.getServer().getPluginManager().callEvent(shopEvent);
                         } else {
@@ -429,5 +432,12 @@ public class ControlPanel implements Listener {
      */
     public static String getDefaultPanelName() {
         return defaultPanelName;
+    }
+
+    /**
+     * @return the cpPanelDefaultChanged
+     */
+    public static boolean isCpPanelDefaultChanged() {
+        return cpPanelDefaultChanged;
     }
 }

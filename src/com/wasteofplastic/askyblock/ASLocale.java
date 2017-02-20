@@ -330,7 +330,6 @@ public class ASLocale {
 
     // info
     public String adminInfoislandLocation;
-    public String adminInfoerrorNotPartOfTeam;
     public String adminInfoerrorNullTeamLeader;
     public String adminInfoerrorTeamMembersExist;
     public String adminHelpinfoIsland;
@@ -1218,8 +1217,6 @@ public class ASLocale {
         registererrorBedrockNotFound = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("register.errorBedrockNotFound", "Error: unable to set the island!"));
         adminInfoislandLocation = ChatColor.translateAlternateColorCodes('&', locale.getString("adminInfo.islandLocation", "Island Location"));
-        adminInfoerrorNotPartOfTeam = ChatColor.translateAlternateColorCodes('&',
-                locale.getString("adminInfo.errorNotPartOfTeam", "That player is not a member of an island team."));
         adminInfoerrorNullTeamLeader = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("adminInfo.errorNullTeamLeader", "Team leader should be null!"));
         adminInfoerrorTeamMembersExist = ChatColor.translateAlternateColorCodes('&',
@@ -1241,10 +1238,6 @@ public class ASLocale {
         registererrorBedrockNotFound = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("register.errorBedrockNotFound", "Error: unable to set the island!"));
         adminInfoislandLocation = ChatColor.translateAlternateColorCodes('&', locale.getString("adminInfo.islandLocation", "Island Location"));
-        adminInfoerrorNotPartOfTeam = ChatColor.translateAlternateColorCodes('&',
-                locale.getString("adminInfo.errorNotPartOfTeam", "That player is not a member of an island team."));
-        adminInfoerrorNullTeamLeader = ChatColor.translateAlternateColorCodes('&',
-                locale.getString("adminInfo.errorNullTeamLeader", "Team leader should be null!"));
         adminInfoerrorTeamMembersExist = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("adminInfo.errorTeamMembersExist", "Player has team members, but shouldn't!"));
         resetChallengessuccess = ChatColor.translateAlternateColorCodes('&',

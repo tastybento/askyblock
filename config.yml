@@ -186,6 +186,7 @@ general:
    # Use the control panel as the default display for /island
    # /island will always create an island if one does not exist
    # If the control panel is not used, then /island will teleport the player home
+   # Players can change this setting using /island cp on or /island cp off
    usecontrolpanel: false
 
    # Create Nether - if this is false, the nether world will not be made and access to

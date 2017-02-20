@@ -298,7 +298,7 @@ public class TopTen implements Listener{
             topTenList = MapUtil.sortByValue(topTenList);
             // Create the top ten GUI if it does not exist
             if (gui == null) {
-                gui = Bukkit.createInventory(null, GUISIZE, plugin.myLocale().topTenGuiTitle);
+                gui = Bukkit.createInventory(null, GUISIZE, plugin.myLocale(player.getUniqueId()).topTenGuiTitle);
             }
             // Reset
             gui.clear();

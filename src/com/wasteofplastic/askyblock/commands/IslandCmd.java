@@ -1179,7 +1179,8 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                 chooseIsland(player);
                 return true;
             } else {
-                // Teleporting to island
+                // Island command
+                // Check if this should open the Control Panel or not
                 if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.controlpanel") && plugin.getPlayers().getControlPanel(playerUUID)) {
                     player.performCommand(Settings.ISLANDCOMMAND + " cp");
                 } else {
@@ -1482,14 +1483,10 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                 }
 
             if (split[0].equalsIgnoreCase("controlpanel") || split[0].equalsIgnoreCase("cp")) {
-                // if
-                // (player.getWorld().getName().equalsIgnoreCase(Settings.worldName))
-                // {
                 if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.controlpanel")) {
                     player.openInventory(ControlPanel.controlPanel.get(ControlPanel.getDefaultPanelName()));
                     return true;
                 }
-                // }
             }
 
             if (split[0].equalsIgnoreCase("minishop") || split[0].equalsIgnoreCase("ms")) {

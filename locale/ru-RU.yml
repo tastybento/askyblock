@@ -11,6 +11,7 @@ acidLore: |
     Не
     пить!
     Подумой!
+
 adminDeleteIsland: 
   error: "Используйте &ldeleteisland в течении &r&cto секунд, чтобы удалить остров, на котором вы находитесь."
   noid: "Невозможно найти остров."
@@ -27,6 +28,7 @@ adminHelp:
   infoisland: "предоставляет информацию о ближайшем острове"
   kick: "удаляет игрока из команды"
   level: "предоставить подробную информацию об уровне острова игрока"
+  listChallengeResets: "lists challenge reset schedules, if any"
   lock: "блокирует/разблокирует остров игрока"
   purge: "удаляет острова с неактивностью больше [TimeInDays] дней."
   purgeallowdisallow: "разрешить/запретить очистку острова, когда он достигает критерия очистки"
@@ -37,6 +39,7 @@ adminHelp:
   reload: "Перезагрузка файла конфигураций."
   resetAllChallenges: "Сброс всех испытаний для игрока"
   resetChallenge: "Пометить испытание как ‘Невыполненный’ "
+  resetChallengeForAll: "globally resets a challenge for every player with an optional repetition"
   resetname: "Сбросить имя острова"
   resetsign: "Сменить табличку на которую вы смотрите, на табличку владельца"
   setbiome: "устанавливает биом на острове лидера"
@@ -52,7 +55,10 @@ adminHelp:
   unregister: "удаление игрока без удаления его острова"
 adminInfo: 
   bannedPlayers: "Заблокированные игроки"
+  errorNullTeamLeader: "Team leader should be null!"
+  errorTeamMembersExist: "Player has team members, but shouldn't!"
   hoppers: "Остров имеет [number] воронок"
+  islandLocation: "Island Location"
   isLocked: "Остров заблокирован"
   isProtected: "Остров защищен от очистки"
   isSpawn: "Остров является спавном"
@@ -76,10 +82,16 @@ adminRegister:
   notSpawn: "Вы не можете стать владельцем спавна!"
   taking: "Взять право на остров от [name]"
 adminResetSign: 
+  error: "Format for repeat time must is [integer number][m/h/d] (minutes, hours, days), e.g. 5h"
+  repeating: "Repeating [duration]"
+  reset: "Reset [date]"
+adminResetSign: 
   errorExists: "Эта табличка уже активна и принадлежит [name]"
   found: "Табличка найдена!"
   noSign: "Вы должны смотреть на указатель, чтобы выполнить эту команду."
   rescued: "Табличка восстановлена и присоединена к  [name]"
+adminReserve:
+  islandExists: "There is an island here already! Register the player instead!"
 adminSetHome: 
   homeSet: "Дом был установлен в [location]"
   noneFound: "Не найдено безопасных координат!"
@@ -89,6 +101,7 @@ adminSetRange:
   invalid: "Неправильный радиус!"
   set: "Установить радиус [number]"
   tip: "Диапазон должен быть от 10 до [max]"
+  updated: "Island range updated to [number]"
   warning: "Предупреждение - диапазон больше, чем размер острова [max]"
   warning2: "Перекрытые острова будут работать как спавн"
 adminSetSpawn: 
@@ -189,6 +202,7 @@ completechallenge:
 confirm: 
   errorTimeLimitExpired: "Время закончилось! Вызовите команду снова."
 coop: 
+  cannotcoop: "Only island leader can coop a player." 
   help: "дать игроку полный доступ к острову"
   invited: "[name] пригласил [player] для совместной игры!"
   listcoops: "список игроков в команде"
@@ -209,13 +223,15 @@ delete:
 drankAcid: "выпил кислоту."
 drankAcidAndDied: "выпил кислоту и умер."
 error: 
+  blockedbyapi: "A plugin using the API blocked this action."
   commandNotReady: "Вы не можете использовать эту команду в данный момент."
+  maxIslands: "Мир максимально заполнен островами! Попробуйте позже!"
   noIsland: "У вас нет острова!"
   noIslandOther: "Этот игрок не имеет острова!"
   noPermission: "У вас нет прав, чтобы использовать эту команду!"
+  notABlock: "That is not a block"
   noTeam: "Игрок не состоит ни в какой команде."
   notOnIsland: "Вы не находитесь на территории острова!"
-  maxIslands: "Мир максимально заполнен островами! Попробуйте позже!"
   offlinePlayer: "Этот игрок оффлайн или не существует."
   tooLong: "Слишком длинное. Максимальный размер [length]."
   tooShort: "Слишком короткое. Минимальный размер [length]."
@@ -230,6 +246,8 @@ expel:
   notonisland: "Игрок не числится на вашем острове!"
   notyourself: "Вы не можете исключить самого себя!"
   success: "Вы исключили [name]!"
+general:
+  success: "Success!"
 invite: 
   errorCantJoinIsland: "Вы не можете войти на остров, возможно он полон."
   errorCoolDown: "Вы можете пригласить этого игрока снова через [time] минут"
@@ -249,6 +267,8 @@ invite:
   youCannotInvite: "Вы больше не можете приглашать игроков."
   youHaveJoinedAnIsland: "Вы вошли на остров! Используйте /[label] team, чтобы увидеть остальных игроков."
 island: 
+  blockValue: "[name] placed here may be worth [value]"
+  blockWorthless: "[name] is worthless" 
   cannotTeleport: "Вы не можете телепортироваться, пока падаете!"
   donate: "Добро пожаловать на A SkyBlock от tastybento"
   donatecolor: "aqua"
@@ -279,16 +299,19 @@ island:
   helpTeam: "информация о вашей команде."
   helpTeleport: "телепорт на ваш остров."
   helpTop: "просмотр топ островов."
+  helpValue: "see island level value of block in hand"
   helpWarp: "Варп к <player>."
   helpWarps: "Список всех варпов."
   islandDeletedLifeboats: "Остров удален!"
   islandLevelis: "Уровень острова"
   new: "Создаем новый остров для Вас..."
+  requiredPointsToNextLevel: "You need [points] more points to reach level [next]!"
   resetConfirm: "Введите /[label] confirm в течении [seconds] секунд что бы удалить и сбросить ваш остров!"
   resetMustRemovePlayers: "Вам нужно кинкуть всех игроков, прежде чем вы начнете сброс (/[label] kick <player>). Список игроков -  /[label] team."
   resetNoMore: "Для вашего острова больше не доступны сбросы!"
   resetOnlyOwner: "Только владелец может сбросить остров. покиньте этот остров, что бы сделать свой (/[label] leave)."
   resetPleaseWait: "Ожидайте, генерируем остров"
+  resetsLeft: "Resets left"
   resetTo: "Количество сбросов острова обновлено"
   resetWait: "Вам нужно подождать [time] перед тем как вы сможете поторить."
   resetYouHave: "У вас осталось [number] сбросов острова."
@@ -297,11 +320,14 @@ island:
   teleport: "Телепортируем Вас на Ваш остров. (/[label] help for more info)"
   title: "A SkyBlock"
   titlecolor: "gold"
+  unlimited: "Unlimited"
   url: ""
 islandProtected: "Остров защищен."
 islandguardsettings: 
   TNTdamage: "Урон от динамита"
   allowed: "Разрешено"
+  aciddamage: "Acid damage"
+  animalspawning: "Allow/Disallow Animal Spawning"
   anvil: "Использование наковальни"
   armorstand: "Использование стойки для брони"
   beacon: "Использование маяки"
@@ -310,17 +336,23 @@ islandguardsettings:
   breeding: "Размножение"
   brewingstand: "Изготовление зелий"
   bucket: "Использование ведра"
+  collectlava: "Lava collection"
+  collectwater: "Water collection"
   chest: "Использовать сундук"
   chestdamage: "Урон сундук с помощью динамита"
   chorusfruit: "Использование плода коруса"
   creeperdamage: "Урон от криперов"
   creepergriefing: "Криперы ломают блоки"
+  creeperpain: "Creeper explosions hurt"
   croptrample: "Затаптывание посевов"
   disallowed: Disallowed
   door: "Использование двери"
+  eggs: "Egg throwing"
   enchantingtable: "Использование стола зачарований"
   enderpearl: "Использование жемчуга Края"
   fire: "Огонь"
+  fireextinguish: "Fire extinguish"
+  firespread: "Fire spread"
   furnace: "Использование печки"
   gate: "Использование ворот"
   horseinventoryaccess: "Доступ гостя к инвентарю лошади"
@@ -331,7 +363,8 @@ islandguardsettings:
   jukebox: "Использование проигрывателя"
   leash: "Использование поводка"
   lever: "Использование кнопки или рычага"
-  mobspawning: "Разрешить/Запретить спавн мобов"
+  milking: "Milking"
+  monsterspawning: "Разрешить/Запретить спавн мобов"
   netherpvp: "PvP в аду"
   placeblocks: "Поставить блок"
   portaluse: "Использовать портал"
@@ -367,7 +400,9 @@ leave:
   errorYouAreTheLeader: "Вы не можете покинуть остров, так как вы лидер. Сначала - передайте лидера."
   errorYouCannotLeaveIsland: "Вы не можете покинуть остров, если вы последний игрок на нем. Попробуйте рестарт!"
   errorYouMustBeInWorld: "Вы должны быть в мире островов, чтобы покинуть команду!"
+  errorYouMustBeInWorld: "You must be in the island world to leave your team!"
   nameHasLeftYourIsland: "[name] покинул ваш остров!"
+  warning: "Are you sure you want to leave the team? Type '[label] leave' again to confirm."
   youHaveLeftTheIsland: "Вы покинули остров и вернулись на спавн."
 level: 
   calculating: "Вычисляем уровень острова. Подождите немного..."
@@ -476,6 +511,7 @@ teamchat:
 topTen:
   errorExcluded: "Вы исклчены з Топ-10 по причине: [perm]"
   errorNotReady: "Топ-10 островов еще не сгенерирован!"
+  guiTitle: "Top 10 Islands"
   header: "Это Топ-10 островов:"
 warps: 
   deactivate: "Деактивация старой таблички!"
