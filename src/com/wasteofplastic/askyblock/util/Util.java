@@ -43,6 +43,7 @@ import com.wasteofplastic.askyblock.nms.NMSAbstraction;
  */
 public class Util {
     private static ASkyBlock plugin = ASkyBlock.getPlugin();
+    private static Long x = System.nanoTime();
 
     /**
      * Loads a YAML file and if it does not exist it is looked for in the JAR
@@ -345,5 +346,22 @@ public class Util {
         if (!ChatColor.stripColor(message).trim().isEmpty()) {
             sender.sendMessage(message);
         }
+    }
+    
+    /**
+     * @return random long number using XORShift random number generator
+     */
+    public static long randomLong() {
+        x ^= (x << 21);
+        x ^= (x >>> 35);
+        x ^= (x << 4);
+        return Math.abs(x);
+      }
+    
+    /**
+     * @return random double using XORShift random number generator
+     */
+    public static double randomDouble() {
+        return (double)randomLong()/Long.MAX_VALUE;
     }
 }

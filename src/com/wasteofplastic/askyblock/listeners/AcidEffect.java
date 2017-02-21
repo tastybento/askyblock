@@ -365,6 +365,10 @@ public class AcidEffect implements Listener {
         if (!e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
             return;
         }
+        if (!e.getPlayer().getGameMode().equals(GameMode.SURVIVAL)) {
+            // Only Survival players can do this
+            return;
+        }
         if (DEBUG)
             plugin.getLogger().info("DEBUG: obsidian scoop " + e.getEventName());
 

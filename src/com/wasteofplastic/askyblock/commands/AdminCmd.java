@@ -22,8 +22,10 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -32,6 +34,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -347,9 +350,24 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                         Util.sendMessage(sender, ChatColor.RED + plugin.myLocale().banNone);
                         return true;
                     }
-                    for (Material mat : LavaCheck.getStats().elementSet()) {
-                        Util.sendMessage(sender, mat + ": " + LavaCheck.getStats().count(mat) + "/" + LavaCheck.getStats().size() + " or " 
-                                + ((int)((double)LavaCheck.getStats().count(mat)/LavaCheck.getStats().size()*100)) + "%");
+                    // Display by level
+                    for (Integer level : LavaCheck.getStats().keySet()) {
+                        if (level == Integer.MIN_VALUE) {
+                            Util.sendMessage(sender, plugin.myLocale().challengeslevel + ": Default");
+                        } else {
+                            Util.sendMessage(sender, plugin.myLocale().challengeslevel + ": " + level);
+                        }
+                        // Collect and sort
+                        Collection<String> result = new TreeSet<String>(Collator.getInstance());
+                        for (Material mat : LavaCheck.getStats().get(level).elementSet()) {
+                            result.add("   " + Util.prettifyText(mat.toString()) + ": " + LavaCheck.getStats().get(level).count(mat) + "/" + LavaCheck.getStats().get(level).size() + " or " 
+                                    + ((int)((double)LavaCheck.getStats().get(level).count(mat)/LavaCheck.getStats().get(level).size()*100)) 
+                                    + "% (config = " + String.valueOf(LavaCheck.getConfigChances(level, mat)) + "%)");
+                        }
+                        // Send to player
+                        for (String r: result) {
+                            Util.sendMessage(sender,r);
+                        }
                     }
                     return true;
                 }

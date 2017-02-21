@@ -18,10 +18,11 @@ package com.wasteofplastic.askyblock.listeners;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Random;
 import java.util.TreeMap;
 
 import org.bukkit.Material;
@@ -40,6 +41,7 @@ import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.ASkyBlockAPI;
 import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.Settings;
+import com.wasteofplastic.askyblock.util.Util;
 
 /**
  * @author tastybento
@@ -49,13 +51,12 @@ public class LavaCheck implements Listener {
     BukkitTask task;
     private final ASkyBlock plugin;
     private final static boolean DEBUG = false;
-    private final Random random;
     private final static List<BlockFace> FACES = Arrays.asList(BlockFace.SELF, BlockFace.UP, BlockFace.DOWN, BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST);
-    private static Multiset<Material> stats = HashMultiset.create();
+    private static Map<Integer, Multiset<Material>> stats = new HashMap<Integer, Multiset<Material>>();
+    private static Map<Integer, Map<Material, Double>> configChances = new HashMap<Integer, Map<Material, Double>>();
 
     public LavaCheck(ASkyBlock aSkyBlock) {
         plugin = aSkyBlock;
-        random = new Random();
         stats.clear();
     }
 
@@ -135,7 +136,7 @@ public class LavaCheck implements Listener {
 
         // If only at spawn, do nothing if we're not at spawn
         if(Settings.magicCobbleGenOnlyAtSpawn && (!ASkyBlockAPI.getInstance().isAtSpawn(e.getBlock().getLocation()))){
-        	return;
+            return;
         }
 
         final Block b = e.getBlock();
@@ -182,15 +183,22 @@ public class LavaCheck implements Listener {
                                 if(!Settings.magicCobbleGenChances.isEmpty()){
                                     Entry<Integer,TreeMap<Double,Material>> entry = Settings.magicCobbleGenChances.floorEntry(level);
                                     double maxValue = entry.getValue().lastKey();                                    
-                                    double rnd = random.nextDouble() * maxValue;
+                                    double rnd = Util.randomDouble() * maxValue;
                                     Entry<Double, Material> en = entry.getValue().ceilingEntry(rnd);
+                                    //Bukkit.getLogger().info("DEBUG: " + entry.getValue().toString());
                                     //plugin.getLogger().info("DEBUG: Cobble generated. Island level = " + level);
                                     //plugin.getLogger().info("DEBUG: rnd = " + rnd + "/" + maxValue);
                                     //plugin.getLogger().info("DEBUG: material = " + en.getValue());
                                     if (en != null) {
                                         block.setType(en.getValue());
-                                        // Record stats
-                                        stats.add(en.getValue());
+                                        // Record stats, per level
+                                        if (stats.containsKey(entry.getKey())) {
+                                            stats.get(entry.getKey()).add(en.getValue()); 
+                                        } else {
+                                            Multiset<Material> set = HashMultiset.create();
+                                            set.add(en.getValue());
+                                            stats.put(entry.getKey(), set);
+                                        }
                                     }
                                 }
                             }
@@ -215,9 +223,9 @@ public class LavaCheck implements Listener {
     }
 
     /**
-     * @return the magic cobble gen stats
+     * @return the magic cooble stone stats
      */
-    public static Multiset<Material> getStats() {
+    public static Map<Integer, Multiset<Material>> getStats() {
         return stats;
     }
 
@@ -227,146 +235,38 @@ public class LavaCheck implements Listener {
     public static void clearStats() {
         stats.clear();
     }
-}
 
-// Failed attempts - remember the pain
-// Not this event
-/*
- * @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
- * public void onStone(BlockFormEvent e) {
- * plugin.getLogger().info(e.getEventName());
- * }
- */
-/*
- * @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
- * public void onStone(BlockPhysicsEvent e) {
- * plugin.getLogger().info(e.getEventName());
- * plugin.getLogger().info("DEBUG: block physics " +
- * e.getBlock().getType());
- * plugin.getLogger().info("DEBUG: block physics changed " +
- * e.getChangedType());
- * plugin.getLogger().info("---------------------------------");
- * if (e.getChangedType().equals(Material.WATER) ||
- * e.getChangedType().equals(Material.STATIONARY_WATER)
- * && e.getBlock().getType().equals(Material.STONE)) {
- * e.getBlock().setType(Material.WATER);
- * e.getBlock().getWorld().playSound(e.getBlock().getLocation(), Sound.FIZZ,
- * 1F, 1F);
- * }
- * }
- */
-/*
- * @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
- * public void onStone(BlockSpreadEvent e) {
- * plugin.getLogger().info(e.getEventName());
- * }
- */
-/*
- * if ((from.equals(Material.STATIONARY_WATER) &&
- * to.getType().equals(Material.STONE))
- * || (from.equals(Material.STATIONARY_LAVA) &&
- * to.getType().equals(Material.STATIONARY_WATER))
- * || (from.equals(Material.LAVA) &&
- * to.getType().equals(Material.STATIONARY_WATER))) {
- * // plugin.getLogger().info("from sw to st cancelled");
- * // to.setType(Material.FIRE);
- * to.setType(Material.STATIONARY_WATER);
- * e.getBlock().getWorld().playSound(e.getBlock().getLocation(), Sound.FIZZ,
- * 1F, 1F);
- * e.setCancelled(true);
- * //return;
- * }
- * // Get the from block
- * Block fromBlock = to.getRelative(oppositeFace(e.getFace()));
- * plugin.getLogger().info("DEBUG: From block " + fromBlock.getType() +
- * " location " + fromBlock.getX() + "," + fromBlock.getZ());
- * plugin.getLogger().info("To material before " + to.getType().toString());
- * final Material prev = to.getType();
- * plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
- * @Override
- * public void run() {
- * plugin.getLogger().info("To material is after 1 tick " +
- * to.getType().toString());
- * if ((prev.equals(Material.WATER) ||
- * prev.equals(Material.STATIONARY_WATER)) &&
- * to.getType().equals(Material.STONE)) {
- * to.setType(prev);
- * to.getWorld().playSound(to.getLocation(), Sound.FIZZ, 1F, 1F);
- * }
- * }});
- * if ((from.equals(Material.STATIONARY_WATER) ||
- * from.equals(Material.WATER))) {
- * // Look around the from block
- * for (BlockFace bf: BlockFace.values()) {
- * switch (bf) {
- * case DOWN:
- * case EAST:
- * case NORTH:
- * case NORTH_EAST:
- * case NORTH_WEST:
- * case SOUTH:
- * case SOUTH_EAST:
- * case SOUTH_WEST:
- * case UP:
- * case WEST:
- * Block adjacent = fromBlock.getRelative(bf);
- * if (adjacent.getType().equals(Material.STONE)) {
- * adjacent.setType(Material.AIR);
- * adjacent.getWorld().playSound(e.getBlock().getLocation(), Sound.FIZZ, 1F,
- * 1F);
- * plugin.getLogger().info("DEBUG: Melting block " + adjacent.getType() +
- * " location " + adjacent.getX() + "," + adjacent.getZ());
- * }
- * break;
- * default:
- * break;
- * }
- * }
- * }
- */
-/*
- * private BlockFace oppositeFace(BlockFace face) {
- * switch (face) {
- * case DOWN:
- * return BlockFace.UP;
- * case EAST:
- * return BlockFace.WEST;
- * case EAST_NORTH_EAST:
- * return BlockFace.WEST_SOUTH_WEST;
- * case EAST_SOUTH_EAST:
- * return BlockFace.WEST_NORTH_WEST;
- * case NORTH:
- * return BlockFace.SOUTH;
- * case NORTH_EAST:
- * return BlockFace.SOUTH_WEST;
- * case NORTH_NORTH_EAST:
- * return BlockFace.SOUTH_SOUTH_WEST;
- * case NORTH_NORTH_WEST:
- * return BlockFace.SOUTH_SOUTH_EAST;
- * case NORTH_WEST:
- * return BlockFace.SOUTH_EAST;
- * case SELF:
- * return BlockFace.SELF;
- * case SOUTH:
- * return BlockFace.NORTH;
- * case SOUTH_EAST:
- * return BlockFace.NORTH_WEST;
- * case SOUTH_SOUTH_EAST:
- * return BlockFace.NORTH_NORTH_WEST;
- * case SOUTH_SOUTH_WEST:
- * return BlockFace.NORTH_NORTH_EAST;
- * case SOUTH_WEST:
- * return BlockFace.NORTH_EAST;
- * case UP:
- * return BlockFace.DOWN;
- * case WEST:
- * return BlockFace.EAST;
- * case WEST_NORTH_WEST:
- * return BlockFace.EAST_SOUTH_EAST;
- * case WEST_SOUTH_WEST:
- * return BlockFace.EAST_NORTH_EAST;
- * default:
- * return BlockFace.SELF;
- * }
- * }
- */
+    /**
+     * Store the configured chances in %
+     * @param levelInt
+     * @param chances
+     */
+    public static void storeChances(int levelInt, Map<Material, Double> chances) {
+        configChances.put(levelInt, chances); 
+    }
+    
+    /**
+     * Clear the magic cobble gen chances
+     */
+    public static void clearChances() {
+        configChances.clear();
+    }
+
+    /**
+     * Return the chances for this level and material
+     * @param level
+     * @param material
+     * @return chance, or 0 if the level or material don't exist
+     */
+    public static double getConfigChances(Integer level, Material material) {
+        double result = 0;
+        //Bukkit.getLogger().info("DEBUG : requested " + level + " " + material);
+        //Bukkit.getLogger().info("DEBUG : " + configChances.toString());
+        if (configChances.containsKey(level) && configChances.get(level).containsKey(material)) {
+            result = configChances.get(level).get(material);
+        }
+        //Bukkit.getLogger().info("DEBUG : result = " + result);
+        return result;
+    }
+   
+}
