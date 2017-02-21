@@ -1356,7 +1356,36 @@ public class ASkyBlock extends JavaPlugin {
             getLogger().severe("Could not parse biome " + defaultBiome + " using PLAINS instead.");
             Settings.defaultBiome = Biome.PLAINS;
         }
-        Settings.breedingLimit = getConfig().getInt("general.breedinglimit", 0);
+        Settings.breedingLimitChicken = getConfig().getInt("general.breedinglimit.CHICKEN", 0);
+        Settings.breedingLimitCow = getConfig().getInt("general.breedinglimit.COW", 0);
+        Settings.breedingLimitHorse = getConfig().getInt("general.breedinglimit.HORSE", 0);
+        Settings.breedingLimitIronGolem = getConfig().getInt("general.breedinglimit.IRONGOLEM", 0);
+        Settings.breedingLimitLlama = getConfig().getInt("general.breedinglimit.LLAMA", 0);
+        Settings.breedingLimitMushroomCow = getConfig().getInt("general.breedinglimit.MUSHROOMCOW", 0);
+        Settings.breedingLimitOcelot = getConfig().getInt("general.breedinglimit.OCELOT", 0);
+        Settings.breedingLimitPolarBear = getConfig().getInt("general.breedinglimit.POLARBEAR", 0);
+        Settings.breedingLimitRabbit = getConfig().getInt("general.breedinglimit.RABBIT", 0);
+        Settings.breedingLimitSheep = getConfig().getInt("general.breedinglimit.SHEEP", 0);
+        Settings.breedingLimitSquid = getConfig().getInt("general.breedinglimit.SQUID", 0);
+        Settings.breedingLimitWolf = getConfig().getInt("general.breedinglimit.WOLF", 0);
+
+        Settings.monsterLimitBlaze = getConfig().getInt("general.monsterlimit.BLAZE", 0);
+        Settings.monsterLimitCaveSpider = getConfig().getInt("general.monsterlimit.CAVE_SPIDER", 0);
+        Settings.monsterLimitCreeper = getConfig().getInt("general.monsterlimit.CREEPER", 0);
+        Settings.monsterLimitEnderman = getConfig().getInt("general.monsterlimit.ENDERMAN", 0);
+        Settings.monsterLimitEndermite = getConfig().getInt("general.monsterlimit.ENDERMITE", 0);
+        Settings.monsterLimitGhast = getConfig().getInt("general.monsterlimit.GHAST", 0);
+        Settings.monsterLimitHusk = getConfig().getInt("general.monsterlimit.HUSK", 0);
+        Settings.monsterLimitMagmaCube = getConfig().getInt("general.monsterlimit.MAGMA_CUBE", 0);
+        Settings.monsterLimitPigZombie = getConfig().getInt("general.monsterlimit.PIG_ZOMBIE", 0);
+        Settings.monsterLimitSkeleton = getConfig().getInt("general.monsterlimit.SKELETON", 0);
+        Settings.monsterLimitSlime = getConfig().getInt("general.monsterlimit.SLIME", 0);
+        Settings.monsterLimitSpider = getConfig().getInt("general.monsterlimit.SPIDER", 0);
+        Settings.monsterLimitStray = getConfig().getInt("general.monsterlimit.STRAY", 0);
+        Settings.monsterLimitWitch = getConfig().getInt("general.monsterlimit.WITCH", 0);
+        Settings.monsterLimitZombie = getConfig().getInt("general.monsterlimit.ZOMBIE", 0);
+        Settings.monsterLimitZombieVillager = getConfig().getInt("general.monsterlimit.ZOMBIE_VILLAGER", 0);
+        
         Settings.villagerLimit = getConfig().getInt("general.villagerlimit", 0);
         Settings.limitedBlocks = new HashMap<String,Integer>();
         Settings.entityLimits = new HashMap<EntityType, Integer>();

@@ -337,6 +337,25 @@ general:
    # Note: If set to a negative number the world will use the server-wide spawn limit instead.
    monsterspawnlimit: 100
    
+   # Monster limits - works exactly like breeding limit.
+   monsterlimit:
+     BLAZE: 0
+     CAVE_SPIDER: 0
+     CREEPER: 0
+     ENDERMAN: 0
+     ENDERMITE: 0
+     GHAST: 0
+     HUSK: 0
+     MAGMA_CUBE: 0
+     PIG_ZOMBIE: 0
+     SKELETON: 0
+     SLIME: 0
+     SPIDER: 0
+     STRAY: 0
+     WITCH: 0
+     ZOMBIE: 0
+     ZOMBIE_VILLAGER: 0
+   
    # Sets the limit for number of animals that can spawn in a chunk in this world. 
    # Note: If set to a negative number the world will use the server-wide spawn limit instead.
    animalspawnlimit: 15
@@ -347,7 +366,20 @@ general:
    # This WILL affect mobspawn blocks AND spawn egg use. Note that hearts will
    # still appear, but breeding will not happen.
    # Limit includes nether island if nether islands are active.
-   breedinglimit: 0
+   # Villager breeding limit is set below, as it works differently. (villagerlimit)
+   breedinglimit:
+     CHICKEN: 0
+     COW: 0
+     HORSE: 0
+     IRONGOLEM: 0
+     LLAMA: 0
+     MUSHROOMCOW: 0
+     OCELOT: 0
+     POLARBEAR: 0
+     RABBIT: 0
+     SHEEP: 0
+     SQUID: 0
+     WOLF: 0
    
    # Sets the limit for number of water animals [squid] that can spawn in a chunk in this world. 
    # Note: If set to a negative number the world will use the server-wide spawn limit instead.
