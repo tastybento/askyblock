@@ -128,7 +128,9 @@ island:
    # PVP cooldown in seconds. Players cannot toggle PVP off and on until this timeout
    pvpcooldown: 60
    
-   # How many seconds will the player keeps his flymode while flying outside his island.
+   # Players with askyblock.islandfly permission can fly on their island. This setting is
+   # how many seconds the player keeps fly mode while flying outside his island before it
+   # is removed (and they fall).
    # Negative value will be considered as 0.
    flytimeoutside: 0
    
