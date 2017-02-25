@@ -1018,6 +1018,7 @@ public class Schematic {
 
         if (teleport) {
             plugin.getPlayers().setInTeleport(player.getUniqueId(), true);
+            player.setInvulnerable(true);
             // Check distance. If it's too close, warp to spawn to try to clear the client's cache
             //plugin.getLogger().info("DEBUG: view dist = " + plugin.getServer().getViewDistance());
             if (player.getWorld().equals(world)) {
@@ -1033,9 +1034,9 @@ public class Schematic {
 
                 @Override
                 public void run() {
-                    player.setFallDistance(0F);
                     plugin.getGrid().homeTeleport(player);
                     plugin.getPlayers().setInTeleport(player.getUniqueId(), false);
+                    player.setInvulnerable(false);
                 }}, 10L);
 
         }
