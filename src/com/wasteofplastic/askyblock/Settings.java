@@ -222,7 +222,6 @@ public class Settings {
     public static boolean immediateTeleport;
     public static boolean makeIslandIfNone;
     public static boolean setTeamName;
-    public static int debug;
     public static boolean useSchematicPanel;
     public static boolean chooseIslandRandomly;
     public static double underWaterMultiplier;
@@ -237,7 +236,6 @@ public class Settings {
     public static boolean useWarpPanel;
     public static List<EntityType> mobWhiteList = new ArrayList<EntityType>();
     public static int villagerLimit;
-    public static int mobLimit;
     public static int hopperLimit;
     public static List<String> visitorCommandBlockList;
     public static boolean muteDeathMessages;

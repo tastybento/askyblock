@@ -19,16 +19,9 @@ package com.wasteofplastic.askyblock;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
 import java.util.UUID;
 
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -36,28 +29,15 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.WorldType;
-import org.bukkit.block.Biome;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.MaterialData;
-import org.bukkit.material.SpawnEgg;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
-import org.bukkit.potion.PotionType;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.ScoreboardManager;
-import org.bukkit.scoreboard.Team;
 
-import com.wasteofplastic.askyblock.Island.SettingsFlag;
 import com.wasteofplastic.askyblock.NotSetup.Reason;
 import com.wasteofplastic.askyblock.Settings.GameType;
 import com.wasteofplastic.askyblock.Updater.UpdateResult;
@@ -89,7 +69,6 @@ import com.wasteofplastic.askyblock.panels.ControlPanel;
 import com.wasteofplastic.askyblock.panels.SchematicsPanel;
 import com.wasteofplastic.askyblock.panels.SettingsPanel;
 import com.wasteofplastic.askyblock.panels.WarpPanel;
-import com.wasteofplastic.askyblock.util.SpawnEgg1_9;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
@@ -103,8 +82,6 @@ public class ASkyBlock extends JavaPlugin {
     // The ASkyBlock world
     private static World islandWorld = null;
     private static World netherWorld = null;
-    // No push scoreboard name
-    private final static String NO_PUSH_TEAM_NAME = "ASkyBlockNP";
     // Flag indicating if a new islands is in the process of being generated or
     // not
     private boolean newIsland = false;
@@ -112,8 +89,6 @@ public class ASkyBlock extends JavaPlugin {
     private File playersFolder;
     // Challenges object
     private Challenges challenges;
-    // Localization Strings
-    private HashMap<String,ASLocale> availableLocales = new HashMap<String,ASLocale>();
     // Players object
     private PlayerCache players;
     // Listeners
@@ -133,8 +108,6 @@ public class ASkyBlock extends JavaPlugin {
     private TopTen topTen;
     // V1.8 or later
     private boolean onePointEight;
-
-    private boolean debug = false;
 
     // Level calc
     private boolean calculatingLevel = false;
@@ -159,6 +132,9 @@ public class ASkyBlock extends JavaPlugin {
 
     // Player events listener
     private PlayerEvents playerEvents;
+
+    // Localization Strings
+    private HashMap<String,ASLocale> availableLocales = new HashMap<String,ASLocale>();
 
     /**
      * Returns the World object for the island world named in config.yml.
@@ -306,7 +282,7 @@ public class ASkyBlock extends JavaPlugin {
             return;
         }
         // Load all the configuration of the plugin and localization strings
-        if (!loadPluginConfig()) {
+        if (!PluginConfig.loadPluginConfig(this)) {
             // Currently, the only setup error is where the world_name does not match
             if (Settings.GAMETYPE.equals(Settings.GameType.ASKYBLOCK)) {
                 getCommand("island").setExecutor(new NotSetup(Reason.WORLD_NAME));
@@ -700,783 +676,6 @@ public class ASkyBlock extends JavaPlugin {
     }
 
     /**
-     * Loads the various settings from the config.yml file into the plugin
-     */
-    @SuppressWarnings("deprecation")
-    public boolean loadPluginConfig() {
-        // getLogger().info("*********************************************");
-        try {
-            getConfig();
-        } catch (final Exception e) {
-            e.printStackTrace();
-        }
-        // Get the default language
-        Settings.defaultLanguage = getConfig().getString("general.defaultlanguage", "en-US");
-        availableLocales.clear();
-        FileLister fl = new FileLister(this);
-        try {
-            int index = 1;
-            for (String code: fl.list()) {
-                //getLogger().info("DEBUG: lang file = " + code);
-                availableLocales.put(code, new ASLocale(this, code, index++));
-            }
-        } catch (IOException e1) {
-            getLogger().severe("Could not add locales!");
-        }
-        if (!availableLocales.containsKey(Settings.defaultLanguage)) {
-            getLogger().severe("'" + Settings.defaultLanguage + ".yml' not found in /locale folder. Using /locale/en-US.yml");
-            Settings.defaultLanguage = "en-US";
-            availableLocales.put(Settings.defaultLanguage, new ASLocale(this, Settings.defaultLanguage, 0));
-        }
-
-        // Assign settings
-        String configVersion = getConfig().getString("general.version", "");
-        //getLogger().info("DEBUG: config ver length " + configVersion.split("\\.").length);
-        // Ignore last digit if it is 4 digits long
-        if (configVersion.split("\\.").length == 4) {
-            configVersion = configVersion.substring(0, configVersion.lastIndexOf('.')); 
-        }
-        // Save for plugin version
-        String version = plugin.getDescription().getVersion();
-        //getLogger().info("DEBUG: version length " + version.split("\\.").length);
-        if (version.split("\\.").length == 4) {
-            version = version.substring(0, version.lastIndexOf('.')); 
-        }
-        if (configVersion.isEmpty() || !configVersion.equalsIgnoreCase(version)) {
-            // Check to see if this has already been shared
-            File newConfig = new File(plugin.getDataFolder(),"config.new.yml");
-            getLogger().warning("***********************************************************");
-            getLogger().warning("Config file is out of date. See config.new.yml for updates!");
-            getLogger().warning("config.yml version is '" + configVersion + "'");
-            getLogger().warning("Latest config version is '" + version + "'");
-            getLogger().warning("***********************************************************");
-            if (!newConfig.exists()) {
-                File oldConfig = new File(plugin.getDataFolder(),"config.yml");
-                File bakConfig = new File(plugin.getDataFolder(),"config.bak");
-                if (oldConfig.renameTo(bakConfig)) {
-                    plugin.saveResource("config.yml", false);
-                    oldConfig.renameTo(newConfig);
-                    bakConfig.renameTo(oldConfig);
-                } 
-            }
-        }
-        // Recover superflat
-        Settings.recoverSuperFlat = getConfig().getBoolean("general.recoversuperflat");
-        if (Settings.recoverSuperFlat) {
-            getLogger().warning("*********************************************************");
-            getLogger().warning("WARNING: Recover super flat mode is enabled");
-            getLogger().warning("This will regenerate any chunks with bedrock at y=0 when they are loaded");
-            getLogger().warning("Switch off when superflat chunks are cleared");
-            getLogger().warning("You should back up your world before running this");
-            getLogger().warning("*********************************************************");
-        }
-        // Leavers lose resets
-        Settings.leaversLoseReset = getConfig().getBoolean("general.leaversloseresets", true);
-        // Action bar settings
-        Settings.showInActionBar = getConfig().getBoolean("general.showinactionbar",true);
-        // Helmet and full armor acid protection options
-        Settings.helmetProtection = getConfig().getBoolean("general.helmetprotection", true);
-        Settings.fullArmorProtection = getConfig().getBoolean("general.fullarmorprotection", false);
-        // Destroy items in acid timer
-        Settings.acidItemDestroyTime = getConfig().getLong("general.itemdestroyafter",0L) * 20L;
-        // Hack skeleton spawners for 1.11
-        Settings.hackSkeletonSpawners = getConfig().getBoolean("schematicsection.hackskeletonspawners", true);
-        // Allow Obsidian Scooping
-        Settings.allowObsidianScooping = getConfig().getBoolean("general.allowobsidianscooping", true);
-        // Kicked players keep inventory
-        Settings.kickedKeepInv = getConfig().getBoolean("general.kickedkeepinv", false);
-        // Chat prefixes
-        Settings.chatLevelPrefix = getConfig().getString("general.chatlevelprefix","{ISLAND_LEVEL}");
-        Settings.chatChallengeLevelPrefix = getConfig().getString("general.chatchallanegelevelprefix","{ISLAND_CHALLENGE_LEVEL}");
-        Settings.chatIslandPlayer = getConfig().getString("general.chatislandplayer","{ISLAND_PLAYER}");
-        // Nether roof option
-        Settings.netherRoof = getConfig().getBoolean("general.netherroof", true);
-        // FTB Autoamtic Activators
-        Settings.allowAutoActivator = getConfig().getBoolean("general.autoactivator");
-        // Debug
-        Settings.debug = getConfig().getInt("debug", 0);
-        // Persistent coops
-        Settings.persistantCoops = getConfig().getBoolean("general.persistentcoops");
-        // Only leader can coop
-        Settings.onlyLeaderCanCoop = getConfig().getBoolean("general.onlyleadercancoop", false);
-        // Level logging
-        Settings.levelLogging = getConfig().getBoolean("general.levellogging");
-        // Allow pushing
-        Settings.allowPushing = getConfig().getBoolean("general.allowpushing", true);
-        // try to remove the team from the scoreboard
-        if (Settings.allowPushing) {
-            try {
-                ScoreboardManager manager = getServer().getScoreboardManager();
-                if (manager != null) {
-                    Scoreboard scoreboard = manager.getMainScoreboard();
-                    if (scoreboard != null) {
-                        Team pTeam = scoreboard.getTeam(NO_PUSH_TEAM_NAME);
-                        if (pTeam != null) {
-                            pTeam.unregister();
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                getLogger().warning("Problem removing no push from scoreboard.");
-            }
-        }
-        // Custom generator
-        Settings.useOwnGenerator = getConfig().getBoolean("general.useowngenerator", false);
-        // How often the grid will be saved to file. Default is 5 minutes
-        Settings.backupDuration = (getConfig().getLong("general.backupduration", 5) * 20 * 60);
-        // How long a player has to wait after deactivating PVP until they can activate PVP again
-        Settings.pvpRestartCooldown = getConfig().getLong("general.pvpcooldown",60);
-        // Max Islands
-        Settings.maxIslands = getConfig().getInt("general.maxIslands",0);
-        // Mute death messages
-        Settings.muteDeathMessages = getConfig().getBoolean("general.mutedeathmessages", false);
-        // Warp Restriction
-        Settings.warpLevelsRestriction = getConfig().getInt("general.warplevelrestriction", 10);
-        // Warp panel
-        Settings.useWarpPanel = getConfig().getBoolean("general.usewarppanel", true);
-        // Fast level calculation (this is really fast)
-        Settings.fastLevelCalc = getConfig().getBoolean("general.fastlevelcalc", true);
-        // Restrict wither
-        Settings.restrictWither = getConfig().getBoolean("general.restrictwither", true);
-        // Team chat
-        Settings.teamChat = getConfig().getBoolean("general.teamchat", true);
-        Settings.logTeamChat = getConfig().getBoolean("general.logteamchat", true);
-        // TEAMSUFFIX as island level
-        Settings.setTeamName = getConfig().getBoolean("general.setteamsuffix", false);
-        Settings.teamSuffix = getConfig().getString("general.teamsuffix","([level])");
-        // Immediate teleport
-        Settings.immediateTeleport = getConfig().getBoolean("general.immediateteleport", false);
-        // Make island automatically
-        Settings.makeIslandIfNone = getConfig().getBoolean("general.makeislandifnone", false);
-        // Use physics when pasting island block schematics
-        Settings.usePhysics = getConfig().getBoolean("general.usephysics", false);
-        // Use old display (chat instead of GUI) for Island top ten
-        Settings.displayIslandTopTenInChat = getConfig().getBoolean("general.islandtopteninchat", false);
-        // Run level calc at login
-        Settings.loginLevel = getConfig().getBoolean("general.loginlevel", false);
-        // Use economy or not
-        // In future expand to include internal economy
-        Settings.useEconomy = getConfig().getBoolean("general.useeconomy", true);
-        // Use the minishop or not
-        Settings.useMinishop = getConfig().getBoolean("general.useminishop", true);
-        // Check for updates
-        Settings.updateCheck = getConfig().getBoolean("general.checkupdates", true);
-        // Island reset commands
-        Settings.resetCommands = getConfig().getStringList("general.resetcommands");
-        Settings.leaveCommands = getConfig().getStringList("general.leavecommands");
-        Settings.startCommands = getConfig().getStringList("general.startcommands");
-        Settings.teamStartCommands = getConfig().getStringList("general.teamstartcommands");
-        Settings.useControlPanel = getConfig().getBoolean("general.usecontrolpanel", false);
-        // Check if /island command is allowed when falling
-        Settings.allowTeleportWhenFalling = getConfig().getBoolean("general.allowfallingteleport", true);
-        Settings.fallingCommandBlockList = getConfig().getStringList("general.blockingcommands");
-        // Visitor command banned list
-        Settings.visitorCommandBlockList = getConfig().getStringList("general.visitorbannedcommands");
-        // Max team size
-        Settings.maxTeamSize = getConfig().getInt("island.maxteamsize", 4);
-        // Deprecated settings - use permission askyblock.team.maxsize.<number> instead
-        Settings.maxTeamSizeVIP = getConfig().getInt("island.vipteamsize", 0);
-        Settings.maxTeamSizeVIP2 = getConfig().getInt("island.vip2teamsize", 0);
-        if (Settings.maxTeamSizeVIP > 0 || Settings.maxTeamSizeVIP2 > 0) {
-            getLogger().warning(Settings.PERMPREFIX + "team.vip and " + Settings.PERMPREFIX + "team.vip2 are deprecated!");
-            getLogger().warning("Use permission " + Settings.PERMPREFIX + "team.maxsize.<number> instead.");
-        }
-        // Max home number
-        Settings.maxHomes = getConfig().getInt("general.maxhomes",1);
-        if (Settings.maxHomes < 1) {
-            Settings.maxHomes = 1;
-        }
-        // Flymode expiration while flying oustide island boundaries
-        Settings.flyTimeOutside = getConfig().getInt("island.flytimeoutside", 0);
-        if(Settings.flyTimeOutside < 0) {
-            Settings.flyTimeOutside = 0;
-        }
-
-        // Temporary Permissions while inside island
-        Settings.temporaryPermissions = getConfig().getStringList("island.islandtemporaryperms");
-
-        // Settings from config.yml
-        Settings.worldName = getConfig().getString("general.worldName");
-        // Check if the world name matches island.yml info
-        File islandFile = new File(plugin.getDataFolder(), "islands.yml");
-        if (islandFile.exists()) {
-            YamlConfiguration islandYaml = new YamlConfiguration();
-            try {
-                islandYaml.load(islandFile);
-                if (!islandYaml.contains(Settings.worldName)) {
-                    // Bad news, stop everything and tell the admin
-                    getLogger().severe("+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
-                    getLogger().severe("More set up is required. Go to config.yml and edit it.");
-                    getLogger().severe("");
-                    getLogger().severe("Check island world name is same as world in islands.yml.");
-                    getLogger().severe("If you are resetting and changing world, delete island.yml and restart.");
-                    getLogger().severe("");
-                    getLogger().severe("+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
-                    return false;
-                }
-            } catch (Exception e) {}        
-        }
-        Settings.createNether = getConfig().getBoolean("general.createnether", true);
-        if (!Settings.createNether) {
-            getLogger().info("The Nether is disabled");
-        }
-
-        String companion = getConfig().getString("island.companion", "COW").toUpperCase();
-        Settings.islandCompanion = null;
-        if (!companion.equalsIgnoreCase("NOTHING")) {
-            String commaList = "NOTHING, ";
-            for (EntityType type : EntityType.values()) {
-                if (companion.equalsIgnoreCase(type.toString())) {
-                    Settings.islandCompanion = type;
-                    break;
-                }
-                commaList += ", " + type.toString();
-            }
-            if (Settings.islandCompanion == null) {
-                getLogger().warning("Island companion is not recognized. Pick from " + commaList);
-            }
-        }
-        // Companion names
-        List<String> companionNames = getConfig().getStringList("island.companionnames");
-        Settings.companionNames = new ArrayList<String>();
-        for (String name : companionNames) {
-            Settings.companionNames.add(ChatColor.translateAlternateColorCodes('&', name));
-        }
-        Settings.islandDistance = getConfig().getInt("island.distance", 200);
-        if (Settings.islandDistance < 50) {
-            Settings.islandDistance = 50;
-            getLogger().info("Setting minimum island distance to 50");
-        }
-        Settings.island_protectionRange = getConfig().getInt("island.protectionRange", 100);
-        if (Settings.island_protectionRange % 2 != 0) {
-            Settings.island_protectionRange--;
-            getLogger().warning("Protection range must be even, using " + Settings.island_protectionRange);
-        }
-        if (Settings.island_protectionRange > Settings.islandDistance) {
-            getLogger().warning("Protection range cannot be > island distance. Setting them to be equal.");
-            Settings.island_protectionRange = Settings.islandDistance;
-        }
-        if (Settings.island_protectionRange < 0) {
-            Settings.island_protectionRange = 0;
-        }
-        Settings.islandXOffset = getConfig().getInt("island.xoffset", 0);
-        if (Settings.islandXOffset < 0) {
-            Settings.islandXOffset = 0;
-            getLogger().info("Setting minimum island X Offset to 0");
-        } else if (Settings.islandXOffset > Settings.islandDistance) {
-            Settings.islandXOffset = Settings.islandDistance;
-            getLogger().info("Setting maximum island X Offset to " + Settings.islandDistance);
-        }
-        Settings.islandZOffset = getConfig().getInt("island.zoffset", 0);
-        if (Settings.islandZOffset < 0) {
-            Settings.islandZOffset = 0;
-            getLogger().info("Setting minimum island Z Offset to 0");
-        } else if (Settings.islandZOffset > Settings.islandDistance) {
-            Settings.islandZOffset = Settings.islandDistance;
-            getLogger().info("Setting maximum island Z Offset to " + Settings.islandDistance);
-        }
-        long x = getConfig().getLong("island.startx", 0);
-        // Check this is a multiple of island distance
-        long z = getConfig().getLong("island.startz", 0);
-        Settings.islandStartX = Math.round((double) x / Settings.islandDistance) * Settings.islandDistance + Settings.islandXOffset;
-        Settings.islandStartZ = Math.round((double) z / Settings.islandDistance) * Settings.islandDistance + Settings.islandZOffset;
-
-        // ASkyBlock and AcidIsland difference
-        if (Settings.GAMETYPE.equals(Settings.GameType.ACIDISLAND)) {
-            Settings.acidDamage = getConfig().getDouble("general.aciddamage", 5D);
-            if (Settings.acidDamage > 100D) {
-                Settings.acidDamage = 100D;
-            } else if (Settings.acidDamage < 0D) {
-                Settings.acidDamage = 0D;
-            }
-            Settings.mobAcidDamage = getConfig().getDouble("general.mobaciddamage", 10D);
-            if (Settings.mobAcidDamage > 100D) {
-                Settings.mobAcidDamage = 100D;
-            } else if (Settings.mobAcidDamage < 0D) {
-                Settings.mobAcidDamage = 0D;
-            }
-            Settings.rainDamage = getConfig().getDouble("general.raindamage", 0.5D);
-            if (Settings.rainDamage > 100D) {
-                Settings.rainDamage = 100D;
-            } else if (Settings.rainDamage < 0D) {
-                Settings.rainDamage = 0D;
-            }
-            // The island's center is actually 5 below sea level
-            Settings.sea_level = getConfig().getInt("island.sealevel", 50);
-            if (Settings.sea_level < 0) {
-                Settings.sea_level = 0;
-            }
-            Settings.island_level = getConfig().getInt("island.islandlevel", 50) - 5;
-            if (Settings.island_level < 0) {
-                Settings.island_level = 0;
-            }
-        } else {
-            Settings.acidDamage = getConfig().getDouble("general.aciddamage", 0D);
-            if (Settings.acidDamage > 100D) {
-                Settings.acidDamage = 100D;
-            } else if (Settings.acidDamage < 0D) {
-                Settings.acidDamage = 0D;
-            }
-            Settings.mobAcidDamage = getConfig().getDouble("general.mobaciddamage", 0D);
-            if (Settings.mobAcidDamage > 100D) {
-                Settings.mobAcidDamage = 100D;
-            } else if (Settings.mobAcidDamage < 0D) {
-                Settings.mobAcidDamage = 0D;
-            }
-            Settings.rainDamage = getConfig().getDouble("general.raindamage", 0D);
-            if (Settings.rainDamage > 100D) {
-                Settings.rainDamage = 100D;
-            } else if (Settings.rainDamage < 0D) {
-                Settings.rainDamage = 0D;
-            }
-            // The island's center is actually 5 below sea level
-            Settings.sea_level = getConfig().getInt("general.sealevel", 0);
-            if (Settings.sea_level < 0) {
-                Settings.sea_level = 0;
-            }
-            Settings.island_level = getConfig().getInt("general.islandlevel", 120) - 5;
-            if (Settings.island_level < 0) {
-                Settings.island_level = 0;
-            }
-        }
-        Settings.animalAcidDamage = getConfig().getDouble("general.animaldamage", 0D);
-        if (Settings.animalAcidDamage > 100D) {
-            Settings.animalAcidDamage = 100D;
-        } else if (Settings.animalAcidDamage < 0D) {
-            Settings.animalAcidDamage = 0D;
-        }
-        Settings.damageChickens = getConfig().getBoolean("general.damagechickens", false);
-        // Damage Type
-        List<String> acidDamageType = getConfig().getStringList("general.damagetype");
-        Settings.acidDamageType.clear();
-        if (acidDamageType != null) {
-            for (String effect : acidDamageType) {
-                PotionEffectType newPotionType = PotionEffectType.getByName(effect);
-                if (newPotionType != null) {
-                    // Check if it is a valid addition
-                    if (newPotionType.equals(PotionEffectType.BLINDNESS) || newPotionType.equals(PotionEffectType.CONFUSION)
-                            || newPotionType.equals(PotionEffectType.HUNGER) || newPotionType.equals(PotionEffectType.POISON)
-                            || newPotionType.equals(PotionEffectType.SLOW) || newPotionType.equals(PotionEffectType.SLOW_DIGGING)
-                            || newPotionType.equals(PotionEffectType.WEAKNESS)) {
-                        Settings.acidDamageType.add(newPotionType);
-                    }
-                } else {
-                    getLogger().warning("Could not interpret acid damage modifier: " + effect + " - skipping");
-                    getLogger().warning("Types can be : SLOW, SLOW_DIGGING, CONFUSION,");
-                    getLogger().warning("BLINDNESS, HUNGER, WEAKNESS and POISON");
-                }
-            }
-        }
-
-        Settings.animalSpawnLimit = getConfig().getInt("general.animalspawnlimit", 15);
-        if (Settings.animalSpawnLimit < -1) {
-            Settings.animalSpawnLimit = -1;
-        }
-
-        Settings.monsterSpawnLimit = getConfig().getInt("general.monsterspawnlimit", 100);
-        if (Settings.monsterSpawnLimit < -1) {
-            Settings.monsterSpawnLimit = -1;
-        }
-
-        Settings.waterAnimalSpawnLimit = getConfig().getInt("general.wateranimalspawnlimit", 15);
-        if (Settings.waterAnimalSpawnLimit < -1) {
-            Settings.waterAnimalSpawnLimit = -1;
-        }
-
-        Settings.abandonedIslandLevel = getConfig().getInt("general.abandonedislandlevel", 10);
-        if (Settings.abandonedIslandLevel < 0) {
-            Settings.abandonedIslandLevel = 0;
-        }
-
-        Settings.resetChallenges = getConfig().getBoolean("general.resetchallenges", true);
-        Settings.resetMoney = getConfig().getBoolean("general.resetmoney", true);
-        Settings.clearInventory = getConfig().getBoolean("general.resetinventory", true);
-        Settings.resetEnderChest = getConfig().getBoolean("general.resetenderchest", false);
-
-        Settings.startingMoney = getConfig().getDouble("general.startingmoney", 0D);
-        Settings.respawnOnIsland = getConfig().getBoolean("general.respawnonisland", false);
-        Settings.newNether = getConfig().getBoolean("general.newnether", true);
-        Settings.netherTrees = getConfig().getBoolean("general.nethertrees", true);
-        // Nether spawn protection radius
-        Settings.netherSpawnRadius = getConfig().getInt("general.netherspawnradius", 25);
-        if (Settings.netherSpawnRadius < 0) {
-            Settings.netherSpawnRadius = 0;
-        } else if (Settings.netherSpawnRadius > 100) {
-            Settings.netherSpawnRadius = 100;
-        }
-
-        Settings.resetWait = getConfig().getInt("island.resetwait", 300);
-        if (Settings.resetWait < 0) {
-            Settings.resetWait = 0;
-        }
-        Settings.resetLimit = getConfig().getInt("island.resetlimit", 0);
-        if (Settings.resetWait < 0) {
-            Settings.resetWait = -1;
-        }
-        Settings.inviteWait = getConfig().getInt("island.invitewait", 60);
-        if (Settings.inviteWait < 0) {
-            Settings.inviteWait = 0;
-        }
-        Settings.levelWait = getConfig().getInt("island.levelwait", 60);
-        if (Settings.levelWait < 0) {
-            Settings.levelWait = 0;
-        }
-        // Seconds to wait for a confirmation of reset
-        Settings.resetConfirmWait = getConfig().getInt("island.resetconfirmwait", 10);
-        if (Settings.resetConfirmWait < 0) {
-            Settings.resetConfirmWait = 0;
-        }
-        Settings.damageOps = getConfig().getBoolean("general.damageops", false);
-        // Invincible visitors
-        Settings.invincibleVisitors = getConfig().getBoolean("general.invinciblevisitors", false);
-        if(Settings.invincibleVisitors){
-            Settings.visitorDamagePrevention = new HashSet<DamageCause>();
-            List<String> damageSettings = getConfig().getStringList("general.invinciblevisitorsoptions");
-            for (DamageCause cause: DamageCause.values()) {
-                if (damageSettings.contains(cause.toString())) {
-                    Settings.visitorDamagePrevention.add(cause);
-                }
-            }
-        }
-
-        // Settings.ultraSafeBoats =
-        // getConfig().getBoolean("general.ultrasafeboats", true);
-        Settings.logInRemoveMobs = getConfig().getBoolean("general.loginremovemobs", true);
-        Settings.islandRemoveMobs = getConfig().getBoolean("general.islandremovemobs", false);
-        List<String> mobWhiteList = getConfig().getStringList("general.mobwhitelist");
-        Settings.mobWhiteList.clear();
-        String valid = "BLAZE, CREEPER, SKELETON, SPIDER, GIANT, ZOMBIE, GHAST, PIG_ZOMBIE, "
-                + "ENDERMAN, CAVE_SPIDER, SILVERFISH,  WITHER, WITCH, ENDERMITE,"
-                + " GUARDIAN";
-        for (String mobName : mobWhiteList) {
-            if (valid.contains(mobName.toUpperCase())) {
-                try {
-                    Settings.mobWhiteList.add(EntityType.valueOf(mobName.toUpperCase()));
-                } catch (Exception e) {
-                    plugin.getLogger().severe("Error in config.yml, mobwhitelist value '" + mobName + "' is invalid.");
-                    plugin.getLogger().severe("Possible values are : Blaze, Cave_Spider, Creeper, Enderman, Endermite, Giant, Guardian, "
-                            + "Pig_Zombie, Silverfish, Skeleton, Spider, Witch, Wither, Zombie");
-                }
-            } else {
-                plugin.getLogger().severe("Error in config.yml, mobwhitelist value '" + mobName + "' is invalid.");
-                plugin.getLogger().severe("Possible values are : Blaze, Cave_Spider, Creeper, Enderman, Endermite, Giant, Guardian, "
-                        + "Pig_Zombie, Silverfish, Skeleton, Spider, Witch, Wither, Zombie");
-            }
-        }
-        // getLogger().info("DEBUG: island level is " + Settings.island_level);
-        // Get chest items
-        String chestItems = getConfig().getString("island.chestItems","");
-        if (!chestItems.isEmpty()) {
-            final String[] chestItemString = chestItems.split(" ");
-            // getLogger().info("DEBUG: chest items = " + chestItemString);
-            final ItemStack[] tempChest = new ItemStack[chestItemString.length];
-            for (int i = 0; i < tempChest.length; i++) {
-                String[] amountdata = chestItemString[i].split(":");
-                try {
-                    if (amountdata.length == 3 && amountdata[0].equalsIgnoreCase("MONSTER_EGG")) {
-                        try {
-                            EntityType type = EntityType.valueOf(amountdata[1].toUpperCase());
-                            if (Bukkit.getServer().getVersion().contains("(MC: 1.8") || Bukkit.getServer().getVersion().contains("(MC: 1.7")) {
-                                tempChest[i] = new SpawnEgg(type).toItemStack(Integer.parseInt(amountdata[2]));
-                            } else {
-                                try {
-                                    tempChest[i] = new SpawnEgg1_9(type).toItemStack(Integer.parseInt(amountdata[2]));
-                                } catch (Exception ex) {
-                                    tempChest[i] = new ItemStack(Material.MONSTER_EGG);
-                                    plugin.getLogger().severe("Monster eggs not supported with this server version.");
-                                }
-                            }
-                        } catch (Exception e) {
-                            Bukkit.getLogger().severe("Spawn eggs must be described by name. Try one of these (not all are possible):");
-                            for (EntityType type : EntityType.values()) {
-                                if (type.isSpawnable() && type.isAlive()) {
-                                    plugin.getLogger().severe(type.toString());
-                                }
-                            }
-                        }
-                    } else if (amountdata[0].equals("POTION")) {
-                        // getLogger().info("DEBUG: Potion length " +
-                        // amountdata.length);
-                        if (amountdata.length == 6) {
-                            tempChest[i] = Challenges.getPotion(amountdata, Integer.parseInt(amountdata[5]), "config.yml");
-                        } else {
-                            getLogger().severe("Problem loading chest item from config.yml so skipping it: " + chestItemString[i]);
-                            getLogger().severe("Potions for the chest must be fully defined as POTION:NAME:<LEVEL>:<EXTENDED>:<SPLASH/LINGER>:QTY");
-                        }
-                    } else {
-                        Material mat;
-                        if (StringUtils.isNumeric(amountdata[0])) {
-                            mat = Material.getMaterial(Integer.parseInt(amountdata[0]));
-                        } else {
-                            mat = Material.getMaterial(amountdata[0].toUpperCase());
-                        }
-                        if (amountdata.length == 2) {
-                            tempChest[i] = new ItemStack(mat, Integer.parseInt(amountdata[1]));
-                        } else if (amountdata.length == 3) {
-                            tempChest[i] = new ItemStack(mat, Integer.parseInt(amountdata[2]), Short.parseShort(amountdata[1]));
-                        }
-                    }
-                } catch (java.lang.IllegalArgumentException ex) {
-                    ex.printStackTrace();
-                    getLogger().severe("Problem loading chest item from config.yml so skipping it: " + chestItemString[i]);
-                    getLogger().severe("Error is : " + ex.getMessage());
-                    getLogger().info("Potential potion types are: ");
-                    for (PotionType c : PotionType.values())
-                        getLogger().info(c.name());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    getLogger().severe("Problem loading chest item from config.yml so skipping it: " + chestItemString[i]);
-                    getLogger().info("Potential material types are: ");
-                    for (Material c : Material.values())
-                        getLogger().info(c.name());
-                    // e.printStackTrace();
-                }
-            }
-            Settings.chestItems = tempChest;
-        } else {
-            // Nothing in the chest
-            Settings.chestItems = new ItemStack[0];
-        }
-        // System settings
-        Settings.endermanDeathDrop = getConfig().getBoolean("island.endermandeathdrop", true);
-        Settings.allowEndermanGriefing = getConfig().getBoolean("island.allowendermangriefing", true);
-        Settings.allowCreeperDamage = getConfig().getBoolean("island.allowcreeperdamage", true);
-        Settings.allowCreeperGriefing = getConfig().getBoolean("island.allowcreepergriefing", false);
-        Settings.allowTNTDamage = getConfig().getBoolean("island.allowtntdamage", false);
-        Settings.allowFireExtinguish = getConfig().getBoolean("island.allowfireextinguish", false);
-        Settings.allowChestDamage = getConfig().getBoolean("island.allowchestdamage", false);
-        Settings.allowVisitorKeepInvOnDeath = getConfig().getBoolean("island.allowvisitorkeepinvondeath", false);
-        Settings.allowPistonPush = getConfig().getBoolean("island.allowpistonpush", true);
-        Settings.allowMobDamageToItemFrames = getConfig().getBoolean("island.allowitemframedamage", false);
-
-        // Default settings hashmaps - make sure this is kept up to date with new settings
-        // If a setting is not listed, the world default is used
-        Settings.defaultWorldSettings.clear();
-        Settings.defaultIslandSettings.clear();
-        Settings.defaultSpawnSettings.clear();
-        Settings.visitorSettings.clear();
-        for (SettingsFlag flag: SettingsFlag.values()) {
-            Settings.defaultWorldSettings.put(flag, getConfig().getBoolean("protection.world." + flag.name()));
-            Settings.defaultSpawnSettings.put(flag, Settings.defaultWorldSettings.get(flag));
-            if (getConfig().contains("protection.island." + flag.name())) {
-                // Only items in the config.yml can be per island customized
-                Settings.visitorSettings.put(flag, Settings.defaultIslandSettings.get(flag));
-                // (The default value listed here should never be used because by definition, the flag name exists)
-                Settings.defaultIslandSettings.put(flag, getConfig().getBoolean("protection.island." + flag.name(), Settings.defaultWorldSettings.get(flag)));
-            } else {
-                // If not in the list in config.yml, then the island gets the world default
-                Settings.defaultIslandSettings.put(flag, Settings.defaultWorldSettings.get(flag));
-            }
-        }
-        // Challenges
-        getChallenges();
-        // Challenge completion
-        Settings.broadcastMessages = getConfig().getBoolean("general.broadcastmessages", true);
-
-        // Levels
-        // Get the blockvalues.yml file
-        YamlConfiguration blockValuesConfig = Util.loadYamlFile("blockvalues.yml");
-        // Get the under water multiplier
-        Settings.deathpenalty = blockValuesConfig.getInt("deathpenalty", 0);
-        Settings.sumTeamDeaths = blockValuesConfig.getBoolean("sumteamdeaths");
-        Settings.maxDeaths = blockValuesConfig.getInt("maxdeaths", 10);
-        Settings.islandResetDeathReset = blockValuesConfig.getBoolean("islandresetdeathreset", true);
-        Settings.teamJoinDeathReset = blockValuesConfig.getBoolean("teamjoindeathreset", true);
-        Settings.underWaterMultiplier = blockValuesConfig.getDouble("underwater", 1D);
-        Settings.levelCost = blockValuesConfig.getInt("levelcost", 100);
-        if (Settings.levelCost < 1) {
-            Settings.levelCost = 1;
-            getLogger().warning("levelcost in blockvalues.yml cannot be less than 1. Setting to 1.");
-        }
-        Settings.blockLimits = new HashMap<MaterialData, Integer>();
-        if (blockValuesConfig.isSet("limits")) {
-            for (String material : blockValuesConfig.getConfigurationSection("limits").getKeys(false)) {
-                try {
-                    String[] split = material.split(":");
-                    byte data = 0;
-                    if (split.length>1) {
-                        data = Byte.valueOf(split[1]);
-                    }
-                    Material mat;
-                    if (StringUtils.isNumeric(split[0])) {
-                        mat = Material.getMaterial(Integer.parseInt(split[0]));
-                    } else {
-                        mat = Material.valueOf(split[0].toUpperCase());
-                    }
-                    MaterialData materialData = new MaterialData(mat);
-                    materialData.setData(data);
-                    Settings.blockLimits.put(materialData, blockValuesConfig.getInt("limits." + material, 0));
-                    if (debug) {
-                        getLogger().info("Maximum number of " + materialData + " will be " + Settings.blockLimits.get(materialData));
-                    }
-                } catch (Exception e) {
-                    getLogger().warning("Unknown material (" + material + ") in blockvalues.yml Limits section. Skipping...");
-                }
-            }
-        }
-        Settings.blockValues = new HashMap<MaterialData, Integer>();
-        if (blockValuesConfig.isSet("blocks")) {
-            for (String material : blockValuesConfig.getConfigurationSection("blocks").getKeys(false)) {
-                try {
-                    String[] split = material.split(":");
-                    byte data = 0;
-                    if (split.length>1) {
-                        data = Byte.valueOf(split[1]);
-                    }
-                    Material mat;
-                    if (StringUtils.isNumeric(split[0])) {
-                        mat = Material.getMaterial(Integer.parseInt(split[0]));
-                    } else {
-                        mat = Material.valueOf(split[0].toUpperCase());
-                    }
-                    MaterialData materialData = new MaterialData(mat);
-                    materialData.setData(data);
-                    Settings.blockValues.put(materialData, blockValuesConfig.getInt("blocks." + material, 0));
-                    if (debug) {
-                        getLogger().info(mat.toString() + " value is " + Settings.blockValues.get(mat));
-                    }
-                } catch (Exception e) {
-                    // e.printStackTrace();
-                    getLogger().warning("Unknown material (" + material + ") in blockvalues.yml blocks section. Skipping...");
-                }
-            }
-        } else {
-            getLogger().severe("No block values in blockvalues.yml! All island levels will be zero!");
-        }
-        // Biome Settings
-        Settings.biomeCost = getConfig().getDouble("biomesettings.defaultcost", 100D);
-        if (Settings.biomeCost < 0D) {
-            Settings.biomeCost = 0D;
-            getLogger().warning("Biome default cost is < $0, so set to zero.");
-        }
-        String defaultBiome = getConfig().getString("biomesettings.defaultbiome", "PLAINS");
-        try {
-            Settings.defaultBiome = Biome.valueOf(defaultBiome);
-        } catch (Exception e) {
-            getLogger().severe("Could not parse biome " + defaultBiome + " using PLAINS instead.");
-            Settings.defaultBiome = Biome.PLAINS;
-        }
-        Settings.breedingLimit = getConfig().getInt("general.breedinglimit", 0);
-        Settings.villagerLimit = getConfig().getInt("general.villagerlimit", 0);
-        Settings.limitedBlocks = new HashMap<String,Integer>();
-        Settings.entityLimits = new HashMap<EntityType, Integer>();
-        ConfigurationSection entityLimits = getConfig().getConfigurationSection("general.entitylimits");
-        if (entityLimits != null) {
-            for (String entity: entityLimits.getKeys(false)) {
-                int limit = entityLimits.getInt(entity.toUpperCase(), -1);
-                if (limit > 0) {
-                    getLogger().info(entity.toUpperCase() + " will be limited to " + limit);
-                }
-                if (Material.getMaterial(entity.toUpperCase()) == null) {
-                    // Check if this is a living entity
-                    EntityType type = EntityType.valueOf(entity.toUpperCase());
-                    if (type != null && type.isAlive()) {
-                        Settings.entityLimits.put(type, limit);
-                    } else {
-                        getLogger().warning("general.entitylimits section has unknown entity type: " + entity.toUpperCase() + " skipping...");
-                    }
-                } else if (limit > -1) {
-                    Settings.limitedBlocks.put(entity.toUpperCase(), limit);
-                    if (entity.equalsIgnoreCase("REDSTONE_COMPARATOR")) {
-                        // Player can only ever place a redstone comparator in the OFF state
-                        Settings.limitedBlocks.put("REDSTONE_COMPARATOR_OFF", limit);
-                    } else if (entity.equalsIgnoreCase("BANNER")) {
-                        // To simplify banners, the banner is allowed and automatically made wall and standing banner
-                        Settings.limitedBlocks.put("WALL_BANNER", limit);
-                        Settings.limitedBlocks.put("STANDING_BANNER", limit);
-                    } else if (entity.equalsIgnoreCase("SIGN")) {
-                        // To simplify signs, the sign is allowed and automatically made wall and standing signs
-                        Settings.limitedBlocks.put("WALL_SIGN", limit);
-                        Settings.limitedBlocks.put("SIGN_POST", limit);
-                    }
-                }
-            }
-        }
-        // Legacy setting support for hopper limiting
-        if (Settings.limitedBlocks.isEmpty()) {
-            Settings.hopperLimit = getConfig().getInt("general.hopperlimit", -1);
-            if (Settings.hopperLimit > 0) {
-                Settings.limitedBlocks.put("HOPPER", Settings.hopperLimit);
-            }
-        }
-        Settings.mobLimit = getConfig().getInt("general.moblimit", 0);
-        Settings.removeCompleteOntimeChallenges = getConfig().getBoolean("general.removecompleteonetimechallenges", false);
-        Settings.addCompletedGlow = getConfig().getBoolean("general.addcompletedglow", true);
-        // Clean up blocks around edges when deleting islands
-        Settings.cleanRate = getConfig().getInt("island.cleanrate", 2);
-        if (Settings.cleanRate < 1) {
-            Settings.cleanRate = 1;
-        }
-        // No acid bottles or buckets
-        Settings.acidBottle = getConfig().getBoolean("general.acidbottles", true);
-        // Island name length
-        Settings.minNameLength = getConfig().getInt("island.minnamelength", 1);
-        Settings.maxNameLength = getConfig().getInt("island.maxnamelength", 20);
-        if (Settings.minNameLength < 0) {
-            Settings.minNameLength = 0;
-        }
-        if (Settings.maxNameLength < 1) {
-            Settings.maxNameLength = 1;
-        }
-        if (Settings.minNameLength > Settings.maxNameLength) {
-            Settings.minNameLength = Settings.maxNameLength;
-        }
-        // Magic Cobble Generator
-        Settings.useMagicCobbleGen = getConfig().getBoolean("general.usemagiccobblegen", false);
-        if (Settings.useMagicCobbleGen) {
-            Settings.magicCobbleGenOnlyAtSpawn = getConfig().getBoolean("general.magiccobblegenonlyatspawn", false);
-            if(getConfig().isSet("general.magiccobblegenchances")){
-                //getLogger().info("DEBUG: magic cobble gen enabled and chances section found");
-                // Clear the cobble gen chances so they can be reloaded
-                LavaCheck.clearChances();
-                Settings.magicCobbleGenChances = new TreeMap<Integer, TreeMap<Double,Material>>();
-                for(String level : getConfig().getConfigurationSection("general.magiccobblegenchances").getKeys(false)){
-                    int levelInt = 0;
-                    try{
-                        if(level.equals("default")) {
-                            levelInt = Integer.MIN_VALUE;
-                        } else {
-                            levelInt = Integer.parseInt(level);
-                        } 
-                        TreeMap<Double,Material> blockMapTree = new TreeMap<Double, Material>();
-                        double chanceTotal = 0;
-                        for(String block : getConfig().getConfigurationSection("general.magiccobblegenchances." + level).getKeys(false)){
-                            double chance = getConfig().getDouble("general.magiccobblegenchances." + level + "." + block, 0D);
-                            if(chance > 0 && Material.getMaterial(block) != null && Material.getMaterial(block).isBlock()) {
-                                // Store the cumulative chance in the treemap. It does not need to add up to 100%
-                                chanceTotal += chance;
-                                blockMapTree.put(chanceTotal, Material.getMaterial(block));
-                            }
-                        }
-                        if (!blockMapTree.isEmpty()) {
-                            Settings.magicCobbleGenChances.put(levelInt, blockMapTree);
-                        }
-                        // Store the requested values as a % chance
-                        Map<Material, Double> chances = new HashMap<Material, Double>();
-                        for (Entry<Double, Material> en : blockMapTree.entrySet()) {
-                            double chance = getConfig().getDouble("general.magiccobblegenchances." + level + "." + en.getValue(), 0D);
-                            chances.put(en.getValue(), (chance/chanceTotal) * 100);
-                        }
-                        //getLogger().info("DEBUG: level = " + levelInt + " chances = " + chances.toString());
-                        LavaCheck.storeChances(levelInt, chances);
-                    } catch(NumberFormatException e){
-                        // Putting the catch here means that an invalid level is skipped completely
-                        getLogger().severe("Unknown level '" + level + "' listed in magiccobblegenchances section! Must be an integer or 'default'. Skipping...");
-                    }
-                }
-            }
-        }
-        // Disable offline redstone
-        Settings.disableOfflineRedstone = getConfig().getBoolean("general.disableofflineredstone", false);
-
-        // Fancy island level display
-        Settings.fancyIslandLevelDisplay = getConfig().getBoolean("general.fancylevelinchat", false);
-
-        // All done
-        return true;
-    }
-
-    /**
      * Registers events
      */
     public void registerEvents() {
@@ -1729,6 +928,13 @@ public class ASkyBlock extends JavaPlugin {
      */
     public HashMap<String, ASLocale> getAvailableLocales() {
         return availableLocales;
+    }
+
+    /**
+     * @param availableLocales the availableLocales to set
+     */
+    public void setAvailableLocales(HashMap<String, ASLocale> availableLocales) {
+        this.availableLocales = availableLocales;
     }
 
     /**

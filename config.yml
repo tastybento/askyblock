@@ -124,10 +124,7 @@ island:
    # These set the minimum and maximum size of a name. 
    minnamelength: 0
    maxnamelength: 20
-   
-   # PVP cooldown in seconds. Players cannot toggle PVP off and on until this timeout
-   pvpcooldown: 60
-   
+      
    # Players with askyblock.islandfly permission can fly on their island. This setting is
    # how many seconds the player keeps fly mode while flying outside his island before it
    # is removed (and they fall).
@@ -163,6 +160,9 @@ island:
 
 # General Settings
 general:
+   # Name of the world - if it does not exist then it will be generated
+   worldName: ASkyBlock
+
    # Default language for new players.
    # This is the filename in the locale folder without .yml.
    # If this does not exist, the default en-US will be used.
@@ -176,9 +176,6 @@ general:
    # Show enter/exit notices in Action Bar (11.1+)
    # Only shows if notices are enabled in settings
    showinactionbar: true
-   
-   # Name of the world - if it does not exist then it will be generated
-   worldName: ASkyBlock
    
    # Maximum number of islands. Set to 0 for unlimited. 
    # If the number of islands is greater than this number, no new islands will be
@@ -206,6 +203,11 @@ general:
    # Make the new nether roof, if false, there is nothing up there
    # Change to false if lag is a problem from the generation
    netherroof: true 
+   # Nether spawn protection radius - this is the distance around the nether spawn
+   # that will be protected from player interaction (breaking blocks, pouring lava etc.)
+   # Minimum is 0 (not recommended), maximum is 100. Default is 25.
+   # Only applies to standard nether.
+   netherspawnradius: 25
 
    # Use new level calculation (super speedy). Set to false if you want the old
    # method (slower).
@@ -246,6 +248,9 @@ general:
    visitorbannedcommands:
    - spawner
    - spawnmob
+
+   # PVP cooldown in seconds. Players cannot toggle PVP off and on until this timeout
+   pvpcooldown: 60
 
    # Invincible visitors - Prevent players from killing them (intentionally or by accident)
    # If they fall to the void, they get TP'd to their island.
@@ -481,16 +486,6 @@ general:
    # permission.
    resetenderchest: false
 
-   # Nether spawn protection radius - this is the distance around the nether spawn
-   # that will be protected from player interaction (breaking blocks, pouring lava etc.)
-   # Minimum is 0 (not recommended), maximum is 100. Default is 25.
-   # Only applies to standard nether.
-   netherspawnradius: 25
-
-   # Broadcast 1st time challenge completion messages to all players.
-   # Change to false if the spam becomes too much.
-   broadcastmessages: true
-
    # Allow /island teleport when falling. If set to false, all teleporting is
    # disabled until death from the void or until you hit something.
    # See commands that this will block too
@@ -501,6 +496,10 @@ general:
    #- anotherCommand
    #- andAnotherOne
    #- "*"
+
+   # Broadcast 1st time challenge completion messages to all players.
+   # Change to false if the spam becomes too much.
+   broadcastmessages: true
 
    # Remove non-repeatable challenges from the challenge GUI when complete
    removecompleteonetimechallenges: false
@@ -534,11 +533,13 @@ general:
    logteamchat: true
 
    # Variables to use as chat prefixes. You can change them to be what you want.
-   # "{ISLAND_LEVEL}" is replaced by the player's island level.
-   # "{ISLAND_CHALLENGE_LEVEL}" is replaced by the player's challenge level.
+   # {ISLAND_LEVEL} is replaced by the player's island level.
+   # {ISLAND_CHALLENGE_LEVEL} is replaced by the player's challenge level.
+   # {ISLAND_PLAYER} is replaced by the player's display name
    # Confirmed to work with Essentials Chat, Multiverse Core and Herochat.
    chatlevelprefix: "{ISLAND_LEVEL}"
    chatchallengelevelprefix: "{ISLAND_CHALLENGE_LEVEL}"
+   chatislandplayer: "{ISLAND_PLAYER}"
      
    # Restrict Wither and other flying mobs
    # Any flying mobs that exit the island space where they were spawned will be removed.

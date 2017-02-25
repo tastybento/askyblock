@@ -63,6 +63,7 @@ import com.wasteofplastic.askyblock.CoopPlay;
 import com.wasteofplastic.askyblock.DeleteIslandChunk;
 import com.wasteofplastic.askyblock.GridManager;
 import com.wasteofplastic.askyblock.Island;
+import com.wasteofplastic.askyblock.PluginConfig;
 import com.wasteofplastic.askyblock.Island.SettingsFlag;
 import com.wasteofplastic.askyblock.PlayerCache;
 import com.wasteofplastic.askyblock.SafeSpotTeleport;
@@ -699,7 +700,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 // Remove temp permissions
                 plugin.getPlayerEvents().removeAllTempPerms();
                 plugin.reloadConfig();
-                plugin.loadPluginConfig();
+                PluginConfig.loadPluginConfig(plugin);
                 plugin.getChallenges().reloadChallengeConfig();
                 if (Settings.useEconomy && VaultHelper.setupEconomy()) {
                     ControlPanel.loadShop();
