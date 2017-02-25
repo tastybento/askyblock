@@ -145,124 +145,132 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
             // Permissions are split into admin permissions and mod permissions
             // Listed in alphabetical order
             Player player = (Player) sender;
-            Util.sendMessage(player, plugin.myLocale(player.getUniqueId()).adminHelpHelp);
+            List<String> helpMessages = new ArrayList<String>();
+            helpMessages.add(plugin.myLocale(player.getUniqueId()).adminHelpHelp);
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.challenges") || player.isOp()) {
-                Util.sendMessage(player, ChatColor.YELLOW + "/" + label + " clearchallengereset <challenge>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpclearChallengeReset);
+                helpMessages.add(ChatColor.YELLOW + "/" + label + " clearchallengereset <challenge>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpclearChallengeReset);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.clearreset") || player.isOp()) {
-                Util.sendMessage(player, ChatColor.YELLOW + "/" + label + " clearreset <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpclearReset);
+                helpMessages.add(ChatColor.YELLOW + "/" + label + " clearreset <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpclearReset);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.clearresetall") || player.isOp()) {
-                Util.sendMessage(player, ChatColor.YELLOW + "/" + label + " clearresetall:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpclearReset);
+                helpMessages.add(ChatColor.YELLOW + "/" + label + " clearresetall:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpclearReset);
             }
             if (Settings.useMagicCobbleGen && VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.cobblestats") || player.isOp()) {
-                Util.sendMessage(player, ChatColor.YELLOW  + "/" + label + " cobblestats: " + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpcobbleStats);
+                helpMessages.add(ChatColor.YELLOW  + "/" + label + " cobblestats: " + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpcobbleStats);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.challenges") || player.isOp()) {
-                Util.sendMessage(player, ChatColor.YELLOW + "/" + label + " completechallenge <player> <challengename>:" + ChatColor.WHITE + " "
+                helpMessages.add(ChatColor.YELLOW + "/" + label + " completechallenge <player> <challengename>:" + ChatColor.WHITE + " "
                         + plugin.myLocale(player.getUniqueId()).adminHelpcompleteChallenge);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.delete") || player.isOp()) {
-                Util.sendMessage(player, ChatColor.YELLOW + "/" + label + " delete <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpdelete);
+                helpMessages.add(ChatColor.YELLOW + "/" + label + " delete <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpdelete);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.deleteisland") || player.isOp()) {
-                Util.sendMessage(player, ChatColor.YELLOW + "/" + label + " deleteisland confirm:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpdelete);
+                helpMessages.add(ChatColor.YELLOW + "/" + label + " deleteisland confirm:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpdelete);
             }
 
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.info") || player.isOp()) {
-                Util.sendMessage(player, ChatColor.YELLOW + "/" + label + " info:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpinfoIsland);
-                Util.sendMessage(player, ChatColor.YELLOW + "/" + label + " info <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpinfo);
-                Util.sendMessage(player, ChatColor.YELLOW + "/" + label + " info challenges <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpinfo);
+                helpMessages.add(ChatColor.YELLOW + "/" + label + " info:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpinfoIsland);
+                helpMessages.add(ChatColor.YELLOW + "/" + label + " info <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpinfo);
+                helpMessages.add(ChatColor.YELLOW + "/" + label + " info challenges <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpinfo);
 
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.challenges") || player.isOp()) {
-                Util.sendMessage(player, ChatColor.YELLOW + "/" + label + " listchallengeresets: " + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelplistChallengeResets);
+                helpMessages.add(ChatColor.YELLOW + "/" + label + " listchallengeresets: " + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelplistChallengeResets);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.lock") || player.isOp()) {
-                Util.sendMessage(player, ChatColor.YELLOW + "/" + label + " lock <player>: " + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelplock);
+                helpMessages.add(ChatColor.YELLOW + "/" + label + " lock <player>: " + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelplock);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.name") || player.isOp()) {
-                Util.sendMessage(player, ChatColor.YELLOW  + "/" + label + " name <player> <island name>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpName);
+                helpMessages.add(ChatColor.YELLOW  + "/" + label + " name <player> <island name>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpName);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.purge") || player.isOp()) {
-                Util.sendMessage(player, ChatColor.YELLOW + "/" + label + " purge [TimeInDays]:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelppurge);
-                Util.sendMessage(player, ChatColor.YELLOW + "/" + label + " purge unowned:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelppurgeUnowned);
-                Util.sendMessage(player, ChatColor.YELLOW + "/" + label + " purge allow/disallow:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelppurgeAllowDisallow);
+                helpMessages.add(ChatColor.YELLOW + "/" + label + " purge [TimeInDays]:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelppurge);
+                helpMessages.add(ChatColor.YELLOW + "/" + label + " purge unowned:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelppurgeUnowned);
+                helpMessages.add(ChatColor.YELLOW + "/" + label + " purge allow/disallow:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelppurgeAllowDisallow);
             }
 
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.reload") || player.isOp()) {
-                Util.sendMessage(player, ChatColor.YELLOW + "/" + label + " reload:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpreload);
+                helpMessages.add(ChatColor.YELLOW + "/" + label + " reload:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpreload);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.register") || player.isOp()) {
-                Util.sendMessage(player, ChatColor.YELLOW + "/" + label + " register <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpregister);
+                helpMessages.add(ChatColor.YELLOW + "/" + label + " register <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpregister);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.resethome") || player.isOp()) {
-                Util.sendMessage(player, ChatColor.YELLOW + "/" + label + " resethome <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpResetHome);
+                helpMessages.add(ChatColor.YELLOW + "/" + label + " resethome <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpResetHome);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.challenges") || player.isOp()) {
-                Util.sendMessage(player, ChatColor.YELLOW + "/" + label + " resetchallenge <player> <challengename>:" + ChatColor.WHITE + " "
+                helpMessages.add(ChatColor.YELLOW + "/" + label + " resetchallenge <player> <challengename>:" + ChatColor.WHITE + " "
                         + plugin.myLocale(player.getUniqueId()).adminHelpresetChallenge);
-                Util.sendMessage(player, ChatColor.YELLOW + "/" + label + " resetchallengeforall <challenge> [time][m/h/d]:" + ChatColor.WHITE + " "
+                helpMessages.add(ChatColor.YELLOW + "/" + label + " resetchallengeforall <challenge> [time][m/h/d]:" + ChatColor.WHITE + " "
                         + plugin.myLocale(player.getUniqueId()).adminHelpresetChallengeForAll);
-                Util.sendMessage(player, ChatColor.YELLOW + "/" + label + " resetallchallenges <player>:" + ChatColor.WHITE + " "
+                helpMessages.add(ChatColor.YELLOW + "/" + label + " resetallchallenges <player>:" + ChatColor.WHITE + " "
                         + plugin.myLocale(player.getUniqueId()).adminHelpresetAllChallenges);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.resetname") || player.isOp()) {
-                Util.sendMessage(player, ChatColor.YELLOW  + "/" + label + " resetname <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpResetName);
+                helpMessages.add(ChatColor.YELLOW  + "/" + label + " resetname <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpResetName);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.signadmin") || player.isOp()) {
-                Util.sendMessage(player, ChatColor.YELLOW + "/" + label + " resetsign:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpResetSign);
-                Util.sendMessage(player, ChatColor.YELLOW + "/" + label + " resetsign <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpResetSign);
+                helpMessages.add(ChatColor.YELLOW + "/" + label + " resetsign:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpResetSign);
+                helpMessages.add(ChatColor.YELLOW + "/" + label + " resetsign <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpResetSign);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.reserve") || player.isOp()) {
-                Util.sendMessage(player, ChatColor.YELLOW + "/" + label + " reserve <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpReserve);
+                helpMessages.add(ChatColor.YELLOW + "/" + label + " reserve <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpReserve);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.setbiome") || player.isOp()) {
-                Util.sendMessage(sender, ChatColor.YELLOW + "/" + label + " setbiome <leader> <biome>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpsetBiome);
+                helpMessages.add(ChatColor.YELLOW + "/" + label + " setbiome <leader> <biome>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpsetBiome);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.setdeaths") || player.isOp()) {
-                Util.sendMessage(sender, ChatColor.YELLOW  + label + " setdeaths <player> <number>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpsetDeaths);
+                helpMessages.add(ChatColor.YELLOW  + label + " setdeaths <player> <number>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpsetDeaths);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.resethome") || player.isOp()) {
-                Util.sendMessage(player, ChatColor.YELLOW + "/" + label + " sethome <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpSetHome);
+                helpMessages.add(ChatColor.YELLOW + "/" + label + " sethome <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpSetHome);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.setspawn") || player.isOp()) {
-                Util.sendMessage(player, ChatColor.YELLOW + "/" + label + " setspawn:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpSetSpawn);
+                helpMessages.add(ChatColor.YELLOW + "/" + label + " setspawn:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpSetSpawn);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.setrange") || player.isOp()) {
-                Util.sendMessage(player, ChatColor.YELLOW + "/" + label + " setrange <number>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpSetRange);
-                Util.sendMessage(player, ChatColor.YELLOW + "/" + label + " addrange <+/- number>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpAddRange);
+                helpMessages.add(ChatColor.YELLOW + "/" + label + " setrange <number>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpSetRange);
+                helpMessages.add(ChatColor.YELLOW + "/" + label + " addrange <+/- number>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpAddRange);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.settingsreset") || player.isOp()) {
-                Util.sendMessage(player, ChatColor.YELLOW + "/" + label + " settingsreset [help | all | flag]:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpSettingsReset);
+                helpMessages.add(ChatColor.YELLOW + "/" + label + " settingsreset [help | all | flag]:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpSettingsReset);
             }
             if (Settings.teamChat && VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.spy") || player.isOp()) {
-                Util.sendMessage(player, ChatColor.YELLOW + "/" + label + " spy:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpTeamChatSpy);
+                helpMessages.add(ChatColor.YELLOW + "/" + label + " spy:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpTeamChatSpy);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.team") || player.isOp()) {
-                Util.sendMessage(sender, ChatColor.YELLOW + "/" + label + " team kick <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpkick);
-                Util.sendMessage(sender, ChatColor.YELLOW + "/" + label + " team add <player> <leader>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpadd);
+                helpMessages.add(ChatColor.YELLOW + "/" + label + " team kick <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpkick);
+                helpMessages.add(ChatColor.YELLOW + "/" + label + " team add <player> <leader>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpadd);
                 // Util.sendMessage(sender, ChatColor.YELLOW + "/" + label +
                 // " team delete <leader>:" + ChatColor.WHITE +
                 // " Removes the leader's team compeletely.");
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.topten") || player.isOp()) {
-                Util.sendMessage(player, ChatColor.YELLOW + "/" + label + " topten:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelptopTen);
+                helpMessages.add(ChatColor.YELLOW + "/" + label + " topten:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelptopTen);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.topbreeders") || player.isOp()) {
-                Util.sendMessage(player, ChatColor.YELLOW + "/" + label + " topbreeders: " + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelptopBreeders);
+                helpMessages.add(ChatColor.YELLOW + "/" + label + " topbreeders: " + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelptopBreeders);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.tp") || player.isOp()) {
-                Util.sendMessage(player, ChatColor.YELLOW + "/" + label + " tp <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelptp);
+                helpMessages.add(ChatColor.YELLOW + "/" + label + " tp <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelptp);
             }
             if (Settings.createNether && Settings.newNether && ASkyBlock.getNetherWorld() != null && (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.tpnether") || player.isOp())) {
-                Util.sendMessage(player, ChatColor.YELLOW + "/" + label + " tpnether <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelptpNether);
+                helpMessages.add(ChatColor.YELLOW + "/" + label + " tpnether <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelptpNether);
             }
 
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.unregister") || player.isOp()) {
-                Util.sendMessage(player, ChatColor.YELLOW + "/" + label + " unregister <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpunregister);
+                helpMessages.add(ChatColor.YELLOW + "/" + label + " unregister <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpunregister);
             }
-
+            // Send out the help. If the player does not have permission for any commands, tell them they have no permission
+            if (helpMessages.size() == 1) {
+                Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
+            } else {
+                for (String line : helpMessages) {
+                    Util.sendMessage(player, line);
+                }
+            }
         }
     }
 
