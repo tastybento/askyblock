@@ -13,8 +13,8 @@ acidLore: |-
     &c&l一切水源無法飲用!
 
 adminDeleteIsland: 
-  error: "Use &ldeleteisland confirm &r&cto delete the island you are on."
-  noid: "Cannot identify island."
+  error: "使用&ldeleteisland confirm &r&c刪除您所在的島嶼."
+  noid: "無法識別島。"
   use: "Use &ldelete [name] &r&cto delete the player instead."
 adminHelp: 
   add: "adds player to leader's team"
@@ -267,10 +267,10 @@ invite:
   youCannotInvite: "&l你無法邀請更多的玩家了."
   youHaveJoinedAnIsland: "你加入了一個島嶼! 使用 &e&l/[label] team &a來查看其他成員."
 island: 
-  blockValue: "[name] placed here may be worth [value]"
-  blockWorthless: "[name] is worthless" 
+  blockValue: "[name]放在這裡可能值得[value]"
+  blockWorthless: "[name]是毫無價值的" 
   cannotTeleport: "&c&l你不能在掉落時傳送!"
-  donate: "Welcome to A SkyBlock by tastybento"
+  donate: "§a本汉化由§e§ltastybento§a提供"
   donatecolor: "aqua"
   errorCouldNotCreateIsland: "無法為你創建島嶼. 請聯繫管理員."
   errorInvalidPlayer: 玩家不存在或者他不曾擁有一個島嶼!

@@ -965,9 +965,9 @@ public class ASLocale {
                 locale.getString("island.cannotTeleport", "You cannot teleport when falling!"));
         islandnew = ChatColor.translateAlternateColorCodes('&', locale.getString("island.new", "Creating a new island for you..."));
         islandSubTitle = locale.getString("island.subtitle", "by tastybento");
-        islandDonate = locale.getString("island.donate", "ASkyBlock by tastybento, click here to donate via PayPal!");
+        islandDonate = locale.getString("island.donate", "ASkyBlock by tastybento");
         islandTitle = locale.getString("island.title", "A SkyBlock");
-        islandURL = locale.getString("island.url", "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZSBJG5J2E3B7U");
+        islandURL = locale.getString("island.url", "");
         islandSubTitleColor = colorCheck(locale.getString("island.subtitlecolor", "blue"));
         islandDonateColor = colorCheck(locale.getString("island.donatecolor", "aqua"));
         islandTitleColor = colorCheck(locale.getString("island.titlecolor", "gold"));

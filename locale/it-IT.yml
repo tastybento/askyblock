@@ -270,7 +270,7 @@ island:
   blockValue: "[name] placed here may be worth [value]"
   blockWorthless: "[name] is worthless" 
   cannotTeleport: "Non puoi teletrasportarti mentre stai cadendo!"
-  donate: "ASkyBlock di tastybento, clicca qui per donarlo via PayPal!"
+  donate: "ASkyBlock di tastybento"
   donatecolor: "aqua"
   errorCouldNotCreateIsland: "Non puoi creare la tua isola. Per favore contatta lo staff."
   errorInvalidPlayer: "Quel giocatore è invalido o non ha una isola!"
@@ -321,7 +321,7 @@ island:
   title: "A SkyBlock"
   titlecolor: "gold"
   unlimited: "Unlimited"
-  url: "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZSBJG5J2E3B7U"
+  url: ""
 islandProtected: "Isola protetta."
 islandguardsettings: 
   TNTdamage: "TNT Damage"
