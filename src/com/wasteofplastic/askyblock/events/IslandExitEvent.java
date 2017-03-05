@@ -25,7 +25,7 @@ import com.wasteofplastic.askyblock.Island;
 
 
 /**
- * Fired when a player exits an island's area
+ * Fired when a player exits an island's protected area
  * @author tastybento
  *
  */
@@ -43,7 +43,7 @@ public class IslandExitEvent extends ASkyBlockEvent {
     }
 
     /**
-     * Location of where the player exited the island
+     * Location of where the player exited the island's protected area
      * @return the location
      */
     public Location getLocation() {

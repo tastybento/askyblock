@@ -457,7 +457,7 @@ public class IslandGuard implements Listener {
                 }
             }
             // Fire exit event
-            final IslandExitEvent event = new IslandExitEvent(e.getPlayer().getUniqueId(), islandFrom, e.getFrom());
+            final IslandExitEvent event = new IslandExitEvent(e.getPlayer().getUniqueId(), islandFrom, e.getTo());
             plugin.getServer().getPluginManager().callEvent(event);
         } else if (islandTo != null && islandFrom != null && !islandTo.equals(islandFrom)) {
             // Adjacent islands or overlapping protections
@@ -480,7 +480,7 @@ public class IslandGuard implements Listener {
             final IslandExitEvent event = new IslandExitEvent(e.getPlayer().getUniqueId(), islandTo, e.getTo());
             plugin.getServer().getPluginManager().callEvent(event);
             // Fire entry event
-            final IslandEnterEvent event2 = new IslandEnterEvent(e.getPlayer().getUniqueId(), islandFrom, e.getFrom());
+            final IslandEnterEvent event2 = new IslandEnterEvent(e.getPlayer().getUniqueId(), islandFrom, e.getTo());
             plugin.getServer().getPluginManager().callEvent(event2);
         }
     }
@@ -497,6 +497,7 @@ public class IslandGuard implements Listener {
                 || plugin.getServer().getVersion().contains("(MC: 1.9")
                 || plugin.getServer().getVersion().contains("(MC: 1.10")) {
             Util.sendMessage(player, message);
+            return;
         }
         plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(),
                 "minecraft:title " + player.getName() + " actionbar {\"text\":\"" + ChatColor.stripColor(message) + "\"}");
