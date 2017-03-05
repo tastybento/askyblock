@@ -491,13 +491,15 @@ public class IslandGuard implements Listener {
      * @param message
      */
     private void sendEnterExit(Player player, String message) {
-        if (Settings.showInActionBar) {
-            plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(),
-                    "minecraft:title " + player.getName() + " actionbar {\"text\":\"" + ChatColor.stripColor(message) + "\"}");
-        } else {
+        if (!Settings.showInActionBar
+                || plugin.getServer().getVersion().contains("(MC: 1.7")
+                || plugin.getServer().getVersion().contains("(MC: 1.8")
+                || plugin.getServer().getVersion().contains("(MC: 1.9")
+                || plugin.getServer().getVersion().contains("(MC: 1.10")) {
             Util.sendMessage(player, message);
         }
-        
+        plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(),
+                "minecraft:title " + player.getName() + " actionbar {\"text\":\"" + ChatColor.stripColor(message) + "\"}");
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)

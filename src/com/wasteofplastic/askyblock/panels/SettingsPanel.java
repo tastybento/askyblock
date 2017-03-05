@@ -49,6 +49,7 @@ public class SettingsPanel implements Listener {
     private static boolean hasChorusFruit;
     private static boolean hasArmorStand;
     private HashMap<UUID,Long> pvpCoolDown = new HashMap<UUID,Long>();
+    private static final boolean DEBUG = false;
 
     /**
      * Lookup table of Material to SettingsFlag
@@ -161,12 +162,12 @@ public class SettingsPanel implements Listener {
             for (SettingsFlag flag : Settings.visitorSettings.keySet()) {
                 if (flag.equals(SettingsFlag.ACID_DAMAGE) && Settings.acidDamage == 0)
                     continue;
-                if (lookup.inverse().get(flag) == null) {
-                    plugin.getLogger().severe(flag + " is missing an icon");
-                } else {
+                if (lookup.inverse().get(flag) != null) {
                     if (plugin.myLocale(uuid).igs.containsKey(flag)) {
                         ip.add(new IPItem(island.getIgsFlag(flag), lookup.inverse().get(flag), plugin.myLocale(uuid).igs.get(flag), uuid));
                     }
+                } else if (DEBUG) {
+                    plugin.getLogger().severe("DEBUG: " + flag + " is missing an icon");
                 }
             }
         }

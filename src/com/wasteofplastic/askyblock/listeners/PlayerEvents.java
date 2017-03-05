@@ -759,4 +759,20 @@ public class PlayerEvents implements Listener {
             e.setCancelled(true);
         }
     }
+    
+    /**
+     * Protect players from damage when teleporting
+     * @param e
+     */
+    public void onPlayerTeleportDamage(EntityDamageEvent e){
+        if(!(e.getEntity() instanceof Player)) return;
+
+        Player p = (Player) e.getEntity();
+        if (plugin.getPlayers().isInTeleport(p.getUniqueId())) {
+            if (DEBUG)
+                plugin.getLogger().info("DEBUG: protecting player from teleport damage");
+            p.setFallDistance(0);
+            e.setCancelled(true);
+        }
+    }
 }
