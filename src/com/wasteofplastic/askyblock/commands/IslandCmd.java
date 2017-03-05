@@ -812,11 +812,11 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
             range--;
             plugin.getLogger().warning("Protection range must be even, using " + range + " for " + player.getName());
         }
-        if (range > (Settings.islandDistance - 16) && !plugin.getConfig().getBoolean("island.overridelimit", false)) {
-            range = Settings.islandDistance - 16;
+        if (range > Settings.islandDistance) {
+            plugin.getLogger().warning("Player has " + Settings.PERMPREFIX + "island.range." + range);
+            range = Settings.islandDistance;
             plugin.getLogger().warning(
-                    "Island protection range must be " + (Settings.islandDistance - 16) + " or less, (island range -16). Setting to: "
-                            + range);
+                    "Island protection range must be " + Settings.islandDistance + " or less. Setting to: " + range);
         }
         myIsland.setProtectionSize(range);
         // Show fancy titles!
