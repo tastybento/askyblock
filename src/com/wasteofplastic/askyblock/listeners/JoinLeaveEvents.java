@@ -56,7 +56,7 @@ public class JoinLeaveEvents implements Listener {
     /**
      * @param event
      */
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerJoin(final PlayerJoinEvent event) {
         if (DEBUG)
             plugin.getLogger().info("DEBUG: on PlayerJoin");
@@ -315,6 +315,7 @@ public class JoinLeaveEvents implements Listener {
                 plugin.getGrid().homeTeleport(player);
             }
         }
+
         if (DEBUG)
             plugin.getLogger().info("DEBUG: Setting the player's level in chat listener");
         // Set the player's level

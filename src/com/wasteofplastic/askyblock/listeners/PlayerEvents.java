@@ -38,6 +38,7 @@ import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -152,11 +153,13 @@ public class PlayerEvents implements Listener {
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerEnterOnIsland(IslandEnterEvent e){
         Player player = plugin.getServer().getPlayer(e.getPlayer());
+        processPerms(player);
+    }
+    
+    private void processPerms(Player player) {
         if(plugin.getGrid().playerIsOnIsland(player)){
             if(VaultHelper.checkPerm(player, Settings.PERMPREFIX + "islandfly")){
                 player.setAllowFlight(true);
-                // TODO: is this needed?
-                player.setFlying(true);
             }
 
             for(String perm : Settings.temporaryPermissions){
@@ -170,6 +173,16 @@ public class PlayerEvents implements Listener {
                 }
             }
         }
+        
+    }
+
+    /**
+     * Handle player joining
+     * @param event
+     */
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onPlayerJoin(final PlayerJoinEvent event) {
+        processPerms(event.getPlayer());
     }
 
     /**
@@ -213,7 +226,7 @@ public class PlayerEvents implements Listener {
      * Removes temporary perms when the player log out
      * @param e
      */
-    @EventHandler
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerLeave(PlayerQuitEvent e){
         Player player = e.getPlayer();
 
@@ -223,6 +236,8 @@ public class PlayerEvents implements Listener {
             }
             temporaryPerms.remove(player.getUniqueId());
         }
+        player.setAllowFlight(false);
+        player.setFlying(false);
     }
 
     /**
