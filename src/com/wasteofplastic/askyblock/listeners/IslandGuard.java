@@ -1003,7 +1003,11 @@ public class IslandGuard implements Listener {
             inNether = true;
         }
         // Stop TNT damage if it is disallowed
-        if (!Settings.allowTNTDamage && e.getDamager().getType().equals(EntityType.PRIMED_TNT)) {
+        if (!Settings.allowTNTDamage && (e.getDamager().getType().equals(EntityType.PRIMED_TNT) 
+                || e.getDamager().getType().equals(EntityType.FIREWORK)
+                || e.getDamager().getType().equals(EntityType.FIREBALL))) {
+            if (DEBUG)
+                plugin.getLogger().info("DEBUG: cancelling firework or fireball damage");
             e.setCancelled(true);
             return;
         }
@@ -1037,7 +1041,7 @@ public class IslandGuard implements Listener {
             // Check if this creeper was lit by a visitor
             if (litCreeper.contains(creeper.getUniqueId())) {
                 if (DEBUG) {
-                    plugin.getLogger().info("DBEUG: preventing creeeper from damaging");
+                    plugin.getLogger().info("DEBUG: preventing creeeper from damaging");
                 }
                 e.setCancelled(true);
                 return;
@@ -1738,6 +1742,19 @@ public class IslandGuard implements Listener {
                     e.setCancelled(true);
                 }
                 return;
+            }
+            // Handle fireworks
+            if (e.getMaterial() != null && e.getMaterial().equals(Material.FIREWORK)) {
+                if (island == null) {
+                    if (!Settings.defaultWorldSettings.get(SettingsFlag.PLACE_BLOCKS)) {
+                        Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
+                        e.setCancelled(true);  
+                    }
+                } else if (!island.getIgsFlag(SettingsFlag.PLACE_BLOCKS)) {
+                    Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
+                    e.setCancelled(true);
+                }
+                return; 
             }
             switch (e.getClickedBlock().getType()) {
             case WOODEN_DOOR:
