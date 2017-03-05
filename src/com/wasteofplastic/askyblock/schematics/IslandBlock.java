@@ -538,12 +538,17 @@ public class IslandBlock {
      * @param nms
      * @param blockLoc
      */
+    //@SuppressWarnings("deprecation")
+    @SuppressWarnings("deprecation")
     public void paste(NMSAbstraction nms, Location blockLoc, boolean usePhysics, Biome biome) {
         // Only paste air if it is below the sea level and in the overworld
         Block block = new Location(blockLoc.getWorld(), x, y, z).add(blockLoc).getBlock();
         block.setBiome(biome);
         nms.setBlockSuperFast(block, typeId, data, usePhysics);
         if (signText != null) {
+            if (block.getTypeId() != typeId) {
+                block.setTypeId(typeId);
+            }
             // Sign
             Sign sign = (Sign) block.getState();
             int index = 0;
@@ -558,24 +563,28 @@ public class IslandBlock {
         } else if (pot != null){
             pot.set(nms, block);
         } else if (spawnerBlockType != null) {
+            if (block.getTypeId() != typeId) {
+                block.setTypeId(typeId);
+            }
             CreatureSpawner cs = (CreatureSpawner)block.getState();
             cs.setSpawnedType(spawnerBlockType);
         } else if (!chestContents.isEmpty()) {
-            if (block.getType().equals(Material.CHEST)) {
-                // Check if this is a double chest
-                Chest chestBlock = (Chest) block.getState();
-                InventoryHolder iH = chestBlock.getInventory().getHolder();
-                if (iH instanceof DoubleChest) {
-                    //Bukkit.getLogger().info("DEBUG: double chest");
-                    DoubleChest doubleChest = (DoubleChest) iH;
-                    for (ItemStack chestItem: chestContents.values()) {
-                        doubleChest.getInventory().addItem(chestItem);
-                    }
-                } else {
-                    // Signle chest
-                    for (Entry<Byte, ItemStack> en : chestContents.entrySet()) {
-                        chestBlock.getInventory().setItem(en.getKey(), en.getValue());
-                    }
+            if (block.getTypeId() != typeId) {
+                block.setTypeId(typeId);
+            }
+            // Check if this is a double chest
+            Chest chestBlock = (Chest) block.getState();
+            InventoryHolder iH = chestBlock.getInventory().getHolder();
+            if (iH instanceof DoubleChest) {
+                //Bukkit.getLogger().info("DEBUG: double chest");
+                DoubleChest doubleChest = (DoubleChest) iH;
+                for (ItemStack chestItem: chestContents.values()) {
+                    doubleChest.getInventory().addItem(chestItem);
+                }
+            } else {
+                // Single chest
+                for (Entry<Byte, ItemStack> en : chestContents.entrySet()) {
+                    chestBlock.getInventory().setItem(en.getKey(), en.getValue());
                 }
             }
         }
