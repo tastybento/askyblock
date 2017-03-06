@@ -267,10 +267,10 @@ invite:
   youCannotInvite: §c你无法邀请更多的玩家了.
   youHaveJoinedAnIsland: "§a你加入了一个岛屿! 使用 §e/[label] team §a来查看其他成员."
 island: 
-  blockValue: "[name] placed here may be worth [value]"
-  blockWorthless: "[name] is worthless" 
+  blockValue: "[name]放在这里可能值得[value]"
+  blockWorthless: "[name]是毫无价值的" 
   cannotTeleport: §c你无法在下落过程中进行传送!
-  donate: §a本汉化由§e§l梦之地§a提供
+  donate: §a本汉化由§e§ltastybento§a提供
   donatecolor: "aqua"
   errorCouldNotCreateIsland: "§c无法为你创建岛屿. 请联系管理员."
   errorInvalidPlayer: §c玩家不存在或者他不曾拥有一个岛屿!

@@ -661,9 +661,11 @@ protection:
    # e.g. askyblock.settings.PVP or all settings with askyblock.settings.*
    # Permissions are CASE SENSITIVE!
    #
-   # World defaults.
+   # -- World defaults --
    # Applies everywhere and are the default for islands and spawn.
    # If not listed, default is false.
+   # Changing a setting here will only affect new islands. Use /asadmin settingsreset
+   # to reset individual or all settings across all islands. See /asadmin settingsreset help.
    world:
      # Acid causes damage above sea-level (if acid is active)
      ACID_DAMAGE: true
@@ -705,6 +707,8 @@ protection:
      ENCHANTING: true
      # Allow enderpearl throwing
      ENDER_PEARL: false
+     # Enable or disable join/leave messages from the player's island
+     ENTER_EXIT_MESSAGES: true
      # Allow fire (flint & steel use, TNT priming) Making portals is allowed.
      FIRE: false
      # Can extinguish fires by punching them
@@ -757,9 +761,11 @@ protection:
      VISITOR_ITEM_DROP: true
      # Allow item pickup
      VISITOR_ITEM_PICKUP: true
+   # -- Island Settings --
    # Settings for islands. Some are for visitors, some for the island itself.
    # If setting is not listed, it will not show in GUI and the world default will be used.
-   # Add settings here to give the player the ability to change them in the GUI. 
+   # Add settings here to give the player the ability to see them in the GUI. Give the
+   # player the permission for the setting for them to be able to change the setting.
    island:
      # Allow visitor anvil use
      ANVIL: true
@@ -785,22 +791,18 @@ protection:
      EGGS: false
      # Allow visitors to use enchanting tables
      ENCHANTING: true
-     # Enable or disable join/leave messages from the player's island
-     ENTER_EXIT_MESSAGES: true
-     # Allow fire
-     FIRE: false
-     # Allow fire spreading
-     FIRE_SPREAD: false
      # Allow visitor furnace use
      FURNACE: true
+     # Allow use of jukeboxes and note blocks
+     MUSIC: false
      # Allow portal use by visitors
      PORTAL: true
      # Allow pressure plate activation by visitors (players only)
      PRESSURE_PLATE: false
+     # Allow adjustment of diodes or comparators
+     REDSTONE: false
      # Allow visitors to shear sheep
      SHEARING: false
-     # Spawn eggs can be used by owners
-     SPAWN_EGGS: true
 
 # This section contains the biomes that can be bought or used
 biomesettings:
