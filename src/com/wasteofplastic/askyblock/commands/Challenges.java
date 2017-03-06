@@ -1807,17 +1807,20 @@ public class Challenges implements CommandExecutor, TabCompleter {
         String description = ChatColor.GREEN
                 + ChatColor.translateAlternateColorCodes('&', getChallengeConfig().getString("challenges.challengeList." + challengeName + ".friendlyname",
                         challengeName.substring(0, 1).toUpperCase() + challengeName.substring(1)));
-
+        // Remove extraneous info
+        ItemMeta im = icon.getItemMeta();
+        im.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+        im.addItemFlags(ItemFlag.HIDE_DESTROYS);
+        im.addItemFlags(ItemFlag.HIDE_PLACED_ON);
         // Check if completed or not
         boolean complete = false;
         if (Settings.addCompletedGlow && plugin.getPlayers().checkChallenge(player.getUniqueId(), challengeName)) {
             // Complete! Make the icon glow
-            ItemMeta im = icon.getItemMeta();
             im.addEnchant(Enchantment.ARROW_DAMAGE, 0, true);
             im.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-            icon.setItemMeta(im);
             complete = true;
         }
+        icon.setItemMeta(im);
         boolean repeatable = false;
         if (getChallengeConfig().getBoolean("challenges.challengeList." + challengeName + ".repeatable", false)) {
             // Repeatable
