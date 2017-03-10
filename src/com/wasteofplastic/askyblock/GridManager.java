@@ -475,7 +475,9 @@ public class GridManager {
             Iterator<Island> islandIt = it.next().values().iterator();
             while (islandIt.hasNext()) {
                 Island island = islandIt.next();
-                islandList.add(island.save());
+                if (!island.isSpawn()) {
+                    islandList.add(island.save());
+                }
             }
         }
         islandYaml.set(Settings.worldName, islandList);
