@@ -17,7 +17,9 @@ import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Monster;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
@@ -461,27 +463,32 @@ public class PluginConfig {
                 }
             }
         }
-        
+
         Settings.logInRemoveMobs = plugin.getConfig().getBoolean("general.loginremovemobs", true);
         Settings.islandRemoveMobs = plugin.getConfig().getBoolean("general.islandremovemobs", false);
         List<String> mobWhiteList = plugin.getConfig().getStringList("general.mobwhitelist");
         Settings.mobWhiteList.clear();
-        String valid = "BLAZE, CREEPER, SKELETON, SPIDER, GIANT, ZOMBIE, GHAST, PIG_ZOMBIE, "
-                + "ENDERMAN, CAVE_SPIDER, SILVERFISH,  WITHER, WITCH, ENDERMITE,"
-                + " GUARDIAN";
         for (String mobName : mobWhiteList) {
-            if (valid.contains(mobName.toUpperCase())) {
-                try {
-                    Settings.mobWhiteList.add(EntityType.valueOf(mobName.toUpperCase()));
-                } catch (Exception e) {
-                    plugin.getLogger().severe("Error in config.yml, mobwhitelist value '" + mobName + "' is invalid.");
-                    plugin.getLogger().severe("Possible values are : Blaze, Cave_Spider, Creeper, Enderman, Endermite, Giant, Guardian, "
-                            + "Pig_Zombie, Silverfish, Skeleton, Spider, Witch, Wither, Zombie");
+            boolean mobFound = false;
+            for (EntityType type: EntityType.values()) {
+                if (mobName.toUpperCase().equals(type.toString())) {
+                    try {
+                        Settings.mobWhiteList.add(EntityType.valueOf(mobName.toUpperCase()));
+                    } catch (Exception e) {
+                        plugin.getLogger().severe("Error in config.yml, mobwhitelist value '" + mobName + "' is invalid.");
+                    }
+                    mobFound = true;
+                    break;
                 }
-            } else {
+            }
+            if (!mobFound) {
                 plugin.getLogger().severe("Error in config.yml, mobwhitelist value '" + mobName + "' is invalid.");
-                plugin.getLogger().severe("Possible values are : Blaze, Cave_Spider, Creeper, Enderman, Endermite, Giant, Guardian, "
-                        + "Pig_Zombie, Silverfish, Skeleton, Spider, Witch, Wither, Zombie");
+                plugin.getLogger().severe("Possible values are : ");
+                for (EntityType e : EntityType.values()) {
+                    if (e.isAlive()) {
+                        plugin.getLogger().severe(e.name());
+                    }
+                }
             }
         }
 
@@ -560,25 +567,25 @@ public class PluginConfig {
         // Things to reset when an island is reset
         Settings.resetChallenges = plugin.getConfig().getBoolean("general.resetchallenges", true);
         Settings.clearInventory = plugin.getConfig().getBoolean("general.resetinventory", true);
-        
+
         // Kicked players keep inventory
         Settings.kickedKeepInv = plugin.getConfig().getBoolean("general.kickedkeepinv", false);
 
         // Leavers lose resets
         Settings.leaversLoseReset = plugin.getConfig().getBoolean("general.leaversloseresets", true);
-      
+
         // Reset the ender chest
         Settings.resetEnderChest = plugin.getConfig().getBoolean("general.resetenderchest", false);
-        
+
         // Check if /island command is allowed when falling
         Settings.allowTeleportWhenFalling = plugin.getConfig().getBoolean("general.allowfallingteleport", true);
         Settings.fallingCommandBlockList = plugin.getConfig().getStringList("general.blockingcommands");
-      
+
         // Challenges
         Settings.broadcastMessages = plugin.getConfig().getBoolean("general.broadcastmessages", true);
         Settings.removeCompleteOntimeChallenges = plugin.getConfig().getBoolean("general.removecompleteonetimechallenges", false);
         Settings.addCompletedGlow = plugin.getConfig().getBoolean("general.addcompletedglow", true);
-     
+
         // Max home number
         Settings.maxHomes = plugin.getConfig().getInt("general.maxhomes",1);
         if (Settings.maxHomes < 1) {
@@ -649,21 +656,21 @@ public class PluginConfig {
             plugin.getLogger().warning("You should back up your world before running this");
             plugin.getLogger().warning("*********************************************************");
         }     
-        
+
         // Persistent coops
         Settings.persistantCoops = plugin.getConfig().getBoolean("general.persistentcoops");
         // Only leader can coop
         Settings.onlyLeaderCanCoop = plugin.getConfig().getBoolean("general.onlyleadercancoop", false);
-        
+
         // FTB Automatic Activators
         Settings.allowAutoActivator = plugin.getConfig().getBoolean("general.autoactivator");
-        
+
         // Allow Obsidian Scooping
         Settings.allowObsidianScooping = plugin.getConfig().getBoolean("general.allowobsidianscooping", true);
-    
+
         // Use old display (chat instead of GUI) for Island top ten
         Settings.displayIslandTopTenInChat = plugin.getConfig().getBoolean("general.islandtopteninchat", false);
-      
+
         // Magic Cobble Generator
         Settings.useMagicCobbleGen = plugin.getConfig().getBoolean("general.usemagiccobblegen", false);
         if (Settings.useMagicCobbleGen) {
@@ -709,13 +716,13 @@ public class PluginConfig {
                 }
             }
         }
-        
+
         // Disable offline redstone
         Settings.disableOfflineRedstone = plugin.getConfig().getBoolean("general.disableofflineredstone", false);
 
         // Fancy island level display
         Settings.fancyIslandLevelDisplay = plugin.getConfig().getBoolean("general.fancylevelinchat", false);
-      
+
         // Check config.yml version
         String configVersion = plugin.getConfig().getString("general.version", "");
         //plugin.getLogger().info("DEBUG: config ver length " + configVersion.split("\\.").length);
@@ -747,7 +754,7 @@ public class PluginConfig {
                 } 
             }
         }
-        
+
         // *** Non-Public Settings - these are "secret" settings that may not be used anymore
         // Level logging
         Settings.levelLogging = plugin.getConfig().getBoolean("general.levellogging");

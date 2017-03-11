@@ -328,12 +328,11 @@ general:
    islandremovemobs: false
    
    # Mob white list - these mobs will NOT be removed when logging in or doing /island
-   # Options are: Blaze, Cave_Spider, Creeper, Enderman, Endermite, Giant, Guardian,
-   # Pig_Zombie, Silverfish, Skeleton, Spider, Witch, Wither, Zombie
    mobwhitelist:
-   - Wither
-   - Enderman
-   - Pig_Zombie
+   - WITHER
+   - ENDERMAN
+   - PIG_ZOMBIE
+   #- ZOMBIE_VILLAGER
 
    # Sets the limit for number of monsters that can spawn in a chunk in this world. 
    # Note: this does not limit the number of monsters, just how many spawn naturally.
