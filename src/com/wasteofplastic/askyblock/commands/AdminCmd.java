@@ -394,9 +394,9 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                         player = (Player) sender;
                         if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.spy") || player.isOp()) {
                             if (plugin.getChatListener().toggleSpy(player.getUniqueId())) {
-                                Util.sendMessage(sender, ChatColor.GREEN + plugin.myLocale().teamChatStatusOn);
+                                Util.sendMessage(sender, ChatColor.GREEN + plugin.myLocale().teamChatSpyStatusOn);
                             } else {
-                                Util.sendMessage(sender, ChatColor.GREEN + plugin.myLocale().teamChatStatusOff);
+                                Util.sendMessage(sender, ChatColor.GREEN + plugin.myLocale().teamChatSpyStatusOff);
                             }
                             return true;
                         }

@@ -649,6 +649,10 @@ public class ASLocale {
 
     public String adminHelpclearResetAll;
 
+    public String teamChatSpyStatusOff;
+
+    public String teamChatSpyStatusOn;
+
 
     /**
      * Creates a locale object full of localized strings for a language
@@ -1344,6 +1348,8 @@ public class ASLocale {
         }
         teamChatPrefix = ChatColor.translateAlternateColorCodes('&', locale.getString("teamchat.prefix", "[Team Chat]<{ISLAND_PLAYER}> "));
         teamChatHelp = ChatColor.translateAlternateColorCodes('&', locale.getString("teamchat.helpChat", "turn on/off team chat"));
+        teamChatSpyStatusOff = ChatColor.translateAlternateColorCodes('&', locale.getString("teamchat.spyoff", "Team chat spy is off"));
+        teamChatSpyStatusOn = ChatColor.translateAlternateColorCodes('&', locale.getString("teamchat.spyon", "Team chat spy is on"));
         teamChatStatusOff = ChatColor.translateAlternateColorCodes('&', locale.getString("teamchat.statusOff", "Team chat is off"));
         teamChatStatusOn = ChatColor.translateAlternateColorCodes('&', locale.getString("teamchat.statusOn", "Team chat is on"));
         teamChatNoTeamAround = ChatColor.translateAlternateColorCodes('&', locale.getString("teamchat.noTeamAround", "None of your team are online!"));

@@ -507,6 +507,8 @@ teamchat:
   noTeam: "Вы не в команде!"
   noTeamAround: "Никто из вашей команды не в сети!"
   prefix: "[§eКоманда§f]<{ISLAND_PLAYER}> "
+  spyoff: "Team chat spy off"
+  spyon: "Team chat spy on"
   statusOff: "Командный чат отключен"
   statusOn: "Командный чат включен"
 topTen:
