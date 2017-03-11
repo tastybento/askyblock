@@ -20,6 +20,7 @@ adminHelp:
   add: "lisää pelaajan johtajan tiimiin"
   addrange: "adds to or substracts from the island's protection range"
   clearreset: "nollaa pelaajan saaren nollaukset"
+  clearresetall: "resets the island reset limit for all players"
   cobblestats: "displays magic cobble generation stats"
   completeChallenge: "merkkaa tehtävän tehdyksi"
   delete: "poistaa saaren (kaikki palikat)"

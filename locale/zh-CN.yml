@@ -20,6 +20,7 @@ adminHelp:
   add: "adds player to leader's team"
   addrange: "adds to or substracts from the island's protection range"
   clearreset: "§c重置一个玩家的初始信息."
+  clearresetall: "resets the island reset limit for all players"
   cobblestats: "displays magic cobble generation stats"
   completeChallenge: "§e标记一个挑战为已完成"
   delete: "§c删除一个玩家的岛屿 (移除方块)."

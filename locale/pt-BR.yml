@@ -20,6 +20,7 @@ adminHelp:
   add: "adiciona o jogador à equipe do líder"
   addrange: "adiciona ou subtrai do alcance do espaço protegido da ilha"  
   clearreset: "redefine o limite de resets da ilha para o jogador."
+  clearresetall: "resets the island reset limit for all players"
   cobblestats: "mostra estatísticas de geração mágica de cobblestone"  
   completeChallenge: "marca um desafio como completo"
   delete: "apaga uma ilha (remove os blocos)"

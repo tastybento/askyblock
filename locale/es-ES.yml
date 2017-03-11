@@ -20,6 +20,7 @@ adminHelp:
   add: "Añade jugador para el equipo de líder."
   addrange: "adds to or substracts from the island's protection range"
   clearreset: "Resetea el límite de reseteos de isla para el jugador."
+  clearresetall: "resets the island reset limit for all players"
   cobblestats: "displays magic cobble generation stats"
   completeChallenge: "Marca un reto como completo"
   delete: "Elimina una isla (elimina bloques)."

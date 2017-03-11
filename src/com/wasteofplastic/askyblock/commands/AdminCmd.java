@@ -107,7 +107,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
         if (!(sender instanceof Player)) {
             Util.sendMessage(sender, ChatColor.YELLOW  + label + " clearchallengereset <challenge>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpclearChallengeReset);
             Util.sendMessage(sender, ChatColor.YELLOW  + label + " clearreset <player>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpclearReset);
-            Util.sendMessage(sender, ChatColor.YELLOW  + label + " clearresetall:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpclearReset);
+            Util.sendMessage(sender, ChatColor.YELLOW  + label + " clearresetall:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpclearResetAll);
             if (Settings.useMagicCobbleGen) {
                 Util.sendMessage(sender, ChatColor.YELLOW  + label + " cobblestats: " + ChatColor.WHITE + " " + plugin.myLocale().adminHelpcobbleStats);
             }

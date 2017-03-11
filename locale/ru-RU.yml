@@ -20,6 +20,7 @@ adminHelp:
   add: "добавляет игрока в команду лидера"
   addrange: "Добавляет или удаляет "
   clearreset: "восстанавливает лимит пересозданий острова игроку"
+  clearresetall: "resets the island reset limit for all players"
   cobblestats: "отобразить статистику генерации магического булыжника"
   completeChallenge: "помечает испытание выполненным"
   delete: "удалить остров (убрать блоки)"

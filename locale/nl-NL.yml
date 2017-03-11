@@ -20,6 +20,7 @@ adminHelp:
   add: "speler toegevoegd aan het leiders van team"
   addrange: "adds to or substracts from the island's protection range"
   clearreset: "Eiland reset limiet gereset voor [name]"
+  clearresetall: "resets the island reset limit for all players"
   cobblestats: "displays magic cobble generation stats"
   completeChallenge: "markeer een challenge als compleet"
   delete: "verwijder een eiland (blokken)."

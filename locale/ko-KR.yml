@@ -18,6 +18,7 @@ adminDeleteIsland:
 adminHelp: 
   add: "리더의 팀에 유저를 추가하기"
   clearreset: "유저의 섬 초기화 제한을 초기화하기"
+  clearresetall: "resets the island reset limit for all players"
   completeChallenge: "완료된 도전 과제를 표시하기"
   delete: "섬을 삭제하기 (블럭도 초기화)"
   help: "관리자 명령어:"

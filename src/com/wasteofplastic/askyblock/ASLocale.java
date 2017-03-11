@@ -647,6 +647,8 @@ public class ASLocale {
 
     public String adminResetChallengeForAllReset;
 
+    public String adminHelpclearResetAll;
+
 
     /**
      * Creates a locale object full of localized strings for a language
@@ -1274,6 +1276,8 @@ public class ASLocale {
                 locale.getString("boats.warning", "It's unsafe to exit the boat right now..."));
         adminHelpclearReset = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("adminHelp.clearreset", "resets the island reset limit for player."));
+        adminHelpclearResetAll = ChatColor.translateAlternateColorCodes('&',
+                locale.getString("adminHelp.clearresetall", "resets the island reset limit for all players."));
         resetYouHave = ChatColor.translateAlternateColorCodes('&', locale.getString("island.resetYouHave", "You have [number] resets left."));
         resetsLeft = ChatColor.translateAlternateColorCodes('&', locale.getString("island.resetsLeft", "Resets left"));
         unlimited = ChatColor.translateAlternateColorCodes('&', locale.getString("island.unlimitd", "Unlimited"));
