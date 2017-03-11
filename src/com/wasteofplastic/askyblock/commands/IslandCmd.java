@@ -76,7 +76,6 @@ import com.wasteofplastic.askyblock.DeleteIslandChunk;
 import com.wasteofplastic.askyblock.GridManager;
 import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.Island.SettingsFlag;
-import com.wasteofplastic.askyblock.LevelCalc;
 import com.wasteofplastic.askyblock.LevelCalcByChunk;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.TopTen;
@@ -1035,54 +1034,25 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
     public boolean calculateIslandLevel(final CommandSender sender, final UUID targetPlayer, boolean report) {
         if (sender instanceof Player) {
             Player asker = (Player)sender;
-            if (plugin.isCalculatingLevel()) {
-                asker.sendMessage(ChatColor.RED + plugin.myLocale(asker.getUniqueId()).islanderrorLevelNotReady);
-                return false;
-            }
             // Player asking for their own island calc
             if (asker.getUniqueId().equals(targetPlayer) || asker.isOp() || VaultHelper.checkPerm(asker, Settings.PERMPREFIX + "mod.info")) {
                 // Newer better system - uses chunks
-                if (Settings.fastLevelCalc) {
-                    if (!onLevelWaitTime(asker) || Settings.levelWait <= 0 || asker.isOp() || VaultHelper.checkPerm(asker, Settings.PERMPREFIX + "mod.info")) {
-                        asker.sendMessage(ChatColor.GREEN + plugin.myLocale(asker.getUniqueId()).levelCalculating);
-                        setLevelWaitTime(asker);
-                        new LevelCalcByChunk(plugin, targetPlayer, asker, report);
-                    } else {
-                        asker.sendMessage(ChatColor.YELLOW + plugin.myLocale(asker.getUniqueId()).islandresetWait.replace("[time]", String.valueOf(getLevelWaitTime(asker))));
-                    }
+                if (!onLevelWaitTime(asker) || Settings.levelWait <= 0 || asker.isOp() || VaultHelper.checkPerm(asker, Settings.PERMPREFIX + "mod.info")) {
+                    asker.sendMessage(ChatColor.GREEN + plugin.myLocale(asker.getUniqueId()).levelCalculating);
+                    setLevelWaitTime(asker);
+                    new LevelCalcByChunk(plugin, targetPlayer, asker, report);
                 } else {
-                    // Legacy support - maybe some people still want the old way (shrug)
-                    plugin.setCalculatingLevel(true);
-                    if (!onLevelWaitTime(asker) || Settings.levelWait <= 0 || asker.isOp() || VaultHelper.checkPerm(asker, Settings.PERMPREFIX + "mod.info")) {
-                        asker.sendMessage(ChatColor.GREEN + plugin.myLocale(asker.getUniqueId()).levelCalculating);
-                        LevelCalc levelCalc = new LevelCalc(plugin, targetPlayer, asker, report);
-                        levelCalc.runTaskTimer(plugin, 0L, 5L);
-                        setLevelWaitTime(asker);
-                    } else {
-                        asker.sendMessage(ChatColor.YELLOW + plugin.myLocale(asker.getUniqueId()).islandresetWait.replace("[time]", String.valueOf(getLevelWaitTime(asker))));
-                        plugin.setCalculatingLevel(false);
-                    }
+                    asker.sendMessage(ChatColor.YELLOW + plugin.myLocale(asker.getUniqueId()).islandresetWait.replace("[time]", String.valueOf(getLevelWaitTime(asker))));
                 }
+
             } else {
                 // Asking for the level of another player
                 asker.sendMessage(ChatColor.GREEN + plugin.myLocale(asker.getUniqueId()).islandislandLevelis + " " + ChatColor.WHITE + plugin.getPlayers().getIslandLevel(targetPlayer));
             }
         } else {
             // Console request            
-            if (Settings.fastLevelCalc) {
-                Util.sendMessage(sender, ChatColor.GREEN + plugin.myLocale().levelCalculating);
-                new LevelCalcByChunk(plugin, targetPlayer, sender, report);
-            } else {
-                // Legacy support - maybe some people still want the old way (shrug) 
-                if (plugin.isCalculatingLevel()) {
-                    Util.sendMessage(sender, ChatColor.RED + plugin.myLocale().islanderrorLevelNotReady);
-                    return true;
-                }
-                Util.sendMessage(sender, ChatColor.GREEN + plugin.myLocale().levelCalculating);
-                plugin.setCalculatingLevel(true);
-                LevelCalc levelCalc = new LevelCalc(plugin, targetPlayer, sender, report);
-                levelCalc.runTaskTimer(plugin, 0L, 5L);
-            }
+            Util.sendMessage(sender, ChatColor.GREEN + plugin.myLocale().levelCalculating);
+            new LevelCalcByChunk(plugin, targetPlayer, sender, report);
         }
         return true;
     }
@@ -1873,18 +1843,8 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                         if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "intopten")) {
                             Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).topTenerrorExcluded.replace("[perm]", Settings.PERMPREFIX + "intopten"));
                         }
-                        if (Settings.fastLevelCalc) {
-                            calculateIslandLevel(player, playerUUID);
-                            return true;
-                        } else {
-                            // Legacy - forces player to be on island to reduce frivolous calculations
-                            if (plugin.getGrid().playerIsOnIsland(player)) {
-                                calculateIslandLevel(player, playerUUID);
-                            } else {
-                                Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).challengeserrorNotOnIsland);
-                            }
-                            return true;
-                        }
+                        calculateIslandLevel(player, playerUUID);
+                        return true;
                     }
                 } else {
                     Util.sendMessage(player, ChatColor.RED + plugin.myLocale(playerUUID).errorNoPermission);

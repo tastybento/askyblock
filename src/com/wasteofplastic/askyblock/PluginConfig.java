@@ -363,8 +363,6 @@ public class PluginConfig {
         // Nether roof option
         Settings.netherRoof = plugin.getConfig().getBoolean("general.netherroof", true);
 
-        // Fast level calculation (this is really fast)
-        Settings.fastLevelCalc = plugin.getConfig().getBoolean("general.fastlevelcalc", true);
         // Run level calc at login
         Settings.loginLevel = plugin.getConfig().getBoolean("general.loginlevel", false);
 

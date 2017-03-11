@@ -22,7 +22,7 @@ import java.util.UUID;
 import com.wasteofplastic.askyblock.Island;
 
 /**
- * This event is fired when an island level is calculated
+ * This event is fired after ASkyBlock calculates an island level and is for notification only.
  * 
  * @author tastybento
  * 

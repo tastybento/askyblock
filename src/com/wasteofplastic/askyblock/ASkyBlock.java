@@ -109,9 +109,6 @@ public class ASkyBlock extends JavaPlugin {
     // V1.8 or later
     private boolean onePointEight;
 
-    // Level calc
-    private boolean calculatingLevel = false;
-
     // Update object
     private Updater updateCheck = null;
 
@@ -662,13 +659,6 @@ public class ASkyBlock extends JavaPlugin {
     }
 
     /**
-     * @return the calculatingLevel
-     */
-    public boolean isCalculatingLevel() {
-        return calculatingLevel;
-    }
-
-    /**
      * @return the newIsland
      */
     public boolean isNewIsland() {
@@ -794,14 +784,6 @@ public class ASkyBlock extends JavaPlugin {
         // Enables warp signs in ASkyBlock
         warpSignsListener = new WarpSigns(this);
         manager.registerEvents(warpSignsListener, this);
-    }
-
-    /**
-     * @param calculatingLevel
-     *            the calculatingLevel to set
-     */
-    public void setCalculatingLevel(boolean calculatingLevel) {
-        this.calculatingLevel = calculatingLevel;
     }
 
     /**

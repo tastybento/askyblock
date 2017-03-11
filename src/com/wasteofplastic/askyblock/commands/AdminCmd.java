@@ -117,9 +117,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
             Util.sendMessage(sender, ChatColor.YELLOW  + label + " info <player>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpinfo);
             Util.sendMessage(sender, ChatColor.YELLOW  + label + " info challenges <player>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpinfo);
             Util.sendMessage(sender, ChatColor.YELLOW  + label + " info:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpinfoIsland);
-            if (!plugin.getServer().getVersion().contains("(MC: 1.7")) {
-                Util.sendMessage(sender, ChatColor.YELLOW  + label + " level <player>: " + ChatColor.WHITE + " " + plugin.myLocale().adminHelplevel);
-            }
+            Util.sendMessage(sender, ChatColor.YELLOW  + label + " level <player>: " + ChatColor.WHITE + " " + plugin.myLocale().adminHelplevel);
             Util.sendMessage(sender, ChatColor.YELLOW  + label + " listchallengeresets: " + ChatColor.WHITE + " " + plugin.myLocale().adminHelplistChallengeResets);
             Util.sendMessage(sender, ChatColor.YELLOW  + label + " lock <player>: " + ChatColor.WHITE + " " + plugin.myLocale().adminHelplock);
             Util.sendMessage(sender, ChatColor.YELLOW  + label + " purge [TimeInDays]:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelppurge);
@@ -829,23 +827,21 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                     return false;
                 }
         case 2:
-            if (!plugin.getServer().getVersion().contains("(MC: 1.7")) {
-                if (split[0].equalsIgnoreCase("level")) {                   
-                    // Convert name to a UUID
-                    final UUID playerUUID = plugin.getPlayers().getUUID(split[1], true);
-                    // plugin.getLogger().info("DEBUG: console player info UUID = "
-                    // + playerUUID);
-                    if (playerUUID == null) {
-                        Util.sendMessage(sender, ChatColor.RED + plugin.myLocale().errorUnknownPlayer);
-                        return true;
+            if (split[0].equalsIgnoreCase("level")) {                   
+                // Convert name to a UUID
+                final UUID playerUUID = plugin.getPlayers().getUUID(split[1], true);
+                // plugin.getLogger().info("DEBUG: console player info UUID = "
+                // + playerUUID);
+                if (playerUUID == null) {
+                    Util.sendMessage(sender, ChatColor.RED + plugin.myLocale().errorUnknownPlayer);
+                    return true;
+                } else {
+                    if (sender instanceof Player) {
+                        plugin.getIslandCmd().calculateIslandLevel(sender, playerUUID, false); 
                     } else {
-                        if (sender instanceof Player) {
-                            plugin.getIslandCmd().calculateIslandLevel(sender, playerUUID, false); 
-                        } else {
-                            plugin.getIslandCmd().calculateIslandLevel(sender, playerUUID, true);
-                        }
-                        return true;
+                        plugin.getIslandCmd().calculateIslandLevel(sender, playerUUID, true);
                     }
+                    return true;
                 }
             }
 

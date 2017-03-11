@@ -208,10 +208,6 @@ general:
    # Minimum is 0 (not recommended), maximum is 100. Default is 25.
    # Only applies to standard nether.
    netherspawnradius: 25
-
-   # Use new level calculation (super speedy). Set to false if you want the old
-   # method (slower).
-   fastlevelcalc: true
    
    # Calculate level on login
    # If true, the plugin will run the level command for the player when they login

@@ -34,7 +34,6 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.CoopPlay;
 import com.wasteofplastic.askyblock.Island;
-import com.wasteofplastic.askyblock.LevelCalc;
 import com.wasteofplastic.askyblock.LevelCalcByChunk;
 import com.wasteofplastic.askyblock.PlayerCache;
 import com.wasteofplastic.askyblock.Scoreboards;
@@ -247,28 +246,11 @@ public class JoinLeaveEvents implements Listener {
                 }
             }
         }
-        // Run the level command if it's free to do so
-        if (DEBUG)
-            plugin.getLogger().info("DEBUG: Run level calc?");
+        // Run the level command
         if (Settings.loginLevel) {
             if (DEBUG)
-                plugin.getLogger().info("DEBUG: Yes");
-            if (Settings.fastLevelCalc) {
-                if (DEBUG)
-                    plugin.getLogger().info("DEBUG: Fast calc");
-                new LevelCalcByChunk(plugin, playerUUID, player, false);
-            } else {
-                if (DEBUG)
-                    plugin.getLogger().info("DEBUG: slow calc");
-                if (!plugin.isCalculatingLevel()) {
-                    // This flag is true if the command can be used
-                    if (DEBUG)
-                        plugin.getLogger().info("DEBUG: calculating");
-                    plugin.setCalculatingLevel(true);
-                    LevelCalc levelCalc = new LevelCalc(plugin, playerUUID, player, false);
-                    levelCalc.runTaskTimer(plugin, 0L, 10L);
-                }
-            }
+                plugin.getLogger().info("DEBUG: Run level calc");
+            new LevelCalcByChunk(plugin, playerUUID, player, false);
         }
         // Reset resets if the admin changes it to or from unlimited
         if (Settings.resetLimit < players.getResetsLeft(playerUUID)  || (Settings.resetLimit >= 0 && players.getResetsLeft(playerUUID) < 0)) {

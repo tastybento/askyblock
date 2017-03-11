@@ -143,7 +143,6 @@ public class Settings {
     // Levels
     public static HashMap<MaterialData, Integer> blockLimits;
     public static HashMap<MaterialData, Integer> blockValues;
-    public static boolean fastLevelCalc;
 
     // Challenge completion broadcast
     public static boolean broadcastMessages;
