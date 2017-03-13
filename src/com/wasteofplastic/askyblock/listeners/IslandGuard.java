@@ -457,7 +457,7 @@ public class IslandGuard implements Listener {
                 }
             }
             // Fire exit event
-            final IslandExitEvent event = new IslandExitEvent(e.getPlayer().getUniqueId(), islandFrom, e.getTo());
+            final IslandExitEvent event = new IslandExitEvent(e.getPlayer().getUniqueId(), islandFrom, e.getFrom());
             plugin.getServer().getPluginManager().callEvent(event);
         } else if (islandTo != null && islandFrom != null && !islandTo.equals(islandFrom)) {
             // Adjacent islands or overlapping protections
@@ -477,7 +477,7 @@ public class IslandGuard implements Listener {
                 }
             }
             // Fire exit event
-            final IslandExitEvent event = new IslandExitEvent(e.getPlayer().getUniqueId(), islandFrom, e.getTo());
+            final IslandExitEvent event = new IslandExitEvent(e.getPlayer().getUniqueId(), islandFrom, e.getFrom());
             plugin.getServer().getPluginManager().callEvent(event);
             // Fire entry event
             final IslandEnterEvent event2 = new IslandEnterEvent(e.getPlayer().getUniqueId(), islandTo, e.getTo());

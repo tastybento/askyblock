@@ -35,8 +35,8 @@ public class IslandEnterEvent extends ASkyBlockEvent {
     /**
      * Called to create the event
      * @param player
-     * @param island
-     * @param location
+     * @param island - island the player is entering
+     * @param location - Location of where the player entered the island or tried to enter
      */
     public IslandEnterEvent(UUID player, Island island, Location location) {
         super(player,island);

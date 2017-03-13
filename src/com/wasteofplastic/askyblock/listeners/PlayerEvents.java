@@ -102,11 +102,12 @@ public class PlayerEvents implements Listener {
         if (plugin.getGrid() == null) {
             return;
         }
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: Giving all temp perms");
         for (Player player : plugin.getServer().getOnlinePlayers()) {
             if(plugin.getGrid().playerIsOnIsland(player)){
                 if(VaultHelper.checkPerm(player, Settings.PERMPREFIX + "islandfly")){
                     player.setAllowFlight(true);
-                    // TODO: is this needed?
                     player.setFlying(true);
                 }
 
@@ -152,8 +153,15 @@ public class PlayerEvents implements Listener {
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerEnterOnIsland(IslandEnterEvent e){
-        if (DEBUG)
-            plugin.getLogger().info("DEBUG: player enter island");
+        if (DEBUG) {
+            plugin.getLogger().info("DEBUG: player entered island");
+            plugin.getLogger().info("DEBUG: island center is " + e.getIslandLocation());
+            if (e.getIslandOwner() != null) {
+                plugin.getLogger().info("DEBUG: island owner is " + plugin.getServer().getPlayer(e.getIslandOwner()).getName());
+            } else {
+                plugin.getLogger().info("DEBUG: island is unowned");
+            }
+        }
         Player player = plugin.getServer().getPlayer(e.getPlayer());
         processPerms(player, e.getIslandLocation());
     }
@@ -163,21 +171,28 @@ public class PlayerEvents implements Listener {
      * @param player
      * @param loc
      */
-    private void processPerms(Player player, Location loc) {
+    private void processPerms(final Player player, final Location loc) {
         if (DEBUG)
             plugin.getLogger().info("DEBUG: processing perms. Player is at " + loc);
         if(plugin.getGrid().locationIsOnIsland(player, loc)){
             if (DEBUG)
-                plugin.getLogger().info("DEBUG: player on island");
+                plugin.getLogger().info("DEBUG: player on island " + player.getName());
             if(VaultHelper.checkPerm(player, Settings.PERMPREFIX + "islandfly")) {
                 if (DEBUG)
                     plugin.getLogger().info("DEBUG: player has fly");
-                player.setAllowFlight(true);
-                // TODO: is this needed? Yes - they may be flying when they logged out
-                player.setFlying(true);
-            }
+                plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
 
-            for(String perm : Settings.temporaryPermissions){
+                    @Override
+                    public void run() {
+                        player.setAllowFlight(true);
+                        player.setFlying(true);
+
+                    }});
+
+            }
+            if (DEBUG)
+                plugin.getLogger().info("DEBUG: adding temp perms");
+            for(String perm : Settings.temporaryPermissions) {
                 if(!VaultHelper.checkPerm(player, perm)){
                     VaultHelper.addPerm(player, perm);
 
@@ -187,6 +202,9 @@ public class PlayerEvents implements Listener {
                     temporaryPerms.put(player.getUniqueId(), perms);
                     if (DEBUG)
                         plugin.getLogger().info("DEBUG: adding perm " + perm);
+                } else {
+                    if (DEBUG)
+                        plugin.getLogger().info("DEBUG: player already has perm " + perm);
                 }
             }
         }
@@ -212,48 +230,78 @@ public class PlayerEvents implements Listener {
         if (DEBUG)
             plugin.getLogger().info("DEBUG: island exit event");
         final Player player = plugin.getServer().getPlayer(e.getPlayer());
-        if(!plugin.getGrid().locationIsOnIsland(player, e.getLocation())) {
-            if (DEBUG)
-                plugin.getLogger().info("DEBUG: player left island");
-            if(VaultHelper.checkPerm(player, Settings.PERMPREFIX + "islandfly") && player.isFlying()
-                    && player.getGameMode().equals(GameMode.SURVIVAL)) {
-                if (DEBUG)
-                    plugin.getLogger().info("DEBUG: player is flying timer is " + Settings.flyTimeOutside + "s");
-                if (Settings.flyTimeOutside == 0) {
-                    player.setAllowFlight(false);
-                    player.setFlying(false);
-                    if (DEBUG)
-                        plugin.getLogger().info("DEBUG: removed fly");
-                } else {
-                    plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+        if (DEBUG) {
+            plugin.getLogger().info("DEBUG: player left island. e.getLocation = " + e.getLocation());
+            plugin.getLogger().info("DEBUG: player location = " + player.getLocation());
+        }
+        removeTempPerms(player, e.getIsland(), plugin.getGrid().getIslandAt(e.getLocation()));
+    }
 
-                        @Override
-                        public void run() {
-                            if(!plugin.getGrid().playerIsOnIsland(player) && player.isFlying()){
-                                player.setAllowFlight(false);
-                                player.setFlying(false);
-                                if (DEBUG)
-                                    plugin.getLogger().info("DEBUG: removed fly");
+    /**
+     * Removes perms for a player who was on one island and is now elsewhere
+     * If fromIsland and toIsland are the same, then the player is just out of their protection zone
+     * and if timing is allowed, they will keep their fly capability
+     * @param player
+     * @param fromIsland
+     * @param toIsland
+     */
+    public void removeTempPerms(final Player player, Island fromIsland, Island toIsland) {
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: Removing temp perms");
+        // Check if the player has left the island completely
+        if(VaultHelper.checkPerm(player, Settings.PERMPREFIX + "islandfly")) {
+            // If the player has teleported to another world or island
+            if (toIsland != null && fromIsland.equals(toIsland)) {
+                if (player.isFlying() && player.getGameMode().equals(GameMode.SURVIVAL)) {
+                    if (DEBUG)
+                        plugin.getLogger().info("DEBUG: player is flying timer is " + Settings.flyTimeOutside + "s");
+                    if (Settings.flyTimeOutside == 0) {
+                        player.setAllowFlight(false);
+                        player.setFlying(false);
+                        if (DEBUG)
+                            plugin.getLogger().info("DEBUG: removed fly");
+                    } else {
+                        plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+
+                            @Override
+                            public void run() {
+                                if(!plugin.getGrid().playerIsOnIsland(player) && player.isFlying()){
+                                    player.setAllowFlight(false);
+                                    player.setFlying(false);
+                                    if (DEBUG)
+                                        plugin.getLogger().info("DEBUG: removed fly");
+                                }
+
                             }
-
-                        }
-                    }, 20*Settings.flyTimeOutside);
+                        }, 20*Settings.flyTimeOutside);
+                    }
                 }
+            } else {
+                if (DEBUG)
+                    plugin.getLogger().info("DEBUG: Removing flight immediately");
+                // Remove fly immediately
+                player.setAllowFlight(false);
+                player.setFlying(false);
+                if (DEBUG)
+                    plugin.getLogger().info("DEBUG: removed fly");
             }
+        }
 
-            for(String perm : Settings.temporaryPermissions){
-                if(temporaryPerms.containsKey(player.getUniqueId()) && VaultHelper.checkPerm(player, perm)){
-                    VaultHelper.removePerm(player, perm);
-                    if (DEBUG)
-                        plugin.getLogger().info("DEBUG: removed temp perm " + perm);
-                    List<String> perms = temporaryPerms.get(player.getUniqueId());
-                    perms.remove(perm);
-                    if(perms.isEmpty()) temporaryPerms.remove(player.getUniqueId());
-                    else temporaryPerms.put(player.getUniqueId(), perms);
-                }
+
+        for(String perm : Settings.temporaryPermissions){
+            if(temporaryPerms.containsKey(player.getUniqueId()) && VaultHelper.checkPerm(player, perm)){
+                VaultHelper.removePerm(player, perm);
+                if (DEBUG)
+                    plugin.getLogger().info("DEBUG: removed temp perm " + perm);
+                List<String> perms = temporaryPerms.get(player.getUniqueId());
+                perms.remove(perm);
+                if(perms.isEmpty()) temporaryPerms.remove(player.getUniqueId());
+                else temporaryPerms.put(player.getUniqueId(), perms);
             }
         }
     }
+
+
 
     /**
      * Removes temporary perms when the player log out
@@ -261,6 +309,8 @@ public class PlayerEvents implements Listener {
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerLeave(PlayerQuitEvent e){
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: Removing fly and all temp perms");
         Player player = e.getPlayer();
 
         if(temporaryPerms.containsKey(player.getUniqueId())){
@@ -666,8 +716,10 @@ public class PlayerEvents implements Listener {
                     Util.sendMessage(e.getPlayer(), plugin.myLocale(e.getPlayer().getUniqueId()).lockNowLeaving.replace("[name]", plugin.getGrid().getIslandName(islandFrom.getOwner())));
                 }
             }
+            // Remove temp perms
+            removeTempPerms(e.getPlayer(), islandFrom, islandTo);
             // Fire exit event
-            final IslandExitEvent event = new IslandExitEvent(e.getPlayer().getUniqueId(), islandFrom, e.getTo());
+            final IslandExitEvent event = new IslandExitEvent(e.getPlayer().getUniqueId(), islandFrom, e.getFrom());
             plugin.getServer().getPluginManager().callEvent(event);
         } else if (islandTo != null && islandFrom != null && !islandTo.equals(islandFrom)) {
             if (DEBUG )
@@ -696,11 +748,15 @@ public class PlayerEvents implements Listener {
             } else if (islandTo.getOwner() != null) {
                 Util.sendMessage(e.getPlayer(), plugin.myLocale(e.getPlayer().getUniqueId()).lockNowEntering.replace("[name]", plugin.getGrid().getIslandName(islandTo.getOwner())));
             }
+            // Remove temp perms
+            if (!islandTo.getMembers().contains(e.getPlayer().getUniqueId())) {
+                removeTempPerms(e.getPlayer(), islandFrom, islandTo);
+            }
             // Fire exit event
-            final IslandExitEvent event = new IslandExitEvent(e.getPlayer().getUniqueId(), islandTo, e.getTo());
+            final IslandExitEvent event = new IslandExitEvent(e.getPlayer().getUniqueId(), islandFrom, e.getFrom());
             plugin.getServer().getPluginManager().callEvent(event);
             // Fire entry event
-            final IslandEnterEvent event2 = new IslandEnterEvent(e.getPlayer().getUniqueId(), islandFrom, e.getTo());
+            final IslandEnterEvent event2 = new IslandEnterEvent(e.getPlayer().getUniqueId(), islandTo, e.getTo());
             plugin.getServer().getPluginManager().callEvent(event2);
         }
 

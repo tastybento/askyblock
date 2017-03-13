@@ -34,8 +34,8 @@ public class IslandExitEvent extends ASkyBlockEvent {
 
     /**
      * @param player
-     * @param island
-     * @param location
+     * @param island that the player is leaving
+     * @param location - Location of where the player exited the island's protected area
      */
     public IslandExitEvent(UUID player, Island island, Location location) {
         super(player,island);

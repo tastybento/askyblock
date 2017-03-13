@@ -1387,7 +1387,7 @@ public class GridManager {
     }
 
     /**
-     * Checks if an online player is on their island, on a team island or on a
+     * Checks if an online player is in the protected area of their island, a team island or a
      * coop island
      * 
      * @param player
@@ -1398,7 +1398,7 @@ public class GridManager {
     }
 
     /**
-     * Checks if an online player is on their island, on a team island or on a
+     * Checks if an online player is in the protected area of their island, a team island or a
      * coop island
      * @param player
      * @param coop - if true, coop islands are included
