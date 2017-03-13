@@ -46,6 +46,7 @@ adminHelp:
   setbiome: "Define o bioma da ilha do líder."  
   setdeaths: "Especifica a contagem de mortes do jogador"    
   setrange: "Muda o alcance do espaço protegido da ilha."
+  setlanguage: "sets the default language and resets every player to that language"
   setspawn: "Define o spawn do island world como sendo um local próximo a você."
   settingsreset: "Restaura as configurações de proteção default para todas as ilhas"
   teamChatSpy: "Visualiza o chat de equipes (liga/desliga)."  

@@ -45,6 +45,7 @@ adminHelp:
   resetsign: "Réinitialise le panneau que vous regardez au propriétaire de l'île"
   setbiome: "modifie le biome d'une île"
   setdeaths: "sets player's death count"
+  setlanguage: "sets the default language and resets every player to that language"
   setrange: "modifie la distance de protection d'une île"
   setspawn: "définit l'île la plus proche comme le Spawn"
   settingsreset: "Resets all islands to default protection settings"

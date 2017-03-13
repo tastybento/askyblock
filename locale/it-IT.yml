@@ -45,6 +45,7 @@ adminHelp:
   resetsign: "Resets the sign you are looking at to the island owner"
   setbiome: "sets leader's island biome"
   setdeaths: "sets player's death count"
+  setlanguage: "sets the default language and resets every player to that language"
   setrange: "cambia il raggio di protezione isola."
   setspawn: "setta la isola dove sei come spawn."
   settingsreset: "Resets all islands to default protection settings"

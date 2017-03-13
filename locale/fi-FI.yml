@@ -45,6 +45,7 @@ adminHelp:
   resetsign: "nollaa kyltin jota katsot saaren omistajalle"
   setbiome: "asettaa johtajan saaren biomen"
   setdeaths: "sets player's death count"
+  setlanguage: "sets the default language and resets every player to that language"
   setrange: "vaihtaa saaren suojausrajaa"
   setspawn: "asettaa saaren spawn-sijainnin lähelle sinua"
   settingsreset: "Resets all islands to default protection settings"

@@ -11,21 +11,27 @@ acidLore: |
     마시지
     마시오!
     경고함
+
 adminDeleteIsland: 
   error: "&c당신이 서 있는 섬을 &ldeleteisland confirm &r&c으로 제거할 수 있습니다."
   noid: "섬을 식별할 수 없습니다."
   use: "&ldelete [name] &r&c을 입력해 플레이어를 대신 제거하세요."
 adminHelp: 
   add: "리더의 팀에 유저를 추가하기"
+  addrange: "adds to or substracts from the island's protection range"
   clearreset: "유저의 섬 초기화 제한을 초기화하기"
   clearresetall: "resets the island reset limit for all players"
+  cobblestats: "displays magic cobble generation stats"
   completeChallenge: "완료된 도전 과제를 표시하기"
   delete: "섬을 삭제하기 (블럭도 초기화)"
   help: "관리자 명령어:"
   info: "특정 유저의 정보를 확인하기"
   infoisland: "가장 가까이에 있는 섬의 정보를 확인하기"
   kick: "팀에서 유저 제거하기"
+  level: "provide detailed island level report on player"
+  listChallengeResets: "lists challenge reset schedules, if any"
   lock: "특정 유저의 섬을 잠금/개방하기"
+  name: "Set name of player's island"
   purge: "[TimeInDays] 이상 사용되지 않은 섬을 삭제하기"
   purgeallowdisallow: "제거 대상이 된 섬들이 삭제되도록 허용/비허용하기"
   purgeholes: "재사용을 위해 섬 구멍들을 정리하기"
@@ -34,10 +40,15 @@ adminHelp:
   reload: "파일을 통해 설정값 다시 불러오기"
   resetAllChallenges: "유저의 도전 과제를 전부 초기화하기"
   resetChallenge: "특정 도전과제를 완료되지 않음으로 표시하기"
+  resetChallengeForAll: "globally resets a challenge for every player with an optional repetition"
+  resetname: "Reset name of player's island"
   resetsign: "바라보고 있는 표지판을 섬의 소유자 표시 초기화하기"
   setbiome: "리더의 섬 바이옴을 설정하기"
+  setdeaths: "sets player's death count"
+  setlanguage: "sets the default language and resets every player to that language"
   setrange: "섬의 보호 반경 범위를 설정하기"
   setspawn: "현위치를 섬 세계의 스폰지점으로 설정하기"
+  settingsreset: "Resets all islands to default protection settings"
   teamChatSpy: "팀 채팅 몰래보기 (켜기/끄기)"
   topTen: "상위 10 목록을 수동적으로 갱신합니다"
   topbreeders: "현재 로드된 가장 유명한 섬 목록 보기"
@@ -46,15 +57,18 @@ adminHelp:
   unregister: "특정 섬의 블럭을 초기화하지 않고 유저만 삭제하기"
 adminInfo: 
   bannedPlayers: "차단된 유저"
+  errorNullTeamLeader: "Team leader should be null!"
+  errorTeamMembersExist: "Player has team members, but shouldn't!"
   hoppers: "섬에 [number] 개의 깔대기가 있습니다"
   isLocked: "섬이 잠겨 있습니다"
   isProtected: "섬이 삭제로부터 보호되었습니다"
   isSpawn: "섬이 스폰장소입니다"
   isUnlocked: "섬이 개방되어 있습니다"
   isUnprotected: "섬이 삭제로부터 보호되지 않았습니다"
+  islandLocation: "Island Location"
   lastLogin: "마지막 로그인"
   maxSize: "섬 최대 크기 (거리)"
-  player: "유저"
+  player: 유저
   teamLeader: "팀 리더"
   teamMembers: "팀 구성원"
   title: "이곳은 스폰 섬입니다"
@@ -69,6 +83,12 @@ adminRegister:
   noIsland: "이 구역에서 알려진 섬이 없습니다!"
   notSpawn: "스폰의 섬을 소유할 수 없습니다!"
   taking: "[name] 의 섬의 소유권을 뺏습니다."
+adminReserve: 
+  islandExists: "There is an island here already! Register the player instead!"
+adminResetChallengeForAll: 
+  error: "Format for repeat time must is [integer number][m/h/d] (minutes, hours, days), e.g. 5h"
+  repeating: "Repeating [duration]"
+  reset: "Reset [date]"
 adminResetSign: 
   errorExists: "그 워프 표지판은 이미 작동중이고, [name] 이/가 소유중입니다."
   found: "워프 표지판이 발견되었습니다!"
@@ -83,6 +103,7 @@ adminSetRange:
   invalid: "잘못된 범위!"
   set: "새로운 범위를 [number] (으)로 설정하세요."
   tip: "[max] (으)로 10 을 사용하세요."
+  updated: "Island range updated to [number]"
   warning: "경고 - 범위가 섬의 범위 [max] 보다 큽니다!"
   warning2: "겹쳐진 섬들은 스폰 섬처럼 작동할 것입니다!"
 adminSetSpawn: 
@@ -121,9 +142,11 @@ ban:
   banned: "당신은 [name] 의 섬으로부터 차단되었습니다!"
   fail: "[name] 은/는 차단될 수 없습니다!"
   helpBan: "자신의 섬으로부터 특정 유저를 차단하기"
+  helpBanList: "list banned players."
   helpUnban: "자신의 섬으로부터 특정 유저의 차단을 해제하기"
   lifted: "[name] 의 섬으로부터 차단이 해제되었습니다!"
   liftedsuccess: "[name] 의 차단을 해제했습니다!"
+  none: None
   notbanned: "[name] 은/는 차단되지 않았습니다!"
   notteammember: "자신의 팀 구성원을 차단할 수 없습니다!"
   notyourself: "자신이 스스로 그것을 할 수 없습니다!"
@@ -138,7 +161,7 @@ boats:
   warning: "지금 보트에서 나가는 건 안전하지 않습니다..."
 challenges: 
   colors: "종류 별로 도전과제는 다른 색상들로 되어있을 겁니다:"
-  complete: "완료"
+  complete: 완료
   completeNotRepeatable: "완료됨(반복 불가능함)"
   completeRepeatable: "완료됨(반복 가능함)"
   completedtimes: "진행 단계: [donetimes] / [maxtimes]"
@@ -154,17 +177,18 @@ challenges:
   guititle: "스카이블록 도전과제"
   help1: "/c <도전과제> 을 입력해 특정 도전 과제 정보를 봅니다."
   help2: "/c complete <도전과제> 을 입력해 도전과제 완료를 시도합니다."
-  incomplete: "미완료"
+  incomplete: 미완료
   invalidChallengeName: "잘못된 도전 과제 이름입니다! 사용 /c 더 많은 정보"
   itemTakeWarning: "이 도전과제를 완료할 때 모든 요구된 아이템을 가져갑니다!"
-  level: "레벨"
+  level: 레벨
   maxreached: "진행 완료: [donetimes] / [maxtimes]"
   moneyReward: "돈 보상"
   name: "도전과제 이름"
   nameHasCompleted: "[name] 이/가 [challenge] 도전과제를 완료했습니다!"
+  navigation: "Click to see [level] challenges!"
   notRepeatable: "이 도전과제는 반복해서 다시 완료할 수 없습니다!"
   repeatRewards: "반복 달성 보상"
-  rewards: "보상"
+  rewards: 보상
   toComplete: "이 레벨의 잠금을 해제하려면 [challengesToDo] 도전과제를 [thisLevel] 이상 완료해야 합니다!"
   toCompleteUse: "이 도전 과제를 완료하려면"
   unknownChallenge: "알 수 없는 도전 과제 이름 (맞춤법을 확인)!"
@@ -180,8 +204,10 @@ completechallenge:
 confirm: 
   errorTimeLimitExpired: "시간 제한 초과됨! 명령어를 다시 입력하세요."
 coop: 
+  cannotcoop: "Only island leader can coop a player."
   help: "잠시동안 특정 유저에게 자신의 섬의 모든 권한을 맡기기"
   invited: "[name] 이/가 [player] 을/를 그의 조합원으로 만들었습니다!"
+  listcoops: "list coop players"
   madeyoucoopy: "[name] 이/가 당신을 그의 조합원으로 만들었습니다!"
   notincoop: "[name] 은/는 당신의 조합원이 아닙니다!"
   onyourteam: "그 유저는 이미 당신의 조합원입니다!"
@@ -190,19 +216,28 @@ coop:
   success: "[name] 은/는 이제 당신이 그를 내쫒거나 그가 로그아웃할 때까지 조합원입니다."
   uncoop: "유저로부터 모든 섬의 권한을 제거합니다"
   useexpel: "expel 또는 uncoop 을 사용해 유저를 제거하세요."
+deaths: 
+  deaths: Deaths
+  died: died!
+  leveldeaths: "&c[[number] deaths]"
 delete: 
   removing: "[name] 의 섬을 제거 중입니다."
 drankAcid: "acid 를 마심."
 drankAcidAndDied: "acid 를 마셔 죽었습니다."
 error: 
+  blockedbyapi: "A plugin using the API blocked this action."
   commandNotReady: "이 명령어를 아직은 사용할 수 없습니다."
+  maxIslands: "세계에 섬들이 꽉 찼습니다! 잠시 후 다시 시도해주세요!"
+  minishopDisabled: "Minishop is disabled."
   noIsland: "당신은 섬을 가지고 있지 않습니다!"
   noIslandOther: "그 유저는 섬을 가지고 있지 않습니다!"
   noPermission: "이 명령어를 사용할 권한이 없습니다!"
   noTeam: "그 유저는 팀에 없습니다."
+  notABlock: "That is not a block"
   notOnIsland: "당신은 섬 공간에 있지 않습니다!"
-  maxIslands: "세계에 섬들이 꽉 찼습니다! 잠시 후 다시 시도해주세요!"
   offlinePlayer: "그 유저는 접속중이지 않거나 존재하지 않습니다."
+  tooLong: "Too long. Maximum size is [length]."
+  tooShort: "Too short. Minimum size is [length]."
   unknownCommand: "알 수 없는 명령어입니다."
   unknownPlayer: "그 유저는 존재하지 않습니다."
   useInGame: "이 커맨드는 콘솔에서 사용할 수 없습니다."
@@ -213,6 +248,8 @@ expel:
   notonisland: "그 유저는 당신의 섬에 침입하지 않았습니다!"
   notyourself: "자기 자신을 내쫒을 수 없습니다!"
   success: "[name] 을/를 내쫒았습니다!"
+general: 
+  success: Success!
 invite: 
   errorCantJoinIsland: "그 섬에 가입할 수 없었습니다, 인원수가 가득 찬 것 같습니다."
   errorCoolDown: "그 유저를 [time] 분 후에 다시 초대할 수 있습니다"
@@ -232,9 +269,11 @@ invite:
   youCannotInvite: "유저를 더 이상 초대할 수 없습니다."
   youHaveJoinedAnIsland: "당신은 그 섬에 가입되었습니다! /[label] team 을 입력해 다른 구성원들을 보세요."
 island: 
+  blockValue: "[name] placed here may be worth [value]"
+  blockWorthless: "[name] is worthless"
   cannotTeleport: "낙하 중에 텔레포트할 수 없습니다!"
   donate: "tastybento 의 A SkyBlock 에 오신것을 환영합니다"
-  donatecolor: "aqua"
+  donatecolor: aqua
   errorCouldNotCreateIsland: "섬을 만들 수 없었습니다. 서버 관리자에게 문의해주세요."
   errorInvalidPlayer: "그 유저는 유효하지 않거나 섬을 가지고 있지 않습니다!"
   errorLevelNotReady: "이 명령어를 몇 초 후에 다시 사용해 주세요!"
@@ -253,17 +292,22 @@ island:
   helpLevelPlayer: "다른 유저의 섬 레벨을 보기."
   helpLock: "섬을 잠궈서 방문자들이 들어올 수 없게하기"
   helpMakeLeader: "자신의 섬을 <유저>에게 넘겨주기"
+  helpName: "Set a name for your island"
+  helpResetName: "reset your island name."
   helpRestart: "섬을 다시 만들고 기존 섬을 초기화하기"
+  helpSelectLanguage: "Select Language"
   helpSetHome: "/[label] 명령어의 순간이동 지점을 설정하기."
   helpSettings: "섬 보호 및 게임 설정을 보기."
   helpTeam: "자신의 팀 정보를 보기."
   helpTeleport: "자신의 섬으로 순간이동하기."
   helpTop: "상위에 등록된 섬 목록 보기."
+  helpValue: "see island level value of block in hand"
   helpWarp: "<플레이어>의 환영 표지판으로 순간이동하기."
   helpWarps: "사용가능한 모든 환영 표지판 워프 목록을 보기."
   islandDeletedLifeboats: "섬이 제거되었습니다! 생명의 보트를 향해서..!"
   islandLevelis: "섬 레벨:"
   new: "새로운 섬을 생성하는 중입니다..."
+  requiredPointsToNextLevel: "You need [points] more points to reach level [next]!"
   resetConfirm: "/[label] confirm 을 [seconds] 초 안에 입력해 당신의 섬을 초기화할 수 있습니다!"
   resetMustRemovePlayers: "섬을 초기화하기 전에 당신의 섬에서 모든 유저를 제거해야합니다 (/[label] kick <유저>). 당신의 섬을 사용중인 유저들의 목록: /[label] team"
   resetNoMore: "당신의 섬을 더 이상 초기화할 수 없습니다!"
@@ -272,16 +316,20 @@ island:
   resetTo: "초기화 제한이 리셋됬습니다."
   resetWait: "[time] 초 후 다시 할 수 있습니다."
   resetYouHave: "당신은 섬 초기화 기능을 최대 [number] 번 더 사용할 수 있습니다."
+  resetsLeft: "Resets left"
   subtitle: "by tastybento"
-  subtitlecolor: "blue"
+  subtitlecolor: blue
   teleport: "당신의 섬으로 순간이동 중입니다. (섬 도움말: /[label] help)"
   title: "A SkyBlock"
-  titlecolor: "gold"
+  titlecolor: gold
+  unlimited: Unlimited
   url: ""
 islandProtected: "섬이 보호됩니다."
 islandguardsettings: 
   TNTdamage: "TNT 데미지"
+  aciddamage: "Acid damage"
   allowed: 허용됨
+  animalspawning: "Allow/Disallow Animal Spawning"
   anvil: "모루 사용"
   armorstand: "갑옷 거치대 사용"
   beacon: "비콘 사용"
@@ -292,39 +340,50 @@ islandguardsettings:
   bucket: "양동이 사용"
   chest: "창고 사용"
   chestdamage: "TNT에 의한 창고 데미지"
+  chorusfruit: "Visitor chorus fruit use"
+  collectlava: "Visitor lava collection"
+  collectwater: "Visitor water collection"
   creeperdamage: "크리퍼 데미지"
   creepergriefing: "크리퍼 블럭 데미지"
+  creeperpain: "Creeper explosions hurt"
   croptrample: "작물 밟기"
   disallowed: 비허용됨
   door: "문 사용"
+  eggs: "Visitor egg throwing"
   enchantingtable: "인첸트 테이블 사용"
   enderpearl: "엔더 진주 사용"
   fire: 불
+  fireextinguish: "Visitor fire extinguish"
+  firespread: "Fire spread"
   furnace: "화로 사용"
   gate: "기타 문 사용"
   horseinventoryaccess: "방문자의 말 창고 접근"
   horseriding: "방문자의 말 타기"
   hurtanimals: "동물 공격"
   hurtmonsters: "몬스터 공격"
+  joinleaveislandmessages: "Enter/exit island messages"
   jukebox: "주크박스 사용"
   leash: "끈 사용"
   lever: "레버 또는 버튼 사용"
+  milking: "Visitor cow milking"
+  monsterspawning: "Allow/Disallow Monster Spawning"
   netherpvp: "지옥 PvP"
   placeblocks: "블럭 설치"
   portaluse: "포탈 사용"
   pressureplate: "방문자의 발판 사용"
   pvp: PvP
   redstone: "레드스톤 사용"
-  settingsgeneraltitle: "기본 섬 세계 설정"
   settingsgeneraldesc: "기본 섬 세계 설정"
-  settingsislandtitle: "섬 설정"
+  settingsgeneraltitle: "기본 섬 세계 설정"
   settingsislanddesc: "다음 규칙들은 이 섬의 방문자들에게 적용됩니다"
-  settingsspawntitle: "스폰 설정"
+  settingsislandtitle: "섬 설정"
   settingsspawndesc: "다음 규칙들은 스폰에 적용됩니다."
+  settingsspawntitle: "스폰 설정"
   shears: "가위 사용"
   spawnegg: "달걀 던지기"
   teleportwhenfalling: "낙하 중 순간이동"
   title: "섬 보호 설정"
+  villagertrading: "Visitor villager trading"
   visitordrop: "방문자의 아이템 흘리기"
   visitorkeepitems: "방문자 사망시 아이템 유지"
   visitorpickup: "방문자의 아이템 줍기"
@@ -339,11 +398,13 @@ kick:
   nameRemovedYou: "[name] 이/가 그의 섬으로부터 당신을 추방했습니다!"
 lavaTip: "팁: 만약 흑요석을 잘못 만들면, 양동이로 다시 퍼낼 수 있습니다."
 leave: 
+  canceled: "Leave canceled"
   errorLeadersCannotLeave: "리더는 섬을 떠날 수 없습니다. 우선 다른 팀원에게 리더를 넘겨주게 하세요."
   errorYouAreTheLeader: "당신은 리더이므로 섬을 떠날 수 없습니다. 우선 다른 팀원에게 리더를 넘겨주세요."
   errorYouCannotLeaveIsland: "당신이 섬에 남은 단 한명이라면 떠날 수 없습니다. 하지만 새로운 섬을 만들 수 있습니다."
   errorYouMustBeInWorld: "팀을 떠나려면 섬 세계에 있어야 합니다!"
   nameHasLeftYourIsland: "[name] 이/가 섬을 떠났습니다!"
+  warning: "Are you sure you want to leave the team? Type '[label] leave' again to confirm."
   youHaveLeftTheIsland: "당신은 섬을 떠나 유저 소환지점으로 돌아왔습니다."
 level: 
   calculating: "섬 레벨 계산중, 몇 초가 소요됩니다..."
@@ -378,6 +439,7 @@ minishop:
   youcannotafford: "[description] 을/를 구매할 돈이 부족합니다!"
   yousold: "[description] [number] 을/를 [price] 에 판매했습니다"
 moblimits: 
+  entity: "Island [entity] limit of [number] reached!"
   error: "섬의 동물 교배 한계치 [number] 에 도달했습니다!"
   hopper: "섬의 깔대기 설치 제한 [number] 에 도달했습니다!"
   villager: "섬의 주민 교배 한계치 [number] 에 도달했습니다!"
@@ -425,16 +487,19 @@ sethome:
   errorNotOnIsland: "홈 지역을 지정할 당신의 섬 구역 안에 있어야 합니다!"
   errorNumHomes: "홈 지역은 최대 [max] 개까지 가질 수 있습니다"
   homeSet: "섬의 홈 지역이 현위치로 지정되었습니다."
+settingsReset:
+  done: "Done."
+  inprogress: "Protection settings being reset, please wait..."
 sign: 
   line1: "&1[A Skyblock]"
   line2: "[player]"
   line3: "떨어지지 마세요!"
-  line4: "조심하시오!"
-sign-acidisland:
+  line4: 조심하시오!
+sign-acidisland: 
   line1: "&1[Acid Island]"
   line2: "[player]"
   line3: "물이 acid입니다!"
-  line4: "조심하시오"
+  line4: 조심하시오
 targetInPVPArea: "타깃 PvP 보호구역에 있습니다!"
 team: 
   listingMembers: "당신의 섬 구성원 목록"
@@ -448,7 +513,9 @@ teamchat:
   statusOff: "팀 채팅: 사용 안함"
   statusOn: "팀 채팅: 사용중"
 topTen: 
+  errorExcluded: "FYI: You are excluded from the top ten as you do not have [perm]"
   errorNotReady: "상위 10 목록이 아직 생성되지 않았습니다!"
+  guiTitle: "Top 10 Islands"
   header: "상위 10개의 섬:"
 warps: 
   deactivate: "기존 표지판을 비활성화 중입니다!"
@@ -458,11 +525,12 @@ warps:
   errorNoPlace: "환영 표지판은 당신의 섬에서만 설치가 가능합니다!"
   errorNoRemove: "자신이 설치한 환영 표지판만 제거가 가능합니다!"
   errorNoWarpsYet: "아직 사용가능한 워프가 없습니다!"
+  errorNotEnoughLevel: "You do not have enough island levels to create a Welcome Sign!"
   errorNotReadyYet: "이 워프는 아직 준비되지 않았습니다. 나중에 다시 시도해주세요."
   errorNotSafe: "이 워프는 현재 안전하지 않습니다. 나중에 다시 시도해주세요."
-  next: "다음"
+  next: 다음
   playerWarped: "[name] &2이/가 당신의 섬으로 워프했습니다!"
-  previous: "이전"
+  previous: 이전
   removed: "환영 표지판 제거!"
   signRemoved: "환영 표지판이 제거되었습니다!"
   success: "성공적으로 환영 표지판을 설치했습니다!"

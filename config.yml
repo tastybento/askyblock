@@ -1,13 +1,6 @@
-#############################################################################
 # Config for ASkyblock V${version}
-# It is recommended that you check at least these settings:
-#
-# 1. island distance - the distance between islands. If upgrading set to what you had.
-# 2. resetmoney (general section) - set to true so that everyone starts with nothing
-# 3. islandLevel (general section) - the height you want your islands to float
-# 4. protectionRange - how big a player's island is at the start
-#
-##############################################################################
+# Maintainer: tastybento
+# If you change island distance, you MUST reset the world.
 
 ##### Island Related Settings #####
 

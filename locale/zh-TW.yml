@@ -46,6 +46,7 @@ adminHelp:
   setbiome: "sets leader's island biome"
   setdeaths: "sets player's death count"
   setrange: 改變島嶼保護的範圍
+  setlanguage: "sets the default language and resets every player to that language"
   setspawn: 設置島嶼世界的重生點
   settingsreset: "Resets all islands to default protection settings"
   teamChatSpy: "Spy on team chats (on/off)"

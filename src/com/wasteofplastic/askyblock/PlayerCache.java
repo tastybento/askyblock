@@ -24,9 +24,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import com.google.common.collect.Lists;
@@ -48,26 +46,29 @@ public class PlayerCache {
         this.plugin = plugin;
         // final Collection<? extends Player> serverPlayers =
         // Bukkit.getServer().getOnlinePlayers();
-        for (Player p : getOnlinePlayers()) {
-            if (p.isOnline()) {
-                final Players playerInf = new Players(plugin, p.getUniqueId());
-                // Make sure parties are working correctly
-                if (playerInf.inTeam() && playerInf.getTeamIslandLocation() == null) {
-                    final Players leaderInf = new Players(plugin, playerInf.getTeamLeader());
-                    playerInf.setTeamIslandLocation(leaderInf.getIslandLocation());
-                    playerInf.save();
-                }
-                // Add this player to the online cache
-                //plugin.getLogger().info("DEBUG: added player " + p.getUniqueId());
-                playerCache.put(p.getUniqueId(), playerInf);
+        for (Player p : plugin.getServer().getOnlinePlayers()) {
+            final Players playerInf = new Players(plugin, p.getUniqueId());
+            // Make sure parties are working correctly
+            if (playerInf.inTeam() && playerInf.getTeamIslandLocation() == null) {
+                final Players leaderInf = new Players(plugin, playerInf.getTeamLeader());
+                playerInf.setTeamIslandLocation(leaderInf.getIslandLocation());
+                playerInf.save();
             }
+            // Add this player to the online cache
+            //plugin.getLogger().info("DEBUG: added player " + p.getUniqueId());
+            playerCache.put(p.getUniqueId(), playerInf);
         }
     }
 
-    public static List<Player> getOnlinePlayers() {
-        List<Player> list = Lists.newArrayList();
-        for (World world : Bukkit.getWorlds()) {
-            list.addAll(world.getPlayers());
+    /**
+     * @return list of all online cached players
+     */
+    public List<UUID> getOnlineCachedPlayers() {
+        List<UUID> list = Lists.newArrayList();
+        for (Player p: plugin.getServer().getOnlinePlayers()) {
+            if (playerCache.containsKey(p.getUniqueId())) {
+                list.add(p.getUniqueId());
+            }
         }
         return Collections.unmodifiableList(list);
     }
@@ -142,8 +143,8 @@ public class PlayerCache {
         } else {
             // Get the file system
             try {
-            final File file = new File(plugin.getPlayersFolder(), uniqueID.toString() + ".yml");
-            return file.exists();
+                final File file = new File(plugin.getPlayersFolder(), uniqueID.toString() + ".yml");
+                return file.exists();
             } catch (Exception e) {
                 return false;
             }

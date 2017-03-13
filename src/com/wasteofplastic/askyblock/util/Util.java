@@ -18,7 +18,14 @@
 package com.wasteofplastic.askyblock.util;
 
 import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +39,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
-import com.wasteofplastic.askyblock.PlayerCache;
 import com.wasteofplastic.askyblock.nms.NMSAbstraction;
 
 /**
@@ -295,13 +301,12 @@ public class Util {
      */
     public static List<String> getOnlinePlayerList() {
         final List<String> returned = new ArrayList<String>();
-        final List<Player> players = PlayerCache.getOnlinePlayers();
-        for (Player p : players) {
+        for (Player p : Bukkit.getServer().getOnlinePlayers()) {
             returned.add(p.getName());
         }
         return returned;
     }
-    
+
     /**
      * Checks what version the server is running and picks the appropriate NMS handler, or fallback
      * @return NMSAbstraction class
@@ -336,7 +341,7 @@ public class Util {
             throw new IllegalStateException("Class " + clazz.getName() + " does not implement NMSAbstraction");
         }
     }
-    
+
     /**
      * Send a message to sender if message is not empty. Does not include color codes or spaces
      * @param sender
@@ -347,7 +352,7 @@ public class Util {
             sender.sendMessage(message);
         }
     }
-    
+
     /**
      * @return random long number using XORShift random number generator
      */
@@ -356,12 +361,76 @@ public class Util {
         x ^= (x >>> 35);
         x ^= (x << 4);
         return Math.abs(x);
-      }
-    
+    }
+
     /**
      * @return random double using XORShift random number generator
      */
     public static double randomDouble() {
         return (double)randomLong()/Long.MAX_VALUE;
+    }
+
+    /**
+     * Changes the setting in config.yml to a new value without removing comments (saveConfig() removes comments)
+     * @param oldSetting
+     * @param newSetting
+     * @throws IOException
+     */
+    public static void setConfig(String setting, String oldSetting, String newSetting) throws IOException {
+        setYamlConfig(plugin.getDataFolder().getAbsolutePath() + File.separator + "config.yml", setting, oldSetting, newSetting);
+    }
+    
+    /**
+     * Changes the setting in a YAML file to a new value without removing comments (saveConfig() removes comments)
+     * @param absoluteFilename
+     * @param setting
+     * @param oldSetting
+     * @param newSetting
+     * @throws IOException
+     */
+    public static void setYamlConfig(String absoluteFilename, String setting, String oldSetting, String newSetting) throws IOException {
+        Path path = Paths.get(absoluteFilename);
+        Charset charset = StandardCharsets.UTF_8;
+        String content = new String(Files.readAllBytes(path), charset);
+        content = content.replaceAll(setting + ": " + oldSetting, setting + ": " + newSetting);
+        Files.write(path, content.getBytes(charset));
+    }
+    
+    /**
+     * Changes a setting in all player files in the player folder. If the setting does not exist, no change is made
+     * This is not a true YAML change, if the setting name exists multiple times in the file, all lines will be changed.
+     * The setting must include any spaces at the front if required
+     * @param playerFolder
+     * @param setting - name of the YAML setting, e.g., locale
+     * @param newSettingValue - the new value for this setting
+     * @throws IOException
+     */
+    public static void setPlayerYamlConfig(File playerFolder, String setting, String newSettingValue) throws IOException {
+        FilenameFilter ymlFilter = new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                String lowercaseName = name.toLowerCase();
+                if (lowercaseName.endsWith(".yml")) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        };
+        for (File file: playerFolder.listFiles(ymlFilter)) {
+            Path path = Paths.get(file.getAbsolutePath());
+            Charset charset = StandardCharsets.UTF_8;
+
+            List<String> fileContent = new ArrayList<>(Files.readAllLines(path, charset));
+
+            for (int i = 0; i < fileContent.size(); i++) {
+                if (fileContent.get(i).startsWith(setting)) {
+                    fileContent.set(i, setting + ": " + newSettingValue);
+                    break;
+                }
+            }
+
+            Files.write(path, fileContent, charset);
+        }
     }
 }

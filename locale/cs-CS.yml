@@ -45,6 +45,7 @@ adminHelp:
   resetsign: "Resets the sign you are looking at to the island owner"
   setbiome: "sets leader's island biome"
   setdeaths: "sets player's death count"
+  setlanguage: "sets the default language and resets every player to that language"
   setrange: "zmeni dosah ochranne oblasti."
   setspawn: "nastavi spawn ostrovniho sveta na tvou pozici."
   settingsreset: "Resets all islands to default protection settings"

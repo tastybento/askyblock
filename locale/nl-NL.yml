@@ -46,6 +46,7 @@ adminHelp:
   setbiome: "zet de biome van het eiland"
   setdeaths: "sets player's death count"
   setrange: "veranderd het eiland protectie-bereik"
+  setlanguage: "sets the default language and resets every player to that language"
   setspawn: "zet de skyblock spawn naar jouw locatie"
   settingsreset: "Resets all islands to default protection settings"
   teamChatSpy: "spioneer in team chats (aan/uit)"

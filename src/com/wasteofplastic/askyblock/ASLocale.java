@@ -653,6 +653,8 @@ public class ASLocale {
 
     public String teamChatSpyStatusOn;
 
+    public String adminHelpsetLanguage;
+
 
     /**
      * Creates a locale object full of localized strings for a language
@@ -1155,6 +1157,8 @@ public class ASLocale {
         adminHelpinfo = ChatColor.translateAlternateColorCodes('&', locale.getString("adminHelp.info", "check information on the given player"));
         adminHelpSetSpawn = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("adminHelp.setspawn", "sets the island world spawn to a location close to you"));
+        adminHelpsetLanguage = ChatColor.translateAlternateColorCodes('&',
+                locale.getString("adminHelp.setlanguage", "sets the default language and resets every player to that language"));
         adminHelpSetRange = ChatColor
                 .translateAlternateColorCodes('&', locale.getString("adminHelp.setrange", "changes the island's protection range"));
         adminHelpAddRange = ChatColor

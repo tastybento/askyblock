@@ -45,6 +45,7 @@ adminHelp:
   resetsign: "Macht das angesehene Schild zum Warp-Schild des Inselbesitzers."
   setbiome: "Setzt das Biom des Inselbesitzers."
   setdeaths: "sets player's death count"
+  setlanguage: "sets the default language and resets every player to that language"
   setrange: "Ändert den Schutzbereich einer Insel"
   setspawn: "Setzt den Insel-Welt Spawn."
   settingsreset: "Resets all islands to default protection settings"

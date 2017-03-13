@@ -46,6 +46,7 @@ adminHelp:
   setbiome: "устанавливает биом на острове лидера"
   setdeaths: "устанавливает число смертей игроку"
   setrange: "изменяет область защиты острова"
+  setlanguage: "sets the default language and resets every player to that language"
   setspawn: "установить спавн для всех островов рядом с Вами"
   settingsreset: "Восстановить настройки защиты у всех островов"
   teamChatSpy: "Следить за командными чатами (включить/выключить)"

@@ -58,14 +58,15 @@ import org.bukkit.util.BlockIterator;
 
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
+import com.wasteofplastic.askyblock.ASLocale;
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.CoopPlay;
 import com.wasteofplastic.askyblock.DeleteIslandChunk;
+import com.wasteofplastic.askyblock.FileLister;
 import com.wasteofplastic.askyblock.GridManager;
 import com.wasteofplastic.askyblock.Island;
-import com.wasteofplastic.askyblock.PluginConfig;
 import com.wasteofplastic.askyblock.Island.SettingsFlag;
-import com.wasteofplastic.askyblock.PlayerCache;
+import com.wasteofplastic.askyblock.PluginConfig;
 import com.wasteofplastic.askyblock.SafeSpotTeleport;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.Settings.GameType;
@@ -132,6 +133,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
             Util.sendMessage(sender, ChatColor.YELLOW  + label + " resetname <player>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpResetName);
             Util.sendMessage(sender, ChatColor.YELLOW  + label + " setbiome <leader> <biome>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpsetBiome);
             Util.sendMessage(sender, ChatColor.YELLOW  + label + " setdeaths <player> <number>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpsetDeaths);
+            Util.sendMessage(sender, ChatColor.YELLOW  + label + " setlanguage <locale>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpsetLanguage);
             Util.sendMessage(sender, ChatColor.YELLOW  + label + " settingsreset [help | all | flag]:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpSettingsReset);
             Util.sendMessage(sender, ChatColor.YELLOW  + label + " team add <player> <leader>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpadd);
             Util.sendMessage(sender, ChatColor.YELLOW  + label + " team kick <player>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpkick);
@@ -223,6 +225,9 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.setdeaths") || player.isOp()) {
                 helpMessages.add(ChatColor.YELLOW  + label + " setdeaths <player> <number>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpsetDeaths);
             }
+            if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.setlanguage") || player.isOp()) {
+                helpMessages.add(ChatColor.YELLOW  + label + " setlanguage <locale>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpsetLanguage);
+            }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.resethome") || player.isOp()) {
                 helpMessages.add(ChatColor.YELLOW + "/" + label + " sethome <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpSetHome);
             }
@@ -292,7 +297,8 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                         || split[0].equalsIgnoreCase("deleteisland") || split[0].equalsIgnoreCase("setrange")
                         || split[0].equalsIgnoreCase("reserve") || split[0].equalsIgnoreCase("addrange")
                         || split[0].equalsIgnoreCase("unregister") || split[0].equalsIgnoreCase("clearresetall")
-                        || split[0].equalsIgnoreCase("settingsreset") || split[0].equalsIgnoreCase("cobblestats")) {
+                        || split[0].equalsIgnoreCase("settingsreset") || split[0].equalsIgnoreCase("cobblestats")
+                        || split[0].equalsIgnoreCase("setlanguage")) {
                     if (!checkAdminPerms(player, split)) {
                         Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
                         return true;
@@ -345,6 +351,10 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
             help(sender, label);
             return true;
         case 1:
+            if (split[0].equalsIgnoreCase("setlanguage")) {
+                Util.sendMessage(sender, ChatColor.YELLOW + plugin.myLocale().adminHelpsetLanguage);                
+                return true;
+            }
             if (split[0].equalsIgnoreCase("listchallengeresets")) {
                 // Reset the challenge now
                 for (String challenge : plugin.getChallenges().getRepeatingChallengeResets()) {
@@ -827,7 +837,86 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                     return false;
                 }
         case 2:
-            if (split[0].equalsIgnoreCase("level")) {                   
+            if (split[0].equalsIgnoreCase("setlanguage")) {
+                if (asyncPending) {
+                    Util.sendMessage(sender, ChatColor.RED + plugin.myLocale().errorCommandNotReady);
+                    return true;
+                }
+                if (plugin.getAvailableLocales().keySet().contains(split[1])) {
+                    // Change the config.yml setting without removing comments
+                    try {
+                        Util.setConfig("defaultlanguage", Settings.defaultLanguage, split[1]);
+                    } catch (IOException e) {
+                        Util.sendMessage(sender, ChatColor.RED + e.getMessage());
+                        return true;
+                        //e.printStackTrace();
+                    }
+                    plugin.getConfig().set("general.defaultlanguage", split[1]);
+                    Settings.defaultLanguage = split[1];
+
+                    // Load languages
+                    HashMap<String,ASLocale> availableLocales = new HashMap<String,ASLocale>();
+                    FileLister fl = new FileLister(plugin);
+                    try {
+                        int index = 1;
+                        for (String code: fl.list()) {
+                            //plugin.getLogger().info("DEBUG: lang file = " + code);
+                            availableLocales.put(code, new ASLocale(plugin, code, index++));
+                        }
+                    } catch (IOException e1) {
+                        plugin.getLogger().severe("Could not add locales!");
+                    }
+                    if (!availableLocales.containsKey(Settings.defaultLanguage)) {
+                        plugin.getLogger().severe("'" + Settings.defaultLanguage + ".yml' not found in /locale folder. Using /locale/en-US.yml");
+                        Settings.defaultLanguage = "en-US";
+                        availableLocales.put(Settings.defaultLanguage, new ASLocale(plugin, Settings.defaultLanguage, 0));
+                    }
+                    plugin.setAvailableLocales(availableLocales);
+                    // Run through all the players and set their languages
+                    for (UUID onlinePlayer : plugin.getPlayers().getOnlineCachedPlayers()) {
+                        plugin.getPlayers().setLocale(onlinePlayer, Settings.defaultLanguage);
+                    }
+                    // Prepare for the async check - make final
+                    final File playerFolder = plugin.getPlayersFolder();
+                    // Set the pending flag
+                    asyncPending = true;
+                    // Change player files
+                    plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+
+                        @Override
+                        public void run() {
+                            try {
+                                Util.setPlayerYamlConfig(playerFolder, "locale", Settings.defaultLanguage);
+
+                                // Run sync task
+                                plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
+
+                                    @Override
+                                    public void run() {
+                                        Util.sendMessage(sender, ChatColor.GREEN + plugin.myLocale().generalSuccess);
+                                        asyncPending = false;
+                                    }} );
+                            } catch (final IOException e) {
+                                // Run sync task
+                                plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
+
+                                    @Override
+                                    public void run() {
+                                        Util.sendMessage(sender, ChatColor.RED + e.getMessage());
+                                        asyncPending = false;
+                                    }} );        
+                            }
+                            //System.out.println("DEBUG: scanning done");
+
+                        }});
+                
+                    Util.sendMessage(sender, ChatColor.RED + plugin.getAvailableLocales().keySet().toString());
+                }
+                return true;
+
+            }
+
+            else if (split[0].equalsIgnoreCase("level")) {                   
                 // Convert name to a UUID
                 final UUID playerUUID = plugin.getPlayers().getUUID(split[1], true);
                 // plugin.getLogger().info("DEBUG: console player info UUID = "
@@ -2395,9 +2484,13 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                         "resetallchallenges", "purge", "info", "info", "info", "listchallengeresets",
                         "clearreset", "clearresetall", "setbiome", "topbreeders", "team",
                         "name", "setdeaths", "settingsreset", "setrange", "addrange",
-                        "resetname", "register", "cobblestats", "clearchallengereset"));
+                        "resetname", "register", "cobblestats", "clearchallengereset",
+                        "setlanguage"));
                 break;
             case 2:
+                if (args[0].equalsIgnoreCase("setlanguage")) {
+                    options.addAll(plugin.getAvailableLocales().keySet());
+                }
                 if (args[0].equalsIgnoreCase("name") || args[0].equalsIgnoreCase("resetname") || args[0].equalsIgnoreCase("setdeaths")) {
                     options.addAll(Util.getOnlinePlayerList());
                 }
@@ -2492,6 +2585,9 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
             switch (args.length) {
             case 0:
             case 1:
+                if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.setlanguage") || player.isOp()) {
+                    options.add("setlanguage");
+                }
                 if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.reload") || player.isOp()) {
                     options.add("reload");
                 }
@@ -2570,6 +2666,10 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 }
                 break;
             case 2:
+                if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.setlanguage") || player.isOp()
+                        && args[0].equalsIgnoreCase("setlanguage")) {
+                    options.addAll(plugin.getAvailableLocales().keySet());
+                }
                 if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.setrange") || player.isOp() 
                         && (args[0].equalsIgnoreCase("setrange") || args[0].equalsIgnoreCase("addrange"))) {
                     options.addAll(Util.getOnlinePlayerList());
@@ -2679,8 +2779,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.team") || player.isOp())
                         && args[0].equalsIgnoreCase("team")
                         && args[1].equalsIgnoreCase("add")) {
-                    final List<Player> players = PlayerCache.getOnlinePlayers();
-                    for (Player p : players) {
+                    for (Player p : plugin.getServer().getOnlinePlayers()) {
                         options.add(p.getName());
                     }
                 }
