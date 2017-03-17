@@ -357,11 +357,7 @@ public class ASkyBlock extends JavaPlugin {
             getServer().getPluginManager().registerEvents(new WorldLoader(this), this);
         }
         // Metrics
-        try {
-            final Metrics metrics = new Metrics(this);
-            metrics.start();
-        } catch (final IOException localIOException) {
-        }
+        new MetricsLite(this);
         // Kick off a few tasks on the next tick
         // By calling getIslandWorld(), if there is no island
         // world, it will be created
