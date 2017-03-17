@@ -65,12 +65,12 @@ import com.wasteofplastic.askyblock.DeleteIslandChunk;
 import com.wasteofplastic.askyblock.FileLister;
 import com.wasteofplastic.askyblock.GridManager;
 import com.wasteofplastic.askyblock.Island;
-import com.wasteofplastic.askyblock.Island.SettingsFlag;
 import com.wasteofplastic.askyblock.PluginConfig;
 import com.wasteofplastic.askyblock.SafeSpotTeleport;
 import com.wasteofplastic.askyblock.Settings;
-import com.wasteofplastic.askyblock.Settings.GameType;
 import com.wasteofplastic.askyblock.TopTen;
+import com.wasteofplastic.askyblock.Island.SettingsFlag;
+import com.wasteofplastic.askyblock.Settings.GameType;
 import com.wasteofplastic.askyblock.listeners.LavaCheck;
 import com.wasteofplastic.askyblock.panels.ControlPanel;
 import com.wasteofplastic.askyblock.util.Util;
@@ -106,40 +106,40 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 
     private void help(CommandSender sender, String label) {
         if (!(sender instanceof Player)) {
-            Util.sendMessage(sender, ChatColor.YELLOW  + label + " clearchallengereset <challenge>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpclearChallengeReset);
-            Util.sendMessage(sender, ChatColor.YELLOW  + label + " clearreset <player>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpclearReset);
-            Util.sendMessage(sender, ChatColor.YELLOW  + label + " clearresetall:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpclearResetAll);
+            Util.sendMessage(sender, plugin.myLocale().helpColor  + label + " clearchallengereset <challenge>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpclearChallengeReset);
+            Util.sendMessage(sender, plugin.myLocale().helpColor  + label + " clearreset <player>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpclearReset);
+            Util.sendMessage(sender, plugin.myLocale().helpColor  + label + " clearresetall:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpclearResetAll);
             if (Settings.useMagicCobbleGen) {
-                Util.sendMessage(sender, ChatColor.YELLOW  + label + " cobblestats: " + ChatColor.WHITE + " " + plugin.myLocale().adminHelpcobbleStats);
+                Util.sendMessage(sender, plugin.myLocale().helpColor  + label + " cobblestats: " + ChatColor.WHITE + " " + plugin.myLocale().adminHelpcobbleStats);
             }
-            Util.sendMessage(sender, ChatColor.YELLOW  + label + " completechallenge <player> <challenge>:" + ChatColor.WHITE + " "
+            Util.sendMessage(sender, plugin.myLocale().helpColor  + label + " completechallenge <player> <challenge>:" + ChatColor.WHITE + " "
                     + plugin.myLocale().adminHelpcompleteChallenge);
-            Util.sendMessage(sender, ChatColor.YELLOW  + label + " delete <player>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpdelete);
-            Util.sendMessage(sender, ChatColor.YELLOW  + label + " info <player>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpinfo);
-            Util.sendMessage(sender, ChatColor.YELLOW  + label + " info challenges <player>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpinfo);
-            Util.sendMessage(sender, ChatColor.YELLOW  + label + " info:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpinfoIsland);
-            Util.sendMessage(sender, ChatColor.YELLOW  + label + " level <player>: " + ChatColor.WHITE + " " + plugin.myLocale().adminHelplevel);
-            Util.sendMessage(sender, ChatColor.YELLOW  + label + " listchallengeresets: " + ChatColor.WHITE + " " + plugin.myLocale().adminHelplistChallengeResets);
-            Util.sendMessage(sender, ChatColor.YELLOW  + label + " lock <player>: " + ChatColor.WHITE + " " + plugin.myLocale().adminHelplock);
-            Util.sendMessage(sender, ChatColor.YELLOW  + label + " purge [TimeInDays]:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelppurge);
-            Util.sendMessage(sender, ChatColor.YELLOW  + label + " name <player> <island name>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpName);
-            Util.sendMessage(sender, ChatColor.YELLOW  + label + " reload:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpreload);
-            Util.sendMessage(sender, ChatColor.YELLOW  + label + " resetallchallenges <player>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpresetAllChallenges);
-            Util.sendMessage(sender, ChatColor.YELLOW  + label + " resetchallenge <player> <challenge>:" + ChatColor.WHITE + " "
+            Util.sendMessage(sender, plugin.myLocale().helpColor  + label + " delete <player>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpdelete);
+            Util.sendMessage(sender, plugin.myLocale().helpColor  + label + " info <player>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpinfo);
+            Util.sendMessage(sender, plugin.myLocale().helpColor  + label + " info challenges <player>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpinfo);
+            Util.sendMessage(sender, plugin.myLocale().helpColor  + label + " info:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpinfoIsland);
+            Util.sendMessage(sender, plugin.myLocale().helpColor  + label + " level <player>: " + ChatColor.WHITE + " " + plugin.myLocale().adminHelplevel);
+            Util.sendMessage(sender, plugin.myLocale().helpColor  + label + " listchallengeresets: " + ChatColor.WHITE + " " + plugin.myLocale().adminHelplistChallengeResets);
+            Util.sendMessage(sender, plugin.myLocale().helpColor  + label + " lock <player>: " + ChatColor.WHITE + " " + plugin.myLocale().adminHelplock);
+            Util.sendMessage(sender, plugin.myLocale().helpColor  + label + " purge [TimeInDays]:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelppurge);
+            Util.sendMessage(sender, plugin.myLocale().helpColor  + label + " name <player> <island name>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpName);
+            Util.sendMessage(sender, plugin.myLocale().helpColor  + label + " reload:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpreload);
+            Util.sendMessage(sender, plugin.myLocale().helpColor  + label + " resetallchallenges <player>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpresetAllChallenges);
+            Util.sendMessage(sender, plugin.myLocale().helpColor  + label + " resetchallenge <player> <challenge>:" + ChatColor.WHITE + " "
                     + plugin.myLocale().adminHelpresetChallenge);
-            Util.sendMessage(sender, ChatColor.YELLOW  + label + " resetchallengeforall <challenge> [time][m/h/d]:" + ChatColor.WHITE + " "
+            Util.sendMessage(sender, plugin.myLocale().helpColor  + label + " resetchallengeforall <challenge> [time][m/h/d]:" + ChatColor.WHITE + " "
                     + plugin.myLocale().adminHelpresetChallengeForAll);           
-            Util.sendMessage(sender, ChatColor.YELLOW  + label + " resethome <player>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpResetHome);
-            Util.sendMessage(sender, ChatColor.YELLOW  + label + " resetname <player>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpResetName);
-            Util.sendMessage(sender, ChatColor.YELLOW  + label + " setbiome <leader> <biome>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpsetBiome);
-            Util.sendMessage(sender, ChatColor.YELLOW  + label + " setdeaths <player> <number>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpsetDeaths);
-            Util.sendMessage(sender, ChatColor.YELLOW  + label + " setlanguage <locale>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpsetLanguage);
-            Util.sendMessage(sender, ChatColor.YELLOW  + label + " settingsreset [help | all | flag]:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpSettingsReset);
-            Util.sendMessage(sender, ChatColor.YELLOW  + label + " team add <player> <leader>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpadd);
-            Util.sendMessage(sender, ChatColor.YELLOW  + label + " team kick <player>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpkick);
-            Util.sendMessage(sender, ChatColor.YELLOW  + label + " topbreeders: " + ChatColor.WHITE + " " + plugin.myLocale().adminHelptopBreeders);
-            Util.sendMessage(sender, ChatColor.YELLOW  + label + " topten:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelptopTen);
-            Util.sendMessage(sender, ChatColor.YELLOW  + label + " unregister <player>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpunregister);
+            Util.sendMessage(sender, plugin.myLocale().helpColor  + label + " resethome <player>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpResetHome);
+            Util.sendMessage(sender, plugin.myLocale().helpColor  + label + " resetname <player>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpResetName);
+            Util.sendMessage(sender, plugin.myLocale().helpColor  + label + " setbiome <leader> <biome>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpsetBiome);
+            Util.sendMessage(sender, plugin.myLocale().helpColor  + label + " setdeaths <player> <number>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpsetDeaths);
+            Util.sendMessage(sender, plugin.myLocale().helpColor  + label + " setlanguage <locale>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpsetLanguage);
+            Util.sendMessage(sender, plugin.myLocale().helpColor  + label + " settingsreset [help | all | flag]:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpSettingsReset);
+            Util.sendMessage(sender, plugin.myLocale().helpColor  + label + " team add <player> <leader>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpadd);
+            Util.sendMessage(sender, plugin.myLocale().helpColor  + label + " team kick <player>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpkick);
+            Util.sendMessage(sender, plugin.myLocale().helpColor  + label + " topbreeders: " + ChatColor.WHITE + " " + plugin.myLocale().adminHelptopBreeders);
+            Util.sendMessage(sender, plugin.myLocale().helpColor  + label + " topten:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelptopTen);
+            Util.sendMessage(sender, plugin.myLocale().helpColor  + label + " unregister <player>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpunregister);
 
         } else {
             // Only give help if the player has permissions
@@ -149,123 +149,123 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
             List<String> helpMessages = new ArrayList<String>();
             helpMessages.add(plugin.myLocale(player.getUniqueId()).adminHelpHelp);
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.challenges") || player.isOp()) {
-                helpMessages.add(ChatColor.YELLOW + "/" + label + " clearchallengereset <challenge>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpclearChallengeReset);
+                helpMessages.add(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " clearchallengereset <challenge>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpclearChallengeReset);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.clearreset") || player.isOp()) {
-                helpMessages.add(ChatColor.YELLOW + "/" + label + " clearreset <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpclearReset);
+                helpMessages.add(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " clearreset <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpclearReset);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.clearresetall") || player.isOp()) {
-                helpMessages.add(ChatColor.YELLOW + "/" + label + " clearresetall:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpclearReset);
+                helpMessages.add(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " clearresetall:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpclearReset);
             }
             if (Settings.useMagicCobbleGen && VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.cobblestats") || player.isOp()) {
-                helpMessages.add(ChatColor.YELLOW  + "/" + label + " cobblestats: " + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpcobbleStats);
+                helpMessages.add(plugin.myLocale(player.getUniqueId()).helpColor  + "/" + label + " cobblestats: " + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpcobbleStats);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.challenges") || player.isOp()) {
-                helpMessages.add(ChatColor.YELLOW + "/" + label + " completechallenge <player> <challengename>:" + ChatColor.WHITE + " "
+                helpMessages.add(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " completechallenge <player> <challengename>:" + ChatColor.WHITE + " "
                         + plugin.myLocale(player.getUniqueId()).adminHelpcompleteChallenge);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.delete") || player.isOp()) {
-                helpMessages.add(ChatColor.YELLOW + "/" + label + " delete <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpdelete);
+                helpMessages.add(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " delete <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpdelete);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.deleteisland") || player.isOp()) {
-                helpMessages.add(ChatColor.YELLOW + "/" + label + " deleteisland confirm:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpdelete);
+                helpMessages.add(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " deleteisland confirm:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpdelete);
             }
 
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.info") || player.isOp()) {
-                helpMessages.add(ChatColor.YELLOW + "/" + label + " info:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpinfoIsland);
-                helpMessages.add(ChatColor.YELLOW + "/" + label + " info <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpinfo);
-                helpMessages.add(ChatColor.YELLOW + "/" + label + " info challenges <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpinfo);
+                helpMessages.add(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " info:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpinfoIsland);
+                helpMessages.add(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " info <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpinfo);
+                helpMessages.add(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " info challenges <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpinfo);
 
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.challenges") || player.isOp()) {
-                helpMessages.add(ChatColor.YELLOW + "/" + label + " listchallengeresets: " + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelplistChallengeResets);
+                helpMessages.add(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " listchallengeresets: " + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelplistChallengeResets);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.lock") || player.isOp()) {
-                helpMessages.add(ChatColor.YELLOW + "/" + label + " lock <player>: " + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelplock);
+                helpMessages.add(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " lock <player>: " + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelplock);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.name") || player.isOp()) {
-                helpMessages.add(ChatColor.YELLOW  + "/" + label + " name <player> <island name>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpName);
+                helpMessages.add(plugin.myLocale(player.getUniqueId()).helpColor  + "/" + label + " name <player> <island name>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpName);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.purge") || player.isOp()) {
-                helpMessages.add(ChatColor.YELLOW + "/" + label + " purge [TimeInDays]:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelppurge);
-                helpMessages.add(ChatColor.YELLOW + "/" + label + " purge unowned:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelppurgeUnowned);
-                helpMessages.add(ChatColor.YELLOW + "/" + label + " purge allow/disallow:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelppurgeAllowDisallow);
+                helpMessages.add(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " purge [TimeInDays]:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelppurge);
+                helpMessages.add(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " purge unowned:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelppurgeUnowned);
+                helpMessages.add(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " purge allow/disallow:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelppurgeAllowDisallow);
             }
 
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.reload") || player.isOp()) {
-                helpMessages.add(ChatColor.YELLOW + "/" + label + " reload:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpreload);
+                helpMessages.add(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " reload:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpreload);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.register") || player.isOp()) {
-                helpMessages.add(ChatColor.YELLOW + "/" + label + " register <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpregister);
+                helpMessages.add(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " register <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpregister);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.resethome") || player.isOp()) {
-                helpMessages.add(ChatColor.YELLOW + "/" + label + " resethome <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpResetHome);
+                helpMessages.add(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " resethome <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpResetHome);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.challenges") || player.isOp()) {
-                helpMessages.add(ChatColor.YELLOW + "/" + label + " resetchallenge <player> <challengename>:" + ChatColor.WHITE + " "
+                helpMessages.add(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " resetchallenge <player> <challengename>:" + ChatColor.WHITE + " "
                         + plugin.myLocale(player.getUniqueId()).adminHelpresetChallenge);
-                helpMessages.add(ChatColor.YELLOW + "/" + label + " resetchallengeforall <challenge> [time][m/h/d]:" + ChatColor.WHITE + " "
+                helpMessages.add(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " resetchallengeforall <challenge> [time][m/h/d]:" + ChatColor.WHITE + " "
                         + plugin.myLocale(player.getUniqueId()).adminHelpresetChallengeForAll);
-                helpMessages.add(ChatColor.YELLOW + "/" + label + " resetallchallenges <player>:" + ChatColor.WHITE + " "
+                helpMessages.add(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " resetallchallenges <player>:" + ChatColor.WHITE + " "
                         + plugin.myLocale(player.getUniqueId()).adminHelpresetAllChallenges);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.resetname") || player.isOp()) {
-                helpMessages.add(ChatColor.YELLOW  + "/" + label + " resetname <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpResetName);
+                helpMessages.add(plugin.myLocale(player.getUniqueId()).helpColor  + "/" + label + " resetname <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpResetName);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.signadmin") || player.isOp()) {
-                helpMessages.add(ChatColor.YELLOW + "/" + label + " resetsign:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpResetSign);
-                helpMessages.add(ChatColor.YELLOW + "/" + label + " resetsign <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpResetSign);
+                helpMessages.add(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " resetsign:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpResetSign);
+                helpMessages.add(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " resetsign <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpResetSign);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.reserve") || player.isOp()) {
-                helpMessages.add(ChatColor.YELLOW + "/" + label + " reserve <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpReserve);
+                helpMessages.add(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " reserve <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpReserve);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.setbiome") || player.isOp()) {
-                helpMessages.add(ChatColor.YELLOW + "/" + label + " setbiome <leader> <biome>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpsetBiome);
+                helpMessages.add(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " setbiome <leader> <biome>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpsetBiome);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.setdeaths") || player.isOp()) {
-                helpMessages.add(ChatColor.YELLOW  + label + " setdeaths <player> <number>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpsetDeaths);
+                helpMessages.add(plugin.myLocale(player.getUniqueId()).helpColor  + label + " setdeaths <player> <number>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpsetDeaths);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.setlanguage") || player.isOp()) {
-                helpMessages.add(ChatColor.YELLOW  + label + " setlanguage <locale>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpsetLanguage);
+                helpMessages.add(plugin.myLocale(player.getUniqueId()).helpColor  + label + " setlanguage <locale>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpsetLanguage);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.resethome") || player.isOp()) {
-                helpMessages.add(ChatColor.YELLOW + "/" + label + " sethome <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpSetHome);
+                helpMessages.add(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " sethome <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpSetHome);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.setspawn") || player.isOp()) {
-                helpMessages.add(ChatColor.YELLOW + "/" + label + " setspawn:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpSetSpawn);
+                helpMessages.add(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " setspawn:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpSetSpawn);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.setrange") || player.isOp()) {
-                helpMessages.add(ChatColor.YELLOW + "/" + label + " setrange <number>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpSetRange);
-                helpMessages.add(ChatColor.YELLOW + "/" + label + " addrange <+/- number>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpAddRange);
+                helpMessages.add(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " setrange <number>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpSetRange);
+                helpMessages.add(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " addrange <+/- number>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpAddRange);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.settingsreset") || player.isOp()) {
-                helpMessages.add(ChatColor.YELLOW + "/" + label + " settingsreset [help | all | flag]:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpSettingsReset);
+                helpMessages.add(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " settingsreset [help | all | flag]:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpSettingsReset);
             }
             if (Settings.teamChat && VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.spy") || player.isOp()) {
-                helpMessages.add(ChatColor.YELLOW + "/" + label + " spy:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpTeamChatSpy);
+                helpMessages.add(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " spy:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpTeamChatSpy);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.team") || player.isOp()) {
-                helpMessages.add(ChatColor.YELLOW + "/" + label + " team kick <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpkick);
-                helpMessages.add(ChatColor.YELLOW + "/" + label + " team add <player> <leader>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpadd);
-                // Util.sendMessage(sender, ChatColor.YELLOW + "/" + label +
+                helpMessages.add(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " team kick <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpkick);
+                helpMessages.add(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " team add <player> <leader>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpadd);
+                // Util.sendMessage(sender, plugin.myLocale(player.getUniqueId()).helpColor + "/" + label +
                 // " team delete <leader>:" + ChatColor.WHITE +
                 // " Removes the leader's team compeletely.");
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.topten") || player.isOp()) {
-                helpMessages.add(ChatColor.YELLOW + "/" + label + " topten:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelptopTen);
+                helpMessages.add(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " topten:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelptopTen);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.topbreeders") || player.isOp()) {
-                helpMessages.add(ChatColor.YELLOW + "/" + label + " topbreeders: " + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelptopBreeders);
+                helpMessages.add(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " topbreeders: " + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelptopBreeders);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.tp") || player.isOp()) {
-                helpMessages.add(ChatColor.YELLOW + "/" + label + " tp <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelptp);
+                helpMessages.add(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " tp <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelptp);
             }
             if (Settings.createNether && Settings.newNether && ASkyBlock.getNetherWorld() != null && (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.tpnether") || player.isOp())) {
-                helpMessages.add(ChatColor.YELLOW + "/" + label + " tpnether <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelptpNether);
+                helpMessages.add(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " tpnether <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelptpNether);
             }
 
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.unregister") || player.isOp()) {
-                helpMessages.add(ChatColor.YELLOW + "/" + label + " unregister <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpunregister);
+                helpMessages.add(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " unregister <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpunregister);
             }
             // Send out the help. If the player does not have permission for any commands, tell them they have no permission
             if (helpMessages.size() == 1) {
@@ -352,7 +352,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
             return true;
         case 1:
             if (split[0].equalsIgnoreCase("setlanguage")) {
-                Util.sendMessage(sender, ChatColor.YELLOW + plugin.myLocale().adminHelpsetLanguage);                
+                Util.sendMessage(sender, plugin.myLocale().helpColor + plugin.myLocale().adminHelpsetLanguage);                
                 return true;
             }
             if (split[0].equalsIgnoreCase("listchallengeresets")) {
@@ -389,11 +389,11 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                     return true;
                 }
             if (split[0].equalsIgnoreCase("setdeaths")) {
-                Util.sendMessage(sender, ChatColor.YELLOW  + label + " setdeaths <player> <number>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpsetDeaths);
+                Util.sendMessage(sender, plugin.myLocale().helpColor  + label + " setdeaths <player> <number>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpsetDeaths);
                 return true;
             } else
                 if (split[0].equalsIgnoreCase("settingsreset")) {
-                    Util.sendMessage(sender, ChatColor.YELLOW  + label + " settingsreset help");
+                    Util.sendMessage(sender, plugin.myLocale().helpColor  + label + " settingsreset help");
                     return true;
                 } else 
                     if (Settings.teamChat && split[0].equalsIgnoreCase("spy")) {
@@ -998,7 +998,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                             }
                         }
                         // Show help
-                        Util.sendMessage(sender, ChatColor.YELLOW + "/" + label + " settingsreset [help | all | flag]:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpSettingsReset);
+                        Util.sendMessage(sender, plugin.myLocale().helpColor + "/" + label + " settingsreset [help | all | flag]:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpSettingsReset);
                         Util.sendMessage(sender, ChatColor.GREEN + "flag options: ");
                         String commaList = "all";
                         for (SettingsFlag flag: SettingsFlag.values()) {
@@ -1469,7 +1469,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                     return true;
                 } else {
                     Util.sendMessage(sender, ChatColor.GREEN + plugin.getPlayers().getName(playerUUID) + " " + plugin.getPlayers().getDeaths(playerUUID) + " " + plugin.myLocale().deaths);
-                    Util.sendMessage(sender, ChatColor.YELLOW  + label + " setdeaths <player> <number>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpsetDeaths);
+                    Util.sendMessage(sender, plugin.myLocale().helpColor  + label + " setdeaths <player> <number>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpsetDeaths);
                     return true;
                 }
             } else if (split[0].equalsIgnoreCase("clearreset")) {
@@ -1822,7 +1822,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                         Util.sendMessage(sender, ChatColor.GREEN + plugin.getPlayers().getName(playerUUID) + " " + oldDeaths + " >>> " + newDeaths + " " + plugin.myLocale().deaths);
                     } catch (Exception e) {
                         Util.sendMessage(sender, ChatColor.GREEN + plugin.getPlayers().getName(playerUUID) + " " + plugin.getPlayers().getDeaths(playerUUID) + " " + plugin.myLocale().deaths);
-                        Util.sendMessage(sender, ChatColor.YELLOW  + label + " setdeaths <player> <number>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpsetDeaths);
+                        Util.sendMessage(sender, plugin.myLocale().helpColor  + label + " setdeaths <player> <number>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpsetDeaths);
                         return true;
                     }
                     return true;
