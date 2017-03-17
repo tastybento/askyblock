@@ -1,6 +1,15 @@
-# Config for ASkyblock V${version}
+#############################################################################
+# Config for ASkyBlock V${version}
 # Maintainer: tastybento
-# If you change island distance, you MUST reset the world.
+# It is recommended that you check at least these settings:
+#
+# 1. island distance - the distance between islands. If upgrading set to what you had.
+#    If you change island distance, you MUST reset the world.
+# 2. resetmoney (general section) - set to true so that everyone starts with nothing
+# 3. islandLevel (general section) - the height you want your islands to float
+# 4. protectionRange - how big a player's island is at the start
+#
+##############################################################################
 
 ##### Island Related Settings #####
 
@@ -825,6 +834,7 @@ biomes:
     friendlyname: "&eDesert"
     description: "&eA dry desert.|&eWarning - Ice or|&esnow have to go."
     #permission: any.perm.you.want
+  # Change MUTATED_FOREST to FLOWER_FOREST if you use an old server version
   MUTATED_FOREST:
     icon: RED_ROSE
     friendlyname: "&aFlower Forest"
@@ -896,7 +906,7 @@ schematicsection:
   # Hack skeleton spawners to also spawn wither skeletons in 1.11. This helps with
   # older schematics that do not have explicit wither skeleton spawners. This setting
   # is ignored by older servers.
-  hackskeletonspawners: true
+  hackskeletonspawners: false
   
   # This section lists all the schematics available
   # Settings are:

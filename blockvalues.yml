@@ -23,6 +23,11 @@ sumteamdeaths: false
 # If player dies more than this, it doesn't count anymore
 # Stops players from getting into an impossible situation
 maxdeaths: 10
+# Reset deaths on island reset
+islandresetdeathreset: true
+# Reset deaths on team join
+teamjoindeathreset: true
+
 
 # This section lists the limits for any particular block. Blocks over this amount
 # are not counted.
