@@ -91,6 +91,10 @@ public class AcidEffect implements Listener {
         if (player.isDead() || player.getGameMode().toString().startsWith("SPECTATOR")) {
             return;
         }
+        // Check if in teleport
+        if (plugin.getPlayers().isInTeleport(player.getUniqueId())) {
+            return;
+        }
         // Check that they are in the ASkyBlock world
         if (!player.getWorld().equals(ASkyBlock.getIslandWorld())) {
             return;
