@@ -266,10 +266,13 @@ public class PlayerEvents implements Listener {
                             @Override
                             public void run() {
                                 if(!plugin.getGrid().playerIsOnIsland(player) && player.isFlying()){
-                                    player.setAllowFlight(false);
-                                    player.setFlying(false);
-                                    if (DEBUG)
-                                        plugin.getLogger().info("DEBUG: removed fly");
+                                    // Check they didn't enable creative
+                                    if (player.getGameMode().equals(GameMode.SURVIVAL)) {
+                                        player.setAllowFlight(false);
+                                        player.setFlying(false);
+                                        if (DEBUG)
+                                            plugin.getLogger().info("DEBUG: removed fly");
+                                    }
                                 }
 
                             }
@@ -279,11 +282,13 @@ public class PlayerEvents implements Listener {
             } else {
                 if (DEBUG)
                     plugin.getLogger().info("DEBUG: Removing flight immediately");
-                // Remove fly immediately
-                player.setAllowFlight(false);
-                player.setFlying(false);
-                if (DEBUG)
-                    plugin.getLogger().info("DEBUG: removed fly");
+                if (player.getGameMode().equals(GameMode.SURVIVAL)) {
+                    // Remove fly immediately
+                    player.setAllowFlight(false);
+                    player.setFlying(false);
+                    if (DEBUG)
+                        plugin.getLogger().info("DEBUG: removed fly");
+                }
             }
         }
 
@@ -319,8 +324,10 @@ public class PlayerEvents implements Listener {
             }
             temporaryPerms.remove(player.getUniqueId());
         }
-        player.setAllowFlight(false);
-        player.setFlying(false);
+        if (player.getGameMode().equals(GameMode.SURVIVAL)) {
+            player.setAllowFlight(false);
+            player.setFlying(false);
+        }
     }
 
     /**
