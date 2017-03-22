@@ -147,13 +147,148 @@ permissions:
       askyblock.settings.*:
         description: Ability to change settings in GUI
         default: false
-        # ACID_DAMAGE, ANVIL, ARMOR_STAND, BEACON, BED, BREAK_BLOCKS, BREEDING, BREWING, 
-        # BUCKET, COLLECT_LAVA, COLLECT_WATER, CHEST, CHORUS_FRUIT, CRAFTING, CROP_TRAMPLE, 
-        # DOOR, EGGS, ENCHANTING, ENDER_PEARL, ENTER_EXIT_MESSAGES, FIRE, FIRE_EXTINGUISH, 
-        # FIRE_SPREAD, FURNACE, GATE, HORSE_INVENTORY, HORSE_RIDING, HURT_MOBS, LEASH,
-        # LEVER_BUTTON, MOB_SPAWN, MUSIC, PLACE_BLOCKS, PORTAL, PRESSURE_PLATE, PVP,
-        # MILKING, NETHER_PVP, REDSTONE, SPAWN_EGGS, SHEARING, VILLAGER_TRADING,
-        # VISITOR_ITEM_DROP, VISITOR_ITEM_PICKUP
+        children:
+          askyblock.settings.ACID_DAMAGE:
+            description: Can configure the Acid Damage setting
+            default: false
+          askyblock.settings.ANVIL:
+            description: Can configure the Anvil setting
+            default: false
+          askyblock.settings.ARMOR_STAND:
+            description: Can configure the Armor Stand setting
+            default: false
+          askyblock.settings.BEACON:
+            description: Can configure the Beacon setting
+            default: false
+          askyblock.settings.BED:
+            description: Can configure the Bed setting
+            default: false
+          askyblock.settings.BREAK_BLOCKS:
+            description: Can configure the Break Blocks setting
+            default: false
+          askyblock.settings.BREEDING:
+            description: Can configure the Breeding setting
+            default: false
+          askyblock.settings.BREWING:
+            description: Can configure the Brewing setting
+            default: false
+          askyblock.settings.BUCKET:
+            description: Can configure the Bucket setting
+            default: false
+          askyblock.settings.COLLECT_LAVA:
+            description: Can configure the Collect Lava setting
+            default: false
+          askyblock.settings.COLLECT_WATER:
+            description: Can configure the Collect Water setting
+            default: false
+          askyblock.settings.CHEST:
+            description: Can configure the Chest setting
+            default: false
+          askyblock.settings.CHORUS_FRUIT:
+            description: Can configure the Chorus Fruit setting
+            default: false
+          askyblock.settings.CRAFTING:
+            description: Can configure the Crafting setting
+            default: false
+          askyblock.settings.CREEPER_PAIN:
+            description: Can configure the Creeper Pain setting
+            default: false
+          askyblock.settings.CROP_TRAMPLE:
+            description: Can configure the Crop Trample setting
+            default: false
+          askyblock.settings.DOOR:
+            description: Can configure the Door setting
+            default: false
+          askyblock.settings.EGGS:
+            description: Can configure the Eggs setting
+            default: false
+          askyblock.settings.ENCHANTING:
+            description: Can configure the Enchanting setting
+            default: false
+          askyblock.settings.ENDER_PEARL:
+            description: Can configure the Ender Pearl setting
+            default: false
+          askyblock.settings.ENTER_EXIT_MESSAGES:
+            description: Can configure the Enter Exit Messages setting
+            default: false
+          askyblock.settings.FIRE:
+            description: Can configure the Fire setting
+            default: false
+          askyblock.settings.FIRE_EXTINGUISH:
+            description: Can configure the Fire Extinguish setting
+            default: false
+          askyblock.settings.FIRE_SPREAD:
+            description: Can configure the Fire Spread setting
+            default: false
+          askyblock.settings.FURNACE:
+            description: Can configure the Furnace setting
+            default: false
+          askyblock.settings.GATE:
+            description: Can configure the Gate setting
+            default: false
+          askyblock.settings.HORSE_INVENTORY:
+            description: Can configure the Horse Inventory setting
+            default: false
+          askyblock.settings.HORSE_RIDING:
+            description: Can configure the Horse Riding setting
+            default: false
+          askyblock.settings.HURT_MOBS:
+            description: Can configure the Hurt Mobs setting
+            default: false
+          askyblock.settings.HURT_MONSTERS:
+            description: Can configure the Hurt Monsters setting
+            default: false
+          askyblock.settings.LEASH:
+            description: Can configure the Leash setting
+            default: false
+          askyblock.settings.LEVER_BUTTON:
+            description: Can configure the Lever Button setting
+            default: false
+          askyblock.settings.MILKING:
+            description: Can configure the Milking setting
+            default: false
+          askyblock.settings.MOB_SPAWN:
+            description: Can configure the Mob Spawn setting
+            default: false
+          askyblock.settings.MONSTER_SPAWN:
+            description: Can configure the Monster Spawn setting
+            default: false
+          askyblock.settings.MUSIC:
+            description: Can configure the Music setting
+            default: false
+          askyblock.settings.NETHER_PVP:
+            description: Can configure the Nether Pvp setting
+            default: false
+          askyblock.settings.PLACE_BLOCKS:
+            description: Can configure the Place Blocks setting
+            default: false
+          askyblock.settings.PORTAL:
+            description: Can configure the Portal setting
+            default: false
+          askyblock.settings.PRESSURE_PLATE:
+            description: Can configure the Pressure Plate setting
+            default: false
+          askyblock.settings.PVP:
+            description: Can configure the Pvp setting
+            default: false
+          askyblock.settings.REDSTONE:
+            description: Can configure the Redstone setting
+            default: false
+          askyblock.settings.SPAWN_EGGS:
+            description: Can configure the Spawn Eggs setting
+            default: false
+          askyblock.settings.SHEARING:
+            description: Can configure the Shearing setting
+            default: false
+          askyblock.settings.VILLAGER_TRADING:
+            description: Can configure the Villager Trading setting
+            default: false
+          askyblock.settings.VISITOR_ITEM_DROP:
+            description: Can configure the Visitor Item Drop setting
+            default: false
+          askyblock.settings.VISITOR_ITEM_PICKUP:
+            description: Can configure the Visitor Item Pickup setting
+            default: false
       askyblock.mod.*:
         children:
           askyblock.mod.topten:
