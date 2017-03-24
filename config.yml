@@ -790,6 +790,8 @@ protection:
      ENCHANTING: true
      # Allow visitor furnace use
      FURNACE: true
+     # Allow gate use
+     GATE: true
      # Allow use of jukeboxes and note blocks
      MUSIC: false
      # Allow portal use by visitors

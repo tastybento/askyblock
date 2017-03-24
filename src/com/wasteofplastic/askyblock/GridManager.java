@@ -1309,7 +1309,9 @@ public class GridManager {
      * @return true if location is on island of player
      */
     public boolean locationIsOnIsland(final Player player, final Location loc) {
-
+        if (player == null) {
+            return false;
+        }
         // Get the player's island from the grid if it exists
         Island island = getIslandAt(loc);
         if (island != null) {
@@ -1317,6 +1319,8 @@ public class GridManager {
             // On an island in the grid
             //plugin.getLogger().info("DEBUG: onIsland = " + island.onIsland(loc));
             //plugin.getLogger().info("DEBUG: members = " + island.getMembers());
+            //plugin.getLogger().info("DEBUG: player UUID = " + player.getUniqueId());
+
             if (island.onIsland(loc) && island.getMembers().contains(player.getUniqueId())) {
                 //plugin.getLogger().info("DEBUG: allowed");
                 // In a protected zone but is on the list of acceptable players
