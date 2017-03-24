@@ -223,10 +223,10 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 helpMessages.add(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " setbiome <leader> <biome>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpsetBiome);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.setdeaths") || player.isOp()) {
-                helpMessages.add(plugin.myLocale(player.getUniqueId()).helpColor  + label + " setdeaths <player> <number>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpsetDeaths);
+                helpMessages.add(plugin.myLocale(player.getUniqueId()).helpColor  + "/" +label + " setdeaths <player> <number>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpsetDeaths);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.setlanguage") || player.isOp()) {
-                helpMessages.add(plugin.myLocale(player.getUniqueId()).helpColor  + label + " setlanguage <locale>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpsetLanguage);
+                helpMessages.add(plugin.myLocale(player.getUniqueId()).helpColor  + "/" + label + " setlanguage <locale>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpsetLanguage);
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.resethome") || player.isOp()) {
                 helpMessages.add(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " sethome <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpSetHome);
