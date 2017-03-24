@@ -1,0 +1,540 @@
+###########################################################################################
+# This is a YML file. Be careful when editing. Check your edits in a YAML checker like    #
+# the one at http://yaml-online-parser.appspot.com                                        #
+# If this file is deleted, then it will be recreate at the next reload.                   #
+###########################################################################################
+# BETA: Please submit better translations!
+
+--- 
+acidBottle: 酸性ボトル
+acidBucket: 酸性バケツ
+acidLore: |
+    飲まない！
+
+
+
+adminDeleteIsland: 
+  error: "あなたがいる島を削除するには&ldeleteisland confirm &r&cを使います"
+  noid: 島を特定できない
+  use: "&ldelete [name] &r&cを使用してプレーヤーを削除してください。"
+adminHelp: 
+  add: リーダーのチームにプレーヤーを追加します
+  addrange: 島の保護区域を増減する
+  clearreset: プレイヤーの島のリセット限界をリセットする
+  cobblestats: マジックコブル生成統計を表示する
+  completeChallenge: チャレンジを完了する
+  delete: 島を削除する（ブロックを削除する）
+  help: 管理コマンド
+  info: プレーヤー情報
+  infoisland: 島の情報
+  kick: チームからプレーヤーを削除する
+  level: 詳細島レベルレポート
+  listChallengeResets: チャレンジリセットスケジュールを一覧表示する
+  lock: プレイヤーの島をロック/アンロック
+  name: 島の名前を設定する
+  purge: "[TimeInDays]より古い無効な島を削除する"
+  purgeallowdisallow: 島のパージを許可/禁止する
+  purgeholes: ~
+  purgeunowned: 未所有の島を取り除く
+  register: 島をあなたの場所に設定する
+  reload: 設定をリロードする
+  resetAllChallenges: プレイヤーのチャレンジのすべてをリセットする
+  resetChallenge: チャレンジを不完全にする
+  resetChallengeForAll: すべてのプレーヤーのチャレンジをリセットする.
+  resetname: リセット島名
+  resetsign: 島の所有者がサインを所有するようにする。
+  setbiome: 島の生態系を設定する
+  setdeaths: プレイヤーの死亡数を変更する
+  setlanguage: デフォルトの言語を設定し、すべてのプレーヤーをその言語にリセットする
+  setrange: 島の保護区域を増減する
+  setspawn: あなたの場所に島の世界のスポーンを設定する
+  settingsreset: すべての島をデフォルトの保護設定にリセットする
+  teamChatSpy: チームチャットのスパイ(on/off)
+  topTen: 上位10リストを手動で更新する
+  topbreeders: 最も動物の多い島を挙げる
+  tp: プレイヤーの島にテレポートする
+  tpnether: プレイヤーのnether島にテレポートする
+  unregister: プレーヤーを削除する（ブロックを削除しない）
+adminInfo: 
+  bannedPlayers: 禁止されたプレーヤー
+  errorNullTeamLeader: チームリーダーはnullにする必要があります!
+  errorTeamMembersExist: プレーヤーにはチームメンバーがいますが、そうしてはいけません！
+  hoppers: "島のホッパーズ：[number]"
+  isLocked: 島はロックされています
+  isProtected: 島はパージ保護されています
+  isSpawn: 島はスポーンです
+  isUnlocked: 島はロックされていない
+  isUnprotected: 島はパージ保護されていません
+  islandLocation: 島の位置
+  lastLogin: 前回のログイン
+  maxSize: 島の最大サイズ（距離）
+  player: プレーヤー
+  teamLeader: チームリーダー
+  teamMembers: チームメンバー
+  title: これはスポーン島
+  unowned: この島は所有されていない
+adminLock: 
+  adminLockedIsland: 管理者があなたの島をロックしました
+  adminUnlockedIsland: 管理者があなたの島をロック解除しました
+  errorInGame: このコマンドを使用するには、島にいなければなりません。
+adminRegister: 
+  hadIsland: "[name]に[location]に島がありました"
+  leadsTeam: "[name]はチームリーダーです。 最初にチームからすべての選手を削除します"
+  noIsland: この地域には知られている島はありません！
+  notSpawn: スポーンの所有権を取ることはできません！
+  taking: "所有権を[name]から奪い取る。"
+adminReserve: 
+  islandExists: "すでにここに島があります！ 代わりにプレーヤーを登録してください！"
+adminResetChallengeForAll: 
+  error: "フォーマットは[整数][m/h/d] (分,時間,日), 例えば5h"
+  repeating: "[duration]ごとに繰り返されます"
+  reset: "[date]にリセット"
+adminResetSign: 
+  errorExists: "[name]はそのワープサインを所有しています"
+  found: ワープサインが見つかりました！
+  noSign: このコマンドを実行するには、看板を見ている必要があります。
+  rescued: "ワープサインが救出され,[name]に割り当てられました"
+adminSetHome: 
+  homeSet: "ホームは[location]に設定されています"
+  noneFound: 安全な場所が見つかりません！
+  notOnPlayersIsland: あなたはプレイヤーの島にいません
+  notSafe: その場所は安全ではありません
+adminSetRange: 
+  invalid: 無効な範囲です！
+  set: "新しい範囲を[number]に設定する"
+  tip: "範囲は10〜[max]の間でなければなりません"
+  updated: "島の範囲が[number]に更新されました"
+  warning: "警告 - 範囲は島範囲[max]より大きい"
+  warning2: 重なった島は産卵のように振る舞います！
+adminSetSpawn: 
+  center: "アイランドセンター[location]"
+  coords: "保護コード[min]〜[max]"
+  limits: "島は[min]を[max]に制限します"
+  locked: スポーンはロックされています！
+  move: 移動したり所有者の登録を解除します。
+  ownedBy: "この島の空間は[name]"
+  range: "保護範囲= [number]"
+  set: あなたの場所に島のスポーンを設定します。
+  setting: "あなたの場所に島のスポーンを設定する[location]"
+adminTeam: 
+  addLeaderNoIsland: チームリーダーには独自の島がないので、チームはできません！
+  addLeaderToOwn: リーダーを自分のチームに追加することはできません。
+  addedLeader: このチームにリーダーを追加しました！
+  addingPlayer: チームにプレーヤーを追加する。
+  alreadyOnTeam: プレイヤーはすでにこのチームにいた！
+  kickLeader: "その選手はチームリーダーです。 まずチームメンバーを削除します"
+  nowUnowned: "[name]には[location]に島があり、今は所有権がなくなります。 手動で削除することをお勧めします"
+  settingHome: リーダーの自宅の場所にプレイヤーの家を設定する
+adminTopBreeders: 
+  checking: "[number]島の確認中..."
+  finding: トップブリーダーを見つける...
+  nothing: クリーチャーは見つかりませんでした。
+adminTopTen: 
+  finished: トップテンリストの完成
+  generating: トップテンリストの生成
+adminTp: 
+  manualWarp: "安全な場所が見つかりませんでした。 [location]の近くのどこかに手作業で反ります。"
+adminUnregister: 
+  keepBlocks: "世界からプレイヤーを削除するが、[location]に島を維持する"
+  onTeam: "プレーヤーはチームに属しています - まず解散してください。"
+ban: 
+  alreadybanned: "[name]は既に禁止されています！"
+  banned: "あなたは[name]の島から禁止されています！"
+  fail: "[name]を禁止することはできません！"
+  helpBan: あなたの島からプレイヤーを禁止する。
+  helpBanList: 禁止された選手を一覧表示する。
+  helpUnban: あなたの島からプレイヤーの禁止を解除する。
+  lifted: "[name]の島から持ち上げられた禁止！"
+  liftedsuccess: "[name]のために持ち上げられた禁止！"
+  none: なし
+  notbanned: "[name]は禁止されていません！"
+  notteammember: チームメンバーを禁止することはできません！
+  notyourself: あなたはそれをあなた自身にすることはできません！
+  success: "[name]は島から禁止されています！"
+biome: 
+  help: "biomes GUIを開きます。"
+  paneltitle: "A Biomeを選択"
+  set: "島のバイオームは[biome]に設定！"
+  unknown: 不明なバイオーム！
+  youbought: "[コスト]で購入しました！"
+boats: 
+  warning: 今すぐボートを出るのは危険です...
+challenges: 
+  colors: 挑戦は彼らがarかどうかによって異なる色を持つでしょう
+  complete: コンプリート
+  completeNotRepeatable: 完了（繰り返し不可）
+  completeRepeatable: 完了（繰り返し可能）
+  completedtimes: "[maxtimes]のうち[donetimes]を完了しました"
+  errorIslandLevel: "この挑戦を完了するには、あなたの島はレベル[レベル]でなければなりません！"
+  errorItemsNotThere: すべての必要なアイテムはあなたの島の近くにある必要があります！
+  errorNotCloseEnough: "必要なすべての項目の[number]ブロック内に立っていなければなりません。"
+  errorNotEnoughItems: 必要なアイテムが不足しています。
+  errorNotOnIsland: それをするには島にいる必要があります！
+  errorRewardProblem: あなたの報酬を与えることに問題がありました。管理者にログを確認するよう依頼してください！
+  erroryouaremissing: あなたは行方不明です
+  expReward: 経験値報酬
+  firstTimeRewards: 初めての報酬
+  guititle: ASkyBlockの課題
+  help1: "チャレンジに関する情報を表示するには、/ c <名前>を使用します。"
+  help2: "/ c complete <name>を使用して、そのチャレンジを完了してください。"
+  incomplete: 不完全な
+  invalidChallengeName: "チャレンジ名が無効です！詳細は/ cヘルプを使用してください"
+  itemTakeWarning: あなたがこのチャレンジを完了すると、すべての必要な項目が取られます！
+  level: レベル
+  maxreached: "Maxは[maxtimes]の[donetimes]に達しました"
+  moneyReward: マネー報酬
+  name: チャレンジ名
+  nameHasCompleted: "[name]が[challenge]のチャレンジを完了しました！"
+  navigation: "クリックすると[レベル]の課題が表示されます。"
+  notRepeatable: このチャレンジは反復可能ではありません！
+  repeatRewards: 報酬を繰り返します
+  rewards: 報酬（複数可）
+  toComplete: "[challengesToDo]を完了してください[thisLevel]このレベルのロックを解除するには挑戦してください！"
+  toCompleteUse: この問題を解決するには、
+  unknownChallenge: 不明なチャレンジ名（スペルチェック）！
+  youHaveCompleted: "あなたは[challenge]チャレンジを完了しました！"
+  youHaveNotUnlocked: あなたはまだこの挑戦を解除していません！
+  youRepeated: "あなたは[challenge]チャレンジを繰り返しました！"
+changingObsidiantoLava: 黒曜石を溶岩に戻す。注意してください！
+checkteam: 
+  checkingTeam: "[name]のチームを確認しています"
+completechallenge: 
+  challangeCompleted: チャレンジ
+  errorChallengeDoesNotExist: チャレンジが存在しないか、既に完了している
+confirm: 
+  errorTimeLimitExpired: 期限が切れました！再度コマンドを発行してください。
+coop: 
+  cannotcoop: 島の指導者だけが選手を共謀することができます。
+  help: プレイヤーに島への完全なアクセス権を与える
+  invited: "[name]は[player]を共同プレイヤーにしました！"
+  listcoops: リストクッププレイヤー
+  madeyoucoopy: "[name]はあなたを仲間プレイヤーにしました！"
+  notincoop: "[name]はあなたの屋内にありません！"
+  onyourteam: プレイヤーはすでにあなたのチームにいる！
+  removed: "[name]あなたの仲間のステータスを削除しました！"
+  removesuccess: "[name]はもはや協力プレイヤーではありません。"
+  success: "あなたがログアウトするか、あなたがそれらをuncoopまたは追放するまで、[name]は今すぐcoop playerです。"
+  uncoop: プレーヤーから完全な島のアクセスを削除する
+  useexpel: "expelまたはuncoopを使用して削除します。"
+deaths: 
+  deaths: 死
+  died: 死亡しました！
+  leveldeaths: "＆c [[number]死者数]"
+delete: 
+  removing: "[name]の島を削除する。"
+drankAcid: 酸を飲んだ。
+drankAcidAndDied: ちょうど酸を飲んで死んだ。
+error: 
+  blockedbyapi: APIを使用しているプラ​​グインがこの操作をブロックしました。
+  commandNotReady: 今すぐこのコマンドを使用することはできません。
+  maxIslands: 世界は島々でいっぱいです！あとでもう一度試してみてください！
+  minishopDisabled: ミニショップは無効になっています。
+  noIsland: 島はありません！
+  noIslandOther: そのプレイヤーには島がありません！
+  noPermission: あなたはそのコマンドを使用する権限を持っていません！
+  noTeam: プレーヤーはチームにいません。
+  notABlock: それはブロックではない
+  notOnIsland: あなたは島の空間にいません！
+  offlinePlayer: そのプレイヤーはオフラインであるか存在しません。
+  tooLong: "長すぎる。最大サイズは[length]です。"
+  tooShort: "短すぎる。最小サイズは[length]です。"
+  unknownCommand: 未知のコマンド
+  unknownPlayer: そのプレイヤーは不明です
+  useInGame: このコマンドはゲーム内で使用する必要があります。
+  wrongWorld: あなたはこの世界でそれをすることはできません。
+expel: 
+  expelled: あなたはその島から追放されました！
+  fail: "[name]を追放することはできません！"
+  notonisland: プレイヤーはあなたの島に侵入していません！
+  notyourself: あなたは自分を追放することはできません！
+  success: "あなたは[name]を追放しました！"
+general: 
+  success: 成功！
+invite: 
+  errorCantJoinIsland: あなたは島に参加することができませんでした、多分それはいっぱいです。
+  errorCoolDown: "あなたは[time]分にそのプレイヤーを再び招待することができます"
+  errorThatPlayerIsAlreadyInATeam: そのプレイヤーは既にチームに入っています。
+  errorYouCannotInviteYourself: あなた自身を招待することはできません！
+  errorYouMustHaveIslandToInvite: 人々を招待するには島が必要です！
+  errorYourIslandIsFull: あなたの島は満員です。他の誰も招待できません。
+  hasJoinedYourIsland: "[name]あなたの島に加わった！"
+  help: "[/ [label] invite <playername>]を使用して、あなたの島にプレーヤーを招待してください。"
+  inviteSentTo: "招待状を[name]に送信しました"
+  nameHasInvitedYou: "[name]さんがあなたの島に招待しました！"
+  onlyIslandOwnerCanInvite: リーダーだけが招待できます！
+  removingInvite: 以前の招待状を削除しています。
+  toAcceptOrReject: 招待を受け入れるか拒否するか。
+  warningYouWillLoseIsland: 警告：あなたが受け入れるなら、あなたは現在の島を失うでしょう！
+  youCanInvite: "[number]人以上のプレイヤーを招待することができます。"
+  youCannotInvite: 他のプレイヤーを招待することはできません。
+  youHaveJoinedAnIsland: "あなたは島に参加しました！他のメンバーを見るには/ [label] teamを使用してください。"
+island: 
+  blockValue: "[name]はここに置く価値があるかもしれません[値]"
+  blockWorthless: "[name]は価値がない"
+  cannotTeleport: あなたは落ちる時にテレポートすることはできません！
+  donate: ASkyBlockへようこそ
+  donatecolor: aqua
+  errorCouldNotCreateIsland: あなたの島を作ることができませんでした。サーバーモデレーターに連絡してください
+  errorInvalidPlayer: そのプレイヤーは無効であるか、島を持っていません！
+  errorLevelNotReady: 今すぐそのコマンドを使用することはできません！数秒後にもう一度お試しください
+  errorYouDoNotHavePermission: あなたはそのコマンドを使用する権限を持っていません！
+  helpAcceptReject: 招待を受け入れるか拒否するか
+  helpChallenges: /challenge
+  helpColor: "&e"
+  helpControlPanel: 島のGUIを開きます
+  helpExpel: あなたの島からプレイヤーを強制する
+  helpInvite: あなたの島に参加するようにプレーヤーを招待する
+  helpIsland: 島を開始するか、あなたの島にテレポートします
+  helpIslandSpawn: 島のスポーンにテレポートします
+  helpKick: あなたの島からチームプレイヤーを削除する
+  helpLeave: 別のプレイヤーの島を離れる
+  helpLevel: 島のレベルを計算する
+  helpLevelPlayer: 他のプレイヤーの島レベルを参照する
+  helpLock: 訪問者がそれを入力することができないように島をロックする
+  helpMakeLeader: アイランドを<player>に移動します
+  helpName: あなたの島の名前を設定する
+  helpResetName: あなたの島の名前をリセットします
+  helpRestart: あなたの島を再起動し、古いものを削除する
+  helpSelectLanguage: 言語を選択する
+  helpSetHome: "/[label]のテレポートポイントを設定する"
+  helpSettings: 島の保護とゲームの設定を参照する
+  helpTeam: チーム情報を表示します
+  helpTeleport: あなたの島にテレポートする
+  helpTop: トップランクの島を参照する
+  helpValue: 手元のブロックの島レベルの値を参照
+  helpWarp: <player>の歓迎サインにワープ
+  helpWarps: 使用可能なすべてのウェルカムサインワープを一覧表示します
+  islandDeletedLifeboats: 島が削除されました！救命艇に向かう！
+  islandLevelis: 島レベルは
+  new: あなたのために新しい島を作る...
+  requiredPointsToNextLevel: "レベル[next]に達するにはさらに[points]ポイントが必要です!"
+  resetConfirm: "島を削除して再起動するには[seconds]秒以内に/[label] confirmと入力してください"
+  resetMustRemovePlayers: "島を再始動させる前にすべてのプレイヤーを削除する必要があります（/[label] kick <player>）。 /[label] team を使ってあなたの島の現在の選手のリストを見てください"
+  resetNoMore: あなたの島でもうリセットはできません！
+  resetOnlyOwner: "所有者だけがこの島を再開することができます。あなた自身の（/ [label] leave）を始めるためにこの島を離れる"
+  resetPleaseWait: お待ちください、新しい島を生成してください
+  resetTo: クリアされたリセット制限
+  resetWait: "もう一度やり直すには、[time]秒待たなければなりません"
+  resetYouHave: "[number]リセットが残っています"
+  resetsLeft: 左にリセット
+  subtitle: によってtastybento
+  subtitlecolor: blue
+  teleport: "あなたの島にあなたを移動します。(詳細については /[label] help)"
+  title: ASkyBlock
+  titlecolor: gold
+  unlimited: 無制限
+  url: ""
+islandProtected: 島は保護します
+islandguardsettings: 
+  TNTdamage: TNTダメージ
+  aciddamage: 酸損傷
+  allowed: 許可
+  animalspawning: 動物産卵を許可する/許可しない
+  anvil: アンビルの使用
+  armorstand: アーマースタンド使用
+  beacon: ビーコンの使用
+  bed: ベッド使用
+  breakblocks: ブレークブロック
+  breeding: 育種
+  brewingstand: ポーション醸造
+  bucket: バケツの使用
+  chest: 胸の使用
+  chestdamage: TNTによる胸部損傷
+  chorusfruit: コーラスフルーツ使用
+  collectlava: 溶岩コレクション
+  collectwater: 水の回収
+  creeperdamage: クリーパーダメージ
+  creepergriefing: クリーパー悲しみ
+  creeperpain: クリーパーの爆発が痛い
+  croptrample: トリプリング
+  disallowed: 禁止
+  door: ドア使用
+  eggs: エッグ投げ
+  enchantingtable: エンチャントテーブルの使用
+  enderpearl: エンダーパールの使用
+  fire: 火災
+  fireextinguish: 消火する
+  firespread: 火災の広がり
+  furnace: 炉使用
+  gate: ゲート使用
+  horseinventoryaccess: 訪問者の馬の在庫アクセス
+  horseriding: 訪問者の乗馬
+  hurtanimals: 動物を傷つける
+  hurtmonsters: モンスターを傷つける
+  joinleaveislandmessages: 参加＆アイランドメッセージを残す
+  jukebox: ジュークボックスの使用
+  leash: リーシュ使用
+  lever: レバーまたはボタンの使用
+  milking: 搾乳
+  monsterspawning: モンスターの産卵を許可する/許可しない
+  netherpvp: ネザーPvP
+  placeblocks: ブロックを配置
+  portaluse: ポータルの使用
+  pressureplate: 訪問者は圧力板を作動させる
+  pvp: PvP
+  redstone: レッドストーンの使用
+  settingsgeneraldesc: 一般的な島の世界の設定
+  settingsgeneraltitle: 一般的な島の世界の設定
+  settingsislanddesc: これらのルールは、この島の訪問者に適用されます
+  settingsislandtitle: 島の設定
+  settingsspawndesc: これらのルールはスポーンに適用されます
+  settingsspawntitle: スポーン設定
+  shears: はさみ
+  spawnegg: 卵使用を産む
+  teleportwhenfalling: 落ちる時にテレポートする
+  title: アイランドガードの設定
+  villagertrading: 村人取引
+  visitordrop: ビジターアイテムの削除
+  visitorkeepitems: 訪問者は死に際にアイテムを保持する
+  visitorpickup: ビジターアイテムのピックアップ
+  withergriefing: 悲しみを嘆く
+  workbench: ワークベンチの使用
+kick: 
+  errorNoTeam: あなたはチームを持っていません！
+  errorNotPartOfTeam: そのプレイヤーはあなたの島のチームの一員ではありません！
+  errorOnlyLeaderCan: リーダーだけが島から人々を蹴散らすことができます！
+  errorPlayerNotInTeam: そのプレイヤーはあなたのチームにいません！
+  nameRemoved: "[name]は島から削除されました。"
+  nameRemovedYou: "あなたの島から[name]を削除しました！"
+lavaTip: ヒント
+leave: 
+  canceled: 立ち去らない
+  errorLeadersCannotLeave: チームリーダーは島を離れることはできません
+  errorYouAreTheLeader: チームリーダーは島を離れることはできません
+  errorYouCannotLeaveIsland: リセットを使用して新しい島を開始する
+  errorYouMustBeInWorld: あなたはチームを離れるには島の世界にいなければなりません！
+  nameHasLeftYourIsland: "[name]あなたの島を離れました！"
+  warning: "あなたは本当にチームを離れたいですか？もう一度「/[label] leave」と入力して確認してください。"
+  youHaveLeftTheIsland: あなたは島を離れ、プレイヤーのスポーンに戻りました。
+level: 
+  calculating: 島レベルの計算。これには数秒かかります...
+  errornotYourIsland: リーダーだけがそれを行うことができます。
+  islandLevel: 島レベル
+lock: 
+  enteringspawn: スポーンに入る
+  islandlocked: 島は訪問者にロックされています
+  leavingspawn: スポーンから離れる
+  locking: ロックアイランド
+  nowentering: "今[name]の島に入る"
+  nowleaving: "今[name]の島を離れる"
+  unlocking: 島のロック解除
+makeleader: 
+  errorGeneralError: リーダーを変えることはできませんでした。
+  errorNotYourIsland: これはあなたの島ではないので、あなたはそれを捨てることはできません！
+  errorPlayerMustBeOnline: そのプレイヤーは島を移譲するためにオンラインでなければなりません。
+  errorRemoveAllPlayersFirst: 移籍先のプレーヤー以外のチームからすべてのプレーヤーを削除します。
+  errorThatPlayerIsNotInTeam: そのプレイヤーはあなたの島のチームの一員ではありません！
+  errorYouMustBeInTeam: 島を移送するにはチームにいなければなりません。
+  nameIsNowTheOwner: "[name]はあなたの島の所有者になりました！"
+  youAreNowTheOwner: あなたは今あなたの島の所有者です。
+minishop: 
+  buy: 購入（左クリック）
+  buyproblem: "[description]を購入する際に問題が発生しました"
+  islandhelpMiniShop: ミニショップを開く
+  outofstock: 在庫切れ
+  sell: 販売（右クリック）
+  sellproblem: "あなたは売るのに十分な[説明]がありません。"
+  title: ミニショップ
+  youbought: "[number]つの[description]を買った。 費用[price]."
+  youcannotafford: "あなたは[description]を買う余裕がない！"
+  yousold: "あなたは[number]の[description]を販売しました. [price]"
+moblimits: 
+  entity: "島[entity]の[number]の限界に達しました！"
+  error: "島の動物繁殖限界[number]に達しました！"
+  hopper: "島のホッパー限界[number]に達しました！"
+  villager: "島の村人繁殖限界[number]に達しました！"
+nether: 
+  spawnisprotected: ネザーのスポーンエリアは保護されています。
+news: 
+  headline: "[ASkyblock ニュース]あなたがオフラインになっている間に..."
+purge: 
+  acidFound: "所有されていない島が[number]があります。 20秒以内に '/acid purge unowned confirm'を削除してください。"
+  allowPurge: パージ保護が削除されました
+  alreadyRunning: パージは既に実行されています。完了するまでお待ちください！
+  calculating: "[time]日以上にわたってどの島が非アクティブであるかを計算する。"
+  countingUnowned: 所有されていない島を数え、プレイヤーファイルをチェックする。これには時間がかかるかもしれません...
+  finished: 非アクティブな島のパージを完了しました。
+  noneFound: 削除する非アクティブな島はありません。
+  nowWaiting: 今待っている...
+  preventPurge: 島はパージから保護されています
+  purgeCancelled: パージがキャンセルされました。
+  removingAt: "場所[場所]の島を削除する"
+  removingName: "[name]の島を削除する"
+  skyblockFound: "所有されていない島が[number]があります。 20秒以内に '/asadmin purge unowned confirm'を削除してください。"
+  stillChecking: まだプレーヤーファイルをチェックしています...
+  thisWillRemove: "[number]不活発な島が見つかりました。 レベル<レベルの島は削除されます。"
+  typeConfirm: "/[label] confirmを10秒以内に進める"
+  usage: "  使用法：/ [label] purge [TimeInDays]"
+  warning: "危険！すべての選手をログアウトしてください！ 世界のバックアップを作る！"
+register: 
+  errorBedrockNotFound: 島を登録できませんでした！
+  settingIsland: "[name]の島を最も近い島に設定します。"
+reject: 
+  nameHasRejectedInvite: "[name]は拒否しました！"
+  youHaveNotBeenInvited: あなたはチームに招待されていませんでした。
+  youHaveRejectedInvitation: あなたは島への招待を拒否しました。
+reload: 
+  configReloaded: ファイルから設定を再ロードしました。
+resetallchallenges: 
+  success: "[name]はすべての課題をリセットしました。"
+resetchallenge: 
+  challengeReset: "[name]に対して[challengename]がリセットされました"
+  errorChallengeDoesNotExist: チャレンジが存在しないか、まだ完了していない
+schematics: 
+  title: 島を選択...
+sethome: 
+  errorNoIsland: "あなたは島の一部ではありません。 あなたにスポーンエリアを返す！"
+  errorNotOnIsland: あなたは家に帰るために島の境界線にいなければなりません！
+  errorNumHomes: "家は1から[max]"
+  homeSet: あなたの島の家はあなたの現在の場所に設定されています。
+settingsReset: 
+  done: 完了しました。
+  inprogress: 保護設定がリセットされました。しばらくお待ちください...
+sign: 
+  line1: "&1[A Skyblock]"
+  line2: "[player]"
+  line3: 落ちるな！
+  line4: 注意してください！
+sign-acidisland: 
+  line1: "＆1 [AcidIsland]"
+  line2: "[player]"
+  line3: 水は酸です！
+  line4: 注意してください！
+targetInPVPArea: ターゲットはPVPなしの領域にあります！
+team: 
+  listingMembers: 島のメンバーをリストアップする
+teamchat: 
+  helpChat: チームチャットのオン/オフを切り替える
+  noTeam: あなたはチームにいません！
+  noTeamAround: あなたのチームはオンラインではありません！
+  prefix: "[チームチャット] <{ISLAND_PLAYER}>"
+  statusOff: チームチャットがオフです
+  statusOn: チームチャットはオンです
+topTen: 
+  errorExcluded: "FYI：[perm]がないのでトップ10から除外されています"
+  errorNotReady: トップ10リストはまだ生成されていません！
+  guiTitle: トップ10島
+  header: これらはトップ10の島です
+warps: 
+  deactivate: 古いサインを無効にする！
+  errorDoesNotExist: そのワープは存在しません！
+  errorDuplicate: "ごめんなさい！ すでにその場所にサインがあります！"
+  errorNoPerm: ウェルカムサインをまだ置く権限がありません！
+  errorNoPlace: ウェルカムサインを置くには島にいなければなりません！
+  errorNoRemove: あなた自身のウェルカムサインのみを削除することができます！
+  errorNoWarpsYet: まだ使用可能なワープはありません！
+  errorNotEnoughLevel: ウェルカムサインを作成するのに十分な島レベルがありません！
+  errorNotReadyYet: "そのワープはまだ準備ができていません。 あとでもう一度試してみてください。"
+  errorNotSafe: "その反りは今は安全ではありません。 あとでもう一度試してみてください。"
+  next: 次
+  playerWarped: "[name]＆2あなたの島にワープ！"
+  previous: 前
+  removed: ウェルカムサインが削除されました
+  signRemoved: あなたのウェルカムサインは削除されました！
+  success: ウェルカムサインは正常に配置されました！
+  title: 島ワープ
+  warpTip: "最上部に[WELCOME]という記号を入れてワープを作成します。"
+  warpToPlayersSign: <player>のウェルカインサインにワープします。
+  warpsAvailable: 次のワープが利用可能です
+  welcomeLine: "[WELCOME]"
+  
