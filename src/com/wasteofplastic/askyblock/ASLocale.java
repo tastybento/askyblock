@@ -329,7 +329,6 @@ public class ASLocale {
 
     // info
     public String adminInfoislandLocation;
-    public String adminInfoerrorNotPartOfTeam;
     public String adminInfoerrorNullTeamLeader;
     public String adminInfoerrorTeamMembersExist;
     public String adminHelpinfoIsland;
@@ -374,7 +373,7 @@ public class ASLocale {
     public String minishopBuyProblem;
     public String minishopYouCannotAfford;
     public String errorMinishopDisabled;
-    
+
     // Sign
     public String signLine1;
     public String signLine2;
@@ -472,7 +471,7 @@ public class ASLocale {
     public String igsSettingsIslandDesc;
     public String igsSettingsSpawnTitle;
     public String igsSettingsSpawnDesc;
-    
+
     public String setHomeerrorNumHomes;
     public String schematicsTitle;
     public String islandhelpBan;
@@ -618,6 +617,44 @@ public class ASLocale {
 
     public String topTenerrorExcluded;
 
+    public String leaveWarning;
+
+    public String leaveCanceled;
+
+    public String unlimited;
+
+    public String resetsLeft;
+
+    public String islandblockValue;
+
+    public String islandblockWorthless;
+
+    public String errorNotABlock;
+
+    public String islandhelpValue;
+
+    public String adminSetRangeUpdated;
+
+    public String adminResetChallengeForAllError;
+
+    public String adminHelpresetChallengeForAll;
+
+    public String adminHelplistChallengeResets;
+
+    public String adminHelpclearChallengeReset;
+
+    public String adminResetChallengeForAllRepeating;
+
+    public String adminResetChallengeForAllReset;
+
+    public String adminHelpclearResetAll;
+
+    public String teamChatSpyStatusOff;
+
+    public String teamChatSpyStatusOn;
+
+    public String adminHelpsetLanguage;
+
 
     /**
      * Creates a locale object full of localized strings for a language
@@ -631,9 +668,9 @@ public class ASLocale {
         this.localeName = localeName;
         getLocale(localeName);
         loadLocale();
-        if (!localeName.equalsIgnoreCase("locale")) {
-            localeObject = new Locale(localeName.substring(0, 2), localeName.substring(3, 5));
-        }       
+        //if (!localeName.equalsIgnoreCase("locale")) {
+        localeObject = new Locale(localeName.substring(0, 2), localeName.substring(3, 5));
+        //}       
     }
 
     /**
@@ -670,20 +707,7 @@ public class ASLocale {
                 locale = YamlConfiguration.loadConfiguration(localeFile);
                 //locale.setDefaults(defLocale);
             } else {
-                // Use the default file
-                localeFile = new File(plugin.getDataFolder() + File.separator + "locale", "locale.yml");
-                if (localeFile.exists()) {
-                    locale = YamlConfiguration.loadConfiguration(localeFile);
-                } else {
-                    // Look for defaults in the jar                    
-                    if (plugin.getResource("locale/locale.yml") != null) {
-                        plugin.saveResource("locale/locale.yml", true);
-                        localeFile = new File(plugin.getDataFolder() + File.separator + "locale", "locale.yml");
-                        locale = YamlConfiguration.loadConfiguration(localeFile);
-                    } else {
-                        plugin.getLogger().severe("Could not find any locale file!");
-                    }
-                }
+                plugin.getLogger().severe("Could not find locale file! " + localeName);
             }
         }
     }
@@ -729,6 +753,7 @@ public class ASLocale {
         errorNoPermission = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("error.noPermission", "You don't have permission to use that command!"));
         errorNoIsland = ChatColor.translateAlternateColorCodes('&', locale.getString("error.noIsland", "You do not have an island!"));
+        errorNotABlock = ChatColor.translateAlternateColorCodes('&', locale.getString("error.notABlock", "That is not a block"));
         errorNoIslandOther = ChatColor
                 .translateAlternateColorCodes('&', locale.getString("error.noIslandOther", "That player does not have an island!"));
         // "You must be on your island to use this command."
@@ -748,53 +773,54 @@ public class ASLocale {
         }
         igsAllowed = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.allowed", "Allowed"));
         igsDisallowed = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.disallowed", "Disallowed"));
-
+        // Developer - add new text for GUI icons here and in the local files
         igs = new HashMap<SettingsFlag, String>();
         igs.put(SettingsFlag.ACID_DAMAGE, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.aciddamage", "Acid Damage")));
-        igs.put(SettingsFlag.ANVIL, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.anvil", "Anvil Use")));
-        igs.put(SettingsFlag.ARMOR_STAND, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.armorstand", "Armor Stand use")));
-        igs.put(SettingsFlag.BEACON, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.beacon", "Beacon use")));
-        igs.put(SettingsFlag.BED, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.bed", "Bed use")));
-        igs.put(SettingsFlag.BREAK_BLOCKS, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.breakblocks", "Break blocks")));
-        igs.put(SettingsFlag.BREEDING, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.breeding", "Breeding")));
-        igs.put(SettingsFlag.BREWING, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.brewingstand", "Potion Brewing")));
-        igs.put(SettingsFlag.BUCKET, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.bucket", "Bucket use")));
-        igs.put(SettingsFlag.COLLECT_LAVA, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.collectlava", "Lava collection")));
-        igs.put(SettingsFlag.COLLECT_WATER, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.collectwater", "Water collection")));
-        igs.put(SettingsFlag.CHEST, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.chest", "Chest use")));
-        igs.put(SettingsFlag.CHORUS_FRUIT, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.chorusfruit", "Chorus Fruit Use")));
-        igs.put(SettingsFlag.CRAFTING, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.workbench", "Workbench use")));
+        igs.put(SettingsFlag.ANVIL, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.anvil", "Visitor anvil use")));
+        igs.put(SettingsFlag.ARMOR_STAND, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.armorstand", "Visitor armor stand use")));
+        igs.put(SettingsFlag.BEACON, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.beacon", "Visitor beacon use")));
+        igs.put(SettingsFlag.BED, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.bed", "Visitor bed use")));
+        igs.put(SettingsFlag.BREAK_BLOCKS, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.breakblocks", "Visitor block breaking")));
+        igs.put(SettingsFlag.BREEDING, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.breeding", "Visitor animal breeding")));
+        igs.put(SettingsFlag.BREWING, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.brewingstand", "Visitor potion brewing")));
+        igs.put(SettingsFlag.BUCKET, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.bucket", "Visitor bucket use")));
+        igs.put(SettingsFlag.COLLECT_LAVA, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.collectlava", "Visitor lava collection")));
+        igs.put(SettingsFlag.COLLECT_WATER, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.collectwater", "Visitor water collection")));
+        igs.put(SettingsFlag.CHEST, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.chest", "Visitor chest use")));
+        igs.put(SettingsFlag.CHORUS_FRUIT, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.chorusfruit", "Visitor chorus fruit use")));
+        igs.put(SettingsFlag.CRAFTING, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.workbench", "Visitor workbench use")));
         igs.put(SettingsFlag.CREEPER_PAIN, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.creeperpain", "Creeper explosions hurt")));
-        igs.put(SettingsFlag.CROP_TRAMPLE, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.croptrample", "Crop trampling")));
-        igs.put(SettingsFlag.DOOR, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.door", "Door use")));
-        igs.put(SettingsFlag.EGGS, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.eggs", "Egg throwing")));
-        igs.put(SettingsFlag.ENCHANTING, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.enchantingtable", "Enchanting table use")));
-        igs.put(SettingsFlag.ENDERPEARL, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.enderpearl", "Enderpearl use")));
-        igs.put(SettingsFlag.ENTER_EXIT_MESSAGES, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.joinleaveislandmessages", "Enable Join & Leave Island Messages")));
-        igs.put(SettingsFlag.FIRE_EXTINGUISH, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.fireextinguish", "Fire extinguish")));
+        igs.put(SettingsFlag.CROP_TRAMPLE, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.croptrample", "Visitor crop trampling")));
+        igs.put(SettingsFlag.DOOR, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.door", "Visitor door use")));
+        igs.put(SettingsFlag.EGGS, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.eggs", "Visitor egg throwing")));
+        igs.put(SettingsFlag.ENCHANTING, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.enchantingtable", "Visitor enchanting table use")));
+        igs.put(SettingsFlag.ENDER_PEARL, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.enderpearl", "Visitor enderpearl use")));
+        igs.put(SettingsFlag.ENTER_EXIT_MESSAGES, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.joinleaveislandmessages", "Enter/Exit Island Messages")));
+        igs.put(SettingsFlag.FIRE, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.fire", "Fire")));
+        igs.put(SettingsFlag.FIRE_EXTINGUISH, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.fireextinguish", "Visitor fire extinguish")));
         igs.put(SettingsFlag.FIRE_SPREAD, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.firespread", "Fire spread")));
-        igs.put(SettingsFlag.FURNACE, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.furnace", "Furnace use")));
-        igs.put(SettingsFlag.GATE, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.gate", "Gate use")));
-        igs.put(SettingsFlag.HORSE_INVENTORY, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.horseinventoryaccess", "Horse inv access when riding")));   
-        igs.put(SettingsFlag.HORSE_RIDING, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.horseriding", "Horse riding")));   
-        igs.put(SettingsFlag.HURT_MOBS, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.hurtanimals", "Hurting animals")));
-        igs.put(SettingsFlag.HURT_MONSTERS, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.hurtmonsters", "Hurting monsters")));
-        igs.put(SettingsFlag.LEASH, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.leash", "Leash use")));
-        igs.put(SettingsFlag.LEVER_BUTTON, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.lever", "Lever or Button Use")));
+        igs.put(SettingsFlag.FURNACE, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.furnace", "Visitor furnace use")));
+        igs.put(SettingsFlag.GATE, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.gate", "Visitor gate use")));
+        igs.put(SettingsFlag.HORSE_INVENTORY, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.horseinventoryaccess", "Visitor horse inventory access")));   
+        igs.put(SettingsFlag.HORSE_RIDING, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.horseriding", "Visitor horse riding")));   
+        igs.put(SettingsFlag.HURT_MOBS, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.hurtanimals", "Visitor animal hurting")));
+        igs.put(SettingsFlag.HURT_MONSTERS, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.hurtmonsters", "Visitor monster hurting")));
+        igs.put(SettingsFlag.LEASH, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.leash", "Visitor leash use")));
+        igs.put(SettingsFlag.LEVER_BUTTON, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.lever", "Visitor lever or button use")));
         igs.put(SettingsFlag.MOB_SPAWN, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.animalspawning", "Allow/Disallow Animal Spawning")));
         igs.put(SettingsFlag.MONSTER_SPAWN, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.monsterspawning", "Allow/Disallow Monster Spawning")));
-        igs.put(SettingsFlag.MUSIC, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.jukebox", "Jukebox use")));
-        igs.put(SettingsFlag.PLACE_BLOCKS, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.placeblocks", "Place blocks")));
-        igs.put(SettingsFlag.PORTAL, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.portaluse", "Portal use")));
-        igs.put(SettingsFlag.PRESSURE_PLATE, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.pressureplate", "Activate pressure plates")));   
+        igs.put(SettingsFlag.MUSIC, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.jukebox", "Visitor jukebox use")));
+        igs.put(SettingsFlag.PLACE_BLOCKS, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.placeblocks", "Visitor block placing")));
+        igs.put(SettingsFlag.PORTAL, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.portaluse", "Visitor portal use")));
+        igs.put(SettingsFlag.PRESSURE_PLATE, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.pressureplate", "Visitors activate pressure plates")));   
         igs.put(SettingsFlag.PVP, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.pvp", "PvP")));
-        igs.put(SettingsFlag.MILKING, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.milking", "Milking")));   
+        igs.put(SettingsFlag.MILKING, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.milking", "Visitor cow milking")));   
         igs.put(SettingsFlag.NETHER_PVP, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.netherpvp", "Nether PvP")));
-        igs.put(SettingsFlag.REDSTONE, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.redstone", "Redstone use")));
+        igs.put(SettingsFlag.REDSTONE, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.redstone", "Visitor redstone use")));
         igs.put(SettingsFlag.SPAWN_EGGS, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.spawnegg", "Spawn egg use")));
-        igs.put(SettingsFlag.SHEARING, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.shears", "Shears use")));
-        igs.put(SettingsFlag.VILLAGER_TRADING, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.villagertrading", "Villager trading")));
-        igs.put(SettingsFlag.VISITOR_ITEM_DROP, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.visitordrop", "Visitor item dropping")));
+        igs.put(SettingsFlag.SHEARING, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.shears", "Visitor shears use")));
+        igs.put(SettingsFlag.VILLAGER_TRADING, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.villagertrading", "Visitor villager trading")));
+        igs.put(SettingsFlag.VISITOR_ITEM_DROP, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.visitordrop", "Visitor item drop")));
         igs.put(SettingsFlag.VISITOR_ITEM_PICKUP, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.visitorpickup", "Visitor item pick-up")));
 
         igsChestDamage = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.chestdamage", "Chest damage by TNT"));
@@ -814,7 +840,7 @@ public class ASLocale {
         if (igsSettingsIslandTitle.length() > 30) {
             igsSettingsIslandTitle = igsSettingsIslandTitle.substring(0,29);
         }
-        igsSettingsIslandDesc = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.settingsislanddesc", "These rules apply to visitors on this island"));
+        igsSettingsIslandDesc = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.settingsislanddesc", "These rules apply to this island"));
         igsSettingsSpawnTitle = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.settingsspawntitle", "Spawn Settings"));
         if (igsSettingsSpawnTitle.length() > 30) {
             igsSettingsSpawnTitle = igsSettingsSpawnTitle.substring(0,29);
@@ -835,7 +861,7 @@ public class ASLocale {
         warpserrorNoPerm = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("warps.errorNoPerm", "You do not have permission to place Welcome Signs yet!"));
         warpserrorNotEnoughLevel = ChatColor.translateAlternateColorCodes('&', 
-        		locale.getString("warps.errorNotEnoughLevel", "You do not have enough island levels to create a Welcome Sign!"));
+                locale.getString("warps.errorNotEnoughLevel", "You do not have enough island levels to create a Welcome Sign!"));
         warpserrorNoPlace = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("warps.errorNoPlace", "You must be on your island to place a Welcome Sign!"));
         warpserrorDuplicate = ChatColor.translateAlternateColorCodes('&',
@@ -946,9 +972,9 @@ public class ASLocale {
                 locale.getString("island.cannotTeleport", "You cannot teleport when falling!"));
         islandnew = ChatColor.translateAlternateColorCodes('&', locale.getString("island.new", "Creating a new island for you..."));
         islandSubTitle = locale.getString("island.subtitle", "by tastybento");
-        islandDonate = locale.getString("island.donate", "ASkyBlock by tastybento, click here to donate via PayPal!");
+        islandDonate = locale.getString("island.donate", "ASkyBlock by tastybento");
         islandTitle = locale.getString("island.title", "A SkyBlock");
-        islandURL = locale.getString("island.url", "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZSBJG5J2E3B7U");
+        islandURL = locale.getString("island.url", "");
         islandSubTitleColor = colorCheck(locale.getString("island.subtitlecolor", "blue"));
         islandDonateColor = colorCheck(locale.getString("island.donatecolor", "aqua"));
         islandTitleColor = colorCheck(locale.getString("island.titlecolor", "gold"));
@@ -970,6 +996,10 @@ public class ASLocale {
                 locale.getString("island.resetWait", "You have to wait [time] seconds before you can do that again."));
         islandresetConfirm = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("island.resetConfirm", "Type /[label] confirm within [seconds] seconds to delete your island and restart!").replace("[label]", Settings.ISLANDCOMMAND));
+        islandblockValue = ChatColor.translateAlternateColorCodes('&',
+                locale.getString("island.blockValue", "[name] placed here may be worth [value]"));
+        islandblockWorthless = ChatColor.translateAlternateColorCodes('&',
+                locale.getString("island.blockWorthless", "[name] is worthless"));
         islandhelpIsland = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("island.helpIsland", "start an island, or teleport to your island."));
         islandhelpTeleport = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpTeleport", "teleport to your island."));
@@ -984,6 +1014,7 @@ public class ASLocale {
         islandhelpLevelPlayer = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("island.helpLevelPlayer", "see another player's island level."));
         islandhelpTop = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpTop", "see the top ranked islands."));
+        islandhelpValue = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpValue", "see island level value of block in hand"));
         islandhelpWarps = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpWarps", "Lists all available welcome-sign warps."));
         islandhelpWarp = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpWarp", "Warp to <player>'s welcome sign."));
         islandhelpTeam = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpTeam", "view your team information."));
@@ -1001,7 +1032,7 @@ public class ASLocale {
         adminHelpName = ChatColor.translateAlternateColorCodes('&', locale.getString("adminHelp.name", "Set name of player's island"));
         adminHelpResetName = ChatColor.translateAlternateColorCodes('&', locale.getString("adminHelp.resetname", "Reset name of player's island"));
         islandHelpSelectLanguage = ChatColor.translateAlternateColorCodes('&', locale.getString("islandHelp.selectlanguage", "Select Language"));
-       
+
         islandhelpAcceptReject = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("island.helpAcceptReject", "accept or reject an invitation."));
         islandhelpMakeLeader = ChatColor
@@ -1014,7 +1045,7 @@ public class ASLocale {
                 locale.getString("island.errorInvalidPlayer", "That player is invalid or does not have an island!"));
         islandislandLevelis = ChatColor.translateAlternateColorCodes('&', locale.getString("island.islandLevelis", "Island level is"));
         islandrequiredPointsToNextLevel = ChatColor.translateAlternateColorCodes('&', locale.getString("island.requiredPointsToNextLevel", "You need [points] more points to reach level [next]!"));
-        
+
         invitehelp = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("invite.help", "Use [/[label] invite <playername>] to invite a player to your island.").replace("[label]", Settings.ISLANDCOMMAND));
         inviteyouCanInvite = ChatColor.translateAlternateColorCodes('&',
@@ -1065,6 +1096,10 @@ public class ASLocale {
                 locale.getString("leave.errorYouMustBeInWorld", "You must be in the island world to leave your team!"));
         leaveerrorLeadersCannotLeave = ChatColor.translateAlternateColorCodes('&', locale.getString("leave.errorLeadersCannotLeave",
                 "Leaders cannot leave an island. Make someone else the leader fist using /[label] makeleader <player>").replace("[label]", Settings.ISLANDCOMMAND));
+        leaveWarning = ChatColor.translateAlternateColorCodes('&', locale.getString("leave.warning",
+                "Are you sure you want to leave the team? Type '[label] leave' again to confirm.").replace("[label]", Settings.ISLANDCOMMAND));
+        leaveCanceled = ChatColor.translateAlternateColorCodes('&',
+                locale.getString("leave.canceled", "Leave canceled"));
         teamlistingMembers = ChatColor.translateAlternateColorCodes('&', locale.getString("team.listingMembers", "Listing your island members"));
         kickerrorPlayerNotInTeam = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("kick.errorPlayerNotInTeam", "That player is not in your team!"));
@@ -1101,10 +1136,15 @@ public class ASLocale {
         adminHelpunregister = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("adminHelp.unregister", "deletes a player without deleting the island blocks"));
         adminHelpdelete = ChatColor.translateAlternateColorCodes('&', locale.getString("adminHelp.delete", "delete an island (removes blocks)"));
+        adminHelpclearChallengeReset = ChatColor.translateAlternateColorCodes('&', locale.getString("adminHelp.clearChallengeReset", "clear a global challenge reset")); 
         adminHelpcompleteChallenge = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("adminHelp.completeChallenge", "marks a challenge as complete"));
         adminHelpresetChallenge = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("adminHelp.resetChallenge", "marks a challenge as incomplete"));
+        adminHelpresetChallengeForAll = ChatColor.translateAlternateColorCodes('&',
+                locale.getString("adminHelp.resetChallengeForAll", "globally resets a challenge for every player with an optional repetition"));
+        adminHelplistChallengeResets = ChatColor.translateAlternateColorCodes('&',
+                locale.getString("adminHelp.listChallengeResets", "lists challenge reset schedules, if any"));
         adminHelpresetAllChallenges = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("adminHelp.resetAllChallenges", "resets all of the player's challenges"));
         adminHelppurge = ChatColor.translateAlternateColorCodes('&',
@@ -1117,6 +1157,8 @@ public class ASLocale {
         adminHelpinfo = ChatColor.translateAlternateColorCodes('&', locale.getString("adminHelp.info", "check information on the given player"));
         adminHelpSetSpawn = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("adminHelp.setspawn", "sets the island world spawn to a location close to you"));
+        adminHelpsetLanguage = ChatColor.translateAlternateColorCodes('&',
+                locale.getString("adminHelp.setlanguage", "sets the default language and resets every player to that language"));
         adminHelpSetRange = ChatColor
                 .translateAlternateColorCodes('&', locale.getString("adminHelp.setrange", "changes the island's protection range"));
         adminHelpAddRange = ChatColor
@@ -1184,8 +1226,6 @@ public class ASLocale {
         registererrorBedrockNotFound = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("register.errorBedrockNotFound", "Error: unable to set the island!"));
         adminInfoislandLocation = ChatColor.translateAlternateColorCodes('&', locale.getString("adminInfo.islandLocation", "Island Location"));
-        adminInfoerrorNotPartOfTeam = ChatColor.translateAlternateColorCodes('&',
-                locale.getString("adminInfo.errorNotPartOfTeam", "That player is not a member of an island team."));
         adminInfoerrorNullTeamLeader = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("adminInfo.errorNullTeamLeader", "Team leader should be null!"));
         adminInfoerrorTeamMembersExist = ChatColor.translateAlternateColorCodes('&',
@@ -1207,10 +1247,6 @@ public class ASLocale {
         registererrorBedrockNotFound = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("register.errorBedrockNotFound", "Error: unable to set the island!"));
         adminInfoislandLocation = ChatColor.translateAlternateColorCodes('&', locale.getString("adminInfo.islandLocation", "Island Location"));
-        adminInfoerrorNotPartOfTeam = ChatColor.translateAlternateColorCodes('&',
-                locale.getString("adminInfo.errorNotPartOfTeam", "That player is not a member of an island team."));
-        adminInfoerrorNullTeamLeader = ChatColor.translateAlternateColorCodes('&',
-                locale.getString("adminInfo.errorNullTeamLeader", "Team leader should be null!"));
         adminInfoerrorTeamMembersExist = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("adminInfo.errorTeamMembersExist", "Player has team members, but shouldn't!"));
         resetChallengessuccess = ChatColor.translateAlternateColorCodes('&',
@@ -1248,7 +1284,11 @@ public class ASLocale {
                 locale.getString("boats.warning", "It's unsafe to exit the boat right now..."));
         adminHelpclearReset = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("adminHelp.clearreset", "resets the island reset limit for player."));
+        adminHelpclearResetAll = ChatColor.translateAlternateColorCodes('&',
+                locale.getString("adminHelp.clearresetall", "resets the island reset limit for all players."));
         resetYouHave = ChatColor.translateAlternateColorCodes('&', locale.getString("island.resetYouHave", "You have [number] resets left."));
+        resetsLeft = ChatColor.translateAlternateColorCodes('&', locale.getString("island.resetsLeft", "Resets left"));
+        unlimited = ChatColor.translateAlternateColorCodes('&', locale.getString("island.unlimitd", "Unlimited"));
         islandResetNoMore = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("island.resetNoMore", "No more resets are allowed for your island!"));
         clearedResetLimit = ChatColor.translateAlternateColorCodes('&', locale.getString("resetTo", "Cleared reset limit"));
@@ -1312,6 +1352,8 @@ public class ASLocale {
         }
         teamChatPrefix = ChatColor.translateAlternateColorCodes('&', locale.getString("teamchat.prefix", "[Team Chat]<{ISLAND_PLAYER}> "));
         teamChatHelp = ChatColor.translateAlternateColorCodes('&', locale.getString("teamchat.helpChat", "turn on/off team chat"));
+        teamChatSpyStatusOff = ChatColor.translateAlternateColorCodes('&', locale.getString("teamchat.spyoff", "Team chat spy is off"));
+        teamChatSpyStatusOn = ChatColor.translateAlternateColorCodes('&', locale.getString("teamchat.spyon", "Team chat spy is on"));
         teamChatStatusOff = ChatColor.translateAlternateColorCodes('&', locale.getString("teamchat.statusOff", "Team chat is off"));
         teamChatStatusOn = ChatColor.translateAlternateColorCodes('&', locale.getString("teamchat.statusOn", "Team chat is on"));
         teamChatNoTeamAround = ChatColor.translateAlternateColorCodes('&', locale.getString("teamchat.noTeamAround", "None of your team are online!"));
@@ -1343,6 +1385,9 @@ public class ASLocale {
         adminSetHomeNoneFound = ChatColor.translateAlternateColorCodes('&', locale.getString("adminSetHome.noneFound", "No safe location found!"));
         adminSetHomeHomeSet = ChatColor.translateAlternateColorCodes('&', locale.getString("adminSetHome.homeSet", "Home set to [location]"));
         adminSetHomeNotOnPlayersIsland = ChatColor.translateAlternateColorCodes('&', locale.getString("adminSetHome.notOnPlayersIsland", "You are not on the player's island"));
+        adminResetChallengeForAllError = ChatColor.translateAlternateColorCodes('&', locale.getString("adminResetChallengeForAll.error", "Format for repeat time must is [integer number][m/h/d] (minutes, hours, days), e.g. 5h"));
+        adminResetChallengeForAllRepeating = ChatColor.translateAlternateColorCodes('&', locale.getString("adminResetChallengeForAll.repeating", "Repeating [duration]"));
+        adminResetChallengeForAllReset = ChatColor.translateAlternateColorCodes('&', locale.getString("adminResetChallengeForAll.reset", "Reset [date]"));       
         adminHelpResetSign = ChatColor.translateAlternateColorCodes('&', locale.getString("adminHelp.resetSign", "Resets the sign you are looking at to the island owner"));
         adminResetSignNoSign = ChatColor.translateAlternateColorCodes('&', locale.getString("adminResetSign.noSign", "You must be looking at a sign post to run this command."));
         adminResetSignFound = ChatColor.translateAlternateColorCodes('&', locale.getString("adminResetSign.found", "Warp Sign found!"));
@@ -1385,6 +1430,8 @@ public class ASLocale {
         generalSuccess = ChatColor.translateAlternateColorCodes('&', locale.getString("general.success", "Success!"));
         adminHelpReserve = ChatColor.translateAlternateColorCodes('&', locale.getString("adminHelp.reserve", "reserves this spot for player's next island"));
         adminReserveIslandExists = ChatColor.translateAlternateColorCodes('&', locale.getString("adminReserve.islandExists", "There is an island here already! Register the player instead!"));
+        adminSetRangeUpdated = ChatColor.translateAlternateColorCodes('&', locale.getString("adminSetRange.updated", "Island range updated to [number]"));
+
     }
 
     /**

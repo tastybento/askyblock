@@ -1018,7 +1018,18 @@ public class Schematic {
 
         if (teleport) {
             plugin.getPlayers().setInTeleport(player.getUniqueId(), true);
-            player.teleport(world.getSpawnLocation());
+            //player.setInvulnerable(true);
+            // Check distance. If it's too close, warp to spawn to try to clear the client's cache
+            //plugin.getLogger().info("DEBUG: view dist = " + plugin.getServer().getViewDistance());
+            if (player.getWorld().equals(world)) {
+                //plugin.getLogger().info("DEBUG: same world");
+                int distSq = (int)((player.getLocation().distanceSquared(loc) - (Settings.islandDistance * Settings.islandDistance)/16));
+                //plugin.getLogger().info("DEBUG:  distsq = " + distSq);
+                if (plugin.getServer().getViewDistance() * plugin.getServer().getViewDistance() < distSq) {
+                    //plugin.getLogger().info("DEBUG: teleporting");
+                    player.teleport(world.getSpawnLocation());
+                }
+            }
             plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
 
                 @Override
@@ -1036,6 +1047,17 @@ public class Schematic {
                 }
             }, 40L);
         }
+        // Set the bedrock block meta data to the original spawn location
+        // Doesn't survive a server restart. TODO: change to add this info elsewhere.
+        /*
+        if (playerSpawn != null) {
+            blockToChange = loc.getBlock();
+            if (blockToChange.getType().equals(Material.BEDROCK)) {
+                String spawnLoc = Util.getStringLocation(loc.clone().add(playerSpawn).add(new Vector(0.5D,0D,0.5D)));
+                blockToChange.setMetadata("playerSpawn", new FixedMetadataValue(plugin, spawnLoc));
+            }
+        }
+        */
     }
     /**
      * This method prepares to pastes a schematic.

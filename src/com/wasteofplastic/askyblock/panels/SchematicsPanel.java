@@ -35,6 +35,7 @@ import org.bukkit.inventory.Inventory;
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.schematics.Schematic;
+import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
 public class SchematicsPanel implements Listener {
@@ -82,7 +83,7 @@ public class SchematicsPanel implements Listener {
             }
             return newPanel;
         } else {
-            player.sendMessage(ChatColor.RED + plugin.myLocale().errorCommandNotReady);
+            Util.sendMessage(player, ChatColor.RED + plugin.myLocale().errorCommandNotReady);
         }
         return null;
     }
@@ -139,7 +140,7 @@ public class SchematicsPanel implements Listener {
             if (item.getCost() > 0) {
                 if (Settings.useEconomy && VaultHelper.setupEconomy() && !VaultHelper.econ.has(player, item.getCost())) {
                     // Too expensive
-                    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).minishopYouCannotAfford.replace("[description]", item.getName()));        
+                    Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).minishopYouCannotAfford.replace("[description]", item.getName()));        
                 } else {
                     // Do something
                     if (Settings.useEconomy && VaultHelper.setupEconomy()) {

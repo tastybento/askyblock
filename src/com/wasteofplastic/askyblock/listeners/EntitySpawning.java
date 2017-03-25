@@ -21,7 +21,6 @@ import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -144,7 +143,7 @@ public class EntitySpawning implements Listener {
         for (Entity ent : e.getLocation().getWorld().getNearbyEntities(e.getLocation(), 5, 5, 5)) {
             if (ent instanceof Player) {
                 Player player = (Player)ent; 
-                player.sendMessage(ChatColor.RED 
+                Util.sendMessage(player, ChatColor.RED 
                         + (plugin.myLocale(player.getUniqueId()).entityLimitReached.replace("[entity]", 
                                 Util.prettifyText(e.getEntityType().toString()))
                                 .replace("[number]", String.valueOf(Settings.entityLimits.get(e.getEntityType())))));

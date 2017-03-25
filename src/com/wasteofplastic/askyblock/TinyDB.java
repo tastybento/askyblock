@@ -174,7 +174,7 @@ public class TinyDB {
                     saveDB();
                     // Save memory
                     treeMap.clear();
-                    System.out.println("[ASkyBlock]: Complete. Processed " + count + " names to database");
+                    System.out.println("Complete. Processed " + count + " names to database");
                     // Set flag
                     dbReady = true;
                 } catch (Exception e) {

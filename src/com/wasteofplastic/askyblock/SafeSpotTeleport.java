@@ -30,6 +30,8 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import com.wasteofplastic.askyblock.util.Util;
+
 /**
  * A class that calculates finds a safe spot asynchronously and then teleports the player there. 
  * @author tastybento
@@ -240,9 +242,9 @@ public class SafeSpotTeleport {
                                 //plugin.getLogger().info("DEBUG: safe spot not found");
                                 if (entity instanceof Player) {
                                     if (!failureMessage.isEmpty()) {
-                                        ((Player)entity).sendMessage(failureMessage);
+                                        Util.sendMessage(((Player)entity), failureMessage);
                                     } else {
-                                        ((Player)entity).sendMessage(ChatColor.RED + plugin.myLocale(((Player)entity).getUniqueId()).warpserrorNotSafe);
+                                        Util.sendMessage(((Player)entity), ChatColor.RED + plugin.myLocale(((Player)entity).getUniqueId()).warpserrorNotSafe);
                                     }
                                 }
                             }});

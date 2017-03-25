@@ -87,9 +87,9 @@ public class CoopPlay {
                 if (!member.equals(requester.getUniqueId())) {
                     Player player = plugin.getServer().getPlayer(member);
                     if (player != null) {
-                        player.sendMessage(ChatColor.GOLD
+                        Util.sendMessage(player, ChatColor.GOLD
                                 + plugin.myLocale(player.getUniqueId()).coopInvited.replace("[name]", requester.getDisplayName()).replace("[player]", newPlayer.getDisplayName()));
-                        player.sendMessage(ChatColor.GOLD + plugin.myLocale(player.getUniqueId()).coopUseExpel);
+                        Util.sendMessage(player, ChatColor.GOLD + plugin.myLocale(player.getUniqueId()).coopUseExpel);
                     } else {
                         if (member.equals(leaderUUID)) {
                             // offline - tell leader

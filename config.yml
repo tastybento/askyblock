@@ -1,8 +1,10 @@
 #############################################################################
-# Config for ASkyblock V${version}
+# Config for ASkyBlock V${version}
+# Maintainer: tastybento
 # It is recommended that you check at least these settings:
 #
 # 1. island distance - the distance between islands. If upgrading set to what you had.
+#    If you change island distance, you MUST reset the world.
 # 2. resetmoney (general section) - set to true so that everyone starts with nothing
 # 3. islandLevel (general section) - the height you want your islands to float
 # 4. protectionRange - how big a player's island is at the start
@@ -21,14 +23,12 @@ island:
    # IF YOU ARE UPGRADING YOU MUST USE YOUR OLD VALUE EXACTLY, E.G., 110
    # OR RESET YOUR WORLD
    # Value must be an even number
-
    distance: 200
 
    # Default protection range (even number). Min = 0, Recommended = 100
-   # Value must be at least 16 blocks less than the island distance.
-   # Use this permission to set for different groups: askyblock.island.range.<number>
    # Larger values will take longer to calculate the island level
    # Admins can change protection sizes for players individually using /asadmin setrange
+   # or set this permission: askyblock.island.range.<number>
    # For optimal performance, keep protection range at leat 16 blocks less than distance.
    protectionRange: 100
 
@@ -40,11 +40,40 @@ island:
    startx: 0
    startz: 0
 
+   # Sea level height (don't changes this mid-game unless you delete the world)
+   # Minimum is 0, which means you are playing sky block!
+   # If sea level is less than about 10, then players will drop right through it
+   # if it exists. Makes for an interesting variation on skyblock.
+   sealevel: 0
+
+   # Island level - the height of the island.
+   # Lowest level is 5
+   islandlevel: 120
+
+   #How many resets a player is allowed (override with /asadmin clearreset <player>
+   #Value of -1 means unlimited, 0 means hardcore - no resets.
+   #Example, 2 resets means they get 2 resets or 3 islands lifetime
+   resetlimit: 2
+
+   #How long a player must wait before they can reset their island again in second
+   resetwait: 300
+
+   #The number of seconds to wait for confirmation of a reset
+   resetconfirmwait: 10
+
+   #How long a player must wait until they can rejoin a team island after being
+   #kicked in minutes. This slows the effectiveness of players repeating challenges
+   #by repetitively being invited to a team island.
+   invitewait: 60
+
    # Default max team size
    # Use this permission to set for specific user groups: askyblock.team.maxsize.<number> 
    # Permission size cannot be less than the default. 
    maxteamsize: 4
-
+   
+   # Island level calculation cool down in seconds
+   levelwait: 60
+   
    # Items that will be in the chest when the player starts an island
    # Must be in Bukkit Materials format. Format is <Material>:<Qty>
    # or <Material>:<Data>:<Qty>
@@ -97,102 +126,10 @@ island:
    # These set the minimum and maximum size of a name. 
    minnamelength: 0
    maxnamelength: 20
-   
-   # Island Protection Settings for Visitors
-   # Players can be given the ability to change all setting using /island settings with the
-   # askyblock.settings.* permission.
-   # Individual permissions can also be given, e.g., askyblock.settings.allowPvP
-   # Full list is:
-   # ANVIL, ARMOR_STAND, BEACON, BED, BREAK_BLOCKS, BREEDING, BREWING, BUCKET, CHEST,
-   # CRAFTING, CROP_TRAMPLE, DOOR, ENCHANTING, ENDERPEARL, FURNACE, GATE, HORSE_INVENTORY, 
-   # HORSE_RIDING, HURT_MOBS, LEASH, LEVER_BUTTON, MUSIC, PLACE_BLOCKS, PORTAL,
-   # PRESSURE_PLATE, PVP, NETHER_PVP, REDSTONE, SHEARING, VILLAGER_TRADING, CHORUS_FRUIT, 
-   # ENTER_EXIT_MESSAGES, MOB_SPAWNING,  VISITOR_ITEM_DROP, VISITOR_ITEM_PICKUP
-   # Permissions are CASE SENSITIVE!
-   
-   # Default island settings that players may be able to adjust if they have permission
-   # TODO: not all of these settings are currently checked for spawn:
-   # armor stand, bed, breeding, bucket, crop trample, enderpearl, hurt mobs, leash
-   # portal, pvp, nether pvp.
-   settings:
-     # Allow anvil use by visitors
-     ANVIL: true
-     # Allow armor stand use by visitors (1.8+ only)
-     ARMOR_STAND: false
-     # Allow beacon use by visitors
-     BEACON: false
-     # Allow visitors to sleep in beds
-     BED: false
-     # Visitors can break blocks or generally damage things
-     BREAK_BLOCKS: false
-     # Allow animal breeding by visitors
-     BREEDING: false
-     # Allow visitors to use cauldrons and brewing stands
-     BREWING: false
-     # Allow visitors to use buckets, either fill or dump them
-     BUCKET: false
-     # Allow visitors to access chests of any kind, droppers, dispensers and hoppers
-     CHEST: false
-     # Allow visitors to use crafting benches
-     CRAFTING: true
-     # Allow visitors to trample crops
-     CROP_TRAMPLE: false
-     # Allow visitors to use doors or trapdoors. Not including redstone activations.
-     DOOR: false
-     # Allow visitors to use enchanting tables
-     ENCHANTING: true
-     # Allow visitors to throw enderpearls and teleport
-     ENDERPEARL: false
-     # Allow visitors to access furnaces
-     FURNACE: false
-     # Allow visitors to use gates
-     GATE: false
-     # Allow visitors access to horse inventories - only works when riding is enabled     
-     HORSE_INVENTORY: false
-     # Allow visitors to ride horses
-     HORSE_RIDING: false
-     # Allow visitors to hurt friendly mobs (cows etc.)
-     HURT_MOBS: true
-     # Allow visitors to use leashes
-     LEASH: false
-     # Allow visitors to use levers or buttons
-     LEVER_BUTTON: false
-     # Allow visitors to use jukeboxes, eject discs and hit note blocks
-     MUSIC: false
-     # Visitors can place blocks
-     PLACE_BLOCKS: false
-     # Allow portal use by visitors
-     PORTAL: true
-     # Allow pressure plate activation by visitors (players only)
-     PRESSURE_PLATE: false
-     # Allow PVP in the overworld
-     # If a player sets PVP, everyone on the island is given a warning
-     PVP: false
-     # Allow PVP in the nether world
-     NETHER_PVP: false
-     # Allow monsters to spawn on island
-     MONSTER_SPAWN: true
-     # Allow visitors to adjust diodes or comparators
-     REDSTONE: false
-     # Allow visitors to shear sheep
-     SHEARING: false
-     # Allow visitors to trade with villagers
-     VILLAGER_TRADING: true
-     # Allow visitors to teleport when eating chorus fruit
-     CHORUS_FRUIT: false
-     # Enable or disable join/leave messages from the player's island
-     ENTER_EXIT_MESSAGES: true
-     # Allow mobs to spawn on player's island
-     MOB_SPAWNING: true
-     # Allow item drop by visitors
-     VISITOR_ITEM_DROP: true
-     # Allow item pickup by visitors
-     VISITOR_ITEM_PICKUP: true
-   
-   # PVP cooldown in seconds. Players cannot toggle PVP off and on until this timeout
-   pvpcooldown: 60
-   
-   # How many seconds will the player keeps his flymode while flying outside his island.
+      
+   # Players with askyblock.islandfly permission can fly on their island. This setting is
+   # how many seconds the player keeps fly mode while flying outside his island before it
+   # is removed (and they fall).
    # Negative value will be considered as 0.
    flytimeoutside: 0
    
@@ -202,11 +139,6 @@ island:
    #- "amazing.permission"
    
    # System settings - these cannot be changed by players, only viewed
-   
-   # Allow monsters to be hurt (creepers,slimes, etc.)
-   # Don't change this to false unless you accept that island visitors will not be
-   # able to defend themselves!
-   allowhurtmonsters: true
    # Allow Enderman Griefing (default is to allow, see next setting)
    allowendermangriefing: true
    # Make enderman drop the block he is holding if he dies (recommended)
@@ -217,12 +149,6 @@ island:
    allowcreepergriefing: false 
    # Allow TNT damage to blocks (stops players using TNT to destroy other's islands)
    allowtntdamage: false
-   # Allow spawn egg use
-   allowspawneggs: true
-   # Allow use of Flint & Steel by visitors
-   allowfire: false
-   # Allow fire spread (global - not just for visitors)
-   allowfirespread: false
    # Allow fire extinguishing by visitors
    allowfireextinguish: false
    # Allow chests to be blown up by creepers or TNT
@@ -236,25 +162,22 @@ island:
 
 # General Settings
 general:
+   # Name of the world - if it does not exist then it will be generated
+   worldName: ASkyBlock
+
+   # Default language for new players.
+   # This is the filename in the locale folder without .yml.
+   # If this does not exist, the default en-US will be used.
+   defaultlanguage: en-US
+   
    # Check for updates - this will tell Ops and the console if there is a new
    # version available. It contacts dev.bukkit.org to request the latest version
    # info. It does not download the latest version or change any files
    checkupdates: true
-
-   # Sea level height (don't changes this mid-game unless you delete the world)
-   # Minimum is 0, which means you are playing sky block!
-   # If sea level is less than about 10, then players will drop right through it
-   # if it exists. Makes for an interesting variation on sky block.
-   sealevel: 0
-
-   # Island level - the height of the island.
-   # Height should not be lower than sea level, but can be if you have an
-   # island schematic that supports it
-   # Lowest level is 5
-   islandlevel: 120
-
-   # Name of the world - if it does not exist then it will be generated
-   worldName: ASkyBlock
+   
+   # Show enter/exit notices in Action Bar (11.1+)
+   # Only shows if notices are enabled in settings
+   showinactionbar: true
    
    # Maximum number of islands. Set to 0 for unlimited. 
    # If the number of islands is greater than this number, no new islands will be
@@ -264,6 +187,7 @@ general:
    # Use the control panel as the default display for /island
    # /island will always create an island if one does not exist
    # If the control panel is not used, then /island will teleport the player home
+   # Players can change this setting using /island cp on or /island cp off
    usecontrolpanel: false
 
    # Create Nether - if this is false, the nether world will not be made and access to
@@ -281,34 +205,16 @@ general:
    # Make the new nether roof, if false, there is nothing up there
    # Change to false if lag is a problem from the generation
    netherroof: true 
-
-   #How long a player must wait before they can reset their island again in second
-   resetwait: 300
-
-   #The number of seconds to wait for confirmation of a reset
-   resetconfirmwait: 10
-
-   #How long a player must wait until they can rejoin a team island after being
-   #kicked in minutes. This slows the effectiveness of players repeating challenges
-   #by repetitively being invited to a team island.
-   invitewait: 60
-
-   # Use new level calculation (super speedy). Set to false if you want the old
-   # method (slower).
-   fastlevelcalc: true
+   # Nether spawn protection radius - this is the distance around the nether spawn
+   # that will be protected from player interaction (breaking blocks, pouring lava etc.)
+   # Minimum is 0 (not recommended), maximum is 100. Default is 25.
+   # Only applies to standard nether.
+   netherspawnradius: 25
    
-   # Island level calculation cool down in seconds
-   levelwait: 60
-
    # Calculate level on login
    # If true, the plugin will run the level command for the player when they login
    # If the command is busy, it will fail silently
    loginlevel: false
-
-   #How many resets a player is allowed (override with /asadmin clearreset <player>
-   #Value of -1 means unlimited, 0 means hardcore - no resets.
-   #Example, 2 resets means they get 2 resets or 3 islands lifetime
-   resetlimit: 2
 
    #Commands to run when the player resets their island (uncomment and customize)
    # [player] is the player name of who is reseting
@@ -341,9 +247,9 @@ general:
    - spawner
    - spawnmob
 
-   # Ops receive damage from acid (Set to true if you want Ops to play properly)
-   damageops: false
-   
+   # PVP cooldown in seconds. Players cannot toggle PVP off and on until this timeout
+   pvpcooldown: 60
+
    # Invincible visitors - Prevent players from killing them (intentionally or by accident)
    # If they fall to the void, they get TP'd to their island.
    invinciblevisitors: false
@@ -380,6 +286,8 @@ general:
    # 1.11+ only
    - CRAMMING
 
+   # Acid Section - for AcidIsland, but can be used in ASkyBlock as well.
+   #
    # Acid damage to player per second by being in acid if they have no armor on.
    # A fully health player has 20 health points. Players will regen some health
    # so the default will give players about 3 seconds to get out the acid
@@ -398,7 +306,13 @@ general:
    # be on for this setting to work. i.e., it'll work with water too.
    # Items fizz when they are destroyed.
    itemdestroyafter: 0
-
+   # Ops receive damage from acid (Set to true if you want Ops to play properly)
+   damageops: false
+   # Armor protection.
+   # Protect players from acid rain if they have a helmet on
+   helmetprotection: true
+   # Protect players from all acid if they have a full set of armor on
+   fullarmorprotection: false
    # Damage type to apply in addition to acid damage
    # Types can be : SLOW, SLOW_DIGGING, CONFUSION,BLINDNESS, HUNGER, WEAKNESS and POISON
    # If you just want these to act, then make the acid damage 0 above
@@ -416,12 +330,11 @@ general:
    islandremovemobs: false
    
    # Mob white list - these mobs will NOT be removed when logging in or doing /island
-   # Options are: Blaze, Cave_Spider, Creeper, Enderman, Endermite, Giant, Guardian,
-   # Pig_Zombie, Silverfish, Skeleton, Spider, Witch, Wither, Zombie
    mobwhitelist:
-   - Wither
-   - Enderman
-   - Pig_Zombie
+   - WITHER
+   - ENDERMAN
+   - PIG_ZOMBIE
+   #- ZOMBIE_VILLAGER
 
    # Sets the limit for number of monsters that can spawn in a chunk in this world. 
    # Note: this does not limit the number of monsters, just how many spawn naturally.
@@ -555,6 +468,13 @@ general:
    # kicked player is online and in the island world.
    kickedkeepinv: false
 
+   # Kicked or leaving players lose resets
+   # Players who leave a team will lose an island reset chance
+   # If a player has zero resets left and leaves a team, they cannot make a new
+   # island by themselves and can only join a team.
+   # Leave this true to avoid players exploiting free islands
+   leaversloseresets: true
+   
    # Reset Ender Chest - if true, the player's Ender Chest will be cleared when they
    # start or restart their island. Default is false.
    # NOTE: Ender Chests span worlds, so it will clear ALL chests. In general,
@@ -562,16 +482,6 @@ general:
    # world. Ender Chest crafting and use is governed by the askyblock.craft.enderchest
    # permission.
    resetenderchest: false
-
-   # Nether spawn protection radius - this is the distance around the nether spawn
-   # that will be protected from player interaction (breaking blocks, pouring lava etc.)
-   # Minimum is 0 (not recommended), maximum is 100. Default is 25.
-   # Only applies to standard nether.
-   netherspawnradius: 25
-
-   # Broadcast 1st time challenge completion messages to all players.
-   # Change to false if the spam becomes too much.
-   broadcastmessages: true
 
    # Allow /island teleport when falling. If set to false, all teleporting is
    # disabled until death from the void or until you hit something.
@@ -584,17 +494,15 @@ general:
    #- andAnotherOne
    #- "*"
 
+   # Broadcast 1st time challenge completion messages to all players.
+   # Change to false if the spam becomes too much.
+   broadcastmessages: true
+
    # Remove non-repeatable challenges from the challenge GUI when complete
    removecompleteonetimechallenges: false
 
-   # Add enchanted glow to completed challenges (does not work with all clients)
-   # Also currently adds an "enchanted" line of text...
+   # Add enchanted glow to completed challenges
    addcompletedglow: true
-
-   # Use physics when pasting schematic blocks. If this is false, then blocks
-   # like water will not flow from the schematic
-   # Set schematic-specific options in the schematicsection
-   usephysics: false
    
    # Default maximum number of homes a player can have. Min = 1
    # Accessed via sethome <number> or go <number>
@@ -622,11 +530,17 @@ general:
    logteamchat: true
 
    # Variables to use as chat prefixes. You can change them to be what you want.
-   # "{ISLAND_LEVEL}" is replaced by the player's island level.
-   # "{ISLAND_CHALLENGE_LEVEL}" is replaced by the player's challenge level.
+   # {ISLAND_LEVEL} is replaced by the player's island level.
+   # {ISLAND_CHALLENGE_LEVEL} is replaced by the player's challenge level.
+   # {ISLAND_PLAYER} is replaced by the player's display name
    # Confirmed to work with Essentials Chat, Multiverse Core and Herochat.
+   # Do not use these in PEX prefixes - it doesn't work.
    chatlevelprefix: "{ISLAND_LEVEL}"
    chatchallengelevelprefix: "{ISLAND_CHALLENGE_LEVEL}"
+   chatislandplayer: "{ISLAND_PLAYER}"
+   # Displays the island level {ISLAND_LEVEL} with a XX.Xk pattern in chat
+   # e.g : [23.5k] instead of [23562]
+   fancylevelinchat: false
      
    # Restrict Wither and other flying mobs
    # Any flying mobs that exit the island space where they were spawned will be removed.
@@ -693,6 +607,10 @@ general:
    # Default is false, because it highly changes the gameplay.
    usemagiccobblegen: false
    
+   # If set to true, Magic Cobblestone Generator will only work at spawn
+   # Beware! Spawn MUST be in the same world that islands to work.
+   magiccobblegenonlyatspawn: false
+   
    # This won't be considered if usemagiccobblegen is set to false.
    # You can add, remove a block or modify its probability to be generated.
    # You can also set different probabilities from specified minimum levels
@@ -720,110 +638,170 @@ general:
    # Default is false
    disableofflineredstone: false
    
-   # Displays the island level with a XX.Xk pattern
-   # e.g : [23.5k] Player instead of [23562] Player.
-   fancylevelinchat: false
-   
    # Config.yml version. DO NOT EDIT. This number only changes if the latest
    # plugin config has been updated. If a new config is detected, it will be
    # auto-saved to config.new.yml.
    version: ${version}
-
-# Default spawn protection settings. Once spawn is made, the GUI determines the settings.
-spawn:
-  # Acid is damage above sea level
-  ACID_DAMAGE: false
-  # Allow anvil use by visitors
-  ANVIL: true
-  # Allow armor stand use by visitors (1.8+ only)
-  ARMOR_STAND: false
-  # Allow beacon use by visitors
-  BEACON: false
-  # Allow visitors to sleep in beds
-  BED: false
-  # Visitors can break blocks or generally damage things
-  BREAK_BLOCKS: false
-  # Allow animal breeding by visitors
-  BREEDING: false
-  # Allow visitors to use cauldrons and brewing stands
-  BREWING: true
-  # Collect Lava
-  COLLECT_LAVA: false
-  # Collect water
-  COLLECT_WATER: false
-  # Allow visitors to access chests of any kind, droppers, dispensers and hoppers
-  CHEST: true
-  # Allow visitors to eat/use chorus fruit
-  CHORUS_FRUIT: false
-  # Allow visitors to use crafting benches
-  CRAFTING: true
-  # Allow creepers to hurt players (but not damage blocks)
-  CREEPER_PAIN: false
-  # Allow visitors to trample crops
-  CROP_TRAMPLE: false
-  # Allow visitors to use doors or trapdoors. Not including redstone activations.
-  DOOR: true
-  # Chicken eggs can be thrown
-  EGGS: false
-  # Allow visitors to use enchanting tables
-  ENCHANTING: true
-  # Allow visitors to throw enderpearls and teleport
-  ENDERPEARL: false
-  # Can extinguish fires by punching them
-  FIRE_EXTINGUISH: false
-  # Allow visitors to access furnaces
-  FURNACE: true
-  # Allow visitors to use gates
-  GATE: false
-  # Allow visitors access to horse inventories - only works when riding is enabled  
-  HORSE_INVENTORY: false
-  # Allow visitors to ride horses
-  HORSE_RIDING: false
-  # Allow visitors to hurt friendly mobs (cows etc.)
-  HURT_MOBS: false
-  # Allow visitors to hurt monsters
-  HURT_MONSTERS: true
-  # Allow visitors to use leashes
-  LEASH: false
-  # Allow visitors to use levers or buttons
-  LEVER_BUTTON: true
-  # Allow visitors to use jukeboxes, eject discs and hit note blocks
-  MUSIC: true
-  # Visitors can place blocks
-  PLACE_BLOCKS: false
-  # Allow portal use by visitors
-  PORTAL: true
-  # Allow pressure plate activation by visitors (players only)
-  PRESSURE_PLATE: true
-  # Allow PVP in the overworld
-  # If a player sets PVP, everyone on the island is given a warning
-  PVP: false
-  # Allow PVP in the nether world
-  NETHER_PVP: false
-  # Cows can be milked
-  MILKING: true
-  # Animals, etc. can spawn naturally
-  MOB_SPAWN: false
-  # Allow monsters to spawn naturally
-  MONSTER_SPAWN: false
-  # Allow visitors to adjust diodes or comparators
-  REDSTONE: false
-  # Spawn eggs can be used
-  SPAWN_EGGS: false
-  # Allow visitors to shear sheep
-  SHEARING: false
-  # Allow visitors to trade with villagers
-  VILLAGER_TRADING: true
-  # Allow visitors to teleport when eating chorus fruit
-  CHORUS_FRUIT: false
-  # Enable or disable join/leave messages from the player's island
-  ENTER_EXIT_MESSAGES: true
-  # Allow mobs to spawn on player's island
-  MOB_SPAWNING: true
-  # Allow item drop by visitors
-  VISITOR_ITEM_DROP: true
-  # Allow item pickup by visitors
-  VISITOR_ITEM_PICKUP: true
+   
+# Protection settings
+protection:
+   # Protection Setting Flags:
+   # ACID_DAMAGE, ANVIL, ARMOR_STAND, BEACON, BED, BREAK_BLOCKS, BREEDING, BREWING, 
+   # BUCKET, COLLECT_LAVA, COLLECT_WATER, CHEST, CHORUS_FRUIT, CRAFTING, CROP_TRAMPLE, 
+   # DOOR, EGGS, ENCHANTING, ENDER_PEARL, ENTER_EXIT_MESSAGES, FIRE, FIRE_EXTINGUISH, 
+   # FIRE_SPREAD, FURNACE, GATE, HORSE_INVENTORY, HORSE_RIDING, HURT_MOBS, LEASH,
+   # LEVER_BUTTON, MOB_SPAWN, MUSIC, PLACE_BLOCKS, PORTAL, PRESSURE_PLATE, PVP,
+   # MILKING, NETHER_PVP, REDSTONE, SPAWN_EGGS, SHEARING, VILLAGER_TRADING,
+   # VISITOR_ITEM_DROP, VISITOR_ITEM_PICKUP
+   #
+   # Players can be given the ability to change settings in the GUI with permissions
+   # e.g. askyblock.settings.PVP or all settings with askyblock.settings.*
+   # Permissions are CASE SENSITIVE!
+   #
+   # -- World defaults --
+   # Applies everywhere and are the default for islands and spawn.
+   # If not listed, default is false.
+   # Changing a setting here will only affect new islands. Use /asadmin settingsreset
+   # to reset individual or all settings across all islands. See /asadmin settingsreset help.
+   world:
+     # Acid causes damage above sea-level (if acid is active)
+     ACID_DAMAGE: true
+     # Allow anvil use
+     ANVIL: false
+     # Allow armor stand use (1.8+ only)
+     ARMOR_STAND: false
+     # Allow beacon use
+     BEACON: false
+     # Allow bed use
+     BED: false
+     # Players can break blocks or generally damage things
+     BREAK_BLOCKS: false
+     # Allow animal breeding
+     BREEDING: false
+     # Allow use of cauldrons and brewing stands
+     BREWING: false
+     # Allow use of buckets, either fill or dump them
+     BUCKET: false
+     # Collect Lava (overrides BUCKET setting for collecting lava)
+     COLLECT_LAVA: false
+     # Collect water (overrides BUCKET setting for collecting water)
+     COLLECT_WATER: false
+     # Allow access chests of any kind, droppers, dispensers and hoppers
+     CHEST: false
+     # Allow eating or use of chorus fruit
+     CHORUS_FRUIT: false
+     # Allow use of crafting benches
+     CRAFTING: true
+     # Allow creepers to hurt players (but not damage blocks)
+     CREEPER_PAIN: true
+     # Allow crop trampling
+     CROP_TRAMPLE: false
+     # Allow use of doors or trapdoors. Not including redstone activations.
+     DOOR: true
+     # Allow chicken egg throwing
+     EGGS: false
+     # Allow use of enchanting tables
+     ENCHANTING: true
+     # Allow enderpearl throwing
+     ENDER_PEARL: false
+     # Enable or disable join/leave messages from the player's island
+     ENTER_EXIT_MESSAGES: true
+     # Allow fire (flint & steel use, TNT priming) Making portals is allowed.
+     FIRE: false
+     # Can extinguish fires by punching them
+     FIRE_EXTINGUISH: false
+     # Allow fire spreading
+     FIRE_SPREAD: false
+     # Allow furnace use
+     FURNACE: true
+     # Allow gate use
+     GATE: false
+     # Allow horse/llama inventory use - only works when riding is enabled     
+     HORSE_INVENTORY: false
+     # Allow riding of horses/llamas
+     HORSE_RIDING: false
+     # Allow friendly mob hurting(cows etc.)
+     HURT_MOBS: false
+     # Allow monsters hurting
+     HURT_MONSTERS: true
+     # Allow leash use
+     LEASH: false
+     # Allow lever or button use
+     LEVER_BUTTON: true
+     # Cows can be milked
+     MILKING: true
+     # Animals, etc. can spawn naturally
+     MOB_SPAWN: true
+     # Allow monsters to spawn naturally
+     MONSTER_SPAWN: true
+     # Allow use of jukeboxes and note blocks
+     MUSIC: false
+     # Allow PVP in the nether world
+     NETHER_PVP: false
+     # Players can place blocks
+     PLACE_BLOCKS: false
+     # Allow portal use
+     PORTAL: true
+     # Allow pressure plate activation by players
+     PRESSURE_PLATE: true
+     # Allow PVP in the overworld
+     PVP: false
+     # Allow adjustment of diodes or comparators
+     REDSTONE: false
+     # Spawn eggs can be used
+     SPAWN_EGGS: false
+     # Allow sheep shearing
+     SHEARING: false
+     # Allow trading with villagers
+     VILLAGER_TRADING: true
+     # Allow item drop
+     VISITOR_ITEM_DROP: true
+     # Allow item pickup
+     VISITOR_ITEM_PICKUP: true
+   # -- Island Settings --
+   # Settings for islands. Some are for visitors, some for the island itself.
+   # If setting is not listed, it will not show in GUI and the world default will be used.
+   # Add settings here to give the player the ability to see them in the GUI. Give the
+   # player the permission for the setting for them to be able to change the setting.
+   island:
+     # Allow visitor anvil use
+     ANVIL: true
+     # Allow visitor armor stand use (1.8+ only)
+     ARMOR_STAND: false
+     # Allow visitor beacon use
+     BEACON: false
+     # Allow visitor bed use
+     BED: false
+     # Allow visitor block breaking, or other damage
+     BREAK_BLOCKS: false
+     # Allow visitor animal breeding
+     BREEDING: false
+     # Allow visitor use of cauldrons and brewing stands
+     BREWING: false
+     # Allow visitor access chests of any kind, droppers, dispensers and hoppers
+     CHEST: false
+     # Allow visitors to use crafting benches
+     CRAFTING: true
+     # Allow visitor use of doors or trapdoors. Not including redstone activations.
+     DOOR: true
+     # Allow visitor chicken egg throwing
+     EGGS: false
+     # Allow visitors to use enchanting tables
+     ENCHANTING: true
+     # Allow visitor furnace use
+     FURNACE: true
+     # Allow gate use
+     GATE: true
+     # Allow use of jukeboxes and note blocks
+     MUSIC: false
+     # Allow portal use by visitors
+     PORTAL: true
+     # Allow pressure plate activation by visitors (players only)
+     PRESSURE_PLATE: false
+     # Allow adjustment of diodes or comparators
+     REDSTONE: false
+     # Allow visitors to shear sheep
+     SHEARING: false
 
 # This section contains the biomes that can be bought or used
 biomesettings:
@@ -858,6 +836,7 @@ biomes:
     friendlyname: "&eDesert"
     description: "&eA dry desert.|&eWarning - Ice or|&esnow have to go."
     #permission: any.perm.you.want
+  # Change MUTATED_FOREST to FLOWER_FOREST if you use an old server version
   MUTATED_FOREST:
     icon: RED_ROSE
     friendlyname: "&aFlower Forest"
@@ -929,7 +908,7 @@ schematicsection:
   # Hack skeleton spawners to also spawn wither skeletons in 1.11. This helps with
   # older schematics that do not have explicit wither skeleton spawners. This setting
   # is ignored by older servers.
-  hackskeletonspawners: true
+  hackskeletonspawners: false
   
   # This section lists all the schematics available
   # Settings are:

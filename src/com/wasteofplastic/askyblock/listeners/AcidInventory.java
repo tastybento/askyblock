@@ -176,7 +176,7 @@ public class AcidInventory implements Listener {
                 plugin.getLogger().info(e.getPlayer().getName() + " " + plugin.myLocale().drankAcidAndDied);
                 if (!Settings.muteDeathMessages) {
                     for (Player p : plugin.getServer().getOnlinePlayers()) {
-                        p.sendMessage(e.getPlayer().getDisplayName() + " " + plugin.myLocale(p.getUniqueId()).drankAcid);
+                        Util.sendMessage(p, e.getPlayer().getDisplayName() + " " + plugin.myLocale(p.getUniqueId()).drankAcid);
                     }
                 }
                 final ItemStack item = new ItemStack(Material.GLASS_BOTTLE);

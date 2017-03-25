@@ -18,7 +18,6 @@
 package com.wasteofplastic.askyblock;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -187,11 +186,15 @@ public class Island implements Cloneable {
         /**
          * Can throw ender pearls
          */
-        ENDERPEARL,
+        ENDER_PEARL,
         /**
          * Can toggle enter/exit names to island
          */
         ENTER_EXIT_MESSAGES,
+        /**
+         * Fire use/placement in general
+         */
+        FIRE,
         /**
          * Can extinguish fires by punching them
          */
@@ -235,6 +238,10 @@ public class Island implements Cloneable {
         /**
          * Animals, etc. can spawn
          */
+        MILKING,
+        /**
+         * Can do PVP in the nether
+         */
         MOB_SPAWN,
         /**
          * Monsters can spawn
@@ -246,6 +253,10 @@ public class Island implements Cloneable {
         MUSIC,
         /**
          * Can place blocks
+         */
+        NETHER_PVP,
+        /**
+         * Can interact with redstone items, like diodes
          */
         PLACE_BLOCKS,
         /**
@@ -262,14 +273,6 @@ public class Island implements Cloneable {
         PVP,
         /**
          * Cows can be milked
-         */
-        MILKING,
-        /**
-         * Can do PVP in the nether
-         */
-        NETHER_PVP,
-        /**
-         * Can interact with redstone items, like diodes
          */
         REDSTONE,
         /**
@@ -401,7 +404,7 @@ public class Island implements Cloneable {
             }
         }
     }
-    
+
     /**
      * Reset spawn protection settings to their default as set in config.yml for this island
      */
@@ -989,11 +992,13 @@ public class Island implements Cloneable {
     }
 
     /**
-     * Sets the settings for the island. If the island is spawn, then default spawn settings will be used
+     * Sets the settings for the island.
      * @param settings
      * @param settingsKey
      */
     public void setSettings(String settings, List<String> settingsKey) {
+
+        // Start with defaults
         if (isSpawn) {
             setSpawnDefaults();
         } else {
@@ -1001,36 +1006,16 @@ public class Island implements Cloneable {
         }
         if(settings == null || settings.isEmpty())
             return;
-        // Parse the 8th string into island guard protection settings
-        // Try to get key from settingsKey
-        if (settingsKey.isEmpty() && settings.length() == LegacySettingsFlag.values().length) {
-            // Legacy settings V3.0.5.3 and before
-            int index = 0;
-            // Run through the enum and set
-            for (LegacySettingsFlag f : LegacySettingsFlag.values()) {
-                if (settings.length() == index) {
-                    break;
-                }
-                // Convert to new SettingsFlag enum
-                SettingsFlag flag = SettingsFlag.valueOf(f.name());
-                this.igs.put(flag, settings.charAt(index++) == '1' ? true : false);
+        if (settingsKey.size() != settings.length()) {
+            plugin.getLogger().severe("Island settings does not match settings key in islands.yml. Using defaults.");
+            return;
+        }
+        for (int i = 0; i < settingsKey.size(); i++) {
+            if (settings.charAt(i) == '0') {
+                this.setIgsFlag(SettingsFlag.valueOf(settingsKey.get(i)), false);
+            } else {
+                this.setIgsFlag(SettingsFlag.valueOf(settingsKey.get(i)), true);
             }
-        } else {
-            // Post V3.0.6
-            if (!settingsKey.isEmpty()) {
-                // Normal operation
-                int index = 0;
-                // Run through the enum and set
-                for (String f : settingsKey) {
-                    // Convert to new SettingsFlag enum
-                    try {
-                        SettingsFlag flag = SettingsFlag.valueOf(f);
-                        this.igs.put(flag, settings.charAt(index++) == '1' ? true : false);
-                    } catch (Exception e) {
-                        // Does not exist
-                    }
-                }
-            } // else, just use the defaults
         }
 
     }

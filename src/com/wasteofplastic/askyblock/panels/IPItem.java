@@ -19,9 +19,12 @@ package com.wasteofplastic.askyblock.panels;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -66,30 +69,12 @@ public class IPItem {
     }
 
     /**
-     * Item with a toggle settings. Description will be MATERIAL + "use"
-     * @param flagValue
-     * @param material
-     */
-    public IPItem(boolean flagValue, Material material) {
-        createToggleableItem(flagValue, material, 0, Util.prettifyText(material.toString()) + " use");
-    }
-
-    /**
-     * @param flagValue
-     * @param material
-     * @param durability
-     */
-    public IPItem(boolean flagValue, Material material, int durability) {
-        createToggleableItem(flagValue, material, durability, Util.prettifyText(material.toString()) + " use");
-    }
-
-    /**
      * @param flagValue
      * @param material
      * @param name
      */
-    public IPItem(boolean flagValue, Material material, String name) {
-        createToggleableItem(flagValue, material, 0, name);
+    public IPItem(boolean flagValue, Material material, String name, UUID uuid) {
+        createToggleableItem(flagValue, material, 0, name, uuid);
     }
 
     /**
@@ -98,11 +83,15 @@ public class IPItem {
      * @param durability
      * @param name
      */
-    public IPItem(boolean flagValue, Material material, int durability, String name) {
-        createToggleableItem(flagValue, material, durability, name);
+    public IPItem(boolean flagValue, Material material, int durability, String name, UUID uuid) {
+        createToggleableItem(flagValue, material, durability, name, uuid);
     }
 
-    private void createToggleableItem(boolean flagValue, Material material, int durability, String name) {
+    public IPItem(Boolean boolean1, Material material, String name, UUID uuid) {
+        createToggleableItem(flagValue, material, 0, name, uuid);
+    }
+
+    private void createToggleableItem(boolean flagValue, Material material, int durability, String name, UUID uuid) {
         this.flagValue = flagValue;
         this.slot = -1;
         this.name = name;
@@ -113,11 +102,22 @@ public class IPItem {
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(ChatColor.WHITE + name);
         if (flagValue) {
-            description.add(ChatColor.GREEN + ASkyBlock.getPlugin().myLocale().igsAllowed);
+            if (uuid == null)
+                description.add(ChatColor.GREEN + ASkyBlock.getPlugin().myLocale().igsAllowed);
+            else
+                description.add(ChatColor.GREEN + ASkyBlock.getPlugin().myLocale(uuid).igsAllowed);
         } else {
-            description.add(ChatColor.RED + ASkyBlock.getPlugin().myLocale().igsDisallowed);
+            if (uuid == null)
+                description.add(ChatColor.RED + ASkyBlock.getPlugin().myLocale().igsDisallowed);
+            else
+                description.add(ChatColor.RED + ASkyBlock.getPlugin().myLocale(uuid).igsDisallowed);
         }
         meta.setLore(description);
+        // Remove extraneous info
+        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+        meta.addItemFlags(ItemFlag.HIDE_DESTROYS);
+        meta.addItemFlags(ItemFlag.HIDE_PLACED_ON);
+        meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         item.setItemMeta(meta);
     }
 

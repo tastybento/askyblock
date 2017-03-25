@@ -173,7 +173,7 @@ public class Messages {
             // getLogger().info("DEBUG: trying UUID " + member.toString());
             if (!member.equals(playerUUID) && plugin.getServer().getPlayer(member) != null) {
                 // Online player
-                plugin.getServer().getPlayer(member).sendMessage(message);
+                Util.sendMessage(plugin.getServer().getPlayer(member), message);
             }
         }
     }
@@ -191,12 +191,20 @@ public class Messages {
         // Check if player is online
         if (player != null) {
             if (player.isOnline()) {
-                // player.sendMessage(message);
+                // Util.sendMessage(player, message);
                 return false;
             }
         }
-        // Player is offline so store the message
-        // getLogger().info("DEBUG: player is offline - storing message");
+        storeMessage(playerUUID, message);
+        return true;
+    }
+
+    /**
+     * Stores a message without any online check
+     * @param playerUUID
+     * @param message
+     */
+    public void storeMessage(UUID playerUUID, String message) {
         List<String> playerMessages = get(playerUUID);
         if (playerMessages != null) {
             playerMessages.add(message);
@@ -204,7 +212,5 @@ public class Messages {
             playerMessages = new ArrayList<String>(Arrays.asList(message));
         }
         put(playerUUID, playerMessages);
-        return true;
     }
-
 }

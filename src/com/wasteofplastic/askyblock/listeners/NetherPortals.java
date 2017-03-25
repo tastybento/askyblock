@@ -37,6 +37,7 @@ import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.world.StructureGrowEvent;
+import org.bukkit.metadata.MetadataValue;
 import org.bukkit.util.Vector;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
@@ -47,6 +48,7 @@ import com.wasteofplastic.askyblock.SafeSpotTeleport;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.commands.IslandCmd;
 import com.wasteofplastic.askyblock.schematics.Schematic;
+import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
 public class NetherPortals implements Listener {
@@ -132,17 +134,14 @@ public class NetherPortals implements Listener {
         }
         // Check if player has permission
         Island island = plugin.getGrid().getIslandAt(currentLocation);
-        if ((island == null && !Settings.defaultIslandSettings.get(SettingsFlag.PORTAL)) 
-                || (island != null && !island.getIgsFlag(SettingsFlag.PORTAL))) {
-            // Portal use is disallowed for visitors, but okay for ops or bypass
-            // mods
-            if (event.getPlayer().isOp() || VaultHelper.checkPerm(event.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
+        if ((island == null && !Settings.defaultWorldSettings.get(SettingsFlag.PORTAL)) 
+                || (island != null && !(island.getIgsFlag(SettingsFlag.PORTAL) || island.getMembers().contains(event.getPlayer().getUniqueId())))) {
+            // Portals use is not allowed
+            if (!event.getPlayer().isOp() && !VaultHelper.checkPerm(event.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
+                Util.sendMessage(event.getPlayer(), ChatColor.RED + plugin.myLocale(event.getPlayer().getUniqueId()).islandProtected);
+                event.setCancelled(true);
                 return;
             }
-            // Portals use is not allowed
-            event.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(event.getPlayer().getUniqueId()).islandProtected);
-            event.setCancelled(true);
-            return;
         }
         // Determine what portal it is
         switch (event.getCause()) {
@@ -159,7 +158,7 @@ public class NetherPortals implements Listener {
                         // end_place.getBlock().getType(),end_place.getBlock().getData());
                         return;
                     } else {
-                        event.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(event.getPlayer().getUniqueId()).warpserrorNotSafe);
+                        Util.sendMessage(event.getPlayer(), ChatColor.RED + plugin.myLocale(event.getPlayer().getUniqueId()).warpserrorNotSafe);
                         plugin.getGrid().homeTeleport(event.getPlayer());
                         return;
                     }
@@ -243,7 +242,7 @@ public class NetherPortals implements Listener {
                             } else {
                                 plugin.getLogger().severe("Cannot teleport player to nether because there is no nether schematic");
                                 event.setCancelled(true);
-                                event.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(event.getPlayer().getUniqueId()).warpserrorNotSafe);
+                                Util.sendMessage(event.getPlayer(), ChatColor.RED + plugin.myLocale(event.getPlayer().getUniqueId()).warpserrorNotSafe);
                                 return;
                             }
                         }
@@ -251,6 +250,24 @@ public class NetherPortals implements Listener {
                     if (DEBUG)
                         plugin.getLogger().info("DEBUG: Teleporting to " + event.getFrom().toVector().toLocation(ASkyBlock.getNetherWorld()));
                     event.setCancelled(true);
+                    // Find out if there's a spawn point in the bedrock
+                    // TODO: use different location to store this info
+                    /*
+                    if (netherIsland.getBlock().hasMetadata("playerSpawn")) {
+                        for (MetadataValue meta : netherIsland.getBlock().getMetadata("playerSpawn")) {
+                            if (meta.getOwningPlugin().equals(plugin)) {
+                                Location spawnLoc = Util.getLocationString(meta.asString());
+                                if (spawnLoc != null) {
+                                    plugin.getGrid();
+                                    if (GridManager.isSafeLocation(spawnLoc)) {
+                                        event.getPlayer().teleport(spawnLoc);
+                                        return;
+                                    }
+                                }
+                            }
+                        } 
+                    }
+                    */
                     // Teleport using the new safeSpot teleport
                     new SafeSpotTeleport(plugin, event.getPlayer(), netherIsland);
                     return;
@@ -301,7 +318,7 @@ public class NetherPortals implements Listener {
             if (DEBUG)
                 plugin.getLogger().info("Block break in island nether");
             if (!awayFromSpawn(e.getPlayer()) && !e.getPlayer().isOp()) {
-                e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).netherSpawnIsProtected);
+                Util.sendMessage(e.getPlayer(), plugin.myLocale(e.getPlayer().getUniqueId()).netherSpawnIsProtected);
                 e.setCancelled(true);
             }
         }

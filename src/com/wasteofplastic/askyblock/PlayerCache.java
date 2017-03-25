@@ -24,9 +24,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import com.google.common.collect.Lists;
@@ -48,25 +46,29 @@ public class PlayerCache {
         this.plugin = plugin;
         // final Collection<? extends Player> serverPlayers =
         // Bukkit.getServer().getOnlinePlayers();
-        for (Player p : getOnlinePlayers()) {
-            if (p.isOnline()) {
-                final Players playerInf = new Players(plugin, p.getUniqueId());
-                // Make sure parties are working correctly
-                if (playerInf.inTeam() && playerInf.getTeamIslandLocation() == null) {
-                    final Players leaderInf = new Players(plugin, playerInf.getTeamLeader());
-                    playerInf.setTeamIslandLocation(leaderInf.getIslandLocation());
-                    playerInf.save();
-                }
-                // Add this player to the online cache
-                playerCache.put(p.getUniqueId(), playerInf);
+        for (Player p : plugin.getServer().getOnlinePlayers()) {
+            final Players playerInf = new Players(plugin, p.getUniqueId());
+            // Make sure parties are working correctly
+            if (playerInf.inTeam() && playerInf.getTeamIslandLocation() == null) {
+                final Players leaderInf = new Players(plugin, playerInf.getTeamLeader());
+                playerInf.setTeamIslandLocation(leaderInf.getIslandLocation());
+                playerInf.save();
             }
+            // Add this player to the online cache
+            //plugin.getLogger().info("DEBUG: added player " + p.getUniqueId());
+            playerCache.put(p.getUniqueId(), playerInf);
         }
     }
 
-    public static List<Player> getOnlinePlayers() {
-        List<Player> list = Lists.newArrayList();
-        for (World world : Bukkit.getWorlds()) {
-            list.addAll(world.getPlayers());
+    /**
+     * @return list of all online cached players
+     */
+    public List<UUID> getOnlineCachedPlayers() {
+        List<UUID> list = Lists.newArrayList();
+        for (Player p: plugin.getServer().getOnlinePlayers()) {
+            if (playerCache.containsKey(p.getUniqueId())) {
+                list.add(p.getUniqueId());
+            }
         }
         return Collections.unmodifiableList(list);
     }
@@ -76,7 +78,7 @@ public class PlayerCache {
      */
 
     public void addPlayer(final UUID playerUUID) {
-        // plugin.getLogger().info("DEBUG: added player");
+        //plugin.getLogger().info("DEBUG: added player " + playerUUID);
         if (!playerCache.containsKey(playerUUID)) {
             final Players player = new Players(plugin, playerUUID);
             playerCache.put(playerUUID, player);
@@ -140,24 +142,13 @@ public class PlayerCache {
             return true;
         } else {
             // Get the file system
-            final File folder = plugin.getPlayersFolder();
-            final File[] files = folder.listFiles();
-            // Go through the native YAML files
-            for (final File f : files) {
-                // Need to remove the .yml suffix
-                if (f.getName().endsWith(".yml")) {
-                    try {
-                        if (UUID.fromString(f.getName().substring(0, f.getName().length() - 4)).equals(uniqueID)) {
-                            return true;
-                        }
-                    } catch (Exception e) {
-                        plugin.getLogger().warning("Problem with " + f.getName());
-                    }
-                }
+            try {
+                final File file = new File(plugin.getPlayersFolder(), uniqueID.toString() + ".yml");
+                return file.exists();
+            } catch (Exception e) {
+                return false;
             }
         }
-        // Not found, sorry.
-        return false;
     }
 
     /**
@@ -454,9 +445,13 @@ public class PlayerCache {
     }
 
     public void removeMember(UUID teamLeader, UUID playerUUID) {
-        addPlayer(teamLeader);
+        if (teamLeader != null) {
+            addPlayer(teamLeader);
+        }
         addPlayer(playerUUID);
-        playerCache.get(teamLeader).removeMember(playerUUID);
+        if (teamLeader != null) {
+            playerCache.get(teamLeader).removeMember(playerUUID);
+        }
         // Remove from team chat too
         plugin.getChatListener().unSetPlayer(playerUUID);
     }
@@ -512,18 +507,23 @@ public class PlayerCache {
      */
     @SuppressWarnings("deprecation")
     public UUID getUUID(String string, boolean adminCheck) {
-        for (UUID id : playerCache.keySet()) {
-            String name = playerCache.get(id).getPlayerName();
-            // plugin.getLogger().info("DEBUG: Testing name " + name);
-            if (name != null && name.equalsIgnoreCase(string)) {
-                return id;
-            }
-        }
         // Look in the database if it ready
         if (plugin.getTinyDB() != null && plugin.getTinyDB().isDbReady()) {
             UUID result = plugin.getTinyDB().getPlayerUUID(string);
             if (result != null) {
                 return result;
+            }
+        }
+        // This goes after the database because it is possible for islands that have a duplicate name to be in
+        // the cache. For example, Bill had an island but left. Bill changes his name to Bob. Then Alice changes
+        // her name to Bill and logs into the game. There are now two islands with owner names called "Bill"
+        // The name database will ensure the names are updated.
+        for (UUID id : playerCache.keySet()) {
+            String name = playerCache.get(id).getPlayerName();
+            //plugin.getLogger().info("DEBUG: Testing name " + name);
+            if (name != null && name.equalsIgnoreCase(string)) {
+                //plugin.getLogger().info("DEBUG: found it! " + id);
+                return id;
             }
         }
         // Try the server

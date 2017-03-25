@@ -43,6 +43,8 @@ import com.google.common.collect.Multiset;
 import com.google.common.collect.Multiset.Entry;
 import com.google.common.collect.Multisets;
 import com.wasteofplastic.askyblock.events.IslandLevelEvent;
+import com.wasteofplastic.askyblock.events.IslandPreLevelEvent;
+import com.wasteofplastic.askyblock.util.Util;
 
 /**
  * A class that calculates the level of an island very quickly by copying island
@@ -64,14 +66,13 @@ public class LevelCalcByChunk {
      * @param plugin
      * @param targetPlayer - UUID of island owner or team member
      * @param sender - requester of the level calculation, if anyone
-     * @param silent - if true, calculation will be done silently
      * @param report - provide a report to the asker
      */
     public LevelCalcByChunk(final ASkyBlock plugin, final UUID targetPlayer, final CommandSender sender, final boolean report) {
-        if (report && plugin.getServer().getVersion().contains("(MC: 1.7")) { 
-            sender.sendMessage(ChatColor.RED + "This option is not available in V1.7 servers, sorry.");
-            return;
-        }
+        //if (report && plugin.getServer().getVersion().contains("(MC: 1.7")) { 
+        //    Util.sendMessage(sender, ChatColor.RED + "This option is not available in V1.7 servers, sorry.");
+        //    return;
+        //}
         //plugin.getLogger().info("DEBUG: running level calc " + silent);
         // Get player's island
         final Island island = plugin.getGrid().getIsland(targetPlayer);
@@ -315,8 +316,10 @@ public class LevelCalcByChunk {
                         }
                         reportLines.add("Regular block count");
                         reportLines.add("Total number of blocks = " + String.format("%,d",mdCount.size()));
+                        //Iterable<Multiset.Entry<MaterialData>> entriesSortedByCount = 
+                        //        Multisets.copyHighestCountFirst(mdCount).entrySet();
                         Iterable<Multiset.Entry<MaterialData>> entriesSortedByCount = 
-                                Multisets.copyHighestCountFirst(mdCount).entrySet();
+                                mdCount.entrySet();
                         Iterator<Entry<MaterialData>> it = entriesSortedByCount.iterator();
                         while (it.hasNext()) {
                             Entry<MaterialData> type = it.next();
@@ -337,7 +340,8 @@ public class LevelCalcByChunk {
                         reportLines.add("Total = " + total);
                         reportLines.add("==================================");
                         reportLines.add("Blocks not counted because they exceeded limits: " + String.format("%,d",ofCount.size()));
-                        entriesSortedByCount = Multisets.copyHighestCountFirst(ofCount).entrySet();
+                        //entriesSortedByCount = Multisets.copyHighestCountFirst(ofCount).entrySet();
+                        entriesSortedByCount = ofCount.entrySet();
                         it = entriesSortedByCount.iterator();
                         while (it.hasNext()) {
                             Entry<MaterialData> type = it.next();
@@ -353,7 +357,8 @@ public class LevelCalcByChunk {
                         reportLines.add("==================================");
                         reportLines.add("Blocks on island that are not in blockvalues.yml");
                         reportLines.add("Total number = " + String.format("%,d",ncCount.size()));
-                        entriesSortedByCount = Multisets.copyHighestCountFirst(ncCount).entrySet();
+                        //entriesSortedByCount = Multisets.copyHighestCountFirst(ncCount).entrySet();
+                        entriesSortedByCount = ncCount.entrySet();
                         it = entriesSortedByCount.iterator();
                         while (it.hasNext()) {
                             Entry<MaterialData> type = it.next();
@@ -370,43 +375,66 @@ public class LevelCalcByChunk {
                         out.close();
                     }
 
+                    // Calculate how many points are required to get to the next level
+                    final int pointsToNextLevel = (Settings.levelCost * (plugin.getPlayers().getIslandLevel(targetPlayer) + 1 + levelHandicap)) - ((blockCount * levelMultiplier) - (deathHandicap * Settings.deathpenalty));
                     // Return to main thread
-                    final int blocks = blockCount;
                     plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
 
                         @Override
                         public void run() {
+                            // Fire the pre-level event
+                            Island island = plugin.getGrid().getIsland(targetPlayer);
+                            final IslandPreLevelEvent event = new IslandPreLevelEvent(targetPlayer, island, score);
+                            event.setPointsToNextLevel(pointsToNextLevel);
+                            plugin.getServer().getPluginManager().callEvent(event);
+                            if (event.isCancelled()) {
+                                // Do no more and return
+                                return;
+                            }
                             //plugin.getLogger().info("DEBUG: updating player");
                             int oldLevel = plugin.getPlayers().getIslandLevel(targetPlayer);
-                            // Update player and team mates
-                            plugin.getPlayers().setIslandLevel(targetPlayer, score);
-                            //plugin.getLogger().info("DEBUG: set island level, now trying to save player");
-                            plugin.getPlayers().save(targetPlayer);
+                            if (oldLevel != event.getLevel()) {
+                                // Update player and team mates
+                                plugin.getPlayers().setIslandLevel(targetPlayer, event.getLevel());
+                                //plugin.getLogger().info("DEBUG: set island level, now trying to save player");
+                                plugin.getPlayers().save(targetPlayer);
+                            }
                             //plugin.getLogger().info("DEBUG: save player, now looking at team members");
                             // Update any team members too
                             if (plugin.getPlayers().inTeam(targetPlayer)) {
                                 //plugin.getLogger().info("DEBUG: player is in team");
                                 for (UUID member : plugin.getPlayers().getMembers(targetPlayer)) {
                                     //plugin.getLogger().info("DEBUG: updating team member level too");
-                                    plugin.getPlayers().setIslandLevel(member, score);
-                                    plugin.getPlayers().save(member);
+                                    if (plugin.getPlayers().getIslandLevel(member) != event.getLevel()) {
+                                        plugin.getPlayers().setIslandLevel(member, event.getLevel());
+                                        plugin.getPlayers().save(member);
+                                    }
                                 }
                             }
                             //plugin.getLogger().info("DEBUG: finished team member saving");
+                            // Check that sender still is online
                             if (sender != null) {
+                                // Check if console
                                 if (!(sender instanceof Player)) {
                                     // Console  
                                     if (!report) {
-                                        sender.sendMessage(ChatColor.GREEN + plugin.myLocale().islandislandLevelis + " " + ChatColor.WHITE + plugin.getPlayers().getIslandLevel(targetPlayer));
+                                        Util.sendMessage(sender, ChatColor.GREEN + plugin.myLocale().islandislandLevelis + " " + ChatColor.WHITE + plugin.getPlayers().getIslandLevel(targetPlayer));
                                     } else {
                                         for (String line: reportLines) {
-                                            sender.sendMessage(line);
+                                            Util.sendMessage(sender, line);
+                                        }
+                                        Util.sendMessage(sender, ChatColor.GREEN + plugin.myLocale().islandislandLevelis + " " + ChatColor.WHITE + plugin.getPlayers().getIslandLevel(targetPlayer));
+                                        if (event.getPointsToNextLevel() >= 0) {
+                                            String toNextLevel = ChatColor.GREEN + plugin.myLocale().islandrequiredPointsToNextLevel.replace("[points]", String.valueOf(event.getPointsToNextLevel()));
+                                            toNextLevel = toNextLevel.replace("[next]", String.valueOf(plugin.getPlayers().getIslandLevel(targetPlayer) + 1));
+                                            Util.sendMessage(sender, toNextLevel);
                                         }
                                     }
                                 } else {
+                                    // Player
                                     if (!report) {
-                                        // Tell offline team members the island level increased.
-                                        if (plugin.getPlayers().getIslandLevel(targetPlayer) > oldLevel) {
+                                        // Tell offline team members the island level changed
+                                        if (plugin.getPlayers().getIslandLevel(targetPlayer) != oldLevel) {
                                             //plugin.getLogger().info("DEBUG: telling offline players");
                                             plugin.getMessages().tellOfflineTeam(targetPlayer, ChatColor.GREEN + plugin.myLocale(targetPlayer).islandislandLevelis + " " + ChatColor.WHITE
                                                     + plugin.getPlayers().getIslandLevel(targetPlayer));
@@ -416,21 +444,25 @@ public class LevelCalcByChunk {
                                             if (Settings.deathpenalty != 0) {
                                                 message += " " + plugin.myLocale(((Player)sender).getUniqueId()).levelDeaths.replace("[number]", String.valueOf(plugin.getPlayers().getDeaths(targetPlayer)));
                                             }
-                                            sender.sendMessage(message);
+                                            Util.sendMessage(sender, message);
                                             //Send player how many points are required to reach next island level
-                                            int requiredPoints = (Settings.levelCost * (plugin.getPlayers().getIslandLevel(targetPlayer) + 1 + levelHandicap)) - ((blocks * levelMultiplier) - (deathHandicap * Settings.deathpenalty));
-                                            
-                                            
-                                            
-                                            String toNextLevel = ChatColor.GREEN + plugin.myLocale(((Player)sender).getUniqueId()).islandrequiredPointsToNextLevel.replace("[points]", String.valueOf(requiredPoints));
-                                            toNextLevel = toNextLevel.replace("[next]", String.valueOf(plugin.getPlayers().getIslandLevel(targetPlayer) + 1));
-                                            sender.sendMessage(toNextLevel);
+                                            if (event.getPointsToNextLevel() >= 0) {
+                                                String toNextLevel = ChatColor.GREEN + plugin.myLocale(((Player)sender).getUniqueId()).islandrequiredPointsToNextLevel.replace("[points]", String.valueOf(event.getPointsToNextLevel()));
+                                                toNextLevel = toNextLevel.replace("[next]", String.valueOf(plugin.getPlayers().getIslandLevel(targetPlayer) + 1));
+                                                Util.sendMessage(sender, toNextLevel);
+                                            }
                                         }
                                     } else {
                                         if (((Player)sender).isOnline()) {
                                             for (String line: reportLines) {
-                                                sender.sendMessage(line);
+                                                Util.sendMessage(sender, line);
                                             }
+                                        }
+                                        Util.sendMessage(sender, ChatColor.GREEN + plugin.myLocale().islandislandLevelis + " " + ChatColor.WHITE + plugin.getPlayers().getIslandLevel(targetPlayer));
+                                        if (event.getPointsToNextLevel() >= 0) {
+                                            String toNextLevel = ChatColor.GREEN + plugin.myLocale().islandrequiredPointsToNextLevel.replace("[points]", String.valueOf(event.getPointsToNextLevel()));
+                                            toNextLevel = toNextLevel.replace("[next]", String.valueOf(plugin.getPlayers().getIslandLevel(targetPlayer) + 1));
+                                            Util.sendMessage(sender, toNextLevel);
                                         }
                                     }
                                 }
@@ -439,15 +471,14 @@ public class LevelCalcByChunk {
                             if (plugin.getPlayers().inTeam(targetPlayer)) {
                                 UUID leader = plugin.getPlayers().getTeamLeader(targetPlayer);
                                 if (leader != null) {
-                                    TopTen.topTenAddEntry(leader, score);
+                                    TopTen.topTenAddEntry(leader, event.getLevel());
                                 }
                             } else {
-                                TopTen.topTenAddEntry(targetPlayer, score);
+                                TopTen.topTenAddEntry(targetPlayer, event.getLevel());
                             }
-                            // Fire the level event
-                            Island island = plugin.getGrid().getIsland(targetPlayer);
-                            final IslandLevelEvent event = new IslandLevelEvent(targetPlayer, island, score);
-                            plugin.getServer().getPluginManager().callEvent(event);
+                            // Fire the island level event
+                            final IslandLevelEvent event2 = new IslandLevelEvent(targetPlayer, island, event.getLevel());
+                            plugin.getServer().getPluginManager().callEvent(event2);
                         }});
                 }});
         }

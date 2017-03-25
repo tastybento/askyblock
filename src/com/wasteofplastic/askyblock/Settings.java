@@ -83,6 +83,11 @@ public class Settings {
     public static int animalSpawnLimit;
     public static int waterAnimalSpawnLimit;
     /**
+     * Default world protection settings
+     */
+    public static HashMap<SettingsFlag, Boolean> defaultWorldSettings = new HashMap<SettingsFlag, Boolean>();
+
+    /**
      * Default island protection settings
      */
     public static HashMap<SettingsFlag, Boolean> defaultIslandSettings = new HashMap<SettingsFlag, Boolean>();
@@ -90,7 +95,10 @@ public class Settings {
      * Default spawn protection settings
      */
     public static HashMap<SettingsFlag, Boolean> defaultSpawnSettings = new HashMap<SettingsFlag, Boolean>();
-
+    /**
+     * Visitors settings to show in the GUI
+     */
+    public static HashMap<SettingsFlag, Boolean> visitorSettings = new HashMap<SettingsFlag, Boolean>();
     // Flymode
     public static int flyTimeOutside;
     
@@ -102,10 +110,6 @@ public class Settings {
     public static boolean allowCreeperDamage;
     public static boolean allowCreeperGriefing;
     public static boolean allowEndermanGriefing;
-    public static boolean allowFire;
-    public static boolean allowFireSpread;
-    public static boolean allowHurtMonsters;
-    public static boolean allowMonsterEggs;
     public static boolean allowPistonPush;
     public static boolean allowTNTDamage;
     public static boolean allowVisitorKeepInvOnDeath;
@@ -139,7 +143,6 @@ public class Settings {
     // Levels
     public static HashMap<MaterialData, Integer> blockLimits;
     public static HashMap<MaterialData, Integer> blockValues;
-    public static boolean fastLevelCalc;
 
     // Challenge completion broadcast
     public static boolean broadcastMessages;
@@ -193,6 +196,7 @@ public class Settings {
     
     // Magic Cobble Generator
     public static boolean useMagicCobbleGen;
+    public static boolean magicCobbleGenOnlyAtSpawn;
     public static TreeMap<Integer,TreeMap<Double,Material>> magicCobbleGenChances;
     
     // Disable offline redstone
@@ -217,7 +221,6 @@ public class Settings {
     public static boolean immediateTeleport;
     public static boolean makeIslandIfNone;
     public static boolean setTeamName;
-    public static int debug;
     public static boolean useSchematicPanel;
     public static boolean chooseIslandRandomly;
     public static double underWaterMultiplier;
@@ -232,7 +235,6 @@ public class Settings {
     public static boolean useWarpPanel;
     public static List<EntityType> mobWhiteList = new ArrayList<EntityType>();
     public static int villagerLimit;
-    public static int mobLimit;
     public static int hopperLimit;
     public static List<String> visitorCommandBlockList;
     public static boolean muteDeathMessages;
@@ -271,4 +273,9 @@ public class Settings {
     public static boolean hackSkeletonSpawners;
     public static HashMap<EntityType, Integer> entityLimits;
     public static long acidItemDestroyTime;
+    public static boolean helmetProtection;
+    public static boolean fullArmorProtection;
+    public static String defaultLanguage;
+    public static boolean showInActionBar;
+    public static boolean leaversLoseReset;
 }

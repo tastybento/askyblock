@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -33,7 +34,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -97,6 +97,7 @@ public class GridManager {
         try {
             islandNames.load(islandNameFile);
         } catch (Exception e) {
+            //e.printStackTrace();
             plugin.getLogger().severe("Could not load " + ISLANDNAMES_FILENAME);
         }
         islandFile = new File(plugin.getDataFolder(), ISLANDS_FILENAME);
@@ -113,26 +114,7 @@ public class GridManager {
                 List<String> islandList = new ArrayList<String>();
                 if (islandYaml.contains(Settings.worldName)) {
                     // Load the island settings key
-                    List<String> settingsKey = new ArrayList<String>();
-                    if (islandYaml.contains(SETTINGS_KEY)) {
-                        settingsKey = islandYaml.getStringList(SETTINGS_KEY);
-                        // Check the key is valid, if not, all previous settings are wiped.
-                        check:
-                            for (String key: settingsKey) {
-                                boolean found = false;
-                                for (SettingsFlag flag: SettingsFlag.values()) {
-                                    if (flag.toString().equals(key)) {
-                                        found = true;
-                                        break;
-                                    }                               
-                                }
-                                if (!found) {
-                                    plugin.getLogger().severe(ISLANDS_FILENAME + " has an invalid settings key, all island settings will be default, sorry.");
-                                    settingsKey.clear();
-                                    break check;
-                                }
-                            }
-                    }
+                    List<String> settingsKey = islandYaml.getStringList(SETTINGS_KEY);
                     // Load spawn, if it exists - V3.0.6 onwards
                     if (islandYaml.contains("spawn")) {
                         Location spawnLoc = Util.getLocationString(islandYaml.getString("spawn.location"));
@@ -143,22 +125,13 @@ public class GridManager {
                             if (range < 0) {
                                 range = Settings.island_protectionRange;
                             }
-                            boolean locked = islandYaml.getBoolean("spawn.locked");
-                            String biomeString = islandYaml.getString("spawn.biome");
-                            Biome biome = Biome.PLAINS;
-                            try {
-                                biome = Biome.valueOf(biomeString);
-                            } catch (Exception e) {}
                             String spawnSettings = islandYaml.getString("spawn.settings");
-                            
                             // Make the spawn
                             Island newSpawn = new Island(plugin, spawnLoc.getBlockX(), spawnLoc.getBlockZ());
                             newSpawn.setSpawn(true);
                             if (spawnPoint != null)
                                 newSpawn.setSpawnPoint(spawnPoint);
                             newSpawn.setProtectionSize(range);
-                            newSpawn.setBiome(biome);
-                            newSpawn.setLocked(locked);
                             newSpawn.setSettings(spawnSettings, settingsKey);
                             spawn = newSpawn;
                         }
@@ -182,6 +155,7 @@ public class GridManager {
                     islandFile.renameTo(rename);
                 }
             } catch (Exception e) {
+                //e.printStackTrace();
                 plugin.getLogger().severe("Could not load " + ISLANDS_FILENAME);
             }
         }
@@ -413,7 +387,7 @@ public class GridManager {
 
                     } catch (Exception e) {
                         plugin.getLogger().severe("Problem with " + fileName);
-                        e.printStackTrace();
+                        //e.printStackTrace();
                     }
                 }
             }
@@ -485,23 +459,24 @@ public class GridManager {
         List<String> islandSettings = new ArrayList<String>();
         for (SettingsFlag flag: SettingsFlag.values()) {
             islandSettings.add(flag.toString());
-        }
+        } 
         islandYaml.set(SETTINGS_KEY, islandSettings);
-        // Save the settings
+        // Save spawn
+        if (getSpawn() != null) {
+            islandYaml.set("spawn.location", Util.getStringLocation(getSpawn().getCenter()));
+            islandYaml.set("spawn.spawnpoint", Util.getStringLocation(getSpawn().getSpawnPoint()));
+            islandYaml.set("spawn.range", getSpawn().getProtectionSize());
+            islandYaml.set("spawn.settings", getSpawn().getSettings());  
+        }
+        // Save the regular islands
         List<String> islandList = new ArrayList<String>();
-        for (int x : islandGrid.keySet()) {
-            for (int z : islandGrid.get(x).keySet()) {
-                Island island = islandGrid.get(x).get(z);
+        Iterator<TreeMap<Integer, Island>> it = islandGrid.values().iterator();
+        while (it.hasNext()) {
+            Iterator<Island> islandIt = it.next().values().iterator();
+            while (islandIt.hasNext()) {
+                Island island = islandIt.next();
                 if (!island.isSpawn()) {
                     islandList.add(island.save());
-                } else {
-                    // Spawn
-                    islandYaml.set("spawn.location", Util.getStringLocation(island.getCenter()));
-                    islandYaml.set("spawn.spawnpoint", Util.getStringLocation(island.getSpawnPoint()));
-                    islandYaml.set("spawn.range", island.getProtectionSize());
-                    islandYaml.set("spawn.locked", island.isLocked());
-                    islandYaml.set("spawn.biome", island.getBiome().toString());
-                    islandYaml.set("spawn.settings", island.getSettings());                    
                 }
             }
         }
@@ -514,7 +489,7 @@ public class GridManager {
                         islandYaml.save(islandFile);
                     } catch (Exception e) {
                         plugin.getLogger().severe("Could not save " + ISLANDS_FILENAME + "!");
-                        e.printStackTrace();
+                        //e.printStackTrace();
                     }}
             });
         } else {
@@ -1284,9 +1259,9 @@ public class GridManager {
         player.teleport(home);
         //player.sendBlockChange(home, Material.GLOWSTONE, (byte)0);
         if (number ==1 ) {
-            player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).islandteleport);
+            Util.sendMessage(player, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).islandteleport);
         } else {
-            player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).islandteleport + " #" + number);
+            Util.sendMessage(player, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).islandteleport + " #" + number);
         }
         return true;
 
@@ -1300,19 +1275,19 @@ public class GridManager {
     public void homeSet(Player player, int number) {
         // Check if player is in their home world        
         if (!player.getWorld().equals(plugin.getPlayers().getIslandLocation(player.getUniqueId()).getWorld())) {
-            player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).setHomeerrorNotOnIsland);
+            Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).setHomeerrorNotOnIsland);
             return; 
         }
         // Check if player is on island, ignore coops
         if (!plugin.getGrid().playerIsOnIsland(player, false)) {
-            player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).setHomeerrorNotOnIsland);
+            Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).setHomeerrorNotOnIsland);
             return;
         }
         plugin.getPlayers().setHomeLocation(player.getUniqueId(), player.getLocation(), number);
         if (number == 1) {
-            player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).setHomehomeSet);
+            Util.sendMessage(player, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).setHomehomeSet);
         } else {
-            player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).setHomehomeSet + " #" + number);
+            Util.sendMessage(player, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).setHomehomeSet + " #" + number);
         }
     }
 
@@ -1334,7 +1309,9 @@ public class GridManager {
      * @return true if location is on island of player
      */
     public boolean locationIsOnIsland(final Player player, final Location loc) {
-
+        if (player == null) {
+            return false;
+        }
         // Get the player's island from the grid if it exists
         Island island = getIslandAt(loc);
         if (island != null) {
@@ -1342,6 +1319,8 @@ public class GridManager {
             // On an island in the grid
             //plugin.getLogger().info("DEBUG: onIsland = " + island.onIsland(loc));
             //plugin.getLogger().info("DEBUG: members = " + island.getMembers());
+            //plugin.getLogger().info("DEBUG: player UUID = " + player.getUniqueId());
+
             if (island.onIsland(loc) && island.getMembers().contains(player.getUniqueId())) {
                 //plugin.getLogger().info("DEBUG: allowed");
                 // In a protected zone but is on the list of acceptable players
@@ -1412,7 +1391,7 @@ public class GridManager {
     }
 
     /**
-     * Checks if an online player is on their island, on a team island or on a
+     * Checks if an online player is in the protected area of their island, a team island or a
      * coop island
      * 
      * @param player
@@ -1423,7 +1402,7 @@ public class GridManager {
     }
 
     /**
-     * Checks if an online player is on their island, on a team island or on a
+     * Checks if an online player is in the protected area of their island, a team island or a
      * coop island
      * @param player
      * @param coop - if true, coop islands are included
