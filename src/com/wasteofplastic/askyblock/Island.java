@@ -434,11 +434,11 @@ public class Island implements Cloneable {
         // Calculate min minX and z
         this.minX = x - Settings.islandDistance / 2;
         this.minZ = z - Settings.islandDistance / 2;
-        this.minProtectedX = x - Settings.island_protectionRange / 2;
-        this.minProtectedZ = z - Settings.island_protectionRange / 2;
-        this.y = Settings.island_level;
+        this.minProtectedX = x - Settings.islandProtectionRange / 2;
+        this.minProtectedZ = z - Settings.islandProtectionRange / 2;
+        this.y = Settings.islandHeight;
         this.islandDistance = Settings.islandDistance;
-        this.protectionRange = Settings.island_protectionRange;
+        this.protectionRange = Settings.islandProtectionRange;
         this.world = ASkyBlock.getIslandWorld();
         this.center = new Location(world, x, y, z);
         this.createdDate = new Date().getTime();

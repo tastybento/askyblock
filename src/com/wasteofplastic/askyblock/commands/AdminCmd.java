@@ -2232,7 +2232,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
     public static Location getClosestIsland(Location location) {
         long x = Math.round((double) location.getBlockX() / Settings.islandDistance) * Settings.islandDistance + Settings.islandXOffset;
         long z = Math.round((double) location.getBlockZ() / Settings.islandDistance) * Settings.islandDistance + Settings.islandZOffset;
-        long y = Settings.island_level;
+        long y = Settings.islandHeight;
         return new Location(location.getWorld(), x, y, z);
     }
 

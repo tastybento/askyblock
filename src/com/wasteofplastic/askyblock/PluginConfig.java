@@ -17,9 +17,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Monster;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
@@ -58,17 +56,17 @@ public class PluginConfig {
             Settings.islandDistance = 50;
             plugin.getLogger().info("Setting minimum island distance to 50");
         }
-        Settings.island_protectionRange = plugin.getConfig().getInt("island.protectionRange", 100);
-        if (Settings.island_protectionRange % 2 != 0) {
-            Settings.island_protectionRange--;
-            plugin.getLogger().warning("Protection range must be even, using " + Settings.island_protectionRange);
+        Settings.islandProtectionRange = plugin.getConfig().getInt("island.protectionRange", 100);
+        if (Settings.islandProtectionRange % 2 != 0) {
+            Settings.islandProtectionRange--;
+            plugin.getLogger().warning("Protection range must be even, using " + Settings.islandProtectionRange);
         }
-        if (Settings.island_protectionRange > Settings.islandDistance) {
+        if (Settings.islandProtectionRange > Settings.islandDistance) {
             plugin.getLogger().warning("Protection range cannot be > island distance. Setting them to be equal.");
-            Settings.island_protectionRange = Settings.islandDistance;
+            Settings.islandProtectionRange = Settings.islandDistance;
         }
-        if (Settings.island_protectionRange < 0) {
-            Settings.island_protectionRange = 0;
+        if (Settings.islandProtectionRange < 0) {
+            Settings.islandProtectionRange = 0;
         }
 
         // xoffset and zoffset are not public and only used for IslandWorld compatibility
@@ -98,20 +96,20 @@ public class PluginConfig {
 
         // ASkyBlock and AcidIsland difference
         if (Settings.GAMETYPE.equals(Settings.GameType.ACIDISLAND)) {
-            Settings.island_level = plugin.getConfig().getInt("island.islandlevel", 50) - 5;
+            Settings.islandHeight = plugin.getConfig().getInt("island.islandheight", 50) - 5;
             // The island's center is actually 5 below sea level
-            Settings.sea_level = plugin.getConfig().getInt("island.sealevel", 50);
+            Settings.seaHeight = plugin.getConfig().getInt("island.seaheight", 50);
         } else {
             // ASkyBlock
-            Settings.island_level = plugin.getConfig().getInt("island.islandlevel", 120) - 5;
+            Settings.islandHeight = plugin.getConfig().getInt("island.islandheight", 120) - 5;
             // The island's center is actually 5 below sea level
-            Settings.sea_level = plugin.getConfig().getInt("island.sealevel", 0);
+            Settings.seaHeight = plugin.getConfig().getInt("island.seaheight", 0);
         }
-        if (Settings.island_level < 0) {
-            Settings.island_level = 0;
+        if (Settings.islandHeight < 0) {
+            Settings.islandHeight = 0;
         }
-        if (Settings.sea_level < 0) {
-            Settings.sea_level = 0;
+        if (Settings.seaHeight < 0) {
+            Settings.seaHeight = 0;
         }
         // Island reset settings
         Settings.resetLimit = plugin.getConfig().getInt("island.resetlimit", 2);
