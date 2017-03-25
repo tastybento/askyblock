@@ -114,7 +114,7 @@ public class PluginConfig {
             Settings.sea_level = 0;
         }
         // Island reset settings
-        Settings.resetLimit = plugin.getConfig().getInt("island.resetlimit", 0);
+        Settings.resetLimit = plugin.getConfig().getInt("island.resetlimit", 2);
         if (Settings.resetWait < 0) {
             Settings.resetWait = -1;
         }
