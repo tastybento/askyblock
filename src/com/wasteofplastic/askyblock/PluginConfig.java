@@ -17,9 +17,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Monster;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
@@ -114,7 +112,7 @@ public class PluginConfig {
             Settings.sea_level = 0;
         }
         // Island reset settings
-        Settings.resetLimit = plugin.getConfig().getInt("island.resetlimit", 0);
+        Settings.resetLimit = plugin.getConfig().getInt("island.resetlimit", 2);
         if (Settings.resetWait < 0) {
             Settings.resetWait = -1;
         }
