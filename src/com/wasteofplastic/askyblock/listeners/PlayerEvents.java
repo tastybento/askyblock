@@ -488,7 +488,8 @@ public class PlayerEvents implements Listener {
                 || Settings.allowTeleportWhenFalling 
                 || !e.getPlayer().getGameMode().equals(GameMode.SURVIVAL) 
                 || e.getPlayer().isOp() 
-                || e.getPlayer().isFlying()) {
+                || e.getPlayer().isFlying()
+                || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "bypassfalling")) {
             fallingPlayers.remove(e.getPlayer().getUniqueId());
             return;
         }
@@ -517,7 +518,8 @@ public class PlayerEvents implements Listener {
         }
         if (!IslandGuard.inWorld(e.getPlayer()) || Settings.allowTeleportWhenFalling || e.getPlayer().isOp()
                 || !e.getPlayer().getGameMode().equals(GameMode.SURVIVAL)
-                || plugin.getPlayers().isInTeleport(e.getPlayer().getUniqueId())) {
+                || plugin.getPlayers().isInTeleport(e.getPlayer().getUniqueId())
+                || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "bypassfalling")) {
             return;
         }
         // Check commands
@@ -563,7 +565,7 @@ public class PlayerEvents implements Listener {
             return;
         }
         // Teleporting while falling check
-        if (!Settings.allowTeleportWhenFalling && e.getPlayer().getGameMode().equals(GameMode.SURVIVAL) && !e.getPlayer().isOp()) {
+        if (!Settings.allowTeleportWhenFalling && e.getPlayer().getGameMode().equals(GameMode.SURVIVAL) && !e.getPlayer().isOp() && !VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "bypassfalling")) {
             if (DEBUG)
                 plugin.getLogger().info("DEBUG: Teleporting while falling check");
             // If the player is allowed to teleport excuse them

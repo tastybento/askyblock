@@ -141,6 +141,9 @@ permissions:
       askyblock.nohunger:
         description: Excludes player from hunger if on island
         default: false
+      askyblock.bypassfalling:
+        description: Allow player to execute commands or teleport while falling
+        default: false
       askyblock.islandfly:
         description: Allow player to fly inside his island boundaries
         default: false
