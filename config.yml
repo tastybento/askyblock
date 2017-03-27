@@ -44,11 +44,10 @@ island:
    # Minimum is 0, which means you are playing sky block!
    # If sea height is less than about 10, then players will drop right through it
    # if it exists. Makes for an interesting variation on skyblock.
-   seaheight: 0
+   sealevel: 0
 
-   # Island height.
-   # Lowest height is 5
-   islandheight: 120
+   # Island height - Lowest is 5.
+   islandlevel: 120
 
    #How many resets a player is allowed (override with /asadmin clearreset <player>)
    #Value of -1 means unlimited, 0 means hardcore - no resets.
