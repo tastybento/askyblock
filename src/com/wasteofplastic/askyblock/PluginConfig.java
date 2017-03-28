@@ -219,7 +219,8 @@ public class PluginConfig {
             // Nothing in the chest
             Settings.chestItems = new ItemStack[0];
         }
-        // Defaul companion
+        // Default companion
+        Settings.spawnCompanion = plugin.getConfig().getBoolean("island.spawncompanion", true);
         String companion = plugin.getConfig().getString("island.companion", "COW").toUpperCase();
         Settings.islandCompanion = null;
         if (!companion.equalsIgnoreCase("NOTHING")) {

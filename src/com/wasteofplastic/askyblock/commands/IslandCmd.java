@@ -373,6 +373,9 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                             newSchem.setPartnerName(schemSection.getString("schematics." + key + ".partnerSchematic","nether"));
                         }
                         // Island companion
+                        if(!Settings.spawnCompanion){
+                        	newSchem.setSpawnCompanion(schemSection.getBoolean("schematics." + key + ".spawnCompanion", false));
+                        }
                         List<String> companion = schemSection.getStringList("schematics." + key + ".companion");
                         List<EntityType> companionTypes = new ArrayList<EntityType>();
                         if (!companion.isEmpty()) {
@@ -402,6 +405,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                             }
                             newSchem.setCompanionNames(names);
                         }
+                        
                         // Get chest items
                         final List<String> chestItems = schemSection.getStringList("schematics." + key + ".chestItems");
                         if (!chestItems.isEmpty()) {
@@ -460,30 +464,52 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                             newSchem.setDefaultChestItems(tempChest);
                         }
                         // Player spawn block
-                        String spawnBlock = schemSection.getString("schematics." + key + ".spawnblock");
-                        if (spawnBlock != null) {
+                        String pSpawnBlock = schemSection.getString("schematics." + key + ".spawnblock");
+                        if (pSpawnBlock != null) {
                             // Check to see if this block is a valid material
                             try {
                                 Material playerSpawnBlock;
-                                if (StringUtils.isNumeric(spawnBlock)) {
-                                    playerSpawnBlock = Material.getMaterial(Integer.parseInt(spawnBlock));
+                                if (StringUtils.isNumeric(pSpawnBlock)) {
+                                    playerSpawnBlock = Material.getMaterial(Integer.parseInt(pSpawnBlock));
                                 } else {
-                                    playerSpawnBlock = Material.valueOf(spawnBlock.toUpperCase());
+                                    playerSpawnBlock = Material.valueOf(pSpawnBlock.toUpperCase());
                                 }
                                 if (newSchem.setPlayerSpawnBlock(playerSpawnBlock)) {
                                     plugin.getLogger().info("Player will spawn at the " + playerSpawnBlock.toString());
                                 } else {
-                                    plugin.getLogger().severe("Problem with schematic '" + name + "'. Spawn block '" + spawnBlock + "' not found in schematic or there is more than one. Skipping...");
+                                    plugin.getLogger().severe("Problem with schematic '" + name + "'. Spawn block '" + pSpawnBlock + "' not found in schematic or there is more than one. Skipping...");
                                 }
                             } catch (Exception e) {
-                                plugin.getLogger().severe("Problem with schematic '" + name + "'. Spawn block '" + spawnBlock + "' is unknown. Skipping...");
+                                plugin.getLogger().severe("Problem with schematic '" + name + "'. Spawn block '" + pSpawnBlock + "' is unknown. Skipping...");
                             }
                         } else {
                             // plugin.getLogger().info("No spawn block found");
                         }
+                        
+                        // Companion spawn block
+                        String cSpawnBlock = schemSection.getString("schematics." + key + ".companionspawnblock");
+                        if (cSpawnBlock != null) {
+                            // Check to see if this block is a valid material
+                            try {
+                                Material companionSpawnBlock;
+                                if (StringUtils.isNumeric(cSpawnBlock)) {
+                                	companionSpawnBlock = Material.getMaterial(Integer.parseInt(cSpawnBlock));
+                                } else {
+                                	companionSpawnBlock = Material.valueOf(cSpawnBlock.toUpperCase());
+                                }
+                                if (newSchem.setCompanionSpawnBlock(companionSpawnBlock)) {
+                                    plugin.getLogger().info("Companion will spawn at the " + companionSpawnBlock.toString());
+                                } else {
+                                    plugin.getLogger().severe("Problem with schematic '" + name + "'. Spawn block '" + cSpawnBlock + "' not found in schematic or there is more than one. Skipping...");
+                                }
+                            } catch (Exception e) {
+                                plugin.getLogger().severe("Problem with schematic '" + name + "'. Spawn block '" + cSpawnBlock + "' is unknown. Skipping...");
+                            }
+                        }
+                        
                         // Level handicap
                         newSchem.setLevelHandicap(schemSection.getInt("schematics." + key + ".levelHandicap", 0));
-
+                        
                         // Store it
                         schematics.put(key, newSchem);
                         if (perm.isEmpty()) {

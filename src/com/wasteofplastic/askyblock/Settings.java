@@ -202,6 +202,7 @@ public class Settings {
     public static int maxTeamSizeVIP;
     public static int maxTeamSizeVIP2;
     
+    public static boolean spawnCompanion;
     public static EntityType islandCompanion;
     public static List<String> companionNames;
     

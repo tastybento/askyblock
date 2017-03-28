@@ -105,6 +105,7 @@ public class Schematic {
     private int order;
     // These hashmaps enable translation between WorldEdit strings and Bukkit names
     //private HashMap<String, EntityType> WEtoME = new HashMap<String, EntityType>();
+    private boolean spawnCompanion;
     private List<EntityType> islandCompanion;
     private List<String> companionNames;
     private ItemStack[] defaultChestItems;
@@ -116,7 +117,7 @@ public class Schematic {
     private Vector welcomeSign;
     private Vector topGrass;
     private Vector playerSpawn;
-    //private Material playerSpawnBlock;
+    private Vector companionSpawn;
     private NMSAbstraction nms;
     private Set<Integer> attachable = new HashSet<Integer>();
     private Map<String, Art> paintingList = new HashMap<String, Art>();
@@ -141,6 +142,7 @@ public class Schematic {
         biome = Settings.defaultBiome;
         usePhysics = Settings.usePhysics;
         file = null;
+        spawnCompanion = true;
         islandCompanion = new ArrayList<EntityType>();
         islandCompanion.add(Settings.islandCompanion);
         companionNames = Settings.companionNames;
@@ -152,7 +154,7 @@ public class Schematic {
         welcomeSign = null;
         topGrass = null;
         playerSpawn = null;
-        //playerSpawnBlock = null;
+        companionSpawn = null;
         partnerName = "";
     }
 
@@ -171,6 +173,7 @@ public class Schematic {
         useDefaultChest = true;
         biome = Settings.defaultBiome;
         usePhysics = Settings.usePhysics;
+        spawnCompanion = true;
         islandCompanion = new ArrayList<EntityType>();
         islandCompanion.add(Settings.islandCompanion);
         companionNames = Settings.companionNames;
@@ -183,7 +186,7 @@ public class Schematic {
         welcomeSign = null;
         topGrass = null;
         playerSpawn = null;
-        //playerSpawnBlock = null;
+        companionSpawn = null;
         partnerName = "";
 
         attachable.add(Material.STONE_BUTTON.getId());
@@ -1039,13 +1042,23 @@ public class Schematic {
                 }}, 10L);
 
         }
-        if (!islandCompanion.isEmpty() && grass != null) {
-            Bukkit.getServer().getScheduler().runTaskLater(ASkyBlock.getPlugin(), new Runnable() {
-                @Override
-                public void run() {
-                    spawnCompanion(player, grass);
-                }
-            }, 40L);
+        if ((Settings.spawnCompanion || spawnCompanion) && !islandCompanion.isEmpty()) {
+        	if(isCompanionSpawn()){
+        		Bukkit.getServer().getScheduler().runTaskLater(ASkyBlock.getPlugin(), new Runnable() {
+        			@Override
+        			public void run() {
+        				spawnCompanion(player, loc);
+        			}
+        		}, 40L);
+        	} 
+        	else if(grass != null){
+        		Bukkit.getServer().getScheduler().runTaskLater(ASkyBlock.getPlugin(), new Runnable() {
+        			@Override
+        			public void run() {
+        				spawnCompanion(player, grass);
+        			}
+        		}, 40L);
+        	}
         }
         // Set the bedrock block meta data to the original spawn location
         // Doesn't survive a server restart. TODO: change to add this info elsewhere.
@@ -1374,7 +1387,7 @@ public class Schematic {
         blockToChange.setData(dc.getData(), true);
         // Teleport player
         plugin.getGrid().homeTeleport(player);
-        if (!islandCompanion.isEmpty()) {
+        if ((Settings.spawnCompanion || spawnCompanion) && !islandCompanion.isEmpty()) {
             Bukkit.getServer().getScheduler().runTaskLater(ASkyBlock.getPlugin(), new Runnable() {
                 @Override
                 public void run() {
@@ -1429,6 +1442,13 @@ public class Schematic {
         }
     }
 
+    /**
+     * @param spawnCompanion - if the companion will spawn
+     */
+    public void setSpawnCompanion(boolean spawnCompanion){
+    	this.spawnCompanion = spawnCompanion;
+    }
+    
     /**
      * @param islandCompanion the islandCompanion to set
      */
@@ -1558,6 +1578,42 @@ public class Schematic {
         return false;
     }
 
+    /**
+     * @return true if companion spawn exists in this schematic
+     */
+    public boolean isCompanionSpawn(){
+    	if(companionSpawn == null) return true;
+    	else return false;
+    }
+    
+    /**
+     * @return the companionSpawn Location from the given paste location
+     */
+    public Location getCompanionSpawn(Location pasteLocation){
+    	return pasteLocation.clone().add(companionSpawn);
+    }
+    
+    /**
+     * @param companionSpawnBlock the companionSpawnBlock to set
+     * @return true if block is found otherwise false
+     */
+    @SuppressWarnings("deprecation")
+    public boolean setCompanionSpawnBlock(Material companionSpawnBlock) {
+        if (bedrock == null) {
+            return false;
+        }
+        this.companionSpawn = null;
+        // Run through the schematic and try and find the spawnBlock
+        for (IslandBlock islandBlock : islandBlocks) {
+            if (islandBlock.getTypeId() == companionSpawnBlock.getId()) {
+            	this.companionSpawn = islandBlock.getVector().subtract(bedrock).add(new Vector(0.5D,0D,0.5D));
+                // Set the block to air
+                islandBlock.setTypeId((short)0);
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * @return the levelHandicap
