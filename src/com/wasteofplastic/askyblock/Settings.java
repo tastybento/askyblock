@@ -73,6 +73,7 @@ public class Settings {
 
     /*		MAIN SETTINGS		*/
     public static boolean updateCheck;
+    public static boolean metrics;
     
     public static long backupDuration;
     
