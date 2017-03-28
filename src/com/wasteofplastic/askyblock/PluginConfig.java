@@ -50,6 +50,8 @@ public class PluginConfig {
             e.printStackTrace();
         }
         // The order in this file should match the order in config.yml so that it is easy to check that everything is covered
+        Settings.metrics = plugin.getConfig().getBoolean("metrics", true);
+        
         // ********************** Island settings **************************
         Settings.islandDistance = plugin.getConfig().getInt("island.distance", 200);
         if (Settings.islandDistance < 50) {
