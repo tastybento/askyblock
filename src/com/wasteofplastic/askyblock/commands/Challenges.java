@@ -1816,15 +1816,19 @@ public class Challenges implements CommandExecutor, TabCompleter {
                         challengeName.substring(0, 1).toUpperCase() + challengeName.substring(1)));
         // Remove extraneous info
         ItemMeta im = icon.getItemMeta();
-        im.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-        im.addItemFlags(ItemFlag.HIDE_DESTROYS);
-        im.addItemFlags(ItemFlag.HIDE_PLACED_ON);
+        if (!plugin.getServer().getVersion().contains("1.7")) {
+            im.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+            im.addItemFlags(ItemFlag.HIDE_DESTROYS);
+            im.addItemFlags(ItemFlag.HIDE_PLACED_ON);
+        }
         // Check if completed or not
         boolean complete = false;
         if (Settings.addCompletedGlow && plugin.getPlayers().checkChallenge(player.getUniqueId(), challengeName)) {
             // Complete! Make the icon glow
             im.addEnchant(Enchantment.ARROW_DAMAGE, 0, true);
-            im.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            if (!plugin.getServer().getVersion().contains("1.7")) {
+                im.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            }
             complete = true;
         }
         icon.setItemMeta(im);

@@ -571,7 +571,8 @@ public class IslandGuard implements Listener {
             if (e.getSpawnReason().equals(SpawnReason.CURED)) {
                 // Easter Egg. Or should I say Easter Apple?
                 ItemStack goldenApple = new ItemStack(Material.GOLDEN_APPLE);
-                goldenApple.setDurability((short)1);
+                // Nerfed
+                //goldenApple.setDurability((short)1);
                 e.getLocation().getWorld().dropItemNaturally(e.getLocation(), goldenApple);
             }
             e.setCancelled(true);
