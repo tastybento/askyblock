@@ -127,6 +127,7 @@ public class Schematic {
     private int durability;
     private int levelHandicap;
     private double cost;
+    private List<String> startCommands = new ArrayList<String>();
 
     public Schematic(ASkyBlock plugin) {
         this.plugin = plugin;
@@ -1070,7 +1071,7 @@ public class Schematic {
         */
     }
     /**
-     * This method prepares to pastes a schematic.
+     * This method prepares to paste a schematic.
      * @param blocks
      * @param data
      */
@@ -1632,6 +1633,20 @@ public class Schematic {
      */
     public double getCost() {
         return cost;
+    }
+    
+    /**
+     * @param commands - the commands to run when starting an island using this schematic
+     */
+    public void setStartingCommands(List<String> commands){
+    	this.startCommands = commands;
+    }
+    
+    /**
+     * @return the commands to run when starting an island using this schematic
+     */
+    public List<String> getStartingCommands(){
+    	return this.startCommands;
     }
 
 }

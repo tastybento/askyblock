@@ -932,6 +932,7 @@ schematicsection:
   # usephysics - if true, causes lava or water to flow after being pasted.
   # pasteair - Only set to true if you need to paste below sea level.
   # permission - the permission required to use this schematic. It can be anything you like
+  # startcommands - the commands to run when starting an island using this schematic
   # You can add or remove from this list. If this section is missing, only the default
   # island works.
   schematics:
@@ -1051,4 +1052,6 @@ schematicsection:
       # Only works with the schematic panel
       # The cost is a double and displayed in the description if [cost] is there
       cost: 0
+      startcommands:
+      #- "bc Good luck [player]!"
 

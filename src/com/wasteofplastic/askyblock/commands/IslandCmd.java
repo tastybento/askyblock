@@ -373,9 +373,6 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                             newSchem.setPartnerName(schemSection.getString("schematics." + key + ".partnerSchematic","nether"));
                         }
                         // Island companion
-                        if(!Settings.spawnCompanion){
-                        	newSchem.setSpawnCompanion(schemSection.getBoolean("schematics." + key + ".spawnCompanion", false));
-                        }
                         List<String> companion = schemSection.getStringList("schematics." + key + ".companion");
                         List<EntityType> companionTypes = new ArrayList<EntityType>();
                         if (!companion.isEmpty()) {
@@ -509,6 +506,9 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                         
                         // Level handicap
                         newSchem.setLevelHandicap(schemSection.getInt("schematics." + key + ".levelHandicap", 0));
+                        
+                        // Start commands
+                        newSchem.setStartingCommands(schemSection.getStringList("schematics." + key + ".startcommands"));
                         
                         // Store it
                         schematics.put(key, newSchem);
@@ -871,6 +871,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
             if (!player.hasPermission(Settings.PERMPREFIX + "command.newislandexempt")) {
                 //plugin.getLogger().info("DEBUG: Executing new island commands");
                 runCommands(Settings.startCommands, player);
+                runCommands(schematic.getStartingCommands(), player);
             }
         }
         // Save grid just in case there's a crash
