@@ -654,9 +654,9 @@ protection:
    # ACID_DAMAGE, ANVIL, ARMOR_STAND, BEACON, BED, BREAK_BLOCKS, BREEDING, BREWING, 
    # BUCKET, COLLECT_LAVA, COLLECT_WATER, CHEST, CHORUS_FRUIT, CRAFTING, CROP_TRAMPLE, 
    # DOOR, EGGS, ENCHANTING, ENDER_PEARL, ENTER_EXIT_MESSAGES, FIRE, FIRE_EXTINGUISH, 
-   # FIRE_SPREAD, FURNACE, GATE, HORSE_INVENTORY, HORSE_RIDING, HURT_MOBS, LEASH,
-   # LEVER_BUTTON, MOB_SPAWN, MUSIC, PLACE_BLOCKS, PORTAL, PRESSURE_PLATE, PVP,
-   # MILKING, NETHER_PVP, REDSTONE, SPAWN_EGGS, SHEARING, VILLAGER_TRADING,
+   # FIRE_SPREAD, FISHING_ROD, FURNACE, GATE, HORSE_INVENTORY, HORSE_RIDING, HURT_MOBS,
+   # LEASH, LEVER_BUTTON, MOB_SPAWN, MUSIC, PLACE_BLOCKS, PORTAL, PRESSURE_PLATE, PVP,
+   # MILKING, NETHER_PVP, REDSTONE, SPAWN_EGGS, SPLASH_POTION, SHEARING, VILLAGER_TRADING,
    # VISITOR_ITEM_DROP, VISITOR_ITEM_PICKUP
    #
    # Players can be given the ability to change settings in the GUI with permissions
@@ -717,6 +717,8 @@ protection:
      FIRE_EXTINGUISH: false
      # Allow fire spreading
      FIRE_SPREAD: false
+     # Allow fishing rod use
+     FISHING_ROD: true
      # Allow furnace use
      FURNACE: true
      # Allow gate use
@@ -755,6 +757,8 @@ protection:
      REDSTONE: false
      # Spawn eggs can be used
      SPAWN_EGGS: false
+     # Allow to throw splash potions
+     SPLASH_POTION: true
      # Allow sheep shearing
      SHEARING: false
      # Allow trading with villagers
@@ -793,6 +797,8 @@ protection:
      EGGS: false
      # Allow visitors to use enchanting tables
      ENCHANTING: true
+     # Allow fishing rod use
+     FISHING_ROD: true
      # Allow visitor furnace use
      FURNACE: true
      # Allow gate use
@@ -807,6 +813,8 @@ protection:
      REDSTONE: false
      # Allow visitors to shear sheep
      SHEARING: false
+     # Allow to throw splash potions
+     SPLASH_POTION: true
 
 # This section contains the biomes that can be bought or used
 biomesettings:

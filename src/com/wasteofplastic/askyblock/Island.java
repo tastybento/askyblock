@@ -204,6 +204,10 @@ public class Island implements Cloneable {
          */
         FIRE_SPREAD,
         /**
+         * Can use fishing rod
+         */
+        FISHING_ROD,
+        /**
          * Can use furnaces
          */
         FURNACE,
@@ -279,6 +283,10 @@ public class Island implements Cloneable {
          * Spawn eggs can be used
          */
         SPAWN_EGGS,
+        /**
+         * Can throw splash potions
+         */
+        SPLASH_POTION,
         /**
          * Can shear sheep
          */

@@ -223,6 +223,9 @@ permissions:
           askyblock.settings.FIRE_SPREAD:
             description: Can configure the Fire Spread setting
             default: false
+          askyblock.settings.FISHING_ROD:
+            description: Can configure the Fishing Rod setting
+            default: false
           askyblock.settings.FURNACE:
             description: Can configure the Furnace setting
             default: false
@@ -279,6 +282,9 @@ permissions:
             default: false
           askyblock.settings.SPAWN_EGGS:
             description: Can configure the Spawn Eggs setting
+            default: false
+          askyblock.settings.SPLASH_POTION:
+            description: Can configure the Splash Potion setting
             default: false
           askyblock.settings.SHEARING:
             description: Can configure the Shearing setting

@@ -81,6 +81,7 @@ public class SettingsPanel implements Listener {
         lookup.put(Material.ENCHANTMENT_TABLE, SettingsFlag.ENCHANTING);
         lookup.put(Material.ENDER_PEARL, SettingsFlag.ENDER_PEARL);
         lookup.put(Material.FENCE_GATE, SettingsFlag.GATE);
+        lookup.put(Material.FISHING_ROD, SettingsFlag.FISHING_ROD);
         lookup.put(Material.FLINT_AND_STEEL, SettingsFlag.FIRE);
         lookup.put(Material.FURNACE, SettingsFlag.FURNACE);
         lookup.put(Material.GOLD_BARDING, SettingsFlag.HORSE_INVENTORY);
@@ -101,6 +102,7 @@ public class SettingsPanel implements Listener {
         lookup.put(Material.POTION, SettingsFlag.ACID_DAMAGE);
         lookup.put(Material.REDSTONE_COMPARATOR, SettingsFlag.REDSTONE);
         lookup.put(Material.SHEARS, SettingsFlag.SHEARING);
+        lookup.put(Material.SPLASH_POTION, SettingsFlag.SPLASH_POTION);
         lookup.put(Material.SIGN, SettingsFlag.ENTER_EXIT_MESSAGES);
         lookup.put(Material.STONE, SettingsFlag.BREAK_BLOCKS);
         lookup.put(Material.TNT, SettingsFlag.CREEPER_PAIN);
