@@ -27,6 +27,7 @@ import com.wasteofplastic.askyblock.Island;
  * @author tastybento
  * @deprecated check IslandPostLevelEvent
  */
+@Deprecated
 public class IslandLevelEvent extends ASkyBlockEvent {
     private int level;
 
