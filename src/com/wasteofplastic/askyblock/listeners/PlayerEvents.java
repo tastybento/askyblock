@@ -404,19 +404,19 @@ public class PlayerEvents implements Listener {
         if (Settings.muteDeathMessages) {
             e.setDeathMessage(null);
         }
-        // If the player is not on another island then they die and lose everything -
-        // sorry :-(
-        Island island = plugin.getGrid().getIslandAt(e.getEntity().getLocation());
-        if (island == null || island.getMembers().contains(e.getEntity().getUniqueId())) {
-            return;
-        }
         // If visitors will keep items and their level on death
         // This will override any global settings
         if (Settings.allowVisitorKeepInvOnDeath) {
-            InventorySave.getInstance().savePlayerInventory(e.getEntity());
-            e.getDrops().clear();
-            e.setKeepLevel(true);
-            e.setDroppedExp(0);
+            // If the player is not a visitor then they die and lose everything -
+            // sorry :-(
+            Island island = plugin.getGrid().getProtectedIslandAt(e.getEntity().getLocation());
+            if (island != null && !island.getMembers().contains(e.getEntity().getUniqueId())) {
+                // They are a visitor
+                InventorySave.getInstance().savePlayerInventory(e.getEntity());
+                e.getDrops().clear();
+                e.setKeepLevel(true);
+                e.setDroppedExp(0);
+            }
         }
     }
 
