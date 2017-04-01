@@ -376,7 +376,12 @@ public class LevelCalcByChunk {
                     }
 
                     // Calculate how many points are required to get to the next level
-                    final int pointsToNextLevel = (Settings.levelCost * (plugin.getPlayers().getIslandLevel(targetPlayer) + 1 + levelHandicap)) - ((blockCount * levelMultiplier) - (deathHandicap * Settings.deathpenalty));
+                    int calculatePointsToNextLevel = (Settings.levelCost * (plugin.getPlayers().getIslandLevel(targetPlayer) + 1 + levelHandicap)) - ((blockCount * levelMultiplier) - (deathHandicap * Settings.deathpenalty));
+                    // Sometimes it will return 0, so calculate again to make sure it will display a good value
+                    if(calculatePointsToNextLevel == 0) calculatePointsToNextLevel = (Settings.levelCost * (plugin.getPlayers().getIslandLevel(targetPlayer) + 2 + levelHandicap)) - ((blockCount * levelMultiplier) - (deathHandicap * Settings.deathpenalty));
+                    
+                    final int pointsToNextLevel = calculatePointsToNextLevel;
+                    
                     // Return to main thread
                     plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
 
