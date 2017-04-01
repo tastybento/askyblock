@@ -404,9 +404,10 @@ public class PlayerEvents implements Listener {
         if (Settings.muteDeathMessages) {
             e.setDeathMessage(null);
         }
-        // If the player is on their island then they die and lose everything -
+        // If the player is not on another island then they die and lose everything -
         // sorry :-(
-        if (plugin.getGrid().playerIsOnIsland(e.getEntity())) {
+        Island island = plugin.getGrid().getIslandAt(e.getEntity().getLocation());
+        if (island == null || island.getMembers().contains(e.getEntity().getUniqueId())) {
             return;
         }
         // If visitors will keep items and their level on death

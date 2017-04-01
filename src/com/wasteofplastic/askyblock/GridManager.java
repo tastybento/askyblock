@@ -510,7 +510,8 @@ public class GridManager {
     }
 
     /**
-     * Returns the island at the location or null if there is none
+     * Returns the island at the location or null if there is none.
+     * This includes the full island space, not just the protected area
      * 
      * @param location
      * @return PlayerIsland object
@@ -548,7 +549,8 @@ public class GridManager {
 
 
     /**
-     * Returns the island at the x,z location or null if there is none
+     * Returns the island at the x,z location or null if there is none.
+     * This includes the full island space, not just the protected area.
      * 
      * @param x
      * @param z

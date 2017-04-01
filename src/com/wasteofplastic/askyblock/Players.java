@@ -106,7 +106,7 @@ public class Players {
         this.playerName = playerInfo.getString("playerName", "");
         if (playerName.isEmpty()) {
             Entity entity = plugin.getServer().getEntity(uuid);
-            if (entity.hasMetadata("NPC")) {
+            if (entity != null && entity.hasMetadata("NPC")) {
                 //plugin.getLogger().info("DEBUG: Entity is NPC");
                 playerName = entity.getUniqueId().toString();
             } else {
