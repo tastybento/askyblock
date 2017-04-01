@@ -2121,10 +2121,10 @@ public class IslandGuard implements Listener {
                 }
                 return;
             } else if (e.getMaterial().equals(Material.FLINT_AND_STEEL)) {
-                plugin.getLogger().info("DEBUG: flint & steel");
+            	if (DEBUG) plugin.getLogger().info("DEBUG: flint & steel");
                 if (e.getClickedBlock() != null) {
                     if (e.getMaterial().equals(Material.OBSIDIAN)) {
-                        plugin.getLogger().info("DEBUG: flint & steel on obsidian");
+                    	if (DEBUG) plugin.getLogger().info("DEBUG: flint & steel on obsidian");
                         //return;
                     }
                     if (!actionAllowed(e.getPlayer(), e.getClickedBlock().getLocation(), SettingsFlag.FIRE)) {
@@ -2147,6 +2147,11 @@ public class IslandGuard implements Listener {
                 try {
                     Potion p = Potion.fromItemStack(e.getItem());
                     if (p.isSplash()) {
+                    	if(island != null && !island.getIgsFlag(SettingsFlag.SPLASH_POTION)){
+                    		Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
+                            e.setCancelled(true);
+                    	}
+                    	
                         // Splash potions are allowed only if PVP is allowed
                         boolean inNether = false;
                         if (e.getPlayer().getWorld().equals(ASkyBlock.getNetherWorld())) {
@@ -2169,6 +2174,11 @@ public class IslandGuard implements Listener {
                     }
                 } catch (Exception ex) {
                 }
+            } else if (e.getMaterial().equals(Material.FISHING_ROD)){
+            	if(!island.getIgsFlag(SettingsFlag.FISHING_ROD)){
+                    Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
+                    e.setCancelled(true);
+            	}
             }
             // Everything else is okay
         }
