@@ -111,6 +111,7 @@ island:
    # Default island companion. Set schematic-specific companions in the schematicsection
    # Recommended are: COW, PIG, SHEEP, CHICKEN, VILLAGER, HORSE, IRON_GOLEM, OCELOT,
    # RABBIT, WOLF, LLAMA or NOTHING. Default is COW.
+   # If you don't want a companion to spawn, set NOTHING.
 
    companion: COW
 
@@ -122,6 +123,7 @@ island:
    - "&9[player]'s cow"
    - "&cEmergency &fFood?"
    - "&aD&6a&di&6s&9y"
+   - "&bA&cTasty&aCow"
    
    # Island naming
    # Only players with the askyblock.island.name permission can name their island
@@ -893,9 +895,10 @@ biomes:
     description: "&6Woods and trees"
     #permission: any.perm.you.want
 
-
+# IMPORTANT: Please read carefully all the comments in this section in order to edit or add a schematic
+# If it is not configured properly, ASkyBlock/AcidIsland will automatically use the default overworld & nether schematics.
+# Every new schematic you add should be put in the schematics folder.
 schematicsection:
-   # All schematics should be put in the schematics folder
 
    # Schematic panel - if more than one schematic is available to the player
    # Show a panel to choose. If this is false, no panel is shown and the starter 
@@ -918,48 +921,55 @@ schematicsection:
   
   # This section lists all the schematics available
   # Settings are:
-  # show - whether this island will show in the GUI or not. Typically used for partner
-  #        schematics, but can be used to temporarily hide schematics.
-  # icon - the icon to show in the GUI. It must be a known Material
-  # order - the priority for showing in the GUI. Lower numbers are shown first.
-  # name - a friendly short name for the schematic. Color codes okay.
+  #
+  # show - whether the island will show in the panel or not. Typically used for partner schematics,
+  #        but can be used to temporarily hide schematics.
+  # icon - the icon to show in the panel. If this is missing or an unknown material, it will be a MAP.
+  # order - the priority for showing in the panel. Lower numbers are shown first.
+  # name - a friendly short name for the schematics. Color codes okay.
   # description - a longer description. Use | to split lines. Color codes okay.
-  # filename - the filename of the schematic in the schematic folder
-  # useDefaultChest - fill a chest on the island with the items in this config. If false
-  #                   the contents will come from the schematic.
-  # partnerSchematic - the island that will be pasted in the Nether.
+  #
+  # filename - the filename of the schematic in the schematics folder.
+  # partnerSchematic - Which schematic will be pasted in the opposite world. When not specified, it'll be the default schematic.
+  # permission - the permission required to use this schematic. It can be anything you like
+  # cost - if an economy is in use, this can be used to require a fee. Only works with the schematic panel.
+  #        The cost is displayed in the schematic's description if [cost] is there.
+  #
   # biome - the biome this island should have. All pasted blocks will have this biome.
+  # useDefaultChest - fill a chest on the island with the items chosen in this config.
+  #                   If false, the contents will come from the schematic.
+  # chestItems - Chest items defined here will override the default chest items. It has to be configured like a list
+  #              using Material:Qty, or Material:Data:Qty as format.
+  #              e.g: - MELON:1
+  #                   - NETHERRACK:64
+  # startcommands - the commands to run when starting an island using this schematic
+  # companion - overrides the default setting. Check "companion" in the island settings for more info.
+  # companionnames - overrides the default setting. Check "companionnames" in the island settings for more info.
+  # levelHandicap - use it to set to zero the initial island level.
+  #
   # These next settings may cause lag if true. Default is false. Use judiciously.
   # pasteentities - if the schematic has entities in it (mobs) this will paste them.
-  # usephysics - if true, causes lava or water to flow after being pasted.
+  # usephysics - Schematics that require water or lava to hover can prevent physics when pasting. If true, causes lava or water to flow after being pasted. 
   # pasteair - Only set to true if you need to paste below sea level.
-  # permission - the permission required to use this schematic. It can be anything you like
-  # You can add or remove from this list. If this section is missing, only the default
-  # island works.
+  #
+  # spawnblock - This optional block determines where the player will spawn. It must be unique in the schematic and will be replaced by air when pasted.
+  # companionspawnblock - This optional block determines where the companion will spawn. As the player's spawn block, it must be unique in the schematic 
+  #                       and will be replaced by air when pasted. BEWARE: It must be different from the player's spawn block too.
+  
   schematics:
-    # default heading is required
+    # "default" heading is REQUIRED. You mustn't rename or remove it.
     default:
-      # Icon - if this is missing or wrong, it will be a MAP
       icon: DIRT
-      # Order of preference in listing
       order: 1
-      # Short name - color codes with & okay
       name: "The Original"
-      # Longer description. Use | for new lines. Color codes okay.
       description: "Challenging|starter|island!"
-      # Filename of the schematic in the schematic folder
       filename: island.schematic
-      # Use default chest if true, or use schematic chest contents if false
       useDefaultChest: true
-      # Which schematic will be used in the opposite world if newnether:true
-      # If there is no partner, this island will be used
       partnerSchematic: nether
-      #Level handicap zeros the initial island level. 
       levelHandicap: 3
 
     # This is the default nether island - do not remove this section!
     nether:
-      # Hide or show this schematic to players in the GUI
       show: false
       icon: NETHERRACK
       # If the biome is HELL it is assumed this island goes in the Nether
@@ -971,13 +981,8 @@ schematicsection:
       useDefaultChest: false
       # The partner to this schematic is the default island
       partnerSchematic: default
-      # Schematics can include entities (mobs) in them and if pasteentities is true,
-      # mobs will be pasted. 
       pasteentities: true
-      # Usephysics causes lava or water to flow after being pasted. Change to false
-      # if it lags
       usephysics: true
-      #Level handicap zeros the initial island level. 
       levelHandicap: 93
   
     # Additional heading names can be anything you like, but must be unique
@@ -988,36 +993,15 @@ schematicsection:
       name: "Island Duo"
       description: "Two close islands!|Double the fun,|but a little easier.|&a[Credit] Antal1609"
       filename: double.schematic
-      # Schematics can have biomes set when they are created
       biome: FOREST
-      # If useDefaultChest is false, the items in the schematic will be used
-      # If false, the default chest items will be used, or the list below
       useDefaultChest: true
-      # Chest items defined here will override the default chest items.
-      # You can set the chest items here in this list
-      # Material:Qty, or Material:Data:Qty
-      #chestItems:
-      #- MELON:1
-      #- ICE:1
-      # Your island companion. Overrides the default setting. If more than one is
-      # listed, one will be chosen at random.
-      # Recommended choices: COW, PIG, SHEEP, CHICKEN, VILLAGER, HORSE, IRON_GOLEM, OCELOT,
-      # RABBIT, WOLF, LLAMA or NOTHING.
       companion:
       - CHICKEN 
-      # This is a list of names, picked at random that will apply to the companion
-      # You can add more if you like. If none are listed, the companion will not be
-      # named.
       companionnames:
       - "&9[player]'s chicken"
       - "&dFree-Range Eggs"
       partnerSchematic: nether
-      #permission: any.perm.you.like
-      #Level handicap zeros the initial island level. 
       levelHandicap: 9
-      # Cost - if an economy is in use, this can be used to require a fee
-      # Only works with the schematic panel
-      # The cost is a double and displayed in the description if [cost] is there
       cost: 0
 
     # New snowy schematic
@@ -1030,27 +1014,13 @@ schematicsection:
       filename: harder.schematic
       biome: COLD_BEACH
       useDefaultChest: false
-      # Chest items defined here will override the default chest items.
-      # You can set the chest items here in this list
-      # Material:Qty, or Material:Data:Qty
-      #chestItems:
-      #- MELON:1
-      #- ICE:1
-      # Schematics that require water or lava to hover can prevent physics when pasting
       usephysics: false
-      # Schematics may include entities (mobs) in them and if pasteentities is true,
-      # mobs will be pasted.
-      # Example: Setting this to true for this schematic will give a wolf.
+      # Setting pasteentities to true for this schematic will give a wolf.
       pasteentities: false
       partnerSchematic: nether
-      #permission: any.perm.you.like
-      # This optional block determines where the player will spawn. It must be unique in
-      # the schematic and will be replaced by air when pasted.
       #spawnblock: SPONGE
-      #Level handicap zeros the initial island level. 
       levelHandicap: 1
-      # Cost - if an economy is in use, this can be used to require a fee
-      # Only works with the schematic panel
-      # The cost is a double and displayed in the description if [cost] is there
       cost: 0
+      startcommands:
+      #- "bc Good luck [player]!"
 

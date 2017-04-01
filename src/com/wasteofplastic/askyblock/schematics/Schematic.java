@@ -116,7 +116,7 @@ public class Schematic {
     private Vector welcomeSign;
     private Vector topGrass;
     private Vector playerSpawn;
-    //private Material playerSpawnBlock;
+    private Vector companionSpawn;
     private NMSAbstraction nms;
     private Set<Integer> attachable = new HashSet<Integer>();
     private Map<String, Art> paintingList = new HashMap<String, Art>();
@@ -127,6 +127,7 @@ public class Schematic {
     private int durability;
     private int levelHandicap;
     private double cost;
+    private List<String> startCommands = new ArrayList<String>();
 
     public Schematic(ASkyBlock plugin) {
         this.plugin = plugin;
@@ -152,7 +153,7 @@ public class Schematic {
         welcomeSign = null;
         topGrass = null;
         playerSpawn = null;
-        //playerSpawnBlock = null;
+        companionSpawn = null;
         partnerName = "";
     }
 
@@ -183,7 +184,7 @@ public class Schematic {
         welcomeSign = null;
         topGrass = null;
         playerSpawn = null;
-        //playerSpawnBlock = null;
+        companionSpawn = null;
         partnerName = "";
 
         attachable.add(Material.STONE_BUTTON.getId());
@@ -1039,13 +1040,23 @@ public class Schematic {
                 }}, 10L);
 
         }
-        if (!islandCompanion.isEmpty() && grass != null) {
-            Bukkit.getServer().getScheduler().runTaskLater(ASkyBlock.getPlugin(), new Runnable() {
-                @Override
-                public void run() {
-                    spawnCompanion(player, grass);
-                }
-            }, 40L);
+        if (!islandCompanion.isEmpty()) {
+        	if(isCompanionSpawn()){
+        		Bukkit.getServer().getScheduler().runTaskLater(ASkyBlock.getPlugin(), new Runnable() {
+        			@Override
+        			public void run() {
+        				spawnCompanion(player, loc);
+        			}
+        		}, 40L);
+        	} 
+        	else if(grass != null){
+        		Bukkit.getServer().getScheduler().runTaskLater(ASkyBlock.getPlugin(), new Runnable() {
+        			@Override
+        			public void run() {
+        				spawnCompanion(player, grass);
+        			}
+        		}, 40L);
+        	}
         }
         // Set the bedrock block meta data to the original spawn location
         // Doesn't survive a server restart. TODO: change to add this info elsewhere.
@@ -1060,7 +1071,7 @@ public class Schematic {
         */
     }
     /**
-     * This method prepares to pastes a schematic.
+     * This method prepares to paste a schematic.
      * @param blocks
      * @param data
      */
@@ -1428,7 +1439,7 @@ public class Schematic {
             }
         }
     }
-
+    
     /**
      * @param islandCompanion the islandCompanion to set
      */
@@ -1558,6 +1569,42 @@ public class Schematic {
         return false;
     }
 
+    /**
+     * @return true if companion spawn exists in this schematic
+     */
+    public boolean isCompanionSpawn(){
+    	if(companionSpawn == null) return true;
+    	else return false;
+    }
+    
+    /**
+     * @return the companionSpawn Location from the given paste location
+     */
+    public Location getCompanionSpawn(Location pasteLocation){
+    	return pasteLocation.clone().add(companionSpawn);
+    }
+    
+    /**
+     * @param companionSpawnBlock the companionSpawnBlock to set
+     * @return true if block is found otherwise false
+     */
+    @SuppressWarnings("deprecation")
+    public boolean setCompanionSpawnBlock(Material companionSpawnBlock) {
+        if (bedrock == null) {
+            return false;
+        }
+        this.companionSpawn = null;
+        // Run through the schematic and try and find the spawnBlock
+        for (IslandBlock islandBlock : islandBlocks) {
+            if (islandBlock.getTypeId() == companionSpawnBlock.getId()) {
+            	this.companionSpawn = islandBlock.getVector().subtract(bedrock).add(new Vector(0.5D,0D,0.5D));
+                // Set the block to air
+                islandBlock.setTypeId((short)0);
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * @return the levelHandicap
@@ -1586,6 +1633,20 @@ public class Schematic {
      */
     public double getCost() {
         return cost;
+    }
+    
+    /**
+     * @param commands - the commands to run when starting an island using this schematic
+     */
+    public void setStartingCommands(List<String> commands){
+    	this.startCommands = commands;
+    }
+    
+    /**
+     * @return the commands to run when starting an island using this schematic
+     */
+    public List<String> getStartingCommands(){
+    	return this.startCommands;
     }
 
 }
