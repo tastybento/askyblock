@@ -105,7 +105,7 @@ public class PlayerEvents implements Listener {
         if (DEBUG)
             plugin.getLogger().info("DEBUG: Giving all temp perms");
         for (Player player : plugin.getServer().getOnlinePlayers()) {
-            if(plugin.getGrid().playerIsOnIsland(player)){
+            if(!player.hasMetadata("NPC") && plugin.getGrid().playerIsOnIsland(player)){
                 if(VaultHelper.checkPerm(player, Settings.PERMPREFIX + "islandfly")){
                     player.setAllowFlight(true);
                     player.setFlying(true);
@@ -248,6 +248,9 @@ public class PlayerEvents implements Listener {
     public void removeTempPerms(final Player player, Island fromIsland, Island toIsland) {
         if (DEBUG)
             plugin.getLogger().info("DEBUG: Removing temp perms");
+        if (player.hasMetadata("NPC")) {
+            return;
+        }
         // Check if the player has left the island completely
         if(VaultHelper.checkPerm(player, Settings.PERMPREFIX + "islandfly")) {
             // If the player has teleported to another world or island
@@ -401,9 +404,10 @@ public class PlayerEvents implements Listener {
         if (Settings.muteDeathMessages) {
             e.setDeathMessage(null);
         }
-        // If the player is on their island then they die and lose everything -
+        // If the player is not on another island then they die and lose everything -
         // sorry :-(
-        if (plugin.getGrid().playerIsOnIsland(e.getEntity())) {
+        Island island = plugin.getGrid().getIslandAt(e.getEntity().getLocation());
+        if (island == null || island.getMembers().contains(e.getEntity().getUniqueId())) {
             return;
         }
         // If visitors will keep items and their level on death

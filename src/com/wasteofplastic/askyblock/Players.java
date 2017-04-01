@@ -27,6 +27,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import com.wasteofplastic.askyblock.events.TeamJoinEvent;
@@ -104,16 +105,24 @@ public class Players {
         // Load in from YAML file
         this.playerName = playerInfo.getString("playerName", "");
         if (playerName.isEmpty()) {
-            try {
-                playerName = plugin.getServer().getOfflinePlayer(uuid).getName();
-            } catch (Exception e) {
-                plugin.getLogger().severe("Could not obtain a name for the player with UUID " + uuid.toString());
-                playerName = "";
+            Entity entity = plugin.getServer().getEntity(uuid);
+            if (entity != null && entity.hasMetadata("NPC")) {
+                //plugin.getLogger().info("DEBUG: Entity is NPC");
+                playerName = entity.getUniqueId().toString();
+            } else {
+                //plugin.getLogger().info("DEBUG: Entity is player");
+                try {
+                    playerName = plugin.getServer().getOfflinePlayer(uuid).getName();
+                } catch (Exception e) {
+                    plugin.getLogger().severe("Could not obtain a name for the player with UUID " + uuid.toString());
+                    playerName = "";
+                }
+                if (playerName == null) {
+                    plugin.getLogger().severe("Could not obtain a name for the player with UUID " + uuid.toString());
+                    playerName = "";
+                }
             }
-            if (playerName == null) {
-                plugin.getLogger().severe("Could not obtain a name for the player with UUID " + uuid.toString());
-                playerName = "";
-            }
+            
         }
         // Start island rating - how difficult the start island was. Default if 50/100
         this.startIslandRating = playerInfo.getInt("startIslandRating", 50);

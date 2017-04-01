@@ -72,7 +72,9 @@ public class Util {
         } else {
             // Create the missing file
             config = new YamlConfiguration();
-            plugin.getLogger().info("No " + file + " found. Creating it...");
+            if (!file.startsWith("players")) {
+                plugin.getLogger().info("No " + file + " found. Creating it...");
+            }
             try {
                 if (plugin.getResource(file) != null) {
                     plugin.getLogger().info("Using default found in jar file.");
@@ -379,7 +381,7 @@ public class Util {
     public static void setConfig(String setting, String oldSetting, String newSetting) throws IOException {
         setYamlConfig(plugin.getDataFolder().getAbsolutePath() + File.separator + "config.yml", setting, oldSetting, newSetting);
     }
-    
+
     /**
      * Changes the setting in a YAML file to a new value without removing comments (saveConfig() removes comments)
      * @param absoluteFilename
@@ -395,7 +397,7 @@ public class Util {
         content = content.replaceAll(setting + ": " + oldSetting, setting + ": " + newSetting);
         Files.write(path, content.getBytes(charset));
     }
-    
+
     /**
      * Changes a setting in all player files in the player folder. If the setting does not exist, no change is made
      * This is not a true YAML change, if the setting name exists multiple times in the file, all lines will be changed.
