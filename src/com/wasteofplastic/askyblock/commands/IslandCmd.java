@@ -871,7 +871,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
             if (!player.hasPermission(Settings.PERMPREFIX + "command.newislandexempt")) {
                 //plugin.getLogger().info("DEBUG: Executing new island commands");
                 runCommands(Settings.startCommands, player);
-                runCommands(schematic.getStartingCommands(), player);
+                if(schematic != null) runCommands(schematic.getStartingCommands(), player);
             }
         }
         // Save grid just in case there's a crash
