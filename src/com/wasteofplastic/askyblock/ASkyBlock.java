@@ -356,7 +356,9 @@ public class ASkyBlock extends JavaPlugin {
             getServer().getPluginManager().registerEvents(new WorldLoader(this), this);
         }
         // Metrics
-        new MetricsLite(this);
+        if(Settings.metrics){
+            new MetricsLite(this);
+        }
         // Kick off a few tasks on the next tick
         // By calling getIslandWorld(), if there is no island
         // world, it will be created
@@ -379,7 +381,7 @@ public class ASkyBlock extends JavaPlugin {
                     if (Settings.GAMETYPE.equals(Settings.GameType.ASKYBLOCK)) {
                         getCommand("island").setExecutor(new NotSetup(Reason.GENERATOR));
                         getCommand("asc").setExecutor(new NotSetup(Reason.GENERATOR));
-                        getCommand("asadmin").setExecutor(new NotSetup(Reason.GENERATOR));
+                        getCommand("asadmin").setExecutor(new NotSetup(Reason.GENERATOR));  
                     } else {
                         getCommand("ai").setExecutor(new NotSetup(Reason.GENERATOR));
                         getCommand("aic").setExecutor(new NotSetup(Reason.GENERATOR));
