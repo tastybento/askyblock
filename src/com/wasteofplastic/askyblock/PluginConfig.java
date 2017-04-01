@@ -220,7 +220,6 @@ public class PluginConfig {
             Settings.chestItems = new ItemStack[0];
         }
         // Default companion
-        Settings.spawnCompanion = plugin.getConfig().getBoolean("island.spawncompanion", true);
         String companion = plugin.getConfig().getString("island.companion", "COW").toUpperCase();
         Settings.islandCompanion = null;
         if (!companion.equalsIgnoreCase("NOTHING")) {

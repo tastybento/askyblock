@@ -105,7 +105,6 @@ public class Schematic {
     private int order;
     // These hashmaps enable translation between WorldEdit strings and Bukkit names
     //private HashMap<String, EntityType> WEtoME = new HashMap<String, EntityType>();
-    private boolean spawnCompanion;
     private List<EntityType> islandCompanion;
     private List<String> companionNames;
     private ItemStack[] defaultChestItems;
@@ -142,7 +141,6 @@ public class Schematic {
         biome = Settings.defaultBiome;
         usePhysics = Settings.usePhysics;
         file = null;
-        spawnCompanion = true;
         islandCompanion = new ArrayList<EntityType>();
         islandCompanion.add(Settings.islandCompanion);
         companionNames = Settings.companionNames;
@@ -173,7 +171,6 @@ public class Schematic {
         useDefaultChest = true;
         biome = Settings.defaultBiome;
         usePhysics = Settings.usePhysics;
-        spawnCompanion = true;
         islandCompanion = new ArrayList<EntityType>();
         islandCompanion.add(Settings.islandCompanion);
         companionNames = Settings.companionNames;
@@ -1042,7 +1039,7 @@ public class Schematic {
                 }}, 10L);
 
         }
-        if ((Settings.spawnCompanion || spawnCompanion) && !islandCompanion.isEmpty()) {
+        if (!islandCompanion.isEmpty()) {
         	if(isCompanionSpawn()){
         		Bukkit.getServer().getScheduler().runTaskLater(ASkyBlock.getPlugin(), new Runnable() {
         			@Override
@@ -1387,7 +1384,7 @@ public class Schematic {
         blockToChange.setData(dc.getData(), true);
         // Teleport player
         plugin.getGrid().homeTeleport(player);
-        if ((Settings.spawnCompanion || spawnCompanion) && !islandCompanion.isEmpty()) {
+        if (!islandCompanion.isEmpty()) {
             Bukkit.getServer().getScheduler().runTaskLater(ASkyBlock.getPlugin(), new Runnable() {
                 @Override
                 public void run() {
@@ -1440,13 +1437,6 @@ public class Schematic {
                 } 
             }
         }
-    }
-
-    /**
-     * @param spawnCompanion - if the companion will spawn
-     */
-    public void setSpawnCompanion(boolean spawnCompanion){
-    	this.spawnCompanion = spawnCompanion;
     }
     
     /**

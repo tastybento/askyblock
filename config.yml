@@ -103,13 +103,10 @@ island:
 
    chestItems: 'ICE:2 MELON:1 TORCH:2 BONE:1 LAVA_BUCKET:1 PUMPKIN_SEEDS:1 SUGAR_CANE:1 RED_MUSHROOM:1 BROWN_MUSHROOM:1 CACTUS:1 BREAD:1 WHEAT:1 LEATHER_BOOTS:1 LEATHER_HELMET:1 LEATHER_CHESTPLATE:1 LEATHER_LEGGINGS:1'
 
-   # Enable or disable companions. No more companions will spawn from schematics.
-   # However, you can allow a schematic to have a companion : see "spawncompanion" in the schematics section.
-   spawncompanion: true
-
    # Default island companion. Set schematic-specific companions in the schematicsection
    # Recommended are: COW, PIG, SHEEP, CHICKEN, VILLAGER, HORSE, IRON_GOLEM, OCELOT,
    # RABBIT, WOLF, LLAMA or NOTHING. Default is COW.
+   # If you don't want a companion to spawn, set NOTHING.
 
    companion: COW
 
@@ -935,7 +932,6 @@ schematicsection:
   # usephysics - if true, causes lava or water to flow after being pasted.
   # pasteair - Only set to true if you need to paste below sea level.
   # permission - the permission required to use this schematic. It can be anything you like
-  # spawnCompanion - set if the companion will spawn.
   # You can add or remove from this list. If this section is missing, only the default
   # island works.
   schematics:
