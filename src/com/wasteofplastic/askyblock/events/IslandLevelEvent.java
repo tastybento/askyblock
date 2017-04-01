@@ -25,7 +25,7 @@ import com.wasteofplastic.askyblock.Island;
  * This event is fired after ASkyBlock calculates an island level and is for notification only.
  * 
  * @author tastybento
- * 
+ * @deprecated check IslandPostLevelEvent
  */
 public class IslandLevelEvent extends ASkyBlockEvent {
     private int level;

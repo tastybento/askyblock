@@ -27,7 +27,8 @@ import com.wasteofplastic.askyblock.Island;
  * This event is fired after ASkyBlock calculates an island level but before it is communicated
  * to the player.
  * Use getLevel() to see the level calculated and setLevel() to change it.
- * Canceling this event will result in no change in level and no communication with the player.
+ * Canceling this event will result in no change in level.
+ * See IslandPostLevelEvent to cancel notifications to the player.
  * 
  * @author tastybento
  * 
