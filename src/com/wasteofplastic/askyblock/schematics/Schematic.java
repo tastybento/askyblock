@@ -19,6 +19,8 @@ package com.wasteofplastic.askyblock.schematics;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -67,8 +69,10 @@ import org.bukkit.util.Vector;
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.Settings.GameType;
+import com.wasteofplastic.askyblock.commands.IslandCmd;
 import com.wasteofplastic.askyblock.nms.NMSAbstraction;
 import com.wasteofplastic.askyblock.util.Util;
+import com.wasteofplastic.askyblock.util.VaultHelper;
 import com.wasteofplastic.org.jnbt.ByteArrayTag;
 import com.wasteofplastic.org.jnbt.ByteTag;
 import com.wasteofplastic.org.jnbt.CompoundTag;
@@ -79,6 +83,8 @@ import com.wasteofplastic.org.jnbt.NBTInputStream;
 import com.wasteofplastic.org.jnbt.ShortTag;
 import com.wasteofplastic.org.jnbt.StringTag;
 import com.wasteofplastic.org.jnbt.Tag;
+
+import net.milkbowl.vault.economy.EconomyResponse;
 
 public class Schematic {
     private ASkyBlock plugin;
@@ -1036,6 +1042,41 @@ public class Schematic {
                 public void run() {
                     plugin.getGrid().homeTeleport(player);
                     plugin.getPlayers().setInTeleport(player.getUniqueId(), false);
+                    // Reset any inventory, etc. This is done AFTER the teleport because other plugins may switch out inventory based on world
+                    plugin.resetPlayer(player);
+                    // Reset money if required
+                    if (Settings.resetMoney) {
+                        resetMoney(player);
+                    }
+                    // Show fancy titles!
+                    if (!Bukkit.getServer().getVersion().contains("(MC: 1.7")) {
+                        if (!plugin.myLocale(player.getUniqueId()).islandSubTitle.isEmpty()) {
+                            //plugin.getLogger().info("DEBUG: title " + player.getName() + " subtitle {\"text\":\"" + plugin.myLocale(player.getUniqueId()).islandSubTitle + "\", \"color\":\"" + plugin.myLocale(player.getUniqueId()).islandSubTitleColor + "\"}");
+                            plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(),
+                                    "minecraft:title " + player.getName() + " subtitle {\"text\":\"" + plugin.myLocale(player.getUniqueId()).islandSubTitle.replace("[player]", player.getName()) + "\", \"color\":\"" + plugin.myLocale(player.getUniqueId()).islandSubTitleColor + "\"}");
+                        }
+                        if (!plugin.myLocale(player.getUniqueId()).islandTitle.isEmpty()) {
+                            //plugin.getLogger().info("DEBUG: title " + player.getName() + " title {\"text\":\"" + plugin.myLocale(player.getUniqueId()).islandTitle + "\", \"color\":\"" + plugin.myLocale(player.getUniqueId()).islandTitleColor + "\"}");
+                            plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(),
+                                    "minecraft:title " + player.getName() + " title {\"text\":\"" + plugin.myLocale(player.getUniqueId()).islandTitle.replace("[player]", player.getName()) + "\", \"color\":\"" + plugin.myLocale(player.getUniqueId()).islandTitleColor + "\"}");
+                        }
+                        if (!plugin.myLocale(player.getUniqueId()).islandDonate.isEmpty() && !plugin.myLocale(player.getUniqueId()).islandURL.isEmpty()) {
+                            //plugin.getLogger().info("DEBUG: tellraw " + player.getName() + " {\"text\":\"" + plugin.myLocale(player.getUniqueId()).islandDonate + "\",\"color\":\"" + plugin.myLocale(player.getUniqueId()).islandDonateColor + "\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\""
+                            //                + plugin.myLocale(player.getUniqueId()).islandURL + "\"}}");
+                            plugin.getServer().dispatchCommand(
+                                    plugin.getServer().getConsoleSender(),
+                                    "minecraft:tellraw " + player.getName() + " {\"text\":\"" + plugin.myLocale(player.getUniqueId()).islandDonate.replace("[player]", player.getName()) + "\",\"color\":\"" + plugin.myLocale(player.getUniqueId()).islandDonateColor + "\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\""
+                                            + plugin.myLocale(player.getUniqueId()).islandURL + "\"}}");
+                        }
+                    }
+                    if (!plugin.getPlayers().hasIsland(player.getUniqueId())) {
+                        // Run any commands that need to be run at the start
+                            //plugin.getLogger().info("DEBUG: First time");
+                            if (!player.hasPermission(Settings.PERMPREFIX + "command.newislandexempt")) {
+                                //plugin.getLogger().info("DEBUG: Executing new island commands");
+                                IslandCmd.runCommands(Settings.startCommands, player);
+                        }
+                    }
                 }}, 10L);
 
         }
@@ -1588,4 +1629,61 @@ public class Schematic {
         return cost;
     }
 
+    private void resetMoney(Player player) {
+        if (!Settings.useEconomy) {
+            return;
+        }
+        // Set player's balance in acid island to the starting balance
+        try {
+            // plugin.getLogger().info("DEBUG: " + player.getName() + " " +
+            // Settings.general_worldName);
+            if (VaultHelper.econ == null) {
+                // plugin.getLogger().warning("DEBUG: econ is null!");
+                VaultHelper.setupEconomy();
+            }
+            Double playerBalance = VaultHelper.econ.getBalance(player, Settings.worldName);
+            // plugin.getLogger().info("DEBUG: playerbalance = " +
+            // playerBalance);
+            // Round the balance to 2 decimal places and slightly down to
+            // avoid issues when withdrawing the amount later
+            BigDecimal bd = new BigDecimal(playerBalance);
+            bd = bd.setScale(2, RoundingMode.HALF_DOWN);
+            playerBalance = bd.doubleValue();
+            // plugin.getLogger().info("DEBUG: playerbalance after rounding = "
+            // + playerBalance);
+            if (playerBalance != Settings.startingMoney) {
+                if (playerBalance > Settings.startingMoney) {
+                    Double difference = playerBalance - Settings.startingMoney;
+                    EconomyResponse response = VaultHelper.econ.withdrawPlayer(player, Settings.worldName, difference);
+                    // plugin.getLogger().info("DEBUG: withdrawn");
+                    if (response.transactionSuccess()) {
+                        plugin.getLogger().info(
+                                "FYI:" + player.getName() + " had " + VaultHelper.econ.format(playerBalance) + " when they typed /island and it was set to "
+                                        + Settings.startingMoney);
+                    } else {
+                        plugin.getLogger().warning(
+                                "Problem trying to withdraw " + playerBalance + " from " + player.getName() + "'s account when they typed /island!");
+                        plugin.getLogger().warning("Error from economy was: " + response.errorMessage);
+                    }
+                } else {
+                    Double difference = Settings.startingMoney - playerBalance;
+                    EconomyResponse response = VaultHelper.econ.depositPlayer(player, Settings.worldName, difference);
+                    if (response.transactionSuccess()) {
+                        plugin.getLogger().info(
+                                "FYI:" + player.getName() + " had " + VaultHelper.econ.format(playerBalance) + " when they typed /island and it was set to "
+                                        + Settings.startingMoney);
+                    } else {
+                        plugin.getLogger().warning(
+                                "Problem trying to deposit " + playerBalance + " from " + player.getName() + "'s account when they typed /island!");
+                        plugin.getLogger().warning("Error from economy was: " + response.errorMessage);
+                    }
+
+                }
+            }
+        } catch (final Exception e) {
+            plugin.getLogger().severe("Error trying to zero " + player.getName() + "'s account when they typed /island!");
+            plugin.getLogger().severe(e.getMessage());
+        }
+
+    }
 }

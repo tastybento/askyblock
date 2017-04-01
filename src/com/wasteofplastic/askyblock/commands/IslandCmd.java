@@ -18,8 +18,6 @@ package com.wasteofplastic.askyblock.commands;
 
 import java.io.File;
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -34,8 +32,6 @@ import java.util.Random;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
-
-import net.milkbowl.vault.economy.EconomyResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
@@ -763,29 +759,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
         myIsland.setLevelHandicap(schematic.getLevelHandicap());
         // Save the player so that if the server is reset weird things won't happen
         plugin.getPlayers().save(playerUUID);
-        /*
-	if (firstTime) {
-	    plugin.getLogger().info("First time teleport");
-	    plugin.getGrid().homeTeleport(player);
-	}*/
 
-        // Delayed teleport so that the island pasting can be completed.
-        /*
-	plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
-
-	    @Override
-	    public void run() {
-		// New island teleport
-		plugin.getGrid().homeTeleport(player);
-
-	    }}, 40L);
-         */
-        // Reset any inventory, etc. This is done AFTER the teleport because other plugins may switch out inventory based on world
-        plugin.resetPlayer(player);
-        // Reset money if required
-        if (Settings.resetMoney) {
-            resetMoney(player);
-        }
         // Start the reset cooldown
         if (!firstTime) {
             setResetWaitTime(player);
@@ -818,27 +792,6 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                     "Island protection range must be " + Settings.islandDistance + " or less. Setting to: " + range);
         }
         myIsland.setProtectionSize(range);
-        // Show fancy titles!
-        if (!Bukkit.getServer().getVersion().contains("(MC: 1.7")) {
-            if (!plugin.myLocale(player.getUniqueId()).islandSubTitle.isEmpty()) {
-                //plugin.getLogger().info("DEBUG: title " + player.getName() + " subtitle {\"text\":\"" + plugin.myLocale(player.getUniqueId()).islandSubTitle + "\", \"color\":\"" + plugin.myLocale(player.getUniqueId()).islandSubTitleColor + "\"}");
-                plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(),
-                        "minecraft:title " + player.getName() + " subtitle {\"text\":\"" + plugin.myLocale(player.getUniqueId()).islandSubTitle.replace("[player]", player.getName()) + "\", \"color\":\"" + plugin.myLocale(player.getUniqueId()).islandSubTitleColor + "\"}");
-            }
-            if (!plugin.myLocale(player.getUniqueId()).islandTitle.isEmpty()) {
-                //plugin.getLogger().info("DEBUG: title " + player.getName() + " title {\"text\":\"" + plugin.myLocale(player.getUniqueId()).islandTitle + "\", \"color\":\"" + plugin.myLocale(player.getUniqueId()).islandTitleColor + "\"}");
-                plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(),
-                        "minecraft:title " + player.getName() + " title {\"text\":\"" + plugin.myLocale(player.getUniqueId()).islandTitle.replace("[player]", player.getName()) + "\", \"color\":\"" + plugin.myLocale(player.getUniqueId()).islandTitleColor + "\"}");
-            }
-            if (!plugin.myLocale(player.getUniqueId()).islandDonate.isEmpty() && !plugin.myLocale(player.getUniqueId()).islandURL.isEmpty()) {
-                //plugin.getLogger().info("DEBUG: tellraw " + player.getName() + " {\"text\":\"" + plugin.myLocale(player.getUniqueId()).islandDonate + "\",\"color\":\"" + plugin.myLocale(player.getUniqueId()).islandDonateColor + "\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\""
-                //                + plugin.myLocale(player.getUniqueId()).islandURL + "\"}}");
-                plugin.getServer().dispatchCommand(
-                        plugin.getServer().getConsoleSender(),
-                        "minecraft:tellraw " + player.getName() + " {\"text\":\"" + plugin.myLocale(player.getUniqueId()).islandDonate.replace("[player]", player.getName()) + "\",\"color\":\"" + plugin.myLocale(player.getUniqueId()).islandDonateColor + "\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\""
-                                + plugin.myLocale(player.getUniqueId()).islandURL + "\"}}");
-            }
-        }
         // Run any commands that need to be run at the start
         if (firstTime) {
             //plugin.getLogger().info("DEBUG: First time");
@@ -847,6 +800,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                 runCommands(Settings.startCommands, player);
             }
         }
+
         // Save grid just in case there's a crash
         plugin.getGrid().saveGrid();
         // Done - fire event
@@ -914,63 +868,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
         return next;
     }
 
-    private void resetMoney(Player player) {
-        if (!Settings.useEconomy) {
-            return;
-        }
-        // Set player's balance in acid island to the starting balance
-        try {
-            // plugin.getLogger().info("DEBUG: " + player.getName() + " " +
-            // Settings.general_worldName);
-            if (VaultHelper.econ == null) {
-                // plugin.getLogger().warning("DEBUG: econ is null!");
-                VaultHelper.setupEconomy();
-            }
-            Double playerBalance = VaultHelper.econ.getBalance(player, Settings.worldName);
-            // plugin.getLogger().info("DEBUG: playerbalance = " +
-            // playerBalance);
-            // Round the balance to 2 decimal places and slightly down to
-            // avoid issues when withdrawing the amount later
-            BigDecimal bd = new BigDecimal(playerBalance);
-            bd = bd.setScale(2, RoundingMode.HALF_DOWN);
-            playerBalance = bd.doubleValue();
-            // plugin.getLogger().info("DEBUG: playerbalance after rounding = "
-            // + playerBalance);
-            if (playerBalance != Settings.startingMoney) {
-                if (playerBalance > Settings.startingMoney) {
-                    Double difference = playerBalance - Settings.startingMoney;
-                    EconomyResponse response = VaultHelper.econ.withdrawPlayer(player, Settings.worldName, difference);
-                    // plugin.getLogger().info("DEBUG: withdrawn");
-                    if (response.transactionSuccess()) {
-                        plugin.getLogger().info(
-                                "FYI:" + player.getName() + " had " + VaultHelper.econ.format(playerBalance) + " when they typed /island and it was set to "
-                                        + Settings.startingMoney);
-                    } else {
-                        plugin.getLogger().warning(
-                                "Problem trying to withdraw " + playerBalance + " from " + player.getName() + "'s account when they typed /island!");
-                        plugin.getLogger().warning("Error from economy was: " + response.errorMessage);
-                    }
-                } else {
-                    Double difference = Settings.startingMoney - playerBalance;
-                    EconomyResponse response = VaultHelper.econ.depositPlayer(player, Settings.worldName, difference);
-                    if (response.transactionSuccess()) {
-                        plugin.getLogger().info(
-                                "FYI:" + player.getName() + " had " + VaultHelper.econ.format(playerBalance) + " when they typed /island and it was set to "
-                                        + Settings.startingMoney);
-                    } else {
-                        plugin.getLogger().warning(
-                                "Problem trying to deposit " + playerBalance + " from " + player.getName() + "'s account when they typed /island!");
-                        plugin.getLogger().warning("Error from economy was: " + response.errorMessage);
-                    }
 
-                }
-            }
-        } catch (final Exception e) {
-            plugin.getLogger().severe("Error trying to zero " + player.getName() + "'s account when they typed /island!");
-            plugin.getLogger().severe(e.getMessage());
-        }
-
-    }
 
 
 
@@ -1079,6 +977,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
      * org.bukkit.command.CommandExecutor#onCommand(org.bukkit.command.CommandSender
      * , org.bukkit.command.Command, java.lang.String, java.lang.String[])
      */
+    @SuppressWarnings("deprecation")
     @Override
     public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] split) {
         if (!(sender instanceof Player)) {
@@ -1181,6 +1080,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                         Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNotOnIsland);
                         return true;
                     }
+                    @SuppressWarnings("deprecation")
                     ItemStack item = player.getItemInHand();
                     double multiplier = 1;
                     if (item != null && item.getType().isBlock()) {
@@ -3223,19 +3123,19 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
      * @param commands
      * @param offlinePlayer
      */
-    private void runCommands(List<String> commands, OfflinePlayer offlinePlayer) {
+    public static void runCommands(List<String> commands, OfflinePlayer offlinePlayer) {
         // Run commands
         for (String cmd : commands) {
             if (cmd.startsWith("[SELF]")) {
                 cmd = cmd.substring(6,cmd.length()).replace("[player]", offlinePlayer.getName()).trim();
                 if (offlinePlayer.isOnline()) {
                     try {
-                        plugin.getLogger().info("Running command '" + cmd + "' as " + offlinePlayer.getName());
+                        Bukkit.getLogger().info("Running command '" + cmd + "' as " + offlinePlayer.getName());
                         ((Player)offlinePlayer).performCommand(cmd);
                     } catch (Exception e) {
-                        plugin.getLogger().severe("Problem executing island command executed by player - skipping!");
-                        plugin.getLogger().severe("Command was : " + cmd);
-                        plugin.getLogger().severe("Error was: " + e.getMessage());
+                        Bukkit.getLogger().severe("Problem executing island command executed by player - skipping!");
+                        Bukkit.getLogger().severe("Command was : " + cmd);
+                        Bukkit.getLogger().severe("Error was: " + e.getMessage());
                         e.printStackTrace();
                     }
                 }
@@ -3244,14 +3144,14 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
             // Substitute in any references to player
             try {
                 //plugin.getLogger().info("Running command " + cmd + " as console.");
-                if (!plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), cmd.replace("[player]", offlinePlayer.getName()))) {
-                    plugin.getLogger().severe("Problem executing island command - skipping!");
-                    plugin.getLogger().severe("Command was : " + cmd);
+                if (!Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), cmd.replace("[player]", offlinePlayer.getName()))) {
+                    Bukkit.getLogger().severe("Problem executing island command - skipping!");
+                    Bukkit.getLogger().severe("Command was : " + cmd);
                 }
             } catch (Exception e) {
-                plugin.getLogger().severe("Problem executing island command - skipping!");
-                plugin.getLogger().severe("Command was : " + cmd);
-                plugin.getLogger().severe("Error was: " + e.getMessage());
+                Bukkit.getLogger().severe("Problem executing island command - skipping!");
+                Bukkit.getLogger().severe("Command was : " + cmd);
+                Bukkit.getLogger().severe("Error was: " + e.getMessage());
                 e.printStackTrace();
             }
         }
