@@ -196,5 +196,5 @@
 			<url>http://maven.sk89q.com/repo/</url>
 		</repository>
 	</repositories>
-	<version>4.0</version>
+	<version>4.0_repack</version>
 </project>
