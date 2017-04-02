@@ -430,6 +430,7 @@ public class ASLocale {
     public String lockUnlocking;
     public String islandHelpLock;
     public String helpColor;
+    public String helpHeader;
     public String lockPlayerLocked;
     public String lockPlayerUnlocked;
     public String lockEnteringSpawn;
@@ -1342,6 +1343,7 @@ public class ASLocale {
         lockUnlocking = ChatColor.translateAlternateColorCodes('&', locale.getString("lock.unlocking", "Unlocking island"));
         islandHelpLock = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpLock", "Locks island so visitors cannot enter it"));
         helpColor = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpColor", "&e"));
+        helpHeader = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpHeader", "[plugin] v[version] help:"));
         lockPlayerLocked = ChatColor.translateAlternateColorCodes('&', locale.getString("lock.playerlocked", "[name] locked the island"));
         lockPlayerUnlocked = ChatColor.translateAlternateColorCodes('&', locale.getString("lock.playerunlocked", "[name] unlocked the island"));
         lockEnteringSpawn = ChatColor.translateAlternateColorCodes('&', locale.getString("lock.enteringspawn", "Entering Spawn"));
