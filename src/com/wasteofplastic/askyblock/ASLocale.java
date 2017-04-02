@@ -799,6 +799,7 @@ public class ASLocale {
         igs.put(SettingsFlag.FIRE, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.fire", "Fire")));
         igs.put(SettingsFlag.FIRE_EXTINGUISH, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.fireextinguish", "Visitor fire extinguish")));
         igs.put(SettingsFlag.FIRE_SPREAD, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.firespread", "Fire spread")));
+        igs.put(SettingsFlag.FISHING_ROD, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.fishingrod", "Visitor fishing rod use")));
         igs.put(SettingsFlag.FURNACE, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.furnace", "Visitor furnace use")));
         igs.put(SettingsFlag.GATE, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.gate", "Visitor gate use")));
         igs.put(SettingsFlag.HORSE_INVENTORY, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.horseinventoryaccess", "Visitor horse inventory access")));   
@@ -818,6 +819,7 @@ public class ASLocale {
         igs.put(SettingsFlag.NETHER_PVP, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.netherpvp", "Nether PvP")));
         igs.put(SettingsFlag.REDSTONE, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.redstone", "Visitor redstone use")));
         igs.put(SettingsFlag.SPAWN_EGGS, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.spawnegg", "Spawn egg use")));
+        igs.put(SettingsFlag.SPLASH_POTION, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.splashpotion", "Visitor splash potion throwing")));
         igs.put(SettingsFlag.SHEARING, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.shears", "Visitor shears use")));
         igs.put(SettingsFlag.VILLAGER_TRADING, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.villagertrading", "Visitor villager trading")));
         igs.put(SettingsFlag.VISITOR_ITEM_DROP, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.visitordrop", "Visitor item drop")));
