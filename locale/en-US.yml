@@ -280,6 +280,7 @@ island:
   helpAcceptReject: "accept or reject an invitation."
   helpChallenges: "/challenges: &fshow challenges"
   helpColor: "&e"
+  helpHeader: "[plugin] v[version] help:"
   helpControlPanel: "open the island GUI."
   helpExpel: "force a player from your island."
   helpInvite: "invite a player to join your island."
