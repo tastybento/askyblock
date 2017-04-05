@@ -334,9 +334,9 @@ public class TopTen implements Listener{
         if (playerName == null) return null;
         SkullMeta meta = (SkullMeta) playerSkull.getItemMeta();
         meta.setOwner(playerName);
-        meta.setDisplayName(ChatColor.YELLOW + ChatColor.BOLD "<!> Island: " + ChatColor.GOLD + ChatColor.UNDERLINE + plugin.getGrid().getIslandName(player) + ChatColor.GRAY + " (" + rank + ")");
+        meta.setDisplayName(ChatColor.YELLOW + ChatColor.BOLD "<!> Island: " + ChatColor.GOLD + ChatColor.UNDERLINE + plugin.getGrid().getIslandName(player) + ChatColor.GRAY + " (#" + rank + ")");
         List<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.GOLD + ChatColor.BOLD + "* " + ChatColor.YELLOW + plugin.myLocale(player).levelislandLevel + " " + ChatColor.WHITE + levels);
+        lore.add(ChatColor.GOLD + ChatColor.BOLD + "* " + ChatColor.YELLOW + plugin.myLocale(player).levelislandLevel + " " + levels);
         if (plugin.getPlayers().inTeam(player)) {
             final List<UUID> pMembers = plugin.getPlayers().getMembers(player);
             // Need to make this a vertical list, because some teams are very large and it'll go off the screen otherwise
