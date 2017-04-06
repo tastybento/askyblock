@@ -902,6 +902,16 @@ biomes:
     friendlyname: "&l&eBlack Forest"
     description: "&6Woods and trees"
     #permission: any.perm.you.want
+  OCEAN:
+    icon: WATER_BUCKET
+    friendlyname: "&3Ocean"
+    description: "&bWater. Everything is water."
+    #permission: any.perm.you.want
+  SKY:
+    icon: ENDER_STONE
+    friendlyname: "&5The End."
+    description: "&dThe end is closer than|&dyou think..."
+    #permission: any.perm.you.want
 
 # IMPORTANT: Please read carefully all the comments in this section in order to edit or add a schematic
 # If it is not configured properly, ASkyBlock/AcidIsland will automatically use the default overworld & nether schematics.
