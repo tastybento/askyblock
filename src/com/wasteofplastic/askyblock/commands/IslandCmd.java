@@ -2547,6 +2547,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                 // Tell everyone what happened
                                 Util.sendMessage(player, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).coopSuccess.replace("[name]", target.getDisplayName()));
                                 target.sendMessage(ChatColor.GREEN + plugin.myLocale(targetPlayerUUID).coopMadeYouCoop.replace("[name]", player.getDisplayName()));
+                                // TODO: Give perms if the player is on the coop island
                             } // else fail silently
                             return true;
                         } else if (split[0].equalsIgnoreCase("expel")) {

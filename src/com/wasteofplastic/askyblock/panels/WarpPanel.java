@@ -91,6 +91,19 @@ public class WarpPanel implements Listener {
     }
 
     /**
+     * Update the text on all the warp icons.
+     */
+    public void updateAllWarpText() {
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: update all Warps");
+        for (UUID playerUUID : cachedWarps.keySet()) {
+            // Get the item
+            ItemStack playerSkull = cachedWarps.get(playerUUID);
+            playerSkull = updateText(playerSkull, playerUUID);
+        }
+        updatePanel();
+    }
+    /**
      * Adds a new warp to the cache. Does NOT update the panels
      * @param playerUUID
      */
@@ -164,7 +177,8 @@ public class WarpPanel implements Listener {
             if (island != null) {
                 if ((signLocation.getWorld().equals(ASkyBlock.getIslandWorld()) && island.getIgsFlag(SettingsFlag.PVP))
                         || (signLocation.getWorld().equals(ASkyBlock.getNetherWorld()) && island.getIgsFlag(SettingsFlag.NETHER_PVP))) {
-                    //plugin.getLogger().info("DEBUG: pvp warning added");
+                    if (DEBUG)
+                        plugin.getLogger().info("DEBUG: pvp warning added");
                     lines.add(ChatColor.RED + plugin.myLocale().igs.get(SettingsFlag.PVP));
                 }
             }
