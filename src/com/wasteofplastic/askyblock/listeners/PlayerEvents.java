@@ -105,7 +105,7 @@ public class PlayerEvents implements Listener {
         if (DEBUG)
             plugin.getLogger().info("DEBUG: Giving all temp perms");
         for (Player player : plugin.getServer().getOnlinePlayers()) {
-            if(!player.hasMetadata("NPC") && plugin.getGrid().playerIsOnIsland(player)){
+            if(player != null && !player.hasMetadata("NPC") && plugin.getGrid().playerIsOnIsland(player)){
                 if(VaultHelper.checkPerm(player, Settings.PERMPREFIX + "islandfly")){
                     player.setAllowFlight(true);
                     player.setFlying(true);
@@ -254,7 +254,7 @@ public class PlayerEvents implements Listener {
     public void removeTempPerms(final Player player, Island fromIsland, Island toIsland) {
         if (DEBUG)
             plugin.getLogger().info("DEBUG: Removing temp perms");
-        if (player.hasMetadata("NPC")) {
+        if (player == null || player.hasMetadata("NPC")) {
             return;
         }
         // Check if the player has left the island completely
