@@ -105,7 +105,7 @@ public class PlayerEvents implements Listener {
         if (DEBUG)
             plugin.getLogger().info("DEBUG: Giving all temp perms");
         for (Player player : plugin.getServer().getOnlinePlayers()) {
-            if(!player.hasMetadata("NPC") && plugin.getGrid().playerIsOnIsland(player)){
+            if(player != null && !player.hasMetadata("NPC") && plugin.getGrid().playerIsOnIsland(player)){
                 if(VaultHelper.checkPerm(player, Settings.PERMPREFIX + "islandfly")){
                     player.setAllowFlight(true);
                     player.setFlying(true);
@@ -218,6 +218,12 @@ public class PlayerEvents implements Listener {
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerJoin(final PlayerJoinEvent event) {
         processPerms(event.getPlayer(), event.getPlayer().getLocation());
+        final Island island = plugin.getGrid().getProtectedIslandAt(event.getPlayer().getLocation());
+        if (island != null) {
+            // Fire entry event
+            final IslandEnterEvent e = new IslandEnterEvent(event.getPlayer().getUniqueId(), island, event.getPlayer().getLocation());
+            plugin.getServer().getPluginManager().callEvent(e);
+        }
     }
 
     /**
@@ -248,7 +254,7 @@ public class PlayerEvents implements Listener {
     public void removeTempPerms(final Player player, Island fromIsland, Island toIsland) {
         if (DEBUG)
             plugin.getLogger().info("DEBUG: Removing temp perms");
-        if (player.hasMetadata("NPC")) {
+        if (player == null || player.hasMetadata("NPC")) {
             return;
         }
         // Check if the player has left the island completely
@@ -313,13 +319,13 @@ public class PlayerEvents implements Listener {
 
     /**
      * Removes temporary perms when the player log out
-     * @param e
+     * @param event
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-    public void onPlayerLeave(PlayerQuitEvent e){
+    public void onPlayerLeave(PlayerQuitEvent event){
         if (DEBUG)
             plugin.getLogger().info("DEBUG: Removing fly and all temp perms");
-        Player player = e.getPlayer();
+        Player player = event.getPlayer();
 
         if(temporaryPerms.containsKey(player.getUniqueId())){
             for(String perm : temporaryPerms.get(player.getUniqueId())){
@@ -330,6 +336,12 @@ public class PlayerEvents implements Listener {
         if (player.getGameMode().equals(GameMode.SURVIVAL)) {
             player.setAllowFlight(false);
             player.setFlying(false);
+        }
+        final Island island = plugin.getGrid().getProtectedIslandAt(event.getPlayer().getLocation());
+        if (island != null) {
+            // Fire exit event
+            final IslandExitEvent e = new IslandExitEvent(event.getPlayer().getUniqueId(), island, event.getPlayer().getLocation());
+            plugin.getServer().getPluginManager().callEvent(e);
         }
     }
 

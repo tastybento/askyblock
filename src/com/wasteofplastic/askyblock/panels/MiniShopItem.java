@@ -943,8 +943,6 @@ public class MiniShopItem {
             break;
         case FIREWORK:
             return "Firework Rocket";
-        case FISHING_ROD:
-            break;
         case FLINT:
             break;
         case FLINT_AND_STEEL:
@@ -1504,7 +1502,6 @@ public class MiniShopItem {
         switch (mat) {
         case BOW:
         case SHEARS:
-        case FISHING_ROD:
         case FLINT_AND_STEEL:
 
         case CHAINMAIL_BOOTS:
