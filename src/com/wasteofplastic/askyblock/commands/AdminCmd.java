@@ -909,7 +909,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                             //System.out.println("DEBUG: scanning done");
 
                         }});
-                
+
                     Util.sendMessage(sender, ChatColor.RED + plugin.getAvailableLocales().keySet().toString());
                 }
                 return true;
@@ -971,8 +971,17 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                                 for (Island island : plugin.getGrid().getUnownedIslands().values()) {
                                     island.setIgsDefaults();
                                 }
-                                Util.sendMessage(sender, ChatColor.GREEN + plugin.myLocale().settingsResetDone);
                                 plugin.getGrid().saveGrid();
+                                // Go back to non-async world
+                                plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
+
+                                    @Override
+                                    public void run() {
+                                        // Reset any warp signs
+                                        plugin.getWarpPanel().updateAllWarpText();
+                                        Util.sendMessage(sender, ChatColor.GREEN + plugin.myLocale().settingsResetDone);
+
+                                    }});
                             }});
                         return true;
                     } else {
@@ -991,8 +1000,19 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                                         for (Island island : plugin.getGrid().getUnownedIslands().values()) {
                                             island.setIgsFlag(flagToSet, Settings.defaultIslandSettings.get(flagToSet));
                                         }
-                                        Util.sendMessage(sender, ChatColor.GREEN + plugin.myLocale().settingsResetDone);
                                         plugin.getGrid().saveGrid();
+                                        // Go back to non-async world
+                                        plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
+
+                                            @Override
+                                            public void run() {
+                                                if (flagToSet.equals(SettingsFlag.PVP) || flagToSet.equals(SettingsFlag.NETHER_PVP)) {
+                                                    // Reset any warp signs
+                                                    plugin.getWarpPanel().updateAllWarpText();
+                                                }
+                                                Util.sendMessage(sender, ChatColor.GREEN + plugin.myLocale().settingsResetDone);
+
+                                            }});
                                     }});
                                 return true;
                             }
