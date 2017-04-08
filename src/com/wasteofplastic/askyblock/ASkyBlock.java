@@ -37,7 +37,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import com.wasteofplastic.askyblock.Island.SettingsFlag;
 import com.wasteofplastic.askyblock.NotSetup.Reason;
 import com.wasteofplastic.askyblock.Settings.GameType;
 import com.wasteofplastic.askyblock.Updater.UpdateResult;

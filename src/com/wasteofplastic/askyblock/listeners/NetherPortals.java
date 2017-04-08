@@ -37,7 +37,6 @@ import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.world.StructureGrowEvent;
-import org.bukkit.metadata.MetadataValue;
 import org.bukkit.util.Vector;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
