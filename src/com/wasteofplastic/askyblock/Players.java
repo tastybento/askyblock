@@ -105,10 +105,10 @@ public class Players {
         // Load in from YAML file
         this.playerName = playerInfo.getString("playerName", "");
         if (playerName.isEmpty()) {
-            Entity entity = plugin.getServer().getEntity(uuid);
-            if (entity != null && entity.hasMetadata("NPC")) {
+            Player player = plugin.getServer().getPlayer(uuid);
+            if (player != null && player.hasMetadata("NPC")) {
                 //plugin.getLogger().info("DEBUG: Entity is NPC");
-                playerName = entity.getUniqueId().toString();
+                playerName = player.getUniqueId().toString();
             } else {
                 //plugin.getLogger().info("DEBUG: Entity is player");
                 try {
