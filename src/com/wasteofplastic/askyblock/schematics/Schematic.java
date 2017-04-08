@@ -30,6 +30,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+import net.milkbowl.vault.economy.EconomyResponse;
+
 import org.bukkit.Art;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
@@ -83,8 +85,6 @@ import com.wasteofplastic.org.jnbt.NBTInputStream;
 import com.wasteofplastic.org.jnbt.ShortTag;
 import com.wasteofplastic.org.jnbt.StringTag;
 import com.wasteofplastic.org.jnbt.Tag;
-
-import net.milkbowl.vault.economy.EconomyResponse;
 
 public class Schematic {
     private ASkyBlock plugin;
