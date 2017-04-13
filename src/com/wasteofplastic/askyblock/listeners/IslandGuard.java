@@ -2429,12 +2429,17 @@ public class IslandGuard implements Listener {
                     plugin.getLogger().info("DEBUG: target block = " + e.getPlayer().getTargetBlock(transparent, 10));
                 }
                 // Check if this is allowed
-                if (e.getPlayer().isOp() || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypass")) {
+                if (e.getPlayer() != null && (e.getPlayer().isOp() || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypass"))) {
                     return;
                 }
                 if (!actionAllowed(e.getBlock().getLocation(), SettingsFlag.FIRE)) {
                     if (DEBUG)
                         plugin.getLogger().info("DEBUG: canceling fire");
+                    // If this was not a player, just stop it
+                    if (e.getPlayer() == null) {
+                        e.setCancelled(true);
+                        break;
+                    }
                     // Get target block
                     Block targetBlock = e.getPlayer().getTargetBlock(transparent, 10);
                     if (targetBlock.getType().equals(Material.OBSIDIAN)) {
