@@ -1292,7 +1292,7 @@ public class Schematic {
     }
 
     /**
-     * Creates an island block by block
+     * Creates the AcidIsland default island block by block
      * @param islandLoc
      * @param player
      */
@@ -1426,6 +1426,41 @@ public class Schematic {
         blockToChange.setData(dc.getData(), true);
         // Teleport player
         plugin.getGrid().homeTeleport(player);
+        // Reset any inventory, etc. This is done AFTER the teleport because other plugins may switch out inventory based on world
+        plugin.resetPlayer(player);
+        // Reset money if required
+        if (Settings.resetMoney) {
+            resetMoney(player);
+        }
+        // Show fancy titles!
+        if (!Bukkit.getServer().getVersion().contains("(MC: 1.7")) {
+            if (!plugin.myLocale(player.getUniqueId()).islandSubTitle.isEmpty()) {
+                //plugin.getLogger().info("DEBUG: title " + player.getName() + " subtitle {\"text\":\"" + plugin.myLocale(player.getUniqueId()).islandSubTitle + "\", \"color\":\"" + plugin.myLocale(player.getUniqueId()).islandSubTitleColor + "\"}");
+                plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(),
+                        "minecraft:title " + player.getName() + " subtitle {\"text\":\"" + plugin.myLocale(player.getUniqueId()).islandSubTitle.replace("[player]", player.getName()) + "\", \"color\":\"" + plugin.myLocale(player.getUniqueId()).islandSubTitleColor + "\"}");
+            }
+            if (!plugin.myLocale(player.getUniqueId()).islandTitle.isEmpty()) {
+                //plugin.getLogger().info("DEBUG: title " + player.getName() + " title {\"text\":\"" + plugin.myLocale(player.getUniqueId()).islandTitle + "\", \"color\":\"" + plugin.myLocale(player.getUniqueId()).islandTitleColor + "\"}");
+                plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(),
+                        "minecraft:title " + player.getName() + " title {\"text\":\"" + plugin.myLocale(player.getUniqueId()).islandTitle.replace("[player]", player.getName()) + "\", \"color\":\"" + plugin.myLocale(player.getUniqueId()).islandTitleColor + "\"}");
+            }
+            if (!plugin.myLocale(player.getUniqueId()).islandDonate.isEmpty() && !plugin.myLocale(player.getUniqueId()).islandURL.isEmpty()) {
+                //plugin.getLogger().info("DEBUG: tellraw " + player.getName() + " {\"text\":\"" + plugin.myLocale(player.getUniqueId()).islandDonate + "\",\"color\":\"" + plugin.myLocale(player.getUniqueId()).islandDonateColor + "\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\""
+                //                + plugin.myLocale(player.getUniqueId()).islandURL + "\"}}");
+                plugin.getServer().dispatchCommand(
+                        plugin.getServer().getConsoleSender(),
+                        "minecraft:tellraw " + player.getName() + " {\"text\":\"" + plugin.myLocale(player.getUniqueId()).islandDonate.replace("[player]", player.getName()) + "\",\"color\":\"" + plugin.myLocale(player.getUniqueId()).islandDonateColor + "\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\""
+                                + plugin.myLocale(player.getUniqueId()).islandURL + "\"}}");
+            }
+        }
+        if (!plugin.getPlayers().hasIsland(player.getUniqueId())) {
+            // Run any commands that need to be run at the start
+                //plugin.getLogger().info("DEBUG: First time");
+                if (!player.hasPermission(Settings.PERMPREFIX + "command.newislandexempt")) {
+                    //plugin.getLogger().info("DEBUG: Executing new island commands");
+                    IslandCmd.runCommands(Settings.startCommands, player);
+            }
+        }
         if (!islandCompanion.isEmpty()) {
             Bukkit.getServer().getScheduler().runTaskLater(ASkyBlock.getPlugin(), new Runnable() {
                 @Override
