@@ -2346,7 +2346,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                     Player target = plugin.getServer().getPlayer(uuid);
                     if (target != null) {
                         //online
-                        list += target.getDisplayName() + ", ";
+                        list += target.getName() + ", ";
                     } else {
                         list += plugin.getPlayers().getName(uuid) + ", ";
                     }

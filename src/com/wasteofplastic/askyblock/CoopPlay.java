@@ -88,13 +88,13 @@ public class CoopPlay {
                     Player player = plugin.getServer().getPlayer(member);
                     if (player != null) {
                         Util.sendMessage(player, ChatColor.GOLD
-                                + plugin.myLocale(player.getUniqueId()).coopInvited.replace("[name]", requester.getDisplayName()).replace("[player]", newPlayer.getDisplayName()));
+                                + plugin.myLocale(player.getUniqueId()).coopInvited.replace("[name]", requester.getName()).replace("[player]", newPlayer.getName()));
                         Util.sendMessage(player, ChatColor.GOLD + plugin.myLocale(player.getUniqueId()).coopUseExpel);
                     } else {
                         if (member.equals(leaderUUID)) {
                             // offline - tell leader
                             plugin.getMessages().setMessage(leaderUUID,
-                                    plugin.myLocale(leaderUUID).coopInvited.replace("[name]", requester.getDisplayName()).replace("[player]", newPlayer.getDisplayName()));
+                                    plugin.myLocale(leaderUUID).coopInvited.replace("[name]", requester.getName()).replace("[player]", newPlayer.getName()));
                         }
                     }
                 }
@@ -315,9 +315,9 @@ public class CoopPlay {
                         // Yes, so get the invitee (target)
                         Player target = plugin.getServer().getPlayer(playerUUID);
                         if (target != null) {
-                            target.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).coopRemoved.replace("[name]", clearer.getDisplayName()));
+                            target.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).coopRemoved.replace("[name]", clearer.getName()));
                         } else {
-                            plugin.getMessages().setMessage(playerUUID, ChatColor.RED + plugin.myLocale(playerUUID).coopRemoved.replace("[name]", clearer.getDisplayName()));
+                            plugin.getMessages().setMessage(playerUUID, ChatColor.RED + plugin.myLocale(playerUUID).coopRemoved.replace("[name]", clearer.getName()));
                         }
                         // Mark them as no longer on a coop island
                         // setOnCoopIsland(players, null);
