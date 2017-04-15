@@ -1507,7 +1507,7 @@ public class Schematic {
                 LivingEntity companion = (LivingEntity) location.getWorld().spawnEntity(location, type);
                 if (!companionNames.isEmpty()) {
                     randomNum = rand.nextInt(companionNames.size());
-                    String name = companionNames.get(randomNum).replace("[player]", player.getDisplayName());
+                    String name = companionNames.get(randomNum).replace("[player]", player.getName());
                     //plugin.getLogger().info("DEBUG: name is " + name);
                     companion.setCustomName(name);
                     companion.setCustomNameVisible(true);
