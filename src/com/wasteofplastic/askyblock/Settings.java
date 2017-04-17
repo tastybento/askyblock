@@ -195,6 +195,7 @@ public class Settings {
     public static boolean fancyIslandLevelDisplay;
     public static boolean teamChat;
     public static boolean logTeamChat;
+    public static boolean teamChatIncludeCoop;
     public static boolean muteDeathMessages;
     public static boolean showInActionBar;
     

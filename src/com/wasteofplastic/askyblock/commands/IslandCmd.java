@@ -1186,7 +1186,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                         Util.sendMessage(player, ChatColor.RED + plugin.myLocale().errorUnknownCommand);
                         return false;
                     }
-                    // Check if in team
+                    // Check if in team or if there is coop players
                     if (plugin.getPlayers().inTeam(playerUUID)) {
                         // Check if team members are online
                         boolean online = false;
@@ -1194,6 +1194,13 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                             if (!teamMember.equals(playerUUID) && plugin.getServer().getPlayer(teamMember) != null) {
                                 online = true;
                             }
+                        }
+                        if(Settings.teamChatIncludeCoop){
+                        	for (UUID coopPlayer : CoopPlay.getInstance().getCoopPlayers(plugin.getPlayers().getIslandLocation(playerUUID))){
+                        		if(plugin.getServer().getPlayer(coopPlayer) != null){
+                        			online = true;
+                        		}
+                        	}
                         }
                         if (!online) {
                             Util.sendMessage(player, ChatColor.RED + plugin.myLocale(playerUUID).teamChatNoTeamAround);
@@ -1209,7 +1216,28 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                             Util.sendMessage(player, ChatColor.GREEN + plugin.myLocale(playerUUID).teamChatStatusOn);
                             plugin.getChatListener().setPlayer(playerUUID);
                         }
-                    } else {
+                    } else if (Settings.teamChatIncludeCoop) {
+                    	boolean online = false;
+                    	for (UUID coopPlayer : CoopPlay.getInstance().getCoopPlayers(plugin.getPlayers().getIslandLocation(playerUUID))){
+                    		if(plugin.getServer().getPlayer(coopPlayer) != null){
+                    			online = true;
+                    		}
+                    	}
+                        if (!online) {
+                            Util.sendMessage(player, ChatColor.RED + plugin.myLocale(playerUUID).teamChatNoTeamAround);
+                            Util.sendMessage(player, ChatColor.GREEN + plugin.myLocale(playerUUID).teamChatStatusOff);
+                            plugin.getChatListener().unSetPlayer(playerUUID);
+                            return true;
+                        }
+                        if (plugin.getChatListener().isTeamChat(playerUUID)) {
+                            // Toggle
+                            Util.sendMessage(player, ChatColor.GREEN + plugin.myLocale(playerUUID).teamChatStatusOff);
+                            plugin.getChatListener().unSetPlayer(playerUUID);
+                        } else {
+                            Util.sendMessage(player, ChatColor.GREEN + plugin.myLocale(playerUUID).teamChatStatusOn);
+                            plugin.getChatListener().setPlayer(playerUUID);
+                        }
+                	} else {
                         Util.sendMessage(player, ChatColor.RED + plugin.myLocale(playerUUID).teamChatNoTeam);
                     }
                 } else {
