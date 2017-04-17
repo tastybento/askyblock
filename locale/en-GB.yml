@@ -247,6 +247,8 @@ expel:
   notonisland: "Player is not trespassing on your island!"
   notyourself: "You cannot expel yourself!"
   success: "You expelled [name]!"
+  allsuccess: "You expelled [count] visitors/coop players from your island."
+  allnone: "There is nobody on your island!"
 general:
   success: "Success!"
 invite: 
@@ -282,7 +284,8 @@ island:
   helpColor: "&e"
   helpHeader: "[plugin] v[version] help:"
   helpControlPanel: "open the island GUI."
-  helpExpel: "force a player from your island."
+  helpExpel: "kick a player from your island."
+  helpExpelall: "kick all players from your island."
   helpInvite: "invite a player to join your island."
   helpIsland: "start an island, or teleport to your island."
   helpIslandSpawn: "go to spawn."
