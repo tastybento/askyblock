@@ -7,11 +7,14 @@ import org.bukkit.event.Cancellable;
 import com.wasteofplastic.askyblock.Island;
 
 /**
- * This event is fired after ASkyBlock calculates an island level and when it sends notification to the player.
+ * This event is fired after ASkyBlock calculates an island level and before it sends notification to the player.
  * Use getLevel() to see the level calculated and getPointsToNextLevel() to see how much points are needed to reach next level.
  * Canceling this event will result in no notifications to the player.
+ * <p>
+ * You can edit the values that will be send to the player, but be aware it will be "fake" values and they won't be saved.
  * 
  * @author Poslovitch
+ * @see IslandPreLevelEvent, to really edit level/points to next level values.
  */
 public class IslandPostLevelEvent extends ASkyBlockEvent implements Cancellable {
     private int level;
@@ -35,6 +38,14 @@ public class IslandPostLevelEvent extends ASkyBlockEvent implements Cancellable 
     public int getLevel() {
         return level;
     }
+    
+    /**
+     * Fake the level value that will be send to the player.
+     * @param level
+     */
+    public void setLevel(int level) {
+    	this.level = level;
+    }
 
     @Override
     public boolean isCancelled() {
@@ -51,6 +62,14 @@ public class IslandPostLevelEvent extends ASkyBlockEvent implements Cancellable 
      */
     public int getPointsToNextLevel() {
         return points;
+    }
+    
+    /**
+     * Fake the points to next level value that will be send to the player.
+     * @param points
+     */
+    public void setPointsToNextLevel(int points) {
+    	this.points = points;
     }
 
 }
