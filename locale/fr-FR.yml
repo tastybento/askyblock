@@ -283,7 +283,7 @@ island:
   helpHeader: "Aide de [plugin] v[version]:"
   helpControlPanel: "Ouvre le menu."
   helpExpel: "Ejecte un joueur de l'île."
-  helpExpelall: "Ejecte tous les joueurs de l'île."
+  helpExpelall: "Ejecte tous les visiteurs/joueurs coop de l'île."
   helpInvite: "Invite un joueur à rejoindre votre île."
   helpIsland: "Commence une île, ou vous y téléporte."
   helpIslandSpawn: "Vous téléporte au spawn."
