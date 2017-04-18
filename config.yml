@@ -533,6 +533,9 @@ general:
    # Set this to true will log all messages sent in TeamChats to console
    # If set to false, it won't be logged.
    logteamchat: true
+   
+   # Set this to true will include coop players to the island TeamChat.
+   teamchatincludecoop: false
 
    # Variables to use as chat prefixes. You can change them to be what you want.
    # {ISLAND_LEVEL} is replaced by the player's island level.
