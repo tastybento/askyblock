@@ -369,14 +369,14 @@ public class ASkyBlock extends JavaPlugin {
                 getIslandWorld();
                 if (!Settings.useOwnGenerator && getServer().getWorld(Settings.worldName).getGenerator() == null) {
                     // Check if the world generator is registered correctly
-                    getLogger().severe("********* The Generator for " + plugin.getName() + " is not registered so the plugin cannot start ********");
+                    getLogger().severe("********* The Generator for " + ASkyBlock.this.getName() + " is not registered so the plugin cannot start ********");
                     getLogger().severe("If you are using your own generator or server.properties, set useowngenerator: true in config.yml");
                     getLogger().severe("Otherwise:");
                     getLogger().severe("Make sure you have the following in bukkit.yml (case sensitive):");
                     getLogger().severe("worlds:");
                     getLogger().severe("  # The next line must be the name of your world:");
                     getLogger().severe("  " + Settings.worldName + ":");
-                    getLogger().severe("    generator: " + plugin.getName());
+                    getLogger().severe("    generator: " + ASkyBlock.this.getName());
                     if (Settings.GAMETYPE.equals(Settings.GameType.ASKYBLOCK)) {
                         getCommand("island").setExecutor(new NotSetup(Reason.GENERATOR));
                         getCommand("asc").setExecutor(new NotSetup(Reason.GENERATOR));
@@ -386,15 +386,15 @@ public class ASkyBlock extends JavaPlugin {
                         getCommand("aic").setExecutor(new NotSetup(Reason.GENERATOR));
                         getCommand("acid").setExecutor(new NotSetup(Reason.GENERATOR));
                     }
-                    HandlerList.unregisterAll(plugin);
+                    HandlerList.unregisterAll(ASkyBlock.this);
                     return;
                 }
                 // Try to register Herochat
                 if (Bukkit.getServer().getPluginManager().isPluginEnabled("Herochat")) {
                     try {
-                        getServer().getPluginManager().registerEvents(new HeroChatListener(plugin), plugin);
+                        getServer().getPluginManager().registerEvents(new HeroChatListener(ASkyBlock.this), ASkyBlock.this);
                     } catch (Exception e) {
-                        plugin.getLogger().severe("Could not register with Herochat");
+                        ASkyBlock.this.getLogger().severe("Could not register with Herochat");
                     }
                 }
 
@@ -406,53 +406,53 @@ public class ASkyBlock extends JavaPlugin {
                 } catch (Exception e) {} // do nothing
 
                 // Run these one tick later to ensure worlds are loaded.
-                getServer().getScheduler().runTask(plugin, new Runnable() {
+                getServer().getScheduler().runTask(ASkyBlock.this, new Runnable() {
                     @Override
                     public void run() {
                         // load the list - order matters - grid first, then top
                         // ten to optimize upgrades
                         // Load grid
                         if (grid == null) {
-                            grid = new GridManager(plugin);
+                            grid = new GridManager(ASkyBlock.this);
                         }
                         // Register events
                         registerEvents();
 
                         // Load TinyDb
                         if (tinyDB == null) {
-                            tinyDB = new TinyDB(plugin);
+                            tinyDB = new TinyDB(ASkyBlock.this);
                         }
                         // Load warps
                         getWarpSignsListener().loadWarpList();
                         // Load the warp panel
                         if (Settings.useWarpPanel) {
-                            warpPanel = new WarpPanel(plugin);
-                            getServer().getPluginManager().registerEvents(warpPanel, plugin);
+                            warpPanel = new WarpPanel(ASkyBlock.this);
+                            getServer().getPluginManager().registerEvents(warpPanel, ASkyBlock.this);
                         }						
                         // Load the TopTen GUI
                         if (!Settings.displayIslandTopTenInChat){
-                            topTen = new TopTen(plugin);
-                            getServer().getPluginManager().registerEvents(topTen, plugin);
+                            topTen = new TopTen(ASkyBlock.this);
+                            getServer().getPluginManager().registerEvents(topTen, ASkyBlock.this);
                         }
                         // Minishop - must wait for economy to load before we can use
                         // econ
-                        getServer().getPluginManager().registerEvents(new ControlPanel(plugin), plugin);
+                        getServer().getPluginManager().registerEvents(new ControlPanel(ASkyBlock.this), ASkyBlock.this);
                         // Settings
-                        settingsPanel = new SettingsPanel(plugin);
-                        getServer().getPluginManager().registerEvents(settingsPanel, plugin);
+                        settingsPanel = new SettingsPanel(ASkyBlock.this);
+                        getServer().getPluginManager().registerEvents(settingsPanel, ASkyBlock.this);
                         // Biomes
                         // Load Biomes
-                        biomes = new BiomesPanel(plugin);
-                        getServer().getPluginManager().registerEvents(biomes, plugin);
+                        biomes = new BiomesPanel(ASkyBlock.this);
+                        getServer().getPluginManager().registerEvents(biomes, ASkyBlock.this);
 
                         TopTen.topTenLoad();
 
                         // Add any online players to the DB
-                        for (Player onlinePlayer : plugin.getServer().getOnlinePlayers()) {
+                        for (Player onlinePlayer : ASkyBlock.this.getServer().getOnlinePlayers()) {
                             tinyDB.savePlayerName(onlinePlayer.getName(), onlinePlayer.getUniqueId());
                         }
                         if (Settings.backupDuration > 0) {
-                            new AsyncBackup(plugin);
+                            new AsyncBackup(ASkyBlock.this);
                         }
                         // Load the coops
                         if (Settings.persistantCoops) {
@@ -474,38 +474,38 @@ public class ASkyBlock extends JavaPlugin {
                         @Override
                         public void run() {
                             if (count++ > 20) {
-                                plugin.getLogger().info("No updates found. (No response from server after 20s)");
+                                ASkyBlock.this.getLogger().info("No updates found. (No response from server after 20s)");
                                 this.cancel();
                             } else {
                                 // Wait for the response
                                 if (updateCheck != null) {
                                     switch (updateCheck.getResult()) {
                                     case DISABLED:
-                                        plugin.getLogger().info("Updating has been disabled");
+                                        ASkyBlock.this.getLogger().info("Updating has been disabled");
                                         break;
                                     case FAIL_APIKEY:
-                                        plugin.getLogger().info("API key failed");
+                                        ASkyBlock.this.getLogger().info("API key failed");
                                         break;
                                     case FAIL_BADID:
-                                        plugin.getLogger().info("Bad ID");
+                                        ASkyBlock.this.getLogger().info("Bad ID");
                                         break;
                                     case FAIL_DBO:
-                                        plugin.getLogger().info("Could not connect to updating service");
+                                        ASkyBlock.this.getLogger().info("Could not connect to updating service");
                                         break;
                                     case FAIL_DOWNLOAD:
-                                        plugin.getLogger().info("Downloading failed");
+                                        ASkyBlock.this.getLogger().info("Downloading failed");
                                         break;
                                     case FAIL_NOVERSION:
-                                        plugin.getLogger().info("Could not recognize version");
+                                        ASkyBlock.this.getLogger().info("Could not recognize version");
                                         break;
                                     case NO_UPDATE:
-                                        plugin.getLogger().info("No update available.");
+                                        ASkyBlock.this.getLogger().info("No update available.");
                                         break;
                                     case SUCCESS:
-                                        plugin.getLogger().info("Success!");
+                                        ASkyBlock.this.getLogger().info("Success!");
                                         break;
                                     case UPDATE_AVAILABLE:
-                                        plugin.getLogger().info("Update available " + updateCheck.getLatestName());
+                                        ASkyBlock.this.getLogger().info("Update available " + updateCheck.getLatestName());
                                         break;
                                     default:
                                         break;
@@ -515,11 +515,11 @@ public class ASkyBlock extends JavaPlugin {
                                 }
                             }
                         }
-                    }.runTaskTimer(plugin, 0L, 20L); // Check status every second
+                    }.runTaskTimer(ASkyBlock.this, 0L, 20L); // Check status every second
                 }
 
                 // Run acid tasks
-                acidTask = new AcidTask(plugin);
+                acidTask = new AcidTask(ASkyBlock.this);
 
             }
         });
@@ -536,9 +536,9 @@ public class ASkyBlock extends JavaPlugin {
             @Override
             public void run() {
                 if (Settings.GAMETYPE.equals(GameType.ASKYBLOCK)) {
-                    updateCheck = new Updater(plugin, 85189, plugin.getFile(), UpdateType.NO_DOWNLOAD, true); // ASkyBlock
+                    updateCheck = new Updater(ASkyBlock.this, 85189, ASkyBlock.this.getFile(), UpdateType.NO_DOWNLOAD, true); // ASkyBlock
                 } else {
-                    updateCheck = new Updater(plugin, 80095, plugin.getFile(), UpdateType.NO_DOWNLOAD, true); // AcidIsland
+                    updateCheck = new Updater(ASkyBlock.this, 80095, ASkyBlock.this.getFile(), UpdateType.NO_DOWNLOAD, true); // AcidIsland
                 }                
             }
         });
