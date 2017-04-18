@@ -620,6 +620,9 @@ public class PluginConfig {
         // Warp panel
         Settings.useWarpPanel = plugin.getConfig().getBoolean("general.usewarppanel", true);
 
+        // Warp sound
+        Settings.warpSound = plugin.getParser().parseSound(plugin.getConfig().getString("general.warpsound", "ENTITY_BAT_TAKEOFF;1.0;1.0"), "config.yml:general.warpsound");
+        
         // Mute death messages
         Settings.muteDeathMessages = plugin.getConfig().getBoolean("general.mutedeathmessages", false);
 

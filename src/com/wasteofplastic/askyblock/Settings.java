@@ -32,6 +32,7 @@ import org.bukkit.material.MaterialData;
 import org.bukkit.potion.PotionEffectType;
 
 import com.wasteofplastic.askyblock.Island.SettingsFlag;
+import com.wasteofplastic.askyblock.util.ASBParser.ASBSound;
 
 /**
  * Where all the settings are
@@ -223,6 +224,8 @@ public class Settings {
     public static boolean allowTeleportWhenFalling;
     
     public static boolean respawnOnIsland;
+    
+    public static ASBSound warpSound;
     
     /*		ACID		*/
     public static double acidDamage;
