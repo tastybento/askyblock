@@ -1340,6 +1340,10 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                     }
                     int expelledPlayers = 0;
                     for(Player visitor : plugin.getServer().getOnlinePlayers()){
+                    	// Check if this isn't a Citizens' NPC
+                    	if(visitor.hasMetadata("NPC")) continue;
+                    	
+                    	// It is a real player, checking he is on sender's island.
                     	if(visitor != player && plugin.getGrid().isOnIsland(player, visitor)){
                     		// Don't kick them if they are op
                             if (visitor.isOp() || VaultHelper.checkPerm(visitor, Settings.PERMPREFIX + "mod.bypassprotect") || VaultHelper.checkPerm(visitor, Settings.PERMPREFIX + "mod.bypassexpel")) {
