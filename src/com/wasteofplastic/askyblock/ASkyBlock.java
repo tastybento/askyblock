@@ -277,6 +277,21 @@ public class ASkyBlock extends JavaPlugin {
             }
             return;
         }
+        
+        // Check to see if the user has carefully updated the configuration
+        if(!isConfigUpToDate()){
+            getLogger().severe("+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
+            getLogger().severe("It seems you didn't update your config.yml...");
+            getLogger().severe("");
+            getLogger().severe("Make sure you updated your config.yml ! Otherwise bad bad bad things may happen (i.e: island removal)...");
+            getLogger().severe("");
+            getLogger().severe("If you did but it's still showing this message, it's probably because you edited the old config rather than editing the new one.");
+            getLogger().severe("So please remove the current config.yml, work on config.new.yml and rename it to config.yml.");
+            getLogger().severe("");
+            getLogger().severe("+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
+        	return;
+        }
+        
         // Load all the configuration of the plugin and localization strings
         if (!PluginConfig.loadPluginConfig(this)) {
             // Currently, the only setup error is where the world_name does not match
@@ -553,7 +568,36 @@ public class ASkyBlock extends JavaPlugin {
                 Util.sendMessage(p, ChatColor.RED + getUpdateCheck().getLatestFileLink());
             }
         }
-
+    }
+    
+    /**
+     * Checks if the config is up to date, to avoid critical issues
+     * It uses its own "checker" in order to be more tolerant than the Updater.
+     */
+    public boolean isConfigUpToDate(){
+    	String[] pluginVersion = this.getDescription().getVersion().split(".");
+    	String[] configVersion = getConfig().getString("general.version").split(".");
+    	
+    	for(int i = 0; i < (Math.max(pluginVersion.length, configVersion.length) - 1); i++){
+    		try{
+    			int configLastDigit = 0;
+    			if (i < configVersion.length) {
+    				configLastDigit = Integer.valueOf(configVersion[i]);
+                }
+                int pluginLastDigit = 0;
+                if (i < pluginVersion.length) {
+                	pluginLastDigit = Integer.valueOf(pluginVersion[i]);
+                }
+                
+                if(pluginLastDigit > configLastDigit){
+                	return true;
+                }
+    		} catch(Exception e){
+    			getLogger().warning("Could not determine config accuracy.");
+    			return false;
+    		}
+    	}
+    	return false;
     }
 
     /**
