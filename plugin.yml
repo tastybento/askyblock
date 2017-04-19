@@ -67,6 +67,9 @@ permissions:
           askyblock.island.expel:
             description: Allows expelling of visitors
             default: true
+          askyblock.island.expelall:
+            description: Allows expelling of all visitors and coops via /is expelall
+            default: true
           askyblock.island.ban:
             description: Allows banning of visitors
             default: false

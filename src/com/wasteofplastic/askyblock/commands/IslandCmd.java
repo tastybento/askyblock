@@ -1244,8 +1244,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                     Util.sendMessage(player, ChatColor.RED + plugin.myLocale(playerUUID).errorNoPermission);
                 }
                 return true;
-            }
-            if (split[0].equalsIgnoreCase("banlist")) {
+            } else if (split[0].equalsIgnoreCase("banlist")) {
                 if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.ban")) {                   
                     // Show banned players
                     Util.sendMessage(player, ChatColor.GREEN + plugin.myLocale(playerUUID).adminInfoBannedPlayers + ":");
@@ -1292,8 +1291,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                     resetPlayer(player, oldIsland);
                 }
                 return true;
-            } else 
-                if (split[0].equalsIgnoreCase("lang")) {
+            } else if (split[0].equalsIgnoreCase("lang")) {
                     if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.lang")) {
                         Util.sendMessage(player, "/" + label + " lang <#>");
                         displayLocales(player);
@@ -1362,6 +1360,55 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                             island.setLocked(false);
                         }
                         return true;
+                    }
+                } else if (split[0].equalsIgnoreCase("expelall") || split[0].equalsIgnoreCase("expel!")){
+                    if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.expelall")) {
+                        Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
+                        return true;
+                    }
+                    int expelledPlayers = 0;
+                    for(Player visitor : plugin.getServer().getOnlinePlayers()){
+                    	// Check if this isn't a Citizens' NPC
+                    	if(visitor.hasMetadata("NPC")) continue;
+                    	
+                    	// It is a real player, checking he is on sender's island.
+                    	if(visitor != player && plugin.getGrid().isOnIsland(player, visitor)){
+                    		// Don't kick them if they are op
+                            if (visitor.isOp() || VaultHelper.checkPerm(visitor, Settings.PERMPREFIX + "mod.bypassprotect") || VaultHelper.checkPerm(visitor, Settings.PERMPREFIX + "mod.bypassexpel")) {
+                                continue;
+                            }
+                            
+                            // Don't kick them if they are team Members
+                            if (plugin.getPlayers().getMembers(playerUUID).contains(visitor.getUniqueId())){
+                            	continue;
+                            }
+                            
+                            // Time to kick! :D
+                            expelledPlayers++;
+                            //   Remove from coop
+                            boolean coop = CoopPlay.getInstance().removeCoopPlayer(player, visitor.getUniqueId());
+                            if(coop){
+                            	visitor.sendMessage(ChatColor.RED + plugin.myLocale(visitor.getUniqueId()).coopRemoved.replace("[name]", player.getName()));
+                            }
+                            //   Send them back to their island
+                            if (plugin.getPlayers().inTeam(visitor.getUniqueId()) || plugin.getPlayers().hasIsland(visitor.getUniqueId())) {
+                                plugin.getGrid().homeTeleport(visitor);
+                            } else {
+                                //   Just move target to spawn
+                                if (!visitor.performCommand(Settings.SPAWNCOMMAND)) {
+                                	visitor.teleport(player.getWorld().getSpawnLocation());
+                                }
+                            }
+                            visitor.sendMessage(ChatColor.RED + plugin.myLocale(visitor.getUniqueId()).expelExpelled);
+                            plugin.getLogger().info(player.getName() + " expelled " + visitor.getName() + " from their island.");
+                        }
+                    }
+                    
+                    // Expel report to the expeller
+                    if(expelledPlayers == 0){
+                    	Util.sendMessage(player, ChatColor.RED + plugin.myLocale(playerUUID).expelallNone);
+                    } else {
+                    	Util.sendMessage(player, ChatColor.RED + plugin.myLocale(playerUUID).expelallSuccess.replace("[count]", String.valueOf(expelledPlayers)));
                     }
                 } else if (split[0].equalsIgnoreCase("go")) {
                     if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.go")) {
@@ -1675,7 +1722,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                 }
                 if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.chat")
                         && plugin.getPlayers().inTeam(playerUUID)) {
-                    Util.sendMessage(player, plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " teamchat: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).teamChatHelp);
+                    Util.sendMessage(player, plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " teamchat or tc: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).teamChatHelp);
                 }
                 if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.biomes")) {
                     Util.sendMessage(player, plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " biomes: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpBiome);
@@ -1683,6 +1730,9 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                 // if (!Settings.allowPvP) {
                 if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.expel")) {
                     Util.sendMessage(player, plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " expel <player>: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpExpel);
+                }
+                if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.expelall")) {
+                    Util.sendMessage(player, plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " expelall or expel!: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpExpelall);
                 }
                 if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.ban")) {
                     Util.sendMessage(player, plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " ban <player>: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpBan);
@@ -3385,6 +3435,10 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.expel")) {
                 options.add("expel");
+            }
+            if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.expelall")) {
+                options.add("expelall");
+                options.add("expel!");
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "coop")) {
                 options.add("coop");
