@@ -40,43 +40,61 @@ public class ASBParser {
 	}
 	
 	public ASBSound parseSound(String text, String key){
+		text = text.toUpperCase();
 		String[] split = text.split(";");
+		
+		// Checking if this is the good format
+		if(split.length != 3){
+			plugin.getLogger().warning("Could not parse \"" + text + "\" in \"" + key + "\" : Invalid format. Must be \"SOUND_ID;PITCH;VOLUME\"");
+			return null;
+		}
 		
 		Sound sound;
 		float pitch;
 		float volume;
 		
+		// Doing a little backward-compatibility for older versions. Might not be accurate.
+		if(plugin.getServer().getVersion().contains("(MC: 1.8")){
+			text = text.replace("BLOCK_", "").replace("ENTITY_", "");
+		}
+		
 		if(Sound.valueOf(split[0]) != null) sound = Sound.valueOf(split[0]);
 		else {
 			plugin.getLogger().warning("Could not parse \"" + text + "\" in \"" + key + "\" : Sound does not exist.");
+			plugin.getLogger().info("Here is a list of available sounds:");
+			for(Sound s : Sound.values()) System.out.print(s + ", ");
 			return null;
 		}
 		
 		try{
 			pitch = Float.valueOf(split[1]);
 			if(pitch <= 0){
-				plugin.getLogger().warning("Could not parse \"" + text + "\" in \"" + key + "\" : Pitch must be higher than 0. Setting it to 1.");
+				plugin.getLogger().warning("Error while parsing \"" + text + "\" in \"" + key + "\" : Pitch must be higher than 0. Setting it to 1.");
 				pitch = 1.0F;
 			}
 		} catch(NumberFormatException e) {
-			plugin.getLogger().warning("Could not parse \"" + text + "\" in \"" + key + "\" : Pitch invalid.");
+			plugin.getLogger().warning("Could not parse \"" + text + "\" in \"" + key + "\" : Invalid pitch.");
 			return null;
 		}
 		
 		try{
 			volume = Float.valueOf(split[2]);
 			if(volume <= 0){
-				plugin.getLogger().warning("Could not parse \"" + text + "\" in \"" + key + "\" : Volume must be higher than 0. Setting it to 1.");
+				plugin.getLogger().warning("Error while parsing \"" + text + "\" in \"" + key + "\" : Volume must be higher than 0. Setting it to 1.");
 				volume = 1.0F;
 			}
 		} catch(NumberFormatException e) {
-			plugin.getLogger().warning("Could not parse \"" + text + "\" in \"" + key + "\" : Volume invalid.");
+			plugin.getLogger().warning("Could not parse \"" + text + "\" in \"" + key + "\" : Invalid volume.");
 			return null;
 		}
 		
 		return new ASBSound(sound, pitch, volume);
 	}
 	
+	/**
+	 * This object simplify sound parsing.
+	 * @author Poslovitch
+	 */
 	public class ASBSound{
 		private Sound sound;
 		private float pitch;
