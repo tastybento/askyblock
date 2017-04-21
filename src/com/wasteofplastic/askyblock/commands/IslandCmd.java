@@ -1467,7 +1467,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                         Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoIsland);
                         return true;
                     }
-                    if (player.getWorld().equals(ASkyBlock.getIslandWorld()) || player.getWorld().equals(ASkyBlock.getNetherWorld())) {	
+                    if (Settings.allowGlobalMinishop || (player.getWorld().equals(ASkyBlock.getIslandWorld()) || player.getWorld().equals(ASkyBlock.getNetherWorld()))) {	
                         if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.minishop")) {
                             if (ControlPanel.miniShop != null) {
                                 player.openInventory(ControlPanel.miniShop);

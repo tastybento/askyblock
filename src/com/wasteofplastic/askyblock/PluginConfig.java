@@ -559,7 +559,10 @@ public class PluginConfig {
 
         // Use the minishop or not
         Settings.useMinishop = plugin.getConfig().getBoolean("general.useminishop", true);
-
+        
+        // Allow the minishop to be used in every worlds
+        Settings.allowGlobalMinishop = plugin.getConfig().getBoolean("general.allowglobalminishop", false);
+        
         // Starting money - default $0
         Settings.startingMoney = plugin.getConfig().getDouble("general.startingmoney", 0D);
 

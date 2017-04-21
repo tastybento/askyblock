@@ -452,6 +452,10 @@ general:
    
    # Enable the minishop or not
    useminishop: true
+   
+   # Global minishop - allow to use the minishop in every worlds
+   # useminishop must be true in order to use this setting
+   allowglobalminishop: false
 
    # Starting money - this is how much money new players will have as their
    # balance at the start of an island. 
