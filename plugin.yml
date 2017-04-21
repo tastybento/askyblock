@@ -404,5 +404,7 @@ permissions:
           askyblock.admin.setlanguage:
             description: Resets all player languages and sets the default language
             default: op
-          askyblock.settings.*: true
+          askyblock.admin.settings:
+            description: Allow to edit settings
+            default: op
      
