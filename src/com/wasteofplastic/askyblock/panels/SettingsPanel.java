@@ -42,6 +42,7 @@ import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.Island.SettingsFlag;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.util.Util;
+import com.wasteofplastic.askyblock.util.VaultHelper;
 
 public class SettingsPanel implements Listener {
     // Island Guard Settings Panel
@@ -249,10 +250,10 @@ public class SettingsPanel implements Listener {
         }
         // Players can only do something if they own the island or are op
         Island island = plugin.getGrid().getIslandAt(player.getLocation());
-        if (island != null && (player.isOp() || (island.getOwner() != null && island.getOwner().equals(player.getUniqueId())))) {
+        if (island != null && (player.isOp() || VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.settings") || (island.getOwner() != null && island.getOwner().equals(player.getUniqueId())))) {
             //plugin.getLogger().info("DEBUG: Check perm " + flag.toString());
             // Check perms
-            if (player.hasPermission(Settings.PERMPREFIX + "settings." + flag.toString())) {
+            if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.settings") || VaultHelper.checkPerm(player, Settings.PERMPREFIX + "settings." + flag.toString())) {
                 //plugin.getLogger().info("DEBUG: Player has perm " + flag.toString());
                 if (flag.equals(SettingsFlag.PVP) || flag.equals(SettingsFlag.NETHER_PVP)) {
                     // PVP always results in an inventory closure
