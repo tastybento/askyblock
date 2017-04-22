@@ -3125,18 +3125,8 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
         player.teleport(actualWarp);
         if (pvp) {
             Util.sendMessage(player, ChatColor.BOLD + "" + ChatColor.RED + plugin.myLocale(player.getUniqueId()).igs.get(SettingsFlag.PVP) + " " + plugin.myLocale(player.getUniqueId()).igsAllowed);
-            if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
-                player.getWorld().playSound(player.getLocation(), Sound.valueOf("ARROW_HIT"), 1F, 1F);
-            } else {
-                player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ARROW_HIT, 1F, 1F);
-            }
-        } else {
-            if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
-                player.getWorld().playSound(player.getLocation(), Sound.valueOf("BAT_TAKEOFF"), 1F, 1F);
-            } else {
-                player.getWorld().playSound(player.getLocation(), Sound.ENTITY_BAT_TAKEOFF, 1F, 1F);
-            }
         }
+        if(Settings.warpSound != null) player.getWorld().playSound(player.getLocation(), Settings.warpSound.getSound(), Settings.warpSound.getPitch(), Settings.warpSound.getVolume());
         Player warpOwner = plugin.getServer().getPlayer(foundWarp);
         if (warpOwner != null && !warpOwner.equals(player)) {
             warpOwner.sendMessage(plugin.myLocale(foundWarp).warpsPlayerWarped.replace("[name]", player.getName()));

@@ -564,6 +564,10 @@ general:
    # text will be used
    usewarppanel: true
    
+   # Warp sound - will be played when a player warps on an island
+   # Syntax : "SOUND_ID;PITCH;VOLUME" -> e.g: "A_FUNNY_SOUND;0.27;0.85"
+   warpsound: "ENTITY_BAT_TAKEOFF;1.0;1.0"
+   
    # Mute death messages
    mutedeathmessages: false
    
