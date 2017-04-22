@@ -1161,7 +1161,7 @@ public class IslandGuard implements Listener {
                 return;
             }
             if (DEBUG)
-                plugin.getLogger().info("DEBUG: Mobs not allowed to be hurt. Blocking");
+                plugin.getLogger().info("DEBUG: Villagers not allowed to be hurt. Blocking");
             // Else not allowed
             attacker.sendMessage(ChatColor.RED + plugin.myLocale(attacker.getUniqueId()).islandProtected);
             if (flamingArrow)
