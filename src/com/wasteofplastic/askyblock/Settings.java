@@ -92,6 +92,7 @@ public class Settings {
     public static double startingMoney;
     public static boolean useEconomy;
     public static boolean useMinishop;
+    public static boolean allowGlobalMinishop;
     
     public static boolean recoverSuperFlat;
     
