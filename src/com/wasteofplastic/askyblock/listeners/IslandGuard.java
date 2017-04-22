@@ -1139,9 +1139,25 @@ public class IslandGuard implements Listener {
         }
 
         // Mobs being hurt
-        if (e.getEntity() instanceof Animals || e.getEntity() instanceof IronGolem || e.getEntity() instanceof Snowman
-                || e.getEntity() instanceof Villager) {
+        if (e.getEntity() instanceof Animals || e.getEntity() instanceof IronGolem || e.getEntity() instanceof Snowman) {
             if (island != null && (island.getIgsFlag(SettingsFlag.HURT_MOBS) || island.getMembers().contains(attacker.getUniqueId()))) {
+                return;
+            }
+            if (DEBUG)
+                plugin.getLogger().info("DEBUG: Mobs not allowed to be hurt. Blocking");
+            // Else not allowed
+            attacker.sendMessage(ChatColor.RED + plugin.myLocale(attacker.getUniqueId()).islandProtected);
+            if (flamingArrow)
+                e.getEntity().setFireTicks(0);
+            if (projectile)
+                e.getDamager().remove();
+            e.setCancelled(true);
+            return;
+        }
+        
+        // Villagers being hurt
+        if (e.getEntity() instanceof Villager){
+            if (island != null && (island.getIgsFlag(SettingsFlag.HURT_VILLAGERS) || island.getMembers().contains(attacker.getUniqueId()))) {
                 return;
             }
             if (DEBUG)

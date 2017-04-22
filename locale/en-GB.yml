@@ -365,6 +365,7 @@ islandguardsettings:
   horseriding: "Visitor horse riding"
   hurtanimals: "Visitor animal hurting"
   hurtmonsters: "Visitor monster hurting"
+  hurtvillagers: "Visitor villager hurting"
   joinleaveislandmessages: "Enter/exit island messages"
   jukebox: "Visitor jukebox use"
   leash: "Visitor leash use"
