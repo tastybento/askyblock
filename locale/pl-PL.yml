@@ -537,4 +537,4 @@ warps:
   warpTip: "Stwórz teleport tworząc tabliczke z napisem [WELCOME] na górze."
   warpToPlayersSign: "Teleport do tabliczki Witaj Gracza <player>."
   warpsAvailable: "Te teleporty są dostępne"
-  welcomeLine: "[WECOME]"
+  welcomeLine: "[WELCOME]"
