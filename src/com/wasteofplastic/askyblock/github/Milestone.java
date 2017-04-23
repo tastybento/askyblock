@@ -1,5 +1,8 @@
 package com.wasteofplastic.askyblock.github;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 /**
  * This object stores all data about an open milestone
  * @author Poslovitch
@@ -42,8 +45,7 @@ public class Milestone {
 	}
 	
 	public double getProgress(){
-		//TODO
-		return 0;
+		return new BigDecimal( getClosedIssues() / (getOpenIssues() + getClosedIssues()) * 100 ).setScale(1, RoundingMode.HALF_UP).doubleValue();
 	}
 	
 	public String getCreatedAt(){
