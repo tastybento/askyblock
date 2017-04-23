@@ -47,6 +47,7 @@ import com.wasteofplastic.askyblock.commands.IslandCmd;
 import com.wasteofplastic.askyblock.events.IslandDeleteEvent;
 import com.wasteofplastic.askyblock.events.ReadyEvent;
 import com.wasteofplastic.askyblock.generators.ChunkGeneratorWorld;
+import com.wasteofplastic.askyblock.github.GithubSetup;
 import com.wasteofplastic.askyblock.listeners.AcidEffect;
 import com.wasteofplastic.askyblock.listeners.ChatListener;
 import com.wasteofplastic.askyblock.listeners.CleanSuperFlat;
@@ -369,6 +370,12 @@ public class ASkyBlock extends JavaPlugin {
         if(Settings.metrics){
             new MetricsLite(this);
         }
+        
+        // GitHub Link
+        if(Settings.githubLink){
+        	GithubSetup.setup();
+        }
+        
         // Kick off a few tasks on the next tick
         // By calling getIslandWorld(), if there is no island
         // world, it will be created
