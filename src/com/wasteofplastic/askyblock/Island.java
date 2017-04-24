@@ -107,201 +107,154 @@ public class Island implements Cloneable {
      * Covers island, spawn and system settings
      */
     public enum SettingsFlag {
-        /**
-         * Water is acid above sea level
-         */
+        // Water is acid above sea level
         ACID_DAMAGE,
-        /**
-         * Anvil use
-         */
+        
+        // Anvil use
         ANVIL,
-        /**
-         * Armor stand use
-         */
+        
+        // Armor Stand use
         ARMOR_STAND,
-        /**
-         * Beacon use
-         */
+        
+        // Beacon use
         BEACON,
-        /**
-         * Bed use
-         */
+        
+        // Bed use
         BED,
-        /**
-         * Can break blocks
-         */
+        
+        // Can break blocks
         BREAK_BLOCKS,
-        /**
-         * Can breed animals
-         */
+        
+        // Can breed animals
         BREEDING,
-        /**
-         * Can use brewing stand
-         */
+        
+        // Can use brewing stands
         BREWING,
-        /**
-         * Can empty or fill buckets
-         */
+        
+        // Can empty or fill buckets
         BUCKET,
-        /**
-         * Can collect lava
-         */
+        
+        // Can collect lava
         COLLECT_LAVA,
-        /**
-         * Can collect water
-         */
+        
+        // Can collect water
         COLLECT_WATER,
-        /**
-         * Can open chests or hoppers or dispensers
-         */
+        
+        // Can open chests, hoppers or dispensers
         CHEST,
-        /**
-         * Can eat and teleport with chorus fruit
-         */
+        
+        // Can eat and teleport with chorus fruit
         CHORUS_FRUIT,
-        /**
-         * Can use the work bench
-         */
+
+        // Can use the workbench
         CRAFTING,
-        /**
-         * Allow creepers to hurt players (but not damage blocks)
-         */
+        
+        // Allow creepers to hurt players (but not to damage blocks)
         CREEPER_PAIN,
-        /**
-         * Can trample crops
-         */
+        
+        // Can trample crops
         CROP_TRAMPLE,
-        /**
-         * Can open doors or trapdoors
-         */
+        
+        // Can open doors or trapdoors
         DOOR,
-        /**
-         * Chicken eggs can be thrown
-         */
+        
+        // Chicken eggs can be thrown
         EGGS,
-        /**
-         * Can use the enchanting table
-         */
+        
+        // Can use the enchanting table
         ENCHANTING,
-        /**
-         * Can throw ender pearls
-         */
+        
+        // Can throw enderpearls
         ENDER_PEARL,
-        /**
-         * Can toggle enter/exit names to island
-         */
+        
+        // Can toggle enter/exit names to island
         ENTER_EXIT_MESSAGES,
-        /**
-         * Fire use/placement in general
-         */
+        
+        // Fire use/placement in general
         FIRE,
-        /**
-         * Can extinguish fires by punching them
-         */
+        
+        // Can extinguish fires by punching them
         FIRE_EXTINGUISH,
-        /**
-         * Allow fire spread
-         */
+        
+        // Allow fire spread
         FIRE_SPREAD,
-        /**
-         * Can use fishing rod
-         */
+        
+        // Can use fishing rod
         FISHING_ROD,
-        /**
-         * Can use furnaces
-         */
+        
+        // Can use furnaces
         FURNACE,
-        /**
-         * Can use gates
-         */
+        
+        // Can use gates
         GATE,
-        /**
-         * Can open horse or other animal inventories, e.g. llama
-         */
+        
+        // Can open horse or other animal inventories, e.g. llama
         HORSE_INVENTORY,
-        /**
-         * Can ride an animal
-         */
+        
+        // Can ride an animal
         HORSE_RIDING,
-        /**
-         * Can hurt friendly mobs, e.g. cows
-         */
+        
+        // Can hurt friendly mobs, e.g. cows - Villagers excluded
         HURT_MOBS,
-        /**
-         * Can hurt monsters
-         */
+        
+        // Can hurt monsters
         HURT_MONSTERS,
-        /**
-         * Can leash or unleash animals
-         */
+        
+        // Can hurt villagers
+        HURT_VILLAGERS,
+        
+        // Can leash or unleash animals
         LEASH,
-        /**
-         * Can use buttons or levers
-         */
+        
+        // Can use buttons or levers
         LEVER_BUTTON,
-        /**
-         * Animals, etc. can spawn
-         */
+
+        // Cows can be milked
         MILKING,
-        /**
-         * Can do PVP in the nether
-         */
+        
+        // Animals, etc. can spawn
         MOB_SPAWN,
-        /**
-         * Monsters can spawn
-         */
+        
+        // Monsters can spawn
         MONSTER_SPAWN,
-        /**
-         * Can operate jukeboxes, note boxes etc.
-         */
+        
+        // Can operate jukeboxes, noteblocks etc.
         MUSIC,
-        /**
-         * Can place blocks
-         */
+
+        // Can do PVP in the nether
         NETHER_PVP,
-        /**
-         * Can interact with redstone items, like diodes
-         */
+        
+        // Can place blocks
         PLACE_BLOCKS,
-        /**
-         * Can go through portals
-         */
+        
+        // Can go through portals
         PORTAL,
-        /**
-         * Will activate pressure plates
-         */
+        
+        // Will activate pressure plates
         PRESSURE_PLATE,
-        /**
-         * Can do PVP in the overworld
-         */
+        
+        // Can do PVP in the overworld
         PVP,
-        /**
-         * Cows can be milked
-         */
+        
+        // Can interact with redstone items, like repeaters
         REDSTONE,
-        /**
-         * Spawn eggs can be used
-         */
+        
+        // Spawn eggs can be used
         SPAWN_EGGS,
-        /**
-         * Can throw splash potions
-         */
+        
+        // Can throw splash potions
         SPLASH_POTION,
-        /**
-         * Can shear sheep
-         */
+        
+        // Can shear sheep
         SHEARING,
-        /**
-         * Can trade with villagers
-         */
+        
+        // Can trade with villagers
         VILLAGER_TRADING,
-        /**
-         * Visitors can drop items
-         */
+        
+        // Visitors can drop items
         VISITOR_ITEM_DROP,
-        /**
-         * Visitors can pick up items
-         */
+        
+        // Visitors can pick up items
         VISITOR_ITEM_PICKUP
     }
 

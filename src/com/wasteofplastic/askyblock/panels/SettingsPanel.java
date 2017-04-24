@@ -106,6 +106,7 @@ public class SettingsPanel implements Listener {
         lookup.put(Material.SPLASH_POTION, SettingsFlag.SPLASH_POTION);
         lookup.put(Material.SIGN, SettingsFlag.ENTER_EXIT_MESSAGES);
         lookup.put(Material.STONE, SettingsFlag.BREAK_BLOCKS);
+        lookup.put(Material.STONE_SWORD, SettingsFlag.HURT_VILLAGERS);
         lookup.put(Material.TNT, SettingsFlag.CREEPER_PAIN);
         lookup.put(Material.TORCH, SettingsFlag.FIRE_SPREAD);
         lookup.put(Material.WATER_BUCKET, SettingsFlag.COLLECT_WATER);
