@@ -1410,7 +1410,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                     } else {
                     	Util.sendMessage(player, ChatColor.RED + plugin.myLocale(playerUUID).expelallSuccess.replace("[count]", String.valueOf(expelledPlayers)));
                     }
-                } else if (split[0].equalsIgnoreCase("go")) {
+                } else if (split[0].equalsIgnoreCase("go") || split[0].equalsIgnoreCase("home") || split[0].equalsIgnoreCase("h")) {
                     if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.go")) {
                         Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
                         return true;
@@ -1665,15 +1665,15 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                     }
                 }
                 if (maxHomes > 1 && VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.go")) {
-                    Util.sendMessage(player, plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " go <1 - " + maxHomes + ">: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpTeleport);
+                    Util.sendMessage(player, plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " <go/home/h> <1 - " + maxHomes + ">: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpTeleport);
                 } else if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.go")) {
-                    Util.sendMessage(player, plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " go: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpTeleport);
+                    Util.sendMessage(player, plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " <go/home/h>: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpTeleport);
                 }
                 if (plugin.getGrid() != null && plugin.getGrid().getSpawn() != null && VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.spawn")) {
                     Util.sendMessage(player, plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " spawn: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpSpawn);
                 }
                 if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.controlpanel")) {
-                    Util.sendMessage(player, plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " controlpanel or cp [on/off]: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpControlPanel);
+                    Util.sendMessage(player, plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " <controlpanel/cp> [on/off]: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpControlPanel);
                 }
                 if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.reset")) {
                     Util.sendMessage(player, plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " reset: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpRestart);
@@ -1697,7 +1697,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                     Util.sendMessage(player, plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " top: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpTop);
                 }
                 if (Settings.useEconomy && VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.minishop")) {
-                    Util.sendMessage(player, plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " minishop or ms: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpMiniShop);
+                    Util.sendMessage(player, plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " <minishop/ms>: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpMiniShop);
                 }
                 if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.value")) {
                     Util.sendMessage(player, plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " value: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpValue);
@@ -1722,7 +1722,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                 }
                 if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.chat")
                         && plugin.getPlayers().inTeam(playerUUID)) {
-                    Util.sendMessage(player, plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " teamchat or tc: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).teamChatHelp);
+                    Util.sendMessage(player, plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " <teamchat/tc>: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).teamChatHelp);
                 }
                 if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.biomes")) {
                     Util.sendMessage(player, plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " biomes: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpBiome);
@@ -1732,7 +1732,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                     Util.sendMessage(player, plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " expel <player>: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpExpel);
                 }
                 if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.expelall")) {
-                    Util.sendMessage(player, plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " expelall or expel!: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpExpelall);
+                    Util.sendMessage(player, plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " <expelall/expel!>: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpExpelall);
                 }
                 if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.ban")) {
                     Util.sendMessage(player, plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " ban <player>: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpBan);
@@ -2220,7 +2220,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                         }
                     } else 
                         // Multi home
-                        if (split[0].equalsIgnoreCase("go")) {
+                        if (split[0].equalsIgnoreCase("go") || split[0].equalsIgnoreCase("home") || split[0].equalsIgnoreCase("h")) {
                             if (!plugin.getPlayers().hasIsland(playerUUID) && !plugin.getPlayers().inTeam(playerUUID)) {
                                 // Player has no island
                                 Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoIsland);
@@ -3369,6 +3369,8 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
             //options.add("make"); //Make is currently a private command never accessible to the player
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.go")) {
                 options.add("go");
+                options.add("home");
+                options.add("h");
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.name") && plugin.getPlayers().hasIsland(player.getUniqueId())) {
                 options.add("name");
