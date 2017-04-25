@@ -895,7 +895,7 @@ public class Island implements Cloneable {
      * @return count of how many tile entities of type mat are on the island at last count. Counts are done when a player places
      * a tile entity.
      */
-    public int getTileEntityCount(Material material) {
+    public int getTileEntityCount(Material material, World world) {
         int result = 0;	
         for (int x = getMinProtectedX() /16; x <= (getMinProtectedX() + getProtectionSize() - 1)/16; x++) {
             for (int z = getMinProtectedZ() /16; z <= (getMinProtectedZ() + getProtectionSize() - 1)/16; z++) {

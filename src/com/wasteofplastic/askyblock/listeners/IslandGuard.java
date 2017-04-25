@@ -1228,7 +1228,7 @@ public class IslandGuard implements Listener {
                         || e.getBlock().getType().equals(Material.FLOWER_POT)){
                     // tile entity placed
                     if (Settings.limitedBlocks.containsKey(type) && Settings.limitedBlocks.get(type) > -1) {
-                        int count = island.getTileEntityCount(e.getBlock().getType());
+                        int count = island.getTileEntityCount(e.getBlock().getType(),e.getBlock().getWorld());
                         //plugin.getLogger().info("DEBUG: count is "+ count);
                         if (Settings.limitedBlocks.get(type) <= count) {
                             Util.sendMessage(e.getPlayer(), ChatColor.RED + (plugin.myLocale(e.getPlayer().getUniqueId()).entityLimitReached.replace("[entity]",
@@ -1289,7 +1289,7 @@ public class IslandGuard implements Listener {
                         || e.getBlock().getType().equals(Material.FLOWER_POT)){
                     // tile entity placed
                     if (Settings.limitedBlocks.containsKey(type) && Settings.limitedBlocks.get(type) > -1) {
-                        int count = island.getTileEntityCount(e.getBlock().getType());
+                        int count = island.getTileEntityCount(e.getBlock().getType(),e.getBlock().getWorld());
                         if (Settings.limitedBlocks.get(type) <= count) {
                             Util.sendMessage(e.getPlayer(), ChatColor.RED + (plugin.myLocale(e.getPlayer().getUniqueId()).entityLimitReached.replace("[entity]",
                                     Util.prettifyText(type))).replace("[number]", String.valueOf(Settings.limitedBlocks.get(type))));
@@ -1361,7 +1361,7 @@ public class IslandGuard implements Listener {
                     // tile entity placed
                     if (Settings.limitedBlocks.containsKey(type) && Settings.limitedBlocks.get(type) > -1) {
                         // Convert from EntityType to Material via string - ugh
-                        int count = island.getTileEntityCount(Material.valueOf(type));
+                        int count = island.getTileEntityCount(Material.valueOf(type),e.getEntity().getWorld());
                         if (Settings.limitedBlocks.get(type) <= count) {
                             Util.sendMessage(e.getPlayer(), ChatColor.RED + (plugin.myLocale(e.getPlayer().getUniqueId()).entityLimitReached.replace("[entity]",
                                     Util.prettifyText(type))).replace("[number]", String.valueOf(Settings.limitedBlocks.get(type))));
