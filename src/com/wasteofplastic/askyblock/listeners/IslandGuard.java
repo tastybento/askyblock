@@ -2027,6 +2027,23 @@ public class IslandGuard implements Listener {
                 }
                 break;
             case CAKE_BLOCK:
+                if (island == null) {
+                    if (Settings.defaultWorldSettings.get(SettingsFlag.BREAK_BLOCKS)) {
+                        return;
+                    } else {
+                        Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
+                        e.getPlayer().setFoodLevel(e.getPlayer().getFoodLevel() - 2);
+                        e.setCancelled(true);
+                        return;
+                    }
+                }
+                if (!island.getIgsFlag(SettingsFlag.BREAK_BLOCKS)) {
+                    Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
+                    e.getPlayer().setFoodLevel(e.getPlayer().getFoodLevel() - 2);
+                    e.setCancelled(true);
+                    return;
+                }
+                break;
             case DRAGON_EGG:
                 if (island == null) {
                     if (Settings.defaultWorldSettings.get(SettingsFlag.BREAK_BLOCKS)) {
