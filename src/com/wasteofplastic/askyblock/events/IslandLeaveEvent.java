@@ -25,7 +25,7 @@ import com.wasteofplastic.askyblock.Island;
 /**
  * Fired when a player leaves an island team
  * @author tastybento
- *
+ * @since 3.0.0.4
  */
 public class IslandLeaveEvent extends ASkyBlockEvent {
 

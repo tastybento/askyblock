@@ -27,7 +27,7 @@ import com.wasteofplastic.askyblock.Island;
 /**
  * Fired when a player enters an island's area
  * @author tastybento
- *
+ * @since 3.0.0.4
  */
 public class IslandEnterEvent extends ASkyBlockEvent {
     private final Location location;

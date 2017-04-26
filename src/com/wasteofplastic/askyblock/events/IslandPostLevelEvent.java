@@ -15,6 +15,7 @@ import com.wasteofplastic.askyblock.Island;
  * 
  * @author Poslovitch
  * @see IslandPreLevelEvent, to really edit level/points to next level values.
+ * @since 3.0.6.2
  */
 public class IslandPostLevelEvent extends ASkyBlockEvent implements Cancellable {
     private int level;

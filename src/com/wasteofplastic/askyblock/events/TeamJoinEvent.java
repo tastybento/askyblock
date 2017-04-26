@@ -27,7 +27,7 @@ import org.bukkit.event.HandlerList;
  * This event is fired when a player joins a new Team
  * 
  * @author Exloki
- * 
+ * @since 3.0.4
  */
 public class TeamJoinEvent extends Event implements Cancellable {
     private static final HandlerList handlers = new HandlerList();

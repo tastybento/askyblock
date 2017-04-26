@@ -24,10 +24,10 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 /**
- * This event is fired when a player resets an island
+ * This event is fired when an island is deleted.
  *
  * @author tastybento
- *
+ * @since 3.0.2.1
  */
 public class IslandDeleteEvent extends Event {
 	private static final HandlerList handlers = new HandlerList();

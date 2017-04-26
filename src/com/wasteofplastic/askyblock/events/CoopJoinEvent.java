@@ -27,7 +27,7 @@ import com.wasteofplastic.askyblock.Island;
  * This event is fired when a player joins an island team as a coop member
  * 
  * @author tastybento
- * 
+ * @since 3.0.0.4
  */
 public class CoopJoinEvent extends ASkyBlockEvent implements Cancellable {
 

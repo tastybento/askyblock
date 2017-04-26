@@ -27,7 +27,7 @@ import com.wasteofplastic.askyblock.Island;
 /**
  * Fired when a player is leaves an island coop
  * @author tastybento
- *
+ * @since 3.0.0.4
  */
 public class CoopLeaveEvent extends ASkyBlockEvent implements Cancellable {
     private final UUID expeller;
