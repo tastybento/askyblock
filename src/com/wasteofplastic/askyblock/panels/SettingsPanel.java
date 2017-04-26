@@ -41,6 +41,7 @@ import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.Island.SettingsFlag;
 import com.wasteofplastic.askyblock.Settings;
+import com.wasteofplastic.askyblock.events.SettingChangeEvent;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
@@ -278,76 +279,96 @@ public class SettingsPanel implements Listener {
                             // Tidy up
                             pvpCoolDown.remove(player.getUniqueId());
                         }
-                        // Warn players on the island
-                        for (Player p : plugin.getServer().getOnlinePlayers()) {
-                            if (island.onIsland(p.getLocation())) {
-                                if (flag.equals(SettingsFlag.NETHER_PVP)) {
-                                    Util.sendMessage(p, ChatColor.RED + "" + ChatColor.BOLD + plugin.myLocale(p.getUniqueId()).igs.get(SettingsFlag.NETHER_PVP) + " " + plugin.myLocale(p.getUniqueId()).igsAllowed);
-                                } else {
-                                    Util.sendMessage(p, ChatColor.RED + "" + ChatColor.BOLD + plugin.myLocale(p.getUniqueId()).igs.get(SettingsFlag.PVP) + " " + plugin.myLocale(p.getUniqueId()).igsAllowed);
-                                }
+                        // Trigger SettingChangeEvent
+                        SettingChangeEvent changeEvent = new SettingChangeEvent(player.getUniqueId(), island, flag, !island.getIgsFlag(flag));
+                        plugin.getServer().getPluginManager().callEvent(changeEvent);
 
-                                if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
-                                    player.getWorld().playSound(player.getLocation(), Sound.valueOf("ARROW_HIT"), 1F, 1F);
-                                } else {
-                                    player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ARROW_HIT, 1F, 1F);
-                                }
-                            }
+                        if(!changeEvent.isCancelled()){
+                        	// Warn players on the island
+                        	for (Player p : plugin.getServer().getOnlinePlayers()) {
+                        		if (island.onIsland(p.getLocation())) {
+                        			if (flag.equals(SettingsFlag.NETHER_PVP)) {
+                        				Util.sendMessage(p, ChatColor.RED + "" + ChatColor.BOLD + plugin.myLocale(p.getUniqueId()).igs.get(SettingsFlag.NETHER_PVP) + " " + plugin.myLocale(p.getUniqueId()).igsAllowed);
+                        			} else {
+                        				Util.sendMessage(p, ChatColor.RED + "" + ChatColor.BOLD + plugin.myLocale(p.getUniqueId()).igs.get(SettingsFlag.PVP) + " " + plugin.myLocale(p.getUniqueId()).igsAllowed);
+                        			}
+
+                        			if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
+                        				player.getWorld().playSound(player.getLocation(), Sound.valueOf("ARROW_HIT"), 1F, 1F);
+                        			} else {
+                        				player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ARROW_HIT, 1F, 1F);
+                        			}
+                        		}
+                        	}
+
+
+                        	// Toggle the flag
+                        	island.toggleIgs(flag); 
+                        	// Update warp signs
+                        	final List<UUID> members = island.getMembers();
+                        	// Run one tick later because text gets updated at the end of tick
+                        	plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
+
+                        		@Override
+                        		public void run() {
+                        			for (UUID playerUUID : members) {
+                        				plugin.getWarpPanel().updateWarp(playerUUID);
+                        			}
+
+                        		}});
                         }
-                        // Toggle the flag
-                        island.toggleIgs(flag); 
-                        // Update warp signs
-                        final List<UUID> members = island.getMembers();
-                        // Run one tick later because text gets updated at the end of tick
-                        plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
-
-                            @Override
-                            public void run() {
-                                for (UUID playerUUID : members) {
-                                    plugin.getWarpPanel().updateWarp(playerUUID);
-                                }
-
-                            }});
-
                         return;
                     } else {
-                        // PVP deactivation
-                        // Store this deactivation time
-                        pvpCoolDown.put(player.getUniqueId(), System.currentTimeMillis());
-                        // Immediately toggle the setting
-                        island.toggleIgs(flag);
-                        // Update warp signs
-                        final List<UUID> members = island.getMembers();
-                        // Run one tick later because text gets updated at the end of tick
-                        plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
+                    	// Trigger SettingChangeEvent
+                    	SettingChangeEvent changeEvent = new SettingChangeEvent(player.getUniqueId(), island, flag, !island.getIgsFlag(flag));
+                    	plugin.getServer().getPluginManager().callEvent(changeEvent);
 
-                            @Override
-                            public void run() {
-                                for (UUID playerUUID : members) {
-                                    plugin.getWarpPanel().updateWarp(playerUUID);
-                                }
+                    	if(!changeEvent.isCancelled()){
 
-                            }});
-                        // Warn players of change
-                        for (Player p : plugin.getServer().getOnlinePlayers()) {
-                            if (island.onIsland(p.getLocation())) {
-                                // Deactivate PVP
-                                if (flag.equals(SettingsFlag.NETHER_PVP)) {
-                                    Util.sendMessage(p, ChatColor.GREEN + plugin.myLocale(p.getUniqueId()).igs.get(SettingsFlag.NETHER_PVP) + " " + plugin.myLocale(p.getUniqueId()).igsDisallowed);
-                                } else {
-                                    Util.sendMessage(p, ChatColor.GREEN + plugin.myLocale(p.getUniqueId()).igs.get(SettingsFlag.PVP) + " " + plugin.myLocale(p.getUniqueId()).igsDisallowed);
-                                }
-                                if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
-                                    p.getWorld().playSound(p.getLocation(), Sound.valueOf("FIREWORK_TWINKLE"), 1F, 1F);
-                                } else {
-                                    p.getWorld().playSound(p.getLocation(), Sound.ENTITY_FIREWORK_TWINKLE, 1F, 1F);
-                                }
+                    		// PVP deactivation
+                    		// Store this deactivation time
+                    		pvpCoolDown.put(player.getUniqueId(), System.currentTimeMillis());
+                    		// Immediately toggle the setting
+                    		island.toggleIgs(flag);
+                    		// Update warp signs
+                    		final List<UUID> members = island.getMembers();
+                    		// Run one tick later because text gets updated at the end of tick
+                    		plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
 
-                            }
-                        }
+                    			@Override
+                    			public void run() {
+                    				for (UUID playerUUID : members) {
+                    					plugin.getWarpPanel().updateWarp(playerUUID);
+                    				}
+
+                    			}});
+                    		// Warn players of change
+                    		for (Player p : plugin.getServer().getOnlinePlayers()) {
+                    			if (island.onIsland(p.getLocation())) {
+                    				// Deactivate PVP
+                    				if (flag.equals(SettingsFlag.NETHER_PVP)) {
+                    					Util.sendMessage(p, ChatColor.GREEN + plugin.myLocale(p.getUniqueId()).igs.get(SettingsFlag.NETHER_PVP) + " " + plugin.myLocale(p.getUniqueId()).igsDisallowed);
+                    				} else {
+                    					Util.sendMessage(p, ChatColor.GREEN + plugin.myLocale(p.getUniqueId()).igs.get(SettingsFlag.PVP) + " " + plugin.myLocale(p.getUniqueId()).igsDisallowed);
+                    				}
+                    				if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
+                    					p.getWorld().playSound(p.getLocation(), Sound.valueOf("FIREWORK_TWINKLE"), 1F, 1F);
+                    				} else {
+                    					p.getWorld().playSound(p.getLocation(), Sound.ENTITY_FIREWORK_TWINKLE, 1F, 1F);
+                    				}
+
+                    			}
+                    		}
+                    	}
                     }
                 } else {
-                    island.toggleIgs(flag);
+                	// Trigger SettingChangeEvent
+                	SettingChangeEvent changeEvent = new SettingChangeEvent(player.getUniqueId(), island, flag, !island.getIgsFlag(flag));
+                	plugin.getServer().getPluginManager().callEvent(changeEvent);
+
+                	if(!changeEvent.isCancelled()){
+                		island.toggleIgs(flag);
+                	}
                 }
             }
             //player.closeInventory();
