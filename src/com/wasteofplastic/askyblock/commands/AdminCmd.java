@@ -1415,6 +1415,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                         	if(sender instanceof Player) senderUUID = ((Player) sender).getUniqueId();
                         	// Trigger PurgeStartEvent
                         	PurgeStartEvent startEvent = new PurgeStartEvent(senderUUID, removeList);
+                        	plugin.getServer().getPluginManager().callEvent(startEvent);
                         	
                         	// Launch purge only if it isn't cancelled using API
                         	if(!startEvent.isCancelled()){
@@ -1441,6 +1442,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                         						if (plugin.getPlayers().getIslandLevel(removeList.get(0)) < Settings.abandonedIslandLevel) {
                         							// Trigger PurgeDeleteIslandEvent
                         							PurgeDeleteIslandEvent deleteEvent = new PurgeDeleteIslandEvent(plugin.getGrid().getIsland(removeList.get(0)));
+                        							plugin.getServer().getPluginManager().callEvent(deleteEvent);
                         							
                         							if(!deleteEvent.isCancelled()){
                         								Util.sendMessage(sender, ChatColor.YELLOW + "[" + (total - removeList.size() + 1) + "/" + total + "] "
