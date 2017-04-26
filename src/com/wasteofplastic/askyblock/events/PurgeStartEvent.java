@@ -30,6 +30,7 @@ import org.bukkit.event.HandlerList;
  * Canceling this event will cancel the purge
  * 
  * @author Poslovitch
+ * @since 4.0
  */
 public class PurgeStartEvent extends Event implements Cancellable {
     private static final HandlerList handlers = new HandlerList();

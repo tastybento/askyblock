@@ -28,6 +28,7 @@ import com.wasteofplastic.askyblock.Island;
  * Canceling this event will prevent the plugin to remove the island.
  * 
  * @author Poslovitch
+ * @since 4.0
  */
 public class PurgeDeleteIslandEvent extends Event implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
