@@ -40,7 +40,7 @@ public class PurgeStartEvent extends Event implements Cancellable {
     
     /**
      * Called to create the event
-     * @param user - the UUID of the player who launched the purge
+     * @param user - the UUID of the player who launched the purge, may be null if purge is launched using the console.
      * @param islandsList - the list of islands to remove, based on their leader's UUID 
      */
     public PurgeStartEvent(UUID user, List<UUID> islandsList){
@@ -49,7 +49,7 @@ public class PurgeStartEvent extends Event implements Cancellable {
     }
     
     /**
-     * @return the user who launched the purge
+     * @return the user who launched the purge, may be null if purge is launched using the console.
      */
     public UUID getUser(){
         return this.user;
@@ -79,7 +79,7 @@ public class PurgeStartEvent extends Event implements Cancellable {
     }
     
     /**
-     * Replace the island list with the specified one
+     * Replace the island list
      * @param - a new island owners' UUIDs list
      */
     public void setIslandsList(List<UUID> islandsList){

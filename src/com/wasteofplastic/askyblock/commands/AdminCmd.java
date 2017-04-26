@@ -71,6 +71,8 @@ import com.wasteofplastic.askyblock.SafeSpotTeleport;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.Settings.GameType;
 import com.wasteofplastic.askyblock.TopTen;
+import com.wasteofplastic.askyblock.events.PurgeDeleteIslandEvent;
+import com.wasteofplastic.askyblock.events.PurgeStartEvent;
 import com.wasteofplastic.askyblock.listeners.LavaCheck;
 import com.wasteofplastic.askyblock.panels.ControlPanel;
 import com.wasteofplastic.askyblock.util.Util;
@@ -1409,39 +1411,56 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                             Util.sendMessage(sender, ChatColor.YELLOW + plugin.myLocale().purgepurgeCancelled);
                             this.cancel();
                         } else if (confirmOK) {
-                            // Set up a repeating task to run every 2
-                            // seconds to remove
-                            // islands one by one and then cancel when
-                            // done
-                            final int total = removeList.size();
-                            new BukkitRunnable() {
-                                @Override
-                                public void run() {
-                                    if (removeList.isEmpty() && purgeFlag) {
-                                        purgeFlag = false;
-                                        Util.sendMessage(sender, ChatColor.YELLOW + plugin.myLocale().purgefinished);
-                                        this.cancel();
-                                    }
+                        	UUID senderUUID = null;
+                        	if(sender instanceof Player) senderUUID = ((Player) sender).getUniqueId();
+                        	// Trigger PurgeStartEvent
+                        	PurgeStartEvent startEvent = new PurgeStartEvent(senderUUID, removeList);
+                        	
+                        	// Launch purge only if it isn't cancelled using API
+                        	if(!startEvent.isCancelled()){
+                        		// Override the original removeList with the one from the event.
+                        		removeList = startEvent.getIslandsList();
+                        		
+                        		// Set up a repeating task to run every 2 seconds to remove
+                        		// islands one by one and then cancel when done
+                        		final int total = removeList.size();
+                        		new BukkitRunnable() {
+                        			@Override
+                        			public void run() {
+                        				if (removeList.isEmpty() && purgeFlag) {
+                        					purgeFlag = false;
+                        					Util.sendMessage(sender, ChatColor.YELLOW + plugin.myLocale().purgefinished);
+                        					this.cancel();
+                        				}
 
-                                    if (removeList.size() > 0 && purgeFlag) {
-                                        // Check if the player is online
-                                        if (plugin.getServer().getPlayer(removeList.get(0)) == null) {
-                                            //plugin.getLogger().info("DEBUG: player is offline");
-                                            // Check the level
-                                            if (plugin.getPlayers().getIslandLevel(removeList.get(0)) < Settings.abandonedIslandLevel) {
-                                                Util.sendMessage(sender, ChatColor.YELLOW + "[" + (total - removeList.size() + 1) + "/" + total + "] "
-                                                        + plugin.myLocale().purgeremovingName.replace("[name]", plugin.getPlayers().getName(removeList.get(0))));
-                                                plugin.deletePlayerIsland(removeList.get(0), true);
-                                            }
-                                        } else {
-                                            Util.sendMessage(sender, ChatColor.YELLOW + "[" + (total - removeList.size() + 1) + "/" + total + "] "
-                                                    + "Skipping online player...");
-                                        }
-                                        removeList.remove(0);
-                                    }
-                                    //Util.sendMessage(sender, "Now waiting...");
-                                }
-                            }.runTaskTimer(plugin, 0L, 20L);
+                        				if (removeList.size() > 0 && purgeFlag) {
+                        					// Check if the player is online
+                        					if (plugin.getServer().getPlayer(removeList.get(0)) == null) {
+                        						//plugin.getLogger().info("DEBUG: player is offline");
+                        						// Check the level
+                        						if (plugin.getPlayers().getIslandLevel(removeList.get(0)) < Settings.abandonedIslandLevel) {
+                        							// Trigger PurgeDeleteIslandEvent
+                        							PurgeDeleteIslandEvent deleteEvent = new PurgeDeleteIslandEvent(plugin.getGrid().getIsland(removeList.get(0)));
+                        							
+                        							if(!deleteEvent.isCancelled()){
+                        								Util.sendMessage(sender, ChatColor.YELLOW + "[" + (total - removeList.size() + 1) + "/" + total + "] "
+                                                        		+ plugin.myLocale().purgeremovingName.replace("[name]", plugin.getPlayers().getName(removeList.get(0))));
+                                                		plugin.deletePlayerIsland(removeList.get(0), true);
+                        							} else {
+                        								Util.sendMessage(sender, ChatColor.YELLOW + "[" + (total - removeList.size() + 1) + "/" + total + "] " + plugin.myLocale().purgeSkippingAPI);
+                        							}
+                                            	}
+                                        	} else {
+                                            	Util.sendMessage(sender, ChatColor.YELLOW + "[" + (total - removeList.size() + 1) + "/" + total + "] " + plugin.myLocale().purgeSkippingOnline);
+                                        	}
+                                        	removeList.remove(0);
+                                    	}
+                                    	//Util.sendMessage(sender, "Now waiting...");
+                                	}
+                            	}.runTaskTimer(plugin, 0L, 20L);
+                        	} else {
+                        		Util.sendMessage(sender, ChatColor.YELLOW + plugin.myLocale().purgeCancelledByAPI);
+                        	}
                             confirmReq = false;
                             confirmOK = false;
                             this.cancel();
