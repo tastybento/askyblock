@@ -1193,91 +1193,100 @@ public class Challenges implements CommandExecutor, TabCompleter {
                                 // POTION:NAME:<LEVEL>:<EXTENDED>:<SPLASH/LINGER>:QTY
                                 if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
                                     // Test potion
-                                    Potion potion = Potion.fromItemStack(i);
-                                    PotionType potionType = potion.getType();
-                                    boolean match = true;                                    
-                                    if (DEBUG)
-                                        plugin.getLogger().info("DEBUG: name check " + part[1]);
-                                    // Name check
-                                    if (potion != null && potionType != null && !part[1].isEmpty()) {
-                                        // There is a name
-                                        // Custom potions may not have names
-                                        if (potionType.name() != null) {
-                                            if (!part[1].equalsIgnoreCase(potionType.name())) {
-                                                match = false;
-                                                if (DEBUG)
-                                                    plugin.getLogger().info("DEBUG: name does not match");
+                                    Potion potion = null;
+                                    try {
+                                        // This may fail if there are custom potions in the player's inventory
+                                        // If so, just skip this item stack.
+                                        potion = Potion.fromItemStack(i);
+                                    } catch (Exception e) {
+                                        potion = null;
+                                    }
+                                    if (potion != null) {
+                                        PotionType potionType = potion.getType();
+                                        boolean match = true;                                    
+                                        if (DEBUG)
+                                            plugin.getLogger().info("DEBUG: name check " + part[1]);
+                                        // Name check
+                                        if (potion != null && potionType != null && !part[1].isEmpty()) {
+                                            // There is a name
+                                            // Custom potions may not have names
+                                            if (potionType.name() != null) {
+                                                if (!part[1].equalsIgnoreCase(potionType.name())) {
+                                                    match = false;
+                                                    if (DEBUG)
+                                                        plugin.getLogger().info("DEBUG: name does not match");
+                                                } else {
+                                                    if (DEBUG)
+                                                        plugin.getLogger().info("DEBUG: name matches");
+                                                }
                                             } else {
-                                                if (DEBUG)
-                                                    plugin.getLogger().info("DEBUG: name matches");
-                                            }
-                                        } else {
-                                            plugin.getLogger().severe("Potion type is unknown. Please pick from the following:");
-                                            for (PotionType pt: PotionType.values()) {
-                                                plugin.getLogger().severe(pt.name());
-                                            }
-                                            match = false;
-                                        }
-                                    }
-                                    // Level check (upgraded)
-                                    if (DEBUG)
-                                        plugin.getLogger().info("DEBUG: level check " + part[2]);
-                                    if (!part[2].isEmpty()) {
-                                        // There is a level declared - check it
-                                        if (StringUtils.isNumeric(part[2])) {
-                                            int level = Integer.valueOf(part[2]);
-                                            if (level != potion.getLevel()) {
-                                                if (DEBUG)
-                                                    plugin.getLogger().info("DEBUG: level does not match");
+                                                plugin.getLogger().severe("Potion type is unknown. Please pick from the following:");
+                                                for (PotionType pt: PotionType.values()) {
+                                                    plugin.getLogger().severe(pt.name());
+                                                }
                                                 match = false;
-                                            }                                     
+                                            }                                        
                                         }
-                                    }
-                                    // Extended check
-                                    if (DEBUG)
-                                        plugin.getLogger().info("DEBUG: extended check " + part[3]);
-                                    if (!part[3].isEmpty()) {
-                                        if (part[3].equalsIgnoreCase("EXTENDED") && !potion.hasExtendedDuration()) {
-                                            match = false;
-                                            if (DEBUG)
-                                                plugin.getLogger().info("DEBUG: extended does not match");
-                                        }
-                                        if (part[3].equalsIgnoreCase("NOTEXTENDED") && potion.hasExtendedDuration()) {
-                                            match = false;
-                                            if (DEBUG)
-                                                plugin.getLogger().info("DEBUG: extended does not match");
-                                        }
-                                    }
-                                    // Splash check
-                                    if (DEBUG)
-                                        plugin.getLogger().info("DEBUG: splash/linger check " + part[4]);
-                                    if (!part[4].isEmpty()) {
-                                        if (part[4].equalsIgnoreCase("SPLASH") && !potion.isSplash()) {
-                                            match = false;
-                                            if (DEBUG)
-                                                plugin.getLogger().info("DEBUG: not splash");
-                                        }
-                                        if (part[4].equalsIgnoreCase("NOSPLASH") && potion.isSplash()) {
-                                            match = false;
-                                            if (DEBUG)
-                                                plugin.getLogger().info("DEBUG: not no splash");
-                                        }                                    
-                                    }
-                                    // Quantity check
-                                    if (match) {
+                                        // Level check (upgraded)
                                         if (DEBUG)
-                                            plugin.getLogger().info("DEBUG: potion matches!");
-                                        ItemStack removeItem = i.clone();
-                                        if (removeItem.getAmount() > reqAmount) {
-                                            if (DEBUG)
-                                                plugin.getLogger().info("DEBUG: found " + removeItem.getAmount() + " qty in inv");
-                                            removeItem.setAmount(reqAmount);
+                                            plugin.getLogger().info("DEBUG: level check " + part[2]);
+                                        if (!part[2].isEmpty()) {
+                                            // There is a level declared - check it
+                                            if (StringUtils.isNumeric(part[2])) {
+                                                int level = Integer.valueOf(part[2]);
+                                                if (level != potion.getLevel()) {
+                                                    if (DEBUG)
+                                                        plugin.getLogger().info("DEBUG: level does not match");
+                                                    match = false;
+                                                }                                     
+                                            }
                                         }
-                                        count = count - removeItem.getAmount();
+                                        // Extended check
                                         if (DEBUG)
-                                            plugin.getLogger().info("DEBUG: " + count + " left");
-                                        toBeRemoved.add(removeItem);
-                                    }                 
+                                            plugin.getLogger().info("DEBUG: extended check " + part[3]);
+                                        if (!part[3].isEmpty()) {
+                                            if (part[3].equalsIgnoreCase("EXTENDED") && !potion.hasExtendedDuration()) {
+                                                match = false;
+                                                if (DEBUG)
+                                                    plugin.getLogger().info("DEBUG: extended does not match");
+                                            }
+                                            if (part[3].equalsIgnoreCase("NOTEXTENDED") && potion.hasExtendedDuration()) {
+                                                match = false;
+                                                if (DEBUG)
+                                                    plugin.getLogger().info("DEBUG: extended does not match");
+                                            }
+                                        }
+                                        // Splash check
+                                        if (DEBUG)
+                                            plugin.getLogger().info("DEBUG: splash/linger check " + part[4]);
+                                        if (!part[4].isEmpty()) {
+                                            if (part[4].equalsIgnoreCase("SPLASH") && !potion.isSplash()) {
+                                                match = false;
+                                                if (DEBUG)
+                                                    plugin.getLogger().info("DEBUG: not splash");
+                                            }
+                                            if (part[4].equalsIgnoreCase("NOSPLASH") && potion.isSplash()) {
+                                                match = false;
+                                                if (DEBUG)
+                                                    plugin.getLogger().info("DEBUG: not no splash");
+                                            }                                    
+                                        }
+                                        // Quantity check
+                                        if (match) {
+                                            if (DEBUG)
+                                                plugin.getLogger().info("DEBUG: potion matches!");
+                                            ItemStack removeItem = i.clone();
+                                            if (removeItem.getAmount() > reqAmount) {
+                                                if (DEBUG)
+                                                    plugin.getLogger().info("DEBUG: found " + removeItem.getAmount() + " qty in inv");
+                                                removeItem.setAmount(reqAmount);
+                                            }
+                                            count = count - removeItem.getAmount();
+                                            if (DEBUG)
+                                                plugin.getLogger().info("DEBUG: " + count + " left");
+                                            toBeRemoved.add(removeItem);
+                                        }
+                                    }
                                 } else {
                                     // V1.9 and above
                                     PotionMeta potionMeta = (PotionMeta)i.getItemMeta();

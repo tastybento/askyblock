@@ -184,7 +184,7 @@ public class IslandGuard1_9 implements Listener {
                 //plugin.getLogger().info("1.9 " +"DEBUG: armor stand place check");
                 if (Settings.limitedBlocks.containsKey("END_CRYSTAL") && Settings.limitedBlocks.get("END_CRYSTAL") > -1) {
                     //plugin.getLogger().info("1.9 " +"DEBUG: count armor stands");
-                    int count = island.getTileEntityCount(Material.END_CRYSTAL);
+                    int count = island.getTileEntityCount(Material.END_CRYSTAL,e.getPlayer().getWorld());
                     //plugin.getLogger().info("1.9 " +"DEBUG: count is " + count + " limit is " + Settings.limitedBlocks.get("ARMOR_STAND"));
                     if (Settings.limitedBlocks.get("END_CRYSTAL") <= count) {
                         Util.sendMessage(e.getPlayer(), ChatColor.RED + (plugin.myLocale(e.getPlayer().getUniqueId()).entityLimitReached.replace("[entity]",

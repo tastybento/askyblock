@@ -160,12 +160,15 @@ public class SettingsPanel implements Listener {
             }
         } else {
             // Standard island
+            //plugin.getLogger().info("DEBUG: Standard island");
             ip.add(new IPItem(Material.MAP, plugin.myLocale(uuid).igsSettingsIslandTitle, plugin.myLocale(uuid).igsSettingsIslandDesc));
             for (SettingsFlag flag : Settings.visitorSettings.keySet()) {
+                //plugin.getLogger().info("DEBUG: visitor flag = " + flag);
                 if (flag.equals(SettingsFlag.ACID_DAMAGE) && Settings.acidDamage == 0)
                     continue;
                 if (lookup.inverse().get(flag) != null) {
                     if (plugin.myLocale(uuid).igs.containsKey(flag)) {
+                        //plugin.getLogger().info("DEBUG: Adding flag");
                         ip.add(new IPItem(island.getIgsFlag(flag), lookup.inverse().get(flag), plugin.myLocale(uuid).igs.get(flag), uuid));
                     }
                 } else if (DEBUG) {

@@ -778,17 +778,28 @@ public class PluginConfig {
         Settings.defaultIslandSettings.clear();
         Settings.defaultSpawnSettings.clear();
         Settings.visitorSettings.clear();
-        for (SettingsFlag flag: SettingsFlag.values()) {
-            Settings.defaultWorldSettings.put(flag, plugin.getConfig().getBoolean("protection.world." + flag.name()));
-            Settings.defaultSpawnSettings.put(flag, Settings.defaultWorldSettings.get(flag));
-            if (plugin.getConfig().contains("protection.island." + flag.name())) {
+        ConfigurationSection protectionWorld = plugin.getConfig().getConfigurationSection("protection.world");
+        for (String setting: protectionWorld.getKeys(false)) {
+            try {
+                SettingsFlag flag = SettingsFlag.valueOf(setting.toUpperCase());
+                Settings.defaultWorldSettings.put(flag, plugin.getConfig().getBoolean("protection.world." + flag.name()));
+                Settings.defaultSpawnSettings.put(flag, Settings.defaultWorldSettings.get(flag));
+                Settings.defaultIslandSettings.put(flag, Settings.defaultWorldSettings.get(flag));
+            } catch (Exception e) {
+                plugin.getLogger().severe("Unknown setting in config.yml:protection.world " + setting.toUpperCase() + " skipping...");
+            }
+
+        }
+        ConfigurationSection protectionIsland = plugin.getConfig().getConfigurationSection("protection.island");
+        for (String setting: protectionIsland.getKeys(false)) {
+            try {
+                SettingsFlag flag = SettingsFlag.valueOf(setting.toUpperCase());
                 // Only items in the config.yml can be per island customized
                 Settings.visitorSettings.put(flag, Settings.defaultIslandSettings.get(flag));
-                // (The default value listed here should never be used because by definition, the flag name exists)
-                Settings.defaultIslandSettings.put(flag, plugin.getConfig().getBoolean("protection.island." + flag.name(), Settings.defaultWorldSettings.get(flag)));
-            } else {
-                // If not in the list in config.yml, then the island gets the world default
-                Settings.defaultIslandSettings.put(flag, Settings.defaultWorldSettings.get(flag));
+                //plugin.getLogger().info("DEBUG: visitor flag added " + flag);
+                Settings.defaultIslandSettings.put(flag, Settings.visitorSettings.get(flag));
+            } catch (Exception e) {
+                plugin.getLogger().severe("Unknown setting in config.yml:island.world " + setting.toUpperCase() + " skipping...");
             }
         }
 
