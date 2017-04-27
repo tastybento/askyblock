@@ -67,6 +67,9 @@ permissions:
           askyblock.island.expel:
             description: Allows expelling of visitors
             default: true
+          askyblock.island.expelall:
+            description: Allows expelling of all visitors and coops via /is expelall
+            default: true
           askyblock.island.ban:
             description: Allows banning of visitors
             default: false
@@ -412,5 +415,8 @@ permissions:
             default: op
           askyblock.admin.setlanguage:
             description: Resets all player languages and sets the default language
+            default: op
+          askyblock.admin.settings:
+            description: Allow to edit settings
             default: op
      

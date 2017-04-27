@@ -68,6 +68,7 @@ import com.wasteofplastic.askyblock.panels.ControlPanel;
 import com.wasteofplastic.askyblock.panels.SchematicsPanel;
 import com.wasteofplastic.askyblock.panels.SettingsPanel;
 import com.wasteofplastic.askyblock.panels.WarpPanel;
+import com.wasteofplastic.askyblock.util.ASBParser;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
@@ -132,6 +133,9 @@ public class ASkyBlock extends JavaPlugin {
     // Localization Strings
     private HashMap<String,ASLocale> availableLocales = new HashMap<String,ASLocale>();
 
+    // ASB Items & Sounds parser for panels & challenges
+    private ASBParser parser;
+    
     /**
      * Returns the World object for the island world named in config.yml.
      * If the world does not exist then it is created.
@@ -315,17 +319,9 @@ public class ASkyBlock extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
-        // This can no longer be run in onEnable because the plugin is loaded at
-        // startup and so key variables are
-        // not known to the server. Instead it is run one tick after startup.
-        // If the world exists, load it, even without the generator
-        /*
-	if (Settings.createNether) {
-	    Bukkit.getWorld(Settings.worldName + "_nether");
-	}
-	if (Bukkit.getWorld(Settings.worldName) == null) {
-	    islandWorld = WorldCreator.name(Settings.worldName).type(WorldType.FLAT).environment(World.Environment.NORMAL).createWorld();
-	}*/
+        // Load ASB Parser
+        parser = new ASBParser(this);
+        
         // Get challenges
         challenges = new Challenges(this);
         // Set and make the player's directory if it does not exist and then
@@ -639,6 +635,13 @@ public class ASkyBlock extends JavaPlugin {
         return biomes;
     }
 
+    /**
+     * @return the items & sounds parser for panels & challenges
+     */
+    public ASBParser getParser() {
+    	return parser;
+    }
+    
     /**
      * @return the challenges
      */

@@ -32,6 +32,7 @@ import org.bukkit.material.MaterialData;
 import org.bukkit.potion.PotionEffectType;
 
 import com.wasteofplastic.askyblock.Island.SettingsFlag;
+import com.wasteofplastic.askyblock.util.ASBParser.ASBSound;
 
 /**
  * Where all the settings are
@@ -91,6 +92,7 @@ public class Settings {
     public static double startingMoney;
     public static boolean useEconomy;
     public static boolean useMinishop;
+    public static boolean allowGlobalMinishop;
     
     public static boolean recoverSuperFlat;
     
@@ -195,6 +197,7 @@ public class Settings {
     public static boolean fancyIslandLevelDisplay;
     public static boolean teamChat;
     public static boolean logTeamChat;
+    public static boolean teamChatIncludeCoop;
     public static boolean muteDeathMessages;
     public static boolean showInActionBar;
     
@@ -222,6 +225,8 @@ public class Settings {
     public static boolean allowTeleportWhenFalling;
     
     public static boolean respawnOnIsland;
+    
+    public static ASBSound warpSound;
     
     /*		ACID		*/
     public static double acidDamage;

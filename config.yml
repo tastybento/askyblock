@@ -452,6 +452,10 @@ general:
    
    # Enable the minishop or not
    useminishop: true
+   
+   # Global minishop - allow to use the minishop in every worlds
+   # useminishop must be true in order to use this setting
+   allowglobalminishop: false
 
    # Starting money - this is how much money new players will have as their
    # balance at the start of an island. 
@@ -533,6 +537,9 @@ general:
    # Set this to true will log all messages sent in TeamChats to console
    # If set to false, it won't be logged.
    logteamchat: true
+   
+   # Set this to true will include coop players to the island TeamChat.
+   teamchatincludecoop: false
 
    # Variables to use as chat prefixes. You can change them to be what you want.
    # {ISLAND_LEVEL} is replaced by the player's island level.
@@ -560,6 +567,10 @@ general:
    # Warp panel - GUI for welcome warp signs. If set to false, old-style
    # text will be used
    usewarppanel: true
+   
+   # Warp sound - will be played when a player warps on an island
+   # Syntax : "SOUND_ID;PITCH;VOLUME" -> e.g: "A_FUNNY_SOUND;0.27;0.85"
+   warpsound: "ENTITY_BAT_TAKEOFF;1.0;1.0"
    
    # Mute death messages
    mutedeathmessages: false
@@ -655,9 +666,9 @@ protection:
    # BUCKET, COLLECT_LAVA, COLLECT_WATER, CHEST, CHORUS_FRUIT, CRAFTING, CROP_TRAMPLE, 
    # DOOR, EGGS, ENCHANTING, ENDER_PEARL, ENTER_EXIT_MESSAGES, FIRE, FIRE_EXTINGUISH, 
    # FIRE_SPREAD, FISHING_ROD, FURNACE, GATE, HORSE_INVENTORY, HORSE_RIDING, HURT_MOBS,
-   # LEASH, LEVER_BUTTON, MOB_SPAWN, MUSIC, PLACE_BLOCKS, PORTAL, PRESSURE_PLATE, PVP,
-   # MILKING, NETHER_PVP, REDSTONE, SPAWN_EGGS, SPLASH_POTION, SHEARING, VILLAGER_TRADING,
-   # VISITOR_ITEM_DROP, VISITOR_ITEM_PICKUP
+   # HURT_MONSTERS, HURT_VILLAGERS, LEASH, LEVER_BUTTON, MOB_SPAWN, MUSIC, PLACE_BLOCKS,
+   # PORTAL, PRESSURE_PLATE, PVP, MILKING, NETHER_PVP, REDSTONE, SPAWN_EGGS, SPLASH_POTION,
+   # SHEARING, VILLAGER_TRADING, VISITOR_ITEM_DROP, VISITOR_ITEM_PICKUP
    #
    # Players can be given the ability to change settings in the GUI with permissions
    # e.g. askyblock.settings.PVP or all settings with askyblock.settings.*
@@ -727,10 +738,12 @@ protection:
      HORSE_INVENTORY: false
      # Allow riding of horses/llamas
      HORSE_RIDING: false
-     # Allow friendly mob hurting(cows etc.)
+     # Allow friendly mob hurting (cows etc.) - Villagers excluded
      HURT_MOBS: false
      # Allow monsters hurting
      HURT_MONSTERS: true
+     # Allow villagers hurting
+     HURT_VILLAGERS: false
      # Allow leash use
      LEASH: false
      # Allow lever or button use

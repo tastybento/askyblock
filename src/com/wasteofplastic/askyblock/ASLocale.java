@@ -207,6 +207,7 @@ public class ASLocale {
     public String islandhelpTeleport;
     // Expel
     public String islandhelpExpel;
+    public String islandhelpExpelall;
 
     // ////////////////////////////////////
     // /island commands //
@@ -393,7 +394,9 @@ public class ASLocale {
     public String expelExpelled;
     public String expelFail;
     public String expelNotYourself;
-
+    public String expelallSuccess;
+    public String expelallNone;
+    
     // Ban
     public String banSuccess;
     public String banLifted;
@@ -807,6 +810,7 @@ public class ASLocale {
         igs.put(SettingsFlag.HORSE_RIDING, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.horseriding", "Visitor horse riding")));   
         igs.put(SettingsFlag.HURT_MOBS, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.hurtanimals", "Visitor animal hurting")));
         igs.put(SettingsFlag.HURT_MONSTERS, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.hurtmonsters", "Visitor monster hurting")));
+        igs.put(SettingsFlag.HURT_VILLAGERS, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.hurtvillagers", "Visitor villager hurting")));
         igs.put(SettingsFlag.LEASH, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.leash", "Visitor leash use")));
         igs.put(SettingsFlag.LEVER_BUTTON, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.lever", "Visitor lever or button use")));
         igs.put(SettingsFlag.MOB_SPAWN, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.animalspawning", "Allow/Disallow Animal Spawning")));
@@ -1024,7 +1028,8 @@ public class ASLocale {
         islandhelpInvite = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpInvite", "invite a player to join your island."));
         islandhelpLeave = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpLeave", "leave another player's island."));
         islandhelpKick = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpKick", "remove a team member from your island."));
-        islandhelpExpel = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpExpel", "force a player from your island."));
+        islandhelpExpel = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpExpel", "kick a player from your island."));
+        islandhelpExpelall = ChatColor.translateAlternateColorCodes('&', locale.getString("island.helpExpelall", "kick all players from your island."));
         islandhelpBan = ChatColor.translateAlternateColorCodes('&', locale.getString("ban.helpBan", "ban a player from your island."));
         islandhelpBanList = ChatColor.translateAlternateColorCodes('&', locale.getString("ban.helpBanList", "list banned players."));
         islandhelpUnban = ChatColor.translateAlternateColorCodes('&', locale.getString("ban.helpUnban", "un-ban a player from your island."));
@@ -1310,6 +1315,8 @@ public class ASLocale {
         expelExpelled = ChatColor.translateAlternateColorCodes('&', locale.getString("expel.expelled", "You were expelled from that island!"));
         expelFail = ChatColor.translateAlternateColorCodes('&', locale.getString("expel.fail", "[name] cannot be expelled!"));
         expelNotYourself = ChatColor.translateAlternateColorCodes('&', locale.getString("expel.notyourself", "You cannot expel yourself!"));
+        expelallSuccess = ChatColor.translateAlternateColorCodes('&', locale.getString("expel.allsuccess", "You expelled [count] visitors/coop players from your island."));
+        expelallNone = ChatColor.translateAlternateColorCodes('&', locale.getString("expel.allnone", "There is nobody on your island!"));
         banSuccess = ChatColor.translateAlternateColorCodes('&', locale.getString("ban.success", "[name] is banned from the island!"));
         banBanned = ChatColor.translateAlternateColorCodes('&', locale.getString("ban.banned", "You are banned from [name]'s island!"));
         banLifted = ChatColor.translateAlternateColorCodes('&', locale.getString("ban.lifted", "Ban lifted from [name]'s island!"));

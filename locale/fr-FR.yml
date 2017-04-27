@@ -245,6 +245,8 @@ expel:
   notonisland: "Ce joueur n'est pas sur l'île !"
   notyourself: "Vous ne pouvez pas vous exclure vous-même !"
   success: "[name] est parti."
+  allsuccess: "Vous avez éjecté [count] visiteurs/joueurs coop de votre île."
+  allnone: "Il n'y a personne à éjecter sur votre île!"
 general:
   success: "Succès!"
 invite: 
@@ -280,7 +282,8 @@ island:
   helpColor: "&e"
   helpHeader: "Aide de [plugin] v[version]:"
   helpControlPanel: "Ouvre le menu."
-  helpExpel: "Force un joueur a quitter l'île."
+  helpExpel: "Ejecte un joueur de l'île."
+  helpExpelall: "Ejecte tous les visiteurs/joueurs coop de l'île."
   helpInvite: "Invite un joueur à rejoindre votre île."
   helpIsland: "Commence une île, ou vous y téléporte."
   helpIslandSpawn: "Vous téléporte au spawn."
@@ -360,6 +363,7 @@ islandguardsettings:
   horseriding: "Equitation"
   hurtanimals: "Frapper les animaux"
   hurtmonsters: "Frapper les monstres"
+  hurtvillagers: "Frapper les villageois"
   joinleaveislandmessages: "Montrer les messages d'entrée/sortie de l'île"
   jukebox: "Jukebox"
   leash: "Laisse"

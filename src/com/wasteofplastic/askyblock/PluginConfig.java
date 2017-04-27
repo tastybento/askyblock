@@ -559,7 +559,10 @@ public class PluginConfig {
 
         // Use the minishop or not
         Settings.useMinishop = plugin.getConfig().getBoolean("general.useminishop", true);
-
+        
+        // Allow the minishop to be used in every worlds
+        Settings.allowGlobalMinishop = plugin.getConfig().getBoolean("general.allowglobalminishop", false);
+        
         // Starting money - default $0
         Settings.startingMoney = plugin.getConfig().getDouble("general.startingmoney", 0D);
 
@@ -601,7 +604,8 @@ public class PluginConfig {
         // Team chat
         Settings.teamChat = plugin.getConfig().getBoolean("general.teamchat", true);
         Settings.logTeamChat = plugin.getConfig().getBoolean("general.logteamchat", true);
-
+        Settings.teamChatIncludeCoop = plugin.getConfig().getBoolean("general.teamchatincludecoop", false);
+        
         // Chat prefixes
         Settings.chatLevelPrefix = plugin.getConfig().getString("general.chatlevelprefix","{ISLAND_LEVEL}");
         Settings.chatChallengeLevelPrefix = plugin.getConfig().getString("general.chatchallanegelevelprefix","{ISLAND_CHALLENGE_LEVEL}");
@@ -619,6 +623,9 @@ public class PluginConfig {
         // Warp panel
         Settings.useWarpPanel = plugin.getConfig().getBoolean("general.usewarppanel", true);
 
+        // Warp sound
+        Settings.warpSound = plugin.getParser().parseSound(plugin.getConfig().getString("general.warpsound", "ENTITY_BAT_TAKEOFF;1.0;1.0"), "config.yml:general.warpsound");
+        
         // Mute death messages
         Settings.muteDeathMessages = plugin.getConfig().getBoolean("general.mutedeathmessages", false);
 

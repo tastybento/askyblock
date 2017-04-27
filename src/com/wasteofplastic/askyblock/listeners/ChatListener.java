@@ -33,6 +33,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.CoopPlay;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.util.Util;
 
@@ -148,6 +149,40 @@ public class ChatListener implements Listener {
                     }
                 }
             }
+            if(Settings.teamChatIncludeCoop){
+            	for (UUID coopPlayerUUID : CoopPlay.getInstance().getCoopPlayers(plugin.getPlayers().getIslandLocation(playerUUID))){
+            		Player coopPlayer = plugin.getServer().getPlayer(coopPlayerUUID);
+            		if(coopPlayer != null){
+            			Util.sendMessage(coopPlayer, message);
+            			onLine = true;
+            		}
+            	}
+            }
+            // Spy function
+            if (onLine) {
+                for (Player onlinePlayer: plugin.getServer().getOnlinePlayers()) {
+                    if (spies.contains(onlinePlayer.getUniqueId()) && onlinePlayer.hasPermission(Settings.PERMPREFIX + "mod.spy")) {
+                        Util.sendMessage(onlinePlayer, ChatColor.RED + "[TCSpy] " + ChatColor.WHITE + message);
+                    }
+                }
+                //Log teamchat
+                if(Settings.logTeamChat) plugin.getLogger().info(ChatColor.stripColor(message));
+            }
+            if (!onLine) {
+                Util.sendMessage(player, ChatColor.RED + plugin.myLocale(playerUUID).teamChatNoTeamAround);
+                Util.sendMessage(player, ChatColor.RED + plugin.myLocale(playerUUID).teamChatStatusOff);
+                teamChatUsers.remove(playerUUID);
+            }
+        } else if (Settings.teamChatIncludeCoop) {
+        	boolean onLine = false;
+            message = plugin.myLocale(playerUUID).teamChatPrefix.replace(Settings.chatIslandPlayer,player.getDisplayName()) + message;
+        	for (UUID coopPlayerUUID : CoopPlay.getInstance().getCoopPlayers(plugin.getPlayers().getIslandLocation(playerUUID))){
+        		Player coopPlayer = plugin.getServer().getPlayer(coopPlayerUUID);
+        		if(coopPlayer != null){
+        			Util.sendMessage(coopPlayer, message);
+        			onLine = true;
+        		}
+        	}
             // Spy function
             if (onLine) {
                 for (Player onlinePlayer: plugin.getServer().getOnlinePlayers()) {
