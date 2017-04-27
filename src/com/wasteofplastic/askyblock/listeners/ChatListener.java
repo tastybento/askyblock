@@ -35,6 +35,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.CoopPlay;
 import com.wasteofplastic.askyblock.Settings;
+import com.wasteofplastic.askyblock.events.TeamChatEvent;
 import com.wasteofplastic.askyblock.util.Util;
 
 /**
@@ -132,6 +133,15 @@ public class ChatListener implements Listener {
         Player player = event.getPlayer();
         UUID playerUUID = player.getUniqueId();
         //Bukkit.getLogger().info("DEBUG: post: " + message);
+        
+        // Trigger TeamChatEvent to allow cancelling or editing the message
+        TeamChatEvent chatEvent = new TeamChatEvent(playerUUID, plugin.getGrid().getIslandAt(plugin.getPlayers().getIslandLocation(playerUUID)), message);
+        plugin.getServer().getPluginManager().callEvent(chatEvent);
+        if(chatEvent.isCancelled()) return;
+        
+        // Override the message
+        message = chatEvent.getMessage();
+        
         // Is team chat on for this player
         // Find out if this player is in a team (should be if team chat is on)
         // TODO: remove when player resets or leaves team

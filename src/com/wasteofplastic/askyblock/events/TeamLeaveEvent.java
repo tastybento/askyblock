@@ -27,7 +27,7 @@ import org.bukkit.event.HandlerList;
  * This event is fired when a player leaves an existing Team
  * 
  * @author Exloki
- * 
+ * @since 3.0.4
  */
 public class TeamLeaveEvent extends Event implements Cancellable {
     private static final HandlerList handlers = new HandlerList();

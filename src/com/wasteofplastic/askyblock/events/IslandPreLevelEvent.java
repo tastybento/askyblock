@@ -31,7 +31,7 @@ import com.wasteofplastic.askyblock.Island;
  * See IslandPostLevelEvent to cancel notifications to the player.
  * 
  * @author tastybento
- * 
+ * @since 3.0.6
  */
 public class IslandPreLevelEvent extends ASkyBlockEvent implements Cancellable {
     private int level;

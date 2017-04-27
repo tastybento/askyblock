@@ -79,6 +79,8 @@ import com.wasteofplastic.askyblock.events.IslandJoinEvent;
 import com.wasteofplastic.askyblock.events.IslandLeaveEvent;
 import com.wasteofplastic.askyblock.events.IslandNewEvent;
 import com.wasteofplastic.askyblock.events.IslandResetEvent;
+import com.wasteofplastic.askyblock.events.PlayerAcceptInviteEvent;
+import com.wasteofplastic.askyblock.events.PlayerRejectInviteEvent;
 import com.wasteofplastic.askyblock.listeners.PlayerEvents;
 import com.wasteofplastic.askyblock.panels.ControlPanel;
 import com.wasteofplastic.askyblock.schematics.Schematic;
@@ -1920,6 +1922,9 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                     // If player is not in a team but has been invited to join
                     // one
                     if (!plugin.getPlayers().inTeam(playerUUID) && inviteList.containsKey(playerUUID)) {
+                    	// Trigger PlayerAcceptInviteEvent
+                    	plugin.getServer().getPluginManager().callEvent(new PlayerAcceptInviteEvent(player));
+                    	
                         // If the invitee has an island of their own
                         if (plugin.getPlayers().hasIsland(playerUUID)) {
                             plugin.getLogger().info(player.getName() + "'s island will be deleted because they joined a party.");
@@ -1963,6 +1968,9 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
             } else if (split[0].equalsIgnoreCase("reject")) {
                 // Reject /island reject
                 if (inviteList.containsKey(player.getUniqueId())) {
+                	// Trigger PlayerRejectInviteEvent
+                	plugin.getServer().getPluginManager().callEvent(new PlayerRejectInviteEvent(player));
+                	
                     Util.sendMessage(player, ChatColor.YELLOW + plugin.myLocale(player.getUniqueId()).rejectyouHaveRejectedInvitation);
                     // If the player is online still then tell them directly
                     // about the rejection

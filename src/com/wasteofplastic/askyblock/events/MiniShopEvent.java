@@ -27,7 +27,7 @@ import com.wasteofplastic.askyblock.panels.MiniShopItem;
 /**
  * Fired when a player buys or sells in the mini shop
  * @author tastybento
- *
+ * @since 3.0.0.4
  */
 public class MiniShopEvent extends ASkyBlockEvent {
     public enum TransactionType {BUY, SELL}

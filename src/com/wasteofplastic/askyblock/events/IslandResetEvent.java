@@ -26,7 +26,7 @@ import org.bukkit.event.HandlerList;
  * This event is fired when a player resets an island
  * 
  * @author tastybento
- * 
+ * @since 3.0.0.4
  */
 public class IslandResetEvent extends Event {
     private static final HandlerList handlers = new HandlerList();

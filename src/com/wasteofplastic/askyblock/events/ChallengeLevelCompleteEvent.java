@@ -28,7 +28,7 @@ import org.bukkit.inventory.ItemStack;
  * This event is fired when a player completes a challenge level
  * 
  * @author tastybento
- * 
+ * @since 3.0.0.4
  */
 public class ChallengeLevelCompleteEvent extends Event {
     private static final HandlerList handlers = new HandlerList();

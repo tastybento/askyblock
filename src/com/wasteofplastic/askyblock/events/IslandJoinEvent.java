@@ -25,7 +25,7 @@ import com.wasteofplastic.askyblock.Island;
  * This event is fired when a player joins an island team
  * 
  * @author tastybento
- * 
+ * @since 3.0.0.4
  */
 public class IslandJoinEvent extends ASkyBlockEvent {
 

@@ -35,6 +35,8 @@ import org.bukkit.entity.Villager;
 
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
+import com.wasteofplastic.askyblock.events.IslandLockEvent;
+import com.wasteofplastic.askyblock.events.IslandUnlockEvent;
 import com.wasteofplastic.askyblock.util.Util;
 
 /**
@@ -661,7 +663,24 @@ public class Island implements Cloneable {
      */
     public void setLocked(boolean locked) {
         // Bukkit.getLogger().info("DEBUG: island is now " + locked);
-        this.locked = locked;
+        
+    	// The island will be locked
+    	if(locked){
+    		IslandLockEvent event = new IslandLockEvent(this);
+    		plugin.getServer().getPluginManager().callEvent(event);
+    		
+    		if(!event.isCancelled()){
+    			this.locked = locked;
+    		}
+    	} else {
+    		// The island will be unlocked
+    		IslandUnlockEvent event = new IslandUnlockEvent(this);
+    		plugin.getServer().getPluginManager().callEvent(event);
+    		
+    		if(!event.isCancelled()){
+    			this.locked = locked;
+    		}
+    	}
     }
 
     /**

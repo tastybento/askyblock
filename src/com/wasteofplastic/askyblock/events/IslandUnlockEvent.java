@@ -17,52 +17,54 @@
 
 package com.wasteofplastic.askyblock.events;
 
-import java.util.UUID;
-
-import org.bukkit.Location;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
+import com.wasteofplastic.askyblock.Island;
+
 /**
- * This event is fired when an island is deleted.
- *
- * @author tastybento
- * @since 3.0.2.1
+ * This event is fired when an island is going to be unlocked.
+ * <p>
+ * Cancelling this event will result in keeping the island locked.
+ * @author Poslovitch
+ * @since 4.0
  */
-public class IslandDeleteEvent extends Event {
-	private static final HandlerList handlers = new HandlerList();
-	private final UUID playerUUID;
-	private final Location location;
-
+public class IslandUnlockEvent extends Event implements Cancellable{
+    private static final HandlerList handlers = new HandlerList();
+    private final Island island;
+	private boolean cancelled;
+	
 	/**
-	 * @param playerUUID
-	 * @param oldLocation
+	 * @param island
 	 */
-	public IslandDeleteEvent(UUID playerUUID, Location oldLocation) {
-		this.playerUUID = playerUUID;
-		this.location = oldLocation;
+	public IslandUnlockEvent(Island island){
+		this.island = island;
 	}
-
+	
 	/**
-	 * @return the player's UUID
+	 * @return the locked island
 	 */
-	public UUID getPlayerUUID() {
-		return playerUUID;
+	public Island getIsland(){
+		return this.island;
 	}
+	
+    @Override
+    public HandlerList getHandlers() {
+        return handlers;
+    }
 
-	/**
-	 * @return the location
-	 */
-	public Location getLocation() {
-		return location;
-	}
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
+	
+    @Override
+    public boolean isCancelled() {
+        return cancelled;
+    }
 
-	@Override
-	public HandlerList getHandlers() {
-		return handlers;
-	}
-
-	public static HandlerList getHandlerList() {
-		return handlers;
-	}
+    @Override
+    public void setCancelled(boolean cancel) {
+        this.cancelled = cancel;
+    }
 }

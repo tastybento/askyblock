@@ -15,54 +15,59 @@
  * along with ASkyBlock.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
 
+
 package com.wasteofplastic.askyblock.events;
 
 import java.util.UUID;
 
-import org.bukkit.Location;
-import org.bukkit.event.Event;
-import org.bukkit.event.HandlerList;
+import org.bukkit.event.Cancellable;
+
+import com.wasteofplastic.askyblock.Island;
 
 /**
- * This event is fired when an island is deleted.
- *
- * @author tastybento
- * @since 3.0.2.1
+ * This event is fired when a player talks in TeamChat
+ * 
+ * @author Poslovitch
+ * @since 4.0
  */
-public class IslandDeleteEvent extends Event {
-	private static final HandlerList handlers = new HandlerList();
-	private final UUID playerUUID;
-	private final Location location;
+public class TeamChatEvent extends ASkyBlockEvent implements Cancellable{
 
+	private String message;
+	private boolean cancelled;
+	
 	/**
-	 * @param playerUUID
-	 * @param oldLocation
+	 * @param player
+	 * @param island
+	 * @param message
 	 */
-	public IslandDeleteEvent(UUID playerUUID, Location oldLocation) {
-		this.playerUUID = playerUUID;
-		this.location = oldLocation;
+	public TeamChatEvent(UUID player, Island island, String message){
+		super(player, island);
+		this.message = message;
 	}
-
+	
 	/**
-	 * @return the player's UUID
+	 * Gets the message that the player is attempting to send.
+	 * @return the message
 	 */
-	public UUID getPlayerUUID() {
-		return playerUUID;
+	public String getMessage(){
+		return this.message;
 	}
-
+	
 	/**
-	 * @return the location
+	 * Sets the message that the player will send.
+	 * @param the message to send
 	 */
-	public Location getLocation() {
-		return location;
+	public void setMessage(String message){
+		this.message = message;
 	}
+	
+    @Override
+    public boolean isCancelled() {
+        return cancelled;
+    }
 
-	@Override
-	public HandlerList getHandlers() {
-		return handlers;
-	}
-
-	public static HandlerList getHandlerList() {
-		return handlers;
-	}
+    @Override
+    public void setCancelled(boolean cancel) {
+        this.cancelled = cancel;
+    }
 }

@@ -29,7 +29,7 @@ import com.wasteofplastic.askyblock.schematics.Schematic;
  * This event is fired when a player starts a new island
  * 
  * @author tastybento
- * 
+ * @since 3.0.0.4
  */
 public class IslandNewEvent extends Event {
     private static final HandlerList handlers = new HandlerList();

@@ -17,52 +17,40 @@
 
 package com.wasteofplastic.askyblock.events;
 
-import java.util.UUID;
-
-import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 /**
- * This event is fired when an island is deleted.
+ * This event is fired when a player rejects an invite to join a team.
  *
- * @author tastybento
- * @since 3.0.2.1
+ * @author Poslovitch
+ * @since 4.0
  */
-public class IslandDeleteEvent extends Event {
-	private static final HandlerList handlers = new HandlerList();
-	private final UUID playerUUID;
-	private final Location location;
-
+public class PlayerRejectInviteEvent extends Event{
+    private static final HandlerList handlers = new HandlerList();
+	private final Player player;
+	
 	/**
-	 * @param playerUUID
-	 * @param oldLocation
+	 * @param player
 	 */
-	public IslandDeleteEvent(UUID playerUUID, Location oldLocation) {
-		this.playerUUID = playerUUID;
-		this.location = oldLocation;
+	public PlayerRejectInviteEvent(Player player) {
+		this.player = player;
 	}
-
+	
 	/**
-	 * @return the player's UUID
+	 * @return the player
 	 */
-	public UUID getPlayerUUID() {
-		return playerUUID;
+	public Player getPlayer(){
+		return this.player;
 	}
+	
+    @Override
+    public HandlerList getHandlers() {
+        return handlers;
+    }
 
-	/**
-	 * @return the location
-	 */
-	public Location getLocation() {
-		return location;
-	}
-
-	@Override
-	public HandlerList getHandlers() {
-		return handlers;
-	}
-
-	public static HandlerList getHandlerList() {
-		return handlers;
-	}
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
 }

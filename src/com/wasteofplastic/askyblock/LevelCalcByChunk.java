@@ -42,7 +42,6 @@ import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.Multiset.Entry;
 import com.google.common.collect.Multisets;
-import com.wasteofplastic.askyblock.events.IslandLevelEvent;
 import com.wasteofplastic.askyblock.events.IslandPostLevelEvent;
 import com.wasteofplastic.askyblock.events.IslandPreLevelEvent;
 import com.wasteofplastic.askyblock.util.Util;
@@ -426,15 +425,12 @@ public class LevelCalcByChunk {
                             		TopTen.topTenAddEntry(targetPlayer, event.getLevel());
                             	}
                             }
-                            // Fire the island level event
-                            final IslandLevelEvent event2 = new IslandLevelEvent(targetPlayer, island, event.getLevel());
-                            plugin.getServer().getPluginManager().callEvent(event2);
                             
                             // Fire the island post level calculation event
-                            final IslandPostLevelEvent event3 = new IslandPostLevelEvent(targetPlayer, island, event.getLevel(), event.getPointsToNextLevel());
-                            plugin.getServer().getPluginManager().callEvent(event3);
+                            final IslandPostLevelEvent event2 = new IslandPostLevelEvent(targetPlayer, island, event.getLevel(), event.getPointsToNextLevel());
+                            plugin.getServer().getPluginManager().callEvent(event2);
                             
-                            if(!event3.isCancelled()){
+                            if(!event2.isCancelled()){
                                 // Check that sender still is online
                                 if (sender != null) {
                                     // Check if console
