@@ -314,10 +314,13 @@ public class ASLocale {
     public String purgepurgeCancelled;
     public String purgefinished;
     public String purgeremovingName;
+    public String purgeCancelledByAPI;
+    public String purgeSkippingOnline;
+    public String purgeSkippingAPI;
     public String adminHelppurgeholes;
     public String adminAllowPurge;
     public String adminPreventPurge;
-
+    
     // confirm
     public String confirmerrorTimeLimitExpired;
 
@@ -1218,6 +1221,9 @@ public class ASLocale {
         purgepurgeCancelled = ChatColor.translateAlternateColorCodes('&', locale.getString("purge.purgeCancelled", "Purge cancelled."));
         purgefinished = ChatColor.translateAlternateColorCodes('&', locale.getString("purge.finished", "Finished purging of inactive islands."));
         purgeremovingName = ChatColor.translateAlternateColorCodes('&', locale.getString("purge.removingName", "Purge: Removing [name]'s island"));
+        purgeCancelledByAPI = ChatColor.translateAlternateColorCodes('&', locale.getString("purge.cancelledbyAPI", "Purge cancelled by API."));
+        purgeSkippingOnline = ChatColor.translateAlternateColorCodes('&', locale.getString("purge.skippingonline", "Skipping online player..."));
+        purgeSkippingAPI = ChatColor.translateAlternateColorCodes('&', locale.getString("purge.skippingAPI", "Skipping due to API..."));
         purgeRemovingAt = ChatColor.translateAlternateColorCodes('&', locale.getString("purge.removingAt", "Removing island at location [location]"));
         purgeNowWaiting = ChatColor.translateAlternateColorCodes('&', locale.getString("purge.nowWaiting", "Now waiting..."));
         purgeCountingUnowned = ChatColor.translateAlternateColorCodes('&', locale.getString("purge.countingUnowned", "Counting unowned islands and checking player files. This could take some time..."));
