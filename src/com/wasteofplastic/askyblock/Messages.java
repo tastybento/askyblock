@@ -218,10 +218,8 @@ public class Messages {
      * Offline messages types that allow filtering them.
      */
     public enum OfflineMessageType{
-        ALL,
         ADMIN,
         TEAM,
-        ISLAND,
-        NOTHING;
+        ISLAND;
     }
 }
