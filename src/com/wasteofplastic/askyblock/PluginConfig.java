@@ -726,9 +726,12 @@ public class PluginConfig {
         // Disable offline redstone
         Settings.disableOfflineRedstone = plugin.getConfig().getBoolean("general.disableofflineredstone", false);
 
+        // Offline messages types
+        Settings.offlineMessagesTypes = plugin.getConfig().getStringList("general.offlinemessagestypes");
+        
         // Fancy island level display
         Settings.fancyIslandLevelDisplay = plugin.getConfig().getBoolean("general.fancylevelinchat", false);
-
+        
         // Check config.yml version
         String configVersion = plugin.getConfig().getString("general.version", "");
         //plugin.getLogger().info("DEBUG: config ver length " + configVersion.split("\\.").length);
