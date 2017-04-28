@@ -201,7 +201,7 @@ public class Settings {
     public static boolean muteDeathMessages;
     public static boolean showInActionBar;
     
-    public static List<OfflineMessageType> offlineMessageTypes;
+    public static List<OfflineMessageType> offlineMessagesTypes;
     
     /*		ISLAND		*/
     public static int maxTeamSize;
