@@ -213,4 +213,15 @@ public class Messages {
         }
         put(playerUUID, playerMessages);
     }
+    
+    /**
+     * Offline messages types that allow filtering them.
+     */
+    public enum OfflineMessageType{
+        ALL,
+        ADMIN,
+        TEAM,
+        ISLAND,
+        NOTHING;
+    }
 }
