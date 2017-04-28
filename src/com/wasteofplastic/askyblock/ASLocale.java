@@ -814,6 +814,7 @@ public class ASLocale {
         igs.put(SettingsFlag.HURT_MOBS, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.hurtanimals", "Visitor animal hurting")));
         igs.put(SettingsFlag.HURT_MONSTERS, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.hurtmonsters", "Visitor monster hurting")));
         igs.put(SettingsFlag.HURT_VILLAGERS, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.hurtvillagers", "Visitor villager hurting")));
+        igs.put(SettingsFlag.INTERACT_TAMED, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.interacttamed", "Visitor tamed animals interacting")));
         igs.put(SettingsFlag.LEASH, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.leash", "Visitor leash use")));
         igs.put(SettingsFlag.LEVER_BUTTON, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.lever", "Visitor lever or button use")));
         igs.put(SettingsFlag.MOB_SPAWN, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.animalspawning", "Allow/Disallow Animal Spawning")));

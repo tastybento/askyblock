@@ -71,6 +71,7 @@ public class SettingsPanel implements Listener {
         lookup.put(Material.ARROW, SettingsFlag.PVP);
         lookup.put(Material.BEACON, SettingsFlag.BEACON);
         lookup.put(Material.BED, SettingsFlag.BED);
+        lookup.put(Material.BONE, SettingsFlag.INTERACT_TAMED);
         lookup.put(Material.BREWING_STAND_ITEM, SettingsFlag.BREWING);
         lookup.put(Material.BUCKET, SettingsFlag.BUCKET);
         lookup.put(Material.CARROT_ITEM, SettingsFlag.BREEDING);

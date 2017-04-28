@@ -48,6 +48,7 @@ import org.bukkit.entity.Skeleton;
 import org.bukkit.entity.Slime;
 import org.bukkit.entity.Snowman;
 import org.bukkit.entity.Squid;
+import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -2368,6 +2369,21 @@ public class IslandGuard implements Listener {
                         e.setCancelled(true);
                     }
                 }
+                break;
+            case OCELOT:
+            case WOLF:
+            	if(((Tameable)e.getRightClicked()).isTamed()){
+            		if (island == null && !Settings.defaultWorldSettings.get(SettingsFlag.INTERACT_TAMED)) {
+                        Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
+                        e.setCancelled(true);
+                    }
+                    if (island != null) {
+                        if (!island.getIgsFlag(SettingsFlag.INTERACT_TAMED)) {
+                            Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
+                            e.setCancelled(true);
+                        }
+                    }
+            	}
                 break;
             default:
                 break;

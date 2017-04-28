@@ -666,9 +666,9 @@ protection:
    # BUCKET, COLLECT_LAVA, COLLECT_WATER, CHEST, CHORUS_FRUIT, CRAFTING, CROP_TRAMPLE, 
    # DOOR, EGGS, ENCHANTING, ENDER_PEARL, ENTER_EXIT_MESSAGES, FIRE, FIRE_EXTINGUISH, 
    # FIRE_SPREAD, FISHING_ROD, FURNACE, GATE, HORSE_INVENTORY, HORSE_RIDING, HURT_MOBS,
-   # HURT_MONSTERS, HURT_VILLAGERS, LEASH, LEVER_BUTTON, MOB_SPAWN, MUSIC, PLACE_BLOCKS,
-   # PORTAL, PRESSURE_PLATE, PVP, MILKING, NETHER_PVP, REDSTONE, SPAWN_EGGS, SPLASH_POTION,
-   # SHEARING, VILLAGER_TRADING, VISITOR_ITEM_DROP, VISITOR_ITEM_PICKUP
+   # HURT_MONSTERS, HURT_VILLAGERS, INTERACT_TAMED, LEASH, LEVER_BUTTON, MOB_SPAWN, MUSIC, 
+   # PLACE_BLOCKS, PORTAL, PRESSURE_PLATE, PVP, MILKING, NETHER_PVP, REDSTONE, SPAWN_EGGS, 
+   # SPLASH_POTION, SHEARING, VILLAGER_TRADING, VISITOR_ITEM_DROP, VISITOR_ITEM_PICKUP
    #
    # Players can be given the ability to change settings in the GUI with permissions
    # e.g. askyblock.settings.PVP or all settings with askyblock.settings.*
@@ -744,6 +744,8 @@ protection:
      HURT_MONSTERS: true
      # Allow villagers hurting
      HURT_VILLAGERS: false
+     # Allow interacting with tamed animals
+     INTERACT_TAMED: false
      # Allow leash use
      LEASH: false
      # Allow lever or button use
@@ -816,6 +818,8 @@ protection:
      FURNACE: true
      # Allow gate use
      GATE: true
+     # Allow interacting with tamed animals
+     INTERACT_TAMED: false
      # Allow use of jukeboxes and note blocks
      MUSIC: false
      # Allow portal use by visitors
