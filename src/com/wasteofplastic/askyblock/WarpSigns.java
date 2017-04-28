@@ -39,6 +39,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
 
+import com.wasteofplastic.askyblock.Messages.HistoryMessageType;
 import com.wasteofplastic.askyblock.events.WarpCreateEvent;
 import com.wasteofplastic.askyblock.events.WarpListEvent;
 import com.wasteofplastic.askyblock.events.WarpRemoveEvent;
@@ -362,7 +363,7 @@ public class WarpSigns implements Listener {
                     // Inform the player
                     Util.sendMessage(p, ChatColor.RED + plugin.myLocale(p.getUniqueId()).warpssignRemoved);
                 } else {
-                    plugin.getMessages().setMessage(en.getKey(), ChatColor.RED + plugin.myLocale(en.getKey()).warpssignRemoved);
+                    plugin.getMessages().setMessage(en.getKey(), HistoryMessageType.ISLAND, ChatColor.RED + plugin.myLocale(en.getKey()).warpssignRemoved);
                 }
                 it.remove();
             }

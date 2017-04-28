@@ -29,6 +29,7 @@ import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.scoreboard.Team;
 
 import com.wasteofplastic.askyblock.Island.SettingsFlag;
+import com.wasteofplastic.askyblock.Messages.HistoryMessageType;
 import com.wasteofplastic.askyblock.commands.Challenges;
 import com.wasteofplastic.askyblock.listeners.LavaCheck;
 import com.wasteofplastic.askyblock.util.SpawnEgg1_9;
@@ -727,7 +728,11 @@ public class PluginConfig {
         Settings.disableOfflineRedstone = plugin.getConfig().getBoolean("general.disableofflineredstone", false);
 
         // Offline messages types
-        Settings.offlineMessagesTypes = plugin.getConfig().getStringList("general.offlinemessagestypes");
+        Settings.historyMessagesTypes = new ArrayList<HistoryMessageType>();
+        for(String type : plugin.getConfig().getStringList("general.historymessagestypes")){
+        	if(HistoryMessageType.valueOf(type) != null) Settings.historyMessagesTypes.add(HistoryMessageType.valueOf(type));
+        	else plugin.getLogger().warning("Unknown history message type '" + type + "' listed in historymessagestypes list! Skipping...");
+        }
         
         // Fancy island level display
         Settings.fancyIslandLevelDisplay = plugin.getConfig().getBoolean("general.fancylevelinchat", false);

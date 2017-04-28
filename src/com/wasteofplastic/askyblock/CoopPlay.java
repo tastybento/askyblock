@@ -34,6 +34,7 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
+import com.wasteofplastic.askyblock.Messages.HistoryMessageType;
 import com.wasteofplastic.askyblock.events.CoopJoinEvent;
 import com.wasteofplastic.askyblock.events.CoopLeaveEvent;
 import com.wasteofplastic.askyblock.util.Util;
@@ -93,7 +94,7 @@ public class CoopPlay {
                     } else {
                         if (member.equals(leaderUUID)) {
                             // offline - tell leader
-                            plugin.getMessages().setMessage(leaderUUID,
+                            plugin.getMessages().setMessage(leaderUUID, HistoryMessageType.TEAM,
                                     plugin.myLocale(leaderUUID).coopInvited.replace("[name]", requester.getName()).replace("[player]", newPlayer.getName()));
                         }
                     }
@@ -317,7 +318,7 @@ public class CoopPlay {
                         if (target != null) {
                             target.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).coopRemoved.replace("[name]", clearer.getName()));
                         } else {
-                            plugin.getMessages().setMessage(playerUUID, ChatColor.RED + plugin.myLocale(playerUUID).coopRemoved.replace("[name]", clearer.getName()));
+                            plugin.getMessages().setMessage(playerUUID, HistoryMessageType.TEAM, ChatColor.RED + plugin.myLocale(playerUUID).coopRemoved.replace("[name]", clearer.getName()));
                         }
                         // Mark them as no longer on a coop island
                         // setOnCoopIsland(players, null);

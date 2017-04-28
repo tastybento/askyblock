@@ -32,6 +32,7 @@ import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
 
+import com.wasteofplastic.askyblock.Messages.HistoryMessageType;
 import com.wasteofplastic.askyblock.commands.Challenges;
 import com.wasteofplastic.askyblock.panels.SetBiome;
 
@@ -309,11 +310,12 @@ public class ASkyBlockAPI {
      * Sets a message for the player to receive next time they login
      * 
      * @param playerUUID
+     * @param type
      * @param message
      * @return true if player is offline, false if online
      */
-    public boolean setMessage(UUID playerUUID, String message) {
-        return plugin.getMessages().setMessage(playerUUID, message);
+    public boolean setMessage(UUID playerUUID, HistoryMessageType type, String message) {
+        return plugin.getMessages().setMessage(playerUUID, type, message);
     }
 
     /**
@@ -321,10 +323,11 @@ public class ASkyBlockAPI {
      * is not in a team, nothing happens.
      * 
      * @param playerUUID
+     * @param type
      * @param message
      */
-    public void tellOfflineTeam(UUID playerUUID, String message) {
-        plugin.getMessages().tellOfflineTeam(playerUUID, message);
+    public void tellOfflineTeam(UUID playerUUID, HistoryMessageType type, String message) {
+        plugin.getMessages().tellOfflineTeam(playerUUID, type, message);
     }
 
     /**

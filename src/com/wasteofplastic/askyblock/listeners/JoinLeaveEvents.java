@@ -39,6 +39,7 @@ import com.wasteofplastic.askyblock.PlayerCache;
 import com.wasteofplastic.askyblock.Scoreboards;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.TopTen;
+import com.wasteofplastic.askyblock.Messages.HistoryMessageType;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
@@ -234,7 +235,7 @@ public class JoinLeaveEvents implements Listener {
                                     plugin.getLogger().info("DEBUG: final range is " + range + " island protection size = " + islandByOwner.getProtectionSize());
                                 // Range can go up or down
                                 if (range != islandByOwner.getProtectionSize()) {
-                                    plugin.getMessages().storeMessage(playerUUID, plugin.myLocale(playerUUID).adminSetRangeUpdated.replace("[number]", String.valueOf(range)));
+                                    plugin.getMessages().storeMessage(playerUUID, HistoryMessageType.ISLAND, plugin.myLocale(playerUUID).adminSetRangeUpdated.replace("[number]", String.valueOf(range)));
                                     plugin.getLogger().info(
                                             "Login range setting: Island protection range changed from " + islandByOwner.getProtectionSize() + " to "
                                                     + range + " for " + player.getName() + " due to permission.");
