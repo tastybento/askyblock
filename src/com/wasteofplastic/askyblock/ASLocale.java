@@ -246,6 +246,8 @@ public class ASLocale {
     public String leaveerrorYouCannotLeaveIsland;
     public String leaveerrorYouMustBeInWorld;
     public String leaveerrorLeadersCannotLeave;
+    public String leaveWarning;
+    public String leaveCancelled;
 
     // team
     public String teamlistingMembers;
@@ -257,6 +259,8 @@ public class ASLocale {
     public String kickerrorNotPartOfTeam;
     public String kickerrorOnlyLeaderCan;
     public String kickerrorNoTeam;
+    public String kickWarning;
+    public String kickCancelled;
 
     // makeleader
     public String makeLeadererrorPlayerMustBeOnline;
@@ -623,10 +627,6 @@ public class ASLocale {
     public String adminHelpcobbleStats;
 
     public String topTenerrorExcluded;
-
-    public String leaveWarning;
-
-    public String leaveCanceled;
 
     public String unlimited;
 
@@ -1109,8 +1109,7 @@ public class ASLocale {
                 "Leaders cannot leave an island. Make someone else the leader fist using /[label] makeleader <player>").replace("[label]", Settings.ISLANDCOMMAND));
         leaveWarning = ChatColor.translateAlternateColorCodes('&', locale.getString("leave.warning",
                 "Are you sure you want to leave the team? Type '[label] leave' again to confirm.").replace("[label]", Settings.ISLANDCOMMAND));
-        leaveCanceled = ChatColor.translateAlternateColorCodes('&',
-                locale.getString("leave.canceled", "Leave canceled"));
+        leaveCancelled = ChatColor.translateAlternateColorCodes('&', locale.getString("leave.cancelled", "Leave cancelled"));
         teamlistingMembers = ChatColor.translateAlternateColorCodes('&', locale.getString("team.listingMembers", "Listing your island members"));
         kickerrorPlayerNotInTeam = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("kick.errorPlayerNotInTeam", "That player is not in your team!"));
@@ -1123,6 +1122,8 @@ public class ASLocale {
                 locale.getString("kick.errorOnlyLeaderCan", "Only the island's owner may remove people from the island!"));
         kickerrorNoTeam = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("kick.errorNoTeam", "No one else is on your island, are you seeing things?"));
+        kickWarning = ChatColor.translateAlternateColorCodes('&', locale.getString("kick.warning", "Are you sure you want to kick this player? Type '[command]' again to confirm."));
+        kickCancelled = ChatColor.translateAlternateColorCodes('&', locale.getString("kick.cancelled", "Kick cancelled."));
         makeLeadererrorPlayerMustBeOnline = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("makeleader.errorPlayerMustBeOnline", "That player must be online to transfer the island."));
         makeLeadererrorYouMustBeInTeam = ChatColor.translateAlternateColorCodes('&',
