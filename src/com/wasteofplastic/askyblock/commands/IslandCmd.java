@@ -117,6 +117,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
     private final Random random = new Random();
     private HashMap<UUID, Location> islandSpot = new HashMap<UUID, Location>();
     private List<UUID> leavingPlayers = new ArrayList<UUID>();
+    private List<UUID> kickingPlayers = new ArrayList<UUID>();
 
     /**
      * Constructor
@@ -2007,7 +2008,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                         // If the player is still on the list, remove them and cancel the leave
                                         if (leavingPlayers.contains(playerUUID)) {
                                             leavingPlayers.remove(playerUUID);
-                                            Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).leaveCanceled);
+                                            Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).leaveCancelled);
                                         }
                                     }
 
@@ -2859,12 +2860,12 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                             // command
                             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.kick")) {
                                 if (!plugin.getPlayers().inTeam(playerUUID)) {
-                                    Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).kickerrorNoTeam);
+                                    Util.sendMessage(player, ChatColor.RED + plugin.myLocale(playerUUID).kickerrorNoTeam);
                                     return true;
                                 }
                                 // Only leaders can kick
                                 if (teamLeader != null && !teamLeader.equals(playerUUID)) {
-                                    Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).kickerrorOnlyLeaderCan);
+                                    Util.sendMessage(player, ChatColor.RED + plugin.myLocale(playerUUID).kickerrorOnlyLeaderCan);
                                     return true;
                                 }
                                 // The main thing to do is check if the player name to kick
@@ -2876,16 +2877,37 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                     }
                                 }
                                 if (targetPlayer == null) {
-                                    Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).kickerrorNotPartOfTeam);
+                                    Util.sendMessage(player, ChatColor.RED + plugin.myLocale(playerUUID).kickerrorNotPartOfTeam);
                                     return true;
                                 }
                                 if (teamMembers.contains(targetPlayer)) {
                                     // If the player leader tries to kick or remove
                                     // themselves
                                     if (player.getUniqueId().equals(targetPlayer)) {
-                                        Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).leaveerrorLeadersCannotLeave);
+                                        Util.sendMessage(player, ChatColor.RED + plugin.myLocale(playerUUID).leaveerrorLeadersCannotLeave);
                                         return true;
                                     }
+                                    // Check for confirmation
+                                    if(!kickingPlayers.contains(playerUUID)){
+                                    	kickingPlayers.add(playerUUID);
+                                    	Util.sendMessage(player, ChatColor.RED + plugin.myLocale(playerUUID).kickWarning.replace("[command]", label + " " + split[0] + " " + split[1]));
+                                    	new BukkitRunnable() {
+
+											@Override
+											public void run() {
+												// If the player is still on the list, remove them and cancel the leave
+												if (kickingPlayers.contains(playerUUID)) {
+													kickingPlayers.remove(playerUUID);
+												    Util.sendMessage(player, ChatColor.RED + plugin.myLocale(playerUUID).kickCancelled);
+												}
+											}
+                                    		
+                                    	}.runTaskLater(plugin, Settings.resetConfirmWait * 20L);
+                                    	return true;
+                                    }
+                                    // Remove from confirmation list
+                                    kickingPlayers.remove(playerUUID);
+                                    
                                     // Try to kick player
                                     if (!removePlayerFromTeam(targetPlayer, teamLeader)) {
                                         //Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).leaveerrorYouCannotLeaveIsland);
@@ -2957,16 +2979,16 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                         if (DEBUG)
                                             plugin.getLogger().info("DEBUG: player is offline "+ targetPlayer.toString());
                                         // Tell offline player they were kicked
-                                        plugin.getMessages().setMessage(targetPlayer, ChatColor.RED + plugin.myLocale(player.getUniqueId()).kicknameRemovedYou.replace("[name]", player.getName()));
+                                        plugin.getMessages().setMessage(targetPlayer, ChatColor.RED + plugin.myLocale(playerUUID).kicknameRemovedYou.replace("[name]", player.getName()));
                                     }
                                     // Remove any warps
                                     plugin.getWarpSignsListener().removeWarp(targetPlayer);
                                     // Tell leader they removed the player
-                                    Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).kicknameRemoved.replace("[name]", split[1]));
+                                    Util.sendMessage(player, ChatColor.RED + plugin.myLocale(playerUUID).kicknameRemoved.replace("[name]", split[1]));
                                     //removePlayerFromTeam(targetPlayer, teamLeader);
                                     teamMembers.remove(targetPlayer);
                                     if (teamMembers.size() < 2) {
-                                        if (!removePlayerFromTeam(player.getUniqueId(), teamLeader)) {
+                                        if (!removePlayerFromTeam(playerUUID, teamLeader)) {
                                             // If cancelled, return silently
                                             return true;
                                         }
@@ -2974,7 +2996,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                     plugin.getPlayers().save(targetPlayer);
                                 } else {
                                     plugin.getLogger().warning("Player " + player.getName() + " failed to remove " + plugin.getPlayers().getName(targetPlayer));
-                                    Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).kickerrorNotPartOfTeam);
+                                    Util.sendMessage(player, ChatColor.RED + plugin.myLocale(playerUUID).kickerrorNotPartOfTeam);
                                 }
                                 return true;
                             } else {
