@@ -32,6 +32,7 @@ import org.bukkit.material.MaterialData;
 import org.bukkit.potion.PotionEffectType;
 
 import com.wasteofplastic.askyblock.Island.SettingsFlag;
+import com.wasteofplastic.askyblock.Messages.HistoryMessageType;
 import com.wasteofplastic.askyblock.util.ASBParser.ASBSound;
 
 /**
@@ -77,6 +78,8 @@ public class Settings {
     public static boolean metrics;
     
     public static long backupDuration;
+    
+    public static boolean purgeRemoveUserfiles;
     
     public static String worldName;
     public static String defaultLanguage;
@@ -200,6 +203,8 @@ public class Settings {
     public static boolean teamChatIncludeCoop;
     public static boolean muteDeathMessages;
     public static boolean showInActionBar;
+    
+    public static List<HistoryMessageType> historyMessagesTypes;
     
     /*		ISLAND		*/
     public static int maxTeamSize;

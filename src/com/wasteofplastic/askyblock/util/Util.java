@@ -108,6 +108,17 @@ public class Util {
             e.printStackTrace();
         }
     }
+    
+    /**
+     * Deletes a YAML file
+     * 
+     * @param fileLocation
+     */
+    public static void removeFile(String fileLocation){
+    	File file = new File(plugin.getDataFolder(), fileLocation);
+    	
+    	if(file.exists()) file.delete();
+    }
 
     /**
      * Cuts up a string into multiple lines with the same color code at the

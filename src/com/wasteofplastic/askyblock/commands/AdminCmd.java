@@ -66,6 +66,7 @@ import com.wasteofplastic.askyblock.FileLister;
 import com.wasteofplastic.askyblock.GridManager;
 import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.Island.SettingsFlag;
+import com.wasteofplastic.askyblock.Messages.HistoryMessageType;
 import com.wasteofplastic.askyblock.PluginConfig;
 import com.wasteofplastic.askyblock.SafeSpotTeleport;
 import com.wasteofplastic.askyblock.Settings;
@@ -432,7 +433,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                                 if (owner != null) {
                                     owner.sendMessage(plugin.myLocale(owner.getUniqueId()).adminLockadminUnlockedIsland);
                                 } else {
-                                    plugin.getMessages().setMessage(island.getOwner(), plugin.myLocale(island.getOwner()).adminLockadminUnlockedIsland);
+                                    plugin.getMessages().setMessage(island.getOwner(), HistoryMessageType.ISLAND, plugin.myLocale(island.getOwner()).adminLockadminUnlockedIsland);
                                 }
                             } else {
                                 Util.sendMessage(sender, ChatColor.RED + plugin.myLocale().lockLocking);
@@ -440,7 +441,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                                 if (owner != null) {
                                     owner.sendMessage(plugin.myLocale(owner.getUniqueId()).adminLockadminLockedIsland);
                                 } else {
-                                    plugin.getMessages().setMessage(island.getOwner(), plugin.myLocale(island.getOwner()).adminLockadminLockedIsland);
+                                    plugin.getMessages().setMessage(island.getOwner(), HistoryMessageType.ISLAND, plugin.myLocale(island.getOwner()).adminLockadminLockedIsland);
                                 }
                             }
                             return true;
@@ -1447,7 +1448,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                         							if(!deleteEvent.isCancelled()){
                         								Util.sendMessage(sender, ChatColor.YELLOW + "[" + (total - removeList.size() + 1) + "/" + total + "] "
                                                         		+ plugin.myLocale().purgeremovingName.replace("[name]", plugin.getPlayers().getName(removeList.get(0))));
-                                                		plugin.deletePlayerIsland(removeList.get(0), true);
+                                                		plugin.deletePlayerIsland(removeList.get(0), true, true);
                         							} else {
                         								Util.sendMessage(sender, ChatColor.YELLOW + "[" + (total - removeList.size() + 1) + "/" + total + "] " + plugin.myLocale().purgeSkippingAPI);
                         							}
@@ -1486,7 +1487,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                             if (owner != null) {
                                 owner.sendMessage(plugin.myLocale(owner.getUniqueId()).adminLockadminUnlockedIsland);
                             } else {
-                                plugin.getMessages().setMessage(island.getOwner(), plugin.myLocale(island.getOwner()).adminLockadminUnlockedIsland);
+                                plugin.getMessages().setMessage(island.getOwner(), HistoryMessageType.ISLAND, plugin.myLocale(island.getOwner()).adminLockadminUnlockedIsland);
                             }
                         } else {
                             Util.sendMessage(sender, ChatColor.RED + plugin.myLocale().lockLocking);
@@ -1494,7 +1495,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                             if (owner != null) {
                                 owner.sendMessage(plugin.myLocale(owner.getUniqueId()).adminLockadminLockedIsland);
                             } else {
-                                plugin.getMessages().setMessage(island.getOwner(), plugin.myLocale(island.getOwner()).adminLockadminLockedIsland);
+                                plugin.getMessages().setMessage(island.getOwner(), HistoryMessageType.ISLAND, plugin.myLocale(island.getOwner()).adminLockadminLockedIsland);
                             }
                         }
                     } else {
@@ -1611,7 +1612,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                         plugin.resetPlayer(target);
                     }
                     // plugin.getLogger().info("DEBUG: deleting player");
-                    plugin.deletePlayerIsland(playerUUID, true);
+                    plugin.deletePlayerIsland(playerUUID, true, false);
                     return true;
                 }
             } else if (split[0].equalsIgnoreCase("reserve")) {
@@ -1681,7 +1682,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                     Util.sendMessage(sender, ChatColor.GREEN + plugin.myLocale().adminUnregisterKeepBlocks.replace("[location]",
                             + plugin.getPlayers().getIslandLocation(playerUUID).getBlockX() + ","
                                     + plugin.getPlayers().getIslandLocation(playerUUID).getBlockZ()));
-                    plugin.deletePlayerIsland(playerUUID, false);
+                    plugin.deletePlayerIsland(playerUUID, false, false);
                     plugin.getGrid().saveGrid();
                     return true;
                 }
@@ -1925,7 +1926,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                     // Online
                     Util.sendMessage(targetPlayer, "[Admin] " + ChatColor.GREEN + plugin.myLocale(playerUUID).biomeSet.replace("[biome]", biomeName));
                 } else {
-                    plugin.getMessages().setMessage(playerUUID, "[Admin] " + ChatColor.GREEN + plugin.myLocale(playerUUID).biomeSet.replace("[biome]", biomeName));
+                    plugin.getMessages().setMessage(playerUUID, HistoryMessageType.ISLAND, "[Admin] " + ChatColor.GREEN + plugin.myLocale(playerUUID).biomeSet.replace("[biome]", biomeName));
                 }
                 return true;
             } else
@@ -2085,7 +2086,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 }
                 // Remove their old island affiliation - do not delete the
                 // island just in case
-                plugin.deletePlayerIsland(playerUUID, false);
+                plugin.deletePlayerIsland(playerUUID, false, false);
                 // Join the team and set the team island location and leader
                 plugin.getPlayers().setJoinTeam(playerUUID, teamLeader, plugin.getPlayers().getIslandLocation(teamLeader));
                 // Configure the best home location for this player
