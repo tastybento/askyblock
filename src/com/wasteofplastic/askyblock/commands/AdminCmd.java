@@ -1448,7 +1448,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                         							if(!deleteEvent.isCancelled()){
                         								Util.sendMessage(sender, ChatColor.YELLOW + "[" + (total - removeList.size() + 1) + "/" + total + "] "
                                                         		+ plugin.myLocale().purgeremovingName.replace("[name]", plugin.getPlayers().getName(removeList.get(0))));
-                                                		plugin.deletePlayerIsland(removeList.get(0), true);
+                                                		plugin.deletePlayerIsland(removeList.get(0), true, true);
                         							} else {
                         								Util.sendMessage(sender, ChatColor.YELLOW + "[" + (total - removeList.size() + 1) + "/" + total + "] " + plugin.myLocale().purgeSkippingAPI);
                         							}
@@ -1612,7 +1612,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                         plugin.resetPlayer(target);
                     }
                     // plugin.getLogger().info("DEBUG: deleting player");
-                    plugin.deletePlayerIsland(playerUUID, true);
+                    plugin.deletePlayerIsland(playerUUID, true, false);
                     return true;
                 }
             } else if (split[0].equalsIgnoreCase("reserve")) {
@@ -1682,7 +1682,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                     Util.sendMessage(sender, ChatColor.GREEN + plugin.myLocale().adminUnregisterKeepBlocks.replace("[location]",
                             + plugin.getPlayers().getIslandLocation(playerUUID).getBlockX() + ","
                                     + plugin.getPlayers().getIslandLocation(playerUUID).getBlockZ()));
-                    plugin.deletePlayerIsland(playerUUID, false);
+                    plugin.deletePlayerIsland(playerUUID, false, false);
                     plugin.getGrid().saveGrid();
                     return true;
                 }
@@ -2086,7 +2086,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 }
                 // Remove their old island affiliation - do not delete the
                 // island just in case
-                plugin.deletePlayerIsland(playerUUID, false);
+                plugin.deletePlayerIsland(playerUUID, false, false);
                 // Join the team and set the team island location and leader
                 plugin.getPlayers().setJoinTeam(playerUUID, teamLeader, plugin.getPlayers().getIslandLocation(teamLeader));
                 // Configure the best home location for this player

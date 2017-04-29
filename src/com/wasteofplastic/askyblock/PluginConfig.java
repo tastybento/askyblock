@@ -334,7 +334,10 @@ public class PluginConfig {
 
         // Check for updates
         Settings.updateCheck = plugin.getConfig().getBoolean("general.checkupdates", true);
-
+        
+        // Purge will remove userfiles
+        Settings.purgeRemoveUserfiles = plugin.getConfig().getBoolean("general.purgeremoveuserfiles", false);
+        
         // Action bar settings
         Settings.showInActionBar = plugin.getConfig().getBoolean("general.showinactionbar",true);
 
