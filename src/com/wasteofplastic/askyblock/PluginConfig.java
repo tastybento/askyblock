@@ -739,39 +739,6 @@ public class PluginConfig {
         
         // Fancy island level display
         Settings.fancyIslandLevelDisplay = plugin.getConfig().getBoolean("general.fancylevelinchat", false);
-        
-        // Check config.yml version
-        String configVersion = plugin.getConfig().getString("general.version", "");
-        //plugin.getLogger().info("DEBUG: config ver length " + configVersion.split("\\.").length);
-        // Ignore last digit if it is 4 digits long
-        if (configVersion.split("\\.").length == 4) {
-            configVersion = configVersion.substring(0, configVersion.lastIndexOf('.')); 
-        }
-        // Save for plugin version
-        String version = plugin.getDescription().getVersion();
-        //plugin.getLogger().info("DEBUG: version length " + version.split("\\.").length);
-        if (version.split("\\.").length == 4) {
-            version = version.substring(0, version.lastIndexOf('.')); 
-        }
-        if (configVersion.isEmpty() || !configVersion.equalsIgnoreCase(version)) {
-            // Check to see if this has already been shared
-            File newConfig = new File(plugin.getDataFolder(),"config.new.yml");
-            plugin.getLogger().warning("***********************************************************");
-            plugin.getLogger().warning("Config file is out of date. See config.new.yml for updates!");
-            plugin.getLogger().warning("config.yml version is '" + configVersion + "'");
-            plugin.getLogger().warning("Latest config version is '" + version + "'");
-            plugin.getLogger().warning("***********************************************************");
-            if (!newConfig.exists()) {
-                File oldConfig = new File(plugin.getDataFolder(),"config.yml");
-                File bakConfig = new File(plugin.getDataFolder(),"config.bak");
-                if (oldConfig.renameTo(bakConfig)) {
-                    plugin.saveResource("config.yml", false);
-                    oldConfig.renameTo(newConfig);
-                    bakConfig.renameTo(oldConfig);
-                } 
-            }
-        }
-
         // *** Non-Public Settings - these are "secret" settings that may not be used anymore
         // Level logging
         Settings.levelLogging = plugin.getConfig().getBoolean("general.levellogging");
