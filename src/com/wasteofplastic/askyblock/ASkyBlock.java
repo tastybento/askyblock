@@ -293,6 +293,17 @@ public class ASkyBlock extends JavaPlugin {
             getLogger().severe("So please remove the current config.yml, work on config.new.yml and rename it to config.yml.");
             getLogger().severe("");
             getLogger().severe("+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
+            
+            File newConfig = new File(plugin.getDataFolder(),"config.new.yml");
+            if (!newConfig.exists()) {
+                File oldConfig = new File(plugin.getDataFolder(),"config.yml");
+                File bakConfig = new File(plugin.getDataFolder(),"config.bak");
+                if (oldConfig.renameTo(bakConfig)) {
+                    plugin.saveResource("config.yml", false);
+                    oldConfig.renameTo(newConfig);
+                    bakConfig.renameTo(oldConfig);
+                } 
+            }
         	return;
         }
         
