@@ -21,9 +21,11 @@ import net.milkbowl.vault.permission.Permission;
 
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.Settings;
 
 /**
  * Helper class for Vault Economy and Permissions
@@ -82,7 +84,42 @@ public class VaultHelper {
     public static boolean checkPerm(final Player player, final String perm, final World world) {
         return permission.playerHas(world.getName(), player, perm);
     }
-
+    
+    /**
+     * Gets value of the perm
+     * 
+     * @param player
+     * @param rootPerm
+     * @param defaultValue
+     * @return the highest value in the perm
+     */
+    public static int getPermCustomValue(final Player player, final String rootPerm, final int defaultValue){
+    	int value = defaultValue;
+    	for(PermissionAttachmentInfo perms : player.getEffectivePermissions()){
+    		if (perms.getPermission().startsWith(rootPerm)) {
+    			if (perms.getPermission().contains(rootPerm + ".*")) {
+                    value = defaultValue;
+                    break;
+                } else {
+                    // Get the max value should there be more than one
+                    String[] spl = perms.getPermission().split(rootPerm + ".");
+                    if (spl.length > 1) {
+                        try{
+                        	value = Math.max(value, Integer.valueOf(spl[1]));
+                        } catch (Exception e){
+                        	ASkyBlock.getPlugin().getLogger().warning("Player '" + player.getName() + "' has invalid permission '" + perms.getPermission() + "'.");
+                        	value = Math.max(value, defaultValue);
+                        }
+                    }
+                }
+    		}
+    		
+    		// Sanity check
+    		if(value < 1) value = 1;
+    	}
+    	return value;
+    }
+    
     /**
      * Adds permission to player
      * 
