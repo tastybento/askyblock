@@ -1928,7 +1928,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                         // If the invitee has an island of their own
                         if (plugin.getPlayers().hasIsland(playerUUID)) {
                             plugin.getLogger().info(player.getName() + "'s island will be deleted because they joined a party.");
-                            plugin.deletePlayerIsland(playerUUID, true);
+                            plugin.deletePlayerIsland(playerUUID, true, false);
                             plugin.getLogger().info("Island deleted.");
                         }
                         // Add the player to the team

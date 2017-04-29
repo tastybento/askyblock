@@ -78,6 +78,8 @@ public class Settings {
     
     public static long backupDuration;
     
+    public static boolean purgeRemoveUserfiles;
+    
     public static String worldName;
     public static String defaultLanguage;
     
