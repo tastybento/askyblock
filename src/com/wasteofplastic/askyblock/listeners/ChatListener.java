@@ -36,6 +36,7 @@ import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.CoopPlay;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.events.TeamChatEvent;
+import com.wasteofplastic.askyblock.placeholders.PlaceholderHandler;
 import com.wasteofplastic.askyblock.util.Util;
 
 /**
@@ -84,33 +85,7 @@ public class ChatListener implements Listener {
     public void onChat(final AsyncPlayerChatEvent event) {
         if (DEBUG)
             plugin.getLogger().info("DEBUG: " + event.getEventName());
-        // Substitute variable - thread safe
-        String level = "";
-        if (playerLevels.containsKey(event.getPlayer().getUniqueId())) {
-            level = playerLevels.get(event.getPlayer().getUniqueId());
-            if(Settings.fancyIslandLevelDisplay) {
-                if (Integer.valueOf(level) > 1000){
-                    // 1052 -> 1.0k
-                    level = new DecimalFormat("#.#").format(Double.valueOf(level)/1000.0) + "k";
-                }
-            }
-        }
-        if (DEBUG) {
-            plugin.getLogger().info("DEBUG: player level = " + level);
-            plugin.getLogger().info("DEBUG: getFormat = " + event.getFormat());
-            plugin.getLogger().info("DEBUG: getMessage = " + event.getMessage());
-        }
-        String format = event.getFormat().replace(Settings.chatLevelPrefix, level);
-        if (DEBUG)
-            plugin.getLogger().info("DEBUG: format (island level substitute) = " + format);
-        level = "";
-        if (playerChallengeLevels.containsKey(event.getPlayer().getUniqueId())) {
-            level = playerChallengeLevels.get(event.getPlayer().getUniqueId());
-        }
-        format = format.replace(Settings.chatChallengeLevelPrefix, level);
-        if (DEBUG)
-            plugin.getLogger().info("DEBUG: format (challenge level sub) = " + format);
-        event.setFormat(format);
+        event.setFormat(PlaceholderHandler.replacePlaceholders(event.getPlayer(), event.getFormat()));
         if (DEBUG)
             plugin.getLogger().info("DEBUG: format set");
         // Team chat
@@ -149,11 +124,10 @@ public class ChatListener implements Listener {
             List<UUID> teamMembers = plugin.getPlayers().getMembers(player.getUniqueId());
             // Tell only the team members if they are online
             boolean onLine = false;
-            message = plugin.myLocale(playerUUID).teamChatPrefix.replace(Settings.chatIslandPlayer,player.getDisplayName()) + message;
             for (UUID teamMember : teamMembers) {
                 Player teamPlayer = plugin.getServer().getPlayer(teamMember);
                 if (teamPlayer != null) {
-                    Util.sendMessage(teamPlayer, message);
+                    Util.sendMessage(teamPlayer, plugin.myLocale(playerUUID).teamChatPrefix + message);
                     if (!teamMember.equals(playerUUID)) {
                         onLine = true;
                     }
@@ -185,11 +159,10 @@ public class ChatListener implements Listener {
             }
         } else if (Settings.teamChatIncludeCoop) {
         	boolean onLine = false;
-            message = plugin.myLocale(playerUUID).teamChatPrefix.replace(Settings.chatIslandPlayer,player.getDisplayName()) + message;
         	for (UUID coopPlayerUUID : CoopPlay.getInstance().getCoopPlayers(plugin.getPlayers().getIslandLocation(playerUUID))){
         		Player coopPlayer = plugin.getServer().getPlayer(coopPlayerUUID);
         		if(coopPlayer != null){
-        			Util.sendMessage(coopPlayer, message);
+        			Util.sendMessage(coopPlayer, plugin.myLocale(playerUUID).teamChatPrefix + message);
         			onLine = true;
         		}
         	}

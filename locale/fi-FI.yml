@@ -506,7 +506,7 @@ teamchat:
   helpChat: "kytke päälle tai pois tiimichatti"
   noTeam: "Sinä et ole tiimissä!"
   noTeamAround: "Kukaan tiimistäsi ei ole online!"
-  prefix: "&9Team Chat &7<{ISLAND_PLAYER}> "
+  prefix: "&9Team Chat &7<{player_name}> "
   spyoff: "Team chat spy off"
   spyon: "Team chat spy on"
   statusOff: "Tiimichat on pois päältä"

@@ -506,7 +506,7 @@ teamchat:
   helpChat: "включает/выключает командный чат"
   noTeam: "Вы не в команде!"
   noTeamAround: "Никто из вашей команды не в сети!"
-  prefix: "[§eКоманда§f]<{ISLAND_PLAYER}> "
+  prefix: "[§eКоманда§f]<{player_name}> "
   spyoff: "Team chat spy off"
   spyon: "Team chat spy on"
   statusOff: "Командный чат отключен"

@@ -507,7 +507,7 @@ teamchat:
   helpChat: チームチャットのオン/オフを切り替える
   noTeam: あなたはチームにいません！
   noTeamAround: あなたのチームはオンラインではありません！
-  prefix: "[チームチャット] <{ISLAND_PLAYER}>"
+  prefix: "[チームチャット] <{player_name}>"
   statusOff: チームチャットがオフです
   statusOn: チームチャットはオンです
 topTen: 

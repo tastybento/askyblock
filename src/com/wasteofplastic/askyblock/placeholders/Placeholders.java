@@ -1,5 +1,6 @@
 package com.wasteofplastic.askyblock.placeholders;
 
+import java.text.DecimalFormat;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -42,10 +43,38 @@ public class Placeholders {
 		
 		/*		ISLAND		*/
 		new Placeholder("island_level") {
-			
+			@Override
+			public String onRequest(Player player) {
+				String level = plugin.getChatListener().getPlayerLevel(player.getUniqueId());
+				if(Settings.fancyIslandLevelDisplay) {
+	                if (Integer.valueOf(level) > 1000){
+	                    // 1052 -> 1.0k
+	                    level = new DecimalFormat("#.#").format(Double.valueOf(level)/1000.0) + "k";
+	                }
+	            }
+				return level;
+			}
+		};
+		
+		new Placeholder("island_level_raw") {
 			@Override
 			public String onRequest(Player player) {
 				return "" + plugin.getPlayers().getIslandLevel(player.getUniqueId());
+			}
+		};
+		
+		/*		PLAYER		*/
+		new Placeholder("player_name") {
+			@Override
+			public String onRequest(Player player) {
+				return player.getName();
+			}
+		};
+		
+		new Placeholder("challenge_level") {
+			@Override
+			public String onRequest(Player player) {
+				return "" + plugin.getChatListener().getPlayerChallengeLevel(player.getUniqueId());
 			}
 		};
 		
@@ -60,7 +89,7 @@ public class Placeholders {
 		private String identifier;
 		
 		protected Placeholder(String identifier){
-			this.identifier = Settings.PLACEHOLDERPREFIX + "_" + identifier;
+			this.identifier = identifier;
 			placeholders.add(this);
 		}
 		

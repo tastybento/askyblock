@@ -469,7 +469,7 @@ teamchat:
   helpChat: "bật/tắt chat nhóm"
   noTeam: "Bạn không ở trong nhóm nào!"
   noTeamAround: "None of your team are online!"
-  prefix: "[Team Chat]<{ISLAND_PLAYER}> "
+  prefix: "[Team Chat]<{player_name}> "
   statusOff: "Team chat đã tắt"
   statusOn: "Team chat đã bật"
 topTen:

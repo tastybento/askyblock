@@ -506,7 +506,7 @@ teamchat:
   helpChat: "팀 채팅을 켜기/끄기"
   noTeam: "당신은 어느 팀에도 속하지 않았습니다!"
   noTeamAround: "당신의 팀 구성원이 모두 접속중이지 않습니다!"
-  prefix: "[Team Chat]<{ISLAND_PLAYER}> "
+  prefix: "[Team Chat]<{player_name}> "
   spyoff: "Team chat spy off"
   spyon: "Team chat spy on"
   statusOff: "팀 채팅: 사용 안함"

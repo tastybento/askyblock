@@ -58,8 +58,6 @@ public class Settings {
     public static final String CHALLENGECOMMAND = "aic";
     // Admin command
     public static final String ADMINCOMMAND = "acid";
-    // Placeholder prefix
-    public static final String PLACEHOLDERPREFIX = "ai";
     */
     
     public final static GameType GAMETYPE = GameType.ASKYBLOCK;
@@ -73,8 +71,6 @@ public class Settings {
     public final static String SPAWNCOMMAND = "spawn";
     // Admin command
     public static final String ADMINCOMMAND = "asadmin";
-    // Placeholder prefix
-    public static final String PLACEHOLDERPREFIX = "asb";
 
     /*		MAIN SETTINGS		*/
     public static boolean updateCheck;
@@ -194,10 +190,6 @@ public class Settings {
     public static boolean netherTrees;
 
     /*		CHAT		*/
-    public static String chatLevelPrefix;
-    public static String chatChallengeLevelPrefix;
-    public static String chatIslandPlayer;
-    
     public static boolean fancyIslandLevelDisplay;
     public static boolean teamChat;
     public static boolean logTeamChat;
@@ -289,9 +281,6 @@ public class Settings {
     public static boolean acidBottle;
     // Use physics when pasting schematic blocks
     public static boolean usePhysics;
-    
-    public static boolean setTeamName;
-    public static String teamSuffix;
     
     public static int cleanRate;
     
