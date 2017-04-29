@@ -136,9 +136,10 @@ public class Messages {
      * Sends a message to every player in the team that is offline
      * 
      * @param playerUUID
+     * @param type
      * @param message
      */
-    public void tellOfflineTeam(UUID playerUUID, String message) {
+    public void tellOfflineTeam(UUID playerUUID, HistoryMessageType type, String message) {
         // getLogger().info("DEBUG: tell offline team called");
         if (!plugin.getPlayers().inTeam(playerUUID)) {
             // getLogger().info("DEBUG: player is not in a team");
@@ -150,7 +151,7 @@ public class Messages {
             // getLogger().info("DEBUG: trying UUID " + member.toString());
             if (plugin.getServer().getPlayer(member) == null) {
                 // Offline player
-                setMessage(member, message);
+                setMessage(member, type, message);
             }
         }
     }
@@ -182,10 +183,11 @@ public class Messages {
      * Sets a message for the player to receive next time they login
      * 
      * @param playerUUID
+     * @param type
      * @param message
      * @return true if player is offline, false if online
      */
-    public boolean setMessage(UUID playerUUID, String message) {
+    public boolean setMessage(UUID playerUUID, HistoryMessageType type, String message) {
         // getLogger().info("DEBUG: received message - " + message);
         Player player = plugin.getServer().getPlayer(playerUUID);
         // Check if player is online
@@ -195,22 +197,39 @@ public class Messages {
                 return false;
             }
         }
-        storeMessage(playerUUID, message);
+        storeMessage(playerUUID, type, message);
         return true;
     }
 
     /**
      * Stores a message without any online check
      * @param playerUUID
+     * @param type
      * @param message
      */
-    public void storeMessage(UUID playerUUID, String message) {
-        List<String> playerMessages = get(playerUUID);
-        if (playerMessages != null) {
-            playerMessages.add(message);
-        } else {
-            playerMessages = new ArrayList<String>(Arrays.asList(message));
-        }
-        put(playerUUID, playerMessages);
+    public void storeMessage(UUID playerUUID, HistoryMessageType type, String message) {
+    	if(Settings.historyMessagesTypes.contains(type)){
+            List<String> playerMessages = get(playerUUID);
+            if (playerMessages != null) {
+                playerMessages.add(message);
+            } else {
+            	playerMessages = new ArrayList<String>(Arrays.asList(message));
+        	}
+        	put(playerUUID, playerMessages);
+    	}
+    }
+    
+    /**
+     * History messages types that allow filtering them.
+     * - TEAM : invited coop, removed coop, challenge completed, player left team, player (un)banned
+     * - ISLAND : level, island range increased, (admin) locked/unlocked, biome set by admin, warp removed
+     * - DEATH : player died (only if death penalty enabled)
+     * - PERSONAL : coop removed, (un)banned, kicked from an island, now a leader
+     */
+    public enum HistoryMessageType{
+        TEAM,
+        ISLAND,
+        DEATH,
+        PERSONAL;
     }
 }

@@ -66,6 +66,7 @@ import com.wasteofplastic.askyblock.FileLister;
 import com.wasteofplastic.askyblock.GridManager;
 import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.Island.SettingsFlag;
+import com.wasteofplastic.askyblock.Messages.HistoryMessageType;
 import com.wasteofplastic.askyblock.PluginConfig;
 import com.wasteofplastic.askyblock.SafeSpotTeleport;
 import com.wasteofplastic.askyblock.Settings;
@@ -432,7 +433,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                                 if (owner != null) {
                                     owner.sendMessage(plugin.myLocale(owner.getUniqueId()).adminLockadminUnlockedIsland);
                                 } else {
-                                    plugin.getMessages().setMessage(island.getOwner(), plugin.myLocale(island.getOwner()).adminLockadminUnlockedIsland);
+                                    plugin.getMessages().setMessage(island.getOwner(), HistoryMessageType.ISLAND, plugin.myLocale(island.getOwner()).adminLockadminUnlockedIsland);
                                 }
                             } else {
                                 Util.sendMessage(sender, ChatColor.RED + plugin.myLocale().lockLocking);
@@ -440,7 +441,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                                 if (owner != null) {
                                     owner.sendMessage(plugin.myLocale(owner.getUniqueId()).adminLockadminLockedIsland);
                                 } else {
-                                    plugin.getMessages().setMessage(island.getOwner(), plugin.myLocale(island.getOwner()).adminLockadminLockedIsland);
+                                    plugin.getMessages().setMessage(island.getOwner(), HistoryMessageType.ISLAND, plugin.myLocale(island.getOwner()).adminLockadminLockedIsland);
                                 }
                             }
                             return true;
@@ -1486,7 +1487,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                             if (owner != null) {
                                 owner.sendMessage(plugin.myLocale(owner.getUniqueId()).adminLockadminUnlockedIsland);
                             } else {
-                                plugin.getMessages().setMessage(island.getOwner(), plugin.myLocale(island.getOwner()).adminLockadminUnlockedIsland);
+                                plugin.getMessages().setMessage(island.getOwner(), HistoryMessageType.ISLAND, plugin.myLocale(island.getOwner()).adminLockadminUnlockedIsland);
                             }
                         } else {
                             Util.sendMessage(sender, ChatColor.RED + plugin.myLocale().lockLocking);
@@ -1494,7 +1495,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                             if (owner != null) {
                                 owner.sendMessage(plugin.myLocale(owner.getUniqueId()).adminLockadminLockedIsland);
                             } else {
-                                plugin.getMessages().setMessage(island.getOwner(), plugin.myLocale(island.getOwner()).adminLockadminLockedIsland);
+                                plugin.getMessages().setMessage(island.getOwner(), HistoryMessageType.ISLAND, plugin.myLocale(island.getOwner()).adminLockadminLockedIsland);
                             }
                         }
                     } else {
@@ -1925,7 +1926,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                     // Online
                     Util.sendMessage(targetPlayer, "[Admin] " + ChatColor.GREEN + plugin.myLocale(playerUUID).biomeSet.replace("[biome]", biomeName));
                 } else {
-                    plugin.getMessages().setMessage(playerUUID, "[Admin] " + ChatColor.GREEN + plugin.myLocale(playerUUID).biomeSet.replace("[biome]", biomeName));
+                    plugin.getMessages().setMessage(playerUUID, HistoryMessageType.ISLAND, "[Admin] " + ChatColor.GREEN + plugin.myLocale(playerUUID).biomeSet.replace("[biome]", biomeName));
                 }
                 return true;
             } else

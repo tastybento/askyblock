@@ -59,6 +59,7 @@ import org.bukkit.potion.PotionType;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Settings;
+import com.wasteofplastic.askyblock.Messages.HistoryMessageType;
 import com.wasteofplastic.askyblock.events.ChallengeCompleteEvent;
 import com.wasteofplastic.askyblock.events.ChallengeLevelCompleteEvent;
 import com.wasteofplastic.askyblock.panels.CPItem;
@@ -311,7 +312,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
                             ChatColor.GOLD + plugin.myLocale(p.getUniqueId()).challengesnameHasCompleted.replace("[name]", player.getName()).replace("[challenge]", challengeName));
                 }
             }
-            plugin.getMessages().tellOfflineTeam(player.getUniqueId(),
+            plugin.getMessages().tellOfflineTeam(player.getUniqueId(), HistoryMessageType.TEAM,
                     ChatColor.GOLD + plugin.myLocale(player.getUniqueId()).challengesnameHasCompleted.replace("[name]", player.getName()).replace("[challenge]", challengeName));
             itemRewards = getChallengeConfig().getString("challenges.challengeList." + challenge.toLowerCase() + ".itemReward", "").split(" ");
             moneyReward = getChallengeConfig().getDouble("challenges.challengeList." + challenge.toLowerCase() + ".moneyReward", 0D);
