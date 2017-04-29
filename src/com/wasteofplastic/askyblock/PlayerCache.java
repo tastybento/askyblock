@@ -28,6 +28,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import com.google.common.collect.Lists;
+import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
 /**
@@ -222,6 +223,18 @@ public class PlayerCache {
         playerCache.get(playerUUID).setIslandLevel(0);
         playerCache.get(playerUUID).save(); // Needed?
         TopTen.topTenRemoveEntry(playerUUID);
+    }
+    
+    /**
+     * Deletes player file.
+     * 
+     * @param playerUUID
+     */
+    public void deletePlayerData(UUID playerUUID){
+    	addPlayer(playerUUID);
+    	
+    	playerCache.remove(playerUUID);
+    	Util.removeFile("players/" + playerUUID.toString() + ".yml");
     }
 
     /**

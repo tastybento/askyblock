@@ -612,11 +612,11 @@ public class ASkyBlock extends JavaPlugin {
      * Called when an island is restarted or reset
      *
      * @param player
-     *            - player name String
+     *            - player UUID
      * @param removeBlocks
      *            - true to remove the island blocks
      */
-    public void deletePlayerIsland(final UUID player, boolean removeBlocks) {
+    public void deletePlayerIsland(final UUID player, boolean removeBlocks, boolean removeUserfiles) {
         // Removes the island
         //getLogger().info("DEBUG: deleting player island");
         CoopPlay.getInstance().clearAllIslandCoops(player);
@@ -636,7 +636,11 @@ public class ASkyBlock extends JavaPlugin {
             getLogger().severe("Could not delete player: " + player.toString() + " island!");
             getServer().getPluginManager().callEvent(new IslandDeleteEvent(player, null));
         }
+        
         players.zeroPlayerData(player);
+        if(removeUserfiles){
+        	players.deletePlayerData(player);
+        }
     }
 
     /**

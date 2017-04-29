@@ -395,7 +395,9 @@ islandguardsettings:
   visitorpickup: "Visitor item pick-up"
   withergriefing: "Wither griefing"
   workbench: "Visitor workbench use"
-kick: 
+kick:
+  cancelled: "Kick cancelled."
+  warning: "Are you sure you want to kick this player? Type '[command]' again to confirm."
   errorNoTeam: "You do not have a team!"
   errorNotPartOfTeam: "That player is not part of your island team!"
   errorOnlyLeaderCan: "Only the leader can kick people off the island!"
@@ -404,7 +406,7 @@ kick:
   nameRemovedYou: "[name] has removed you from their island!"
 lavaTip: "Tip: If obsidian was not intended, it can be scooped back up again with a bucket."
 leave: 
-  canceled: "Leave canceled"
+  cancelled: "Leave cancelled."
   errorLeadersCannotLeave: "Leaders cannot leave an island. Make someone else the leader first."
   errorYouAreTheLeader: "You cannot leave because you are the leader. Make someone the leader first."
   errorYouCannotLeaveIsland: "You can't leave your island if you are the only person. Try restart if you want a new one!"

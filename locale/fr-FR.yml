@@ -10,7 +10,6 @@ acidLore: |
     Ne tombez pas !
     Faites attention!
 
-
 adminDeleteIsland: 
   error: "Utilisez &ldeleteisland confirm &r&cpour supprimer l'île sur laquelle vous êtes."
   noid: "Impossible d'identifier cette île."
@@ -393,7 +392,9 @@ islandguardsettings:
   visitorpickup: "Objets récupérés par les visiteurs"
   withergriefing: "Destruction par Wither"
   workbench: "Etabli"
-kick: 
+kick:
+  cancelled: "Suppression annulée."
+  warning: "Es-tu certain de vouloir supprimer ce joueur de l'île? Ecris '[command]' à nouveau pour confirmer."
   errorNoTeam: "Vous n'avez pas d'équipe !"
   errorNotPartOfTeam: "Ce joueur ne fait pas partie de l'île !"
   errorOnlyLeaderCan: "Seul le propriétaire peut supprimer des joueurs de l'île !"
@@ -401,7 +402,8 @@ kick:
   nameRemoved: "[name] a été supprimé de l'île."
   nameRemovedYou: "[name] vous a supprimé de l'île !"
 lavaTip: "Astuce: Si vous ne vouliez pas d'obsidienne, vous pouvez récupérer de la lave avec un sceau en cliquant sur le bloc."
-leave: 
+leave:
+  cancelled: "Départ annulé."
   errorLeadersCannotLeave: "Les propriétaires ne peuvent pas quitter l'île. Transférez l'île à un membre de l'équipe avec /[label] makeleader <joueur>"
   errorYouAreTheLeader: "Vous êtes le propriétaire. Utilisez /[label] makeleader <joueur> pour transférer l'île à un membre de l'équipe."
   errorYouCannotLeaveIsland: "Vous êtes seul. Impossible de quitter l'île. Utilisez /[label] restart pour en commencer une nouvelle !"
