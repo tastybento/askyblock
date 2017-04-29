@@ -58,6 +58,8 @@ public class Settings {
     public static final String CHALLENGECOMMAND = "aic";
     // Admin command
     public static final String ADMINCOMMAND = "acid";
+    // Placeholder prefix
+    public static final String PLACEHOLDERPREFIX = "ai";
     */
     
     public final static GameType GAMETYPE = GameType.ASKYBLOCK;
@@ -71,6 +73,8 @@ public class Settings {
     public final static String SPAWNCOMMAND = "spawn";
     // Admin command
     public static final String ADMINCOMMAND = "asadmin";
+    // Placeholder prefix
+    public static final String PLACEHOLDERPREFIX = "asb";
 
     /*		MAIN SETTINGS		*/
     public static boolean updateCheck;

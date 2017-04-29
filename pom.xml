@@ -181,6 +181,21 @@
 			<systemPath>${server.jars}/HeroChat_5.6.7.jar</systemPath>
 			<version>5.6.7</version>
 		</dependency>
+		<dependency>
+            <groupId>be.maximvdw</groupId>
+            <artifactId>MVdWPlaceholderAPI</artifactId>
+            <version>1.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>me.clip</groupId>
+            <artifactId>placeholderapi</artifactId>
+            <version>2.7.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>me.clip.deluxechat</groupId>
+            <artifactId>DeluxeChatPlaceholderAPI</artifactId>
+        </dependency>
 	</dependencies>
 	<repositories>
 		<repository>
@@ -195,6 +210,10 @@
 			<id>worldedit-repo</id>
 			<url>http://maven.sk89q.com/repo/</url>
 		</repository>
+		<repository>
+            <id>placeholderapi</id>
+            <url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+        </repository>
 	</repositories>
 	<version>4.0</version>
 </project>

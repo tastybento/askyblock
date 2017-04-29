@@ -41,6 +41,7 @@ import org.bukkit.entity.Player;
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.nms.NMSAbstraction;
+import com.wasteofplastic.askyblock.placeholders.PlaceholderHandler;
 
 /**
  * A set of utility methods
@@ -346,11 +347,14 @@ public class Util {
     }
 
     /**
-     * Send a message to sender if message is not empty. Does not include color codes or spaces
+     * Send a message to sender if message is not empty. Does not include color codes or spaces.
+     * Placeholders are set.
      * @param sender
      * @param message
      */
     public static void sendMessage(CommandSender sender, String message) {
+    	message = PlaceholderHandler.replacePlaceholders((Player) sender, message);
+    	
         if (!ChatColor.stripColor(message).trim().isEmpty()) {
             sender.sendMessage(message);
         }
