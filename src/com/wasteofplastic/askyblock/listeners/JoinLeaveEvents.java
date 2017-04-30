@@ -202,7 +202,7 @@ public class JoinLeaveEvents implements Listener {
                             }
                             // Dynamic island range sizes with permissions
                             boolean hasARangePerm = false;
-                            int range = Settings.island_protectionRange;
+                            int range = Settings.islandProtectionRange;
                             // Check for zero protection range
                             if (island.getProtectionSize() == 0) {
                                 plugin.getLogger().warning("Player " + player.getName() + "'s island had a protection range of 0. Setting to default " + range);

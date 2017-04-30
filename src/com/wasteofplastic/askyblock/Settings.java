@@ -120,7 +120,7 @@ public class Settings {
     public static int islandXOffset;
     public static int islandZOffset;
     public static int sea_level;
-    public static int island_protectionRange;
+    public static int islandProtectionRange;
     public static int abandonedIslandLevel;
     public static Double startingMoney;
     public static double netherSpawnRadius;

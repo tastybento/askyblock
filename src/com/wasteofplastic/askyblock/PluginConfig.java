@@ -56,17 +56,17 @@ public class PluginConfig {
             Settings.islandDistance = 50;
             plugin.getLogger().info("Setting minimum island distance to 50");
         }
-        Settings.island_protectionRange = plugin.getConfig().getInt("island.protectionRange", 100);
-        if (Settings.island_protectionRange % 2 != 0) {
-            Settings.island_protectionRange--;
-            plugin.getLogger().warning("Protection range must be even, using " + Settings.island_protectionRange);
+        Settings.islandProtectionRange = plugin.getConfig().getInt("island.protectionRange", 100);
+        if (Settings.islandProtectionRange % 2 != 0) {
+            Settings.islandProtectionRange--;
+            plugin.getLogger().warning("Protection range must be even, using " + Settings.islandProtectionRange);
         }
-        if (Settings.island_protectionRange > Settings.islandDistance) {
+        if (Settings.islandProtectionRange > Settings.islandDistance) {
             plugin.getLogger().warning("Protection range cannot be > island distance. Setting them to be equal.");
-            Settings.island_protectionRange = Settings.islandDistance;
+            Settings.islandProtectionRange = Settings.islandDistance;
         }
-        if (Settings.island_protectionRange < 0) {
-            Settings.island_protectionRange = 0;
+        if (Settings.islandProtectionRange < 0) {
+            Settings.islandProtectionRange = 0;
         }
 
         // xoffset and zoffset are not public and only used for IslandWorld compatibility

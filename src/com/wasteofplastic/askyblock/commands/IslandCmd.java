@@ -780,11 +780,11 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
         }
         // Set the custom protection range if appropriate
         // Dynamic island range sizes with permissions
-        int range = Settings.island_protectionRange;        
+        int range = Settings.islandProtectionRange;        
         for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
             if (perms.getPermission().startsWith(Settings.PERMPREFIX + "island.range.")) {
                 if (perms.getPermission().contains(Settings.PERMPREFIX + "island.range.*")) {
-                    range = Settings.island_protectionRange;
+                    range = Settings.islandProtectionRange;
                     break;
                 } else {
                     String[] spl = perms.getPermission().split(Settings.PERMPREFIX + "island.range.");
@@ -2984,7 +2984,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                                 Util.sendMessage(plugin.getServer().getPlayer(targetPlayer), ChatColor.GREEN + plugin.myLocale(targetPlayer).makeLeaderyouAreNowTheOwner);
                                                 // Check if new leader has a lower range permission than the island size
                                                 boolean hasARangePerm = false;
-                                                int range = Settings.island_protectionRange;
+                                                int range = Settings.islandProtectionRange;
                                                 // Check for zero protection range
                                                 Island islandByOwner = plugin.getGrid().getIsland(targetPlayer);
                                                 if (islandByOwner.getProtectionSize() == 0) {
