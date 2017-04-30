@@ -1448,7 +1448,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                         							if(!deleteEvent.isCancelled()){
                         								Util.sendMessage(sender, ChatColor.YELLOW + "[" + (total - removeList.size() + 1) + "/" + total + "] "
                                                         		+ plugin.myLocale().purgeremovingName.replace("[name]", plugin.getPlayers().getName(removeList.get(0))));
-                                                		plugin.deletePlayerIsland(removeList.get(0), true, true);
+                                                        plugin.deletePlayerIsland(removeList.get(0), true, Settings.purgeRemoveUserfiles);
                         							} else {
                         								Util.sendMessage(sender, ChatColor.YELLOW + "[" + (total - removeList.size() + 1) + "/" + total + "] " + plugin.myLocale().purgeSkippingAPI);
                         							}
