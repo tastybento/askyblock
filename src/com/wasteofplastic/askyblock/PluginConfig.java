@@ -765,7 +765,13 @@ public class PluginConfig {
             } catch (Exception e) {
                 plugin.getLogger().severe("Unknown setting in config.yml:protection.world " + setting.toUpperCase() + " skipping...");
             }
-
+        }
+        // Establish defaults if they are missing in the config file.
+        for (SettingsFlag flag: SettingsFlag.values()) {
+            if (!Settings.defaultWorldSettings.containsKey(flag)) {
+                plugin.getLogger().warning("config.yml:protection.world."+flag.name() + " is missing. You should add it to the config file. Setting to false by default");
+                Settings.defaultWorldSettings.put(flag, false);
+            }
         }
         ConfigurationSection protectionIsland = plugin.getConfig().getConfigurationSection("protection.island");
         for (String setting: protectionIsland.getKeys(false)) {

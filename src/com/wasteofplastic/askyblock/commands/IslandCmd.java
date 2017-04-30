@@ -593,6 +593,18 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
      * @return true if successful, false if not
      */
     public boolean removePlayerFromTeam(final UUID playerUUID, final UUID teamLeader) {
+        return removePlayerFromTeam(playerUUID, teamLeader, false);
+    }
+
+    /**
+     * Removes a player from a team run by teamleader
+     * 
+     * @param playerUUID
+     * @param teamLeader
+     * @param makeLeader - true if this is the result of switching leader
+     * @return true if successful, false if not
+     */
+    public boolean removePlayerFromTeam(final UUID playerUUID, final UUID teamLeader, boolean makeLeader) {
         // Remove player from the team
         plugin.getPlayers().removeMember(teamLeader, playerUUID);
         // If player is online
@@ -605,22 +617,24 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
             plugin.getPlayers().clearHomeLocations(playerUUID);
             plugin.getPlayers().setIslandLocation(playerUUID, null);
             plugin.getPlayers().setTeamIslandLocation(playerUUID, null);
-            OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayer(playerUUID);
-            if (offlinePlayer.isOnline()) {
-                // Check perms
-                if (!((Player)offlinePlayer).hasPermission(Settings.PERMPREFIX + "command.leaveexempt")) {
+            if (!makeLeader) {
+                OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayer(playerUUID);
+                if (offlinePlayer.isOnline()) {
+                    // Check perms
+                    if (!((Player)offlinePlayer).hasPermission(Settings.PERMPREFIX + "command.leaveexempt")) {
+                        runCommands(Settings.leaveCommands, offlinePlayer);
+                    }
+                } else {
+                    // If offline, all commands are run, sorry
                     runCommands(Settings.leaveCommands, offlinePlayer);
                 }
-            } else {
-                // If offline, all commands are run, sorry
-                runCommands(Settings.leaveCommands, offlinePlayer);
-            }
-            // Deduct a reset
-            if (Settings.leaversLoseReset && Settings.resetLimit >= 0) {
-                int resetsLeft = plugin.getPlayers().getResetsLeft(playerUUID);
-                if (resetsLeft > 0) {
-                    resetsLeft--;
-                    plugin.getPlayers().setResetsLeft(playerUUID, resetsLeft);
+                // Deduct a reset
+                if (Settings.leaversLoseReset && Settings.resetLimit >= 0) {
+                    int resetsLeft = plugin.getPlayers().getResetsLeft(playerUUID);
+                    if (resetsLeft > 0) {
+                        resetsLeft--;
+                        plugin.getPlayers().setResetsLeft(playerUUID, resetsLeft);
+                    }
                 }
             }
             // Fire event
@@ -805,7 +819,11 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                 } else {
                     String[] spl = perms.getPermission().split(Settings.PERMPREFIX + "island.range.");
                     if (spl.length > 1) {
-                        range = Math.max(range, Integer.valueOf(spl[1]));
+                        if (!NumberUtils.isDigits(spl[1])) {
+                            plugin.getLogger().severe("Player " + player.getName() + " has permission: " + perms.getPermission() + " <-- the last part MUST be a number! Ignoring...");
+                        } else {
+                            range = Math.max(range, Integer.valueOf(spl[1]));
+                        }
                     }
                 }
             }
@@ -1116,8 +1134,16 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                         // Get permission multiplier                
                         for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
                             if (perms.getPermission().startsWith(Settings.PERMPREFIX + "island.multiplier.")) {
+                                String[] spl = perms.getPermission().split(Settings.PERMPREFIX + "island.multiplier.");
                                 // Get the max value should there be more than one
-                                multiplier = Math.max(multiplier, Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "island.multiplier.")[1]));
+                                if (spl.length > 1) {
+                                    if (!NumberUtils.isDigits(spl[1])) {
+                                        plugin.getLogger().severe("Player " + player.getName() + " has permission: " + perms.getPermission() + " <-- the last part MUST be a number! Ignoring...");
+
+                                    } else {
+                                        multiplier = Math.max(multiplier, Integer.valueOf(spl[1]));
+                                    }
+                                }
                             }
                             // Do some sanity checking
                             if (multiplier < 1) {
@@ -1652,14 +1678,20 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                 int maxHomes = Settings.maxHomes;
                 for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
                     if (perms.getPermission().startsWith(Settings.PERMPREFIX + "island.maxhomes.")) {
-                        if (perms.getPermission().contains(Settings.PERMPREFIX + "island.maxhomes.*")) {
+                        if (perms.getPermission().startsWith(Settings.PERMPREFIX + "island.maxhomes.*")) {
                             maxHomes = Settings.maxHomes;
                             break;
                         } else {
                             // Get the max value should there be more than one
                             String[] spl = perms.getPermission().split(Settings.PERMPREFIX + "island.maxhomes.");
                             if (spl.length > 1) {
-                                maxHomes = Math.max(maxHomes, Integer.valueOf(spl[1]));
+                                // Check that it is a number
+                                if (!NumberUtils.isDigits(spl[1])) {
+                                    plugin.getLogger().severe("Player " + player.getName() + " has permission: " + perms.getPermission() + " <-- the last part MUST be a number! Ignoring...");
+
+                                } else {
+                                    maxHomes = Math.max(maxHomes, Integer.valueOf(spl[1]));
+                                }
                             }
                         }
                     }
@@ -1879,7 +1911,12 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                         // Get the max value should there be more than one
                                         String[] spl = perms.getPermission().split(Settings.PERMPREFIX + "team.maxsize.");
                                         if (spl.length > 1) {
-                                            maxSize = Math.max(maxSize, Integer.valueOf(spl[1]));
+                                            if (!NumberUtils.isDigits(spl[1])) {
+                                                plugin.getLogger().severe("Player " + player.getName() + " has permission: " + perms.getPermission() + " <-- the last part MUST be a number! Ignoring...");
+
+                                            } else {
+                                                maxSize = Math.max(maxSize, Integer.valueOf(spl[1]));
+                                            }
                                         }
                                     }
                                 }
@@ -2086,7 +2123,12 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                     // Get the max value should there be more than one
                                     String[] spl = perms.getPermission().split(Settings.PERMPREFIX + "team.maxsize.");
                                     if (spl.length > 1) {
-                                        maxSize = Math.max(maxSize, Integer.valueOf(spl[1]));
+                                        if (!NumberUtils.isDigits(spl[1])) {
+                                            plugin.getLogger().severe("Player " + player.getName() + " has permission: " + perms.getPermission() + " <-- the last part MUST be a number! Ignoring...");
+
+                                        } else {
+                                            maxSize = Math.max(maxSize, Integer.valueOf(spl[1]));
+                                        }
                                     }
                                 }
                             }
@@ -2255,7 +2297,12 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                                     // Get the max value should there be more than one
                                                     String[] spl = perms.getPermission().split(Settings.PERMPREFIX + "island.maxhomes.");
                                                     if (spl.length > 1) {
-                                                        maxHomes = Math.max(maxHomes, Integer.valueOf(spl[1]));
+                                                        if (!NumberUtils.isDigits(spl[1])) {
+                                                            plugin.getLogger().severe("Player " + player.getName() + " has permission: " + perms.getPermission() + " <-- the last part MUST be a number! Ignoring...");
+
+                                                        } else {
+                                                            maxHomes = Math.max(maxHomes, Integer.valueOf(spl[1]));
+                                                        }
                                                     }
                                                 }
                                             }
@@ -2306,7 +2353,12 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                         } else {
                                             String[] spl = perms.getPermission().split(Settings.PERMPREFIX + "island.maxhomes.");
                                             if (spl.length > 1) {
-                                                maxHomes = Math.max(maxHomes, Integer.valueOf(spl[1]));
+                                                if (!NumberUtils.isDigits(spl[1])) {
+                                                    plugin.getLogger().severe("Player " + player.getName() + " has permission: " + perms.getPermission() + " <-- the last part MUST be a number! Ignoring...");
+
+                                                } else {
+                                                    maxHomes = Math.max(maxHomes, Integer.valueOf(spl[1]));
+                                                }
                                             }
                                         }
                                     }
@@ -2520,7 +2572,12 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                                         // Get the max value should there be more than one
                                                         String[] spl = perms.getPermission().split(Settings.PERMPREFIX + "team.maxsize.");
                                                         if (spl.length > 1) {
-                                                            maxSize = Math.max(maxSize, Integer.valueOf(spl[1]));
+                                                            if (!NumberUtils.isDigits(spl[1])) {
+                                                                plugin.getLogger().severe("Player " + player.getName() + " has permission: " + perms.getPermission() + " <-- the last part MUST be a number! Ignoring...");
+
+                                                            } else {
+                                                                maxSize = Math.max(maxSize, Integer.valueOf(spl[1]));
+                                                            }
                                                         }
                                                     }
                                                 }
@@ -3029,17 +3086,16 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                 if (plugin.getPlayers().inTeam(player.getUniqueId())) {
                                     if (teamLeader.equals(player.getUniqueId())) {
                                         if (teamMembers.contains(targetPlayer)) {
-
                                             // targetPlayer is the new leader
                                             // plugin.getLogger().info("DEBUG: " +
                                             // plugin.getPlayers().getIslandLevel(teamLeader));
                                             // Remove the target player from the team
-                                            if (!removePlayerFromTeam(targetPlayer, teamLeader)) {
+                                            if (!removePlayerFromTeam(targetPlayer, teamLeader, true)) {
                                                 // If cancelled, return silently
                                                 return true;
                                             }
                                             // Remove the leader from the team
-                                            if (!removePlayerFromTeam(teamLeader, teamLeader)) {
+                                            if (!removePlayerFromTeam(teamLeader, teamLeader, true)) {
                                                 // If cancelled, return silently
                                                 return true;
                                             }
@@ -3065,17 +3121,28 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                                 Util.sendMessage(plugin.getServer().getPlayer(targetPlayer), ChatColor.GREEN + plugin.myLocale(targetPlayer).makeLeaderyouAreNowTheOwner);
                                                 // Check if new leader has a lower range permission than the island size
                                                 boolean hasARangePerm = false;
-                                                int range = 0;
+                                                int range = Settings.islandProtectionRange;
+                                                // Check for zero protection range
+                                                Island islandByOwner = plugin.getGrid().getIsland(targetPlayer);
+                                                if (islandByOwner.getProtectionSize() == 0) {
+                                                    plugin.getLogger().warning("Player " + player.getName() + "'s island had a protection range of 0. Setting to default " + range);
+                                                    islandByOwner.setProtectionSize(range);
+                                                }
                                                 for (PermissionAttachmentInfo perms : target.getEffectivePermissions()) {
                                                     if (perms.getPermission().startsWith(Settings.PERMPREFIX + "island.range.")) {
                                                         if (perms.getPermission().contains(Settings.PERMPREFIX + "island.range.*")) {
                                                             // Ignore
                                                             break;
                                                         } else {
-                                                            hasARangePerm = true;
                                                             String[] spl = perms.getPermission().split(Settings.PERMPREFIX + "island.range.");
                                                             if (spl.length > 1) {
-                                                                range = Math.max(range, Integer.valueOf(spl[1]));
+                                                                if (!NumberUtils.isDigits(spl[1])) {
+                                                                    plugin.getLogger().severe("Player " + player.getName() + " has permission: " + perms.getPermission() + " <-- the last part MUST be a number! Ignoring...");
+
+                                                                } else {
+                                                                    hasARangePerm = true;
+                                                                    range = Math.max(range, Integer.valueOf(spl[1]));
+                                                                }
                                                             }
                                                         }
                                                     }
@@ -3087,7 +3154,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                                         range--;
                                                     }
                                                     // Get island range
-                                                    Island islandByOwner = plugin.getGrid().getIsland(targetPlayer);
+
                                                     // Range can go up or down
                                                     if (range != islandByOwner.getProtectionSize()) {
                                                         Util.sendMessage(player, ChatColor.GOLD + plugin.myLocale(targetPlayer).adminSetRangeUpdated.replace("[number]", String.valueOf(range)));
@@ -3507,7 +3574,11 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                 // Get the max value should there be more than one
                                 String[] spl = perms.getPermission().split(Settings.PERMPREFIX + "island.maxhomes.");
                                 if (spl.length > 1) {
-                                    maxHomes = Math.max(maxHomes, Integer.valueOf(spl[1]));
+                                    if (!NumberUtils.isDigits(spl[1])) {
+                                        plugin.getLogger().severe("Player " + player.getName() + " has permission: " + perms.getPermission() + " <-- the last part MUST be a number! Ignoring...");
+                                    } else {
+                                        maxHomes = Math.max(maxHomes, Integer.valueOf(spl[1]));
+                                    }
                                 }
                             }
                         }

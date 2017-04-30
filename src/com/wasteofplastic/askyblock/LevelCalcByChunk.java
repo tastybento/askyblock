@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.World;
@@ -85,8 +86,15 @@ public class LevelCalcByChunk {
                 // Get permission multiplier                
                 for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
                     if (perms.getPermission().startsWith(Settings.PERMPREFIX + "island.multiplier.")) {
-                        // Get the max value should there be more than one
-                        multiplier = Math.max(multiplier, Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "island.multiplier.")[1]));
+                        String spl[] = perms.getPermission().split(Settings.PERMPREFIX + "island.multiplier.");
+                        if (spl.length > 1) {
+                            if (!NumberUtils.isDigits(spl[1])) {
+                                plugin.getLogger().severe("Player " + player.getName() + " has permission: " + perms.getPermission() + " <-- the last part MUST be a number! Ignoring...");
+                            } else {
+                                // Get the max value should there be more than one
+                                multiplier = Math.max(multiplier, Integer.valueOf(spl[1]));
+                            }
+                        }
                     }
                     // Do some sanity checking
                     if (multiplier < 1) {
@@ -380,9 +388,9 @@ public class LevelCalcByChunk {
                     int calculatePointsToNextLevel = (Settings.levelCost * (plugin.getPlayers().getIslandLevel(targetPlayer) + 1 + levelHandicap)) - ((blockCount * levelMultiplier) - (deathHandicap * Settings.deathpenalty));
                     // Sometimes it will return 0, so calculate again to make sure it will display a good value
                     if(calculatePointsToNextLevel == 0) calculatePointsToNextLevel = (Settings.levelCost * (plugin.getPlayers().getIslandLevel(targetPlayer) + 2 + levelHandicap)) - ((blockCount * levelMultiplier) - (deathHandicap * Settings.deathpenalty));
-                    
+
                     final int pointsToNextLevel = calculatePointsToNextLevel;
-                    
+
                     // Return to main thread
                     plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
 
@@ -395,38 +403,37 @@ public class LevelCalcByChunk {
                             plugin.getServer().getPluginManager().callEvent(event);
                             int oldLevel = plugin.getPlayers().getIslandLevel(targetPlayer);
                             if (!event.isCancelled()) {
-                            	//plugin.getLogger().info("DEBUG: updating player");
+                                //plugin.getLogger().info("DEBUG: updating player");
 
-                            	if (oldLevel != event.getLevel()) {
-                            		// Update player and team mates
-                            		plugin.getPlayers().setIslandLevel(targetPlayer, event.getLevel());
-                            		//plugin.getLogger().info("DEBUG: set island level, now trying to save player");
-                            		plugin.getPlayers().save(targetPlayer);
-                            	}
-                            	//plugin.getLogger().info("DEBUG: save player, now looking at team members");
-                            	// Update any team members too
-                            	if (plugin.getPlayers().inTeam(targetPlayer)) {
-                            		//plugin.getLogger().info("DEBUG: player is in team");
-                            		for (UUID member : plugin.getPlayers().getMembers(targetPlayer)) {
-                            			//plugin.getLogger().info("DEBUG: updating team member level too");
-                            			if (plugin.getPlayers().getIslandLevel(member) != event.getLevel()) {
-                            				plugin.getPlayers().setIslandLevel(member, event.getLevel());
-                            				plugin.getPlayers().save(member);
-                            			}
-                            		}
-                            	}
-                            	//plugin.getLogger().info("DEBUG: finished team member saving");
-                            	//plugin.getLogger().info("DEBUG: updating top ten");
-                            	if (plugin.getPlayers().inTeam(targetPlayer)) {
-                            		UUID leader = plugin.getPlayers().getTeamLeader(targetPlayer);
-                            		if (leader != null) {
-                            			TopTen.topTenAddEntry(leader, event.getLevel());
-                            		}
-                            	} else {
-                            		TopTen.topTenAddEntry(targetPlayer, event.getLevel());
-                            	}
+                                if (oldLevel != event.getLevel()) {
+                                    // Update player and team mates
+                                    plugin.getPlayers().setIslandLevel(targetPlayer, event.getLevel());
+                                    //plugin.getLogger().info("DEBUG: set island level, now trying to save player");
+                                    plugin.getPlayers().save(targetPlayer);
+                                }
+                                //plugin.getLogger().info("DEBUG: save player, now looking at team members");
+                                // Update any team members too
+                                if (plugin.getPlayers().inTeam(targetPlayer)) {
+                                    //plugin.getLogger().info("DEBUG: player is in team");
+                                    for (UUID member : plugin.getPlayers().getMembers(targetPlayer)) {
+                                        //plugin.getLogger().info("DEBUG: updating team member level too");
+                                        if (plugin.getPlayers().getIslandLevel(member) != event.getLevel()) {
+                                            plugin.getPlayers().setIslandLevel(member, event.getLevel());
+                                            plugin.getPlayers().save(member);
+                                        }
+                                    }
+                                }
+                                //plugin.getLogger().info("DEBUG: finished team member saving");
+                                //plugin.getLogger().info("DEBUG: updating top ten");
+                                if (plugin.getPlayers().inTeam(targetPlayer)) {
+                                    UUID leader = plugin.getPlayers().getTeamLeader(targetPlayer);
+                                    if (leader != null) {
+                                        TopTen.topTenAddEntry(leader, event.getLevel());
+                                    }
+                                } else {
+                                    TopTen.topTenAddEntry(targetPlayer, event.getLevel());
+                                }
                             }
-                            
                             // Fire the island post level calculation event
                             final IslandPostLevelEvent event2 = new IslandPostLevelEvent(targetPlayer, island, event.getLevel(), event.getPointsToNextLevel());
                             plugin.getServer().getPluginManager().callEvent(event2);

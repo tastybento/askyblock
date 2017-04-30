@@ -182,20 +182,23 @@
 			<version>5.6.7</version>
 		</dependency>
 		<dependency>
-            <groupId>be.maximvdw</groupId>
-            <artifactId>MVdWPlaceholderAPI</artifactId>
-            <version>1.0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>me.clip</groupId>
-            <artifactId>placeholderapi</artifactId>
-            <version>2.7.1</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>me.clip.deluxechat</groupId>
-            <artifactId>DeluxeChatPlaceholderAPI</artifactId>
-        </dependency>
+			<groupId>be.maximvdw</groupId>
+			<artifactId>MVdWPlaceholderAPI</artifactId>
+			<version>LATEST</version>
+		</dependency>
+		<dependency>
+			<groupId>me.clip</groupId>
+			<artifactId>placeholderapi</artifactId>
+			<version>2.7.1</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>me.clip</groupId>
+			<artifactId>DeluxeChat</artifactId>
+			<scope>system</scope>
+			<systemPath>${server.jars}/DeluxeChat.jar</systemPath>
+			<version>1.11.1</version>
+		</dependency>
 	</dependencies>
 	<repositories>
 		<repository>
@@ -211,9 +214,14 @@
 			<url>http://maven.sk89q.com/repo/</url>
 		</repository>
 		<repository>
-            <id>placeholderapi</id>
-            <url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
-        </repository>
+			<id>placeholderapi</id>
+			<url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+		</repository>
+		<repository>
+			<id>mvdw-software</id>
+			<name>MVdW Public Repositories</name>
+			<url>http://repo.mvdw-software.be/content/groups/public/</url>
+		</repository>
 	</repositories>
 	<version>4.0</version>
 </project>
