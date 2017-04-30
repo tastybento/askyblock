@@ -247,6 +247,12 @@ permissions:
           askyblock.settings.HURT_MONSTERS:
             description: Can configure the Hurt Monsters setting
             default: false
+          askyblock.settings.HURT_VILLAGERS:
+            description: Can configure the Hurt Villagers setting
+            default: false
+          askyblock.settings.INTERACT_TAMED:
+            description: Can configure the Interact Tamed setting
+            default: false
           askyblock.settings.LEASH:
             description: Can configure the Leash setting
             default: false

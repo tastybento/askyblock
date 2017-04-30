@@ -366,6 +366,7 @@ islandguardsettings:
   hurtanimals: "Visitor animal hurting"
   hurtmonsters: "Visitor monster hurting"
   hurtvillagers: "Visitor villager hurting"
+  interacttamed: "Visitors can interact with tamed animals"
   joinleaveislandmessages: "Enter/exit island messages"
   jukebox: "Visitor jukebox use"
   leash: "Visitor leash use"

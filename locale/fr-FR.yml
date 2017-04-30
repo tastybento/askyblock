@@ -363,6 +363,7 @@ islandguardsettings:
   hurtanimals: "Frapper les animaux"
   hurtmonsters: "Frapper les monstres"
   hurtvillagers: "Frapper les villageois"
+  interacttamed: "Interagir avec les animaux domestiqués"
   joinleaveislandmessages: "Montrer les messages d'entrée/sortie de l'île"
   jukebox: "Jukebox"
   leash: "Laisse"

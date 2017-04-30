@@ -205,6 +205,9 @@ public class Island implements Cloneable {
         // Can hurt villagers
         HURT_VILLAGERS,
         
+        // Can interact with tamed animals
+        INTERACT_TAMED,
+        
         // Can leash or unleash animals
         LEASH,
         
