@@ -21,6 +21,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -201,7 +202,12 @@ public class JoinLeaveEvents implements Listener {
                             }
                             // Dynamic island range sizes with permissions
                             boolean hasARangePerm = false;
-                            int range = 0;
+                            int range = Settings.island_protectionRange;
+                            // Check for zero protection range
+                            if (island.getProtectionSize() == 0) {
+                                plugin.getLogger().warning("Player " + player.getName() + "'s island had a protection range of 0. Setting to default " + range);
+                                island.setProtectionSize(range);
+                            }
                             for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
                                 if (perms.getPermission().startsWith(Settings.PERMPREFIX + "island.range.")) {
                                     if (DEBUG)
@@ -210,14 +216,18 @@ public class JoinLeaveEvents implements Listener {
                                         // Ignore
                                         break;
                                     } else {
-                                        if (DEBUG)
-                                            plugin.getLogger().info("DEBUG: found number perm");
-                                        hasARangePerm = true;
                                         String[] spl = perms.getPermission().split(Settings.PERMPREFIX + "island.range.");
                                         if (spl.length > 1) {
-                                            range = Math.max(range, Integer.valueOf(spl[1]));
-                                            if (DEBUG)
-                                                plugin.getLogger().info("DEBUG: highest range is " + range);
+                                            if (!NumberUtils.isDigits(spl[1])) {
+                                                plugin.getLogger().severe("Player " + player.getName() + " has permission: " + perms.getPermission() + " <-- the last part MUST be a number! Ignoring...");
+                                            } else {
+                                                if (DEBUG)
+                                                    plugin.getLogger().info("DEBUG: found number perm");
+                                                hasARangePerm = true;
+                                                range = Math.max(range, Integer.valueOf(spl[1]));
+                                                if (DEBUG)
+                                                    plugin.getLogger().info("DEBUG: highest range is " + range);
+                                            }
                                         }
                                     }
                                 }

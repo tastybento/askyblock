@@ -114,7 +114,7 @@ public class IPItem {
         }
         meta.setLore(description);
         // Remove extraneous info
-        if (!Bukkit.getServer().getVersion().contains("1.7")) {
+        if (!Bukkit.getServer().getVersion().contains("1.7") && !Bukkit.getServer().getVersion().contains("1.8")) {
             meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
             meta.addItemFlags(ItemFlag.HIDE_DESTROYS);
             meta.addItemFlags(ItemFlag.HIDE_PLACED_ON);
