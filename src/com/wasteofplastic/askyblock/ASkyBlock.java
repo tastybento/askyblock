@@ -68,6 +68,7 @@ import com.wasteofplastic.askyblock.panels.ControlPanel;
 import com.wasteofplastic.askyblock.panels.SchematicsPanel;
 import com.wasteofplastic.askyblock.panels.SettingsPanel;
 import com.wasteofplastic.askyblock.panels.WarpPanel;
+import com.wasteofplastic.askyblock.placeholders.PlaceholderHandler;
 import com.wasteofplastic.askyblock.util.ASBParser;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
@@ -235,6 +236,9 @@ public class ASkyBlock extends JavaPlugin {
             if (playerEvents != null) {
                 playerEvents.removeAllTempPerms();
             }
+            
+            // Unregister Placeholders hooks
+            PlaceholderHandler.unregister(this);
         } catch (final Exception e) {
             getLogger().severe("Something went wrong saving files!");
             e.printStackTrace();
@@ -419,6 +423,9 @@ public class ASkyBlock extends JavaPlugin {
                         ASkyBlock.this.getLogger().severe("Could not register with Herochat");
                     }
                 }
+                
+                // Load Placeholders and hooks with other plugins
+                PlaceholderHandler.register(ASkyBlock.this);
 
                 // Run game rule to keep things quiet
                 try {

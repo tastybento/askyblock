@@ -518,7 +518,7 @@ teamchat:
   helpChat: "turn on/off team chat"
   noTeam: "You are not in a team!"
   noTeamAround: "None of your team are online!"
-  prefix: "[Team Chat]<{ISLAND_PLAYER}> "
+  prefix: "[Team Chat]<{player_name}> "
   spyoff: "Team chat spy off"
   spyon: "Team chat spy on"
   statusOff: "Team chat is off"

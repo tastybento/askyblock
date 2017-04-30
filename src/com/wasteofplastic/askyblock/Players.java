@@ -626,9 +626,7 @@ public class Players {
      */
     public void setIslandLevel(final int i) {
         islandLevel = i;
-        if (Settings.setTeamName) {
-            Scoreboards.getInstance().setLevel(uuid, i);
-        }
+        //Scoreboards.getInstance().setLevel(uuid, i);
     }
 
     /**

@@ -506,7 +506,7 @@ teamchat:
   helpChat: §a开启§e/§c关闭§e团队聊天
   noTeam: §c你不在一个团队中!
   noTeamAround: §c没有一个团队成员在线!
-  prefix: "§7[§a团队聊天§7]<{ISLAND_PLAYER}> "
+  prefix: "§7[§a团队聊天§7]<{player_name}> "
   spyoff: "Team chat spy off"
   spyon: "Team chat spy on"
   statusOff: §c团队聊天已经关闭

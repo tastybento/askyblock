@@ -193,10 +193,6 @@ public class Settings {
     public static boolean netherTrees;
 
     /*		CHAT		*/
-    public static String chatLevelPrefix;
-    public static String chatChallengeLevelPrefix;
-    public static String chatIslandPlayer;
-    
     public static boolean fancyIslandLevelDisplay;
     public static boolean teamChat;
     public static boolean logTeamChat;
@@ -290,9 +286,6 @@ public class Settings {
     public static boolean acidBottle;
     // Use physics when pasting schematic blocks
     public static boolean usePhysics;
-    
-    public static boolean setTeamName;
-    public static String teamSuffix;
     
     public static int cleanRate;
     

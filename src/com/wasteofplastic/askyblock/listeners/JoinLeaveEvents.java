@@ -278,13 +278,6 @@ public class JoinLeaveEvents implements Listener {
             plugin.getGrid().removeMobs(player.getLocation());
         }
 
-        // Set the TEAMNAME and TEAMSUFFIX variable if required
-        if (Settings.setTeamName) {
-            if (DEBUG)
-                plugin.getLogger().info("DEBUG: setTeamName");
-            Scoreboards.getInstance().setLevel(playerUUID);
-        }
-
         // Check if they logged in to a locked island and expel them or if they are banned
         Island currentIsland = plugin.getGrid().getIslandAt(player.getLocation());
         if (currentIsland != null && (currentIsland.isLocked() || plugin.getPlayers().isBanned(currentIsland.getOwner(),player.getUniqueId()))) {

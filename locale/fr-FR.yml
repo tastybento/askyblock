@@ -515,7 +515,7 @@ teamchat:
   helpChat: "activer/désactiver le chat d'île"
   noTeam: "Vous n'êtes pas en équipe!"
   noTeamAround: "Aucun membre de l'équipe n'est connecté!"
-  prefix: "[Ile]<{ISLAND_PLAYER}> "
+  prefix: "[Ile]<{player_name}> "
   spyoff: "Espionnage du chat d'île désactivé"
   spyon: "Espionnage du chat d'île activé"
   statusOff: "Chat d'île désactivé"

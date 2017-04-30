@@ -545,17 +545,8 @@ general:
    
    # Set this to true will include coop players to the island TeamChat.
    teamchatincludecoop: false
-
-   # Variables to use as chat prefixes. You can change them to be what you want.
-   # {ISLAND_LEVEL} is replaced by the player's island level.
-   # {ISLAND_CHALLENGE_LEVEL} is replaced by the player's challenge level.
-   # {ISLAND_PLAYER} is replaced by the player's display name
-   # Confirmed to work with Essentials Chat, Multiverse Core and Herochat.
-   # Do not use these in PEX prefixes - it doesn't work.
-   chatlevelprefix: "{ISLAND_LEVEL}"
-   chatchallengelevelprefix: "{ISLAND_CHALLENGE_LEVEL}"
-   chatislandplayer: "{ISLAND_PLAYER}"
-   # Displays the island level {ISLAND_LEVEL} with a XX.Xk pattern in chat
+   
+   # Displays the island level {island_level} with a XX.Xk pattern in chat
    # e.g : [23.5k] instead of [23562]
    fancylevelinchat: false
      
