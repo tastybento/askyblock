@@ -308,6 +308,16 @@ public class ASkyBlock extends JavaPlugin {
                     bakConfig.renameTo(oldConfig);
                 } 
             }
+            
+            if (Settings.GAMETYPE.equals(Settings.GameType.ASKYBLOCK)) {
+                getCommand("island").setExecutor(new NotSetup(Reason.CONFIG_OUTDATED));
+                getCommand("asc").setExecutor(new NotSetup(Reason.CONFIG_OUTDATED));
+                getCommand("asadmin").setExecutor(new NotSetup(Reason.CONFIG_OUTDATED));
+            } else {
+                getCommand("ai").setExecutor(new NotSetup(Reason.CONFIG_OUTDATED));
+                getCommand("aic").setExecutor(new NotSetup(Reason.CONFIG_OUTDATED));
+                getCommand("acid").setExecutor(new NotSetup(Reason.CONFIG_OUTDATED));
+            }
         	return;
         }
         

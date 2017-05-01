@@ -63,6 +63,14 @@ public class ASLocale {
     private ASkyBlock plugin;
     private Locale localeObject;
 
+    // Not Setup
+    public String notSetupHeader;
+    public String notSetupDistance;
+    public String notSetupGenerator;
+    public String notSetupGeneratorMultiverse;
+    public String notSetupWorldname;
+    public String notSetupConfigOutdated;
+    
     public String changingObsidiantoLava;
     public String acidLore;
     public String acidBucket;
@@ -742,6 +750,27 @@ public class ASLocale {
             newsHeadline = ChatColor.translateAlternateColorCodes('&', locale.getString("news.headline", "[AcidIsland News] While you were offline..."));
 
         }
+        
+        // Not Setup
+        notSetupHeader = ChatColor.translateAlternateColorCodes('&', locale.getString("notsetup.header", "More set up is required before the plugin can start...\nEdit config.yml. Then restart server."));
+        notSetupDistance = ChatColor.translateAlternateColorCodes('&', locale.getString("notsetup.distance", "Make sure you set island distance. If upgrading, set it to what it was before."));
+        notSetupGenerator = ChatColor.translateAlternateColorCodes('&', 
+        		locale.getString("notsetup.generator", "The world generator for the island world is not registered."
+        				+ "\nPotential reasons are:"
+        				+ "\n  1. If you are configuring the island world as the only server world\n     Make sure you have added the world to bukkit.yml"
+        				+ "\n  2. You reloaded instead of restarting the server. Reboot and try again."));
+        notSetupGeneratorMultiverse = ChatColor.translateAlternateColorCodes('&', locale.getString("notsetup.generatormultiverse", "  3. Your Multiverse plugin is out of date. Upgrade to the latest version."));
+        notSetupWorldname = ChatColor.translateAlternateColorCodes('&', 
+        		locale.getString("notsetup.worldname", "The world name in config.yml is different to the world name in islands.yml." 
+        				+ "\nIf this is intentional, we assume you are doing a full reset."
+        				+ "\nIf so, delete islands.yml and the previous world."
+        				+ "\nIf not, correct the world name in config.yml and restart. This is probably the case if you are upgrading."));
+        notSetupConfigOutdated = ChatColor.translateAlternateColorCodes('&', 
+        		locale.getString("notsetup.configoutdated", "The config.yml file looks outdated."
+        				+ "\nMake sure you updated your configuration after upgrading."
+        				+ "\nIf this error is still happening, you probably edited the old config rather than editing the new one."
+        				+ "\nIf so, please remove the current config.yml, work on config.new.yml and rename it to config.yml."));
+        
         changingObsidiantoLava = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("changingObsidiantoLava", "Changing obsidian back into lava. Be careful!"));
         acidLore = ChatColor.translateAlternateColorCodes('&', locale.getString("acidLore", "Poison!\nBeware!\nDo not drink!"));
