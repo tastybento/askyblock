@@ -76,6 +76,7 @@ public class Settings {
     /*		MAIN SETTINGS		*/
     public static boolean updateCheck;
     public static boolean metrics;
+    public static boolean githubLink;
     
     public static long backupDuration;
     

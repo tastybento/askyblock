@@ -16,6 +16,11 @@
 # anonymous so please consider twice if you really want to disable it.
 metrics: true
 
+# ASkyBlock is an open-source plugin hosted on Github.org.
+# The plugin will automatically download data about contributors, issues and development progress,
+# in order to show how the plugin is going.
+githublink: true
+
 ##### Island Related Settings #####
 
 island:
