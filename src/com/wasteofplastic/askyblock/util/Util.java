@@ -359,7 +359,7 @@ public class Util {
 
     /**
      * Send a message to sender if message is not empty. Does not include color codes or spaces.
-     * Placeholders are set.
+     * Placeholders are set. Message is splited using \n
      * @param sender
      * @param message
      */
@@ -367,7 +367,9 @@ public class Util {
     	message = PlaceholderHandler.replacePlaceholders((Player) sender, message);
     	
         if (!ChatColor.stripColor(message).trim().isEmpty()) {
-            sender.sendMessage(message);
+            for(String part : message.split("\n")){
+            	sender.sendMessage(part);
+            }
         }
     }
 
