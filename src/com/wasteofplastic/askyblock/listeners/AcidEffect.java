@@ -51,6 +51,8 @@ import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.Island.SettingsFlag;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.Settings.GameType;
+import com.wasteofplastic.askyblock.events.acid.PlayerDamageByAcidEvent;
+import com.wasteofplastic.askyblock.events.acid.PlayerDamageByAcidEvent.Acid;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
@@ -154,17 +156,23 @@ public class AcidEffect implements Listener {
                                     this.cancel();
                                     // Check they are still in this world
                                 } else {
-                                    double health = player.getHealth() - (Settings.rainDamage - Settings.rainDamage * getDamageReduced(player));
-                                    if (health < 0D) {
-                                        health = 0D;
-                                    } else if (health > player.getMaxHealth()) {
-                                        health = player.getMaxHealth();
-                                    }
-                                    player.setHealth(health);
-                                    if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
-                                        player.getWorld().playSound(playerLoc, Sound.valueOf("FIZZ"), 3F, 3F);
-                                    } else {
-                                        player.getWorld().playSound(playerLoc, Sound.ENTITY_CREEPER_PRIMED, 3F, 3F);
+                                    // Trigger PlayerDamageByAcid event
+                                    PlayerDamageByAcidEvent acidEvent = new PlayerDamageByAcidEvent(plugin.getGrid().getIslandAt(player.getLocation()), player, Settings.rainDamage - Settings.rainDamage * getDamageReduced(player), Acid.RAIN);
+                                    plugin.getServer().getPluginManager().callEvent(acidEvent);
+                                    
+                                    if(!acidEvent.isCancelled()){
+                                        double health = player.getHealth() - acidEvent.getDamage();
+                                        if (health < 0D) {
+                                            health = 0D;
+                                        } else if (health > player.getMaxHealth()) {
+                                            health = player.getMaxHealth();
+                                        }
+                                        player.setHealth(health);
+                                        if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
+                                            player.getWorld().playSound(playerLoc, Sound.valueOf("FIZZ"), 3F, 3F);
+                                        } else {
+                                            player.getWorld().playSound(playerLoc, Sound.ENTITY_CREEPER_PRIMED, 3F, 3F);
+                                        }
                                     }
                                 }
                             }
@@ -218,17 +226,23 @@ public class AcidEffect implements Listener {
                     }
                     // Apply damage if there is any
                     if (Settings.acidDamage > 0D) {
-                        double health = player.getHealth() - (Settings.acidDamage - Settings.acidDamage * getDamageReduced(player));
-                        if (health < 0D) {
-                            health = 0D;
-                        } else if (health > player.getMaxHealth()) {
-                            health = player.getMaxHealth();
-                        }
-                        player.setHealth(health);
-                        if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
-                            player.getWorld().playSound(playerLoc, Sound.valueOf("FIZZ"), 3F, 3F);
-                        } else {
-                            player.getWorld().playSound(playerLoc, Sound.ENTITY_CREEPER_PRIMED, 3F, 3F);
+                        // Trigger PlayerDamageByAcid event
+                        PlayerDamageByAcidEvent acidEvent = new PlayerDamageByAcidEvent(plugin.getGrid().getIslandAt(player.getLocation()), player, Settings.acidDamage - Settings.acidDamage * getDamageReduced(player), Acid.WATER);
+                        plugin.getServer().getPluginManager().callEvent(acidEvent);
+                        
+                        if(!acidEvent.isCancelled()){
+                            double health = player.getHealth() - acidEvent.getDamage();
+                            if (health < 0D) {
+                                health = 0D;
+                            } else if (health > player.getMaxHealth()) {
+                                health = player.getMaxHealth();
+                            }
+                            player.setHealth(health);
+                            if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
+                                player.getWorld().playSound(playerLoc, Sound.valueOf("FIZZ"), 3F, 3F);
+                            } else {
+                                player.getWorld().playSound(playerLoc, Sound.ENTITY_CREEPER_PRIMED, 3F, 3F);
+                            }
                         }
                     }
 
