@@ -96,20 +96,20 @@ public class PluginConfig {
 
         // ASkyBlock and AcidIsland difference
         if (Settings.GAMETYPE.equals(Settings.GameType.ACIDISLAND)) {
-            Settings.island_level = plugin.getConfig().getInt("island.islandlevel", 50) - 5;
+            Settings.islandHeight = plugin.getConfig().getInt("island.islandlevel", 50) - 5;
             // The island's center is actually 5 below sea level
-            Settings.sea_level = plugin.getConfig().getInt("island.sealevel", 50);
+            Settings.seaHeight = plugin.getConfig().getInt("island.sealevel", 50);
         } else {
             // ASkyBlock
-            Settings.island_level = plugin.getConfig().getInt("island.islandlevel", 120) - 5;
+            Settings.islandHeight = plugin.getConfig().getInt("island.islandlevel", 120) - 5;
             // The island's center is actually 5 below sea level
-            Settings.sea_level = plugin.getConfig().getInt("island.sealevel", 0);
+            Settings.seaHeight = plugin.getConfig().getInt("island.sealevel", 0);
         }
-        if (Settings.island_level < 0) {
-            Settings.island_level = 0;
+        if (Settings.islandHeight < 0) {
+            Settings.islandHeight = 0;
         }
-        if (Settings.sea_level < 0) {
-            Settings.sea_level = 0;
+        if (Settings.seaHeight < 0) {
+            Settings.seaHeight = 0;
         }
         // Island reset settings
         Settings.resetLimit = plugin.getConfig().getInt("island.resetlimit", 2);

@@ -204,7 +204,7 @@ public class LevelCalcByChunk {
                                             //plugin.getLogger().info("DEBUG: Count for non-generic " + md + " is " + count);
                                             if (count > 0) {
                                                 limitCount.put(md, --count);
-                                                if (Settings.sea_level > 0 && y<=Settings.sea_level) {
+                                                if (Settings.seaHeight > 0 && y<=Settings.seaHeight) {
                                                     underWaterBlockCount += Settings.blockValues.get(md);                                                    
                                                     if (Settings.levelLogging || report) {
                                                         uwLog.add(md);
@@ -223,7 +223,7 @@ public class LevelCalcByChunk {
                                             //plugin.getLogger().info("DEBUG: Count for generic " + generic + " is " + count);
                                             if (count > 0) {  
                                                 limitCount.put(generic, --count);
-                                                if (Settings.sea_level > 0 && y<=Settings.sea_level) {
+                                                if (Settings.seaHeight > 0 && y<=Settings.seaHeight) {
                                                     underWaterBlockCount += Settings.blockValues.get(generic);
                                                     if (Settings.levelLogging || report) {
                                                         uwLog.add(md);
@@ -239,7 +239,7 @@ public class LevelCalcByChunk {
                                             }
                                         } else if (Settings.blockValues.containsKey(md)) {
                                             //plugin.getLogger().info("DEBUG: Adding " + md + " = " + Settings.blockValues.get(md));
-                                            if (Settings.sea_level > 0 && y<=Settings.sea_level) {
+                                            if (Settings.seaHeight > 0 && y<=Settings.seaHeight) {
                                                 underWaterBlockCount += Settings.blockValues.get(md);
                                                 if (Settings.levelLogging || report) {
                                                     uwLog.add(md);
@@ -252,7 +252,7 @@ public class LevelCalcByChunk {
                                             }
                                         } else if (Settings.blockValues.containsKey(generic)) {
                                             //plugin.getLogger().info("DEBUG: Adding " + generic + " = " + Settings.blockValues.get(generic));
-                                            if (Settings.sea_level > 0 && y<=Settings.sea_level) {
+                                            if (Settings.seaHeight > 0 && y<=Settings.seaHeight) {
                                                 underWaterBlockCount += Settings.blockValues.get(generic);
                                                 if (Settings.levelLogging || report) {
                                                     uwLog.add(md);

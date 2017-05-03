@@ -48,12 +48,12 @@ public class ChunkGeneratorWorld extends ChunkGenerator {
             return generateNetherBlockSections(world, random, chunkX, chunkZ, biomeGrid);
         }
         byte[][] result = new byte[world.getMaxHeight() / 16][];
-        if (Settings.sea_level == 0) {
+        if (Settings.seaHeight == 0) {
             return result;
         } else {
             for (int x = 0; x < 16; x++) {
                 for (int z = 0; z < 16; z++) {
-                    for (int y = 0; y < Settings.sea_level; y++) {
+                    for (int y = 0; y < Settings.seaHeight; y++) {
                         setBlock(result, x, y, z, (byte) Material.STATIONARY_WATER.getId()); // Stationary
                         // Water
                         // Allows stuff to fall through into oblivion, thus

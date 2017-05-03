@@ -874,7 +874,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
         }
         // Find the next free spot
         if (last == null) {
-            last = new Location(ASkyBlock.getIslandWorld(), Settings.islandXOffset + Settings.islandStartX, Settings.island_level, Settings.islandZOffset + Settings.islandStartZ);
+            last = new Location(ASkyBlock.getIslandWorld(), Settings.islandXOffset + Settings.islandStartX, Settings.islandHeight, Settings.islandZOffset + Settings.islandStartZ);
         }
         Location next = last.clone();
 
@@ -1120,7 +1120,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                             }
                         }
                         // Player height
-                        if (player.getLocation().getBlockY() < Settings.sea_level) {
+                        if (player.getLocation().getBlockY() < Settings.seaHeight) {
                             multiplier *= Settings.underWaterMultiplier;
                         }
                         // Get the value. Try the specific item
