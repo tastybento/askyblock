@@ -403,7 +403,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                             }
                             newSchem.setCompanionNames(names);
                         }
-                        
+
                         // Get chest items
                         final List<String> chestItems = schemSection.getStringList("schematics." + key + ".chestItems");
                         if (!chestItems.isEmpty()) {
@@ -483,7 +483,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                         } else {
                             // plugin.getLogger().info("No spawn block found");
                         }
-                        
+
                         // Companion spawn block
                         String cSpawnBlock = schemSection.getString("schematics." + key + ".companionspawnblock");
                         if (cSpawnBlock != null) {
@@ -491,9 +491,9 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                             try {
                                 Material companionSpawnBlock;
                                 if (StringUtils.isNumeric(cSpawnBlock)) {
-                                	companionSpawnBlock = Material.getMaterial(Integer.parseInt(cSpawnBlock));
+                                    companionSpawnBlock = Material.getMaterial(Integer.parseInt(cSpawnBlock));
                                 } else {
-                                	companionSpawnBlock = Material.valueOf(cSpawnBlock.toUpperCase());
+                                    companionSpawnBlock = Material.valueOf(cSpawnBlock.toUpperCase());
                                 }
                                 if (newSchem.setCompanionSpawnBlock(companionSpawnBlock)) {
                                     plugin.getLogger().info("Companion will spawn at the " + companionSpawnBlock.toString());
@@ -504,13 +504,13 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                 plugin.getLogger().severe("Problem with schematic '" + name + "'. Spawn block '" + cSpawnBlock + "' is unknown. Skipping...");
                             }
                         }
-                        
+
                         // Level handicap
                         newSchem.setLevelHandicap(schemSection.getInt("schematics." + key + ".levelHandicap", 0));
-                        
+
                         // Start commands
                         newSchem.setStartingCommands(schemSection.getStringList("schematics." + key + ".startcommands"));
-                        
+
                         // Store it
                         schematics.put(key, newSchem);
                         if (perm.isEmpty()) {
@@ -1226,11 +1226,11 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                             }
                         }
                         if(Settings.teamChatIncludeCoop){
-                        	for (UUID coopPlayer : CoopPlay.getInstance().getCoopPlayers(plugin.getPlayers().getIslandLocation(playerUUID))){
-                        		if(plugin.getServer().getPlayer(coopPlayer) != null){
-                        			online = true;
-                        		}
-                        	}
+                            for (UUID coopPlayer : CoopPlay.getInstance().getCoopPlayers(plugin.getPlayers().getIslandLocation(playerUUID))){
+                                if(plugin.getServer().getPlayer(coopPlayer) != null){
+                                    online = true;
+                                }
+                            }
                         }
                         if (!online) {
                             Util.sendMessage(player, ChatColor.RED + plugin.myLocale(playerUUID).teamChatNoTeamAround);
@@ -1247,12 +1247,12 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                             plugin.getChatListener().setPlayer(playerUUID);
                         }
                     } else if (Settings.teamChatIncludeCoop) {
-                    	boolean online = false;
-                    	for (UUID coopPlayer : CoopPlay.getInstance().getCoopPlayers(plugin.getPlayers().getIslandLocation(playerUUID))){
-                    		if(plugin.getServer().getPlayer(coopPlayer) != null){
-                    			online = true;
-                    		}
-                    	}
+                        boolean online = false;
+                        for (UUID coopPlayer : CoopPlay.getInstance().getCoopPlayers(plugin.getPlayers().getIslandLocation(playerUUID))){
+                            if(plugin.getServer().getPlayer(coopPlayer) != null){
+                                online = true;
+                            }
+                        }
                         if (!online) {
                             Util.sendMessage(player, ChatColor.RED + plugin.myLocale(playerUUID).teamChatNoTeamAround);
                             Util.sendMessage(player, ChatColor.GREEN + plugin.myLocale(playerUUID).teamChatStatusOff);
@@ -1267,7 +1267,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                             Util.sendMessage(player, ChatColor.GREEN + plugin.myLocale(playerUUID).teamChatStatusOn);
                             plugin.getChatListener().setPlayer(playerUUID);
                         }
-                	} else {
+                    } else {
                         Util.sendMessage(player, ChatColor.RED + plugin.myLocale(playerUUID).teamChatNoTeam);
                     }
                 } else {
@@ -1322,166 +1322,166 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                 }
                 return true;
             } else if (split[0].equalsIgnoreCase("lang")) {
-                    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.lang")) {
-                        Util.sendMessage(player, "/" + label + " lang <#>");
-                        displayLocales(player);
-                    } else {
-                        Util.sendMessage(player, ChatColor.RED + plugin.myLocale(playerUUID).errorNoPermission);
-                    }
-                    return true;
-                } else if (split[0].equalsIgnoreCase("settings")) {
-                    // Show what the plugin settings are
-                    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.settings")) {
-                        try {
-                            player.openInventory(plugin.getSettingsPanel().islandGuardPanel(player));
-                        } catch (Exception e) {
-                            if (DEBUG)
-                                e.printStackTrace();
-                            Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorCommandNotReady);
-                        }
-                    } else {
-                        Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
-                    }
-                    return true;
-                } else if (split[0].equalsIgnoreCase("lock")) {
-                    if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.lock")) {
-                        Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
-                        return true;
-                    }
-                    // plugin.getLogger().info("DEBUG: perms ok");
-                    // Find out which island they want to lock
-                    Island island = plugin.getGrid().getIsland(playerUUID);
-                    if (island == null) {
-                        // plugin.getLogger().info("DEBUG: player has no island in grid");
-                        // Player has no island in the grid
-                        Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoIsland);
-                        return true;
-                    } else {
-                        if (!island.isLocked()) {
-                            // Remove any visitors
-                            for (Player target : plugin.getServer().getOnlinePlayers()) {
-                                // See if target is on this player's island, not a mod, no bypass, and not a coop player
-                                if (!player.equals(target) && !target.isOp() && !VaultHelper.checkPerm(target, Settings.PERMPREFIX + "mod.bypassprotect")
-                                        && plugin.getGrid().isOnIsland(player, target)
-                                        && !CoopPlay.getInstance().getCoopPlayers(island.getCenter()).contains(target.getUniqueId())) {
-                                    // Send them home
-                                    if (plugin.getPlayers().inTeam(target.getUniqueId()) || plugin.getPlayers().hasIsland(target.getUniqueId())) {
-                                        plugin.getGrid().homeTeleport(target);
-                                    } else {
-                                        // Just move target to spawn
-                                        if (!target.performCommand(Settings.SPAWNCOMMAND)) {
-                                            target.teleport(player.getWorld().getSpawnLocation());
-                                        }
-                                    }
-                                    target.sendMessage(ChatColor.RED + plugin.myLocale(target.getUniqueId()).expelExpelled);
-                                    plugin.getLogger().info(player.getName() + " expelled " + target.getName() + " from their island when locking.");
-                                    // Yes they are
-                                    Util.sendMessage(player, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).expelSuccess.replace("[name]", target.getName()));
-                                }                              
-                            }
-                            Util.sendMessage(player, ChatColor.GREEN + plugin.myLocale(playerUUID).lockLocking);
-                            plugin.getMessages().tellOfflineTeam(playerUUID, HistoryMessageType.ISLAND, plugin.myLocale(playerUUID).lockPlayerLocked.replace("[name]", player.getName()));
-                            plugin.getMessages().tellTeam(playerUUID, plugin.myLocale(playerUUID).lockPlayerLocked.replace("[name]", player.getName()));
-                            island.setLocked(true);
-                        } else {
-                            Util.sendMessage(player, ChatColor.GREEN + plugin.myLocale(playerUUID).lockUnlocking);
-                            plugin.getMessages().tellOfflineTeam(playerUUID, HistoryMessageType.ISLAND, plugin.myLocale(playerUUID).lockPlayerUnlocked.replace("[name]", player.getName()));
-                            plugin.getMessages().tellTeam(playerUUID, plugin.myLocale(playerUUID).lockPlayerUnlocked.replace("[name]", player.getName()));
-                            island.setLocked(false);
-                        }
-                        return true;
-                    }
-                } else if (split[0].equalsIgnoreCase("expelall") || split[0].equalsIgnoreCase("expel!")){
-                    if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.expelall")) {
-                        Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
-                        return true;
-                    }
-                    int expelledPlayers = 0;
-                    for(Player visitor : plugin.getServer().getOnlinePlayers()){
-                    	// Check if this isn't a Citizens' NPC
-                    	if(visitor.hasMetadata("NPC")) continue;
-                    	
-                    	// It is a real player, checking he is on sender's island.
-                    	if(visitor != player && plugin.getGrid().isOnIsland(player, visitor)){
-                    		// Don't kick them if they are op
-                            if (visitor.isOp() || VaultHelper.checkPerm(visitor, Settings.PERMPREFIX + "mod.bypassprotect") || VaultHelper.checkPerm(visitor, Settings.PERMPREFIX + "mod.bypassexpel")) {
-                                continue;
-                            }
-                            
-                            // Don't kick them if they are team Members
-                            if (plugin.getPlayers().getMembers(playerUUID).contains(visitor.getUniqueId())){
-                            	continue;
-                            }
-                            
-                            // Time to kick! :D
-                            expelledPlayers++;
-                            //   Remove from coop
-                            boolean coop = CoopPlay.getInstance().removeCoopPlayer(player, visitor.getUniqueId());
-                            if(coop){
-                            	visitor.sendMessage(ChatColor.RED + plugin.myLocale(visitor.getUniqueId()).coopRemoved.replace("[name]", player.getName()));
-                            }
-                            //   Send them back to their island
-                            if (plugin.getPlayers().inTeam(visitor.getUniqueId()) || plugin.getPlayers().hasIsland(visitor.getUniqueId())) {
-                                plugin.getGrid().homeTeleport(visitor);
-                            } else {
-                                //   Just move target to spawn
-                                if (!visitor.performCommand(Settings.SPAWNCOMMAND)) {
-                                	visitor.teleport(player.getWorld().getSpawnLocation());
-                                }
-                            }
-                            visitor.sendMessage(ChatColor.RED + plugin.myLocale(visitor.getUniqueId()).expelExpelled);
-                            plugin.getLogger().info(player.getName() + " expelled " + visitor.getName() + " from their island.");
-                        }
-                    }
-                    
-                    // Expel report to the expeller
-                    if(expelledPlayers == 0){
-                    	Util.sendMessage(player, ChatColor.RED + plugin.myLocale(playerUUID).expelallNone);
-                    } else {
-                    	Util.sendMessage(player, ChatColor.RED + plugin.myLocale(playerUUID).expelallSuccess.replace("[count]", String.valueOf(expelledPlayers)));
-                    }
-                } else if (split[0].equalsIgnoreCase("go") || split[0].equalsIgnoreCase("home") || split[0].equalsIgnoreCase("h")) {
-                    if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.go")) {
-                        Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
-                        return true;
-                    }
-                    if (!plugin.getPlayers().hasIsland(playerUUID) && !plugin.getPlayers().inTeam(playerUUID)) {
-                        // Player has no island
-                        Util.sendMessage(player, ChatColor.RED + plugin.myLocale(playerUUID).errorNoIsland);
-                        return true;
-                    }
-                    // Teleport home
-                    plugin.getGrid().homeTeleport(player);
-                    if (Settings.islandRemoveMobs) {
-                        plugin.getGrid().removeMobs(player.getLocation());
-                    }
-                    return true;
-                } else if (split[0].equalsIgnoreCase("about")) {
-                	Util.sendMessage(player, ChatColor.GOLD + "About " + ChatColor.GREEN + plugin.getDescription().getName() + ChatColor.GOLD + " v" + ChatColor.AQUA + plugin.getDescription().getVersion() + ChatColor.GOLD + ":");
-                    Util.sendMessage(player, ChatColor.GOLD + "This plugin is free software: you can redistribute");
-                    Util.sendMessage(player, ChatColor.GOLD + "it and/or modify it under the terms of the GNU");
-                    Util.sendMessage(player, ChatColor.GOLD + "General Public License as published by the Free");
-                    Util.sendMessage(player, ChatColor.GOLD + "Software Foundation, either version 3 of the License,");
-                    Util.sendMessage(player, ChatColor.GOLD + "or (at your option) any later version.");
-                    Util.sendMessage(player, ChatColor.GOLD + "This plugin is distributed in the hope that it");
-                    Util.sendMessage(player, ChatColor.GOLD + "will be useful, but WITHOUT ANY WARRANTY; without");
-                    Util.sendMessage(player, ChatColor.GOLD + "even the implied warranty of MERCHANTABILITY or");
-                    Util.sendMessage(player, ChatColor.GOLD + "FITNESS FOR A PARTICULAR PURPOSE.  See the");
-                    Util.sendMessage(player, ChatColor.GOLD + "GNU General Public License for more details.");
-                    Util.sendMessage(player, ChatColor.GOLD + "You should have received a copy of the GNU");
-                    Util.sendMessage(player, ChatColor.GOLD + "General Public License along with this plugin.");
-                    Util.sendMessage(player, ChatColor.GOLD + "If not, see <http://www.gnu.org/licenses/>.");
-                    Util.sendMessage(player, ChatColor.GOLD + "Souce code is available on GitHub.");
-                    Util.sendMessage(player, ChatColor.GOLD + "(c) 2014 - 2017 by Tastybento");
-                    return true;
-                    // Spawn enderman
-                    // Enderman enderman = (Enderman)
-                    // player.getWorld().spawnEntity(player.getLocation().add(new
-                    // Vector(5,0,5)), EntityType.ENDERMAN);
-                    // enderman.setCustomName("TastyBento's Ghost");
-                    // enderman.setCarriedMaterial(new
-                    // MaterialData(Material.GRASS));
+                if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.lang")) {
+                    Util.sendMessage(player, "/" + label + " lang <#>");
+                    displayLocales(player);
+                } else {
+                    Util.sendMessage(player, ChatColor.RED + plugin.myLocale(playerUUID).errorNoPermission);
                 }
+                return true;
+            } else if (split[0].equalsIgnoreCase("settings")) {
+                // Show what the plugin settings are
+                if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.settings")) {
+                    try {
+                        player.openInventory(plugin.getSettingsPanel().islandGuardPanel(player));
+                    } catch (Exception e) {
+                        if (DEBUG)
+                            e.printStackTrace();
+                        Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorCommandNotReady);
+                    }
+                } else {
+                    Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
+                }
+                return true;
+            } else if (split[0].equalsIgnoreCase("lock")) {
+                if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.lock")) {
+                    Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
+                    return true;
+                }
+                // plugin.getLogger().info("DEBUG: perms ok");
+                // Find out which island they want to lock
+                Island island = plugin.getGrid().getIsland(playerUUID);
+                if (island == null) {
+                    // plugin.getLogger().info("DEBUG: player has no island in grid");
+                    // Player has no island in the grid
+                    Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoIsland);
+                    return true;
+                } else {
+                    if (!island.isLocked()) {
+                        // Remove any visitors
+                        for (Player target : plugin.getServer().getOnlinePlayers()) {
+                            // See if target is on this player's island, not a mod, no bypass, and not a coop player
+                            if (!player.equals(target) && !target.isOp() && !VaultHelper.checkPerm(target, Settings.PERMPREFIX + "mod.bypassprotect")
+                                    && plugin.getGrid().isOnIsland(player, target)
+                                    && !CoopPlay.getInstance().getCoopPlayers(island.getCenter()).contains(target.getUniqueId())) {
+                                // Send them home
+                                if (plugin.getPlayers().inTeam(target.getUniqueId()) || plugin.getPlayers().hasIsland(target.getUniqueId())) {
+                                    plugin.getGrid().homeTeleport(target);
+                                } else {
+                                    // Just move target to spawn
+                                    if (!target.performCommand(Settings.SPAWNCOMMAND)) {
+                                        target.teleport(player.getWorld().getSpawnLocation());
+                                    }
+                                }
+                                target.sendMessage(ChatColor.RED + plugin.myLocale(target.getUniqueId()).expelExpelled);
+                                plugin.getLogger().info(player.getName() + " expelled " + target.getName() + " from their island when locking.");
+                                // Yes they are
+                                Util.sendMessage(player, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).expelSuccess.replace("[name]", target.getName()));
+                            }                              
+                        }
+                        Util.sendMessage(player, ChatColor.GREEN + plugin.myLocale(playerUUID).lockLocking);
+                        plugin.getMessages().tellOfflineTeam(playerUUID, HistoryMessageType.ISLAND, plugin.myLocale(playerUUID).lockPlayerLocked.replace("[name]", player.getName()));
+                        plugin.getMessages().tellTeam(playerUUID, plugin.myLocale(playerUUID).lockPlayerLocked.replace("[name]", player.getName()));
+                        island.setLocked(true);
+                    } else {
+                        Util.sendMessage(player, ChatColor.GREEN + plugin.myLocale(playerUUID).lockUnlocking);
+                        plugin.getMessages().tellOfflineTeam(playerUUID, HistoryMessageType.ISLAND, plugin.myLocale(playerUUID).lockPlayerUnlocked.replace("[name]", player.getName()));
+                        plugin.getMessages().tellTeam(playerUUID, plugin.myLocale(playerUUID).lockPlayerUnlocked.replace("[name]", player.getName()));
+                        island.setLocked(false);
+                    }
+                    return true;
+                }
+            } else if (split[0].equalsIgnoreCase("expelall") || split[0].equalsIgnoreCase("expel!")){
+                if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.expelall")) {
+                    Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
+                    return true;
+                }
+                int expelledPlayers = 0;
+                for(Player visitor : plugin.getServer().getOnlinePlayers()){
+                    // Check if this isn't a Citizens' NPC
+                    if(visitor.hasMetadata("NPC")) continue;
+
+                    // It is a real player, checking he is on sender's island.
+                    if(visitor != player && plugin.getGrid().isOnIsland(player, visitor)){
+                        // Don't kick them if they are op
+                        if (visitor.isOp() || VaultHelper.checkPerm(visitor, Settings.PERMPREFIX + "mod.bypassprotect") || VaultHelper.checkPerm(visitor, Settings.PERMPREFIX + "mod.bypassexpel")) {
+                            continue;
+                        }
+
+                        // Don't kick them if they are team Members
+                        if (plugin.getPlayers().getMembers(playerUUID).contains(visitor.getUniqueId())){
+                            continue;
+                        }
+
+                        // Time to kick! :D
+                        expelledPlayers++;
+                        //   Remove from coop
+                        boolean coop = CoopPlay.getInstance().removeCoopPlayer(player, visitor.getUniqueId());
+                        if(coop){
+                            visitor.sendMessage(ChatColor.RED + plugin.myLocale(visitor.getUniqueId()).coopRemoved.replace("[name]", player.getName()));
+                        }
+                        //   Send them back to their island
+                        if (plugin.getPlayers().inTeam(visitor.getUniqueId()) || plugin.getPlayers().hasIsland(visitor.getUniqueId())) {
+                            plugin.getGrid().homeTeleport(visitor);
+                        } else {
+                            //   Just move target to spawn
+                            if (!visitor.performCommand(Settings.SPAWNCOMMAND)) {
+                                visitor.teleport(player.getWorld().getSpawnLocation());
+                            }
+                        }
+                        visitor.sendMessage(ChatColor.RED + plugin.myLocale(visitor.getUniqueId()).expelExpelled);
+                        plugin.getLogger().info(player.getName() + " expelled " + visitor.getName() + " from their island.");
+                    }
+                }
+
+                // Expel report to the expeller
+                if(expelledPlayers == 0){
+                    Util.sendMessage(player, ChatColor.RED + plugin.myLocale(playerUUID).expelallNone);
+                } else {
+                    Util.sendMessage(player, ChatColor.RED + plugin.myLocale(playerUUID).expelallSuccess.replace("[count]", String.valueOf(expelledPlayers)));
+                }
+            } else if (split[0].equalsIgnoreCase("go") || split[0].equalsIgnoreCase("home") || split[0].equalsIgnoreCase("h")) {
+                if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.go")) {
+                    Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
+                    return true;
+                }
+                if (!plugin.getPlayers().hasIsland(playerUUID) && !plugin.getPlayers().inTeam(playerUUID)) {
+                    // Player has no island
+                    Util.sendMessage(player, ChatColor.RED + plugin.myLocale(playerUUID).errorNoIsland);
+                    return true;
+                }
+                // Teleport home
+                plugin.getGrid().homeTeleport(player);
+                if (Settings.islandRemoveMobs) {
+                    plugin.getGrid().removeMobs(player.getLocation());
+                }
+                return true;
+            } else if (split[0].equalsIgnoreCase("about")) {
+                Util.sendMessage(player, ChatColor.GOLD + "About " + ChatColor.GREEN + plugin.getDescription().getName() + ChatColor.GOLD + " v" + ChatColor.AQUA + plugin.getDescription().getVersion() + ChatColor.GOLD + ":");
+                Util.sendMessage(player, ChatColor.GOLD + "This plugin is free software: you can redistribute");
+                Util.sendMessage(player, ChatColor.GOLD + "it and/or modify it under the terms of the GNU");
+                Util.sendMessage(player, ChatColor.GOLD + "General Public License as published by the Free");
+                Util.sendMessage(player, ChatColor.GOLD + "Software Foundation, either version 3 of the License,");
+                Util.sendMessage(player, ChatColor.GOLD + "or (at your option) any later version.");
+                Util.sendMessage(player, ChatColor.GOLD + "This plugin is distributed in the hope that it");
+                Util.sendMessage(player, ChatColor.GOLD + "will be useful, but WITHOUT ANY WARRANTY; without");
+                Util.sendMessage(player, ChatColor.GOLD + "even the implied warranty of MERCHANTABILITY or");
+                Util.sendMessage(player, ChatColor.GOLD + "FITNESS FOR A PARTICULAR PURPOSE.  See the");
+                Util.sendMessage(player, ChatColor.GOLD + "GNU General Public License for more details.");
+                Util.sendMessage(player, ChatColor.GOLD + "You should have received a copy of the GNU");
+                Util.sendMessage(player, ChatColor.GOLD + "General Public License along with this plugin.");
+                Util.sendMessage(player, ChatColor.GOLD + "If not, see <http://www.gnu.org/licenses/>.");
+                Util.sendMessage(player, ChatColor.GOLD + "Souce code is available on GitHub.");
+                Util.sendMessage(player, ChatColor.GOLD + "(c) 2014 - 2017 by Tastybento");
+                return true;
+                // Spawn enderman
+                // Enderman enderman = (Enderman)
+                // player.getWorld().spawnEntity(player.getLocation().add(new
+                // Vector(5,0,5)), EntityType.ENDERMAN);
+                // enderman.setCustomName("TastyBento's Ghost");
+                // enderman.setCarriedMaterial(new
+                // MaterialData(Material.GRASS));
+            }
 
             if (split[0].equalsIgnoreCase("controlpanel") || split[0].equalsIgnoreCase("cp")) {
                 if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.controlpanel")) {
@@ -1808,6 +1808,11 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                 return true;
             } else if (split[0].equalsIgnoreCase("listcoops")) {
                 if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "coop")) {
+                    if (!plugin.getPlayers().hasIsland(playerUUID)) {
+                        // Player has no island
+                        Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoIsland);
+                        return true;
+                    }
                     Island island = plugin.getGrid().getIsland(playerUUID);
                     boolean none = true;
                     for (UUID uuid: CoopPlay.getInstance().getCoopPlayers(island.getCenter())) {
@@ -1961,9 +1966,9 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                     // If player is not in a team but has been invited to join
                     // one
                     if (!plugin.getPlayers().inTeam(playerUUID) && inviteList.containsKey(playerUUID)) {
-                    	// Trigger PlayerAcceptInviteEvent
-                    	plugin.getServer().getPluginManager().callEvent(new PlayerAcceptInviteEvent(player));
-                    	
+                        // Trigger PlayerAcceptInviteEvent
+                        plugin.getServer().getPluginManager().callEvent(new PlayerAcceptInviteEvent(player));
+
                         // If the invitee has an island of their own
                         if (plugin.getPlayers().hasIsland(playerUUID)) {
                             plugin.getLogger().info(player.getName() + "'s island will be deleted because they joined a party.");
@@ -2007,9 +2012,9 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
             } else if (split[0].equalsIgnoreCase("reject")) {
                 // Reject /island reject
                 if (inviteList.containsKey(player.getUniqueId())) {
-                	// Trigger PlayerRejectInviteEvent
-                	plugin.getServer().getPluginManager().callEvent(new PlayerRejectInviteEvent(player));
-                	
+                    // Trigger PlayerRejectInviteEvent
+                    plugin.getServer().getPluginManager().callEvent(new PlayerRejectInviteEvent(player));
+
                     Util.sendMessage(player, ChatColor.YELLOW + plugin.myLocale(player.getUniqueId()).rejectyouHaveRejectedInvitation);
                     // If the player is online still then tell them directly
                     // about the rejection
@@ -2947,25 +2952,25 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                     }
                                     // Check for confirmation
                                     if(!kickingPlayers.contains(playerUUID)){
-                                    	kickingPlayers.add(playerUUID);
-                                    	Util.sendMessage(player, ChatColor.RED + plugin.myLocale(playerUUID).kickWarning.replace("[command]", label + " " + split[0] + " " + split[1]));
-                                    	new BukkitRunnable() {
+                                        kickingPlayers.add(playerUUID);
+                                        Util.sendMessage(player, ChatColor.RED + plugin.myLocale(playerUUID).kickWarning.replace("[command]", label + " " + split[0] + " " + split[1]));
+                                        new BukkitRunnable() {
 
-											@Override
-											public void run() {
-												// If the player is still on the list, remove them and cancel the leave
-												if (kickingPlayers.contains(playerUUID)) {
-													kickingPlayers.remove(playerUUID);
-												    Util.sendMessage(player, ChatColor.RED + plugin.myLocale(playerUUID).kickCancelled);
-												}
-											}
-                                    		
-                                    	}.runTaskLater(plugin, Settings.resetConfirmWait * 20L);
-                                    	return true;
+                                            @Override
+                                            public void run() {
+                                                // If the player is still on the list, remove them and cancel the leave
+                                                if (kickingPlayers.contains(playerUUID)) {
+                                                    kickingPlayers.remove(playerUUID);
+                                                    Util.sendMessage(player, ChatColor.RED + plugin.myLocale(playerUUID).kickCancelled);
+                                                }
+                                            }
+
+                                        }.runTaskLater(plugin, Settings.resetConfirmWait * 20L);
+                                        return true;
                                     }
                                     // Remove from confirmation list
                                     kickingPlayers.remove(playerUUID);
-                                    
+
                                     // Try to kick player
                                     if (!removePlayerFromTeam(targetPlayer, teamLeader)) {
                                         //Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).leaveerrorYouCannotLeaveIsland);
