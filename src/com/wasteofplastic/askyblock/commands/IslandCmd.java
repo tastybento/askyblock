@@ -1698,6 +1698,11 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                 return true;
             } else if (split[0].equalsIgnoreCase("listcoops")) {
                 if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "coop")) {
+                    if (!plugin.getPlayers().hasIsland(playerUUID)) {
+                        // Player has no island
+                        Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoIsland);
+                        return true;
+                    }
                     Island island = plugin.getGrid().getIsland(playerUUID);
                     boolean none = true;
                     for (UUID uuid: CoopPlay.getInstance().getCoopPlayers(island.getCenter())) {
@@ -1705,9 +1710,9 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                         none = false;
                     }
                     if (none) {
-                        Util.sendMessage(player, plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " coop <player>: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpCoop);
+                        Util.sendMessage(player, plugin.myLocale(playerUUID).helpColor + "/" + label + " coop <player>: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpCoop);
                     } else {
-                        Util.sendMessage(player, plugin.myLocale(player.getUniqueId()).helpColor + plugin.myLocale(playerUUID).coopUseExpel);
+                        Util.sendMessage(player, plugin.myLocale(playerUUID).helpColor + plugin.myLocale(playerUUID).coopUseExpel);
                     }
                     return true;
                 }
