@@ -41,6 +41,8 @@ import org.bukkit.util.BlockIterator;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Settings;
+import com.wasteofplastic.askyblock.events.acid.ItemFillWithAcidEvent;
+import com.wasteofplastic.askyblock.events.acid.PlayerDrinkAcidEvent;
 import com.wasteofplastic.askyblock.nms.NMSAbstraction;
 import com.wasteofplastic.askyblock.util.Util;
 
@@ -87,13 +89,19 @@ public class AcidInventory implements Listener {
                     if (item != null) {
                         // plugin.getLogger().info(item.toString());
                         if (item.getType() == Material.WATER_BUCKET) {
-                            if (DEBUG)
-                                plugin.getLogger().info("Found it!");
-                            ItemMeta meta = item.getItemMeta();
-                            meta.setDisplayName(plugin.myLocale(e.getPlayer().getUniqueId()).acidBucket);
-                            lore = Arrays.asList(plugin.myLocale(e.getPlayer().getUniqueId()).acidLore.split("\n"));
-                            meta.setLore(lore);
-                            item.setItemMeta(meta);
+                            // Trigger ItemFillWithAcid event
+                            ItemFillWithAcidEvent acidEvent = new ItemFillWithAcidEvent(plugin.getGrid().getIslandAt(e.getPlayer().getLocation()), (Player) e.getPlayer(), item);
+                            plugin.getServer().getPluginManager().callEvent(acidEvent);
+                            
+                            if(!acidEvent.isCancelled()){
+                                if (DEBUG)
+                                    plugin.getLogger().info("Found it!");
+                                ItemMeta meta = item.getItemMeta();
+                                meta.setDisplayName(plugin.myLocale(e.getPlayer().getUniqueId()).acidBucket);
+                                lore = Arrays.asList(plugin.myLocale(e.getPlayer().getUniqueId()).acidLore.split("\n"));
+                                meta.setLore(lore);
+                                item.setItemMeta(meta);
+                            }
                         }
                     }
                 }
@@ -112,13 +120,19 @@ public class AcidInventory implements Listener {
                                 return;
                             }
                             if (!nms.isPotion(item)) {
-                                if (DEBUG)
-                                    plugin.getLogger().info("Found it!");
-                                ItemMeta meta = item.getItemMeta();
-                                meta.setDisplayName(plugin.myLocale(e.getPlayer().getUniqueId()).acidBottle);
-                                lore = Arrays.asList(plugin.myLocale(e.getPlayer().getUniqueId()).acidLore.split("\n"));
-                                meta.setLore(lore);
-                                item.setItemMeta(meta);
+                                // Trigger ItemFillWithAcid event
+                                ItemFillWithAcidEvent acidEvent = new ItemFillWithAcidEvent(plugin.getGrid().getIslandAt(e.getPlayer().getLocation()), (Player) e.getPlayer(), item);
+                                plugin.getServer().getPluginManager().callEvent(acidEvent);
+                                
+                                if(!acidEvent.isCancelled()){
+                                    if (DEBUG)
+                                        plugin.getLogger().info("Found it!");
+                                    ItemMeta meta = item.getItemMeta();
+                                    meta.setDisplayName(plugin.myLocale(e.getPlayer().getUniqueId()).acidBottle);
+                                    lore = Arrays.asList(plugin.myLocale(e.getPlayer().getUniqueId()).acidLore.split("\n"));
+                                    meta.setLore(lore);
+                                    item.setItemMeta(meta);
+                                }
                             }
                         }
                     }
@@ -142,11 +156,17 @@ public class AcidInventory implements Listener {
             if (Settings.acidDamage > 0D && Settings.acidBottle) {
                 ItemStack item = e.getItemStack();
                 if (item.getType().equals(Material.WATER_BUCKET) || item.getType().equals(Material.POTION)) {
-                    ItemMeta meta = item.getItemMeta();
-                    meta.setDisplayName(plugin.myLocale(e.getPlayer().getUniqueId()).acidBucket);
-                    lore = Arrays.asList(plugin.myLocale(e.getPlayer().getUniqueId()).acidLore.split("\n"));
-                    meta.setLore(lore);
-                    item.setItemMeta(meta);
+                    // Trigger ItemFillWithAcid event
+                    ItemFillWithAcidEvent acidEvent = new ItemFillWithAcidEvent(plugin.getGrid().getIslandAt(e.getPlayer().getLocation()), e.getPlayer(), item);
+                    plugin.getServer().getPluginManager().callEvent(acidEvent);
+                    
+                    if(!acidEvent.isCancelled()){
+                        ItemMeta meta = item.getItemMeta();
+                        meta.setDisplayName(plugin.myLocale(e.getPlayer().getUniqueId()).acidBucket);
+                        lore = Arrays.asList(plugin.myLocale(e.getPlayer().getUniqueId()).acidLore.split("\n"));
+                        meta.setLore(lore);
+                        item.setItemMeta(meta);
+                    }
                 }
             }
         }
@@ -173,16 +193,22 @@ public class AcidInventory implements Listener {
                 return;
             }
             if (!nms.isPotion(e.getItem())) {
-                plugin.getLogger().info(e.getPlayer().getName() + " " + plugin.myLocale().drankAcidAndDied);
-                if (!Settings.muteDeathMessages) {
-                    for (Player p : plugin.getServer().getOnlinePlayers()) {
-                        Util.sendMessage(p, e.getPlayer().getName() + " " + plugin.myLocale(p.getUniqueId()).drankAcid);
+                // Trigger PlayerDrinkAcid event
+                PlayerDrinkAcidEvent acidEvent = new PlayerDrinkAcidEvent(plugin.getGrid().getIslandAt(e.getPlayer().getLocation()), e.getPlayer());
+                plugin.getServer().getPluginManager().callEvent(acidEvent);
+                
+                if(!acidEvent.isCancelled()){
+                    plugin.getLogger().info(e.getPlayer().getName() + " " + plugin.myLocale().drankAcidAndDied);
+                    if (!Settings.muteDeathMessages) {
+                        for (Player p : plugin.getServer().getOnlinePlayers()) {
+                            Util.sendMessage(p, e.getPlayer().getName() + " " + plugin.myLocale(p.getUniqueId()).drankAcid);
+                        }
                     }
+                    final ItemStack item = new ItemStack(Material.GLASS_BOTTLE);
+                    e.getPlayer().setItemInHand(item);
+                    e.getPlayer().setHealth(0D);
+                    e.setCancelled(true);
                 }
-                final ItemStack item = new ItemStack(Material.GLASS_BOTTLE);
-                e.getPlayer().setItemInHand(item);
-                e.getPlayer().setHealth(0D);
-                e.setCancelled(true);
             }
         }
     }
@@ -201,14 +227,14 @@ public class AcidInventory implements Listener {
         if (e.getBlock().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
             //if (Settings.acidBottle && Settings.acidDamage>0 && e.getBlock().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
 
-            plugin.getLogger().info("DEBUG: Brew Event called");
+            if (DEBUG) plugin.getLogger().info("DEBUG: Brew Event called");
             BrewerInventory inv = e.getContents();
             int i = 0;
             for (ItemStack item : inv.getContents()) {
                 if (item != null) {
                     // Remove lore
                     ItemMeta meta = item.getItemMeta();
-                    plugin.getLogger().info("DEBUG: " + meta.getDisplayName());
+                    if (DEBUG) plugin.getLogger().info("DEBUG: " + meta.getDisplayName());
                     meta.setDisplayName(null);
                     inv.setItem(i, item);
                 }
@@ -269,15 +295,21 @@ public class AcidInventory implements Listener {
                                         return;
                                     }
                                     if (!nms.isPotion(item)) {
-                                        // plugin.getLogger().info("Water bottle found!");
-                                        ItemMeta meta = item.getItemMeta();
-                                        meta.setDisplayName(plugin.myLocale(e.getPlayer().getUniqueId()).acidBottle);
-                                        // ArrayList<String> lore = new
-                                        // ArrayList<String>(Arrays.asList("Poison",
-                                        // "Beware!", "Do not drink!"));
-                                        meta.setLore(lore);
-                                        item.setItemMeta(meta);
-                                        inv.setItem(i, item);
+                                        // Trigger ItemFillWithAcid event
+                                        ItemFillWithAcidEvent acidEvent = new ItemFillWithAcidEvent(plugin.getGrid().getIslandAt(e.getPlayer().getLocation()), (Player) e.getPlayer(), item);
+                                        plugin.getServer().getPluginManager().callEvent(acidEvent);
+
+                                        if(!acidEvent.isCancelled()){
+                                            // plugin.getLogger().info("Water bottle found!");
+                                            ItemMeta meta = item.getItemMeta();
+                                            meta.setDisplayName(plugin.myLocale(e.getPlayer().getUniqueId()).acidBottle);
+                                            // ArrayList<String> lore = new
+                                            // ArrayList<String>(Arrays.asList("Poison",
+                                            // "Beware!", "Do not drink!"));
+                                            meta.setLore(lore);
+                                            item.setItemMeta(meta);
+                                            inv.setItem(i, item);
+                                        }
                                     }
                                 }
                             }

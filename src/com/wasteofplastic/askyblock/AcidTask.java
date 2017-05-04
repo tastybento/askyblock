@@ -11,9 +11,13 @@ import org.bukkit.entity.Animals;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Guardian;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Monster;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
+
+import com.wasteofplastic.askyblock.events.acid.EntityDamageByAcidEvent;
+import com.wasteofplastic.askyblock.events.acid.ItemDestroyByAcidEvent;
 
 public class AcidTask {
     private ASkyBlock plugin;
@@ -44,16 +48,34 @@ public class AcidTask {
                         if ((current instanceof Monster) && Settings.mobAcidDamage > 0D) {
                             if ((current.getLocation().getBlock().getType() == Material.WATER)
                                     || (current.getLocation().getBlock().getType() == Material.STATIONARY_WATER)) {
-                                ((Monster) current).damage(Settings.mobAcidDamage);
-                                // getLogger().info("Killing monster");
+                                // Trigger EntityDamageByAcid event
+                                EntityDamageByAcidEvent event = new EntityDamageByAcidEvent(plugin.getGrid().getIslandAt(current.getLocation()), current, Settings.mobAcidDamage);
+                                plugin.getServer().getPluginManager().callEvent(event);
+                                
+                                if(!event.isCancelled()){
+                                    ((Monster) current).damage(event.getDamage());
+                                    // getLogger().info("Killing monster");
+                                }
                             }
                         } else if ((current instanceof Animals) && Settings.animalAcidDamage > 0D) {
                             if ((current.getLocation().getBlock().getType() == Material.WATER)
                                     || (current.getLocation().getBlock().getType() == Material.STATIONARY_WATER)) {
                                 if (!current.getType().equals(EntityType.CHICKEN)) {
-                                    ((Animals) current).damage(Settings.animalAcidDamage);
+                                    // Trigger EntityDamageByAcid event
+                                    EntityDamageByAcidEvent event = new EntityDamageByAcidEvent(plugin.getGrid().getIslandAt(current.getLocation()), current, Settings.animalAcidDamage);
+                                    plugin.getServer().getPluginManager().callEvent(event);
+                                    
+                                    if(!event.isCancelled()){
+                                        ((Animals) current).damage(event.getDamage());
+                                    }
                                 } else if (Settings.damageChickens) {
-                                    ((Animals) current).damage(Settings.animalAcidDamage);
+                                    // Trigger EntityDamageByAcid event
+                                    EntityDamageByAcidEvent event = new EntityDamageByAcidEvent(plugin.getGrid().getIslandAt(current.getLocation()), current, Settings.animalAcidDamage);
+                                    plugin.getServer().getPluginManager().callEvent(event);
+                                    
+                                    if(!event.isCancelled()){
+                                        ((Animals) current).damage(event.getDamage());
+                                    }
                                 }
                                 // getLogger().info("Killing animal");
                             }
@@ -83,13 +105,19 @@ public class AcidTask {
                                 //plugin.getLogger().info("DEBUG: Item in water " + current.toString());
                                 // Check if this item was in the list last time
                                 if (itemsInWater.contains(current.getUniqueId())) {
-                                    // Remove item
-                                    if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
-                                        current.getWorld().playSound(current.getLocation(), Sound.valueOf("FIZZ"), 3F, 3F);
-                                    } else {
-                                        current.getWorld().playSound(current.getLocation(), Sound.ENTITY_CREEPER_PRIMED, 3F, 3F);
+                                    // Trigger ItemDestroyByAcid event
+                                    ItemDestroyByAcidEvent event = new ItemDestroyByAcidEvent(plugin.getGrid().getIslandAt(current.getLocation()), (Item) current);
+                                    plugin.getServer().getPluginManager().callEvent(event);
+                                    
+                                    if(!event.isCancelled()){
+                                        // Remove item
+                                        if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
+                                            current.getWorld().playSound(current.getLocation(), Sound.valueOf("FIZZ"), 3F, 3F);
+                                        } else {
+                                            current.getWorld().playSound(current.getLocation(), Sound.ENTITY_CREEPER_PRIMED, 3F, 3F);
+                                        }
+                                        current.remove();
                                     }
-                                    current.remove();
                                 } else {
                                     // Add to list
                                     newItemsInWater.add(current.getUniqueId());
