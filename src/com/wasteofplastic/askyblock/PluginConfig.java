@@ -586,7 +586,11 @@ public class PluginConfig {
         // Check if /island command is allowed when falling
         Settings.allowTeleportWhenFalling = plugin.getConfig().getBoolean("general.allowfallingteleport", true);
         Settings.fallingCommandBlockList = plugin.getConfig().getStringList("general.blockingcommands");
-
+        
+        // Check if /island command is allowed when in acid
+        Settings.allowTeleportWhenInAcid = plugin.getConfig().getBoolean("general.allowacidteleport", true);
+        Settings.acidCommandBlockList = plugin.getConfig().getStringList("general.acidblockingcommands");
+        
         // Challenges
         Settings.broadcastMessages = plugin.getConfig().getBoolean("general.broadcastmessages", true);
         Settings.removeCompleteOntimeChallenges = plugin.getConfig().getBoolean("general.removecompleteonetimechallenges", false);

@@ -147,6 +147,9 @@ permissions:
       askyblock.bypassfalling:
         description: Allow player to execute commands or teleport while falling
         default: false
+      askyblock.bypassacid:
+        description: Allow player to execute commands or teleport while in acid
+        default: false
       askyblock.islandfly:
         description: Allow player to fly inside his island boundaries
         default: false

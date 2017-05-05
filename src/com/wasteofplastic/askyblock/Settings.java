@@ -243,6 +243,9 @@ public class Settings {
     public static boolean damageChickens;
     public static long acidItemDestroyTime;
     
+    public static List<String> acidCommandBlockList;
+    public static boolean allowTeleportWhenInAcid;
+    
     /*		CHALLENGES		*/
     public static List<String> challengeLevels;
     public static List<String> freeLevels = new ArrayList<String>();
