@@ -781,9 +781,10 @@ public class PluginConfig {
         for (String setting: protectionWorld.getKeys(false)) {
             try {
                 SettingsFlag flag = SettingsFlag.valueOf(setting.toUpperCase());
-                Settings.defaultWorldSettings.put(flag, plugin.getConfig().getBoolean("protection.world." + flag.name()));
-                Settings.defaultSpawnSettings.put(flag, Settings.defaultWorldSettings.get(flag));
-                Settings.defaultIslandSettings.put(flag, Settings.defaultWorldSettings.get(flag));
+                boolean value = plugin.getConfig().getBoolean("protection.world." + flag.name());
+                Settings.defaultWorldSettings.put(flag, value);
+                Settings.defaultSpawnSettings.put(flag, value);
+                Settings.defaultIslandSettings.put(flag, value);
             } catch (Exception e) {
                 plugin.getLogger().severe("Unknown setting in config.yml:protection.world " + setting.toUpperCase() + " skipping...");
             }
@@ -793,6 +794,12 @@ public class PluginConfig {
             if (!Settings.defaultWorldSettings.containsKey(flag)) {
                 plugin.getLogger().warning("config.yml:protection.world."+flag.name() + " is missing. You should add it to the config file. Setting to false by default");
                 Settings.defaultWorldSettings.put(flag, false);
+            }
+            if (!Settings.defaultIslandSettings.containsKey(flag)) {
+                Settings.defaultIslandSettings.put(flag, false);
+            }
+            if (!Settings.defaultSpawnSettings.containsKey(flag)) {
+                Settings.defaultSpawnSettings.put(flag, false);
             }
         }
         ConfigurationSection protectionIsland = plugin.getConfig().getConfigurationSection("protection.island");
@@ -807,7 +814,6 @@ public class PluginConfig {
                 plugin.getLogger().severe("Unknown setting in config.yml:island.world " + setting.toUpperCase() + " skipping...");
             }
         }
-
         // ******************** Biome Settings *********************
         Settings.biomeCost = plugin.getConfig().getDouble("biomesettings.defaultcost", 100D);
         if (Settings.biomeCost < 0D) {

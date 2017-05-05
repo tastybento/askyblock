@@ -400,7 +400,12 @@ public class Island implements Cloneable {
                 // Default default
                 this.igs.put(flag, false);
             } else {
-                this.igs.put(flag, Settings.defaultIslandSettings.get(flag));
+                if (Settings.defaultIslandSettings.get(flag) == null) {
+                    //plugin.getLogger().info("DEBUG: null flag " + flag);
+                    this.igs.put(flag, false);
+                } else {
+                    this.igs.put(flag, Settings.defaultIslandSettings.get(flag));
+                }
             }
         }
     }
@@ -414,7 +419,11 @@ public class Island implements Cloneable {
                 // Default default
                 this.igs.put(flag, false);
             } else {
-                this.igs.put(flag, Settings.defaultSpawnSettings.get(flag));
+                if (Settings.defaultSpawnSettings.get(flag) == null) {
+                    this.igs.put(flag, false);
+                } else {
+                    this.igs.put(flag, Settings.defaultSpawnSettings.get(flag));
+                }
             }
         }
     }
