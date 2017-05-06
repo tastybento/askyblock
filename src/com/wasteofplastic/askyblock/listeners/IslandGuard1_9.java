@@ -294,7 +294,8 @@ public class IslandGuard1_9 implements Listener {
             return;
         }
         // General settings irrespective of whether this is allowed or not
-        if (!Settings.allowTNTDamage) {
+        Island island = plugin.getGrid().getProtectedIslandAt(e.getEntity().getLocation());
+        if (island != null && !island.getIgsFlag(SettingsFlag.TNT_DAMAGE)) {
             plugin.getLogger().info("1.9 " +"TNT block damage prevented");
             e.blockList().clear();
         } else {

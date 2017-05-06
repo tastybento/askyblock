@@ -118,15 +118,12 @@ public class Settings {
     //System settings
     public static boolean allowAutoActivator;
     public static boolean allowChestDamage;
-    public static boolean allowCreeperDamage;
     public static boolean allowCreeperGriefing;
     public static boolean allowEndermanGriefing;
-    public static boolean allowFireExtinguish;
     public static boolean allowMobDamageToItemFrames;
     public static boolean allowObsidianScooping;
     public static boolean allowPistonPush;
     public static boolean allowPushing;
-    public static boolean allowTNTDamage;
     public static boolean allowVisitorKeepInvOnDeath;
     public static boolean endermanDeathDrop;
     public static boolean restrictWither;

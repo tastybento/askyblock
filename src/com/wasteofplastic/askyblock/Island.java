@@ -154,6 +154,9 @@ public class Island implements Cloneable {
         // Allow creepers to hurt players (but not to damage blocks)
         CREEPER_PAIN,
         
+        // Allow creepers to damage blocks
+        CREEPER_DAMAGE,
+        
         // Can trample crops
         CROP_TRAMPLE,
         
@@ -252,6 +255,9 @@ public class Island implements Cloneable {
         
         // Can shear sheep
         SHEARING,
+        
+        // TNT damages blocks
+        TNT_DAMAGE,
         
         // Can trade with villagers
         VILLAGER_TRADING,

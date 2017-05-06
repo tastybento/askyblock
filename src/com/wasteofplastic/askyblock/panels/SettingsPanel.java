@@ -109,7 +109,13 @@ public class SettingsPanel implements Listener {
         lookup.put(Material.SIGN, SettingsFlag.ENTER_EXIT_MESSAGES);
         lookup.put(Material.STONE, SettingsFlag.BREAK_BLOCKS);
         lookup.put(Material.STONE_SWORD, SettingsFlag.HURT_VILLAGERS);
+        
+        // These 3 "TNT" settings will not stay like that, as I will edit later how SettingsPanel work
+        // - Poslovitch
         lookup.put(Material.TNT, SettingsFlag.CREEPER_PAIN);
+        lookup.put(Material.TNT, SettingsFlag.CREEPER_DAMAGE);
+        lookup.put(Material.TNT, SettingsFlag.TNT_DAMAGE);
+        
         lookup.put(Material.TORCH, SettingsFlag.FIRE_SPREAD);
         lookup.put(Material.WATER_BUCKET, SettingsFlag.COLLECT_WATER);
         lookup.put(Material.WHEAT, SettingsFlag.CROP_TRAMPLE);
@@ -146,10 +152,8 @@ public class SettingsPanel implements Listener {
             }
             // System settings that are visible to users
             ip.add(new IPItem(Settings.allowChestDamage, Material.CHEST, plugin.myLocale(uuid).igsChestDamage, uuid));
-            ip.add(new IPItem(Settings.allowCreeperDamage, Material.SKULL_ITEM, 4, plugin.myLocale(uuid).igsCreeperDamage, uuid));
             ip.add(new IPItem(Settings.allowCreeperGriefing, Material.SKULL_ITEM, 4, plugin.myLocale(uuid).igsCreeperGriefing, uuid));
             ip.add(new IPItem(!Settings.restrictWither, Material.SKULL_ITEM, 1, plugin.myLocale(uuid).igsWitherDamage, uuid));
-            ip.add(new IPItem(Settings.allowTNTDamage, Material.TNT, plugin.myLocale(uuid).igsTNT, uuid));
             ip.add(new IPItem(Settings.allowVisitorKeepInvOnDeath, Material.IRON_CHESTPLATE, plugin.myLocale(uuid).igsVisitorKeep, uuid));
         } else if (island.isSpawn()) {
             ip.add(new IPItem(Material.MAP, plugin.myLocale(uuid).igsSettingsSpawnTitle, plugin.myLocale(uuid).igsSettingsSpawnDesc));
