@@ -82,6 +82,10 @@ permissions:
           askyblock.island.name:
             description: Player can set the name of their island
             default: false
+            children:
+              askyblock.island.name.format:
+                description: Allow the player to add colors and format the name of their island
+                default: false
           askyblock.island.value:
             description: Player can see the value of a block
             default: true
