@@ -199,6 +199,9 @@ permissions:
           askyblock.settings.CREEPER_PAIN:
             description: Can configure the Creeper Pain setting
             default: false
+          askyblock.settings.CREEPER_DAMAGE:
+            description: Can configure the Creeper Damage setting
+            default: false
           askyblock.settings.CROP_TRAMPLE:
             description: Can configure the Crop Trample setting
             default: false
@@ -297,6 +300,9 @@ permissions:
             default: false
           askyblock.settings.SHEARING:
             description: Can configure the Shearing setting
+            default: false
+          askyblock.settings.TNT_DAMAGE:
+            description: Can configure the TNT Damage setting
             default: false
           askyblock.settings.VILLAGER_TRADING:
             description: Can configure the Villager Trading setting
