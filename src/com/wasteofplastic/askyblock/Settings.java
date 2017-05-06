@@ -155,7 +155,6 @@ public class Settings {
 
     public static int resetLimit;
     public static int resetWait;
-    public static long resetConfirmWait;
     public static int inviteWait;
     
     public static boolean leaversLoseReset;
@@ -167,6 +166,13 @@ public class Settings {
     public static boolean chooseIslandRandomly;
     
     public static int abandonedIslandLevel;
+    
+    public static boolean confirmKick;
+    public static long confirmKickWait;
+    public static boolean confirmLeave;
+    public static long confirmLeaveWait;
+    public static boolean confirmRestart;
+    public static long confirmRestartWait;
     
     /*		ENTITIES		*/
     public static HashMap<EntityType, Integer> entityLimits;

@@ -94,8 +94,6 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
     public boolean levelCalcFreeFlag = true;
     private static HashMap<String, Schematic> schematics = new HashMap<String, Schematic>();
     private ASkyBlock plugin;
-    // The island reset confirmation
-    private HashMap<UUID, Boolean> confirm = new HashMap<UUID, Boolean>();
     // Last island
     Location last = null;
     // List of players in the middle of choosing an island schematic
@@ -117,8 +115,11 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
     // To choose an island randomly
     private final Random random = new Random();
     private HashMap<UUID, Location> islandSpot = new HashMap<UUID, Location>();
-    private List<UUID> leavingPlayers = new ArrayList<UUID>();
-    private List<UUID> kickingPlayers = new ArrayList<UUID>();
+    
+    // The commands confirmations
+    private List<UUID> confirmRestart = new ArrayList<UUID>();
+    private List<UUID> confirmLeave = new ArrayList<UUID>();
+    private List<UUID> confirmKick = new ArrayList<UUID>();
 
     /**
      * Constructor
@@ -1584,27 +1585,30 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                 if (plugin.getPlayers().getResetsLeft(playerUUID) > 0) {
                     Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).resetYouHave.replace("[number]", String.valueOf(plugin.getPlayers().getResetsLeft(playerUUID))));
                 }
-                if (!onRestartWaitTime(player) || Settings.resetWait == 0 || player.isOp()) {
-                    // Kick off the confirmation
-                    Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).islandresetConfirm.replace("[seconds]", String.valueOf(Settings.resetConfirmWait)));
-                    if (!confirm.containsKey(playerUUID) || !confirm.get(playerUUID)) {
-                        confirm.put(playerUUID, true);
-                        plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
-                            @Override
-                            public void run() {
-                                confirm.put(playerUUID, false);
-                            }
-                        }, (Settings.resetConfirmWait * 20));
+                if (!onRestartWaitTime(player) || Settings.resetWait == 0 || player.isOp()) {              
+                    // Ask for confirmation if needed
+                    if (Settings.confirmRestart){
+                        if (!confirmRestart.contains(playerUUID)){
+                            confirmRestart.add(playerUUID);
+                            Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).islandresetConfirm.replace("[seconds]", String.valueOf(Settings.confirmRestartWait)));
+                            new BukkitRunnable() {
+                                
+                                @Override
+                                public void run() {
+                                    // If the player is still on the list, remove them and cancel the restart
+                                    if (confirmRestart.contains(playerUUID)){
+                                        confirmRestart.remove(playerUUID);
+                                        Util.sendMessage(player, ChatColor.RED + plugin.myLocale(playerUUID).islandresetCancelled);
+                                    }
+                                }
+                            }.runTaskLater(plugin, Settings.confirmRestartWait * 20L);
+                            return true;
+                        }
+                        
+                        // Remove from the confirmation list
+                        confirmRestart.remove(playerUUID);
                     }
-                    return true;
-                } else {
-                    Util.sendMessage(player, ChatColor.YELLOW + plugin.myLocale(player.getUniqueId()).islandresetWait.replace("[time]", String.valueOf(getResetWaitTime(player))));
-                }
-                return true;
-            } else if (split[0].equalsIgnoreCase("confirm")) {
-                // This is where the actual reset is done
-                if (confirm.containsKey(playerUUID) && confirm.get(playerUUID)) {
-                    confirm.remove(playerUUID);
+                    
                     // Actually RESET the island
                     Util.sendMessage(player, ChatColor.YELLOW + plugin.myLocale(player.getUniqueId()).islandresetPleaseWait);
                     if (plugin.getPlayers().getResetsLeft(playerUUID) == 0) {
@@ -1649,11 +1653,12 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                             resetPlayer(player,oldIsland);
                         }
                     }
+                    
                     return true;
                 } else {
-                    Util.sendMessage(player, plugin.myLocale(player.getUniqueId()).helpColor + "/island restart: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpRestart);
-                    return true;
+                    Util.sendMessage(player, ChatColor.YELLOW + plugin.myLocale(player.getUniqueId()).islandresetWait.replace("[time]", String.valueOf(getResetWaitTime(player))));
                 }
+                return true;
             } else if (split[0].equalsIgnoreCase("sethome")) {
                 if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.sethome")) {
                     // Check island
@@ -2040,26 +2045,28 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                 Util.sendMessage(player, ChatColor.YELLOW + plugin.myLocale(player.getUniqueId()).leaveerrorYouAreTheLeader);
                                 return true;
                             }
-                            // Check for confirmation
-                            if (!leavingPlayers.contains(playerUUID)) {
-                                leavingPlayers.add(playerUUID);
-                                Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).leaveWarning);
-                                new BukkitRunnable() {
+                            // Check for confirmation if it is needed
+                            if (Settings.confirmLeave){
+                                if (!confirmLeave.contains(playerUUID)) {
+                                    confirmLeave.add(playerUUID);
+                                    Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).leaveWarning.replace("[seconds]", String.valueOf(Settings.confirmLeaveWait)));
+                                    new BukkitRunnable() {
 
-                                    @Override
-                                    public void run() {
-                                        // If the player is still on the list, remove them and cancel the leave
-                                        if (leavingPlayers.contains(playerUUID)) {
-                                            leavingPlayers.remove(playerUUID);
-                                            Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).leaveCancelled);
+                                        @Override
+                                        public void run() {
+                                            // If the player is still on the list, remove them and cancel the leave
+                                            if (confirmLeave.contains(playerUUID)) {
+                                                confirmLeave.remove(playerUUID);
+                                                Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).leaveCancelled);
+                                            }
                                         }
-                                    }
 
-                                }.runTaskLater(plugin, Settings.resetConfirmWait * 20L);
-                                return true; 
+                                    }.runTaskLater(plugin, Settings.confirmLeaveWait * 20L);
+                                    return true; 
+                                }
+                                // Remove from confirmation list
+                                confirmLeave.remove(playerUUID);
                             }
-                            // Remove from confirmation list
-                            leavingPlayers.remove(playerUUID);
                             // Remove from team
                             if (!removePlayerFromTeam(playerUUID, teamLeader)) {
                                 //Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).leaveerrorYouCannotLeaveIsland);
@@ -2950,27 +2957,29 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                         Util.sendMessage(player, ChatColor.RED + plugin.myLocale(playerUUID).leaveerrorLeadersCannotLeave);
                                         return true;
                                     }
-                                    // Check for confirmation
-                                    if(!kickingPlayers.contains(playerUUID)){
-                                        kickingPlayers.add(playerUUID);
-                                        Util.sendMessage(player, ChatColor.RED + plugin.myLocale(playerUUID).kickWarning.replace("[command]", label + " " + split[0] + " " + split[1]));
-                                        new BukkitRunnable() {
+                                    // Check for confirmation if it is needed
+                                    if (Settings.confirmKick){
+                                        if(!confirmKick.contains(playerUUID)){
+                                            confirmKick.add(playerUUID);
+                                            Util.sendMessage(player, ChatColor.RED + plugin.myLocale(playerUUID).kickWarning.replace("[command]", label + " " + split[0] + " " + split[1]).replace("[seconds]", String.valueOf(Settings.confirmKickWait)));
+                                            new BukkitRunnable() {
 
-                                            @Override
-                                            public void run() {
-                                                // If the player is still on the list, remove them and cancel the leave
-                                                if (kickingPlayers.contains(playerUUID)) {
-                                                    kickingPlayers.remove(playerUUID);
-                                                    Util.sendMessage(player, ChatColor.RED + plugin.myLocale(playerUUID).kickCancelled);
+                                                @Override
+                                                public void run() {
+                                                    // If the player is still on the list, remove them and cancel the kick
+                                                    if (confirmKick.contains(playerUUID)) {
+                                                        confirmKick.remove(playerUUID);
+                                                        Util.sendMessage(player, ChatColor.RED + plugin.myLocale(playerUUID).kickCancelled);
+                                                    }
                                                 }
-                                            }
 
-                                        }.runTaskLater(plugin, Settings.resetConfirmWait * 20L);
-                                        return true;
+                                            }.runTaskLater(plugin, Settings.confirmKickWait * 20L);
+                                            return true;
+                                        }
+                                        // Remove from confirmation list
+                                        confirmKick.remove(playerUUID);
                                     }
-                                    // Remove from confirmation list
-                                    kickingPlayers.remove(playerUUID);
-
+                                    
                                     // Try to kick player
                                     if (!removePlayerFromTeam(targetPlayer, teamLeader)) {
                                         //Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).leaveerrorYouCannotLeaveIsland);
@@ -3488,6 +3497,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.reset")) {
                 options.add("reset");
+                options.add("restart");
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.sethome")) {
                 options.add("sethome");
