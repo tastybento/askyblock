@@ -146,14 +146,8 @@ island:
    allowendermangriefing: true
    # Make enderman drop the block he is holding if he dies (recommended)
    endermandeathdrop: true
-   # Allow creeper explosion damage to block (explosion still hurts)
-   allowcreeperdamage: true
    # Allow visitors to use creeper explosions to grief islands
-   allowcreepergriefing: false 
-   # Allow TNT damage to blocks (stops players using TNT to destroy other's islands)
-   allowtntdamage: false
-   # Allow fire extinguishing by visitors
-   allowfireextinguish: false
+   allowcreepergriefing: false
    # Allow chests to be blown up by creepers or TNT
    allowchestdamage: false
    # Allow visitors to keep their items if they die
@@ -741,6 +735,8 @@ protection:
      CRAFTING: true
      # Allow creepers to hurt players (but not damage blocks)
      CREEPER_PAIN: true
+     # Allow creepers to damage blocks
+     CREEPER_DAMAGE: false
      # Allow crop trampling
      CROP_TRAMPLE: false
      # Allow use of doors or trapdoors. Not including redstone activations.
@@ -807,6 +803,8 @@ protection:
      SPLASH_POTION: true
      # Allow sheep shearing
      SHEARING: false
+     # TNT damages blocks
+     TNT_DAMAGE: false
      # Allow trading with villagers
      VILLAGER_TRADING: true
      # Allow item drop

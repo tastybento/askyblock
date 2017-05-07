@@ -478,12 +478,9 @@ public class ASLocale {
     public String igsAllowed;
     public String igsDisallowed;
     public String igsChestDamage;
-    public String igsFire;
-    public String igsCreeperDamage;
     public String igsCreeperGriefing;
     public String igsWitherDamage;
     public String igsTeleport;
-    public String igsTNT;
     public String igsVisitorKeep;
     public String igsPistonPush;
     public String igsSettingsGeneralTitle;
@@ -828,6 +825,7 @@ public class ASLocale {
         igs.put(SettingsFlag.CHORUS_FRUIT, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.chorusfruit", "Visitor chorus fruit use")));
         igs.put(SettingsFlag.CRAFTING, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.workbench", "Visitor workbench use")));
         igs.put(SettingsFlag.CREEPER_PAIN, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.creeperpain", "Creeper explosions hurt")));
+        igs.put(SettingsFlag.CREEPER_DAMAGE, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.creeperdamage", "Creeper damage")));
         igs.put(SettingsFlag.CROP_TRAMPLE, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.croptrample", "Visitor crop trampling")));
         igs.put(SettingsFlag.DOOR, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.door", "Visitor door use")));
         igs.put(SettingsFlag.EGGS, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.eggs", "Visitor egg throwing")));
@@ -861,16 +859,14 @@ public class ASLocale {
         igs.put(SettingsFlag.SPAWN_EGGS, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.spawnegg", "Spawn egg use")));
         igs.put(SettingsFlag.SPLASH_POTION, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.splashpotion", "Visitor splash potion throwing")));
         igs.put(SettingsFlag.SHEARING, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.shears", "Visitor shears use")));
+        igs.put(SettingsFlag.TNT_DAMAGE, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.TNTdamage", "TNT Damage")));
         igs.put(SettingsFlag.VILLAGER_TRADING, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.villagertrading", "Visitor villager trading")));
         igs.put(SettingsFlag.VISITOR_ITEM_DROP, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.visitordrop", "Visitor item drop")));
         igs.put(SettingsFlag.VISITOR_ITEM_PICKUP, ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.visitorpickup", "Visitor item pick-up")));
 
         igsChestDamage = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.chestdamage", "Chest damage by TNT"));
-        igsCreeperDamage = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.creeperdamage", "Creeper damage"));
         igsCreeperGriefing = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.creepergriefing", "Creeper griefing"));
         igsWitherDamage = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.withergriefing", "Wither griefing"));
-        igsFire = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.fire", "Fire"));
-        igsTNT = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.TNTdamage", "TNT Damage"));
         igsPistonPush = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.pistonpush", "Pistons can push blocks outside island area")); 
         igsVisitorKeep = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.visitorkeepitems", "Visitor keep item on death"));   
         igsSettingsGeneralTitle = ChatColor.translateAlternateColorCodes('&', locale.getString("islandguardsettings.settingsgeneraltitle", "General Island World Settings"));

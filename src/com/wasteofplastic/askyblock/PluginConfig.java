@@ -265,10 +265,7 @@ public class PluginConfig {
         // System settings
         Settings.allowEndermanGriefing = plugin.getConfig().getBoolean("island.allowendermangriefing", true);
         Settings.endermanDeathDrop = plugin.getConfig().getBoolean("island.endermandeathdrop", true);
-        Settings.allowCreeperDamage = plugin.getConfig().getBoolean("island.allowcreeperdamage", true);
         Settings.allowCreeperGriefing = plugin.getConfig().getBoolean("island.allowcreepergriefing", false);
-        Settings.allowTNTDamage = plugin.getConfig().getBoolean("island.allowtntdamage", false);
-        Settings.allowFireExtinguish = plugin.getConfig().getBoolean("island.allowfireextinguish", false);
         Settings.allowChestDamage = plugin.getConfig().getBoolean("island.allowchestdamage", false);
         Settings.allowVisitorKeepInvOnDeath = plugin.getConfig().getBoolean("island.allowvisitorkeepinvondeath", false);
         Settings.allowPistonPush = plugin.getConfig().getBoolean("island.allowpistonpush", true);

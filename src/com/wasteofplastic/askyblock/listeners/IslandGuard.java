@@ -724,10 +724,11 @@ public class IslandGuard implements Listener {
         }
         // Find out what is exploding
         Entity expl = e.getEntity();
+        Island island = plugin.getGrid().getProtectedIslandAt(e.getEntity().getLocation());
         if (expl == null) {
             // This allows beds to explode or other null entities, but still curtail the damage
             // Note player can still die from beds exploding in the nether.
-            if (!Settings.allowTNTDamage) {
+            if (island != null && !island.getIgsFlag(SettingsFlag.TNT_DAMAGE)) {
                 //plugin.getLogger().info("TNT block damage prevented");
                 e.blockList().clear();
             } else {
@@ -765,7 +766,7 @@ public class IslandGuard implements Listener {
         }
         switch (exploding) {
         case CREEPER:
-            if (!Settings.allowCreeperDamage) {
+            if (island != null && !island.getIgsFlag(SettingsFlag.CREEPER_DAMAGE)) {
                 // plugin.getLogger().info("Creeper block damage prevented");
                 e.blockList().clear();
             } else {
@@ -816,7 +817,7 @@ public class IslandGuard implements Listener {
             break;
         case PRIMED_TNT:
         case MINECART_TNT:
-            if (!Settings.allowTNTDamage) {
+            if (island != null && !island.getIgsFlag(SettingsFlag.TNT_DAMAGE)) {
                 // plugin.getLogger().info("TNT block damage prevented");
                 e.blockList().clear();
             } else {
@@ -1006,7 +1007,7 @@ public class IslandGuard implements Listener {
             inNether = true;
         }
         // Stop TNT damage if it is disallowed
-        if (!Settings.allowTNTDamage && (e.getDamager().getType().equals(EntityType.PRIMED_TNT) 
+        if (island != null && !island.getIgsFlag(SettingsFlag.TNT_DAMAGE) && (e.getDamager().getType().equals(EntityType.PRIMED_TNT) 
                 || e.getDamager().getType().equals(EntityType.FIREWORK)
                 || e.getDamager().getType().equals(EntityType.FIREBALL))) {
             if (DEBUG)
@@ -1019,7 +1020,7 @@ public class IslandGuard implements Listener {
             return;
         }
         // Stop Creeper damager if it is disallowed
-        if (!Settings.allowCreeperDamage && e.getDamager().getType().equals(EntityType.CREEPER) && !(e.getEntity() instanceof Player)) {
+        if (!island.getIgsFlag(SettingsFlag.CREEPER_DAMAGE) && e.getDamager().getType().equals(EntityType.CREEPER) && !(e.getEntity() instanceof Player)) {
             e.setCancelled(true);
             return;
         }
@@ -1424,7 +1425,8 @@ public class IslandGuard implements Listener {
             plugin.getLogger().info(e.getRemover().toString());
         }
         if (inWorld(e.getEntity())) {
-            if ((e.getRemover() instanceof Creeper) && !Settings.allowCreeperDamage) {
+            Island island = plugin.getGrid().getProtectedIslandAt(e.getEntity().getLocation());
+            if ((e.getRemover() instanceof Creeper) && island != null && !island.getIgsFlag(SettingsFlag.CREEPER_DAMAGE)) {
                 e.setCancelled(true);
                 return;
             }
