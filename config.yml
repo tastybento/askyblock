@@ -709,6 +709,7 @@ protection:
    # If not listed, default is false.
    # Changing a setting here will only affect new islands. Use /asadmin settingsreset
    # to reset individual or all settings across all islands. See /asadmin settingsreset help.
+   # If they're not listed in Islands Settings, they won't be displayed in the GUI.
    world:
      # Acid causes damage above sea-level (if acid is active)
      ACID_DAMAGE: true
@@ -850,6 +851,8 @@ protection:
      GATE: true
      # Allow interacting with tamed animals
      INTERACT_TAMED: false
+     # Allow lever or button use
+     LEVER_BUTTON: true
      # Allow use of jukeboxes and note blocks
      MUSIC: false
      # Allow portal use by visitors
