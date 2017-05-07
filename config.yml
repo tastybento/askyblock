@@ -507,6 +507,17 @@ general:
    #- anotherCommand
    #- andAnotherOne
    #- "*"
+   
+   # Allow /island teleport when in acid. If set to false, all teleporting is
+   # disabled until death or leaving the acid.
+   # See commands that this will block too
+   # Using "*" (with quotes) will block ALL commands when in acid
+   allowacidteleport: true
+   acidblockingcommands:
+   - home
+   #- anotherCommand
+   #- andAnotherOne
+   #- "*"
 
    # Broadcast 1st time challenge completion messages to all players.
    # Change to false if the spam becomes too much.

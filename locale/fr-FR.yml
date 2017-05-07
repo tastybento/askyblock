@@ -277,7 +277,8 @@ invite:
 island: 
   blockValue: "[name] vaut [value]"
   blockWorthless: "[name] n'a aucune valeur" 
-  cannotTeleport: "Vous ne pouvez pas vous téléporter quand vous tombez "
+  cannotTeleportFalling: "Vous ne pouvez pas vous téléporter quand vous tombez!"
+  cannotTeleportAcid: "Vous ne pouvez pas vous téléporter tant que vous nagez dans de l'acide!"
   donate: "Bienvenue sur ASkyblock par Tastybento - traduction par MrSheepSheep & Poslovitch"
   donatecolor: "aqua"
   errorCouldNotCreateIsland: "Impossible de creér une nouvelle île. Contactez un modérateur / administrateur."

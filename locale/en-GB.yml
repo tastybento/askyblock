@@ -280,7 +280,8 @@ invite:
 island:
   blockValue: "[name] placed here may be worth [value]"
   blockWorthless: "[name] is worthless" 
-  cannotTeleport: "You cannot teleport when falling!"
+  cannotTeleportFalling: "You cannot teleport when falling!"
+  cannotTeleportAcid: "You cannot teleport while you are in acid!"
   donate: "Welcome to A SkyBlock by tastybento"
   donatecolor: "aqua"
   errorCouldNotCreateIsland: "Could not create your Island. Please contact a server moderator."

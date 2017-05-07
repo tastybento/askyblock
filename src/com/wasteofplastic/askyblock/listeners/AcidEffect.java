@@ -63,13 +63,17 @@ import com.wasteofplastic.askyblock.util.VaultHelper;
  */
 public class AcidEffect implements Listener {
     private final ASkyBlock plugin;
-    private List<Player> burningPlayers = new ArrayList<Player>();
+    private static List<Player> burningPlayers = new ArrayList<Player>();
     private boolean isRaining = false;
     private List<Player> wetPlayers = new ArrayList<Player>();
     private static final boolean DEBUG = false;
 
     public AcidEffect(final ASkyBlock pluginI) {
         plugin = pluginI;
+    }
+    
+    public static boolean isInAcid(Player player){
+        return burningPlayers.contains(player);
     }
 
     @EventHandler(priority = EventPriority.LOW)

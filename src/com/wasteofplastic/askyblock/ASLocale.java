@@ -437,7 +437,8 @@ public class ASLocale {
     public String cannotCoop;
 
     public String errorWrongWorld;
-    public String islandcannotTeleport;
+    public String islandcannotTeleportFalling;
+    public String islandcannotTeleportAcid;
     public String levelCalculating;
     public String prefix;
     // Lock
@@ -1008,8 +1009,8 @@ public class ASLocale {
                 locale.getString("challenges.maxreached", "Max reached [donetimes] out of [maxtimes]"));
         islandteleport = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("island.teleport", "Teleporting you to your island. (/[label] help for more info)").replace("[label]", Settings.ISLANDCOMMAND));
-        islandcannotTeleport = ChatColor.translateAlternateColorCodes('&',
-                locale.getString("island.cannotTeleport", "You cannot teleport when falling!"));
+        islandcannotTeleportFalling = ChatColor.translateAlternateColorCodes('&', locale.getString("island.cannotTeleportFalling", "You cannot teleport when falling!"));
+        islandcannotTeleportAcid = ChatColor.translateAlternateColorCodes('&', locale.getString("island.cannotTeleportAcid", "You cannot teleport while you are in acid!"));
         islandnew = ChatColor.translateAlternateColorCodes('&', locale.getString("island.new", "Creating a new island for you..."));
         islandSubTitle = locale.getString("island.subtitle", "by tastybento");
         islandDonate = locale.getString("island.donate", "ASkyBlock by tastybento");

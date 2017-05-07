@@ -538,7 +538,7 @@ public class PlayerEvents implements Listener {
     }
 
     /**
-     * Prevents teleporting when falling based on setting by stopping commands
+     * Prevents teleporting when falling/in acid based on setting by stopping commands
      * 
      * @param e
      */
@@ -547,20 +547,34 @@ public class PlayerEvents implements Listener {
         if (DEBUG) {
             plugin.getLogger().info(e.getEventName());
         }
-        if (!IslandGuard.inWorld(e.getPlayer()) || Settings.allowTeleportWhenFalling || e.getPlayer().isOp()
+        
+        if (!IslandGuard.inWorld(e.getPlayer()) || e.getPlayer().isOp()
                 || !e.getPlayer().getGameMode().equals(GameMode.SURVIVAL)
-                || plugin.getPlayers().isInTeleport(e.getPlayer().getUniqueId())
-                || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "bypassfalling")) {
+                || plugin.getPlayers().isInTeleport(e.getPlayer().getUniqueId())){
             return;
         }
         // Check commands
         // plugin.getLogger().info("DEBUG: falling command: '" +
         // e.getMessage().substring(1).toLowerCase() + "'");
-        if (isFalling(e.getPlayer().getUniqueId()) && (Settings.fallingCommandBlockList.contains("*") || Settings.fallingCommandBlockList.contains(e.getMessage().substring(1).toLowerCase()))) {
-            // Sorry you are going to die
-            Util.sendMessage(e.getPlayer(), plugin.myLocale(e.getPlayer().getUniqueId()).errorNoPermission); 
-            Util.sendMessage(e.getPlayer(), plugin.myLocale(e.getPlayer().getUniqueId()).islandcannotTeleport);
-            e.setCancelled(true);
+        
+        if (!Settings.allowTeleportWhenFalling && !VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "bypassfalling")){
+            if (isFalling(e.getPlayer().getUniqueId()) && (Settings.fallingCommandBlockList.contains("*") || Settings.fallingCommandBlockList.contains(e.getMessage().substring(1).toLowerCase()))) {
+                // Sorry you are going to die
+                Util.sendMessage(e.getPlayer(), plugin.myLocale(e.getPlayer().getUniqueId()).errorNoPermission); 
+                Util.sendMessage(e.getPlayer(), plugin.myLocale(e.getPlayer().getUniqueId()).islandcannotTeleportFalling);
+                e.setCancelled(true);
+                return;
+            }
+        }
+        
+        if (!Settings.allowTeleportWhenInAcid && !VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "bypassacid")){
+            if(AcidEffect.isInAcid(e.getPlayer()) && (Settings.acidCommandBlockList.contains("*") || Settings.acidCommandBlockList.contains(e.getMessage().substring(1).toLowerCase()))){
+                // Sorry you are going to die
+                Util.sendMessage(e.getPlayer(), plugin.myLocale(e.getPlayer().getUniqueId()).errorNoPermission); 
+                Util.sendMessage(e.getPlayer(), plugin.myLocale(e.getPlayer().getUniqueId()).islandcannotTeleportFalling);
+                e.setCancelled(true);
+                return;
+            }
         }
     }
 
@@ -608,7 +622,7 @@ public class PlayerEvents implements Listener {
                 if (DEBUG)
                     plugin.getLogger().info("DEBUG: player is falling");
                 // Sorry you are going to die
-                Util.sendMessage(e.getPlayer(), plugin.myLocale(e.getPlayer().getUniqueId()).islandcannotTeleport);
+                Util.sendMessage(e.getPlayer(), plugin.myLocale(e.getPlayer().getUniqueId()).islandcannotTeleportFalling);
                 e.setCancelled(true);
                 // Check if the player is in the void and kill them just in case
                 if (e.getPlayer().getLocation().getBlockY() < 0) {
@@ -617,6 +631,18 @@ public class PlayerEvents implements Listener {
                     e.getPlayer().setHealth(0D);
                     unsetFalling(e.getPlayer().getUniqueId());
                 }
+                return;
+            }
+        }
+        // Teleporting while in acid check
+        if (!Settings.allowTeleportWhenInAcid && e.getPlayer().getGameMode().equals(GameMode.SURVIVAL) && !e.getPlayer().isOp() && !VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "bypassacid")) {
+            if (DEBUG) plugin.getLogger().info("DEBUG: Teleporting while in acid check");
+            
+            if (AcidEffect.isInAcid(e.getPlayer())) {
+                if (DEBUG) plugin.getLogger().info("DEBUG: player is in acid");
+                // Sorry you are going to die
+                Util.sendMessage(e.getPlayer(), plugin.myLocale(e.getPlayer().getUniqueId()).islandcannotTeleportAcid);
+                e.setCancelled(true);
                 return;
             }
         }
