@@ -1701,7 +1701,7 @@ public class IslandGuard implements Listener {
                     if (lastBlock.equals(e.getClickedBlock())) {
                         if (DEBUG)
                             plugin.getLogger().info("DEBUG: found clicked block");
-                        continue;
+                        break;
                     }
                     if (lastBlock.getType().equals(Material.FIRE)) {
                         if (DEBUG)
@@ -1733,7 +1733,7 @@ public class IslandGuard implements Listener {
                 }
             }
             // Handle Shulker Boxes
-            if (e.getClickedBlock().getType().toString().contains("BOX")) {
+            if (e.getClickedBlock().getType().toString().contains("SHULKER_BOX")) {
                 if (island == null) {
                     if (!Settings.defaultWorldSettings.get(SettingsFlag.CHEST)) {
                         Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
@@ -1758,6 +1758,7 @@ public class IslandGuard implements Listener {
                 }
                 return; 
             }
+            
             switch (e.getClickedBlock().getType()) {
             case WOODEN_DOOR:
             case SPRUCE_DOOR:
@@ -1919,17 +1920,25 @@ public class IslandGuard implements Listener {
             case ITEM_FRAME:
                 break;
             case JUKEBOX:
+                if (DEBUG)
+                    plugin.getLogger().info("DEBUG: Jukebox");
             case NOTE_BLOCK:
                 if (island == null) {
+                    if (DEBUG) 
+                        plugin.getLogger().info("DEBUG: Jukebox island = null");
                     if (Settings.defaultWorldSettings.get(SettingsFlag.MUSIC)) {
                         return;
                     } else {
+                        if (DEBUG) 
+                            plugin.getLogger().info("DEBUG: Jukebox not allowed");
                         Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                         e.setCancelled(true);
                         return;
                     }
                 }
                 if (!island.getIgsFlag(SettingsFlag.MUSIC)) {
+                    if (DEBUG) 
+                        plugin.getLogger().info("DEBUG: Jukebox not allowed");
                     Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                     e.setCancelled(true);
                     return;
