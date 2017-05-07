@@ -1066,7 +1066,13 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                     Util.sendMessage(player, ChatColor.RED + (plugin.myLocale(player.getUniqueId()).errorTooLong).replace("[length]", String.valueOf(Settings.maxNameLength)));
                     return true;
                 }
-                plugin.getGrid().setIslandName(playerUUID, ChatColor.translateAlternateColorCodes('&', name));
+                
+                // Set island name
+                if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.name.format")) {
+                    plugin.getGrid().setIslandName(playerUUID, ChatColor.translateAlternateColorCodes('&', name));
+                } else {
+                    plugin.getGrid().setIslandName(playerUUID, name);
+                }
                 Util.sendMessage(player, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).generalSuccess);
                 return true;
             } else {
