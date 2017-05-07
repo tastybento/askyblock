@@ -168,6 +168,7 @@ public class ASLocale {
     public String islandresetMustRemovePlayers;
     public String islandresetPleaseWait;
     public String islandresetConfirm;
+    public String islandresetCancelled;
     public String resetYouHave;
     public String islandResetNoMore;
     // Cool down warning - [time] is number of seconds left
@@ -1036,7 +1037,8 @@ public class ASLocale {
         islandresetWait = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("island.resetWait", "You have to wait [time] seconds before you can do that again."));
         islandresetConfirm = ChatColor.translateAlternateColorCodes('&',
-                locale.getString("island.resetConfirm", "Type /[label] confirm within [seconds] seconds to delete your island and restart!").replace("[label]", Settings.ISLANDCOMMAND));
+                locale.getString("island.resetConfirm", "Type '/[label] reset' again within [seconds] seconds to delete your island and restart!").replace("[label]", Settings.ISLANDCOMMAND));
+        islandresetCancelled = ChatColor.translateAlternateColorCodes('&', locale.getString("island.resetCancelled", "Reset cancelled."));
         islandblockValue = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("island.blockValue", "[name] placed here may be worth [value]"));
         islandblockWorthless = ChatColor.translateAlternateColorCodes('&',
@@ -1139,7 +1141,7 @@ public class ASLocale {
         leaveerrorLeadersCannotLeave = ChatColor.translateAlternateColorCodes('&', locale.getString("leave.errorLeadersCannotLeave",
                 "Leaders cannot leave an island. Make someone else the leader fist using /[label] makeleader <player>").replace("[label]", Settings.ISLANDCOMMAND));
         leaveWarning = ChatColor.translateAlternateColorCodes('&', locale.getString("leave.warning",
-                "Are you sure you want to leave the team? Type '[label] leave' again to confirm.").replace("[label]", Settings.ISLANDCOMMAND));
+                "Are you sure you want to leave the team? Type '[label] leave' again within [seconds] seconds to confirm.").replace("[label]", Settings.ISLANDCOMMAND));
         leaveCancelled = ChatColor.translateAlternateColorCodes('&', locale.getString("leave.cancelled", "Leave cancelled"));
         teamlistingMembers = ChatColor.translateAlternateColorCodes('&', locale.getString("team.listingMembers", "Listing your island members"));
         kickerrorPlayerNotInTeam = ChatColor.translateAlternateColorCodes('&',
@@ -1153,7 +1155,7 @@ public class ASLocale {
                 locale.getString("kick.errorOnlyLeaderCan", "Only the island's owner may remove people from the island!"));
         kickerrorNoTeam = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("kick.errorNoTeam", "No one else is on your island, are you seeing things?"));
-        kickWarning = ChatColor.translateAlternateColorCodes('&', locale.getString("kick.warning", "Are you sure you want to kick this player? Type '[command]' again to confirm."));
+        kickWarning = ChatColor.translateAlternateColorCodes('&', locale.getString("kick.warning", "Are you sure you want to kick this player? Type '[command]' again within [seconds] seconds to confirm."));
         kickCancelled = ChatColor.translateAlternateColorCodes('&', locale.getString("kick.cancelled", "Kick cancelled."));
         makeLeadererrorPlayerMustBeOnline = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("makeleader.errorPlayerMustBeOnline", "That player must be online to transfer the island."));
@@ -1285,8 +1287,6 @@ public class ASLocale {
                 locale.getString("completechallenge.challangeCompleted", "[challengename] has been completed for [name]"));
         resetChallengeerrorChallengeDoesNotExist = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("resetchallenge.errorChallengeDoesNotExist", "[challengename] has been reset for [name]"));
-        confirmerrorTimeLimitExpired = ChatColor.translateAlternateColorCodes('&',
-                locale.getString("confirm.errorTimeLimitExpired", "Time limit expired! Issue command again."));
         deleteremoving = ChatColor.translateAlternateColorCodes('&', locale.getString("delete.removing", "Removing [name]'s island."));
         registersettingIsland = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("register.settingIsland", "Set [name]'s island to the bedrock nearest you."));

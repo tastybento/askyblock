@@ -122,11 +122,6 @@ public class PluginConfig {
         if (Settings.resetWait < 0) {
             Settings.resetWait = 0;
         }
-        // Seconds to wait for a confirmation of reset
-        Settings.resetConfirmWait = plugin.getConfig().getInt("island.resetconfirmwait", 10);
-        if (Settings.resetConfirmWait < 0) {
-            Settings.resetConfirmWait = 0;
-        }
         // Timeout required between duplicate team join/leaves
         Settings.inviteWait = plugin.getConfig().getInt("island.invitewait", 60);
         if (Settings.inviteWait < 0) {
@@ -732,6 +727,19 @@ public class PluginConfig {
         	if(HistoryMessageType.valueOf(type) != null) Settings.historyMessagesTypes.add(HistoryMessageType.valueOf(type));
         	else plugin.getLogger().warning("Unknown history message type '" + type + "' listed in historymessagestypes list! Skipping...");
         }
+        
+        // Commands confirmation
+        Settings.confirmKick = plugin.getConfig().getBoolean("general.requireconfirmation.kick", true);
+        Settings.confirmKickWait = plugin.getConfig().getLong("general.requireconfirmation.kick-wait", 10);
+        if(Settings.confirmKickWait < 0) Settings.confirmKickWait = 0;
+        
+        Settings.confirmLeave = plugin.getConfig().getBoolean("general.requireconfirmation.leave", true);
+        Settings.confirmLeaveWait = plugin.getConfig().getLong("general.requireconfirmation.leave-wait", 10);
+        if(Settings.confirmLeaveWait < 0) Settings.confirmLeaveWait = 0;
+        
+        Settings.confirmRestart = plugin.getConfig().getBoolean("general.requireconfirmation.restart", true);
+        Settings.confirmRestartWait = plugin.getConfig().getLong("general.requireconfirmation.restart-wait", 10);
+        if(Settings.confirmRestartWait < 0) Settings.confirmRestartWait = 0;
         
         // Fancy island level display
         Settings.fancyIslandLevelDisplay = plugin.getConfig().getBoolean("general.fancylevelinchat", false);
