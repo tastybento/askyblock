@@ -1326,15 +1326,15 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                         Util.sendMessage(p, ChatColor.RED + plugin.myLocale(p.getUniqueId()).errorNoIslandOther);
                         return true;
                     }
-                    if (split[1].equalsIgnoreCase("allow")) {
+                    if (split[1].equalsIgnoreCase("disallow")) {
                         island.setPurgeProtected(true);
                     } else {
                         island.setPurgeProtected(false);
                     }
                     if (island.isPurgeProtected()) {
-                        Util.sendMessage(p, ChatColor.GREEN + plugin.myLocale(p.getUniqueId()).adminAllowPurge);
-                    } else {
                         Util.sendMessage(p, ChatColor.GREEN + plugin.myLocale(p.getUniqueId()).adminPreventPurge);
+                    } else {
+                        Util.sendMessage(p, ChatColor.GREEN + plugin.myLocale(p.getUniqueId()).adminAllowPurge);
                     }
                     return true;
                 }
