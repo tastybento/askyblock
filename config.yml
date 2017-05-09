@@ -217,7 +217,7 @@ general:
    # If the command is busy, it will fail silently
    loginlevel: false
 
-   #Commands to run when the player resets their island (uncomment and customize)
+   # Commands to run when the player resets their island (uncomment and customize)
    # [player] is the player name of who is reseting
    # If the command is proceeded by [SELF] the command will be run as that player
    # E.g., - "[SELF] kit tools"
@@ -240,6 +240,16 @@ general:
 
    # Commands to execute when a player joins a new team island (does /island accept)
    teamstartcommands:
+   #- "[SELF] balance"
+   #- "some other command"
+   
+   # Commands to execute when a player is promoted as leader of an island
+   promotedleadercommands:
+   #- "[SELF] balance"
+   #- "some other command"
+   
+   # Commands to execute when a player hands island leadership over to another player
+   demotedleadercommands:
    #- "[SELF] balance"
    #- "some other command"
 

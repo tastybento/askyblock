@@ -368,6 +368,8 @@ public class PluginConfig {
         Settings.leaveCommands = plugin.getConfig().getStringList("general.leavecommands");
         Settings.startCommands = plugin.getConfig().getStringList("general.startcommands");
         Settings.teamStartCommands = plugin.getConfig().getStringList("general.teamstartcommands");
+        Settings.promotedLeaderCommands = plugin.getConfig().getStringList("general.promotedleadercommands");
+        Settings.demotedLeaderCommands = plugin.getConfig().getStringList("general.demotedleadercommands");
         Settings.visitorCommandBlockList = plugin.getConfig().getStringList("general.visitorbannedcommands");
 
         // How long a player has to wait after deactivating PVP until they can activate PVP again
