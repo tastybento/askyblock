@@ -128,6 +128,9 @@ public class ASkyBlock extends JavaPlugin {
 
     // Player events listener
     private PlayerEvents playerEvents;
+    
+    // Metrics
+    private Metrics metrics;
 
     // Localization Strings
     private HashMap<String,ASLocale> availableLocales = new HashMap<String,ASLocale>();
@@ -235,6 +238,8 @@ public class ASkyBlock extends JavaPlugin {
             getLogger().severe("Something went wrong saving files!");
             e.printStackTrace();
         }
+        
+        metrics = null;
     }
 
     /*
@@ -355,7 +360,8 @@ public class ASkyBlock extends JavaPlugin {
             getServer().getPluginManager().registerEvents(new WorldLoader(this), this);
         }
         // Metrics
-        new MetricsLite(this);
+        metrics = new Metrics(this);
+        
         // Kick off a few tasks on the next tick
         // By calling getIslandWorld(), if there is no island
         // world, it will be created
@@ -460,6 +466,10 @@ public class ASkyBlock extends JavaPlugin {
                         playerEvents.giveAllTempPerms();
 
                         getLogger().info("All files loaded. Ready to play...");
+                        
+                        registerCustomCharts();
+                        getLogger().info("Metrics loaded.");
+                        
                         // Fire event
                         getServer().getPluginManager().callEvent(new ReadyEvent());
                     }
@@ -925,5 +935,38 @@ public class ASkyBlock extends JavaPlugin {
      */
     public PlayerEvents getPlayerEvents() {
         return playerEvents;
+    }
+    
+    /**
+     * Registers the custom charts for Metrics
+     */
+    public void registerCustomCharts(){
+        metrics.addCustomChart(new Metrics.SimplePie("challenges_count") {
+            
+            @Override
+            public String getValue() {
+                int count = challenges.getAllChallenges().size();
+                if(count <= 0) return "0";
+                else if(1 <= count && 10 <= count) return "1-10";
+                else if(11 <= count && 20 <= count) return "11-20";
+                else if(21 <= count && 30 <= count) return "21-30";
+                else if(31 <= count && 40 <= count) return "31-40";
+                else if(41 <= count && 50 <= count) return "41-50";
+                else if(51 <= count && 75 <= count) return "51-75";
+                else if(76 <= count && 100 <= count) return "76-100";
+                else if(101 <= count && 150 <= count) return "101-150";
+                else if(151 <= count && 200 <= count) return "151-200";
+                else if(201 <= count && 300 <= count) return "201-300";
+                else return "300+";
+            }
+        });
+        
+        metrics.addCustomChart(new Metrics.SingleLineChart("islands_count") {
+            
+            @Override
+            public int getValue() {
+                return plugin.getGrid().getIslandCount();
+            }
+        });
     }
 }
