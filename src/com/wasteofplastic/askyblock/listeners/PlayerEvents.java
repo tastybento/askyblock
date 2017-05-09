@@ -62,7 +62,7 @@ import com.wasteofplastic.askyblock.util.VaultHelper;
  */
 public class PlayerEvents implements Listener {
     private final ASkyBlock plugin;
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
     // A set of falling players
     private static HashSet<UUID> fallingPlayers = new HashSet<UUID>();
     private static HashMap<UUID, List<String>> temporaryPerms = new HashMap<UUID, List<String>>();
@@ -163,10 +163,10 @@ public class PlayerEvents implements Listener {
             if (DEBUG) {
                 plugin.getLogger().info("DEBUG: player entered island");
                 plugin.getLogger().info("DEBUG: island center is " + e.getIslandLocation());
-                if (e.getIslandOwner() != null) {
-                    plugin.getLogger().info("DEBUG: island owner is " + plugin.getServer().getPlayer(e.getIslandOwner()).getName());
+                if (e.getIslandOwner() != null && plugin.getPlayers().isAKnownPlayer(e.getIslandOwner())) {
+                    plugin.getLogger().info("DEBUG: island owner is " + plugin.getPlayers().getName(e.getIslandOwner()));
                 } else {
-                    plugin.getLogger().info("DEBUG: island is unowned");
+                    plugin.getLogger().info("DEBUG: island is unowned or owner unknown");
                 }
             }
             processPerms(player, e.getIsland());
