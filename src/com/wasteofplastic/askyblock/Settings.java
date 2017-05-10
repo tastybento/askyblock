@@ -149,6 +149,8 @@ public class Settings {
     public static List<String> teamStartCommands;
     public static List<String> leaveCommands;
     public static List<String> resetCommands;
+    public static List<String> promotedLeaderCommands;
+    public static List<String> demotedLeaderCommands;
 
     public static int resetLimit;
     public static int resetWait;

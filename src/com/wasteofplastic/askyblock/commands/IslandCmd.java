@@ -3186,6 +3186,16 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                                     islandByOwner.setProtectionSize(range);
                                                 }
                                             }
+                                            
+                                            // Run commands
+                                            if(!VaultHelper.checkPerm(target, Settings.PERMPREFIX + "command.promotedleaderexempt")){
+                                                runCommands(Settings.promotedLeaderCommands, target);
+                                            }
+                                            if(!VaultHelper.checkPerm(target, Settings.PERMPREFIX + "command.demotedleaderexempt")){
+                                                runCommands(Settings.demotedLeaderCommands, player);
+                                            }
+                                            
+                                            
                                             plugin.getGrid().saveGrid();
                                             return true;
                                         }

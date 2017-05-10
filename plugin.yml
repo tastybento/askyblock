@@ -131,6 +131,12 @@ permissions:
           askyblock.command.newteamexempt:
             description: Player is exempt from commands run when accepting a team invite
             default: false
+          askyblock.command.promotedleaderexempt:
+            description: Player is exempt from commands run when promoted as leader of an island
+            default: false
+          askyblock.command.demotedleaderexempt:
+            description: Player is exempt from commands run when promoting a player as leader of its island
+            default: false
       askyblock.coop:
         description: Allows player to use the coop command
         default: false    
