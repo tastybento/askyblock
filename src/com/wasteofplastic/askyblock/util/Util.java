@@ -289,6 +289,8 @@ public class Util {
     public static List<String> tabLimit(final List<String> list, final String start) {
         final List<String> returned = new ArrayList<String>();
         for (String s : list) {
+            if (s == null)
+                continue;
             if (s.toLowerCase().startsWith(start.toLowerCase())) {
                 returned.add(s);
             }

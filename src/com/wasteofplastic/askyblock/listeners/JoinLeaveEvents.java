@@ -65,6 +65,10 @@ public class JoinLeaveEvents implements Listener {
         final UUID playerUUID = player.getUniqueId();
         if (DEBUG)
             plugin.getLogger().info("DEBUG: got player UUID");
+        if (playerUUID == null) {
+            plugin.getLogger().severe("Player " + player.getName() + " has a null UUID!");
+            return;
+        }
         // Check language permission
         if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.lang")) {
             if (DEBUG)

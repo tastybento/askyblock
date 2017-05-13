@@ -290,6 +290,9 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
         Player player;
         if (sender instanceof Player) {
             player = (Player) sender;
+            if (player.getUniqueId() == null) {
+                return false;
+            }
             if (split.length > 0) {
                 // Admin-only commands : reload, register, delete and purge
                 if (split[0].equalsIgnoreCase("reload") || split[0].equalsIgnoreCase("register") || split[0].equalsIgnoreCase("delete")

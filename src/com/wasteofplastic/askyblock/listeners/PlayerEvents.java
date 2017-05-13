@@ -62,7 +62,7 @@ import com.wasteofplastic.askyblock.util.VaultHelper;
  */
 public class PlayerEvents implements Listener {
     private final ASkyBlock plugin;
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
     // A set of falling players
     private static HashSet<UUID> fallingPlayers = new HashSet<UUID>();
     private static HashMap<UUID, List<String>> temporaryPerms = new HashMap<UUID, List<String>>();

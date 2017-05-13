@@ -100,6 +100,9 @@ public class Challenges implements CommandExecutor, TabCompleter {
             return false;
         }
         final Player player = (Player) sender;
+        if (player.getUniqueId() == null) {
+            return false;
+        }
         /*
          * if
          * (!player.getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
