@@ -2689,12 +2689,16 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 }
                 break;
             case 2:
-                if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.setlanguage") || player.isOp()
+                if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.setlanguage") || player.isOp())
                         && args[0].equalsIgnoreCase("setlanguage")) {
                     options.addAll(plugin.getAvailableLocales().keySet());
                 }
-                if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.setrange") || player.isOp() 
+                if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.setrange") || player.isOp()) 
                         && (args[0].equalsIgnoreCase("setrange") || args[0].equalsIgnoreCase("addrange"))) {
+                    options.addAll(Util.getOnlinePlayerList());
+                }
+                if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.reserve") || player.isOp()) 
+                        && args[0].equalsIgnoreCase("reserve")) {
                     options.addAll(Util.getOnlinePlayerList());
                 }
                 if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.lock") || player.isOp())
