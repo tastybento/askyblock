@@ -385,9 +385,9 @@ public class LevelCalcByChunk {
                     }
 
                     // Calculate how many points are required to get to the next level
-                    int calculatePointsToNextLevel = (Settings.levelCost * (plugin.getPlayers().getIslandLevel(targetPlayer) + 1 + levelHandicap)) - ((blockCount * levelMultiplier) - (deathHandicap * Settings.deathpenalty));
+                    int calculatePointsToNextLevel = (Settings.levelCost * (score + 1 + levelHandicap)) - ((blockCount * levelMultiplier) - (deathHandicap * Settings.deathpenalty));
                     // Sometimes it will return 0, so calculate again to make sure it will display a good value
-                    if(calculatePointsToNextLevel == 0) calculatePointsToNextLevel = (Settings.levelCost * (plugin.getPlayers().getIslandLevel(targetPlayer) + 2 + levelHandicap)) - ((blockCount * levelMultiplier) - (deathHandicap * Settings.deathpenalty));
+                    if(calculatePointsToNextLevel == 0) calculatePointsToNextLevel = (Settings.levelCost * (score + 2 + levelHandicap)) - ((blockCount * levelMultiplier) - (deathHandicap * Settings.deathpenalty));
 
                     final int pointsToNextLevel = calculatePointsToNextLevel;
 
@@ -473,7 +473,7 @@ public class LevelCalcByChunk {
                                             if (sender instanceof Player && ((Player)sender).isOnline()) {
                                                 String message = ChatColor.GREEN + plugin.myLocale(((Player)sender).getUniqueId()).islandislandLevelis + " " + ChatColor.WHITE + plugin.getPlayers().getIslandLevel(targetPlayer);
                                                 if (Settings.deathpenalty != 0) {
-                                                    message += " " + plugin.myLocale(((Player)sender).getUniqueId()).levelDeaths.replace("[number]", String.valueOf(plugin.getPlayers().getDeaths(targetPlayer)));
+                                                    message += " " + plugin.myLocale(((Player)sender).getUniqueId()).levelDeaths.replace("[number]", String.valueOf(deathHandicap));
                                                 }
                                                 Util.sendMessage(sender, message);
                                                 //Send player how many points are required to reach next island level
