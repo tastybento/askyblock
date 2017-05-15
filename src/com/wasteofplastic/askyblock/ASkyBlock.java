@@ -131,12 +131,15 @@ public class ASkyBlock extends JavaPlugin {
     // Player events listener
     private PlayerEvents playerEvents;
 
+    // Metrics
+    private Metrics metrics;
+
     // Localization Strings
     private HashMap<String,ASLocale> availableLocales = new HashMap<String,ASLocale>();
 
     // ASB Items & Sounds parser for panels & challenges
     private ASBParser parser;
-    
+
     /**
      * Returns the World object for the island world named in config.yml.
      * If the world does not exist then it is created.
@@ -236,13 +239,15 @@ public class ASkyBlock extends JavaPlugin {
             if (playerEvents != null) {
                 playerEvents.removeAllTempPerms();
             }
-            
+
             // Unregister Placeholders hooks
             PlaceholderHandler.unregister(this);
         } catch (final Exception e) {
             getLogger().severe("Something went wrong saving files!");
             e.printStackTrace();
         }
+
+        metrics = null;
     }
 
     /*
@@ -285,7 +290,7 @@ public class ASkyBlock extends JavaPlugin {
             }
             return;
         }
-        
+
         // Check to see if the user has carefully updated the configuration
         if(!isConfigUpToDate()){
             getLogger().severe("+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
@@ -297,7 +302,7 @@ public class ASkyBlock extends JavaPlugin {
             getLogger().severe("So please remove the current config.yml, work on config.new.yml and rename it to config.yml.");
             getLogger().severe("");
             getLogger().severe("+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
-            
+
             File newConfig = new File(plugin.getDataFolder(),"config.new.yml");
             if (!newConfig.exists()) {
                 File oldConfig = new File(plugin.getDataFolder(),"config.yml");
@@ -308,7 +313,7 @@ public class ASkyBlock extends JavaPlugin {
                     bakConfig.renameTo(oldConfig);
                 } 
             }
-            
+
             if (Settings.GAMETYPE.equals(Settings.GameType.ASKYBLOCK)) {
                 getCommand("island").setExecutor(new NotSetup(Reason.CONFIG_OUTDATED));
                 getCommand("asc").setExecutor(new NotSetup(Reason.CONFIG_OUTDATED));
@@ -318,9 +323,9 @@ public class ASkyBlock extends JavaPlugin {
                 getCommand("aic").setExecutor(new NotSetup(Reason.CONFIG_OUTDATED));
                 getCommand("acid").setExecutor(new NotSetup(Reason.CONFIG_OUTDATED));
             }
-        	return;
+            return;
         }
-        
+
         // Load all the configuration of the plugin and localization strings
         if (!PluginConfig.loadPluginConfig(this)) {
             // Currently, the only setup error is where the world_name does not match
@@ -346,7 +351,7 @@ public class ASkyBlock extends JavaPlugin {
         }
         // Load ASB Parser
         parser = new ASBParser(this);
-        
+
         // Get challenges
         challenges = new Challenges(this);
         // Set and make the player's directory if it does not exist and then
@@ -392,7 +397,7 @@ public class ASkyBlock extends JavaPlugin {
         }
         // Metrics
         if(Settings.metrics){
-            new MetricsLite(this);
+            metrics = new Metrics(this);
         }
         // Kick off a few tasks on the next tick
         // By calling getIslandWorld(), if there is no island
@@ -433,7 +438,7 @@ public class ASkyBlock extends JavaPlugin {
                         ASkyBlock.this.getLogger().severe("Could not register with Herochat");
                     }
                 }
-                
+
                 // Load Placeholders and hooks with other plugins
                 PlaceholderHandler.register(ASkyBlock.this);
 
@@ -501,6 +506,10 @@ public class ASkyBlock extends JavaPlugin {
                         playerEvents.giveAllTempPerms();
 
                         getLogger().info("All files loaded. Ready to play...");
+
+                        registerCustomCharts();
+                        getLogger().info("Metrics loaded.");
+
                         // Fire event
                         getServer().getPluginManager().callEvent(new ReadyEvent());
                     }
@@ -593,35 +602,35 @@ public class ASkyBlock extends JavaPlugin {
             }
         }
     }
-    
+
     /**
      * Checks if the config is up to date, to avoid critical issues
      * It uses its own "checker" in order to be more tolerant than the Updater.
      */
     public boolean isConfigUpToDate(){
-    	String[] pluginVersion = this.getDescription().getVersion().split(".");
-    	String[] configVersion = getConfig().getString("general.version").split(".");
-    	
-    	for(int i = 0; i < (Math.max(pluginVersion.length, configVersion.length) - 1); i++){
-    		try{
-    			int configLastDigit = 0;
-    			if (i < configVersion.length) {
-    				configLastDigit = Integer.valueOf(configVersion[i]);
+        String[] pluginVersion = this.getDescription().getVersion().split(".");
+        String[] configVersion = getConfig().getString("general.version").split(".");
+
+        for(int i = 0; i < (Math.max(pluginVersion.length, configVersion.length) - 1); i++){
+            try{
+                int configLastDigit = 0;
+                if (i < configVersion.length) {
+                    configLastDigit = Integer.valueOf(configVersion[i]);
                 }
                 int pluginLastDigit = 0;
                 if (i < pluginVersion.length) {
-                	pluginLastDigit = Integer.valueOf(pluginVersion[i]);
+                    pluginLastDigit = Integer.valueOf(pluginVersion[i]);
                 }
-                
+
                 if(pluginLastDigit > configLastDigit){
-                	return true;
+                    return true;
                 }
-    		} catch(Exception e){
-    			getLogger().warning("Could not determine config accuracy.");
-    			return false;
-    		}
-    	}
-    	return false;
+            } catch(Exception e){
+                getLogger().warning("Could not determine config accuracy.");
+                return false;
+            }
+        }
+        return false;
     }
 
     /**
@@ -653,10 +662,10 @@ public class ASkyBlock extends JavaPlugin {
             getLogger().severe("Could not delete player: " + player.toString() + " island!");
             getServer().getPluginManager().callEvent(new IslandDeleteEvent(player, null));
         }
-        
+
         players.zeroPlayerData(player);
         if(removeUserfiles){
-        	players.deletePlayerData(player);
+            players.deletePlayerData(player);
         }
     }
 
@@ -671,9 +680,9 @@ public class ASkyBlock extends JavaPlugin {
      * @return the items & sounds parser for panels & challenges
      */
     public ASBParser getParser() {
-    	return parser;
+        return parser;
     }
-    
+
     /**
      * @return the challenges
      */
@@ -1006,5 +1015,38 @@ public class ASkyBlock extends JavaPlugin {
      */
     public PlayerEvents getPlayerEvents() {
         return playerEvents;
+    }
+
+    /**
+     * Registers the custom charts for Metrics
+     */
+    public void registerCustomCharts(){
+        metrics.addCustomChart(new Metrics.SimplePie("challenges_count") {
+
+            @Override
+            public String getValue() {
+                int count = challenges.getAllChallenges().size();
+                if(count <= 0) return "0";
+                else if(1 <= count && 10 <= count) return "1-10";
+                else if(11 <= count && 20 <= count) return "11-20";
+                else if(21 <= count && 30 <= count) return "21-30";
+                else if(31 <= count && 40 <= count) return "31-40";
+                else if(41 <= count && 50 <= count) return "41-50";
+                else if(51 <= count && 75 <= count) return "51-75";
+                else if(76 <= count && 100 <= count) return "76-100";
+                else if(101 <= count && 150 <= count) return "101-150";
+                else if(151 <= count && 200 <= count) return "151-200";
+                else if(201 <= count && 300 <= count) return "201-300";
+                else return "300+";
+            }
+        });
+
+        metrics.addCustomChart(new Metrics.SingleLineChart("islands_count") {
+
+            @Override
+            public int getValue() {
+                return plugin.getGrid().getIslandCount();
+            }
+        });
     }
 }

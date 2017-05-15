@@ -16,6 +16,7 @@
  *******************************************************************************/
 package com.wasteofplastic.askyblock;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -69,9 +70,12 @@ public class Players {
      *            Constructor - initializes the state variables
      * 
      */
-    public Players(final ASkyBlock aSkyBlock, final UUID uuid) {
+    public Players(final ASkyBlock aSkyBlock, final UUID uuid) throws IOException {
         this.plugin = aSkyBlock;
         this.uuid = uuid;
+        if (uuid == null) {
+            throw new IOException("UUID is null");
+        }
         this.members = new ArrayList<UUID>();
         this.hasIsland = false;
         this.islandLocation = null;

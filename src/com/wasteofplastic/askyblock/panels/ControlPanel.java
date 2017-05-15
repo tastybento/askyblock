@@ -216,6 +216,8 @@ public class ControlPanel implements Listener {
         ItemStack clicked = event.getCurrentItem(); // The item that was clicked
         Inventory inventory = event.getInventory(); // The inventory that was clicked in
         if (inventory.getName() == null) {
+            if (DEBUG)
+                plugin.getLogger().info("DEBUG: inventory name is null");
             return;
         }
         // ASkyBlock plugin = ASkyBlock.getPlugin();
@@ -224,12 +226,16 @@ public class ControlPanel implements Listener {
         if (inventory.getName().equals(plugin.myLocale(player.getUniqueId()).challengesguiTitle)) {
             event.setCancelled(true);
             if (event.getClick().equals(ClickType.SHIFT_RIGHT)) {
+                if (DEBUG)
+                    plugin.getLogger().info("DEBUG: click type shift Right");
                 inventory.clear();
                 player.closeInventory();
                 player.updateInventory();
                 return;
             }
             if (event.getSlotType() == SlotType.OUTSIDE) {
+                if (DEBUG)
+                    plugin.getLogger().info("DEBUG: slot type outside");
                 inventory.clear();
                 player.closeInventory();
                 return;
@@ -248,6 +254,8 @@ public class ControlPanel implements Listener {
             // plugin.getLogger().info("DEBUG: Challenges size = " +
             // challenges.size());
             if (slot >= 0 && slot < challenges.size()) {
+                if (DEBUG)
+                    plugin.getLogger().info("DEBUG: slot within challenges");
                 CPItem item = challenges.get(slot);
                 // TEST
                 /*
@@ -269,12 +277,15 @@ public class ControlPanel implements Listener {
 
                 }*/
                 // END TEST
-                //plugin.getLogger().info("DEBUG: CP Item is " + item.getItem().toString());
-                //plugin.getLogger().info("DEBUG: Clicked is " + clicked.toString());
+                if (DEBUG) {
+                    plugin.getLogger().info("DEBUG: CP Item is " + item.getItem().toString());
+                    plugin.getLogger().info("DEBUG: Clicked is " + clicked.toString());
+                }
                 // Check that it is the top items that are being clicked on
                 // These two should be identical because it is made before
                 if (clicked.equals(item.getItem())) {
-                    // plugin.getLogger().info("DEBUG: You clicked on a challenge item");
+                    if (DEBUG)
+                        plugin.getLogger().info("DEBUG: You clicked on a challenge item");
                     // plugin.getLogger().info("DEBUG: performing  /" +
                     // item.getCommand());
                     // plugin.getLogger().info("DEBUG: going to " +

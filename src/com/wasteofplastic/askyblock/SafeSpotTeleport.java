@@ -250,7 +250,7 @@ public class SafeSpotTeleport {
                  * @param x
                  * @param y
                  * @param z
-                 * @param worldHeight
+                 * @param worldHeight 
                  * @return
                  */
                 @SuppressWarnings("deprecation")

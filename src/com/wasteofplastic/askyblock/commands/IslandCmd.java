@@ -811,7 +811,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
         }
         // Set the custom protection range if appropriate
         // Dynamic island range sizes with permissions
-        int range = Settings.islandProtectionRange;
+        int range = Settings.islandProtectionRange;        
         for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
             if (perms.getPermission().startsWith(Settings.PERMPREFIX + "island.range.")) {
                 if (perms.getPermission().contains(Settings.PERMPREFIX + "island.range.*")) {
@@ -1044,6 +1044,11 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
          * playerUUID is the unique ID of the player who issued the command
          */
         final UUID playerUUID = player.getUniqueId();
+        if (playerUUID == null) {
+            plugin.getLogger().severe("Player " + sender.getName() + " has a null UUID - this should never happen!");
+            sender.sendMessage(ChatColor.RED + plugin.myLocale().errorCommandNotReady + " (No UUID)");
+            return true;
+        }
         final UUID teamLeader = plugin.getPlayers().getTeamLeader(playerUUID);
         List<UUID> teamMembers = new ArrayList<UUID>();
         if (teamLeader != null) {
@@ -1547,6 +1552,8 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                             Boolean hasWarp = false;
                             String wlist = "";
                             for (UUID w : warpList) {
+                                if (w == null)
+                                    continue;
                                 if (wlist.isEmpty()) {
                                     wlist = plugin.getPlayers().getName(w);
                                 } else {
@@ -1831,9 +1838,9 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                         none = false;
                     }
                     if (none) {
-                        Util.sendMessage(player, plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " coop <player>: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpCoop);
+                        Util.sendMessage(player, plugin.myLocale(playerUUID).helpColor + "/" + label + " coop <player>: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpCoop);
                     } else {
-                        Util.sendMessage(player, plugin.myLocale(player.getUniqueId()).helpColor + plugin.myLocale(playerUUID).coopUseExpel);
+                        Util.sendMessage(player, plugin.myLocale(playerUUID).helpColor + plugin.myLocale(playerUUID).coopUseExpel);
                     }
                     return true;
                 }
@@ -2421,6 +2428,8 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                     // Check if this is part of a name
                                     UUID foundWarp = null;
                                     for (UUID warp : warpList) {
+                                        if (warp == null)
+                                            continue;
                                         if (plugin.getPlayers().getName(warp).toLowerCase().equals(split[1].toLowerCase())) {
                                             foundWarp = warp;
                                             break;

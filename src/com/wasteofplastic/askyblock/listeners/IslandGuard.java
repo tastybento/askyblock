@@ -578,11 +578,15 @@ public class IslandGuard implements Listener {
         }
         // If there's no limit - leave it
         if (Settings.breedingLimit <= 0) {
+            if (DEBUG2)
+                plugin.getLogger().info("No limit on breeding or spawning");
             return;
         }
         // We only care about spawning and breeding
         if (e.getSpawnReason() != SpawnReason.SPAWNER && e.getSpawnReason() != SpawnReason.BREEDING && e.getSpawnReason() != SpawnReason.EGG
                 && e.getSpawnReason() != SpawnReason.DISPENSE_EGG && e.getSpawnReason() != SpawnReason.SPAWNER_EGG && !e.getSpawnReason().name().contains("BABY")) {
+            if (DEBUG2)
+                plugin.getLogger().info("Not Spawner or breeding");
             return;
         }
         LivingEntity animal = e.getEntity();
@@ -593,9 +597,13 @@ public class IslandGuard implements Listener {
                 return;
             }
         }
+        if (DEBUG2)
+            plugin.getLogger().info("Correct world");
         Island island = plugin.getGrid().getProtectedIslandAt(animal.getLocation());
         if (island == null) {
             // Animal is spawning outside of an island so ignore
+            if (DEBUG2)
+                plugin.getLogger().info("Outside island, so spawning is okay");
             return;
         }
         // Count how many animals are there and who is the most likely spawner if it was a player
@@ -607,13 +615,15 @@ public class IslandGuard implements Listener {
             for (int z = island.getMinProtectedZ() /16; z <= (island.getMinProtectedZ() + island.getProtectionSize() - 1)/16; z++) {
                 for (Entity entity : ASkyBlock.getIslandWorld().getChunkAt(x, z).getEntities()) {
                     if (entity instanceof Animals || entity.getType().equals(EntityType.SQUID)) {
-                        if (DEBUG)
+                        if (DEBUG2)
                             plugin.getLogger().info("DEBUG: Animal count is " + animals);
                         animals++;
                         if (animals >= Settings.breedingLimit) {
                             // Delete any extra animals
                             overLimit = true;
                             animal.remove();
+                            if (DEBUG2)
+                                plugin.getLogger().info("Over limit! >=" + Settings.breedingLimit);
                             e.setCancelled(true);
                         }
                     } else if (entity instanceof Player && e.getSpawnReason() != SpawnReason.SPAWNER && e.getSpawnReason() != SpawnReason.DISPENSE_EGG) {
@@ -622,6 +632,8 @@ public class IslandGuard implements Listener {
                             Material type = itemInHand.getType();
                             if (type == Material.EGG || type == Material.MONSTER_EGG || type == Material.WHEAT || type == Material.CARROT_ITEM
                                     || type == Material.SEEDS) {
+                                if (DEBUG2)
+                                    plugin.getLogger().info("Player used egg or did breeding ");
                                 culprits.add(((Player) entity));
                             }
                         }
@@ -629,17 +641,21 @@ public class IslandGuard implements Listener {
                 }
             }
         }
+        if (DEBUG2)
+            plugin.getLogger().info("Counting nether");
         // Nether check
         if (Settings.createNether && Settings.newNether && ASkyBlock.getNetherWorld() != null) {
             for (int x = island.getMinProtectedX() /16; x <= (island.getMinProtectedX() + island.getProtectionSize() - 1)/16; x++) {
                 for (int z = island.getMinProtectedZ() /16; z <= (island.getMinProtectedZ() + island.getProtectionSize() - 1)/16; z++) {
                     for (Entity entity : ASkyBlock.getNetherWorld().getChunkAt(x, z).getEntities()) {
                         if (entity instanceof Animals || entity.getType().equals(EntityType.SQUID)) {
-                            if (DEBUG)
+                            if (DEBUG2)
                                 plugin.getLogger().info("DEBUG: Animal count is " + animals);
                             animals++;
                             if (animals >= Settings.breedingLimit) {
                                 // Delete any extra animals
+                                if (DEBUG2)
+                                    plugin.getLogger().info("Over limit! >=" + Settings.breedingLimit);
                                 overLimit = true;
                                 animal.remove();
                                 e.setCancelled(true);
@@ -1720,7 +1736,7 @@ public class IslandGuard implements Listener {
                     if (lastBlock.equals(e.getClickedBlock())) {
                         if (DEBUG)
                             plugin.getLogger().info("DEBUG: found clicked block");
-                        continue;
+                        break;
                     }
                     if (lastBlock.getType().equals(Material.FIRE)) {
                         if (DEBUG)
@@ -1752,7 +1768,7 @@ public class IslandGuard implements Listener {
                 }
             }
             // Handle Shulker Boxes
-            if (e.getClickedBlock().getType().toString().contains("BOX")) {
+            if (e.getClickedBlock().getType().toString().contains("SHULKER_BOX")) {
                 if (island == null) {
                     if (!Settings.defaultWorldSettings.get(SettingsFlag.CHEST)) {
                         Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
@@ -1777,6 +1793,7 @@ public class IslandGuard implements Listener {
                 }
                 return; 
             }
+            
             switch (e.getClickedBlock().getType()) {
             case WOODEN_DOOR:
             case SPRUCE_DOOR:
@@ -1938,17 +1955,25 @@ public class IslandGuard implements Listener {
             case ITEM_FRAME:
                 break;
             case JUKEBOX:
+                if (DEBUG)
+                    plugin.getLogger().info("DEBUG: Jukebox");
             case NOTE_BLOCK:
                 if (island == null) {
+                    if (DEBUG) 
+                        plugin.getLogger().info("DEBUG: Jukebox island = null");
                     if (Settings.defaultWorldSettings.get(SettingsFlag.MUSIC)) {
                         return;
                     } else {
+                        if (DEBUG) 
+                            plugin.getLogger().info("DEBUG: Jukebox not allowed");
                         Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                         e.setCancelled(true);
                         return;
                     }
                 }
                 if (!island.getIgsFlag(SettingsFlag.MUSIC)) {
+                    if (DEBUG) 
+                        plugin.getLogger().info("DEBUG: Jukebox not allowed");
                     Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                     e.setCancelled(true);
                     return;

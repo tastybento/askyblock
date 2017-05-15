@@ -790,6 +790,12 @@ public class PluginConfig {
             if (!Settings.defaultSpawnSettings.containsKey(flag)) {
                 Settings.defaultSpawnSettings.put(flag, false);
             }
+            if (!Settings.defaultIslandSettings.containsKey(flag)) {
+                Settings.defaultIslandSettings.put(flag, false);
+            }
+            if (!Settings.defaultSpawnSettings.containsKey(flag)) {
+                Settings.defaultSpawnSettings.put(flag, false);
+            }
         }
         ConfigurationSection protectionIsland = plugin.getConfig().getConfigurationSection("protection.island");
         for (String setting: protectionIsland.getKeys(false)) {
@@ -803,7 +809,6 @@ public class PluginConfig {
                 plugin.getLogger().severe("Unknown setting in config.yml:island.world " + setting.toUpperCase() + " skipping...");
             }
         }
-
         // ******************** Biome Settings *********************
         Settings.biomeCost = plugin.getConfig().getDouble("biomesettings.defaultcost", 100D);
         if (Settings.biomeCost < 0D) {
