@@ -1,8 +1,10 @@
-package com.wasteofplastic.askyblock.placeholders;
+package com.wasteofplastic.askyblock.placeholders.hooks;
 
 import org.bukkit.entity.Player;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.placeholders.PlaceholderAPI;
+import com.wasteofplastic.askyblock.placeholders.Placeholders;
 import com.wasteofplastic.askyblock.placeholders.Placeholders.Placeholder;
 
 /**
@@ -10,7 +12,7 @@ import com.wasteofplastic.askyblock.placeholders.Placeholders.Placeholder;
  * 
  * @author Poslovitch
  */
-public class InternalPlaceholderAPI implements PlaceholderAPI{
+public class ASkyBlockPlaceholderAPI implements PlaceholderAPI{
 	
 	@Override
 	public boolean register(ASkyBlock plugin) {
@@ -33,5 +35,10 @@ public class InternalPlaceholderAPI implements PlaceholderAPI{
 		}
 		return message;
 	}
+
+    @Override
+    public String getName() {
+        return "ASkyBlock";
+    }
 
 }

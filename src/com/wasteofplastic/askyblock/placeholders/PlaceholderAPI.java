@@ -10,7 +10,29 @@ import com.wasteofplastic.askyblock.ASkyBlock;
  * @author Poslovitch
  */
 public interface PlaceholderAPI {
+    
+    /**
+     * @return name of the placeholder plugin
+     */
+    String getName();
+	/**
+	 * Register a placeholder
+	 * @param plugin
+	 * @return true if registered
+	 */
 	boolean register(ASkyBlock plugin);
+	
+	/**
+	 * Unregister a placeholder
+	 * @param plugin
+	 */
 	void unregister(ASkyBlock plugin);
+	
+	/**
+	 * Replace message for player
+	 * @param player
+	 * @param message
+	 * @return Updated message
+	 */
 	String replacePlaceholders(Player player, String message);
 }

@@ -3,14 +3,6 @@
 # the one at http://yaml-online-parser.appspot.com                                        #
 ###########################################################################################
 
-notsetup:
-  header: "More set up is required before the plugin can start... \nEdit config.yml. Then restart server."
-  distance: "Make sure you set island distance. If upgrading, set it to what it was before."
-  generator: "The world generator for the island world is not registered. \nPotential reasons are: \n  1. If you are configuring the island world as the only server world \n     Make sure you have added the world to bukkit.yml \n  2. You reloaded instead of restarting the server. Reboot and try again."
-  generatormultiverse: "  3. Your Multiverse plugin is out of date. Upgrade to the latest version."
-  worldname: "The world name in config.yml is different to the world name in islands.yml. \nIf this is intentional, we assume you are doing a full reset. \nIf so, delete islands.yml and the previous world. \nIf not, correct the world name in config.yml and restart. This is probably the case if you are upgrading."
-  configoutdated: "The config.yml file looks outdated. \nMake sure you updated your configuration after upgrading. \nIf this error is still happening, you probably edited the old config rather than editing the new one. \nIf so, please remove the current config.yml, work on config.new.yml and rename it to config.yml."
-
 --- 
 acidBottle: "Acid Bottle"
 acidBucket: "Acid Bucket"
@@ -18,14 +10,13 @@ acidLore: |
     Do
     not drink!
     Beware!
-
 adminDeleteIsland: 
   error: "Use &ldeleteisland confirm &r&cto delete the island you are on."
   noid: "Cannot identify island."
   use: "Use &ldelete [name] &r&cto delete the player instead."
-adminHelp:
+adminHelp: 
   add: "adds player to leader's team"
-  addrange: "adds to or substracts from the island's protection range" 
+  addrange: "adds to or substracts from the island's protection range"
   clearreset: "zresetuje limit poctu restartu ostrovu hrace."
   clearresetall: "resets the island reset limit for all players"
   cobblestats: "displays magic cobble generation stats"
@@ -38,11 +29,11 @@ adminHelp:
   level: "provide detailed island level report on player"
   listChallengeResets: "lists challenge reset schedules, if any"
   lock: "locks/unlocks player's island"
+  name: "Set name of player's island"
   purge: "odstrani vsechny neaktivni ostrovy starsi nez [TimeInDays]."
   purgeallowdisallow: "allow/disallow island to be purged if it meets purge criteria"
   purgeholes: "uvolni mezery mezi ostrovy pro znovupouziti"
   purgeunowned: "remove unowned islands"
-  name: "Set name of player's island"
   register: "nastavi hracuv ostrov na tvou pozici"
   reload: "nahraje konfiguraci ze souboru."
   resetAllChallenges: "zresetuje vsechny ukoly hrace"
@@ -67,19 +58,19 @@ adminInfo:
   errorNullTeamLeader: "Vudce tymu by mel byt null!"
   errorTeamMembersExist: "Hrac mel cleny tymu ale nemel by mit!"
   hoppers: "Island has [number] hoppers"
-  islandLocation: "Umisteni ostrova"
   isLocked: "Island is locked"
   isProtected: "Island is purge protected"
   isSpawn: "Island is spawn"
   isUnlocked: "Island is unlocked"
   isUnprotected: "Island is not purge protected"
+  islandLocation: "Umisteni ostrova"
   lastLogin: "Last login"
   maxSize: "Island max size (distance)"
-  player: "Player"
+  player: Player
   teamLeader: "Team Leader"
   teamMembers: "Team Members"
   title: "This is spawn island"
-  unowned: "This island is not owned by anyone right now." 
+  unowned: "This island is not owned by anyone right now."
 adminLock: 
   adminLockedIsland: "Admin locked your island"
   adminUnlockedIsland: "Admin unlocked your island"
@@ -90,7 +81,9 @@ adminRegister:
   noIsland: "There is no known island in this area!"
   notSpawn: "You cannot take ownership of spawn!"
   taking: "Taking ownership away from [name]"
-adminResetChallengeForAll:
+adminReserve: 
+  islandExists: "There is an island here already! Register the player instead!"
+adminResetChallengeForAll: 
   error: "Format for repeat time must is [integer number][m/h/d] (minutes, hours, days), e.g. 5h"
   repeating: "Repeating [duration]"
   reset: "Reset [date]"
@@ -99,8 +92,6 @@ adminResetSign:
   found: "Warp sign found!"
   noSign: "You must be looking at a sign post to run this command."
   rescued: "Warp sign rescued and assigned to [name]"
-adminReserve:
-  islandExists: "There is an island here already! Register the player instead!"
 adminSetHome: 
   homeSet: "Home set to [location]"
   noneFound: "No safe location found!"
@@ -153,7 +144,7 @@ ban:
   helpUnban: "un-ban a player from your island."
   lifted: "Ban lifted from [name]'s island!"
   liftedsuccess: "Ban lifted for [name]!"
-  none: "None"
+  none: None
   notbanned: "[name] is not banned!"
   notteammember: "You cannot ban a team member!"
   notyourself: "You cannot do that to yourself!"
@@ -168,9 +159,9 @@ boats:
   warning: "Je nebezpecne opoustet lod prave ted!"
 challenges: 
   colors: "Ukoly budou mit ruzne barvy pokud jsou:"
-  complete: "Kompletni"
-  completeNotRepeatable: "Kompletni(neopakovatelne)"
-  completeRepeatable: "Kompletni(opakovatelne)"
+  complete: Kompletni
+  completeNotRepeatable: Kompletni(neopakovatelne)
+  completeRepeatable: Kompletni(opakovatelne)
   completedtimes: "Dokonceno [donetimes] z [maxtimes]"
   errorIslandLevel: "Tvuj ostrov musi mit uroven [level] k dokonceni ukolu!"
   errorItemsNotThere: "Vsechny pozadovane predmety musi byt blizko tebe na tvem ostrove!"
@@ -178,7 +169,7 @@ challenges:
   errorNotEnoughItems: "Nemas dostatek pozadovanych predmetu"
   errorNotOnIsland: "Musis byt na svem ostrovu abys to mohl udelat!"
   errorRewardProblem: "Nastal problem pri odmenovani. Kontaktuj Admina!"
-  erroryouaremissing: "Chybis"
+  erroryouaremissing: Chybis
   expReward: "Odmena zkusenostmi"
   firstTimeRewards: "Prvni odmena(y)"
   guititle: "aSkyBlock ulohy"
@@ -211,7 +202,7 @@ completechallenge:
 confirm: 
   errorTimeLimitExpired: "Casovy limit vyprsel! Spust prikaz znovu."
 coop: 
-  cannotcoop: "Only island leader can coop a player." 
+  cannotcoop: "Only island leader can coop a player."
   help: "docasne da hraci pristup k tvemu ostrovu"
   invited: "[name] udelal z [player] kooperujiciho hrace!"
   listcoops: "list coop players"
@@ -224,8 +215,8 @@ coop:
   uncoop: "remove full island access from player"
   useexpel: "Pouzij expel k odstraneni."
 deaths: 
-  deaths: "Deaths"
-  died: "died!"
+  deaths: Deaths
+  died: died!
   leveldeaths: "&c[[number] deaths]"
 delete: 
   removing: "Odstranovani ostrova hrace [name]."
@@ -235,11 +226,12 @@ error:
   blockedbyapi: "A plugin using the API blocked this action."
   commandNotReady: "Prave ted tento prikaz pouzit nemuzes."
   maxIslands: "The world is full of islands! Try again later!"
+  minishopDisabled: "Minishop is disabled."
   noIsland: "Nemate zadny ostrov!"
   noIslandOther: "Tento hrac nema zadny ostrov!"
   noPermission: "Nemate povoleni k pouziti tohoto prikazu"
-  notABlock: "That is not a block"
   noTeam: "Hrac neni v tymu."
+  notABlock: "That is not a block"
   notOnIsland: "You are not in an island space!"
   offlinePlayer: "Hrac je offline nebo neexistuje"
   tooLong: "Too long. Maximum size is [length]."
@@ -248,15 +240,14 @@ error:
   unknownPlayer: "Neznamy hrac"
   useInGame: "This command must be used in-game."
   wrongWorld: "Toto nemuzes udelat v tomto svete."
-  minishopDisabled: "Minishop is disabled."
 expel: 
   expelled: "Byl si vyhnan z ostrova!"
   fail: "hrac [name] nemuze byt vyhnan!"
   notonisland: "Hrac neni na tvem ostrove!"
   notyourself: "Nemuzes vyhnat sam sebe!"
   success: "Vyhnal si hrace [name]!"
-general:
-  success: "Success!"
+general: 
+  success: Success!
 invite: 
   errorCantJoinIsland: "Nemuzes se pridat k ostrovu, nejspise je plny."
   errorCoolDown: "Muzes pozvat hrace v [time] minutach"
@@ -277,10 +268,10 @@ invite:
   youHaveJoinedAnIsland: "Pridal ses na ostrov! Pouzij /[label] team abys videl ostatni celny."
 island: 
   blockValue: "[name] placed here may be worth [value]"
-  blockWorthless: "[name] is worthless" 
+  blockWorthless: "[name] is worthless"
   cannotTeleport: "Nemuzes se teleportovat pokud padas!"
   donate: "Vitejte na ostrove od tastybento"
-  donatecolor: "aqua"
+  donatecolor: aqua
   errorCouldNotCreateIsland: "Nemohu vytvorit tvuj ostrov. Kontaktuj prosim serveroveho moderatora."
   errorInvalidPlayer: "Hrac neni spravny nebo nema ostrov!"
   errorLevelNotReady: "Nyni tento prikaz pouzit nemuzes, zkus to pozdeji"
@@ -320,22 +311,22 @@ island:
   resetNoMore: "Vycerpal si maximalni pocet restartu ostrova!"
   resetOnlyOwner: "Pouze vlastnik muze zrestartovat tento ostrov. Opust tento ostrov pokud si chces zalozit vlastni (/[label] leave)."
   resetPleaseWait: "Cekej prosim, vytvari se novy ostrov"
-  resetsLeft: "Resets left"
   resetTo: "Obnoven pocet restartu"
   resetWait: "Musis cekat [time] sekund pred opakovanim."
   resetYouHave: "Zbyva ti [number] restartu."
+  resetsLeft: "Resets left"
   subtitle: "by tastybento"
-  subtitlecolor: "blue"
+  subtitlecolor: blue
   teleport: "Teleportuji te na tvuj ostrov. (/[label] help pro vice informaci)"
   title: "A SkyBlock"
-  titlecolor: "gold"
-  unlimited: "Unlimited"
+  titlecolor: gold
+  unlimited: Unlimited
   url: ""
 islandProtected: "Ostrov chranen."
 islandguardsettings: 
   TNTdamage: "Poskozeni TNT"
-  allowed: Povoleno
   aciddamage: "Acid damage"
+  allowed: Povoleno
   animalspawning: "Allow/Disallow Animal Spawning"
   anvil: "Pouziti kovadliny"
   armorstand: "Pouziti stojanu na brneni"
@@ -345,11 +336,11 @@ islandguardsettings:
   breeding: "Mnozeni zvirat"
   brewingstand: "Vareni lektvaru"
   bucket: "Pouziti kbeliku"
-  collectlava: "Lava collection"
-  collectwater: "Water collection"
   chest: "Pouziti truhel"
   chestdamage: "Poskozeni truhel TNT"
   chorusfruit: "Chorus Fruit Use"
+  collectlava: "Lava collection"
+  collectwater: "Water collection"
   creeperdamage: "Creeper damage"
   creepergriefing: "Creeper griefing"
   creeperpain: "Creeper explosions hurt"
@@ -364,15 +355,13 @@ islandguardsettings:
   firespread: "Fire spread"
   furnace: "Pouziti pece"
   gate: "Pouziti brany"
-  hurtanimals: "Ublizovani zviratum"
-  hurtmonsters: "Ublizovani monstrum"
   hurtanimals: "Hurting animals"
   hurtmonsters: "Hurting monsters"
   joinleaveislandmessages: "Enable Join & Leave Island Messages"
   jukebox: "Pouziti hraci skrinky"
   leash: "Pouziti voditka"
   lever: "Pouziti packy nebo cudliku"
-  milking: "Milking"
+  milking: Milking
   monsterspawning: "Allow/Disallow Monster Spawning"
   netherpvp: "PvP v netheru"
   placeblocks: "Pokladani bloku"
@@ -380,12 +369,12 @@ islandguardsettings:
   pressureplate: "Visitors activate pressure plates"
   pvp: PvP
   redstone: "Pouziti redstone"
-  settingsgeneraltitle: "General Island World Settings"
   settingsgeneraldesc: "General Island World Settings"
-  settingsislandtitle: "Island Settings"
+  settingsgeneraltitle: "General Island World Settings"
   settingsislanddesc: "These rules apply to visitors on this island"
-  settingsspawntitle: "Spawn Settings"
+  settingsislandtitle: "Island Settings"
   settingsspawndesc: "These rules apply at spawn"
+  settingsspawntitle: "Spawn Settings"
   shears: "Pouziti nuzek"
   spawnegg: "Pouziti spawnovaciho vejce"
   teleportwhenfalling: "Teleport behem padu"
@@ -408,7 +397,6 @@ leave:
   errorLeadersCannotLeave: "Vudce ostrova nemuze opustit ostrov. Udelej nejprve vudce z nekoho jineho."
   errorYouAreTheLeader: "Nemuzes opustit ostrov pokud jses vedouci ostrova. Udelej nejprve vedouciho z nekoho jineho."
   errorYouCannotLeaveIsland: "Nemuzes opustit ostrov pokud jses sam. Zkus restartovat ostrov pokud chces jiny!"
-  errorYouMustBeInWorld: "Musis byt v ostrovnim svete abys mohl opustit tym!"
   errorYouMustBeInWorld: "You must be in the island world to leave your team!"
   nameHasLeftYourIsland: "[name] opustil tvuj ostrov!"
   warning: "Are you sure you want to leave the team? Type '[label] leave' again to confirm."
@@ -454,6 +442,28 @@ nether:
   spawnisprotected: "Spawnovaci oblast v netheru je chranena."
 news: 
   headline: "[Novinky ze skyblocku] Zatimco si byl offline..."
+notsetup: 
+  configoutdated: |-
+      The config.yml file looks outdated. 
+      Make sure you updated your configuration after upgrading. 
+      If this error is still happening, you probably edited the old config rather than editing the new one. 
+      If so, please remove the current config.yml, work on config.new.yml and rename it to config.yml.
+  distance: "Make sure you set island distance. If upgrading, set it to what it was before."
+  generator: |-
+      The world generator for the island world is not registered. 
+      Potential reasons are: 
+        1. If you are configuring the island world as the only server world 
+           Make sure you have added the world to bukkit.yml 
+        2. You reloaded instead of restarting the server. Reboot and try again.
+  generatormultiverse: "  3. Your Multiverse plugin is out of date. Upgrade to the latest version."
+  header: |-
+      More set up is required before the plugin can start... 
+      Edit config.yml. Then restart server.
+  worldname: |-
+      The world name in config.yml is different to the world name in islands.yml. 
+      If this is intentional, we assume you are doing a full reset. 
+      If so, delete islands.yml and the previous world. 
+      If not, correct the world name in config.yml and restart. This is probably the case if you are upgrading.
 purge: 
   acidFound: "There are [number] unowned islands. Do '/acid purge unowned confirm' to delete them within 20 seconds."
   allowPurge: "Purge protection removed"
@@ -494,19 +504,19 @@ sethome:
   errorNotOnIsland: "Nesmis byt mimo hranice ostrova abys mohl nastavit domov!"
   errorNumHomes: "Muze byt pouze od 1 do [max] domovu"
   homeSet: "Tvuj ostrovni domov byl nastaven na tvou soucasnou pozici."
-settingsReset:
-  done: "Done."
+settingsReset: 
+  done: Done.
   inprogress: "Protection settings being reset, please wait..."
 sign: 
   line1: "&1[A Skyblock]"
   line2: "[player]"
-  line3: "Nespadni!"
+  line3: Nespadni!
   line4: "Davej pozor!"
-sign-acidisland:
+sign-acidisland: 
   line1: "&1[AcidIsland]"
   line2: "[player]"
   line3: "Voda je kyselina!"
-  line4: "Pozor!"
+  line4: Pozor!
 targetInPVPArea: "Cil je mimo PVP oblast!"
 team: 
   listingMembers: "Seznam clenu tveho ostrova"
@@ -532,12 +542,11 @@ warps:
   errorNoPlace: "K umisteni cedulky WELCOME musis byt na svem ostrove!"
   errorNoRemove: "Muzes odstranit pouze svou vlastni cedulku WELCOME!"
   errorNoWarpsYet: "Zadne warpy zde nejsou zatim dostupne!"
+  errorNotEnoughLevel: "You do not have enough island levels to create a Welcome Sign!"
   errorNotReadyYet: "Tento warp neni jeste pripraven, zkuste to pozdeji."
   errorNotSafe: "Tento warp nyni neni bezpecny, zkuste to pozdeji."
-  errorNotEnoughLevel: "You do not have enough island levels to create a Welcome Sign!"
-  next: "Next"
+  next: Next
   playerWarped: "[name] &2pouzil warp k teleportu na tvuj ostrov!"
-  removed: "Cedulka WELCOME byla odstranena!"
   removed: "Welcome sign removed!"
   signRemoved: "Tvoje cedulka WELCOME byla odstranena!"
   success: "Cedulka WELCOME umistena uspesne!"

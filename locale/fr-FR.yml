@@ -3,14 +3,6 @@
 # the one at http://yaml-online-parser.appspot.com                                        #
 ###########################################################################################
 
-notsetup:
-  header: "Configuration nécessaire avant de pouvoir utiliser le plugin... \nEditez le fichier config.yml puis redémarrez le serveur."
-  distance: "Assurez vous d'avoir défini la distance entre les îles. Si vous avez mis à jour le plugin, conservez la même distance."
-  generator: "Le générateur n'est pas défini pour le monde des îles. \nLes raisons potentielles sont: \n  1. Si vous configurez le monde des îles comme le seul monde du serveur, \n     assurez-vous d'avoir ajouté le nom du monde dans le fichier bukkit.yml \n  2. Vous avez reload le serveur au lieu de le redémarrer."
-  generatormultiverse: "  3. Le plugin Multiverse n'est pas à jour. Installez la version la plus récente."
-  worldname: "Le nom du monde dans le fichier config.yml diffère de celui dans le fichier islands.yml. \nSi ceci est intentionnel, nous en déduisons que vous réinitialisez votre serveur. \nDans ce cas, supprimez le fichier islands.yml et l'ancien monde. \nSi ce n'est pas le cas, corrigez le nom du monde dans le fichier config.yml et redémarrez votre serveur. Ceci peut se produire lorsque vous mettez à jour le plugin."
-  configoutdated: "Le fichier config.yml semble être obsolète. \nAssurez-vous d'avoir actualisé votre configuration après avoir mis à jour le plugin. \nSi cette erreur continue de se produire, vous avez probablement édité l'ancien config.yml plutôt que le nouveau. \nSi c'est le cas, supprimez le fichier config.yml, travaillez sur le fichier config.new.yml puis renommez-le en config.yml."
-
 --- 
 acidBottle: "Bouteille d'acide"
 acidBucket: "Seau d'acide"
@@ -387,7 +379,7 @@ islandguardsettings:
   pvp: "PvP"
   redstone: "Redstone"
   settingsgeneraltitle: "Paramètres généraux du monde des îles"
-  settingsgeneraldesc: ""Paramètres généraux du monde des îles"
+  settingsgeneraldesc: "Paramètres généraux du monde des îles"
   settingsislandtitle: "Paramètres de l'île"
   settingsislanddesc: "Ces paramètres s'appliquent aux visiteurs"
   settingsspawntitle: "Paramètres du Spawn"

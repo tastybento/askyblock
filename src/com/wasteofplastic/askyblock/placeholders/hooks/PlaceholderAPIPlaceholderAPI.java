@@ -15,7 +15,7 @@ import me.clip.placeholderapi.PlaceholderHook;
  * 
  * @author Poslovitch
  */
-public class PAPIPlaceholderAPI implements PlaceholderAPI{
+public class PlaceholderAPIPlaceholderAPI implements PlaceholderAPI{
 
 	@Override
 	public boolean register(ASkyBlock plugin) {
@@ -46,5 +46,10 @@ public class PAPIPlaceholderAPI implements PlaceholderAPI{
 	public String replacePlaceholders(Player player, String message) {
 		return me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(player, message);
 	}
+
+    @Override
+    public String getName() {
+        return "PlaceholderAPI";
+    }
 
 }

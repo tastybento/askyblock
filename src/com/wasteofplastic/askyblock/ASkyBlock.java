@@ -241,7 +241,9 @@ public class ASkyBlock extends JavaPlugin {
             }
 
             // Unregister Placeholders hooks
-            PlaceholderHandler.unregister(this);
+            if (PlaceholderHandler.hasAPIs()) {
+                PlaceholderHandler.unregister(this);
+            }
         } catch (final Exception e) {
             getLogger().severe("Something went wrong saving files!");
             e.printStackTrace();
@@ -280,13 +282,13 @@ public class ASkyBlock extends JavaPlugin {
             getLogger().severe("");
             getLogger().severe("+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
             if (Settings.GAMETYPE.equals(Settings.GameType.ASKYBLOCK)) {
-                getCommand("island").setExecutor(new NotSetup(Reason.DISTANCE));
-                getCommand("asc").setExecutor(new NotSetup(Reason.DISTANCE));
-                getCommand("asadmin").setExecutor(new NotSetup(Reason.DISTANCE));
+                getCommand("island").setExecutor(new NotSetup(plugin, Reason.DISTANCE));
+                getCommand("asc").setExecutor(new NotSetup(plugin, Reason.DISTANCE));
+                getCommand("asadmin").setExecutor(new NotSetup(plugin, Reason.DISTANCE));
             } else {
-                getCommand("ai").setExecutor(new NotSetup(Reason.DISTANCE));
-                getCommand("aic").setExecutor(new NotSetup(Reason.DISTANCE));
-                getCommand("acid").setExecutor(new NotSetup(Reason.DISTANCE));
+                getCommand("ai").setExecutor(new NotSetup(plugin, Reason.DISTANCE));
+                getCommand("aic").setExecutor(new NotSetup(plugin, Reason.DISTANCE));
+                getCommand("acid").setExecutor(new NotSetup(plugin, Reason.DISTANCE));
             }
             return;
         }
@@ -315,28 +317,30 @@ public class ASkyBlock extends JavaPlugin {
             }
 
             if (Settings.GAMETYPE.equals(Settings.GameType.ASKYBLOCK)) {
-                getCommand("island").setExecutor(new NotSetup(Reason.CONFIG_OUTDATED));
-                getCommand("asc").setExecutor(new NotSetup(Reason.CONFIG_OUTDATED));
-                getCommand("asadmin").setExecutor(new NotSetup(Reason.CONFIG_OUTDATED));
+                getCommand("island").setExecutor(new NotSetup(plugin, Reason.CONFIG_OUTDATED));
+                getCommand("asc").setExecutor(new NotSetup(plugin, Reason.CONFIG_OUTDATED));
+                getCommand("asadmin").setExecutor(new NotSetup(plugin, Reason.CONFIG_OUTDATED));
             } else {
-                getCommand("ai").setExecutor(new NotSetup(Reason.CONFIG_OUTDATED));
-                getCommand("aic").setExecutor(new NotSetup(Reason.CONFIG_OUTDATED));
-                getCommand("acid").setExecutor(new NotSetup(Reason.CONFIG_OUTDATED));
+                getCommand("ai").setExecutor(new NotSetup(plugin, Reason.CONFIG_OUTDATED));
+                getCommand("aic").setExecutor(new NotSetup(plugin, Reason.CONFIG_OUTDATED));
+                getCommand("acid").setExecutor(new NotSetup(plugin, Reason.CONFIG_OUTDATED));
             }
             return;
         }
+        // Load ASB Parser
+        parser = new ASBParser(this);
 
         // Load all the configuration of the plugin and localization strings
         if (!PluginConfig.loadPluginConfig(this)) {
             // Currently, the only setup error is where the world_name does not match
             if (Settings.GAMETYPE.equals(Settings.GameType.ASKYBLOCK)) {
-                getCommand("island").setExecutor(new NotSetup(Reason.WORLD_NAME));
-                getCommand("asc").setExecutor(new NotSetup(Reason.WORLD_NAME));
-                getCommand("asadmin").setExecutor(new NotSetup(Reason.WORLD_NAME));
+                getCommand("island").setExecutor(new NotSetup(plugin, Reason.WORLD_NAME));
+                getCommand("asc").setExecutor(new NotSetup(plugin, Reason.WORLD_NAME));
+                getCommand("asadmin").setExecutor(new NotSetup(plugin, Reason.WORLD_NAME));
             } else {
-                getCommand("ai").setExecutor(new NotSetup(Reason.WORLD_NAME));
-                getCommand("aic").setExecutor(new NotSetup(Reason.WORLD_NAME));
-                getCommand("acid").setExecutor(new NotSetup(Reason.WORLD_NAME));
+                getCommand("ai").setExecutor(new NotSetup(plugin, Reason.WORLD_NAME));
+                getCommand("aic").setExecutor(new NotSetup(plugin, Reason.WORLD_NAME));
+                getCommand("acid").setExecutor(new NotSetup(plugin, Reason.WORLD_NAME));
             }
             return;
         }
@@ -349,8 +353,6 @@ public class ASkyBlock extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
-        // Load ASB Parser
-        parser = new ASBParser(this);
 
         // Get challenges
         challenges = new Challenges(this);
@@ -419,13 +421,13 @@ public class ASkyBlock extends JavaPlugin {
                     getLogger().severe("  " + Settings.worldName + ":");
                     getLogger().severe("    generator: " + ASkyBlock.this.getName());
                     if (Settings.GAMETYPE.equals(Settings.GameType.ASKYBLOCK)) {
-                        getCommand("island").setExecutor(new NotSetup(Reason.GENERATOR));
-                        getCommand("asc").setExecutor(new NotSetup(Reason.GENERATOR));
-                        getCommand("asadmin").setExecutor(new NotSetup(Reason.GENERATOR));  
+                        getCommand("island").setExecutor(new NotSetup(plugin, Reason.GENERATOR));
+                        getCommand("asc").setExecutor(new NotSetup(plugin, Reason.GENERATOR));
+                        getCommand("asadmin").setExecutor(new NotSetup(plugin, Reason.GENERATOR));  
                     } else {
-                        getCommand("ai").setExecutor(new NotSetup(Reason.GENERATOR));
-                        getCommand("aic").setExecutor(new NotSetup(Reason.GENERATOR));
-                        getCommand("acid").setExecutor(new NotSetup(Reason.GENERATOR));
+                        getCommand("ai").setExecutor(new NotSetup(plugin, Reason.GENERATOR));
+                        getCommand("aic").setExecutor(new NotSetup(plugin, Reason.GENERATOR));
+                        getCommand("acid").setExecutor(new NotSetup(plugin, Reason.GENERATOR));
                     }
                     HandlerList.unregisterAll(ASkyBlock.this);
                     return;
@@ -608,10 +610,13 @@ public class ASkyBlock extends JavaPlugin {
      * It uses its own "checker" in order to be more tolerant than the Updater.
      */
     public boolean isConfigUpToDate(){
-        String[] pluginVersion = this.getDescription().getVersion().split(".");
-        String[] configVersion = getConfig().getString("general.version").split(".");
-
-        for(int i = 0; i < (Math.max(pluginVersion.length, configVersion.length) - 1); i++){
+        String[] pluginVersion = this.getDescription().getVersion().split("\\.");
+        String[] configVersion = getConfig().getString("general.version").split("\\.");
+        getLogger().info("DEBUG: pluginVersion = " + this.getDescription().getVersion());
+        getLogger().info("DEBUG: configVersion = " + getConfig().getString("general.version"));
+        getLogger().info("DEBUG: max length = " + (Math.max(pluginVersion.length, configVersion.length) - 1));
+        
+        for(int i = 0; i < Math.max(pluginVersion.length, configVersion.length); i++){
             try{
                 int configLastDigit = 0;
                 if (i < configVersion.length) {
@@ -621,16 +626,21 @@ public class ASkyBlock extends JavaPlugin {
                 if (i < pluginVersion.length) {
                     pluginLastDigit = Integer.valueOf(pluginVersion[i]);
                 }
-
-                if(pluginLastDigit > configLastDigit){
+                getLogger().info("DEBUG: pluginLastDigit = " + pluginLastDigit + " configLastDigit = " + configLastDigit);
+                if(pluginLastDigit < configLastDigit){
+                    getLogger().info("DEBUG: up to date!");
                     return true;
+                } else if (pluginLastDigit > configLastDigit) {
+                    getLogger().info("DEBUG: not up to date!");
+                    return false;
                 }
             } catch(Exception e){
                 getLogger().warning("Could not determine config accuracy.");
                 return false;
             }
         }
-        return false;
+        getLogger().info("DEBUG: up to date!");
+        return true;
     }
 
     /**

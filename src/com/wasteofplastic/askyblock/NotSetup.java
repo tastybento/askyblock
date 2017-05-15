@@ -17,6 +17,9 @@
 
 package com.wasteofplastic.askyblock;
 
+import java.io.IOException;
+import java.util.HashMap;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -39,34 +42,57 @@ public class NotSetup implements CommandExecutor {
     };
 
     private Reason reason;
+    private ASkyBlock plugin;
 
     /**
      * Handles plugin operation if a critical setup parameter is missing
      * 
      * @param reason
      */
-    public NotSetup(Reason reason) {
+    public NotSetup(ASkyBlock plugin, Reason reason) {
+        this.plugin = plugin;
         this.reason = reason;
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String arg2, String[] arg3) {
-        Util.sendMessage(sender, ChatColor.RED + ASkyBlock.getPlugin().myLocale().notSetupHeader);
+        // Get the default language
+        Settings.defaultLanguage = plugin.getConfig().getString("general.defaultlanguage", "en-US");
+
+        // Load languages
+        HashMap<String,ASLocale> availableLocales = new HashMap<String,ASLocale>();
+        FileLister fl = new FileLister(plugin);
+        try {
+            int index = 1;
+            for (String code: fl.list()) {
+                //plugin.getLogger().info("DEBUG: lang file = " + code);
+                availableLocales.put(code, new ASLocale(plugin, code, index++));
+            }
+        } catch (IOException e1) {
+            plugin.getLogger().severe("Could not add locales!");
+        }
+        if (!availableLocales.containsKey(Settings.defaultLanguage)) {
+            plugin.getLogger().severe("'" + Settings.defaultLanguage + ".yml' not found in /locale folder. Using /locale/en-US.yml");
+            Settings.defaultLanguage = "en-US";
+            availableLocales.put(Settings.defaultLanguage, new ASLocale(plugin, Settings.defaultLanguage, 0));
+        }
+        plugin.setAvailableLocales(availableLocales);
+        Util.sendMessage(sender, ChatColor.RED + plugin.myLocale().notSetupHeader);
         switch (reason) {
         case DISTANCE:
-            Util.sendMessage(sender, ChatColor.RED + ASkyBlock.getPlugin().myLocale().notSetupDistance);
+            Util.sendMessage(sender, ChatColor.RED + plugin.myLocale().notSetupDistance);
             break;
         case GENERATOR:
-            Util.sendMessage(sender, ChatColor.RED + ASkyBlock.getPlugin().myLocale().notSetupGenerator);
+            Util.sendMessage(sender, ChatColor.RED + plugin.myLocale().notSetupGenerator);
             if (Bukkit.getServer().getPluginManager().isPluginEnabled("Multiverse-Core")) {
-                Util.sendMessage(sender, ChatColor.RED + ASkyBlock.getPlugin().myLocale().notSetupGeneratorMultiverse);
+                Util.sendMessage(sender, ChatColor.RED + plugin.myLocale().notSetupGeneratorMultiverse);
             }
             break;
         case WORLD_NAME:
-            Util.sendMessage(sender, ChatColor.RED + ASkyBlock.getPlugin().myLocale().notSetupWorldname);
+            Util.sendMessage(sender, ChatColor.RED + plugin.myLocale().notSetupWorldname);
             break;
         case CONFIG_OUTDATED:
-        	Util.sendMessage(sender, ChatColor.RED + ASkyBlock.getPlugin().myLocale().notSetupConfigOutdated);
+        	Util.sendMessage(sender, ChatColor.RED + plugin.myLocale().notSetupConfigOutdated);
         	break;
         default:
             break;
