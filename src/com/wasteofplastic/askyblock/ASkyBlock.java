@@ -947,16 +947,16 @@ public class ASkyBlock extends JavaPlugin {
             public String getValue() {
                 int count = challenges.getAllChallenges().size();
                 if(count <= 0) return "0";
-                else if(1 <= count && 10 <= count) return "1-10";
-                else if(11 <= count && 20 <= count) return "11-20";
-                else if(21 <= count && 30 <= count) return "21-30";
-                else if(31 <= count && 40 <= count) return "31-40";
-                else if(41 <= count && 50 <= count) return "41-50";
-                else if(51 <= count && 75 <= count) return "51-75";
-                else if(76 <= count && 100 <= count) return "76-100";
-                else if(101 <= count && 150 <= count) return "101-150";
-                else if(151 <= count && 200 <= count) return "151-200";
-                else if(201 <= count && 300 <= count) return "201-300";
+                else if(1 <= count && count <= 10) return "1-10";
+                else if(11 <= count && count <= 20) return "11-20";
+                else if(21 <= count && count <= 30) return "21-30";
+                else if(31 <= count && count <= 40) return "31-40";
+                else if(41 <= count && count <= 50) return "41-50";
+                else if(51 <= count && count <= 75) return "51-75";
+                else if(76 <= count && count <= 100) return "76-100";
+                else if(101 <= count && count <= 150) return "101-150";
+                else if(151 <= count && count <= 200) return "151-200";
+                else if(201 <= count && count <= 300) return "201-300";
                 else return "300+";
             }
         });
