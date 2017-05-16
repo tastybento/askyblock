@@ -1526,6 +1526,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                 }
                 else{
                     Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorMinishopDisabled);
+                    return true;
                 }
             }
             // /island <command>
