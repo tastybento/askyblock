@@ -1,5 +1,8 @@
 package com.wasteofplastic.askyblock.placeholders.hooks;
 
+import java.util.regex.Pattern;
+
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
@@ -29,9 +32,13 @@ public class ASkyBlockPlaceholderAPI implements PlaceholderAPI{
 		if(message == null || message.isEmpty()){
 			return "";
 		}
-		
+		Bukkit.getLogger().info("DEBUG: " + player.getName() + " : " + message);
 		for(Placeholder placeholder : Placeholders.getPlaceholders()){
-			message = message.replaceAll("{" + placeholder.getIdentifier() + "}", placeholder.onRequest(player));
+		    Bukkit.getLogger().info("DEBUG: placeholder = " + placeholder.getIdentifier());
+		    Bukkit.getLogger().info("DEBUG: replacement = " + placeholder.onRequest(player));
+		    String textToFormat = "{" + placeholder.getIdentifier() + "}";
+			message = message.replaceAll(Pattern.quote(textToFormat), placeholder.onRequest(player));
+			Bukkit.getLogger().info("DEBUG: result = " + message);
 		}
 		return message;
 	}

@@ -46,6 +46,9 @@ public class Placeholders {
 			@Override
 			public String onRequest(Player player) {
 				String level = plugin.getChatListener().getPlayerLevel(player.getUniqueId());
+				if (level == null) {
+				    return "";
+				}
 				if(Settings.fancyIslandLevelDisplay) {
 	                if (Integer.valueOf(level) > 1000){
 	                    // 1052 -> 1.0k
@@ -56,13 +59,20 @@ public class Placeholders {
 			}
 		};
 		
+		/*
+		 * Not async safe - could cause issues with async chat
 		new Placeholder("island_level_raw") {
 			@Override
 			public String onRequest(Player player) {
-				return "" + plugin.getPlayers().getIslandLevel(player.getUniqueId());
+			    Integer level = plugin.getPlayers().getIslandLevel(player.getUniqueId());
+			    if (level == null) {
+			        return "";
+			    } else {
+			        return level.toString();
+			    }
 			}
 		};
-		
+		*/
 		/*		PLAYER		*/
 		new Placeholder("player_name") {
 			@Override

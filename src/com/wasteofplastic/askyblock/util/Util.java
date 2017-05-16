@@ -109,16 +109,16 @@ public class Util {
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Deletes a YAML file
      * 
      * @param fileLocation
      */
     public static void removeFile(String fileLocation){
-    	File file = new File(plugin.getDataFolder(), fileLocation);
-    	
-    	if(file.exists()) file.delete();
+        File file = new File(plugin.getDataFolder(), fileLocation);
+
+        if(file.exists()) file.delete();
     }
 
     /**
@@ -366,11 +366,12 @@ public class Util {
      * @param message
      */
     public static void sendMessage(CommandSender sender, String message) {
-    	message = PlaceholderHandler.replacePlaceholders((Player) sender, message);
-    	
+        if (sender instanceof Player) {
+            message = PlaceholderHandler.replacePlaceholders((Player) sender, message);
+        }
         if (!ChatColor.stripColor(message).trim().isEmpty()) {
             for(String part : message.split("\n")){
-            	sender.sendMessage(part);
+                sender.sendMessage(part);
             }
         }
     }
@@ -455,7 +456,7 @@ public class Util {
             Files.write(path, fileContent, charset);
         }
     }
-    
+
     /**
      * Display message to player in action bar (1.11+ or chat)
      * @param player

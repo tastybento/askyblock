@@ -1,5 +1,6 @@
 package com.wasteofplastic.askyblock.placeholders;
 
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
@@ -30,9 +31,9 @@ public interface PlaceholderAPI {
 	
 	/**
 	 * Replace message for player
-	 * @param player
+	 * @param sender
 	 * @param message
 	 * @return Updated message
 	 */
-	String replacePlaceholders(Player player, String message);
+	String replacePlaceholders(Player sender, String message);
 }
