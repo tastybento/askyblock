@@ -2450,7 +2450,7 @@ public class IslandGuard implements Listener {
                 transparent.add(Material.AIR);
                 if (DEBUG) {
                     plugin.getLogger().info("DEBUG: block = " + e.getBlock());
-                    plugin.getLogger().info("DEBUG: target block = " + e.getPlayer().getTargetBlock(transparent, 10));
+                    //plugin.getLogger().info("DEBUG: target block = " + e.getPlayer().getTargetBlock(transparent, 10));
                 }
                 // Check if this is allowed
                 if (e.getPlayer() != null && (e.getPlayer().isOp() || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypass"))) {

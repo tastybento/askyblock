@@ -95,7 +95,8 @@ public class PlayerCache {
                 final Players player = new Players(plugin, playerUUID);
                 playerCache.put(playerUUID, player);
             } catch (Exception e) {
-                plugin.getLogger().severe("Player add request for a null UUID");
+                // Be silent.
+                //plugin.getLogger().severe("Player add request for a null UUID");
             }
         }
     }
