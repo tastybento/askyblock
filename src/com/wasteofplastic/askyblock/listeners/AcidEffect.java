@@ -345,12 +345,12 @@ public class AcidEffect implements Listener {
         }
         // Check if water above sea-level is not acid
         Island island = plugin.getGrid().getIslandAt(player.getLocation());
-        if (island != null && !island.getIgsFlag(SettingsFlag.ACID_DAMAGE) && player.getLocation().getBlockY() > Settings.sea_level) {
+        if (island != null && !island.getIgsFlag(SettingsFlag.ACID_DAMAGE) && player.getLocation().getBlockY() > Settings.seaHeight) {
             if (DEBUG)
                 plugin.getLogger().info("DEBUG:no acid damage above sea level 1");
             return true;
         }
-        if (island == null && !Settings.defaultWorldSettings.get(SettingsFlag.ACID_DAMAGE) && player.getLocation().getBlockY() > Settings.sea_level) {
+        if (island == null && !Settings.defaultWorldSettings.get(SettingsFlag.ACID_DAMAGE) && player.getLocation().getBlockY() > Settings.seaHeight) {
             if (DEBUG)
                 plugin.getLogger().info("DEBUG: no acid damage above sea level");
             return true;

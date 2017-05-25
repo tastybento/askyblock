@@ -117,6 +117,7 @@ public class IslandBlock {
         WEtoM.put("GOLDEN_HOE", Material.GOLD_HOE);
         WEtoM.put("GOLDEN_AXE", Material.GOLD_AXE);
         WEtoM.put("GOLDEN_BOOTS", Material.GOLD_BOOTS);
+        WEtoM.put("GUNPOWDER", Material.SULPHUR);
         WEtoM.put("HARDENED_CLAY",Material.HARD_CLAY);
         WEtoM.put("HEAVY_WEIGHTED_PRESSURE_PLATE",Material.GOLD_PLATE);
         WEtoM.put("IRON_BARS",Material.IRON_FENCE);

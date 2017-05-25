@@ -290,6 +290,9 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
         Player player;
         if (sender instanceof Player) {
             player = (Player) sender;
+            if (player.getUniqueId() == null) {
+                return false;
+            }
             if (split.length > 0) {
                 // Admin-only commands : reload, register, delete and purge
                 if (split[0].equalsIgnoreCase("reload") || split[0].equalsIgnoreCase("register") || split[0].equalsIgnoreCase("delete")
@@ -1326,15 +1329,15 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                         Util.sendMessage(p, ChatColor.RED + plugin.myLocale(p.getUniqueId()).errorNoIslandOther);
                         return true;
                     }
-                    if (split[1].equalsIgnoreCase("allow")) {
+                    if (split[1].equalsIgnoreCase("disallow")) {
                         island.setPurgeProtected(true);
                     } else {
                         island.setPurgeProtected(false);
                     }
                     if (island.isPurgeProtected()) {
-                        Util.sendMessage(p, ChatColor.GREEN + plugin.myLocale(p.getUniqueId()).adminAllowPurge);
-                    } else {
                         Util.sendMessage(p, ChatColor.GREEN + plugin.myLocale(p.getUniqueId()).adminPreventPurge);
+                    } else {
+                        Util.sendMessage(p, ChatColor.GREEN + plugin.myLocale(p.getUniqueId()).adminAllowPurge);
                     }
                     return true;
                 }
@@ -2252,7 +2255,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
     public static Location getClosestIsland(Location location) {
         long x = Math.round((double) location.getBlockX() / Settings.islandDistance) * Settings.islandDistance + Settings.islandXOffset;
         long z = Math.round((double) location.getBlockZ() / Settings.islandDistance) * Settings.islandDistance + Settings.islandZOffset;
-        long y = Settings.island_level;
+        long y = Settings.islandHeight;
         return new Location(location.getWorld(), x, y, z);
     }
 
@@ -2346,7 +2349,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                     Player target = plugin.getServer().getPlayer(uuid);
                     if (target != null) {
                         //online
-                        list += target.getDisplayName() + ", ";
+                        list += target.getName() + ", ";
                     } else {
                         list += plugin.getPlayers().getName(uuid) + ", ";
                     }
@@ -2686,12 +2689,16 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 }
                 break;
             case 2:
-                if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.setlanguage") || player.isOp()
+                if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.setlanguage") || player.isOp())
                         && args[0].equalsIgnoreCase("setlanguage")) {
                     options.addAll(plugin.getAvailableLocales().keySet());
                 }
-                if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.setrange") || player.isOp() 
+                if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.setrange") || player.isOp()) 
                         && (args[0].equalsIgnoreCase("setrange") || args[0].equalsIgnoreCase("addrange"))) {
+                    options.addAll(Util.getOnlinePlayerList());
+                }
+                if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.reserve") || player.isOp()) 
+                        && args[0].equalsIgnoreCase("reserve")) {
                     options.addAll(Util.getOnlinePlayerList());
                 }
                 if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.lock") || player.isOp())

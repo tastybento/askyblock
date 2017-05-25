@@ -18,9 +18,11 @@ package com.wasteofplastic.askyblock.listeners;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -63,6 +65,10 @@ public class JoinLeaveEvents implements Listener {
         final UUID playerUUID = player.getUniqueId();
         if (DEBUG)
             plugin.getLogger().info("DEBUG: got player UUID");
+        if (playerUUID == null) {
+            plugin.getLogger().severe("Player " + player.getName() + " has a null UUID!");
+            return;
+        }
         // Check language permission
         if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.lang")) {
             if (DEBUG)
@@ -117,6 +123,20 @@ public class JoinLeaveEvents implements Listener {
                 plugin.getLogger().info("DEBUG: reseting team island");
             leader = players.getTeamLeader(playerUUID);
             players.setTeamIslandLocation(playerUUID, players.getIslandLocation(leader));
+        }
+        // This should not be needed. Fixes situation where a team member is listed on more than one team
+        // Only happens when the team leader logs in
+        if (players.inTeam(playerUUID) && players.getTeamLeader(playerUUID).equals(playerUUID)) {
+            // Run through this team leader's players and check they are correct
+            Iterator<UUID> it = players.getMembers(playerUUID).iterator();
+            while (it.hasNext()) {
+                UUID member = it.next();
+                if (!players.getTeamLeader(member).equals(playerUUID)) {
+                    plugin.getLogger().warning(plugin.getPlayers().getName(member) + " is on more than one team. Fixing...");
+                    plugin.getLogger().warning("Removing " + player.getName() + " as team leader, keeping " + plugin.getPlayers().getName(players.getTeamLeader(member)));
+                    players.removeMember(players.getTeamLeader(member), member);
+                }
+            }
         }
         // Add island to grid if it is not in there already
         // Add owners to the island grid list as they log in
@@ -201,7 +221,12 @@ public class JoinLeaveEvents implements Listener {
                             }
                             // Dynamic island range sizes with permissions
                             boolean hasARangePerm = false;
-                            int range = 0;
+                            int range = Settings.islandProtectionRange;
+                            // Check for zero protection range
+                            if (island.getProtectionSize() == 0) {
+                                plugin.getLogger().warning("Player " + player.getName() + "'s island had a protection range of 0. Setting to default " + range);
+                                island.setProtectionSize(range);
+                            }
                             for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
                                 if (perms.getPermission().startsWith(Settings.PERMPREFIX + "island.range.")) {
                                     if (DEBUG)
@@ -210,14 +235,18 @@ public class JoinLeaveEvents implements Listener {
                                         // Ignore
                                         break;
                                     } else {
-                                        if (DEBUG)
-                                            plugin.getLogger().info("DEBUG: found number perm");
-                                        hasARangePerm = true;
                                         String[] spl = perms.getPermission().split(Settings.PERMPREFIX + "island.range.");
                                         if (spl.length > 1) {
-                                            range = Math.max(range, Integer.valueOf(spl[1]));
-                                            if (DEBUG)
-                                                plugin.getLogger().info("DEBUG: highest range is " + range);
+                                            if (!NumberUtils.isDigits(spl[1])) {
+                                                plugin.getLogger().severe("Player " + player.getName() + " has permission: " + perms.getPermission() + " <-- the last part MUST be a number! Ignoring...");
+                                            } else {
+                                                if (DEBUG)
+                                                    plugin.getLogger().info("DEBUG: found number perm");
+                                                hasARangePerm = true;
+                                                range = Math.max(range, Integer.valueOf(spl[1]));
+                                                if (DEBUG)
+                                                    plugin.getLogger().info("DEBUG: highest range is " + range);
+                                            }
                                         }
                                     }
                                 }

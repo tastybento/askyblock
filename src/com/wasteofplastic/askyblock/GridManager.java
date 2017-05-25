@@ -121,9 +121,9 @@ public class GridManager {
                         // Validate entries
                         if (spawnLoc != null && spawnLoc.getWorld() != null && spawnLoc.getWorld().equals(ASkyBlock.getIslandWorld())) {
                             Location spawnPoint = Util.getLocationString(islandYaml.getString("spawn.spawnpoint"));
-                            int range = islandYaml.getInt("spawn.range", Settings.island_protectionRange);
+                            int range = islandYaml.getInt("spawn.range", Settings.islandProtectionRange);
                             if (range < 0) {
-                                range = Settings.island_protectionRange;
+                                range = Settings.islandProtectionRange;
                             }
                             String spawnSettings = islandYaml.getString("spawn.settings");
                             // Make the spawn
@@ -954,7 +954,7 @@ public class GridManager {
     public Location getClosestIsland(Location location) {
         long x = Math.round((double) location.getBlockX() / Settings.islandDistance) * Settings.islandDistance + Settings.islandXOffset;
         long z = Math.round((double) location.getBlockZ() / Settings.islandDistance) * Settings.islandDistance + Settings.islandZOffset;
-        long y = Settings.island_level;
+        long y = Settings.islandHeight;
         return new Location(location.getWorld(), x, y, z);
     }
 
@@ -1351,10 +1351,10 @@ public class GridManager {
         // Run through all the locations
         for (Location islandTestLocation : islandTestLocations) {
             if (loc.getWorld().equals(islandTestLocation.getWorld())) {
-                if (loc.getX() >= islandTestLocation.getX() - Settings.island_protectionRange / 2
-                        && loc.getX() < islandTestLocation.getX() + Settings.island_protectionRange / 2
-                        && loc.getZ() >= islandTestLocation.getZ() - Settings.island_protectionRange / 2
-                        && loc.getZ() < islandTestLocation.getZ() + Settings.island_protectionRange / 2) {
+                if (loc.getX() >= islandTestLocation.getX() - Settings.islandProtectionRange / 2
+                        && loc.getX() < islandTestLocation.getX() + Settings.islandProtectionRange / 2
+                        && loc.getZ() >= islandTestLocation.getZ() - Settings.islandProtectionRange / 2
+                        && loc.getZ() < islandTestLocation.getZ() + Settings.islandProtectionRange / 2) {
                     return true;
                 }
             }
@@ -1381,10 +1381,10 @@ public class GridManager {
                         // We are in a protected island area.
                         return island.getCenter();
                     }
-                } else if (loc.getX() > islandTestLocation.getX() - Settings.island_protectionRange / 2
-                        && loc.getX() < islandTestLocation.getX() + Settings.island_protectionRange / 2
-                        && loc.getZ() > islandTestLocation.getZ() - Settings.island_protectionRange / 2
-                        && loc.getZ() < islandTestLocation.getZ() + Settings.island_protectionRange / 2) {
+                } else if (loc.getX() > islandTestLocation.getX() - Settings.islandProtectionRange / 2
+                        && loc.getX() < islandTestLocation.getX() + Settings.islandProtectionRange / 2
+                        && loc.getZ() > islandTestLocation.getZ() - Settings.islandProtectionRange / 2
+                        && loc.getZ() < islandTestLocation.getZ() + Settings.islandProtectionRange / 2) {
                     return islandTestLocation;
                 }
             }
@@ -1449,7 +1449,7 @@ public class GridManager {
             // Must be in the same world as the locations being checked
             // Note that getWorld can return null if a world has been deleted on the server
             if (islandTestLocation != null && islandTestLocation.getWorld() != null && islandTestLocation.getWorld().equals(loc.getWorld())) {
-                int protectionRange = Settings.island_protectionRange;
+                int protectionRange = Settings.islandProtectionRange;
                 if (getIslandAt(islandTestLocation) != null) {
                     // Get the protection range for this location if possible
                     Island island = getProtectedIslandAt(islandTestLocation);
@@ -1510,7 +1510,7 @@ public class GridManager {
                 return false;
             }
 
-            int protectionRange = Settings.island_protectionRange;
+            int protectionRange = Settings.islandProtectionRange;
             if (getIslandAt(islandTestLocation) != null) {
 
                 Island island = getProtectedIslandAt(islandTestLocation);

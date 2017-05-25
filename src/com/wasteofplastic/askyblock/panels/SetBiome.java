@@ -93,7 +93,7 @@ public class SetBiome {
                         for (int x = 0; x< 16; x++) {
                             for (int z = 0; z < 16; z++) {
                                 // Check if it is snow, ice or water
-                                for (int yy = world.getMaxHeight()-1; yy >= Settings.sea_level; yy--) {
+                                for (int yy = world.getMaxHeight()-1; yy >= Settings.seaHeight; yy--) {
                                     int type = chunk.getBlockTypeId(x, yy, z);
                                     if (type == Material.ICE.getId() || type == Material.SNOW.getId() || type == Material.SNOW_BLOCK.getId()
                                             || type == Material.WATER.getId() || type == Material.STATIONARY_WATER.getId()) {

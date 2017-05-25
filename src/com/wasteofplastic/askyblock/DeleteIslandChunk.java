@@ -156,7 +156,7 @@ public class DeleteIslandChunk {
                                         Material bt = b.getType();
                                         Material setTo = Material.AIR;
                                         // Split depending on below or above water line
-                                        if (y < Settings.sea_level) {
+                                        if (y < Settings.seaHeight) {
                                             setTo = Material.STATIONARY_WATER;
                                         }
                                         // Grab anything out of containers (do that it is

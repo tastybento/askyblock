@@ -400,7 +400,12 @@ public class Island implements Cloneable {
                 // Default default
                 this.igs.put(flag, false);
             } else {
-                this.igs.put(flag, Settings.defaultIslandSettings.get(flag));
+                if (Settings.defaultIslandSettings.get(flag) == null) {
+                    //plugin.getLogger().info("DEBUG: null flag " + flag);
+                    this.igs.put(flag, false);
+                } else {
+                    this.igs.put(flag, Settings.defaultIslandSettings.get(flag));
+                }
             }
         }
     }
@@ -414,7 +419,11 @@ public class Island implements Cloneable {
                 // Default default
                 this.igs.put(flag, false);
             } else {
-                this.igs.put(flag, Settings.defaultSpawnSettings.get(flag));
+                if (Settings.defaultSpawnSettings.get(flag) == null) {
+                    this.igs.put(flag, false);
+                } else {
+                    this.igs.put(flag, Settings.defaultSpawnSettings.get(flag));
+                }
             }
         }
     }
@@ -434,11 +443,11 @@ public class Island implements Cloneable {
         // Calculate min minX and z
         this.minX = x - Settings.islandDistance / 2;
         this.minZ = z - Settings.islandDistance / 2;
-        this.minProtectedX = x - Settings.island_protectionRange / 2;
-        this.minProtectedZ = z - Settings.island_protectionRange / 2;
-        this.y = Settings.island_level;
+        this.minProtectedX = x - Settings.islandProtectionRange / 2;
+        this.minProtectedZ = z - Settings.islandProtectionRange / 2;
+        this.y = Settings.islandHeight;
         this.islandDistance = Settings.islandDistance;
-        this.protectionRange = Settings.island_protectionRange;
+        this.protectionRange = Settings.islandProtectionRange;
         this.world = ASkyBlock.getIslandWorld();
         this.center = new Location(world, x, y, z);
         this.createdDate = new Date().getTime();
@@ -895,7 +904,7 @@ public class Island implements Cloneable {
      * @return count of how many tile entities of type mat are on the island at last count. Counts are done when a player places
      * a tile entity.
      */
-    public int getTileEntityCount(Material material) {
+    public int getTileEntityCount(Material material, World world) {
         int result = 0;	
         for (int x = getMinProtectedX() /16; x <= (getMinProtectedX() + getProtectionSize() - 1)/16; x++) {
             for (int z = getMinProtectedZ() /16; z <= (getMinProtectedZ() + getProtectionSize() - 1)/16; z++) {

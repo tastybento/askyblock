@@ -135,7 +135,7 @@ public class WarpSigns implements Listener {
                     }
                     if(!(ASkyBlockAPI.getInstance().getIslandLevel(player.getUniqueId()) > Settings.warpLevelsRestriction)){
                         Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorNotEnoughLevel);
-                    	return;
+                        return;
                     }
                     // Check that the player is on their island
                     if (!(plugin.getGrid().playerIsOnIsland(player))) {
@@ -245,27 +245,29 @@ public class WarpSigns implements Listener {
         for (String s : temp.keySet()) {
             try {
                 UUID playerUUID = UUID.fromString(s);
-                Location l = Util.getLocationString((String) temp.get(s));
-                //plugin.getLogger().info("DEBUG: Loading warp at " + l);
-                Block b = l.getBlock();
-                // Check that a warp sign is still there
-                if (b.getType().equals(Material.SIGN_POST) || b.getType().equals(Material.WALL_SIGN)) {
-                    warpList.put(playerUUID, l);
-                } else {
-                    plugin.getLogger().warning("Warp at location " + temp.get(s) + " has no sign - removing.");
-                    // Test code
-                    if (DEBUG) {
-                        String name = plugin.getTinyDB().getPlayerName(playerUUID);
+                if (playerUUID != null) {
+                    Location l = Util.getLocationString((String) temp.get(s));
+                    //plugin.getLogger().info("DEBUG: Loading warp at " + l);
+                    Block b = l.getBlock();
+                    // Check that a warp sign is still there
+                    if (b.getType().equals(Material.SIGN_POST) || b.getType().equals(Material.WALL_SIGN)) {
                         warpList.put(playerUUID, l);
-                        b.getRelative(BlockFace.DOWN).setType(Material.DIRT);
-                        b.setType(Material.SIGN_POST);
-                        Sign sign = (Sign)b.getState();
-                        sign.setLine(0, ChatColor.GREEN + plugin.myLocale().warpswelcomeLine);
-                        sign.setLine(1, name);
-                        sign.setLine(2, "Test 2");
-                        sign.update();
+                    } else {
+                        plugin.getLogger().warning("Warp at location " + temp.get(s) + " has no sign - removing.");
+                        // Test code
+                        if (DEBUG) {
+                            String name = plugin.getTinyDB().getPlayerName(playerUUID);
+                            warpList.put(playerUUID, l);
+                            b.getRelative(BlockFace.DOWN).setType(Material.DIRT);
+                            b.setType(Material.SIGN_POST);
+                            Sign sign = (Sign)b.getState();
+                            sign.setLine(0, ChatColor.GREEN + plugin.myLocale().warpswelcomeLine);
+                            sign.setLine(1, name);
+                            sign.setLine(2, "Test 2");
+                            sign.update();
+                        }
+                        // End test code
                     }
-                    // End test code
                 }
             } catch (Exception e) {
                 plugin.getLogger().severe("Problem loading warp at location " + temp.get(s) + " - removing.");
@@ -277,19 +279,22 @@ public class WarpSigns implements Listener {
     /**
      * Stores warps in the warp array
      * 
-     * @param player
+     * @param playerUUID
      * @param loc
      */
-    public boolean addWarp(final UUID player, final Location loc) {
+    public boolean addWarp(final UUID playerUUID, final Location loc) {
+        if (playerUUID == null) {
+            return false;
+        }
         // Do not allow warps to be in the same location
         if (warpList.containsValue(loc)) {
             return false;
         }
         // Remove the old warp if it existed
-        if (warpList.containsKey(player)) {
-            warpList.remove(player);
+        if (warpList.containsKey(playerUUID)) {
+            warpList.remove(playerUUID);
         }
-        warpList.put(player, loc);
+        warpList.put(playerUUID, loc);
         saveWarpList();
         // Update warp signs
         // Run one tick later because text gets updated at the end of tick
@@ -297,9 +302,9 @@ public class WarpSigns implements Listener {
 
             @Override
             public void run() {
-                plugin.getWarpPanel().addWarp(player);
+                plugin.getWarpPanel().addWarp(playerUUID);
                 plugin.getWarpPanel().updatePanel();
-                Bukkit.getPluginManager().callEvent(new WarpCreateEvent(plugin, loc, player));
+                Bukkit.getPluginManager().callEvent(new WarpCreateEvent(plugin, loc, playerUUID));
             }});
         return true;
     }
@@ -406,13 +411,13 @@ public class WarpSigns implements Listener {
     /**
      * Provides the location of the warp for player or null if one is not found
      * 
-     * @param player
+     * @param playerUUID
      *            - the warp requested
      * @return Location of warp
      */
-    public Location getWarp(UUID player) {
-        if (warpList.containsKey(player)) {
-            return warpList.get(player);
+    public Location getWarp(UUID playerUUID) {
+        if (playerUUID != null && warpList.containsKey(playerUUID)) {
+            return warpList.get(playerUUID);
         } else {
             return null;
         }

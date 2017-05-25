@@ -155,7 +155,7 @@ public class SafeSpotTeleport {
                                     // Check for safe spot, but only if it is closer than one we have found already
                                     if (!safeSpotFound || (safeDistance > islandLoc.toVector().distanceSquared(new Vector(x,y,z)))) {
                                         // No safe spot yet, or closer distance
-                                        if (checkBlock(chunk,x,y,z)) {
+                                        if (checkBlock(chunk,x,y,z, worldHeight)) {
                                             safeChunk = chunk;
                                             safeSpotFound = true;
                                             safeSpotInChunk = new Vector(x,y,z);
@@ -184,7 +184,7 @@ public class SafeSpotTeleport {
                         }
                         //System.out.print("DEBUG: Portal teleport loc = " + (16 * portalChunk.getX() + x) + "," + (y) + "," + (16 * portalChunk.getZ() + z));
                         // Now check if this is a safe location
-                        if (checkBlock(portalChunk,x,y,z)) {
+                        if (checkBlock(portalChunk,x,y,z, worldHeight)) {
                             // Yes, so use this instead of the highest location
                             //System.out.print("DEBUG: Portal is safe");
                             safeSpotFound = true;
@@ -257,15 +257,16 @@ public class SafeSpotTeleport {
                  * @param x
                  * @param y
                  * @param z
+                 * @param worldHeight 
                  * @return
                  */
                 @SuppressWarnings("deprecation")
-                private boolean checkBlock(ChunkSnapshot chunk, int x, int y, int z) {
+                private boolean checkBlock(ChunkSnapshot chunk, int x, int y, int z, int worldHeight) {
                     int type = chunk.getBlockTypeId(x, y, z);
                     if (type != 0) { // AIR
-                        int space1 = chunk.getBlockTypeId(x, y + 1, z);
-                        int space2 = chunk.getBlockTypeId(x, y + 2, z);
-                        if ((space1 == 0 && space2 == 0) || (space1 == Material.PORTAL.getId() && space2 == Material.PORTAL.getId())) {
+                        int space1 = chunk.getBlockTypeId(x, Math.min(y + 1, worldHeight), z);
+                        int space2 = chunk.getBlockTypeId(x, Math.min(y + 2, worldHeight), z);
+                        if ((space1 == 0 && space2 == 0) || (space1 == Material.PORTAL.getId() || space2 == Material.PORTAL.getId())) {
                             // Now there is a chance that this is a safe spot
                             // Check for safe ground
                             Material mat = Material.getMaterial(type);

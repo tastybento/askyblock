@@ -163,10 +163,10 @@ public class PlayerEvents implements Listener {
             if (DEBUG) {
                 plugin.getLogger().info("DEBUG: player entered island");
                 plugin.getLogger().info("DEBUG: island center is " + e.getIslandLocation());
-                if (e.getIslandOwner() != null) {
-                    plugin.getLogger().info("DEBUG: island owner is " + plugin.getServer().getPlayer(e.getIslandOwner()).getName());
+                if (e.getIslandOwner() != null && plugin.getPlayers().isAKnownPlayer(e.getIslandOwner())) {
+                    plugin.getLogger().info("DEBUG: island owner is " + plugin.getPlayers().getName(e.getIslandOwner()));
                 } else {
-                    plugin.getLogger().info("DEBUG: island is unowned");
+                    plugin.getLogger().info("DEBUG: island is unowned or owner unknown");
                 }
             }
             processPerms(player, e.getIsland());
@@ -724,7 +724,7 @@ public class PlayerEvents implements Listener {
                     plugin.getLogger().info("DEBUG: islandTo is locked spawn");
                 if(islandTo.getIgsFlag(SettingsFlag.ENTER_EXIT_MESSAGES)) {
                     if (!plugin.myLocale(e.getPlayer().getUniqueId()).lockEnteringSpawn.isEmpty()) {
-                        Util.sendMessage(e.getPlayer(), plugin.myLocale(e.getPlayer().getUniqueId()).lockEnteringSpawn);
+                        Util.sendEnterExit(e.getPlayer(), plugin.myLocale(e.getPlayer().getUniqueId()).lockEnteringSpawn);
                     }
                 }
             } else {
@@ -732,7 +732,7 @@ public class PlayerEvents implements Listener {
                     plugin.getLogger().info("DEBUG: islandTo is locked regular");
                 if(islandTo.getIgsFlag(SettingsFlag.ENTER_EXIT_MESSAGES)) {
                     if (!plugin.myLocale(e.getPlayer().getUniqueId()).lockNowEntering.isEmpty()) {
-                        Util.sendMessage(e.getPlayer(), plugin.myLocale(e.getPlayer().getUniqueId()).lockNowEntering.replace("[name]", plugin.getGrid().getIslandName(islandTo.getOwner())));
+                        Util.sendEnterExit(e.getPlayer(), plugin.myLocale(e.getPlayer().getUniqueId()).lockNowEntering.replace("[name]", plugin.getGrid().getIslandName(islandTo.getOwner())));
                     }
                 }
             }
@@ -749,7 +749,7 @@ public class PlayerEvents implements Listener {
                 // Leaving
                 if(islandFrom.getIgsFlag(SettingsFlag.ENTER_EXIT_MESSAGES)) {
                     if (!plugin.myLocale(e.getPlayer().getUniqueId()).lockLeavingSpawn.isEmpty()) {
-                        Util.sendMessage(e.getPlayer(), plugin.myLocale(e.getPlayer().getUniqueId()).lockLeavingSpawn);
+                        Util.sendEnterExit(e.getPlayer(), plugin.myLocale(e.getPlayer().getUniqueId()).lockLeavingSpawn);
                     }
                 }
             } else {
@@ -757,7 +757,7 @@ public class PlayerEvents implements Listener {
                     plugin.getLogger().info("DEBUG: leaving locked");
                 if(islandFrom.getIgsFlag(SettingsFlag.ENTER_EXIT_MESSAGES)) {
                     if (!plugin.myLocale(e.getPlayer().getUniqueId()).lockNowLeaving.isEmpty()) {
-                        Util.sendMessage(e.getPlayer(), plugin.myLocale(e.getPlayer().getUniqueId()).lockNowLeaving.replace("[name]", plugin.getGrid().getIslandName(islandFrom.getOwner())));
+                        Util.sendEnterExit(e.getPlayer(), plugin.myLocale(e.getPlayer().getUniqueId()).lockNowLeaving.replace("[name]", plugin.getGrid().getIslandName(islandFrom.getOwner())));
                     }
                 }
             }
@@ -785,20 +785,20 @@ public class PlayerEvents implements Listener {
             if (islandFrom.isSpawn()) {
                 // Leaving
                 if(islandFrom.getIgsFlag(SettingsFlag.ENTER_EXIT_MESSAGES) && !plugin.myLocale(e.getPlayer().getUniqueId()).lockLeavingSpawn.isEmpty()) {
-                    Util.sendMessage(e.getPlayer(), plugin.myLocale(e.getPlayer().getUniqueId()).lockLeavingSpawn);
+                    Util.sendEnterExit(e.getPlayer(), plugin.myLocale(e.getPlayer().getUniqueId()).lockLeavingSpawn);
                 }
             } else if (islandFrom.getOwner() != null && !plugin.myLocale(e.getPlayer().getUniqueId()).lockNowLeaving.isEmpty()) {
                 if(islandFrom.getIgsFlag(SettingsFlag.ENTER_EXIT_MESSAGES)) {
-                    Util.sendMessage(e.getPlayer(), plugin.myLocale(e.getPlayer().getUniqueId()).lockNowLeaving.replace("[name]", plugin.getGrid().getIslandName(islandFrom.getOwner())));
+                    Util.sendEnterExit(e.getPlayer(), plugin.myLocale(e.getPlayer().getUniqueId()).lockNowLeaving.replace("[name]", plugin.getGrid().getIslandName(islandFrom.getOwner())));
                 }
             }
             if (islandTo.isSpawn()) {
                 if(islandTo.getIgsFlag(SettingsFlag.ENTER_EXIT_MESSAGES) && !plugin.myLocale(e.getPlayer().getUniqueId()).lockEnteringSpawn.isEmpty()) {
-                    Util.sendMessage(e.getPlayer(), plugin.myLocale(e.getPlayer().getUniqueId()).lockEnteringSpawn);
+                    Util.sendEnterExit(e.getPlayer(), plugin.myLocale(e.getPlayer().getUniqueId()).lockEnteringSpawn);
                 }
             } else if (islandTo.getOwner() != null && !plugin.myLocale(e.getPlayer().getUniqueId()).lockNowEntering.isEmpty()) {
                 if(islandTo.getIgsFlag(SettingsFlag.ENTER_EXIT_MESSAGES)) {
-                    Util.sendMessage(e.getPlayer(), plugin.myLocale(e.getPlayer().getUniqueId()).lockNowEntering.replace("[name]", plugin.getGrid().getIslandName(islandTo.getOwner())));
+                    Util.sendEnterExit(e.getPlayer(), plugin.myLocale(e.getPlayer().getUniqueId()).lockNowEntering.replace("[name]", plugin.getGrid().getIslandName(islandTo.getOwner())));
                 }
             }
             // Remove temp perms

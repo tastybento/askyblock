@@ -56,17 +56,17 @@ public class PluginConfig {
             Settings.islandDistance = 50;
             plugin.getLogger().info("Setting minimum island distance to 50");
         }
-        Settings.island_protectionRange = plugin.getConfig().getInt("island.protectionRange", 100);
-        if (Settings.island_protectionRange % 2 != 0) {
-            Settings.island_protectionRange--;
-            plugin.getLogger().warning("Protection range must be even, using " + Settings.island_protectionRange);
+        Settings.islandProtectionRange = plugin.getConfig().getInt("island.protectionRange", 100);
+        if (Settings.islandProtectionRange % 2 != 0) {
+            Settings.islandProtectionRange--;
+            plugin.getLogger().warning("Protection range must be even, using " + Settings.islandProtectionRange);
         }
-        if (Settings.island_protectionRange > Settings.islandDistance) {
+        if (Settings.islandProtectionRange > Settings.islandDistance) {
             plugin.getLogger().warning("Protection range cannot be > island distance. Setting them to be equal.");
-            Settings.island_protectionRange = Settings.islandDistance;
+            Settings.islandProtectionRange = Settings.islandDistance;
         }
-        if (Settings.island_protectionRange < 0) {
-            Settings.island_protectionRange = 0;
+        if (Settings.islandProtectionRange < 0) {
+            Settings.islandProtectionRange = 0;
         }
 
         // xoffset and zoffset are not public and only used for IslandWorld compatibility
@@ -96,20 +96,20 @@ public class PluginConfig {
 
         // ASkyBlock and AcidIsland difference
         if (Settings.GAMETYPE.equals(Settings.GameType.ACIDISLAND)) {
-            Settings.island_level = plugin.getConfig().getInt("island.islandlevel", 50) - 5;
+            Settings.islandHeight = plugin.getConfig().getInt("island.islandlevel", 50) - 5;
             // The island's center is actually 5 below sea level
-            Settings.sea_level = plugin.getConfig().getInt("island.sealevel", 50);
+            Settings.seaHeight = plugin.getConfig().getInt("island.sealevel", 50);
         } else {
             // ASkyBlock
-            Settings.island_level = plugin.getConfig().getInt("island.islandlevel", 120) - 5;
+            Settings.islandHeight = plugin.getConfig().getInt("island.islandlevel", 120) - 5;
             // The island's center is actually 5 below sea level
-            Settings.sea_level = plugin.getConfig().getInt("island.sealevel", 0);
+            Settings.seaHeight = plugin.getConfig().getInt("island.sealevel", 0);
         }
-        if (Settings.island_level < 0) {
-            Settings.island_level = 0;
+        if (Settings.islandHeight < 0) {
+            Settings.islandHeight = 0;
         }
-        if (Settings.sea_level < 0) {
-            Settings.sea_level = 0;
+        if (Settings.seaHeight < 0) {
+            Settings.seaHeight = 0;
         }
         // Island reset settings
         Settings.resetLimit = plugin.getConfig().getInt("island.resetlimit", 2);
@@ -777,20 +777,43 @@ public class PluginConfig {
         Settings.defaultIslandSettings.clear();
         Settings.defaultSpawnSettings.clear();
         Settings.visitorSettings.clear();
-        for (SettingsFlag flag: SettingsFlag.values()) {
-            Settings.defaultWorldSettings.put(flag, plugin.getConfig().getBoolean("protection.world." + flag.name()));
-            Settings.defaultSpawnSettings.put(flag, Settings.defaultWorldSettings.get(flag));
-            if (plugin.getConfig().contains("protection.island." + flag.name())) {
-                // Only items in the config.yml can be per island customized
-                Settings.visitorSettings.put(flag, Settings.defaultIslandSettings.get(flag));
-                // (The default value listed here should never be used because by definition, the flag name exists)
-                Settings.defaultIslandSettings.put(flag, plugin.getConfig().getBoolean("protection.island." + flag.name(), Settings.defaultWorldSettings.get(flag)));
-            } else {
-                // If not in the list in config.yml, then the island gets the world default
-                Settings.defaultIslandSettings.put(flag, Settings.defaultWorldSettings.get(flag));
+        ConfigurationSection protectionWorld = plugin.getConfig().getConfigurationSection("protection.world");
+        for (String setting: protectionWorld.getKeys(false)) {
+            try {
+                SettingsFlag flag = SettingsFlag.valueOf(setting.toUpperCase());
+                boolean value = plugin.getConfig().getBoolean("protection.world." + flag.name());
+                Settings.defaultWorldSettings.put(flag, value);
+                Settings.defaultSpawnSettings.put(flag, value);
+                Settings.defaultIslandSettings.put(flag, value);
+            } catch (Exception e) {
+                plugin.getLogger().severe("Unknown setting in config.yml:protection.world " + setting.toUpperCase() + " skipping...");
             }
         }
-
+        // Establish defaults if they are missing in the config file.
+        for (SettingsFlag flag: SettingsFlag.values()) {
+            if (!Settings.defaultWorldSettings.containsKey(flag)) {
+                plugin.getLogger().warning("config.yml:protection.world."+flag.name() + " is missing. You should add it to the config file. Setting to false by default");
+                Settings.defaultWorldSettings.put(flag, false);
+            }
+            if (!Settings.defaultIslandSettings.containsKey(flag)) {
+                Settings.defaultIslandSettings.put(flag, false);
+            }
+            if (!Settings.defaultSpawnSettings.containsKey(flag)) {
+                Settings.defaultSpawnSettings.put(flag, false);
+            }
+        }
+        ConfigurationSection protectionIsland = plugin.getConfig().getConfigurationSection("protection.island");
+        for (String setting: protectionIsland.getKeys(false)) {
+            try {
+                SettingsFlag flag = SettingsFlag.valueOf(setting.toUpperCase());
+                // Only items in the config.yml can be per island customized
+                Settings.visitorSettings.put(flag, Settings.defaultIslandSettings.get(flag));
+                //plugin.getLogger().info("DEBUG: visitor flag added " + flag);
+                Settings.defaultIslandSettings.put(flag, Settings.visitorSettings.get(flag));
+            } catch (Exception e) {
+                plugin.getLogger().severe("Unknown setting in config.yml:island.world " + setting.toUpperCase() + " skipping...");
+            }
+        }
         // ******************** Biome Settings *********************
         Settings.biomeCost = plugin.getConfig().getDouble("biomesettings.defaultcost", 100D);
         if (Settings.biomeCost < 0D) {

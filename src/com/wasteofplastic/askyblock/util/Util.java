@@ -39,6 +39,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.nms.NMSAbstraction;
 
 /**
@@ -288,6 +289,8 @@ public class Util {
     public static List<String> tabLimit(final List<String> list, final String start) {
         final List<String> returned = new ArrayList<String>();
         for (String s : list) {
+            if (s == null)
+                continue;
             if (s.toLowerCase().startsWith(start.toLowerCase())) {
                 returned.add(s);
             }
@@ -435,4 +438,23 @@ public class Util {
             Files.write(path, fileContent, charset);
         }
     }
+    
+    /**
+     * Display message to player in action bar (1.11+ or chat)
+     * @param player
+     * @param message
+     */
+    public static void sendEnterExit(Player player, String message) {
+        if (!Settings.showInActionBar
+                || plugin.getServer().getVersion().contains("(MC: 1.7")
+                || plugin.getServer().getVersion().contains("(MC: 1.8")
+                || plugin.getServer().getVersion().contains("(MC: 1.9")
+                || plugin.getServer().getVersion().contains("(MC: 1.10")) {
+            sendMessage(player, message);
+            return;
+        }
+        plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(),
+                "minecraft:title " + player.getName() + " actionbar {\"text\":\"" + ChatColor.stripColor(message) + "\"}");
+    }
+
 }

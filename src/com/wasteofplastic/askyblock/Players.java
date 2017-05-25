@@ -16,6 +16,7 @@
  *******************************************************************************/
 package com.wasteofplastic.askyblock;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -26,6 +27,7 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
@@ -68,9 +70,12 @@ public class Players {
      *            Constructor - initializes the state variables
      * 
      */
-    public Players(final ASkyBlock aSkyBlock, final UUID uuid) {
+    public Players(final ASkyBlock aSkyBlock, final UUID uuid) throws IOException {
         this.plugin = aSkyBlock;
         this.uuid = uuid;
+        if (uuid == null) {
+            throw new IOException("UUID is null");
+        }
         this.members = new ArrayList<UUID>();
         this.hasIsland = false;
         this.islandLocation = null;
@@ -109,19 +114,19 @@ public class Players {
                 //plugin.getLogger().info("DEBUG: Entity is NPC");
                 playerName = player.getUniqueId().toString();
             } else {
+                playerName = uuid.toString();
                 //plugin.getLogger().info("DEBUG: Entity is player");
                 try {
-                    playerName = plugin.getServer().getOfflinePlayer(uuid).getName();
+                    OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayer(uuid);
+                    if (offlinePlayer != null) {
+                        playerName = offlinePlayer.getName();
+                    }
                 } catch (Exception e) {
                     plugin.getLogger().severe("Could not obtain a name for the player with UUID " + uuid.toString());
-                    playerName = "";
-                }
-                if (playerName == null) {
-                    plugin.getLogger().severe("Could not obtain a name for the player with UUID " + uuid.toString());
-                    playerName = "";
+                    playerName = uuid.toString();
                 }
             }
-            
+
         }
         // Start island rating - how difficult the start island was. Default if 50/100
         this.startIslandRating = playerInfo.getInt("startIslandRating", 50);

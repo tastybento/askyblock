@@ -1123,8 +1123,8 @@ public class Schematic {
                     // Only bother if this block is above ground zero and 
                     // only bother with air if it is below sea level
                     // TODO: need to check max world height too?
-                    int h = Settings.island_level + y - bedrock.getBlockY();
-                    if (h >= 0 && h < 255 && (blocks[index] != 0 || h < Settings.sea_level)){
+                    int h = Settings.islandHeight + y - bedrock.getBlockY();
+                    if (h >= 0 && h < 255 && (blocks[index] != 0 || h < Settings.seaHeight)){
                         // Only bother if the schematic blocks are within the range that y can be
                         //plugin.getLogger().info("DEBUG: height " + (count++) + ":" +h);
                         IslandBlock block = new IslandBlock(x, y, z);
@@ -1169,7 +1169,7 @@ public class Schematic {
         for (int x = 0; x < width; ++x) {
             for (int y = 0; y < height; ++y) {
                 for (int z = 0; z < length; ++z) {
-                    int h = Settings.island_level + y - bedrock.getBlockY();
+                    int h = Settings.islandHeight + y - bedrock.getBlockY();
                     if (h >= 0 && h < 255){
                         int index = y * width * length + z * width + x;
                         IslandBlock block = new IslandBlock(x, y, z);
@@ -1302,11 +1302,11 @@ public class Schematic {
                 b.setBiome(biome);
             }
         }
-        for (y = 1; y < Settings.island_level + 5; y++) {
+        for (y = 1; y < Settings.islandHeight + 5; y++) {
             for (int x_space = x - 4; x_space <= x + 4; x_space++) {
                 for (int z_space = z - 4; z_space <= z + 4; z_space++) {
                     final Block b = world.getBlockAt(x_space, y, z_space);
-                    if (y < (Settings.island_level / 2)) {
+                    if (y < (Settings.islandHeight / 2)) {
                         b.setType(Material.SANDSTONE);
                     } else {
                         b.setType(Material.SAND);
@@ -1316,7 +1316,7 @@ public class Schematic {
             }
         }
         // Then cut off the corners to make it round-ish
-        for (y = 0; y < Settings.island_level + 5; y++) {
+        for (y = 0; y < Settings.islandHeight + 5; y++) {
             for (int x_space = x - 4; x_space <= x + 4; x_space += 8) {
                 for (int z_space = z - 4; z_space <= z + 4; z_space += 8) {
                     final Block b = world.getBlockAt(x_space, y, z_space);
@@ -1325,7 +1325,7 @@ public class Schematic {
             }
         }
         // Add some grass
-        for (y = Settings.island_level + 4; y < Settings.island_level + 5; y++) {
+        for (y = Settings.islandHeight + 4; y < Settings.islandHeight + 5; y++) {
             for (int x_space = x - 2; x_space <= x + 2; x_space++) {
                 for (int z_space = z - 2; z_space <= z + 2; z_space++) {
                     final Block blockToChange = world.getBlockAt(x_space, y, z_space);
@@ -1335,10 +1335,10 @@ public class Schematic {
         }
         // Place bedrock - MUST be there (ensures island are not
         // overwritten
-        Block b = world.getBlockAt(x, Settings.island_level, z);
+        Block b = world.getBlockAt(x, Settings.islandHeight, z);
         b.setType(Material.BEDROCK);
         // Then add some more dirt in the classic shape
-        y = Settings.island_level + 3;
+        y = Settings.islandHeight + 3;
         for (int x_space = x - 2; x_space <= x + 2; x_space++) {
             for (int z_space = z - 2; z_space <= z + 2; z_space++) {
                 b = world.getBlockAt(x_space, y, z_space);
@@ -1353,7 +1353,7 @@ public class Schematic {
         b.setType(Material.DIRT);
         b = world.getBlockAt(x, y, z + 3);
         b.setType(Material.DIRT);
-        y = Settings.island_level + 2;
+        y = Settings.islandHeight + 2;
         for (int x_space = x - 1; x_space <= x + 1; x_space++) {
             for (int z_space = z - 1; z_space <= z + 1; z_space++) {
                 b = world.getBlockAt(x_space, y, z_space);
@@ -1368,7 +1368,7 @@ public class Schematic {
         b.setType(Material.DIRT);
         b = world.getBlockAt(x, y, z + 2);
         b.setType(Material.DIRT);
-        y = Settings.island_level + 1;
+        y = Settings.islandHeight + 1;
         b = world.getBlockAt(x - 1, y, z);
         b.setType(Material.DIRT);
         b = world.getBlockAt(x + 1, y, z);
@@ -1379,15 +1379,15 @@ public class Schematic {
         b.setType(Material.DIRT);
 
         // Add island items
-        y = Settings.island_level;
+        y = Settings.islandHeight;
         // Add tree (natural)
         final Location treeLoc = new Location(world, x, y + 5D, z);
         world.generateTree(treeLoc, TreeType.ACACIA);
         // Place the cow
-        final Location location = new Location(world, x, (Settings.island_level + 5), z - 2);
+        final Location location = new Location(world, x, (Settings.islandHeight + 5), z - 2);
 
         // Place a helpful sign in front of player
-        Block blockToChange = world.getBlockAt(x, Settings.island_level + 5, z + 3);
+        Block blockToChange = world.getBlockAt(x, Settings.islandHeight + 5, z + 3);
         blockToChange.setType(Material.SIGN_POST);
         Sign sign = (Sign) blockToChange.getState();
         sign.setLine(0, ASkyBlock.getPlugin().myLocale(player.getUniqueId()).signLine1.replace("[player]", player.getName()));
@@ -1399,7 +1399,7 @@ public class Schematic {
         // Place the chest - no need to use the safe spawn function
         // because we
         // know what this island looks like
-        blockToChange = world.getBlockAt(x, Settings.island_level + 5, z + 1);
+        blockToChange = world.getBlockAt(x, Settings.islandHeight + 5, z + 1);
         blockToChange.setType(Material.CHEST);
         // Only set if the config has items in it
         if (Settings.chestItems.length > 0) {
@@ -1496,7 +1496,7 @@ public class Schematic {
                 LivingEntity companion = (LivingEntity) location.getWorld().spawnEntity(location, type);
                 if (!companionNames.isEmpty()) {
                     randomNum = rand.nextInt(companionNames.size());
-                    String name = companionNames.get(randomNum).replace("[player]", player.getDisplayName());
+                    String name = companionNames.get(randomNum).replace("[player]", player.getName());
                     //plugin.getLogger().info("DEBUG: name is " + name);
                     companion.setCustomName(name);
                     companion.setCustomNameVisible(true);

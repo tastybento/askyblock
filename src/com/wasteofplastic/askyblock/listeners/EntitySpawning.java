@@ -62,6 +62,8 @@ public class EntitySpawning implements Listener {
             return;
         }
         boolean bypass = false;
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: spawn reason = " + e.getSpawnReason());
         // Check why it was spawned
         switch (e.getSpawnReason()) {
         // These reasons are due to a player being involved (usually)
@@ -98,6 +100,8 @@ public class EntitySpawning implements Listener {
         if (island.isSpawn()) {
             return;
         }
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: Checking entity limits");
         // Check if the player is at the limit
         int count = 0;
         checkLimits:
@@ -108,10 +112,12 @@ public class EntitySpawning implements Listener {
                     for (LivingEntity entity: e.getEntity().getWorld().getLivingEntities()) {
                         // If it is the right one
                         if (entity.getType().equals(e.getEntityType())) {
-                            //plugin.getLogger().info("DEBUG: " + entity.getType() + " found");
+                            if (DEBUG)
+                                plugin.getLogger().info("DEBUG: " + entity.getType() + " found");
                             // Check spawn location
                             if (entity.hasMetadata("spawnLoc")) {
-                                //plugin.getLogger().info("DEBUG: has meta");
+                                if (DEBUG)
+                                    plugin.getLogger().info("DEBUG: has meta");
                                 // Get the meta data
                                 List<MetadataValue> values = entity.getMetadata("spawnLoc");
                                 for (MetadataValue v : values) {
@@ -119,12 +125,17 @@ public class EntitySpawning implements Listener {
                                     if (v.getOwningPlugin().equals(plugin)) {
                                         // Get the island spawn location
                                         Location spawnLoc = Util.getLocationString(v.asString());
-                                        //plugin.getLogger().info("DEBUG: entity spawnLoc = " + spawnLoc);
+                                        if (DEBUG)
+                                            plugin.getLogger().info("DEBUG: entity spawnLoc = " + spawnLoc);
                                         if (spawnLoc != null && spawnLoc.equals(island.getCenter())) {
                                             // Entity is on this island
                                             count++;
+                                            if (DEBUG)
+                                                plugin.getLogger().info("DEBUG: entity is on island. Number = " + count);
                                             if (count >= Settings.entityLimits.get(e.getEntityType())) {
                                                 // No more allowed!
+                                                if (DEBUG)
+                                                    plugin.getLogger().info("DEBUG: no more allowed! >=" + count);
                                                 break checkLimits;
                                             }
                                         }
@@ -136,9 +147,13 @@ public class EntitySpawning implements Listener {
                 }
                 // Okay to spawn, but tag it
                 creature.setMetadata("spawnLoc", new FixedMetadataValue(plugin, Util.getStringLocation(island.getCenter())));
+                if (DEBUG)
+                    plugin.getLogger().info("DEBUG: spawn okay");
                 return;
             }
         // Cancel - no spawning - tell nearby players
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: spawn cancelled");
         e.setCancelled(true);
         for (Entity ent : e.getLocation().getWorld().getNearbyEntities(e.getLocation(), 5, 5, 5)) {
             if (ent instanceof Player) {

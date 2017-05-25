@@ -47,16 +47,27 @@ public class PlayerCache {
         // final Collection<? extends Player> serverPlayers =
         // Bukkit.getServer().getOnlinePlayers();
         for (Player p : plugin.getServer().getOnlinePlayers()) {
-            final Players playerInf = new Players(plugin, p.getUniqueId());
-            // Make sure parties are working correctly
-            if (playerInf.inTeam() && playerInf.getTeamIslandLocation() == null) {
-                final Players leaderInf = new Players(plugin, playerInf.getTeamLeader());
-                playerInf.setTeamIslandLocation(leaderInf.getIslandLocation());
-                playerInf.save();
+            if (p.getUniqueId() != null) {
+                try {
+                    final Players playerInf = new Players(plugin, p.getUniqueId());
+                    // Make sure parties are working correctly
+                    if (playerInf.inTeam() && playerInf.getTeamIslandLocation() == null) {
+                        if (playerInf.getTeamLeader() == null) {
+                            // Player cannot be in a team - try to clean up
+                            playerInf.setLeaveTeam();
+                        } else {
+                            final Players leaderInf = new Players(plugin, playerInf.getTeamLeader());
+                            playerInf.setTeamIslandLocation(leaderInf.getIslandLocation());
+                        }
+                        playerInf.save();
+                    }
+                    // Add this player to the online cache
+                    //plugin.getLogger().info("DEBUG: added player " + p.getUniqueId());
+                    playerCache.put(p.getUniqueId(), playerInf);
+                } catch (Exception e) {
+                    plugin.getLogger().severe("Player add tried for a player with null UUID");
+                }
             }
-            // Add this player to the online cache
-            //plugin.getLogger().info("DEBUG: added player " + p.getUniqueId());
-            playerCache.put(p.getUniqueId(), playerInf);
         }
     }
 
@@ -80,8 +91,12 @@ public class PlayerCache {
     public void addPlayer(final UUID playerUUID) {
         //plugin.getLogger().info("DEBUG: added player " + playerUUID);
         if (!playerCache.containsKey(playerUUID)) {
-            final Players player = new Players(plugin, playerUUID);
-            playerCache.put(playerUUID, player);
+            try {
+                final Players player = new Players(plugin, playerUUID);
+                playerCache.put(playerUUID, player);
+            } catch (Exception e) {
+                plugin.getLogger().severe("Player add request for a null UUID");
+            }
         }
     }
 
