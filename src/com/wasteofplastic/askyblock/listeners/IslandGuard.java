@@ -1115,7 +1115,7 @@ public class IslandGuard implements Listener {
                 return;
             }
             // Else not allowed
-            attacker.sendMessage(ChatColor.RED + plugin.myLocale(attacker.getUniqueId()).islandProtected);
+            Util.sendMessage(attacker, ChatColor.RED + plugin.myLocale(attacker.getUniqueId()).islandProtected);
             if (flamingArrow)
                 e.getEntity().setFireTicks(0);
             if (projectile)
@@ -1145,7 +1145,7 @@ public class IslandGuard implements Listener {
                 return;
             }
             // Not allowed
-            attacker.sendMessage(ChatColor.RED + plugin.myLocale(attacker.getUniqueId()).islandProtected);
+            Util.sendMessage(attacker, ChatColor.RED + plugin.myLocale(attacker.getUniqueId()).islandProtected);
             if (flamingArrow)
                 e.getEntity().setFireTicks(0);
             if (projectile)
@@ -1163,7 +1163,7 @@ public class IslandGuard implements Listener {
             if (DEBUG)
                 plugin.getLogger().info("DEBUG: Mobs not allowed to be hurt. Blocking");
             // Else not allowed
-            attacker.sendMessage(ChatColor.RED + plugin.myLocale(attacker.getUniqueId()).islandProtected);
+            Util.sendMessage(attacker, ChatColor.RED + plugin.myLocale(attacker.getUniqueId()).islandProtected);
             if (flamingArrow)
                 e.getEntity().setFireTicks(0);
             if (projectile)
@@ -2686,7 +2686,7 @@ public class IslandGuard implements Listener {
                         // Only say it once a second
                         // Debounce event (it can be called twice for the same action)
                         if (!tntBlocks.contains(e.getBlock().getLocation())) {
-                            shooter.sendMessage(ChatColor.RED + plugin.myLocale(shooter.getUniqueId()).islandProtected);
+                            Util.sendMessage(shooter, ChatColor.RED + plugin.myLocale(shooter.getUniqueId()).islandProtected);
                             tntBlocks.add(e.getBlock().getLocation());
                             plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
 
