@@ -453,6 +453,7 @@ purge:
   calculating: "Lasketaan kuinka monta saarta on ollut epäaktiivisena [time] päivää."
   countingUnowned: "Lasketaan omistamattomat saaret ja pelaajien tiedot. Tämä voi kestää hetken..."
   finished: "Epäaktiivisten saarten puhdistus suoritettu loppuun."
+  maxPurge: "Max purge is [number] islands. Run purge again afterwards to purge more."
   noneFound: "Epäaktiivisia saaria poistettavaksi ei löytynyt."
   nowWaiting: "Nyt odotellaan..."
   preventPurge: "Saari on suojattu puhdistukselta"

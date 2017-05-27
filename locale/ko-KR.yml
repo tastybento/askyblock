@@ -453,6 +453,7 @@ purge:
   calculating: "[time] 일 이상 사용되지 않은 섬들을 계산 중입니다."
   countingUnowned: "주인없는 섬의 갯수와 유저 데이터 파일을 확인중입니다. 시간이 걸릴 수 있습니다..."
   finished: "사용되지 않은 섬들의 초기화가 완료되었습니다."
+  maxPurge: "Max purge is [number] islands. Run purge again afterwards to purge more."
   noneFound: "사용되지 않은 섬이 없어 제거할 수 없었습니다."
   nowWaiting: "이제 기다리는 중..."
   preventPurge: "섬이 초기화로부터 보호되었습니다"

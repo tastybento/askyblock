@@ -1394,6 +1394,17 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 Util.sendMessage(sender, ChatColor.YELLOW + plugin.myLocale().purgethisWillRemove.replace("[number]", String.valueOf(removeList.size())).replace("[level]", String.valueOf(Settings.abandonedIslandLevel)));
                 Util.sendMessage(sender, ChatColor.RED + plugin.myLocale().purgewarning);
                 Util.sendMessage(sender, ChatColor.RED + plugin.myLocale().purgetypeConfirm.replace("[label]", label));
+                if (removeList.size() > Settings.maxPurge) {
+                    Util.sendMessage(sender, "However, purge is limited to " + Settings.maxPurge +" islands. Run purge again afterwards to delete more");
+                    Iterator<UUID> it = removeList.iterator();
+                    int count = 1;
+                    while (it.hasNext()) {
+                        it.next();
+                       if (count++ > Settings.maxPurge) {
+                           it.remove();
+                       }
+                    }
+                }
                 confirmReq = true;
                 confirmOK = false;
                 confirmTimer = 0;
@@ -2214,12 +2225,26 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                         Util.sendMessage(sender, plugin.myLocale().purgeStillChecking);
                     } else {
                         // Done
+                        //plugin.getLogger().info("DEBUG: unowned size = " + unowned.size());
                         if (unowned.size() > 0) {
                             if (Settings.GAMETYPE.equals(GameType.ASKYBLOCK)) {
                                 Util.sendMessage(sender, plugin.myLocale().purgeSkyBlockFound.replace("[number]", String.valueOf(unowned.size())));
                             } else {
                                 Util.sendMessage(sender, plugin.myLocale().purgeAcidFound.replace("[number]", String.valueOf(unowned.size())));
                             }
+                            if (unowned.size() > Settings.maxPurge) {
+                                Util.sendMessage(sender, plugin.myLocale().purgeLimit.replace("[number]", String.valueOf(Settings.maxPurge)));
+                                Iterator<Entry<String, Island>> it = unowned.entrySet().iterator();
+                                int count = 1;
+                                while (it.hasNext()) {
+                                    it.next();
+                                   if (count++ > Settings.maxPurge) {
+                                       //plugin.getLogger().info("DEBUG: removing record");
+                                       it.remove();
+                                   }
+                                }
+                            }
+                            //plugin.getLogger().info("DEBUG: unowned size after = " + unowned.size());
                             purgeUnownedConfirm = true;
                             purgeFlag = false;
                             plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {

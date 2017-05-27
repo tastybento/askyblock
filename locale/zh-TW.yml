@@ -452,6 +452,7 @@ purge:
   alreadyRunning: "清除已在運行中, 請稍後至它完成!"
   calculating: "計算島嶼閒置時間超過 [time] 天者"
   countingUnowned: "Counting unowned islands and checking player files. This could take some time..."
+  maxPurge: "Max purge is [number] islands. Run purge again afterwards to purge more."
   finished: 成功清除了閒置島嶼
   noneFound: 沒有找到閒置的島嶼
   nowWaiting: "Now waiting..."

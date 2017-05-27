@@ -431,6 +431,9 @@ general:
 
    # Islands below this level will be removed if they are abandoned and admins issue the purge command
    abandonedislandlevel: 10
+   # Maximum number of islands to purge in one go. Don't make this too big because if you
+   # stop the server mid run, you may end up with incompletely deleted islands
+   maxpurge: 500
 
    ##### Economy ######
    # Use economy or not. If true, an economy plugin is required. If false,

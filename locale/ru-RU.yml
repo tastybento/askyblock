@@ -453,6 +453,7 @@ purge:
   calculating: "Рассчитываем количество островов которые были неактивны более [time] дней."
   countingUnowned: "Рассчитываем количество неактивных островов. Это может занять время..."
   finished: "Очистка неактивных островов окончена."
+  maxPurge: "Max purge is [number] islands. Run purge again afterwards to purge more."
   noneFound: "Нет неактивных островов для удаления."
   nowWaiting: "Подождите..."
   preventPurge: "Остров защищен от очистки"

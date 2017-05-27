@@ -655,6 +655,8 @@ public class ASLocale {
 
     public String adminHelpsetLanguage;
 
+    public String purgeLimit;
+
 
     /**
      * Creates a locale object full of localized strings for a language
@@ -1216,6 +1218,7 @@ public class ASLocale {
         purgeStillChecking = ChatColor.translateAlternateColorCodes('&', locale.getString("purge.stillChecking", "Still checking player files..."));
         purgeSkyBlockFound = ChatColor.translateAlternateColorCodes('&', locale.getString("purge.skyblockFound", "There are [number] unowned islands. Do '/asadmin purge unowned confirm' to delete them within 20 seconds."));
         purgeAcidFound = ChatColor.translateAlternateColorCodes('&', locale.getString("purge.acidFound", "There are [number] unowned islands. Do '/acid purge unowned confirm' to delete them within 20 seconds."));
+        purgeLimit = ChatColor.translateAlternateColorCodes('&', locale.getString("purge.maxPurge", "Max purge is [number] islands. Run purge again afterwards to purge more."));
         adminAllowPurge = ChatColor.translateAlternateColorCodes('&', locale.getString("purge.preventName", "Purge protection removed"));
         adminPreventPurge = ChatColor.translateAlternateColorCodes('&', locale.getString("purge.allowName", "Island is protected from purging"));
         confirmerrorTimeLimitExpired = ChatColor.translateAlternateColorCodes('&',

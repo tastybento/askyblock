@@ -453,6 +453,7 @@ purge:
   calculating: "Calcul du nombre d'îles inactives depuis plus de [time] jours..."
   countingUnowned: "Vérification des îles sans propriétaires et vérification des fichiers. Cela peut prendre du temps..."
   finished: "Suppression des îles inactives terminée."
+  maxPurge: "Max purge is [number] islands. Run purge again afterwards to purge more."
   noneFound: "Aucune île inactive à supprimer."
   nowWaiting: "En attente..."
   preventPurge: "L'île est protégée de la purge"

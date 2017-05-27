@@ -549,6 +549,10 @@ public class PluginConfig {
         if (Settings.abandonedIslandLevel < 0) {
             Settings.abandonedIslandLevel = 0;
         }
+        Settings.maxPurge = plugin.getConfig().getInt("general.maxpurge", 500);
+        if (Settings.maxPurge < 0) {
+            Settings.maxPurge = 0;
+        }
         // Use economy or not
         // In future expand to include internal economy
         Settings.useEconomy = plugin.getConfig().getBoolean("general.useeconomy", true);

@@ -452,6 +452,7 @@ purge:
   alreadyRunning: "§c正在清理中,请等待清理完毕!"
   calculating: "§c计算不活跃天数超过§e [time] 天§c的岛屿."
   countingUnowned: "Counting unowned islands and checking player files. This could take some time..."
+  maxPurge: "Max purge is [number] islands. Run purge again afterwards to purge more."
   finished: §a清理不活跃岛屿完成.
   noneFound: §c没有不活跃的岛屿被移除.
   nowWaiting: "Now waiting..."

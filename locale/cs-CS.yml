@@ -453,6 +453,7 @@ purge:
   calculating: "Propocitava ktere ostrovy byly neaktivni vice nez [time] dni."
   countingUnowned: "Counting unowned islands and checking player files. This could take some time..."
   finished: "Dokoncovani cisteni neaktivnich ostrovu."
+  maxPurge: "Max purge is [number] islands. Run purge again afterwards to purge more."
   noneFound: "Zadne neaktivni ostrovy k odstraneni."
   nowWaiting: "Now waiting..."
   preventPurge: "Island is protected from purging"
