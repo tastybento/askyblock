@@ -181,13 +181,6 @@
 			<systemPath>${server.jars}/spigot-1649.jar</systemPath>
 			<version>1.7.10</version>
 		</dependency>
-		<dependency>
-			<groupId>org.dthielke</groupId>
-			<artifactId>Herochat</artifactId>
-			<scope>system</scope>
-			<systemPath>${server.jars}/HeroChat_5.6.7.jar</systemPath>
-			<version>5.6.7</version>
-		</dependency>
 	</dependencies>
 	<repositories>
 		<repository>

@@ -52,7 +52,6 @@ import com.wasteofplastic.askyblock.listeners.ChatListener;
 import com.wasteofplastic.askyblock.listeners.CleanSuperFlat;
 import com.wasteofplastic.askyblock.listeners.EntitySpawning;
 import com.wasteofplastic.askyblock.listeners.FlyingMobEvents;
-import com.wasteofplastic.askyblock.listeners.HeroChatListener;
 import com.wasteofplastic.askyblock.listeners.IslandGuard;
 import com.wasteofplastic.askyblock.listeners.IslandGuard1_8;
 import com.wasteofplastic.askyblock.listeners.IslandGuard1_9;
@@ -393,15 +392,6 @@ public class ASkyBlock extends JavaPlugin {
                     HandlerList.unregisterAll(ASkyBlock.this);
                     return;
                 }
-                // Try to register Herochat
-                if (Bukkit.getServer().getPluginManager().isPluginEnabled("Herochat")) {
-                    try {
-                        getServer().getPluginManager().registerEvents(new HeroChatListener(ASkyBlock.this), ASkyBlock.this);
-                    } catch (Exception e) {
-                        ASkyBlock.this.getLogger().severe("Could not register with Herochat");
-                    }
-                }
-
                 // Run game rule to keep things quiet
                 try {
                     getLogger().info("Silencing command feedback for Ops...");

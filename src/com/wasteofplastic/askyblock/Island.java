@@ -46,6 +46,8 @@ import com.wasteofplastic.askyblock.util.Util;
  */
 public class Island implements Cloneable {
     ASkyBlock plugin;
+    // Island UUID
+    private UUID uuid;
     // Coordinates of the island area
     private int minX;
     private int minZ;
@@ -1032,4 +1034,19 @@ public class Island implements Cloneable {
         }
 
     }
+
+    /**
+     * @return the uuid
+     */
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    /**
+     * @param uuid the uuid to set
+     */
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
+    }
+
 }

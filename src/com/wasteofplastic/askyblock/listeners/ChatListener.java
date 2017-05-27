@@ -227,10 +227,12 @@ public class ChatListener implements Listener {
     /**
      * Return the player's challenge level for use in chat - async safe
      * @param playerUUID
-     * @return challenge level as string
+     * @return challenge level as string or empty string none
      */
     public String getPlayerChallengeLevel(UUID playerUUID) {
-        return playerChallengeLevels.get(playerUUID);
+        if (playerChallengeLevels.contains(playerUUID))
+            return playerChallengeLevels.get(playerUUID);
+        return "";
     }
 
     /**
