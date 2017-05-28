@@ -2329,6 +2329,8 @@ public class IslandGuard implements Listener {
                 }
                 break;
             case LLAMA:
+            case SKELETON_HORSE:
+            case ZOMBIE_HORSE:
             case HORSE:
                 //plugin.getLogger().info("Horse riding");
                 if (island == null && !Settings.defaultWorldSettings.get(SettingsFlag.HORSE_RIDING)) {
