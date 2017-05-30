@@ -1395,7 +1395,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 Util.sendMessage(sender, ChatColor.RED + plugin.myLocale().purgewarning);
                 Util.sendMessage(sender, ChatColor.RED + plugin.myLocale().purgetypeConfirm.replace("[label]", label));
                 if (removeList.size() > Settings.maxPurge) {
-                    Util.sendMessage(sender, "However, purge is limited to " + Settings.maxPurge +" islands. Run purge again afterwards to delete more");
+                    Util.sendMessage(sender, plugin.myLocale().purgeLimit.replace("[number]",String.valueOf(Settings.maxPurge)));
                     Iterator<UUID> it = removeList.iterator();
                     int count = 1;
                     while (it.hasNext()) {
