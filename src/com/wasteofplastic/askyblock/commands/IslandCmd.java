@@ -3484,23 +3484,23 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.info")
                     && args[0].equalsIgnoreCase("level")) {
-                options.addAll(Util.getOnlinePlayerList());
+                options.addAll(Util.getOnlinePlayerList(player));
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.create")
                     && args[0].equalsIgnoreCase("invite")) {
-                options.addAll(Util.getOnlinePlayerList());
+                options.addAll(Util.getOnlinePlayerList(player));
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "coop")
                     && args[0].equalsIgnoreCase("coop")) {
-                options.addAll(Util.getOnlinePlayerList());
+                options.addAll(Util.getOnlinePlayerList(player));
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "coop")
                     && args[0].equalsIgnoreCase("uncoop")) {
-                options.addAll(Util.getOnlinePlayerList());
+                options.addAll(Util.getOnlinePlayerList(player));
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.expel")
                     && args[0].equalsIgnoreCase("expel")) {
-                options.addAll(Util.getOnlinePlayerList());
+                options.addAll(Util.getOnlinePlayerList(player));
             }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.kick") 
                     && (args[0].equalsIgnoreCase("kick") || args[0].equalsIgnoreCase("remove"))) {
