@@ -56,19 +56,24 @@ public class PluginConfig {
             Settings.islandDistance = 50;
             plugin.getLogger().info("Setting minimum island distance to 50");
         }
-        Settings.islandProtectionRange = plugin.getConfig().getInt("island.protectionRange", 100);
-        if (Settings.islandProtectionRange % 2 != 0) {
-            Settings.islandProtectionRange--;
-            plugin.getLogger().warning("Protection range must be even, using " + Settings.islandProtectionRange);
+        if (Settings.islandDistance % 2 != 0) {
+            plugin.getLogger().warning("Island distance should be even!");
         }
+        Settings.islandProtectionRange = plugin.getConfig().getInt("island.protectionRange", 100);
         if (Settings.islandProtectionRange > Settings.islandDistance) {
             plugin.getLogger().warning("Protection range cannot be > island distance. Setting them to be equal.");
             Settings.islandProtectionRange = Settings.islandDistance;
         }
-        if (Settings.islandProtectionRange < 0) {
-            Settings.islandProtectionRange = 0;
+        if (Settings.islandProtectionRange <= 0) {
+            plugin.getLogger().warning("Protection range of 0 in config.yml: To disable protection, the range should");
+            plugin.getLogger().warning("equal the island distance and then you should allow all island protection flags");
+            plugin.getLogger().warning("in config.yml. Protection range will be set to island distance (" + Settings.islandDistance + ")");
+            Settings.islandProtectionRange = Settings.islandDistance;
         }
-
+        if (Settings.islandProtectionRange % 2 != 0) {
+            Settings.islandProtectionRange--;
+            plugin.getLogger().warning("Protection range must be even, using " + Settings.islandProtectionRange);
+        }
         // xoffset and zoffset are not public and only used for IslandWorld compatibility
         Settings.islandXOffset = plugin.getConfig().getInt("island.xoffset", 0);
         if (Settings.islandXOffset < 0) {
