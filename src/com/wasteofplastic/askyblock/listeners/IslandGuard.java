@@ -1775,7 +1775,7 @@ public class IslandGuard implements Listener {
                 }
                 return; 
             }
-            
+
             switch (e.getClickedBlock().getType()) {
             case WOODEN_DOOR:
             case SPRUCE_DOOR:
@@ -2730,43 +2730,47 @@ public class IslandGuard implements Listener {
             e.setNewCurrent(0);
         }
     }
-    
+
     @EventHandler(priority=EventPriority.LOW)
     public void onEvent(BlockPistonExtendEvent event)
     {
-        // Check world
-        if (!inWorld(event.getBlock())) {
-            return;
-        }
-        
-        for (Block block: event.getBlocks()) {
-            if (block.getType() == Material.TNT) {
-                event.setCancelled(true);
-                break;
+        if (!Settings.allowTNTPushing) {
+            // Check world
+            if (!inWorld(event.getBlock())) {
+                return;
+            }
+
+            for (Block block: event.getBlocks()) {
+                if (block.getType() == Material.TNT) {
+                    event.setCancelled(true);
+                    break;
+                }
             }
         }
         /* JAVA 8
         if (event.getBlocks()..stream().anyMatch(it->it.getType()==Material.TNT))
             event.setCancelled(true);
-            */
+         */
     }
 
     @EventHandler(priority=EventPriority.LOW)
     public void onEvent(BlockPistonRetractEvent event)
     {
-        // Check world
-        if (!inWorld(event.getBlock())) {
-            return;
-        }
-        for (Block block: event.getBlocks()) {
-            if (block.getType() == Material.TNT) {
-                event.setCancelled(true);
-                break;
+        if (!Settings.allowTNTPushing) {
+            // Check world
+            if (!inWorld(event.getBlock())) {
+                return;
+            }
+            for (Block block: event.getBlocks()) {
+                if (block.getType() == Material.TNT) {
+                    event.setCancelled(true);
+                    break;
+                }
             }
         }
         /* JAVA 8
         if (event.getBlocks().stream().anyMatch(it->it.getType()==Material.TNT))
             event.setCancelled(true);
-            */
+         */
     }
 }

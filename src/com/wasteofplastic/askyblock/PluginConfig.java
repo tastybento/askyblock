@@ -721,6 +721,9 @@ public class PluginConfig {
 
         // Disable offline redstone
         Settings.disableOfflineRedstone = plugin.getConfig().getBoolean("general.disableofflineredstone", false);
+        
+        // Allow/disallow TNT pusing
+        Settings.allowTNTPushing = plugin.getConfig().getBoolean("general.allowTNTpushing",true);
 
         // Fancy island level display
         Settings.fancyIslandLevelDisplay = plugin.getConfig().getBoolean("general.fancylevelinchat", false);
