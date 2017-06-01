@@ -239,7 +239,7 @@ invite:
   youHaveJoinedAnIsland: "Bạn đã tham gia một hòn đảo! sử dụng /[label] team để xem các thành viên khác."
 island:
   cannotTeleport: "Bạn không thể dịch chuyển khi rơi!"
-  donate: "Chào mừng đến skyblock by MINE95"
+  donate: "Chào mừng đến skyblock by tastybento"
   donatecolor: "aqua"
   errorCouldNotCreateIsland: "Không thể tạo Đảo của bạn. Hãy liên hệ với người điều hành máy chủ."
   errorInvalidPlayer: "player đó là không hợp lệ hoặc không có một hòn đảo!"
@@ -278,12 +278,12 @@ island:
   resetTo: "giới hạn reset xóa"
   resetWait: "Ybạn phải đợi [time] giây trước khi bạn có thể làm điều đó một lần nữa."
   resetYouHave: "you have [number] reset lại."
-  subtitle: "by MINE95"
+  subtitle: "by tastybento"
   subtitlecolor: "blue"
   teleport: "Dịch chuyển bạn đến hòn đảo của bạn. (/[label] help để xem thông tin)"
   title: "Skyblock"
   titlecolor: "gold"
-  url: "https://www.facebook.com/tung.vanthanh.984"
+  url: ""
 islandProtected: "Đảo được bảo vệ."
 islandguardsettings:
   TNTdamage: "TNT Damage"
