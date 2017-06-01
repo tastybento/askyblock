@@ -641,6 +641,10 @@ general:
    # Default is false
    disableofflineredstone: false
    
+   # Disable piston pushing of TNT. There is a glitch in 1.9.4 that enables unlimited
+   # TNT creation with this. Default is allowed, set to false if you need it off.
+   allowTNTpushing: true
+   
    # Config.yml version. DO NOT EDIT. This number only changes if the latest
    # plugin config has been updated. If a new config is detected, it will be
    # auto-saved to config.new.yml.

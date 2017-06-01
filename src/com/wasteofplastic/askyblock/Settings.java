@@ -279,4 +279,5 @@ public class Settings {
     public static boolean showInActionBar;
     public static boolean leaversLoseReset;
     public static int maxPurge;
+    public static boolean allowTNTPushing;
 }
