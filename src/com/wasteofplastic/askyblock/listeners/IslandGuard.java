@@ -1185,7 +1185,7 @@ public class IslandGuard implements Listener {
             if (pvp) {
                 return;
             } else {
-                attacker.sendMessage(ChatColor.RED + plugin.myLocale(attacker.getUniqueId()).targetInNoPVPArea);
+                Util.sendMessage(attacker, ChatColor.RED + plugin.myLocale(attacker.getUniqueId()).targetInNoPVPArea);
                 if (flamingArrow)
                     e.getEntity().setFireTicks(0);
                 if (projectile)

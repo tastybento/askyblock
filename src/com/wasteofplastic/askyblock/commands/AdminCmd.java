@@ -431,7 +431,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                                 Util.sendMessage(sender, ChatColor.RED + plugin.myLocale().lockUnlocking);
                                 island.setLocked(false);
                                 if (owner != null) {
-                                    owner.sendMessage(plugin.myLocale(owner.getUniqueId()).adminLockadminUnlockedIsland);
+                                    Util.sendMessage(owner, plugin.myLocale(owner.getUniqueId()).adminLockadminUnlockedIsland);
                                 } else {
                                     plugin.getMessages().setMessage(island.getOwner(), plugin.myLocale(island.getOwner()).adminLockadminUnlockedIsland);
                                 }
@@ -439,7 +439,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                                 Util.sendMessage(sender, ChatColor.RED + plugin.myLocale().lockLocking);
                                 island.setLocked(true);
                                 if (owner != null) {
-                                    owner.sendMessage(plugin.myLocale(owner.getUniqueId()).adminLockadminLockedIsland);
+                                    Util.sendMessage(owner, plugin.myLocale(owner.getUniqueId()).adminLockadminLockedIsland);
                                 } else {
                                     plugin.getMessages().setMessage(island.getOwner(), plugin.myLocale(island.getOwner()).adminLockadminLockedIsland);
                                 }
@@ -1485,7 +1485,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                             Util.sendMessage(sender, ChatColor.RED + plugin.myLocale().lockLocking);
                             island.setLocked(true);
                             if (owner != null) {
-                                owner.sendMessage(plugin.myLocale(owner.getUniqueId()).adminLockadminLockedIsland);
+                                Util.sendMessage(owner, plugin.myLocale(owner.getUniqueId()).adminLockadminLockedIsland);
                             } else {
                                 plugin.getMessages().setMessage(island.getOwner(), plugin.myLocale(island.getOwner()).adminLockadminLockedIsland);
                             }

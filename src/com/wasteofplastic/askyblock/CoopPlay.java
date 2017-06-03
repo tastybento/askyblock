@@ -78,7 +78,7 @@ public class CoopPlay {
             UUID leaderUUID = plugin.getPlayers().getTeamLeader(requester.getUniqueId());
             // Check if only leader can coop
             if(Settings.onlyLeaderCanCoop && (!requester.getUniqueId().equals(leaderUUID))){
-            	requester.sendMessage(ChatColor.RED + plugin.myLocale(requester.getUniqueId()).cannotCoop);
+                Util.sendMessage(requester, ChatColor.RED + plugin.myLocale(requester.getUniqueId()).cannotCoop);
             	return false;
             }
             // Tell all the team members
@@ -315,7 +315,7 @@ public class CoopPlay {
                         // Yes, so get the invitee (target)
                         Player target = plugin.getServer().getPlayer(playerUUID);
                         if (target != null) {
-                            target.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).coopRemoved.replace("[name]", clearer.getName()));
+                            Util.sendMessage(target, ChatColor.RED + plugin.myLocale(playerUUID).coopRemoved.replace("[name]", clearer.getName()));
                         } else {
                             plugin.getMessages().setMessage(playerUUID, ChatColor.RED + plugin.myLocale(playerUUID).coopRemoved.replace("[name]", clearer.getName()));
                         }
