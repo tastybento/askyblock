@@ -75,7 +75,7 @@
 		<dependency>
 			<groupId>org.bukkit</groupId>
 			<artifactId>bukkit</artifactId>
-			<version>1.12-pre2-SNAPSHOT</version>
+			<version>1.12-pre6-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -111,13 +111,13 @@
 			<systemPath>${server.jars}/spigot-1.9.4.jar</systemPath>
 			<version>1.9.4</version>
 		</dependency>
-		      <dependency>
-            <groupId>spigotmc.org</groupId>
-            <artifactId>spigot-1.12</artifactId>
-            <scope>system</scope>
-            <systemPath>${server.jars}/spigot-1.12-pre2.jar</systemPath>
-            <version>1.12</version>
-        </dependency>
+		<dependency>
+			<groupId>spigotmc.org</groupId>
+			<artifactId>spigot-1.12</artifactId>
+			<scope>system</scope>
+			<systemPath>${server.jars}/spigot-1.12-pre2.jar</systemPath>
+			<version>1.12</version>
+		</dependency>
 		<dependency>
 			<groupId>spigotmc.org</groupId>
 			<artifactId>spigot-1.10</artifactId>

@@ -1383,8 +1383,14 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 
             if (split[0].equalsIgnoreCase("controlpanel") || split[0].equalsIgnoreCase("cp")) {
                 if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.controlpanel")) {
-                    player.openInventory(ControlPanel.controlPanel.get(ControlPanel.getDefaultPanelName()));
-                    return true;
+                    if (ControlPanel.controlPanel.containsKey(ControlPanel.getDefaultPanelName())) {
+                        player.openInventory(ControlPanel.controlPanel.get(ControlPanel.getDefaultPanelName()));
+                        return true;
+                    } else {
+                        Util.sendMessage(player, plugin.myLocale(playerUUID).errorCommandNotReady);
+                        plugin.getLogger().severe("There is a problem with the controlpanel.yml file - it is probably corrupted. Delete it and let it be regenerated.");
+                        return true;
+                    }
                 }
             }
 
