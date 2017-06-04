@@ -379,6 +379,12 @@ public class PlayerEvents implements Listener {
             if (respawnLocation != null) {
                 //plugin.getLogger().info("DEBUG: Setting respawn location to " + respawnLocation);
                 e.setRespawnLocation(respawnLocation);
+                // Get island
+                Island island = plugin.getGrid().getIslandAt(respawnLocation);
+                if (island != null) {
+                    // Run perms etc.
+                    processPerms(e.getPlayer(), island);
+                }
             }
         }
     }
