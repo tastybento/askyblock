@@ -663,6 +663,7 @@ protection:
    #
    # Players can be given the ability to change settings in the GUI with permissions
    # e.g. askyblock.settings.PVP or all settings with askyblock.settings.*
+   # Permissions are not case sensitive.
    #
    # -- World defaults --
    # Applies everywhere and are the default for islands and spawn.
