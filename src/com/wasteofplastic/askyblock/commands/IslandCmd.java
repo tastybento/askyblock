@@ -82,6 +82,7 @@ import com.wasteofplastic.askyblock.events.IslandResetEvent;
 import com.wasteofplastic.askyblock.listeners.PlayerEvents;
 import com.wasteofplastic.askyblock.panels.ControlPanel;
 import com.wasteofplastic.askyblock.schematics.Schematic;
+import com.wasteofplastic.askyblock.schematics.Schematic.PasteReason;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
@@ -734,13 +735,13 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                 next = next.toVector().toLocation(ASkyBlock.getNetherWorld());
                 // Set the player's island location to this new spot
                 plugin.getPlayers().setIslandLocation(playerUUID, next);
-                schematic.pasteSchematic(next, player, true);
+                schematic.pasteSchematic(next, player, true, firstTime ? PasteReason.NEW_ISLAND: PasteReason.RESET);
             } else {
                 // Over world start
                 //plugin.getLogger().info("DEBUG: pasting");
                 //long timer = System.nanoTime();
                 // Paste the island and teleport the player home
-                schematic.pasteSchematic(next, player, true);
+                schematic.pasteSchematic(next, player, true, firstTime ? PasteReason.NEW_ISLAND: PasteReason.RESET);
                 //double diff = (System.nanoTime() - timer)/1000000;
                 //plugin.getLogger().info("DEBUG: nano time = " + diff + " ms");
                 //plugin.getLogger().info("DEBUG: pasted overworld");
@@ -810,14 +811,6 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                     "Island protection range must be " + Settings.islandDistance + " or less. Setting to: " + range);
         }
         myIsland.setProtectionSize(range);
-        // Run any commands that need to be run at the start
-        if (firstTime) {
-            //plugin.getLogger().info("DEBUG: First time");
-            if (!player.hasPermission(Settings.PERMPREFIX + "command.newislandexempt")) {
-                //plugin.getLogger().info("DEBUG: Executing new island commands");
-                runCommands(Settings.startCommands, player);
-            }
-        }
 
         // Save grid just in case there's a crash
         plugin.getGrid().saveGrid();
@@ -837,7 +830,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 
             @Override
             public void run() {
-                schematic.pasteSchematic(loc, player, false);
+                schematic.pasteSchematic(loc, player, false, PasteReason.PARTNER);
 
             }}, 60L);
 
@@ -848,9 +841,10 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
      * @param schematic
      * @param loc
      * @param player
+     * @param reason 
      */
-    public void pasteSchematic(final Schematic schematic, final Location loc, final Player player) {
-        schematic.pasteSchematic(loc, player, false);
+    public void pasteSchematic(final Schematic schematic, final Location loc, final Player player, PasteReason reason) {
+        schematic.pasteSchematic(loc, player, false, reason);
     }
 
     /**
@@ -3194,11 +3188,6 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
             plugin.getServer().getPluginManager().callEvent(event);
         } else {
             //plugin.getLogger().info("DEBUG oldisland = null!");
-        }
-        // Run any commands that need to be run at reset
-        // Ignore commands with this perm
-        if (!player.hasPermission(Settings.PERMPREFIX + "command.resetexempt")) {
-            runCommands(Settings.resetCommands, player);
         }
         plugin.getGrid().saveGrid();
     }

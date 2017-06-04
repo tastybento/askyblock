@@ -47,6 +47,7 @@ import com.wasteofplastic.askyblock.SafeSpotTeleport;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.commands.IslandCmd;
 import com.wasteofplastic.askyblock.schematics.Schematic;
+import com.wasteofplastic.askyblock.schematics.Schematic.PasteReason;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
@@ -237,7 +238,7 @@ public class NetherPortals implements Listener {
                             if (nether != null) {
                                 if (DEBUG)
                                     plugin.getLogger().info("DEBUG: pasting at " + island.getCenter().toVector());
-                                plugin.getIslandCmd().pasteSchematic(nether, netherIsland, event.getPlayer());
+                                plugin.getIslandCmd().pasteSchematic(nether, netherIsland, event.getPlayer(), PasteReason.PARTNER);
                             } else {
                                 plugin.getLogger().severe("Cannot teleport player to nether because there is no nether schematic");
                                 event.setCancelled(true);

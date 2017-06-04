@@ -133,6 +133,21 @@ public class Schematic {
     private int durability;
     private int levelHandicap;
     private double cost;
+    // The reason why this schematic is being pasted
+    public enum PasteReason {
+        /**
+         * This is a new island
+         */
+        NEW_ISLAND,
+        /**
+         * This is a partner island
+         */
+        PARTNER,
+        /**
+         * This is a reset
+         */
+        RESET
+    };
 
     public Schematic(ASkyBlock plugin) {
         this.plugin = plugin;
@@ -763,12 +778,13 @@ public class Schematic {
      * This method pastes a schematic.
      * @param loc
      * @param player
+     * @param partner 
      */
-    public void pasteSchematic(final Location loc, final Player player, boolean teleport) {
+    public void pasteSchematic(final Location loc, final Player player, boolean teleport, final PasteReason reason) {
         // If this is not a file schematic, paste the default island
         if (this.file == null) {
             if (Settings.GAMETYPE == GameType.ACIDISLAND) {
-                generateIslandBlocks(loc,player);
+                generateIslandBlocks(loc,player, reason);
             } else {
                 loc.getBlock().setType(Material.BEDROCK);
                 ASkyBlock.getPlugin().getLogger().severe("Missing schematic - using bedrock block only");
@@ -1069,14 +1085,22 @@ public class Schematic {
                                             + plugin.myLocale(player.getUniqueId()).islandURL + "\"}}");
                         }
                     }
-                    if (!plugin.getPlayers().hasIsland(player.getUniqueId())) {
+                    if (reason.equals(PasteReason.NEW_ISLAND)) {
                         // Run any commands that need to be run at the start
-                            //plugin.getLogger().info("DEBUG: First time");
-                            if (!player.hasPermission(Settings.PERMPREFIX + "command.newislandexempt")) {
-                                //plugin.getLogger().info("DEBUG: Executing new island commands");
-                                IslandCmd.runCommands(Settings.startCommands, player);
+                        //plugin.getLogger().info("DEBUG: First time");
+                        if (!player.hasPermission(Settings.PERMPREFIX + "command.newexempt")) {
+                            //plugin.getLogger().info("DEBUG: Executing new island commands");
+                            IslandCmd.runCommands(Settings.startCommands, player);
+                        }
+                    } else if (reason.equals(PasteReason.RESET)) {
+                        // Run any commands that need to be run at reset
+                        //plugin.getLogger().info("DEBUG: Reset");
+                        if (!player.hasPermission(Settings.PERMPREFIX + "command.resetexempt")) {
+                            //plugin.getLogger().info("DEBUG: Executing reset island commands");
+                            IslandCmd.runCommands(Settings.resetCommands, player);
                         }
                     }
+
                 }}, 10L);
 
         }
@@ -1098,7 +1122,7 @@ public class Schematic {
                 blockToChange.setMetadata("playerSpawn", new FixedMetadataValue(plugin, spawnLoc));
             }
         }
-        */
+         */
     }
     /**
      * This method prepares to pastes a schematic.
@@ -1284,9 +1308,10 @@ public class Schematic {
      * Creates the AcidIsland default island block by block
      * @param islandLoc
      * @param player
+     * @param reason 
      */
     @SuppressWarnings("deprecation")
-    public void generateIslandBlocks(final Location islandLoc, final Player player) {
+    public void generateIslandBlocks(final Location islandLoc, final Player player, PasteReason reason) {
         // AcidIsland
         // Build island layer by layer
         // Start from the base
@@ -1442,12 +1467,19 @@ public class Schematic {
                                 + plugin.myLocale(player.getUniqueId()).islandURL + "\"}}");
             }
         }
-        if (!plugin.getPlayers().hasIsland(player.getUniqueId())) {
+        if (reason.equals(PasteReason.NEW_ISLAND)) {
             // Run any commands that need to be run at the start
-                //plugin.getLogger().info("DEBUG: First time");
-                if (!player.hasPermission(Settings.PERMPREFIX + "command.newislandexempt")) {
-                    //plugin.getLogger().info("DEBUG: Executing new island commands");
-                    IslandCmd.runCommands(Settings.startCommands, player);
+            //plugin.getLogger().info("DEBUG: First time 2");
+            if (!player.hasPermission(Settings.PERMPREFIX + "command.newexempt")) {
+                //plugin.getLogger().info("DEBUG: Executing new island commands 2");
+                IslandCmd.runCommands(Settings.startCommands, player);
+            }
+        } else if (reason.equals(PasteReason.RESET)) {
+            // Run any commands that need to be run at reset
+            //plugin.getLogger().info("DEBUG: Reset");
+            if (!player.hasPermission(Settings.PERMPREFIX + "command.resetexempt")) {
+                //plugin.getLogger().info("DEBUG: Executing reset island commands");
+                IslandCmd.runCommands(Settings.resetCommands, player);
             }
         }
         if (!islandCompanion.isEmpty()) {
