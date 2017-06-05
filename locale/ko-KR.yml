@@ -515,6 +515,7 @@ teamchat:
 topTen: 
   errorExcluded: "FYI: You are excluded from the top ten as you do not have [perm]"
   errorNotReady: "상위 10 목록이 아직 생성되지 않았습니다!"
+  guiHeading: "&E&L<!> Island: &6&N[name]&7 (#[rank])"
   guiTitle: "Top 10 Islands"
   header: "상위 10개의 섬:"
 warps: 

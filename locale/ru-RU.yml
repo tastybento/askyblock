@@ -515,6 +515,7 @@ teamchat:
 topTen:
   errorExcluded: "Вы исклчены з Топ-10 по причине: [perm]"
   errorNotReady: "Топ-10 островов еще не сгенерирован!"
+  guiHeading: "&E&L<!> Island: &6&N[name]&7 (#[rank])"
   guiTitle: "Top 10 Islands"
   header: "Это Топ-10 островов:"
 warps: 

@@ -452,7 +452,10 @@ teamchat:
   statusOff: "Team chat is off"
   statusOn: "Team chat is on"
 topTen:
+  errorExcluded: "FYI: You are excluded from the top ten as you do not have [perm]"
   errorNotReady: "Danh sách top 10 không được tạo ra chưa!"
+  guiHeading: "&E&L<!> Island: &6&N[name]&7 (#[rank])"
+  guiTitle: "Top 10 Islands"
   header: "Đây là Top 10 hòn đảo:"
 warps:
   deactivate: "Việc tắt dấu cũ!"

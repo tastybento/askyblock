@@ -515,6 +515,7 @@ teamchat:
 topTen: 
   errorExcluded: "FYI: You are excluded from the top ten as you do not have [perm]"
   errorNotReady: "Generatore classfica non pronto!"
+  guiHeading: "&E&L<!> Island: &6&N[name]&7 (#[rank])"
   guiTitle: "Top 10 Islands"
   header: "Queste sono le prime 10 isole in classifica:"
 warps: 

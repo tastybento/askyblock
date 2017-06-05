@@ -57,6 +57,7 @@ public class ASLocale {
             "white"
             ));
 
+
     // Localization Strings
     private FileConfiguration locale = null;
     private File localeFile = null;
@@ -109,6 +110,7 @@ public class ASLocale {
     // ASkyBlock
     public String topTenheader;
     public String topTenGuiTitle;
+    public String topTenGuiHeading;
     public String topTenerrorNotReady;
     public String levelislandLevel;
     public String levelerrornotYourIsland;
@@ -890,6 +892,7 @@ public class ASLocale {
         if (topTenGuiTitle.length() > 30) {
             topTenGuiTitle = topTenGuiTitle.substring(0, 29);
         }
+        topTenGuiHeading = ChatColor.translateAlternateColorCodes('&', locale.getString("topTen.guiHeading", "&E&L<!> Island: &6&N[name]&7 (#[rank])"));
         topTenerrorNotReady = ChatColor.translateAlternateColorCodes('&', locale.getString("topTen.errorNotReady", "Top ten list not generated yet!"));
         topTenerrorExcluded = ChatColor.translateAlternateColorCodes('&', locale.getString("topTen.errorExcluded", "FYI: You are excluded from the top ten as you do not have [perm]"));
         levelislandLevel = ChatColor.translateAlternateColorCodes('&', locale.getString("level.islandLevel", "Island level"));
