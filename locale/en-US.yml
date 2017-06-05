@@ -515,6 +515,7 @@ teamchat:
 topTen:
   errorExcluded: "FYI: You are excluded from the top ten as you do not have [perm]"
   errorNotReady: "Top ten list not generated yet!"
+  guiHeading: "&E&L<!> Island: &6&N[name]&7 (#[rank])"
   guiTitle: "Top 10 Islands"
   header: "These are the Top 10 islands:"
 warps: 
