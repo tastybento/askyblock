@@ -12,130 +12,130 @@ acidLore: |-
     §c一切水源无法饮用!
 
 adminDeleteIsland: 
-  error: "Use &ldeleteisland confirm &r&cto delete the island you are on."
-  noid: "Cannot identify island."
-  use: "Use &ldelete [name] &r&cto delete the player instead."
+  error: "使用 &ldeleteisland confirm &r&c来删除你所在的岛屿."
+  noid: "无法识别岛屿."
+  use: "或者使用 &ldelete [name] &r&c来删除一个玩家."
 adminHelp: 
-  add: "adds player to leader's team"
-  addrange: "adds to or substracts from the island's protection range"
-  clearreset: "§c重置一个玩家的初始信息."
-  clearresetall: "resets the island reset limit for all players"
-  cobblestats: "displays magic cobble generation stats"
+  add: "向领导者的队伍增加玩家"
+  addrange: "增加或减少岛屿的保护区域大小."
+  clearreset: "§c重置一个玩家的岛屿初始化次数."
+  clearresetall: "为所有玩家重置岛屿的初始化次数."
+  cobblestats: "显示magic cobble的生成统计数据."
   completeChallenge: "§e标记一个挑战为已完成"
   delete: "§c删除一个玩家的岛屿 (移除方块)."
   help: "§b管理员指令:"
   info: "§a显示指定玩家信息."
   infoisland: "§e显示离你最近的岛屿信息."
-  kick: "removes player from any team"
-  level: "provide detailed island level report on player"
-  listChallengeResets: "lists challenge reset schedules, if any"
-  lock: "locks/unlocks player's island"
+  kick: "从任何队伍中踢出玩家.
+  level: "为玩家提供岛屿等级详情.
+  listChallengeResets: "列出挑战重置时间表（若有）
+  lock: "锁定或解锁玩家的岛屿.
   purge: "§c删除超过 [TimeInDays] 天的不活跃岛屿."
-  purgeallowdisallow: "allow/disallow island to be purged if it meets purge criteria"
+  purgeallowdisallow: "允许/禁止一个岛屿被删除（若它们达到删除标准）."
   purgeholes: "§c重置空余的岛屿,以便重复使用."
-  purgeunowned: "remove unowned islands"
-  name: "Set name of player's island"
+  purgeunowned: "移除无主岛屿."
+  name: "为玩家岛屿命名."
   register: "§a设置玩家的岛屿在你的位置"
   reload: "§a配置重读."
   resetAllChallenges: "§c重置该玩家的的所有挑战"
   resetChallenge: "§e标记一个挑战为未完成"
-  resetChallengeForAll: "globally resets a challenge for every player with an optional repetition"
-  resetname: "Reset name of player's island"
+  resetChallengeForAll: "重设全服务器每位玩家的挑战（可选重复）"
+  resetname: "重设玩家岛屿名称"
   resetsign: "Resets the sign you are looking at to the island owner"
-  setbiome: "sets leader's island biome"
-  setdeaths: "sets player's death count"
+  setbiome: "设置领导者岛屿的生物群系."
+  setdeaths: "设置玩家的死亡计数."
   setrange: "§c改变岛屿的保护范围."
-  setlanguage: "sets the default language and resets every player to that language"
+  setlanguage: "设定默认语言并应用于所有玩家."
   setspawn: "§e设置岛屿世界的重生点在你的附近."
-  settingsreset: "Resets all islands to default protection settings"
-  teamChatSpy: "Spy on team chats (on/off)"
+  settingsreset: "重设所有岛屿到默认保护设定"
+  teamChatSpy: "偷听岛屿team聊天(开启/关闭)"
   topTen: "§a手动更新前十列表"
-  topbreeders: "lists most populated islands currently loaded"
-  tp: "Teleport to a player's island"
-  tpnether: "Teleport to a player's nether island"
-  unregister: "§c删除一个玩家的岛屿信息,但不清楚岛屿内方块"
+  topbreeders: "列出目前载入的最活跃的岛屿"
+  tp: "传送到玩家岛屿"
+  tpnether: "传送到玩家的下界岛屿"
+  unregister: "§c删除一个玩家的岛屿信息,但不清除岛屿内方块"
 adminInfo: 
-  bannedPlayers: "Banned players"
+  bannedPlayers: "已被封禁的玩家"
   errorNullTeamLeader: "§c团队领导必须为空!"
   errorTeamMembersExist: "§c玩家拥有团队成员,但不应该!"
-  hoppers: "Island has [number] hoppers"
-  islandLocation: §a岛屿坐标
-  isLocked: "Island is locked"
-  isProtected: "Island is purge protected"
-  isSpawn: "Island is spawn"
-  isUnlocked: "Island is unlocked"
-  isUnprotected: "Island is not purge protected"
-  lastLogin: "Last login"
-  maxSize: "Island max size (distance)"
-  player: "Player"
-  teamLeader: "Team Leader"
-  teamMembers: "Team Members"
-  title: "This is spawn island"
-  unowned: "This island is not owned by anyone right now."
+  hoppers: "岛上有 [number] 个漏斗"
+  islandLocation: "§a岛屿坐标"
+  isLocked: "岛屿被锁定"
+  isProtected: "岛屿被保护免于清除"
+  isSpawn: "岛屿是出生地"
+  isUnlocked: "岛屿被解锁"
+  isUnprotected: "岛屿未被保护免于清除"
+  lastLogin: "最后登录"
+  maxSize: "岛屿最大大小（距离）"
+  player: "玩家"
+  teamLeader: "队伍领袖"
+  teamMembers: "队伍成员"
+  title: "这是出生地岛屿"
+  unowned: "本岛暂时无主."
 adminLock: 
-  adminLockedIsland: "Admin locked your island"
-  adminUnlockedIsland: "Admin unlocked your island"
-  errorInGame: "Must use command in-game while on an island!"
+  adminLockedIsland: "管理员锁定了你的岛屿"
+  adminUnlockedIsland: "管理员解锁了你的岛屿"
+  errorInGame: "必须在游戏内使用该命令!"
 adminRegister: 
-  hadIsland: "[name] had an island at [location]"
-  leadsTeam: "[name] leads a team. Kick players from it first."
-  noIsland: "There is no known island in this area!"
-  notSpawn: "You cannot take ownership of spawn!"
-  taking: "Taking ownership away from [name]"
+  hadIsland: "[name] 在 [location] 处拥有一个岛屿"
+  leadsTeam: "[name] 拥有一个队伍. 请先踢光队里的人."
+  noIsland: "本区域内无已知空岛!"
+  notSpawn: "你不能占领出生地!"
+  taking: "正从 [name] 玩家接管岛屿"
 adminResetChallengeForAll:
-  error: "Format for repeat time must is [integer number][m/h/d] (minutes, hours, days), e.g. 5h"
-  repeating: "Repeating [duration]"
-  reset: "Reset [date]"
+  error: "重复次数的格式必须是整数 [integer number][m/h/d] (minutes, hours, days), 例如. 5h"
+  repeating: "重复 [duration]"
+  reset: "重设 [date]"
 adminResetSign: 
-  errorExists: "That warp sign is already active and owned by [name]"
-  found: "Warp sign found!"
-  noSign: "You must be looking at a sign post to run this command."
-  rescued: "Warp sign rescued and assigned to [name]"
+  errorExists: "传送牌已被激活过并属于 [name]"
+  found: "发现传送牌!"
+  noSign: "在执行此命令时你必须盯着传送牌杆看."
+  rescued: "已拯救传送牌并指派给 [name]"
 adminReserve:
-  islandExists: "There is an island here already! Register the player instead!"
+  islandExists: "此地已有一岛屿! Register the player instead!"
 adminSetHome: 
-  homeSet: "Home set to [location]"
-  noneFound: "No safe location found!"
-  notOnPlayersIsland: "You are not on the player's island"
-  notSafe: "That location is not safe"
+  homeSet: "已设家于 [location]"
+  noneFound: "未发现安全位置!"
+  notOnPlayersIsland: "你不在玩家岛屿上"
+  notSafe: "这位置不安全"
 adminSetRange: 
-  invalid: "Invalid range!"
-  set: "Set new range to [number]"
-  tip: "Range must be between 10 to [max]"
-  updated: "Island range updated to [number]"
-  warning: "Warning - range is greater than island range [max]"
-  warning2: "Overlapped islands will act like spawn!"
+  invalid: "范围无效!"
+  set: "设定新范围为 [number]"
+  tip: "范围必须在 10 到 [max] 之间"
+  updated: "岛屿范围更新为 [number]"
+  warning: "警告 - 范围比岛屿范围 [max] 更大"
+  warning2: "重叠的岛屿将像出生地一样(无法被拥有)!"
 adminSetSpawn: 
-  center: "Island center [location]"
-  coords: "Protection coords [min] to [max]"
-  limits: "Island limits [min] to [max]"
-  locked: "Spawn is locked!"
-  move: "Move further away or unregister the owner."
-  ownedBy: "This island space is owned by [name]"
-  range: "Protection range = [number]"
-  set: "Set island spawn to your location."
-  setting: "Setting island spawn to your location [location]"
+  center: "岛屿中心 [location]"
+  coords: "保护坐标从 [min] 到 [max]"
+  limits: "岛屿限制从 [min] 到 [max]"
+  locked: "出生地被锁定!"
+  move: "再走远点或解除所有者的注册."
+  ownedBy: "本岛空间由 [name] 拥有"
+  range: "保护区域大小 = [number]"
+  set: "设定岛屿出生点到你的位置."
+  setting: "设定岛屿出生点到你的位置 [location]."
 adminTeam: 
-  addLeaderNoIsland: "Team leader does not have their own island so cannot have a team!"
-  addLeaderToOwn: "Cannot add a leader to their own team."
-  addedLeader: "Added the leader to this team!"
-  addingPlayer: "Adding player to team."
-  alreadyOnTeam: "Player was already on this team!"
-  kickLeader: "That player is a team leader. Remove team members first. Use '/[label] info [name]' to find team members."
-  nowUnowned: "[name] had an island at [location] that will become unowned now. You may want to delete it manually."
-  settingHome: "Setting player's home to the leader's home location"
+  addLeaderNoIsland: "团队领袖没有自己的岛屿所以不能拥有队员!"
+  addLeaderToOwn: "无法让领袖再次加入同一团队."
+  addedLeader: "已向团队加入领袖!"
+  addingPlayer: "正向团队加入玩家."
+  alreadyOnTeam: "玩家已经属于本队!"
+  kickLeader: "该玩家是一名团队领袖. 先踢光队员. 使用 '/[label] info [name]' 来查找队员."
+  nowUnowned: "[name] 在 [location] 的岛屿现将成为无主之岛. 你可以手动删除它了."
+  settingHome: "设定玩家的家到领袖的家的位置"
 adminTopBreeders: 
-  checking: "Checking [number] islands..."
-  finding: "Finding top breeders..."
-  nothing: "No creatures found."
+  checking: "正核对 [number] 个岛屿..."
+  finding: "正查找名列前茅的岛屿..."
+  nothing: "未发现生物."
 adminTopTen: 
   finished: §e已生成前十名单列表
   generating: §a生成前十名单列表
 adminTp: 
-  manualWarp: "No safe spot found. Manually warp to somewhere near [location]."
+  manualWarp: "未发现安全地点. 在 [location] 附近手动传送."
 adminUnregister: 
-  keepBlocks: "Removing player from world, but keeping island at [location]"
-  onTeam: "Player is in a team - disband it first."
+  keepBlocks: "从世界中删除一个玩家，但在 [location] 处仍保留原有空岛. "
+  onTeam: "玩家隶属于一个队伍——先把他赶出去."
 ban: 
 ban: 
   alreadybanned: "§e[name]§c早就列入了黑名单!"
@@ -145,7 +145,7 @@ ban:
   helpUnban: §c将一个玩家从岛屿黑名单中移除
   lifted: "§c被从§e[name]§c的岛屿黑名单中解除!"
   liftedsuccess: "§c被§e[name]§c解除黑名单!"
-  none: "None"
+  none: "无"
   notbanned: "§e[name]§c未被列入黑名单!"
   notteammember: §c你无法将岛屿成员列入黑名单!
   notyourself: §c你不能那样对自己做!
@@ -203,42 +203,42 @@ completechallenge:
 confirm: 
   errorTimeLimitExpired: "§c超时,请重新运行指令."
 coop: 
-  cannotcoop: "Only island leader can coop a player." 
+  cannotcoop: "只有岛屿领袖才能赋予其他玩家岛屿完全访问权限." 
   help: §c暂时允许玩家完全访问你的岛屿
   invited: "§e[name] §c囚禁了§e [player] !"
-  listcoops: "list coop players"
+  listcoops: "列出协作的玩家"
   madeyoucoopy: "§e[name] §c把你囚禁了,直到你下线或者他们驱逐你."
   notincoop: "[name] is not in your coop!"
   onyourteam: §c玩家早就在你的团队中了!
   removed: "§e[name] §c取消了你的锁定状态!"
   removesuccess: "§e[name] §c不再是一个囚禁玩家."
   success: "§e[name] §c现在被你囚禁了,直到他们下线或者你驱逐他们."
-  uncoop: "remove full island access from player"
+  uncoop: "移除玩家对您岛屿的完全访问"
   useexpel: "§c输入 §e/expel §c移除."
 deaths: 
-  deaths: "Deaths"
-  died: "died!"
-  leveldeaths: "&c[[number] deaths]"
+  deaths: "死亡次数"
+  died: "死了!"
+  leveldeaths: "&c[[number] 死]"
 delete: 
   removing: "§c移除了§e [name] §c的岛屿."
 drankAcid: §e饮用辐射水源.
 drankAcidAndDied: §e饮用受到辐射的水而死亡.
 error: 
-  blockedbyapi: "A plugin using the API blocked this action."
+  blockedbyapi: "此行为被某个使用API的插件阻止."
   commandNotReady: §c你现在不能使用此命令.
-  maxIslands: "The world is full of islands! Try again later!"
+  maxIslands: "已达到世界最大容许岛屿数! 请稍后再试!"
   noIsland: §c你还没有获得一个岛屿!
   noIslandOther: §c玩家未拥有岛屿!
   noPermission: §c你没有权限那样做!
-  notABlock: "That is not a block"
+  notABlock: "这不是一个方块"
   noTeam: §c玩家不再团队中.
   notOnIsland: §c你必须在你的岛屿上使用这个指令.
   offlinePlayer: §c玩家不在线或不存在.
-  tooLong: "Too long. Maximum size is [length]."
-  tooShort: "Too short. Minimum size is [length]."
+  tooLong: "太长. 最大长度为 [length]."
+  tooShort: "太短. 最小长度为 [length]."
   unknownCommand: §c未知指令.
   unknownPlayer: §c未知玩家.
-  useInGame: "This command must be used in-game."
+  useInGame: "这个指令必须在游戏内使用."
   wrongWorld: "§c你无法在当前世界这样操作,请返回你的岛屿."
   minishopDisabled: "Minishop is disabled."
 expel: 
@@ -248,7 +248,7 @@ expel:
   notyourself: §c你无法驱逐你自己!
   success: "§c你驱逐了玩家:[name]!"
 general:
-  success: "Success!"
+  success: "成功!"
 invite: 
   errorCantJoinIsland: "§c你不能加入这个岛屿, 可能岛屿已满员."
   errorCoolDown: "§c你需要等待§e§l [time] §c分钟后才能再次邀请那个玩家"
@@ -271,7 +271,7 @@ island:
   blockValue: "[name]放在这里可能值得[value]"
   blockWorthless: "[name]是毫无价值的" 
   cannotTeleport: §c你无法在下落过程中进行传送!
-  donate: §a本汉化由§e§ltastybento§a提供
+  donate: §a本汉化由§e§ltastybento§a和§e§lDuckSoft§a提供
   donatecolor: "aqua"
   errorCouldNotCreateIsland: "§c无法为你创建岛屿. 请联系管理员."
   errorInvalidPlayer: §c玩家不存在或者他不曾拥有一个岛屿!
@@ -291,22 +291,22 @@ island:
   helpLevelPlayer: §a查询玩家的岛屿等级.
   helpLock: "§c岛屿已锁定,非岛屿成员无法传送至岛屿上"
   helpMakeLeader: §c§l将岛屿赠送给玩家.
-  helpName: "Set a name for your island"
-  helpResetName: "reset your island name."
+  helpName: "给你的岛屿起个名"
+  helpResetName: "重置你的岛屿名称."
   helpRestart: §c重新开始你的岛屿生涯.
-  helpSelectLanguage: "Select Language"
+  helpSelectLanguage: "语言选择(Select Language)"
   helpSetHome: §a设置返回岛屿的传送坐标§7(§e需要在自己岛屿内设置§7)§a.
   helpSettings: §c查看岛屿保护和游戏设置
   helpTeam: §a显示你团队的信息.
   helpTeleport: §a传送到你的岛屿.
   helpTop: §a查询岛屿等级排行榜.
-  helpValue: "see island level value of block in hand"
+  helpValue: "查看手中方块的岛屿价值"
   helpWarp: §a传送到玩家的传送点.
   helpWarps: §a列出所有可用的传送点.
   islandDeletedLifeboats: §c岛屿已§4删除!
   islandLevelis: §6岛屿等级为§e§l
   new: §b正在为你创建一个新的岛屿...
-  requiredPointsToNextLevel: "You need [points] more points to reach level [next]!"
+  requiredPointsToNextLevel: "你还需要 [points] 点数来达到 [next] 级!"
   resetConfirm: "§c请在§e[seconds]§c秒内输入§e/[label] confirm §c来确认你的操作,然后重新开始!"
   resetMustRemovePlayers: "§c你只有将岛屿§4所有成员§e踢出§c才能重新开始 §b(/[label] kick §c<玩家ID>§b). §a输入§e/[label] team §a可以查询成员列表."
   resetNoMore: §c你无法再重新开始了!
@@ -327,8 +327,8 @@ islandProtected: 岛屿保护.
 islandguardsettings: 
   TNTdamage: §6是否开启TNT爆炸伤害
   allowed: §a允许
-  aciddamage: "Acid damage"
-  animalspawning: "Allow/Disallow Animal Spawning"
+  aciddamage: "酸雨伤害"
+  animalspawning: "允许/禁止动物出生"
   anvil: §6是否使用铁毡
   armorstand: §6是否使用盔甲架
   beacon: §6是否允许使用信标
@@ -337,14 +337,14 @@ islandguardsettings:
   breeding: §6是否允许喂养
   brewingstand: §6是否允许酿造药水
   bucket: §6是否允许使用桶
-  collectlava: "Lava collection"
-  collectwater: "Water collection"
+  collectlava: "收集岩浆"
+  collectwater: "收集水"
   chest: §6是否允许使用箱子
   chestdamage: §6TNT能否破坏箱子
-  chorusfruit: "Chorus Fruit Use"
+  chorusfruit: "使用紫颂果"
   creeperdamage: §6苦力怕伤害
   creepergriefing: §6苦力怕破坏
-  creeperpain: "Creeper explosions hurt"
+  creeperpain: "苦力怕爆炸伤害"
   croptrample: §6是否允许践踏农作物
   disallowed: §c不允许
   door: §6是否允许使用门
@@ -352,37 +352,37 @@ islandguardsettings:
   enchantingtable: §6是否允许使用附魔台
   enderpearl: §6是否允许使用末影珍珠
   fire: §6是否允许使用打火石
-  fireextinguish: "Fire extinguish"
-  firespread: "Fire spread"
+  fireextinguish: "熄灭火焰"
+  firespread: "火焰传播"
   furnace: §6是否允许使用熔炉
   gate: §6是否允许使用栅栏门
-  horseinventoryaccess: "Visitor horse inventory access"
-  horseriding: "Visitor horse riding"
+  horseinventoryaccess: "是否允许参观者查看马的物品栏"
+  horseriding: "是否允许参观者骑马"
   hurtanimals: §6是否允许攻击动物
   hurtmonsters: §6是否允许攻击怪物
-  joinleaveislandmessages: "Enable Join & Leave Island Messages"
+  joinleaveislandmessages: "启用岛屿进入与离开消息"
   jukebox: §6是否允许使用唱片机
   leash: §6是否允许使用栓绳
   lever: §6是否允许使用开关按钮
-  milking: "Milking"
-  monsterspawning: "Allow/Disallow Monster Spawning"
+  milking: "挤奶"
+  monsterspawning: "允许/禁止岛屿刷怪"
   netherpvp: §6是否允许地狱PVP
   placeblocks: §6是否允许放置方块
   portaluse: §6是否允许使用传送门
-  pressureplate: "Visitors activate pressure plates"
+  pressureplate: "是否允许参观者激活压力盘"
   pvp: §6是否允许PVP
   redstone: §6是否允许使用红石
-  settingsgeneraltitle: "General Island World Settings"
-  settingsgeneraldesc: "General Island World Settings"
-  settingsislandtitle: "Island Settings"
-  settingsislanddesc: "These rules apply to visitors on this island"
-  settingsspawntitle: "Spawn Settings"
-  settingsspawndesc: "These rules apply at spawn"
+  settingsgeneraltitle: "一般岛屿世界设定"
+  settingsgeneraldesc: "一般岛屿世界设定"
+  settingsislandtitle: "岛屿设定"
+  settingsislanddesc: "这些规则适用于岛屿的参观者"
+  settingsspawntitle: "出生地设定"
+  settingsspawndesc: "这些规则适用于出生地"
   shears: §6是否允许使用剪刀
   spawnegg: §6是否允许使用刷怪蛋
   teleportwhenfalling: §6下落时是否允许传送
   title: §e岛屿保护设置
-  villagertrading: "Villager trading"
+  villagertrading: "是否允许村民交易"
   visitordrop: §6是否允许访问者掉落物品
   visitorkeepitems: §6访问者死亡是否保存背包
   visitorpickup: §6是否允许访问者捡起物品
@@ -401,9 +401,9 @@ leave:
   errorYouAreTheLeader: "§c因为你是岛屿主人所以不能离开, 使用§b /[label] makeleader <玩家> §e来改变岛屿主人."
   errorYouCannotLeaveIsland: "§c你无法离开岛屿当只剩下你一个人的时候.如果你想重新开始,请输入 §e/[label] restart!"
   errorYouMustBeInWorld: §c你只能够在你的岛屿上这样做!
-  errorYouMustBeInWorld: "You must be in the island world to leave your team!"
+  errorYouMustBeInWorld: "你只能在岛屿世界离开你的队伍!"
   nameHasLeftYourIsland: "§b[name] §c离开了你的岛屿!"
-  warning: "Are you sure you want to leave the team? Type '[label] leave' again to confirm."
+  warning: "你确定要离开队伍吗? 再次键入 '[label] leave' 以确认."
   youHaveLeftTheIsland: "§c你离开了岛屿, 并返回到了玩家出生地."
 level: 
   calculating: "§c正在计算岛屿等级,需要等待一段时间.请稍后..."
@@ -447,21 +447,21 @@ nether:
 news: 
   headline: "§7[§6岛屿快讯§7]: §e你离线的时候发生了..."
 purge: 
-  acidFound: "There are [number] unowned islands. Do '/acid purge unowned confirm' to delete them within 20 seconds."
+  acidFound: "已有 [number] 个无主岛屿. 使用 '/acid purge unowned confirm' 来在20s内删除它们."
   allowPurge: §c清楚保护已移除
   alreadyRunning: "§c正在清理中,请等待清理完毕!"
   calculating: "§c计算不活跃天数超过§e [time] 天§c的岛屿."
-  countingUnowned: "Counting unowned islands and checking player files. This could take some time..."
-  maxPurge: "Max purge is [number] islands. Run purge again afterwards to purge more."
+  countingUnowned: "正在计数无主岛屿并检查玩家文件. 可能会花一点时间..."
+  maxPurge: "一次最大清理数为 [number] 个岛屿. 再次运行purge命令以清理更多."
   finished: §a清理不活跃岛屿完成.
   noneFound: §c没有不活跃的岛屿被移除.
-  nowWaiting: "Now waiting..."
+  nowWaiting: "请等待..."
   preventPurge: §c岛是免受清除的
   purgeCancelled: §a取消清理.
-  removingAt: "Removing island at location [location]"
+  removingAt: "正删除位于 [location] 的岛屿"
   removingName: "§c清理: 移除了§e [name] §c的岛屿"
-  skyblockFound: "There are [number] unowned islands. Do '/asadmin purge unowned confirm' to delete them within 20 seconds."
-  stillChecking: "Still checking player files..."
+  skyblockFound: "还有 [number] 个无主岛屿. 使用 '/asadmin purge unowned confirm' 来在20s内删除它们."
+  stillChecking: "仍在检查玩家文件..."
   thisWillRemove: "§c这将会移除 [number] 个不活跃的岛屿!"
   typeConfirm: "§c请在10秒内输入§e§l /acid confirm 进行确定"
   usage: "§a使用方式:§e /acid purge [TimeInDays]"
@@ -488,8 +488,8 @@ sethome:
   errorNumHomes: "§c家只能设置§e1- [max]"
   homeSet: §a已经设置家在你当前位置.
 settingsReset:
-  done: "Done."
-  inprogress: "Protection settings being reset, please wait..."
+  done: "完成."
+  inprogress: "重设保护设置中，请稍待..."
 sign: 
   line1: "&7[&c末日岛屿&7]"
   line2: "&a[player]"
@@ -508,14 +508,14 @@ teamchat:
   noTeam: §c你不在一个团队中!
   noTeamAround: §c没有一个团队成员在线!
   prefix: "§7[§a团队聊天§7]<{ISLAND_PLAYER}> "
-  spyoff: "Team chat spy off"
-  spyon: "Team chat spy on"
+  spyoff: "关闭团队聊天窃听"
+  spyon: "打开团队聊天窃听"
   statusOff: §c团队聊天已经关闭
   statusOn: §a团队聊天已经开启
 topTen: 
-  errorExcluded: "FYI: You are excluded from the top ten as you do not have [perm]"
+  errorExcluded: "仅供参考: 你被逐出了前十名，因为你没有 [perm]"
   errorNotReady: §c前十名单未生成!
-  guiTitle: "Top 10 Islands"
+  guiTitle: "前10岛屿"
   header: "§e排名前10的岛屿:"
 warps: 
   deactivate: §b旧的传送点被替换!
@@ -527,7 +527,7 @@ warps:
   errorNoWarpsYet: §c没有任何传送点!
   errorNotReadyYet: §c传送点未准备好.请稍后再试.
   errorNotSafe: §c传送点不安全.请稍后再试.
-  errorNotEnoughLevel: "You do not have enough island levels to create a Welcome Sign!"
+  errorNotEnoughLevel: "你的岛屿等级不够，无法创建欢迎牌!"
   next: §a下一页
   playerWarped: "§e[name] &e传送到了你的岛屿!"
   previous: §a上一页
