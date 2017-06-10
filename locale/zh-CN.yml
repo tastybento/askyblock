@@ -26,10 +26,10 @@ adminHelp:
   help: "§b管理员指令:"
   info: "§a显示指定玩家信息."
   infoisland: "§e显示离你最近的岛屿信息."
-  kick: "从任何队伍中踢出玩家.
-  level: "为玩家提供岛屿等级详情.
-  listChallengeResets: "列出挑战重置时间表（若有）
-  lock: "锁定或解锁玩家的岛屿.
+  kick: "从任何队伍中踢出玩家."
+  level: "为玩家提供岛屿等级详情."
+  listChallengeResets: "列出挑战重置时间表（若有）"
+  lock: "锁定或解锁玩家的岛屿."
   purge: "§c删除超过 [TimeInDays] 天的不活跃岛屿."
   purgeallowdisallow: "允许/禁止一个岛屿被删除（若它们达到删除标准）."
   purgeholes: "§c重置空余的岛屿,以便重复使用."
