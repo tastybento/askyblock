@@ -515,6 +515,7 @@ teamchat:
 topTen: 
   errorExcluded: "仅供参考: 你被逐出了前十名，因为你没有 [perm]"
   errorNotReady: §c前十名单未生成!
+  guiHeading: "&E&L<!> 岛屿: &6&N[name]&7 (#[rank])"
   guiTitle: "前10岛屿"
   header: "§e排名前10的岛屿:"
 warps: 
