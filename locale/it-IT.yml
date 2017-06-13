@@ -540,3 +540,4 @@ warps:
   warpToPlayersSign: "Ti trasporta dal cartello [WELCOME] di <player>."
   warpsAvailable: "I seguenti warp sono disponibili"
   welcomeLine: "[WELCOME]"
+needRelog: "You need to relog in order to see the changes."

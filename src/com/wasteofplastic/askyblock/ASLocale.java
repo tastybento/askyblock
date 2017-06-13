@@ -658,6 +658,8 @@ public class ASLocale {
     public String adminHelpsetLanguage;
 
     public String purgeLimit;
+    
+    public String needRelog;
 
 
     /**
@@ -1437,7 +1439,8 @@ public class ASLocale {
         adminHelpReserve = ChatColor.translateAlternateColorCodes('&', locale.getString("adminHelp.reserve", "reserves this spot for player's next island"));
         adminReserveIslandExists = ChatColor.translateAlternateColorCodes('&', locale.getString("adminReserve.islandExists", "There is an island here already! Register the player instead!"));
         adminSetRangeUpdated = ChatColor.translateAlternateColorCodes('&', locale.getString("adminSetRange.updated", "Island range updated to [number]"));
-
+        
+        needRelog = ChatColor.translateAlternateColorCodes('&', locale.getString("needRelog", "You need to relog in order to see the changes."));
     }
 
     /**

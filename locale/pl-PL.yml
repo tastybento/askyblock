@@ -540,3 +540,4 @@ warps:
   warpToPlayersSign: "Teleport do tabliczki Witaj Gracza <player>."
   warpsAvailable: "Te teleporty są dostępne"
   welcomeLine: "[WELCOME]"
+needRelog: "You need to relog in order to see the changes."

@@ -540,3 +540,4 @@ warps:
   warpToPlayersSign: "Телепортация к табличке игрока <player>."
   warpsAvailable: "Следующие варпы доступны"
   welcomeLine: "[WELCOME]"
+needRelog: "You need to relog in order to see the changes."
