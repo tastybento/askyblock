@@ -539,4 +539,5 @@ warps:
   warpTip: "Para criar um ponto de warp, basta colocar uma placa com [Bem-vindo] na primeira linha."
   warpToPlayersSign: "Fazer warp para a placa de boas-vindas do jogador <player>."
   warpsAvailable: "Os seguintes pontos de warp estão disponíveis"
-  welcomeLine: "[Bem-vindo]"   
+  welcomeLine: "[Bem-vindo]"
+needRelog: "You need to relog in order to see the changes."

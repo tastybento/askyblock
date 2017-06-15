@@ -119,7 +119,7 @@ public class BiomesPanel implements Listener {
             }
             return newPanel;
         } else {
-            Util.sendMessage(player, ChatColor.RED + plugin.myLocale().errorCommandNotReady);
+            Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorCommandNotReady);
             plugin.getLogger().warning("There are no biomes in config.yml so /island biomes will not work!");
         }
         return null;
@@ -166,7 +166,7 @@ public class BiomesPanel implements Listener {
             // Check this player has an island
             Island island = plugin.getGrid().getIsland(playerUUID);
             if (island == null) {
-                Util.sendMessage(player, ChatColor.RED + plugin.myLocale().errorNoIsland);
+                Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoIsland);
                 return;
             }
             // Check ownership
@@ -186,11 +186,11 @@ public class BiomesPanel implements Listener {
                     double cost = thisPanel.get(slot).getPrice();
                     if (cost > 0D) {
                         if (!VaultHelper.econ.has(player, Settings.worldName, cost)) {
-                            Util.sendMessage(player, ChatColor.RED + plugin.myLocale().minishopYouCannotAfford.replace("[description]", VaultHelper.econ.format(cost)));
+                            Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).minishopYouCannotAfford.replace("[description]", VaultHelper.econ.format(cost)));
                             return;
                         } else {
                             VaultHelper.econ.withdrawPlayer(player, Settings.worldName, cost);
-                            Util.sendMessage(player, ChatColor.GREEN + plugin.myLocale().biomeYouBought.replace("[cost]", VaultHelper.econ.format(cost)));
+                            Util.sendMessage(player, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).biomeYouBought.replace("[cost]", VaultHelper.econ.format(cost)));
                         }
                     }
                 }
@@ -199,7 +199,8 @@ public class BiomesPanel implements Listener {
             player.closeInventory(); // Closes the inventory
             // Actually set the biome
             setIslandBiome(island, biome);
-            Util.sendMessage(player, ChatColor.GREEN + plugin.myLocale().biomeSet.replace("[biome]", thisPanel.get(slot).getName()));
+            Util.sendMessage(player, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).biomeSet.replace("[biome]", thisPanel.get(slot).getName()));
+            Util.sendMessage(player, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).needRelog);
         }
         return;
     }
@@ -220,87 +221,4 @@ public class BiomesPanel implements Listener {
             return false; 
         }
     }
-
-    /**
-     * Ensures that any block when loaded will match the biome of the center column of the island
-     * if it exists. Does not apply to spawn.
-     * @param e
-     */
-    /*
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = false)
-    public void onChunkLoad(ChunkLoadEvent e) {
-        // Check if the grid is ready. If it is doing an import, it may not be.
-        if (plugin.getGrid() == null) {
-            return;
-        }
-        if (ASkyBlock.getIslandWorld() == null || e.getWorld() != ASkyBlock.getIslandWorld()) {
-            //plugin.getLogger().info("DEBUG: not right world");
-            return;
-        }
-        //Island island = plugin.getGrid().getIslandAt(e.getChunk().getX()*16, e.getChunk().getZ()*16);
-        //if (island != null && !island.isSpawn()) {
-        //    Biome biome = island.getCenter().getBlock().getBiome();
-        //plugin.getLogger().info("DEBUG: Writing the biome");
-        for (int x = 0; x< 16; x++) {
-            for (int z = 0; z< 16; z++) {
-                Island island = plugin.getGrid().getIslandAt(e.getChunk().getX()*16 + x, e.getChunk().getZ()*16 + z);
-                if (island != null && !island.isSpawn()) {
-                    Biome biome = island.getBiome();
-                    Biome blockBiome = e.getChunk().getBlock(x, 0, z).getBiome();
-                    // If not set already, set it now
-                    if (!biome.equals(blockBiome)) {
-                        //plugin.getLogger().info("DEBUG: setting biome");
-                        // Set biome
-                        e.getChunk().getBlock(x, 0, z).setBiome(biome);
-                        // Check y down for snow etc.
-                        switch (biome) {
-                        case MESA:
-                        case DESERT:
-                        case JUNGLE:
-                        case SAVANNA:
-                        case SWAMPLAND:
-                            boolean topBlockFound = false;
-                            for (int y = e.getWorld().getMaxHeight(); y >= Settings.sea_level; y--) {
-                                Block b = e.getChunk().getBlock(x, y, z);
-                                if (!b.getType().equals(Material.AIR)) {
-                                    topBlockFound = true;
-                                }
-                                if (topBlockFound) {
-                                    if (b.getType() == Material.ICE || b.getType() == Material.SNOW || b.getType() == Material.SNOW_BLOCK) {
-                                        b.setType(Material.AIR);
-                                    } else {
-                                        // Finished with the removals once we hit non-offending blocks
-                                        break;
-                                    }
-                                }
-                            }
-                            break;
-                        case HELL:
-                            topBlockFound = false;
-                            for (int y = e.getWorld().getMaxHeight(); y >= Settings.sea_level; y--) {
-                                Block b = e.getChunk().getBlock(x, y, z);
-                                if (!b.getType().equals(Material.AIR)) {
-                                    topBlockFound = true;
-                                }
-                                if (topBlockFound) {
-                                    if (b.getType() == Material.ICE || b.getType() == Material.SNOW || b.getType() == Material.SNOW_BLOCK
-                                            || b.getType() == Material.WATER || b.getType() == Material.STATIONARY_WATER) {
-                                        b.setType(Material.AIR);
-                                    } else {
-                                        // Finished with the removals once we hit non-offending blocks
-                                        break;
-                                    }
-                                }
-                            }
-                            break;
-
-                        default:
-                        }
-                    }
-                }
-
-            }	    
-        }
-    }*/
-
 }

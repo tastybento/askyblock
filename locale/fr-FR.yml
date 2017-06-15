@@ -488,8 +488,8 @@ sethome:
   errorNumHomes: "Vous ne pouvez avoir que [max] home(s)."
   homeSet: "Votre home a été défini là où vous êtes."
 settingsReset:
-  done: "Done."
-  inprogress: "Protection settings being reset, please wait..."
+  done: "Terminé."
+  inprogress: "Les paramètres de protection de toutes les îles sont en cours de réinitialisation. Veuillez patienter..."
 sign: 
   line1: "&1ASkyBlock"
   line2: "[player]"
@@ -508,8 +508,8 @@ teamchat:
   noTeam: "Vous n'êtes pas en équipe!"
   noTeamAround: "Aucun membre de l'équipe n'est connecté!"
   prefix: "[Ile]<{ISLAND_PLAYER}> "
-  spyoff: "Team chat spy off"
-  spyon: "Team chat spy on"
+  spyoff: "Espion du chat d'île désactivé"
+  spyon: "Espion du chat d'île activé"
   statusOff: "Chat d'île désactivé"
   statusOn: "Chat d'île activé"
 topTen: 
@@ -540,3 +540,4 @@ warps:
   warpToPlayersSign: "Vous téléporte au panneau de bienvenue du joueur."
   warpsAvailable: "Les warps suivants sont disponibles"
   welcomeLine: "[WELCOME]"
+needRelog: "Vous devez vous reconnecter pour voir les changements."
