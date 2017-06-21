@@ -3,7 +3,6 @@
 # the one at http://yaml-online-parser.appspot.com                                        #
 ###########################################################################################
 #Locale Vietsubs by Locale
-#IP : SV.MINE95.NET
  
 ---
 acidBottle: "Acid Bottle"
@@ -478,3 +477,4 @@ warps:
   warpToPlayersSign: "Warp đến đảo <player>"
   warpsAvailable: "Các warps sau đây có sẵn"
   welcomeLine: "[WELCOME]"
+needRelog: "You need to relog in order to see the changes."

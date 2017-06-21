@@ -540,3 +540,4 @@ warps:
   warpToPlayersSign: "§e传送到玩家: §b<player>§e的岛屿传送点."
   warpsAvailable: §a以下的传送点可用
   welcomeLine: "[传送点]"
+needRelog: "You need to relog in order to see the changes."

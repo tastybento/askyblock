@@ -540,3 +540,4 @@ warps:
   warpToPlayersSign: "Teleportataan <player> saarelle."
   warpsAvailable: "Käytössä olevat warpit"
   welcomeLine: "[Tervetuloa]"
+needRelog: "You need to relog in order to see the changes."

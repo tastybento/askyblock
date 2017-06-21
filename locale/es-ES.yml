@@ -540,3 +540,4 @@ warps:
   warpToPlayersSign: "Teletransportar al cartel de bienvenida de <jugador>."
   warpsAvailable: "Los siguentes warps están disponibles"
   welcomeLine: "[WELCOME]"
+needRelog: "You need to relog in order to see the changes."

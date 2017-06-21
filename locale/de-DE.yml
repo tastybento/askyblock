@@ -539,3 +539,4 @@ warps:
   warpToPlayersSign: "Teleportiert dich zum Insel-Warp von: <player>."
   warpsAvailable: "Folgende Insel-Warps sind verfügbar"
   welcomeLine: "[WELCOME]"
+needRelog: "You need to relog in order to see the changes."

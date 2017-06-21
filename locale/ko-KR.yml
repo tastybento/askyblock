@@ -540,3 +540,4 @@ warps:
   warpToPlayersSign: "<player> 의 환영 표지판으로 순간이동합니다."
   warpsAvailable: "다음 워프들은 사용가능합니다"
   welcomeLine: "[WELCOME]"
+needRelog: "You need to relog in order to see the changes."

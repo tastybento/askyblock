@@ -540,3 +540,4 @@ warps:
   warpToPlayersSign: "Warp k uvitacej cedulke hraca <player>."
   warpsAvailable: "Nasledovne warpy su povolene"
   welcomeLine: "[WELCOME]"
+needRelog: "You need to relog in order to see the changes."

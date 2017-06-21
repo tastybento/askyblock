@@ -540,3 +540,4 @@ warps:
   warpToPlayersSign: "Warp k <player> WELCOME cedulce."
   warpsAvailable: "Nasledujici warpy jsou dostupne"
   welcomeLine: "[WELCOME]"
+needRelog: "You need to relog in order to see the changes."

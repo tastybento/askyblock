@@ -540,3 +540,4 @@ warps:
   warpToPlayersSign: "Aan het warpen naar <player>'s warp."
   warpsAvailable: "De volgende warps zijn beschikbaar:"
   welcomeLine: "[WARP]"
+needRelog: "You need to relog in order to see the changes."
