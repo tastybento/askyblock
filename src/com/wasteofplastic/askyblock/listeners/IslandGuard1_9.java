@@ -30,6 +30,7 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.EntityBlockFormEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
@@ -413,6 +414,49 @@ public class IslandGuard1_9 implements Listener {
             plugin.getLogger().severe("Error trying to remove player from push scoreboard");
             plugin.getLogger().severe(player.getName() + " : " + e.getMessage());
             e.printStackTrace();
+        }
+    }
+    
+    /**
+     * Handle blocks that need special treatment
+     * Tilling of coarse dirt into dirt using off-hand (regular hand is in 1.8)
+     * Usually prevented because it could lead to an endless supply of dirt with gravel
+     * 
+     * @param e
+     */
+    @SuppressWarnings("deprecation")
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
+    public void onPlayerInteract(final PlayerInteractEvent e) {
+        if (DEBUG) {
+            plugin.getLogger().info("1.9 " + e.getEventName());
+        }
+        if (!e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
+            return;
+        }
+        if (!IslandGuard.inWorld(e.getPlayer())) {
+            return;
+        }
+        if (e.getPlayer().isOp()) {
+            return;
+        }
+        // This permission bypasses protection
+        if (VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
+                || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "craft.dirt")) {
+            return;
+        }
+        // Prevents tilling of coarse dirt into dirt
+        ItemStack inHand = e.getPlayer().getInventory().getItemInOffHand();
+        if (inHand.getType() == Material.WOOD_HOE || inHand.getType() == Material.IRON_HOE || inHand.getType() == Material.GOLD_HOE
+                || inHand.getType() == Material.DIAMOND_HOE || inHand.getType() == Material.STONE_HOE) {
+            // plugin.getLogger().info("1.8 " + "DEBUG: hoe in hand");
+            Block block = e.getClickedBlock();
+            // plugin.getLogger().info("1.8 " + "DEBUG: block is " + block.getType() +
+            // ":" + block.getData());
+            // Check if coarse dirt
+            if (block.getType() == Material.DIRT && block.getData() == (byte) 1) {
+                // plugin.getLogger().info("1.8 " + "DEBUG: hitting coarse dirt!");
+                e.setCancelled(true);
+            }
         }
     }
 }
