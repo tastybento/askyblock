@@ -175,6 +175,11 @@ general:
    # info. It does not download the latest version or change any files
    checkupdates: true
    
+   # ASkyBlock uses commands for some of its fonctionnalities (action bar, titles).
+   # It used to silence them automatically by executing "/minecraft:gamerule sendCommandFeedback false",
+   # however, you can toggle here this feature.
+   silencecommandfeedback: true
+   
    # Show enter/exit notices in Action Bar (11.1+)
    # Only shows if notices are enabled in settings
    showinactionbar: true

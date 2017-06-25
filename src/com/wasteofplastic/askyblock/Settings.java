@@ -280,4 +280,5 @@ public class Settings {
     public static boolean leaversLoseReset;
     public static int maxPurge;
     public static boolean allowTNTPushing;
+    public static boolean silenceCommandFeedback;
 }
