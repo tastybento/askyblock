@@ -27,6 +27,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -305,11 +306,7 @@ public class Util {
      * @return list of online players
      */
     public static List<String> getOnlinePlayerList() {
-        final List<String> returned = new ArrayList<String>();
-        for (Player p : Bukkit.getServer().getOnlinePlayers()) {
-            returned.add(p.getName());
-        }
-        return returned;
+        return getOnlinePlayerList(null);
     }
 
     /**
@@ -438,7 +435,7 @@ public class Util {
             Files.write(path, fileContent, charset);
         }
     }
-    
+
     /**
      * Display message to player in action bar (1.11+ or chat)
      * @param player
@@ -455,6 +452,23 @@ public class Util {
         }
         plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(),
                 "minecraft:title " + player.getName() + " actionbar {\"text\":\"" + ChatColor.stripColor(message) + "\"}");
+    }
+
+    /**
+     * Return a list of online players this player can see, i.e. are not invisible
+     * @param player
+     * @return
+     */
+    public static List<String> getOnlinePlayerList(Player player) {
+        final List<String> returned = new ArrayList<String>();
+        for (Player p : Bukkit.getServer().getOnlinePlayers()) {
+            if (player == null) {
+                returned.add(p.getName());
+            } else if (player.canSee(p)) {
+                returned.add(p.getName()); 
+            }
+        }
+        return returned;
     }
 
 }

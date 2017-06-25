@@ -98,16 +98,21 @@ public class ChatListener implements Listener {
             plugin.getLogger().info("DEBUG: getFormat = " + event.getFormat());
             plugin.getLogger().info("DEBUG: getMessage = " + event.getMessage());
         }
-        String format = event.getFormat().replace(Settings.chatLevelPrefix, level);
-        if (DEBUG)
-            plugin.getLogger().info("DEBUG: format (island level substitute) = " + format);
-        level = "";
-        if (playerChallengeLevels.containsKey(event.getPlayer().getUniqueId())) {
-            level = playerChallengeLevels.get(event.getPlayer().getUniqueId());
+        String format = event.getFormat();
+        if (!Settings.chatLevelPrefix.isEmpty()) {
+            format = format.replace(Settings.chatLevelPrefix, level);
+            if (DEBUG)
+                plugin.getLogger().info("DEBUG: format (island level substitute) = " + format);
         }
-        format = format.replace(Settings.chatChallengeLevelPrefix, level);
-        if (DEBUG)
-            plugin.getLogger().info("DEBUG: format (challenge level sub) = " + format);
+        if (!Settings.chatChallengeLevelPrefix.isEmpty()) {
+            level = "";
+            if (playerChallengeLevels.containsKey(event.getPlayer().getUniqueId())) {
+                level = playerChallengeLevels.get(event.getPlayer().getUniqueId());
+            }
+            format = format.replace(Settings.chatChallengeLevelPrefix, level);
+            if (DEBUG)
+                plugin.getLogger().info("DEBUG: format (challenge level sub) = " + format);           
+        }
         event.setFormat(format);
         if (DEBUG)
             plugin.getLogger().info("DEBUG: format set");
@@ -138,7 +143,11 @@ public class ChatListener implements Listener {
             List<UUID> teamMembers = plugin.getPlayers().getMembers(player.getUniqueId());
             // Tell only the team members if they are online
             boolean onLine = false;
-            message = plugin.myLocale(playerUUID).teamChatPrefix.replace(Settings.chatIslandPlayer,player.getDisplayName()) + message;
+            if (Settings.chatIslandPlayer.isEmpty()) {
+                message = plugin.myLocale(playerUUID).teamChatPrefix + message;
+            } else {
+                message = plugin.myLocale(playerUUID).teamChatPrefix.replace(Settings.chatIslandPlayer,player.getDisplayName()) + message;
+            }
             for (UUID teamMember : teamMembers) {
                 Player teamPlayer = plugin.getServer().getPlayer(teamMember);
                 if (teamPlayer != null) {

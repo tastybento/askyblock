@@ -347,9 +347,11 @@ public class PlayerEvents implements Listener {
             }
             temporaryPerms.remove(player.getUniqueId());
         }
-        if (player.getGameMode().equals(GameMode.SURVIVAL)) {
-            player.setAllowFlight(false);
-            player.setFlying(false);
+        if(VaultHelper.checkPerm(player, Settings.PERMPREFIX + "islandfly")) {
+            if (player.getGameMode().equals(GameMode.SURVIVAL)) {
+                player.setAllowFlight(false);
+                player.setFlying(false);
+            }
         }
         final Island island = plugin.getGrid().getProtectedIslandAt(event.getPlayer().getLocation());
         if (island != null) {

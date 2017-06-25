@@ -59,6 +59,7 @@ import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockMultiPlaceEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
+import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
@@ -1774,7 +1775,7 @@ public class IslandGuard implements Listener {
                 }
                 return; 
             }
-            
+
             switch (e.getClickedBlock().getType()) {
             case WOODEN_DOOR:
             case SPRUCE_DOOR:
@@ -2728,5 +2729,48 @@ public class IslandGuard implements Listener {
             }
             e.setNewCurrent(0);
         }
+    }
+
+    @EventHandler(priority=EventPriority.LOW)
+    public void onEvent(BlockPistonExtendEvent event)
+    {
+        if (!Settings.allowTNTPushing) {
+            // Check world
+            if (!inWorld(event.getBlock())) {
+                return;
+            }
+
+            for (Block block: event.getBlocks()) {
+                if (block.getType() == Material.TNT) {
+                    event.setCancelled(true);
+                    break;
+                }
+            }
+        }
+        /* JAVA 8
+        if (event.getBlocks()..stream().anyMatch(it->it.getType()==Material.TNT))
+            event.setCancelled(true);
+         */
+    }
+
+    @EventHandler(priority=EventPriority.LOW)
+    public void onEvent(BlockPistonRetractEvent event)
+    {
+        if (!Settings.allowTNTPushing) {
+            // Check world
+            if (!inWorld(event.getBlock())) {
+                return;
+            }
+            for (Block block: event.getBlocks()) {
+                if (block.getType() == Material.TNT) {
+                    event.setCancelled(true);
+                    break;
+                }
+            }
+        }
+        /* JAVA 8
+        if (event.getBlocks().stream().anyMatch(it->it.getType()==Material.TNT))
+            event.setCancelled(true);
+         */
     }
 }
