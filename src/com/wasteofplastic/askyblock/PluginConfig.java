@@ -338,6 +338,9 @@ public class PluginConfig {
         // Check for updates
         Settings.updateCheck = plugin.getConfig().getBoolean("general.checkupdates", true);
 
+        // Silence command feedback
+        Settings.silenceCommandFeedback = plugin.getConfig().getBoolean("general.silencecommandfeedback", true);
+
         // Action bar settings
         Settings.showInActionBar = plugin.getConfig().getBoolean("general.showinactionbar",true);
 

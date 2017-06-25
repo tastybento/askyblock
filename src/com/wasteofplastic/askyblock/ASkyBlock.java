@@ -392,13 +392,16 @@ public class ASkyBlock extends JavaPlugin {
                     HandlerList.unregisterAll(ASkyBlock.this);
                     return;
                 }
+                
                 // Run game rule to keep things quiet
-                try {
-                    getLogger().info("Silencing command feedback for Ops...");
-                    getServer().dispatchCommand(getServer().getConsoleSender(), "minecraft:gamerule sendCommandFeedback false");
-                    getLogger().info("If you do not want this, do /gamerule sendCommandFeedback true");
-                } catch (Exception e) {} // do nothing
-
+                if (Settings.silenceCommandFeedback){
+                    try {
+                        getLogger().info("Silencing command feedback for Ops...");
+                        getServer().dispatchCommand(getServer().getConsoleSender(), "minecraft:gamerule sendCommandFeedback false");
+                        getLogger().info("If you do not want this, do /gamerule sendCommandFeedback true");
+                    } catch (Exception e) {} // do nothing
+                }
+                
                 // Run these one tick later to ensure worlds are loaded.
                 getServer().getScheduler().runTask(ASkyBlock.this, new Runnable() {
                     @Override
