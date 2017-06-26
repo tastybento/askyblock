@@ -627,14 +627,17 @@ public class IslandGuard implements Listener {
                             e.setCancelled(true);
                         }
                     } else if (entity instanceof Player && e.getSpawnReason() != SpawnReason.SPAWNER && e.getSpawnReason() != SpawnReason.DISPENSE_EGG) {
-                        ItemStack itemInHand = ((Player) entity).getItemInHand();
-                        if (itemInHand != null) {
-                            Material type = itemInHand.getType();
-                            if (type == Material.EGG || type == Material.MONSTER_EGG || type == Material.WHEAT || type == Material.CARROT_ITEM
-                                    || type == Material.SEEDS) {
-                                if (DEBUG2)
-                                    plugin.getLogger().info("Player used egg or did breeding ");
-                                culprits.add(((Player) entity));
+                        for (ItemStack itemInHand: Util.getPlayerInHandItems((Player) entity)) {
+                            if (itemInHand != null) {
+                                Material type = itemInHand.getType();
+                                if (type == Material.EGG || type == Material.MONSTER_EGG || type == Material.WHEAT || type == Material.CARROT_ITEM
+                                        || type == Material.SEEDS) {
+                                    if (DEBUG2)
+                                        plugin.getLogger().info("Player used egg or did breeding ");
+                                    if (!culprits.contains((Player)entity)) {
+                                        culprits.add(((Player) entity));
+                                    }
+                                }
                             }
                         }
                     }
@@ -661,12 +664,13 @@ public class IslandGuard implements Listener {
                                 e.setCancelled(true);
                             }
                         } else if (entity instanceof Player && e.getSpawnReason() != SpawnReason.SPAWNER && e.getSpawnReason() != SpawnReason.DISPENSE_EGG) {
-                            ItemStack itemInHand = ((Player) entity).getItemInHand();
-                            if (itemInHand != null) {
+                            for (ItemStack itemInHand : Util.getPlayerInHandItems(((Player) entity))) {
                                 Material type = itemInHand.getType();
                                 if (type == Material.EGG || type == Material.MONSTER_EGG || type == Material.WHEAT || type == Material.CARROT_ITEM
                                         || type == Material.SEEDS) {
-                                    culprits.add(((Player) entity));
+                                    if (!culprits.contains((Player)entity)) {
+                                        culprits.add(((Player) entity));
+                                    }
                                 }
                             }
                         }
@@ -681,8 +685,7 @@ public class IslandGuard implements Listener {
                                 + Settings.breedingLimit);
                 for (Player player : culprits) {
                     Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).moblimitsError.replace("[number]", String.valueOf(Settings.breedingLimit)));
-                    plugin.getLogger().warning(player.getName() + " was trying to use a " + Util.prettifyText(player.getItemInHand().getType().toString()));
-
+                    plugin.getLogger().warning(player.getName() + " was trying to use " + Util.getPlayerInHandItems(player).toString());
                 }
             }
         }
@@ -1134,12 +1137,13 @@ public class IslandGuard implements Listener {
             if (actionAllowed(attacker, e.getEntity().getLocation(), SettingsFlag.HURT_MONSTERS)) {
                 // Check for visitors setting creepers alight using flint steel
                 if (!Settings.allowCreeperGriefing && e.getEntity() instanceof Creeper) {
-                    ItemStack holding = attacker.getItemInHand();
-                    if (holding != null && holding.getType().equals(Material.FLINT_AND_STEEL)) {
-                        // Save this creeper for later when any damage caused by its explosion will be nullified
-                        litCreeper.add(e.getEntity().getUniqueId());
-                        if (DEBUG) {
-                            plugin.getLogger().info("DBEUG: adding to lit creeper set");
+                    for (ItemStack holding : Util.getPlayerInHandItems(attacker)) {
+                        if (holding.getType().equals(Material.FLINT_AND_STEEL)) {
+                            // Save this creeper for later when any damage caused by its explosion will be nullified
+                            litCreeper.add(e.getEntity().getUniqueId());
+                            if (DEBUG) {
+                                plugin.getLogger().info("DEBUG: adding to lit creeper set");
+                            }
                         }
                     }
                 }
@@ -1573,16 +1577,26 @@ public class IslandGuard implements Listener {
                 Block dumpBlock = e.getBlockClicked().getRelative(e.getBlockFace());
                 if (actionAllowed(p, dumpBlock.getLocation(), SettingsFlag.BUCKET)) {
                     // Check if biome is Nether and then allow water placement but fizz the water
-                    if (e.getBlockClicked().getBiome().equals(Biome.HELL)
-                            && e.getPlayer().getItemInHand().getType().equals(Material.WATER_BUCKET)) {
-                        e.setCancelled(true);
-                        e.getPlayer().getItemInHand().setType(Material.BUCKET);
+                    if (e.getBlockClicked().getBiome().equals(Biome.HELL)) {
                         if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
-                            e.getPlayer().getWorld().playSound(e.getPlayer().getLocation(), Sound.valueOf("FIZZ"), 1F, 2F);
+                            if (e.getPlayer().getItemInHand().getType().equals(Material.WATER_BUCKET)) {
+                                e.setCancelled(true);
+                                e.getPlayer().getItemInHand().setType(Material.BUCKET);
+                                e.getPlayer().getWorld().playSound(e.getPlayer().getLocation(), Sound.valueOf("FIZZ"), 1F, 2F);
+                                Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).biomeSet.replace("[biome]", "Nether"));
+                            }
                         } else {
-                            e.getPlayer().getWorld().playSound(e.getPlayer().getLocation(), Sound.ENTITY_CREEPER_PRIMED, 1F, 2F);
+                            if (Util.playerIsHolding(e.getPlayer(), Material.WATER_BUCKET)) {
+                                e.setCancelled(true);
+                                if (e.getPlayer().getInventory().getItemInMainHand().getType() == Material.WATER_BUCKET) {
+                                    e.getPlayer().getInventory().setItemInMainHand(new ItemStack(Material.BUCKET));
+                                } else if (e.getPlayer().getInventory().getItemInOffHand().getType() == Material.WATER_BUCKET) {
+                                    e.getPlayer().getInventory().setItemInOffHand(new ItemStack(Material.BUCKET));
+                                }
+                                e.getPlayer().getWorld().playSound(e.getPlayer().getLocation(), Sound.ENTITY_CREEPER_PRIMED, 1F, 2F);
+                                Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).biomeSet.replace("[biome]", "Nether"));
+                            }
                         }
-                        Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).biomeSet.replace("[biome]", "Nether"));
                     }
                     return;
                 }
@@ -2116,7 +2130,7 @@ public class IslandGuard implements Listener {
         // Check for disallowed in-hand items
         if (DEBUG) {
             plugin.getLogger().info("Material = " + e.getMaterial());
-            plugin.getLogger().info("in hand = " + e.getPlayer().getItemInHand().toString());
+            plugin.getLogger().info("in hand = " + Util.getPlayerInHandItems(e.getPlayer()));
         }
         if (e.getMaterial() != null) {
             // This check protects against an exploit in 1.7.9 against cactus
@@ -2263,7 +2277,7 @@ public class IslandGuard implements Listener {
             return;
         }
         // Leashes are dealt with elsewhere
-        if (p.getItemInHand() != null && p.getItemInHand().getType().equals(Material.LEASH)) {
+        if (Util.playerIsHolding(p, Material.LEASH)) {
             return;
         }
         Island island = plugin.getGrid().getProtectedIslandAt(e.getPlayer().getLocation());
@@ -2288,27 +2302,43 @@ public class IslandGuard implements Listener {
                 }
             }
             // Handle name tags and dyes
-            if (p.getItemInHand() != null && (p.getItemInHand().getType().equals(Material.NAME_TAG) ||
-                    p.getItemInHand().getType().equals(Material.INK_SACK))) {
+            if (Util.playerIsHolding(p, Material.NAME_TAG) || Util.playerIsHolding(p, Material.INK_SACK)) {
                 Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                 e.setCancelled(true);
                 e.getPlayer().updateInventory();
                 return;
             }
-            // Handle breeding
-            if (p.getItemInHand() != null && e.getRightClicked() instanceof Animals) {
-                Material type = p.getItemInHand().getType();
-                if (type == Material.EGG || type == Material.WHEAT || type == Material.CARROT_ITEM || type == Material.SEEDS) {
-                    if (island == null && !Settings.defaultWorldSettings.get(SettingsFlag.BREEDING)) {
+            // Handle cookies (to animals)
+            if (Util.playerIsHolding(p, Material.COOKIE) && e.getRightClicked() instanceof Animals) {
+                if (island == null && !Settings.defaultWorldSettings.get(SettingsFlag.HURT_MOBS)) {
+                    Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
+                    e.setCancelled(true);
+                    return;
+                }
+                if (island != null) {
+                    if ((!island.getIgsFlag(SettingsFlag.HURT_MOBS) && !island.getMembers().contains(p.getUniqueId()))) {
                         Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                         e.setCancelled(true);
                         return;
                     }
-                    if (island != null) {
-                        if ((!island.getIgsFlag(SettingsFlag.BREEDING) && !island.getMembers().contains(p.getUniqueId()))) {
+                }
+            }
+            // Handle breeding
+            if (e.getRightClicked() instanceof Animals) {
+                for (ItemStack item : Util.getPlayerInHandItems(p)) {
+                    Material type = item.getType();
+                    if (type == Material.EGG || type == Material.WHEAT || type == Material.CARROT_ITEM || type == Material.SEEDS) {
+                        if (island == null && !Settings.defaultWorldSettings.get(SettingsFlag.BREEDING)) {
                             Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                             e.setCancelled(true);
                             return;
+                        }
+                        if (island != null) {
+                            if ((!island.getIgsFlag(SettingsFlag.BREEDING) && !island.getMembers().contains(p.getUniqueId()))) {
+                                Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
+                                e.setCancelled(true);
+                                return;
+                            }
                         }
                     }
                 }
@@ -2317,13 +2347,14 @@ public class IslandGuard implements Listener {
             case CREEPER:
                 // This seems to be called when the player is in Creative mode...
                 if (!Settings.allowCreeperGriefing) {
-                    ItemStack item = e.getPlayer().getItemInHand();
-                    if (item != null && item.getType().equals(Material.FLINT_AND_STEEL)) {
-                        if (!island.getMembers().contains(e.getPlayer().getUniqueId())) {
-                            // Visitor
-                            litCreeper.add(e.getRightClicked().getUniqueId());
-                            if (DEBUG) {
-                                plugin.getLogger().info("DEBUG: visitor lit creeper");
+                    for (ItemStack item : Util.getPlayerInHandItems(e.getPlayer())) {
+                        if (item != null && item.getType().equals(Material.FLINT_AND_STEEL)) {
+                            if (!island.getMembers().contains(e.getPlayer().getUniqueId())) {
+                                // Visitor
+                                litCreeper.add(e.getRightClicked().getUniqueId());
+                                if (DEBUG) {
+                                    plugin.getLogger().info("DEBUG: visitor lit creeper");
+                                }
                             }
                         }
                     }

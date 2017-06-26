@@ -159,34 +159,34 @@ public class IslandGuard1_8 implements Listener {
         }
 
         // Check if they are holding armor stand
-        ItemStack inHand = e.getPlayer().getItemInHand();
-        if (inHand != null && inHand.getType().equals(Material.ARMOR_STAND)) {
-            // Check island
-            Island island = plugin.getGrid().getIslandAt(e.getPlayer().getLocation());
-            if (island == null && Settings.defaultWorldSettings.get(SettingsFlag.PLACE_BLOCKS)) {
-                return;
-            }
-            if (island !=null && (island.getMembers().contains(p.getUniqueId()) || island.getIgsFlag(SettingsFlag.PLACE_BLOCKS))) {
-                //plugin.getLogger().info("1.8 " + "DEBUG: armor stand place check");
-                if (Settings.limitedBlocks.containsKey("ARMOR_STAND") && Settings.limitedBlocks.get("ARMOR_STAND") > -1) {
-                    //plugin.getLogger().info("1.8 " + "DEBUG: count armor stands");
-                    int count = island.getTileEntityCount(Material.ARMOR_STAND,e.getPlayer().getWorld());
-                    //plugin.getLogger().info("1.8 " + "DEBUG: count is " + count + " limit is " + Settings.limitedBlocks.get("ARMOR_STAND"));
-                    if (Settings.limitedBlocks.get("ARMOR_STAND") <= count) {
-                        Util.sendMessage(e.getPlayer(), ChatColor.RED + (plugin.myLocale(e.getPlayer().getUniqueId()).entityLimitReached.replace("[entity]",
-                                Util.prettifyText(Material.ARMOR_STAND.toString()))).replace("[number]", String.valueOf(Settings.limitedBlocks.get("ARMOR_STAND"))));
-                        e.setCancelled(true);
-                        return;
-                    }
+        for (ItemStack inHand : Util.getPlayerInHandItems(e.getPlayer())) {
+            if (inHand.getType().equals(Material.ARMOR_STAND)) {
+                // Check island
+                Island island = plugin.getGrid().getIslandAt(e.getPlayer().getLocation());
+                if (island == null && Settings.defaultWorldSettings.get(SettingsFlag.PLACE_BLOCKS)) {
+                    return;
                 }
-                return;
+                if (island !=null && (island.getMembers().contains(p.getUniqueId()) || island.getIgsFlag(SettingsFlag.PLACE_BLOCKS))) {
+                    //plugin.getLogger().info("1.8 " + "DEBUG: armor stand place check");
+                    if (Settings.limitedBlocks.containsKey("ARMOR_STAND") && Settings.limitedBlocks.get("ARMOR_STAND") > -1) {
+                        //plugin.getLogger().info("1.8 " + "DEBUG: count armor stands");
+                        int count = island.getTileEntityCount(Material.ARMOR_STAND,e.getPlayer().getWorld());
+                        //plugin.getLogger().info("1.8 " + "DEBUG: count is " + count + " limit is " + Settings.limitedBlocks.get("ARMOR_STAND"));
+                        if (Settings.limitedBlocks.get("ARMOR_STAND") <= count) {
+                            Util.sendMessage(e.getPlayer(), ChatColor.RED + (plugin.myLocale(e.getPlayer().getUniqueId()).entityLimitReached.replace("[entity]",
+                                    Util.prettifyText(Material.ARMOR_STAND.toString()))).replace("[number]", String.valueOf(Settings.limitedBlocks.get("ARMOR_STAND"))));
+                            e.setCancelled(true);
+                            return;
+                        }
+                    }
+                    return;
+                }
+                // plugin.getLogger().info("1.8 " + "DEBUG: stand place cancelled");
+                e.setCancelled(true);
+                Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
+                e.getPlayer().updateInventory();
             }
-            // plugin.getLogger().info("1.8 " + "DEBUG: stand place cancelled");
-            e.setCancelled(true);
-            Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
-            e.getPlayer().updateInventory();
         }
-
     }
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)

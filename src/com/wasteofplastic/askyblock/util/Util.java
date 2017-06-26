@@ -27,17 +27,18 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Settings;
@@ -471,4 +472,47 @@ public class Util {
         return returned;
     }
 
+    /**
+     * Results a list of items in a player's hands. Works for older versions of servers
+     * @param player
+     * @return list of itemstacks
+     */
+    @SuppressWarnings("deprecation")
+    public static List<ItemStack> getPlayerInHandItems(Player player) {
+        List<ItemStack> result = new ArrayList<ItemStack>(2);
+        if (plugin.getServer().getVersion().contains("(MC: 1.7")
+        || plugin.getServer().getVersion().contains("(MC: 1.8")) {
+            if (player.getItemInHand() != null)
+                result.add(player.getItemInHand());
+            return result;
+        }
+        if (player.getInventory().getItemInMainHand() != null)
+            result.add(player.getInventory().getItemInMainHand());
+        if (player.getInventory().getItemInOffHand() != null)
+            result.add(player.getInventory().getItemInOffHand());
+        return result;
+    }
+    
+    /**
+     * Checks if player has this type of item in either hand
+     * @param player
+     * @param type
+     * @return true if they are holding an item of type type
+     */
+    public static boolean playerIsHolding(Player player, Material type) {
+        if (plugin.getServer().getVersion().contains("(MC: 1.7")
+        || plugin.getServer().getVersion().contains("(MC: 1.8")) {
+            if (player.getItemInHand() != null && player.getItemInHand().getType().equals(type)) {
+                return true;
+            }
+            return false;
+        }
+        if (player.getInventory().getItemInMainHand() != null && player.getInventory().getItemInMainHand().getType().equals(type)) {
+            return true;
+        }
+        if (player.getInventory().getItemInMainHand() != null && player.getInventory().getItemInOffHand().getType().equals(type)) {
+            return true;
+        }
+        return false;
+    }
 }

@@ -174,32 +174,33 @@ public class IslandGuard1_9 implements Listener {
         }
 
         // Check if they are holding armor stand
-        ItemStack inHand = e.getPlayer().getItemInHand();
-        if (inHand != null && inHand.getType().equals(Material.END_CRYSTAL)) {
-            // Check island
-            Island island = plugin.getGrid().getIslandAt(e.getPlayer().getLocation());
-            if (island == null && Settings.defaultWorldSettings.get(SettingsFlag.PLACE_BLOCKS)) {
-                return;
-            }
-            if (island !=null && (island.getMembers().contains(p.getUniqueId()) || island.getIgsFlag(SettingsFlag.PLACE_BLOCKS))) {
-                //plugin.getLogger().info("1.9 " +"DEBUG: armor stand place check");
-                if (Settings.limitedBlocks.containsKey("END_CRYSTAL") && Settings.limitedBlocks.get("END_CRYSTAL") > -1) {
-                    //plugin.getLogger().info("1.9 " +"DEBUG: count armor stands");
-                    int count = island.getTileEntityCount(Material.END_CRYSTAL,e.getPlayer().getWorld());
-                    //plugin.getLogger().info("1.9 " +"DEBUG: count is " + count + " limit is " + Settings.limitedBlocks.get("ARMOR_STAND"));
-                    if (Settings.limitedBlocks.get("END_CRYSTAL") <= count) {
-                        Util.sendMessage(e.getPlayer(), ChatColor.RED + (plugin.myLocale(e.getPlayer().getUniqueId()).entityLimitReached.replace("[entity]",
-                                Util.prettifyText(Material.END_CRYSTAL.toString()))).replace("[number]", String.valueOf(Settings.limitedBlocks.get("END_CRYSTAL"))));
-                        e.setCancelled(true);
-                        return;
-                    }
+        for (ItemStack inHand : Util.getPlayerInHandItems(e.getPlayer())) {
+            if (inHand.getType().equals(Material.END_CRYSTAL)) {
+                // Check island
+                Island island = plugin.getGrid().getIslandAt(e.getPlayer().getLocation());
+                if (island == null && Settings.defaultWorldSettings.get(SettingsFlag.PLACE_BLOCKS)) {
+                    return;
                 }
-                return;
+                if (island !=null && (island.getMembers().contains(p.getUniqueId()) || island.getIgsFlag(SettingsFlag.PLACE_BLOCKS))) {
+                    //plugin.getLogger().info("1.9 " +"DEBUG: armor stand place check");
+                    if (Settings.limitedBlocks.containsKey("END_CRYSTAL") && Settings.limitedBlocks.get("END_CRYSTAL") > -1) {
+                        //plugin.getLogger().info("1.9 " +"DEBUG: count armor stands");
+                        int count = island.getTileEntityCount(Material.END_CRYSTAL,e.getPlayer().getWorld());
+                        //plugin.getLogger().info("1.9 " +"DEBUG: count is " + count + " limit is " + Settings.limitedBlocks.get("ARMOR_STAND"));
+                        if (Settings.limitedBlocks.get("END_CRYSTAL") <= count) {
+                            Util.sendMessage(e.getPlayer(), ChatColor.RED + (plugin.myLocale(e.getPlayer().getUniqueId()).entityLimitReached.replace("[entity]",
+                                    Util.prettifyText(Material.END_CRYSTAL.toString()))).replace("[number]", String.valueOf(Settings.limitedBlocks.get("END_CRYSTAL"))));
+                            e.setCancelled(true);
+                            return;
+                        }
+                    }
+                    return;
+                }
+                // plugin.getLogger().info("1.9 " +"DEBUG: stand place cancelled");
+                e.setCancelled(true);
+                Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
+                e.getPlayer().updateInventory();
             }
-            // plugin.getLogger().info("1.9 " +"DEBUG: stand place cancelled");
-            e.setCancelled(true);
-            Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
-            e.getPlayer().updateInventory();
         }
 
     }
@@ -416,7 +417,7 @@ public class IslandGuard1_9 implements Listener {
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Handle blocks that need special treatment
      * Tilling of coarse dirt into dirt using off-hand (regular hand is in 1.8)
