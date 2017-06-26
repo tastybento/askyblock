@@ -17,23 +17,35 @@
 package com.wasteofplastic.askyblock.listeners;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Animals;
 import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.IronGolem;
+import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+import org.bukkit.entity.Slime;
+import org.bukkit.entity.Snowman;
+import org.bukkit.entity.Squid;
+import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.EntityBlockFormEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.LingeringPotionSplashEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -62,9 +74,11 @@ public class IslandGuard1_9 implements Listener {
     private final static String NO_PUSH_TEAM_NAME = "ASkyBlockNP";
     private Scoreboard scoreboard;
     private Team pushTeam;
+    private HashMap<Integer, UUID> thrownPotions;
 
     public IslandGuard1_9(final ASkyBlock plugin) {
         this.plugin = plugin;
+        this.thrownPotions = new HashMap<Integer, UUID>();
         if (!Settings.allowPushing) {
             // try to remove the team from the scoreboard
             try {
@@ -459,5 +473,156 @@ public class IslandGuard1_9 implements Listener {
                 e.setCancelled(true);
             }
         }
+    }
+
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
+    public void onLingeringPotionSplash(final LingeringPotionSplashEvent e) {
+        if (DEBUG) {
+            plugin.getLogger().info("1.9 " + e.getEventName());
+            plugin.getLogger().info("1.9 entity = " + e.getEntity());
+            plugin.getLogger().info("1.9 entity type = " + e.getEntityType());
+            plugin.getLogger().info("1.9 radius = " + e.getAreaEffectCloud().getRadius());
+            plugin.getLogger().info("1.9 id = " + e.getAreaEffectCloud().getEntityId());
+            plugin.getLogger().info("1.9 hit entity = " + e.getHitEntity());
+        }
+        if (!IslandGuard.inWorld(e.getEntity().getLocation())) {
+            return;
+        }
+        // Try to get the shooter
+        Projectile projectile = (Projectile) e.getEntity();
+        plugin.getLogger().info("shooter = " + projectile.getShooter());
+        if (projectile.getShooter() != null && projectile.getShooter() instanceof Player) {
+            UUID uuid = ((Player)projectile.getShooter()).getUniqueId();
+            // Store it and remove it when the effect is gone
+            thrownPotions.put(e.getAreaEffectCloud().getEntityId(), uuid);
+            plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
+
+                @Override
+                public void run() {
+                    if (DEBUG)
+                        plugin.getLogger().info("DEBUG: Effect finished");
+                    thrownPotions.remove(e.getAreaEffectCloud().getEntityId());
+
+                }}, e.getAreaEffectCloud().getDuration());
+        }
+    }
+
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
+    public void onLingeringPotionDamage(final EntityDamageByEntityEvent e) {
+        if (DEBUG) {
+            plugin.getLogger().info("1.9 lingering potion damage " + e.getEventName());
+            plugin.getLogger().info("1.9 lingering potion entity = " + e.getEntity());
+            plugin.getLogger().info("1.9 lingering potion entity type = " + e.getEntityType());
+            plugin.getLogger().info("1.9 lingering potion cause = " + e.getCause());
+            plugin.getLogger().info("1.9 lingering potion damager = " + e.getDamager());
+        }
+        if (!IslandGuard.inWorld(e.getEntity().getLocation())) {
+            return;
+        }
+        if (e.getEntity() == null || e.getEntity().getUniqueId() == null) {
+            return;
+        }
+        if (e.getCause().equals(DamageCause.ENTITY_ATTACK) && thrownPotions.containsKey(e.getDamager().getEntityId())) {
+            UUID attacker = thrownPotions.get(e.getDamager().getEntityId());
+            // Self damage
+            if (attacker.equals(e.getEntity().getUniqueId())) {
+                if (DEBUG)
+                    plugin.getLogger().info("DEBUG: Self damage from lingering potion!");
+                return;
+            }
+            Island island = plugin.getGrid().getIslandAt(e.getEntity().getLocation());
+            boolean inNether = false;
+            if (e.getEntity().getWorld().equals(ASkyBlock.getNetherWorld())) {
+                inNether = true;
+            }
+            // Monsters being hurt
+            if (e.getEntity() instanceof Monster || e.getEntity() instanceof Slime || e.getEntity() instanceof Squid) {
+                // Normal island check
+                if (island != null && island.getMembers().contains(attacker)) {
+                    // Members always allowed
+                    return;
+                }
+                if (actionAllowed(attacker, e.getEntity().getLocation(), SettingsFlag.HURT_MONSTERS)) {
+                    return;
+                }
+                // Not allowed
+                e.setCancelled(true);
+                return;
+            }
+
+            // Mobs being hurt
+            if (e.getEntity() instanceof Animals || e.getEntity() instanceof IronGolem || e.getEntity() instanceof Snowman
+                    || e.getEntity() instanceof Villager) {
+                if (island != null && (island.getIgsFlag(SettingsFlag.HURT_MOBS) || island.getMembers().contains(attacker))) {
+                    return;
+                }
+                if (DEBUG)
+                    plugin.getLogger().info("DEBUG: Mobs not allowed to be hurt. Blocking");
+                e.setCancelled(true);
+                return;
+            }
+
+            // Establish whether PVP is allowed or not.
+            boolean pvp = false;
+            if ((inNether && island != null && island.getIgsFlag(SettingsFlag.NETHER_PVP) || (!inNether && island != null && island.getIgsFlag(SettingsFlag.PVP)))) {
+                if (DEBUG) plugin.getLogger().info("DEBUG: PVP allowed");
+                pvp = true;
+            }
+
+            // Players being hurt PvP
+            if (e.getEntity() instanceof Player) {
+                if (pvp) {
+                    if (DEBUG) plugin.getLogger().info("DEBUG: PVP allowed");
+                    return;
+                } else {
+                    if (DEBUG) plugin.getLogger().info("DEBUG: PVP not allowed");
+                    e.setCancelled(true);
+                    return;
+                }
+            }
+        }
+    }
+    
+    /**
+     * Checks if action is allowed for player in location for flag
+     * @param uuid
+     * @param location
+     * @param flag
+     * @return true if allowed
+     */
+    private boolean actionAllowed(UUID uuid, Location location, SettingsFlag flag) {
+        Player player = plugin.getServer().getPlayer(uuid);
+        if (player == null) {
+            return actionAllowed(location, flag);
+        }
+        // This permission bypasses protection
+        if (player.isOp() || VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.bypassprotect")) {
+            return true;
+        }
+        Island island = plugin.getGrid().getProtectedIslandAt(location);
+        if (island != null && (island.getIgsFlag(flag) || island.getMembers().contains(player.getUniqueId()))){
+            return true;
+        }
+        if (island == null && Settings.defaultWorldSettings.get(flag)) {
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+     * Action allowed in this location
+     * @param location
+     * @param flag
+     * @return true if allowed
+     */
+    private boolean actionAllowed(Location location, SettingsFlag flag) {
+        Island island = plugin.getGrid().getProtectedIslandAt(location);
+        if (island != null && island.getIgsFlag(flag)){
+            return true;
+        }
+        if (island == null && Settings.defaultWorldSettings.get(flag)) {
+            return true;
+        }
+        return false;
     }
 }

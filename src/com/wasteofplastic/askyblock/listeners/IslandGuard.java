@@ -70,6 +70,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.PlayerLeashEntityEvent;
+import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
@@ -2803,5 +2804,94 @@ public class IslandGuard implements Listener {
         if (event.getBlocks().stream().anyMatch(it->it.getType()==Material.TNT))
             event.setCancelled(true);
          */
+    }
+
+    /**
+     * Checks for splash damage. If there is any to any affected entity and it's not allowed, it won't work on any of them.
+     * @param e
+     */
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
+    public void onSplashPotionSplash(final PotionSplashEvent e) {
+        if (DEBUG) {
+            plugin.getLogger().info(e.getEventName());
+            plugin.getLogger().info("splash entity = " + e.getEntity());
+            plugin.getLogger().info("splash entity type = " + e.getEntityType());
+            plugin.getLogger().info("splash affected entities = " + e.getAffectedEntities());
+            //plugin.getLogger().info("splash hit entity = " + e.getHitEntity());
+        }
+        if (!IslandGuard.inWorld(e.getEntity().getLocation())) {
+            return;
+        }
+        // Try to get the shooter
+        Projectile projectile = (Projectile) e.getEntity();
+        if (DEBUG)
+            plugin.getLogger().info("splash shooter = " + projectile.getShooter());
+        if (projectile.getShooter() != null && projectile.getShooter() instanceof Player) {
+            Player attacker = (Player)projectile.getShooter();
+            // Run through all the affected entities
+            for (LivingEntity entity: e.getAffectedEntities()) {
+                if (DEBUG)
+                    plugin.getLogger().info("DEBUG: affected splash entity = " + entity);
+                // Self damage
+                if (attacker.equals(entity)) {
+                    if (DEBUG)
+                        plugin.getLogger().info("DEBUG: Self damage from splash potion!");
+                    continue;
+                }
+                Island island = plugin.getGrid().getIslandAt(entity.getLocation());
+                boolean inNether = false;
+                if (entity.getWorld().equals(ASkyBlock.getNetherWorld())) {
+                    inNether = true;
+                }
+                // Monsters being hurt
+                if (entity instanceof Monster || entity instanceof Slime || entity instanceof Squid) {
+                    // Normal island check
+                    if (island != null && island.getMembers().contains(attacker)) {
+                        // Members always allowed
+                        continue;
+                    }
+                    if (actionAllowed(attacker, entity.getLocation(), SettingsFlag.HURT_MONSTERS)) {
+                        continue;
+                    }
+                    // Not allowed
+                    Util.sendMessage(attacker, ChatColor.RED + plugin.myLocale(attacker.getUniqueId()).islandProtected);
+                    e.setCancelled(true);
+                    return;
+                }
+
+                // Mobs being hurt
+                if (entity instanceof Animals || entity instanceof IronGolem || entity instanceof Snowman
+                        || entity instanceof Villager) {
+                    if (island != null && (island.getIgsFlag(SettingsFlag.HURT_MOBS) || island.getMembers().contains(attacker))) {
+                        continue;
+                    }
+                    if (DEBUG)
+                        plugin.getLogger().info("DEBUG: Mobs not allowed to be hurt. Blocking");
+                    Util.sendMessage(attacker, ChatColor.RED + plugin.myLocale(attacker.getUniqueId()).islandProtected);
+                    e.setCancelled(true);
+                    return;
+                }
+
+                // Establish whether PVP is allowed or not.
+                boolean pvp = false;
+                if ((inNether && island != null && island.getIgsFlag(SettingsFlag.NETHER_PVP) || (!inNether && island != null && island.getIgsFlag(SettingsFlag.PVP)))) {
+                    if (DEBUG) plugin.getLogger().info("DEBUG: PVP allowed");
+                    pvp = true;
+                }
+
+                // Players being hurt PvP
+                if (entity instanceof Player) {
+                    if (pvp) {
+                        if (DEBUG) plugin.getLogger().info("DEBUG: PVP allowed");
+                        continue;
+                    } else {
+                        if (DEBUG) plugin.getLogger().info("DEBUG: PVP not allowed");
+                        Util.sendMessage(attacker, ChatColor.RED + plugin.myLocale(attacker.getUniqueId()).targetInNoPVPArea);
+                        e.setCancelled(true);
+                        return;
+                    }
+                }
+            }
+        }
     }
 }
