@@ -540,4 +540,4 @@ warps:
   warpToPlayersSign: "Warping to <player>'s welcome sign."
   warpsAvailable: "The following warps are available"
   welcomeLine: "[WELCOME]"
-needRelog: "You need to relog in order to see the changes."
+needRelog: "You need to logout and login again to see the changes."
