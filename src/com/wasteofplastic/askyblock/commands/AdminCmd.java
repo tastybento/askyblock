@@ -1950,6 +1950,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                             // Remove any warps
                             plugin.getWarpSignsListener().removeWarp(playerUUID);
                             Util.sendMessage(sender, ChatColor.RED + plugin.myLocale().kicknameRemoved.replace("[name]", split[2]));
+                            plugin.getPlayers().save(playerUUID);
                             return true;
                         }
                         // Payer is not a team leader
@@ -1973,6 +1974,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                             // Remove any warps
                             plugin.getWarpSignsListener().removeWarp(playerUUID);
                             Util.sendMessage(sender, ChatColor.RED + plugin.myLocale().kicknameRemoved.replace("[name]", split[2]));
+                            plugin.getPlayers().save(playerUUID);
                             return true;
                         } else {
                             Util.sendMessage(sender, ChatColor.RED + (plugin.myLocale().adminTeamKickLeader.replace("[label]",label)).replace("[name]",split[2]));
@@ -1995,6 +1997,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                         return true;
                     }
                     plugin.getPlayers().get(playerUUID).completeChallenge(split[2].toLowerCase());
+                    plugin.getPlayers().save(playerUUID);
                     Util.sendMessage(sender, ChatColor.YELLOW
                             + plugin.myLocale().completeChallengechallangeCompleted.replace("[challengename]", split[2].toLowerCase()).replace("[name]", split[1]));
                     return true;
@@ -2011,6 +2014,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                         return true;
                     }
                     plugin.getPlayers().resetChallenge(playerUUID, split[2].toLowerCase());
+                    plugin.getPlayers().save(playerUUID);
                     Util.sendMessage(sender, ChatColor.YELLOW
                             + plugin.myLocale().resetChallengechallengeReset.replace("[challengename]", split[2].toLowerCase()).replace("[name]", split[1]));
                     return true;

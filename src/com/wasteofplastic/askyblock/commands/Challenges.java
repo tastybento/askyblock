@@ -207,6 +207,8 @@ public class Challenges implements CommandExecutor, TabCompleter {
                 if (checkIfCanCompleteChallenge(player, cmd[1].toLowerCase())) {
                     int oldLevel = getLevelDone(player);
                     giveReward(player, cmd[1].toLowerCase());
+                    //Save player
+                    plugin.getPlayers().save(player.getUniqueId());
                     int newLevel = getLevelDone(player);
                     // Fire an event if they are different
                     //plugin.getLogger().info("DEBUG: " + oldLevel + " " + newLevel);
@@ -258,7 +260,8 @@ public class Challenges implements CommandExecutor, TabCompleter {
                             // Fire event
                             ChallengeLevelCompleteEvent event = new ChallengeLevelCompleteEvent(player, oldLevel, newLevel, rewardedItems);
                             plugin.getServer().getPluginManager().callEvent(event);
-
+                            // Save player
+                            plugin.getPlayers().save(player.getUniqueId());
                         }
                     }
                 }
