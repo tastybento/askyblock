@@ -270,23 +270,18 @@ public class TopTen implements Listener{
                     }
                 }
                 if (show) {
-                    if (plugin.getPlayers().inTeam(playerUUID)) {
-                        // Island name + Island members + Island level
-                        final List<UUID> pMembers = plugin.getPlayers().getMembers(playerUUID);
-                        String memberList = "";
-                        for (UUID members : pMembers) {
-                            memberList += plugin.getPlayers().getName(members) + ", ";
-                        }
-                        if (memberList.length() > 2) {
-                            memberList = memberList.substring(0, memberList.length() - 2);
-                        }
-                        Util.sendMessage(player, ChatColor.AQUA + "#" + i + ": " + plugin.getGrid().getIslandName(playerUUID) + ChatColor.AQUA + " (" + memberList + ") - "
-                                + plugin.myLocale(player.getUniqueId()).levelislandLevel + " " + m.getValue());
-                    } else {
-                        // Island name + Island level
-                        Util.sendMessage(player, ChatColor.AQUA + "#" + i + ": " + plugin.getGrid().getIslandName(playerUUID) + ChatColor.AQUA +  " - " + plugin.myLocale(player.getUniqueId()).levelislandLevel + " "
-                                + m.getValue());
+                    // Island name + Island members + Island level
+                    final List<UUID> pMembers = plugin.getPlayers().getMembers(playerUUID);
+                    String memberList = "";
+                    for (UUID members : pMembers) {
+                        memberList += plugin.getPlayers().getName(members) + ", ";
                     }
+                    if (memberList.length() > 2) {
+                        memberList = memberList.substring(0, memberList.length() - 2);
+                    }
+                    Util.sendMessage(player, ChatColor.AQUA + "#" + i + ": " + plugin.getGrid().getIslandName(playerUUID) + ChatColor.AQUA + " (" + memberList + ") - "
+                            + plugin.myLocale(player.getUniqueId()).levelislandLevel + " " + m.getValue());
+
                     if (i++ == 10) {
                         break;
                     }
@@ -338,15 +333,13 @@ public class TopTen implements Listener{
         //meta.setDisplayName(ChatColor.YELLOW + "" + ChatColor.BOLD + "<!> " + ChatColor.YELLOW + "Island: " + ChatColor.GOLD + ChatColor.UNDERLINE + plugin.getGrid().getIslandName(player) + ChatColor.GRAY + " (#" + rank + ")");
         List<String> lore = new ArrayList<String>();
         lore.add(ChatColor.YELLOW + plugin.myLocale(player).levelislandLevel + " " + levels);
-        if (plugin.getPlayers().inTeam(player)) {
-            final List<UUID> pMembers = plugin.getPlayers().getMembers(player);
-            // Need to make this a vertical list, because some teams are very large and it'll go off the screen otherwise
-            List<String> memberList = new ArrayList<>();
-            for (UUID members : pMembers) {
-                memberList.add(ChatColor.AQUA + plugin.getPlayers().getName(members));
-            }
-            lore.addAll(memberList);
+        final List<UUID> pMembers = plugin.getPlayers().getMembers(player);
+        // Need to make this a vertical list, because some teams are very large and it'll go off the screen otherwise
+        List<String> memberList = new ArrayList<>();
+        for (UUID members : pMembers) {
+            memberList.add(ChatColor.AQUA + plugin.getPlayers().getName(members));
         }
+        lore.addAll(memberList);
         //else lore.add(ChatColor.AQUA + playerName);
         
         meta.setLore(lore);
