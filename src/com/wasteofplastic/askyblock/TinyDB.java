@@ -196,6 +196,9 @@ public class TinyDB {
      * @param playerUUID
      */
     public void savePlayerName(String playerName, UUID playerUUID) {
+        if (playerName == null) {
+            return;
+        }
         treeMap.put(playerName.toLowerCase(), playerUUID);
         // This will be saved when everything shuts down
     }
@@ -206,6 +209,9 @@ public class TinyDB {
      * @return UUID of player, or null if unknown
      */
     public UUID getPlayerUUID(String playerName) {
+        if (playerName == null) {
+            return null;
+        }
         // Try cache
         if (treeMap.containsKey(playerName.toLowerCase())) {
             //plugin.getLogger().info("DEBUG: found in UUID cache");
@@ -240,6 +246,9 @@ public class TinyDB {
      * @return Name or empty string if unknown
      */
     public String getPlayerName(UUID playerUuid) {
+        if (playerUuid == null) {
+            return "";
+        }
         // Names and UUID's are stored in line pairs.
         try(BufferedReader br = new BufferedReader(new FileReader(new File(plugin.getDataFolder(), "name-uuid.txt")))) {
             String line = br.readLine();
