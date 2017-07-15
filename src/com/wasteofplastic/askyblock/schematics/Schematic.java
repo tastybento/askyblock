@@ -313,7 +313,7 @@ public class Schematic {
 
             Map<String, Tag> schematic = schematicTag.getValue();
 
-            Vector origin = null;
+            Vector origin = new Vector(0,0,0);
             try {
                 int originX = getChildTag(schematic, "WEOriginX", IntTag.class).getValue();
                 int originY = getChildTag(schematic, "WEOriginY", IntTag.class).getValue();
@@ -407,7 +407,7 @@ public class Schematic {
                             List<Tag> pos = new ArrayList<Tag>();
                             pos = ((ListTag) entry.getValue()).getValue();
                             //Bukkit.getLogger().info("DEBUG pos: " + pos);
-                            if (pos.size() == 3) {
+                            if (pos.size() == 3) {                               
                                 double x = (double)pos.get(0).getValue() - origin.getX();
                                 double y = (double)pos.get(1).getValue() - origin.getY();
                                 double z = (double)pos.get(2).getValue() - origin.getZ();
