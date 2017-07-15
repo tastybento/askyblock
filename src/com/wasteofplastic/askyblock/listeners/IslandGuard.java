@@ -1027,10 +1027,9 @@ public class IslandGuard implements Listener {
         }
         // Stop TNT damage if it is disallowed
         if (!Settings.allowTNTDamage && (e.getDamager().getType().equals(EntityType.PRIMED_TNT) 
-                || e.getDamager().getType().equals(EntityType.FIREWORK)
-                || e.getDamager().getType().equals(EntityType.FIREBALL))) {
+                || e.getDamager().getType().equals(EntityType.FIREWORK))) {
             if (DEBUG)
-                plugin.getLogger().info("DEBUG: cancelling firework or fireball damage");
+                plugin.getLogger().info("DEBUG: cancelling TNT or firework damage");
             e.setCancelled(true);
             return;
         }
