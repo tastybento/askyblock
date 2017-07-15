@@ -407,10 +407,14 @@ public class Schematic {
                             List<Tag> pos = new ArrayList<Tag>();
                             pos = ((ListTag) entry.getValue()).getValue();
                             //Bukkit.getLogger().info("DEBUG pos: " + pos);
-                            double x = (double)pos.get(0).getValue() - origin.getX();
-                            double y = (double)pos.get(1).getValue() - origin.getY();
-                            double z = (double)pos.get(2).getValue() - origin.getZ();
-                            ent.setLocation(new BlockVector(x,y,z));
+                            if (pos.size() == 3) {
+                                double x = (double)pos.get(0).getValue() - origin.getX();
+                                double y = (double)pos.get(1).getValue() - origin.getY();
+                                double z = (double)pos.get(2).getValue() - origin.getZ();
+                                ent.setLocation(new BlockVector(x,y,z));
+                            } else {
+                                ent.setLocation(new BlockVector(0,0,0));
+                            }
                         }
                     } else if (entry.getKey().equals("Motion")) {
                         //Bukkit.getLogger().info("DEBUG Pos fond");
@@ -419,8 +423,12 @@ public class Schematic {
                             List<Tag> pos = new ArrayList<Tag>();
                             pos = ((ListTag) entry.getValue()).getValue();
                             //Bukkit.getLogger().info("DEBUG pos: " + pos);
-                            ent.setMotion(new Vector((double)pos.get(0).getValue(), (double)pos.get(1).getValue()
-                                    ,(double)pos.get(2).getValue()));
+                            if (pos.size() == 3) {
+                                ent.setMotion(new Vector((double)pos.get(0).getValue(), (double)pos.get(1).getValue()
+                                        ,(double)pos.get(2).getValue()));
+                            } else {
+                                ent.setMotion(new Vector(0,0,0));
+                            }
                         }
                     } else if (entry.getKey().equals("Rotation")) {
                         //Bukkit.getLogger().info("DEBUG Pos fond");
@@ -429,8 +437,13 @@ public class Schematic {
                             List<Tag> pos = new ArrayList<Tag>();
                             pos = ((ListTag) entry.getValue()).getValue();
                             //Bukkit.getLogger().info("DEBUG pos: " + pos);
-                            ent.setYaw((float)pos.get(0).getValue());
-                            ent.setPitch((float)pos.get(1).getValue());
+                            if (pos.size() == 2) {
+                                ent.setYaw((float)pos.get(0).getValue());
+                                ent.setPitch((float)pos.get(1).getValue());
+                            } else {
+                                ent.setYaw(0F);
+                                ent.setPitch(0F);
+                            }
                         }
                     } else if (entry.getKey().equals("Color")) {
                         if (entry.getValue() instanceof ByteTag) {
