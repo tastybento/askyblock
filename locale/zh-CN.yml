@@ -135,8 +135,7 @@ adminTp:
   manualWarp: "未发现安全地点. 在 [location] 附近手动传送."
 adminUnregister: 
   keepBlocks: "从世界中删除一个玩家, 但在 [location] 处仍保留原有空岛. "
-  onTeam: "玩家隶属于一个队伍——先把他赶出去."
-ban: 
+  onTeam: "玩家隶属于一个队伍——先把他赶出去." 
 ban: 
   alreadybanned: "[name] 早就被列入了黑名单!"
   banned: "你被列入 [name] 的岛屿的黑名单!"
