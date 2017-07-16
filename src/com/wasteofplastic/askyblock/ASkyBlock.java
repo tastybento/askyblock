@@ -75,6 +75,7 @@ import com.wasteofplastic.askyblock.util.VaultHelper;
  *         Main ASkyBlock class - provides an island minigame in a sea of acid
  */
 public class ASkyBlock extends JavaPlugin {
+    private static final boolean DEBUG = false;
     // This plugin
     private static ASkyBlock plugin;
     // The ASkyBlock world
@@ -323,6 +324,8 @@ public class ASkyBlock extends JavaPlugin {
         if (!playersFolder.exists()) {
             playersFolder.mkdir();
         }
+        if (DEBUG)
+            Bukkit.getLogger().info("DEBUG: Setting up player cache");
         players = new PlayerCache(this);
         // Set up commands for this plugin
         islandCmd = new IslandCmd(this);

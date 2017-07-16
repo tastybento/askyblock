@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
@@ -41,12 +42,15 @@ import com.wasteofplastic.askyblock.panels.SetBiome;
  * @author tastybento
  */
 public class ASkyBlockAPI {
+    private static final boolean DEBUG = false;
     private static ASkyBlockAPI instance = new ASkyBlockAPI(ASkyBlock.getPlugin());
 
     /**
      * @return the instance
      */
     public static ASkyBlockAPI getInstance() {
+        if (DEBUG)
+            Bukkit.getLogger().info("DEBUG: ASkyBlock API, getInstance()");
         return instance;
     }
 
@@ -54,6 +58,8 @@ public class ASkyBlockAPI {
 
     private ASkyBlockAPI(ASkyBlock plugin) {
         this.plugin = plugin;
+        if (DEBUG)
+            Bukkit.getLogger().info("DEBUG: API constructed");
     }
 
     /**
@@ -65,7 +71,7 @@ public class ASkyBlockAPI {
     public Map<String, Boolean> getChallengeStatus(UUID playerUUID) {
         return Collections.unmodifiableMap(plugin.getPlayers().getChallengeStatus(playerUUID));
     }
-    
+
     /**
      * @param playerUUID
      * @return Map of all of the known challenges and how many times each
@@ -88,6 +94,14 @@ public class ASkyBlockAPI {
      * @return the last level calculated for the island or zero if none.
      */
     public int getIslandLevel(UUID playerUUID) {
+        if (DEBUG) {
+            Bukkit.getLogger().info("DEBUG: getIslandLevel. playerUUID = " + playerUUID);
+            if (plugin == null) {
+                Bukkit.getLogger().info("DEBUG: plugin is null");
+            } else if (plugin.getPlayers() == null) {
+                Bukkit.getLogger().info("DEBUG: player cache object is null!");
+            } 
+        }
         return plugin.getPlayers().getIslandLevel(playerUUID);
     }
 
@@ -102,7 +116,7 @@ public class ASkyBlockAPI {
     public void setIslandLevel(UUID playerUUID, int level) {
         plugin.getPlayers().setIslandLevel(playerUUID, level);
     }
-    
+
     /**
      * Calculates the island level. Only the fast calc is supported.
      * The island calculation runs async and fires an IslandLevelEvent when completed
@@ -467,15 +481,15 @@ public class ASkyBlockAPI {
     public void setIslandName(UUID owner, String name) {
         plugin.getGrid().setIslandName(owner, name);
     }
-    
+
     /**
      * Get all the challenges
      * @return challenges per level
      */
     public LinkedHashMap<String, List<String>> getAllChallenges(){
-    	return Challenges.getChallengeList();
+        return Challenges.getChallengeList();
     }
-    
+
     /**
      * Get the number of resets left for this player
      * @param playerUUID
@@ -484,7 +498,7 @@ public class ASkyBlockAPI {
     public int getResetsLeft(UUID playerUUID) {
         return plugin.getPlayers().getResetsLeft(playerUUID);
     }
-    
+
     /**
      * Set the number of resets left for this player
      * @param playerUUID

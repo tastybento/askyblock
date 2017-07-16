@@ -48,6 +48,7 @@ import org.bukkit.material.TrapDoor;
 import org.bukkit.util.Vector;
 
 import com.wasteofplastic.askyblock.Island.SettingsFlag;
+import com.wasteofplastic.askyblock.events.IslandChangeOwnerEvent;
 import com.wasteofplastic.askyblock.util.Util;
 
 /**
@@ -1558,6 +1559,8 @@ public class GridManager {
             // Update top ten list
             // Remove old owner score from top ten list
             TopTen.remove(oldOwner);
+            // Fire event
+            plugin.getServer().getPluginManager().callEvent(new IslandChangeOwnerEvent(island, oldOwner, newOwner));
             return true;
         }
         return false;

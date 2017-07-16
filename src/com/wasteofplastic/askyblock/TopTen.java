@@ -365,12 +365,12 @@ public class TopTen implements Listener{
         if (inventory.getName() == null) {
             return;
         }
-        if (!inventory.getTitle().equals(plugin.myLocale().topTenGuiTitle)) {
-            return;
-        }
         // The player that clicked the item
         Player player = (Player) event.getWhoClicked();
         event.setCancelled(true);
+        if (!inventory.getTitle().equals(plugin.myLocale(player.getUniqueId()).topTenGuiTitle)) {
+            return;
+        }
         player.updateInventory();
         if(event.getCurrentItem() != null && event.getCurrentItem().getType().equals(Material.SKULL_ITEM) && event.getCurrentItem().hasItemMeta()){
         	player.performCommand("is warp " + ((SkullMeta)event.getCurrentItem().getItemMeta()).getOwner());

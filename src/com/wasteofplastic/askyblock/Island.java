@@ -398,11 +398,19 @@ public class Island implements Cloneable {
         for (SettingsFlag flag: SettingsFlag.values()) {
             if (!Settings.defaultIslandSettings.containsKey(flag)) {
                 // Default default
-                this.igs.put(flag, false);
+                if (flag.equals(SettingsFlag.MOB_SPAWN) || flag.equals(SettingsFlag.MONSTER_SPAWN)) {
+                    this.igs.put(flag, true);
+                } else {
+                    this.igs.put(flag, false);
+                }
             } else {
                 if (Settings.defaultIslandSettings.get(flag) == null) {
                     //plugin.getLogger().info("DEBUG: null flag " + flag);
-                    this.igs.put(flag, false);
+                    if (flag.equals(SettingsFlag.MOB_SPAWN) || flag.equals(SettingsFlag.MONSTER_SPAWN)) {
+                        this.igs.put(flag, true);
+                    } else {
+                        this.igs.put(flag, false);
+                    }
                 } else {
                     this.igs.put(flag, Settings.defaultIslandSettings.get(flag));
                 }
@@ -417,10 +425,18 @@ public class Island implements Cloneable {
         for (SettingsFlag flag: SettingsFlag.values()) {
             if (!Settings.defaultSpawnSettings.containsKey(flag)) {
                 // Default default
-                this.igs.put(flag, false);
+                if (flag.equals(SettingsFlag.MOB_SPAWN) || flag.equals(SettingsFlag.MONSTER_SPAWN)) {
+                    this.igs.put(flag, true);
+                } else {
+                    this.igs.put(flag, false);
+                }
             } else {
                 if (Settings.defaultSpawnSettings.get(flag) == null) {
-                    this.igs.put(flag, false);
+                    if (flag.equals(SettingsFlag.MOB_SPAWN) || flag.equals(SettingsFlag.MONSTER_SPAWN)) {
+                        this.igs.put(flag, true);
+                    } else {
+                        this.igs.put(flag, false);
+                    }
                 } else {
                     this.igs.put(flag, Settings.defaultSpawnSettings.get(flag));
                 }
