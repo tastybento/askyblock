@@ -1174,6 +1174,7 @@ public class Schematic {
                             }
                             // Tile Entities
                             if (tileEntitiesMap.containsKey(new BlockVector(x, y, z))) {
+                                //plugin.getLogger().info("DEBUG: tile entity = " + Material.getMaterial(block.getTypeId()).name());
                                 if (plugin.isOnePointEight()) {
                                     if (block.getTypeId() == Material.STANDING_BANNER.getId()) {
                                         block.setBanner(tileEntitiesMap.get(new BlockVector(x, y, z)));
@@ -1190,9 +1191,21 @@ public class Schematic {
                                     block.setSpawnerType(tileEntitiesMap.get(new BlockVector(x, y, z)));
                                 } else if ((block.getTypeId() == Material.SIGN_POST.getId())) {
                                     block.setSign(tileEntitiesMap.get(new BlockVector(x, y, z)));
-                                } else if (block.getTypeId() == Material.CHEST.getId()) {
+                                } else if (block.getTypeId() == Material.CHEST.getId()
+                                        || block.getTypeId() == Material.TRAPPED_CHEST.getId()
+                                        || block.getTypeId() == Material.FURNACE.getId()
+                                        || block.getTypeId() == Material.BURNING_FURNACE.getId()
+                                        || block.getTypeId() == Material.DISPENSER.getId()
+                                        || block.getTypeId() == Material.HOPPER.getId()
+                                        || block.getTypeId() == Material.DROPPER.getId()
+                                        || block.getTypeId() == Material.STORAGE_MINECART.getId()
+                                        || block.getTypeId() == Material.HOPPER_MINECART.getId()
+                                        || block.getTypeId() == Material.POWERED_MINECART.getId()
+                                        || Material.getMaterial(block.getTypeId()).name().contains("SHULKER_BOX")
+                                        ) {
+                                    //plugin.getLogger().info("DEBUG: Block is inventory holder, id = " + Material.getMaterial(block.getTypeId()));
                                     block.setChest(nms, tileEntitiesMap.get(new BlockVector(x, y, z)));
-                                }
+                                } 
                             }
                             islandBlocks.add(block);
                         }

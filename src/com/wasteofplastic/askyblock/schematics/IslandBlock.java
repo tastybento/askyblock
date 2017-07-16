@@ -32,7 +32,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
-import org.bukkit.block.Chest;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.block.DoubleChest;
 import org.bukkit.block.Sign;
@@ -85,6 +84,7 @@ public class IslandBlock {
         WEtoM.put("CARROT_ON_A_STICK",Material.CARROT_STICK);
         WEtoM.put("CARROT",Material.CARROT_ITEM);
         WEtoM.put("CAULDRON", Material.CAULDRON_ITEM);
+        WEtoM.put("CHEST_MINECART", Material.STORAGE_MINECART);
         WEtoM.put("CLOCK", Material.WATCH);
         WEtoM.put("COBBLESTONE_WALL",Material.COBBLE_WALL);
         WEtoM.put("COMMAND_BLOCK",Material.COMMAND);
@@ -133,6 +133,7 @@ public class IslandBlock {
         WEtoM.put("NETHER_WART",Material.NETHER_STALK);
         WEtoM.put("NETHERBRICK",Material.NETHER_BRICK_ITEM);
         WEtoM.put("OAK_STAIRS",Material.WOOD_STAIRS);
+        WEtoM.put("PISTON",Material.PISTON_BASE);
         WEtoM.put("POTATO", Material.POTATO_ITEM);
         WEtoM.put("RAIL",Material.RAILS);
         WEtoM.put("RECORD_11",Material.RECORD_11);
@@ -152,6 +153,7 @@ public class IslandBlock {
         WEtoM.put("REPEATER",Material.DIODE);
         WEtoM.put("SKULL", Material.SKULL_ITEM);
         WEtoM.put("SPAWN_EGG",Material.MONSTER_EGG);
+        WEtoM.put("STICKY_PISTON",Material.PISTON_STICKY_BASE);
         WEtoM.put("STONE_BRICK_STAIRS",Material.BRICK_STAIRS);
         WEtoM.put("STONE_BRICK_STAIRS",Material.SMOOTH_STAIRS);
         WEtoM.put("STONE_SHOVEL",Material.STONE_SPADE);
@@ -573,18 +575,21 @@ public class IslandBlock {
             if (block.getTypeId() != typeId) {
                 block.setTypeId(typeId);
             }
+            //Bukkit.getLogger().info("DEBUG: inventory holder "+ block.getType());
             // Check if this is a double chest
-            Chest chestBlock = (Chest) block.getState();
-            InventoryHolder iH = chestBlock.getInventory().getHolder();
-            if (iH instanceof DoubleChest) {
+            
+            InventoryHolder chestBlock = (InventoryHolder) block.getState();
+            //InventoryHolder iH = chestBlock.getInventory().getHolder();
+            if (chestBlock instanceof DoubleChest) {
                 //Bukkit.getLogger().info("DEBUG: double chest");
-                DoubleChest doubleChest = (DoubleChest) iH;
+                DoubleChest doubleChest = (DoubleChest) chestBlock;
                 for (ItemStack chestItem: chestContents.values()) {
                     doubleChest.getInventory().addItem(chestItem);
                 }
             } else {
                 // Single chest
                 for (Entry<Byte, ItemStack> en : chestContents.entrySet()) {
+                    //Bukkit.getLogger().info("DEBUG: " + en.getKey() + ","  + en.getValue());
                     chestBlock.getInventory().setItem(en.getKey(), en.getValue());
                 }
             }
