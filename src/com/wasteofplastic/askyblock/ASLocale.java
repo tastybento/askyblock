@@ -1367,7 +1367,7 @@ public class ASLocale {
         teamChatNoTeamAround = ChatColor.translateAlternateColorCodes('&', locale.getString("teamchat.noTeamAround", "None of your team are online!"));
         teamChatNoTeam = ChatColor.translateAlternateColorCodes('&', locale.getString("teamchat.noTeam", "You are not in a team!"));
         adminLockerrorInGame = ChatColor.translateAlternateColorCodes('&', locale.getString("adminLock.errorInGame", "Must use command in-game while on an island!"));
-        errorNotOnIsland = ChatColor.translateAlternateColorCodes('&', locale.getString("error.notonisland", "You are not in an island space!"));
+        errorNotOnIsland = ChatColor.translateAlternateColorCodes('&', locale.getString("error.notOnIsland", "You are not in an island space!"));
         adminLockadminUnlockedIsland = ChatColor.translateAlternateColorCodes('&', locale.getString("adminLock.adminUnlockedIsland", "Admin unlocked your island"));
         adminLockadminLockedIsland = ChatColor.translateAlternateColorCodes('&', locale.getString("adminLock.adminLockedIsland", "Admin locked your island"));
         adminTopBreedersFinding = ChatColor.translateAlternateColorCodes('&', locale.getString("adminTopBreeders.finding", "Finding top breeders..."));
