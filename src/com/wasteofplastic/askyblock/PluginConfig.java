@@ -896,17 +896,17 @@ public class PluginConfig {
                     if (split.length>1) {
                         data = Byte.valueOf(split[1]);
                     }
-                    Material mat;
+                    MaterialData materialData = null;
                     if (StringUtils.isNumeric(split[0])) {
-                        mat = Material.getMaterial(Integer.parseInt(split[0]));
+                        materialData = new MaterialData(Integer.parseInt(split[0]));
                     } else {
-                        mat = Material.valueOf(split[0].toUpperCase());
+                        materialData = new MaterialData(Material.valueOf(split[0].toUpperCase()));
                     }
-                    MaterialData materialData = new MaterialData(mat);
+                    
                     materialData.setData(data);
                     Settings.blockValues.put(materialData, blockValuesConfig.getInt("blocks." + material, 0));
                     if (DEBUG) {
-                        plugin.getLogger().info(mat.toString() + " value is " + Settings.blockValues.get(mat));
+                        plugin.getLogger().info(materialData.toString());
                     }
                 } catch (Exception e) {
                     // e.printStackTrace();

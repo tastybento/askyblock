@@ -40,6 +40,7 @@ public class IslandExitEvent extends ASkyBlockEvent {
     public IslandExitEvent(UUID player, Island island, Location location) {
         super(player,island);
         this.location = location;
+        //Bukkit.getLogger().info("DEBUG: IslandExitEvent called");
     }
 
     /**

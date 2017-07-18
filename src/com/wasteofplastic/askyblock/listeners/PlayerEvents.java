@@ -110,6 +110,8 @@ public class PlayerEvents implements Listener {
         for (Player player : plugin.getServer().getOnlinePlayers()) {
             if(player != null && !player.hasMetadata("NPC") && plugin.getGrid().playerIsOnIsland(player)){
                 if(VaultHelper.checkPerm(player, Settings.PERMPREFIX + "islandfly")){
+                    if (DEBUG)
+                        plugin.getLogger().info("DEBUG: Fly enable");
                     player.setAllowFlight(true);
                     player.setFlying(true);
                 }
@@ -710,13 +712,15 @@ public class PlayerEvents implements Listener {
          * islandTo != null && islandFrom != null - same PlayerIsland or teleport?
          * islandTo == islandFrom
          */
+
         if (DEBUG )
             plugin.getLogger().info("DEBUG: announcements");
-        if (islandTo != null && islandFrom == null && (islandTo.getOwner() != null || islandTo.isSpawn())) {
+        if (islandTo != null && islandFrom == null) {
             if (DEBUG )
-                plugin.getLogger().info("DEBUG: entering");
+                plugin.getLogger().info("DEBUG: entering"); 
             // Entering
-            if (islandTo.isLocked() || plugin.getPlayers().isBanned(islandTo.getOwner(),e.getPlayer().getUniqueId())) {
+            if (islandTo.getOwner() != null && (islandTo.isLocked() || plugin.getPlayers().isBanned(islandTo.getOwner(),e.getPlayer().getUniqueId()))) {
+                // Locked island
                 Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).lockIslandLocked);
                 if (!plugin.getGrid().locationIsOnIsland(e.getPlayer(), e.getTo()) && !e.getPlayer().isOp()
                         && !VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
@@ -819,10 +823,16 @@ public class PlayerEvents implements Listener {
             // Fire entry event
             final IslandEnterEvent event2 = new IslandEnterEvent(e.getPlayer().getUniqueId(), islandTo, e.getTo());
             plugin.getServer().getPluginManager().callEvent(event2);
+        } else if (islandTo != null && islandFrom != null && (islandTo.equals(islandFrom) && !e.getFrom().getWorld().equals(e.getTo().getWorld()))) {
+            if (DEBUG )
+                plugin.getLogger().info("DEBUG: jumping from dimension to another - same island");
+            // Fire exit event
+            final IslandExitEvent event = new IslandExitEvent(e.getPlayer().getUniqueId(), islandFrom, e.getFrom());
+            plugin.getServer().getPluginManager().callEvent(event);
+            // Fire entry event
+            final IslandEnterEvent event2 = new IslandEnterEvent(e.getPlayer().getUniqueId(), islandTo, e.getTo());
+            plugin.getServer().getPluginManager().callEvent(event2);
         }
-
-
-
     }
 
 

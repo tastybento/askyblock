@@ -41,6 +41,7 @@ public class IslandEnterEvent extends ASkyBlockEvent {
     public IslandEnterEvent(UUID player, Island island, Location location) {
         super(player,island);
         this.location = location;
+        //Bukkit.getLogger().info("DEBUG: IslandEnterEvent called");
     }
 
     /**

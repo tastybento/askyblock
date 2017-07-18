@@ -46,6 +46,7 @@ import com.wasteofplastic.askyblock.Island.SettingsFlag;
 import com.wasteofplastic.askyblock.SafeSpotTeleport;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.commands.IslandCmd;
+import com.wasteofplastic.askyblock.events.IslandEnterEvent;
 import com.wasteofplastic.askyblock.schematics.Schematic;
 import com.wasteofplastic.askyblock.schematics.Schematic.PasteReason;
 import com.wasteofplastic.askyblock.util.Util;
@@ -182,7 +183,7 @@ public class NetherPortals implements Listener {
                     if (homeWorld.getEnvironment().equals(Environment.NORMAL)) {
                         // Home world is over world
                         event.setTo(ASkyBlock.getNetherWorld().getSpawnLocation());
-                        event.useTravelAgent(true); 
+                        event.useTravelAgent(true);
                     } else {
                         // Home world is nether - going home
                         event.useTravelAgent(false);
@@ -202,9 +203,17 @@ public class NetherPortals implements Listener {
                         Location dest = plugin.getGrid().getSafeHomeLocation(playerUUID,1);
                         if (dest != null) {
                             event.setTo(dest);
+                            // Fire entry event
+                            Island islandTo = plugin.getGrid().getIslandAt(dest);
+                            final IslandEnterEvent event2 = new IslandEnterEvent(event.getPlayer().getUniqueId(), islandTo, dest);
+                            plugin.getServer().getPluginManager().callEvent(event2);
                         } else {
                             event.setCancelled(true);
                             new SafeSpotTeleport(plugin, event.getPlayer(), plugin.getPlayers().getIslandLocation(playerUUID), 1);
+                            // Fire entry event
+                            Island islandTo = plugin.getGrid().getIslandAt(plugin.getPlayers().getIslandLocation(playerUUID));
+                            final IslandEnterEvent event2 = new IslandEnterEvent(event.getPlayer().getUniqueId(), islandTo, plugin.getPlayers().getIslandLocation(playerUUID));
+                            plugin.getServer().getPluginManager().callEvent(event2);
                         }
                     } else {
                         // Home world is nether 
