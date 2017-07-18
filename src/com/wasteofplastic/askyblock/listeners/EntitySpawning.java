@@ -27,6 +27,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 
@@ -155,13 +156,15 @@ public class EntitySpawning implements Listener {
         if (DEBUG)
             plugin.getLogger().info("DEBUG: spawn cancelled");
         e.setCancelled(true);
-        for (Entity ent : e.getLocation().getWorld().getNearbyEntities(e.getLocation(), 5, 5, 5)) {
-            if (ent instanceof Player) {
-                Player player = (Player)ent; 
-                Util.sendMessage(player, ChatColor.RED 
-                        + (plugin.myLocale(player.getUniqueId()).entityLimitReached.replace("[entity]", 
-                                Util.prettifyText(e.getEntityType().toString()))
-                                .replace("[number]", String.valueOf(Settings.entityLimits.get(e.getEntityType())))));
+        if (!e.getSpawnReason().equals(SpawnReason.SPAWNER)) {
+            for (Entity ent : e.getLocation().getWorld().getNearbyEntities(e.getLocation(), 5, 5, 5)) {
+                if (ent instanceof Player) {
+                    Player player = (Player)ent; 
+                    Util.sendMessage(player, ChatColor.RED 
+                            + (plugin.myLocale(player.getUniqueId()).entityLimitReached.replace("[entity]", 
+                                    Util.prettifyText(e.getEntityType().toString()))
+                                    .replace("[number]", String.valueOf(Settings.entityLimits.get(e.getEntityType())))));
+                }
             }
         }
     }
