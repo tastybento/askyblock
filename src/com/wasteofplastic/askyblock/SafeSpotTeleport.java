@@ -18,7 +18,9 @@
 package com.wasteofplastic.askyblock;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.bukkit.ChatColor;
 import org.bukkit.ChunkSnapshot;
@@ -76,8 +78,11 @@ public class SafeSpotTeleport {
      * Teleport to a safe spot on an island
 
      * @param plugin
-     * @param entity
-     * @param islandLoc
+     * @param entity that is being teleported
+     * @param islandLoc - the location of the island
+     * @param homeNumber - the home number to set if setHome is true
+     * @param failureMessage - the message to show the player if this cannot be done
+     * @param setHome - if true, the resulting teleport location should become the player's home
      */
     public SafeSpotTeleport(final ASkyBlock plugin, final Entity entity, final Location islandLoc, final int homeNumber, final String failureMessage, final boolean setHome) {
         //this.plugin = plugin;
@@ -127,12 +132,6 @@ public class SafeSpotTeleport {
                     ChunkSnapshot safeChunk = null;
                     ChunkSnapshot portalChunk = null;
                     boolean safeSpotFound = false;
-                    /*
-		    try {
-			nms = checkVersion();
-		    } catch (Exception e) {
-			e.printStackTrace();
-		    }*/
                     Vector safeSpotInChunk = null;
                     Vector portalPart = null;
                     double distance = 0D;
@@ -192,6 +191,36 @@ public class SafeSpotTeleport {
                             safeChunk = portalChunk;
                             // TODO: Add safe portal spot to island
                         }
+                    } else {
+                        // If no portal, try the spawn point of the schematic
+                        if (entity instanceof Player) {
+                            Player player = (Player)entity;
+                            HashMap<Integer,Location> teleport = plugin.getPlayers().getHomeLocations(player.getUniqueId());
+                            for (Entry<Integer, Location> loc : teleport.entrySet()) {
+                                if (loc.getKey() < 0) {
+                                    // Entry is for the schematic
+                                    // Check the world
+                                    if (loc.getValue().getWorld().equals(islandLoc.getWorld())) {
+                                        // TODO: Check if the location is safe
+                                        final Location destination = loc.getValue().add(new Vector(0.5D,0,0.5D));
+                                        // Return to main thread and teleport the player
+                                        plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
+
+                                            @Override
+                                            public void run() {
+                                                //plugin.getLogger().info("DEBUG: schematic spot found = " + destination);
+                                                if (setHome) {
+                                                    plugin.getPlayers().setHomeLocation(entity.getUniqueId(), destination, homeNumber);
+                                                }
+                                                Vector velocity = entity.getVelocity();
+                                                entity.teleport(destination);
+                                                entity.setVelocity(velocity);
+                                            }});
+                                        return;
+                                    }
+                                }
+                            }
+                        }
                     }
                     //System.out.print("Seconds = " + ((System.nanoTime() - time) * 0.000000001));
                     if (safeChunk != null && safeSpotFound) {
@@ -204,28 +233,6 @@ public class SafeSpotTeleport {
                             public void run() {
                                 Location destination = spot.toLocation(islandLoc.getWorld());
                                 //plugin.getLogger().info("DEBUG: safe spot found = " + destination);
-
-                                // Create a portal
-                                // TODO Add if statement here
-                                //Block b = player.getLocation().getBlock();
-                                //if (b.getType() != Material.PORTAL) {
-                                /*
-				if (world.equals(ASkyBlock.getNetherWorld())) {
-				    for (int x = -1; x < 3; x++) {
-					for (int y = -1; y< 4; y++) {
-					    Location l = new Location(islandLoc.getWorld(), destination.getBlockX() + x, destination.getBlockY() + y, destination.getBlockZ() -1);
-					    if (x == -1 || x == 2 || y == -1 || y == 3) {
-						//nms.setBlockSuperFast(l.getBlock(), Material.OBSIDIAN.getId(), (byte)0, false);
-						//l.getBlock().setType(Material.OBSIDIAN);
-						//plugin.getLogger().info("DEBUG: obsidian at "+ l);
-					    } else {
-						//plugin.getLogger().info("DEBUG: Portal at "+ l);
-						nms.setBlockSuperFast(l.getBlock(), Material.PORTAL.getId(), (byte)0, false);
-						//l.getBlock().setType(Material.PORTAL);
-					    }
-					}
-				    }
-				}*/
                                 if (setHome && entity instanceof Player) {
                                     plugin.getPlayers().setHomeLocation(entity.getUniqueId(), destination, homeNumber);
                                 }

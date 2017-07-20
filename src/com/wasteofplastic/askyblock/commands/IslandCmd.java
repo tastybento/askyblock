@@ -532,13 +532,17 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
         if (!playerUUID.equals(teamLeader)) {
             // Clear any old home locations
             plugin.getPlayers().clearHomeLocations(playerUUID);
-            if (plugin.getPlayers().getHomeLocation(teamLeader,1) != null) {
-                plugin.getPlayers().setHomeLocation(playerUUID, plugin.getPlayers().getHomeLocation(teamLeader));
-                // plugin.getLogger().info("DEBUG: Setting player's home to the leader's home location");
-            } else {
+            // Set homes and spawn point home locations if they exist 
+            for (Entry<Integer,Location> homes : plugin.getPlayers().getHomeLocations(teamLeader).entrySet()) {
+                if (homes.getKey() < 2) {
+                    plugin.getPlayers().setHomeLocation(playerUUID, homes.getValue(), homes.getKey());
+                }
+            }
+            if (plugin.getPlayers().getHomeLocation(teamLeader,1) == null) {
                 plugin.getPlayers().setHomeLocation(playerUUID, plugin.getPlayers().getIslandLocation(teamLeader));
                 // plugin.getLogger().info("DEBUG: Setting player's home to the team island location");
             }
+            
             // If the leader's member list does not contain player then add it
             if (!plugin.getPlayers().getMembers(teamLeader).contains(playerUUID)) {
                 plugin.getPlayers().addTeamMember(teamLeader, playerUUID);
@@ -713,6 +717,8 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
         if (schematic.isPlayerSpawn()) {
             // Set home and teleport
             plugin.getPlayers().setHomeLocation(playerUUID, schematic.getPlayerSpawn(next), 1);
+            // Save it for later reference
+            plugin.getPlayers().setHomeLocation(playerUUID, schematic.getPlayerSpawn(next), -1);
         }
 
         // Sets a flag to temporarily disable cleanstone generation
@@ -831,7 +837,10 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
             @Override
             public void run() {
                 schematic.pasteSchematic(loc, player, false, PasteReason.PARTNER);
-
+                if (schematic.isPlayerSpawn()) {
+                    // Set partner home
+                    plugin.getPlayers().setHomeLocation(player.getUniqueId(), schematic.getPlayerSpawn(loc), -2);
+                }
             }}, 60L);
 
     }
