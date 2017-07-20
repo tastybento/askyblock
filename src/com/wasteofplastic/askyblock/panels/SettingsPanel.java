@@ -253,7 +253,7 @@ public class SettingsPanel implements Listener {
         if (island != null && (player.isOp() || (island.getOwner() != null && island.getOwner().equals(player.getUniqueId())))) {
             //plugin.getLogger().info("DEBUG: Check perm " + flag.toString());
             // Check perms
-            if (player.hasPermission(Settings.PERMPREFIX + "settings." + flag.toString())) {
+            if (player.isOp() || player.hasPermission(Settings.PERMPREFIX + "settings." + flag.toString())) {
                 //plugin.getLogger().info("DEBUG: Player has perm " + flag.toString());
                 if (flag.equals(SettingsFlag.PVP) || flag.equals(SettingsFlag.NETHER_PVP)) {
                     // PVP always results in an inventory closure
