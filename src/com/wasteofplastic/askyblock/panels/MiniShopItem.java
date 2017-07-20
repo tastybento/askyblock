@@ -49,6 +49,7 @@ public class MiniShopItem {
     private String extra;
     private String description;
     private ItemStack item;
+    private EntityType entityType;
 
     // private ASkyBlock plugin = ASkyBlock.getPlugin();
 
@@ -74,7 +75,7 @@ public class MiniShopItem {
             item.setAmount(quantity);
            // Deal with extras
             if (!extra.isEmpty()) {
-                // plugin.getLogger().info("DEBUG: extra is not empty");
+                // plugin.getLogger().info("DEBUG: extra is not empty");                
                 // If it not a potion, then the extras should just be durability
                 if (!material.name().contains("POTION")) {
                     if (material.equals(Material.MONSTER_EGG)) {
@@ -99,7 +100,7 @@ public class MiniShopItem {
                                 }
                             }
                         }
-                    } else {
+                    } else if (!material.equals(Material.MOB_SPAWNER)) {
                         item.setDurability(Short.parseShort(extra));
                     }
                 } else {
@@ -115,6 +116,16 @@ public class MiniShopItem {
             List<String> desc = new ArrayList<String>(Arrays.asList(description.split("\\|")));
             meta.setDisplayName(desc.get(0));
             ArrayList<String> buyAndSell = new ArrayList<String>();
+            if (material.equals(Material.MOB_SPAWNER) && !extra.isEmpty()) {
+                //Bukkit.getLogger().info("DEBUG: mob spawner and extra is " + extra);
+                // Get the entity type
+                for (EntityType type : EntityType.values()) {
+                    if (extra.toUpperCase().equals(type.name())) {
+                        entityType = type;
+                        break;
+                    }
+                }
+            }
             if (desc.size() > 1) {
                 desc.remove(0);// Remove the name
                 buyAndSell.addAll(desc); // Add the rest to the description
@@ -164,7 +175,11 @@ public class MiniShopItem {
         ItemStack temp = this.item.clone();
         ItemMeta meta = temp.getItemMeta();
         meta.setDisplayName(null);
-        meta.setLore(null);
+        List<String> lore = new ArrayList<String>(1);
+        if (item.getType().equals(Material.MOB_SPAWNER)) {  
+            lore.add(Util.prettifyText(entityType.name()));
+        }
+        meta.setLore(lore);
         temp.setItemMeta(meta);
         return temp;
     }
@@ -1561,6 +1576,13 @@ public class MiniShopItem {
             return false;
         }
 
+    }
+
+    /**
+     * @return the entityType
+     */
+    public EntityType getEntityType() {
+        return entityType;
     }
 
 }

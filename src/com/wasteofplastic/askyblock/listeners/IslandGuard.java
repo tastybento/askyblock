@@ -32,6 +32,7 @@ import org.bukkit.World.Environment;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.CreatureSpawner;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Enderman;
@@ -88,6 +89,7 @@ import org.bukkit.event.vehicle.VehicleDamageEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.MaterialData;
 import org.bukkit.potion.Potion;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -1207,6 +1209,43 @@ public class IslandGuard implements Listener {
         }
     }
 
+    /**
+     * Sets spawners to their type
+     * @param e
+     */
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onSpawnerBlockPlace(final BlockPlaceEvent e) {
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: block place");
+        if (inWorld(e.getPlayer()) && Util.playerIsHolding(e.getPlayer(), Material.MOB_SPAWNER)) {
+            if (DEBUG)
+                plugin.getLogger().info("DEBUG: in world");
+            // Get item in hand
+            for (ItemStack item : Util.getPlayerInHandItems(e.getPlayer())) {
+                if (item.getType().equals(Material.MOB_SPAWNER)) {
+                    if (DEBUG)
+                        plugin.getLogger().info("DEBUG: spawner in hand");
+                    ItemMeta meta = item.getItemMeta();
+                    List<String> lore = meta.getLore();
+                    if (!lore.isEmpty()) {
+                        if (DEBUG)
+                            plugin.getLogger().info("DEBUG: lore is not empty");
+                        for (EntityType type : EntityType.values()) {
+                            if (lore.get(0).equals(Util.prettifyText(type.name()))) {
+                                // Found the spawner type
+                                if (DEBUG)
+                                    plugin.getLogger().info("DEBUG: found type");
+                                e.getBlock().setType(Material.MOB_SPAWNER);
+                                CreatureSpawner cs = (CreatureSpawner)e.getBlock().getState();
+                                cs.setSpawnedType(type);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
     /**
      * Prevents placing of blocks
      *
