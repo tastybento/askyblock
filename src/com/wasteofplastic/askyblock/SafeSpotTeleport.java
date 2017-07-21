@@ -119,6 +119,23 @@ public class SafeSpotTeleport {
             }
             final int worldHeight = maxHeight;
             //plugin.getLogger().info("DEBUG:world height = " + worldHeight);
+
+            // Convert any spawn locations 
+            ChunkSnapshot spawnChunk = null;
+            Location spawnLoc = null;
+            if (island.getOwner() != null) {
+                HashMap<Integer,Location> teleport = plugin.getPlayers().getHomeLocations(island.getOwner());
+                for (Entry<Integer, Location> loc : teleport.entrySet()) {
+                    if (loc.getKey() < 0 && loc.getValue().getWorld().equals(islandLoc.getWorld())) {
+                        spawnChunk = loc.getValue().getChunk().getChunkSnapshot();
+                        spawnLoc = loc.getValue();
+                        break;
+                    }
+                }
+            }
+            final ChunkSnapshot spawnChunkFinal = spawnChunk;
+            final Location spawnLocFinal = spawnLoc;
+            
             plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
 
                 @SuppressWarnings("deprecation")
@@ -141,7 +158,6 @@ public class SafeSpotTeleport {
                             for (z = 0; z < 16; z++) {
                                 // Work down from the entry point up
                                 for (y = Math.min(chunk.getHighestBlockYAt(x, z), worldHeight); y >= 0; y--) {
-                                    //System.out.println("Trying " + (16 * chunk.getX() + x) + " " + y + " " + (16 * chunk.getZ() + z));
                                     // Check for portal - only if this is not a safe home search
                                     if (!setHome && chunk.getBlockTypeId(x, y, z) == Material.PORTAL.getId()) {
                                         if (portalPart == null || (distance > islandLoc.toVector().distanceSquared(new Vector(x,y,z)))) {
@@ -189,37 +205,30 @@ public class SafeSpotTeleport {
                             safeSpotFound = true;
                             safeSpotInChunk = new Vector(x,y,z);
                             safeChunk = portalChunk;
-                            // TODO: Add safe portal spot to island
+                        } else {
+                            // Not safe, so ignore this portal
+                            portalPart = null;
                         }
-                    } else {
-                        // If no portal, try the spawn point of the schematic
-                        if (entity instanceof Player) {
-                            Player player = (Player)entity;
-                            HashMap<Integer,Location> teleport = plugin.getPlayers().getHomeLocations(player.getUniqueId());
-                            for (Entry<Integer, Location> loc : teleport.entrySet()) {
-                                if (loc.getKey() < 0) {
-                                    // Entry is for the schematic
-                                    // Check the world
-                                    if (loc.getValue().getWorld().equals(islandLoc.getWorld())) {
-                                        // TODO: Check if the location is safe
-                                        final Location destination = loc.getValue().add(new Vector(0.5D,0,0.5D));
-                                        // Return to main thread and teleport the player
-                                        plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
+                    }
+                    if (portalPart == null && spawnChunkFinal != null) {
+                        // If no portal or it's not safe, try the spawn point of the schematic
+                        x = spawnLocFinal.getBlockX() - spawnChunkFinal.getX() * 16;
+                        y = spawnLocFinal.getBlockY();
+                        z = spawnLocFinal.getBlockZ() - spawnChunkFinal.getZ() * 16;
+                        if (checkBlock(spawnChunkFinal, x, y, z, worldHeight)) {
+                         // Return to main thread and teleport the player
+                            plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
 
-                                            @Override
-                                            public void run() {
-                                                //plugin.getLogger().info("DEBUG: schematic spot found = " + destination);
-                                                if (setHome) {
-                                                    plugin.getPlayers().setHomeLocation(entity.getUniqueId(), destination, homeNumber);
-                                                }
-                                                Vector velocity = entity.getVelocity();
-                                                entity.teleport(destination);
-                                                entity.setVelocity(velocity);
-                                            }});
-                                        return;
+                                @Override
+                                public void run() {
+                                    if (setHome) {
+                                        plugin.getPlayers().setHomeLocation(entity.getUniqueId(), spawnLocFinal, homeNumber);
                                     }
-                                }
-                            }
+                                    Vector velocity = entity.getVelocity();
+                                    entity.teleport(spawnLocFinal);
+                                    entity.setVelocity(velocity);
+                                }});
+                            return;  
                         }
                     }
                     //System.out.print("Seconds = " + ((System.nanoTime() - time) * 0.000000001));
@@ -269,7 +278,10 @@ public class SafeSpotTeleport {
                  */
                 @SuppressWarnings("deprecation")
                 private boolean checkBlock(ChunkSnapshot chunk, int x, int y, int z, int worldHeight) {
+                    //plugin.getLogger().info("DEBUG: chunk = " + chunk.getX() + "," + chunk.getZ());
+                    //plugin.getLogger().info("DEBUG: x,y,z = " + x + "," + y +"," + z);
                     int type = chunk.getBlockTypeId(x, y, z);
+                    //plugin.getLogger().info("DEBUG:block type = " + type);
                     if (type != 0) { // AIR
                         int space1 = chunk.getBlockTypeId(x, Math.min(y + 1, worldHeight), z);
                         int space2 = chunk.getBlockTypeId(x, Math.min(y + 2, worldHeight), z);
@@ -313,7 +325,7 @@ public class SafeSpotTeleport {
                                     break;
                                 default:
                                     // Safe
-                                    // System.out.println("Block is safe " + mat.toString());
+                                    //System.out.println("Block is safe " + mat.toString());
                                     return true;
                                 }
                             }

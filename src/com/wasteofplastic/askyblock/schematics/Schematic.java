@@ -1683,7 +1683,7 @@ public class Schematic {
         // Run through the schematic and try and find the spawnBlock
         for (IslandBlock islandBlock : islandBlocks) {
             if (islandBlock.getTypeId() == playerSpawnBlock.getId()) {
-                playerSpawn = islandBlock.getVector().subtract(bedrock).add(new Vector(0.5D,0D,0.5D));
+                playerSpawn = islandBlock.getVector().subtract(bedrock).add(new Vector(0.5D,-1D,0.5D));
                 // Set the block to air
                 islandBlock.setTypeId((short)0);
                 return true;
