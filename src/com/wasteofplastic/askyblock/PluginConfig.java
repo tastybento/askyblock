@@ -523,19 +523,21 @@ public class PluginConfig {
         if (entityLimits != null) {
             for (String entity: entityLimits.getKeys(false)) {
                 int limit = entityLimits.getInt(entity.toUpperCase(), -1);
-                if (limit > 0) {
-                    plugin.getLogger().info(entity.toUpperCase() + " will be limited to " + limit);
-                }
-                if (Material.getMaterial(entity.toUpperCase()) == null) {
-                    // Check if this is a living entity
-                    EntityType type = EntityType.valueOf(entity.toUpperCase());
-                    if (type != null && type.isAlive()) {
+                // Check if this is an entity
+                for (EntityType type : EntityType.values()) {
+                    //plugin.getLogger().info("DEBUG: is " + entity + " = " + type.name() + "?");
+                    if (type.name().equals(entity.toUpperCase())) {
+                        //plugin.getLogger().info("DEBUG: yes");
                         Settings.entityLimits.put(type, limit);
-                    } else {
-                        plugin.getLogger().warning("general.entitylimits section has unknown entity type: " + entity.toUpperCase() + " skipping...");
+                        if (limit > 0) {
+                            plugin.getLogger().info(entity.toUpperCase() + " will be limited to " + limit);
+                        }
+                        break;
                     }
-                } else if (limit > -1) {
+                }
+                if (Material.getMaterial(entity.toUpperCase()) != null && limit > -1) {
                     Settings.limitedBlocks.put(entity.toUpperCase(), limit);
+                    plugin.getLogger().info(entity.toUpperCase() + " will be limited to " + limit);
                     if (entity.equalsIgnoreCase("REDSTONE_COMPARATOR")) {
                         // Player can only ever place a redstone comparator in the OFF state
                         Settings.limitedBlocks.put("REDSTONE_COMPARATOR_OFF", limit);
@@ -729,7 +731,7 @@ public class PluginConfig {
 
         // Disable offline redstone
         Settings.disableOfflineRedstone = plugin.getConfig().getBoolean("general.disableofflineredstone", false);
-        
+
         // Allow/disallow TNT pusing
         Settings.allowTNTPushing = plugin.getConfig().getBoolean("general.allowTNTpushing",true);
 
@@ -902,7 +904,7 @@ public class PluginConfig {
                     } else {
                         materialData = new MaterialData(Material.valueOf(split[0].toUpperCase()));
                     }
-                    
+
                     materialData.setData(data);
                     Settings.blockValues.put(materialData, blockValuesConfig.getInt("blocks." + material, 0));
                     if (DEBUG) {

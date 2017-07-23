@@ -19,7 +19,6 @@ package com.wasteofplastic.askyblock.listeners;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -31,7 +30,6 @@ import org.bukkit.Sound;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Creeper;
@@ -58,14 +56,11 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
-import org.bukkit.event.block.BlockMultiPlaceEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
-import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
@@ -87,7 +82,6 @@ import org.bukkit.event.player.PlayerShearEntityEvent;
 import org.bukkit.event.player.PlayerUnleashEntityEvent;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
-import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.MaterialData;
@@ -113,7 +107,6 @@ import com.wasteofplastic.askyblock.util.VaultHelper;
 public class IslandGuard implements Listener {
     private final ASkyBlock plugin;
     private final static boolean DEBUG = false;
-    private static final boolean DEBUG2 = false;
     private HashMap<UUID,Vector> onPlate = new HashMap<UUID,Vector>();
     private Set<Location> tntBlocks = new HashSet<Location>();
     private Set<UUID> litCreeper = new HashSet<UUID>();
@@ -509,235 +502,6 @@ public class IslandGuard implements Listener {
             // Fire entry event
             final IslandEnterEvent event2 = new IslandEnterEvent(e.getPlayer().getUniqueId(), islandTo, e.getTo());
             plugin.getServer().getPluginManager().callEvent(event2);
-        }
-    }
-
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void onVillagerSpawn(final CreatureSpawnEvent e) {
-        if (DEBUG2) {
-            plugin.getLogger().info("Villager spawn event! " + e.getEventName());
-            plugin.getLogger().info(e.getSpawnReason().toString());
-            plugin.getLogger().info(e.getEntityType().toString());
-        }
-        // If not an villager
-        if (!(e.getEntity() instanceof Villager)) {
-            return;
-        }
-        // Only cover overworld
-        if (!e.getEntity().getWorld().equals(ASkyBlock.getIslandWorld())) {
-            return;
-        }
-        // If there's no limit - leave it
-        if (Settings.villagerLimit <= 0) {
-            return;
-        }
-        // We only care about villagers breeding, being cured or coming from a spawn egg, etc.
-        if (e.getSpawnReason() != SpawnReason.SPAWNER && e.getSpawnReason() != SpawnReason.BREEDING
-                && e.getSpawnReason() != SpawnReason.DISPENSE_EGG && e.getSpawnReason() != SpawnReason.SPAWNER_EGG
-                && e.getSpawnReason() != SpawnReason.CURED) {
-            return;
-        }
-        Island island = plugin.getGrid().getProtectedIslandAt(e.getLocation());
-        if (island == null || island.getOwner() == null || island.isSpawn()) {
-            // No island, no limit
-            return;
-        }
-        int limit = Settings.villagerLimit * Math.max(1,plugin.getPlayers().getMembers(island.getOwner()).size());
-        //plugin.getLogger().info("DEBUG: villager limit = " + limit);
-        //long time = System.nanoTime();
-        int pop = island.getPopulation();
-        //plugin.getLogger().info("DEBUG: time = " + ((System.nanoTime() - time)*0.000000001));
-        if (pop >= limit) {
-            plugin.getLogger().warning(
-                    "Island at " + island.getCenter().getBlockX() + "," + island.getCenter().getBlockZ() + " hit the island villager limit of "
-                            + limit);
-            //plugin.getLogger().info("Stopped villager spawning on island " + island.getCenter());
-            // Get all players in the area
-            List<Entity> players = e.getEntity().getNearbyEntities(10,10,10);
-            for (Entity player: players) {
-                if (player instanceof Player) {
-                    Player p = (Player) player;
-                    Util.sendMessage(p, ChatColor.RED + plugin.myLocale(island.getOwner()).villagerLimitError.replace("[number]", String.valueOf(limit)));
-                }
-            }
-            plugin.getMessages().tellTeam(island.getOwner(), ChatColor.RED + plugin.myLocale(island.getOwner()).villagerLimitError.replace("[number]", String.valueOf(limit)));
-            if (e.getSpawnReason().equals(SpawnReason.CURED)) {
-                // Easter Egg. Or should I say Easter Apple?
-                ItemStack goldenApple = new ItemStack(Material.GOLDEN_APPLE);
-                // Nerfed
-                //goldenApple.setDurability((short)1);
-                e.getLocation().getWorld().dropItemNaturally(e.getLocation(), goldenApple);
-            }
-            e.setCancelled(true);
-        }
-    }
-
-
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void onAnimalSpawn(final CreatureSpawnEvent e) {
-        if (DEBUG2) {
-            plugin.getLogger().info("Animal spawn event! " + e.getEventName());
-            plugin.getLogger().info(e.getSpawnReason().toString());
-            plugin.getLogger().info(e.getEntityType().toString());
-        }
-        // If not an animal
-        if (!(e.getEntity() instanceof Animals) && !e.getEntityType().equals(EntityType.SQUID)) {
-            if (DEBUG2)
-                plugin.getLogger().info("Not an animal");
-            return;
-        }
-        // If there's no limit - leave it
-        if (Settings.breedingLimit <= 0) {
-            if (DEBUG2)
-                plugin.getLogger().info("No limit on breeding or spawning");
-            return;
-        }
-        // We only care about spawning and breeding
-        if (e.getSpawnReason() != SpawnReason.SPAWNER && e.getSpawnReason() != SpawnReason.BREEDING && e.getSpawnReason() != SpawnReason.EGG
-                && e.getSpawnReason() != SpawnReason.DISPENSE_EGG && e.getSpawnReason() != SpawnReason.SPAWNER_EGG && !e.getSpawnReason().name().contains("BABY")) {
-            if (DEBUG2)
-                plugin.getLogger().info("Not Spawner or breeding");
-            return;
-        }
-        LivingEntity animal = e.getEntity();
-        // If not in the right world, return
-        if (!animal.getWorld().equals(ASkyBlock.getIslandWorld())) {
-            // Check nether
-            if (!(Settings.createNether && Settings.newNether && ASkyBlock.getNetherWorld() != null)) {
-                return;
-            }
-        }
-        if (DEBUG2)
-            plugin.getLogger().info("Correct world");
-        Island island = plugin.getGrid().getProtectedIslandAt(animal.getLocation());
-        if (island == null) {
-            // Animal is spawning outside of an island so ignore
-            if (DEBUG2)
-                plugin.getLogger().info("Outside island, so spawning is okay");
-            return;
-        }
-        // Count how many animals are there and who is the most likely spawner if it was a player
-        // This had to be reworked because the previous snowball approach doesn't work for large volumes
-        List<Player> culprits = new ArrayList<Player>();
-        boolean overLimit = false;
-        int animals = 0;
-        for (int x = island.getMinProtectedX() /16; x <= (island.getMinProtectedX() + island.getProtectionSize() - 1)/16; x++) {
-            for (int z = island.getMinProtectedZ() /16; z <= (island.getMinProtectedZ() + island.getProtectionSize() - 1)/16; z++) {
-                for (Entity entity : ASkyBlock.getIslandWorld().getChunkAt(x, z).getEntities()) {
-                    if (entity instanceof Animals || entity.getType().equals(EntityType.SQUID)) {
-                        if (DEBUG2)
-                            plugin.getLogger().info("DEBUG: Animal count is " + animals);
-                        animals++;
-                        if (animals >= Settings.breedingLimit) {
-                            // Delete any extra animals
-                            overLimit = true;
-                            animal.remove();
-                            if (DEBUG2)
-                                plugin.getLogger().info("Over limit! >=" + Settings.breedingLimit);
-                            e.setCancelled(true);
-                        }
-                    } else if (entity instanceof Player && e.getSpawnReason() != SpawnReason.SPAWNER && e.getSpawnReason() != SpawnReason.DISPENSE_EGG) {
-                        for (ItemStack itemInHand: Util.getPlayerInHandItems((Player) entity)) {
-                            if (itemInHand != null) {
-                                Material type = itemInHand.getType();
-                                if (type == Material.EGG || type == Material.MONSTER_EGG || type == Material.WHEAT || type == Material.CARROT_ITEM
-                                        || type == Material.SEEDS) {
-                                    if (DEBUG2)
-                                        plugin.getLogger().info("Player used egg or did breeding ");
-                                    if (!culprits.contains((Player)entity)) {
-                                        culprits.add(((Player) entity));
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        if (DEBUG2)
-            plugin.getLogger().info("Counting nether");
-        // Nether check
-        if (Settings.createNether && Settings.newNether && ASkyBlock.getNetherWorld() != null) {
-            for (int x = island.getMinProtectedX() /16; x <= (island.getMinProtectedX() + island.getProtectionSize() - 1)/16; x++) {
-                for (int z = island.getMinProtectedZ() /16; z <= (island.getMinProtectedZ() + island.getProtectionSize() - 1)/16; z++) {
-                    for (Entity entity : ASkyBlock.getNetherWorld().getChunkAt(x, z).getEntities()) {
-                        if (entity instanceof Animals || entity.getType().equals(EntityType.SQUID)) {
-                            if (DEBUG2)
-                                plugin.getLogger().info("DEBUG: Animal count is " + animals);
-                            animals++;
-                            if (animals >= Settings.breedingLimit) {
-                                // Delete any extra animals
-                                if (DEBUG2)
-                                    plugin.getLogger().info("Over limit! >=" + Settings.breedingLimit);
-                                overLimit = true;
-                                animal.remove();
-                                e.setCancelled(true);
-                            }
-                        } else if (entity instanceof Player && e.getSpawnReason() != SpawnReason.SPAWNER && e.getSpawnReason() != SpawnReason.DISPENSE_EGG) {
-                            for (ItemStack itemInHand : Util.getPlayerInHandItems(((Player) entity))) {
-                                Material type = itemInHand.getType();
-                                if (type == Material.EGG || type == Material.MONSTER_EGG || type == Material.WHEAT || type == Material.CARROT_ITEM
-                                        || type == Material.SEEDS) {
-                                    if (!culprits.contains((Player)entity)) {
-                                        culprits.add(((Player) entity));
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        if (overLimit) {
-            if (e.getSpawnReason() != SpawnReason.SPAWNER) {
-                plugin.getLogger().warning(
-                        "Island at " + island.getCenter().getBlockX() + "," + island.getCenter().getBlockZ() + " hit the island animal breeding limit of "
-                                + Settings.breedingLimit);
-                for (Player player : culprits) {
-                    Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).moblimitsError.replace("[number]", String.valueOf(Settings.breedingLimit)));
-                    plugin.getLogger().warning(player.getName() + " was trying to use " + Util.getPlayerInHandItems(player).toString());
-                }
-            }
-        }
-        // plugin.getLogger().info("DEBUG: Animal count is " + animals);
-    }
-
-    /**
-     * Prevents mobs spawning at spawn or in an island
-     *
-     * @param e
-     */
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onMobSpawn(final CreatureSpawnEvent e) {
-        if (DEBUG2) {
-            plugin.getLogger().info("on Mob spawn" + e.getEventName());
-        }
-        // if grid is not loaded yet, return.
-        if (plugin.getGrid() == null) {
-            return;
-        }
-        // If not in the right world, return
-        if (!inWorld(e.getEntity())) {
-            return;
-        }
-        // Deal with natural spawning
-        if (e.getEntity() instanceof Monster || e.getEntity() instanceof Slime) {
-            if (!actionAllowed(e.getLocation(), SettingsFlag.MONSTER_SPAWN)) {
-                if (DEBUG2)
-                    plugin.getLogger().info("Natural monster spawn cancelled.");
-                // Mobs not allowed to spawn
-                e.setCancelled(true);
-                return;
-            }
-        }
-        if (e.getEntity() instanceof Animals) {
-            if (!actionAllowed(e.getLocation(), SettingsFlag.MOB_SPAWN)) {
-                // Animals are not allowed to spawn
-                if (DEBUG2)
-                    plugin.getLogger().info("Natural animal spawn cancelled.");
-                e.setCancelled(true);
-                return;
-            }
         }
     }
 
@@ -1246,133 +1010,6 @@ public class IslandGuard implements Listener {
         }
     }
     
-    /**
-     * Prevents placing of blocks
-     *
-     * @param e
-     */
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void onPlayerBlockPlace(final BlockPlaceEvent e) {
-        if (DEBUG) {
-            plugin.getLogger().info("DEBUG: " + e.getEventName());
-            if (e.getPlayer() == null) {
-                plugin.getLogger().info("DEBUG: player is null");
-            } else {
-                plugin.getLogger().info("DEBUG: block placed by " + e.getPlayer().getName());
-            }
-            plugin.getLogger().info("DEBUG: Block is " + e.getBlock().toString());
-        }
-        if (Settings.allowAutoActivator && e.getPlayer().getName().equals("[CoFH]")) {
-            return;
-        }
-        // plugin.getLogger().info(e.getEventName());
-        if (inWorld(e.getPlayer())) {
-            // This permission bypasses protection
-            if (e.getPlayer().isOp() || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
-                return;
-            }
-            //plugin.getLogger().info("DEBUG: checking is inside protection area");
-            Island island = plugin.getGrid().getProtectedIslandAt(e.getBlock().getLocation());
-            // Outside of island protection zone
-            if (island == null) {
-                if (!Settings.defaultWorldSettings.get(SettingsFlag.PLACE_BLOCKS)) {
-                    Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
-                    e.setCancelled(true);
-                }
-                return;
-            }
-            if (actionAllowed(e.getPlayer(), e.getBlock().getLocation(), SettingsFlag.PLACE_BLOCKS))  {
-                // Check how many placed
-                //plugin.getLogger().info("DEBUG: block placed " + e.getBlock().getType());
-                String type = e.getBlock().getType().toString();
-                if (!e.getBlock().getState().getClass().getName().endsWith("CraftBlockState")
-                        // Not all blocks have that type of class, so we have to do some explicit checking...
-                        || e.getBlock().getType().equals(Material.REDSTONE_COMPARATOR_OFF)
-                        || type.endsWith("BANNER") // Avoids V1.7 issues
-                        || e.getBlock().getType().equals(Material.ENDER_CHEST)
-                        || e.getBlock().getType().equals(Material.ENCHANTMENT_TABLE)
-                        || e.getBlock().getType().equals(Material.DAYLIGHT_DETECTOR)
-                        || e.getBlock().getType().equals(Material.FLOWER_POT)){
-                    // tile entity placed
-                    if (Settings.limitedBlocks.containsKey(type) && Settings.limitedBlocks.get(type) > -1) {
-                        int count = island.getTileEntityCount(e.getBlock().getType(),e.getBlock().getWorld());
-                        //plugin.getLogger().info("DEBUG: count is "+ count);
-                        if (Settings.limitedBlocks.get(type) <= count) {
-                            Util.sendMessage(e.getPlayer(), ChatColor.RED + (plugin.myLocale(e.getPlayer().getUniqueId()).entityLimitReached.replace("[entity]",
-                                    Util.prettifyText(type))).replace("[number]", String.valueOf(Settings.limitedBlocks.get(type))));
-                            e.setCancelled(true);
-                            return;
-                        }
-                    }
-                }
-            } else {
-                // Visitor
-                Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
-                e.setCancelled(true);
-            }
-        }
-    }
-
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void onPlayerBlockPlace(final BlockMultiPlaceEvent e) {
-        if (DEBUG) {
-            plugin.getLogger().info("DEBUG: " + e.getEventName());
-            if (e.getPlayer() == null) {
-                plugin.getLogger().info("DEBUG: player is null");
-            } else {
-                plugin.getLogger().info("DEBUG: block placed by " + e.getPlayer().getName());
-            }
-            plugin.getLogger().info("DEBUG: Block is " + e.getBlock().toString());
-        }
-        if (Settings.allowAutoActivator && e.getPlayer().getName().equals("[CoFH]")) {
-            return;
-        }
-        // plugin.getLogger().info(e.getEventName());
-        if (inWorld(e.getPlayer())) {
-            // This permission bypasses protection
-            if (e.getPlayer().isOp() || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
-                return;
-            }
-            Island island = plugin.getGrid().getProtectedIslandAt(e.getBlock().getLocation());
-            if (island == null) {
-                if (!Settings.defaultWorldSettings.get(SettingsFlag.PLACE_BLOCKS)) {
-                    Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
-                    e.setCancelled(true);
-                }
-                return;
-            }
-            // Island exists
-            if (island.getIgsFlag(SettingsFlag.PLACE_BLOCKS) || island.getMembers().contains(e.getPlayer().getUniqueId()))  {
-                // Check how many placed
-                //plugin.getLogger().info("DEBUG: block placed " + e.getBlock().getType());
-                String type = e.getBlock().getType().toString();
-                if (!e.getBlock().getState().getClass().getName().endsWith("CraftBlockState")
-                        // Not all blocks have that type of class, so we have to do some explicit checking...
-                        || e.getBlock().getType().equals(Material.REDSTONE_COMPARATOR_OFF)
-                        || type.endsWith("BANNER") // Avoids V1.7 issues
-                        || e.getBlock().getType().equals(Material.ENDER_CHEST)
-                        || e.getBlock().getType().equals(Material.ENCHANTMENT_TABLE)
-                        || e.getBlock().getType().equals(Material.DAYLIGHT_DETECTOR)
-                        || e.getBlock().getType().equals(Material.FLOWER_POT)){
-                    // tile entity placed
-                    if (Settings.limitedBlocks.containsKey(type) && Settings.limitedBlocks.get(type) > -1) {
-                        int count = island.getTileEntityCount(e.getBlock().getType(),e.getBlock().getWorld());
-                        if (Settings.limitedBlocks.get(type) <= count) {
-                            Util.sendMessage(e.getPlayer(), ChatColor.RED + (plugin.myLocale(e.getPlayer().getUniqueId()).entityLimitReached.replace("[entity]",
-                                    Util.prettifyText(type))).replace("[number]", String.valueOf(Settings.limitedBlocks.get(type))));
-                            e.setCancelled(true);
-                            return;
-                        }
-                    }
-                }
-                return;
-            }
-            // Outside of protection area or visitor
-            Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
-            e.setCancelled(true);
-        }
-    }
-
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerLeashHitch(final HangingPlaceEvent e) {
         if (DEBUG) {
@@ -1395,55 +1032,6 @@ public class IslandGuard implements Listener {
         }
     }
 
-
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void onPlayerBlockPlace(final HangingPlaceEvent e) {
-        if (DEBUG) {
-            plugin.getLogger().info(e.getEventName());
-            plugin.getLogger().info("DEBUG: block placed " + e.getBlock().getType());
-            plugin.getLogger().info("DEBUG: entity " + e.getEntity().getType());
-        }
-        if (Settings.allowAutoActivator && e.getPlayer().getName().equals("[CoFH]")) {
-            return;
-        }
-        // plugin.getLogger().info(e.getEventName());
-        if (inWorld(e.getPlayer())) {
-            // This permission bypasses protection
-            if (e.getPlayer().isOp() || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
-                return;
-            }
-            Island island = plugin.getGrid().getProtectedIslandAt(e.getBlock().getLocation());
-            // Outside of island protection zone
-            if (island == null) {
-                if (!Settings.defaultWorldSettings.get(SettingsFlag.PLACE_BLOCKS)) {
-                    Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
-                    e.setCancelled(true);
-                }
-                return;
-            }
-            if (island.getIgsFlag(SettingsFlag.PLACE_BLOCKS) || island.getMembers().contains(e.getPlayer().getUniqueId()))  {
-                // Check how many placed
-                String type = e.getEntity().getType().toString();
-                if (e.getEntity().getType().equals(EntityType.ITEM_FRAME) || e.getEntity().getType().equals(EntityType.PAINTING)) {
-                    // tile entity placed
-                    if (Settings.limitedBlocks.containsKey(type) && Settings.limitedBlocks.get(type) > -1) {
-                        // Convert from EntityType to Material via string - ugh
-                        int count = island.getTileEntityCount(Material.valueOf(type),e.getEntity().getWorld());
-                        if (Settings.limitedBlocks.get(type) <= count) {
-                            Util.sendMessage(e.getPlayer(), ChatColor.RED + (plugin.myLocale(e.getPlayer().getUniqueId()).entityLimitReached.replace("[entity]",
-                                    Util.prettifyText(type))).replace("[number]", String.valueOf(Settings.limitedBlocks.get(type))));
-                            e.setCancelled(true);
-                            return;
-                        }
-                    }
-                }
-            } else {
-                // Visitor
-                Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
-                e.setCancelled(true);
-            }
-        }
-    }
 
     // Prevent sleeping in other beds
     @EventHandler(priority = EventPriority.LOW)
@@ -2686,37 +2274,6 @@ public class IslandGuard implements Listener {
         }
 
         return;
-    }
-
-    /**
-     * Prevents trees from growing outside of the protected area.
-     *
-     * @param e
-     */
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void onTreeGrow(final StructureGrowEvent e) {
-        if (DEBUG) {
-            plugin.getLogger().info(e.getEventName());
-        }
-        // Check world
-        if (!inWorld(e.getLocation())) {
-            return;
-        }
-        // Check if this is on an island
-        Island island = plugin.getGrid().getIslandAt(e.getLocation());
-        if (island == null || island.isSpawn()) {
-            return;
-        }
-        Iterator<BlockState> it = e.getBlocks().iterator();
-        while (it.hasNext()) {
-            BlockState b = it.next();
-            if (b.getType() == Material.LOG || b.getType() == Material.LOG_2
-                    || b.getType() == Material.LEAVES || b.getType() == Material.LEAVES_2) {
-                if (!island.onIsland(b.getLocation())) {
-                    it.remove();
-                }
-            }
-        }
     }
 
     /**

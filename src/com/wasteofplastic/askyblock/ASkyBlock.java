@@ -50,7 +50,7 @@ import com.wasteofplastic.askyblock.generators.ChunkGeneratorWorld;
 import com.wasteofplastic.askyblock.listeners.AcidEffect;
 import com.wasteofplastic.askyblock.listeners.ChatListener;
 import com.wasteofplastic.askyblock.listeners.CleanSuperFlat;
-import com.wasteofplastic.askyblock.listeners.EntitySpawning;
+import com.wasteofplastic.askyblock.listeners.EntityLimits;
 import com.wasteofplastic.askyblock.listeners.FlyingMobEvents;
 import com.wasteofplastic.askyblock.listeners.IslandGuard;
 import com.wasteofplastic.askyblock.listeners.IslandGuard1_8;
@@ -676,6 +676,8 @@ public class ASkyBlock extends JavaPlugin {
         manager.registerEvents(new NetherSpawning(this), this);
         // Island Protection events
         manager.registerEvents(new IslandGuard(this), this);
+        // Island Entity Limits
+        manager.registerEvents(new EntityLimits(this), this);
         // Player events
         playerEvents = new PlayerEvents(this);
         manager.registerEvents(playerEvents, this);
@@ -723,8 +725,6 @@ public class ASkyBlock extends JavaPlugin {
         if (Settings.recoverSuperFlat) {
             manager.registerEvents(new CleanSuperFlat(), this);
         }
-        // Entity limits
-        manager.registerEvents(new EntitySpawning(this), this);
     }
 
 
