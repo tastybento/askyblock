@@ -65,7 +65,7 @@ public class Scoreboards {
         }
         // The default team name is their own name
         String teamName = player.getName();
-        String level = plugin.getPlayers().getIslandLevel(playerUUID).toString();
+        String level = String.valueOf(plugin.getPlayers().getIslandLevel(playerUUID));
         Team team = board.getTeam(teamName);
         if (team == null) {
             //Team does not exist
@@ -82,9 +82,9 @@ public class Scoreboards {
     /**
      * Sets the player's level explicitly
      * @param playerUUID
-     * @param level
+     * @param l
      */
-    public void setLevel(UUID playerUUID, int level) {
+    public void setLevel(UUID playerUUID, long l) {
         Player player = plugin.getServer().getPlayer(playerUUID);
         if (player == null) {
             // Player is offline...
@@ -98,7 +98,7 @@ public class Scoreboards {
             team = board.registerNewTeam(teamName);
         }
         // Add the suffix
-        team.setSuffix(Settings.teamSuffix.replace("[level]",String.valueOf(level)));
+        team.setSuffix(Settings.teamSuffix.replace("[level]",String.valueOf(l)));
         //Adding player to team
         team.addPlayer(player);
         // Assign scoreboard to player

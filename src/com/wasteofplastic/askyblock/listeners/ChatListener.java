@@ -208,11 +208,11 @@ public class ChatListener implements Listener {
     /**
      * Store the player's level for use in their chat tag
      * @param playerUUID
-     * @param level
+     * @param l
      */
-    public void setPlayerLevel(UUID playerUUID, int level) {
+    public void setPlayerLevel(UUID playerUUID, long l) {
         //plugin.getLogger().info("DEBUG: putting " + playerUUID.toString() + " Level " + level);
-        playerLevels.put(playerUUID, String.valueOf(level));
+        playerLevels.put(playerUUID, String.valueOf(l));
     }
 
     /**

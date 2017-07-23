@@ -11,28 +11,37 @@ import com.wasteofplastic.askyblock.Island;
  * Use getLevel() to see the level calculated and getPointsToNextLevel() to see how much points are needed to reach next level.
  * Canceling this event will result in no notifications to the player.
  * 
- * @author Poslovitch
+ * @author Poslovitch, tastybento
  */
 public class IslandPostLevelEvent extends ASkyBlockEvent implements Cancellable {
-    private int level;
+    private long level;
     private boolean cancelled;
-    private int points;
+    private long points;
 
     /**
      * @param player
      * @param island
-     * @param level
+     * @param l
      */
-    public IslandPostLevelEvent(UUID player, Island island, int level, int points) {
+    public IslandPostLevelEvent(UUID player, Island island, long l, long m) {
         super(player, island);
-        this.level = level;
-        this.points = points;
+        this.level = l;
+        this.points = m;
     }
 
     /**
+     * @deprecated
+     * level is now stored as a long, so the int value may not be accurate
      * @return the level
      */
     public int getLevel() {
+        return (int)level;
+    }
+    
+    /**
+     * @return the level
+     */
+    public long getLongLevel() {
         return level;
     }
 
@@ -47,9 +56,18 @@ public class IslandPostLevelEvent extends ASkyBlockEvent implements Cancellable 
     }
 
     /**
+     * @deprecated
+     * level is now stored as a long, so the int value may not be accurate
      * @return the number of points
      */
     public int getPointsToNextLevel() {
+        return (int)points;
+    }
+    
+    /**
+     * @return the number of points
+     */
+    public long getLongPointsToNextLevel() {
         return points;
     }
 

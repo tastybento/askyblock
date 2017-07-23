@@ -197,7 +197,7 @@ public class Settings {
     // Magic Cobble Generator
     public static boolean useMagicCobbleGen;
     public static boolean magicCobbleGenOnlyAtSpawn;
-    public static TreeMap<Integer,TreeMap<Double,Material>> magicCobbleGenChances;
+    public static TreeMap<Long,TreeMap<Double,Material>> magicCobbleGenChances;
     
     // Disable offline redstone
     public static boolean disableOfflineRedstone;

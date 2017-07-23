@@ -371,8 +371,8 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                         return true;
                     }
                     // Display by level
-                    for (Integer level : LavaCheck.getStats().keySet()) {
-                        if (level == Integer.MIN_VALUE) {
+                    for (Long level : LavaCheck.getStats().keySet()) {
+                        if (level == Long.MIN_VALUE) {
                             Util.sendMessage(sender, plugin.myLocale().challengeslevel + ": Default");
                         } else {
                             Util.sendMessage(sender, plugin.myLocale().challengeslevel + ": " + level);
@@ -381,7 +381,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                         Collection<String> result = new TreeSet<String>(Collator.getInstance());
                         for (Material mat : LavaCheck.getStats().get(level).elementSet()) {
                             result.add("   " + Util.prettifyText(mat.toString()) + ": " + LavaCheck.getStats().get(level).count(mat) + "/" + LavaCheck.getStats().get(level).size() + " or " 
-                                    + ((int)((double)LavaCheck.getStats().get(level).count(mat)/LavaCheck.getStats().get(level).size()*100)) 
+                                    + ((long)((double)LavaCheck.getStats().get(level).count(mat)/LavaCheck.getStats().get(level).size()*100)) 
                                     + "% (config = " + String.valueOf(LavaCheck.getConfigChances(level, mat)) + "%)");
                         }
                         // Send to player

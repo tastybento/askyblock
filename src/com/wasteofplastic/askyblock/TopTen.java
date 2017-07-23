@@ -54,7 +54,7 @@ import com.wasteofplastic.askyblock.util.Util;
 public class TopTen implements Listener{
     private static ASkyBlock plugin = ASkyBlock.getPlugin();
     // Top ten list of players
-    private static Map<UUID, Integer> topTenList = new HashMap<UUID, Integer>();
+    private static Map<UUID, Long> topTenList = new HashMap<UUID, Long>();
     private static final int GUISIZE = 27; // Must be a multiple of 9
     private static final int[] SLOTS = new int[] {4, 12, 14, 19, 20, 21, 22, 23, 24, 25};
     // Store this as a static because it's the same for everyone and saves memory cleanup
@@ -68,12 +68,12 @@ public class TopTen implements Listener{
      * Adds a player to the top ten, if the level is good enough
      * 
      * @param ownerUUID
-     * @param level
+     * @param l
      */
-    public static void topTenAddEntry(UUID ownerUUID, int level) {
+    public static void topTenAddEntry(UUID ownerUUID, long l) {
         // Special case for removals. If a level of zero is given the player
         // needs to be removed from the list
-        if (level < 1) {
+        if (l < 1) {
             if (topTenList.containsKey(ownerUUID)) {
                 topTenList.remove(ownerUUID);
             }
@@ -88,7 +88,7 @@ public class TopTen implements Listener{
                 return;
             }
         }
-        topTenList.put(ownerUUID, level);
+        topTenList.put(ownerUUID, l);
         topTenList = MapUtil.sortByValue(topTenList);
     }
 
@@ -187,7 +187,7 @@ public class TopTen implements Listener{
         // Save config
 
         int rank = 0;
-        for (Map.Entry<UUID, Integer> m : topTenList.entrySet()) {
+        for (Map.Entry<UUID, Long> m : topTenList.entrySet()) {
             if (rank++ == 10) {
                 break;
             }
@@ -256,9 +256,9 @@ public class TopTen implements Listener{
             int i = 1;
             // getLogger().info("DEBUG: " + topTenList.toString());
             // getLogger().info("DEBUG: " + topTenList.values());
-            Iterator<Entry<UUID, Integer>> it = topTenList.entrySet().iterator();
+            Iterator<Entry<UUID, Long>> it = topTenList.entrySet().iterator();
             while (it.hasNext()) {
-                Map.Entry<UUID, Integer> m = it.next();
+                Map.Entry<UUID, Long> m = it.next();
                 UUID playerUUID = m.getKey();
                 // Remove from TopTen if the player is online and has the permission
                 Player entry = plugin.getServer().getPlayer(playerUUID);
@@ -303,9 +303,9 @@ public class TopTen implements Listener{
             // Reset
             gui.clear();
             int i = 1;
-            Iterator<Entry<UUID, Integer>> it = topTenList.entrySet().iterator();
+            Iterator<Entry<UUID, Long>> it = topTenList.entrySet().iterator();
             while (it.hasNext()) {
-                Map.Entry<UUID, Integer> m = it.next();
+                Map.Entry<UUID, Long> m = it.next();
                 UUID playerUUID = m.getKey();
                 //plugin.getLogger().info("DEBUG: " + i + ": " + playerUUID);
                 // Remove from TopTen if the player is online and has the permission
@@ -328,7 +328,7 @@ public class TopTen implements Listener{
         return true;
     }
 
-    static ItemStack getSkull(int rank, int levels, UUID player){
+    static ItemStack getSkull(int rank, Long long1, UUID player){
         String playerName = plugin.getServer().getOfflinePlayer(player).getName();
         ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
         if (playerName == null) return null;
@@ -337,7 +337,7 @@ public class TopTen implements Listener{
         meta.setDisplayName((plugin.myLocale(player).topTenGuiHeading.replace("[name]", plugin.getGrid().getIslandName(player))).replace("[rank]", String.valueOf(rank)));
         //meta.setDisplayName(ChatColor.YELLOW + "" + ChatColor.BOLD + "<!> " + ChatColor.YELLOW + "Island: " + ChatColor.GOLD + ChatColor.UNDERLINE + plugin.getGrid().getIslandName(player) + ChatColor.GRAY + " (#" + rank + ")");
         List<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.YELLOW + plugin.myLocale(player).levelislandLevel + " " + levels);
+        lore.add(ChatColor.YELLOW + plugin.myLocale(player).levelislandLevel + " " + long1);
         if (plugin.getPlayers().inTeam(player)) {
             final List<UUID> pMembers = plugin.getPlayers().getMembers(player);
             // Need to make this a vertical list, because some teams are very large and it'll go off the screen otherwise
@@ -391,7 +391,7 @@ public class TopTen implements Listener{
      * Get a sorted descending map of the top players
      * @return the topTenList - may be more or less than ten
      */
-    public static Map<UUID, Integer> getTopTenList() {
+    public static Map<UUID, Long> getTopTenList() {
         return topTenList;
     }
 }

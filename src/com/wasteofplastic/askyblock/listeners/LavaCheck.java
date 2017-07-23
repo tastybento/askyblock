@@ -52,8 +52,8 @@ public class LavaCheck implements Listener {
     private final ASkyBlock plugin;
     private final static boolean DEBUG = false;
     private final static List<BlockFace> FACES = Arrays.asList(BlockFace.SELF, BlockFace.UP, BlockFace.DOWN, BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST);
-    private static Map<Integer, Multiset<Material>> stats = new HashMap<Integer, Multiset<Material>>();
-    private static Map<Integer, Map<Material, Double>> configChances = new HashMap<Integer, Map<Material, Double>>();
+    private static Map<Long, Multiset<Material>> stats = new HashMap<Long, Multiset<Material>>();
+    private static Map<Long, Map<Material, Double>> configChances = new HashMap<Long, Map<Material, Double>>();
 
     public LavaCheck(ASkyBlock aSkyBlock) {
         plugin = aSkyBlock;
@@ -147,7 +147,7 @@ public class LavaCheck implements Listener {
             if (toBlock.getType().equals(Material.AIR) && generatesCobble(b, toBlock)){
                 //plugin.getLogger().info("DEBUG: potential cobble gen");
                 // Get island level or use default
-                int l = Integer.MIN_VALUE;
+                long l = Long.MIN_VALUE;
                 Island island = plugin.getGrid().getIslandAt(b.getLocation());
                 if (island != null) {
                     if (island.getOwner() != null) {	                    
@@ -155,7 +155,7 @@ public class LavaCheck implements Listener {
                         //plugin.getLogger().info("DEBUG: level " + level);
                     }
                 }
-                final int level = l;
+                final long level = l;
                 // Check if cobble was generated next tick
                 // Store surrounding blocks and their current material types
                 final List<Block> prevBlock = new ArrayList<Block>();
@@ -181,7 +181,7 @@ public class LavaCheck implements Listener {
                                 //plugin.getLogger().info("DEBUG: " + material + " => " + block.getType());
                                 //plugin.getLogger().info("DEBUG: Cobble generated. Island level = " + level);
                                 if(!Settings.magicCobbleGenChances.isEmpty()){
-                                    Entry<Integer,TreeMap<Double,Material>> entry = Settings.magicCobbleGenChances.floorEntry(level);
+                                    Entry<Long,TreeMap<Double,Material>> entry = Settings.magicCobbleGenChances.floorEntry(level);
                                     double maxValue = entry.getValue().lastKey();                                    
                                     double rnd = Util.randomDouble() * maxValue;
                                     Entry<Double, Material> en = entry.getValue().ceilingEntry(rnd);
@@ -225,7 +225,7 @@ public class LavaCheck implements Listener {
     /**
      * @return the magic cooble stone stats
      */
-    public static Map<Integer, Multiset<Material>> getStats() {
+    public static Map<Long, Multiset<Material>> getStats() {
         return stats;
     }
 
@@ -241,7 +241,7 @@ public class LavaCheck implements Listener {
      * @param levelInt
      * @param chances
      */
-    public static void storeChances(int levelInt, Map<Material, Double> chances) {
+    public static void storeChances(long levelInt, Map<Material, Double> chances) {
         configChances.put(levelInt, chances); 
     }
     
@@ -258,7 +258,7 @@ public class LavaCheck implements Listener {
      * @param material
      * @return chance, or 0 if the level or material don't exist
      */
-    public static double getConfigChances(Integer level, Material material) {
+    public static double getConfigChances(Long level, Material material) {
         double result = 0;
         //Bukkit.getLogger().info("DEBUG : requested " + level + " " + material);
         //Bukkit.getLogger().info("DEBUG : " + configChances.toString());

@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 
@@ -87,6 +88,10 @@ public class ASkyBlockAPI {
     }
 
     /**
+     * @deprecated
+     * Island level is now a long and the int value may not be accurate for very large values.
+     * Use getLongIslandLevel(UUID playerUUID) instead.
+     * 
      * Returns the island level from the last time it was calculated. Note this
      * does not calculate the island level.
      * 
@@ -94,6 +99,17 @@ public class ASkyBlockAPI {
      * @return the last level calculated for the island or zero if none.
      */
     public int getIslandLevel(UUID playerUUID) {
+        return (int)plugin.getPlayers().getIslandLevel(playerUUID);
+    }
+    
+    /**
+     * Returns the island level from the last time it was calculated. Note this
+     * does not calculate the island level.
+     * 
+     * @param playerUUID
+     * @return the last level calculated for the island or zero if none.
+     */
+    public long getLongIslandLevel(UUID playerUUID) {
         if (DEBUG) {
             Bukkit.getLogger().info("DEBUG: getIslandLevel. playerUUID = " + playerUUID);
             if (plugin == null) {
@@ -414,11 +430,26 @@ public class ASkyBlockAPI {
     }
 
     /**
+     * @deprecated
+     * Island levels are now stored as longs, so the int value may not be accurate
+     * 
      * Get the top ten list
      * @return Top ten list
      */
     public Map<UUID, Integer> getTopTen() {
-        return new HashMap<UUID, Integer>(TopTen.getTopTenList());
+        HashMap<UUID, Integer> result = new HashMap<UUID, Integer>();
+        for (Entry<UUID, Long> en : TopTen.getTopTenList().entrySet()) {
+           result.put(en.getKey(), en.getValue().intValue()); 
+        }
+        return result;
+    }
+    
+    /**
+     * Get the top ten list
+     * @return Top ten list
+     */
+    public Map<UUID, Long> getLongTopTen() {
+        return new HashMap<UUID, Long>(TopTen.getTopTenList());
     }
 
     /**

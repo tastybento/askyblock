@@ -50,7 +50,7 @@ public class Players {
     private boolean inTeam;
     //private String homeLocation;
     private HashMap<Integer, Location> homeLocations;
-    private int islandLevel;
+    private long islandLevel;
     private String islandLocation;
     private List<UUID> members;
     private String teamIslandLocation;
@@ -492,7 +492,7 @@ public class Players {
      * @return The island level int. Note this function does not calculate the
      *         island level
      */
-    public int getIslandLevel() {
+    public long getIslandLevel() {
         return islandLevel;
     }
 
@@ -626,12 +626,12 @@ public class Players {
     /**
      * Records the island's level. Does not calculate it
      * 
-     * @param i
+     * @param l
      */
-    public void setIslandLevel(final int i) {
-        islandLevel = i;
+    public void setIslandLevel(final long l) {
+        islandLevel = l;
         if (Settings.setTeamName) {
-            Scoreboards.getInstance().setLevel(uuid, i);
+            Scoreboards.getInstance().setLevel(uuid, l);
         }
     }
 

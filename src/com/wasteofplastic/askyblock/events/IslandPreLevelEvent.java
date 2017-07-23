@@ -34,24 +34,33 @@ import com.wasteofplastic.askyblock.Island;
  * 
  */
 public class IslandPreLevelEvent extends ASkyBlockEvent implements Cancellable {
-    private int level;
+    private long level;
     private boolean cancelled;
-    private int points;
+    private long points;
 
     /**
      * @param player
      * @param island
-     * @param level
+     * @param score
      */
-    public IslandPreLevelEvent(UUID player, Island island, int level) {
+    public IslandPreLevelEvent(UUID player, Island island, long score) {
         super(player, island);
-        this.level = level;
+        this.level = score;
     }
 
     /**
+     * @deprecated
+     * Level is stored as a long, so this may give the wrong value for very large level values
      * @return the level
      */
     public int getLevel() {
+        return (int)level;
+    }
+    
+    /**
+     * @return the level
+     */
+    public long getLongLevel() {
         return level;
     }
 
@@ -61,6 +70,15 @@ public class IslandPreLevelEvent extends ASkyBlockEvent implements Cancellable {
     public void setLevel(int level) {
         this.level = level;
     }
+
+    /**
+     * Set the level
+     * @param level
+     */
+    public void setLongLevel(long level) {
+        this.level = level;
+    }
+    
 
     @Override
     public boolean isCancelled() {
@@ -73,21 +91,38 @@ public class IslandPreLevelEvent extends ASkyBlockEvent implements Cancellable {
     }
 
     /**
-     * Set the number of blocks the player requires to reach the next level.
+     * Set the number of points the player requires to reach the next level.
      * If this is set to a negative number, the player will not be informed of
      * how many points they need to reach the next level.
-     * @param points
+     * @param pointsToNextLevel
      */
-    public void setPointsToNextLevel(int points) {
-        this.points = points;
-        
+    public void setPointsToNextLevel(int pointsToNextLevel) {
+        this.points = pointsToNextLevel;       
+    }
+    
+    /**
+     * Set the number of points the player requires to reach the next level.
+     * If this is set to a negative number, the player will not be informed of
+     * how many points they need to reach the next level.
+     * @param pointsToNextLevel
+     */
+    public void setLongPointsToNextLevel(long pointsToNextLevel) {
+        this.points = pointsToNextLevel; 
+    }
+
+    /**
+     * @deprecated
+     * points are now stored as a long, so the int value may not be correct with very large values
+     * @return the number of points
+     */
+    public int getPointsToNextLevel() {
+        return (int)points;
     }
 
     /**
      * @return the number of points
      */
-    public int getPointsToNextLevel() {
+    public long getLongPointsToNextLevel() {
         return points;
     }
-
 }

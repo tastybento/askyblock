@@ -326,15 +326,15 @@ public class PlayerCache {
         playerCache.get(playerUUID).setIslandLocation(islandLocation);
     }
 
-    public Integer getIslandLevel(UUID playerUUID) {
+    public long getIslandLevel(UUID playerUUID) {
         addPlayer(playerUUID);
         return playerCache.get(playerUUID).getIslandLevel();
     }
 
-    public void setIslandLevel(UUID playerUUID, int islandLevel) {
+    public void setIslandLevel(UUID playerUUID, long l) {
         addPlayer(playerUUID);
-        playerCache.get(playerUUID).setIslandLevel(islandLevel);
-        plugin.getChatListener().setPlayerLevel(playerUUID, islandLevel);
+        playerCache.get(playerUUID).setIslandLevel(l);
+        plugin.getChatListener().setPlayerLevel(playerUUID, l);
     }
 
     public void setTeamIslandLocation(UUID playerUUID, Location islandLocation) {

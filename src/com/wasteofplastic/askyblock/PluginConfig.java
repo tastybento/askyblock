@@ -691,14 +691,14 @@ public class PluginConfig {
                 //plugin.getLogger().info("DEBUG: magic cobble gen enabled and chances section found");
                 // Clear the cobble gen chances so they can be reloaded
                 LavaCheck.clearChances();
-                Settings.magicCobbleGenChances = new TreeMap<Integer, TreeMap<Double,Material>>();
+                Settings.magicCobbleGenChances = new TreeMap<Long, TreeMap<Double,Material>>();
                 for(String level : plugin.getConfig().getConfigurationSection("general.magiccobblegenchances").getKeys(false)){
-                    int levelInt = 0;
+                    long levelLong = 0;
                     try{
                         if(level.equals("default")) {
-                            levelInt = Integer.MIN_VALUE;
+                            levelLong = Long.MIN_VALUE;
                         } else {
-                            levelInt = Integer.parseInt(level);
+                            levelLong = Long.parseLong(level);
                         } 
                         TreeMap<Double,Material> blockMapTree = new TreeMap<Double, Material>();
                         double chanceTotal = 0;
@@ -711,7 +711,7 @@ public class PluginConfig {
                             }
                         }
                         if (!blockMapTree.isEmpty()) {
-                            Settings.magicCobbleGenChances.put(levelInt, blockMapTree);
+                            Settings.magicCobbleGenChances.put(levelLong, blockMapTree);
                         }
                         // Store the requested values as a % chance
                         Map<Material, Double> chances = new HashMap<Material, Double>();
@@ -720,7 +720,7 @@ public class PluginConfig {
                             chances.put(en.getValue(), (chance/chanceTotal) * 100);
                         }
                         //plugin.getLogger().info("DEBUG: level = " + levelInt + " chances = " + chances.toString());
-                        LavaCheck.storeChances(levelInt, chances);
+                        LavaCheck.storeChances(levelLong, chances);
                     } catch(NumberFormatException e){
                         // Putting the catch here means that an invalid level is skipped completely
                         plugin.getLogger().severe("Unknown level '" + level + "' listed in magiccobblegenchances section! Must be an integer or 'default'. Skipping...");
