@@ -538,4 +538,18 @@ public class ASkyBlockAPI {
     public void setResetsLeft(UUID playerUUID, int resets) {
         plugin.getPlayers().setResetsLeft(playerUUID, resets);
     }
+    
+    /**
+     * Find out if this player is a team leader or not. If the player is not in a team, the result will always be false.
+     * @param playerUUID
+     * @return true if the player is in a team and is the leader
+     */
+    public boolean isLeader(UUID playerUUID) {
+        UUID leader = plugin.getPlayers().getTeamLeader(playerUUID);
+        if (leader != null && leader.equals(playerUUID)) {
+            return true;
+        }
+        return false;
+        
+    }
 }
