@@ -27,6 +27,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -122,6 +123,11 @@ public class Util {
      */
     public static List<String> chop(ChatColor color, String longLine, int length) {
         List<String> result = new ArrayList<String>();
+        if (longLine.contains("|") || longLine.contains("§")) {
+            // Split pip character requires escaping it
+            String[] split = longLine.split("\\|");
+            return new ArrayList<String>(Arrays.asList(split));
+        }
         // int multiples = longLine.length() / length;
         int i = 0;
         for (i = 0; i < longLine.length(); i += length) {
