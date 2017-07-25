@@ -242,23 +242,28 @@ public class EntityLimits implements Listener {
         // Deal with natural spawning
         if (e.getEntity() instanceof Monster || e.getEntity() instanceof Slime) {
             if (!actionAllowed(e.getLocation(), SettingsFlag.MONSTER_SPAWN)) {
-                if (DEBUG2)
-                    plugin.getLogger().info("Natural monster spawn cancelled.");
-                // Mobs not allowed to spawn
-                e.setCancelled(true);
-                return;
+                if (!e.getSpawnReason().equals(SpawnReason.SPAWNER_EGG) || !actionAllowed(e.getLocation(), SettingsFlag.SPAWN_EGGS)) {
+                    if (DEBUG2)
+                        plugin.getLogger().info("Natural monster spawn cancelled.");
+                    // Mobs not allowed to spawn
+                    e.setCancelled(true);
+                    return;
+                }
             }
         }
         if (e.getEntity() instanceof Animals) {
             if (!actionAllowed(e.getLocation(), SettingsFlag.MOB_SPAWN)) {
-                // Animals are not allowed to spawn
-                if (DEBUG2)
-                    plugin.getLogger().info("Natural animal spawn cancelled.");
-                e.setCancelled(true);
-                return;
+                if (!e.getSpawnReason().equals(SpawnReason.SPAWNER_EGG) || !actionAllowed(e.getLocation(), SettingsFlag.SPAWN_EGGS)) {
+                    // Animals are not allowed to spawn
+                    if (DEBUG2)
+                        plugin.getLogger().info("Natural animal spawn cancelled.");
+                    e.setCancelled(true);
+                    return;
+                }
             }
         }
     }
+
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerBlockPlace(final BlockMultiPlaceEvent e) {
         if (DEBUG) {
