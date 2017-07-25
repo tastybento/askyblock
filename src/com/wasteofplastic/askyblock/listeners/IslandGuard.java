@@ -991,7 +991,7 @@ public class IslandGuard implements Listener {
                         plugin.getLogger().info("DEBUG: spawner in hand");
                     ItemMeta meta = item.getItemMeta();
                     List<String> lore = meta.getLore();
-                    if (!lore.isEmpty()) {
+                    if (meta.hasLore() && !lore.isEmpty()) {
                         if (DEBUG)
                             plugin.getLogger().info("DEBUG: lore is not empty");
                         for (EntityType type : EntityType.values()) {
@@ -1004,6 +1004,7 @@ public class IslandGuard implements Listener {
                                 cs.setSpawnedType(type);
                             }
                         }
+                        // Spawner type not found - do anything : it may be another plugin's spawner
                     }
                 }
             }
