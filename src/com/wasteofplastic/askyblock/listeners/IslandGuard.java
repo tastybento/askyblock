@@ -986,12 +986,11 @@ public class IslandGuard implements Listener {
                 plugin.getLogger().info("DEBUG: in world");
             // Get item in hand
             for (ItemStack item : Util.getPlayerInHandItems(e.getPlayer())) {
-                if (item.getType().equals(Material.MOB_SPAWNER)) {
+                if (item.getType().equals(Material.MOB_SPAWNER) && item.hasItemMeta() && item.getItemMeta().hasLore()) {
                     if (DEBUG)
-                        plugin.getLogger().info("DEBUG: spawner in hand");
-                    ItemMeta meta = item.getItemMeta();
-                    List<String> lore = meta.getLore();
-                    if (meta.hasLore() && !lore.isEmpty()) {
+                        plugin.getLogger().info("DEBUG: spawner in hand with lore");
+                    List<String> lore = item.getItemMeta().getLore();
+                    if (!lore.isEmpty()) {
                         if (DEBUG)
                             plugin.getLogger().info("DEBUG: lore is not empty");
                         for (EntityType type : EntityType.values()) {
