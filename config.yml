@@ -433,6 +433,7 @@ general:
      #FLOWER_POT: 20
      #PAINTING: 5
      #ARMOR_STAND: 5
+     #BREWING_STAND: 20
 
    # Islands below this level will be removed if they are abandoned and admins issue the purge command
    abandonedislandlevel: 10
