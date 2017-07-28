@@ -1332,9 +1332,9 @@ public class ASLocale {
         coopRemoved = ChatColor.translateAlternateColorCodes('&', locale.getString("coop.removed", "[name] remove your coop status!"));
         coopRemoveSuccess = ChatColor.translateAlternateColorCodes('&', locale.getString("coop.removesuccess", "[name] is no longer a coop player."));
         coopSuccess = ChatColor.translateAlternateColorCodes('&',
-                locale.getString("coop.success", "[name] is now a coop player until they log out or you expel them."));
+                locale.getString("coop.success", "[name] is now a coop player until you log out, uncoop or expel him."));
         coopMadeYouCoop = ChatColor.translateAlternateColorCodes('&',
-                locale.getString("coop.madeyoucoopy", "[name] made you a coop player until you log out or they expel you."));
+                locale.getString("coop.madeyoucoopy", "[name] made you a coop player until he logs out or expels you."));
         coopOnYourTeam = ChatColor.translateAlternateColorCodes('&', locale.getString("coop.onyourteam", "Player is already on your team!"));
         coopNotInCoop = ChatColor.translateAlternateColorCodes('&', locale.getString("coop.notincoop", "[name] is not in your coop!"));
         islandhelpCoop = ChatColor.translateAlternateColorCodes('&',locale.getString("coop.help", "temporarily give a player full access to your island"));
