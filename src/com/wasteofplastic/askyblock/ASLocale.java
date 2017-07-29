@@ -310,6 +310,7 @@ public class ASLocale {
     public String purgecalculating;
     public String purgenoneFound;
     public String purgethisWillRemove;
+    public String purgeEstimatedRunTime;
     public String purgewarning;
     public String purgetypeConfirm;
     public String purgepurgeCancelled;
@@ -1210,6 +1211,7 @@ public class ASLocale {
         purgenoneFound = ChatColor.translateAlternateColorCodes('&', locale.getString("purge.noneFound", "No inactive islands to remove."));
         purgethisWillRemove = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("purge.thisWillRemove", "[number] inactive islands found. Islands with level < [level] will be removed."));
+        purgeEstimatedRunTime = ChatColor.translateAlternateColorCodes('&', locale.getString("purge.estimatedRunTime", "Estimated run time is : [time]."));
         purgewarning = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("purge.warning", "DANGER! Do not run this with players on the server! MAKE BACKUP OF WORLD!"));
         purgetypeConfirm = ChatColor.translateAlternateColorCodes('&',

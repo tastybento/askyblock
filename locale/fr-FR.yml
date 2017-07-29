@@ -463,6 +463,7 @@ purge:
   skyblockFound: "Il y a [number] îles sans propriétaires. Faites '/asadmin purge unowned confirm' dans les 20 secondes pour les supprimer."
   stillChecking: "Vérification toujours en cours..."
   thisWillRemove: "[number] îles inactives trouvées. Les îles de niveau < [level] seront supprimées."
+  estimatedRunTime: "Durée estimée : [time]."
   typeConfirm: "Tapez /asadmin confirm pour confirmer"
   usage: "Utilisation: /asadmin purge [jours]"
   warning: "ATTENTION! Ne faites pas ça si des joueurs sont connectés ! SAUVEGARDEZ VOTRE MONDE, FAITES UN BACKUP!"
