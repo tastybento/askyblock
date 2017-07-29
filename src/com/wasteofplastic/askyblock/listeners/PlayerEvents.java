@@ -467,25 +467,6 @@ public class PlayerEvents implements Listener {
             InventorySave.getInstance().clearSavedInventory(e.getPlayer());
         }
     }
-    /*
-     * Prevent item pickup by visitors
-     */
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onVisitorPickup(final PlayerPickupItemEvent e) {
-        if (DEBUG) {
-            plugin.getLogger().info(e.getEventName());
-        }
-        if (!IslandGuard.inWorld(e.getPlayer())) {
-            return;
-        }
-        Island island = plugin.getGrid().getIslandAt(e.getItem().getLocation());
-        if ((island != null && island.getIgsFlag(SettingsFlag.VISITOR_ITEM_PICKUP)) 
-                || e.getPlayer().isOp() || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
-                || plugin.getGrid().locationIsOnIsland(e.getPlayer(), e.getItem().getLocation())) {
-            return;
-        }
-        e.setCancelled(true);
-    }
 
     /*
      * Prevent item drop by visitors
