@@ -278,6 +278,7 @@ island:
   helpAcceptReject: "accepte ou refuse une invitation"
   helpChallenges: "/challenges: &fvoir les challenges"
   helpColor: "&e"
+  helpHeader: "Aide de [plugin] v[version]:"
   helpControlPanel: "ouvre le menu"
   helpExpel: "force un joueur à quitter l'île"
   helpInvite: "invite un joueur à rejoindre votre île"
