@@ -83,7 +83,6 @@ import org.bukkit.event.player.PlayerUnleashEntityEvent;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.MaterialData;
 import org.bukkit.potion.Potion;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -714,9 +713,9 @@ public class IslandGuard implements Listener {
         if (DEBUG) {
             plugin.getLogger().info(e.getEventName());
         }
-        if (Settings.allowAutoActivator && e.getPlayer().getName().equals("[CoFH]")) {
-            return;
-        }
+
+        if (Settings.allowedFakePlayers.contains(e.getPlayer().getName())) return;
+
         if (inWorld(e.getPlayer())) {
             if (actionAllowed(e.getPlayer(), e.getBlock().getLocation(), SettingsFlag.BREAK_BLOCKS)) {
                 return;
@@ -1017,9 +1016,8 @@ public class IslandGuard implements Listener {
             plugin.getLogger().info("DEBUG: block placed " + e.getBlock().getType());
             plugin.getLogger().info("DEBUG: entity " + e.getEntity().getType());
         }
-        if (Settings.allowAutoActivator && e.getPlayer().getName().equals("[CoFH]")) {
-            return;
-        }
+        if (Settings.allowedFakePlayers.contains(e.getPlayer().getName())) return;
+
         // plugin.getLogger().info(e.getEventName());
         if (inWorld(e.getPlayer())) {
             if (e.getEntity() != null && e.getEntity().getType().equals(EntityType.LEASH_HITCH)) {

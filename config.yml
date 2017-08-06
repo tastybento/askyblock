@@ -433,7 +433,6 @@ general:
      #FLOWER_POT: 20
      #PAINTING: 5
      #ARMOR_STAND: 5
-     #BREWING_STAND: 20
 
    # Islands below this level will be removed if they are abandoned and admins issue the purge command
    abandonedislandlevel: 10
@@ -593,9 +592,13 @@ general:
    # Only allow the island leader to coop players.
    # Island members wont be able to coop other players.
    onlyleadercancoop: false
-      
-   # Allow FTB Autonomous Activator to work (will allow a pseudo player [CoFH] to place and break blocks and hang items)
-   autoactivator: false
+
+   # Below you can list all account names that ASkyBlock will ignore for some protection.
+   # Configure it at your own risk!!
+   # This option is mainly for compatibility with mods.
+   fakeplayers:
+   # - [CoFH]
+   # - [BuildCraft]
    
    # Allow obsidian to be scooped up with an empty bucket back into lava
    # This only works if there is a single block of obsidian (no obsidian within 10 blocks)
