@@ -273,9 +273,8 @@ public class EntityLimits implements Listener {
             }
             plugin.getLogger().info("DEBUG: Block is " + e.getBlock().toString());
         }
-        if (Settings.allowAutoActivator && e.getPlayer().getName().equals("[CoFH]")) {
-            return;
-        }
+        if (Settings.allowedFakePlayers.contains(e.getPlayer().getName())) return;
+        
         // plugin.getLogger().info(e.getEventName());
         if (IslandGuard.inWorld(e.getPlayer())) {
             // This permission bypasses protection
@@ -338,9 +337,9 @@ public class EntityLimits implements Listener {
             }
             plugin.getLogger().info("DEBUG: Block is " + e.getBlock().toString());
         }
-        if (Settings.allowAutoActivator && e.getPlayer().getName().equals("[CoFH]")) {
-            return;
-        }
+        
+        if (Settings.allowedFakePlayers.contains(e.getPlayer().getName())) return;
+        
         // plugin.getLogger().info(e.getEventName());
         if (IslandGuard.inWorld(e.getPlayer())) {
             // This permission bypasses protection
@@ -396,9 +395,9 @@ public class EntityLimits implements Listener {
             plugin.getLogger().info("DEBUG: block placed " + e.getBlock().getType());
             plugin.getLogger().info("DEBUG: entity " + e.getEntity().getType());
         }
-        if (Settings.allowAutoActivator && e.getPlayer().getName().equals("[CoFH]")) {
-            return;
-        }
+        
+        if (Settings.allowedFakePlayers.contains(e.getPlayer().getName())) return;
+        
         // plugin.getLogger().info(e.getEventName());
         if (IslandGuard.inWorld(e.getPlayer())) {
             // This permission bypasses protection
