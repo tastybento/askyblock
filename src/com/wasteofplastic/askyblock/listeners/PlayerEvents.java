@@ -40,7 +40,6 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -723,7 +722,7 @@ public class PlayerEvents implements Listener {
             } else {
                 if (DEBUG )
                     plugin.getLogger().info("DEBUG: islandTo is locked regular");
-                if(islandTo.getIgsFlag(SettingsFlag.ENTER_EXIT_MESSAGES)) {
+                if(islandTo.getOwner() != null && islandTo.getIgsFlag(SettingsFlag.ENTER_EXIT_MESSAGES)) {
                     if (!plugin.myLocale(e.getPlayer().getUniqueId()).lockNowEntering.isEmpty()) {
                         Util.sendEnterExit(e.getPlayer(), plugin.myLocale(e.getPlayer().getUniqueId()).lockNowEntering.replace("[name]", plugin.getGrid().getIslandName(islandTo.getOwner())));
                     }

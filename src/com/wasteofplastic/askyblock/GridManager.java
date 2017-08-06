@@ -1702,6 +1702,9 @@ public class GridManager {
      * @return Returns the name of owner's island, or the owner's name if there is none.
      */
     public String getIslandName(UUID owner) {
+        if (owner == null) {
+            return "";
+        }
         return ChatColor.translateAlternateColorCodes('&', islandNames.getString(owner.toString(), plugin.getPlayers().getName(owner))) + ChatColor.RESET;
     }
 
