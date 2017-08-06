@@ -674,8 +674,8 @@ public class PluginConfig {
         // Only leader can coop
         Settings.onlyLeaderCanCoop = plugin.getConfig().getBoolean("general.onlyleadercancoop", false);
 
-        // FTB Automatic Activators
-        Settings.allowAutoActivator = plugin.getConfig().getBoolean("general.autoactivator");
+        // Fake players
+        Settings.allowedFakePlayers = plugin.getConfig().getStringList("general.fakeplayers");
 
         // Allow Obsidian Scooping
         Settings.allowObsidianScooping = plugin.getConfig().getBoolean("general.allowobsidianscooping", true);
