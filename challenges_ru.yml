@@ -1,0 +1,778 @@
+##########################################################################################
+# Challenges
+# Rewards and required items have to be described using Bukkit Materials
+# and be exactly correct
+# Do not use Type Id's - they will not work
+# Challenges can be one of three types - inventory, island or level.
+# inventory - means the player must have the items on them
+# island - means the items have to be on the island and within 10 blocks of the player
+#          entities are also supported, e.g., COW.
+# level - means the island level has to be equal or over this amount.
+#         If level is set as nothing '', then the challenge is a free challenge and can be
+#         done at any time.
+# Challenges can be repeatable only if they are inventory challenges
+# permissions can be given as a reward
+#
+# Reward Commands - commands can be run when a challenge is completed and repeated
+# Commands are:
+#    rewardcommands:
+#      - command1
+#      - command2
+#    repeatrewardcommands:
+#      - command1
+#      - command2      
+# The commands are listed and run in order. Do not put a / in front of the command.
+# The token [player] will be replaced with the player's name.
+# Example:
+#    rewardcommands:
+#      - pex promote [player]
+#      - heal [player]
+#      - warp winner_circle [player]
+# If a command fails, it will be noted in the console.
+#
+# The format for POTIONS is as follows:
+#
+# Format POTION:NAME:<LEVEL>:<EXTENDED>:<SPLASH/LINGER>:QTY
+# LEVEL, EXTENDED, SPLASH, LINGER are optional.
+# LEVEL is a number, 1 or 2
+# LINGER is for V1.9 servers and later
+# Examples:
+# POTION:STRENGTH:1:EXTENDED:SPLASH:1
+# POTION:INSTANT_DAMAGE:2::LINGER:2
+# POTION:JUMP:2:NOTEXTENDED:NOSPLASH:1
+# POTION:WEAKNESS::::1   -  any weakness potion
+# 
+# Valid potion names are:
+# WATER, REGEN, SPEED, FIRE_RESISTANCE, POISON, INSTANT_HEAL, NIGHT_VISION, WEAKNESS,
+# STRENGTH, SLOWNESS, JUMP, INSTANT_DAMAGE, WATER_BREATHING, INVISIBILITY
+# For V1.9 these are also available:
+# LUCK, MUNDANE, THICK, AWKWARD
+#
+#
+# Reseting islands and challenges - usually challenges are reset when a player resets
+# their island (see resetchallenges in config.yml). You can stop some challenges from
+# being reset by using resetallowed:false in the challenge.
+##########################################################################################
+
+challenges:
+  # Challenge levels - list as many as you like. If a challenge's level is '' it can
+  # be done anytime. You cannot name a challenge the same as a level.
+  levels: 'Novice Competent Expert Advanced Elite'
+    
+  # The number of undone tasks that can be left on a level before unlocking next level
+  waiveramount: 1
+  
+  # Free levels - which levels above should be auto done when reached, therefore unlocking next level.
+  # Example:
+  # freelevels: 'Novice' will immediately put player onto Competent level challenges 
+  # freelevels: 'Novice Competent' will make all Novice, Competent and Expert challenges available immediately.
+  # freelevels: 'Competent' will open Competent and Expert levels once Novice is complete
+  freelevels: ''
+  
+  # This section determines what happens when a player unlocks a new level
+  # The subname should correspond to the levels listed above
+  # Note that there is no section for the first level as it is automatically unlocked
+  levelUnlock:
+    Competent:
+      # What additional message to send player
+      message: 'Поздравляем - вы разблокировали &9Компетентный уровень!'
+      rewardDesc: 'Алмаз!'
+      itemReward: 'DIAMOND:1'
+      moneyReward: 100
+      expReward: 100
+      # List permissions separated by spaces
+      permissionReward: ''
+      # Commands to run on this player. Use [player] for their name.
+      commands:
+      #- kit tools [player]
+      #- some other command
+    Expert:
+      # What additional message to send player
+      message: 'Поздравляем - вы разблокировали &aЭксперт уровень!'
+      rewardDesc: '3 алмаза!'
+      itemReward: 'DIAMOND:3'
+      moneyReward: 100
+      expReward: 100
+      permissionReward: ''
+      # Commands to run on this player. Use [player] for their name.
+      commands:
+      #- kit tools [player]
+      #- some other command
+    Advanced:
+      # What additional message to send player
+      message: 'Поздравляем - вы разблокировали &eПродвинутый уровень!'
+      rewardDesc: '5 алмазов!'
+      itemReward: 'DIAMOND:5'
+      moneyReward: 100
+      expReward: 100
+      permissionReward: ''
+      # Commands to run on this player. Use [player] for their name.
+      commands:
+      #- kit tools [player]
+      #- some other command
+    Elite:
+      # What additional message to send player
+      message: 'Поздравляем - вы разблокировали &dЭлитный уровень!'
+      rewardDesc: '7 алмазов!'
+      itemReward: 'DIAMOND:7'
+      moneyReward: 100
+      expReward: 100
+      permissionReward: ''
+      # Commands to run on this player. Use [player] for their name.
+      commands:
+      #- kit tools [player]
+      #- some other command
+      
+  # Challenge list
+  # Challenge names must be in lowercase. Do not use the same name as a level!
+  challengeList:
+    glassmaker:
+      friendlyname: 'Изготовитель стекла'
+      description: 'Создать 1 блок стекла'
+      icon: GLASS
+      level: 'Novice'
+      type: inventory
+      requiredItems: 'GLASS:1'
+      # You can require the player has a certain amount of money for inventory challenges.
+      # Remember to mention it in the description!
+      # If takeItems is true, the money will be removed, so you may want to give it
+      # back in the reward.
+      #requiredMoney: 10
+      takeItems: true
+      itemReward: 'ICE:1'
+      rewardText: '1 блок льда'
+      #rewardcommands:
+      #- kit tools [player]
+      moneyReward: 10
+      expReward: 30
+      permissionReward: ''
+      repeatable: true
+      repeatItemReward: 'ICE:1'
+      repeatRewardText: '1 блок льда'
+      repeatMoneyReward: 5
+      repeatExpReward: 10
+      #repeatrewardcommands:
+      # Max times limits how many times a challenge can be done. Comment out to make unlimited
+      maxtimes: 2
+      # Allow this challenge to reset when the player resets their island
+      # Default is true. Set to false to keep this challenge completed.
+      # Admins can always reset challenges even if this is set to false.
+      resetallowed: true
+    breadmaker:
+      friendlyname: 'Пекарь'
+      description: 'Испеките 21 буханку хлеба'
+      icon: BREAD
+      level: 'Novice'
+      type: inventory
+      requiredItems: 'BREAD:21'
+      takeItems: true
+      itemReward: 'DIRT:5'
+      rewardText: '5 земли'
+      moneyReward: 10
+      expReward: 30
+      permissionReward: ''
+      repeatable: true
+      repeatItemReward: 'DIRT:1'
+      repeatRewardText: '1 земля'
+      repeatMoneyReward: 5
+      repeatExpReward: 10
+      # Max times limits how many times a challenge can be done. Comment out to make unlimited
+      maxtimes: 100
+    dyemaker:
+      friendlyname: 'Краситель'
+      description: 'Создать 32 кактусовых зеленых красителей'
+      icon: INK_SACK:2
+      level: 'Novice'
+      type: inventory
+      requiredItems: 'INK_SACK:2:32'
+      takeItems: true
+      itemReward: 'SAPLING:0:2 SAPLING:1:2 SAPLING:2:2 SAPLING:3:2'
+      rewardText: '2 дуба, 2 березы, 2 тропического дерева и 2 еловых саженца'
+      moneyReward: 10
+      expReward: 30
+      permissionReward: ''
+      repeatable: true
+      repeatItemReward: 'SAPLING:0:1 SAPLING:1:1 SAPLING:2:1 SAPLING:3:1 SAPLING:4:1 SAPLING:5:1'
+      repeatRewardText: '1 каждого вида саженцев'
+      repeatMoneyReward: 5
+      repeatExpReward: 10
+      # Max times limits how many times a challenge can be done. Comment out to make unlimited
+      maxtimes: 100
+    papermaker:
+      friendlyname: 'Бумага'
+      description: 'Создать 21 листов бумаги'
+      icon: PAPER
+      level: 'Novice'
+      type: inventory
+      requiredItems: 'PAPER:21'
+      takeItems: true
+      itemReward: 'DIRT:5 CLAY:15'
+      rewardText: '5 земли и 15 глиняных блоков'
+      moneyReward: 15
+      expReward: 30
+      permissionReward: ''
+      repeatable: true
+      repeatItemReward: 'SAND:2'
+      repeatRewardText: '2 блока песка'
+      repeatMoneyReward: 5
+      repeatExpReward: 10
+      # Max times limits how many times a challenge can be done. Comment out to make unlimited
+      maxtimes: 100
+    cobblemaker:
+      friendlyname: 'Булыжник'
+      description: 'Сделать генератор булыжника и накопать 64 блока булыжника.'
+      icon: COBBLESTONE
+      level: 'Novice'
+      type: inventory
+      requiredItems: 'COBBLESTONE:64'
+      takeItems: true
+      itemReward: 'LEATHER:4'
+      permissionReward: ''
+      rewardText: '4 кожи - ботинки или книга?'
+      moneyReward: 10
+      expReward: 30
+      repeatable: true
+      repeatItemReward: 'LEATHER:1'
+      repeatRewardText: '1 кожа'
+      repeatMoneyReward: 5
+      repeatExpReward: 10
+      # Max times limits how many times a challenge can be done. Comment out to make unlimited
+      maxtimes: 100
+    seedbank:
+      friendlyname: 'Фермер'
+      description: 'Соберите 64 семени дыни, 64 семян тыквы и 64 семян пшеницы'
+      icon: PUMPKIN_SEEDS
+      level: 'Novice'
+      type: inventory
+      requiredItems: 'MELON_SEEDS:64 PUMPKIN_SEEDS:64 SEEDS:64'
+      takeItems: true
+      itemReward: 'DIRT:5 VINE:20'
+      rewardText: '5 земли и 20 лозы'
+      moneyReward: 15
+      expReward: 30
+      permissionReward: ''
+      repeatable: true
+      repeatItemReward: 'DIRT:2 VINE:20'
+      repeatRewardText: '2 земли и 5 лозы'
+      repeatMoneyReward: 5
+      repeatExpReward: 10
+      # Max times limits how many times a challenge can be done. Comment out to make unlimited
+      maxtimes: 100
+    stewmaker:
+      friendlyname: 'Похлебки'
+      description: 'Приготовьте 18 грибных похлебок'
+      icon: MUSHROOM_SOUP
+      level: 'Novice'
+      type: inventory
+      requiredItems: 'MUSHROOM_SOUP:18'
+      takeItems: true
+      itemReward: 'MYCEL:2'
+      rewardText: '2 мицелиевых блока'
+      moneyReward: 15
+      expReward: 30
+      permissionReward: ''
+      repeatable: true
+      repeatItemReward: 'MYCEL:1'
+      repeatRewardText: '1 мицелиевый блок'
+      repeatMoneyReward: 5
+      repeatExpReward: 10
+      # Max times limits how many times a challenge can be done. Comment out to make unlimited
+      maxtimes: 100
+    builder:
+      friendlyname: 'Строитель'
+      description: 'Поднимите уровень острова до 10 (/[label] level).'
+      icon: WOOD
+      level: 'Novice'
+      type: level
+      requiredItems: 10
+      takeItems: false
+      itemReward: 'IRON_PICKAXE:1 DIRT:5 SPONGE:1'
+      rewardText: '1 железная кирка, 5 земли и губка'
+      moneyReward: 50
+      expReward: 50
+      permissionReward: ''
+      repeatable: false
+      repeatItemReward: ''
+      repeatRewardText: ''
+      repeatMoneyReward: 0
+      repeatExpReward: 0
+    grinder:
+      description: 'Убить монстров и собрать 64 гнилой плоти, 32 кости скелета, 32 нитки, 32 стрелы, 16 порохов, 5 глаз паука'
+      icon: BONE
+      level: 'Competent'
+      type: inventory
+      requiredItems: 'ROTTEN_FLESH:64 STRING:32 SULPHUR:16 ARROW:32 BONE:32 SPIDER_EYE:5'
+      takeItems: true
+      itemReward: 'REDSTONE:16 IRON_ORE:5 FLINT:1 POTION:WATER_BREATHING:1 POTION:NIGHT_VISION:1'
+      rewardText: '16 красной пыли, 1 кремень, 1 зелье подводного дыхания , 1 зелье ночного видения и 5 железа (руда)'
+      moneyReward: 75
+      expReward: 75
+      permissionReward: ''
+      repeatable: true
+      repeatItemReward: 'REDSTONE:2 IRON_ORE:1 FLINT:1 POTION:WATER_BREATHING:1'
+      repeatRewardText: '2 красной пыли, 1 кремень, 1 зелье подводного дыханяия и 1 железо(руда)'
+      repeatMoneyReward: 15
+      repeatExpReward: 15
+      # Max times limits how many times a challenge can be done. Comment out to make unlimited
+      maxtimes: 100
+    farmer:
+      description: 'Собрать 64 единицы пшеницы, сахара, дыны, моркови, картофеля, тыквы'
+      icon: WHEAT
+      level: 'Competent'
+      type: inventory
+      requiredItems: 'WHEAT:64 SUGAR:64 MELON:64 CARROT_ITEM:64 POTATO_ITEM:64 PUMPKIN:64'
+      takeItems: true
+      itemReward: 'REDSTONE:16 INK_SACK:3:1 MONSTER_EGG:PIG:1 MONSTER_EGG:COW:1 MONSTER_EGG:CHICKEN:1'
+      rewardText: '16 красной пыли, 1 какао боб, 1 яйцо призыва(курица,корова,свинья)'
+      moneyReward: 75
+      expReward: 75
+      permissionReward: ''
+      repeatable: true
+      repeatItemReward: 'INK_SACK:3:1 MONSTER_EGG:PIG:1 MONSTER_EGG:COW:1 MONSTER_EGG:CHICKEN:1'
+      repeatRewardText: '1 какао боб, 1 яйцо призыва(курица,корова,свинья)'
+      repeatMoneyReward: 20
+      repeatExpReward: 20
+      # Max times limits how many times a challenge can be done. Comment out to make unlimited
+      maxtimes: 100
+    angler:
+      friendlyname: 'Рыболов'
+      description: 'Поймайте и приготовьте 10 рыбы'
+      icon: COOKED_FISH
+      level: 'Competent'
+      type: inventory
+      requiredItems: 'COOKED_FISH:10'
+      takeItems: true
+      itemReward: 'REDSTONE:16 IRON_ORE:5 INK_SACK:5'
+      rewardText: '16 красной пыли, 5 чернильных мешков, 5 железа (руды)'
+      moneyReward: 75
+      expReward: 75
+      permissionReward: ''
+      repeatable: true
+      repeatItemReward: 'REDSTONE:2 IRON_ORE:1 INK_SACK:1'
+      repeatRewardText: '2 красной пыли, 1 чернильный мешок, 1 железо (руда)'
+      repeatMoneyReward: 15
+      repeatExpReward: 15
+      # Max times limits how many times a challenge can be done. Comment out to make unlimited
+      maxtimes: 100
+    treecutter:
+      friendlyname: 'Лесоруб'
+      description: 'Создайте древесную ферму и собирайте 16 дубовых, березовых, джунглейных и еловых бревен'
+      icon: LOG
+      level: 'Competent'
+      type: inventory
+      requiredItems: 'LOG:0:16 LOG:1:16 LOG:2:16 LOG:3:16'
+      takeItems: true
+      itemReward: 'REDSTONE:16 IRON_ORE:5 MONSTER_EGG:WOLF:1'
+      rewardText: '16 красной пыли, 5 железа (руда), 1 яйцо призыва Волка'
+      moneyReward: 75
+      expReward: 75
+      permissionReward: ''
+      repeatable: true
+      repeatItemReward: 'REDSTONE:2 IRON_ORE:1'
+      repeatRewardText: '2 красной пыли, 1 железо (руда)'
+      repeatMoneyReward: 15
+      repeatExpReward: 15
+      # Max times limits how many times a challenge can be done. Comment out to make unlimited
+      maxtimes: 100
+    cookiemaker:
+      friendlyname: 'Пекарь'
+      description: 'Создайте 128 печенек и ведро с молоком'
+      icon: COOKIE
+      level: 'Competent'
+      type: inventory
+      requiredItems: 'MILK_BUCKET:1 COOKIE:128'
+      takeItems: true
+      itemReward: 'REDSTONE:16 IRON_ORE:5'
+      rewardText: '16 красной пыли, 5 железа (руда)'
+      moneyReward: 75
+      expReward: 75
+      permissionReward: ''
+      repeatable: true
+      repeatItemReward: 'REDSTONE:2 IRON_ORE:1'
+      repeatRewardText: '2 красной пыли, 1 железо (руда)'
+      repeatMoneyReward: 15
+      repeatExpReward: 15
+      # Max times limits how many times a challenge can be done. Comment out to make unlimited
+      maxtimes: 100
+    craftsman:
+      friendlyname: 'Ремесленник'
+      description: 'Повысьте уровень острова до 75 (/[label] level).'
+      icon: IRON_BLOCK
+      level: 'Competent'
+      type: level
+      requiredItems: 75
+      takeItems: false
+      itemReward: 'OBSIDIAN:10'
+      rewardText: '10 обсидиан'
+      moneyReward: 50
+      expReward: 50
+      permissionReward: ''
+      repeatable: false
+      repeatItemReward: ''
+      repeatRewardText: ''
+      repeatMoneyReward: 0
+      repeatExpReward: 0
+    homestead:
+      friendlyname: 'Лачуга'
+      description: 'Постройте дом, в котором есть, по крайней мере, 1 деревянная дверь, кровать, книжная полка, стол создания, печь, стекло-окно и факел.'
+      icon: BED
+      level: 'Competent'
+      type: island
+      requiredItems: 'BED_BLOCK:1 WORKBENCH:1 GLASS:1 WOODEN_DOOR:1 FURNACE:1 BOOKSHELF:1 TORCH:1'
+      # Search radius - the number of blocks that will be searched around the player
+      # Minimum 10, which searches from -10 to +10 blocks around the player in x,y,z
+      # Max is 50 because big searches cause lag
+      searchRadius: 10
+      takeItems: false
+      itemReward: 'JUKEBOX:1 RECORD_12:1 LAPIS_BLOCK:10'
+      rewardText: '1 музыкальный автомат, 1 музыкальный диск, 10 лазурных блоков'
+      moneyReward: 100
+      expReward: 100
+      permissionReward: ''
+      repeatable: false
+      repeatItemReward: ''
+      repeatRewardText: ''
+      repeatMoneyReward: 0
+      repeatExpReward: 0
+    nether:
+      friendlyname: 'Нижний мир'
+      description: 'Постройте портал в нижний мир и активируйте его.'
+      icon: NETHERRACK
+      level: 'Expert'
+      type: island
+      requiredItems: 'OBSIDIAN:10 PORTAL:1'
+      takeItems: false
+      itemReward: 'DIAMOND_SWORD:1'
+      rewardText: '1 алмазный меч'
+      moneyReward: 100
+      expReward: 100
+      permissionReward: ''
+      repeatable: false
+      repeatItemReward: ''
+      repeatRewardText: ''
+      repeatMoneyReward: 0
+      repeatExpReward: 0
+    enderpearls:
+      friendlyname: 'Эндерперл'
+      description: 'Соберите 15 эндерперлов от эндермена'
+      icon: ENDER_PEARL
+      level: 'Expert'
+      type: inventory
+      requiredItems: 'ENDER_PEARL:15'
+      takeItems: true
+      itemReward: 'GOLD_INGOT:5 BLAZE_ROD:1'
+      rewardText: '5 золотых слитка и 1 огненный стержень'
+      moneyReward: 50
+      expReward: 100
+      permissionReward: ''
+      repeatable: true
+      repeatItemReward: 'GOLD_INGOT:1 BLAZE_ROD:1'
+      repeatRewardText: '1 золотой слиток и 1 огненный стержень'
+      repeatMoneyReward: 15
+      repeatExpReward: 15
+      # Max times limits how many times a challenge can be done. Comment out to make unlimited
+      maxtimes: 100
+    slimeballfarmer:
+      friendlyname: 'Ферма слизняков'
+      description: 'Соберите 40 слизи из Слизняков'
+      icon: SLIME_BALL
+      level: 'Expert'
+      type: inventory
+      requiredItems: 'SLIME_BALL:40'
+      takeItems: true
+      itemReward: 'GOLD_INGOT:5 IRON_ORE:5'
+      rewardText: '5 золотых слитка и 5 блоков железа'
+      moneyReward: 50
+      expReward: 100
+      permissionReward: ''
+      repeatable: true
+      repeatItemReward: 'REDSTONE:8'
+      repeatRewardText: '8 красной пыли'
+      repeatMoneyReward: 15
+      repeatExpReward: 15
+      # Max times limits how many times a challenge can be done. Comment out to make unlimited
+      maxtimes: 100
+    baker:
+      friendlyname: 'Булочник'
+      description: 'Испеките 5 тортов и 5 тыквенных пирогов'
+      icon: CAKE
+      level: 'Expert'
+      type: inventory
+      requiredItems: 'CAKE:5 PUMPKIN_PIE:5'
+      takeItems: true
+      itemReward: 'GOLD_INGOT:5 DIAMOND:1'
+      rewardText: '5 золотых слитка и 1 алмаз'
+      moneyReward: 50
+      expReward: 100
+      permissionReward: ''
+      repeatable: true
+      repeatItemReward: 'IRON_ORE:1'
+      repeatRewardText: '1 железо (руда)'
+      repeatMoneyReward: 15
+      repeatExpReward: 15
+      # Max times limits how many times a challenge can be done. Comment out to make unlimited
+      maxtimes: 100
+    pioneer:
+      friendlyname: 'Первооткрыватель'
+      description: 'Сделайте 1 карту и используйте ее, компас, часы и собирайте 64 нижнего булыжника, 16 песок душ и 1 слезу Гаста'
+      icon: MAP
+      level: 'Expert'
+      type: inventory
+      requiredItems: 'NETHERRACK:64 SOUL_SAND:16 GHAST_TEAR:1 MAP:1 COMPASS:1 WATCH:1'
+      takeItems: true
+      itemReward: 'POWERED_RAIL:32 RAILS:256 DIAMOND:1 MONSTER_EGG:OCELOT:1'
+      rewardText: '256 рельс, 32 энергетических рельс, 1 яйцо призыва Оцелота, 1 алмаз'
+      moneyReward: 100
+      expReward: 100
+      permissionReward: ''
+      repeatable: true
+      repeatItemReward: 'IRON_ORE:1'
+      repeatRewardText: '1 железо (руда)'
+      repeatMoneyReward: 20
+      repeatExpReward: 20
+      # Max times limits how many times a challenge can be done. Comment out to make unlimited
+      maxtimes: 100
+    mason:
+      friendlyname: 'Каменщик'
+      description: 'Поднимите уровень острова до 150 (/[label] level).'
+      icon: GOLD_BLOCK
+      level: 'Expert'
+      type: level
+      requiredItems: 150
+      takeItems: false
+      itemReward: 'DIAMOND:1 DIRT:20 GOLD_BLOCK:2'
+      rewardText: '1 алмаз, 20 земля, и 2 золотых блока'
+      moneyReward: 150
+      expReward: 150
+      permissionReward: ''
+      repeatable: false
+      repeatItemReward: ''
+      repeatRewardText: ''
+      repeatMoneyReward: 0
+      repeatExpReward: 0
+    shepherd:
+      friendlyname: 'Пастух'
+      description: 'Соберите 5 каждой шерсти'
+      icon: WOOL:2
+      level: 'Advanced'
+      type: inventory
+      requiredItems: 'WOOL:0:5 WOOL:1:5 WOOL:2:5 WOOL:3:5 WOOL:4:5 WOOL:5:5 WOOL:6:5 WOOL:7:5 WOOL:8:5 WOOL:9:5 WOOL:10:5 WOOL:11:5 WOOL:12:5 WOOL:13:5 WOOL:14:5 WOOL:15:5' 
+      takeItems: true
+      itemReward: 'DIAMOND:2 RECORD_7:1 RECORD_8:1 RECORD_6:1 MONSTER_EGG:SHEEP:1 EMERALD:5'
+      rewardText: '2 алмаза, 5 изумрудов, 3 музыкальных диска, 1 яйцо призыва Овцы'
+      moneyReward: 200
+      expReward: 200
+      permissionReward: ''
+      repeatable: true
+      repeatItemReward: 'EMERALD:1 MONSTER_EGG:SHEEP:1'
+      repeatRewardText: '1 изумруд, 1 яйцо призыва Овцы'
+      repeatMoneyReward: 20
+      repeatExpReward: 20
+      # Max times limits how many times a challenge can be done. Comment out to make unlimited
+      maxtimes: 100
+    alchemist:
+      friendlyname: 'Алхимик'
+      description: 'Заварить 1 зелье сопротивления огня, медлительность, быстрота, исцеление, тошноты, невидимость, сила и регенерация'
+      icon: BREWING_STAND_ITEM
+      level: 'Advanced'
+      type: inventory
+      requiredItems: 'POTION:FIRE_RESISTANCE::::1 POTION:SLOWNESS::::1 POTION:SPEED::::1 POTION:INSTANT_HEAL::::1 POTION:INSTANT_DAMAGE::::1 POTION:INVISIBILITY::::1 POTION:STRENGTH::::1 POTION:REGEN::::1'
+      takeItems: true
+      itemReward: 'ENCHANTMENT_TABLE:1'
+      rewardText: 'Стол зачарования'
+      moneyReward: 200
+      expReward: 200
+      permissionReward: ''
+      repeatable: true
+      repeatItemReward: 'DIAMOND:1'
+      repeatRewardText: '1 алмаз'
+      repeatMoneyReward: 20
+      repeatExpReward: 20
+    dj:
+      friendlyname: 'DJ'
+      description: 'Создайте музыкальный автомат и соберите все музыкальные диски'
+      icon: RECORD_5
+      level: 'Advanced'
+      type: inventory
+      requiredItems: 'GOLD_RECORD:1 GREEN_RECORD:1 RECORD_3:1 RECORD_4:1 RECORD_5:1 RECORD_6:1 RECORD_7:1 RECORD_8:1 RECORD_9:1 RECORD_10:1 RECORD_11:1 RECORD_12:1 JUKEBOX:1' 
+      takeItems: true
+      itemReward: 'DIAMOND:3 EMERALD:10 GOLD_INGOT:5'
+      rewardText: '3 алмаза, 10 изумрудов и 5 золотых слитка'
+      moneyReward: 200
+      expReward: 200
+      permissionReward: ''
+      repeatable: true
+      repeatItemReward: 'DIAMOND:1 EMERALD:5 GOLD_INGOT:2'
+      repeatRewardText: '1 алмаз, 5 изумрудов и 2 золотых слитка'
+      repeatMoneyReward: 20
+      repeatExpReward: 20
+      # Max times limits how many times a challenge can be done. Comment out to make unlimited
+      maxtimes: 100
+    gemcollector:
+      friendlyname: 'Сборщик драгоценных камней'
+      description: 'Собрать 50 изумрудов'
+      icon: EMERALD
+      level: 'Advanced'
+      type: inventory
+      requiredItems: 'EMERALD:50' 
+      takeItems: true
+      itemReward: 'DIAMOND:10'
+      rewardText: '10 алмазов'
+      moneyReward: 200
+      expReward: 200
+      permissionReward: ''
+      repeatable: true
+      repeatItemReward: 'GOLD_INGOT:2'
+      repeatRewardText: '2 золотых слитка'
+      repeatMoneyReward: 20
+      repeatExpReward: 20
+      # Max times limits how many times a challenge can be done. Comment out to make unlimited
+      maxtimes: 100
+    culinaryartist:
+      friendlyname: 'Кулинарный художник'
+      description: 'Соберите по 1 каждого вида приготовленной съедобной пищи (без сырой пищи, плоти зомби или супер золотых яблок)'
+      icon: GOLDEN_APPLE
+      level: 'Advanced'
+      type: inventory
+      requiredItems: 'BAKED_POTATO:1 BREAD:1 CAKE:1 COOKED_CHICKEN:1 COOKED_FISH:1 GRILLED_PORK:1 COOKIE:1 GOLDEN_APPLE:0:1 GOLDEN_CARROT:1 MUSHROOM_SOUP:1 PUMPKIN_PIE:1 COOKED_BEEF:1'
+      # If you are running 1.8 change to this:
+      # requiredItems: 'BAKED_POTATO:1 BREAD:1 CAKE:1 COOKED_CHICKEN:1 COOKED_FISH:1 GRILLED_PORK:1 COOKIE:1 GOLDEN_APPLE:0:1 GOLDEN_CARROT:1 MUSHROOM_SOUP:1 PUMPKIN_PIE:1 COOKED_BEEF:1 COOKED_RABBIT:1 RABBIT_STEW:1 COOKED_MUTTON:1'
+      takeItems: true
+      itemReward: 'GOLD_BLOCK:2 GREEN_RECORD:1 RECORD_3:1 RECORD_5:1 MONSTER_EGG:MUSHROOM_COW:1 EMERALD:5'
+      rewardText: '2 золотых блока, 3 музыкальных диска, 1 яйцо призыва грибной коровы и 5 изумрудов'
+      moneyReward: 200
+      expReward: 200
+      permissionReward: ''
+      repeatable: true
+      repeatItemReward: 'GOLD_INGOT:10 MONSTER_EGG:MUSHROOM_COW:1 EMERALD:1'
+      repeatRewardText: '10 золотых слитка, 1 яйцо призыва грибной коровы, 1 изумруд'
+      repeatMoneyReward: 20
+      repeatExpReward: 20
+      # Max times limits how many times a challenge can be done. Comment out to make unlimited
+      maxtimes: 100
+    beaconator:
+      friendlyname: 'Маяк'
+      description: 'Постройте маяк и зажгите его!'
+      icon: BEACON
+      level: 'Advanced'
+      type: island
+      requiredItems: 'BEACON:1'
+      takeItems: false
+      itemReward: 'SMOOTH_BRICK:20 SMOOTH_BRICK:1:20 SMOOTH_BRICK:2:20 SMOOTH_BRICK:3:20'
+      rewardText: '20 блоков любого вида каменного кирпича'
+      moneyReward: 300
+      expReward: 300
+      permissionReward: ''
+      repeatable: false
+      repeatItemReward: ''
+      repeatRewardText: ''
+      repeatMoneyReward: 0
+      repeatExpReward: 0
+    ittakesavillage:
+      friendlyname: 'Деревня жителей'
+      description: 'Проведите деревенскую встречу с 10 жителями деревни!'
+      icon: STONE
+      level: 'Advanced'
+      type: island
+      requiredItems: 'VILLAGER:10'
+      takeItems: false
+      itemReward: 'HOPPER:4'
+      rewardText: '4 воронки'
+      moneyReward: 300
+      expReward: 300
+      permissionReward: ''
+      repeatable: false
+      repeatItemReward: ''
+      repeatRewardText: ''
+      repeatMoneyReward: 0
+      repeatExpReward: 0
+    myprecious:
+      friendlyname: 'Прелесть моя'
+      description: 'Построить железного голема'
+      icon: NAME_TAG
+      level: 'Advanced'
+      type: island
+      requiredItems: 'IRON_GOLEM:1'
+      takeItems: false
+      itemReward: 'NAME_TAG:1 ANVIL:1 CAULDRON_ITEM:1 IRON_BLOCK:2'
+      rewardText: 'Тег имени, наковальня, котёл и 2 железных блока'
+      moneyReward: 300
+      expReward: 300
+      permissionReward: ''
+      repeatable: false
+      repeatItemReward: ''
+      repeatRewardText: ''
+      repeatMoneyReward: 0
+      repeatExpReward: 0
+    snowplay:
+      friendlyname: 'Снежная игра!'
+      description: 'Постройте снежного голема(снеговик)'
+      icon: SNOW_BALL
+      level: 'Advanced'
+      type: island
+      requiredItems: 'SNOWMAN:1'
+      takeItems: false
+      itemReward: 'DIAMOND_SPADE:1'
+      rewardText: 'Алмазная лопата - копать!'
+      moneyReward: 300
+      expReward: 300
+      permissionReward: ''
+      repeatable: false
+      repeatItemReward: ''
+      repeatRewardText: ''
+      repeatMoneyReward: 0
+      repeatExpReward: 0
+    itsaparty:
+      friendlyname: "Это вечеринка"
+      description: 'Устроить вечеринку! Пригласите 4 друзей.'
+      icon: PUMPKIN_PIE
+      level: 'Advanced'
+      type: island
+      requiredItems: 'PLAYER:5'
+      takeItems: false
+      itemReward: 'EMERALD:6 PUMPKIN_PIE:6'
+      rewardText: '6 изумрудов, 6 тыквенных пирогов'
+      moneyReward: 200
+      expReward: 200
+      permissionReward: ''
+      repeatable: false
+      repeatItemReward: ''
+      repeatRewardText: ''
+      repeatMoneyReward: 0
+      repeatExpReward: 0
+    itsamonsterparty:
+      friendlyname: "Это чудовищная вечеринка"
+      description: 'Есть вечеринка - приглашены все монстры! В то же время приблизитесь к скелету, зомби, пауку, крипу и эндерману.'
+      icon: SKULL_ITEM
+      level: 'Advanced'
+      type: island
+      requiredItems: 'SKELETON:1 ZOMBIE:1 SPIDER:1 CREEPER:1 ENDERMAN:1'
+      takeItems: false
+      itemReward: 'SKULL_ITEM:0:2 SKULL_ITEM:2:2 SKULL_ITEM:3:2'
+      rewardText: 'Черепа!'
+      moneyReward: 200
+      expReward: 400
+      permissionReward: ''
+      repeatable: false
+      repeatItemReward: ''
+      repeatRewardText: ''
+      repeatMoneyReward: 0
+      repeatExpReward: 0
+    acidduke:
+      friendlyname: 'Архитектор'
+      description: 'Достигните уровня острова 1000'
+      icon: DIAMOND_BLOCK
+      level: 'Elite'
+      type: level
+      requiredItems: 1000
+      takeItems: false
+      itemReward: 'DIAMOND:1'
+      rewardText: '1 алмаз'
+      moneyReward: 250
+      expReward: 250
+      permissionReward: ''
+      repeatable: false
+      repeatItemReward: ''
+      repeatRewardText: ''
+      repeatMoneyReward: 0
+      repeatExpReward: 0
