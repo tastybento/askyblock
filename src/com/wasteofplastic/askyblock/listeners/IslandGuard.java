@@ -1008,7 +1008,7 @@ public class IslandGuard implements Listener {
             }
         }
     }
-    
+
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerLeashHitch(final HangingPlaceEvent e) {
         if (DEBUG) {
@@ -1491,19 +1491,22 @@ public class IslandGuard implements Listener {
                 }
                 break;
             case SOIL:
-                if (island == null) {
-                    if (Settings.defaultWorldSettings.get(SettingsFlag.CROP_TRAMPLE)) {
-                        return;
-                    } else {
+                // Prevent jumping on crops
+                if (e.getAction().equals(Action.PHYSICAL)) {
+                    if (island == null) {
+                        if (Settings.defaultWorldSettings.get(SettingsFlag.CROP_TRAMPLE)) {
+                            return;
+                        } else {
+                            Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
+                            e.setCancelled(true);
+                            return;
+                        }
+                    }
+                    if (!island.getIgsFlag(SettingsFlag.CROP_TRAMPLE)) {
                         Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                         e.setCancelled(true);
                         return;
                     }
-                }
-                if (!island.getIgsFlag(SettingsFlag.CROP_TRAMPLE)) {
-                    Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
-                    e.setCancelled(true);
-                    return;
                 }
                 break;
             case BREWING_STAND:
