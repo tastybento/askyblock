@@ -1579,7 +1579,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                     return true;
                 }
             } else if (split[0].equalsIgnoreCase("help")) {
-                Util.sendMessage(player, plugin.myLocale(player.getUniqueId()).helpColor + plugin.myLocale(player.getUniqueId()).helpHeader.replaceAll("[plugin]", plugin.getDescription().getName()).replaceAll("[version]", plugin.getDescription().getVersion()));
+                Util.sendMessage(player, plugin.myLocale(player.getUniqueId()).helpColor + plugin.myLocale(player.getUniqueId()).helpHeader.replace("[plugin]", plugin.getDescription().getName()).replace("[version]", plugin.getDescription().getVersion()));
                 if (Settings.useControlPanel) {
                     Util.sendMessage(player, plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + ": " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpControlPanel);
                 } else {
