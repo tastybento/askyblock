@@ -2451,7 +2451,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                     return true;
                                 }
                                 // Player cannot invite themselves
-                                if (player.getName().equalsIgnoreCase(split[1])) {
+                                if (player.getUniqueId().equals(invitedPlayer.getUniqueId())) {
                                     Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).inviteerrorYouCannotInviteYourself);
                                     return true;
                                 }
@@ -2510,7 +2510,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                                 // then this invite will overwrite the
                                                 // previous invite!
                                                 inviteList.put(invitedPlayerUUID, player.getUniqueId());
-                                                Util.sendMessage(player, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).inviteinviteSentTo.replace("[name]", split[1]));
+                                                Util.sendMessage(player, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).inviteinviteSentTo.replace("[name]", invitedPlayer.getName()));
                                                 // Send message to online player
                                                 Util.sendMessage(Bukkit.getPlayer(invitedPlayerUUID), plugin.myLocale(invitedPlayerUUID).invitenameHasInvitedYou.replace("[name]", player.getName()));
                                                 Util.sendMessage(Bukkit.getPlayer(invitedPlayerUUID),
@@ -2539,7 +2539,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                         }
                                         // Place the player and invitee on the invite list
                                         inviteList.put(invitedPlayerUUID, player.getUniqueId());
-                                        Util.sendMessage(player, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).inviteinviteSentTo.replace("[name]", split[1]));
+                                        Util.sendMessage(player, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).inviteinviteSentTo.replace("[name]", invitedPlayer.getName()));
                                         Util.sendMessage(Bukkit.getPlayer(invitedPlayerUUID), plugin.myLocale(invitedPlayerUUID).invitenameHasInvitedYou.replace("[name]", player.getName()));
                                         Util.sendMessage(Bukkit.getPlayer(invitedPlayerUUID),
                                                 ChatColor.WHITE + "/" + label + " [accept/reject]" + ChatColor.YELLOW + " " + plugin.myLocale(invitedPlayerUUID).invitetoAcceptOrReject);
