@@ -1392,6 +1392,8 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                     return true;
                 }
                 Util.sendMessage(sender, ChatColor.YELLOW + plugin.myLocale().purgethisWillRemove.replace("[number]", String.valueOf(removeList.size())).replace("[level]", String.valueOf(Settings.abandonedIslandLevel)));
+                long runtime = removeList.size() * 2;
+                Util.sendMessage(sender, ChatColor.YELLOW + plugin.myLocale().purgeEstimatedRunTime.replace("[time]", String.format("%d h %02d m %02d s", runtime / 3600, (runtime % 3600) / 60, (runtime % 60))));
                 Util.sendMessage(sender, ChatColor.RED + plugin.myLocale().purgewarning);
                 Util.sendMessage(sender, ChatColor.RED + plugin.myLocale().purgetypeConfirm.replace("[label]", label));
                 if (removeList.size() > Settings.maxPurge) {

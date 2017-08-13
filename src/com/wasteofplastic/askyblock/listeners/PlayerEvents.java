@@ -40,7 +40,6 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -467,25 +466,6 @@ public class PlayerEvents implements Listener {
             InventorySave.getInstance().clearSavedInventory(e.getPlayer());
         }
     }
-    /*
-     * Prevent item pickup by visitors
-     */
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onVisitorPickup(final PlayerPickupItemEvent e) {
-        if (DEBUG) {
-            plugin.getLogger().info(e.getEventName());
-        }
-        if (!IslandGuard.inWorld(e.getPlayer())) {
-            return;
-        }
-        Island island = plugin.getGrid().getIslandAt(e.getItem().getLocation());
-        if ((island != null && island.getIgsFlag(SettingsFlag.VISITOR_ITEM_PICKUP)) 
-                || e.getPlayer().isOp() || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
-                || plugin.getGrid().locationIsOnIsland(e.getPlayer(), e.getItem().getLocation())) {
-            return;
-        }
-        e.setCancelled(true);
-    }
 
     /*
      * Prevent item drop by visitors
@@ -742,7 +722,7 @@ public class PlayerEvents implements Listener {
             } else {
                 if (DEBUG )
                     plugin.getLogger().info("DEBUG: islandTo is locked regular");
-                if(islandTo.getIgsFlag(SettingsFlag.ENTER_EXIT_MESSAGES)) {
+                if(islandTo.getOwner() != null && islandTo.getIgsFlag(SettingsFlag.ENTER_EXIT_MESSAGES)) {
                     if (!plugin.myLocale(e.getPlayer().getUniqueId()).lockNowEntering.isEmpty()) {
                         Util.sendEnterExit(e.getPlayer(), plugin.myLocale(e.getPlayer().getUniqueId()).lockNowEntering.replace("[name]", plugin.getGrid().getIslandName(islandTo.getOwner())));
                     }

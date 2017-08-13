@@ -1359,6 +1359,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                     }
                     return true;
                 } else if (split[0].equalsIgnoreCase("about")) {
+                    Util.sendMessage(player, ChatColor.GOLD + "About " + ChatColor.GREEN + plugin.getDescription().getName() + ChatColor.GOLD + " v" + ChatColor.AQUA + plugin.getDescription().getVersion() + ChatColor.GOLD + ":");
                     Util.sendMessage(player, ChatColor.GOLD + "This plugin is free software: you can redistribute");
                     Util.sendMessage(player, ChatColor.GOLD + "it and/or modify it under the terms of the GNU");
                     Util.sendMessage(player, ChatColor.GOLD + "General Public License as published by the Free");
@@ -1373,7 +1374,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                     Util.sendMessage(player, ChatColor.GOLD + "General Public License along with this plugin.");
                     Util.sendMessage(player, ChatColor.GOLD + "If not, see <http://www.gnu.org/licenses/>.");
                     Util.sendMessage(player, ChatColor.GOLD + "Souce code is available on GitHub.");
-                    Util.sendMessage(player, ChatColor.GOLD + "(c) 2014 - 2015 by tastybento");
+                    Util.sendMessage(player, ChatColor.GOLD + "(c) 2014 - 2017 by tastybento, Poslovitch");
                     return true;
                     // Spawn enderman
                     // Enderman enderman = (Enderman)
@@ -1578,7 +1579,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                     return true;
                 }
             } else if (split[0].equalsIgnoreCase("help")) {
-                Util.sendMessage(player, ChatColor.GREEN + plugin.getName() + " " + plugin.getDescription().getVersion() + " help:");
+                Util.sendMessage(player, plugin.myLocale(player.getUniqueId()).helpColor + plugin.myLocale(player.getUniqueId()).helpHeader.replace("[plugin]", plugin.getDescription().getName()).replace("[version]", plugin.getDescription().getVersion()));
                 if (Settings.useControlPanel) {
                     Util.sendMessage(player, plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + ": " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpControlPanel);
                 } else {

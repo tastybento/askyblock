@@ -83,7 +83,6 @@ import org.bukkit.event.player.PlayerUnleashEntityEvent;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.MaterialData;
 import org.bukkit.potion.Potion;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -714,9 +713,9 @@ public class IslandGuard implements Listener {
         if (DEBUG) {
             plugin.getLogger().info(e.getEventName());
         }
-        if (Settings.allowAutoActivator && e.getPlayer().getName().equals("[CoFH]")) {
-            return;
-        }
+
+        if (Settings.allowedFakePlayers.contains(e.getPlayer().getName())) return;
+
         if (inWorld(e.getPlayer())) {
             if (actionAllowed(e.getPlayer(), e.getBlock().getLocation(), SettingsFlag.BREAK_BLOCKS)) {
                 return;
@@ -1009,7 +1008,7 @@ public class IslandGuard implements Listener {
             }
         }
     }
-    
+
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerLeashHitch(final HangingPlaceEvent e) {
         if (DEBUG) {
@@ -1017,9 +1016,8 @@ public class IslandGuard implements Listener {
             plugin.getLogger().info("DEBUG: block placed " + e.getBlock().getType());
             plugin.getLogger().info("DEBUG: entity " + e.getEntity().getType());
         }
-        if (Settings.allowAutoActivator && e.getPlayer().getName().equals("[CoFH]")) {
-            return;
-        }
+        if (Settings.allowedFakePlayers.contains(e.getPlayer().getName())) return;
+
         // plugin.getLogger().info(e.getEventName());
         if (inWorld(e.getPlayer())) {
             if (e.getEntity() != null && e.getEntity().getType().equals(EntityType.LEASH_HITCH)) {
@@ -1493,19 +1491,22 @@ public class IslandGuard implements Listener {
                 }
                 break;
             case SOIL:
-                if (island == null) {
-                    if (Settings.defaultWorldSettings.get(SettingsFlag.CROP_TRAMPLE)) {
-                        return;
-                    } else {
+                // Prevent jumping on crops
+                if (e.getAction().equals(Action.PHYSICAL)) {
+                    if (island == null) {
+                        if (Settings.defaultWorldSettings.get(SettingsFlag.CROP_TRAMPLE)) {
+                            return;
+                        } else {
+                            Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
+                            e.setCancelled(true);
+                            return;
+                        }
+                    }
+                    if (!island.getIgsFlag(SettingsFlag.CROP_TRAMPLE)) {
                         Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                         e.setCancelled(true);
                         return;
                     }
-                }
-                if (!island.getIgsFlag(SettingsFlag.CROP_TRAMPLE)) {
-                    Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
-                    e.setCancelled(true);
-                    return;
                 }
                 break;
             case BREWING_STAND:
