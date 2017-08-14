@@ -40,6 +40,7 @@ import com.wasteofplastic.askyblock.util.VaultHelper;
 public class EntityLimits implements Listener {
     private static final boolean DEBUG = false;
     private static final boolean DEBUG2 = false;
+    private static final boolean DEBUG3 = false;
     private ASkyBlock plugin;
 
     /**
@@ -470,14 +471,14 @@ public class EntityLimits implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onVillagerSpawn(final CreatureSpawnEvent e) {
-        if (DEBUG2) {
-            plugin.getLogger().info("Villager spawn event! " + e.getEventName());
-            plugin.getLogger().info(e.getSpawnReason().toString());
-            plugin.getLogger().info(e.getEntityType().toString());
-        }
         // If not an villager
         if (!(e.getEntity() instanceof Villager)) {
             return;
+        }
+        if (DEBUG3) {
+            plugin.getLogger().info("Villager spawn event! " + e.getEventName());
+            plugin.getLogger().info("Reason:" + e.getSpawnReason().toString());
+            plugin.getLogger().info("Entity:" + e.getEntityType().toString());
         }
         // Only cover overworld
         if (!e.getEntity().getWorld().equals(ASkyBlock.getIslandWorld())) {
