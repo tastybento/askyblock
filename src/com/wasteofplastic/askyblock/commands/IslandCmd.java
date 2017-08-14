@@ -207,15 +207,18 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
         }
         // Set up some basic settings just in case the schematics section is missing
         if (schematics.containsKey("default")) {
-            schematics.get("default").setName("Island");
+            schematics.get("default").setIcon(Material.GRASS);
+            schematics.get("default").setOrder(1);
+            schematics.get("default").setName("The Original");
             schematics.get("default").setDescription("");
             schematics.get("default").setPartnerName("nether");
             schematics.get("default").setBiome(Settings.defaultBiome);
             schematics.get("default").setIcon(Material.GRASS);
             if (Settings.chestItems.length == 0) {
                 schematics.get("default").setUseDefaultChest(false);
+            } else {
+                schematics.get("default").setUseDefaultChest(true);
             }
-            schematics.get("default").setOrder(0);
         }
         if (schematics.containsKey("nether")) {
             schematics.get("nether").setName("NetherBlock Island");
@@ -232,36 +235,17 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 
         // Load the schematics from config.yml
         ConfigurationSection schemSection = plugin.getConfig().getConfigurationSection("schematicsection");
-        if (plugin.getConfig().contains("general.schematics")) {
-            tip();
-            // Load the schematics in this section 
-            int count = 1;
-            for (String perms: plugin.getConfig().getConfigurationSection("general.schematics").getKeys(true)) {
-                // See if the file exists
-                String fileName = plugin.getConfig().getString("general.schematics." + perms);
-                File schem = new File(plugin.getDataFolder(), fileName);
-                if (schem.exists()) {
-                    plugin.getLogger().info("Loading schematic " + fileName + " for permission " + perms);
-                    Schematic schematic;
-                    try {
-                        schematic = new Schematic(plugin, schem);
-                        schematic.setPerm(perms);
-                        schematic.setHeading(perms);
-                        schematic.setName("#" + count++);
-                        if (!schematic.isVisible()) {
-                            plugin.getLogger().info("Schematic " + fileName + " will not be shown on the GUI");  
-                        }
-                        schematics.put(perms, schematic);
-                    } catch (IOException e) {
-                        plugin.getLogger().severe("Could not load schematic " + fileName + " due to error. Skipping...");
-                    }
-                } // Cannot declare a not-found because get keys gets some additional non-wanted strings
-            }
-        } else if (plugin.getConfig().contains("schematicsection")) {
+        if (plugin.getConfig().contains("schematicsection", true)) {
             Settings.useSchematicPanel = schemSection.getBoolean("useschematicspanel", false);
             Settings.chooseIslandRandomly = schemSection.getBoolean("chooseislandrandomly", false);
+            ConfigurationSection schematicsSection = schemSection.getConfigurationSection("schematics");
+            if (!schematicsSection.contains("default", true)) {
+                plugin.getLogger().severe("general.schematicsection.default does not exist!");
+                plugin.getLogger().severe("Make sure you define the default island with the heading default:");
+                plugin.getLogger().severe("A default island will be used until you define the default one yourself.");
+            }
             // Section exists, so go through the various sections
-            for (String key : schemSection.getConfigurationSection("schematics").getKeys(false)) {
+            for (String key : schematicsSection.getKeys(false)) {
                 try {
                     Schematic newSchem = null;
                     // Check the file exists
