@@ -235,15 +235,10 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 
         // Load the schematics from config.yml
         ConfigurationSection schemSection = plugin.getConfig().getConfigurationSection("schematicsection");
-        if (plugin.getConfig().contains("schematicsection", true)) {
+        if (plugin.getConfig().contains("schematicsection")) {
             Settings.useSchematicPanel = schemSection.getBoolean("useschematicspanel", false);
             Settings.chooseIslandRandomly = schemSection.getBoolean("chooseislandrandomly", false);
             ConfigurationSection schematicsSection = schemSection.getConfigurationSection("schematics");
-            if (!schematicsSection.contains("default", true)) {
-                plugin.getLogger().severe("general.schematicsection.default does not exist!");
-                plugin.getLogger().severe("Make sure you define the default island with the heading default:");
-                plugin.getLogger().severe("A default island will be used until you define the default one yourself.");
-            }
             // Section exists, so go through the various sections
             for (String key : schematicsSection.getKeys(false)) {
                 try {
