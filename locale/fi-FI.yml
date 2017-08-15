@@ -304,7 +304,7 @@ island:
   helpWarp: "Warppaa pelaajan <player> tervetuloa-kyltille."
   helpWarps: "Listaa kaikki avoimet tervetulo-kyltit."
   islandDeletedLifeboats: "Saari poistettu! Suuntaa pelastuslautoille!"
-  islandLevelis: "Saaren taso on"
+  islandLevelis: "Saaren taso on : [level]"
   new: "Generoidaan uutta saarta sinulle..."
   requiredPointsToNextLevel: "You need [points] more points to reach level [next]!"
   resetConfirm: "Käytä &7/[label] confirm [seconds] sekunnissa &cpoistaaksesi saaren ja aloittaaksesi alusta!"

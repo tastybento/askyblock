@@ -304,7 +304,7 @@ island:
   helpWarp: "Teleport do tabliczki Witaj gracza <player>."
   helpWarps: "Lista wszystkich tabliczek Witaj."
   islandDeletedLifeboats: "Wyspa usunięta! Głowa do góry!"
-  islandLevelis: "Poziom wyspy to"
+  islandLevelis: "Poziom wyspy to : [level]"
   new: "Tworzenie nowej wyspy dla ciebie..."
   requiredPointsToNextLevel: "You need [points] more points to reach level [next]!"
   resetConfirm: "Masz [seconds] sekunda na wpisanie /[label] confirm żeby potwierdzić usunięcie wyspy i jej reset!"

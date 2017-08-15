@@ -304,7 +304,7 @@ island:
   helpWarp: "<플레이어>의 환영 표지판으로 순간이동하기."
   helpWarps: "사용가능한 모든 환영 표지판 워프 목록을 보기."
   islandDeletedLifeboats: "섬이 제거되었습니다! 생명의 보트를 향해서..!"
-  islandLevelis: "섬 레벨:"
+  islandLevelis: "섬 레벨: [level]"
   new: "새로운 섬을 생성하는 중입니다..."
   requiredPointsToNextLevel: "You need [points] more points to reach level [next]!"
   resetConfirm: "/[label] confirm 을 [seconds] 초 안에 입력해 당신의 섬을 초기화할 수 있습니다!"

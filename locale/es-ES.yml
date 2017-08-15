@@ -10,7 +10,6 @@ acidLore: |
     No caigas!
     Cuidado!
 
-
 adminDeleteIsland:
   error: "Usar &ldeleteisland confirm &r&celiminar la isla que se encuentra."
   noid: "No se puede identificar a la isla."
@@ -303,7 +302,7 @@ island:
   helpWarp: "Te teletransporta al cartel de bienvenida de <jugador>."
   helpWarps: "Lista todos los warps de bienvenida."
   islandDeletedLifeboats: "Isla eliminada! Regresando al Spawn...!"
-  islandLevelis: "El nivel de isla es"
+  islandLevelis: "El nivel de isla es : [level]"
   new: "Creando isla..."
   requiredPointsToNextLevel: "You need [points] more points to reach level [next]!"
   resetConfirm: "Escribe /[label] confirm en [seconds] segundos para borrar y resetear tu isla!"

@@ -267,7 +267,7 @@ island:
   helpWarp: "Warp đến <player> từ bảng welcome."
   helpWarps: "Xem danh sách welcome"
   islandDeletedLifeboats: "Đảo xóa! Đi đến các xuồng cứu sinh!"
-  islandLevelis: "Island Level"
+  islandLevelis: "Island Level : [level]"
   new: "Tạo một hòn đảo mới cho bạn..."
   resetConfirm: "Sử dụng /[label] confirm trong [seconds] giây để xóa đảo và reset!"
   resetMustRemovePlayers: "Bạn phải kick tất cả player từ hòn đảo của mình trước khi bạn có thể khởi động lại nó (/[label] kick <player>). Xem danh sách các player hiện một phần của hòn đảo của bạn bằng cách sử /[label] team."

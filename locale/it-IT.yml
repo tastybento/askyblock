@@ -304,7 +304,7 @@ island:
   helpWarp: "Ti trasporta dal cartello [WELCOME] di un giocatore."
   helpWarps: "Eleanca tutti i warp [WELCOME] disponibili."
   islandDeletedLifeboats: "Isola eliminata! Salvatevi!"
-  islandLevelis: "Il livello della isola è"
+  islandLevelis: "Il livello della isola è : [level]"
   new: "Creando la tua nuova isola..."
   requiredPointsToNextLevel: "You need [points] more points to reach level [next]!"
   resetConfirm: "Scrivi /[label] confirm entro [seconds] secondi per eliminare la tua isola e ricominciare!"

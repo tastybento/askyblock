@@ -304,7 +304,7 @@ island:
   helpWarp: "<player> adlı oyuncunun hoşgeldin tabelasına ışınlan."
   helpWarps: "Tüm kullanılabilir hoşgeldin tabelalarını gör."
   islandDeletedLifeboats: "Ada silindi! Filikalara doğru!"
-  islandLevelis: "Adanın leveli"
+  islandLevelis: "Adanın leveli : [level]"
   new: "Senin için yeni bir ada oluşturuluyor..."
   requiredPointsToNextLevel: "You need [points] more points to reach level [next]!"
   resetConfirm: "Adanı silip yeniden başlamak için [seconds] saniye içinde /[label] confirm yaz!"
