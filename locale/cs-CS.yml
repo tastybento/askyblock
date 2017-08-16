@@ -304,7 +304,7 @@ island:
   helpWarp: "Warp na cedulku [WELCOME] hrace <player> ."
   helpWarps: "Seznam vsech dostupnych warpovacich cedulek [WELCOME]."
   islandDeletedLifeboats: "Ostrov smazan! Vsichni do zachranych clunu!"
-  islandLevelis: "Uroven ostrovu je"
+  islandLevelis: "Uroven ostrovu je : [level]"
   new: "Vytvarim pro tebe novy ostrov..."
   requiredPointsToNextLevel: "You need [points] more points to reach level [next]!"
   resetConfirm: "Napis /[label] confirm do [seconds] sekund ke smazani tveho ostrova a restartu!"

@@ -303,7 +303,7 @@ island:
   helpWarp: 传送到玩家的传送点.
   helpWarps: 列出所有可用的传送点.
   islandDeletedLifeboats: 岛屿已删除!
-  islandLevelis: 岛屿等级为
+  islandLevelis: "岛屿等级为 : [level]"
   new: 正在为你创建一个新的岛屿...
   requiredPointsToNextLevel: "你还需要 [points] 点数来达到 [next] 级!"
   resetConfirm: "请在 [seconds] 秒内输入/[label] confirm 来确认你的操作,然后重新开始!"

@@ -303,7 +303,7 @@ island:
   helpWarp: "téléporte au warp d'un joueur"
   helpWarps: "affiche tous les warps disponibles"
   islandDeletedLifeboats: "Ile supprimée!"
-  islandLevelis: "Niveau de l'île:"
+  islandLevelis: "Niveau de l'île: [level]"
   new: "Création de l'île en cours..."
   requiredPointsToNextLevel: "Vous avez besoin de [points] points supplémentaire pour atteindre le niveau [next]!"
   resetConfirm: "Tapez /[label] confirm dans les [seconds] secondes pour supprimer votre île, et la recommencer!"

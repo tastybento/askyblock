@@ -304,7 +304,7 @@ island:
   helpWarp: "Warpe zu <player>'s Insel."
   helpWarps: "Liste aller verfügbaren Insel-Warps."
   islandDeletedLifeboats: "Insel gelöscht! Zu den Rettungskapseln!!!"
-  islandLevelis: "Insel-Level: "
+  islandLevelis: "Insel-Level: [level]"
   new: "Es wird eine neue Insel für dich erstellt..."
   requiredPointsToNextLevel: "Du brauchst noch [points] Punkte, um das Insel-Level [next] zu erreichen!"
   resetConfirm: "&4Deine Insel und alles was du besitzt wird gelöscht. Wenn du das wirklich möchtest dann gib &c/[label] confirm&4 innerhalb von [seconds] Sekunden ein!"

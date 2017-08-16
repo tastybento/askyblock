@@ -304,7 +304,7 @@ island:
   helpWarp: "&e傳送到玩家的傳送點."
   helpWarps: "&b列出所有可用的傳送點."
   islandDeletedLifeboats: "&c島嶼已&4&l刪除!"
-  islandLevelis: "&6島嶼等級為&b&l"
+  islandLevelis: "&6島嶼等級為&b&l : [level]"
   new: "&b&l正在為你創建一個新的島嶼..."
   requiredPointsToNextLevel: "You need [points] more points to reach level [next]!"
   resetConfirm: "請在&e10&c秒內輸入&e/[label] confirm &c來確認你的操作,然後重新開始!"

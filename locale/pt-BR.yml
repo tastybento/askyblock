@@ -304,7 +304,7 @@ island:
   helpWarp: "Faz warp para a placa de boas-vindas do jogador <player>."
   helpWarps: "Mostra todos os pontos de warp em placas de boas-vindas."
   islandDeletedLifeboats: "A ilha foi deletada! Corra para os botes salva-vidas!"
-  islandLevelis: "O nível de ilha é"
+  islandLevelis: "O nível de ilha é : [level]"
   new: "Criando uma nova ilha para você..."
   requiredPointsToNextLevel: "You need [points] more points to reach level [next]!"
   resetConfirm: "Digite /[label] confirm dentro de [seconds] segundos para apagar a sua ilha e reiniciá-la!"

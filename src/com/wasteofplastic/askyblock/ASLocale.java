@@ -1052,7 +1052,7 @@ public class ASLocale {
                 locale.getString("island.errorLevelNotReady", "Can't use that command right now! Try again in a few seconds."));
         islanderrorInvalidPlayer = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("island.errorInvalidPlayer", "That player is invalid or does not have an island!"));
-        islandislandLevelis = ChatColor.translateAlternateColorCodes('&', locale.getString("island.islandLevelis", "Island level is"));
+        islandislandLevelis = ChatColor.translateAlternateColorCodes('&', locale.getString("island.islandLevelis", "Island level is : [level]"));
         islandrequiredPointsToNextLevel = ChatColor.translateAlternateColorCodes('&', locale.getString("island.requiredPointsToNextLevel", "You need [points] more points to reach level [next]!"));
 
         invitehelp = ChatColor.translateAlternateColorCodes('&',

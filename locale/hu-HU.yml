@@ -304,7 +304,7 @@ island:
   helpWarp: "Elteleportál egy játékoshoz."
   helpWarps: "Kilistázza a teleportokat."
   islandDeletedLifeboats: "A sziget törölve! Menj a mentőcsónakokra!"
-  islandLevelis: "A sziget szintje:"
+  islandLevelis: "A sziget szintje: [level]"
   new: "A szigeted előkészítése folyamatban ..."
   requiredPointsToNextLevel: "Még&7 [points]&a pont kell még a(z)&7 [next].&a szint eléréséhez!"
   resetConfirm: "Kérlek, írd be: /[label] confirm Erre [seconds] másodperced van!"

@@ -304,7 +304,7 @@ island:
   helpWarp: "port na hracov warp"
   helpWarps: "ukaze vsetky dostupne warpy"
   islandDeletedLifeboats: "Ostrov vymazany"
-  islandLevelis: "Level ostrova je"
+  islandLevelis: "Level ostrova je : [level]"
   new: "Vytvaram novy ostrov..."
   requiredPointsToNextLevel: "You need [points] more points to reach level [next]!"
   resetConfirm: "Pouzi /[label] confirm pocas [seconds] sekund pre pre restart ostrova"

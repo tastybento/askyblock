@@ -305,7 +305,7 @@ island:
   helpWarp: "Warp to <player>'s welcome sign."
   helpWarps: "Lists all available welcome-sign warps."
   islandDeletedLifeboats: "Island deleted! Head to the lifeboats!"
-  islandLevelis: "Island level is"
+  islandLevelis: "Island level is : [level]"
   new: "Creating a new island for you..."
   requiredPointsToNextLevel: "You need [points] more points to reach level [next]!"
   resetConfirm: "Type /[label] confirm within [seconds] seconds to delete your island and restart!"
