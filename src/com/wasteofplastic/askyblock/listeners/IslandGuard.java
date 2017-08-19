@@ -75,6 +75,7 @@ import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerEggThrowEvent;
+import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -1893,6 +1894,83 @@ public class IslandGuard implements Listener {
         }
     }
 
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onFishing(PlayerFishEvent e) {
+        if (DEBUG) {
+            plugin.getLogger().info("Player fish event " + e.getEventName());
+            plugin.getLogger().info("Player fish event " + e.getCaught());
+        }
+        if (e.getCaught() == null)
+            return;
+        Player p = e.getPlayer();
+        if (!inWorld(p)) {
+            return;
+        }
+        if (p.isOp() || VaultHelper.checkPerm(p, Settings.PERMPREFIX + "mod.bypassprotect")) {
+            // You can do anything if you are Op of have the bypass
+            return;
+        }
+        // Handle rods
+        Island island = plugin.getGrid().getProtectedIslandAt(e.getCaught().getLocation());
+        // PVP check
+        if (e.getCaught() instanceof Player) {
+            if (island == null 
+                    && (e.getCaught().getWorld().getEnvironment().equals(Environment.NORMAL) 
+                            && !Settings.defaultWorldSettings.get(SettingsFlag.PVP))
+                    || ((e.getCaught().getWorld().getEnvironment().equals(Environment.NETHER) 
+                            && !Settings.defaultWorldSettings.get(SettingsFlag.NETHER_PVP)))) {
+                Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).targetInNoPVPArea);
+                e.setCancelled(true);
+                e.getHook().remove();
+                return;
+            }
+            if (island != null
+                    && (e.getCaught().getWorld().getEnvironment().equals(Environment.NORMAL)
+                            && !island.getIgsFlag(SettingsFlag.PVP))
+                    || ((e.getCaught().getWorld().getEnvironment().equals(Environment.NETHER)
+                            && !island.getIgsFlag(SettingsFlag.NETHER_PVP)))) {
+                Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).targetInNoPVPArea);
+                e.setCancelled(true);
+                e.getHook().remove();
+                return;
+            }
+        }
+        if (!plugin.getGrid().playerIsOnIsland(e.getPlayer())) {
+            if (e.getCaught() instanceof Animals) {
+                if (island == null && !Settings.defaultWorldSettings.get(SettingsFlag.HURT_MOBS)) {
+                    Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
+                    e.setCancelled(true);
+                    e.getHook().remove();
+                    return;
+                }
+                if (island != null) {
+                    if ((!island.getIgsFlag(SettingsFlag.HURT_MOBS) && !island.getMembers().contains(p.getUniqueId()))) {
+                        Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
+                        e.setCancelled(true);
+                        e.getHook().remove();
+                        return;
+                    }
+                }
+            }
+            // Monster protection
+            if (e.getCaught() instanceof Monster || e.getCaught() instanceof Squid || e.getCaught() instanceof Slime) {
+                if (island == null && !Settings.defaultWorldSettings.get(SettingsFlag.HURT_MONSTERS)) {
+                    Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
+                    e.setCancelled(true);
+                    e.getHook().remove();
+                    return;
+                }
+                if (island != null) {
+                    if ((!island.getIgsFlag(SettingsFlag.HURT_MONSTERS) && !island.getMembers().contains(p.getUniqueId()))) {
+                        Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
+                        e.setCancelled(true);
+                        e.getHook().remove();
+                        return;
+                    }
+                }
+            }
+        }
+    }
 
     /**
      * Handles hitting minecarts or feeding animals
