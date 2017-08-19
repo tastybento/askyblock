@@ -96,7 +96,7 @@ public class BannerBlock {
         Banner banner = (Banner) block.getState();
         banner.setBaseColor(bannerBaseColor);
         banner.setPatterns(bannerPattern);
-        banner.update();
+        banner.update(true, false);
         return true;
     }
 

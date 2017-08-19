@@ -699,7 +699,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 if (plugin.getWarpSignsListener().addWarp(target, lastBlock.getLocation())) {
                     // Change sign color to green
                     sign.setLine(0, ChatColor.GREEN + plugin.myLocale().warpswelcomeLine);
-                    sign.update();
+                    sign.update(true, false);
                     Util.sendMessage(sender, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).adminResetSignRescued.replace("[name]", plugin.getPlayers().getName(target)));
                     return true;
                 }

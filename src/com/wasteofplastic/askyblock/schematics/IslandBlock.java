@@ -558,7 +558,7 @@ public class IslandBlock {
             for (String line : signText) {
                 sign.setLine(index++, line);
             }
-            sign.update();
+            sign.update(true, false);
         } else if (banner != null) {
             banner.set(block);
         } else if (skull != null){
@@ -571,6 +571,8 @@ public class IslandBlock {
             }
             CreatureSpawner cs = (CreatureSpawner)block.getState();
             cs.setSpawnedType(spawnerBlockType);
+            //Bukkit.getLogger().info("DEBUG: setting spawner");
+            cs.update(true, false);
         } else if (!chestContents.isEmpty()) {
             if (block.getTypeId() != typeId) {
                 block.setTypeId(typeId);

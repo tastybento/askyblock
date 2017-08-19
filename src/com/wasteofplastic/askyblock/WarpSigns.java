@@ -177,7 +177,7 @@ public class WarpSigns implements Listener {
                                 if (oldSign.getLine(0).equalsIgnoreCase(ChatColor.GREEN + plugin.myLocale().warpswelcomeLine)) {
                                     //plugin.getLogger().info("DEBUG: Old sign had a green welcome");
                                     oldSign.setLine(0, ChatColor.RED + plugin.myLocale().warpswelcomeLine);
-                                    oldSign.update();
+                                    oldSign.update(true, false);
                                     Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpsdeactivate);
                                     removeWarp(player.getUniqueId());
                                     Bukkit.getPluginManager().callEvent(new WarpRemoveEvent(plugin, oldSign.getLocation(), player.getUniqueId()));
@@ -264,7 +264,7 @@ public class WarpSigns implements Listener {
                             sign.setLine(0, ChatColor.GREEN + plugin.myLocale().warpswelcomeLine);
                             sign.setLine(1, name);
                             sign.setLine(2, "Test 2");
-                            sign.update();
+                            sign.update(true, false);
                         }
                         // End test code
                     }
@@ -343,7 +343,7 @@ public class WarpSigns implements Listener {
             if (s != null) {
                 if (s.getLine(0).equalsIgnoreCase(ChatColor.GREEN + plugin.myLocale().warpswelcomeLine)) {
                     s.setLine(0, ChatColor.RED + plugin.myLocale().warpswelcomeLine);
-                    s.update();
+                    s.update(true, false);
                 }
             }
         }

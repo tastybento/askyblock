@@ -1013,7 +1013,7 @@ public class Schematic {
                 // BlockFace direction = ((org.bukkit.material.Sign)
                 // sign.getData()).getFacing();
                 //((org.bukkit.material.Sign) sign.getData()).setFacingDirection(BlockFace.NORTH);
-                sign.update();
+                sign.update(true, false);
             }
         }
         if (chest != null) {
@@ -1446,7 +1446,7 @@ public class Schematic {
         sign.setLine(2, ASkyBlock.getPlugin().myLocale(player.getUniqueId()).signLine3.replace("[player]", player.getName()));
         sign.setLine(3, ASkyBlock.getPlugin().myLocale(player.getUniqueId()).signLine4.replace("[player]", player.getName()));
         ((org.bukkit.material.Sign) sign.getData()).setFacingDirection(BlockFace.NORTH);
-        sign.update();
+        sign.update(true, false);
         // Place the chest - no need to use the safe spawn function
         // because we
         // know what this island looks like
@@ -1458,7 +1458,7 @@ public class Schematic {
             final Inventory inventory = chest.getInventory();
             inventory.clear();
             inventory.setContents(Settings.chestItems);
-            chest.update();
+            chest.update(true, false);
         }
         // Fill the chest and orient it correctly (1.8 faces it north!
         DirectionalContainer dc = (DirectionalContainer) blockToChange.getState().getData();

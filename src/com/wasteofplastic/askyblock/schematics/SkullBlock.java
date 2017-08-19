@@ -103,7 +103,7 @@ public class SkullBlock {
         if(skullTextureValue != null){
             setSkullWithNonPlayerProfile(skullTextureValue, skullTextureSignature, skullOwnerUUID, skullOwnerName, skull);
         }
-        skull.update();
+        skull.update(true, false);
         return true;
     }
 
