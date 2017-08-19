@@ -1454,11 +1454,10 @@ public class Schematic {
         blockToChange.setType(Material.CHEST);
         // Only set if the config has items in it
         if (Settings.chestItems.length > 0) {
-            final Chest chest = (Chest) blockToChange.getState();
+            final InventoryHolder chest = (InventoryHolder) blockToChange.getState();
             final Inventory inventory = chest.getInventory();
-            inventory.clear();
+            //inventory.clear();
             inventory.setContents(Settings.chestItems);
-            chest.update(true, false);
         }
         // Fill the chest and orient it correctly (1.8 faces it north!
         DirectionalContainer dc = (DirectionalContainer) blockToChange.getState().getData();
