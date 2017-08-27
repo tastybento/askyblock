@@ -247,26 +247,28 @@ public class WarpSigns implements Listener {
                 UUID playerUUID = UUID.fromString(s);
                 if (playerUUID != null) {
                     Location l = Util.getLocationString((String) temp.get(s));
-                    //plugin.getLogger().info("DEBUG: Loading warp at " + l);
-                    Block b = l.getBlock();
-                    // Check that a warp sign is still there
-                    if (b.getType().equals(Material.SIGN_POST) || b.getType().equals(Material.WALL_SIGN)) {
-                        warpList.put(playerUUID, l);
-                    } else {
-                        plugin.getLogger().warning("Warp at location " + temp.get(s) + " has no sign - removing.");
-                        // Test code
-                        if (DEBUG) {
-                            String name = plugin.getTinyDB().getPlayerName(playerUUID);
+                    if (l != null) {
+                        //plugin.getLogger().info("DEBUG: Loading warp at " + l);
+                        Block b = l.getBlock();
+                        // Check that a warp sign is still there
+                        if (b.getType().equals(Material.SIGN_POST) || b.getType().equals(Material.WALL_SIGN)) {
                             warpList.put(playerUUID, l);
-                            b.getRelative(BlockFace.DOWN).setType(Material.DIRT);
-                            b.setType(Material.SIGN_POST);
-                            Sign sign = (Sign)b.getState();
-                            sign.setLine(0, ChatColor.GREEN + plugin.myLocale().warpswelcomeLine);
-                            sign.setLine(1, name);
-                            sign.setLine(2, "Test 2");
-                            sign.update(true, false);
+                        } else {
+                            plugin.getLogger().warning("Warp at location " + temp.get(s) + " has no sign - removing.");
+                            // Test code
+                            if (DEBUG) {
+                                String name = plugin.getTinyDB().getPlayerName(playerUUID);
+                                warpList.put(playerUUID, l);
+                                b.getRelative(BlockFace.DOWN).setType(Material.DIRT);
+                                b.setType(Material.SIGN_POST);
+                                Sign sign = (Sign)b.getState();
+                                sign.setLine(0, ChatColor.GREEN + plugin.myLocale().warpswelcomeLine);
+                                sign.setLine(1, name);
+                                sign.setLine(2, "Test 2");
+                                sign.update(true, false);
+                            }
+                            // End test code
                         }
-                        // End test code
                     }
                 }
             } catch (Exception e) {
@@ -382,6 +384,15 @@ public class WarpSigns implements Listener {
      * @return String set of warps
      */
     public Set<UUID> listWarps() {
+        // Check if any of the warp locations are null
+        Iterator<Entry<UUID, Location>> it = warpList.entrySet().iterator();
+        while (it.hasNext()) {
+            Entry<UUID, Location> en = it.next();
+            // Check if the location of the warp still exists, if not, delete it
+            if (en.getValue() == null) {
+                it.remove();
+            }
+        }
         return warpList.keySet();
     }
 
@@ -391,15 +402,24 @@ public class WarpSigns implements Listener {
     public Collection<UUID> listSortedWarps() {
         // Bigger value of time means a more recent login
         TreeMap<Long, UUID> map = new TreeMap<Long, UUID>();
-        for (UUID uuid : warpList.keySet()) {
-            // If never played, will be zero
-            long lastPlayed = plugin.getServer().getOfflinePlayer(uuid).getLastPlayed();
-            // This aims to avoid the chance that players logged off at exactly the same time
-            if (!map.isEmpty() && map.containsKey(lastPlayed)) {
-                lastPlayed = map.firstKey() - 1;
+        Iterator<Entry<UUID, Location>> it = warpList.entrySet().iterator();
+        while (it.hasNext()) {
+            Entry<UUID, Location> en = it.next();
+            // Check if the location of the warp still exists, if not, delete it
+            if (en.getValue() == null) {
+                it.remove();
+            } else {
+                UUID uuid = en.getKey();
+                // If never played, will be zero
+                long lastPlayed = plugin.getServer().getOfflinePlayer(uuid).getLastPlayed();
+                // This aims to avoid the chance that players logged off at exactly the same time
+                if (!map.isEmpty() && map.containsKey(lastPlayed)) {
+                    lastPlayed = map.firstKey() - 1;
+                }
+                map.put(lastPlayed, uuid);
             }
-            map.put(lastPlayed, uuid);
         }
+
         Collection<UUID> result = map.descendingMap().values();
         // Fire event
         WarpListEvent event = new WarpListEvent(plugin, result);
@@ -417,6 +437,10 @@ public class WarpSigns implements Listener {
      */
     public Location getWarp(UUID playerUUID) {
         if (playerUUID != null && warpList.containsKey(playerUUID)) {
+            if (warpList.get(playerUUID) == null) {
+                warpList.remove(playerUUID);
+                return null;
+            }
             return warpList.get(playerUUID);
         } else {
             return null;

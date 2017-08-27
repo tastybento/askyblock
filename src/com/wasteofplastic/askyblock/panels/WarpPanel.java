@@ -167,6 +167,10 @@ public class WarpPanel implements Listener {
         ItemMeta meta = playerSkull.getItemMeta();
         //get the sign info
         Location signLocation = plugin.getWarpSignsListener().getWarp(playerUUID);
+        if (signLocation == null) {
+            plugin.getWarpSignsListener().removeWarp(playerUUID);
+            return playerSkull;
+        }            
         //plugin.getLogger().info("DEBUG: block type = " + signLocation.getBlock().getType());
         // Get the sign info if it exists
         if (signLocation.getBlock().getType().equals(Material.SIGN_POST) || signLocation.getBlock().getType().equals(Material.WALL_SIGN)) {
