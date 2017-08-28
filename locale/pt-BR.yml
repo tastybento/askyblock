@@ -518,6 +518,8 @@ topTen:
   guiHeading: "&E&L<!> Island: &6&N[name]&7 (#[rank])"
   guiTitle: "Top 10 Islands"
   header: "Essas são as ilhas 'Top 10':"
+visitors:
+  protected: "Visitors protected"
 warps: 
   deactivate: "Desativando a placa antiga!"
   errorDoesNotExist: "Esse ponto de warp não existe!"

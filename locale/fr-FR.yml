@@ -517,6 +517,8 @@ topTen:
   guiHeading: "&E&L<!> Île: &6&N[name]&7 (#[rank])"
   guiTitle: "Top 10 des îles"
   header: "Top 10 des îles du serveur:"
+visitors:
+  protected: "Visitors protected"
 warps: 
   deactivate: "Désactivation de l'ancien panneau."
   errorDoesNotExist: "Ce warp n'existe pas!"

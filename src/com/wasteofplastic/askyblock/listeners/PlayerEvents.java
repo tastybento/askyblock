@@ -27,11 +27,15 @@ import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World.Environment;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
@@ -871,6 +875,56 @@ public class PlayerEvents implements Listener {
         }
     }
 
+
+    /**
+     * Prevents visitors from getting damage if invinciblevisitors option is set to TRUE
+     * @param e
+     */
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onVisitorGetDamage(EntityDamageByEntityEvent e){
+        if(!Settings.invincibleVisitors) return;
+        if (!Settings.visitorDamagePrevention.contains(e.getCause())) return;
+        if(!(e.getEntity() instanceof Player)) return;
+        // This only handles entity attacks by other players
+        if (!e.getCause().equals(DamageCause.ENTITY_ATTACK)) return;
+        Player p = (Player) e.getEntity();
+        if (!IslandGuard.inWorld(p) || plugin.getGrid().locationIsOnIsland(p, p.getLocation())) return;
+        // Find out who the attacker is
+        Player attacker = null;
+        if (e.getDamager() instanceof Player) {
+            attacker = (Player)e.getDamager();
+        }
+        if (e.getDamager() instanceof Projectile) {
+            Projectile projectile = (Projectile)e.getDamager();
+            if (projectile.getShooter() instanceof Player) {
+                attacker = (Player)projectile.getShooter();
+            }
+        }
+        // If we cannot work out who is the attacker then just prevent the damage and return
+        if (attacker == null) {
+            e.setCancelled(true);
+            return;
+        }
+        // Check if at spawn
+        if (plugin.getGrid().isAtSpawn(e.getEntity().getLocation())) {
+            // Check if PVP is allowed at spawn or not
+            if ((e.getEntity().getWorld().getEnvironment().equals(Environment.NORMAL) 
+                    && plugin.getGrid().getIslandAt(e.getEntity().getLocation()).getIgsFlag(SettingsFlag.PVP))
+                    || (e.getEntity().getWorld().getEnvironment().equals(Environment.NETHER) 
+                            && plugin.getGrid().getIslandAt(e.getEntity().getLocation()).getIgsFlag(SettingsFlag.NETHER_PVP))) {
+                // Damage allowed            
+                return;
+            }
+            // PVP is not allowed
+            attacker.sendMessage(ChatColor.RED + plugin.myLocale(attacker.getUniqueId()).visitorsProtected);
+            e.setCancelled(true);
+        } else {
+            // Not at spawn, protect visitor
+            attacker.sendMessage(ChatColor.RED + plugin.myLocale(attacker.getUniqueId()).visitorsProtected);
+            e.setCancelled(true);
+        }
+    }
+    
     /**
      * Prevents visitors from getting damage if invinciblevisitors option is set to TRUE
      * @param e
@@ -879,7 +933,8 @@ public class PlayerEvents implements Listener {
     public void onVisitorGetDamage(EntityDamageEvent e){
         if(!Settings.invincibleVisitors) return;
         if(!(e.getEntity() instanceof Player)) return;
-
+        // Entity attacks are handled elsewhere
+        if (e.getCause().equals(DamageCause.ENTITY_ATTACK)) return;
         Player p = (Player) e.getEntity();
         if (!IslandGuard.inWorld(p) || plugin.getGrid().locationIsOnIsland(p, p.getLocation())) return;
 

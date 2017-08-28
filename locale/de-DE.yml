@@ -517,6 +517,8 @@ topTen:
   guiHeading: "&E&L<!> Island: &6&N[name]&7 (#[rank])"
   guiTitle: "Top 10 Inseln"
   header: "Das sind die Top 10 Inseln:"
+visitors:
+  protected: "Visitors protected"
 warps: 
   deactivate: "Das alte Insel-Warp-Schild wurde deaktiviert!"
   errorDoesNotExist: "Dieser Insel-Warp existiert nicht!"

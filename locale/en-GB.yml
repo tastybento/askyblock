@@ -520,6 +520,8 @@ topTen:
   guiHeading: "&E&L<!> Island: &6&N[name]&7 (#[rank])"
   guiTitle: "Top 10 Islands"
   header: "These are the Top 10 islands:"
+visitors:
+  protected: "Visitors protected"
 warps: 
   deactivate: "Deactivating old sign!"
   errorDoesNotExist: "That warp doesn't exist!"

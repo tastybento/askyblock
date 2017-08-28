@@ -513,6 +513,8 @@ topTen:
   errorNotReady: "En iyi 10 listesi henüz oluşturulmadı!"
   guiTitle: "Top 10 Islands"
   header: "Bunlar en iyi 10 ada listesindeki adalar:"
+visitors:
+  protected: "Visitors protected"
 warps: 
   deactivate: "Eski tabela devre dışı bırakılıyor!"
   errorDoesNotExist: "Böyle bir ışınlanma noktası yok!"

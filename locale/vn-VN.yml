@@ -456,6 +456,8 @@ topTen:
   guiHeading: "&E&L<!> Island: &6&N[name]&7 (#[rank])"
   guiTitle: "Top 10 Islands"
   header: "Đây là Top 10 hòn đảo:"
+visitors:
+  protected: "Visitors protected"
 warps:
   deactivate: "Việc tắt dấu cũ!"
   errorDoesNotExist: "Tdọc mà không tồn tại!"

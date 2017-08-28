@@ -518,6 +518,8 @@ topTen:
   guiHeading: "&E&L<!> Island: &6&N[name]&7 (#[rank])"
   guiTitle: "Top 10 Islands"
   header: "To są najlepsze wyspy z Top 10:"
+visitors:
+  protected: "Visitors protected"
 warps: 
   deactivate: "Deaktywacja starej tabliczki!"
   errorDoesNotExist: "Ten teleport nie istnieje!"

@@ -518,6 +518,8 @@ topTen:
   guiHeading: "&E&L<!> Sziget: &6&N[name]&7 (#[rank])"
   guiTitle: "Top 10 szigetek"
   header: "A 10 legjobb sziget:"
+visitors:
+  protected: "Visitors protected"
 warps: 
   deactivate: "A régi táblák kikapcsolása!"
   errorDoesNotExist: "Ez a warp nem létezik!"

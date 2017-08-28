@@ -516,6 +516,8 @@ topTen:
   guiHeading: "&E&L<!> Island: &6&N[name]&7 (#[rank])"
   guiTitle: "Top 10 Islands"
   header: "Este es el top 10 de islas:"
+visitors:
+  protected: "Visitors protected"
 warps:
   deactivate: "Desactivando cartel viejo!"
   errorDoesNotExist: "Ese warp no existe!"

@@ -517,6 +517,8 @@ topTen:
   guiHeading: "&E&L<!> Island: &6&N[name]&7 (#[rank])"
   guiTitle: "Топ-10 островов"
   header: "Это Топ-10 островов:"
+visitors:
+  protected: "Visitors protected"
 warps: 
   deactivate: "Деактивация старой таблички!"
   errorDoesNotExist: "Этот варп не существует!"

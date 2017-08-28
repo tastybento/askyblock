@@ -518,6 +518,8 @@ topTen:
   guiHeading: "&E&L<!> Island: &6&N[name]&7 (#[rank])"
   guiTitle: "Top 10 Islands"
   header: "상위 10개의 섬:"
+visitors:
+  protected: "Visitors protected"
 warps: 
   deactivate: "기존 표지판을 비활성화 중입니다!"
   errorDoesNotExist: "그 워프는 존재하지 않습니다!"

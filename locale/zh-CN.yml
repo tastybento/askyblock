@@ -517,6 +517,8 @@ topTen:
   guiHeading: "&E&L<!> 岛屿: &6&N[name]&7 (#[rank])"
   guiTitle: "前10岛屿"
   header: "排名前10的岛屿:"
+visitors:
+  protected: "Visitors protected"
 warps: 
   deactivate: 旧的传送点被替换!
   errorDoesNotExist: 传送点不存在!

@@ -664,6 +664,9 @@ public class ASLocale {
     public String needRelog;
 
 
+    public String visitorsProtected;
+
+
     /**
      * Creates a locale object full of localized strings for a language
      * @param plugin
@@ -1445,6 +1448,7 @@ public class ASLocale {
         adminSetRangeUpdated = ChatColor.translateAlternateColorCodes('&', locale.getString("adminSetRange.updated", "Island range updated to [number]"));
         
         needRelog = ChatColor.translateAlternateColorCodes('&', locale.getString("needRelog", "You need to relog in order to see the changes."));
+        visitorsProtected = ChatColor.translateAlternateColorCodes('&', locale.getString("visitors.protected", "Visitors protected"));
     }
 
     /**

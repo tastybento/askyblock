@@ -447,6 +447,8 @@ teamchat:
 topTen: 
   errorNotReady: "Top to liste er ikke genereret endnu!"
   header: "Her er Top 10 Ø'erne:"
+visitors:
+  protected: "Visitors protected"
 warps: 
   deactivate: "Deaktiverer gammelt skilt!"
   errorDoesNotExist: "Det warp eksisterer ikke!"

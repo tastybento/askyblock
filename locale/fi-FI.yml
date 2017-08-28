@@ -518,6 +518,8 @@ topTen:
   guiHeading: "&E&L<!> Island: &6&N[name]&7 (#[rank])"
   guiTitle: "Top 10 Islands"
   header: "Top 10 saaret:"
+visitors:
+  protected: "Visitors protected"
 warps: 
   deactivate: "Poistetaan vanha kyltti käytöstä!"
   errorDoesNotExist: "Tuota warppia ei ole olemassa!"
