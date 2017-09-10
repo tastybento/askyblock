@@ -1712,14 +1712,12 @@ public class IslandGuard implements Listener {
                         return;
                     } else {
                         Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
-                        e.getPlayer().setFoodLevel(e.getPlayer().getFoodLevel() - 2);
                         e.setCancelled(true);
                         return;
                     }
                 }
                 if (!island.getIgsFlag(SettingsFlag.BREAK_BLOCKS)) {
                     Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
-                    e.getPlayer().setFoodLevel(e.getPlayer().getFoodLevel() - 2);
                     e.setCancelled(true);
                     return;
                 }
