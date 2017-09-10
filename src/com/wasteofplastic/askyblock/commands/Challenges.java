@@ -129,14 +129,14 @@ public class Challenges implements CommandExecutor, TabCompleter {
             if (cmd[0].equalsIgnoreCase("help") || cmd[0].equalsIgnoreCase("complete") || cmd[0].equalsIgnoreCase("c")) {
                 Util.sendMessage(sender, ChatColor.GOLD + plugin.myLocale(player.getUniqueId()).challengeshelp1);
                 Util.sendMessage(sender, ChatColor.GOLD + plugin.myLocale(player.getUniqueId()).challengeshelp2);
-            } else if (isLevelAvailable(player, getChallengeConfig().getString("challenges.challengeList." + cmd[0].toLowerCase().replaceAll("\\.","") + ".level"))) {
+            } else if (isLevelAvailable(player, getChallengeConfig().getString("challenges.challengeList." + cmd[0].toLowerCase() + ".level"))) {
                 // Provide info on the challenge
                 // Challenge Name
                 // Description
                 // Type
                 // Items taken or not
                 // island or not
-                final String challenge = cmd[0].toLowerCase().toLowerCase().replaceAll("\\.","");
+                final String challenge = cmd[0].toLowerCase();
                 Util.sendMessage(sender, ChatColor.GOLD + plugin.myLocale(player.getUniqueId()).challengesname + ": " + ChatColor.WHITE + challenge);
                 Util.sendMessage(sender, ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).challengeslevel + ": " + ChatColor.GOLD
                         + getChallengeConfig().getString("challenges.challengeList." + challenge + ".level", ""));
@@ -204,9 +204,9 @@ public class Challenges implements CommandExecutor, TabCompleter {
                         return true;
                     }
                 }
-                if (checkIfCanCompleteChallenge(player, cmd[1].toLowerCase().toLowerCase().replaceAll("\\.",""))) {
+                if (checkIfCanCompleteChallenge(player, cmd[1].toLowerCase())) {
                     int oldLevel = getLevelDone(player);
-                    giveReward(player, cmd[1].toLowerCase().toLowerCase().replaceAll("\\.",""));
+                    giveReward(player, cmd[1].toLowerCase());
                     //Save player
                     plugin.getPlayers().save(player.getUniqueId());
                     int newLevel = getLevelDone(player);
@@ -754,9 +754,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
      * @param level
      * @return int of challenges that must still be completed to finish level.
      */
-    public int checkLevelCompletion(final Player player, String level) {
-        // Remove any dots from the level name
-        level = level.replaceAll("\\.","");
+    public int checkLevelCompletion(final Player player, final String level) {
         if (Settings.freeLevels.contains(level)) {
             return 0;
         }
@@ -785,7 +783,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
      * @param challenge
      * @return true if player can complete otherwise false
      */
-    public boolean checkIfCanCompleteChallenge(final Player player, String challenge) {
+    public boolean checkIfCanCompleteChallenge(final Player player, final String challenge) {
         // plugin.getLogger().info("DEBUG: " + player.getDisplayName() + " " +
         // challenge);
         // plugin.getLogger().info("DEBUG: 1");
@@ -795,8 +793,6 @@ public class Challenges implements CommandExecutor, TabCompleter {
             Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).challengesunknownChallenge + " '" + challenge + "'");
             return false;
         }*/
-        // Remove any dots from the challenge name (can be used to exploit)
-        challenge = challenge.replaceAll("\\.","");
         // Check if this challenge level is available
         String level = getChallengeConfig().getString("challenges.challengeList." + challenge + ".level");
         if (level == null) {
