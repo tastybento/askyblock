@@ -248,7 +248,7 @@ public class ControlPanel implements Listener {
                 plugin.getLogger().warning("Player was accessing Challenge Inventory, but it had lost state - was server restarted?");
                 inventory.clear();
                 player.closeInventory();
-                player.performCommand(Settings.CHALLENGECOMMAND);
+                Util.runCommand(player, Settings.CHALLENGECOMMAND);
                 return;
             }
             // plugin.getLogger().info("DEBUG: Challenges size = " +
@@ -296,7 +296,7 @@ public class ControlPanel implements Listener {
                         player.closeInventory();
                         player.openInventory(plugin.getChallenges().challengePanel(player, item.getNextSection()));
                     } else if (item.getCommand() != null) {
-                        player.performCommand(item.getCommand());
+                        Util.runCommand(player, item.getCommand());
                         inventory.clear();
                         player.closeInventory();
                         player.openInventory(plugin.getChallenges().challengePanel(player));
@@ -416,7 +416,7 @@ public class ControlPanel implements Listener {
                         event.setCancelled(true);
                         // plugin.getLogger().info("DEBUG: performing command "
                         // + command);
-                        player.performCommand(command);
+                        Util.runCommand(player, command);
                         return;
                     }
                     if (!nextSection.isEmpty()) {

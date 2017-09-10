@@ -265,7 +265,7 @@ public class WarpPanel implements Listener {
             return;
         }
         // The player that clicked the item
-        Player player = (Player) event.getWhoClicked();
+        final Player player = (Player) event.getWhoClicked();
         String title = inventory.getTitle();
         if (!inventory.getTitle().startsWith(plugin.myLocale(player.getUniqueId()).warpsTitle + " #")) {
             return;
@@ -303,14 +303,14 @@ public class WarpPanel implements Listener {
             if (command != null) {
                 if (command.equalsIgnoreCase(ChatColor.stripColor(plugin.myLocale().warpsNext))) {
                     player.closeInventory();
-                    player.performCommand(Settings.ISLANDCOMMAND + " warps " + (panelNumber+1));
+                    Util.runCommand(player, Settings.ISLANDCOMMAND + " warps " + (panelNumber+1));
                 } else if (command.equalsIgnoreCase(ChatColor.stripColor(plugin.myLocale().warpsPrevious))) {
                     player.closeInventory();
-                    player.performCommand(Settings.ISLANDCOMMAND + " warps " + (panelNumber-1));
+                    Util.runCommand(player, Settings.ISLANDCOMMAND + " warps " + (panelNumber-1));
                 } else {
                     player.closeInventory();
                     Util.sendMessage(player, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).warpswarpToPlayersSign.replace("<player>", command));
-                    player.performCommand(Settings.ISLANDCOMMAND + " warp " + command);
+                    Util.runCommand(player, Settings.ISLANDCOMMAND + " warp " + command);
                 }
             }
         }

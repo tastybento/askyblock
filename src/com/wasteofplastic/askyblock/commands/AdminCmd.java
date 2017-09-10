@@ -2072,7 +2072,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 }
                 // This is a hack to clear any pending invitations
                 if (targetPlayer != null) {
-                    targetPlayer.performCommand(Settings.ISLANDCOMMAND + " decline");
+                    Util.runCommand(targetPlayer, Settings.ISLANDCOMMAND + " decline");
                 }
                 // If the invitee has an island of their own
                 if (plugin.getPlayers().hasIsland(playerUUID)) {

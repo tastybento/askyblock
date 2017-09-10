@@ -146,10 +146,10 @@ public class SchematicsPanel implements Listener {
                     if (Settings.useEconomy && VaultHelper.setupEconomy()) {
                         VaultHelper.econ.withdrawPlayer(player, item.getCost());                   
                     } 
-                    player.performCommand(Settings.ISLANDCOMMAND + " make " + item.getHeading());
+                    Util.runCommand(player, Settings.ISLANDCOMMAND + " make " + item.getHeading());
                 }
             } else {
-                player.performCommand(Settings.ISLANDCOMMAND + " make " + item.getHeading());
+                Util.runCommand(player, Settings.ISLANDCOMMAND + " make " + item.getHeading());
             }
             schematicItems.remove(player.getUniqueId());
             thisPanel.clear();   

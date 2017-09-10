@@ -1055,7 +1055,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                 // Island command
                 // Check if this should open the Control Panel or not
                 if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.controlpanel") && plugin.getPlayers().getControlPanel(playerUUID)) {
-                    player.performCommand(Settings.ISLANDCOMMAND + " cp");
+                    Util.runCommand(player, Settings.ISLANDCOMMAND + " cp");
                 } else {
                     // Check permission
                     if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.go")) {
@@ -1455,7 +1455,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                 // Check this player has an island
                 if (!plugin.getPlayers().hasIsland(playerUUID)) {
                     // No so just start an island
-                    player.performCommand(Settings.ISLANDCOMMAND);
+                    Util.runCommand(player, Settings.ISLANDCOMMAND);
                     return true;
                 }
                 if (plugin.getPlayers().inTeam(playerUUID)) {

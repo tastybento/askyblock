@@ -487,7 +487,7 @@ public class Util {
     public static List<ItemStack> getPlayerInHandItems(Player player) {
         List<ItemStack> result = new ArrayList<ItemStack>(2);
         if (plugin.getServer().getVersion().contains("(MC: 1.7")
-        || plugin.getServer().getVersion().contains("(MC: 1.8")) {
+                || plugin.getServer().getVersion().contains("(MC: 1.8")) {
             if (player.getItemInHand() != null)
                 result.add(player.getItemInHand());
             return result;
@@ -498,7 +498,7 @@ public class Util {
             result.add(player.getInventory().getItemInOffHand());
         return result;
     }
-    
+
     /**
      * Checks if player has this type of item in either hand
      * @param player
@@ -507,7 +507,7 @@ public class Util {
      */
     public static boolean playerIsHolding(Player player, Material type) {
         if (plugin.getServer().getVersion().contains("(MC: 1.7")
-        || plugin.getServer().getVersion().contains("(MC: 1.8")) {
+                || plugin.getServer().getVersion().contains("(MC: 1.8")) {
             if (player.getItemInHand() != null && player.getItemInHand().getType().equals(type)) {
                 return true;
             }
@@ -520,5 +520,15 @@ public class Util {
             return true;
         }
         return false;
+    }
+
+    public static void runCommand(final Player player, final String string) {
+        plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
+
+            @Override
+            public void run() {
+                player.performCommand(string);               
+            }});
+
     }
 }
