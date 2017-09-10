@@ -490,7 +490,8 @@ public class IslandGuard1_9 implements Listener {
         }
         // Try to get the shooter
         Projectile projectile = (Projectile) e.getEntity();
-        plugin.getLogger().info("shooter = " + projectile.getShooter());
+        if (DEBUG)
+            plugin.getLogger().info("shooter = " + projectile.getShooter());
         if (projectile.getShooter() != null && projectile.getShooter() instanceof Player) {
             UUID uuid = ((Player)projectile.getShooter()).getUniqueId();
             // Store it and remove it when the effect is gone
