@@ -88,7 +88,7 @@ public class IPItem {
     }
 
     public IPItem(Boolean boolean1, Material material, String name, UUID uuid) {
-        createToggleableItem(flagValue, material, 0, name, uuid);
+        createToggleableItem(boolean1, material, 0, name, uuid);
     }
 
     private void createToggleableItem(boolean flagValue, Material material, int durability, String name, UUID uuid) {
