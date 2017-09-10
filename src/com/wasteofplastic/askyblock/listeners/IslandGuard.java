@@ -37,6 +37,8 @@ import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Golem;
+import org.bukkit.entity.Horse;
+import org.bukkit.entity.Horse.Variant;
 import org.bukkit.entity.IronGolem;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.LivingEntity;
@@ -1121,6 +1123,7 @@ public class IslandGuard implements Listener {
                 }
                 Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).islandProtected);
                 e.setCancelled(true);
+                e.getPlayer().updateInventory();
             }
         }
     }
@@ -1144,6 +1147,7 @@ public class IslandGuard implements Listener {
                 }
                 Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).islandProtected);
                 e.setCancelled(true);
+                e.getPlayer().updateInventory();
             }
         }
     }
@@ -1989,10 +1993,40 @@ public class IslandGuard implements Listener {
             // You can do anything if you are Op of have the bypass
             return;
         }
-        // Leashes are dealt with elsewhere
-        if (Util.playerIsHolding(p, Material.LEASH)) {
-            return;
+        /*
+         * Leashes are deal with mostly using the PlayerLeashEvent and PlayerUnleashEvent
+         * however, skeleton and zombie horses cannot be leashed, so those should be exempted
+         */
+        if (Util.playerIsHolding(p, Material.LEASH) && e.getRightClicked() != null) {
+            if (DEBUG)
+                plugin.getLogger().info("DEBUG: checking horse types"); 
+            // Pre 1.11
+            if (e.getRightClicked() instanceof Horse) {
+                boolean skellyZombieHorse = false;
+                if (DEBUG)
+                    plugin.getLogger().info("DEBUG: horse clicked ");
+                Horse horse = (Horse)e.getRightClicked();
+                if (DEBUG)
+                    plugin.getLogger().info("DEBUG: horse variant = " + horse.getVariant());
+                if (horse.getVariant().equals(Variant.SKELETON_HORSE) || horse.getVariant().equals(Variant.UNDEAD_HORSE)) {
+                    if (DEBUG)
+                        plugin.getLogger().info("DEBUG: skelly or zombie horse");
+                    skellyZombieHorse = true;
+                }
+
+                if (DEBUG)
+                    plugin.getLogger().info("DEBUG: Checking entity types :" + e.getRightClicked().getType().name());
+                // For 1.11 onwards
+                if (e.getRightClicked().getType().name().equals("ZOMBIE_HORSE")
+                        || e.getRightClicked().getType().name().equals("SKELETON_HORSE")) {
+                    skellyZombieHorse = true;
+                }
+                if (!skellyZombieHorse) return;
+                if (DEBUG)
+                    plugin.getLogger().info("DEBUG: zombie horse or skelly horse");
+            }
         }
+
         Island island = plugin.getGrid().getProtectedIslandAt(e.getPlayer().getLocation());
         if (!plugin.getGrid().playerIsOnIsland(e.getPlayer())) {
             // Not on island
@@ -2081,10 +2115,12 @@ public class IslandGuard implements Listener {
                 if (island == null && !Settings.defaultWorldSettings.get(SettingsFlag.HORSE_RIDING)) {
                     Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                     e.setCancelled(true);
+                    e.getPlayer().updateInventory();
                 }
                 if (island != null && !island.getIgsFlag(SettingsFlag.HORSE_RIDING)) {
                     Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                     e.setCancelled(true);
+                    e.getPlayer().updateInventory();
                 }
                 break;
             case ITEM_FRAME:

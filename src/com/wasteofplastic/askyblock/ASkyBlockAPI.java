@@ -44,7 +44,7 @@ import com.wasteofplastic.askyblock.panels.SetBiome;
  */
 public class ASkyBlockAPI {
     private static final boolean DEBUG = false;
-    private static ASkyBlockAPI instance = new ASkyBlockAPI(ASkyBlock.getPlugin());
+    private static ASkyBlockAPI instance;
 
     /**
      * @return the instance
@@ -55,9 +55,16 @@ public class ASkyBlockAPI {
         return instance;
     }
 
+    /**
+     * @param instance the instance to set
+     */
+    public static void setInstance(ASkyBlockAPI instance) {
+        ASkyBlockAPI.instance = instance;
+    }
+
     private ASkyBlock plugin;
 
-    private ASkyBlockAPI(ASkyBlock plugin) {
+    protected ASkyBlockAPI(ASkyBlock plugin) {
         this.plugin = plugin;
         if (DEBUG)
             Bukkit.getLogger().info("DEBUG: API constructed");

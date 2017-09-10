@@ -462,6 +462,9 @@ public class ASkyBlock extends JavaPlugin {
                         }
                         // Give temp permissions
                         playerEvents.giveAllTempPerms();
+                        
+                        // Initialize the API
+                        ASkyBlockAPI.setInstance(new ASkyBlockAPI(plugin));
 
                         getLogger().info("All files loaded. Ready to play...");
                         
