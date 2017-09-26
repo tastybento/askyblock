@@ -131,7 +131,7 @@ public class JoinLeaveEvents implements Listener {
             Iterator<UUID> it = players.getMembers(playerUUID).iterator();
             while (it.hasNext()) {
                 UUID member = it.next();
-                if (!players.getTeamLeader(member).equals(playerUUID)) {
+                if (players.getTeamLeader(member) != null && !players.getTeamLeader(member).equals(playerUUID)) {
                     plugin.getLogger().warning(plugin.getPlayers().getName(member) + " is on more than one team. Fixing...");
                     plugin.getLogger().warning("Removing " + player.getName() + " as team leader, keeping " + plugin.getPlayers().getName(players.getTeamLeader(member)));
                     players.removeMember(players.getTeamLeader(member), member);

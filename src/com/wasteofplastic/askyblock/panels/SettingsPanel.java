@@ -129,9 +129,12 @@ public class SettingsPanel implements Listener {
         List<IPItem> ip = new ArrayList<IPItem>();
         Inventory newPanel = null;
         if (island == null) {
+            //plugin.getLogger().info("DEBUG: default world settings");
             ip.add(new IPItem(Material.MAP, plugin.myLocale(uuid).igsSettingsGeneralTitle, plugin.myLocale(uuid).igsSettingsGeneralDesc));
             // General settings all enum            
             for (SettingsFlag flag : SettingsFlag.values()) {
+                //plugin.getLogger().info("DEBUG: flag = " + flag.name());
+                //plugin.getLogger().info("DEBUG: default setting = " + Settings.defaultWorldSettings.get(flag));
                 if (flag.equals(SettingsFlag.ACID_DAMAGE) && Settings.acidDamage == 0)
                     continue;
                 if (Settings.defaultWorldSettings.containsKey(flag) && lookup.inverse().containsKey(flag) && plugin.myLocale(uuid).igs.containsKey(flag)) {
@@ -161,7 +164,10 @@ public class SettingsPanel implements Listener {
             //plugin.getLogger().info("DEBUG: Standard island");
             ip.add(new IPItem(Material.MAP, plugin.myLocale(uuid).igsSettingsIslandTitle, plugin.myLocale(uuid).igsSettingsIslandDesc));
             for (SettingsFlag flag : Settings.visitorSettings.keySet()) {
-                //plugin.getLogger().info("DEBUG: visitor flag = " + flag);
+                if (DEBUG) {
+                    plugin.getLogger().info("DEBUG: visitor flag = " + flag);
+                    plugin.getLogger().info("DEBUG: setting for island = " + island.getIgsFlag(flag));
+                }
                 if (flag.equals(SettingsFlag.ACID_DAMAGE) && Settings.acidDamage == 0)
                     continue;
                 if (lookup.inverse().get(flag) != null) {
