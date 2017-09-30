@@ -20,6 +20,7 @@ package com.wasteofplastic.askyblock;
 import java.io.File;
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.concurrent.Callable;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -950,10 +951,10 @@ public class ASkyBlock extends JavaPlugin {
      * Registers the custom charts for Metrics
      */
     public void registerCustomCharts(){
-        metrics.addCustomChart(new Metrics.SimplePie("challenges_count") {
-            
+        metrics.addCustomChart(new Metrics.SimplePie("challenges_count", new Callable<String>() {
             @Override
-            public String getValue() {
+            public String call() throws Exception {
+                
                 int count = challenges.getAllChallenges().size();
                 if(count <= 0) return "0";
                 else if(count >= 1 && count <= 10) return "1-10";
@@ -968,14 +969,13 @@ public class ASkyBlock extends JavaPlugin {
                 else if(count >= 201 && count <= 300) return "201-300";
                 else return "300+";
             }
-        });
+        }));
         
-        metrics.addCustomChart(new Metrics.SingleLineChart("islands_count") {
-            
+        metrics.addCustomChart(new Metrics.SingleLineChart("islands_count", new Callable<Integer>() {
             @Override
-            public int getValue() {
-                return plugin.getGrid().getIslandCount();
+            public Integer call() throws Exception {
+                return getGrid().getIslandCount();
             }
-        });
+        }));
     }
 }
