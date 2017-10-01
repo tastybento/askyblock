@@ -2561,7 +2561,7 @@ public class IslandGuard implements Listener {
                 // Monsters being hurt
                 if (entity instanceof Monster || entity instanceof Slime || entity instanceof Squid) {
                     // Normal island check
-                    if (island != null && island.getMembers().contains(attacker)) {
+                    if (island != null && island.getMembers().contains(attacker.getUniqueId())) {
                         // Members always allowed
                         continue;
                     }
@@ -2577,7 +2577,7 @@ public class IslandGuard implements Listener {
                 // Mobs being hurt
                 if (entity instanceof Animals || entity instanceof IronGolem || entity instanceof Snowman
                         || entity instanceof Villager) {
-                    if (island != null && (island.getIgsFlag(SettingsFlag.HURT_MOBS) || island.getMembers().contains(attacker))) {
+                    if (island != null && (island.getIgsFlag(SettingsFlag.HURT_MOBS) || island.getMembers().contains(attacker.getUniqueId()))) {
                         continue;
                     }
                     if (DEBUG)
