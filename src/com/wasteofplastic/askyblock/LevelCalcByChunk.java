@@ -32,6 +32,7 @@ import java.util.UUID;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.ChatColor;
+import org.bukkit.Chunk;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
@@ -125,11 +126,17 @@ public class LevelCalcByChunk {
             Set<ChunkSnapshot> chunkSnapshot = new HashSet<ChunkSnapshot>();
             for (int x = island.getMinProtectedX(); x < (island.getMinProtectedX() + island.getProtectionSize() + 16); x += 16) {
                 for (int z = island.getMinProtectedZ(); z < (island.getMinProtectedZ() + island.getProtectionSize() + 16); z += 16) {
-                    if (!world.getBlockAt(x, 0, z).getChunk().isLoaded()) {
-                        world.getBlockAt(x, 0, z).getChunk().load();
-                        chunkSnapshot.add(world.getBlockAt(x, 0, z).getChunk().getChunkSnapshot());
-                        world.getBlockAt(x, 0, z).getChunk().unload();
+                    if (!world.isChunkLoaded((int)((double)x/16), (int)((double)z/16))) {
+                        //plugin.getLogger().info("DEBUG: chunk is not loaded");
+                        // If the chunk isn't already generated, don't try and generate it
+                        if (world.loadChunk((int)((double)x/16), (int)((double)z/16), false)) {
+                            //plugin.getLogger().info("DEBUG: chunk loaded");
+                            Chunk chunk = world.getChunkAt((int)((double)x/16), (int)((double)z/16));
+                            chunkSnapshot.add(chunk.getChunkSnapshot());
+                            //plugin.getLogger().info("DEBUG: unload = " + chunk.unload(false));
+                        }
                     } else {
+                        //plugin.getLogger().info("DEBUG: chunk is loaded");
                         chunkSnapshot.add(world.getBlockAt(x, 0, z).getChunk().getChunkSnapshot());
                     }                                       
                     //plugin.getLogger().info("DEBUG: getting chunk at " + x + ", " + z);
