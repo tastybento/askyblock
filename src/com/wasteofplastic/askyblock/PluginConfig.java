@@ -824,7 +824,7 @@ public class PluginConfig {
             try {
                 SettingsFlag flag = SettingsFlag.valueOf(setting.toUpperCase());
                 // Only items in the config.yml can be per island customized
-                Settings.visitorSettings.put(flag, Settings.defaultIslandSettings.get(flag));
+                Settings.visitorSettings.put(flag, protectionIsland.getBoolean(setting));
                 //plugin.getLogger().info("DEBUG: visitor flag added " + flag);
                 Settings.defaultIslandSettings.put(flag, Settings.visitorSettings.get(flag));
             } catch (Exception e) {
