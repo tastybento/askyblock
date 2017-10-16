@@ -57,6 +57,7 @@ public class TopTen implements Listener{
     private static Map<UUID, Long> topTenList = new HashMap<UUID, Long>();
     private static final int GUISIZE = 27; // Must be a multiple of 9
     private static final int[] SLOTS = new int[] {4, 12, 14, 19, 20, 21, 22, 23, 24, 25};
+    private static final boolean DEBUG = false;
     // Store this as a static because it's the same for everyone and saves memory cleanup
     private static Inventory gui;
 
@@ -293,12 +294,16 @@ public class TopTen implements Listener{
                 }
             }
         } else {
+            if (DEBUG)
+                plugin.getLogger().info("DEBUG: new GUI display");
             // New GUI display (shown by default)
             if (topTenList == null) topTenCreate();
             topTenList = MapUtil.sortByValue(topTenList);
             // Create the top ten GUI if it does not exist
             if (gui == null) {
                 gui = Bukkit.createInventory(null, GUISIZE, plugin.myLocale(player.getUniqueId()).topTenGuiTitle);
+                if (DEBUG)
+                    plugin.getLogger().info("DEBUG: creating GUI for the first time");
             }
             // Reset
             gui.clear();
@@ -307,7 +312,8 @@ public class TopTen implements Listener{
             while (it.hasNext()) {
                 Map.Entry<UUID, Long> m = it.next();
                 UUID playerUUID = m.getKey();
-                //plugin.getLogger().info("DEBUG: " + i + ": " + playerUUID);
+                if (DEBUG)
+                    plugin.getLogger().info("DEBUG: " + i + ": " + playerUUID);
                 // Remove from TopTen if the player is online and has the permission
                 Player entry = plugin.getServer().getPlayer(playerUUID);
                 boolean show = true;
@@ -316,6 +322,10 @@ public class TopTen implements Listener{
                         it.remove();
                         show = false;
                     }
+                } else {
+                    if (DEBUG)
+                        plugin.getLogger().info("DEBUG: player not online, so no per check");
+                    
                 }
                 if (show) {
                     gui.setItem(SLOTS[i-1], getSkull(i, m.getValue(), playerUUID));
@@ -329,7 +339,14 @@ public class TopTen implements Listener{
     }
 
     static ItemStack getSkull(int rank, Long long1, UUID player){
-        String playerName = plugin.getServer().getOfflinePlayer(player).getName();
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: Getting the skull");
+        String playerName = plugin.getPlayers().getName(player);
+        if (DEBUG) {
+            plugin.getLogger().info("DEBUG: playername = " + playerName);
+            
+            plugin.getLogger().info("DEBUG: second chance = " + plugin.getPlayers().getName(player));
+        }
         ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
         if (playerName == null) return null;
         SkullMeta meta = (SkullMeta) playerSkull.getItemMeta();

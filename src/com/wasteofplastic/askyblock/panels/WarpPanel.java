@@ -137,7 +137,7 @@ public class WarpPanel implements Listener {
      * @return Player skull item
      */
     private ItemStack getSkull(UUID playerUUID) {
-        String playerName = plugin.getServer().getOfflinePlayer(playerUUID).getName();
+        String playerName = plugin.getPlayers().getName(playerUUID);
         if (DEBUG)
             plugin.getLogger().info("DEBUG: name of warp = " + playerName);
         ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
