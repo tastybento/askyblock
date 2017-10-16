@@ -73,8 +73,6 @@ public class Island implements Cloneable {
     private boolean locked = false;
     // Set if this island is a spawn island
     private boolean isSpawn = false;
-    // Stats variables
-    private HashMap<EntityType, Integer> entities = new HashMap<EntityType, Integer>();
     // Protection against deletion or not
     private boolean purgeProtected;
     // The spawn point 
@@ -836,33 +834,6 @@ public class Island implements Cloneable {
      */
     public void setSpawn(boolean isSpawn) {
         this.isSpawn = isSpawn;
-    }
-
-    public void addEntity(EntityType type) {
-        if (this.entities.containsKey(type)) {
-            int sum = this.entities.get(type);
-            this.entities.put(type, (sum + 1));
-        } else {
-            this.entities.put(type, 1);
-        }
-    }
-
-    public int getEntity(EntityType type) {
-        if (this.entities.containsKey(type)) {
-            return this.entities.get(type);
-        }
-        return 0;
-    }
-
-    /**
-     * @return the entities
-     */
-    public HashMap<EntityType, Integer> getEntities() {
-        return entities;
-    }
-
-    public void clearStats() {
-        this.entities.clear();
     }
 
     /**
