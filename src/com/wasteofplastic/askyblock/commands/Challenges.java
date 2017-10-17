@@ -1214,10 +1214,14 @@ public class Challenges implements CommandExecutor, TabCompleter {
                                     if (potion != null) {
                                         PotionType potionType = potion.getType();
                                         boolean match = true;                                    
-                                        if (DEBUG)
+                                        if (DEBUG) {
                                             plugin.getLogger().info("DEBUG: name check " + part[1]);
+                                            plugin.getLogger().info("DEBUG: potion = " + potion);
+                                            plugin.getLogger().info("DEBUG: potionType = " + potionType);
+                                            plugin.getLogger().info("DEBUG: part[1] = " + part[1]);
+                                        }
                                         // Name check
-                                        if (potion != null && potionType != null && !part[1].isEmpty()) {
+                                        if (potionType != null && !part[1].isEmpty()) {
                                             // There is a name
                                             // Custom potions may not have names
                                             if (potionType.name() != null) {
@@ -1236,6 +1240,10 @@ public class Challenges implements CommandExecutor, TabCompleter {
                                                 }
                                                 match = false;
                                             }                                        
+                                        } else {
+                                            if (DEBUG)
+                                                plugin.getLogger().info("DEBUG: potionType = null");
+                                            match = false;
                                         }
                                         // Level check (upgraded)
                                         if (DEBUG)
