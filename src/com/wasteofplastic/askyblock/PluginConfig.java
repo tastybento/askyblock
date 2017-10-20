@@ -135,6 +135,10 @@ public class PluginConfig {
         if (Settings.inviteWait < 0) {
             Settings.inviteWait = 0;
         }
+        // Invite timeout before accept/reject timesout
+        Settings.inviteTimeout = plugin.getConfig().getInt("island.invitetimeout", 60);
+        Settings.inviteTimeout *= 20; // Convert to ticks
+        
         // Max team size
         Settings.maxTeamSize = plugin.getConfig().getInt("island.maxteamsize", 4);
         // Deprecated settings - use permission askyblock.team.maxsize.<number> instead

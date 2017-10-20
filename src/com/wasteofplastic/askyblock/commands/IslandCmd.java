@@ -521,7 +521,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                 plugin.getPlayers().setHomeLocation(playerUUID, plugin.getPlayers().getIslandLocation(teamLeader));
                 // plugin.getLogger().info("DEBUG: Setting player's home to the team island location");
             }
-            
+
             // If the leader's member list does not contain player then add it
             if (!plugin.getPlayers().getMembers(teamLeader).contains(playerUUID)) {
                 plugin.getPlayers().addTeamMember(teamLeader, playerUUID);
@@ -1817,18 +1817,6 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                     maxSize = 1;
                                 }
                             } 
-                            // Account for deprecated permissions. These will be zero on new installs
-                            // This avoids these permissions breaking on upgrades
-                            if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.vip")) {
-                                if (Settings.maxTeamSizeVIP > maxSize) {
-                                    maxSize = Settings.maxTeamSizeVIP;
-                                }
-                            }
-                            if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.vip2")) {
-                                if (Settings.maxTeamSizeVIP2 > maxSize) {
-                                    maxSize = Settings.maxTeamSizeVIP2;
-                                }
-                            }
                             if (teamMembers.size() < maxSize) {
                                 Util.sendMessage(player, ChatColor.GREEN
                                         + plugin.myLocale(player.getUniqueId()).inviteyouCanInvite.replace("[number]", String.valueOf(maxSize - teamMembers.size())));
@@ -2423,7 +2411,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                     Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorOfflinePlayer);
                                     return true;  
                                 }                                
-                                UUID invitedPlayerUUID = invitedPlayer.getUniqueId();
+                                final UUID invitedPlayerUUID = invitedPlayer.getUniqueId();
                                 // Player issuing the command must have an island
                                 if (!plugin.getPlayers().hasIsland(player.getUniqueId())) {
                                     Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).inviteerrorYouMustHaveIslandToInvite);
@@ -2497,6 +2485,24 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                                 if (plugin.getPlayers().hasIsland(invitedPlayerUUID)) {
                                                     Util.sendMessage(Bukkit.getPlayer(invitedPlayerUUID), ChatColor.RED + plugin.myLocale(invitedPlayerUUID).invitewarningYouWillLoseIsland);
                                                 }
+                                                // Start timeout on invite
+                                                if (Settings.inviteTimeout > 0) {
+                                                    plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
+
+                                                        @Override
+                                                        public void run() {
+                                                            if (inviteList.containsKey(invitedPlayerUUID) && inviteList.get(invitedPlayerUUID).equals(playerUUID)) {
+                                                                inviteList.remove(invitedPlayerUUID);
+                                                                if (plugin.getServer().getPlayer(playerUUID) != null) {
+                                                                    Util.sendMessage(plugin.getServer().getPlayer(playerUUID), ChatColor.YELLOW + plugin.myLocale(player.getUniqueId()).inviteremovingInvite);
+                                                                }
+                                                                if (plugin.getServer().getPlayer(invitedPlayerUUID) != null) {
+                                                                    Util.sendMessage(plugin.getServer().getPlayer(invitedPlayerUUID), ChatColor.YELLOW + plugin.myLocale(player.getUniqueId()).inviteremovingInvite);
+                                                                }
+                                                            }
+
+                                                        }}, Settings.inviteTimeout);
+                                                }
                                             } else {
                                                 Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).inviteerrorYourIslandIsFull);
                                             }
@@ -2529,6 +2535,25 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                         if (plugin.getPlayers().hasIsland(invitedPlayerUUID)) {
                                             // plugin.getLogger().info("DEBUG: invited player has island");
                                             Util.sendMessage(Bukkit.getPlayer(invitedPlayerUUID), ChatColor.RED + plugin.myLocale(invitedPlayerUUID).invitewarningYouWillLoseIsland);
+                                        }
+                                        // Start timeout on invite
+                                        if (Settings.inviteTimeout > 0) {
+                                            plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
+
+                                                @Override
+                                                public void run() {
+
+                                                    if (inviteList.containsKey(invitedPlayerUUID) && inviteList.get(invitedPlayerUUID).equals(playerUUID)) {
+                                                        inviteList.remove(invitedPlayerUUID);
+                                                        if (plugin.getServer().getPlayer(playerUUID) != null) {
+                                                            Util.sendMessage(plugin.getServer().getPlayer(playerUUID), ChatColor.YELLOW + plugin.myLocale(player.getUniqueId()).inviteremovingInvite);
+                                                        }
+                                                        if (plugin.getServer().getPlayer(invitedPlayerUUID) != null) {
+                                                            Util.sendMessage(plugin.getServer().getPlayer(invitedPlayerUUID), ChatColor.YELLOW + plugin.myLocale(player.getUniqueId()).inviteremovingInvite);
+                                                        }
+                                                    }
+
+                                                }}, Settings.inviteTimeout);
                                         }
                                     } else {
                                         Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).inviteerrorThatPlayerIsAlreadyInATeam);

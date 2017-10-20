@@ -66,6 +66,9 @@ island:
    #by repetitively being invited to a team island.
    invitewait: 60
 
+   #Invite timeout in seconds. Invites will lapse if not accepted within this time
+   invitetimeout: 60
+   
    # Default max team size
    # Use this permission to set for specific user groups: askyblock.team.maxsize.<number> 
    # Permission size cannot be less than the default. 

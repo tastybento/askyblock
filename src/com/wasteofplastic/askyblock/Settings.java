@@ -281,4 +281,5 @@ public class Settings {
     public static int maxPurge;
     public static boolean allowTNTPushing;
     public static boolean silenceCommandFeedback;
+    public static long inviteTimeout;
 }
