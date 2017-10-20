@@ -1916,6 +1916,12 @@ public class IslandGuard implements Listener {
         Island island = plugin.getGrid().getProtectedIslandAt(e.getCaught().getLocation());
         // PVP check
         if (e.getCaught() instanceof Player) {
+            // Check if this is the player who is holding the rod
+            if (e.getCaught().equals(e.getPlayer())) {
+                if (DEBUG)
+                    plugin.getLogger().info("DEBUG: player cught themselves!");
+                return;
+            }
             if (island == null 
                     && (e.getCaught().getWorld().getEnvironment().equals(Environment.NORMAL) 
                             && !Settings.defaultWorldSettings.get(SettingsFlag.PVP))
