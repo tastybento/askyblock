@@ -103,6 +103,9 @@ public class CoopPlay {
             islandLoc = plugin.getPlayers().getIslandLocation(requester.getUniqueId());
         }
         Island coopIsland = plugin.getGrid().getIslandAt(islandLoc);
+        if (coopIsland == null) {
+            return false;
+        }
         // Fire event and check if it is cancelled
         final CoopJoinEvent event = new CoopJoinEvent(newPlayer.getUniqueId(), coopIsland, requester.getUniqueId());
         plugin.getServer().getPluginManager().callEvent(event);
@@ -339,6 +342,8 @@ public class CoopPlay {
             return;
         }
         Island coopIsland = plugin.getGrid().getIslandAt(island);
+        if (coopIsland == null)
+            return;
         // Remove any and all islands related to requester
         for (HashMap<Location, UUID> coopPlayer : coopPlayers.values()) {
             // Fire event

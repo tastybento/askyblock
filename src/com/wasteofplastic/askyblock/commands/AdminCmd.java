@@ -1073,21 +1073,26 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                     Sign sign = (Sign) lastBlock.getState();
                     // Check if the sign is within the right island boundary
                     Location islandLoc = plugin.getPlayers().getIslandLocation(playerUUID);
-                    if (!plugin.getGrid().getIslandAt(islandLoc).inIslandSpace(sign.getLocation())) {
-                        Util.sendMessage(p, ChatColor.RED + plugin.myLocale(p.getUniqueId()).adminSetHomeNotOnPlayersIsland);
-                    } else {
-                        Util.sendMessage(sender, ChatColor.GREEN + plugin.myLocale(p.getUniqueId()).adminResetSignFound);
-                        // Find out if this player is allowed to have a sign on this island
-                        if (plugin.getWarpSignsListener().addWarp(playerUUID, lastBlock.getLocation())) {
-                            // Change sign color to green
-                            sign.setLine(0, ChatColor.GREEN + plugin.myLocale().warpswelcomeLine);
-                            sign.update();
-                            Util.sendMessage(p, ChatColor.GREEN + plugin.myLocale(p.getUniqueId()).adminResetSignRescued.replace("[name]", plugin.getPlayers().getName(playerUUID)));
-                            return true;
-                        }
-                        // Warp already exists
-                        Util.sendMessage(sender, ChatColor.RED + plugin.myLocale(p.getUniqueId()).adminResetSignErrorExists.replace("[name]", plugin.getWarpSignsListener().getWarpOwner(lastBlock.getLocation())));
+                    Island island = plugin.getGrid().getIslandAt(islandLoc);
+                    if (island == null) {
+                        Util.sendMessage(sender, ChatColor.RED + plugin.myLocale(p.getUniqueId()).errorNoIsland);
+                        return true;
                     }
+                        if (!island.inIslandSpace(sign.getLocation())) {
+                            Util.sendMessage(p, ChatColor.RED + plugin.myLocale(p.getUniqueId()).adminSetHomeNotOnPlayersIsland);
+                        } else {
+                            Util.sendMessage(sender, ChatColor.GREEN + plugin.myLocale(p.getUniqueId()).adminResetSignFound);
+                            // Find out if this player is allowed to have a sign on this island
+                            if (plugin.getWarpSignsListener().addWarp(playerUUID, lastBlock.getLocation())) {
+                                // Change sign color to green
+                                sign.setLine(0, ChatColor.GREEN + plugin.myLocale().warpswelcomeLine);
+                                sign.update();
+                                Util.sendMessage(p, ChatColor.GREEN + plugin.myLocale(p.getUniqueId()).adminResetSignRescued.replace("[name]", plugin.getPlayers().getName(playerUUID)));
+                                return true;
+                            }
+                            // Warp already exists
+                            Util.sendMessage(sender, ChatColor.RED + plugin.myLocale(p.getUniqueId()).adminResetSignErrorExists.replace("[name]", plugin.getWarpSignsListener().getWarpOwner(lastBlock.getLocation())));
+                        }
                 }
                 return true;
             }
@@ -1174,8 +1179,9 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                     }
                     // Has an island
                     Location islandLoc = plugin.getPlayers().getIslandLocation(playerUUID);
+                    Island island = plugin.getGrid().getIslandAt(islandLoc);
                     // Check the player is within the island boundaries
-                    if (!plugin.getGrid().getIslandAt(islandLoc).inIslandSpace(player.getLocation())) {
+                    if (island == null || !island.inIslandSpace(player.getLocation())) {
                         Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).adminSetHomeNotOnPlayersIsland);
                     } else {
                         // Check that the location is safe
@@ -1402,9 +1408,9 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                     int count = 1;
                     while (it.hasNext()) {
                         it.next();
-                       if (count++ > Settings.maxPurge) {
-                           it.remove();
-                       }
+                        if (count++ > Settings.maxPurge) {
+                            it.remove();
+                        }
                     }
                 }
                 confirmReq = true;
@@ -2244,10 +2250,10 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                                 int count = 1;
                                 while (it.hasNext()) {
                                     it.next();
-                                   if (count++ > Settings.maxPurge) {
-                                       //plugin.getLogger().info("DEBUG: removing record");
-                                       it.remove();
-                                   }
+                                    if (count++ > Settings.maxPurge) {
+                                        //plugin.getLogger().info("DEBUG: removing record");
+                                        it.remove();
+                                    }
                                 }
                             }
                             //plugin.getLogger().info("DEBUG: unowned size after = " + unowned.size());
