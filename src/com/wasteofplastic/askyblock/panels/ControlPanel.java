@@ -182,6 +182,10 @@ public class ControlPanel implements Listener {
                             String[] icon = m.split(":");
                             // plugin.getLogger().info("Material = " + m);
                             Material material = Material.matchMaterial(icon[0]);
+                            if (material == null) {
+                                material = Material.PAPER;
+                                plugin.getLogger().severe("Error in controlpanel.yml " + icon[0] + " is an unknown material, using paper.");
+                            }
                             String description = ChatColor.translateAlternateColorCodes('&',buttons.getString(item + ".description", ""));
                             String command = buttons.getString(item + ".command", "").replace("[island]", Settings.ISLANDCOMMAND);
                             String nextSection = buttons.getString(item + ".nextsection", "");
