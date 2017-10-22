@@ -130,7 +130,7 @@ public class NetherPortals implements Listener {
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerPortal(PlayerPortalEvent event) {
         if (DEBUG)
-            plugin.getLogger().info("DEBUG: Player portal event - reason = " + event.getCause());
+            plugin.getLogger().info("Player portal event - reason =" + event.getCause());
         UUID playerUUID = event.getPlayer().getUniqueId();
         // If the nether is disabled then quit immediately
         if (!Settings.createNether || ASkyBlock.getNetherWorld() == null) {
@@ -151,25 +151,10 @@ public class NetherPortals implements Listener {
         if ((island == null && !Settings.defaultWorldSettings.get(SettingsFlag.PORTAL)) 
                 || (island != null && !(island.getIgsFlag(SettingsFlag.PORTAL) || island.getMembers().contains(event.getPlayer().getUniqueId())))) {
             // Portals use is not allowed
-            if (DEBUG)
-                plugin.getLogger().info("DEBUG: portal use not allowed");
             if (!event.getPlayer().isOp() && !VaultHelper.checkPerm(event.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
                 Util.sendMessage(event.getPlayer(), ChatColor.RED + plugin.myLocale(event.getPlayer().getUniqueId()).islandProtected);
                 event.setCancelled(true);
                 return;
-            }
-        }
-        if (DEBUG) {
-            plugin.getLogger().info("DEBUG: portal use allowed");
-            if (island != null) {
-                plugin.getLogger().info("DEBUG: island is not null, portal flag is " + island.getIgsFlag(SettingsFlag.PORTAL));
-                plugin.getLogger().info("DEBUG: player is a member? " + island.getMembers().contains(event.getPlayer().getUniqueId()));
-                plugin.getLogger().info("DEBUG: player is op? " + event.getPlayer().isOp());
-                plugin.getLogger().info("DEBUG: player has bypass perm? " + VaultHelper.checkPerm(event.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect"));
-            } else {
-                plugin.getLogger().info("DEBUG: island is null, default portal flag is " + Settings.defaultWorldSettings.get(SettingsFlag.PORTAL));
-                plugin.getLogger().info("DEBUG: player is op? " + event.getPlayer().isOp());
-                plugin.getLogger().info("DEBUG: player has bypass perm? " + VaultHelper.checkPerm(event.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect"));
             }
         }
         // Determine what portal it is
