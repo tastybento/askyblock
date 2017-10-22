@@ -445,12 +445,12 @@ public class LevelCalcByChunk {
                                     if (!(sender instanceof Player)) {
                                         // Console  
                                         if (!report) {
-                                            Util.sendMessage(sender, ChatColor.GREEN + plugin.myLocale().islandislandLevelis + " " + ChatColor.WHITE + plugin.getPlayers().getIslandLevel(targetPlayer));
+                                            Util.sendMessage(sender, ChatColor.GREEN + plugin.myLocale().islandislandLevelis.replace("[level]", String.valueOf(plugin.getPlayers().getIslandLevel(targetPlayer))));
                                         } else {
                                             for (String line: reportLines) {
                                                 Util.sendMessage(sender, line);
                                             }
-                                            Util.sendMessage(sender, ChatColor.GREEN + plugin.myLocale().islandislandLevelis + " " + ChatColor.WHITE + plugin.getPlayers().getIslandLevel(targetPlayer));
+                                            Util.sendMessage(sender, ChatColor.GREEN + plugin.myLocale().islandislandLevelis.replace("[level]", String.valueOf(plugin.getPlayers().getIslandLevel(targetPlayer))));
                                             if (event.getLongPointsToNextLevel() >= 0) {
                                                 String toNextLevel = ChatColor.GREEN + plugin.myLocale().islandrequiredPointsToNextLevel.replace("[points]", String.valueOf(event.getLongPointsToNextLevel()));
                                                 toNextLevel = toNextLevel.replace("[next]", String.valueOf(plugin.getPlayers().getIslandLevel(targetPlayer) + 1));
@@ -463,11 +463,10 @@ public class LevelCalcByChunk {
                                             // Tell offline team members the island level changed
                                             if (plugin.getPlayers().getIslandLevel(targetPlayer) != oldLevel) {
                                                 //plugin.getLogger().info("DEBUG: telling offline players");
-                                                plugin.getMessages().tellOfflineTeam(targetPlayer, ChatColor.GREEN + plugin.myLocale(targetPlayer).islandislandLevelis + " " + ChatColor.WHITE
-                                                        + plugin.getPlayers().getIslandLevel(targetPlayer));
+                                                plugin.getMessages().tellOfflineTeam(targetPlayer, ChatColor.GREEN + plugin.myLocale().islandislandLevelis.replace("[level]", String.valueOf(plugin.getPlayers().getIslandLevel(targetPlayer))));
                                             }
                                             if (sender instanceof Player && ((Player)sender).isOnline()) {
-                                                String message = ChatColor.GREEN + plugin.myLocale(((Player)sender).getUniqueId()).islandislandLevelis + " " + ChatColor.WHITE + plugin.getPlayers().getIslandLevel(targetPlayer);
+                                                String message = ChatColor.GREEN + plugin.myLocale().islandislandLevelis.replace("[level]", String.valueOf(plugin.getPlayers().getIslandLevel(targetPlayer)));
                                                 if (Settings.deathpenalty != 0) {
                                                     message += " " + plugin.myLocale(((Player)sender).getUniqueId()).levelDeaths.replace("[number]", String.valueOf(deathHandicap));
                                                 }

@@ -32,8 +32,8 @@ import org.bukkit.metadata.MetadataValue;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Island;
-import com.wasteofplastic.askyblock.Island.SettingsFlag;
 import com.wasteofplastic.askyblock.Settings;
+import com.wasteofplastic.askyblock.Island.SettingsFlag;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
@@ -95,16 +95,18 @@ public class EntityLimits implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onAnimalSpawn(final CreatureSpawnEvent e) {
+        // If not in the right world, return
+        if (!IslandGuard.inWorld(e.getEntity())) {
+            return;
+        }
+        // If not an animal
+        if (!(e.getEntity() instanceof Animals) && !e.getEntityType().equals(EntityType.SQUID)) {
+            return;
+        }
         if (DEBUG2) {
             plugin.getLogger().info("Animal spawn event! " + e.getEventName());
             plugin.getLogger().info(e.getSpawnReason().toString());
             plugin.getLogger().info(e.getEntityType().toString());
-        }
-        // If not an animal
-        if (!(e.getEntity() instanceof Animals) && !e.getEntityType().equals(EntityType.SQUID)) {
-            if (DEBUG2)
-                plugin.getLogger().info("Not an animal");
-            return;
         }
         // If there's no limit - leave it
         if (Settings.breedingLimit <= 0) {
@@ -120,15 +122,6 @@ public class EntityLimits implements Listener {
             return;
         }
         LivingEntity animal = e.getEntity();
-        // If not in the right world, return
-        if (!animal.getWorld().equals(ASkyBlock.getIslandWorld())) {
-            // Check nether
-            if (!(Settings.createNether && Settings.newNether && ASkyBlock.getNetherWorld() != null)) {
-                return;
-            }
-        }
-        if (DEBUG2)
-            plugin.getLogger().info("Correct world");
         Island island = plugin.getGrid().getProtectedIslandAt(animal.getLocation());
         if (island == null) {
             // Animal is spawning outside of an island so ignore
@@ -223,15 +216,12 @@ public class EntityLimits implements Listener {
     }
 
     /**
-     * Prevents mobs spawning natually at spawn or in an island
+     * Prevents mobs spawning naturally at spawn or in an island
      *
      * @param e
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onMobSpawn(final CreatureSpawnEvent e) {
-        if (DEBUG2) {
-            plugin.getLogger().info("on Mob spawn" + e.getEventName());
-        }
+    public void onNaturalMobSpawn(final CreatureSpawnEvent e) {
         // if grid is not loaded yet, return.
         if (plugin.getGrid() == null) {
             return;
@@ -241,10 +231,15 @@ public class EntityLimits implements Listener {
             return;
         }
         // Deal with natural spawning
-        if (e.getSpawnReason().equals(SpawnReason.NATURAL)) {
+        if (e.getSpawnReason().equals(SpawnReason.NATURAL) || e.getSpawnReason().equals(SpawnReason.JOCKEY)
+                || e.getSpawnReason().equals(SpawnReason.CHUNK_GEN)
+                || e.getSpawnReason().equals(SpawnReason.DEFAULT)
+                || e.getSpawnReason().equals(SpawnReason.MOUNT)
+                || e.getSpawnReason().equals(SpawnReason.JOCKEY)
+                || e.getSpawnReason().equals(SpawnReason.NETHER_PORTAL)) {
             if (e.getEntity() instanceof Monster || e.getEntity() instanceof Slime) {
                 if (!actionAllowed(e.getLocation(), SettingsFlag.MONSTER_SPAWN)) {                
-                    if (DEBUG2)
+                    if (DEBUG3)
                         plugin.getLogger().info("Natural monster spawn cancelled.");
                     // Mobs not allowed to spawn
                     e.setCancelled(true);
@@ -259,6 +254,11 @@ public class EntityLimits implements Listener {
                     return;
                 }
             }
+        }
+        if (DEBUG2) {
+            plugin.getLogger().info("Mob spawn allowed " + e.getEventName());
+            plugin.getLogger().info(e.getSpawnReason().toString());
+            plugin.getLogger().info(e.getEntityType().toString());
         }
     }
 
@@ -275,7 +275,7 @@ public class EntityLimits implements Listener {
             plugin.getLogger().info("DEBUG: Block is " + e.getBlock().toString());
         }
         if (Settings.allowedFakePlayers.contains(e.getPlayer().getName())) return;
-        
+
         // plugin.getLogger().info(e.getEventName());
         if (IslandGuard.inWorld(e.getPlayer())) {
             // This permission bypasses protection
@@ -338,9 +338,9 @@ public class EntityLimits implements Listener {
             }
             plugin.getLogger().info("DEBUG: Block is " + e.getBlock().toString());
         }
-        
+
         if (Settings.allowedFakePlayers.contains(e.getPlayer().getName())) return;
-        
+
         // plugin.getLogger().info(e.getEventName());
         if (IslandGuard.inWorld(e.getPlayer())) {
             // This permission bypasses protection
@@ -396,9 +396,9 @@ public class EntityLimits implements Listener {
             plugin.getLogger().info("DEBUG: block placed " + e.getBlock().getType());
             plugin.getLogger().info("DEBUG: entity " + e.getEntity().getType());
         }
-        
+
         if (Settings.allowedFakePlayers.contains(e.getPlayer().getName())) return;
-        
+
         // plugin.getLogger().info(e.getEventName());
         if (IslandGuard.inWorld(e.getPlayer())) {
             // This permission bypasses protection
