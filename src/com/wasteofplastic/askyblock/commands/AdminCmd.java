@@ -65,12 +65,12 @@ import com.wasteofplastic.askyblock.DeleteIslandChunk;
 import com.wasteofplastic.askyblock.FileLister;
 import com.wasteofplastic.askyblock.GridManager;
 import com.wasteofplastic.askyblock.Island;
-import com.wasteofplastic.askyblock.Island.SettingsFlag;
 import com.wasteofplastic.askyblock.PluginConfig;
 import com.wasteofplastic.askyblock.SafeSpotTeleport;
 import com.wasteofplastic.askyblock.Settings;
-import com.wasteofplastic.askyblock.Settings.GameType;
 import com.wasteofplastic.askyblock.TopTen;
+import com.wasteofplastic.askyblock.Island.SettingsFlag;
+import com.wasteofplastic.askyblock.Settings.GameType;
 import com.wasteofplastic.askyblock.listeners.LavaCheck;
 import com.wasteofplastic.askyblock.panels.ControlPanel;
 import com.wasteofplastic.askyblock.util.Util;
@@ -962,6 +962,8 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 return true;
             } else
                 if (split[0].equalsIgnoreCase("settingsreset")) {
+                    plugin.reloadConfig();
+                    PluginConfig.loadPluginConfig(plugin);
                     if (split[1].equalsIgnoreCase("all")) {
                         Util.sendMessage(sender, ChatColor.GREEN + plugin.myLocale().settingsResetInProgress);
                         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {

@@ -523,6 +523,7 @@ public class PluginConfig {
 
         Settings.limitedBlocks = new HashMap<String,Integer>();
         Settings.entityLimits = new HashMap<EntityType, Integer>();
+        plugin.getLogger().info("Loading entity limits");
         ConfigurationSection entityLimits = plugin.getConfig().getConfigurationSection("general.entitylimits");
         if (entityLimits != null) {
             for (String entity: entityLimits.getKeys(false)) {
