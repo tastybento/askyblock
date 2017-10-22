@@ -154,13 +154,7 @@ public class AcidEffect implements Listener {
                                     this.cancel();
                                     // Check they are still in this world
                                 } else {
-                                    double health = player.getHealth() - (Settings.rainDamage - Settings.rainDamage * getDamageReduced(player));
-                                    if (health < 0D) {
-                                        health = 0D;
-                                    } else if (health > player.getMaxHealth()) {
-                                        health = player.getMaxHealth();
-                                    }
-                                    player.setHealth(health);
+                                    player.damage((Settings.rainDamage - Settings.rainDamage * getDamageReduced(player)));
                                     if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
                                         player.getWorld().playSound(playerLoc, Sound.valueOf("FIZZ"), 3F, 3F);
                                     } else {
@@ -218,13 +212,7 @@ public class AcidEffect implements Listener {
                     }
                     // Apply damage if there is any
                     if (Settings.acidDamage > 0D) {
-                        double health = player.getHealth() - (Settings.acidDamage - Settings.acidDamage * getDamageReduced(player));
-                        if (health < 0D) {
-                            health = 0D;
-                        } else if (health > player.getMaxHealth()) {
-                            health = player.getMaxHealth();
-                        }
-                        player.setHealth(health);
+                        player.damage((Settings.acidDamage - Settings.acidDamage * getDamageReduced(player)));
                         if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
                             player.getWorld().playSound(playerLoc, Sound.valueOf("FIZZ"), 3F, 3F);
                         } else {
