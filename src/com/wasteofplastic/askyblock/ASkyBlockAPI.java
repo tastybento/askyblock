@@ -52,15 +52,12 @@ public class ASkyBlockAPI {
     public static ASkyBlockAPI getInstance() {
         if (DEBUG)
             Bukkit.getLogger().info("DEBUG: ASkyBlock API, getInstance()");
+        if (instance == null)
+            // Initialize the API
+            new ASkyBlockAPI(ASkyBlock.getPlugin());
         return instance;
     }
 
-    /**
-     * @param instance the instance to set
-     */
-    public static void setInstance(ASkyBlockAPI instance) {
-        ASkyBlockAPI.instance = instance;
-    }
 
     private ASkyBlock plugin;
 
@@ -68,6 +65,7 @@ public class ASkyBlockAPI {
         this.plugin = plugin;
         if (DEBUG)
             Bukkit.getLogger().info("DEBUG: API constructed");
+        instance = this;
     }
 
     /**

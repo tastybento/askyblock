@@ -253,6 +253,8 @@ public class ASkyBlock extends JavaPlugin {
     public void onEnable() {
         // instance of this plugin
         plugin = this;
+        // Initialize the API
+        new ASkyBlockAPI(this);
         // Check server version - check for a class that only 1.8 has
         Class<?> clazz;
         try {
@@ -464,9 +466,6 @@ public class ASkyBlock extends JavaPlugin {
                         // Give temp permissions
                         playerEvents.giveAllTempPerms();
                         
-                        // Initialize the API
-                        ASkyBlockAPI.setInstance(new ASkyBlockAPI(plugin));
-
                         getLogger().info("All files loaded. Ready to play...");
                         
                         registerCustomCharts();
