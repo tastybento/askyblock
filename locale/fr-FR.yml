@@ -518,7 +518,7 @@ topTen:
   guiTitle: "Top 10 des îles"
   header: "Top 10 des îles du serveur:"
 visitors:
-  protected: "Visitors protected"
+  protected: "Visiteurs protégés"
 warps: 
   deactivate: "Désactivation de l'ancien panneau."
   errorDoesNotExist: "Ce warp n'existe pas!"
