@@ -1371,7 +1371,33 @@ public class IslandGuard implements Listener {
                             plugin.getLogger().info("DEBUG: found clicked block");
                         break;
                     }
-                    if (lastBlock.getType().equals(Material.FIRE)) {
+                    if (lastBlock.getType().equals(Material.SKULL)) {
+                        if (DEBUG)
+                            plugin.getLogger().info("DEBUG: SKULL found");
+                        if (island != null) {
+                            if (!island.getIgsFlag(SettingsFlag.BREAK_BLOCKS)) {
+                                Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
+                                if (DEBUG)
+                                    plugin.getLogger().info("DEBUG: disallow");
+                                e.setCancelled(true);
+                                lastBlock.getState().update();
+                                return;
+                            }
+                        } else {
+                            if (Settings.defaultWorldSettings.get(SettingsFlag.BREAK_BLOCKS)) {
+                                if (DEBUG)
+                                    plugin.getLogger().info("DEBUG: breaking skulls is allowed");
+                                continue;
+                            } else {
+                                if (DEBUG)
+                                    plugin.getLogger().info("DEBUG: disallowed");
+                                Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
+                                e.setCancelled(true);
+                                lastBlock.getState().update();
+                                return;
+                            }
+                        }
+                    } else if (lastBlock.getType().equals(Material.FIRE)) {
                         if (DEBUG)
                             plugin.getLogger().info("DEBUG: fire found");
                         if (island != null) {
