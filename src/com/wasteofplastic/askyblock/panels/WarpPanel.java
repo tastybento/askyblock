@@ -267,7 +267,7 @@ public class WarpPanel implements Listener {
         // The player that clicked the item
         final Player player = (Player) event.getWhoClicked();
         String title = inventory.getTitle();
-        if (!inventory.getTitle().startsWith(plugin.myLocale(player.getUniqueId()).warpsTitle + " #")) {
+        if (!inventory.getTitle().startsWith(plugin.myLocale().warpsTitle + " #")) {
             return;
         }
         event.setCancelled(true);
