@@ -317,7 +317,7 @@ island:
   resetYouHave: "你还有 [number] 次重新开始的机会."
   subtitle: 请务必努力生存下去
   subtitlecolor: "blue"
-  teleport: "[岛屿娘]:欢饮回来~我的主人. (输入/[label] help 获取更多帮助)"
+  teleport: "[岛屿娘]:欢迎回来~我的主人. (输入/[label] help 获取更多帮助)"
   title: ASkyBlock
   titlecolor: "gold"
   unlimited: "无限"
