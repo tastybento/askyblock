@@ -1591,16 +1591,11 @@ public class GridManager {
                 if (c.isLoaded()) {
                     for (final Entity e : c.getEntities()) {
                         //plugin.getLogger().info("DEBUG: " + e.getType());
-
+                        // Don't remove if the entity is an NPC or has a name tag
+                        if (e.getCustomName() != null || e.hasMetadata("NPC"))
+                            continue;
                         if (e instanceof Monster && !Settings.mobWhiteList.contains(e.getType())) {
-                            Monster monster = (Monster)e;
-                            //plugin.getLogger().info("DEBUG: monster found. custom name is '" + monster.getCustomName() + "'");
-                            //plugin.getLogger().info("DEBUG: remove when far away = " + monster.getRemoveWhenFarAway());
-
-                            // Don't remove if the monster has a name tag
-                            if (monster.getCustomName() == null || monster.getRemoveWhenFarAway()) {
-                                e.remove();
-                            }
+                            e.remove();
                         }
                     }
                 }
