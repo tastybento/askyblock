@@ -1290,9 +1290,10 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                         if (!island.isLocked()) {
                             // Remove any visitors
                             for (Player target : plugin.getServer().getOnlinePlayers()) {
-                                // See if target is on this player's island, not a mod, no bypass, and not a coop player
-                                if (!player.equals(target) && !target.isOp() && !VaultHelper.checkPerm(target, Settings.PERMPREFIX + "mod.bypassprotect")
-                                        && plugin.getGrid().isOnIsland(player, target)
+                                if (target == null || target.hasMetadata("NPC") || target.isOp() || player.equals(target) || VaultHelper.checkPerm(target, Settings.PERMPREFIX + "mod.bypassprotect"))
+                                    continue;
+                                // See if target is on this player's island and not a coop player
+                                if (plugin.getGrid().isOnIsland(player, target)
                                         && !CoopPlay.getInstance().getCoopPlayers(island.getCenter()).contains(target.getUniqueId())) {
                                     // Send them home
                                     if (plugin.getPlayers().inTeam(target.getUniqueId()) || plugin.getPlayers().hasIsland(target.getUniqueId())) {
