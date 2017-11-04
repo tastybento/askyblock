@@ -118,7 +118,7 @@ public class Players {
                 //plugin.getLogger().info("DEBUG: Entity is player");
                 try {
                     OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayer(uuid);
-                    if (offlinePlayer != null) {
+                    if (offlinePlayer != null && offlinePlayer.getName() != null) {
                         playerName = offlinePlayer.getName();
                     }
                 } catch (Exception e) {
