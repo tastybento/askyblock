@@ -296,12 +296,30 @@ public class IslandGuard implements Listener {
                         && !VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.bypassprotect")
                         && !VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.bypasslock")) {
                     Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).lockIslandLocked);
-
+                 // Check if the player is within the border a lot
+                    int minX = Math.max(islandTo.getMinProtectedX() - e.getTo().getBlockX(),
+                            e.getTo().getBlockX() - (islandTo.getMinProtectedX() + islandTo.getProtectionSize()));
+                    int minZ = Math.max(islandTo.getMinProtectedZ() - e.getTo().getBlockZ(),
+                            e.getTo().getBlockZ() - (islandTo.getMinProtectedZ() + islandTo.getProtectionSize()));
+                    int minMin = Math.max(minX, minZ);
+                    //plugin.getLogger().info("DEBUG: " + minMin);
+                    if (minMin < -1) {
+                        // Teleport player
+                        plugin.getGrid().homeTeleport(player);
+                        
+                    } else if (minMin < 1) {
+                        Vector v = e.getVehicle().getLocation().toVector().subtract(islandTo.getCenter().toVector()).normalize().multiply(new Vector(1.2,0,1.2));
+                        if (DEBUG)
+                            plugin.getLogger().info("DEBUG: direction vector = " + v);
+                        e.getVehicle().setVelocity(v);
+                    }
                     // Get the vector away from this island
+                    /*
                     Vector v = e.getVehicle().getLocation().toVector().subtract(islandTo.getCenter().toVector()).normalize().multiply(new Vector(1.2,0,1.2));
                     if (DEBUG)
                         plugin.getLogger().info("DEBUG: direction vector = " + v);
                     e.getVehicle().setVelocity(v);
+                    */
                     return;
                 }
             }
@@ -428,10 +446,22 @@ public class IslandGuard implements Listener {
                         }
 
                     } else {
-                        Vector v = e.getPlayer().getLocation().toVector().subtract(islandTo.getCenter().toVector()).normalize().multiply(new Vector(1.2,0,1.2));
-                        if (DEBUG)
-                            plugin.getLogger().info("DEBUG: direction vector = " + v);
-                        e.getPlayer().setVelocity(v);
+                        // Check if the player is within the border a lot
+                        int minX = Math.max(islandTo.getMinProtectedX() - e.getTo().getBlockX(),
+                                e.getTo().getBlockX() - (islandTo.getMinProtectedX() + islandTo.getProtectionSize()));
+                        int minZ = Math.max(islandTo.getMinProtectedZ() - e.getTo().getBlockZ(),
+                                e.getTo().getBlockZ() - (islandTo.getMinProtectedZ() + islandTo.getProtectionSize()));
+                        int minMin = Math.max(minX, minZ);
+                        //plugin.getLogger().info("DEBUG: " + minMin);
+                        if (minMin < -1) {
+                            // Teleport player
+                            plugin.getGrid().homeTeleport(e.getPlayer());
+                        } else if (minMin < 1) {
+                            Vector v = e.getPlayer().getLocation().toVector().subtract(islandTo.getCenter().toVector()).normalize().multiply(new Vector(1.2,0,1.2));
+                            if (DEBUG)
+                                plugin.getLogger().info("DEBUG: direction vector = " + v);
+                            e.getPlayer().setVelocity(v);
+                        }
                     }
                     return;
                 }
