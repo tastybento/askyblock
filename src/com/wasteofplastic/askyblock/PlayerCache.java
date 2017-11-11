@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -120,8 +121,9 @@ public class PlayerCache {
      * Removes all players on the server now from cache and saves their info
      */
     public void removeAllPlayers() {
-        for (UUID pl : playerCache.keySet()) {
-            playerCache.get(pl).save();
+        Map<UUID, Players> map = Collections.unmodifiableMap(playerCache);
+        for (UUID pl : map.keySet()) {
+            map.get(pl).save();
         }
         playerCache.clear();
     }
