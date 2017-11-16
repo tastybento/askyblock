@@ -77,55 +77,9 @@ public class NetherPortals implements Listener {
                 plugin.getLogger().info("DEBUG: Disabled nether: Settings create nether = " + Settings.createNether + " " + (ASkyBlock.getNetherWorld() == null ? "Nether world is null": "Nether world is not null"));
             return;
         }
-        if (event.getEntity() == null) {
-            if (DEBUG)
-                plugin.getLogger().info("DEBUG: entity is null");
-            return;
-        }
-        if (event.getFrom() != null && event.getFrom().getBlock().getType().equals(Material.ENDER_PORTAL)) {
-            event.setCancelled(true);
-            // Same action for all worlds except the end itself
-            if (!event.getFrom().getWorld().getEnvironment().equals(Environment.THE_END)) {
-                if (plugin.getServer().getWorld(Settings.worldName + "_the_end") != null) {
-                    // The end exists
-                    Location end_place = plugin.getServer().getWorld(Settings.worldName + "_the_end").getSpawnLocation();
-                    event.getEntity().teleport(end_place);
-                    if (DEBUG)
-                        plugin.getLogger().info("DEBUG: Result teleported " + event.getEntityType() + " to " + end_place);
-                    return;
-                }
-            }
-            return;
-        }
-        Location currentLocation = event.getFrom().clone();
-        String currentWorld = currentLocation.getWorld().getName();
-        // Only operate if this is Island territory
-        if (!currentWorld.equalsIgnoreCase(Settings.worldName) && !currentWorld.equalsIgnoreCase(Settings.worldName + "_nether")) {
-            if (DEBUG)
-                plugin.getLogger().info("DEBUG: not an island world");
-            return;
-        }
-        // No entities may pass with the old nether
-        if (!Settings.newNether) {
-            if (DEBUG)
-                plugin.getLogger().info("DEBUG: no entities may pass with old nether");
-            event.setCancelled(true);
-            return;
-        }
-        // New nether
-        // Entities can pass only if there are adjoining portals
-        Location dest = event.getFrom().toVector().toLocation(ASkyBlock.getIslandWorld());
-        if (event.getFrom().getWorld().getEnvironment().equals(Environment.NORMAL)) {
-            dest = event.getFrom().toVector().toLocation(ASkyBlock.getNetherWorld());
-        }
-        // Vehicles
-        if (event.getEntity() instanceof Vehicle) {
-            Vehicle vehicle = (Vehicle)event.getEntity();   
-            vehicle.eject();
-        }
-        new SafeSpotTeleport(plugin, event.getEntity(), dest);
+        // Disable entity portal transfer due to dupe glitching
         event.setCancelled(true);
-    }
+    } 
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerPortal(PlayerPortalEvent event) {
