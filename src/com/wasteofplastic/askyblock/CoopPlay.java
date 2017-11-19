@@ -64,8 +64,8 @@ public class CoopPlay {
     /**
      * Adds a player to an island as a coop player.
      * 
-     * @param requester
-     * @param newPlayer
+     * @param requester - coop requester
+     * @param newPlayer - new player to add to the coop
      * @return true if successful, otherwise false
      */
     public boolean addCoopPlayer(Player requester, Player newPlayer) {
@@ -130,8 +130,8 @@ public class CoopPlay {
     /**
      * Removes a coop player
      * 
-     * @param requester
-     * @param targetPlayer
+     * @param requester - requester
+     * @param targetPlayer - player to remove
      * @return true if the player was a coop player, and false if not
      */
     public boolean removeCoopPlayer(Player requester, Player targetPlayer) {
@@ -141,7 +141,7 @@ public class CoopPlay {
     /**
      * Returns the list of islands that this player is coop on or empty if none
      * 
-     * @param player
+     * @param player - player to query
      * @return Set of locations
      */
     public Set<Location> getCoopIslands(Player player) {
@@ -154,7 +154,7 @@ public class CoopPlay {
     /**
      * Gets a list of all the players that are currently coop on this island
      * 
-     * @param islandLoc
+     * @param islandLoc - island location to query
      * @return List of UUID's of players that have coop rights to the island
      */
     public List<UUID> getCoopPlayers(Location islandLoc) {
@@ -173,7 +173,7 @@ public class CoopPlay {
     /**
      * Removes all coop players from an island - used when doing an island reset
      * 
-     * @param player
+     * @param player - island player's UUID
      */
     public void clearAllIslandCoops(UUID player) {
         // Remove any and all islands related to requester
@@ -196,7 +196,7 @@ public class CoopPlay {
      * Deletes all coops from player.
      * Used when player logs out.
      * 
-     * @param player
+     * @param player - player object
      */
     public void clearMyCoops(Player player) {
         //plugin.getLogger().info("DEBUG: clear my coops - clearing coops memberships of " + player.getName());
@@ -300,7 +300,7 @@ public class CoopPlay {
      * clearer. Returns any inventory
      * Can be used when clearer logs out or when they are kicked or leave a team
      * 
-     * @param clearer
+     * @param clearer - player to clear
      */
     public void clearMyInvitedCoops(Player clearer) {
         //plugin.getLogger().info("DEBUG: clear my invited coops - clearing coops that were invited by " + clearer.getName());

@@ -2137,7 +2137,9 @@ public class Challenges implements CommandExecutor, TabCompleter {
 
     /**
      * Records the reseting challenge
-     * @param lowerCase
+     * @param challenge - name of challenge
+     * @param repeat - number of times it has been repeated
+     * @param entry - when it was done
      */
     public void resetChallengeForAll(String challenge, long repeat, String entry) {
         resettingChallenges.set(challenge + ".resettime", System.currentTimeMillis());

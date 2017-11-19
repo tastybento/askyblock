@@ -30,7 +30,6 @@ import org.bukkit.block.Biome;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Hopper;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Villager;
 
 import com.google.common.collect.HashMultiset;
@@ -489,7 +488,7 @@ public class Island implements Cloneable {
     /**
      * Checks if a location is within this island's protected area
      * 
-     * @param target
+     * @param target location to query
      * @return true if it is, false if not
      */
     public boolean onIsland(Location target) {
@@ -519,7 +518,7 @@ public class Island implements Cloneable {
     /**
      * Checks if location is anywhere in the island space (island distance)
      * 
-     * @param target
+     * @param target location to query
      * @return true if in the area
      */
     public boolean inIslandSpace(Location target) {
@@ -779,7 +778,7 @@ public class Island implements Cloneable {
 
     /**
      * Get the Island Guard flag status
-     * @param flag
+     * @param flag - settings flag to check
      * @return true or false, or false if flag is not in the list
      */
     public boolean getIgsFlag(SettingsFlag flag) {
@@ -792,8 +791,8 @@ public class Island implements Cloneable {
 
     /**
      * Set the Island Guard flag
-     * @param flag
-     * @param value
+     * @param flag - settings flag to check
+     * @param value - value to set true or false
      */
     public void setIgsFlag(SettingsFlag flag, boolean value) {
         this.igs.put(flag, value);
@@ -886,7 +885,8 @@ public class Island implements Cloneable {
     }
 
     /**
-     * @param material
+     * @param material Bukkit material to check
+     * @param world - world to check
      * @return count of how many tile entities of type mat are on the island at last count. Counts are done when a player places
      * a tile entity.
      */
@@ -946,7 +946,7 @@ public class Island implements Cloneable {
 
     /**
      * Toggles the Island Guard Flag
-     * @param flag
+     * @param flag  - settings flag to toggle
      */
     public void toggleIgs(SettingsFlag flag) {
         if (igs.containsKey(flag)) {
@@ -988,8 +988,8 @@ public class Island implements Cloneable {
 
     /**
      * Sets the settings for the island.
-     * @param settings
-     * @param settingsKey
+     * @param settings - string of 0 and 1's that define the settings for the island
+     * @param settingsKey - a list showing the order and what flags each digit refers to
      */
     public void setSettings(String settings, List<String> settingsKey) {
 

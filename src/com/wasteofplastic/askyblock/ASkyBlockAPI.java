@@ -38,7 +38,8 @@ import com.wasteofplastic.askyblock.commands.Challenges;
 import com.wasteofplastic.askyblock.panels.SetBiome;
 
 /**
- * Provides a programming interface
+ * Provides a programming interface. The aim of this class is to provide a fairly static set of calls for other plugins to use.
+ * If you try to hook into other classes in the code, they may change and break your code.
  * 
  * @author tastybento
  */
@@ -69,7 +70,7 @@ public class ASkyBlockAPI {
     }
 
     /**
-     * @param playerUUID
+     * @param playerUUID - player's UUID
      * @return Map of all of the known challenges with a boolean marking
      *         them as complete (true) or incomplete (false). This is a view of the
      *         challenges map that only allows read operations.
@@ -79,7 +80,7 @@ public class ASkyBlockAPI {
     }
 
     /**
-     * @param playerUUID
+     * @param playerUUID - player's UUID
      * @return Map of all of the known challenges and how many times each
      *         one has been completed. This is a view of the challenges
      *         map that only allows read operations.
@@ -100,7 +101,7 @@ public class ASkyBlockAPI {
      * Returns the island level from the last time it was calculated. Note this
      * does not calculate the island level.
      * 
-     * @param playerUUID
+     * @param playerUUID - player's UUID
      * @return the last level calculated for the island or zero if none.
      */
     public int getIslandLevel(UUID playerUUID) {
@@ -111,7 +112,7 @@ public class ASkyBlockAPI {
      * Returns the island level from the last time it was calculated. Note this
      * does not calculate the island level.
      * 
-     * @param playerUUID
+     * @param playerUUID - player's UUID
      * @return the last level calculated for the island or zero if none.
      */
     public long getLongIslandLevel(UUID playerUUID) {
@@ -131,8 +132,8 @@ public class ASkyBlockAPI {
      * You will need to check if the player is in a team and individually set the level of each team member.
      * This value will be overwritten if the players run the build-in level command or if the island level
      * is calculated some other way, e.g. at login or via an admin command.
-     * @param playerUUID
-     * @param level
+     * @param playerUUID - player's UUID
+     * @param level - level to set
      */
     public void setIslandLevel(UUID playerUUID, int level) {
         plugin.getPlayers().setIslandLevel(playerUUID, level);
@@ -144,7 +145,7 @@ public class ASkyBlockAPI {
      * or use getIslandLevel(playerUUID). See https://gist.github.com/tastybento/e81d2403c03f2fe26642
      * for example code.
      * 
-     * @param playerUUID
+     * @param playerUUID - player's UUID
      * @return true if player has an island, false if not
      */
     public boolean calculateIslandLevel(UUID playerUUID) {
@@ -159,7 +160,7 @@ public class ASkyBlockAPI {
      * Provides the location of the player's island, either the team island or
      * their own
      * 
-     * @param playerUUID
+     * @param playerUUID - players UUID
      * @return Location of island
      */
     public Location getIslandLocation(UUID playerUUID) {
@@ -170,7 +171,7 @@ public class ASkyBlockAPI {
      * Returns the owner of an island from the location.
      * Uses the grid lookup and is quick
      * 
-     * @param location
+     * @param location - location to check
      * @return UUID of owner
      */
     public UUID getOwner(Location location) {
@@ -180,7 +181,7 @@ public class ASkyBlockAPI {
     /**
      * Get Team Leader
      * 
-     * @param playerUUID
+     * @param playerUUID - player's UUID
      * @return UUID of Team Leader or null if there is none. Use inTeam to
      *         check.
      */
@@ -192,7 +193,7 @@ public class ASkyBlockAPI {
      * Get a list of team members. This is a copy and changing the return value
      * will not affect the membership.
      * 
-     * @param playerUUID
+     * @param playerUUID - player's UUID
      * @return List of team members, including the player. Empty if there are
      *         none.
      */
@@ -203,7 +204,7 @@ public class ASkyBlockAPI {
     /**
      * Provides location of the player's warp sign
      * 
-     * @param playerUUID
+     * @param playerUUID - player's UUID
      * @return Location of sign or null if one does not exist
      */
     public Location getWarp(UUID playerUUID) {
@@ -213,7 +214,7 @@ public class ASkyBlockAPI {
     /**
      * Get the owner of the warp at location
      * 
-     * @param location
+     * @param location - location of the warp
      * @return Returns name of player or empty string if there is no warp at
      *         that spot
      */
@@ -225,7 +226,7 @@ public class ASkyBlockAPI {
      * Status of island ownership. Team members do not have islands of their
      * own, only leaders do.
      * 
-     * @param playerUUID
+     * @param playerUUID - player's UUID
      * @return true if player has an island, false if the player does not.
      */
     public boolean hasIsland(UUID playerUUID) {
@@ -233,7 +234,7 @@ public class ASkyBlockAPI {
     }
 
     /**
-     * @param playerUUID
+     * @param playerUUID - player's UUID
      * @return true if in a team
      */
     public boolean inTeam(UUID playerUUID) {
@@ -245,7 +246,7 @@ public class ASkyBlockAPI {
      * checks if the spawn island is in this area. Checks for bedrock within
      * limits and also looks in the file system. Quite processor intensive.
      * 
-     * @param location
+     * @param location - location to check
      * @return true if there is an island in that location, false if not
      */
     public boolean islandAtLocation(Location location) {
@@ -256,9 +257,8 @@ public class ASkyBlockAPI {
      * Checks to see if a player is trespassing on another player's island. Both
      * players must be online.
      * 
-     * @param owner
-     *            - owner or team member of an island
-     * @param target
+     * @param owner - player owner or team member of an island
+     * @param target - player who may be doing the trespassing
      * @return true if they are on the island otherwise false.
      */
     public boolean isOnIsland(Player owner, Player target) {
@@ -289,8 +289,8 @@ public class ASkyBlockAPI {
      * Checks if a specific location is within the protected range of an island
      * owned by the player
      * 
-     * @param player
-     * @param location
+     * @param player - player object
+     * @param location - location to check
      * @return true if the location is on an island owner by player
      */
     public boolean locationIsOnIsland(final Player player, final Location location) {
@@ -303,8 +303,8 @@ public class ASkyBlockAPI {
      * location of an island. The check is done to see if loc is inside the protected
      * range of any of the islands given. 
      * 
-     * @param islandTestLocations
-     * @param loc
+     * @param islandTestLocations - Set of island locations to check
+     * @param loc - location to check
      * @return the island location that is in the set of locations or null if
      *         none
      */
@@ -316,8 +316,7 @@ public class ASkyBlockAPI {
      * Checks if an online player is on their island, on a team island or on a
      * coop island
      * 
-     * @param player
-     *            - the player who is being checked
+     * @param player - the player who is being checked
      * @return - true if they are on their island, otherwise false
      */
     public boolean playerIsOnIsland(Player player) {
@@ -327,8 +326,8 @@ public class ASkyBlockAPI {
     /**
      * Sets all blocks in an island to a specified biome type
      * 
-     * @param islandLoc
-     * @param biomeType
+     * @param islandLoc - island location
+     * @param biomeType - biome type
      * @return true if the setting was successful
      */
     public boolean setIslandBiome(Location islandLoc, Biome biomeType) {
@@ -343,8 +342,8 @@ public class ASkyBlockAPI {
     /**
      * Sets a message for the player to receive next time they login
      * 
-     * @param playerUUID
-     * @param message
+     * @param playerUUID - player's UUID
+     * @param message - message to set
      * @return true if player is offline, false if online
      */
     public boolean setMessage(UUID playerUUID, String message) {
@@ -355,8 +354,8 @@ public class ASkyBlockAPI {
      * Sends a message to every player in the team that is offline If the player
      * is not in a team, nothing happens.
      * 
-     * @param playerUUID
-     * @param message
+     * @param playerUUID - player's UUID
+     * @param message - message to send
      */
     public void tellOfflineTeam(UUID playerUUID, String message) {
         plugin.getMessages().tellOfflineTeam(playerUUID, message);
@@ -365,7 +364,7 @@ public class ASkyBlockAPI {
     /**
      * Player is in a coop or not
      * 
-     * @param player
+     * @param player - player object to check
      * @return true if player is in a coop, otherwise false
      */
     public boolean isCoop(Player player) {
@@ -378,7 +377,7 @@ public class ASkyBlockAPI {
     /**
      * Find out which coop islands player is a part of
      * 
-     * @param player
+     * @param player - player object to check
      * @return set of locations of islands or empty if none
      */
     public Set<Location> getCoopIslands(Player player) {
@@ -403,7 +402,7 @@ public class ASkyBlockAPI {
 
     /**
      * Checks if a location is at spawn or not
-     * @param location
+     * @param location - location to check
      * @return true if at spawn
      */
     public boolean isAtSpawn(Location location) {
@@ -459,7 +458,7 @@ public class ASkyBlockAPI {
 
     /**
      * Obtains a copy of the island object owned by playerUUID
-     * @param playerUUID
+     * @param playerUUID - player's UUID
      * @return copy of Island object
      */
     public Island getIslandOwnedBy(UUID playerUUID) {
@@ -468,7 +467,7 @@ public class ASkyBlockAPI {
 
     /**
      * Returns a copy of the Island object for an island at this location or null if one does not exist
-     * @param location
+     * @param location - location requested
      * @return copy of Island object
      */
     public Island getIslandAt(Location location) {
@@ -502,7 +501,7 @@ public class ASkyBlockAPI {
 
     /**
      * Get name of the island owned by owner
-     * @param owner
+     * @param owner - player's UUID
      * @return Returns the name of owner's island, or the owner's name if there is none.
      */
     public String getIslandName(UUID owner) {
@@ -511,8 +510,8 @@ public class ASkyBlockAPI {
 
     /**
      * Set the island name
-     * @param owner
-     * @param name
+     * @param owner - player's UUID
+     * @param name - name to set
      */
     public void setIslandName(UUID owner, String name) {
         plugin.getGrid().setIslandName(owner, name);
@@ -528,7 +527,7 @@ public class ASkyBlockAPI {
 
     /**
      * Get the number of resets left for this player
-     * @param playerUUID
+     * @param playerUUID - player's UUID
      * @return Number of resets left
      */
     public int getResetsLeft(UUID playerUUID) {
@@ -537,8 +536,8 @@ public class ASkyBlockAPI {
 
     /**
      * Set the number of resets left for this player
-     * @param playerUUID
-     * @param resets
+     * @param playerUUID - player's UUID
+     * @param resets - number to set
      */
     public void setResetsLeft(UUID playerUUID, int resets) {
         plugin.getPlayers().setResetsLeft(playerUUID, resets);
@@ -546,7 +545,7 @@ public class ASkyBlockAPI {
     
     /**
      * Find out if this player is a team leader or not. If the player is not in a team, the result will always be false.
-     * @param playerUUID
+     * @param playerUUID - player's UUID
      * @return true if the player is in a team and is the leader
      */
     public boolean isLeader(UUID playerUUID) {

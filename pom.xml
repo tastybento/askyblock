@@ -4,6 +4,7 @@
 
 	<groupId>com.wasteofplastic</groupId>
 	<artifactId>askyblock</artifactId>
+
 	<packaging>jar</packaging>
 
 	<name>com.wasteofplastic</name>
@@ -13,7 +14,8 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<server.jars>${project.basedir}/lib</server.jars>
 	</properties>
-	<!-- Ignore or delete the distribution management part of this POM if you are not tastybento! -->
+	<!-- Ignore or delete the distribution management part of this POM if you 
+		are not tastybento! -->
 	<distributionManagement>
 		<repository>
 			<id>bintray-tastybento-maven-repo</id>
@@ -70,6 +72,31 @@
 					<target>1.7</target>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>3.0.1</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 	<dependencies>
@@ -91,10 +118,11 @@
 			<scope>provided</scope>
 			<type>jar</type>
 		</dependency>
-		<!-- These server binaries have to be provided by you and put in the server.jars folder
-		You can build the latest versions using the BuildTools.jar tool from spigotmc.org.
-		If you do not have or do not need a server version, delete the reference here and
-		delete the corresponding package in the source code starting with com.wasteofplastic.askyblock.nms. -->
+		<!-- These server binaries have to be provided by you and put in the server.jars 
+			folder You can build the latest versions using the BuildTools.jar tool from 
+			spigotmc.org. If you do not have or do not need a server version, delete 
+			the reference here and delete the corresponding package in the source code 
+			starting with com.wasteofplastic.askyblock.nms. -->
 		<dependency>
 			<groupId>bukkit.org</groupId>
 			<artifactId>craftbukkit</artifactId>

@@ -22,7 +22,7 @@ public class AcidTask {
 
     /**
      * Runs repeating tasks to deliver acid damage to mobs, etc.
-     * @param plugin
+     * @param plugin - ASkyBlock plugin
      */
     public AcidTask(final ASkyBlock plugin) {
         this.plugin = plugin;

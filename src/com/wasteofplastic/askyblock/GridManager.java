@@ -170,8 +170,8 @@ public class GridManager {
     /**
      * Provides confirmation that the island is on the grid lines
      * 
-     * @param loc
-     * @return
+     * @param loc - location to check
+     * @return true if on grid, false if not
      */
     public boolean onGrid(Location loc) {
         int x = loc.getBlockX();
@@ -451,7 +451,7 @@ public class GridManager {
     /**
      * Saves the grid. Option to save sync or async.
      * Async cannot be used when disabling the plugin
-     * @param async
+     * @param async - true if saving should be done async
      */
     public void saveGrid(boolean async) {
         final File islandFile = new File(plugin.getDataFolder(), ISLANDS_FILENAME);
@@ -514,7 +514,7 @@ public class GridManager {
      * Returns the island at the location or null if there is none.
      * This includes the full island space, not just the protected area
      * 
-     * @param location
+     * @param location - location to query
      * @return PlayerIsland object
      */
     public Island getIslandAt(Location location) {
@@ -535,7 +535,7 @@ public class GridManager {
     /**
      * Determines if a location is in the island world or not or
      * in the new nether if it is activated
-     * @param loc
+     * @param loc - location to query
      * @return true if in the island world
      */
     protected boolean inWorld(Location loc) {
@@ -553,8 +553,8 @@ public class GridManager {
      * Returns the island at the x,z location or null if there is none.
      * This includes the full island space, not just the protected area.
      * 
-     * @param x
-     * @param z
+     * @param x coord
+     * @param z coord
      * @return PlayerIsland or null
      */
     public Island getIslandAt(int x, int z) {
@@ -577,8 +577,8 @@ public class GridManager {
     /**
      * Returns the island being public at the location or null if there is none
      * 
-     * @param location
-     * @return PlayerIsland object
+     * @param location - location to query
+     * @return Island object
      */
     public Island getProtectedIslandAt(Location location) {
         //plugin.getLogger().info("DEBUG: getProtectedIslandAt " + location);
@@ -600,7 +600,7 @@ public class GridManager {
     /**
      * Returns the owner of the island at location or null if there is none
      * 
-     * @param location
+     * @param location location to query
      * @return UUID of owner
      */
     public UUID getOwnerOfIslandAt(Location location) {
@@ -615,8 +615,9 @@ public class GridManager {
     /**
      * Adds an island to the islandGrid with the CENTER point x,z
      * 
-     * @param x
-     * @param z
+     * @param x cood
+     * @param z cood
+     * @return island object
      */
     public Island addIsland(int x, int z) {
         return addIsland(x, z, null);
@@ -625,9 +626,10 @@ public class GridManager {
     /**
      * Adds an island to the islandGrid with the center point x,z owner UUID
      * 
-     * @param x
-     * @param z
-     * @param owner
+     * @param x coord
+     * @param z coord
+     * @param owner owner of island
+     * @return island object
      */
     public Island addIsland(int x, int z, UUID owner) {
         // Check if this owner already has an island
@@ -660,7 +662,9 @@ public class GridManager {
     /**
      * Adds island to the grid using the stored information
      * 
-     * @param islandSerialized
+     * @param islandSerialized serialized version of the island information
+     * @param settingsKey
+     * @return island object
      */
     public Island addIsland(String islandSerialized, List<String> settingsKey) {
         // plugin.getLogger().info("DEBUG: adding island " + islandSerialized);
@@ -671,7 +675,7 @@ public class GridManager {
 
     /**
      * Adds an island to the grid register
-     * @param newIsland
+     * @param newIsland new island object to register on the grid
      */
     private void addToGrids(Island newIsland) {
         //plugin.getLogger().info("DEBUG: adding island to grid at " + newIsland.getMinX() + "," + newIsland.getMinZ());
@@ -723,7 +727,7 @@ public class GridManager {
      * Deletes any island owned by owner from the grid. Does not actually remove the island
      * from the world. Used for cleaning up issues such as mismatches between player files
      * and island.yml
-     * @param owner
+     * @param owner UUID of owner
      */
     public void deleteIslandOwner(UUID owner) {
         if (owner != null && ownershipMap.containsKey(owner)) {
@@ -738,7 +742,7 @@ public class GridManager {
      * Removes the island at location loc from the grid and removes the player
      * from the ownership map
      * 
-     * @param loc
+     * @param loc location to remove
      */
     public void deleteIsland(Location loc) {
         // plugin.getLogger().info("DEBUG: deleting island at " + loc);
@@ -782,7 +786,7 @@ public class GridManager {
      * support
      * Will return the island that this player is a member of if a team player
      * 
-     * @param owner
+     * @param owner island owner's UUID
      * @return island object or null if it does not exist in the list
      */
     public Island getIsland(UUID owner) {
@@ -803,8 +807,8 @@ public class GridManager {
      * Sets an island to be owned by another player. If the new owner had an
      * island, that island is released to null ownership
      * 
-     * @param island
-     * @param newOwner
+     * @param island island object
+     * @param newOwner new owner's UUID
      */
     public void setIslandOwner(Island island, UUID newOwner) {
         // The old owner
@@ -875,7 +879,7 @@ public class GridManager {
     /**
      * Indicates whether a player is at the island spawn or not
      * 
-     * @param playerLoc
+     * @param playerLoc - location to query
      * @return true if they are, false if they are not, or spawn does not exist
      */
     public boolean isAtSpawn(Location playerLoc) {
@@ -890,7 +894,7 @@ public class GridManager {
      * location. Also checks if the spawn island is in this area.
      * Used for creating new islands ONLY
      * 
-     * @param loc
+     * @param loc location to query
      * @return true if found, otherwise false
      */
     public boolean islandAtLocation(Location loc) {
@@ -949,7 +953,7 @@ public class GridManager {
     /**
      * This returns the coordinate of where an island should be on the grid.
      * 
-     * @param location
+     * @param location location to query
      * @return Location of closest island
      */
     public Location getClosestIsland(Location location) {
@@ -1137,7 +1141,7 @@ public class GridManager {
     /**
      * This is a generic scan that can work in the overworld or the nether
      * @param l - location around which to scan
-     * @param i - the range to scan for a location < 0 means the full island.
+     * @param i - the range to scan for a location less than 0 means the full island.
      * @return - safe location, or null if none can be found
      */
     public Location bigScan(Location l, int i) {
@@ -1222,7 +1226,7 @@ public class GridManager {
      * This teleports player to their island. If not safe place can be found
      * then the player is sent to spawn via /spawn command
      * 
-     * @param player
+     * @param player player object
      * @return true if the home teleport is successful
      */
     public boolean homeTeleport(final Player player) {
@@ -1231,7 +1235,7 @@ public class GridManager {
     /**
      * Teleport player to a home location. If one cannot be found a search is done to
      * find a safe place.
-     * @param player
+     * @param player player object
      * @param number - home location to do to
      * @return true if successful, false if not
      */
@@ -1272,8 +1276,8 @@ public class GridManager {
 
     /**
      * Sets the numbered home location based on where the player is now
-     * @param player
-     * @param number
+     * @param player player object
+     * @param number home number
      */
     public void homeSet(Player player, int number) {
         // Check if player is in their home world        
@@ -1297,7 +1301,7 @@ public class GridManager {
     /**
      * Sets the home location based on where the player is now
      * 
-     * @param player
+     * @param player player object
      */
     public void homeSet(final Player player) {
         homeSet(player, 1);
@@ -1307,8 +1311,8 @@ public class GridManager {
      * Checks if a specific location is within the protected range of an island
      * owned by the player
      * 
-     * @param player
-     * @param loc
+     * @param player player object
+     * @param loc location to query
      * @return true if location is on island of player
      */
     public boolean locationIsOnIsland(final Player player, final Location loc) {
@@ -1367,8 +1371,8 @@ public class GridManager {
      * Finds out if location is within a set of island locations and returns the
      * one that is there or null if not
      * 
-     * @param islandTestLocations
-     * @param loc
+     * @param islandTestLocations set of test locations
+     * @param loc location to query
      * @return Location found that is on the island
      */
     public Location locationIsOnIsland(final Set<Location> islandTestLocations, final Location loc) {
@@ -1397,7 +1401,7 @@ public class GridManager {
      * Checks if an online player is in the protected area of their island, a team island or a
      * coop island
      * 
-     * @param player
+     * @param player playe object
      * @return true if on valid island, false if not
      */
     public boolean playerIsOnIsland(final Player player) {
@@ -1407,7 +1411,7 @@ public class GridManager {
     /**
      * Checks if an online player is in the protected area of their island, a team island or a
      * coop island
-     * @param player
+     * @param player playe object
      * @param coop - if true, coop islands are included
      * @return true if on valid island, false if not
      */
@@ -1418,9 +1422,9 @@ public class GridManager {
 
     /**
      * Checks if a location is within the home boundaries of a player. If coop is true, this check includes coop players.
-     * @param player
-     * @param coop
-     * @param loc
+     * @param player player object
+     * @param coop true if coops should be included
+     * @param loc location to query
      * @return true if the location is within home boundaries
      */
     public boolean locationIsAtHome(final Player player, boolean coop, Location loc) {
@@ -1472,8 +1476,8 @@ public class GridManager {
 
     /**
      * Generates a Nether version of the locations
-     * @param islandLocation
-     * @return
+     * @param islandLocation - location to generate
+     * @return location of nether version
      */
     private Location netherIsland(Location islandLocation) {
         //plugin.getLogger().info("DEBUG: netherworld = " + ASkyBlock.getNetherWorld());
@@ -1486,7 +1490,7 @@ public class GridManager {
      * 
      * @param owner
      *            - owner or team member of an island
-     * @param target
+     * @param target target of the query
      * @return true if they are on the island otherwise false.
      */
     public boolean isOnIsland(final Player owner, final Player target) {
@@ -1535,8 +1539,8 @@ public class GridManager {
     /**
      * Transfers ownership of an island from one player to another
      * 
-     * @param oldOwner
-     * @param newOwner
+     * @param oldOwner old owner UUID
+     * @param newOwner new owner UUID
      * @return true if successful
      */
     public boolean transferIsland(final UUID oldOwner, final UUID newOwner) {
@@ -1569,7 +1573,7 @@ public class GridManager {
     /**
      * Removes monsters around location l
      * 
-     * @param l
+     * @param l location
      */
     public void removeMobs(final Location l) {
         if (!inWorld(l)) {
@@ -1607,7 +1611,7 @@ public class GridManager {
      * This removes players from an island overworld and nether - used when reseting or deleting an island
      * Mobs are killed when the chunks are refreshed.
      * @param island to remove players from
-     * @param uuid 
+     * @param uuid - uuid to ignore
      */
     public void removePlayersFromIsland(final Island island, UUID uuid) {
         // Teleport players away
@@ -1657,7 +1661,7 @@ public class GridManager {
 
     /**
      * Set the spawn point for the island world
-     * @param location
+     * @param location island location
      */
     public void setSpawnPoint(Location location) {
         ASkyBlock.getIslandWorld().setSpawnLocation(location.getBlockX(), location.getBlockY(), location.getBlockZ());
@@ -1693,7 +1697,7 @@ public class GridManager {
 
     /**
      * Get name of the island owned by owner
-     * @param owner
+     * @param owner island owner UUID
      * @return Returns the name of owner's island, or the owner's name if there is none.
      */
     public String getIslandName(UUID owner) {
@@ -1705,8 +1709,8 @@ public class GridManager {
 
     /**
      * Set the island name
-     * @param owner
-     * @param name
+     * @param owner island owner UUID
+     * @param name name to set
      */
     public void setIslandName(UUID owner, String name) {
         islandNames.set(owner.toString(), name);

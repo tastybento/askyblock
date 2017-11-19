@@ -66,9 +66,9 @@ public class Players {
     private int deaths;
 
     /**
-     * @param uuid
-     *            Constructor - initializes the state variables
-     * 
+     * @param aSkyBlock - plugin
+     * @param uuid - player's uuid
+     * @throws IOException - if uuid is null
      */
     public Players(final ASkyBlock aSkyBlock, final UUID uuid) throws IOException {
         this.plugin = aSkyBlock;
@@ -328,7 +328,6 @@ public class Players {
     /**
      * @param member
      *            Adds a member to the the player's list
-     * @return 
      */
     public void addTeamMember(final UUID member) {
         members.add(member);
@@ -653,6 +652,7 @@ public class Players {
      * @param l
      *            - the Bukkit location of the team's island (converted to a
      *            String in this function)
+     * @return - true if successful
      */
     public boolean setJoinTeam(final UUID leader, final Location l) {
         if(inTeam) {
@@ -709,6 +709,7 @@ public class Players {
     /**
      * @param leader
      *            a String name of the team leader
+     * @return true if successful
      */
     public boolean setTeamLeader(final UUID leader) {
         if(inTeam) {

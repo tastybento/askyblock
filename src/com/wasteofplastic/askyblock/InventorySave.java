@@ -34,13 +34,14 @@ public class InventorySave {
 
     /**
      * Saves the inventory of a player
+     * @param plugin - ASkyBlock plugin
      */
     public InventorySave(ASkyBlock plugin) {
         inventories = new HashMap<UUID, InventoryStore>();
     }
 
     /** Save player's inventory
-     * @param player
+     * @param player player object
      */
     public void savePlayerInventory(Player player) {
         //plugin.getLogger().info("DEBUG: Saving inventory");
@@ -50,7 +51,7 @@ public class InventorySave {
 
     /**
      * Clears any saved inventory
-     * @param player
+     * @param player player object
      */
     public void clearSavedInventory(Player player) {
         //plugin.getLogger().info("DEBUG: Clearing inventory");
@@ -59,7 +60,7 @@ public class InventorySave {
     /**
      * Load the player's inventory
      * 
-     * @param player
+     * @param player playe object
      */
     public void loadPlayerInventory(Player player) {
         //plugin.getLogger().info("DEBUG: Loading inventory");

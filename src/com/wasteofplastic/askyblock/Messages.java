@@ -51,7 +51,7 @@ public class Messages {
     /**
      * Returns what messages are waiting for the player or null if none
      * 
-     * @param playerUUID
+     * @param playerUUID - player's UUID
      * @return List of messages
      */
     public List<String> getMessages(UUID playerUUID) {
@@ -62,7 +62,7 @@ public class Messages {
     /**
      * Clears any messages for player
      * 
-     * @param playerUUID
+     * @param playerUUID - player's UUID
      */
     public void clearMessages(UUID playerUUID) {
         messages.remove(playerUUID);
@@ -114,7 +114,7 @@ public class Messages {
     /**
      * Provides the messages for the player
      * 
-     * @param playerUUID
+     * @param playerUUID - player's UUID
      * @return List of messages
      */
     public List<String> get(UUID playerUUID) {
@@ -135,8 +135,8 @@ public class Messages {
     /**
      * Sends a message to every player in the team that is offline
      * 
-     * @param playerUUID
-     * @param message
+     * @param playerUUID - player's UUID
+     * @param message - message to send
      */
     public void tellOfflineTeam(UUID playerUUID, String message) {
         // getLogger().info("DEBUG: tell offline team called");
@@ -158,8 +158,8 @@ public class Messages {
     /**
      * Tells all online team members something happened
      * 
-     * @param playerUUID
-     * @param message
+     * @param playerUUID - player's UUID
+     * @param message - message to send
      */
     public void tellTeam(UUID playerUUID, String message) {
         // getLogger().info("DEBUG: tell offline team called");
@@ -181,8 +181,8 @@ public class Messages {
     /**
      * Sets a message for the player to receive next time they login
      * 
-     * @param playerUUID
-     * @param message
+     * @param playerUUID - player's UUID
+     * @param message - message to set
      * @return true if player is offline, false if online
      */
     public boolean setMessage(UUID playerUUID, String message) {
@@ -201,8 +201,8 @@ public class Messages {
 
     /**
      * Stores a message without any online check
-     * @param playerUUID
-     * @param message
+     * @param playerUUID - player's UUID
+     * @param message - message to store
      */
     public void storeMessage(UUID playerUUID, String message) {
         List<String> playerMessages = get(playerUUID);

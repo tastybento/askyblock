@@ -669,9 +669,9 @@ public class ASLocale {
 
     /**
      * Creates a locale object full of localized strings for a language
-     * @param plugin
+     * @param plugin - ASkyBlock plugin
      * @param localeName - name of the yml file that will be used
-     * @param index 
+     * @param index - index number of the locale
      */
     public ASLocale(ASkyBlock plugin, String localeName, int index) {
         this.plugin = plugin;
@@ -685,6 +685,7 @@ public class ASLocale {
     }
 
     /**
+     * @param localeName requested locale name
      * @return locale FileConfiguration object
      */
     public FileConfiguration getLocale(String localeName) {
@@ -696,6 +697,7 @@ public class ASLocale {
 
     /**
      * Reloads the locale file
+     * @param localeName - locale to reload
      */
     public void reloadLocale(String localeName) {
         //plugin.getLogger().info("DEBUG: loading local file " + localeName + ".yml");

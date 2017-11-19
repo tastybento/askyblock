@@ -42,6 +42,8 @@ public class PluginConfig {
 
     /**
      * Loads the various settings from the config.yml file into the plugin
+     * @param plugin - askyblock
+     * @return true if plugin config is loaded correctly
      */
     public static boolean loadPluginConfig(ASkyBlock plugin) {
         try {
