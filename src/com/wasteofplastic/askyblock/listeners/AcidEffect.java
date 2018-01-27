@@ -72,8 +72,9 @@ public class AcidEffect implements Listener {
 
     @EventHandler(priority = EventPriority.LOW)
     public void onPlayerDeath(PlayerDeathEvent e) {
-        if (DEBUG)
+        if (DEBUG) {
             plugin.getLogger().info("DEBUG: " + e.getEventName());
+        }
 
         burningPlayers.remove((Player) e.getEntity());
         wetPlayers.remove((Player) e.getEntity());
@@ -117,8 +118,9 @@ public class AcidEffect implements Listener {
             // Head movements only
             return;
         }*/
-        if (DEBUG)
+        if (DEBUG) {
             plugin.getLogger().info("DEBUG: Acid Effect " + e.getEventName());
+        }
 
         // Slow checks
         final Location playerLoc = player.getLocation();
@@ -176,14 +178,16 @@ public class AcidEffect implements Listener {
         }
         // If they are already burning in acid then return
         if (burningPlayers.contains(player)) {
-            if (DEBUG)
+            if (DEBUG) {
                 plugin.getLogger().info("DEBUG: already burning in acid");
+            }
             return;
         }
         // plugin.getLogger().info("DEBUG: no acid water is false");
         if (isSafeFromAcid(player)) {
-            if (DEBUG)
+            if (DEBUG) {
                 plugin.getLogger().info("DEBUG: safe from acid");
+            }
             return;
         }
         // ACID!
@@ -231,18 +235,21 @@ public class AcidEffect implements Listener {
      * @return true if they are safe
      */
     private boolean isSafeFromRain(Player player) {
-        if (DEBUG)
+        if (DEBUG) {
             plugin.getLogger().info("DEBUG: safe from acid rain");
+        }
         if (!player.getWorld().equals(ASkyBlock.getIslandWorld())) {
-            if (DEBUG)
+            if (DEBUG) {
                 plugin.getLogger().info("DEBUG: wrong world");
+            }
             return true;
         }
         // Check if player has a helmet on and helmet protection is true
         if (Settings.helmetProtection && (player.getInventory().getHelmet() != null 
                 && player.getInventory().getHelmet().getType().name().contains("HELMET"))) {
-            if (DEBUG)
+            if (DEBUG) {
                 plugin.getLogger().info("DEBUG: wearing helmet.");
+            }
             return true;
         }
         // Check potions
@@ -250,21 +257,24 @@ public class AcidEffect implements Listener {
         for (PotionEffect s : activePotions) {
             if (s.getType().equals(PotionEffectType.WATER_BREATHING)) {
                 // Safe!
-                if (DEBUG)
+                if (DEBUG) {
                     plugin.getLogger().info("DEBUG: potion");
+                }
                 return true;
             }
         }
         // Check if all air above player
         for (int y = player.getLocation().getBlockY() + 2; y < player.getLocation().getWorld().getMaxHeight(); y++) {
             if (!player.getLocation().getWorld().getBlockAt(player.getLocation().getBlockX(), y, player.getLocation().getBlockZ()).getType().equals(Material.AIR)) {
-                if (DEBUG)
+                if (DEBUG) {
                     plugin.getLogger().info("DEBUG: something other than air above player");
+                }
                 return true;
             }
         }
-        if (DEBUG)
+        if (DEBUG) {
             plugin.getLogger().info("DEBUG: acid rain damage");
+        }
         return false;
     }
 
@@ -274,23 +284,28 @@ public class AcidEffect implements Listener {
      * @return true if player is not safe
      */
     private boolean isSafeFromAcid(Player player) {
-        if (DEBUG)
+        if (DEBUG) {
             plugin.getLogger().info("DEBUG: safe from acid");
+        }
         if (!player.getWorld().equals(ASkyBlock.getIslandWorld())) {
-            if (DEBUG)
+            if (DEBUG) {
                 plugin.getLogger().info("DEBUG: wrong world");
+            }
             return true;
         }
         // In liquid
         Material bodyMat = player.getLocation().getBlock().getType();
         Material headMat = player.getLocation().getBlock().getRelative(BlockFace.UP).getType();
-          if (bodyMat.equals(Material.STATIONARY_WATER))
-              bodyMat = Material.WATER;
-          if (headMat.equals(Material.STATIONARY_WATER))
-              headMat = Material.WATER;
+        if (bodyMat.equals(Material.STATIONARY_WATER)) {
+            bodyMat = Material.WATER;
+        }
+        if (headMat.equals(Material.STATIONARY_WATER)) {
+            headMat = Material.WATER;
+        }
         if (bodyMat != Material.WATER && headMat != Material.WATER) {
-            if (DEBUG)
+            if (DEBUG) {
                 plugin.getLogger().info("DEBUG: not in water " + player.getLocation().getBlock().isLiquid() + " " + player.getLocation().getBlock().getRelative(BlockFace.UP).isLiquid());
+            }
             return true;
         }
         // Check if player is in a boat
@@ -299,8 +314,9 @@ public class AcidEffect implements Listener {
             // They are in a Vehicle
             if (playersVehicle.getType().equals(EntityType.BOAT)) {
                 // I'M ON A BOAT! I'M ON A BOAT! A %^&&* BOAT!
-                if (DEBUG)
+                if (DEBUG) {
                     plugin.getLogger().info("DEBUG: boat");
+                }
                 return true;
             }
         }
@@ -314,8 +330,9 @@ public class AcidEffect implements Listener {
                 }
             }
             if (fullArmor) {
-                if (DEBUG)
+                if (DEBUG) {
                     plugin.getLogger().info("DEBUG: full armor");
+                }
                 return true;
             }
         }
@@ -326,25 +343,29 @@ public class AcidEffect implements Listener {
             // s.getType().toString());
             if (s.getType().equals(PotionEffectType.WATER_BREATHING)) {
                 // Safe!
-                if (DEBUG)
+                if (DEBUG) {
                     plugin.getLogger().info("DEBUG: Water breathing potion protection!");
+                }
                 return true;
             }
         }
         // Check if water above sea-level is not acid
         Island island = plugin.getGrid().getIslandAt(player.getLocation());
         if (island != null && !island.getIgsFlag(SettingsFlag.ACID_DAMAGE) && player.getLocation().getBlockY() > Settings.seaHeight) {
-            if (DEBUG)
+            if (DEBUG) {
                 plugin.getLogger().info("DEBUG:no acid damage above sea level 1");
+            }
             return true;
         }
         if (island == null && !Settings.defaultWorldSettings.get(SettingsFlag.ACID_DAMAGE) && player.getLocation().getBlockY() > Settings.seaHeight) {
-            if (DEBUG)
+            if (DEBUG) {
                 plugin.getLogger().info("DEBUG: no acid damage above sea level");
+            }
             return true;
         }
-        if (DEBUG)
+        if (DEBUG) {
             plugin.getLogger().info("DEBUG: burn in acid");
+        }
         return false;
     }
 
@@ -359,21 +380,23 @@ public class AcidEffect implements Listener {
         if (!Settings.allowObsidianScooping) {
             return;
         }
+        Player player = e.getPlayer();
         // Check that they are in the ASkyBlock world
-        if (!e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
+        if (!player.getWorld().getName().equalsIgnoreCase(Settings.worldName)) {
             return;
         }
-        if (!e.getPlayer().getGameMode().equals(GameMode.SURVIVAL)) {
+        if (!player.getGameMode().equals(GameMode.SURVIVAL)) {
             // Only Survival players can do this
             return;
         }
-        if (DEBUG)
+        if (DEBUG) {
             plugin.getLogger().info("DEBUG: obsidian scoop " + e.getEventName());
+        }
 
-        if (plugin.getGrid().playerIsOnIsland(e.getPlayer())) {
+        if (plugin.getGrid().playerIsOnIsland(player)) {
             boolean otherOb = false;
             @SuppressWarnings("deprecation")
-            ItemStack inHand = e.getPlayer().getItemInHand();
+            ItemStack inHand = player.getItemInHand();
             if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK) && inHand.getType().equals(Material.BUCKET)
                     && e.getClickedBlock().getType().equals(Material.OBSIDIAN)) {
                 // Look around to see if this is a lone obsidian block
@@ -389,15 +412,15 @@ public class AcidEffect implements Listener {
                     }
                 }
                 if (!otherOb) {
-                    Util.sendMessage(e.getPlayer(), ChatColor.YELLOW + plugin.myLocale(e.getPlayer().getUniqueId()).changingObsidiantoLava);
-                    e.getPlayer().getInventory().setItemInHand(null);
-                    // e.getPlayer().getInventory().removeItem(new
+                    Util.sendMessage(player, ChatColor.YELLOW + plugin.myLocale(player.getUniqueId()).changingObsidiantoLava);
+                    player.getInventory().setItemInHand(null);
+                    // player.getInventory().removeItem(new
                     // ItemStack(Material.BUCKET, 1));
-                    e.getPlayer().getInventory().addItem(new ItemStack(Material.LAVA_BUCKET, 1));
+                    player.getInventory().addItem(new ItemStack(Material.LAVA_BUCKET, 1));
                     if (inHand.getAmount() > 1) {
-                        e.getPlayer().getInventory().addItem(new ItemStack(Material.BUCKET, inHand.getAmount()-1));
+                        player.getInventory().addItem(new ItemStack(Material.BUCKET, inHand.getAmount()-1));
                     }
-                    e.getPlayer().updateInventory();
+                    player.updateInventory();
                     e.getClickedBlock().setType(Material.AIR);
                     e.setCancelled(true);
                 }
@@ -419,54 +442,58 @@ public class AcidEffect implements Listener {
         ItemStack pants = inv.getLeggings();
         double red = 0.0;
         if (helmet != null) {
-            if (helmet.getType() == Material.LEATHER_HELMET)
+            if (helmet.getType() == Material.LEATHER_HELMET) {
                 red = red + 0.04;
-            else if (helmet.getType() == Material.GOLD_HELMET)
+            } else if (helmet.getType() == Material.GOLD_HELMET) {
                 red = red + 0.08;
-            else if (helmet.getType() == Material.CHAINMAIL_HELMET)
+            } else if (helmet.getType() == Material.CHAINMAIL_HELMET) {
                 red = red + 0.08;
-            else if (helmet.getType() == Material.IRON_HELMET)
+            } else if (helmet.getType() == Material.IRON_HELMET) {
                 red = red + 0.08;
-            else if (helmet.getType() == Material.DIAMOND_HELMET)
+            } else if (helmet.getType() == Material.DIAMOND_HELMET) {
                 red = red + 0.12;
+            }
         }
         if (boots != null) {
-            if (boots.getType() == Material.LEATHER_BOOTS)
+            if (boots.getType() == Material.LEATHER_BOOTS) {
                 red = red + 0.04;
-            else if (boots.getType() == Material.GOLD_BOOTS)
+            } else if (boots.getType() == Material.GOLD_BOOTS) {
                 red = red + 0.04;
-            else if (boots.getType() == Material.CHAINMAIL_BOOTS)
+            } else if (boots.getType() == Material.CHAINMAIL_BOOTS) {
                 red = red + 0.04;
-            else if (boots.getType() == Material.IRON_BOOTS)
+            } else if (boots.getType() == Material.IRON_BOOTS) {
                 red = red + 0.08;
-            else if (boots.getType() == Material.DIAMOND_BOOTS)
+            } else if (boots.getType() == Material.DIAMOND_BOOTS) {
                 red = red + 0.12;
+            }
         }
         // Pants
         if (pants != null) {
-            if (pants.getType() == Material.LEATHER_LEGGINGS)
+            if (pants.getType() == Material.LEATHER_LEGGINGS) {
                 red = red + 0.08;
-            else if (pants.getType() == Material.GOLD_LEGGINGS)
+            } else if (pants.getType() == Material.GOLD_LEGGINGS) {
                 red = red + 0.12;
-            else if (pants.getType() == Material.CHAINMAIL_LEGGINGS)
+            } else if (pants.getType() == Material.CHAINMAIL_LEGGINGS) {
                 red = red + 0.16;
-            else if (pants.getType() == Material.IRON_LEGGINGS)
+            } else if (pants.getType() == Material.IRON_LEGGINGS) {
                 red = red + 0.20;
-            else if (pants.getType() == Material.DIAMOND_LEGGINGS)
+            } else if (pants.getType() == Material.DIAMOND_LEGGINGS) {
                 red = red + 0.24;
+            }
         }
         // Chest plate
         if (chest != null) {
-            if (chest.getType() == Material.LEATHER_CHESTPLATE)
+            if (chest.getType() == Material.LEATHER_CHESTPLATE) {
                 red = red + 0.12;
-            else if (chest.getType() == Material.GOLD_CHESTPLATE)
+            } else if (chest.getType() == Material.GOLD_CHESTPLATE) {
                 red = red + 0.20;
-            else if (chest.getType() == Material.CHAINMAIL_CHESTPLATE)
+            } else if (chest.getType() == Material.CHAINMAIL_CHESTPLATE) {
                 red = red + 0.20;
-            else if (chest.getType() == Material.IRON_CHESTPLATE)
+            } else if (chest.getType() == Material.IRON_CHESTPLATE) {
                 red = red + 0.24;
-            else if (chest.getType() == Material.DIAMOND_CHESTPLATE)
+            } else if (chest.getType() == Material.DIAMOND_CHESTPLATE) {
                 red = red + 0.32;
+            }
         }
         return red;
     }
@@ -478,8 +505,9 @@ public class AcidEffect implements Listener {
      */
     @EventHandler(priority = EventPriority.NORMAL)
     public void onWeatherChange(final WeatherChangeEvent e) {
-        if (DEBUG)
+        if (DEBUG) {
             plugin.getLogger().info("DEBUG: " + e.getEventName());
+        }
 
         // Check that they are in the ASkyBlock world
         // plugin.getLogger().info("weather change noted");
@@ -489,5 +517,4 @@ public class AcidEffect implements Listener {
         this.isRaining = e.toWeatherState();
         // plugin.getLogger().info("is raining = " + isRaining);
     }
-
 }
