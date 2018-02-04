@@ -52,6 +52,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.material.MaterialData;
 import org.bukkit.material.SpawnEgg;
 import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionData;
@@ -1463,14 +1464,12 @@ public class Challenges implements CommandExecutor, TabCompleter {
             return true;
         }
         if (type.equalsIgnoreCase("island")) {
-            final HashMap<Material, Integer> neededItem = new HashMap<Material, Integer>();
+            final HashMap<MaterialData, Integer> neededItem = new HashMap<MaterialData, Integer>();
             final HashMap<EntityType, Integer> neededEntities = new HashMap<EntityType, Integer>();
             if (!reqList.isEmpty()) {
                 for (int i = 0; i < reqList.split(" ").length; i++) {
                     final String[] sPart = reqList.split(" ")[i].split(":");
-                    // Parse the qty required first
                     try {
-                        final int qty = Integer.parseInt(sPart[1]);
                         // Find out if the needed item is a Material or an Entity
                         boolean isEntity = false;
                         for (EntityType entityType : EntityType.values()) {
@@ -1480,14 +1479,11 @@ public class Challenges implements CommandExecutor, TabCompleter {
                             }
                         }
                         if (isEntity) {
-                            // plugin.getLogger().info("DEBUG: Item " +
-                            // sPart[0].toUpperCase() + " is an entity");
+                            // plugin.getLogger().info("DEBUG: Item " + sPart[0].toUpperCase() + " is an entity");
                             EntityType entityType = EntityType.valueOf(sPart[0].toUpperCase());
                             if (entityType != null) {
-                                neededEntities.put(entityType, qty);
-                                // plugin.getLogger().info("DEBUG: Needed entity is "
-                                // + Integer.parseInt(sPart[1]) + " x " +
-                                // EntityType.valueOf(sPart[0].toUpperCase()).toString());
+                                neededEntities.put(entityType, Integer.parseInt(sPart[1]));
+                                // plugin.getLogger().info("DEBUG: Needed entity is " + Integer.parseInt(sPart[1]) + " x " + EntityType.valueOf(sPart[0].toUpperCase()).toString());
                             }
                         } else {	
                             Material item;
@@ -1497,11 +1493,19 @@ public class Challenges implements CommandExecutor, TabCompleter {
                                 item = Material.getMaterial(sPart[0].toUpperCase());
                             }
                             if (item != null) {
-                                neededItem.put(item, qty);
-                                // plugin.getLogger().info("DEBUG: Needed item is "
-                                // + Integer.parseInt(sPart[1]) + " x " +
-                                // Material.getMaterial(sPart[0]).toString());
-
+                                // We have two cases : quantity only OR durability + quantity
+                                final int quantity;
+                                final byte durability;
+                                if (sPart.length == 2) {
+                                    // Only a quantity is specified
+                                    quantity = Integer.parseInt(sPart[1]);
+                                    durability = 0;
+                                } else {
+                                    quantity = Integer.parseInt(sPart[2]);
+                                    durability = Byte.parseByte(sPart[1]);
+                                }
+                                neededItem.put(new MaterialData(item, durability), quantity);
+                                // plugin.getLogger().info("DEBUG: Needed item is " + Integer.parseInt(sPart[1]) + " x " + Material.getMaterial(sPart[0]).toString());
                             } else {
                                 plugin.getLogger().warning("Problem parsing required item for challenge " + challenge + " in challenges.yml!");
                                 return false;
@@ -1530,7 +1534,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
             for (int x = -searchRadius; x <= searchRadius; x++) {
                 for (int y = -searchRadius; y <= searchRadius; y++) {
                     for (int z = -searchRadius; z <= searchRadius; z++) {
-                        final Material b = new Location(l.getWorld(), px + x, py + y, pz + z).getBlock().getType();
+                        final MaterialData b = new Location(l.getWorld(), px + x, py + y, pz + z).getBlock().getState().getData();
                         if (neededItem.containsKey(b)) {
                             if (neededItem.get(b) == 1) {
                                 neededItem.remove(b);
@@ -1546,9 +1550,9 @@ public class Challenges implements CommandExecutor, TabCompleter {
             // Check if all the needed items have been amassed
             if (!neededItem.isEmpty()) {
                 // plugin.getLogger().info("DEBUG: Insufficient items around");
-                for (Material missing : neededItem.keySet()) {
+                for (MaterialData missing : neededItem.keySet()) {
                     Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).challengeserrorYouAreMissing + " " + neededItem.get(missing) + " x "
-                            + Util.prettifyText(missing.toString()));
+                            + Util.prettifyText(missing.getItemType().toString()) + ":" + missing.getData());
                 }
                 return false;
             } else {
