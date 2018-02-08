@@ -296,7 +296,7 @@ public class IslandGuard implements Listener {
                         && !VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.bypassprotect")
                         && !VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.bypasslock")) {
                     Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).lockIslandLocked);
-                 // Check if the player is within the border a lot
+                    // Check if the player is within the border a lot
                     int minX = Math.max(islandTo.getMinProtectedX() - e.getTo().getBlockX(),
                             e.getTo().getBlockX() - (islandTo.getMinProtectedX() + islandTo.getProtectionSize()));
                     int minZ = Math.max(islandTo.getMinProtectedZ() - e.getTo().getBlockZ(),
@@ -1485,19 +1485,21 @@ public class IslandGuard implements Listener {
             case BIRCH_DOOR:
             case JUNGLE_DOOR:
             case TRAP_DOOR:
-                if (island == null) {
-                    if (Settings.defaultWorldSettings.get(SettingsFlag.DOOR)) {
-                        return;
-                    } else {
+                if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
+                    if (island == null) {
+                        if (Settings.defaultWorldSettings.get(SettingsFlag.DOOR)) {
+                            return;
+                        } else {
+                            Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
+                            e.setCancelled(true);
+                            return;
+                        }
+                    }
+                    if (!island.getIgsFlag(SettingsFlag.DOOR)) {
                         Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
                         e.setCancelled(true);
                         return;
                     }
-                }
-                if (!island.getIgsFlag(SettingsFlag.DOOR)) {
-                    Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).islandProtected);
-                    e.setCancelled(true);
-                    return;
                 }
                 break;
             case FENCE_GATE:
