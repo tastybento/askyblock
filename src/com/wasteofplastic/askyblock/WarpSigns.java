@@ -138,7 +138,7 @@ public class WarpSigns implements Listener {
                         return;
                     }
                     // Check that the player is on their island
-                    if (!(plugin.getGrid().playerIsOnIsland(player))) {
+                    if (!(plugin.getGrid().playerIsOnIsland(player, false))) {
                         Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorNoPlace);
                         e.setLine(0, ChatColor.RED + plugin.myLocale().warpswelcomeLine);
                         return;
