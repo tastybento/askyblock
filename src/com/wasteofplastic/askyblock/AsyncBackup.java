@@ -4,7 +4,7 @@ public class AsyncBackup {
 
     /**
      * Class to save the register and name database. This is done in an async way.
-     * @param plugin - ASkyBlock plugin
+     * @param plugin - BSkyBlock plugin object - ASkyBlock plugin
      */
     public AsyncBackup(final ASkyBlock plugin) {
         // Save grid every 5 minutes

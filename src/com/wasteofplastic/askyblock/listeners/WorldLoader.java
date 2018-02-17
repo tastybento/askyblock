@@ -32,7 +32,7 @@ public class WorldLoader implements Listener {
 
     /**
      * Class to force world loading before plugins.
-     * @param plugin
+     * @param plugin - BSkyBlock plugin object
      */
     public WorldLoader(ASkyBlock plugin) {
         this.plugin = plugin;

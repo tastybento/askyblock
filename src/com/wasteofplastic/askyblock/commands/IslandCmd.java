@@ -72,7 +72,7 @@ import com.wasteofplastic.askyblock.DeleteIslandChunk;
 import com.wasteofplastic.askyblock.GridManager;
 import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.Island.SettingsFlag;
-import com.wasteofplastic.askyblock.Scanner;
+import com.wasteofplastic.askyblock.LevelCalcByChunk;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.TopTen;
 import com.wasteofplastic.askyblock.events.IslandJoinEvent;
@@ -936,9 +936,9 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
             if (asker.getUniqueId().equals(targetPlayer) || asker.isOp() || VaultHelper.checkPerm(asker, Settings.PERMPREFIX + "mod.info")) {
                 // Newer better system - uses chunks
                 if (!onLevelWaitTime(asker) || Settings.levelWait <= 0 || asker.isOp() || VaultHelper.checkPerm(asker, Settings.PERMPREFIX + "mod.info")) {
-                    //Util.sendMessage(asker, ChatColor.GREEN + plugin.myLocale(asker.getUniqueId()).levelCalculating);
+                    Util.sendMessage(asker, ChatColor.GREEN + plugin.myLocale(asker.getUniqueId()).levelCalculating);
                     setLevelWaitTime(asker);
-                    new Scanner(plugin, plugin.getGrid().getIsland(targetPlayer), targetPlayer, asker, report);
+                    new LevelCalcByChunk(plugin, plugin.getGrid().getIsland(targetPlayer), targetPlayer, asker, report);
                 } else {
                     Util.sendMessage(asker, ChatColor.YELLOW + plugin.myLocale(asker.getUniqueId()).islandresetWait.replace("[time]", String.valueOf(getLevelWaitTime(asker))));
                 }
@@ -950,7 +950,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
         } else {
             // Console request            
             Util.sendMessage(sender, ChatColor.GREEN + plugin.myLocale().levelCalculating);
-            new Scanner(plugin, plugin.getGrid().getIsland(targetPlayer), targetPlayer, sender, report);
+            new LevelCalcByChunk(plugin, plugin.getGrid().getIsland(targetPlayer), targetPlayer, sender, report);
         }
         return true;
     }

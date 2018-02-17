@@ -44,7 +44,7 @@ public class TinyDB {
     private boolean savingFlag;
     /**
      * Opens the database
-     * @param plugin
+     * @param plugin - BSkyBlock plugin object
      */
     public TinyDB(ASkyBlock plugin) {       
         this.plugin = plugin;

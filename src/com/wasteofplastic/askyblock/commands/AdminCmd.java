@@ -65,16 +65,16 @@ import com.wasteofplastic.askyblock.DeleteIslandChunk;
 import com.wasteofplastic.askyblock.FileLister;
 import com.wasteofplastic.askyblock.GridManager;
 import com.wasteofplastic.askyblock.Island;
-import com.wasteofplastic.askyblock.PluginConfig;
-import com.wasteofplastic.askyblock.SafeSpotTeleport;
-import com.wasteofplastic.askyblock.Settings;
-import com.wasteofplastic.askyblock.TopTen;
 import com.wasteofplastic.askyblock.Island.SettingsFlag;
+import com.wasteofplastic.askyblock.PluginConfig;
+import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.Settings.GameType;
+import com.wasteofplastic.askyblock.TopTen;
 import com.wasteofplastic.askyblock.listeners.LavaCheck;
 import com.wasteofplastic.askyblock.panels.ControlPanel;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
+import com.wasteofplastic.askyblock.util.teleport.SafeTeleportBuilder;
 
 /*
  * New commands:
@@ -1552,7 +1552,11 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                             return true;
                         }
                         // Other wise, go to a safe spot
-                        new SafeSpotTeleport(plugin, player, warpSpot, failureMessage);
+                        new SafeTeleportBuilder(plugin)
+                        .entity(player)
+                        .location(warpSpot)
+                        .failureMessage(failureMessage)
+                        .build();
                         return true;
                     }
                     Util.sendMessage(sender, plugin.myLocale().errorNoIslandOther);
@@ -1585,7 +1589,11 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                             player.teleport(home);
                             return true;
                         }
-                        new SafeSpotTeleport(plugin, player, warpSpot, failureMessage);
+                        new SafeTeleportBuilder(plugin)
+                        .entity(player)
+                        .location(warpSpot)
+                        .failureMessage(failureMessage)
+                        .build();
                         return true;
                     }
                     Util.sendMessage(sender, plugin.myLocale().errorNoIslandOther);

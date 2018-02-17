@@ -26,7 +26,6 @@ import org.bukkit.World.Environment;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Vehicle;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -42,15 +41,15 @@ import org.bukkit.util.Vector;
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.GridManager;
 import com.wasteofplastic.askyblock.Island;
-import com.wasteofplastic.askyblock.SafeSpotTeleport;
-import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.Island.SettingsFlag;
+import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.commands.IslandCmd;
 import com.wasteofplastic.askyblock.events.IslandEnterEvent;
 import com.wasteofplastic.askyblock.schematics.Schematic;
 import com.wasteofplastic.askyblock.schematics.Schematic.PasteReason;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
+import com.wasteofplastic.askyblock.util.teleport.SafeTeleportBuilder;
 
 public class NetherPortals implements Listener {
     private final ASkyBlock plugin;
@@ -159,7 +158,12 @@ public class NetherPortals implements Listener {
                             event.setTo(dest);
                         } else {
                             event.setCancelled(true);
-                            new SafeSpotTeleport(plugin, event.getPlayer(), plugin.getPlayers().getIslandLocation(playerUUID), 1);
+                            new SafeTeleportBuilder(plugin)
+                            .entity(event.getPlayer())
+                            .location(plugin.getPlayers().getIslandLocation(playerUUID))
+                            .portal()
+                            .homeNumber(1)
+                            .build();
                         }		
                     }
                 } else {
@@ -176,7 +180,12 @@ public class NetherPortals implements Listener {
                             plugin.getServer().getPluginManager().callEvent(event2);
                         } else {
                             event.setCancelled(true);
-                            new SafeSpotTeleport(plugin, event.getPlayer(), plugin.getPlayers().getIslandLocation(playerUUID), 1);
+                            new SafeTeleportBuilder(plugin)
+                            .entity(event.getPlayer())
+                            .location(plugin.getPlayers().getIslandLocation(playerUUID))
+                            .portal()
+                            .homeNumber(1)
+                            .build();
                             // Fire entry event
                             Island islandTo = plugin.getGrid().getIslandAt(plugin.getPlayers().getIslandLocation(playerUUID));
                             final IslandEnterEvent event2 = new IslandEnterEvent(event.getPlayer().getUniqueId(), islandTo, plugin.getPlayers().getIslandLocation(playerUUID));
@@ -231,13 +240,21 @@ public class NetherPortals implements Listener {
                         plugin.getLogger().info("DEBUG: Teleporting to " + event.getFrom().toVector().toLocation(ASkyBlock.getNetherWorld()));
                     event.setCancelled(true);
                     // Teleport using the new safeSpot teleport
-                    new SafeSpotTeleport(plugin, event.getPlayer(), netherIsland);
+                    new SafeTeleportBuilder(plugin)
+                    .entity(event.getPlayer())
+                    .location(netherIsland)
+                    .portal()
+                    .build();
                     return;
                 }
                 // Going to the over world - if there isn't an island, do nothing
                 event.setCancelled(true);
                 // Teleport using the new safeSpot teleport
-                new SafeSpotTeleport(plugin, event.getPlayer(), overworldIsland);
+                new SafeTeleportBuilder(plugin)
+                .entity(event.getPlayer())
+                .location(overworldIsland)
+                .portal()
+                .build();
             }
             break;
         default:

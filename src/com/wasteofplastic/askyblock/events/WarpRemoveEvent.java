@@ -22,7 +22,7 @@ public class WarpRemoveEvent extends Event{
 	private UUID remover;
 	
 	/**
-	 * @param plugin
+	 * @param plugin - BSkyBlock plugin object
 	 * @param warpLoc
 	 * @param remover
 	 */

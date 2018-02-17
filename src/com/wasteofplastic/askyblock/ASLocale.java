@@ -669,7 +669,7 @@ public class ASLocale {
 
     /**
      * Creates a locale object full of localized strings for a language
-     * @param plugin - ASkyBlock plugin
+     * @param plugin - BSkyBlock plugin object - ASkyBlock plugin
      * @param localeName - name of the yml file that will be used
      * @param index - index number of the locale
      */

@@ -50,6 +50,7 @@ import org.bukkit.util.Vector;
 import com.wasteofplastic.askyblock.Island.SettingsFlag;
 import com.wasteofplastic.askyblock.events.IslandChangeOwnerEvent;
 import com.wasteofplastic.askyblock.util.Util;
+import com.wasteofplastic.askyblock.util.teleport.SafeTeleportBuilder;
 
 /**
  * This class manages the island islandGrid. It knows where every island is, and
@@ -76,7 +77,7 @@ public class GridManager {
     private YamlConfiguration islandNames = new YamlConfiguration();
 
     /**
-     * @param plugin
+     * @param plugin - BSkyBlock plugin object
      */
     public GridManager(ASkyBlock plugin) {
         this.plugin = plugin;
@@ -1258,7 +1259,11 @@ public class GridManager {
         if (home == null) {
             //plugin.getLogger().info("Fixing home location using safe spot teleport");
             // Try to fix this teleport location and teleport the player if possible
-            new SafeSpotTeleport(plugin, player, plugin.getPlayers().getHomeLocation(player.getUniqueId(), number), number);
+            new SafeTeleportBuilder(plugin)
+            .entity(player)
+            .location(plugin.getPlayers().getHomeLocation(player.getUniqueId(), number))
+            .homeNumber(number)
+            .build();
             return true;
         }
         //plugin.getLogger().info("DEBUG: home loc = " + home + " teleporting");

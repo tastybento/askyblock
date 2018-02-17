@@ -189,7 +189,7 @@ public class Updater {
     /**
      * Initialize the updater.
      *
-     * @param plugin   The plugin that is checking for an update.
+     * @param plugin - BSkyBlock plugin object   The plugin that is checking for an update.
      * @param id       The dev.bukkit.org id of the project.
      * @param file     The file that the plugin is running from, get this by doing this.getFile() from within your main class.
      * @param type     Specify the type of update this will be. See {@link UpdateType}
@@ -202,7 +202,7 @@ public class Updater {
     /**
      * Initialize the updater with the provided callback.
      *
-     * @param plugin   The plugin that is checking for an update.
+     * @param plugin - BSkyBlock plugin object   The plugin that is checking for an update.
      * @param id       The dev.bukkit.org id of the project.
      * @param file     The file that the plugin is running from, get this by doing this.getFile() from within your main class.
      * @param type     Specify the type of update this will be. See {@link UpdateType}
@@ -215,7 +215,7 @@ public class Updater {
     /**
      * Initialize the updater with the provided callback.
      *
-     * @param plugin   The plugin that is checking for an update.
+     * @param plugin - BSkyBlock plugin object   The plugin that is checking for an update.
      * @param id       The dev.bukkit.org id of the project.
      * @param file     The file that the plugin is running from, get this by doing this.getFile() from within your main class.
      * @param type     Specify the type of update this will be. See {@link UpdateType}

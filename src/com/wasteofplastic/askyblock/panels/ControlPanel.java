@@ -58,7 +58,7 @@ public class ControlPanel implements Listener {
     private static final boolean DEBUG = false;
 
     /**
-     * @param plugin
+     * @param plugin - BSkyBlock plugin object
      */
     public ControlPanel(ASkyBlock plugin) {
         this.plugin = plugin;

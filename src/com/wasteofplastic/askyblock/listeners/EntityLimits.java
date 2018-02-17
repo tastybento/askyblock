@@ -45,7 +45,7 @@ public class EntityLimits implements Listener {
 
     /**
      * Handles entity and natural limitations
-     * @param plugin
+     * @param plugin - BSkyBlock plugin object
      */
     public EntityLimits(ASkyBlock plugin) {
         this.plugin = plugin;

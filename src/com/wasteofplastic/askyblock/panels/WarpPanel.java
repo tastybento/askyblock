@@ -57,7 +57,7 @@ public class WarpPanel implements Listener {
     private final static boolean DEBUG = false;
 
     /**
-     * @param plugin
+     * @param plugin - BSkyBlock plugin object
      */
     public WarpPanel(ASkyBlock plugin) {
         this.plugin = plugin;

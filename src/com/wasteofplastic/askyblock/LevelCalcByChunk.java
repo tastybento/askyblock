@@ -13,6 +13,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.material.MaterialData;
@@ -29,7 +30,7 @@ import com.wasteofplastic.askyblock.util.Pair;
 import com.wasteofplastic.askyblock.util.Util;
 
 
-public class Scanner {
+public class LevelCalcByChunk {
 
     private static final int MAX_CHUNKS = 200;
     private static final long SPEED = 1;
@@ -40,6 +41,7 @@ public class Scanner {
 
     private Set<Pair<Integer, Integer>> chunksToScan;
     private Island island;
+    private World world;
     private CommandSender asker;
     private UUID targetPlayer;
     private Results result;
@@ -50,9 +52,10 @@ public class Scanner {
     private long oldLevel;
 
 
-    public Scanner(final ASkyBlock plugin, final Island island, final UUID targetPlayer, final CommandSender asker, final boolean report) {
+    public LevelCalcByChunk(final ASkyBlock plugin, final Island island, final UUID targetPlayer, final CommandSender asker, final boolean report) {
         this.plugin = plugin;
         this.island = island;
+        this.world = island != null ? island.getCenter().getWorld() : null;
         this.asker = asker;
         this.targetPlayer = targetPlayer;
         this.limitCount = new HashMap<>(Settings.blockLimits);
@@ -64,7 +67,6 @@ public class Scanner {
 
         // Get chunks to scan
         chunksToScan = getChunksToScan(island);
-        plugin.getLogger().info("DEBUG: chunks to scan = " + chunksToScan.size());
 
         // Start checking
         checking = true;
@@ -76,18 +78,22 @@ public class Scanner {
             public void run() {
                 Set<ChunkSnapshot> chunkSnapshot = new HashSet<>();
                 if (checking) {
-                    plugin.getLogger().info("DEBUG: chunks to scan = " + chunksToScan.size());
                     Iterator<Pair<Integer, Integer>> it = chunksToScan.iterator();
                     if (!it.hasNext()) {
                         // Nothing left
-                        plugin.getLogger().info("DEBUG: tidy up");
                         tidyUp();
                         return;
                     }
                     // Add chunk snapshots to the list
                     while (it.hasNext() && chunkSnapshot.size() < MAX_CHUNKS) {
                         Pair<Integer, Integer> pair = it.next();
-                        chunkSnapshot.add(island.getCenter().getWorld().getChunkAt(pair.x, pair.z).getChunkSnapshot());
+                        if (!world.isChunkLoaded(pair.x, pair.z)) {
+                            world.loadChunk(pair.x, pair.z);
+                            chunkSnapshot.add(world.getChunkAt(pair.x, pair.z).getChunkSnapshot());
+                            world.unloadChunk(pair.x, pair.z);
+                        } else {
+                            chunkSnapshot.add(world.getChunkAt(pair.x, pair.z).getChunkSnapshot());
+                        }
                         it.remove();
                     }
                     // Move to next step
@@ -130,7 +136,7 @@ public class Scanner {
                 }
 
                 for (int y = 0; y < island.getCenter().getWorld().getMaxHeight(); y++) {
-                    Material blockType = chunk.getBlockType(x, y, z);
+                    Material blockType = Material.getMaterial(chunk.getBlockTypeId(x, y, z));
                     boolean belowSeaLevel = (Settings.seaHeight > 0 && y<=Settings.seaHeight) ? true : false;
                     // Air is free
                     if (!blockType.equals(Material.AIR)) {
@@ -198,11 +204,11 @@ public class Scanner {
      * @return
      */
     private Set<Pair<Integer, Integer>> getChunksToScan(Island island) {
-        // Get the chunks coords
         Set<Pair<Integer, Integer>> chunkSnapshot = new HashSet<>();
         for (int x = island.getMinProtectedX(); x < (island.getMinProtectedX() + island.getProtectionSize() + 16); x += 16) {
-            for (int z = island.getMinProtectedZ(); z < (island.getMinProtectedZ() + island.getProtectionSize() + 16); z += 16) {              
-                chunkSnapshot.add(new Pair<>(x/16,z/16));
+            for (int z = island.getMinProtectedZ(); z < (island.getMinProtectedZ() + island.getProtectionSize() + 16); z += 16) {
+                Pair<Integer, Integer> pair = new Pair<>(world.getBlockAt(x, 0, z).getChunk().getX(), world.getBlockAt(x, 0, z).getChunk().getZ());
+                chunkSnapshot.add(pair);
             }
         }
         return chunkSnapshot;
@@ -214,10 +220,9 @@ public class Scanner {
         // Finalize calculations
         result.rawBlockCount += (long)((double)result.underWaterBlockCount * Settings.underWaterMultiplier);
         // Set the death penalty
-        int deaths = plugin.getPlayers().getDeaths(island.getOwner());
-        result.deathHandicap = deaths * Settings.deathpenalty;
+        result.deathHandicap = plugin.getPlayers().getDeaths(island.getOwner());
         // Set final score
-        result.score = (result.rawBlockCount / Settings.levelCost) - result.deathHandicap;
+        result.score = (result.rawBlockCount / Settings.levelCost) - result.deathHandicap - island.getLevelHandicap();
         // Run any modifications
         // Get the permission multiplier if it is available
         int levelMultiplier = 1;
@@ -251,9 +256,8 @@ public class Scanner {
         informPlayers(saveLevel(island, targetPlayer, pointsToNextLevel));
 
     }
-    
+
     private void informPlayers(IslandPreLevelEvent event) {
-        plugin.getLogger().info("DEBUG: inform players");
         // Fire the island post level calculation event
         final IslandPostLevelEvent event3 = new IslandPostLevelEvent(targetPlayer, island, event.getLongLevel(), event.getLongPointsToNextLevel());
         plugin.getServer().getPluginManager().callEvent(event3);
