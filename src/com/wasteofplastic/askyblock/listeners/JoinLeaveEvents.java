@@ -36,8 +36,8 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.CoopPlay;
 import com.wasteofplastic.askyblock.Island;
-import com.wasteofplastic.askyblock.LevelCalcByChunk;
 import com.wasteofplastic.askyblock.PlayerCache;
+import com.wasteofplastic.askyblock.Scanner;
 import com.wasteofplastic.askyblock.Scoreboards;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.TopTen;
@@ -279,7 +279,7 @@ public class JoinLeaveEvents implements Listener {
         if (Settings.loginLevel) {
             if (DEBUG)
                 plugin.getLogger().info("DEBUG: Run level calc");
-            new LevelCalcByChunk(plugin, playerUUID, player, false);
+            new Scanner(plugin, plugin.getGrid().getIsland(playerUUID), playerUUID, player, false);
         }
         // Reset resets if the admin changes it to or from unlimited
         if (Settings.resetLimit < players.getResetsLeft(playerUUID)  || (Settings.resetLimit >= 0 && players.getResetsLeft(playerUUID) < 0)) {

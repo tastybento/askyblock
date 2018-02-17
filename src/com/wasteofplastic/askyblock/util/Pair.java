@@ -1,46 +1,65 @@
-/*******************************************************************************
- * This file is part of ASkyBlock.
- *
- *     ASkyBlock is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     ASkyBlock is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with ASkyBlock.  If not, see <http://www.gnu.org/licenses/>.
- *******************************************************************************/
-
 package com.wasteofplastic.askyblock.util;
 
-public class Pair {
-    private final int left;
-    private final int right;
 
-    public Pair(int left, int right) {
-        this.left = left;
-        this.right = right;
+public class Pair<X, Z> {
+    public final X x;
+    public final Z z;
+
+    public Pair(X x, Z z) {
+        this.x = x;
+        this.z = z;
     }
 
-    public int getLeft() {
-        return left;
-    }
-
-    public int getRight() {
-        return right;
-    }
-
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
     @Override
-    public boolean equals(Object o) {
-        if (o == null)
-            return false;
-        if (!(o instanceof Pair))
-            return false;
-        Pair pairo = (Pair) o;
-        return (this.left == pairo.getLeft()) && (this.right == pairo.getRight());
+    public String toString() {
+        return "Pair [x=" + x + ", z=" + z + "]";
     }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((x == null) ? 0 : x.hashCode());
+        result = prime * result + ((z == null) ? 0 : z.hashCode());
+        return result;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof Pair)) {
+            return false;
+        }
+        Pair<?, ?> other = (Pair<?, ?>) obj;
+        if (x == null) {
+            if (other.x != null) {
+                return false;
+            }
+        } else if (!x.equals(other.x)) {
+            return false;
+        }
+        if (z == null) {
+            if (other.z != null) {
+                return false;
+            }
+        } else if (!z.equals(other.z)) {
+            return false;
+        }
+        return true;
+    }
+    
 }
