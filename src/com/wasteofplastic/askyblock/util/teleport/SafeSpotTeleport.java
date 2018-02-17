@@ -108,11 +108,12 @@ public class SafeSpotTeleport {
         if (portal && bestSpot != null) {
             // No portals found, teleport to the best spot we found
             teleportEntity(bestSpot);
-            return;
-        }
-        // Failed - no safe spot 
-        if (entity instanceof Player && !failureMessage.isEmpty()) {
+        } else if (entity instanceof Player && !failureMessage.isEmpty()) {
+            // Failed, no safe spot
             entity.sendMessage(failureMessage);
+        }
+        if (entity instanceof Player && ((Player)entity).getGameMode().equals(GameMode.SPECTATOR)) {
+            ((Player)entity).setGameMode(GameMode.SURVIVAL);
         }
     }
 
