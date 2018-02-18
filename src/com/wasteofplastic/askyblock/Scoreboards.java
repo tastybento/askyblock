@@ -55,7 +55,7 @@ public class Scoreboards {
 
     /**
      * Puts a player into a team of their own and sets the team suffix to be the level
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      */
     public void setLevel(UUID playerUUID) {
         Player player = plugin.getServer().getPlayer(playerUUID);
@@ -81,7 +81,7 @@ public class Scoreboards {
 
     /**
      * Sets the player's level explicitly
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @param l
      */
     public void setLevel(UUID playerUUID, long l) {

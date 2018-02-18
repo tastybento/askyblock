@@ -69,7 +69,7 @@ public class WarpSigns implements Listener {
 
     /**
      * Checks to see if a sign has been broken
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
     public void onSignBreak(BlockBreakEvent e) {
@@ -112,7 +112,7 @@ public class WarpSigns implements Listener {
     /**
      * Event handler for Sign Changes
      * 
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
     public void onSignWarpCreate(SignChangeEvent e) {
@@ -281,7 +281,7 @@ public class WarpSigns implements Listener {
     /**
      * Stores warps in the warp array
      * 
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @param loc
      */
     public boolean addWarp(final UUID playerUUID, final Location loc) {
@@ -431,7 +431,7 @@ public class WarpSigns implements Listener {
     /**
      * Provides the location of the warp for player or null if one is not found
      * 
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      *            - the warp requested
      * @return Location of warp
      */

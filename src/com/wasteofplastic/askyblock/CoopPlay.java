@@ -258,7 +258,7 @@ public class CoopPlay {
 
     /**
      * Gets a serialize list of all the coops for this player. Used when saving the player
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @return List of island location | uuid of invitee
      */
     private List<String> getMyCoops(UUID playerUUID) {
@@ -273,7 +273,7 @@ public class CoopPlay {
 
     /**
      * Sets a player's coops from string. Used when loading a player.
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @param coops
      */
     private void setMyCoops(UUID playerUUID, List<String> coops) {

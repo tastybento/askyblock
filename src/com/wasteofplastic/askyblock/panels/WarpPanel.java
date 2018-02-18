@@ -74,7 +74,7 @@ public class WarpPanel implements Listener {
 
     /**
      * Only change the text of the warp
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      */
     public void updateWarp(UUID playerUUID) {
         if (DEBUG)
@@ -105,7 +105,7 @@ public class WarpPanel implements Listener {
     }
     /**
      * Adds a new warp to the cache. Does NOT update the panels
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      */
     public void addWarp(UUID playerUUID) {
         if (DEBUG)
@@ -133,7 +133,7 @@ public class WarpPanel implements Listener {
 
     /**
      * Gets the skull for this player UUID
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @return Player skull item
      */
     private ItemStack getSkull(UUID playerUUID) {
@@ -158,7 +158,7 @@ public class WarpPanel implements Listener {
      * Updates the meta text on the skull by looking at the warp sign
      * This MUST be run 1 TICK AFTER the sign has been created otherwise the sign is blank
      * @param playerSkull
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @return updated skull item stack
      */
     private ItemStack updateText(ItemStack playerSkull, final UUID playerUUID) {

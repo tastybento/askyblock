@@ -351,7 +351,7 @@ public class AcidEffect implements Listener {
     /**
      * Enables changing of obsidian back into lava
      * 
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerInteract(final PlayerInteractEvent e) {
@@ -474,7 +474,7 @@ public class AcidEffect implements Listener {
     /**
      * Tracks weather changes and acid rain
      * 
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.NORMAL)
     public void onWeatherChange(final WeatherChangeEvent e) {

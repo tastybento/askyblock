@@ -70,7 +70,7 @@ public class ASkyBlockAPI {
     }
 
     /**
-     * @param playerUUID - player's UUID
+     * @param playerUUID - the player's UUID - player's UUID
      * @return Map of all of the known challenges with a boolean marking
      *         them as complete (true) or incomplete (false). This is a view of the
      *         challenges map that only allows read operations.
@@ -80,7 +80,7 @@ public class ASkyBlockAPI {
     }
 
     /**
-     * @param playerUUID - player's UUID
+     * @param playerUUID - the player's UUID - player's UUID
      * @return Map of all of the known challenges and how many times each
      *         one has been completed. This is a view of the challenges
      *         map that only allows read operations.
@@ -101,7 +101,7 @@ public class ASkyBlockAPI {
      * Returns the island level from the last time it was calculated. Note this
      * does not calculate the island level.
      * 
-     * @param playerUUID - player's UUID
+     * @param playerUUID - the player's UUID - player's UUID
      * @return the last level calculated for the island or zero if none.
      */
     public int getIslandLevel(UUID playerUUID) {
@@ -112,7 +112,7 @@ public class ASkyBlockAPI {
      * Returns the island level from the last time it was calculated. Note this
      * does not calculate the island level.
      * 
-     * @param playerUUID - player's UUID
+     * @param playerUUID - the player's UUID - player's UUID
      * @return the last level calculated for the island or zero if none.
      */
     public long getLongIslandLevel(UUID playerUUID) {
@@ -132,7 +132,7 @@ public class ASkyBlockAPI {
      * You will need to check if the player is in a team and individually set the level of each team member.
      * This value will be overwritten if the players run the build-in level command or if the island level
      * is calculated some other way, e.g. at login or via an admin command.
-     * @param playerUUID - player's UUID
+     * @param playerUUID - the player's UUID - player's UUID
      * @param level - level to set
      */
     public void setIslandLevel(UUID playerUUID, int level) {
@@ -145,7 +145,7 @@ public class ASkyBlockAPI {
      * or use getIslandLevel(playerUUID). See https://gist.github.com/tastybento/e81d2403c03f2fe26642
      * for example code.
      * 
-     * @param playerUUID - player's UUID
+     * @param playerUUID - the player's UUID - player's UUID
      * @return true if player has an island, false if not
      */
     public boolean calculateIslandLevel(UUID playerUUID) {
@@ -160,7 +160,7 @@ public class ASkyBlockAPI {
      * Provides the location of the player's island, either the team island or
      * their own
      * 
-     * @param playerUUID - players UUID
+     * @param playerUUID - the player's UUID - players UUID
      * @return Location of island
      */
     public Location getIslandLocation(UUID playerUUID) {
@@ -181,7 +181,7 @@ public class ASkyBlockAPI {
     /**
      * Get Team Leader
      * 
-     * @param playerUUID - player's UUID
+     * @param playerUUID - the player's UUID - player's UUID
      * @return UUID of Team Leader or null if there is none. Use inTeam to
      *         check.
      */
@@ -193,7 +193,7 @@ public class ASkyBlockAPI {
      * Get a list of team members. This is a copy and changing the return value
      * will not affect the membership.
      * 
-     * @param playerUUID - player's UUID
+     * @param playerUUID - the player's UUID - player's UUID
      * @return List of team members, including the player. Empty if there are
      *         none.
      */
@@ -204,7 +204,7 @@ public class ASkyBlockAPI {
     /**
      * Provides location of the player's warp sign
      * 
-     * @param playerUUID - player's UUID
+     * @param playerUUID - the player's UUID - player's UUID
      * @return Location of sign or null if one does not exist
      */
     public Location getWarp(UUID playerUUID) {
@@ -226,7 +226,7 @@ public class ASkyBlockAPI {
      * Status of island ownership. Team members do not have islands of their
      * own, only leaders do.
      * 
-     * @param playerUUID - player's UUID
+     * @param playerUUID - the player's UUID - player's UUID
      * @return true if player has an island, false if the player does not.
      */
     public boolean hasIsland(UUID playerUUID) {
@@ -234,7 +234,7 @@ public class ASkyBlockAPI {
     }
 
     /**
-     * @param playerUUID - player's UUID
+     * @param playerUUID - the player's UUID - player's UUID
      * @return true if in a team
      */
     public boolean inTeam(UUID playerUUID) {
@@ -342,7 +342,7 @@ public class ASkyBlockAPI {
     /**
      * Sets a message for the player to receive next time they login
      * 
-     * @param playerUUID - player's UUID
+     * @param playerUUID - the player's UUID - player's UUID
      * @param message - message to set
      * @return true if player is offline, false if online
      */
@@ -354,7 +354,7 @@ public class ASkyBlockAPI {
      * Sends a message to every player in the team that is offline If the player
      * is not in a team, nothing happens.
      * 
-     * @param playerUUID - player's UUID
+     * @param playerUUID - the player's UUID - player's UUID
      * @param message - message to send
      */
     public void tellOfflineTeam(UUID playerUUID, String message) {
@@ -458,7 +458,7 @@ public class ASkyBlockAPI {
 
     /**
      * Obtains a copy of the island object owned by playerUUID
-     * @param playerUUID - player's UUID
+     * @param playerUUID - the player's UUID - player's UUID
      * @return copy of Island object
      */
     public Island getIslandOwnedBy(UUID playerUUID) {
@@ -527,7 +527,7 @@ public class ASkyBlockAPI {
 
     /**
      * Get the number of resets left for this player
-     * @param playerUUID - player's UUID
+     * @param playerUUID - the player's UUID - player's UUID
      * @return Number of resets left
      */
     public int getResetsLeft(UUID playerUUID) {
@@ -536,7 +536,7 @@ public class ASkyBlockAPI {
 
     /**
      * Set the number of resets left for this player
-     * @param playerUUID - player's UUID
+     * @param playerUUID - the player's UUID - player's UUID
      * @param resets - number to set
      */
     public void setResetsLeft(UUID playerUUID, int resets) {
@@ -545,7 +545,7 @@ public class ASkyBlockAPI {
     
     /**
      * Find out if this player is a team leader or not. If the player is not in a team, the result will always be false.
-     * @param playerUUID - player's UUID
+     * @param playerUUID - the player's UUID - player's UUID
      * @return true if the player is in a team and is the leader
      */
     public boolean isLeader(UUID playerUUID) {

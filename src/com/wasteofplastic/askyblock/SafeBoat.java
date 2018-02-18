@@ -58,7 +58,7 @@ public class SafeBoat implements Listener {
     }
 
     /**
-     * @param e
+     * @param e - event
      *            This event check throws the boat at a player when they hit it
      *            unless someone is in it
      */
@@ -102,7 +102,7 @@ public class SafeBoat implements Listener {
     }
 
     /**
-     * @param e
+     * @param e - event
      *            This function prevents boats from exploding when they hit
      *            something
      */
@@ -165,7 +165,7 @@ public class SafeBoat implements Listener {
     }
 
     /**
-     * @param e
+     * @param e - event
      *            This event aims to put the player in a safe place when they
      *            exit the boat
      */

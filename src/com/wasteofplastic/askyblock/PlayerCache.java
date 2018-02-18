@@ -134,7 +134,7 @@ public class PlayerCache {
     /**
      * Returns location of player's island from cache if available
      * 
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @return Location of player's island
      */
     /*
@@ -149,7 +149,7 @@ public class PlayerCache {
     /**
      * Checks if the player is known or not by looking through the filesystem
      * 
-     * @param uniqueID
+     * @param uniqueId - unique ID
      * @return true if player is know, otherwise false
      */
     public boolean isAKnownPlayer(final UUID uniqueID) {
@@ -172,7 +172,7 @@ public class PlayerCache {
     /**
      * Returns the player object for the named player
      * 
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      *            - String name of player
      * @return - player object
      */
@@ -184,7 +184,7 @@ public class PlayerCache {
     /**
      * Checks if player has island from cache if available
      * 
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      *            - string name of player
      * @return true if player has island
      */
@@ -198,7 +198,7 @@ public class PlayerCache {
     /**
      * Checks if player is in a Team from cache if available
      * 
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @return true if player in a team
      */
     public boolean inTeam(final UUID playerUUID) {
@@ -210,7 +210,7 @@ public class PlayerCache {
      * Removes any island associated with this player and generally cleans up
      * the player
      * 
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      */
     public void zeroPlayerData(UUID playerUUID) {
         addPlayer(playerUUID);
@@ -244,7 +244,7 @@ public class PlayerCache {
 
     /**
      * Sets the home location for the player
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @param location
      * @param number - 1 is default. Can be any number.
      */
@@ -255,7 +255,7 @@ public class PlayerCache {
 
     /**
      * Set the default home location for player
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @param location
      */
     public void setHomeLocation(UUID playerUUID, Location location) {
@@ -265,7 +265,7 @@ public class PlayerCache {
 
     /**
      * Clears any home locations for player
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      */
     public void clearHomeLocations(UUID playerUUID) {
         addPlayer(playerUUID);
@@ -275,7 +275,7 @@ public class PlayerCache {
     /**
      * Returns the home location, or null if none
      * 
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @param number 
      * @return Home location or null if none
      */
@@ -286,7 +286,7 @@ public class PlayerCache {
 
     /**
      * Gets the default home location for player
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @return Home location or null if none
      */
     public Location getHomeLocation(UUID playerUUID) {
@@ -296,7 +296,7 @@ public class PlayerCache {
 
     /**
      * Provides all home locations for player
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @return List of home locations
      */
     public HashMap<Integer, Location> getHomeLocations(UUID playerUUID) {
@@ -308,7 +308,7 @@ public class PlayerCache {
      * Returns the player's island location.
      * Returns an island location OR a team island location
      * 
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @return Location of player's island
      */
     public Location getIslandLocation(UUID playerUUID) {
@@ -347,7 +347,7 @@ public class PlayerCache {
     /**
      * Checks if a challenge has been completed or not
      * 
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @param challenge
      * @return true if complete
      */
@@ -359,7 +359,7 @@ public class PlayerCache {
     /**
      * Checks how often a challenge has been completed
      * 
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @param challenge
      * @return number of times
      */
@@ -371,7 +371,7 @@ public class PlayerCache {
     /**
      * Provides the status of all challenges for this player
      * 
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @return Hashmap of challenges as key, boolean as state
      */
     public HashMap<String, Boolean> getChallengeStatus(UUID playerUUID) {
@@ -382,7 +382,7 @@ public class PlayerCache {
     /**
      * How many times a challenge has been completed
      * 
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @return map of completion times
      */
     public HashMap<String, Integer> getChallengeTimes(UUID playerUUID) {
@@ -398,7 +398,7 @@ public class PlayerCache {
     /**
      * Resets all the player's challenges. If the boolean is true, then everything will be reset, if false
      * challenges that have the "resetallowed: false" flag in challenges.yml will not be reset
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @param resetAll
      */
     public void resetAllChallenges(UUID playerUUID, boolean resetAll) {
@@ -418,7 +418,7 @@ public class PlayerCache {
 
     /**
      * Puts a player in a team
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @param teamLeader
      * @param islandLocation
      * @return true if successful, false if not
@@ -432,7 +432,7 @@ public class PlayerCache {
     /**
      * Called when a player leaves a team Resets inTeam, teamLeader,
      * islandLevel, teamIslandLocation, islandLocation and members array
-     * @param playerUUID - player's UUID
+     * @param playerUUID - the player's UUID - player's UUID
      * @return - true if successful
      */
     public boolean setLeaveTeam(UUID playerUUID) {
@@ -444,7 +444,7 @@ public class PlayerCache {
      * Returns a list of team member UUID's. If the player is not the leader,
      * then the leader's list is used
      * 
-     * @param playerUUID - player's UUID
+     * @param playerUUID - the player's UUID - player's UUID
      * @return List of team UUIDs
      */
     public List<UUID> getMembers(UUID playerUUID) {
@@ -478,7 +478,7 @@ public class PlayerCache {
 
     /**
      * Provides UUID of this player's team leader or null if it does not exist
-     * @param playerUUID - player's UUID
+     * @param playerUUID - the player's UUID - player's UUID
      * @return UUID of leader
      */
     public UUID getTeamLeader(UUID playerUUID) {
@@ -489,7 +489,7 @@ public class PlayerCache {
     /**
      * Saves the player's info to the file system
      * 
-     * @param playerUUID - player's UUID
+     * @param playerUUID - the player's UUID - player's UUID
      */
     public void save(UUID playerUUID) {
         playerCache.get(playerUUID).save();
@@ -555,7 +555,7 @@ public class PlayerCache {
 
     /**
      * Sets the player's name and updates the name to UUID database so it is up to date
-     * @param uniqueId  - player's UUID
+     * @param uniqueId - unique ID  - player's UUID
      * @param name - name to set
      */
     public void setPlayerName(UUID uniqueId, String name) {
@@ -572,7 +572,7 @@ public class PlayerCache {
      * Obtains the name of the player from their UUID
      * Player must have logged into the game before
      * 
-     * @param playerUUID - player's UUID
+     * @param playerUUID - the player's UUID - player's UUID
      * @return String - playerName
      */
     public String getName(UUID playerUUID) {
@@ -608,7 +608,7 @@ public class PlayerCache {
     /**
      * Gets how many island resets the player has left
      * 
-     * @param playerUUID  - player's UUID
+     * @param playerUUID - the player's UUID  - player's UUID
      * @return number of resets
      */
     public int getResetsLeft(UUID playerUUID) {
@@ -619,7 +619,7 @@ public class PlayerCache {
     /**
      * Sets how many resets the player has left
      * 
-     * @param playerUUID - player's UUID
+     * @param playerUUID - the player's UUID - player's UUID
      * @param resets - value to set
      */
     public void setResetsLeft(UUID playerUUID, int resets) {
@@ -631,7 +631,7 @@ public class PlayerCache {
      * Returns how long the player must wait before they can be invited to an
      * island with the location
      * 
-     * @param playerUUID  - player's UUID
+     * @param playerUUID - the player's UUID  - player's UUID
      * @param location - location to query
      * @return time to wait in minutes/hours
      */
@@ -645,7 +645,7 @@ public class PlayerCache {
      * be invited
      * Called when they are kicked from an island or leave.
      * 
-     * @param playerUUID  - player's UUID
+     * @param playerUUID - the player's UUID  - player's UUID
      * @param location - location to set
      */
     public void startInviteCoolDownTimer(UUID playerUUID, Location location) {
@@ -655,7 +655,7 @@ public class PlayerCache {
 
     /**
      * Returns the locale for this player. If missing, will return nothing
-     * @param playerUUID  - player's UUID
+     * @param playerUUID - the player's UUID  - player's UUID
      * @return name of the locale this player uses
      */
     public String getLocale(UUID playerUUID) {
@@ -668,7 +668,7 @@ public class PlayerCache {
 
     /**
      * Sets the locale this player wants to use
-     * @param playerUUID - player's UUID
+     * @param playerUUID - the player's UUID - player's UUID
      * @param localeName - locale to set
      */
     public void setLocale(UUID playerUUID, String localeName) {
@@ -678,7 +678,7 @@ public class PlayerCache {
 
     /**
      * The rating of the initial starter island out of 100. Default is 50
-     * @param playerUUID  - player's UUID
+     * @param playerUUID - the player's UUID  - player's UUID
      * @return rating the rating
      */
     public int getStartIslandRating(UUID playerUUID) {
@@ -688,7 +688,7 @@ public class PlayerCache {
 
     /**
      * Record the island rating that the player started with
-     * @param playerUUID - player's UUID
+     * @param playerUUID - the player's UUID - player's UUID
      * @param rating the rating
      */
     public void setStartIslandRating(UUID playerUUID, int rating) {
@@ -698,7 +698,7 @@ public class PlayerCache {
 
     /**
      * Clear the starter island rating from the player's record
-     * @param playerUUID  - player's UUID
+     * @param playerUUID - the player's UUID  - player's UUID
      */
     public void clearStartIslandRating(UUID playerUUID) {
         setStartIslandRating(playerUUID, 0);
@@ -706,7 +706,7 @@ public class PlayerCache {
 
     /**
      * Ban target from a player's island
-     * @param playerUUID  - player's UUID
+     * @param playerUUID - the player's UUID  - player's UUID
      * @param targetUUID - target's UUID
      */
     public void ban(UUID playerUUID, UUID targetUUID) {
@@ -728,7 +728,7 @@ public class PlayerCache {
 
     /**
      * Unban target from player's island
-     * @param playerUUID - player's UUID
+     * @param playerUUID - the player's UUID - player's UUID
      * @param targetUUID - target's UUID
      */
     public void unBan(UUID playerUUID, UUID targetUUID) {
@@ -749,7 +749,7 @@ public class PlayerCache {
     }
 
     /**
-     * @param playerUUID - player's UUID
+     * @param playerUUID - the player's UUID - player's UUID
      * @param targetUUID - target's UUID
      * @return true if target is banned from player's island
      */
@@ -780,7 +780,7 @@ public class PlayerCache {
     }
 
     /**
-     * @param playerUUID - player's UUID
+     * @param playerUUID - the player's UUID - player's UUID
      * @return ban list for player
      */
     public List<UUID> getBanList(UUID playerUUID) {
@@ -800,7 +800,7 @@ public class PlayerCache {
 
     /**
      * Sets whether the player uses the control panel or not when doing /island
-     * @param playerUUID - player's UUID
+     * @param playerUUID - the player's UUID - player's UUID
      * @param b - true = user control panel
      */
     public void setControlPanel(UUID playerUUID, boolean b) {
@@ -811,7 +811,7 @@ public class PlayerCache {
 
     /**
      * Gets whether the player uses the control panel or not when doing /island
-     * @param playerUUID  - player's UUID
+     * @param playerUUID - the player's UUID  - player's UUID
      * @return true if they use the control panel
      */
     public boolean getControlPanel(UUID playerUUID) {
@@ -822,7 +822,7 @@ public class PlayerCache {
 
     /**
      * Map storing whether a player is officially teleporting or not
-     * @param uniqueId  - player's UUID
+     * @param uniqueId - unique ID  - player's UUID
      * @param b - true if player is teleporting
      */
     public void setInTeleport(UUID uniqueId, boolean b) {
@@ -835,7 +835,7 @@ public class PlayerCache {
 
     /**
      * Checks whether player with UUID uniqueId is in an official teleport or not
-     * @param uniqueId  - player's UUID
+     * @param uniqueId - unique ID  - player's UUID
      * @return true if in teleport
      */
     public boolean isInTeleport(UUID uniqueId) {
@@ -844,7 +844,7 @@ public class PlayerCache {
 
     /**
      * Add death to player
-     * @param playerUUID  - player's UUID
+     * @param playerUUID - the player's UUID  - player's UUID
      */
     public void addDeath(UUID playerUUID) {
         addPlayer(playerUUID);
@@ -853,7 +853,7 @@ public class PlayerCache {
 
     /**
      * Set death number for player
-     * @param playerUUID - player's UUID
+     * @param playerUUID - the player's UUID - player's UUID
      * @param deaths - number of deaths
      */
     public void setDeaths(UUID playerUUID, int deaths) {
@@ -863,7 +863,7 @@ public class PlayerCache {
 
     /**
      * Get number of times player has died in ASkyBlock worlds since counting began
-     * @param playerUUID - player's UUID
+     * @param playerUUID - the player's UUID - player's UUID
      * @return number of deaths
      */
     public int getDeaths(UUID playerUUID) {
@@ -872,7 +872,7 @@ public class PlayerCache {
     }
 
     /**
-     * @param playerUUID - player's UUID
+     * @param playerUUID - the player's UUID - player's UUID
      * @return List of challenges or levels done
      */
     public List<String> getChallengesDone(UUID playerUUID) {
@@ -881,7 +881,7 @@ public class PlayerCache {
     }
 
     /**
-     * @param playerUUID - player's UUID
+     * @param playerUUID - the player's UUID - player's UUID
      * @return List of challenges or levels not done
      */
     public List<String> getChallengesNotDone(UUID playerUUID) {

@@ -182,7 +182,7 @@ public class ChatListener implements Listener {
 
     /**
      * Adds player to team chat
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      */
     public void setPlayer(UUID playerUUID) {
         this.teamChatUsers.put(playerUUID,true);
@@ -190,7 +190,7 @@ public class ChatListener implements Listener {
 
     /**
      * Removes player from team chat
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      */
     public void unSetPlayer(UUID playerUUID) {
         this.teamChatUsers.remove(playerUUID);
@@ -198,7 +198,7 @@ public class ChatListener implements Listener {
 
     /**
      * Whether the player has team chat on or not
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @return true if team chat is on
      */
     public boolean isTeamChat(UUID playerUUID) {
@@ -207,7 +207,7 @@ public class ChatListener implements Listener {
 
     /**
      * Store the player's level for use in their chat tag
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @param l
      */
     public void setPlayerLevel(UUID playerUUID, long l) {
@@ -226,7 +226,7 @@ public class ChatListener implements Listener {
 
     /**
      * Return the player's level for use in chat - async safe
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @return Player's level as string
      */
     public String getPlayerLevel(UUID playerUUID) {
@@ -235,7 +235,7 @@ public class ChatListener implements Listener {
 
     /**
      * Return the player's challenge level for use in chat - async safe
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @return challenge level as string or empty string none
      */
     public String getPlayerChallengeLevel(UUID playerUUID) {
@@ -246,7 +246,7 @@ public class ChatListener implements Listener {
 
     /**
      * Toggles team chat spy. Spy must also have the spy permission to see chats
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @return true if toggled on, false if toggled off
      */
     public boolean toggleSpy(UUID playerUUID) {

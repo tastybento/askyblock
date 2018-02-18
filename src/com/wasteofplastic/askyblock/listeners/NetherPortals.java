@@ -282,7 +282,7 @@ public class NetherPortals implements Listener {
     /**
      * Prevents blocks from being broken
      * 
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW)
     public void onBlockBreak(final BlockBreakEvent e) {
@@ -307,7 +307,7 @@ public class NetherPortals implements Listener {
     /**
      * Prevents placing of blocks
      * 
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW)
     public void onPlayerBlockPlace(final BlockPlaceEvent e) {
@@ -346,7 +346,7 @@ public class NetherPortals implements Listener {
     /**
      * Prevent the Nether spawn from being blown up
      * 
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onExplosion(final EntityExplodeEvent e) {
@@ -374,7 +374,7 @@ public class NetherPortals implements Listener {
     /**
      * Converts trees to gravel and glowstone
      * 
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onTreeGrow(final StructureGrowEvent e) {

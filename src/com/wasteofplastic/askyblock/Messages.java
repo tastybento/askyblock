@@ -51,7 +51,7 @@ public class Messages {
     /**
      * Returns what messages are waiting for the player or null if none
      * 
-     * @param playerUUID - player's UUID
+     * @param playerUUID - the player's UUID - player's UUID
      * @return List of messages
      */
     public List<String> getMessages(UUID playerUUID) {
@@ -62,7 +62,7 @@ public class Messages {
     /**
      * Clears any messages for player
      * 
-     * @param playerUUID - player's UUID
+     * @param playerUUID - the player's UUID - player's UUID
      */
     public void clearMessages(UUID playerUUID) {
         messages.remove(playerUUID);
@@ -114,7 +114,7 @@ public class Messages {
     /**
      * Provides the messages for the player
      * 
-     * @param playerUUID - player's UUID
+     * @param playerUUID - the player's UUID - player's UUID
      * @return List of messages
      */
     public List<String> get(UUID playerUUID) {
@@ -124,7 +124,7 @@ public class Messages {
     /**
      * Stores a message for player
      * 
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @param playerMessages
      */
     public void put(UUID playerUUID, List<String> playerMessages) {
@@ -135,7 +135,7 @@ public class Messages {
     /**
      * Sends a message to every player in the team that is offline
      * 
-     * @param playerUUID - player's UUID
+     * @param playerUUID - the player's UUID - player's UUID
      * @param message - message to send
      */
     public void tellOfflineTeam(UUID playerUUID, String message) {
@@ -158,7 +158,7 @@ public class Messages {
     /**
      * Tells all online team members something happened
      * 
-     * @param playerUUID - player's UUID
+     * @param playerUUID - the player's UUID - player's UUID
      * @param message - message to send
      */
     public void tellTeam(UUID playerUUID, String message) {
@@ -181,7 +181,7 @@ public class Messages {
     /**
      * Sets a message for the player to receive next time they login
      * 
-     * @param playerUUID - player's UUID
+     * @param playerUUID - the player's UUID - player's UUID
      * @param message - message to set
      * @return true if player is offline, false if online
      */
@@ -201,7 +201,7 @@ public class Messages {
 
     /**
      * Stores a message without any online check
-     * @param playerUUID - player's UUID
+     * @param playerUUID - the player's UUID - player's UUID
      * @param message - message to store
      */
     public void storeMessage(UUID playerUUID, String message) {

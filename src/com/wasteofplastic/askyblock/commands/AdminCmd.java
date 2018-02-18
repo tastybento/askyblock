@@ -2309,7 +2309,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
     /**
      * Shows info on a player
      *
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @param sender
      */
     private void showInfo(UUID playerUUID, CommandSender sender) {
@@ -2415,7 +2415,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
     /**
      * Shows info on the challenge situation for player
      *
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @param sender
      */
     private void showInfoChallenges(UUID playerUUID, CommandSender sender) {

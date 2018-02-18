@@ -218,7 +218,7 @@ public class EntityLimits implements Listener {
     /**
      * Prevents mobs spawning naturally at spawn or in an island
      *
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onNaturalMobSpawn(final CreatureSpawnEvent e) {
@@ -325,7 +325,7 @@ public class EntityLimits implements Listener {
     /**
      * Prevents placing of blocks
      *
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerBlockPlace(final BlockPlaceEvent e) {
@@ -441,7 +441,7 @@ public class EntityLimits implements Listener {
     /**
      * Prevents trees from growing outside of the protected area.
      *
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onTreeGrow(final StructureGrowEvent e) {
@@ -531,7 +531,7 @@ public class EntityLimits implements Listener {
 
     /**
      * Handles minecart placing
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onMinecart(VehicleCreateEvent e) {

@@ -493,7 +493,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
     /**
      * Adds a player to a team. The player and the teamleader MAY be the same
      * 
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @param teamLeader
      * @return true if the player is successfully added
      */
@@ -542,7 +542,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
     /**
      * Removes a player from a team run by teamleader
      * 
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @param teamLeader
      * @return true if successful, false if not
      */
@@ -553,7 +553,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
     /**
      * Removes a player from a team run by teamleader
      * 
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @param teamLeader
      * @param makeLeader - true if this is the result of switching leader
      * @return true if successful, false if not
@@ -837,7 +837,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 
     /**
      * Get the location of next free island spot
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @return Location of island spot
      */
     private Location getNextIsland(UUID playerUUID) {
@@ -3332,7 +3332,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 
     /**
      * Reserves a spot in the world for the player to have their island placed next time they make one
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @param location
      */
     public void reserveLocation(UUID playerUUID, Location location) {

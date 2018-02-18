@@ -391,7 +391,7 @@ public class IslandGuard implements Listener {
     /**
      * Adds island lock function
      *
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlayerMove(final PlayerMoveEvent e) {
@@ -694,7 +694,7 @@ public class IslandGuard implements Listener {
     /**
      * Drops the Enderman's block when he dies if he has one
      *
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onEndermanDeath(final EntityDeathEvent e) {
@@ -733,7 +733,7 @@ public class IslandGuard implements Listener {
     /**
      * Prevents blocks from being broken
      *
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onBlockBreak(final BlockBreakEvent e) {
@@ -804,7 +804,7 @@ public class IslandGuard implements Listener {
      * This method protects players from PVP if it is not allowed and from
      * arrows fired by other players
      *
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onEntityDamage(final EntityDamageByEntityEvent e) {
@@ -1001,7 +1001,7 @@ public class IslandGuard implements Listener {
 
     /**
      * Sets spawners to their type
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onSpawnerBlockPlace(final BlockPlaceEvent e) {
@@ -1078,7 +1078,7 @@ public class IslandGuard implements Listener {
     /**
      * Prevents the breakage of hanging items
      *
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW)
     public void onBreakHanging(final HangingBreakByEntityEvent e) {
@@ -1132,7 +1132,7 @@ public class IslandGuard implements Listener {
     /**
      * Prevents the leash use
      *
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW)
     public void onLeashUse(final PlayerLeashEntityEvent e) {
@@ -1156,7 +1156,7 @@ public class IslandGuard implements Listener {
     /**
      * Prevents the leash use
      *
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW)
     public void onLeashUse(final PlayerUnleashEntityEvent e) {
@@ -1224,7 +1224,7 @@ public class IslandGuard implements Listener {
 
     /**
      * Prevents emptying of buckets outside of island space
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onBucketEmpty(final PlayerBucketEmptyEvent e) {
@@ -1271,7 +1271,7 @@ public class IslandGuard implements Listener {
     /**
      * Prevents water from being dispensed in hell biomes
      *
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW)
     public void onNetherDispenser(final BlockDispenseEvent e) {
@@ -1352,7 +1352,7 @@ public class IslandGuard implements Listener {
     /**
      * Handles interaction with objects
      *
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerInteract(final PlayerInteractEvent e) {
@@ -2034,7 +2034,7 @@ public class IslandGuard implements Listener {
 
     /**
      * Handles hitting minecarts or feeding animals
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerHitEntity(PlayerInteractEntityEvent e) {
@@ -2215,7 +2215,7 @@ public class IslandGuard implements Listener {
 
     /**
      * Prevents fire spread
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onBlockBurn(BlockBurnEvent e) {
@@ -2234,7 +2234,7 @@ public class IslandGuard implements Listener {
 
     /**
      * Prevent fire spread
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onBlockSpread(BlockSpreadEvent e) {
@@ -2347,7 +2347,7 @@ public class IslandGuard implements Listener {
 
     /**
      * Pressure plates
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlateStep(PlayerInteractEvent e) {
@@ -2382,7 +2382,7 @@ public class IslandGuard implements Listener {
 
     /**
      * Removes the player from the plate map
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW)
     public void onStepOffPlate(PlayerMoveEvent e) {
@@ -2422,7 +2422,7 @@ public class IslandGuard implements Listener {
 
     /**
      * Handle visitor chicken egg throwing
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onEggThrow(PlayerEggThrowEvent e) {
@@ -2449,7 +2449,7 @@ public class IslandGuard implements Listener {
 
     /**
      * Trap TNT being primed by flaming arrows
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onTNTPrimed(final EntityChangeBlockEvent e) {
@@ -2515,7 +2515,7 @@ public class IslandGuard implements Listener {
 
     /**
      * Stop redstone if team members are offline and disableOfflineRedstone is TRUE.
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onBlockRedstone(BlockRedstoneEvent e){
@@ -2581,7 +2581,7 @@ public class IslandGuard implements Listener {
 
     /**
      * Checks for splash damage. If there is any to any affected entity and it's not allowed, it won't work on any of them.
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onSplashPotionSplash(final PotionSplashEvent e) {

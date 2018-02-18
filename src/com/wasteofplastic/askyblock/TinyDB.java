@@ -193,7 +193,7 @@ public class TinyDB {
     /**
      * Saves the player name to the database. Case insensitive!
      * @param playerName
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      */
     public void savePlayerName(String playerName, UUID playerUUID) {
         if (playerName == null) {
@@ -242,7 +242,7 @@ public class TinyDB {
     
     /**
      * Gets players name from tiny database
-     * @param playerUuid
+     * @param playerUUID - the player's UUID
      * @return Name or empty string if unknown
      */
     public String getPlayerName(UUID playerUuid) {
