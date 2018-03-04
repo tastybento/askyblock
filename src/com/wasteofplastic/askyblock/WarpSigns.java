@@ -133,7 +133,7 @@ public class WarpSigns implements Listener {
                         Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorNoPerm);
                         return;
                     }
-                    if(!(ASkyBlockAPI.getInstance().getLongIslandLevel(player.getUniqueId()) > Settings.warpLevelsRestriction)){
+                    if(Settings.warpLevelsRestriction > 0 && !(ASkyBlockAPI.getInstance().getLongIslandLevel(player.getUniqueId()) > Settings.warpLevelsRestriction)){
                         Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorNotEnoughLevel);
                         return;
                     }
