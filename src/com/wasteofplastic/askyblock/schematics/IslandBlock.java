@@ -134,6 +134,7 @@ public class IslandBlock {
         WEtoM.put("NETHERBRICK",Material.NETHER_BRICK_ITEM);
         WEtoM.put("OAK_STAIRS",Material.WOOD_STAIRS);
         WEtoM.put("PISTON",Material.PISTON_BASE);
+        WEtoM.put("PLANKS",Material.WOOD);
         WEtoM.put("POTATO", Material.POTATO_ITEM);
         WEtoM.put("RAIL",Material.RAILS);
         WEtoM.put("RECORD_11",Material.RECORD_11);

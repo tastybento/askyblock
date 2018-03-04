@@ -62,7 +62,7 @@ public class AcidInventory implements Listener {
     /**
      * This covers items in a chest, etc. inventory, then change the name then
      * 
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onInventoryOpen(InventoryOpenEvent e) {
@@ -130,7 +130,7 @@ public class AcidInventory implements Listener {
     /**
      * If the player filled up the bucket themselves
      * 
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onBucketFill(PlayerBucketFillEvent e) {
@@ -155,7 +155,7 @@ public class AcidInventory implements Listener {
     /**
      * Checks to see if a player is drinking acid
      * 
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onWaterBottleDrink(final PlayerItemConsumeEvent e) {
@@ -191,7 +191,7 @@ public class AcidInventory implements Listener {
      * This event makes sure that any acid bottles become potions without the
      * warning
      * 
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onBrewComplete(final BrewEvent e) {

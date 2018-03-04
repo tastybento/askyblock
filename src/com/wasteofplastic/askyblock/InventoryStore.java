@@ -29,8 +29,8 @@ public class InventoryStore {
     private ItemStack[] armor;
 
     /**
-     * @param inventory
-     * @param armor
+     * @param inventory inventory array to store
+     * @param armor armor stack array to store
      */
     public InventoryStore(ItemStack[] inventory, ItemStack[] armor) {
         this.inventory = inventory;

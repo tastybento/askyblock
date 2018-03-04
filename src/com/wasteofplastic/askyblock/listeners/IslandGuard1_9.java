@@ -100,7 +100,7 @@ public class IslandGuard1_9 implements Listener {
 
     /**
      * Handles Frost Walking on visitor's islands
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onBlockForm(EntityBlockFormEvent e) {
@@ -138,7 +138,7 @@ public class IslandGuard1_9 implements Listener {
     /**
      * Handle interaction with end crystals 1.9
      * 
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onHitEndCrystal(final PlayerInteractAtEntityEvent e) {
@@ -221,7 +221,7 @@ public class IslandGuard1_9 implements Listener {
 
     /**
      * Handle end crystal damage by visitors
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void EndCrystalDamage(EntityDamageByEntityEvent e) {
@@ -291,7 +291,7 @@ public class IslandGuard1_9 implements Listener {
 
     /**
      * Handles end crystal explosions
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onExplosion(final EntityExplodeEvent e) {
@@ -345,7 +345,7 @@ public class IslandGuard1_9 implements Listener {
 
     /**
      * Triggers a push protection change or not
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerJoin(final PlayerJoinEvent e) {
@@ -361,7 +361,7 @@ public class IslandGuard1_9 implements Listener {
 
     /**
      * Triggers scoreboard cleanup on Quit
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.NORMAL,ignoreCancelled = true)
     public void onPlayerQuit(PlayerQuitEvent e)
@@ -437,7 +437,7 @@ public class IslandGuard1_9 implements Listener {
      * Tilling of coarse dirt into dirt using off-hand (regular hand is in 1.8)
      * Usually prevented because it could lead to an endless supply of dirt with gravel
      * 
-     * @param e
+     * @param e - event
      */
     @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)

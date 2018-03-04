@@ -746,7 +746,7 @@ public class ASkyBlock extends JavaPlugin {
      * Resets a player's inventory, armor slots, equipment, enderchest and
      * potion effects
      *
-     * @param player
+     * @param player - player
      */
     public void resetPlayer(Player player) {
         // getLogger().info("DEBUG: clear inventory = " +
@@ -836,6 +836,7 @@ public class ASkyBlock extends JavaPlugin {
     }
 
     /**
+     * @param player - player
      * @return Locale for this player
      */
     public ASLocale myLocale(UUID player) {

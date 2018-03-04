@@ -40,7 +40,7 @@ import com.wasteofplastic.askyblock.util.Util;
  * 
  */
 public class DeleteIslandChunk {
-    private Set<Pair> chunksToClear = new HashSet<Pair>();
+    private Set<Pair<Integer, Integer>> chunksToClear = new HashSet<Pair<Integer, Integer>>();
     //private HashMap<Location, Material> blocksToClear = new HashMap<Location,Material>();
     private NMSAbstraction nms = null;
 
@@ -115,7 +115,7 @@ public class DeleteIslandChunk {
                 } else {
                     // Add to clear up list if requested
                     if (cleanUpBlocks) {
-                        chunksToClear.add(new Pair(x,z));
+                        chunksToClear.add(new Pair<Integer, Integer>(x,z));
                     }
                 }
             }
@@ -136,17 +136,17 @@ public class DeleteIslandChunk {
                 @SuppressWarnings("deprecation")
                 @Override
                 public void run() {
-                    Iterator<Pair> it = chunksToClear.iterator();
+                    Iterator<Pair<Integer, Integer>> it = chunksToClear.iterator();
                     int count = 0;
                     while (it.hasNext() && count++ < Settings.cleanRate) {                    
-                        Pair pair = it.next();
+                        Pair<Integer, Integer> pair = it.next();
                         //plugin.getLogger().info("DEBUG: There are " + chunksToClear.size() + " chunks that need to be cleared up");
                         //plugin.getLogger().info("DEBUG: Deleting chunk " + pair.getLeft() + ", " + pair.getRight());                       
                         // Check if coords are in island space
                         for (int x = 0; x < 16; x ++) {
                             for (int z = 0; z < 16; z ++) {
-                                int xCoord = pair.getLeft() * 16 + x;
-                                int zCoord = pair.getRight() * 16 + z;
+                                int xCoord = pair.x * 16 + x;
+                                int zCoord = pair.z * 16 + z;
                                 if (island.inIslandSpace(xCoord, zCoord)) {                                 
                                     //plugin.getLogger().info(xCoord + "," + zCoord + " is in island space - deleting column");
                                     // Delete all the blocks here

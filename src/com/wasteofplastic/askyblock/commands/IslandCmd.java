@@ -71,10 +71,10 @@ import com.wasteofplastic.askyblock.CoopPlay;
 import com.wasteofplastic.askyblock.DeleteIslandChunk;
 import com.wasteofplastic.askyblock.GridManager;
 import com.wasteofplastic.askyblock.Island;
+import com.wasteofplastic.askyblock.Island.SettingsFlag;
 import com.wasteofplastic.askyblock.LevelCalcByChunk;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.TopTen;
-import com.wasteofplastic.askyblock.Island.SettingsFlag;
 import com.wasteofplastic.askyblock.events.IslandJoinEvent;
 import com.wasteofplastic.askyblock.events.IslandLeaveEvent;
 import com.wasteofplastic.askyblock.events.IslandNewEvent;
@@ -493,7 +493,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
     /**
      * Adds a player to a team. The player and the teamleader MAY be the same
      * 
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @param teamLeader
      * @return true if the player is successfully added
      */
@@ -542,7 +542,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
     /**
      * Removes a player from a team run by teamleader
      * 
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @param teamLeader
      * @return true if successful, false if not
      */
@@ -553,7 +553,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
     /**
      * Removes a player from a team run by teamleader
      * 
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @param teamLeader
      * @param makeLeader - true if this is the result of switching leader
      * @return true if successful, false if not
@@ -837,7 +837,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 
     /**
      * Get the location of next free island spot
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @return Location of island spot
      */
     private Location getNextIsland(UUID playerUUID) {
@@ -936,9 +936,9 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
             if (asker.getUniqueId().equals(targetPlayer) || asker.isOp() || VaultHelper.checkPerm(asker, Settings.PERMPREFIX + "mod.info")) {
                 // Newer better system - uses chunks
                 if (!onLevelWaitTime(asker) || Settings.levelWait <= 0 || asker.isOp() || VaultHelper.checkPerm(asker, Settings.PERMPREFIX + "mod.info")) {
-                    //Util.sendMessage(asker, ChatColor.GREEN + plugin.myLocale(asker.getUniqueId()).levelCalculating);
+                    Util.sendMessage(asker, ChatColor.GREEN + plugin.myLocale(asker.getUniqueId()).levelCalculating);
                     setLevelWaitTime(asker);
-                    new LevelCalcByChunk(plugin, targetPlayer, asker, report);
+                    new LevelCalcByChunk(plugin, plugin.getGrid().getIsland(targetPlayer), targetPlayer, asker, report);
                 } else {
                     Util.sendMessage(asker, ChatColor.YELLOW + plugin.myLocale(asker.getUniqueId()).islandresetWait.replace("[time]", String.valueOf(getLevelWaitTime(asker))));
                 }
@@ -950,7 +950,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
         } else {
             // Console request            
             Util.sendMessage(sender, ChatColor.GREEN + plugin.myLocale().levelCalculating);
-            new LevelCalcByChunk(plugin, targetPlayer, sender, report);
+            new LevelCalcByChunk(plugin, plugin.getGrid().getIsland(targetPlayer), targetPlayer, sender, report);
         }
         return true;
     }
@@ -3332,7 +3332,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
 
     /**
      * Reserves a spot in the world for the player to have their island placed next time they make one
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @param location
      */
     public void reserveLocation(UUID playerUUID, Location location) {

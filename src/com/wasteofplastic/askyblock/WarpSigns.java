@@ -60,7 +60,7 @@ public class WarpSigns implements Listener {
     private YamlConfiguration welcomeWarps;
 
     /**
-     * @param plugin
+     * @param plugin - BSkyBlock plugin object
      */
     public WarpSigns(ASkyBlock plugin) {
         this.plugin = plugin;
@@ -69,7 +69,7 @@ public class WarpSigns implements Listener {
 
     /**
      * Checks to see if a sign has been broken
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
     public void onSignBreak(BlockBreakEvent e) {
@@ -112,7 +112,7 @@ public class WarpSigns implements Listener {
     /**
      * Event handler for Sign Changes
      * 
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
     public void onSignWarpCreate(SignChangeEvent e) {
@@ -133,12 +133,12 @@ public class WarpSigns implements Listener {
                         Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorNoPerm);
                         return;
                     }
-                    if(!(ASkyBlockAPI.getInstance().getLongIslandLevel(player.getUniqueId()) > Settings.warpLevelsRestriction)){
+                    if(Settings.warpLevelsRestriction > 0 && !(ASkyBlockAPI.getInstance().getLongIslandLevel(player.getUniqueId()) > Settings.warpLevelsRestriction)){
                         Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorNotEnoughLevel);
                         return;
                     }
                     // Check that the player is on their island
-                    if (!(plugin.getGrid().playerIsOnIsland(player))) {
+                    if (!(plugin.getGrid().playerIsOnIsland(player, false))) {
                         Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorNoPlace);
                         e.setLine(0, ChatColor.RED + plugin.myLocale().warpswelcomeLine);
                         return;
@@ -281,7 +281,7 @@ public class WarpSigns implements Listener {
     /**
      * Stores warps in the warp array
      * 
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @param loc
      */
     public boolean addWarp(final UUID playerUUID, final Location loc) {
@@ -431,7 +431,7 @@ public class WarpSigns implements Listener {
     /**
      * Provides the location of the warp for player or null if one is not found
      * 
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      *            - the warp requested
      * @return Location of warp
      */

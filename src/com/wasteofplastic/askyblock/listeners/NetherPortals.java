@@ -26,7 +26,6 @@ import org.bukkit.World.Environment;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Vehicle;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -42,15 +41,15 @@ import org.bukkit.util.Vector;
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.GridManager;
 import com.wasteofplastic.askyblock.Island;
-import com.wasteofplastic.askyblock.SafeSpotTeleport;
-import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.Island.SettingsFlag;
+import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.commands.IslandCmd;
 import com.wasteofplastic.askyblock.events.IslandEnterEvent;
 import com.wasteofplastic.askyblock.schematics.Schematic;
 import com.wasteofplastic.askyblock.schematics.Schematic.PasteReason;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
+import com.wasteofplastic.askyblock.util.teleport.SafeTeleportBuilder;
 
 public class NetherPortals implements Listener {
     private final ASkyBlock plugin;
@@ -77,55 +76,9 @@ public class NetherPortals implements Listener {
                 plugin.getLogger().info("DEBUG: Disabled nether: Settings create nether = " + Settings.createNether + " " + (ASkyBlock.getNetherWorld() == null ? "Nether world is null": "Nether world is not null"));
             return;
         }
-        if (event.getEntity() == null) {
-            if (DEBUG)
-                plugin.getLogger().info("DEBUG: entity is null");
-            return;
-        }
-        if (event.getFrom() != null && event.getFrom().getBlock().getType().equals(Material.ENDER_PORTAL)) {
-            event.setCancelled(true);
-            // Same action for all worlds except the end itself
-            if (!event.getFrom().getWorld().getEnvironment().equals(Environment.THE_END)) {
-                if (plugin.getServer().getWorld(Settings.worldName + "_the_end") != null) {
-                    // The end exists
-                    Location end_place = plugin.getServer().getWorld(Settings.worldName + "_the_end").getSpawnLocation();
-                    event.getEntity().teleport(end_place);
-                    if (DEBUG)
-                        plugin.getLogger().info("DEBUG: Result teleported " + event.getEntityType() + " to " + end_place);
-                    return;
-                }
-            }
-            return;
-        }
-        Location currentLocation = event.getFrom().clone();
-        String currentWorld = currentLocation.getWorld().getName();
-        // Only operate if this is Island territory
-        if (!currentWorld.equalsIgnoreCase(Settings.worldName) && !currentWorld.equalsIgnoreCase(Settings.worldName + "_nether")) {
-            if (DEBUG)
-                plugin.getLogger().info("DEBUG: not an island world");
-            return;
-        }
-        // No entities may pass with the old nether
-        if (!Settings.newNether) {
-            if (DEBUG)
-                plugin.getLogger().info("DEBUG: no entities may pass with old nether");
-            event.setCancelled(true);
-            return;
-        }
-        // New nether
-        // Entities can pass only if there are adjoining portals
-        Location dest = event.getFrom().toVector().toLocation(ASkyBlock.getIslandWorld());
-        if (event.getFrom().getWorld().getEnvironment().equals(Environment.NORMAL)) {
-            dest = event.getFrom().toVector().toLocation(ASkyBlock.getNetherWorld());
-        }
-        // Vehicles
-        if (event.getEntity() instanceof Vehicle) {
-            Vehicle vehicle = (Vehicle)event.getEntity();   
-            vehicle.eject();
-        }
-        new SafeSpotTeleport(plugin, event.getEntity(), dest);
+        // Disable entity portal transfer due to dupe glitching
         event.setCancelled(true);
-    }
+    } 
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerPortal(PlayerPortalEvent event) {
@@ -205,7 +158,12 @@ public class NetherPortals implements Listener {
                             event.setTo(dest);
                         } else {
                             event.setCancelled(true);
-                            new SafeSpotTeleport(plugin, event.getPlayer(), plugin.getPlayers().getIslandLocation(playerUUID), 1);
+                            new SafeTeleportBuilder(plugin)
+                            .entity(event.getPlayer())
+                            .location(plugin.getPlayers().getIslandLocation(playerUUID))
+                            .portal()
+                            .homeNumber(1)
+                            .build();
                         }		
                     }
                 } else {
@@ -222,7 +180,12 @@ public class NetherPortals implements Listener {
                             plugin.getServer().getPluginManager().callEvent(event2);
                         } else {
                             event.setCancelled(true);
-                            new SafeSpotTeleport(plugin, event.getPlayer(), plugin.getPlayers().getIslandLocation(playerUUID), 1);
+                            new SafeTeleportBuilder(plugin)
+                            .entity(event.getPlayer())
+                            .location(plugin.getPlayers().getIslandLocation(playerUUID))
+                            .portal()
+                            .homeNumber(1)
+                            .build();
                             // Fire entry event
                             Island islandTo = plugin.getGrid().getIslandAt(plugin.getPlayers().getIslandLocation(playerUUID));
                             final IslandEnterEvent event2 = new IslandEnterEvent(event.getPlayer().getUniqueId(), islandTo, plugin.getPlayers().getIslandLocation(playerUUID));
@@ -277,13 +240,21 @@ public class NetherPortals implements Listener {
                         plugin.getLogger().info("DEBUG: Teleporting to " + event.getFrom().toVector().toLocation(ASkyBlock.getNetherWorld()));
                     event.setCancelled(true);
                     // Teleport using the new safeSpot teleport
-                    new SafeSpotTeleport(plugin, event.getPlayer(), netherIsland);
+                    new SafeTeleportBuilder(plugin)
+                    .entity(event.getPlayer())
+                    .location(netherIsland)
+                    .portal()
+                    .build();
                     return;
                 }
                 // Going to the over world - if there isn't an island, do nothing
                 event.setCancelled(true);
                 // Teleport using the new safeSpot teleport
-                new SafeSpotTeleport(plugin, event.getPlayer(), overworldIsland);
+                new SafeTeleportBuilder(plugin)
+                .entity(event.getPlayer())
+                .location(overworldIsland)
+                .portal()
+                .build();
             }
             break;
         default:
@@ -311,7 +282,7 @@ public class NetherPortals implements Listener {
     /**
      * Prevents blocks from being broken
      * 
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW)
     public void onBlockBreak(final BlockBreakEvent e) {
@@ -336,7 +307,7 @@ public class NetherPortals implements Listener {
     /**
      * Prevents placing of blocks
      * 
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW)
     public void onPlayerBlockPlace(final BlockPlaceEvent e) {
@@ -375,7 +346,7 @@ public class NetherPortals implements Listener {
     /**
      * Prevent the Nether spawn from being blown up
      * 
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onExplosion(final EntityExplodeEvent e) {
@@ -403,7 +374,7 @@ public class NetherPortals implements Listener {
     /**
      * Converts trees to gravel and glowstone
      * 
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onTreeGrow(final StructureGrowEvent e) {
