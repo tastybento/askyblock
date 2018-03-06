@@ -153,6 +153,7 @@ ban:
 biome: 
   help: "Biyom GUI sini aç."
   paneltitle: "Biyom seç"
+  pleasewait: "Please wait, changing biome..."
   set: "Ada biyomu [biome] olarak ayarlandı!"
   unknown: "Bilinmeyen biyom!"
   youbought: "[cost] para karşılığında satın alındı!"

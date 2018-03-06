@@ -153,6 +153,7 @@ ban:
 biome: 
   help: 打開生態系界面.
   paneltitle: "&5&l購買生態系&e-&d&l一次性購買"
+  pleasewait: "Please wait, changing biome..."
   set: "島嶼生態系設置為:[biome]!"
   unknown: 未知生態系!
   youbought: "購買花費:[cost]!"

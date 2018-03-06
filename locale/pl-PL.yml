@@ -153,6 +153,7 @@ ban:
 biome: 
   help: "otwiera GUI biomów."
   paneltitle: "Wybierz biom"
+  pleasewait: "Please wait, changing biome..."
   set: "Biom wyspy został ustawion do [biome]!"
   unknown: "Nieznany biom!"
   youbought: "Kupione za [cost]!"

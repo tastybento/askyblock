@@ -134,6 +134,7 @@ ban:
 biome:
   help: "Mở biome gui."
   paneltitle: "Chọn biome"
+  pleasewait: "Please wait, changing biome..."
   set: "Đảo biome set đến [biome]!"
   unknown: "Không có biome!"
   youbought: "mua cho [cost]!"

@@ -153,6 +153,7 @@ ban:
 biome: 
   help: "открыть интерфейс биомов."
   paneltitle: "Выбрать биом"
+  pleasewait: "Please wait, changing biome..."
   set: "Биом острова был изменен на [biome]!"
   unknown: "Неизвестный биом!"
   youbought: "Куплено за [cost]!"

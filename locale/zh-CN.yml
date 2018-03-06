@@ -152,6 +152,7 @@ ban:
 biome: 
   help: 打开生物群系界面.
   paneltitle: 选择一个生物群系
+  pleasewait: "Please wait, changing biome..."
   set: "岛屿生物群系设置为: [biome]!"
   unknown: 未知生物群系!
   youbought: "购买花费: [cost]!"
