@@ -156,6 +156,7 @@ biome:
   unknown: "Tuntematon biome!"
   youbought: "Ostettu [cost]!"
   paneltitle: "Valitse biome - &8ilmainen"
+  pleasewait: "Please wait, changing biome..."
 boats: 
   warning: "On turvatonta poistua veneestä juuri nyt..."
 challenges: 

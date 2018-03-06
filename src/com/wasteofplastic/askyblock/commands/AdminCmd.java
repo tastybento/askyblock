@@ -72,6 +72,7 @@ import com.wasteofplastic.askyblock.Settings.GameType;
 import com.wasteofplastic.askyblock.TopTen;
 import com.wasteofplastic.askyblock.listeners.LavaCheck;
 import com.wasteofplastic.askyblock.panels.ControlPanel;
+import com.wasteofplastic.askyblock.panels.SetBiome;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 import com.wasteofplastic.askyblock.util.teleport.SafeTeleportBuilder;
@@ -1929,7 +1930,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 }
                 // Okay clear to set biome
                 // Actually set the biome
-                plugin.getBiomes().setIslandBiome(island,biome);
+                new SetBiome(plugin, island, biome, sender);
                 Util.sendMessage(sender, ChatColor.GREEN + plugin.myLocale().biomeSet.replace("[biome]", biomeName));
                 Player targetPlayer = plugin.getServer().getPlayer(playerUUID);
                 if (targetPlayer != null) {
@@ -2142,7 +2143,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
     private void deleteIslands(Island island, CommandSender sender) {
         plugin.getGrid().removePlayersFromIsland(island,null);
         // Reset the biome
-        plugin.getBiomes().setIslandBiome(island, Settings.defaultBiome);
+        new SetBiome(plugin, island, Settings.defaultBiome, null);
         new DeleteIslandChunk(plugin, island);
         //new DeleteIslandByBlock(plugin, island);
         plugin.getGrid().saveGrid();

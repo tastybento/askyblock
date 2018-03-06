@@ -153,6 +153,7 @@ ban:
 biome: 
   help: "otevre ovladaci panel biomu."
   paneltitle: "Vyber biom"
+  pleasewait: "Please wait, changing biome..."
   set: "Biom ostrova nastaven na [biome]!"
   unknown: "Neznamy biom!"
   youbought: "Koupeno za [cost]!"

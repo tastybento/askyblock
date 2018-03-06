@@ -333,7 +333,7 @@ public class ASkyBlockAPI {
     public boolean setIslandBiome(Location islandLoc, Biome biomeType) {
         Island island = plugin.getGrid().getIslandAt(islandLoc);
         if (island != null) {
-            new SetBiome(plugin, island, biomeType);
+            new SetBiome(plugin, island, biomeType, null);
             return true;
         }
         return false;

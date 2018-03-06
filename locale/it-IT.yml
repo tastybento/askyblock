@@ -153,6 +153,7 @@ ban:
 biome: 
   help: "apre la interfaccia delle biomasse."
   paneltitle: "Seleziona Una Biomassa"
+  pleasewait: "Please wait, changing biome..."
   set: "Biomassa della isola settata in [biome]!"
   unknown: "Biomassa sconosciuta!"
   youbought: "Acquistata per [cost]!"

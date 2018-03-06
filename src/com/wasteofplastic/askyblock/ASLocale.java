@@ -667,6 +667,9 @@ public class ASLocale {
     public String visitorsProtected;
 
 
+    public String biomePleaseWait;
+
+
     /**
      * Creates a locale object full of localized strings for a language
      * @param plugin - BSkyBlock plugin object - ASkyBlock plugin
@@ -1317,6 +1320,7 @@ public class ASLocale {
         if (biomePanelTitle.length() > 30) {
             biomePanelTitle = biomePanelTitle.substring(0, 29);
         }
+        biomePleaseWait = ChatColor.translateAlternateColorCodes('&', locale.getString("biome.pleasewait", "Please wait, changing biome..."));
         expelNotOnIsland = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("expel.notonisland", "Player is not trespassing on your island!"));
         expelSuccess = ChatColor.translateAlternateColorCodes('&', locale.getString("expel.success", "You expelled [name]!"));

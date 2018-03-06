@@ -130,6 +130,7 @@ ban:
 biome: 
   help: "åbner biomes GUI."
   paneltitle: "Vælg et Biome"
+  pleasewait: "Please wait, changing biome..."
   set: "Ø biome sat til [biome]!"
   unknown: "Ukendt biome!"
   youbought: "Købt for [cost]!"

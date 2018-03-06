@@ -153,6 +153,7 @@ ban:
 biome: 
   help: "Öffnet das Biom Menü."
   paneltitle: "Wähle ein Biom"
+  pleasewait: "Please wait, changing biome..."
   set: "Insel Biom geändert in [biome]!"
   unknown: "Unbekanntes Biom!"
   youbought: "Gekauft für [cost]!"
