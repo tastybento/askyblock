@@ -326,7 +326,7 @@ public class TopTen implements Listener{
                 } else {
                     if (DEBUG)
                         plugin.getLogger().info("DEBUG: player not online, so no per check");
-                    
+
                 }
                 if (show) {
                     gui.setItem(SLOTS[i-1], getSkull(i, m.getValue(), playerUUID));
@@ -343,19 +343,20 @@ public class TopTen implements Listener{
     static ItemStack getSkull(int rank, Long long1, UUID player){
         if (DEBUG)
             plugin.getLogger().info("DEBUG: Getting the skull");
-        if (topTenHeads.containsKey(player)) {
-            return topTenHeads.get(player);
-        }
         String playerName = plugin.getPlayers().getName(player);
         if (DEBUG) {
             plugin.getLogger().info("DEBUG: playername = " + playerName);
-            
+
             plugin.getLogger().info("DEBUG: second chance = " + plugin.getPlayers().getName(player));
         }
         ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
         if (playerName == null) return null;
         SkullMeta meta = (SkullMeta) playerSkull.getItemMeta();
-        meta.setOwner(playerName);
+        if (topTenHeads.containsKey(player)) {
+            playerSkull = topTenHeads.get(player);
+        } else {
+            meta.setOwner(playerName);
+        }
         meta.setDisplayName((plugin.myLocale(player).topTenGuiHeading.replace("[name]", plugin.getGrid().getIslandName(player))).replace("[rank]", String.valueOf(rank)));
         //meta.setDisplayName(ChatColor.YELLOW + "" + ChatColor.BOLD + "<!> " + ChatColor.YELLOW + "Island: " + ChatColor.GOLD + ChatColor.UNDERLINE + plugin.getGrid().getIslandName(player) + ChatColor.GRAY + " (#" + rank + ")");
         List<String> lore = new ArrayList<String>();
@@ -370,7 +371,7 @@ public class TopTen implements Listener{
             lore.addAll(memberList);
         }
         //else lore.add(ChatColor.AQUA + playerName);
-        
+
         meta.setLore(lore);
         playerSkull.setItemMeta(meta);
         topTenHeads.put(player, playerSkull);
@@ -397,8 +398,8 @@ public class TopTen implements Listener{
         player.updateInventory();
         if(event.getCurrentItem() != null && event.getCurrentItem().getType().equals(Material.SKULL_ITEM) && event.getCurrentItem().hasItemMeta()){
             Util.runCommand(player, "is warp " + ((SkullMeta)event.getCurrentItem().getItemMeta()).getOwner());
-        	player.closeInventory();
-        	return;
+            player.closeInventory();
+            return;
         }
         if (event.getSlotType().equals(SlotType.OUTSIDE)) {
             player.closeInventory();
