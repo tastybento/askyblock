@@ -73,6 +73,9 @@ public class TopTen implements Listener{
      * @param l
      */
     public static void topTenAddEntry(UUID ownerUUID, long l) {
+        if (DEBUG) {
+            plugin.getLogger().info("DEBUG: adding top ten entry " + ownerUUID + " " + l);
+        }
         // Special case for removals. If a level of zero is given the player
         // needs to be removed from the list
         if (l < 1) {
@@ -354,6 +357,7 @@ public class TopTen implements Listener{
         SkullMeta meta = (SkullMeta) playerSkull.getItemMeta();
         if (topTenHeads.containsKey(player)) {
             playerSkull = topTenHeads.get(player);
+            meta = (SkullMeta) playerSkull.getItemMeta();
         } else {
             meta.setOwner(playerName);
         }
