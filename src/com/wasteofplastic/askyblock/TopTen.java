@@ -54,12 +54,13 @@ import com.wasteofplastic.askyblock.util.Util;
 public class TopTen implements Listener{
     private static ASkyBlock plugin = ASkyBlock.getPlugin();
     // Top ten list of players
-    private static Map<UUID, Long> topTenList = new HashMap<UUID, Long>();
+    private static Map<UUID, Long> topTenList = new HashMap<>();
     private static final int GUISIZE = 27; // Must be a multiple of 9
     private static final int[] SLOTS = new int[] {4, 12, 14, 19, 20, 21, 22, 23, 24, 25};
     private static final boolean DEBUG = false;
     // Store this as a static because it's the same for everyone and saves memory cleanup
     private static Inventory gui;
+    private static Map<UUID, ItemStack> topTenHeads = new HashMap<>();
 
     public TopTen(ASkyBlock plugin) {
         TopTen.plugin = plugin;
@@ -338,9 +339,13 @@ public class TopTen implements Listener{
         return true;
     }
 
+    @SuppressWarnings("deprecation")
     static ItemStack getSkull(int rank, Long long1, UUID player){
         if (DEBUG)
             plugin.getLogger().info("DEBUG: Getting the skull");
+        if (topTenHeads.containsKey(player)) {
+            return topTenHeads.get(player);
+        }
         String playerName = plugin.getPlayers().getName(player);
         if (DEBUG) {
             plugin.getLogger().info("DEBUG: playername = " + playerName);
@@ -368,6 +373,7 @@ public class TopTen implements Listener{
         
         meta.setLore(lore);
         playerSkull.setItemMeta(meta);
+        topTenHeads.put(player, playerSkull);
         return playerSkull;
     }
 
