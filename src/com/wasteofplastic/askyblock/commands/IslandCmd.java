@@ -279,9 +279,13 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                             Material icon;
                             String iconString = schemSection.getString("schematics." + key + ".icon","MAP").toUpperCase();
                             // Support damage values
-                            String[] split = iconString.split(":");                            
+                            String[] split = iconString.split(":");  
                             if (StringUtils.isNumeric(split[0])) {
-                                icon = Material.getMaterial(Integer.parseInt(iconString));
+                                icon = Material.getMaterial(Integer.parseInt(split[0]));
+                                if (icon == null) {
+                                    icon = Material.MAP;
+                                    plugin.getLogger().severe("Schematic's icon could not be found. Try using quotes like '17:2'");
+                                }
                             } else {
                                 icon = Material.valueOf(split[0]);
                             }
