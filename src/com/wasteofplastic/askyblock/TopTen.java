@@ -41,6 +41,7 @@ import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.scheduler.BukkitTask;
 
 import com.wasteofplastic.askyblock.util.MapUtil;
 import com.wasteofplastic.askyblock.util.Util;
@@ -61,7 +62,8 @@ public class TopTen implements Listener{
     // Store this as a static because it's the same for everyone and saves memory cleanup
     private static Inventory gui;
     private static Map<UUID, ItemStack> topTenHeads = new HashMap<>();
-
+    private static List<BukkitTask> headTasks = new ArrayList<>();
+    
     public TopTen(ASkyBlock plugin) {
         TopTen.plugin = plugin;
     }
@@ -72,6 +74,7 @@ public class TopTen implements Listener{
      * @param ownerUUID
      * @param l
      */
+    @SuppressWarnings("deprecation")
     public static void topTenAddEntry(UUID ownerUUID, long l) {
         if (DEBUG) {
             plugin.getLogger().info("DEBUG: adding top ten entry " + ownerUUID + " " + l);
@@ -95,6 +98,26 @@ public class TopTen implements Listener{
         }
         topTenList.put(ownerUUID, l);
         topTenList = MapUtil.sortByValue(topTenList);
+        // Add head to cache
+        if (!topTenHeads.containsKey(ownerUUID)) {
+            // Try to cancel and remove tasks if there are too many going
+            if (headTasks.size() > 20) {
+                headTasks.get(0).cancel();
+                headTasks.remove(0);
+            }
+            BukkitTask task = Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> { 
+                ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
+                String name = plugin.getPlayers().getName(ownerUUID);
+                if (name != null && !name.isEmpty()) {
+                    SkullMeta meta = (SkullMeta) playerSkull.getItemMeta();
+                    meta.setOwner(name);
+                    playerSkull.setItemMeta(meta);
+                    topTenHeads.put(ownerUUID, playerSkull);
+                }
+
+            }); 
+            headTasks.add(task);
+        }
     }
 
     /**
@@ -206,7 +229,7 @@ public class TopTen implements Listener{
             e.printStackTrace();
         }
     }
-
+    
     /**
      * Loads the top ten from the file system topten.yml. If it does not exist
      * then the top ten is created
@@ -342,7 +365,7 @@ public class TopTen implements Listener{
         return true;
     }
 
-    @SuppressWarnings("deprecation")
+
     static ItemStack getSkull(int rank, Long long1, UUID player){
         if (DEBUG)
             plugin.getLogger().info("DEBUG: Getting the skull");
@@ -358,8 +381,6 @@ public class TopTen implements Listener{
         if (topTenHeads.containsKey(player)) {
             playerSkull = topTenHeads.get(player);
             meta = (SkullMeta) playerSkull.getItemMeta();
-        } else {
-            meta.setOwner(playerName);
         }
         meta.setDisplayName((plugin.myLocale(player).topTenGuiHeading.replace("[name]", plugin.getGrid().getIslandName(player))).replace("[rank]", String.valueOf(rank)));
         //meta.setDisplayName(ChatColor.YELLOW + "" + ChatColor.BOLD + "<!> " + ChatColor.YELLOW + "Island: " + ChatColor.GOLD + ChatColor.UNDERLINE + plugin.getGrid().getIslandName(player) + ChatColor.GRAY + " (#" + rank + ")");
@@ -374,11 +395,9 @@ public class TopTen implements Listener{
             }
             lore.addAll(memberList);
         }
-        //else lore.add(ChatColor.AQUA + playerName);
 
         meta.setLore(lore);
         playerSkull.setItemMeta(meta);
-        topTenHeads.put(player, playerSkull);
         return playerSkull;
     }
 
