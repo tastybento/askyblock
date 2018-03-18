@@ -329,15 +329,14 @@ public class LevelCalcByChunk {
                         plugin.getPlayers().save(member);
                     }
                 }
-                if (plugin.getPlayers().inTeam(targetPlayer)) {
-                    UUID leader = plugin.getPlayers().getTeamLeader(targetPlayer);
-                    if (leader != null) {
-                        TopTen.topTenAddEntry(leader, event.getLongLevel());
-                    }
-                } else {
-                    TopTen.topTenAddEntry(targetPlayer, event.getLongLevel());
+                UUID leader = plugin.getPlayers().getTeamLeader(targetPlayer);
+                if (leader != null) {
+                    TopTen.topTenAddEntry(leader, event.getLongLevel());
                 }
+            } else {
+                TopTen.topTenAddEntry(targetPlayer, event.getLongLevel());
             }
+
         }
         return event;
     }

@@ -207,6 +207,7 @@ coop:
   cannotcoop: "Only island leader can coop a player." 
   help: "give a player full access to your island"
   invited: "[name] made [player] a coop player!"
+  nameHasInvitedYou: "[name] has invited you to coop on their island!"
   listcoops: "list coop players"
   madeyoucoopy: "[name] made you a coop player until he logs out or expels you."
   notincoop: "[name] is not in your coop!"

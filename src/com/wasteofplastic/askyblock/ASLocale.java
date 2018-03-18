@@ -670,6 +670,9 @@ public class ASLocale {
     public String biomePleaseWait;
 
 
+    public String coopHasInvited;
+
+
     /**
      * Creates a locale object full of localized strings for a language
      * @param plugin - BSkyBlock plugin object - ASkyBlock plugin
@@ -1353,6 +1356,7 @@ public class ASLocale {
         islandhelpUnCoop = ChatColor.translateAlternateColorCodes('&',locale.getString("coop.uncoop", "remove full island access from player"));
         islandhelpListCoops = ChatColor.translateAlternateColorCodes('&',locale.getString("coop.listcoops", "list coop players"));
         coopInvited = ChatColor.translateAlternateColorCodes('&', locale.getString("coop.invited", "[name] made [player] a coop player!"));
+        coopHasInvited = ChatColor.translateAlternateColorCodes('&', locale.getString("coop.nameHasInvitedYou", "[name] has invited you to coop on their island!"));
         coopUseExpel = ChatColor.translateAlternateColorCodes('&', locale.getString("coop.useexpel", "Use expel to remove."));
         cannotCoop = ChatColor.translateAlternateColorCodes('&', locale.getString("coop.cannotcoop", "Only island leader can coop a player."));
         lockIslandLocked = ChatColor.translateAlternateColorCodes('&', locale.getString("lock.islandlocked", "Island is locked to visitors"));

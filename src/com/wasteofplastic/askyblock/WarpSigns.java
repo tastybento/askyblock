@@ -305,7 +305,6 @@ public class WarpSigns implements Listener {
             @Override
             public void run() {
                 plugin.getWarpPanel().addWarp(playerUUID);
-                plugin.getWarpPanel().updatePanel();
                 Bukkit.getPluginManager().callEvent(new WarpCreateEvent(plugin, loc, playerUUID));
             }});
         return true;

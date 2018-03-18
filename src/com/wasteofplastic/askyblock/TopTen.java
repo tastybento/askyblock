@@ -41,6 +41,7 @@ import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.scheduler.BukkitTask;
 
 import com.wasteofplastic.askyblock.util.MapUtil;
 import com.wasteofplastic.askyblock.util.Util;
@@ -54,13 +55,15 @@ import com.wasteofplastic.askyblock.util.Util;
 public class TopTen implements Listener{
     private static ASkyBlock plugin = ASkyBlock.getPlugin();
     // Top ten list of players
-    private static Map<UUID, Long> topTenList = new HashMap<UUID, Long>();
+    private static Map<UUID, Long> topTenList = new HashMap<>();
     private static final int GUISIZE = 27; // Must be a multiple of 9
     private static final int[] SLOTS = new int[] {4, 12, 14, 19, 20, 21, 22, 23, 24, 25};
     private static final boolean DEBUG = false;
     // Store this as a static because it's the same for everyone and saves memory cleanup
     private static Inventory gui;
-
+    private static Map<UUID, ItemStack> topTenHeads = new HashMap<>();
+    private static List<BukkitTask> headTasks = new ArrayList<>();
+    
     public TopTen(ASkyBlock plugin) {
         TopTen.plugin = plugin;
     }
@@ -71,7 +74,11 @@ public class TopTen implements Listener{
      * @param ownerUUID
      * @param l
      */
+    @SuppressWarnings("deprecation")
     public static void topTenAddEntry(UUID ownerUUID, long l) {
+        if (DEBUG) {
+            plugin.getLogger().info("DEBUG: adding top ten entry " + ownerUUID + " " + l);
+        }
         // Special case for removals. If a level of zero is given the player
         // needs to be removed from the list
         if (l < 1) {
@@ -91,6 +98,26 @@ public class TopTen implements Listener{
         }
         topTenList.put(ownerUUID, l);
         topTenList = MapUtil.sortByValue(topTenList);
+        // Add head to cache
+        if (!topTenHeads.containsKey(ownerUUID)) {
+            // Try to cancel and remove tasks if there are too many going
+            if (headTasks.size() > 20) {
+                headTasks.get(0).cancel();
+                headTasks.remove(0);
+            }
+            BukkitTask task = Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> { 
+                ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
+                String name = plugin.getPlayers().getName(ownerUUID);
+                if (name != null && !name.isEmpty()) {
+                    SkullMeta meta = (SkullMeta) playerSkull.getItemMeta();
+                    meta.setOwner(name);
+                    playerSkull.setItemMeta(meta);
+                    topTenHeads.put(ownerUUID, playerSkull);
+                }
+
+            }); 
+            headTasks.add(task);
+        }
     }
 
     /**
@@ -202,7 +229,7 @@ public class TopTen implements Listener{
             e.printStackTrace();
         }
     }
-
+    
     /**
      * Loads the top ten from the file system topten.yml. If it does not exist
      * then the top ten is created
@@ -325,7 +352,7 @@ public class TopTen implements Listener{
                 } else {
                     if (DEBUG)
                         plugin.getLogger().info("DEBUG: player not online, so no per check");
-                    
+
                 }
                 if (show) {
                     gui.setItem(SLOTS[i-1], getSkull(i, m.getValue(), playerUUID));
@@ -338,19 +365,23 @@ public class TopTen implements Listener{
         return true;
     }
 
+
     static ItemStack getSkull(int rank, Long long1, UUID player){
         if (DEBUG)
             plugin.getLogger().info("DEBUG: Getting the skull");
         String playerName = plugin.getPlayers().getName(player);
         if (DEBUG) {
             plugin.getLogger().info("DEBUG: playername = " + playerName);
-            
+
             plugin.getLogger().info("DEBUG: second chance = " + plugin.getPlayers().getName(player));
         }
         ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
         if (playerName == null) return null;
         SkullMeta meta = (SkullMeta) playerSkull.getItemMeta();
-        meta.setOwner(playerName);
+        if (topTenHeads.containsKey(player)) {
+            playerSkull = topTenHeads.get(player);
+            meta = (SkullMeta) playerSkull.getItemMeta();
+        }
         meta.setDisplayName((plugin.myLocale(player).topTenGuiHeading.replace("[name]", plugin.getGrid().getIslandName(player))).replace("[rank]", String.valueOf(rank)));
         //meta.setDisplayName(ChatColor.YELLOW + "" + ChatColor.BOLD + "<!> " + ChatColor.YELLOW + "Island: " + ChatColor.GOLD + ChatColor.UNDERLINE + plugin.getGrid().getIslandName(player) + ChatColor.GRAY + " (#" + rank + ")");
         List<String> lore = new ArrayList<String>();
@@ -364,8 +395,7 @@ public class TopTen implements Listener{
             }
             lore.addAll(memberList);
         }
-        //else lore.add(ChatColor.AQUA + playerName);
-        
+
         meta.setLore(lore);
         playerSkull.setItemMeta(meta);
         return playerSkull;
@@ -391,8 +421,8 @@ public class TopTen implements Listener{
         player.updateInventory();
         if(event.getCurrentItem() != null && event.getCurrentItem().getType().equals(Material.SKULL_ITEM) && event.getCurrentItem().hasItemMeta()){
             Util.runCommand(player, "is warp " + ((SkullMeta)event.getCurrentItem().getItemMeta()).getOwner());
-        	player.closeInventory();
-        	return;
+            player.closeInventory();
+            return;
         }
         if (event.getSlotType().equals(SlotType.OUTSIDE)) {
             player.closeInventory();
