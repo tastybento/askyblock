@@ -9,7 +9,7 @@ Feature Requests
 ================
 **ASkyBlock is no longer accepting feature requests!**
 
-All new ideas or feature requests should be directed to BSkyBlock: https://github.com/tastybento/bskyblock/issues
+All new ideas or feature requests should be directed to ASkyBlock: https://github.com/tastybento/ASkyBlock/issues
 
 Bug Reports
 ===========

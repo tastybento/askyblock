@@ -46,7 +46,7 @@ public class BiomesPanel implements Listener {
     private HashMap<UUID, List<BiomeItem>> biomeItems = new HashMap<UUID, List<BiomeItem>>();
 
     /**
-     * @param plugin - BSkyBlock plugin object
+     * @param plugin - ASkyBlock plugin object
      */
     public BiomesPanel(ASkyBlock plugin) {
         this.plugin = plugin;

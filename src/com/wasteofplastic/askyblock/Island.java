@@ -297,7 +297,7 @@ public class Island implements Cloneable {
 
     /**
      * New island by loading islands.yml
-     * @param plugin - BSkyBlock plugin object
+     * @param plugin - ASkyBlock plugin object
      * @param serial
      * @param settingsKey 
      */
@@ -443,7 +443,7 @@ public class Island implements Cloneable {
 
     /**
      * Add a new island using the island center method
-     * @param plugin - BSkyBlock plugin object
+     * @param plugin - ASkyBlock plugin object
      * @param x
      * @param z
      */

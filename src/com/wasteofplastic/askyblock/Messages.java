@@ -42,7 +42,7 @@ public class Messages {
 
 
     /**
-     * @param plugin - BSkyBlock plugin object
+     * @param plugin - ASkyBlock plugin object
      */
     public Messages(ASkyBlock plugin) {
         this.plugin = plugin;

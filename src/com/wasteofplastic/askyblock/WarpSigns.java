@@ -60,7 +60,7 @@ public class WarpSigns implements Listener {
     private YamlConfiguration welcomeWarps;
 
     /**
-     * @param plugin - BSkyBlock plugin object
+     * @param plugin - ASkyBlock plugin object
      */
     public WarpSigns(ASkyBlock plugin) {
         this.plugin = plugin;

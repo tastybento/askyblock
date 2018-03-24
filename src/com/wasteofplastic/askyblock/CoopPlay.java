@@ -55,7 +55,7 @@ public class CoopPlay {
     private ASkyBlock plugin;
 
     /**
-     * @param plugin - BSkyBlock plugin object
+     * @param plugin - ASkyBlock plugin object
      */
     private CoopPlay(ASkyBlock plugin) {
         this.plugin = plugin;

@@ -60,7 +60,7 @@ public class ChatListener implements Listener {
     private static final boolean DEBUG = false;
 
     /**
-     * @param plugin - BSkyBlock plugin object
+     * @param plugin - ASkyBlock plugin object
      */
     public ChatListener(ASkyBlock plugin) {
         this.teamChatUsers = new ConcurrentHashMap<UUID,Boolean>();

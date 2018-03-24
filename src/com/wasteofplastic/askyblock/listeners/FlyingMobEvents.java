@@ -51,7 +51,7 @@ public class FlyingMobEvents implements Listener {
     private WeakHashMap<Entity, Island> mobSpawnInfo;
 
     /**
-     * @param plugin - BSkyBlock plugin object
+     * @param plugin - ASkyBlock plugin object
      */
     public FlyingMobEvents(ASkyBlock plugin) {
         this.plugin = plugin;

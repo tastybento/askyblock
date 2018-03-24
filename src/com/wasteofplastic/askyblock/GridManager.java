@@ -77,7 +77,7 @@ public class GridManager {
     private YamlConfiguration islandNames = new YamlConfiguration();
 
     /**
-     * @param plugin - BSkyBlock plugin object
+     * @param plugin - ASkyBlock plugin object
      */
     public GridManager(ASkyBlock plugin) {
         this.plugin = plugin;
