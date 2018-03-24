@@ -1643,8 +1643,6 @@ public class IslandGuard implements Listener {
             case ITEM_FRAME:
                 break;
             case JUKEBOX:
-                if (DEBUG)
-                    plugin.getLogger().info("DEBUG: Jukebox");
             case NOTE_BLOCK:
                 if (island == null) {
                     if (DEBUG) 
@@ -1742,6 +1740,7 @@ public class IslandGuard implements Listener {
                         return;
                     }
                 }
+                break;
             case BEACON:
                 if (island == null) {
                     if (Settings.defaultWorldSettings.get(SettingsFlag.BEACON)) {
@@ -1813,6 +1812,7 @@ public class IslandGuard implements Listener {
                     e.setCancelled(true);
                     return;
                 }
+                break;
             default:
                 break;
             }

@@ -72,6 +72,7 @@ public class NotSetup implements CommandExecutor {
             Util.sendMessage(sender, ChatColor.RED + "If this is intentional, I assume you are doing a full reset. If so,");
             Util.sendMessage(sender, ChatColor.RED + "delete islands.yml and the previous world. If not, correct the world name in");
             Util.sendMessage(sender, ChatColor.RED + "config.yml and restart. This is probably the case if you are upgrading.");
+            break;
         default:
             break;
         }

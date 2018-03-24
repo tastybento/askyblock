@@ -267,6 +267,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
                 }
                 return true;
             }
+            return false;
         default:
             return false;
         }
@@ -2100,7 +2101,8 @@ public class Challenges implements CommandExecutor, TabCompleter {
         case 0: 
         case 1:
             options.add("complete");
-            //Fall through
+            options.addAll(getAvailableChallenges(player));
+            break;
         case 2:
             options.addAll(getAvailableChallenges(player));
             break;

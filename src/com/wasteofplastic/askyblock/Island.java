@@ -43,7 +43,7 @@ import com.wasteofplastic.askyblock.util.Util;
  * @author tastybento
  * 
  */
-public class Island implements Cloneable {
+public class Island {
     ASkyBlock plugin;
     // Coordinates of the island area
     private int minX;
@@ -462,17 +462,34 @@ public class Island implements Cloneable {
         setIgsDefaults();
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#clone()
+    /**
+     * Copy constructor
+     * @param island - island to copy
      */
-    public Object clone() {
-        try {
-            return super.clone();
-        }
-        catch (CloneNotSupportedException e) {
-            // This should never happen
-            throw new InternalError(e.toString());
-        }
+    public Island(Island island) {
+        this.plugin = island.plugin;
+        this.biome = island.biome;
+        this.center = island.center;
+        this.createdDate = island.createdDate;
+        this.igs = island.igs;
+        this.islandDistance = island.islandDistance;
+        this.isSpawn = island.isSpawn;
+        this.locked = island.locked;
+        this.levelHandicap = island.levelHandicap;
+        this.minProtectedX = island.minProtectedX;
+        this.minProtectedZ = island.minProtectedZ;
+        this.minX = island.minX;
+        this.minZ = island.minZ;
+        this.owner = island.owner;
+        this.password = island.password;
+        this.protectionRange = island.protectionRange;
+        this.purgeProtected = island.purgeProtected;
+        this.spawnPoint = island.spawnPoint;
+        this.tileEntityCount = island.tileEntityCount;
+        this.updatedDate = island.updatedDate;
+        this.votes = island.votes;
+        this.world = island.world;
+        this.y = island.y;
     }
 
     /**
@@ -484,22 +501,11 @@ public class Island implements Cloneable {
     public boolean onIsland(Location target) {
         if (world != null) {
             // If the new nether is being used, islands exist in the nether too
-            //plugin.getLogger().info("DEBUG: target x = " + target.getBlockX() + " target z = " + target.getBlockZ());
-            //plugin.getLogger().info("DEBUG: min prot x = " + minProtectedX + " min z = " + minProtectedZ);
-            //plugin.getLogger().info("DEBUG: max x = " + (minProtectedX + protectionRange) + " max z = " + (minProtectedZ + protectionRange));
-
             if (target.getWorld().equals(world) || (Settings.createNether && Settings.newNether && ASkyBlock.getNetherWorld() != null && target.getWorld().equals(ASkyBlock.getNetherWorld()))) {
                 if (target.getBlockX() >= minProtectedX && target.getBlockX() < (minProtectedX + protectionRange)
                         && target.getBlockZ() >= minProtectedZ && target.getBlockZ() < (minProtectedZ + protectionRange)) {
                     return true;
                 }
-                /*
-                if (target.getX() >= center.getBlockX() - protectionRange / 2 && target.getX() < center.getBlockX() + protectionRange / 2
-                        && target.getZ() >= center.getBlockZ() - protectionRange / 2 && target.getZ() < center.getBlockZ() + protectionRange / 2) {
-
-                    return true;
-                }
-                 */
             }
         }
         return false;

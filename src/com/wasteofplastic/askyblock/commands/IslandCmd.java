@@ -2086,6 +2086,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                 Util.sendMessage(player, ChatColor.RED + plugin.myLocale(playerUUID).errorUnknownCommand);
                 return true;
             }
+            break;
             /*
              * Commands that have two parameters
              */

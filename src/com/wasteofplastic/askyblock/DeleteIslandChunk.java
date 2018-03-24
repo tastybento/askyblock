@@ -175,10 +175,12 @@ public class DeleteIslandChunk {
                                             if (setTo.equals(Material.STATIONARY_WATER)) {
                                                 nms.setBlockSuperFast(block, setTo.getId(), (byte)0, false);
                                             }
+                                            break;
                                         case STATIONARY_WATER:
                                             if (setTo.equals(Material.AIR)) {
                                                 nms.setBlockSuperFast(block, setTo.getId(), (byte)0, false);
                                             }
+                                            break;
                                         default:
                                             nms.setBlockSuperFast(block, setTo.getId(), (byte)0, false);
                                             break;

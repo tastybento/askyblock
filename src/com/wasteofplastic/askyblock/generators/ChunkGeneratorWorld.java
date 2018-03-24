@@ -171,6 +171,7 @@ public class ChunkGeneratorWorld extends ChunkGenerator {
                             for (int i = 0; i < random.nextInt(10); i++) {
                                 setBlock(result, x, (maxHeight - 8 - i), z, (byte) Material.GLOWSTONE.getId());
                             }
+                            break;
                         case 3:
                             setBlock(result, x, (maxHeight - 8), z, (byte) Material.GLOWSTONE.getId());
                             if (x > 3 && z > 3) {

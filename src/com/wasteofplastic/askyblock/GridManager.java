@@ -1225,8 +1225,8 @@ public class GridManager {
      * @param player player object
      * @return true if the home teleport is successful
      */
-    public boolean homeTeleport(final Player player) {
-        return homeTeleport(player, 1);
+    public void homeTeleport(final Player player) {
+        homeTeleport(player, 1);
     }
     /**
      * Teleport player to a home location. If one cannot be found a search is done to
@@ -1236,7 +1236,7 @@ public class GridManager {
      * @return true if successful, false if not
      */
     @SuppressWarnings("deprecation")
-    public boolean homeTeleport(final Player player, int number) {
+    public void homeTeleport(final Player player, int number) {
         Location home = null;
         //plugin.getLogger().info("home teleport called for #" + number);
         home = getSafeHomeLocation(player.getUniqueId(), number);
@@ -1260,7 +1260,7 @@ public class GridManager {
             .location(plugin.getPlayers().getHomeLocation(player.getUniqueId(), number))
             .homeNumber(number)
             .build();
-            return true;
+            return;
         }
         //plugin.getLogger().info("DEBUG: home loc = " + home + " teleporting");
         //home.getChunk().load();
@@ -1271,8 +1271,6 @@ public class GridManager {
         } else {
             Util.sendMessage(player, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).islandteleport + " #" + number);
         }
-        return true;
-
     }
 
     /**
