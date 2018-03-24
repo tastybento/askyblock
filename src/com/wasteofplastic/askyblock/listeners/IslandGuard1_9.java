@@ -46,6 +46,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.LingeringPotionSplashEvent;
+import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -513,6 +514,39 @@ public class IslandGuard1_9 implements Listener {
         }
     }
 
+    
+
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
+    public void onRodDamage(final PlayerFishEvent e) {
+        if (e.getPlayer().isOp() || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
+            return;
+        }
+        if (!IslandGuard.inWorld(e.getPlayer().getLocation())) {
+            return;
+        }
+        Player p = e.getPlayer();
+        if (e.getCaught() != null && (e.getCaught().getType().equals(EntityType.ARMOR_STAND) || e.getCaught().getType().equals(EntityType.ENDER_CRYSTAL))) {
+            if (p.isOp() || VaultHelper.checkPerm(p, Settings.PERMPREFIX + "mod.bypassprotect")) {
+                return;
+            }
+            // Check if on island
+            if (plugin.getGrid().playerIsOnIsland(p)) {
+                return;
+            }
+            // Check island
+            Island island = plugin.getGrid().getIslandAt(e.getCaught().getLocation());
+            if (island == null && Settings.defaultWorldSettings.get(SettingsFlag.BREAK_BLOCKS)) {
+                return;
+            }
+            if (island != null && island.getIgsFlag(SettingsFlag.BREAK_BLOCKS)) {
+                return;
+            }
+            Util.sendMessage(p, ChatColor.RED + plugin.myLocale(p.getUniqueId()).islandProtected);
+            e.getHook().remove();
+            e.setCancelled(true);
+        }
+    }
+    
     /**
      * Checks if action is allowed for player in location for flag
      * @param uuid

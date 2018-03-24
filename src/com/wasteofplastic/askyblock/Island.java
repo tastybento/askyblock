@@ -81,16 +81,6 @@ public class Island implements Cloneable {
     // Biome
     Biome biome;
 
-    // Legacy settings up to V3.0.5.1 for backwards compatibility. In new islands.yml, the key is stored in the file.
-    // This is the order of the 0's and 1's in the settings field of the islands.yml file. New settings will follow the SettingsFlag enum.
-    private enum LegacySettingsFlag {
-        ANVIL, ARMOR_STAND, BEACON,BED, BREAK_BLOCKS, BREEDING, BREWING, 
-        BUCKET, COLLECT_LAVA, COLLECT_WATER, CHEST, CRAFTING, 
-        CROP_TRAMPLE, DOOR, ENCHANTING, ENDERPEARL, FURNACE, 
-        GATE, HORSE_INVENTORY, HORSE_RIDING, HURT_MOBS, LEASH, LEVER_BUTTON, MUSIC, 
-        PLACE_BLOCKS, PORTAL, PRESSURE_PLATE, PVP, NETHER_PVP, REDSTONE, SHEARING,
-        VILLAGER_TRADING, CHORUS_FRUIT, ENTER_EXIT_MESSAGES, MONSTER_SPAWN;
-    }
     // Island protection settings
     private static List<String> islandSettingsKey = new ArrayList<String>();
     static {
