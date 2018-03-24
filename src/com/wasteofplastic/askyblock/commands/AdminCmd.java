@@ -1384,11 +1384,8 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                         if (Bukkit.getOfflinePlayer(entry.getKey()).hasPlayedBefore()) {
                             long offlineTime = Bukkit.getOfflinePlayer(entry.getKey()).getLastPlayed();
                             offlineTime = (System.currentTimeMillis() - offlineTime) / 3600000L;
-                            if (offlineTime > time) {
-                                //if (plugin.getPlayers().getIslandLevel(entry.getKey()) < Settings.abandonedIslandLevel) {
-                                // Check level later
+                            if (offlineTime > time && plugin.getPlayers().getIslandLevel(entry.getKey()) < Settings.abandonedIslandLevel) {
                                 removeList.add(entry.getKey());
-                                //}
                             }
                         } else {
                             removeList.add(entry.getKey());
