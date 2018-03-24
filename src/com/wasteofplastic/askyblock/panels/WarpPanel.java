@@ -141,7 +141,9 @@ public class WarpPanel implements Listener {
             playerSkull.setItemMeta(meta);
             // Update
             cachedWarps.put(playerUUID, playerSkull);
-            addWarp(playerUUID);
+            Bukkit.getScheduler().runTask(plugin, () -> {
+                addWarp(playerUUID);
+            });           
         });
     }
 
