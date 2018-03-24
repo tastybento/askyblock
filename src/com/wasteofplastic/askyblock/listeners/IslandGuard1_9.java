@@ -58,8 +58,8 @@ import org.bukkit.scoreboard.Team;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Island;
-import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.Island.SettingsFlag;
+import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
@@ -70,7 +70,6 @@ import com.wasteofplastic.askyblock.util.VaultHelper;
  */
 public class IslandGuard1_9 implements Listener {
     private final ASkyBlock plugin;
-    private final static boolean DEBUG = false;
     private final static String NO_PUSH_TEAM_NAME = "ASkyBlockNP";
     private Scoreboard scoreboard;
     private Team pushTeam;
@@ -104,9 +103,6 @@ public class IslandGuard1_9 implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onBlockForm(EntityBlockFormEvent e) {
-        if (DEBUG) {
-            plugin.getLogger().info("1.9 " +e.getEventName());
-        }
         if (e.getEntity() instanceof Player && e.getNewState().getType().equals(Material.FROSTED_ICE)) {
             Player player= (Player) e.getEntity();
             if (!IslandGuard.inWorld(player)) {
@@ -142,9 +138,6 @@ public class IslandGuard1_9 implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onHitEndCrystal(final PlayerInteractAtEntityEvent e) {
-        if (DEBUG) {
-            plugin.getLogger().info("1.9 " +e.getEventName());
-        }
         if (!IslandGuard.inWorld(e.getPlayer())) {
             return;
         }
@@ -176,9 +169,6 @@ public class IslandGuard1_9 implements Listener {
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled=true)
     void placeEndCrystalEvent(PlayerInteractEvent e) {
         Player p = e.getPlayer();
-        if (DEBUG) {
-            plugin.getLogger().info("1.9 " +"End crystal place " + e.getEventName());
-        }
         if (!IslandGuard.inWorld(p)) {
             return;
         }
@@ -225,28 +215,15 @@ public class IslandGuard1_9 implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void EndCrystalDamage(EntityDamageByEntityEvent e) {
-        if (DEBUG) {
-            plugin.getLogger().info("1.9 " +"IslandGuard 1_9 " + e.getEventName());
-            plugin.getLogger().info("1.9 " +"Entity is " + e.getEntityType());
-        }
         if (e.getEntity() == null || !IslandGuard.inWorld(e.getEntity())) {
             return;
         }
         if (!(e.getEntity() instanceof EnderCrystal)) {
-            if (DEBUG) {
-                plugin.getLogger().info("1.9 Entity is not End crystal it is " + e.getEntityType());
-            }
             return;
-        }
-        if (DEBUG) {
-            plugin.getLogger().info("1.9 Damager is " + e.getDamager());
         }
         Player p = null;
         if (e.getDamager() instanceof Player) {
             p = (Player) e.getDamager();
-            if (DEBUG) {
-                plugin.getLogger().info("1.9 Damager is a player");
-            }
         } else if (e.getDamager() instanceof Projectile) {
             // Get the shooter
             Projectile projectile = (Projectile)e.getDamager();
@@ -254,22 +231,13 @@ public class IslandGuard1_9 implements Listener {
             if (shooter instanceof Player) {
                 p = (Player)shooter;
             }
-            if (DEBUG) {
-                plugin.getLogger().info("1.9 " +"Damager is a projectile shot by " + p.getName());
-            }
         }
         if (p != null) {  
             if (p.isOp() || VaultHelper.checkPerm(p, Settings.PERMPREFIX + "mod.bypassprotect")) {
-                if (DEBUG) {
-                    plugin.getLogger().info("1.9 " +"Bypassing protection");
-                }
                 return;
             }
             // Check if on island
             if (plugin.getGrid().playerIsOnIsland(p)) {
-                if (DEBUG) {
-                    plugin.getLogger().info("1.9 " +"Player is on their own island");
-                }
                 return;
             }
             // Check island
@@ -278,9 +246,6 @@ public class IslandGuard1_9 implements Listener {
                 return;
             }
             if (island != null && island.getIgsFlag(SettingsFlag.BREAK_BLOCKS)) {
-                if (DEBUG) {
-                    plugin.getLogger().info("1.9 " +"Visitor is allowed to break blocks");
-                }
                 return;
             }
             Util.sendMessage(p, ChatColor.RED + plugin.myLocale(p.getUniqueId()).islandProtected);
@@ -295,14 +260,7 @@ public class IslandGuard1_9 implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onExplosion(final EntityExplodeEvent e) {
-        if (DEBUG) {
-            plugin.getLogger().info("1.9 " +e.getEventName());
-            plugin.getLogger().info("1.9 " +"Entity exploding is " + e.getEntity());
-        }
         if (e.getEntity() == null || !e.getEntityType().equals(EntityType.ENDER_CRYSTAL)) {
-            if (DEBUG) {
-                plugin.getLogger().info("1.9 " +"Entity is not an END CRYSTAL");
-            }
             return;
         }
 
@@ -442,9 +400,6 @@ public class IslandGuard1_9 implements Listener {
     @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onPlayerInteract(final PlayerInteractEvent e) {
-        if (DEBUG) {
-            plugin.getLogger().info("1.9 " + e.getEventName());
-        }
         if (!e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
             return;
         }
@@ -477,21 +432,11 @@ public class IslandGuard1_9 implements Listener {
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onLingeringPotionSplash(final LingeringPotionSplashEvent e) {
-        if (DEBUG) {
-            plugin.getLogger().info("1.9 " + e.getEventName());
-            plugin.getLogger().info("1.9 entity = " + e.getEntity());
-            plugin.getLogger().info("1.9 entity type = " + e.getEntityType());
-            plugin.getLogger().info("1.9 radius = " + e.getAreaEffectCloud().getRadius());
-            plugin.getLogger().info("1.9 id = " + e.getAreaEffectCloud().getEntityId());
-            plugin.getLogger().info("1.9 hit entity = " + e.getHitEntity());
-        }
         if (!IslandGuard.inWorld(e.getEntity().getLocation())) {
             return;
         }
         // Try to get the shooter
         Projectile projectile = (Projectile) e.getEntity();
-        if (DEBUG)
-            plugin.getLogger().info("shooter = " + projectile.getShooter());
         if (projectile.getShooter() != null && projectile.getShooter() instanceof Player) {
             UUID uuid = ((Player)projectile.getShooter()).getUniqueId();
             // Store it and remove it when the effect is gone
@@ -500,8 +445,6 @@ public class IslandGuard1_9 implements Listener {
 
                 @Override
                 public void run() {
-                    if (DEBUG)
-                        plugin.getLogger().info("DEBUG: Effect finished");
                     thrownPotions.remove(e.getAreaEffectCloud().getEntityId());
 
                 }}, e.getAreaEffectCloud().getDuration());
@@ -510,13 +453,6 @@ public class IslandGuard1_9 implements Listener {
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onLingeringPotionDamage(final EntityDamageByEntityEvent e) {
-        if (DEBUG) {
-            plugin.getLogger().info("1.9 lingering potion damage " + e.getEventName());
-            plugin.getLogger().info("1.9 lingering potion entity = " + e.getEntity());
-            plugin.getLogger().info("1.9 lingering potion entity type = " + e.getEntityType());
-            plugin.getLogger().info("1.9 lingering potion cause = " + e.getCause());
-            plugin.getLogger().info("1.9 lingering potion damager = " + e.getDamager());
-        }
         if (!IslandGuard.inWorld(e.getEntity().getLocation())) {
             return;
         }
@@ -527,8 +463,6 @@ public class IslandGuard1_9 implements Listener {
             UUID attacker = thrownPotions.get(e.getDamager().getEntityId());
             // Self damage
             if (attacker.equals(e.getEntity().getUniqueId())) {
-                if (DEBUG)
-                    plugin.getLogger().info("DEBUG: Self damage from lingering potion!");
                 return;
             }
             Island island = plugin.getGrid().getIslandAt(e.getEntity().getLocation());
@@ -557,8 +491,6 @@ public class IslandGuard1_9 implements Listener {
                 if (island != null && (island.getIgsFlag(SettingsFlag.HURT_MOBS) || island.getMembers().contains(attacker))) {
                     return;
                 }
-                if (DEBUG)
-                    plugin.getLogger().info("DEBUG: Mobs not allowed to be hurt. Blocking");
                 e.setCancelled(true);
                 return;
             }
@@ -566,24 +498,21 @@ public class IslandGuard1_9 implements Listener {
             // Establish whether PVP is allowed or not.
             boolean pvp = false;
             if ((inNether && island != null && island.getIgsFlag(SettingsFlag.NETHER_PVP) || (!inNether && island != null && island.getIgsFlag(SettingsFlag.PVP)))) {
-                if (DEBUG) plugin.getLogger().info("DEBUG: PVP allowed");
                 pvp = true;
             }
 
             // Players being hurt PvP
             if (e.getEntity() instanceof Player) {
                 if (pvp) {
-                    if (DEBUG) plugin.getLogger().info("DEBUG: PVP allowed");
                     return;
                 } else {
-                    if (DEBUG) plugin.getLogger().info("DEBUG: PVP not allowed");
                     e.setCancelled(true);
                     return;
                 }
             }
         }
     }
-    
+
     /**
      * Checks if action is allowed for player in location for flag
      * @param uuid
@@ -609,7 +538,7 @@ public class IslandGuard1_9 implements Listener {
         }
         return false;
     }
-    
+
     /**
      * Action allowed in this location
      * @param location

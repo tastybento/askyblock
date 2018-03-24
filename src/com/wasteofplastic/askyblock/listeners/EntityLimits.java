@@ -231,7 +231,7 @@ public class EntityLimits implements Listener {
             return;
         }
         // Deal with natural spawning
-        if (e.getSpawnReason().equals(SpawnReason.NATURAL) || e.getSpawnReason().equals(SpawnReason.JOCKEY)
+        if (e.getSpawnReason().equals(SpawnReason.NATURAL)
                 || e.getSpawnReason().equals(SpawnReason.CHUNK_GEN)
                 || e.getSpawnReason().equals(SpawnReason.DEFAULT)
                 || e.getSpawnReason().equals(SpawnReason.MOUNT)

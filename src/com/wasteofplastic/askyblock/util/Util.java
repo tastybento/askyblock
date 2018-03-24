@@ -469,9 +469,7 @@ public class Util {
     public static List<String> getOnlinePlayerList(Player player) {
         final List<String> returned = new ArrayList<String>();
         for (Player p : Bukkit.getServer().getOnlinePlayers()) {
-            if (player == null) {
-                returned.add(p.getName());
-            } else if (player.canSee(p)) {
+            if (player == null || player.canSee(p)) {
                 returned.add(p.getName()); 
             }
         }

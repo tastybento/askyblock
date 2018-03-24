@@ -45,17 +45,13 @@ public class AcidTask {
                             if ((current.getLocation().getBlock().getType() == Material.WATER)
                                     || (current.getLocation().getBlock().getType() == Material.STATIONARY_WATER)) {
                                 ((Monster) current).damage(Settings.mobAcidDamage);
-                                // getLogger().info("Killing monster");
                             }
                         } else if ((current instanceof Animals) && Settings.animalAcidDamage > 0D) {
                             if ((current.getLocation().getBlock().getType() == Material.WATER)
                                     || (current.getLocation().getBlock().getType() == Material.STATIONARY_WATER)) {
-                                if (!current.getType().equals(EntityType.CHICKEN)) {
-                                    ((Animals) current).damage(Settings.animalAcidDamage);
-                                } else if (Settings.damageChickens) {
+                                if (!current.getType().equals(EntityType.CHICKEN) || Settings.damageChickens) {
                                     ((Animals) current).damage(Settings.animalAcidDamage);
                                 }
-                                // getLogger().info("Killing animal");
                             }
                         }
                     }

@@ -1984,11 +1984,8 @@ public class IslandGuard implements Listener {
                 e.getHook().remove();
                 return;
             }
-            if (island != null
-                    && (e.getCaught().getWorld().getEnvironment().equals(Environment.NORMAL)
-                            && !island.getIgsFlag(SettingsFlag.PVP))
-                    || ((e.getCaught().getWorld().getEnvironment().equals(Environment.NETHER)
-                            && !island.getIgsFlag(SettingsFlag.NETHER_PVP)))) {
+            if (island != null && ((e.getCaught().getWorld().getEnvironment().equals(Environment.NORMAL) && !island.getIgsFlag(SettingsFlag.PVP))
+                    || (e.getCaught().getWorld().getEnvironment().equals(Environment.NETHER) && !island.getIgsFlag(SettingsFlag.NETHER_PVP)))) {
                 Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).targetInNoPVPArea);
                 e.setCancelled(true);
                 e.getHook().remove();

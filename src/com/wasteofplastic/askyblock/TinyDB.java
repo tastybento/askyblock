@@ -105,11 +105,11 @@ public class TinyDB {
                         } 
                         br.close();
                     }
-                    
+
                 }                
                 out.close();      
             }
-            
+
             // Move files around
             try {
                 Files.move(newDB.toPath(), oldDB.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
@@ -153,18 +153,18 @@ public class TinyDB {
                             //System.out.println("DEBUG: UUID is " + uuid);
                             final UUID playerUUID = UUID.fromString(uuid);
                             // Get the player's name
-                            Scanner scanner = new Scanner(file);
-                            while (scanner.hasNextLine()) {
-                                final String lineFromFile = scanner.nextLine();
-                                if (lineFromFile.contains("playerName:")) { 
-                                    // Check against potentialUnowned list
-                                    String playerName = lineFromFile.substring(lineFromFile.indexOf(' ')).trim();
-                                    //System.out.println("DEBUG: Player name is " + playerName);
-                                    treeMap.put(playerName.toLowerCase(), playerUUID);
-                                    break;
+                            try (Scanner scanner = new Scanner(file)) {
+                                while (scanner.hasNextLine()) {
+                                    final String lineFromFile = scanner.nextLine();
+                                    if (lineFromFile.contains("playerName:")) { 
+                                        // Check against potentialUnowned list
+                                        String playerName = lineFromFile.substring(lineFromFile.indexOf(' ')).trim();
+                                        //System.out.println("DEBUG: Player name is " + playerName);
+                                        treeMap.put(playerName.toLowerCase(), playerUUID);
+                                        break;
+                                    }
                                 }
                             }
-                            scanner.close();
                         } catch (Exception ex) {
                             System.err.println("[ASkyBlock/AcidIsland]: Problem reading " + file.getName() + " skipping...");
                             //ex.printStackTrace();
@@ -239,7 +239,7 @@ public class TinyDB {
         } 
         return null;
     }
-    
+
     /**
      * Gets players name from tiny database
      * @param playerUUID - the player's UUID

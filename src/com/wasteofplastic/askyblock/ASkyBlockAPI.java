@@ -28,7 +28,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
@@ -44,15 +43,12 @@ import com.wasteofplastic.askyblock.panels.SetBiome;
  * @author tastybento
  */
 public class ASkyBlockAPI {
-    private static final boolean DEBUG = false;
     private static ASkyBlockAPI instance;
 
     /**
      * @return the instance
      */
     public static ASkyBlockAPI getInstance() {
-        if (DEBUG)
-            Bukkit.getLogger().info("DEBUG: ASkyBlock API, getInstance()");
         if (instance == null)
             // Initialize the API
             new ASkyBlockAPI(ASkyBlock.getPlugin());
@@ -64,8 +60,6 @@ public class ASkyBlockAPI {
 
     protected ASkyBlockAPI(ASkyBlock plugin) {
         this.plugin = plugin;
-        if (DEBUG)
-            Bukkit.getLogger().info("DEBUG: API constructed");
         instance = this;
     }
 
@@ -116,14 +110,6 @@ public class ASkyBlockAPI {
      * @return the last level calculated for the island or zero if none.
      */
     public long getLongIslandLevel(UUID playerUUID) {
-        if (DEBUG) {
-            Bukkit.getLogger().info("DEBUG: getIslandLevel. playerUUID = " + playerUUID);
-            if (plugin == null) {
-                Bukkit.getLogger().info("DEBUG: plugin is null");
-            } else if (plugin.getPlayers() == null) {
-                Bukkit.getLogger().info("DEBUG: player cache object is null!");
-            } 
-        }
         return plugin.getPlayers().getIslandLevel(playerUUID);
     }
 

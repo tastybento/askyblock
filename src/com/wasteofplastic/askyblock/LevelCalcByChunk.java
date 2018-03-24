@@ -64,6 +64,10 @@ public class LevelCalcByChunk {
 
         // Results go here
         result = new Results();
+        
+        if (island == null) {
+            return;
+        }
 
         // Get chunks to scan
         chunksToScan = getChunksToScan(island);

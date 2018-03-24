@@ -171,10 +171,7 @@ public class TopTen implements Listener{
                             int islandLevel = player.getInt("islandLevel", 0);
                             String teamLeaderUUID = player.getString("teamLeader", "");
                             if (islandLevel > 0) {
-                                if (!player.getBoolean("hasTeam")) {
-                                    // Single player
-                                    topTenAddEntry(playerUUID, islandLevel);
-                                } else if (!teamLeaderUUID.isEmpty() && teamLeaderUUID.equals(playerUUIDString)) {
+                                if (!player.getBoolean("hasTeam") || (!teamLeaderUUID.isEmpty() && teamLeaderUUID.equals(playerUUIDString))) {
                                     // Only enter team leaders into the top ten
                                     topTenAddEntry(playerUUID, islandLevel);
                                 }

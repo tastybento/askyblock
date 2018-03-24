@@ -298,7 +298,7 @@ public class PlayerEvents implements Listener {
                                 }
 
                             }
-                        }, 20*Settings.flyTimeOutside);
+                        }, 20L*Settings.flyTimeOutside);
                     }
                 }
             } else {

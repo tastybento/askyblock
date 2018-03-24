@@ -30,8 +30,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import net.milkbowl.vault.economy.EconomyResponse;
-
 import org.bukkit.Art;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
@@ -85,6 +83,8 @@ import com.wasteofplastic.org.jnbt.NBTInputStream;
 import com.wasteofplastic.org.jnbt.ShortTag;
 import com.wasteofplastic.org.jnbt.StringTag;
 import com.wasteofplastic.org.jnbt.Tag;
+
+import net.milkbowl.vault.economy.EconomyResponse;
 
 public class Schematic {
     private ASkyBlock plugin;
@@ -1059,7 +1059,7 @@ public class Schematic {
             //plugin.getLogger().info("DEBUG: view dist = " + plugin.getServer().getViewDistance());
             if (player.getWorld().equals(world)) {
                 //plugin.getLogger().info("DEBUG: same world");
-                int distSq = (int)((player.getLocation().distanceSquared(loc) - (Settings.islandDistance * Settings.islandDistance)/16));
+                int distSq = (int)((player.getLocation().distanceSquared(loc) - ((double)Settings.islandDistance * Settings.islandDistance)/16));
                 //plugin.getLogger().info("DEBUG:  distsq = " + distSq);
                 if (plugin.getServer().getViewDistance() * plugin.getServer().getViewDistance() < distSq) {
                     //plugin.getLogger().info("DEBUG: teleporting");

@@ -998,15 +998,10 @@ public class GridManager {
         }
         // In ASkyBlock, liquid may be unsafe
         if (ground.isLiquid() || space1.isLiquid() || space2.isLiquid()) {
-            // Check if acid has no damage
-            if (Settings.acidDamage > 0D) {
-                // Bukkit.getLogger().info("DEBUG: acid");
-                return false;
-            } else if (ground.getType().equals(Material.STATIONARY_LAVA) || ground.getType().equals(Material.LAVA)
+            if (Settings.acidDamage > 0D 
+                    || ground.getType().equals(Material.STATIONARY_LAVA) || ground.getType().equals(Material.LAVA)
                     || space1.getType().equals(Material.STATIONARY_LAVA) || space1.getType().equals(Material.LAVA)
                     || space2.getType().equals(Material.STATIONARY_LAVA) || space2.getType().equals(Material.LAVA)) {
-                // Lava check only
-                // Bukkit.getLogger().info("DEBUG: lava");
                 return false;
             }
         }
@@ -1240,6 +1235,7 @@ public class GridManager {
      * @param number - home location to do to
      * @return true if successful, false if not
      */
+    @SuppressWarnings("deprecation")
     public boolean homeTeleport(final Player player, int number) {
         Location home = null;
         //plugin.getLogger().info("home teleport called for #" + number);
@@ -1361,10 +1357,10 @@ public class GridManager {
         // Run through all the locations
         for (Location islandTestLocation : islandTestLocations) {
             if (loc.getWorld().equals(islandTestLocation.getWorld())) {
-                if (loc.getX() >= islandTestLocation.getX() - Settings.islandProtectionRange / 2
-                        && loc.getX() < islandTestLocation.getX() + Settings.islandProtectionRange / 2
-                        && loc.getZ() >= islandTestLocation.getZ() - Settings.islandProtectionRange / 2
-                        && loc.getZ() < islandTestLocation.getZ() + Settings.islandProtectionRange / 2) {
+                if (loc.getX() >= islandTestLocation.getX() - Settings.islandProtectionRange / 2D
+                        && loc.getX() < islandTestLocation.getX() + Settings.islandProtectionRange / 2D
+                        && loc.getZ() >= islandTestLocation.getZ() - Settings.islandProtectionRange / 2D
+                        && loc.getZ() < islandTestLocation.getZ() + Settings.islandProtectionRange / 2D) {
                     return true;
                 }
             }
@@ -1391,10 +1387,10 @@ public class GridManager {
                         // We are in a protected island area.
                         return island.getCenter();
                     }
-                } else if (loc.getX() > islandTestLocation.getX() - Settings.islandProtectionRange / 2
-                        && loc.getX() < islandTestLocation.getX() + Settings.islandProtectionRange / 2
-                        && loc.getZ() > islandTestLocation.getZ() - Settings.islandProtectionRange / 2
-                        && loc.getZ() < islandTestLocation.getZ() + Settings.islandProtectionRange / 2) {
+                } else if (loc.getX() > islandTestLocation.getX() - Settings.islandProtectionRange / 2D
+                        && loc.getX() < islandTestLocation.getX() + Settings.islandProtectionRange / 2D
+                        && loc.getZ() > islandTestLocation.getZ() - Settings.islandProtectionRange / 2D
+                        && loc.getZ() < islandTestLocation.getZ() + Settings.islandProtectionRange / 2D) {
                     return islandTestLocation;
                 }
             }
@@ -1468,10 +1464,10 @@ public class GridManager {
                         protectionRange = island.getProtectionSize();
                     }
                 }
-                if (loc.getX() > islandTestLocation.getX() - protectionRange / 2
-                        && loc.getX() < islandTestLocation.getX() + protectionRange / 2
-                        && loc.getZ() > islandTestLocation.getZ() - protectionRange / 2
-                        && loc.getZ() < islandTestLocation.getZ() + protectionRange / 2) {
+                if (loc.getX() > islandTestLocation.getX() - protectionRange / 2D
+                        && loc.getX() < islandTestLocation.getX() + protectionRange / 2D
+                        && loc.getZ() > islandTestLocation.getZ() - protectionRange / 2D
+                        && loc.getZ() < islandTestLocation.getZ() + protectionRange / 2D) {
                     return true;
                 }
             }
@@ -1530,10 +1526,10 @@ public class GridManager {
                     protectionRange = island.getProtectionSize();
                 }
             }
-            if (target.getLocation().getX() > islandTestLocation.getX() - protectionRange / 2
-                    && target.getLocation().getX() < islandTestLocation.getX() + protectionRange / 2
-                    && target.getLocation().getZ() > islandTestLocation.getZ() - protectionRange / 2
-                    && target.getLocation().getZ() < islandTestLocation.getZ() + protectionRange / 2) {
+            if (target.getLocation().getX() > islandTestLocation.getX() - protectionRange / 2D
+                    && target.getLocation().getX() < islandTestLocation.getX() + protectionRange / 2D
+                    && target.getLocation().getZ() > islandTestLocation.getZ() - protectionRange / 2D
+                    && target.getLocation().getZ() < islandTestLocation.getZ() + protectionRange / 2D) {
                 return true;
             }
 

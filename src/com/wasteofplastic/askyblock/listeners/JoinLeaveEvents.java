@@ -101,6 +101,7 @@ public class JoinLeaveEvents implements Listener {
 
         if (players == null) {
             plugin.getLogger().severe("players is NULL");
+            return;
         }
 
         // If this player is not an island player just skip all this
@@ -392,12 +393,15 @@ public class JoinLeaveEvents implements Listener {
     public String getLanguage(Player p){
         Object ep;
         try {
-            ep = getMethod("getHandle", p.getClass()).invoke(p, (Object[]) null);
-            Field f = ep.getClass().getDeclaredField("locale");
-            f.setAccessible(true);
-            String language = (String) f.get(ep);
-            language.replace('_', '-');
-            return language;
+            Method method = getMethod("getHandle", p.getClass());
+            if (method != null) {
+                ep = method.invoke(p, (Object[]) null);
+                Field f = ep.getClass().getDeclaredField("locale");
+                f.setAccessible(true);
+                String language = (String) f.get(ep);
+                language = language.replace('_', '-');
+                return language;
+            }
         } catch (Exception e) {
             //nothing
         }
