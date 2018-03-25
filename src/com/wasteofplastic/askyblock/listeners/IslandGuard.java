@@ -108,7 +108,7 @@ import com.wasteofplastic.askyblock.util.VaultHelper;
 @SuppressWarnings("deprecation")
 public class IslandGuard implements Listener {
     private final ASkyBlock plugin;
-    private final static boolean DEBUG = true;
+    private final static boolean DEBUG = false;
     private HashMap<UUID,Vector> onPlate = new HashMap<UUID,Vector>();
     private Set<Location> tntBlocks = new HashSet<Location>();
     private Set<UUID> litCreeper = new HashSet<UUID>();

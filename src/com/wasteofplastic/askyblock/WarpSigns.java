@@ -29,7 +29,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -248,27 +247,7 @@ public class WarpSigns implements Listener {
                 if (playerUUID != null) {
                     Location l = Util.getLocationString((String) temp.get(s));
                     if (l != null) {
-                        //plugin.getLogger().info("DEBUG: Loading warp at " + l);
-                        Block b = l.getBlock();
-                        // Check that a warp sign is still there
-                        if (b.getType().equals(Material.SIGN_POST) || b.getType().equals(Material.WALL_SIGN)) {
-                            warpList.put(playerUUID, l);
-                        } else {
-                            plugin.getLogger().warning("Warp at location " + temp.get(s) + " has no sign - removing.");
-                            // Test code
-                            if (DEBUG) {
-                                String name = plugin.getTinyDB().getPlayerName(playerUUID);
-                                warpList.put(playerUUID, l);
-                                b.getRelative(BlockFace.DOWN).setType(Material.DIRT);
-                                b.setType(Material.SIGN_POST);
-                                Sign sign = (Sign)b.getState();
-                                sign.setLine(0, ChatColor.GREEN + plugin.myLocale().warpswelcomeLine);
-                                sign.setLine(1, name);
-                                sign.setLine(2, "Test 2");
-                                sign.update(true, false);
-                            }
-                            // End test code
-                        }
+                        warpList.put(playerUUID, l);
                     }
                 }
             } catch (Exception e) {

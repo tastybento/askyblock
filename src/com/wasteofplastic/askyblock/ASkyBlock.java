@@ -431,6 +431,7 @@ public class ASkyBlock extends JavaPlugin {
                         getWarpSignsListener().loadWarpList();
                         // Load the warp panel
                         if (Settings.useWarpPanel) {
+                            plugin.getLogger().info("Loading warp panel...");
                             warpPanel = new WarpPanel(ASkyBlock.this);
                             getServer().getPluginManager().registerEvents(warpPanel, ASkyBlock.this);
                         }						
