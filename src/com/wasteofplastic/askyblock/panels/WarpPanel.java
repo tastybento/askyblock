@@ -76,9 +76,10 @@ public class WarpPanel implements Listener {
         }
     }
 
+    @SuppressWarnings("deprecation")
     private void runPlayerHeadGetter() {
         Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
-            if (names.size() > 0) {
+            if (names.size() > 0 && names.size() % 10 == 0) {
                 plugin.getLogger().info("Loading player heads for warps: " + names.size() + " to go...");
             }
             Iterator<Entry<UUID,String>> it = names.entrySet().iterator();
@@ -138,7 +139,6 @@ public class WarpPanel implements Listener {
      * Adds a new warp to the cache. Does NOT update the panels
      * @param playerUUID - the player's UUID
      */
-    @SuppressWarnings("deprecation")
     public void addWarp(UUID playerUUID) {
         if (DEBUG)
             plugin.getLogger().info("DEBUG: Adding warp");

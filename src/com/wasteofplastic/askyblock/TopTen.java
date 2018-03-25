@@ -66,14 +66,12 @@ public class TopTen implements Listener{
     public TopTen(ASkyBlock plugin) {
         TopTen.plugin = plugin;
         runPlayerHeadGetter();
+        plugin.getLogger().info("Loading player heads for Top Ten...");
     }
 
     @SuppressWarnings("deprecation")
     private void runPlayerHeadGetter() {
         Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
-            if (names.size() > 0) {
-                plugin.getLogger().info("Loading player heads for Top Ten: " + names.size() + " to go...");
-            }
             Iterator<Entry<UUID,String>> it = names.entrySet().iterator();
             if (it.hasNext()) {
                 Entry<UUID,String> en = it.next();
