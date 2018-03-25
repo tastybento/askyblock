@@ -79,30 +79,49 @@ public class WarpPanel implements Listener {
     @SuppressWarnings("deprecation")
     private void runPlayerHeadGetter() {
         Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
-            if (names.size() > 0 && names.size() % 10 == 0) {
-                plugin.getLogger().info("Loading player heads for warps: " + names.size() + " to go...");
+            synchronized(names) {
+                if (names.size() > 0 && names.size() % 10 == 0) {
+                    plugin.getLogger().info("Loading player heads for warps: " + names.size() + " to go...");
+                }
+                Iterator<Entry<UUID,String>> it = names.entrySet().iterator();
+                if (it.hasNext()) {
+                    Entry<UUID,String> en = it.next();
+
+                    ItemStack playerSkull = cachedWarps.get(en.getKey());
+                    SkullMeta meta = (SkullMeta) playerSkull.getItemMeta();
+                    meta.setOwner(en.getValue());
+                    meta.setDisplayName(ChatColor.WHITE + en.getValue());
+                    playerSkull.setItemMeta(meta);
+                    // Update
+                    cachedWarps.put(en.getKey(), playerSkull);
+                    updatePanel();
+                    it.remove();
+                }
             }
-            Iterator<Entry<UUID,String>> it = names.entrySet().iterator();
-            if (it.hasNext()) {
-                Entry<UUID,String> en = it.next();
-                ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
-                cachedWarps.put(en.getKey(), playerSkull);
-                SkullMeta meta = (SkullMeta) playerSkull.getItemMeta();
-                meta.setOwner(en.getValue());
-                meta.setDisplayName(ChatColor.WHITE + en.getValue());
-                playerSkull.setItemMeta(meta);
-                // Update
-                cachedWarps.put(en.getKey(), playerSkull);
-                Bukkit.getScheduler().runTask(plugin, () -> {
-                    ItemStack skull = cachedWarps.get(en.getKey());
-                    skull = updateText(skull, en.getKey());
-                    Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> plugin.getWarpPanel().updatePanel());
-                });
-                it.remove();
-            }
-        }, 200L, 20L);
+        }, 20L, 20L);
 
     }
+
+    /**
+     * Adds a name to the list of player head requests
+     * @param playerUUID
+     * @param name
+     */
+    public ItemStack addName(UUID playerUUID, String playerName) {
+        if (!cachedWarps.containsKey(playerUUID)) {
+            ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
+            SkullMeta meta = (SkullMeta) playerSkull.getItemMeta();
+            meta.setDisplayName(ChatColor.WHITE + playerName);
+            playerSkull.setItemMeta(meta);
+            playerSkull = updateText(playerSkull, playerUUID);
+            cachedWarps.put(playerUUID, playerSkull);
+            names.put(playerUUID, playerName);
+            return playerSkull;
+        } else {
+            return cachedWarps.get(playerUUID);
+        }
+    }
+
 
     /**
      * Only change the text of the warp
@@ -163,7 +182,8 @@ public class WarpPanel implements Listener {
             //playerName = playerUUID.toString().substring(0, 10);
         }
         // Get the skull
-        names.put(playerUUID, playerName);
+        addName(playerUUID, playerName);
+        updatePanel();
     }
 
     /**
