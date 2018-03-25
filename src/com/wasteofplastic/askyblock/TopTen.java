@@ -41,7 +41,6 @@ import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.scheduler.BukkitTask;
 
 import com.wasteofplastic.askyblock.util.MapUtil;
 import com.wasteofplastic.askyblock.util.Util;
@@ -62,10 +61,33 @@ public class TopTen implements Listener{
     // Store this as a static because it's the same for everyone and saves memory cleanup
     private static Inventory gui;
     private static Map<UUID, ItemStack> topTenHeads = new HashMap<>();
-    private static List<BukkitTask> headTasks = new ArrayList<>();
-    
+    private static Map<UUID, String> names = new HashMap<>();
+
     public TopTen(ASkyBlock plugin) {
         TopTen.plugin = plugin;
+        runPlayerHeadGetter();
+    }
+
+    @SuppressWarnings("deprecation")
+    private void runPlayerHeadGetter() {
+        Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
+            if (names.size() > 0) {
+                plugin.getLogger().info("Loading player heads for Top Ten: " + names.size() + " to go...");
+            }
+            Iterator<Entry<UUID,String>> it = names.entrySet().iterator();
+            if (it.hasNext()) {
+                Entry<UUID,String> en = it.next();
+                ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
+                topTenHeads.put(en.getKey(), playerSkull);
+                SkullMeta meta = (SkullMeta) playerSkull.getItemMeta();
+                meta.setOwner(en.getValue());
+                playerSkull.setItemMeta(meta);
+                // Update
+                topTenHeads.put(en.getKey(), playerSkull);
+                it.remove();
+            }
+        }, 0L, 20L);
+
     }
 
     /**
@@ -74,7 +96,6 @@ public class TopTen implements Listener{
      * @param ownerUUID
      * @param l
      */
-    @SuppressWarnings("deprecation")
     public static void topTenAddEntry(UUID ownerUUID, long l) {
         if (DEBUG) {
             plugin.getLogger().info("DEBUG: adding top ten entry " + ownerUUID + " " + l);
@@ -100,24 +121,11 @@ public class TopTen implements Listener{
         topTenList = MapUtil.sortByValue(topTenList);
         // Add head to cache
         if (!topTenHeads.containsKey(ownerUUID)) {
-            // Try to cancel and remove tasks if there are too many going
-            if (headTasks.size() > 20) {
-                headTasks.get(0).cancel();
-                headTasks.remove(0);
+            String name = plugin.getPlayers().getName(ownerUUID);
+            if (name != null && !name.isEmpty()) {
+                names.put(ownerUUID, name);
             }
-            BukkitTask task = Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> { 
-                ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
-                String name = plugin.getPlayers().getName(ownerUUID);
-                if (name != null && !name.isEmpty()) {
-                    SkullMeta meta = (SkullMeta) playerSkull.getItemMeta();
-                    meta.setOwner(name);
-                    playerSkull.setItemMeta(meta);
-                    topTenHeads.put(ownerUUID, playerSkull);
-                }
-
-            }); 
-            headTasks.add(task);
-        }
+       }
     }
 
     /**
@@ -226,7 +234,7 @@ public class TopTen implements Listener{
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Loads the top ten from the file system topten.yml. If it does not exist
      * then the top ten is created
