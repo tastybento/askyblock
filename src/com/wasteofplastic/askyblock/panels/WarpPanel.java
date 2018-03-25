@@ -95,7 +95,11 @@ public class WarpPanel implements Listener {
                 if (names.size() > 0 && names.size() % NOTIFICATION_NUM == 0) {
                     plugin.getLogger().info("Loading player heads (Rate limit is 1 head/s): " + names.size() + " to go...");
                     // Run a panel update every NOTIFICATION_NUM heads
-                    Bukkit.getScheduler().runTask(plugin, () -> updatePanel());
+                    plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, () -> {
+                        synchronized(warpPanel) {
+                            updatePanel();
+                        }
+                    }, 10L);
                 }
                 Iterator<Entry<UUID,String>> it = names.entrySet().iterator();
                 if (it.hasNext()) {
@@ -112,7 +116,11 @@ public class WarpPanel implements Listener {
                     // If the names queue drops to zero, then run an panel update
                     if (names.size() == 0) {
                         plugin.getLogger().info("Player heads loaded.");
-                        Bukkit.getScheduler().runTaskLater(plugin, () -> updatePanel(), 10L);
+                        plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, () -> {
+                            synchronized(warpPanel) {
+                                updatePanel();
+                            }
+                        }, 10L);
                     }
                 }
             }
@@ -129,7 +137,11 @@ public class WarpPanel implements Listener {
                 }
                 it.remove();
                 if (textQueue.size() == 0) {
-                    Bukkit.getScheduler().runTaskLater(plugin, () -> updatePanel(), 10L);
+                    plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, () -> {
+                        synchronized(warpPanel) {
+                            updatePanel();
+                        }
+                    }, 10L);
                 }
             }
         }, 3L, 5L);
