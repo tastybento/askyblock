@@ -303,13 +303,7 @@ public class WarpSigns implements Listener {
         saveWarpList();
         // Update warp signs
         // Run one tick later because text gets updated at the end of tick
-        plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
-
-            @Override
-            public void run() {
-                plugin.getWarpPanel().updatePanel();
-
-            }});
+        plugin.getWarpPanel().updatePanel();
     }
 
     /**
