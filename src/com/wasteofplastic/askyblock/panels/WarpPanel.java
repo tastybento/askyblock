@@ -282,7 +282,7 @@ public class WarpPanel implements Listener {
         plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, () -> {
             synchronized(warpPanel) {
                 // Clear the inventory panels
-                warpPanel.clear();
+                List<Inventory> updated = new ArrayList<>();
                 Collection<UUID> activeWarps = plugin.getWarpSignsListener().listSortedWarps();
                 // Create the warp panels
                 if (DEBUG)
@@ -298,12 +298,13 @@ public class WarpPanel implements Listener {
                 for (i = 0; i < panelNumber; i++) {
                     if (DEBUG)
                         plugin.getLogger().info("DEBUG: created panel " + (i+1));
-                    warpPanel.add(Bukkit.createInventory(null, PANELSIZE, plugin.myLocale().warpsTitle + " #" + (i+1)));
+                    updated.add(Bukkit.createInventory(null, PANELSIZE, plugin.myLocale().warpsTitle + " #" + (i+1)));
                 }
                 // Make the last panel
                 if (DEBUG)
                     plugin.getLogger().info("DEBUG: created panel " + (i+1));
-                warpPanel.add(Bukkit.createInventory(null, remainder, plugin.myLocale().warpsTitle + " #" + (i+1)));
+                updated.add(Bukkit.createInventory(null, remainder, plugin.myLocale().warpsTitle + " #" + (i+1)));
+                warpPanel = new ArrayList<>(updated);
                 panelNumber = 0;
                 int slot = 0;
                 // Run through all the warps and add them to the inventories with anv buttons
