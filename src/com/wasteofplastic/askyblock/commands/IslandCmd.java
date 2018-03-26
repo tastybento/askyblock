@@ -2671,8 +2671,8 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                     @Override
                                     public void run() {
 
-                                        if (coopInviteList.containsKey(targetPlayerUUID) && inviteList.get(targetPlayerUUID).equals(playerUUID)) {
-                                            inviteList.remove(targetPlayerUUID);
+                                        if (coopInviteList.containsKey(targetPlayerUUID) && coopInviteList.get(targetPlayerUUID).equals(playerUUID)) {
+                                            coopInviteList.remove(targetPlayerUUID);
                                             if (plugin.getServer().getPlayer(playerUUID) != null) {
                                                 Util.sendMessage(plugin.getServer().getPlayer(playerUUID), ChatColor.YELLOW + plugin.myLocale(player.getUniqueId()).inviteremovingInvite);
                                             }
