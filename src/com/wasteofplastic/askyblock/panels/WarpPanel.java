@@ -132,7 +132,7 @@ public class WarpPanel implements Listener {
                     updatePanel();
                 }
             }
-        }, 3L, 5L);
+        }, 3L, 1L);
 
     }
 
