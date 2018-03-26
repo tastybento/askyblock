@@ -81,7 +81,7 @@ public class WarpPanel implements Listener {
                 if (DEBUG)
                     plugin.getLogger().warning("Warp for Player: UUID " + playerUUID.toString() + " is unknown on this server, skipping...");
             } else {
-                // Get the skull
+                // Get the icon
                 addName(playerUUID, playerName);
             }
         }
@@ -143,14 +143,26 @@ public class WarpPanel implements Listener {
      */
     public ItemStack addName(UUID playerUUID, String playerName) {
         if (!cachedWarps.containsKey(playerUUID)) {
-            ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
-            SkullMeta meta = (SkullMeta) playerSkull.getItemMeta();
-            meta.setDisplayName(ChatColor.WHITE + playerName);
-            playerSkull.setItemMeta(meta);
-            cachedWarps.put(playerUUID, playerSkull);
-            names.put(playerUUID, playerName);
-            textQueue.add(playerUUID);
-            return playerSkull;
+            if (Settings.warpHeads) {
+                // Use warp heads
+                ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
+                SkullMeta meta = (SkullMeta) playerSkull.getItemMeta();
+                meta.setDisplayName(ChatColor.WHITE + playerName);
+                playerSkull.setItemMeta(meta);
+                cachedWarps.put(playerUUID, playerSkull);
+                names.put(playerUUID, playerName);
+                textQueue.add(playerUUID);
+                return playerSkull;
+            } else {
+                // Use something else
+                ItemStack item = new ItemStack(Material.SIGN);
+                ItemMeta meta = item.getItemMeta();
+                meta.setDisplayName(ChatColor.WHITE + playerName);
+                item.setItemMeta(meta);
+                cachedWarps.put(playerUUID, item);
+                textQueue.add(playerUUID);
+                return item;
+            }
         } else {
             return cachedWarps.get(playerUUID);
         }
@@ -304,9 +316,9 @@ public class WarpPanel implements Listener {
                         if (slot == PANELSIZE-2) {
                             // Add navigation buttons
                             if (panelNumber > 0) {
-                                warpPanel.get(panelNumber).setItem(slot++, new CPItem(Material.SIGN,plugin.myLocale().warpsPrevious,"warps " + (panelNumber-1),"").getItem());
+                                warpPanel.get(panelNumber).setItem(slot++, new CPItem(Material.PAPER,plugin.myLocale().warpsPrevious,"warps " + (panelNumber-1),"").getItem());
                             }
-                            warpPanel.get(panelNumber).setItem(slot, new CPItem(Material.SIGN,plugin.myLocale().warpsNext,"warps " + (panelNumber+1),"").getItem());
+                            warpPanel.get(panelNumber).setItem(slot, new CPItem(Material.PAPER,plugin.myLocale().warpsNext,"warps " + (panelNumber+1),"").getItem());
                             // Move onto the next panel
                             panelNumber++;
                             slot = 0;
@@ -314,7 +326,7 @@ public class WarpPanel implements Listener {
                     }
                 }
                 if (remainder != 0 && panelNumber > 0) {
-                    warpPanel.get(panelNumber).setItem(slot++, new CPItem(Material.SIGN,plugin.myLocale().warpsPrevious,"warps " + (panelNumber-1),"").getItem());
+                    warpPanel.get(panelNumber).setItem(slot++, new CPItem(Material.PAPER,plugin.myLocale().warpsPrevious,"warps " + (panelNumber-1),"").getItem());
                 }
 
             }

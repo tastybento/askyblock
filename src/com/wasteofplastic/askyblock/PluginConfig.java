@@ -777,6 +777,8 @@ public class PluginConfig {
         }
 
         // *** Non-Public Settings - these are "secret" settings that may not be used anymore
+        // This may be required if head issues grow...
+        Settings.warpHeads = plugin.getConfig().getBoolean("general.warpheads", true);
         // Level logging
         Settings.levelLogging = plugin.getConfig().getBoolean("general.levellogging");
         // Custom generator

@@ -282,4 +282,5 @@ public class Settings {
     public static boolean allowTNTPushing;
     public static boolean silenceCommandFeedback;
     public static long inviteTimeout;
+    public static boolean warpHeads;
 }
