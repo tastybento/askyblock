@@ -328,7 +328,6 @@ public class WarpPanel implements Listener, Requester {
                 if (it != null && it.getType().equals(Material.SKULL_ITEM)) {
                     ItemMeta meta = it.getItemMeta();
                     if (headInfo.getName().equals(meta.getDisplayName())) {
-                        plugin.getLogger().info("DEBUG: found!");
                         panel.setItem(i, head);
                         return;
                     }
