@@ -109,7 +109,7 @@ public class TopTen implements Listener, Requester {
                 // Get skull async
                 plugin.getHeadGetter().getHead(ownerUUID, this);
             }
-       } 
+        } 
     }
 
     /**
@@ -409,8 +409,10 @@ public class TopTen implements Listener, Requester {
         event.setCancelled(true);
         player.updateInventory();
         if(event.getCurrentItem() != null && event.getCurrentItem().getType().equals(Material.SKULL_ITEM) && event.getCurrentItem().hasItemMeta()){
-            Util.runCommand(player, "is warp " + ((SkullMeta)event.getCurrentItem().getItemMeta()).getOwner());
-            player.closeInventory();
+            if (((SkullMeta)event.getCurrentItem().getItemMeta()).hasOwner()) {
+                Util.runCommand(player, "is warp " + ((SkullMeta)event.getCurrentItem().getItemMeta()).getOwner());
+                player.closeInventory();
+            }
             return;
         }
         if (event.getSlotType().equals(SlotType.OUTSIDE)) {
@@ -434,6 +436,6 @@ public class TopTen implements Listener, Requester {
     @Override
     public void setHead(HeadInfo headInfo) {
         topTenHeads.put(headInfo.getUuid(), headInfo.getHead());
-        
+
     }
 }
