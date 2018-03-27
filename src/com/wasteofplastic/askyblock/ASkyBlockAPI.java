@@ -428,7 +428,7 @@ public class ASkyBlockAPI {
      */
     public Map<UUID, Integer> getTopTen() {
         HashMap<UUID, Integer> result = new HashMap<UUID, Integer>();
-        for (Entry<UUID, Long> en : TopTen.getTopTenList().entrySet()) {
+        for (Entry<UUID, Long> en : plugin.getTopTen().getTopTenList().entrySet()) {
            result.put(en.getKey(), en.getValue().intValue()); 
         }
         return result;
@@ -439,7 +439,7 @@ public class ASkyBlockAPI {
      * @return Top ten list
      */
     public Map<UUID, Long> getLongTopTen() {
-        return new HashMap<UUID, Long>(TopTen.getTopTenList());
+        return new HashMap<UUID, Long>(plugin.getTopTen().getTopTenList());
     }
 
     /**

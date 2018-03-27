@@ -743,7 +743,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 return true;
             } else if (split[0].equalsIgnoreCase("topten")) {
                 Util.sendMessage(sender, ChatColor.YELLOW + plugin.myLocale().adminTopTengenerating);
-                TopTen.topTenCreate(sender);
+                plugin.getTopTen().topTenCreate(sender);
                 return true;
             } else if (split[0].equalsIgnoreCase("purge")) {
                 if (purgeFlag) {

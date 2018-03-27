@@ -315,10 +315,10 @@ public class GridManager {
                                         String teamLeaderUUID = playerFile.getString("teamLeader", "");
                                         if (islandLevel > 0) {
                                             if (!playerFile.getBoolean("hasTeam")) {
-                                                TopTen.topTenAddEntry(owner, islandLevel);
+                                                plugin.getTopTen().topTenAddEntry(owner, islandLevel);
                                             } else if (!teamLeaderUUID.isEmpty()) {
                                                 if (teamLeaderUUID.equals(ownerString)) {
-                                                    TopTen.topTenAddEntry(owner, islandLevel);
+                                                    plugin.getTopTen().topTenAddEntry(owner, islandLevel);
                                                 }
                                             }
                                         }
@@ -397,7 +397,7 @@ public class GridManager {
             plugin.getLogger().info(noisland + " have no island, of which " + inTeam + " are in a team.");
             plugin.getLogger().info((noisland - inTeam) + " are in the system, but have no island or team");
         }
-        TopTen.topTenSave();
+        plugin.getTopTen().topTenSave();
 
         int count2 = 0;
         // Check island folder
@@ -1561,7 +1561,7 @@ public class GridManager {
             }
             // Update top ten list
             // Remove old owner score from top ten list
-            TopTen.remove(oldOwner);
+            plugin.getTopTen().remove(oldOwner);
             // Fire event
             plugin.getServer().getPluginManager().callEvent(new IslandChangeOwnerEvent(island, oldOwner, newOwner));
             return true;

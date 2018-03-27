@@ -1766,7 +1766,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                 return true;
             } else if (split[0].equalsIgnoreCase("top")) {
                 if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.topten")) {
-                    TopTen.topTenShow(player);
+                    plugin.getTopTen().topTenShow(player);
                     return true;
                 } else {
                     Util.sendMessage(player, ChatColor.RED + plugin.myLocale(playerUUID).errorNoPermission);
@@ -2951,7 +2951,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                     }
                                     // Reset the island level
                                     plugin.getPlayers().setIslandLevel(targetPlayer, 0);
-                                    TopTen.topTenAddEntry(playerUUID, 0);
+                                    plugin.getTopTen().topTenAddEntry(playerUUID, 0);
 
                                     // If target is online
                                     Player target = plugin.getServer().getPlayer(targetPlayer);
