@@ -153,8 +153,8 @@ ban:
 biome: 
   help: "Megnyissa a biomokat."
   paneltitle: "Válassz biomt..."
-  pleasewait: "Please wait, changing biome..."
-  set: "A biom sikeresen lerakva: [biome]!"
+  pleasewait: "Kérlek, várj, biome változtatás..."
+  set: "A biom sikeresen beállítva: [biome]!"
   unknown: "Ismeretlen biom!"
   youbought: "Elköltöttél: [cost] pénzt!"
 boats: 
@@ -270,11 +270,11 @@ invite:
   youHaveJoinedAnIsland: "Csatlakoztál a szigethez! /[label] team A csapat információja."
 island: 
   blockValue: "[name] itt elhelyezve érdemes lehet [value]"
-  blockWorthless: "[name] ertéktelen" 
+  blockWorthless: "[name] értéktelen" 
   cannotTeleport: "Nem lehet teleportálni esés közben!"
-  donate: "Üdvözlünk az A SkyBlock-nál by tastybento"
+  donate: "Üdvözlünk az ASkyBlock-nál by tastybento"
   donatecolor: "aqua"
-  errorCouldNotCreateIsland: "Nem sikerült létrehozni a szigetedet. Lépjen kapcsolatba a szerver moderátorával."
+  errorCouldNotCreateIsland: "Nem sikerült létrehozni a szigetet. Lépj kapcsolatba a szerver moderátorával."
   errorInvalidPlayer: "Ez a játékos érvénytelen vagy nincs sziget!"
   errorLevelNotReady: "Nem használhatja ezt a parancsot most! Próbálja újra néhány másodperc múlva."
   errorYouDoNotHavePermission: "Nincs jogosultságod a használatára!"
@@ -311,21 +311,21 @@ island:
   resetConfirm: "Kérlek, írd be: /[label] confirm Erre [seconds] másodperced van!"
   resetMustRemovePlayers: "A sziget újraindítása előtt el kell távolítanod minden játékosodat a szigetedről (/[label] kick <játékos>). Tekintsd meg a szigeten jelenleg résztvevő játékosok listáját /[label] team."
   resetNoMore: "Nincs több alaphelyzetbe állítható sziget!"
-  resetOnlyOwner: "Csak a tulajdonos újraindíthatja ezt a szigetet. Hagyd el ezt a szigetet, hogy elindítsa a sajátját (/[label] leave)."
+  resetOnlyOwner: "Csak a tulajdonos indíthatja újra ezt a szigetet. Hagyd el ezt a szigetet, hogy elindítsa a sajátját (/[label] leave)."
   resetPleaseWait: "Válassz szigetet!"
   resetsLeft: "Újrakezdés balra"
   resetTo: "Törölt kezdéskorlát"
   resetWait: "Kérlek, várj [time] másodpercet, hogy újra használhasd ezt!"
   resetYouHave: "Már csak [number] szigeted lehet."
   subtitle: "by tastybento"
-  subtitlecolor: "green"
+  subtitlecolor: "blue"
   teleport: "A teleportálás megkezdése ...&7 (/[label] help A sziget információihoz.)"
-  title: "A SkyBlock"
+  title: "ASkyBlock"
   titlecolor: "gold"
   unlimited: "Korlátlan"
   url: ""
 islandProtected: "A sziget védett."
-islandguardsettings: 
+islandguardsettings:
   TNTdamage: "TNT robbanás"
   allowed: "Engedélyezve"
   aciddamage: "Savas sebzés"
@@ -440,13 +440,13 @@ minishop:
   yousold: "Vásároltál [number] db [description]&f-t és elköltöttél: &a[price]&f pénzt!"
 moblimits: 
   entity: "Sziget [entity] határértéke [number] elérte!"
-  error: "A sziget állati tenyésztési határa [number] elért!"
+  error: "A sziget állati tenyésztési határa [number] elérte!"
   hopper: "A szigettartály határértéke [number] elérte!"
   villager: "A sziget falusi tenyésztési határa [number] elérte!"
 nether: 
   spawnisprotected: "A Nether spawn terület védett."
 news: 
-  headline: "[A Skyblock hírek] Mikor offline voltál..."
+  headline: "[ASkyBlock hírek] Mikor offline voltál..."
 purge: 
   acidFound: "Vannak [number] nem ismert szigetek. Használd '/acid purge unowned confirm', hogy 20 másodpercen belül törölje őket."
   allowPurge: "A tisztítás védelem eltávolítva"
@@ -487,7 +487,7 @@ sethome:
   errorNoIsland: "Nem vagy egy sziget része. Visszatérek a spawn területre!"
   errorNotOnIsland: "Nem a megfelelő világban vagy, hogy tudj otthont állítani!"
   errorNumHomes: "Az otthon 1 lehet [max]"
-  homeSet: "Sikeresen leraktad az otthonodat!"
+  homeSet: "Sikeresen beállítottad az otthonodat!"
 settingsReset:
   done: "Kész."
   inprogress: "A védelmi beállítások alaphelyzetbe álltak, várj..."
@@ -496,7 +496,7 @@ sign:
   line2: "[player]"
   line3: "Ne csapd össze!"
   line4: "---------------"
-sign-acidisland:
+sign-acidisland: 
    line1: "&1[AcidIsland]"
    line2: "[player]"
    line3: "A víz savas!"
@@ -513,21 +513,21 @@ teamchat:
   spyon: "Csevegő kémel"
   statusOff: "A csapat chat kikapcsolva!"
   statusOn: "A csapat chat bekapcsolva!"
-topTen:
+topTen: 
   errorExcluded: "FYI: kivéve a tíz legjobb közül, mivel nincs [perm]"
   errorNotReady: "A tíz legjobb lista még nem jött létre!"
   guiHeading: "&E&L<!> Sziget: &6&N[name]&7 (#[rank])"
   guiTitle: "Top 10 szigetek"
   header: "A 10 legjobb sziget:"
-visitors:
+visitors: 
   protected: "A látogatók védettek"
 warps: 
-  deactivate: "A régi táblák kikapcsolása!"
+  deactivate: "A régi táblák kikapcsolása."
   errorDoesNotExist: "Ez a warp nem létezik!"
   errorDuplicate: "Sajnálom! Van egy tábla a helyszínen!"
   errorNoPerm: "Nincs jogod az Üdvözlő táblák elhelyezésére!"
   errorNoPlace: "A szigeten kell lenned, hogy elhelyez egy Welcome táblát!"
-  errorNoRemove: "Csak akkor távolíthatja el saját üdvözlőjelét!"
+  errorNoRemove: "Csak akkor távolíthatod el a saját üdvözlő táblát!"
   errorNoWarpsYet: "&cNincs egy elérhető teleportálási célpont sem!"
   errorNotReadyYet: "Ez a warp még nem kész. Próbáld újra később."
   errorNotSafe: "Ez a warp most nem biztonságos. Próbáld újra később."
