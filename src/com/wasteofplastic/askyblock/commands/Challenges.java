@@ -60,6 +60,7 @@ import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.events.ChallengeCompleteEvent;
 import com.wasteofplastic.askyblock.events.ChallengeLevelCompleteEvent;
+import com.wasteofplastic.askyblock.nms.NMSAbstraction;
 import com.wasteofplastic.askyblock.panels.CPItem;
 import com.wasteofplastic.askyblock.util.SpawnEgg1_9;
 import com.wasteofplastic.askyblock.util.Util;
@@ -1119,11 +1120,27 @@ public class Challenges implements CommandExecutor, TabCompleter {
                             reqItem = Material.getMaterial(part[0].toUpperCase());
                         }
                         reqAmount = Integer.parseInt(part[2]);
-                        int reqDurability = Integer.parseInt(part[1]);
-                        ItemStack item = new ItemStack(reqItem);
 
-                        // Item
-                        item.setDurability((short) reqDurability);
+                        ItemStack item = new ItemStack(reqItem);
+                        int reqDurability = 0;
+                        boolean entityIsString = false;
+                        if (StringUtils.isNumeric(part[1])) {
+                            reqDurability = Integer.parseInt(part[1]);
+                            item.setDurability((short) reqDurability);
+                        } else if (reqItem.equals(Material.MONSTER_EGG)){
+                            entityIsString = true;
+                            reqDurability = -1; // non existent
+                            try {
+                                // Check if this is a string
+                                EntityType entityType = EntityType.valueOf(part[1]);
+                                NMSAbstraction nms = null;
+                                nms = Util.checkVersion();
+                                item = nms.getSpawnEgg(entityType, reqAmount);
+                            } catch (Exception ex) {
+                                plugin.getLogger().severe("Unknown entity type '" + part[1] + "' for MONSTER_EGG in challenge " + challenge);
+                                return false;
+                            }
+                        }
                         // check amount
                         int amount = 0;
                         // Go through all the inventory and try to find
@@ -1131,13 +1148,10 @@ public class Challenges implements CommandExecutor, TabCompleter {
                         for (Entry<Integer, ? extends ItemStack> en : player.getInventory().all(reqItem).entrySet()) {
                             // Get the item
                             ItemStack i = en.getValue();
-                            if (i.hasItemMeta()) {
+                            if (i.hasItemMeta() && !i.getType().equals(Material.MONSTER_EGG)) {
                                 continue;
                             }
-                            if (i.getDurability() == reqDurability) {
-                                // Clear any naming, or lore etc.
-                                //i.setItemMeta(null);
-                                // player.getInventory().setItem(en.getKey(), i);
+                            if (i.getDurability() == reqDurability || (entityIsString && i.getItemMeta().equals(item.getItemMeta()))) {
                                 // #1 item stack qty + amount is less than
                                 // required items - take all i
                                 // #2 item stack qty + amount = required
