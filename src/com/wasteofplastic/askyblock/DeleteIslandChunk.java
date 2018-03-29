@@ -52,6 +52,8 @@ public class DeleteIslandChunk {
         boolean cleanUpBlocks = false;
         if (Settings.islandDistance - island.getProtectionSize() < 16) {
             cleanUpBlocks = true;
+            // Never clear up more than the island size
+            island.setProtectionSize(Settings.islandDistance);
         }
         int range = island.getProtectionSize() / 2 * +1;
         final int minx = island.getMinProtectedX();

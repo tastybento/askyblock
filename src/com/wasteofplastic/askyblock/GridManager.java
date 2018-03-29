@@ -397,7 +397,6 @@ public class GridManager {
             plugin.getLogger().info(noisland + " have no island, of which " + inTeam + " are in a team.");
             plugin.getLogger().info((noisland - inTeam) + " are in the system, but have no island or team");
         }
-        plugin.getTopTen().topTenSave();
 
         int count2 = 0;
         // Check island folder

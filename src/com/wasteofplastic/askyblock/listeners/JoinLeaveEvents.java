@@ -1,5 +1,4 @@
 /*******************************************************************************
- * This file is part of ASkyBlock.
  *
  *     ASkyBlock is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -36,11 +35,10 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.CoopPlay;
 import com.wasteofplastic.askyblock.Island;
-import com.wasteofplastic.askyblock.PlayerCache;
 import com.wasteofplastic.askyblock.LevelCalcByChunk;
+import com.wasteofplastic.askyblock.PlayerCache;
 import com.wasteofplastic.askyblock.Scoreboards;
 import com.wasteofplastic.askyblock.Settings;
-import com.wasteofplastic.askyblock.TopTen;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
@@ -75,7 +73,6 @@ public class JoinLeaveEvents implements Listener {
                 plugin.getLogger().info("DEBUG: checking language");
             // Get language
             String language = getLanguage(player);
-            //plugin.getLogger().info("DEBUG: language = " + language);
             // Check if we have this language
             if (plugin.getResource("locale/" + language + ".yml") != null) {
                 if (DEBUG)
@@ -255,6 +252,9 @@ public class JoinLeaveEvents implements Listener {
                             // Only set the island range if the player has a perm to override the default
                             if (hasARangePerm) {
                                 // Do some sanity checking
+                                if (range > Settings.islandDistance) {
+                                    range = Settings.islandDistance;
+                                }
                                 if (range % 2 != 0) {
                                     range--;
                                     if (DEBUG)

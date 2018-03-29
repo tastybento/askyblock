@@ -64,7 +64,7 @@ public class LevelCalcByChunk {
 
         // Results go here
         result = new Results();
-        
+
         if (island == null) {
             return;
         }
@@ -76,35 +76,34 @@ public class LevelCalcByChunk {
         checking = true;
 
         // Start a recurring task until done or cancelled
-        task = plugin.getServer().getScheduler().runTaskTimer(plugin, new Runnable() {
-
-            @Override
-            public void run() {
-                Set<ChunkSnapshot> chunkSnapshot = new HashSet<>();
-                if (checking) {
-                    Iterator<Pair<Integer, Integer>> it = chunksToScan.iterator();
-                    if (!it.hasNext()) {
-                        // Nothing left
-                        tidyUp();
-                        return;
-                    }
-                    // Add chunk snapshots to the list
-                    while (it.hasNext() && chunkSnapshot.size() < MAX_CHUNKS) {
-                        Pair<Integer, Integer> pair = it.next();
-                        if (!world.isChunkLoaded(pair.x, pair.z)) {
-                            world.loadChunk(pair.x, pair.z);
-                            chunkSnapshot.add(world.getChunkAt(pair.x, pair.z).getChunkSnapshot());
-                            world.unloadChunk(pair.x, pair.z);
-                        } else {
-                            chunkSnapshot.add(world.getChunkAt(pair.x, pair.z).getChunkSnapshot());
-                        }
-                        it.remove();
-                    }
-                    // Move to next step
-                    checking = false;
-                    checkChunksAsync(chunkSnapshot);
+        task = plugin.getServer().getScheduler().runTaskTimer(plugin, ()-> {
+            if (this.island.getOwner() == null) {
+                task.cancel();
+                return;
+            }
+            Set<ChunkSnapshot> chunkSnapshot = new HashSet<>();
+            if (checking) {
+                Iterator<Pair<Integer, Integer>> it = chunksToScan.iterator();
+                if (!it.hasNext()) {
+                    // Nothing left
+                    tidyUp();
+                    return;
                 }
-
+                // Add chunk snapshots to the list
+                while (it.hasNext() && chunkSnapshot.size() < MAX_CHUNKS) {
+                    Pair<Integer, Integer> pair = it.next();
+                    if (!world.isChunkLoaded(pair.x, pair.z)) {
+                        world.loadChunk(pair.x, pair.z);
+                        chunkSnapshot.add(world.getChunkAt(pair.x, pair.z).getChunkSnapshot());
+                        world.unloadChunk(pair.x, pair.z);
+                    } else {
+                        chunkSnapshot.add(world.getChunkAt(pair.x, pair.z).getChunkSnapshot());
+                    }
+                    it.remove();
+                }
+                // Move to next step
+                checking = false;
+                checkChunksAsync(chunkSnapshot);
             }
         }, 0L, SPEED);
     }

@@ -460,9 +460,6 @@ public class ASkyBlock extends JavaPlugin {
                         biomes = new BiomesPanel(ASkyBlock.this);
                         getServer().getPluginManager().registerEvents(biomes, ASkyBlock.this);
 
-                        topTen = new TopTen(plugin);
-                        topTen.topTenLoad();
-
                         // Add any online players to the DB
                         for (Player onlinePlayer : ASkyBlock.this.getServer().getOnlinePlayers()) {
                             tinyDB.savePlayerName(onlinePlayer.getName(), onlinePlayer.getUniqueId());
