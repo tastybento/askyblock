@@ -27,6 +27,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
@@ -153,6 +154,15 @@ public class IslandGuard implements Listener {
         return false;
     }
 
+    protected static boolean inWorld(World world) {
+        if (world.equals(ASkyBlock.getIslandWorld())) {
+            return true;
+        }
+        if (Settings.createNether && Settings.newNether && ASkyBlock.getNetherWorld() != null && world.equals(ASkyBlock.getNetherWorld())) {
+            return true;
+        }
+        return false;
+    }
     /**
      * Prevents visitors picking items from riding horses or other inventories
      * @param event
