@@ -1,6 +1,7 @@
 package com.wasteofplastic.askyblock.listeners;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -8,6 +9,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockState;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -23,8 +25,10 @@ import org.bukkit.event.block.BlockMultiPlaceEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.vehicle.VehicleCreateEvent;
+import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -42,6 +46,7 @@ public class EntityLimits implements Listener {
     private static final boolean DEBUG2 = false;
     private static final boolean DEBUG3 = false;
     private ASkyBlock plugin;
+    private YamlConfiguration entities;
 
     /**
      * Handles entity and natural limitations
@@ -49,6 +54,57 @@ public class EntityLimits implements Listener {
      */
     public EntityLimits(ASkyBlock plugin) {
         this.plugin = plugin;
+        entities = Util.loadYamlFile("entitylimits.yml");
+        if (!Settings.saveEntities) {
+            // Clear the file completely
+           entities.set("entities", null);
+           Util.saveYamlFile(entities, "entitylimits.yml");
+        }
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onChunkLoad(ChunkLoadEvent event) {
+        if (!Settings.saveEntities) {
+            return;
+        }
+        Arrays.asList(event.getChunk().getEntities()).forEach(entity -> {
+            String loc = entities.getString("entities." + entity.getUniqueId().toString(), "");
+            if (!loc.isEmpty()) {
+                entity.setMetadata("spawnLoc", new FixedMetadataValue(plugin, loc ));
+                entities.set("entity." + entity.getUniqueId(), null);
+            }
+        });
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onEntityDeath(EntityDeathEvent event) {
+        if (!Settings.saveEntities) {
+            return;
+        }
+        if (event.getEntity().getUniqueId() != null) {
+            entities.set("entities." + event.getEntity().getUniqueId().toString(), null);
+        }
+    }
+
+    public void disable() {
+        if (!Settings.saveEntities) {
+            return;
+        }
+        ASkyBlock.getIslandWorld().getEntities().stream().filter(x -> x.hasMetadata("spawnLoc")).forEach(entity -> {
+            // Get the meta data
+            entity.getMetadata("spawnLoc").stream().filter(y -> y.getOwningPlugin().equals(plugin)).forEach(v -> {
+                entities.set("entities." + entity.getUniqueId().toString(), v.asString());            
+            });
+        });
+        if (Settings.createNether && Settings.newNether && ASkyBlock.getNetherWorld() != null) {
+            ASkyBlock.getNetherWorld().getEntities().stream().filter(x -> x.hasMetadata("spawnLoc")).forEach(entity -> {
+                // Get the meta data
+                entity.getMetadata("spawnLoc").stream().filter(y -> y.getOwningPlugin().equals(plugin)).forEach(v -> {
+                    entities.set("entities." + entity.getUniqueId().toString(), v.asString());            
+                });
+            }); 
+        }
+        Util.saveYamlFile(entities, "entitylimits.yml");
     }
 
     /**
