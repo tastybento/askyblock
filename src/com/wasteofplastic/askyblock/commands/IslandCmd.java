@@ -2662,7 +2662,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                             // Send out coop invite
                             Util.sendMessage(player, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).inviteinviteSentTo.replace("[name]", target.getName()));
                             Util.sendMessage(target, ChatColor.GREEN + plugin.myLocale(targetPlayerUUID).coopHasInvited.replace("[name]", player.getName()));
-                            Util.sendMessage(target, ChatColor.GREEN + Settings.ISLANDCOMMAND + " coopaccept/coopreject " + plugin.myLocale(targetPlayerUUID).invitetoAcceptOrReject);
+                            Util.sendMessage(target, ChatColor.WHITE + "/" + label + " [coopaccept/coopreject]" + ChatColor.YELLOW + plugin.myLocale(targetPlayerUUID).invitetoAcceptOrReject);
                             coopInviteList.put(targetPlayerUUID, playerUUID);
                             if (Settings.inviteTimeout > 0) {
                                 plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
