@@ -233,6 +233,6 @@
 			<url>http://maven.sk89q.com/repo/</url>
 		</repository>
 	</repositories>
-	<version>3.0.8.3</version>
+	<version>3.0.8.4</version>
 	<description>This pom contains reference to a lot of servers that are not included in the GitHub repository because they are binary objects and maybe subject to copyright. These are used so that the NMS code that is used especially for pasting of islands can operate. Before you can build successfully, you need to put zero or more server binaries into the lib directory on your build machine. This version will match the version of the server you will use, for example 1.12. Then delete all the unneeded packages in com.wasteofplastic.askyblock.nms that you do not need or do not have. This will allow you to build. If you have no server binaries and delete all the packages, the Bukkit API will be used instead of NMS, which is slow and not recommended. Good luck!</description>
 </project>

@@ -1510,17 +1510,18 @@ public class Challenges implements CommandExecutor, TabCompleter {
                             if (item != null) {
                                 // We have two cases : quantity only OR durability + quantity
                                 final int quantity;
-                                final byte durability;
+                                MaterialData md = new MaterialData(item);
                                 if (sPart.length == 2) {
                                     // Only a quantity is specified
                                     quantity = Integer.parseInt(sPart[1]);
-                                    durability = 0;
                                 } else {
                                     quantity = Integer.parseInt(sPart[2]);
-                                    durability = Byte.parseByte(sPart[1]);
+                                    md.setData(Byte.parseByte(sPart[1]));
                                 }
-                                neededItem.put(new MaterialData(item, durability), quantity);
-                                // plugin.getLogger().info("DEBUG: Needed item is " + Integer.parseInt(sPart[1]) + " x " + Material.getMaterial(sPart[0]).toString());
+                                neededItem.put(md, quantity);
+                                if (DEBUG) {
+                                    plugin.getLogger().info("DEBUG: Needed item is " + md.toString() + " x " + quantity);
+                                }
                             } else {
                                 plugin.getLogger().warning("Problem parsing required item for challenge " + challenge + " in challenges.yml!");
                                 return false;
@@ -1550,21 +1551,28 @@ public class Challenges implements CommandExecutor, TabCompleter {
                 for (int y = -searchRadius; y <= searchRadius; y++) {
                     for (int z = -searchRadius; z <= searchRadius; z++) {
                         final MaterialData b = new Location(l.getWorld(), px + x, py + y, pz + z).getBlock().getState().getData();
-                        if (neededItem.containsKey(b)) {
-                            if (neededItem.get(b) == 1) {
-                                neededItem.remove(b);
-                            } else {
-                                // Reduce the require amount by 1
-                                neededItem.put(b, neededItem.get(b) - 1);
-                            }
+                        if (!b.getItemType().equals(Material.AIR)) {
+                            neededItem.entrySet().stream().filter(e -> 
+                                (e.getKey().getItemType().equals(b.getItemType()) && (
+                                        e.getKey().getData() == 0 || e.getKey().getData() == b.getData())
+                                        || (e.getKey().getItemType().toString().endsWith("_DOOR") && b.getItemType().toString().endsWith("_DOOR"))
+                                        || (e.getKey().getItemType().toString().endsWith("_COMPARATOR") && b.getItemType().toString().endsWith("_COMPARATOR"))
+                                        || (e.getKey().getItemType().toString().contains("_LAMP") && b.getItemType().toString().contains("_LAMP"))
+                                        || (e.getKey().getItemType().toString().endsWith("FURNACE") && b.getItemType().toString().endsWith("FURNACE"))
+                                        || (e.getKey().getItemType().toString().contains("DAYLIGHT") && b.getItemType().toString().contains("DAYLIGHT"))
+                                        || (e.getKey().getItemType().toString().startsWith("BOAT") && b.getItemType().toString().startsWith("BOAT"))
+                                        )
+                                )
+                            .forEach(e -> e.setValue(e.getValue() - 1));
                         }
                     }
                 }
             }
-            // }
+            neededItem.values().removeIf(v -> v <= 0);
             // Check if all the needed items have been amassed
             if (!neededItem.isEmpty()) {
                 // plugin.getLogger().info("DEBUG: Insufficient items around");
+                
                 for (MaterialData missing : neededItem.keySet()) {
                     Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).challengeserrorYouAreMissing + " " + neededItem.get(missing) + " x "
                             + Util.prettifyText(missing.getItemType().toString()) + ":" + missing.getData());
