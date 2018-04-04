@@ -448,10 +448,10 @@ public class ASkyBlock extends JavaPlugin {
                             plugin.getLogger().info("Loading warp panel...");
                             warpPanel = new WarpPanel(ASkyBlock.this);
                             getServer().getPluginManager().registerEvents(warpPanel, ASkyBlock.this);
-                        }						
+                        }			
+                        topTen = new TopTen(ASkyBlock.this);
                         // Load the TopTen GUI
                         if (!Settings.displayIslandTopTenInChat){
-                            topTen = new TopTen(ASkyBlock.this);
                             getServer().getPluginManager().registerEvents(topTen, ASkyBlock.this);
                         }
                         // Minishop - must wait for economy to load before we can use
