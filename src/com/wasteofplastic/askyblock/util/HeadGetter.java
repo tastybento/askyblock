@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -17,7 +18,7 @@ import com.wasteofplastic.askyblock.ASkyBlock;
 
 public class HeadGetter {
     private Map<UUID,HeadInfo> cachedHeads = new HashMap<>();
-    private Map<UUID,String> names = new HashMap<>();
+    private Map<UUID,String> names = new ConcurrentHashMap<>();
     private ASkyBlock plugin;
     private Map<UUID,Set<Requester>> headRequesters = new HashMap<>();
 

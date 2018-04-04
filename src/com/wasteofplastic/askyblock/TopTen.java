@@ -19,12 +19,16 @@ package com.wasteofplastic.askyblock;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -43,7 +47,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
 import com.wasteofplastic.askyblock.util.HeadGetter.HeadInfo;
-import com.wasteofplastic.askyblock.util.MapUtil;
 import com.wasteofplastic.askyblock.util.Requester;
 import com.wasteofplastic.askyblock.util.Util;
 
@@ -56,7 +59,7 @@ import com.wasteofplastic.askyblock.util.Util;
 public class TopTen implements Listener, Requester {
     private  ASkyBlock plugin = ASkyBlock.getPlugin();
     // Top ten list of players
-    private Map<UUID, Long> topTenList = new HashMap<>();
+    private Map<UUID, Long> topTenList = new ConcurrentHashMap<>();
     private final int GUISIZE = 27; // Must be a multiple of 9
     private final int[] SLOTS = new int[] {4, 12, 14, 19, 20, 21, 22, 23, 24, 25};
     private final boolean DEBUG = false;
@@ -96,9 +99,11 @@ public class TopTen implements Listener, Requester {
             }
         }
         topTenList.put(ownerUUID, l);
-        topTenList = MapUtil.sortByValue(topTenList);
+        topTenList = topTenList.entrySet().stream()
+        .sorted(Collections.reverseOrder(Map.Entry.comparingByValue())).limit(10)
+        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
         // Add head to cache
-        if (!topTenHeads.containsKey(ownerUUID)) {
+        if (topTenList.containsKey(ownerUUID) && !topTenHeads.containsKey(ownerUUID)) {
             String name = plugin.getPlayers().getName(ownerUUID);
             if (name != null && !name.isEmpty()) {
                 ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
@@ -140,6 +145,7 @@ public class TopTen implements Listener, Requester {
 
             @Override
             public void run() {
+                plugin.getIslandCmd().setCreatingTopTen(true);
                 // This map is a list of owner and island level
                 YamlConfiguration player = new YamlConfiguration();
                 int index = 0;
@@ -187,6 +193,7 @@ public class TopTen implements Listener, Requester {
                         } else {
                             plugin.getLogger().warning("Completed top ten creation.");
                         }
+                        plugin.getIslandCmd().setCreatingTopTen(false);
 
                     }});
             }});
@@ -269,7 +276,9 @@ public class TopTen implements Listener, Requester {
                 // Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).topTenerrorNotReady);
                 // return true;
             }
-            topTenList = MapUtil.sortByValue(topTenList);
+            topTenList = topTenList.entrySet().stream()
+                    .sorted(Collections.reverseOrder(Map.Entry.comparingByValue())).limit(10)
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
             int i = 1;
             // getLogger().info("DEBUG: " + topTenList.toString());
             // getLogger().info("DEBUG: " + topTenList.values());
@@ -314,7 +323,9 @@ public class TopTen implements Listener, Requester {
                 plugin.getLogger().info("DEBUG: new GUI display");
             // New GUI display (shown by default)
             if (topTenList == null) topTenCreate();
-            topTenList = MapUtil.sortByValue(topTenList);
+            topTenList = topTenList.entrySet().stream()
+                    .sorted(Collections.reverseOrder(Map.Entry.comparingByValue())).limit(10)
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
             // Create the top ten GUI if it does not exist
             if (gui == null) {
                 gui = Bukkit.createInventory(null, GUISIZE, plugin.myLocale(player.getUniqueId()).topTenGuiTitle);

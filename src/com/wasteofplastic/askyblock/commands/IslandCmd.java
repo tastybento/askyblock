@@ -116,6 +116,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
     private final Random random = new Random();
     private HashMap<UUID, Location> islandSpot = new HashMap<>();
     private List<UUID> leavingPlayers = new ArrayList<>();
+    private boolean creatingTopTen;
 
     /**
      * Constructor
@@ -1765,6 +1766,10 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                 return true;
             } else if (split[0].equalsIgnoreCase("top")) {
                 if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.topten")) {
+                    if (creatingTopTen) {
+                        Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorCommandNotReady);
+                        return true;
+                    }
                     plugin.getTopTen().topTenShow(player);
                     return true;
                 } else {
@@ -3402,6 +3407,20 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
         }
 
         return 0L;
+    }
+
+    /**
+     * @return the creatingTopTen
+     */
+    public boolean isCreatingTopTen() {
+        return creatingTopTen;
+    }
+
+    /**
+     * @param creatingTopTen the creatingTopTen to set
+     */
+    public void setCreatingTopTen(boolean creatingTopTen) {
+        this.creatingTopTen = creatingTopTen;
     }
 
     /**
