@@ -14,6 +14,9 @@ public class AsyncBackup {
             public void run() {
                 plugin.getGrid().saveGrid();
                 plugin.getTinyDB().asyncSaveDB();
+                if (plugin.getTopTen() != null) {
+                    plugin.getTopTen().topTenSave();
+                }
             }}, Settings.backupDuration, Settings.backupDuration);
     }
     

@@ -69,6 +69,7 @@ public class TopTen implements Listener, Requester {
 
     public TopTen(ASkyBlock plugin) {
         this.plugin = plugin;
+        topTenLoad();
     }
 
     /**
@@ -99,8 +100,7 @@ public class TopTen implements Listener, Requester {
             }
         }
         topTenList.put(ownerUUID, l);
-        topTenList = topTenList.entrySet().stream()
-        .sorted(Collections.reverseOrder(Map.Entry.comparingByValue())).limit(10)
+        topTenList = topTenList.entrySet().stream().sorted(Collections.reverseOrder(Map.Entry.comparingByValue())).limit(10)
         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
         // Add head to cache
         if (topTenList.containsKey(ownerUUID) && !topTenHeads.containsKey(ownerUUID)) {
@@ -203,13 +203,12 @@ public class TopTen implements Listener, Requester {
         if (topTenList == null) {
             return;
         }
-        plugin.getLogger().info("Saving top ten list");
+        //plugin.getLogger().info("Saving top ten list");
         // Make file
         File topTenFile = new File(plugin.getDataFolder(), "topten.yml");
         // Make configuration
         YamlConfiguration config = new YamlConfiguration();
         // Save config
-
         int rank = 0;
         for (Map.Entry<UUID, Long> m : topTenList.entrySet()) {
             if (rank++ == 10) {
@@ -231,6 +230,7 @@ public class TopTen implements Listener, Requester {
      * then the top ten is created
      */
     public void topTenLoad() {
+        plugin.getLogger().info("Loading Top Ten");
         topTenList.clear();
         // Check to see if the top ten list exists
         File topTenFile = new File(plugin.getDataFolder(), "topten.yml");
@@ -243,12 +243,9 @@ public class TopTen implements Listener, Requester {
             // Load the values
             if (topTenConfig.isSet("topten")) {
                 for (String playerUUID : topTenConfig.getConfigurationSection("topten").getKeys(false)) {
-                    // getLogger().info(playerUUID);
                     try {
                         UUID uuid = UUID.fromString(playerUUID);
-                        // getLogger().info(uuid.toString());
                         int level = topTenConfig.getInt("topten." + playerUUID);
-                        // getLogger().info("Level = " + level);
                         topTenAddEntry(uuid, level);
                     } catch (Exception e) {
                         e.printStackTrace();

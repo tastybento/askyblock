@@ -22,6 +22,9 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,6 +52,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -1361,6 +1365,11 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                     countUnowned(sender);
                     return true;
                 }
+                
+                if (split[1].equalsIgnoreCase("players")) {
+                    purgePlayers(sender);
+                    return true;
+                }
                 // Set the flag
                 purgeFlag = true;
                 // See if this purge unowned
@@ -2129,6 +2138,53 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
         default:
             return false;
         }
+    }
+
+    private void purgePlayers(CommandSender sender) {
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+         // This map is a list of owner and island level
+            YamlConfiguration player = new YamlConfiguration();
+            File oldPlayers = new File(plugin.getPlayersFolder(), "oldplayers");
+            if (!oldPlayers.exists()) {
+                oldPlayers.mkdirs();
+            }
+            Path targetPath = oldPlayers.toPath();
+            int index = 0;
+            for (final File f : plugin.getPlayersFolder().listFiles()) {
+                // Need to remove the .yml suffix
+                String fileName = f.getName();
+                if (fileName.endsWith(".yml")) {
+                    try {
+                        player.load(f);
+                        index++;
+                        if (index % 1000 == 0) {
+                            plugin.getLogger().info("Processed " + index + " players");
+                        }
+                        if (!player.getBoolean("hasIsland") && !player.getBoolean("hasTeam")) {
+                            Path fileToMovePath = f.toPath();
+                            Files.move(fileToMovePath, targetPath.resolve(fileToMovePath.getFileName()));
+                        }
+                    } catch (Exception e) {
+                        plugin.getLogger().severe("Error when moving player file. File is " + fileName);
+                        plugin.getLogger().severe("Look at the stack trace and edit the file - it probably has broken YAML in it for some reason.");
+                        e.printStackTrace();
+                    }
+                }
+            }
+            plugin.getLogger().info("Processed " + index + " players for top ten");
+
+            plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
+                @Override
+                public void run() {
+                    if (sender != null) {
+                        Util.sendMessage(sender, ChatColor.GREEN + plugin.myLocale().generalSuccess);
+                    } else {
+                        plugin.getLogger().warning("Completed player purge.");
+                    }
+
+                }});
+        });
+        
     }
 
     /**
