@@ -943,6 +943,7 @@ public class PlayerEvents implements Listener {
             if(plugin.getPlayers().hasIsland(p.getUniqueId())) {
                 Location safePlace = plugin.getGrid().getSafeHomeLocation(p.getUniqueId(), 1);
                 if (safePlace != null) {
+                    unsetFalling(p.getUniqueId());
                     p.teleport(safePlace);
                     // Set their fall distance to zero otherwise they crash onto their island and die
                     p.setFallDistance(0);
