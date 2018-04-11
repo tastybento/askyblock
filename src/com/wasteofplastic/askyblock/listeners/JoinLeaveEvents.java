@@ -15,8 +15,6 @@
  *******************************************************************************/
 package com.wasteofplastic.askyblock.listeners;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
@@ -68,22 +66,7 @@ public class JoinLeaveEvents implements Listener {
             return;
         }
         // Check language permission
-        if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.lang")) {
-            if (DEBUG)
-                plugin.getLogger().info("DEBUG: checking language");
-            // Get language
-            String language = getLanguage(player);
-            // Check if we have this language
-            if (plugin.getResource("locale/" + language + ".yml") != null) {
-                if (DEBUG)
-                    plugin.getLogger().info("DEBUG:check if lang exists");
-                if (plugin.getPlayers().getLocale(playerUUID).isEmpty()) {
-                    if (DEBUG)
-                        plugin.getLogger().info("DEBUG: setting locale to " + language);
-                    plugin.getPlayers().setLocale(playerUUID, language);
-                }
-            }
-        } else {
+        if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.lang")) {
             // Default locale
             if (DEBUG)
                 plugin.getLogger().info("DEBUG: using default locale");
@@ -383,37 +366,6 @@ public class JoinLeaveEvents implements Listener {
         // plugin.setMessage(event.getPlayer().getUniqueId(),
         // "Hello! This is a test. You logged out");
         players.removeOnlinePlayer(event.getPlayer().getUniqueId());
-    }
-
-    /**
-     * Attempts to get the player's language
-     * @param p
-     * @return language or empty string
-     */
-    public String getLanguage(Player p){
-        Object ep;
-        try {
-            Method method = getMethod("getHandle", p.getClass());
-            if (method != null) {
-                ep = method.invoke(p, (Object[]) null);
-                Field f = ep.getClass().getDeclaredField("locale");
-                f.setAccessible(true);
-                String language = (String) f.get(ep);
-                language = language.replace('_', '-');
-                return language;
-            }
-        } catch (Exception e) {
-            //nothing
-        }
-        return "en-US";
-    }
-
-    private Method getMethod(String name, Class<?> clazz) {
-        for (Method m : clazz.getDeclaredMethods()) {
-            if (m.getName().equals(name))
-                return m;
-        }
-        return null;
     }
 
 }
