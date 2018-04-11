@@ -218,7 +218,6 @@ public class TopTen implements Listener, Requester {
         }
         try {
             config.save(topTenFile);
-            plugin.getLogger().info("Saved top ten list");
         } catch (Exception e) {
             plugin.getLogger().severe("Could not save top ten list!");
             e.printStackTrace();
