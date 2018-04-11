@@ -127,14 +127,15 @@ public class LevelCalcByChunk {
 
     @SuppressWarnings("deprecation")
     private void scanChunk(ChunkSnapshot chunk) {
+        
         for (int x = 0; x< 16; x++) { 
             // Check if the block coord is inside the protection zone and if not, don't count it
-            if (chunk.getX() * 16 + x < island.getMinProtectedX() || chunk.getX() * 16 + x >= island.getMinProtectedX() + (island.getProtectionSize() * 2)) {
+            if (chunk.getX() * 16 + x < island.getMinProtectedX() || chunk.getX() * 16 + x >= island.getMinProtectedX() + island.getProtectionSize()) {
                 continue;
             }
             for (int z = 0; z < 16; z++) {
                 // Check if the block coord is inside the protection zone and if not, don't count it
-                if (chunk.getZ() * 16 + z < island.getMinProtectedZ() || chunk.getZ() * 16 + z >= island.getMinProtectedZ() + (island.getProtectionSize() * 2)) {
+                if (chunk.getZ() * 16 + z < island.getMinProtectedZ() || chunk.getZ() * 16 + z >= island.getMinProtectedZ() + island.getProtectionSize()) {
                     continue;
                 }
 

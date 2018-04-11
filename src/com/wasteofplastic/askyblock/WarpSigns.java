@@ -52,7 +52,6 @@ import com.wasteofplastic.askyblock.util.VaultHelper;
  */
 public class WarpSigns implements Listener {
     private final ASkyBlock plugin;
-    private final static boolean DEBUG = false;
     // Map of all warps stored as player, warp sign Location
     private HashMap<UUID, Location> warpList = new HashMap<UUID, Location>();
     // Where warps are stored
@@ -299,11 +298,11 @@ public class WarpSigns implements Listener {
         if (warpList.containsKey(uuid)) {
             popSign(warpList.get(uuid));
             warpList.remove(uuid);
+            // Update warp signs
+            // Run one tick later because text gets updated at the end of tick
+            plugin.getWarpPanel().updatePanel();
         }
         saveWarpList();
-        // Update warp signs
-        // Run one tick later because text gets updated at the end of tick
-        plugin.getWarpPanel().updatePanel();
     }
 
     /**

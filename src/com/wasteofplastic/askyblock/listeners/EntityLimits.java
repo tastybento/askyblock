@@ -42,7 +42,7 @@ import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
 public class EntityLimits implements Listener {
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
     private static final boolean DEBUG2 = false;
     private static final boolean DEBUG3 = false;
     private ASkyBlock plugin;

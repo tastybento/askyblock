@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -75,9 +76,11 @@ public class Messages {
         plugin.getLogger().info("Saving offline messages...");
         try {
             // Convert to a serialized string
-            final HashMap<String, Object> offlineMessages = new HashMap<String, Object>();
+            Map<String, Object> offlineMessages = new HashMap<>();
             for (UUID p : messages.keySet()) {
-                offlineMessages.put(p.toString(), messages.get(p));
+                if (p != null) {
+                    offlineMessages.put(p.toString(), messages.get(p));
+                }
             }
             // Convert to YAML
             messageStore.set("messages", offlineMessages);

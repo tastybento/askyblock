@@ -24,7 +24,6 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -79,15 +78,6 @@ import com.wasteofplastic.askyblock.panels.SetBiome;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 import com.wasteofplastic.askyblock.util.teleport.SafeTeleportBuilder;
-
-/*
- * New commands:
- *
- * teamkick <player> - removes a player from any team they are on. Does not throw stuff or teleport them.
- * teamadd <player> <leader> - adds the player to the leader's team. If leader does not have a team, one is made.
- * teamdelete <leader> - removes the leader's team completely
- *
- */
 
 /**
  * This class handles admin commands
