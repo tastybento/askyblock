@@ -1,5 +1,7 @@
 package com.wasteofplastic.askyblock.events;
 
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -14,7 +16,30 @@ import org.bukkit.event.HandlerList;
 public class IslandPreTeleportEvent extends Event implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
-    private boolean cancelled;
+    private boolean cancelled = false;
+
+    private Player player;
+    private Type type;
+
+    private Location location;
+
+    public IslandPreTeleportEvent(Player player, Type type, Location location) {
+        this.player = player;
+        this.type = type;
+        this.location = location;
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public Location getLocation() {
+        return location;
+    }
 
     @Override
     public boolean isCancelled() {
@@ -33,6 +58,14 @@ public class IslandPreTeleportEvent extends Event implements Cancellable {
 
     public static HandlerList getHandlerList() {
         return handlers;
+    }
+
+    public enum Type {
+
+        HOME,
+        WARP,
+        SPAWN
+
     }
 
 }

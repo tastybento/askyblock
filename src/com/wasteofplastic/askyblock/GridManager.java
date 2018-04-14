@@ -29,6 +29,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
 
+import com.wasteofplastic.askyblock.events.IslandPreTeleportEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
@@ -1263,12 +1264,16 @@ public class GridManager {
         }
         //plugin.getLogger().info("DEBUG: home loc = " + home + " teleporting");
         //home.getChunk().load();
-        player.teleport(home);
-        //player.sendBlockChange(home, Material.GLOWSTONE, (byte)0);
-        if (number ==1 ) {
-            Util.sendMessage(player, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).islandteleport);
-        } else {
-            Util.sendMessage(player, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).islandteleport + " #" + number);
+        IslandPreTeleportEvent event = new IslandPreTeleportEvent(player, IslandPreTeleportEvent.Type.HOME, home);
+        Bukkit.getPluginManager().callEvent(event);
+        if (!event.isCancelled()) {
+            player.teleport(event.getLocation());
+            //player.sendBlockChange(home, Material.GLOWSTONE, (byte)0);
+            if (number ==1 ) {
+                Util.sendMessage(player, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).islandteleport);
+            } else {
+                Util.sendMessage(player, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).islandteleport + " #" + number);
+            }
         }
     }
 
