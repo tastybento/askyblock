@@ -43,7 +43,9 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
 import com.wasteofplastic.askyblock.util.HeadGetter.HeadInfo;
@@ -62,6 +64,17 @@ public class TopTen implements Listener, Requester {
     private Map<UUID, Long> topTenList = new ConcurrentHashMap<>();
     private final int GUISIZE = 27; // Must be a multiple of 9
     private final int[] SLOTS = new int[] {4, 12, 14, 19, 20, 21, 22, 23, 24, 25};
+    private final Material[] ICONS = new Material[] {
+            Material.DIAMOND_AXE,
+            Material.GOLD_AXE,
+            Material.IRON_AXE,
+            Material.DIAMOND_BLOCK,
+            Material.GOLD_BLOCK,
+            Material.IRON_BLOCK,
+            Material.DIAMOND_ORE,
+            Material.GOLD_ORE,
+            Material.IRON_ORE,
+            Material.REDSTONE_ORE};
     private final boolean DEBUG = false;
     // Store this as a static because it's the same for everyone and saves memory cleanup
     private Inventory gui;
@@ -101,18 +114,20 @@ public class TopTen implements Listener, Requester {
         }
         topTenList.put(ownerUUID, l);
         topTenList = topTenList.entrySet().stream().sorted(Collections.reverseOrder(Map.Entry.comparingByValue())).limit(10)
-        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
         // Add head to cache
-        if (topTenList.containsKey(ownerUUID) && !topTenHeads.containsKey(ownerUUID)) {
-            String name = plugin.getPlayers().getName(ownerUUID);
-            if (name != null && !name.isEmpty()) {
-                ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
-                SkullMeta meta = (SkullMeta) playerSkull.getItemMeta();
-                meta.setDisplayName(name);
-                playerSkull.setItemMeta(meta);
-                topTenHeads.put(ownerUUID, playerSkull);
-                // Get skull async
-                plugin.getHeadGetter().getHead(ownerUUID, this);
+        if (Settings.warpHeads) {
+            if (topTenList.containsKey(ownerUUID) && !topTenHeads.containsKey(ownerUUID)) {
+                String name = plugin.getPlayers().getName(ownerUUID);
+                if (name != null && !name.isEmpty()) {
+                    ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
+                    SkullMeta meta = (SkullMeta) playerSkull.getItemMeta();
+                    meta.setDisplayName(name);
+                    playerSkull.setItemMeta(meta);
+                    topTenHeads.put(ownerUUID, playerSkull);
+                    // Get skull async
+                    plugin.getHeadGetter().getHead(ownerUUID, this);
+                }
             }
         } 
     }
@@ -351,7 +366,7 @@ public class TopTen implements Listener, Requester {
 
                 }
                 if (show) {
-                    gui.setItem(SLOTS[i-1], getSkull(i, m.getValue(), playerUUID));
+                    gui.setItem(SLOTS[i-1], getTrophy(i, m.getValue(), playerUUID));
                     if (i++ == 10) break;
                 }
             }
@@ -362,7 +377,7 @@ public class TopTen implements Listener, Requester {
     }
 
 
-    ItemStack getSkull(int rank, Long long1, UUID player){
+    ItemStack getTrophy(int rank, Long long1, UUID player){
         if (DEBUG)
             plugin.getLogger().info("DEBUG: Getting the skull");
         String playerName = plugin.getPlayers().getName(player);
@@ -371,12 +386,18 @@ public class TopTen implements Listener, Requester {
 
             plugin.getLogger().info("DEBUG: second chance = " + plugin.getPlayers().getName(player));
         }
-        ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
+        ItemStack trophy = new ItemStack(ICONS[rank - 1]);
+        if (Settings.warpHeads) {
+            trophy = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
+        }
         if (playerName == null) return null;
-        SkullMeta meta = (SkullMeta) playerSkull.getItemMeta();
-        if (topTenHeads.containsKey(player)) {
-            playerSkull = topTenHeads.get(player);
-            meta = (SkullMeta) playerSkull.getItemMeta();
+        ItemMeta meta = trophy.getItemMeta();
+        if (Settings.warpHeads && topTenHeads.containsKey(player)) {
+            trophy = topTenHeads.get(player);
+            meta = (SkullMeta) trophy.getItemMeta();
+        }
+        if (!Bukkit.getServer().getVersion().contains("1.7") && !Bukkit.getServer().getVersion().contains("1.8")) {
+            meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         }
         meta.setDisplayName((plugin.myLocale(player).topTenGuiHeading.replace("[name]", plugin.getGrid().getIslandName(player))).replace("[rank]", String.valueOf(rank)));
         //meta.setDisplayName(ChatColor.YELLOW + "" + ChatColor.BOLD + "<!> " + ChatColor.YELLOW + "Island: " + ChatColor.GOLD + ChatColor.UNDERLINE + plugin.getGrid().getIslandName(player) + ChatColor.GRAY + " (#" + rank + ")");
@@ -393,8 +414,8 @@ public class TopTen implements Listener, Requester {
         }
 
         meta.setLore(lore);
-        playerSkull.setItemMeta(meta);
-        return playerSkull;
+        trophy.setItemMeta(meta);
+        return trophy;
     }
 
     void remove(UUID owner) {
@@ -415,12 +436,11 @@ public class TopTen implements Listener, Requester {
         }
         event.setCancelled(true);
         player.updateInventory();
-        if(event.getCurrentItem() != null && event.getCurrentItem().getType().equals(Material.SKULL_ITEM) && event.getCurrentItem().hasItemMeta()){
-            if (((SkullMeta)event.getCurrentItem().getItemMeta()).hasOwner()) {
-                Util.runCommand(player, "is warp " + ((SkullMeta)event.getCurrentItem().getItemMeta()).getOwner());
-                player.closeInventory();
-            }
-            return;
+        if(event.getCurrentItem() != null) {
+            event.getCurrentItem().setType(Material.AIR);
+            player.closeInventory();
+            Util.runCommand(player, "is warp " + getPlayer(event.getSlot()));
+
         }
         if (event.getSlotType().equals(SlotType.OUTSIDE)) {
             player.closeInventory();
@@ -430,6 +450,23 @@ public class TopTen implements Listener, Requester {
             player.closeInventory();
             return;
         }
+    }
+
+    private String getPlayer(int slot) {
+        String result = "";
+        int i = 0;
+        while (i < 11 && slot != SLOTS[i]) {
+            i++;
+        }
+        if (i < 10) {
+            Iterator<UUID> it = topTenList.keySet().iterator();
+            while (i > 0 && it.hasNext()) {
+                it.next();
+                i--;
+            }
+            result = plugin.getPlayers().getName(it.next());
+        }
+        return result;
     }
 
     /**

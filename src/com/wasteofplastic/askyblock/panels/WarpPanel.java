@@ -72,13 +72,22 @@ public class WarpPanel implements Listener, Requester {
                 if (DEBUG)
                     plugin.getLogger().warning("Warp for Player: UUID " + playerUUID.toString() + " is unknown on this server, skipping...");
             } else {
-                ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
-                SkullMeta meta = (SkullMeta) playerSkull.getItemMeta();
-                meta.setDisplayName(playerName);
-                playerSkull.setItemMeta(meta);
-                cachedWarps.put(playerUUID, playerSkull);
-                // Get the player head async
-                addName(playerUUID, playerName);
+                if (Settings.warpHeads) {
+                    ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
+                    SkullMeta meta = (SkullMeta) playerSkull.getItemMeta();
+                    meta.setDisplayName(playerName);
+                    playerSkull.setItemMeta(meta);
+                    cachedWarps.put(playerUUID, playerSkull);
+                    // Get the player head async
+                    addName(playerUUID, playerName);
+                } else {
+                    ItemStack playerSign = new ItemStack(Material.SIGN);
+                    ItemMeta meta = playerSign.getItemMeta();
+                    meta.setDisplayName(playerName);
+                    playerSign.setItemMeta(meta);
+                    updateText(playerSign, playerUUID);
+                    cachedWarps.put(playerUUID, playerSign);
+                }
             }
         }
         updatePanel();
@@ -115,7 +124,7 @@ public class WarpPanel implements Listener, Requester {
         }
         updatePanel();
     }
-    
+
     /**
      * Adds a new warp
      * @param playerUUID - the player's UUID
@@ -140,32 +149,42 @@ public class WarpPanel implements Listener, Requester {
         if (playerName == null || playerName.isEmpty()) {
             return;
         }
-        ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
-        SkullMeta meta = (SkullMeta) playerSkull.getItemMeta();
-        meta.setDisplayName(playerName);
-        playerSkull.setItemMeta(meta);
-        cachedWarps.put(playerUUID, playerSkull);
-        updatePanel();
-        // Get the player head async
-        addName(playerUUID, playerName);
+        if (Settings.warpHeads) {
+            ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
+            SkullMeta meta = (SkullMeta) playerSkull.getItemMeta();
+            meta.setDisplayName(playerName);
+            playerSkull.setItemMeta(meta);
+            cachedWarps.put(playerUUID, playerSkull);
+            updatePanel();
+            // Get the player head async
+            addName(playerUUID, playerName);
+        } else {
+            ItemStack playerSign = new ItemStack(Material.SIGN);
+            ItemMeta meta = playerSign.getItemMeta();
+            meta.setDisplayName(playerName);
+            playerSign.setItemMeta(meta);
+            updateText(playerSign,playerUUID);
+            cachedWarps.put(playerUUID, playerSign);
+            updatePanel();
+        }
     }
 
     /**
-     * Updates the meta text on the skull by looking at the warp sign
+     * Updates the meta text on the warp sign icon by looking at the warp sign
      * This MUST be run 1 TICK AFTER the sign has been created otherwise the sign is blank
-     * @param playerSkull
+     * @param playerSign
      * @param playerUUID - the player's UUID
      * @return updated skull item stack
      */
-    private ItemStack updateText(ItemStack playerSkull, final UUID playerUUID) {
+    private ItemStack updateText(ItemStack playerSign, final UUID playerUUID) {
         if (DEBUG)
             plugin.getLogger().info("DEBUG: Updating text on item");
-        ItemMeta meta = playerSkull.getItemMeta();
+        ItemMeta meta = playerSign.getItemMeta();
         //get the sign info
         Location signLocation = plugin.getWarpSignsListener().getWarp(playerUUID);
         if (signLocation == null) {
             plugin.getWarpSignsListener().removeWarp(playerUUID);
-            return playerSkull;
+            return playerSign;
         }            
         //plugin.getLogger().info("DEBUG: block type = " + signLocation.getBlock().getType());
         // Get the sign info if it exists
@@ -189,8 +208,8 @@ public class WarpPanel implements Listener, Requester {
             // No sign there - remove the warp
             plugin.getWarpSignsListener().removeWarp(playerUUID);
         }
-        playerSkull.setItemMeta(meta);
-        return playerSkull;
+        playerSign.setItemMeta(meta);
+        return playerSign;
     }
 
     /**
