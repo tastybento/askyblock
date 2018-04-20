@@ -436,11 +436,14 @@ public class TopTen implements Listener, Requester {
         }
         event.setCancelled(true);
         player.updateInventory();
-        if(event.getCurrentItem() != null) {
+        if(event.getCurrentItem() != null && !event.getCurrentItem().getType().equals(Material.AIR) && event.getRawSlot() < 26) {
             event.getCurrentItem().setType(Material.AIR);
             player.closeInventory();
-            Util.runCommand(player, "is warp " + getPlayer(event.getSlot()));
-
+            String playerName = getPlayer(event.getRawSlot());
+            UUID uuid = plugin.getPlayers().getUUID(playerName);
+            if (uuid != null && plugin.getWarpSignsListener().getWarp(uuid) != null) {
+                Util.runCommand(player, "is warp " + playerName);
+            }
         }
         if (event.getSlotType().equals(SlotType.OUTSIDE)) {
             player.closeInventory();
@@ -452,20 +455,32 @@ public class TopTen implements Listener, Requester {
         }
     }
 
+    /**
+     * Get the name of the player from the slot clicked in the inventory
+     * @param slot - slot clicked
+     * @return name of player or empty if not found
+     */
     private String getPlayer(int slot) {
         String result = "";
+        // Find the rank that was clicked based on the slot position
         int i = 0;
-        while (i < 11 && slot != SLOTS[i]) {
+        while (i < SLOTS.length && slot != SLOTS[i]) {
             i++;
         }
-        if (i < 10) {
+        // Was the rank found?
+        if (i < SLOTS.length && slot == SLOTS[i]) {
+            // Iterate through the topTenList keys for the number of ranks (i)
             Iterator<UUID> it = topTenList.keySet().iterator();
             while (i > 0 && it.hasNext()) {
                 it.next();
                 i--;
             }
-            result = plugin.getPlayers().getName(it.next());
+            // Request the name
+            if (it.hasNext()) {
+                result = plugin.getPlayers().getName(it.next());
+            }
         }
+        // Return the result
         return result;
     }
 
