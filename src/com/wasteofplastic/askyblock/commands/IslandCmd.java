@@ -33,6 +33,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
 
+import com.wasteofplastic.askyblock.events.*;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
@@ -74,10 +75,6 @@ import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.Island.SettingsFlag;
 import com.wasteofplastic.askyblock.LevelCalcByChunk;
 import com.wasteofplastic.askyblock.Settings;
-import com.wasteofplastic.askyblock.events.IslandJoinEvent;
-import com.wasteofplastic.askyblock.events.IslandLeaveEvent;
-import com.wasteofplastic.askyblock.events.IslandNewEvent;
-import com.wasteofplastic.askyblock.events.IslandResetEvent;
 import com.wasteofplastic.askyblock.listeners.PlayerEvents;
 import com.wasteofplastic.askyblock.panels.ControlPanel;
 import com.wasteofplastic.askyblock.schematics.Schematic;
@@ -1759,7 +1756,13 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                     if (spawn != null && spawn.getSpawnPoint() != null) {
                         l = spawn.getSpawnPoint();
                     }	
-                    player.teleport(l);
+
+                    IslandPreTeleportEvent event = new IslandPreTeleportEvent(player, IslandPreTeleportEvent.Type.SPAWN, l);
+                    Bukkit.getPluginManager().callEvent(event);
+                    if (!event.isCancelled()) {
+                        player.teleport(event.getLocation());
+                    }
+
                 } else {
                     Util.sendMessage(player, ChatColor.RED + plugin.myLocale(playerUUID).errorNoPermission);  
                 }
@@ -3194,24 +3197,28 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
         float yaw = Util.blockFaceToFloat(directionFacing);
         final Location actualWarp = new Location(inFront.getWorld(), inFront.getBlockX() + 0.5D, inFront.getBlockY(),
                 inFront.getBlockZ() + 0.5D, yaw, 30F);
-        player.teleport(actualWarp);
-        if (pvp) {
-            Util.sendMessage(player, ChatColor.BOLD + "" + ChatColor.RED + plugin.myLocale(player.getUniqueId()).igs.get(SettingsFlag.PVP) + " " + plugin.myLocale(player.getUniqueId()).igsAllowed);
-            if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
-                player.getWorld().playSound(player.getLocation(), Sound.valueOf("ARROW_HIT"), 1F, 1F);
+        IslandPreTeleportEvent event = new IslandPreTeleportEvent(player, IslandPreTeleportEvent.Type.WARP, actualWarp);
+        Bukkit.getPluginManager().callEvent(event);
+        if (!event.isCancelled()) {
+            player.teleport(event.getLocation());
+            if (pvp) {
+                Util.sendMessage(player, ChatColor.BOLD + "" + ChatColor.RED + plugin.myLocale(player.getUniqueId()).igs.get(SettingsFlag.PVP) + " " + plugin.myLocale(player.getUniqueId()).igsAllowed);
+                if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
+                    player.getWorld().playSound(player.getLocation(), Sound.valueOf("ARROW_HIT"), 1F, 1F);
+                } else {
+                    player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ARROW_HIT, 1F, 1F);
+                }
             } else {
-                player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ARROW_HIT, 1F, 1F);
+                if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
+                    player.getWorld().playSound(player.getLocation(), Sound.valueOf("BAT_TAKEOFF"), 1F, 1F);
+                } else {
+                    player.getWorld().playSound(player.getLocation(), Sound.ENTITY_BAT_TAKEOFF, 1F, 1F);
+                }
             }
-        } else {
-            if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
-                player.getWorld().playSound(player.getLocation(), Sound.valueOf("BAT_TAKEOFF"), 1F, 1F);
-            } else {
-                player.getWorld().playSound(player.getLocation(), Sound.ENTITY_BAT_TAKEOFF, 1F, 1F);
+            Player warpOwner = plugin.getServer().getPlayer(foundWarp);
+            if (warpOwner != null && !warpOwner.equals(player)) {
+                Util.sendMessage(warpOwner, plugin.myLocale(foundWarp).warpsPlayerWarped.replace("[name]", player.getName()));
             }
-        }
-        Player warpOwner = plugin.getServer().getPlayer(foundWarp);
-        if (warpOwner != null && !warpOwner.equals(player)) {
-            Util.sendMessage(warpOwner, plugin.myLocale(foundWarp).warpsPlayerWarped.replace("[name]", player.getName()));
         }
     }
 
