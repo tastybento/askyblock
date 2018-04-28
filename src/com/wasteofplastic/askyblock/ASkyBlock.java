@@ -132,7 +132,7 @@ public class ASkyBlock extends JavaPlugin {
 
     // Player events listener
     private PlayerEvents playerEvents;
-    
+
     // Metrics
     private Metrics metrics;
 
@@ -142,7 +142,7 @@ public class ASkyBlock extends JavaPlugin {
     // Head getter
     private HeadGetter headGetter;
     private EntityLimits entityLimits;
-    
+
     /**
      * Returns the World object for the island world named in config.yml.
      * If the world does not exist then it is created.
@@ -165,30 +165,12 @@ public class ASkyBlock extends JavaPlugin {
                 getNetherWorld();
             }
             // Multiverse configuration
-
             if (!Settings.useOwnGenerator && Bukkit.getServer().getPluginManager().isPluginEnabled("Multiverse-Core")) {
-                Bukkit.getLogger().info("Trying to register generator with Multiverse ");
-                try {
-                    Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
-                            "mv import " + Settings.worldName + " normal -g " + plugin.getName());
-                    if (!Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
-                            "mv modify set generator " + plugin.getName() + " " + Settings.worldName)) {
-                        Bukkit.getLogger().severe("Multiverse is out of date! - Upgrade to latest version!");
-                    }
-                    if (Settings.createNether) {
-                        if (Settings.newNether) {
-                            Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
-                                    "mv import " + Settings.worldName + "_nether nether -g " + plugin.getName());
-                            Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
-                                    "mv modify set generator " + plugin.getName() + " " + Settings.worldName + "_nether");
-                        } else {
-                            Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv import " + Settings.worldName + "_nether nether");
-                        }
-                    }
-                } catch (Exception e) {
-                    Bukkit.getLogger().severe("Not successfull! Disabling " + plugin.getName() + "!");
-                    e.printStackTrace();
-                    Bukkit.getServer().getPluginManager().disablePlugin(plugin);
+                // Run sync
+                if (!Bukkit.isPrimaryThread()) {
+                    Bukkit.getScheduler().runTask(plugin, () -> registerMultiverse());
+                } else {
+                    registerMultiverse();
                 }
             }
 
@@ -201,6 +183,35 @@ public class ASkyBlock extends JavaPlugin {
         }
 
         return islandWorld;
+    }
+
+    private static void registerMultiverse() {
+        Bukkit.getLogger().info("Trying to register generator with Multiverse ");
+        try {
+            Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
+                    "mv import " + Settings.worldName + " normal -g " + plugin.getName());
+            if (!Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
+                    "mv modify set generator " + plugin.getName() + " " + Settings.worldName)) {
+                Bukkit.getLogger().severe("Multiverse is out of date! - Upgrade to latest version!");
+            }
+
+            if (Settings.createNether) {
+                if (Settings.newNether) {
+
+                    Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
+
+                            "mv import " + Settings.worldName + "_nether nether -g " + plugin.getName());
+                    Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
+                            "mv modify set generator " + plugin.getName() + " " + Settings.worldName + "_nether");
+
+                } else {
+                    Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv import " + Settings.worldName + "_nether nether");
+                }
+            }
+        } catch (Exception e) {
+            Bukkit.getLogger().severe("Not successfull! Disabling " + plugin.getName() + "!");
+            Bukkit.getServer().getPluginManager().disablePlugin(plugin);
+        }
     }
 
     /**
@@ -252,7 +263,7 @@ public class ASkyBlock extends JavaPlugin {
             getLogger().severe("Something went wrong saving files!");
             e.printStackTrace();
         }
-        
+
         metrics = null;
     }
 
@@ -379,7 +390,7 @@ public class ASkyBlock extends JavaPlugin {
         }
         // Metrics
         metrics = new Metrics(this);
-        
+
         // Kick off a few tasks on the next tick
         // By calling getIslandWorld(), if there is no island
         // world, it will be created
@@ -411,7 +422,7 @@ public class ASkyBlock extends JavaPlugin {
                     HandlerList.unregisterAll(ASkyBlock.this);
                     return;
                 }
-                
+
                 // Run game rule to keep things quiet
                 if (Settings.silenceCommandFeedback){
                     try {
@@ -420,7 +431,7 @@ public class ASkyBlock extends JavaPlugin {
                         getLogger().info("If you do not want this, do /gamerule sendCommandFeedback true");
                     } catch (Exception e) {} // do nothing
                 }
-                
+
                 // Run these one tick later to ensure worlds are loaded.
                 getServer().getScheduler().runTask(ASkyBlock.this, new Runnable() {
                     @Override
@@ -478,12 +489,12 @@ public class ASkyBlock extends JavaPlugin {
                         }
                         // Give temp permissions
                         playerEvents.giveAllTempPerms();
-                                                
+
                         getLogger().info("All files loaded. Ready to play...");
-                        
+
                         registerCustomCharts();
                         getLogger().info("Metrics loaded.");
-                        
+
                         // Fire event
                         getServer().getPluginManager().callEvent(new ReadyEvent());
                     }
@@ -961,7 +972,7 @@ public class ASkyBlock extends JavaPlugin {
     public PlayerEvents getPlayerEvents() {
         return playerEvents;
     }
-    
+
     /**
      * Registers the custom charts for Metrics
      */
@@ -969,7 +980,7 @@ public class ASkyBlock extends JavaPlugin {
         metrics.addCustomChart(new Metrics.SimplePie("challenges_count", new Callable<String>() {
             @Override
             public String call() throws Exception {
-                
+
                 int count = challenges.getAllChallenges().size();
                 if(count <= 0) return "0";
                 else if(count >= 1 && count <= 10) return "1-10";
@@ -985,7 +996,7 @@ public class ASkyBlock extends JavaPlugin {
                 else return "300+";
             }
         }));
-        
+
         metrics.addCustomChart(new Metrics.SingleLineChart("islands_count", new Callable<Integer>() {
             @Override
             public Integer call() throws Exception {
