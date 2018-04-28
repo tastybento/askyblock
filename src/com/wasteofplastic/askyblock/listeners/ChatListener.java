@@ -89,9 +89,9 @@ public class ChatListener implements Listener {
         LEVELS = new TreeMap<>();
 
         LEVELS.put(THOUSAND, "k");
-        LEVELS.put(THOUSAND.pow(1), "M");
-        LEVELS.put(THOUSAND.pow(2), "G");
-        LEVELS.put(THOUSAND.pow(3), "T");
+        LEVELS.put(THOUSAND.pow(2), "M");
+        LEVELS.put(THOUSAND.pow(3), "G");
+        LEVELS.put(THOUSAND.pow(4), "T");
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
