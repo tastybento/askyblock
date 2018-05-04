@@ -28,6 +28,7 @@ import java.util.UUID;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
@@ -121,7 +122,7 @@ public class PlayerCache {
      * Removes all players on the server now from cache and saves their info
      */
     public void removeAllPlayers() {
-        Map<UUID, Players> map = Collections.unmodifiableMap(playerCache);
+        Map<UUID, Players> map = ImmutableMap.copyOf(playerCache);
         for (UUID pl : map.keySet()) {
             map.get(pl).save();
         }
