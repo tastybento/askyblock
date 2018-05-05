@@ -115,6 +115,10 @@ adminSetSpawn:
   range: "Alcance de proteção = [number]"
   set: "Defina a sua posição como sendo o spawn"
   setting: "Definindo a sua posição como sendo o spawn: [location]"
+adminSwitch:
+  op: "Ops can always bypass protection. Deop to use command."
+  adding: "Adding protection bypass..."
+  removing: "Removing protection bypass..."
 adminTeam: 
   addLeaderNoIsland: "O líder não possui sua própria ilha, portanto não pode ter uma equipe!"
   addLeaderToOwn: "O líder não pode ser adicionado à sua própria equipe."

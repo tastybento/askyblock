@@ -97,6 +97,10 @@ adminSetSpawn:
   range: "Phạm vi bảo vệ = [number]"
   set: "Đặt đảo spawn vị trí của bạn."
   settings: "Thiết đảo spawn vị trí của bạn [location]"
+adminSwitch:
+  op: "Ops can always bypass protection. Deop to use command."
+  adding: "Adding protection bypass..."
+  removing: "Removing protection bypass..."
 adminTeam:
   addLeaderNoIsland: "Đội trưởng không có hòn đảo riêng của họ vì vậy không thể có một đội ngũ!"
   addLeaderToOwn: "Không thể thêm một nhà lãnh đạo đội bóng của riêng mình."

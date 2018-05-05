@@ -94,6 +94,10 @@ adminSetSpawn:
   range: "Beskyttelsesrækkevidde = [number]"
   set: "Sæt Ø-spawn til din nuværende position."
   setting: "Sætter Ø-spawn til din nuværende position [location]"
+adminSwitch:
+  op: "Ops can always bypass protection. Deop to use command."
+  adding: "Adding protection bypass..."
+  removing: "Removing protection bypass..."
 adminTeam: 
   addLeaderNoIsland: "Holdleder har ikke sin egen Ø, så han kan ikke have et hold!"
   addLeaderToOwn: "Kan ikke tilføje lederen til sit eget hold."

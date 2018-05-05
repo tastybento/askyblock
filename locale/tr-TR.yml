@@ -115,6 +115,10 @@ adminSetSpawn:
   range: "Koruma menzili = [number]"
   set: "Adanın spawnını bulunduğun yer olarak ayarla."
   setting: "Ada spawnını bulunduğun yer olan [location] olarak ayarla."
+adminSwitch:
+  op: "Ops can always bypass protection. Deop to use command."
+  adding: "Adding protection bypass..."
+  removing: "Removing protection bypass..."
 adminTeam: 
   addLeaderNoIsland: "Takım liderinin kendi adası yok bu yüzden bir takım kuramaz!"
   addLeaderToOwn: "Lider eklenemedi."

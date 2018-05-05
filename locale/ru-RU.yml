@@ -115,6 +115,10 @@ adminSetSpawn:
   range: "Защищенный диапазон = [number]"
   set: "Установить спавн на острове в Ваше местоположение."
   setting: "Установка спавна в Ваше местоположение [location]"
+adminSwitch:
+  op: "Ops can always bypass protection. Deop to use command."
+  adding: "Adding protection bypass..."
+  removing: "Removing protection bypass..."
 adminTeam: 
   addLeaderNoIsland: "У главы команды нет своего острова поэтому он не может иметь команду!"
   addLeaderToOwn: "Нельзя добавить лидера в его команду."

@@ -115,6 +115,10 @@ adminSetSpawn:
   range: "보호 범위 = [number]"
   set: "현위치를 섬 스폰지역으로 설정했습니다."
   setting: "섬 스폰지역을 현위치 [location] (으)로 설정했습니다."
+adminSwitch:
+  op: "Ops can always bypass protection. Deop to use command."
+  adding: "Adding protection bypass..."
+  removing: "Removing protection bypass..."
 adminTeam: 
   addLeaderNoIsland: "팀 리더는 그의 섬을 가질 수 없으므로 팀 또한 가질 수 없습니다!"
   addLeaderToOwn: "리더를 그의 팀에 추가할 수 없습니다."

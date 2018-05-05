@@ -115,6 +115,10 @@ adminSetSpawn:
   range: "Védelmi tartomány = [number]"
   set: "Állítsa be a szigetet az Ön helyére."
   setting: "A sziget szigetelése az Ön helyére [location]"
+adminSwitch:
+  op: "Ops can always bypass protection. Deop to use command."
+  adding: "Adding protection bypass..."
+  removing: "Removing protection bypass..."
 adminTeam: 
   addLeaderNoIsland: "A csapatvezetőnek nincs saját szigetük, így nem lehet csapata!"
   addLeaderToOwn: "Nem adhat hozzá egy vezetőt a saját csapatához."

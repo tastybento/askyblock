@@ -238,6 +238,9 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
             if (Settings.teamChat && VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.spy") || player.isOp()) {
                 helpMessages.add(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " spy:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpTeamChatSpy);
             }
+            if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.switch") && !player.isOp()) {
+                helpMessages.add(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " switch:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpSwitch);
+            }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.team") || player.isOp()) {
                 helpMessages.add(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " team kick <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpkick);
                 helpMessages.add(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " team add <player> <leader>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpadd);
@@ -348,6 +351,36 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
             help(sender, label);
             return true;
         case 1:
+            if (split[0].equalsIgnoreCase("switch")) {
+                if (!(sender instanceof Player)) {
+                    Util.sendMessage(sender, ChatColor.RED + plugin.myLocale().errorUseInGame);
+                    return true;
+                }
+                player = (Player) sender;
+                if (player.isOp()) {
+                    Util.sendMessage(sender, ChatColor.RED + plugin.myLocale(player.getUniqueId()).adminSwitchOp);
+                    return true;
+                }
+                if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.switch")) {
+                    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.bypassprotect")) {
+                        Util.sendMessage(sender, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).adminSwitchRemoving);
+                        //Util.sendMessage(sender, "Removing protection bypass");
+                        VaultHelper.addPerm(player, "-" + Settings.PERMPREFIX + "mod.bypassprotect");
+                        VaultHelper.removePerm(player, Settings.PERMPREFIX + "mod.bypassprotect");
+                        if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.bypassprotect")) {
+                            Util.sendMessage(sender, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).generalSuccess);
+                        }
+                    } else {
+                        Util.sendMessage(sender, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).adminSwitchAdding);
+                        VaultHelper.addPerm(player, Settings.PERMPREFIX + "mod.bypassprotect");
+                        VaultHelper.removePerm(player, "-" + Settings.PERMPREFIX + "mod.bypassprotect");
+                        if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.bypassprotect")) {
+                            Util.sendMessage(sender, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).generalSuccess);
+                        }
+                    }
+                }
+                return true;
+            }
             if (split[0].equalsIgnoreCase("setlanguage")) {
                 Util.sendMessage(sender, plugin.myLocale().helpColor + plugin.myLocale().adminHelpsetLanguage);                
                 return true;
@@ -1355,7 +1388,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                     countUnowned(sender);
                     return true;
                 }
-                
+
                 if (split[1].equalsIgnoreCase("players")) {
                     purgePlayers(sender);
                     return true;
@@ -2132,7 +2165,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 
     private void purgePlayers(CommandSender sender) {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-         // This map is a list of owner and island level
+            // This map is a list of owner and island level
             YamlConfiguration player = new YamlConfiguration();
             File oldPlayers = new File(plugin.getPlayersFolder(), "oldplayers");
             if (!oldPlayers.exists()) {
@@ -2174,7 +2207,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 
                 }});
         });
-        
+
     }
 
     /**
@@ -2776,6 +2809,9 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 }
                 if (Settings.teamChat && VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.spy") || player.isOp()) {
                     options.add("spy");
+                }
+                if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.switch")) {
+                    options.add("switch");
                 }
                 break;
             case 2:

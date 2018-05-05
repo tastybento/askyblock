@@ -115,6 +115,10 @@ adminSetSpawn:
   range: "保护区域大小 = [number]"
   set: "设定岛屿出生点到你的位置."
   setting: "设定岛屿出生点到你的位置 [location]."
+adminSwitch:
+  op: "Ops can always bypass protection. Deop to use command."
+  adding: "Adding protection bypass..."
+  removing: "Removing protection bypass..."
 adminTeam: 
   addLeaderNoIsland: "团队领袖没有自己的岛屿所以不能拥有队员!"
   addLeaderToOwn: "无法让领袖再次加入同一团队."

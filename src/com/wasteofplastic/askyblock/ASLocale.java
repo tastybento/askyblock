@@ -673,6 +673,12 @@ public class ASLocale {
     public String coopHasInvited;
 
 
+    public String adminHelpSwitch;
+    public String adminSwitchOp;
+    public String adminSwitchRemoving;
+    public String adminSwitchAdding;
+
+
     /**
      * Creates a locale object full of localized strings for a language
      * @param plugin - ASkyBlock plugin object - ASkyBlock plugin
@@ -1197,13 +1203,14 @@ public class ASLocale {
                 .translateAlternateColorCodes('&', locale.getString("adminHelp.add", "adds player to leader's team"));
         adminHelpcobbleStats = ChatColor
                 .translateAlternateColorCodes('&', locale.getString("adminHelp.cobblestats", "displays magic cobble generation stats"));
-
+        adminHelpSwitch = ChatColor
+                .translateAlternateColorCodes('&', locale.getString("adminHelp.switch", "toggles protection bypass"));
         settingsResetInProgress = ChatColor
                 .translateAlternateColorCodes('&', locale.getString("settingsReset.inprogress", "Protection settings being reset, please wait..."));
         settingsResetDone = ChatColor
                 .translateAlternateColorCodes('&', locale.getString("settingsReset.done", "Done."));
         adminHelpSettingsReset = ChatColor
-                .translateAlternateColorCodes('&', locale.getString("adminHelp.settingsreset", "Resets all islands to default protection settings"));
+                .translateAlternateColorCodes('&', locale.getString("adminHelp.settingsreset", "resets all islands to default protection settings"));
         adminHelplevel = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("adminHelp.level", "provide detailed island level report on player."));
         adminHelpinfoIsland = ChatColor.translateAlternateColorCodes('&',
@@ -1459,6 +1466,12 @@ public class ASLocale {
         
         needRelog = ChatColor.translateAlternateColorCodes('&', locale.getString("needRelog", "You need to relog in order to see the changes."));
         visitorsProtected = ChatColor.translateAlternateColorCodes('&', locale.getString("visitors.protected", "Visitors protected"));
+        
+        adminSwitchOp = ChatColor.translateAlternateColorCodes('&', locale.getString("adminSwitch.op", "Ops can always bypass protection. Deop to use command."));
+        adminSwitchAdding = ChatColor.translateAlternateColorCodes('&', locale.getString("adminSwitch.adding", "Adding protection bypass..."));
+        adminSwitchRemoving = ChatColor.translateAlternateColorCodes('&', locale.getString("adminSwitch.removing", "Removing protection bypass..."));
+        
+
     }
 
     /**

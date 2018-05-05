@@ -353,6 +353,9 @@ permissions:
           askyblock.mod.setdeaths:
             description: Sets how many deaths the player has
             default: false
+          askyblock.mod.switch:
+            description: Allows mod to switch on/off bypass protection
+            default: false
       askyblock.admin.*:
         children:
           askyblock.admin.clearresetall:

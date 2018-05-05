@@ -115,6 +115,10 @@ adminSetSpawn:
   range: "Beveiliging bereik = [number]"
   set: "Zet de eiland spawn naar jouw locatie."
   setting: "Eiland spawn naar jouw locatie gezet: [location]"
+adminSwitch:
+  op: "Ops can always bypass protection. Deop to use command."
+  adding: "Adding protection bypass..."
+  removing: "Removing protection bypass..."
 adminTeam: 
   addLeaderNoIsland: "Team leider heeft geen eigen eiland dus kan geen team hebben!"
   addLeaderToOwn: "Kan geen leider toevoegen aan zijn eigen team."
