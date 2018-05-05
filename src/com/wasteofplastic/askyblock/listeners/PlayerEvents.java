@@ -616,11 +616,7 @@ public class PlayerEvents implements Listener {
         if (DEBUG)
             plugin.getLogger().info("DEBUG: getting islands for to from");
         Island islandFrom = plugin.getGrid().getProtectedIslandAt(e.getFrom());
-        if (DEBUG && islandFrom != null)
-            plugin.getLogger().info("DEBUG: islandFrom is not null");
         Island islandTo = plugin.getGrid().getProtectedIslandAt(e.getTo());
-        if (DEBUG && islandTo != null)
-            plugin.getLogger().info("DEBUG: islandTo is not null");
 
         // Ender pearl and chorus fruit teleport checks
         if (e.getCause() != null) {
@@ -939,7 +935,7 @@ public class PlayerEvents implements Listener {
 
         if (Settings.visitorDamagePrevention.contains(e.getCause())) e.setCancelled(true);
 
-        else if(e.getCause().equals(DamageCause.VOID)) {
+        if(e.getCause().equals(DamageCause.VOID)) {
             if(plugin.getPlayers().hasIsland(p.getUniqueId())) {
                 Location safePlace = plugin.getGrid().getSafeHomeLocation(p.getUniqueId(), 1);
                 if (safePlace != null) {
