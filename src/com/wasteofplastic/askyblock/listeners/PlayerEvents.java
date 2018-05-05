@@ -931,7 +931,7 @@ public class PlayerEvents implements Listener {
         // Entity attacks are handled elsewhere
         if (e.getCause().equals(DamageCause.ENTITY_ATTACK)) return;
         Player p = (Player) e.getEntity();
-        if (!IslandGuard.inWorld(p) || plugin.getGrid().locationIsOnIsland(p, p.getLocation())) return;
+        if (!IslandGuard.inWorld(p) || plugin.getGrid().inIslandSpace(p)) return;
 
         if (Settings.visitorDamagePrevention.contains(e.getCause())) e.setCancelled(true);
 

@@ -1309,6 +1309,24 @@ public class GridManager {
     public void homeSet(final Player player) {
         homeSet(player, 1);
     }
+    
+    /**
+     * Checks if a player is in their full island space
+     * @param player
+     * @return true if they are anywhere inside their island space (not just protected area)
+     */
+    public boolean inIslandSpace(Player player) {
+        if (player == null) {
+            return false;
+        }
+        Island island = getIslandAt(player.getLocation());
+        if (island != null) {
+            if (island.inIslandSpace(player.getLocation()) && island.getMembers().contains(player.getUniqueId())) { 
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * Checks if a specific location is within the protected range of an island
