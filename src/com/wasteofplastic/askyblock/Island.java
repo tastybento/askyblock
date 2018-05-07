@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -468,28 +469,28 @@ public class Island {
      */
     public Island(Island island) {
         this.plugin = island.plugin;
-        this.biome = island.biome;
-        this.center = island.center;
-        this.createdDate = island.createdDate;
-        this.igs = island.igs;
-        this.islandDistance = island.islandDistance;
-        this.isSpawn = island.isSpawn;
-        this.locked = island.locked;
-        this.levelHandicap = island.levelHandicap;
-        this.minProtectedX = island.minProtectedX;
-        this.minProtectedZ = island.minProtectedZ;
-        this.minX = island.minX;
-        this.minZ = island.minZ;
-        this.owner = island.owner;
+        this.biome = Biome.valueOf(island.biome.name());
+        this.center = island.center != null ? island.center.clone() : null;
+        this.createdDate = Long.valueOf(island.createdDate);
+        island.igs.forEach((k,v) -> this.igs.put(k, v));
+        this.islandDistance = Integer.valueOf(island.islandDistance);
+        this.isSpawn = Boolean.valueOf(island.isSpawn);
+        this.locked = Boolean.valueOf(island.locked);
+        this.levelHandicap = Integer.valueOf(island.levelHandicap);
+        this.minProtectedX = Integer.valueOf(island.minProtectedX);
+        this.minProtectedZ = Integer.valueOf(island.minProtectedZ);
+        this.minX = Integer.valueOf(island.minX);
+        this.minZ = Integer.valueOf(island.minZ);
+        this.owner = UUID.fromString(island.owner.toString());
         this.password = island.password;
-        this.protectionRange = island.protectionRange;
-        this.purgeProtected = island.purgeProtected;
-        this.spawnPoint = island.spawnPoint;
-        this.tileEntityCount = island.tileEntityCount;
-        this.updatedDate = island.updatedDate;
-        this.votes = island.votes;
-        this.world = island.world;
-        this.y = island.y;
+        this.protectionRange = Integer.valueOf(island.protectionRange);
+        this.purgeProtected = Boolean.valueOf(island.purgeProtected);
+        this.spawnPoint = island.spawnPoint == null ? null : island.spawnPoint.clone();
+        this.tileEntityCount.addAll(island.tileEntityCount);
+        this.updatedDate = Long.valueOf(island.updatedDate);
+        this.votes = Integer.valueOf(island.votes);
+        this.world = Bukkit.getWorld(island.world.getUID());
+        this.y = Integer.valueOf(island.y);
     }
 
     /**
