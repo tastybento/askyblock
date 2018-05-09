@@ -249,6 +249,8 @@ general:
    teamstartcommands:
    #- "[SELF] balance"
    #- "some other command"
+   
+   coopscancreatewarps: false
 
    # Visitor banned commands: Visitors to islands cannot use these commands
    visitorbannedcommands:
