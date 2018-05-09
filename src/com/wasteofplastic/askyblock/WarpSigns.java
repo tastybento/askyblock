@@ -136,11 +136,19 @@ public class WarpSigns implements Listener {
                         return;
                     }
                     // Check that the player is on their island
-                    if (!(plugin.getGrid().playerIsOnIsland(player, false))) {
-                        Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorNoPlace);
-                        e.setLine(0, ChatColor.RED + plugin.myLocale().warpswelcomeLine);
-                        return;
-                    }
+					if (Settings.coopsCanCreateWarps) {
+						if (!(plugin.getGrid().playerIsOnIsland(player, true))) {
+							Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorNoPlace);
+							e.setLine(0, ChatColor.RED + plugin.myLocale().warpswelcomeLine);
+							return;
+						}
+					}else {
+						if (!(plugin.getGrid().playerIsOnIsland(player, false))) {
+							Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorNoPlace);
+							e.setLine(0, ChatColor.RED + plugin.myLocale().warpswelcomeLine);
+							return;
+						}
+					}
                     // Check if the player already has a sign
                     final Location oldSignLoc = getWarp(player.getUniqueId());
                     if (oldSignLoc == null) {
