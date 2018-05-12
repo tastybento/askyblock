@@ -1850,7 +1850,6 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                 }
             } else if (split[0].equalsIgnoreCase("coopaccept")) {
                 // Accept an invite command
-                if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "coop")) {
                     if (coopInviteList.containsKey(playerUUID)) {
                         // Check if inviter is online
                         Player inviter = plugin.getServer().getPlayer(coopInviteList.get(playerUUID));
@@ -1872,10 +1871,6 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                     }
                     Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorCommandNotReady);
                     return true;
-                } else {
-                    Util.sendMessage(player, ChatColor.RED + plugin.myLocale(playerUUID).errorNoPermission);
-                    return true;
-                }
             } else if (split[0].equalsIgnoreCase("accept")) {
                 // Accept an invite command
                 if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.join")) {
