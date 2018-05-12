@@ -469,7 +469,7 @@ public class Island {
      */
     public Island(Island island) {
         this.plugin = island.plugin;
-        this.biome = Biome.valueOf(island.biome.name());
+        this.biome = island.biome == null ? null : Biome.valueOf(island.biome.name());
         this.center = island.center != null ? island.center.clone() : null;
         this.createdDate = Long.valueOf(island.createdDate);
         island.igs.forEach((k,v) -> this.igs.put(k, v));
@@ -481,7 +481,7 @@ public class Island {
         this.minProtectedZ = Integer.valueOf(island.minProtectedZ);
         this.minX = Integer.valueOf(island.minX);
         this.minZ = Integer.valueOf(island.minZ);
-        this.owner = UUID.fromString(island.owner.toString());
+        this.owner = owner == null ? null : UUID.fromString(island.owner.toString());
         this.password = island.password;
         this.protectionRange = Integer.valueOf(island.protectionRange);
         this.purgeProtected = Boolean.valueOf(island.purgeProtected);
@@ -489,7 +489,7 @@ public class Island {
         this.tileEntityCount.addAll(island.tileEntityCount);
         this.updatedDate = Long.valueOf(island.updatedDate);
         this.votes = Integer.valueOf(island.votes);
-        this.world = Bukkit.getWorld(island.world.getUID());
+        this.world = island.world == null ? null : Bukkit.getWorld(island.world.getUID());
         this.y = Integer.valueOf(island.y);
     }
 
