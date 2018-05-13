@@ -318,10 +318,10 @@ public class TopTen implements Listener, Requester {
                             memberList = memberList.substring(0, memberList.length() - 2);
                         }
                         Util.sendMessage(player, ChatColor.AQUA + "#" + i + ": " + plugin.getGrid().getIslandName(playerUUID) + ChatColor.AQUA + " (" + memberList + ") - "
-                                + plugin.myLocale(player.getUniqueId()).levelislandLevel + " " + m.getValue());
+                                + plugin.myLocale().levelislandLevel + " " + m.getValue());
                     } else {
                         // Island name + Island level
-                        Util.sendMessage(player, ChatColor.AQUA + "#" + i + ": " + plugin.getGrid().getIslandName(playerUUID) + ChatColor.AQUA +  " - " + plugin.myLocale(player.getUniqueId()).levelislandLevel + " "
+                        Util.sendMessage(player, ChatColor.AQUA + "#" + i + ": " + plugin.getGrid().getIslandName(playerUUID) + ChatColor.AQUA +  " - " + plugin.myLocale().levelislandLevel + " "
                                 + m.getValue());
                     }
                     if (i++ == 10) {
@@ -338,11 +338,7 @@ public class TopTen implements Listener, Requester {
                     .sorted(Collections.reverseOrder(Map.Entry.comparingByValue())).limit(10)
                     .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
             // Create the top ten GUI if it does not exist
-            if (gui == null) {
-                gui = Bukkit.createInventory(null, GUISIZE, plugin.myLocale(player.getUniqueId()).topTenGuiTitle);
-                if (DEBUG)
-                    plugin.getLogger().info("DEBUG: creating GUI for the first time");
-            }
+            gui = Bukkit.createInventory(null, GUISIZE, plugin.myLocale().topTenGuiTitle);
             // Reset
             gui.clear();
             int i = 1;
@@ -399,10 +395,10 @@ public class TopTen implements Listener, Requester {
         if (!Bukkit.getServer().getVersion().contains("1.7") && !Bukkit.getServer().getVersion().contains("1.8")) {
             meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         }
-        meta.setDisplayName((plugin.myLocale(player).topTenGuiHeading.replace("[name]", plugin.getGrid().getIslandName(player))).replace("[rank]", String.valueOf(rank)));
+        meta.setDisplayName((plugin.myLocale().topTenGuiHeading.replace("[name]", plugin.getGrid().getIslandName(player))).replace("[rank]", String.valueOf(rank)));
         //meta.setDisplayName(ChatColor.YELLOW + "" + ChatColor.BOLD + "<!> " + ChatColor.YELLOW + "Island: " + ChatColor.GOLD + ChatColor.UNDERLINE + plugin.getGrid().getIslandName(player) + ChatColor.GRAY + " (#" + rank + ")");
         List<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.YELLOW + plugin.myLocale(player).levelislandLevel + " " + long1);
+        lore.add(ChatColor.YELLOW + plugin.myLocale().levelislandLevel + " " + long1);
         if (plugin.getPlayers().inTeam(player)) {
             final List<UUID> pMembers = plugin.getPlayers().getMembers(player);
             // Need to make this a vertical list, because some teams are very large and it'll go off the screen otherwise
@@ -431,7 +427,7 @@ public class TopTen implements Listener, Requester {
         }
         // The player that clicked the item
         Player player = (Player) event.getWhoClicked();
-        if (!inventory.getTitle().equals(plugin.myLocale(player.getUniqueId()).topTenGuiTitle)) {
+        if (!inventory.getTitle().equals(plugin.myLocale().topTenGuiTitle)) {
             return;
         }
         event.setCancelled(true);
