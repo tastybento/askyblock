@@ -3,8 +3,8 @@
 # Maintainer: tastybento
 # It is recommended that you check at least these settings:
 #
-# 1. island distance - the distance between islands. If upgrading set to what you had
-#    If you change island distance, you MUST reset the world
+# 1. island distance - the distance between islands. If upgrading set to what you had.
+#    If you change island distance, you MUST reset the world.
 # 2. resetmoney (general section) - set to true so that everyone starts with nothing
 # 3. islandLevel (general section) - the height you want your islands to float
 # 4. protectionRange - how big a player's island is at the start
