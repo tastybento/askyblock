@@ -3,8 +3,8 @@
 # Maintainer: tastybento
 # It is recommended that you check at least these settings:
 #
-# 1. island distance - the distance between islands. If upgrading set to what you had.
-#    If you change island distance, you MUST reset the world.
+# 1. island distance - the distance between islands. If upgrading set to what you had
+#    If you change island distance, you MUST reset the world
 # 2. resetmoney (general section) - set to true so that everyone starts with nothing
 # 3. islandLevel (general section) - the height you want your islands to float
 # 4. protectionRange - how big a player's island is at the start
@@ -22,7 +22,7 @@ island:
    # 50 - minimum - not recommended
    # IF YOU ARE UPGRADING YOU MUST USE YOUR OLD VALUE EXACTLY, E.G., 110
    # OR RESET YOUR WORLD
-   # Value must be an even number
+   # Value must be an even number.
    distance: 200
 
    # Default protection range (even number). Min = 0, Recommended = 100
@@ -68,20 +68,20 @@ island:
 
    #Invite timeout in seconds. Invites will lapse if not accepted within this time
    invitetimeout: 60
-   
+
    # Default max team size
    # Use this permission to set for specific user groups: askyblock.team.maxsize.<number> 
    # Permission size cannot be less than the default. 
    maxteamsize: 4
-   
+
    # Island level calculation cool down in seconds
    levelwait: 60
-   
+
    # Items that will be in the chest when the player starts an island
    # Must be in Bukkit Materials format. Format is <Material>:<Qty>
    # or <Material>:<Data>:<Qty>
    # Use <Data> to set the durability of a item or to select sub-items/colors.
-   # 
+   #
    # Spawn Eggs must be defined by name, e.g., MONSTER_EGG:PIG
    #
    # The format for POTIONS is as follows:
@@ -95,7 +95,7 @@ island:
    # POTION:INSTANT_DAMAGE:2::LINGER:2
    # POTION:JUMP:2:::1
    # POTION:WEAKNESS::::1   -  any weakness potion
-   # 
+   #
    # Valid potion names are:
    # WATER, REGEN, SPEED, FIRE_RESISTANCE, POISON, INSTANT_HEAL, NIGHT_VISION, WEAKNESS,
    # STRENGTH, SLOWNESS, JUMP, INSTANT_DAMAGE, WATER_BREATHING, INVISIBILITY
@@ -104,13 +104,11 @@ island:
    #
    # Check console for errors and guidance after reloading configuration
    # Schematics can override this - see schematicsection
-
    chestItems: 'ICE:2 MELON:1 TORCH:2 BONE:1 LAVA_BUCKET:1 PUMPKIN_SEEDS:1 SUGAR_CANE:1 RED_MUSHROOM:1 BROWN_MUSHROOM:1 CACTUS:1 BREAD:1 WHEAT:1 LEATHER_BOOTS:1 LEATHER_HELMET:1 LEATHER_CHESTPLATE:1 LEATHER_LEGGINGS:1'
 
    # Default island companion. Set schematic-specific companions in the schematicsection
    # Recommended are: COW, PIG, SHEEP, CHICKEN, VILLAGER, HORSE, IRON_GOLEM, OCELOT,
    # RABBIT, WOLF, LLAMA or NOTHING. Default is COW.
-
    companion: COW
 
    # Default list of names, picked at random that will apply to the companion
@@ -121,7 +119,7 @@ island:
    - "&9[player]'s cow"
    - "&cEmergency &fFood?"
    - "&aD&6a&di&6s&9y"
-   
+
    # Island naming
    # Only players with the askyblock.island.name permission can name their island
    # It is displayed in the top ten and enter and exit announcements
@@ -129,18 +127,18 @@ island:
    # These set the minimum and maximum size of a name. 
    minnamelength: 0
    maxnamelength: 20
-      
+
    # Players with askyblock.islandfly permission can fly on their island. This setting is
    # how many seconds the player keeps fly mode while flying outside his island before it
    # is removed (and they fall).
    # Negative value will be considered as 0.
    flytimeoutside: 0
-   
+
    # The permissions listed below will be given to the player while he is inside his island.
    # They will be automatically revoked when he leaves his island.
    islandtemporaryperms:
    #- "amazing.permission"
-   
+
    # System settings - these cannot be changed by players, only viewed
    # Allow Enderman Griefing (default is to allow, see next setting)
    allowendermangriefing: true
@@ -149,7 +147,7 @@ island:
    # Allow creeper explosion damage to block (explosion still hurts)
    allowcreeperdamage: true
    # Allow visitors to use creeper explosions to grief islands
-   allowcreepergriefing: false 
+   allowcreepergriefing: false
    # Allow TNT damage to blocks (stops players using TNT to destroy other's islands)
    allowtntdamage: false
    # Allow fire extinguishing by visitors
@@ -171,27 +169,28 @@ general:
    # Default language for new players.
    # This is the filename in the locale folder without .yml.
    # If this does not exist, the default en-US will be used.
+   # Locales: https://github.com/tastybento/askyblock/wiki/Locales
    defaultlanguage: en-US
-   
+
    # Check for updates - this will tell Ops and the console if there is a new
    # version available. It contacts dev.bukkit.org to request the latest version
    # info. It does not download the latest version or change any files
    checkupdates: true
-   
+
    # ASkyBlock uses commands for some of its fonctionnalities (action bar, titles).
    # It used to silence them automatically by executing "/minecraft:gamerule sendCommandFeedback false",
    # however, you can toggle here this feature.
    silencecommandfeedback: true
-   
+
    # Show enter/exit notices in Action Bar (11.1+)
    # Only shows if notices are enabled in settings
    showinactionbar: true
-   
+
    # Maximum number of islands. Set to 0 for unlimited. 
    # If the number of islands is greater than this number, no new islands will be
    # allowed
-   maxIslands: 0 
-   
+   maxIslands: 0
+
    # Use the control panel as the default display for /island
    # /island will always create an island if one does not exist
    # If the control panel is not used, then /island will teleport the player home
@@ -209,16 +208,16 @@ general:
    # New island-style nether. Change to false for standard nether
    newnether: true
    # Nether trees are made if a player grows a tree in the nether (gravel and glowstone)
-   nethertrees: true  
+   nethertrees: true 
    # Make the new nether roof, if false, there is nothing up there
    # Change to false if lag is a problem from the generation
-   netherroof: true 
+   netherroof: true
    # Nether spawn protection radius - this is the distance around the nether spawn
    # that will be protected from player interaction (breaking blocks, pouring lava etc.)
    # Minimum is 0 (not recommended), maximum is 100. Default is 25.
    # Only applies to standard nether.
    netherspawnradius: 25
-   
+
    # Calculate level on login
    # If true, the plugin will run the level command for the player when they login
    # If the command is busy, it will fail silently
@@ -261,7 +260,7 @@ general:
    # Invincible visitors - Prevent players from killing them (intentionally or by accident)
    # If they fall to the void, they get TP'd to their island.
    invinciblevisitors: false
-   
+
    # Only used if invinciblevisitors is set to TRUE
    # This allow you to customize what kind of damage visitors should not receive
    # If you want visitors to receive a listed damage, put a "#" at the start of the line
@@ -327,7 +326,7 @@ general:
    # Note - these are potion effects and so can be cured by milk
    damagetype:
    #-confusion
-   
+
    # Removing mobs - this kills all monsters in the vicinity. Benefit is that it helps
    # players return to their island if the island has been overrun by monsters
    # Con is that it kills any mob grinders 
@@ -348,11 +347,11 @@ general:
    # Note: this does not limit the number of monsters, just how many spawn naturally.
    # Note: If set to a negative number the world will use the server-wide spawn limit instead.
    monsterspawnlimit: 100
-   
+
    # Sets the limit for number of animals that can spawn in a chunk in this world. 
    # Note: If set to a negative number the world will use the server-wide spawn limit instead.
    animalspawnlimit: 15
-   
+
    # Animal breeding limits - if this is set to more than 0, then players will not be able
    # to breed more animals than that number on their island. A value of zero means no
    # limit. Note that animals will not be killed or reduced to this limit.
@@ -360,7 +359,7 @@ general:
    # still appear, but breeding will not happen.
    # Limit includes nether island if nether islands are active.
    breedinglimit: 0
-   
+
    # Sets the limit for number of water animals [squid] that can spawn in a chunk in this world. 
    # Note: If set to a negative number the world will use the server-wide spawn limit instead.
    # Max is 100
@@ -369,7 +368,7 @@ general:
    # Villager limit - this is per team player, so an island of 4 will have 4x this number
    # Note that 10 villagers minimum are required to create an iron farm. Zero is unlimited.
    villagerlimit: 10
-      
+
    # General entity limiting
    # Use this section to limit how many entities can be added to an island.
    # 0 means the item will be blocked from placement completely.
@@ -456,7 +455,7 @@ general:
    # Recommendation is that this is set to true, but if you run multi-worlds
    # make sure your economy handles multi-worlds too.
    resetmoney: false
-   
+
    # Use the minishop or not
    useminishop: true
 
@@ -486,7 +485,7 @@ general:
    # island by themselves and can only join a team.
    # Leave this true to avoid players exploiting free islands
    leaversloseresets: true
-   
+
    # Reset Ender Chest - if true, the player's Ender Chest will be cleared when they
    # start or restart their island. Default is false.
    # NOTE: Ender Chests span worlds, so it will clear ALL chests. In general,
@@ -515,7 +514,7 @@ general:
 
    # Add enchanted glow to completed challenges
    addcompletedglow: true
-   
+
    # Default maximum number of homes a player can have. Min = 1
    # Accessed via sethome <number> or go <number>
    # Use this permission to set for specific user groups: askyblock.island.maxhomes.<number>  
@@ -553,29 +552,29 @@ general:
    # Displays the island level {ISLAND_LEVEL} with a XX.Xk pattern in chat
    # e.g : [23.5k] instead of [23562]
    fancylevelinchat: false
-     
+
    # Restrict Wither and other flying mobs
    # Any flying mobs that exit the island space where they were spawned will be removed.
    # Includes blaze and ghast. 
    restrictwither: true
-   
+
    # Warp Restriction - needed levels to be able to create a warp
    # 0 or negative values will disable this restriction
    # 10 is default
    warplevelrestriction: 10
-   
+
    # Warp panel - GUI for welcome warp signs. If set to false, old-style
    # text will be used
    usewarppanel: true
-   
+
    # Mute death messages
    mutedeathmessages: false
-   
+
    # How often the grid will be saved to file in mins. Default is 5 minutes.
    # This helps prevent issues if the server crashes. Grid is also saved at important
    # points in the game
    backupduration: 5
-   
+
    # Allow pushing - only applicable in 1.9 and above. Setting is for all worlds!
    # If you have another scoreboard plugin, it may not work.
    # If true, players can push each other (default 1.9 behavior) if false,
@@ -587,12 +586,12 @@ general:
    # if there are no more because it may cause lag.
    # This will regenerate any chunks with bedrock at y=0 when they are loaded
    recoversuperflat: false
-   
+
    # Allow coops to be permanent
    # If you change this, change the text in the locale files about coop ending due to
    # log out.
    persistentcoops: false
-   
+
    # Only allow the island leader to coop players.
    # Island members wont be able to coop other players.
    onlyleadercancoop: false
@@ -603,30 +602,30 @@ general:
    fakeplayers:
    # - [CoFH]
    # - [BuildCraft]
-   
+
    # Allow obsidian to be scooped up with an empty bucket back into lava
    # This only works if there is a single block of obsidian (no obsidian within 10 blocks)
    # Recommendation is to keep this true so that newbies don't bother you or reset their
    # island unnecessarily.
    allowobsidianscooping: true
-   
+
    # By default, island top ten (/is top) is displayed as a GUI.
    # If this option is set to TRUE, the top ten will be displayed
    # in chat, like in older versions (up to V3.0.3.3), which can
    # be a little spammy.
    # Recommendation is to keep this false.
    islandtopteninchat: false
-   
+
    # Toggle Magic Cobblestone Generator
    # If set to true, a cobble generator will not just generate cobblestone, but
    # also blocks you have specified.
    # Default is false, because it highly changes the gameplay.
    usemagiccobblegen: false
-   
+
    # If set to true, Magic Cobblestone Generator will only work at spawn
    # Beware! Spawn MUST be in the same world that islands to work.
    magiccobblegenonlyatspawn: false
-   
+
    # This won't be considered if usemagiccobblegen is set to false.
    # You can add, remove a block or modify its probability to be generated.
    # You can also set different probabilities from specified minimum levels
@@ -648,21 +647,21 @@ general:
        REDSTONE_ORE: 5.0
        DIAMOND_ORE: 4.0
        EMERALD_ORE: 1.0
-   
+
    # Disable redstone operation on islands unless a team member is online.
    # This may reduce lag but it can cause problems with visitors needing to use a redstone system.
    # Default is false
    disableofflineredstone: false
-   
+
    # Disable piston pushing of TNT. There is a glitch in 1.9.4 that enables unlimited
    # TNT creation with this. Default is allowed, set to false if you need it off.
    allowTNTpushing: true
-   
+
    # Config.yml version. DO NOT EDIT. This number only changes if the latest
    # plugin config has been updated. If a new config is detected, it will be
    # auto-saved to config.new.yml.
    version: ${version}
-   
+
 # Protection settings
 protection:
    # Protection Setting Flags:
@@ -843,7 +842,6 @@ biomesettings:
 # Hell to Nether
 # description = a description of the biome and what it gives the player
 # remove ice/water/snow - will be done once when the biome is made
-
 biomes:
   COLD_BEACH:
     icon: SAPLING
@@ -907,29 +905,28 @@ biomes:
     description: "&6Woods and trees"
     #permission: any.perm.you.want
 
-
 schematicsection:
-   # All schematics should be put in the schematics folder
+  # All schematics should be put in the schematics folder
 
-   # Schematic panel - if more than one schematic is available to the player
-   # Show a panel to choose. If this is false, no panel is shown and the starter 
-   # island is picked by permission. If a player has more than one permission
-   # the island selected is undefined - the plugin will pick one.
-   # Permissions are taken from the below schematics section even if the GUI is
-   # not used.
+  # Schematic panel - if more than one schematic is available to the player
+  # Show a panel to choose. If this is false, no panel is shown and the starter 
+  # island is picked by permission. If a player has more than one permission
+  # the island selected is undefined - the plugin will pick one.
+  # Permissions are taken from the below schematics section even if the GUI is
+  # not used.
   useschematicspanel: true
 
-   # Random island, only apply when useschematicspanel is false - if set to false
-   # the plugin will choose the first island it found with the user permissions
-   # to generate a new island. If set to true, the plugin will generate an island
-   # randomly from the list of all islands available to the player.
+  # Random island, only apply when useschematicspanel is false - if set to false
+  # the plugin will choose the first island it found with the user permissions
+  # to generate a new island. If set to true, the plugin will generate an island
+  # randomly from the list of all islands available to the player.
   chooseislandrandomly: false
 
   # Hack skeleton spawners to also spawn wither skeletons in 1.11. This helps with
   # older schematics that do not have explicit wither skeleton spawners. This setting
   # is ignored by older servers.
   hackskeletonspawners: false
-  
+
   # This section lists all the schematics available
   # Settings are:
   # show - whether this island will show in the GUI or not. Typically used for partner
@@ -993,7 +990,7 @@ schematicsection:
       usephysics: true
       #Level handicap zeros the initial island level. 
       levelHandicap: 93
-  
+
     # Additional heading names can be anything you like, but must be unique
     island1:
       # Credit to Antal1609 for this schematic!
@@ -1067,4 +1064,3 @@ schematicsection:
       # Only works with the schematic panel
       # The cost is a double and displayed in the description if [cost] is there
       cost: 0
-
