@@ -521,12 +521,10 @@ public class Util {
     }
 
     public static void runCommand(final Player player, final String string) {
-        plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
-
-            @Override
-            public void run() {
-                player.performCommand(string);               
-            }});
-
+        if (plugin.getServer().isPrimaryThread()) {
+            player.performCommand(string);  
+        } else {
+            plugin.getServer().getScheduler().runTask(plugin, () -> player.performCommand(string));
+        }
     }
 }
