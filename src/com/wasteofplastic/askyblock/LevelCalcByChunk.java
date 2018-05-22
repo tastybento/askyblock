@@ -127,7 +127,7 @@ public class LevelCalcByChunk {
 
     @SuppressWarnings("deprecation")
     private void scanChunk(ChunkSnapshot chunk) {
-        
+
         for (int x = 0; x< 16; x++) { 
             // Check if the block coord is inside the protection zone and if not, don't count it
             if (chunk.getX() * 16 + x < island.getMinProtectedX() || chunk.getX() * 16 + x >= island.getMinProtectedX() + island.getProtectionSize()) {
@@ -156,15 +156,13 @@ public class LevelCalcByChunk {
         @SuppressWarnings("deprecation")
         MaterialData md = new MaterialData(type, (byte) blockData);
         int count = limitCount(md);
-        if (count > 0) {
-            if (belowSeaLevel) {
-                result.underWaterBlockCount += count;                                                    
-                result.uwCount.add(md);
-            } else {
-                result.rawBlockCount += count;
-                result.mdCount.add(md); 
-            } 
-        }
+        if (belowSeaLevel) {
+            result.underWaterBlockCount += count;                                                    
+            result.uwCount.add(md);
+        } else {
+            result.rawBlockCount += count;
+            result.mdCount.add(md); 
+        } 
     }
 
     /**
@@ -325,9 +323,7 @@ public class LevelCalcByChunk {
             // Save the value
             plugin.getPlayers().setIslandLevel(island.getOwner(), event.getLongLevel());
             if (plugin.getPlayers().inTeam(targetPlayer)) {
-                //plugin.getLogger().info("DEBUG: player is in team");
                 for (UUID member : plugin.getPlayers().getMembers(targetPlayer)) {
-                    //plugin.getLogger().info("DEBUG: updating team member level too");
                     if (plugin.getPlayers().getIslandLevel(member) != event.getLongLevel()) {
                         plugin.getPlayers().setIslandLevel(member, event.getLongLevel());
                         plugin.getPlayers().save(member);
@@ -415,11 +411,9 @@ public class LevelCalcByChunk {
                 // Generic
                 value = Settings.blockValues.get(new MaterialData(type.getItemType()));
             }
-            if (value > 0) {
-                result.add(type.toString() + ":" 
-                        + String.format("%,d",en.getCount()) + " blocks x " + value + " = " + (value * en.getCount()));
-                total += (value * en.getCount());
-            }
+            result.add(type.toString() + ":" 
+                    + String.format("%,d",en.getCount()) + " blocks x " + value + " = " + (value * en.getCount()));
+            total += (value * en.getCount());
         }
         result.add("Subtotal = " + total);
         result.add("==================================");
