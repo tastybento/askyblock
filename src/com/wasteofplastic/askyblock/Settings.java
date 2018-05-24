@@ -284,4 +284,5 @@ public class Settings {
     public static long inviteTimeout;
     public static boolean warpHeads;
     public static boolean saveEntities;
+    public static boolean coopsCanCreateWarps;
 }
