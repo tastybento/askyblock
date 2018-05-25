@@ -130,14 +130,12 @@ public class TinyDB {
             public void run() {
                 try {
                     // Load all the files from the player folder
-                    FilenameFilter ymlFilter = new FilenameFilter() {
-                        public boolean accept(File dir, String name) {
-                            String lowercaseName = name.toLowerCase();
-                            if (lowercaseName.endsWith(".yml")) {
-                                return true;
-                            } else {
-                                return false;
-                            }
+                    FilenameFilter ymlFilter = (dir, name) -> {
+                        String lowercaseName = name.toLowerCase();
+                        if (lowercaseName.endsWith(".yml")) {
+                            return true;
+                        } else {
+                            return false;
                         }
                     };
                     int count = 0;

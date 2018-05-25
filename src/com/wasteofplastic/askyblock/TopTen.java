@@ -479,7 +479,7 @@ public class TopTen implements Listener, Requester {
      * Get a sorted descending map of the top players
      * @return the topTenList - may be more or less than ten
      */
-    public Map<UUID, Long> getTopTenList() {
+    Map<UUID, Long> getTopTenList() {
         return topTenList;
     }
 
