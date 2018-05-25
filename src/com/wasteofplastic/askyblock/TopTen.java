@@ -59,10 +59,9 @@ import com.wasteofplastic.askyblock.util.Util;
  * 
  */
 public class TopTen implements Listener, Requester {
-    private  ASkyBlock plugin = ASkyBlock.getPlugin();
+    private final ASkyBlock plugin;
     // Top ten list of players
     private Map<UUID, Long> topTenList = new ConcurrentHashMap<>();
-    private final int GUISIZE = 27; // Must be a multiple of 9
     private final int[] SLOTS = new int[] {4, 12, 14, 19, 20, 21, 22, 23, 24, 25};
     private final Material[] ICONS = new Material[] {
             Material.DIAMOND_AXE,
@@ -98,9 +97,7 @@ public class TopTen implements Listener, Requester {
         // Special case for removals. If a level of zero is given the player
         // needs to be removed from the list
         if (l < 1) {
-            if (topTenList.containsKey(ownerUUID)) {
-                topTenList.remove(ownerUUID);
-            }
+            topTenList.remove(ownerUUID);
             return;
         }
         // Try and see if the player is online
@@ -156,62 +153,53 @@ public class TopTen implements Listener, Requester {
      * @param sender
      */
     public void topTenCreate(final CommandSender sender) {
-        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
-
-            @Override
-            public void run() {
-                plugin.getIslandCmd().setCreatingTopTen(true);
-                // This map is a list of owner and island level
-                YamlConfiguration player = new YamlConfiguration();
-                int index = 0;
-                for (final File f : plugin.getPlayersFolder().listFiles()) {
-                    // Need to remove the .yml suffix
-                    String fileName = f.getName();
-                    if (fileName.endsWith(".yml")) {
-                        try {
-                            String playerUUIDString = fileName.substring(0, fileName.length() - 4);
-                            final UUID playerUUID = UUID.fromString(playerUUIDString);
-                            if (playerUUID == null) {
-                                plugin.getLogger().warning("Player file contains erroneous UUID data.");
-                                plugin.getLogger().info("Looking at " + playerUUIDString);
-                            }
-                            player.load(f);
-                            index++;
-                            if (index % 1000 == 0) {
-                                plugin.getLogger().info("Processed " + index + " players for top ten");
-                            }
-                            // Players player = new Players(this, playerUUID);
-                            int islandLevel = player.getInt("islandLevel", 0);
-                            String teamLeaderUUID = player.getString("teamLeader", "");
-                            if (islandLevel > 0) {
-                                if (!player.getBoolean("hasTeam") || (!teamLeaderUUID.isEmpty() && teamLeaderUUID.equals(playerUUIDString))) {
-                                    // Only enter team leaders into the top ten
-                                    topTenAddEntry(playerUUID, islandLevel);
-                                }
-                            }
-                        } catch (Exception e) {
-                            plugin.getLogger().severe("Error when reading player file. File is " + fileName);
-                            plugin.getLogger().severe("Look at the stack trace and edit the file - it probably has broken YAML in it for some reason.");
-                            e.printStackTrace();
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
+            plugin.getIslandCmd().setCreatingTopTen(true);
+            // This map is a list of owner and island level
+            YamlConfiguration player = new YamlConfiguration();
+            int index = 0;
+            for (final File f : plugin.getPlayersFolder().listFiles()) {
+                // Need to remove the .yml suffix
+                String fileName = f.getName();
+                if (fileName.endsWith(".yml")) {
+                    try {
+                        String playerUUIDString = fileName.substring(0, fileName.length() - 4);
+                        final UUID playerUUID = UUID.fromString(playerUUIDString);
+                        player.load(f);
+                        index++;
+                        if (index % 1000 == 0) {
+                            plugin.getLogger().info("Processed " + index + " players for top ten");
                         }
+                        // Players player = new Players(this, playerUUID);
+                        int islandLevel = player.getInt("islandLevel", 0);
+                        String teamLeaderUUID = player.getString("teamLeader", "");
+                        if (islandLevel > 0) {
+                            if (!player.getBoolean("hasTeam") || (!teamLeaderUUID.isEmpty() && teamLeaderUUID.equals(playerUUIDString))) {
+                                // Only enter team leaders into the top ten
+                                topTenAddEntry(playerUUID, islandLevel);
+                            }
+                        }
+                    } catch (Exception e) {
+                        plugin.getLogger().severe("Error when reading player file. File is " + fileName);
+                        plugin.getLogger().severe("Look at the stack trace and edit the file - it probably has broken YAML in it for some reason.");
+                        e.printStackTrace();
                     }
                 }
-                plugin.getLogger().info("Processed " + index + " players for top ten");
-                // Save the top ten
-                topTenSave();
+            }
+            plugin.getLogger().info("Processed " + index + " players for top ten");
+            // Save the top ten
+            topTenSave();
 
-                plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
-                    @Override
-                    public void run() {
-                        if (sender != null) {
-                            Util.sendMessage(sender, ChatColor.YELLOW + plugin.myLocale().adminTopTenfinished);
-                        } else {
-                            plugin.getLogger().warning("Completed top ten creation.");
-                        }
-                        plugin.getIslandCmd().setCreatingTopTen(false);
+            plugin.getServer().getScheduler().runTask(plugin, () -> {
+                if (sender != null) {
+                    Util.sendMessage(sender, ChatColor.YELLOW + plugin.myLocale().adminTopTenfinished);
+                } else {
+                    plugin.getLogger().warning("Completed top ten creation.");
+                }
+                plugin.getIslandCmd().setCreatingTopTen(false);
 
-                    }});
-            }});
+            });
+        });
     }
 
     public void topTenSave() {
@@ -310,12 +298,13 @@ public class TopTen implements Listener, Requester {
                     if (plugin.getPlayers().inTeam(playerUUID)) {
                         // Island name + Island members + Island level
                         final List<UUID> pMembers = plugin.getPlayers().getMembers(playerUUID);
-                        String memberList = "";
+                        StringBuilder memberList = new StringBuilder();
                         for (UUID members : pMembers) {
-                            memberList += plugin.getPlayers().getName(members) + ", ";
+                            memberList.append(plugin.getPlayers().getName(members)).append(", ");
                         }
                         if (memberList.length() > 2) {
-                            memberList = memberList.substring(0, memberList.length() - 2);
+                            memberList = new StringBuilder(
+                                memberList.substring(0, memberList.length() - 2));
                         }
                         Util.sendMessage(player, ChatColor.AQUA + "#" + i + ": " + plugin.getGrid().getIslandName(playerUUID) + ChatColor.AQUA + " (" + memberList + ") - "
                                 + plugin.myLocale(player.getUniqueId()).levelislandLevel + " " + m.getValue());
@@ -339,6 +328,8 @@ public class TopTen implements Listener, Requester {
                     .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
             // Create the top ten GUI if it does not exist
             if (gui == null) {
+                // Must be a multiple of 9
+                int GUISIZE = 27;
                 gui = Bukkit.createInventory(null, GUISIZE, plugin.myLocale(player.getUniqueId()).topTenGuiTitle);
                 if (DEBUG)
                     plugin.getLogger().info("DEBUG: creating GUI for the first time");
@@ -377,7 +368,7 @@ public class TopTen implements Listener, Requester {
     }
 
 
-    ItemStack getTrophy(int rank, Long long1, UUID player){
+    private ItemStack getTrophy(int rank, Long long1, UUID player){
         if (DEBUG)
             plugin.getLogger().info("DEBUG: Getting the skull");
         String playerName = plugin.getPlayers().getName(player);
@@ -394,14 +385,14 @@ public class TopTen implements Listener, Requester {
         ItemMeta meta = trophy.getItemMeta();
         if (Settings.warpHeads && topTenHeads.containsKey(player)) {
             trophy = topTenHeads.get(player);
-            meta = (SkullMeta) trophy.getItemMeta();
+            meta = trophy.getItemMeta();
         }
         if (!Bukkit.getServer().getVersion().contains("1.7") && !Bukkit.getServer().getVersion().contains("1.8")) {
             meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         }
         meta.setDisplayName((plugin.myLocale(player).topTenGuiHeading.replace("[name]", plugin.getGrid().getIslandName(player))).replace("[rank]", String.valueOf(rank)));
         //meta.setDisplayName(ChatColor.YELLOW + "" + ChatColor.BOLD + "<!> " + ChatColor.YELLOW + "Island: " + ChatColor.GOLD + ChatColor.UNDERLINE + plugin.getGrid().getIslandName(player) + ChatColor.GRAY + " (#" + rank + ")");
-        List<String> lore = new ArrayList<String>();
+        List<String> lore = new ArrayList<>();
         lore.add(ChatColor.YELLOW + plugin.myLocale(player).levelislandLevel + " " + long1);
         if (plugin.getPlayers().inTeam(player)) {
             final List<UUID> pMembers = plugin.getPlayers().getMembers(player);

@@ -34,7 +34,6 @@ public class CoopJoinEvent extends ASkyBlockEvent implements Cancellable {
     private final UUID inviter;
     private boolean cancelled;
 
-
     /**
      * @param player
      * @param island

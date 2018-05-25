@@ -39,10 +39,10 @@ public class PotBlock {
     private Material potItem;
     private int potItemData;
 
-    private static HashMap<String, Material> potItemList;
+    private static final Map<String, Material> potItemList;
 
     static {
-        potItemList = new HashMap<String, Material>();
+        potItemList = new HashMap<>();
         potItemList.put("", Material.AIR);
         potItemList.put("minecraft:red_flower", Material.RED_ROSE);
         potItemList.put("minecraft:yellow_flower", Material.YELLOW_FLOWER);

@@ -45,7 +45,7 @@ public class EntityLimits implements Listener {
     private static final boolean DEBUG = false;
     private static final boolean DEBUG2 = false;
     private static final boolean DEBUG3 = false;
-    private ASkyBlock plugin;
+    private final ASkyBlock plugin;
     private YamlConfiguration entities;
 
     /**
@@ -83,7 +83,7 @@ public class EntityLimits implements Listener {
         // Delete the chunk data
         entities.set(event.getWorld().getName() + "." + event.getChunk().getX() + "." + event.getChunk().getZ() , null);
         // Create new entry
-        Arrays.asList(event.getChunk().getEntities()).stream().filter(x -> x.hasMetadata("spawnLoc")).forEach(entity -> {
+        Arrays.stream(event.getChunk().getEntities()).filter(x -> x.hasMetadata("spawnLoc")).forEach(entity -> {
             // Get the meta data
             entity.getMetadata("spawnLoc").stream().filter(y -> y.getOwningPlugin().equals(plugin)).forEach(v -> {
                 entities.set(event.getWorld().getName() + "." 
@@ -128,10 +128,7 @@ public class EntityLimits implements Listener {
         if (island != null && island.getIgsFlag(flag)){
             return true;
         }
-        if (island == null && Settings.defaultWorldSettings.get(flag)) {
-            return true;
-        }
-        return false;
+        return island == null && Settings.defaultWorldSettings.get(flag);
     }
 
     /**
@@ -153,10 +150,7 @@ public class EntityLimits implements Listener {
         if (island != null && (island.getIgsFlag(flag) || island.getMembers().contains(player.getUniqueId()))){
             return true;
         }
-        if (island == null && Settings.defaultWorldSettings.get(flag)) {
-            return true;
-        }
-        return false;
+        return island == null && Settings.defaultWorldSettings.get(flag);
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
@@ -492,7 +486,6 @@ public class EntityLimits implements Listener {
                             Util.sendMessage(e.getPlayer(), ChatColor.RED + (plugin.myLocale(e.getPlayer().getUniqueId()).entityLimitReached.replace("[entity]",
                                     Util.prettifyText(type))).replace("[number]", String.valueOf(Settings.limitedBlocks.get(type))));
                             e.setCancelled(true);
-                            return;
                         }
                     }
                 }
@@ -655,7 +648,6 @@ public class EntityLimits implements Listener {
                 }
             }
         }
-        return;
     }
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)

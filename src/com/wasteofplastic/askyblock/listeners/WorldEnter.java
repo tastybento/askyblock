@@ -27,7 +27,7 @@ import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Settings;
 
 public class WorldEnter implements Listener {
-    private ASkyBlock plugin;
+    private final ASkyBlock plugin;
     private final static boolean DEBUG = false;
 
     public WorldEnter(ASkyBlock aSkyBlock) {

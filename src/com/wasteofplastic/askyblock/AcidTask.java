@@ -27,31 +27,28 @@ public class AcidTask {
     public AcidTask(final ASkyBlock plugin) {
         this.plugin = plugin;
         // Initialize water item list
-        itemsInWater = new HashSet<UUID>();
+        itemsInWater = new HashSet<>();
         // This part will kill monsters if they fall into the water
         // because it
         // is acid
         if (Settings.mobAcidDamage > 0D || Settings.animalAcidDamage > 0D) {
-            plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
-                @Override
-                public void run() {
-                    List<Entity> entList = ASkyBlock.getIslandWorld().getEntities();
-                    for (Entity current : entList) {
-                        if (plugin.isOnePointEight() && current instanceof Guardian) {
-                            // Guardians are immune to acid too
-                            continue;
+            plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
+                List<Entity> entList = ASkyBlock.getIslandWorld().getEntities();
+                for (Entity current : entList) {
+                    if (plugin.isOnePointEight() && current instanceof Guardian) {
+                        // Guardians are immune to acid too
+                        continue;
+                    }
+                    if ((current instanceof Monster) && Settings.mobAcidDamage > 0D) {
+                        if ((current.getLocation().getBlock().getType() == Material.WATER)
+                                || (current.getLocation().getBlock().getType() == Material.STATIONARY_WATER)) {
+                            ((Monster) current).damage(Settings.mobAcidDamage);
                         }
-                        if ((current instanceof Monster) && Settings.mobAcidDamage > 0D) {
-                            if ((current.getLocation().getBlock().getType() == Material.WATER)
-                                    || (current.getLocation().getBlock().getType() == Material.STATIONARY_WATER)) {
-                                ((Monster) current).damage(Settings.mobAcidDamage);
-                            }
-                        } else if ((current instanceof Animals) && Settings.animalAcidDamage > 0D) {
-                            if ((current.getLocation().getBlock().getType() == Material.WATER)
-                                    || (current.getLocation().getBlock().getType() == Material.STATIONARY_WATER)) {
-                                if (!current.getType().equals(EntityType.CHICKEN) || Settings.damageChickens) {
-                                    ((Animals) current).damage(Settings.animalAcidDamage);
-                                }
+                    } else if ((current instanceof Animals) && Settings.animalAcidDamage > 0D) {
+                        if ((current.getLocation().getBlock().getType() == Material.WATER)
+                                || (current.getLocation().getBlock().getType() == Material.STATIONARY_WATER)) {
+                            if (!current.getType().equals(EntityType.CHICKEN) || Settings.damageChickens) {
+                                ((Animals) current).damage(Settings.animalAcidDamage);
                             }
                         }
                     }
@@ -71,7 +68,7 @@ public class AcidTask {
                     //plugin.getLogger().info("DEBUG: running task every " + Settings.acidItemDestroyTime);
                     List<Entity> entList = ASkyBlock.getIslandWorld().getEntities();
                     // Clean up the itemsInWater list
-                    Set<UUID> newItemsInWater = new HashSet<UUID>();
+                    Set<UUID> newItemsInWater = new HashSet<>();
                     for (Entity current: entList) {
                         if (current.getType() != null && current.getType().equals(EntityType.DROPPED_ITEM)) {
                             if ((current.getLocation().getBlock().getType() == Material.WATER)

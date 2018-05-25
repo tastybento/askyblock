@@ -20,7 +20,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.ChatColor;
@@ -66,13 +68,13 @@ public class PlayerEvents implements Listener {
     private final ASkyBlock plugin;
     private static final boolean DEBUG = false;
     // A set of falling players
-    private static HashSet<UUID> fallingPlayers = new HashSet<UUID>();
-    private static HashMap<UUID, List<String>> temporaryPerms = new HashMap<UUID, List<String>>();
+    private static Set<UUID> fallingPlayers = new HashSet<>();
+    private static Map<UUID, List<String>> temporaryPerms = new HashMap<>();
     private List<UUID> respawn;
 
     public PlayerEvents(final ASkyBlock plugin) {
         this.plugin = plugin;
-        respawn = new ArrayList<UUID>();
+        respawn = new ArrayList<>();
     }
 
     /**
@@ -161,7 +163,7 @@ public class PlayerEvents implements Listener {
      * @param e - event
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-    public void onPlayerEnterOnIsland(IslandEnterEvent e){
+    public void onPlayerEnterOnIsland(final IslandEnterEvent e){
         Player player = plugin.getServer().getPlayer(e.getPlayer());
         if (player != null && !player.hasMetadata("NPC")) {
             if (DEBUG) {
@@ -189,14 +191,11 @@ public class PlayerEvents implements Listener {
             if(VaultHelper.checkPerm(player, Settings.PERMPREFIX + "islandfly", island.getCenter().getWorld())) {
                 if (DEBUG)
                     plugin.getLogger().info("DEBUG: player has fly");
-                plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
+                plugin.getServer().getScheduler().runTask(plugin, () -> {
+                    player.setAllowFlight(true);
+                    player.setFlying(true);
 
-                    @Override
-                    public void run() {
-                        player.setAllowFlight(true);
-                        player.setFlying(true);
-
-                    }});
+                });
 
             }
             if (DEBUG)
@@ -207,7 +206,7 @@ public class PlayerEvents implements Listener {
                     if (Settings.createNether && Settings.newNether && ASkyBlock.getNetherWorld() != null) {
                         VaultHelper.addPerm(player, perm, ASkyBlock.getNetherWorld());
                     }
-                    List<String> perms = new ArrayList<String>();
+                    List<String> perms = new ArrayList<>();
                     if(temporaryPerms.containsKey(player.getUniqueId())) perms = temporaryPerms.get(player.getUniqueId());
                     perms.add(perm);
                     temporaryPerms.put(player.getUniqueId(), perms);
@@ -242,7 +241,7 @@ public class PlayerEvents implements Listener {
      * @param e - event
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-    public void onPlayerLeaveIsland(IslandExitEvent e) {
+    public void onPlayerLeaveIsland(final IslandExitEvent e) {
         if (DEBUG)
             plugin.getLogger().info("DEBUG: island exit event");
         final Player player = plugin.getServer().getPlayer(e.getPlayer());
@@ -272,7 +271,7 @@ public class PlayerEvents implements Listener {
         // Check if the player has left the island completely
         if(VaultHelper.checkPerm(player, Settings.PERMPREFIX + "islandfly")) {
             // If the player has teleported to another world or island
-            if (toIsland != null && fromIsland.equals(toIsland)) {
+            if (fromIsland.equals(toIsland)) {
                 if (player.isFlying() && player.getGameMode().equals(GameMode.SURVIVAL)) {
                     if (DEBUG)
                         plugin.getLogger().info("DEBUG: player is flying timer is " + Settings.flyTimeOutside + "s");

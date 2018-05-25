@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
@@ -48,7 +49,7 @@ public class CoopPlay {
     private static CoopPlay instance = new CoopPlay(ASkyBlock.getPlugin());
     // Stores all the coop islands, the coop player, the location and the
     // inviter
-    private HashMap<UUID, HashMap<Location, UUID>> coopPlayers = new HashMap<UUID, HashMap<Location, UUID>>();
+    private final Map<UUID, HashMap<Location, UUID>> coopPlayers = new HashMap<>();
     // Defines whether a player is on a coop island or not
     // private HashMap<UUID, Location> onCoopIsland = new HashMap<UUID,
     // Location>();
@@ -120,7 +121,7 @@ public class CoopPlay {
             coopPlayers.get(newPlayer.getUniqueId()).put(coopIsland.getCenter(), requester.getUniqueId());
         } else {
             // First time. Create the hashmap
-            HashMap<Location, UUID> loc = new HashMap<Location, UUID>();
+            HashMap<Location, UUID> loc = new HashMap<>();
             loc.put(coopIsland.getCenter(), requester.getUniqueId());
             coopPlayers.put(newPlayer.getUniqueId(), loc);
         }
@@ -159,7 +160,7 @@ public class CoopPlay {
      */
     public List<UUID> getCoopPlayers(Location islandLoc) {
         Island coopIsland = plugin.getGrid().getIslandAt(islandLoc);
-        List<UUID> result = new ArrayList<UUID>();
+        List<UUID> result = new ArrayList<>();
         if (coopIsland != null) {
             for (UUID player : coopPlayers.keySet()) {
                 if (coopPlayers.get(player).containsKey(coopIsland.getCenter())) {
@@ -377,7 +378,7 @@ public class CoopPlay {
                 final CoopLeaveEvent event = new CoopLeaveEvent(targetPlayerUUID, requester.getUniqueId(), coopIsland);
                 plugin.getServer().getPluginManager().callEvent(event);
                 if (!event.isCancelled()) {
-                    removed = coopPlayers.get(targetPlayerUUID).remove(coopIsland.getCenter()) != null ? true: false;
+                    removed = coopPlayers.get(targetPlayerUUID).remove(coopIsland.getCenter()) != null;
                 }
             }
         }

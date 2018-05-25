@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
@@ -65,17 +66,17 @@ public class GridManager {
     private static final String SETTINGS_KEY = "settingskey";
     private static final String ISLANDS_FILENAME = "islands.yml";
     private static final String ISLANDNAMES_FILENAME = "islandnames.yml";
-    private ASkyBlock plugin;
+    private final ASkyBlock plugin;
     // 2D islandGrid of islands, x,z
-    private TreeMap<Integer, TreeMap<Integer, Island>> islandGrid = new TreeMap<Integer, TreeMap<Integer, Island>>();
+    private TreeMap<Integer, TreeMap<Integer, Island>> islandGrid = new TreeMap<>();
     // private TreeMap<Integer,TreeMap<Integer,PlayerIsland>> protectionGrid = new
     // TreeMap<Integer,TreeMap<Integer,PlayerIsland>>();
     // Reverse lookup for owner, if they exists
-    private HashMap<UUID, Island> ownershipMap = new HashMap<UUID, Island>();
+    private final HashMap<UUID, Island> ownershipMap = new HashMap<>();
     private File islandFile;
     private Island spawn;
     private File islandNameFile;
-    private YamlConfiguration islandNames = new YamlConfiguration();
+    private final YamlConfiguration islandNames = new YamlConfiguration();
 
     /**
      * @param plugin - ASkyBlock plugin object
@@ -114,7 +115,7 @@ public class GridManager {
             YamlConfiguration islandYaml = new YamlConfiguration();
             try {
                 islandYaml.load(islandFile);
-                List<String> islandList = new ArrayList<String>();
+                List<String> islandList = new ArrayList<>();
                 if (islandYaml.contains(Settings.worldName)) {
                     // Load the island settings key
                     List<String> settingsKey = islandYaml.getStringList(SETTINGS_KEY);
@@ -185,10 +186,7 @@ public class GridManager {
         if ((x - Settings.islandXOffset) % Settings.islandDistance != 0) {
             return false;
         }
-        if ((z - Settings.islandZOffset) % Settings.islandDistance != 0) {
-            return false;
-        }
-        return true;
+        return (z - Settings.islandZOffset) % Settings.islandDistance == 0;
     }
 
     /**
@@ -365,7 +363,7 @@ public class GridManager {
                                                         // Run through the enum and set
                                                         for (SettingsFlag flag : SettingsFlag.values()) {
                                                             if (index < split[8].length()) {
-                                                                newIsland.setIgsFlag(flag, split[8].charAt(index++) == '1' ? true : false);
+                                                                newIsland.setIgsFlag(flag, split[8].charAt(index++) == '1');
                                                             }
                                                         }
                                                     } 
@@ -543,10 +541,8 @@ public class GridManager {
         if (loc.getWorld().equals(ASkyBlock.getIslandWorld())) {
             return true;
         }
-        if (Settings.createNether && Settings.newNether && ASkyBlock.getNetherWorld() != null && loc.getWorld().equals(ASkyBlock.getNetherWorld())) {
-            return true;
-        }
-        return false;
+        return Settings.createNether && Settings.newNether && ASkyBlock.getNetherWorld() != null
+            && loc.getWorld().equals(ASkyBlock.getNetherWorld());
     }
 
 
@@ -707,7 +703,6 @@ public class GridManager {
                     plugin.getLogger().warning("Denied island is unowned and was just found in the islands folder. Skipping it...");
                 }
                 plugin.getLogger().warning("Recommend that the denied player file is deleted otherwise weird things can happen.");
-                return;
             } else {
                 // Add island
                 //plugin.getLogger().info("DEBUG: added island to grid at " + newIsland.getMinX() + "," + newIsland.getMinZ());
@@ -837,7 +832,7 @@ public class GridManager {
             // See if this island has an owner already
             island.setOwner(newOwner);
             // If the old owner exists remove them from the map
-            if (oldOwner != null && ownershipMap.containsKey(oldOwner)) {
+            if (oldOwner != null) {
                 // Remove the old entry
                 ownershipMap.remove(oldOwner);
             }
@@ -1032,12 +1027,8 @@ public class GridManager {
         if (space1.getType().isSolid() && !space1.getType().equals(Material.SIGN_POST) && !space1.getType().equals(Material.WALL_SIGN)) {
             return false;
         }
-        if (space2.getType().isSolid()&& !space2.getType().equals(Material.SIGN_POST) && !space2.getType().equals(Material.WALL_SIGN)) {
-            return false;
-        }
-        // Safe
-        //Bukkit.getLogger().info("DEBUG: safe!");
-        return true;
+        return !space2.getType().isSolid() || space2.getType().equals(Material.SIGN_POST) || space2
+            .getType().equals(Material.WALL_SIGN);
     }
 
     /**
@@ -1321,9 +1312,8 @@ public class GridManager {
         }
         Island island = getIslandAt(player.getLocation());
         if (island != null) {
-            if (island.inIslandSpace(player.getLocation()) && island.getMembers().contains(player.getUniqueId())) { 
-                return true;
-            }
+            return island.inIslandSpace(player.getLocation()) && island.getMembers()
+                .contains(player.getUniqueId());
         }
         return false;
     }
@@ -1349,15 +1339,11 @@ public class GridManager {
             //plugin.getLogger().info("DEBUG: members = " + island.getMembers());
             //plugin.getLogger().info("DEBUG: player UUID = " + player.getUniqueId());
 
-            if (island.onIsland(loc) && island.getMembers().contains(player.getUniqueId())) {
-                //plugin.getLogger().info("DEBUG: allowed");
-                // In a protected zone but is on the list of acceptable players
-                return true;
-            } else {
-                // Not allowed
-                //plugin.getLogger().info("DEBUG: not allowed");
-                return false;
-            }
+            //plugin.getLogger().info("DEBUG: allowed");
+// In a protected zone but is on the list of acceptable players
+// Not allowed
+//plugin.getLogger().info("DEBUG: not allowed");
+            return island.onIsland(loc) && island.getMembers().contains(player.getUniqueId());
         } else {
             //plugin.getLogger().info("DEBUG: no island at this location");
         }
@@ -1546,12 +1532,10 @@ public class GridManager {
                     protectionRange = island.getProtectionSize();
                 }
             }
-            if (target.getLocation().getX() > islandTestLocation.getX() - protectionRange / 2D
-                    && target.getLocation().getX() < islandTestLocation.getX() + protectionRange / 2D
-                    && target.getLocation().getZ() > islandTestLocation.getZ() - protectionRange / 2D
-                    && target.getLocation().getZ() < islandTestLocation.getZ() + protectionRange / 2D) {
-                return true;
-            }
+            return target.getLocation().getX() > islandTestLocation.getX() - protectionRange / 2D
+                && target.getLocation().getX() < islandTestLocation.getX() + protectionRange / 2D
+                && target.getLocation().getZ() > islandTestLocation.getZ() - protectionRange / 2D
+                && target.getLocation().getZ() < islandTestLocation.getZ() + protectionRange / 2D;
 
         }
         return false;

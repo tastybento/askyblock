@@ -70,10 +70,7 @@ public class IslandGuard1_8 implements Listener {
         if (island != null && (island.getIgsFlag(flag) || island.getMembers().contains(player.getUniqueId()))){
             return true;
         }
-        if (island == null && Settings.defaultWorldSettings.get(flag)) {
-            return true;
-        }
-        return false;
+        return island == null && Settings.defaultWorldSettings.get(flag);
     }
 
 

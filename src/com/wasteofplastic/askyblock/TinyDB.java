@@ -24,6 +24,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.UUID;
@@ -38,8 +39,8 @@ import org.bukkit.scheduler.BukkitRunnable;
  *
  */
 public class TinyDB {
-    private ASkyBlock plugin;
-    private ConcurrentHashMap<String,UUID> treeMap;
+    private final ASkyBlock plugin;
+    private final Map<String,UUID> treeMap;
     private boolean dbReady;
     private boolean savingFlag;
     /**
@@ -48,7 +49,7 @@ public class TinyDB {
      */
     public TinyDB(ASkyBlock plugin) {       
         this.plugin = plugin;
-        this.treeMap = new ConcurrentHashMap<String,UUID>();
+        this.treeMap = new ConcurrentHashMap<>();
         File database = new File(plugin.getDataFolder(), "name-uuid.txt");
         if (!database.exists()) {
             // Import from player files. Done async so may take a while
@@ -102,12 +103,10 @@ public class TinyDB {
                             // Read next lines
                             line = br.readLine();
                             uuid = br.readLine();
-                        } 
-                        br.close();
+                        }
                     }
 
-                }                
-                out.close();      
+                }
             }
 
             // Move files around
@@ -242,7 +241,7 @@ public class TinyDB {
 
     /**
      * Gets players name from tiny database
-     * @param playerUUID - the player's UUID
+     * @param playerUuid - the player's UUID
      * @return Name or empty string if unknown
      */
     public String getPlayerName(UUID playerUuid) {
