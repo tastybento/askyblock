@@ -25,7 +25,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import java.util.stream.Collectors;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import com.google.common.collect.ImmutableMap;
@@ -40,9 +42,10 @@ import com.wasteofplastic.askyblock.util.VaultHelper;
  * @author tastybento
  */
 public class PlayerCache {
-    private HashMap<UUID, Players> playerCache = new HashMap<UUID, Players>();
+
+    private final Map<UUID, Players> playerCache = new HashMap<>();
     private final ASkyBlock plugin;
-    private Set<UUID> inTeleport = new HashSet<UUID>();
+    private final Set<UUID> inTeleport = new HashSet<>();
 
     public PlayerCache(ASkyBlock plugin) {
         this.plugin = plugin;
@@ -77,12 +80,9 @@ public class PlayerCache {
      * @return list of all online cached players
      */
     public List<UUID> getOnlineCachedPlayers() {
-        List<UUID> list = Lists.newArrayList();
-        for (Player p: plugin.getServer().getOnlinePlayers()) {
-            if (playerCache.containsKey(p.getUniqueId())) {
-                list.add(p.getUniqueId());
-            }
-        }
+        List<UUID> list = plugin.getServer().getOnlinePlayers().stream()
+            .filter(p -> playerCache.containsKey(p.getUniqueId())).map(Entity::getUniqueId)
+            .collect(Collectors.toList());
         return Collections.unmodifiableList(list);
     }
 
@@ -123,9 +123,7 @@ public class PlayerCache {
      */
     public void removeAllPlayers() {
         Map<UUID, Players> map = ImmutableMap.copyOf(playerCache);
-        for (UUID pl : map.keySet()) {
-            map.get(pl).save();
-        }
+        map.keySet().forEach(player -> map.get(player).save());
         playerCache.clear();
     }
 
@@ -150,7 +148,7 @@ public class PlayerCache {
     /**
      * Checks if the player is known or not by looking through the filesystem
      * 
-     * @param uniqueId - unique ID
+     * @param uniqueID - unique ID
      * @return true if player is know, otherwise false
      */
     public boolean isAKnownPlayer(final UUID uniqueID) {

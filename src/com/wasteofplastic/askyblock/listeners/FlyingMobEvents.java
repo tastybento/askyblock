@@ -18,6 +18,7 @@
 package com.wasteofplastic.askyblock.listeners;
 
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.WeakHashMap;
 
@@ -48,14 +49,14 @@ import com.wasteofplastic.askyblock.Island;
 public class FlyingMobEvents implements Listener {
     private final ASkyBlock plugin;
     private final static boolean DEBUG = false;
-    private WeakHashMap<Entity, Island> mobSpawnInfo;
+    private final Map<Entity, Island> mobSpawnInfo;
 
     /**
      * @param plugin - ASkyBlock plugin object
      */
     public FlyingMobEvents(ASkyBlock plugin) {
         this.plugin = plugin;
-        this.mobSpawnInfo = new WeakHashMap<Entity, Island>();
+        this.mobSpawnInfo = new WeakHashMap<>();
         new BukkitRunnable() {
 
             public void run() {
@@ -116,7 +117,7 @@ public class FlyingMobEvents implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void MobExplosion(EntityExplodeEvent e) {
+    public void MobExplosion(final EntityExplodeEvent e) {
         if (DEBUG) {
             plugin.getLogger().info(e.getEventName());
         }
@@ -124,12 +125,12 @@ public class FlyingMobEvents implements Listener {
         if (e.getEntity() == null || !IslandGuard.inWorld(e.getEntity())) {
             return;
         }
-        if (mobSpawnInfo.containsKey(e.getEntity().getUniqueId())) {
+        if (mobSpawnInfo.containsKey(e.getEntity())) {
             // We know about this mob
             if (DEBUG) {
                 plugin.getLogger().info("DEBUG: We know about this mob");
             }
-            if (!mobSpawnInfo.get(e.getEntity().getUniqueId()).inIslandSpace(e.getLocation())) {
+            if (!mobSpawnInfo.get(e.getEntity()).inIslandSpace(e.getLocation())) {
                 // Cancel the explosion and block damage
                 if (DEBUG) {
                     plugin.getLogger().info("DEBUG: cancel flying mob explosion");
@@ -144,7 +145,7 @@ public class FlyingMobEvents implements Listener {
      * Deal with pre-explosions
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void WitherExplode(ExplosionPrimeEvent e) {
+    public void WitherExplode(final ExplosionPrimeEvent e) {
         if (DEBUG) {
             plugin.getLogger().info(e.getEventName());
         }
@@ -156,7 +157,7 @@ public class FlyingMobEvents implements Listener {
         if (e.getEntityType() == EntityType.WITHER) {
             //plugin.getLogger().info("DEBUG: Wither");
             // Check the location
-            if (mobSpawnInfo.containsKey(e.getEntity().getUniqueId())) {
+            if (mobSpawnInfo.containsKey(e.getEntity())) {
                 // We know about this wither
                 if (DEBUG) {
                     plugin.getLogger().info("DEBUG: We know about this wither");
@@ -179,12 +180,12 @@ public class FlyingMobEvents implements Listener {
                 //plugin.getLogger().info("DEBUG: shooter is wither");
                 Wither wither = (Wither)projectile.getShooter();
                 // Check the location
-                if (mobSpawnInfo.containsKey(wither.getUniqueId())) {
+                if (mobSpawnInfo.containsKey(wither)) {
                     // We know about this wither
                     if (DEBUG) {
                         plugin.getLogger().info("DEBUG: We know about this wither");
                     }
-                    if (!mobSpawnInfo.get(wither.getUniqueId()).inIslandSpace(e.getEntity().getLocation())) {
+                    if (!mobSpawnInfo.get(wither).inIslandSpace(e.getEntity().getLocation())) {
                         // Cancel the explosion
                         if (DEBUG) {
                             plugin.getLogger().info("DEBUG: cancel wither skull explosion");
@@ -202,7 +203,7 @@ public class FlyingMobEvents implements Listener {
      * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void WitherChangeBlocks(EntityChangeBlockEvent e) {
+    public void WitherChangeBlocks(final EntityChangeBlockEvent e) {
         if (DEBUG) {
             plugin.getLogger().info(e.getEventName());
         }
@@ -229,7 +230,7 @@ public class FlyingMobEvents implements Listener {
      * Clean up the hashmap. It's probably not needed, but just in case.
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void MobDeath(EntityDeathEvent e) {
+    public void MobDeath(final EntityDeathEvent e) {
         mobSpawnInfo.remove(e.getEntity());
     }
 }

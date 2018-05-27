@@ -33,16 +33,15 @@ import org.bukkit.scoreboard.Team;
  *
  */
 public class Scoreboards {
-    private static ASkyBlock plugin = ASkyBlock.getPlugin();
-    private static Scoreboards instance = new Scoreboards();
-    private static ScoreboardManager manager;
+    private static final ASkyBlock plugin = ASkyBlock.getPlugin();
+    private static final Scoreboards instance = new Scoreboards();
     private static Scoreboard board;
 
     /**
      * 
      */
     private Scoreboards() {
-        manager = Bukkit.getScoreboardManager();
+        ScoreboardManager manager = Bukkit.getScoreboardManager();
         board = manager.getNewScoreboard();
     }
 

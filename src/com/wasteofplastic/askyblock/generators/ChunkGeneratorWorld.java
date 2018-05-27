@@ -36,9 +36,9 @@ import com.wasteofplastic.askyblock.Settings;
  *         Creates the world
  */
 public class ChunkGeneratorWorld extends ChunkGenerator {
-    Random rand = new Random();
-    PerlinOctaveGenerator gen;
-    ASkyBlock plugin = ASkyBlock.getPlugin();
+    private Random rand = new Random();
+    private PerlinOctaveGenerator gen;
+    private final ASkyBlock plugin = ASkyBlock.getPlugin();
 
     @SuppressWarnings("deprecation")
     public byte[][] generateBlockSections(World world, Random random, int chunkX, int chunkZ, BiomeGrid biomeGrid) {

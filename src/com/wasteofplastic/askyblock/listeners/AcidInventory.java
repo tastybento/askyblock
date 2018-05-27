@@ -52,7 +52,7 @@ import com.wasteofplastic.askyblock.util.Util;
  */
 public class AcidInventory implements Listener {
     private final ASkyBlock plugin;
-    private List<String> lore = new ArrayList<String>();
+    private List<String> lore = new ArrayList<>();
     private final static boolean DEBUG = false;
 
     public AcidInventory(ASkyBlock aSkyBlock) {

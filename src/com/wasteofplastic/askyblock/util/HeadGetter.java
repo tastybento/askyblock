@@ -17,11 +17,10 @@ import org.bukkit.inventory.meta.SkullMeta;
 import com.wasteofplastic.askyblock.ASkyBlock;
 
 public class HeadGetter {
-    private Map<UUID,HeadInfo> cachedHeads = new HashMap<>();
-    private Map<UUID,String> names = new ConcurrentHashMap<>();
-    private ASkyBlock plugin;
-    private Map<UUID,Set<Requester>> headRequesters = new HashMap<>();
-
+    private final Map<UUID,HeadInfo> cachedHeads = new HashMap<>();
+    private final Map<UUID,String> names = new ConcurrentHashMap<>();
+    private final Map<UUID,Set<Requester>> headRequesters = new HashMap<>();
+    private final ASkyBlock plugin;
     /**
      * @param plugin
      */

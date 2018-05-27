@@ -16,10 +16,13 @@
  *******************************************************************************/
 package com.wasteofplastic.askyblock;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -39,8 +42,8 @@ import com.wasteofplastic.askyblock.util.Util;
  * 
  */
 public class DeleteIslandChunk {
-    private Set<Pair<Integer, Integer>> chunksToClear = new HashSet<Pair<Integer, Integer>>();
-    //private HashMap<Location, Material> blocksToClear = new HashMap<Location,Material>();
+    private Set<Pair<Integer, Integer>> chunksToClear = new HashSet<>();
+    //private Map<Location, Material> blocksToClear = new HashMap<>();
     private NMSAbstraction nms = null;
 
     private int nearest16(int x, boolean countUp) {
@@ -82,7 +85,7 @@ public class DeleteIslandChunk {
                     }
                 } 
                 } else {
-                    chunksToClear.add(new Pair<Integer, Integer>(i,j));
+                    chunksToClear.add(new Pair<>(i, j));
                 }
             }
         }

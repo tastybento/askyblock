@@ -19,6 +19,7 @@ package com.wasteofplastic.askyblock.listeners;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -71,14 +72,13 @@ import com.wasteofplastic.askyblock.util.VaultHelper;
  */
 public class IslandGuard1_9 implements Listener {
     private final ASkyBlock plugin;
-    private final static String NO_PUSH_TEAM_NAME = "ASkyBlockNP";
+    private static final String NO_PUSH_TEAM_NAME = "ASkyBlockNP";
     private Scoreboard scoreboard;
-    private Team pushTeam;
-    private HashMap<Integer, UUID> thrownPotions;
+    private final Map<Integer, UUID> thrownPotions;
 
     public IslandGuard1_9(final ASkyBlock plugin) {
         this.plugin = plugin;
-        this.thrownPotions = new HashMap<Integer, UUID>();
+        this.thrownPotions = new HashMap<>();
         if (!Settings.allowPushing) {
             // try to remove the team from the scoreboard
             try {
@@ -103,7 +103,7 @@ public class IslandGuard1_9 implements Listener {
      * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
-    public void onBlockForm(EntityBlockFormEvent e) {
+    public void onBlockForm(final EntityBlockFormEvent e) {
         if (e.getEntity() instanceof Player && e.getNewState().getType().equals(Material.FROSTED_ICE)) {
             Player player= (Player) e.getEntity();
             if (!IslandGuard.inWorld(player)) {
@@ -168,7 +168,7 @@ public class IslandGuard1_9 implements Listener {
     // End crystal
     @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled=true)
-    void placeEndCrystalEvent(PlayerInteractEvent e) {
+    void placeEndCrystalEvent(final PlayerInteractEvent e) {
         Player p = e.getPlayer();
         if (!IslandGuard.inWorld(p)) {
             return;
@@ -215,7 +215,7 @@ public class IslandGuard1_9 implements Listener {
      * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
-    public void EndCrystalDamage(EntityDamageByEntityEvent e) {
+    public void EndCrystalDamage(final EntityDamageByEntityEvent e) {
         if (e.getEntity() == null || !IslandGuard.inWorld(e.getEntity())) {
             return;
         }
@@ -274,7 +274,7 @@ public class IslandGuard1_9 implements Listener {
             e.blockList().clear();
         } else {
             if (!Settings.allowChestDamage) {
-                List<Block> toberemoved = new ArrayList<Block>();
+                List<Block> toberemoved = new ArrayList<>();
                 // Save the chest blocks in a list
                 for (Block b : e.blockList()) {
                     switch (b.getType()) {
@@ -323,7 +323,7 @@ public class IslandGuard1_9 implements Listener {
      * @param e - event
      */
     @EventHandler(priority = EventPriority.NORMAL,ignoreCancelled = true)
-    public void onPlayerQuit(PlayerQuitEvent e)
+    public void onPlayerQuit(final PlayerQuitEvent e)
     {
         if(Settings.allowPushing)
         {
@@ -350,7 +350,7 @@ public class IslandGuard1_9 implements Listener {
             return;
         }
         // Try and get what team the player is on right now
-        pushTeam = scoreboard.getEntryTeam(player.getName());
+        Team pushTeam = scoreboard.getEntryTeam(player.getName());
         if (pushTeam == null) {
             // It doesn't exist yet, so make it
             pushTeam = scoreboard.getTeam(NO_PUSH_TEAM_NAME);
@@ -505,10 +505,8 @@ public class IslandGuard1_9 implements Listener {
             // Players being hurt PvP
             if (e.getEntity() instanceof Player) {
                 if (pvp) {
-                    return;
                 } else {
                     e.setCancelled(true);
-                    return;
                 }
             }
         }
@@ -584,9 +582,6 @@ public class IslandGuard1_9 implements Listener {
         if (island != null && island.getIgsFlag(flag)){
             return true;
         }
-        if (island == null && Settings.defaultWorldSettings.get(flag)) {
-            return true;
-        }
-        return false;
+        return island == null && Settings.defaultWorldSettings.get(flag);
     }
 }

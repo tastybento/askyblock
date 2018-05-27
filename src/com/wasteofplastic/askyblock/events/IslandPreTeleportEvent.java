@@ -18,10 +18,10 @@ public class IslandPreTeleportEvent extends Event implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private boolean cancelled = false;
 
-    private Player player;
-    private Type type;
+    private final Player player;
+    private final Type type;
 
-    private Location location;
+    private final Location location;
 
     public IslandPreTeleportEvent(Player player, Type type, Location location) {
         this.player = player;

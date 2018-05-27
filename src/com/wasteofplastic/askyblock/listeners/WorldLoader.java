@@ -26,7 +26,7 @@ import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Settings;
 
 public class WorldLoader implements Listener {
-    private ASkyBlock plugin;
+    private final ASkyBlock plugin;
     private boolean worldLoaded = false;
     private static final boolean DEBUG = false;
 
