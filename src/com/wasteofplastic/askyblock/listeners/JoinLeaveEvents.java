@@ -15,17 +15,9 @@
  *******************************************************************************/
 package com.wasteofplastic.askyblock.listeners;
 
-import com.wasteofplastic.askyblock.ASkyBlock;
-import com.wasteofplastic.askyblock.CoopPlay;
-import com.wasteofplastic.askyblock.Island;
-import com.wasteofplastic.askyblock.LevelCalcByChunk;
-import com.wasteofplastic.askyblock.PlayerCache;
-import com.wasteofplastic.askyblock.Scoreboards;
-import com.wasteofplastic.askyblock.Settings;
-import com.wasteofplastic.askyblock.util.Util;
-import com.wasteofplastic.askyblock.util.VaultHelper;
 import java.util.List;
 import java.util.UUID;
+
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -36,6 +28,16 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.permissions.PermissionAttachmentInfo;
+
+import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.CoopPlay;
+import com.wasteofplastic.askyblock.Island;
+import com.wasteofplastic.askyblock.LevelCalcByChunk;
+import com.wasteofplastic.askyblock.PlayerCache;
+import com.wasteofplastic.askyblock.Scoreboards;
+import com.wasteofplastic.askyblock.Settings;
+import com.wasteofplastic.askyblock.util.Util;
+import com.wasteofplastic.askyblock.util.VaultHelper;
 
 public class JoinLeaveEvents implements Listener {
     private final ASkyBlock plugin;

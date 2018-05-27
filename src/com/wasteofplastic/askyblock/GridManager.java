@@ -24,13 +24,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
 
-import com.wasteofplastic.askyblock.events.IslandPreTeleportEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
@@ -51,6 +49,7 @@ import org.bukkit.util.Vector;
 
 import com.wasteofplastic.askyblock.Island.SettingsFlag;
 import com.wasteofplastic.askyblock.events.IslandChangeOwnerEvent;
+import com.wasteofplastic.askyblock.events.IslandPreTeleportEvent;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.teleport.SafeTeleportBuilder;
 

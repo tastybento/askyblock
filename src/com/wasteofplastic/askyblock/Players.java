@@ -25,8 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
-
 import java.util.stream.Collectors;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -234,7 +234,7 @@ public class Players {
     /**
      * Saves the player info to the file system
      */
-    public void save() {
+    public void save(boolean async) {
         //plugin.getLogger().info("Saving player..." + playerName);
         // Save the variables
         playerInfo.set("playerName", playerName);
@@ -324,7 +324,7 @@ public class Players {
         //playerInfo.set("coops", value);
 
         // Actually save the file
-        Util.saveYamlFile(playerInfo, "players/" + uuid.toString() + ".yml");
+        Util.saveYamlFile(playerInfo, "players/" + uuid.toString() + ".yml", async);
     }
 
     /**

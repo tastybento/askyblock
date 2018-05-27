@@ -199,7 +199,7 @@ public class WarpSigns implements Listener {
     /**
      * Saves the warp lists to file
      */
-    public void saveWarpList() {
+    public void saveWarpList(boolean async) {
         if (welcomeWarps == null) {
             return;
         }
@@ -209,22 +209,7 @@ public class WarpSigns implements Listener {
             warps.put(p.toString(), Util.getStringLocation(warpList.get(p)));
         }
         welcomeWarps.set("warps", warps);
-        Util.saveYamlFile(welcomeWarps, "warps.yml");
-        // Update the warp panel - needs to be done 1 tick later so that the sign
-        // text will be updated.
-        /*
-	if (reloadPanel) {
-	    // This is not done on shutdown
-	    if (Settings.useWarpPanel && plugin.getWarpPanel() != null) {
-		plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
-
-		    @Override
-		    public void run() {
-			plugin.getWarpPanel().;
-		    }});
-	    }
-	}*/
-        //plugin.getLogger().info("End of saving warps");
+        Util.saveYamlFile(welcomeWarps, "warps.yml", async);
     }
 
     /**
@@ -271,7 +256,7 @@ public class WarpSigns implements Listener {
         // Remove the old warp if it existed
         warpList.remove(playerUUID);
         warpList.put(playerUUID, loc);
-        saveWarpList();
+        saveWarpList(true);
         // Update warp signs
         // Run one tick later because text gets updated at the end of tick
         plugin.getServer().getScheduler().runTask(plugin, () -> {
@@ -295,7 +280,7 @@ public class WarpSigns implements Listener {
             // Run one tick later because text gets updated at the end of tick
             plugin.getWarpPanel().updatePanel();
         }
-        saveWarpList();
+        saveWarpList(true);
     }
 
     /**
@@ -338,7 +323,7 @@ public class WarpSigns implements Listener {
                 it.remove();
             }
         }
-        saveWarpList();
+        saveWarpList(true);
         plugin.getWarpPanel().updatePanel();
     }
 
