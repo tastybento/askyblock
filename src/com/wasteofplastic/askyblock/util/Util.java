@@ -51,8 +51,11 @@ import com.wasteofplastic.askyblock.nms.NMSAbstraction;
  * @author tastybento
  * 
  */
-public class Util {
-    private static ASkyBlock plugin = ASkyBlock.getPlugin();
+public final class Util {
+
+    private Util() { }
+
+    private static final ASkyBlock plugin = ASkyBlock.getPlugin();
     private static Long x = System.nanoTime();
 
     /**
@@ -415,16 +418,9 @@ public class Util {
      * @throws IOException
      */
     public static void setPlayerYamlConfig(File playerFolder, String setting, String newSettingValue) throws IOException {
-        FilenameFilter ymlFilter = new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                String lowercaseName = name.toLowerCase();
-                if (lowercaseName.endsWith(".yml")) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
+        FilenameFilter ymlFilter = (dir, name) -> {
+            String lowercaseName = name.toLowerCase();
+            return lowercaseName.endsWith(".yml");
         };
         for (File file: playerFolder.listFiles(ymlFilter)) {
             Path path = Paths.get(file.getAbsolutePath());
@@ -506,18 +502,13 @@ public class Util {
     public static boolean playerIsHolding(Player player, Material type) {
         if (plugin.getServer().getVersion().contains("(MC: 1.7")
                 || plugin.getServer().getVersion().contains("(MC: 1.8")) {
-            if (player.getItemInHand() != null && player.getItemInHand().getType().equals(type)) {
-                return true;
-            }
-            return false;
+            return player.getItemInHand() != null && player.getItemInHand().getType().equals(type);
         }
         if (player.getInventory().getItemInMainHand() != null && player.getInventory().getItemInMainHand().getType().equals(type)) {
             return true;
         }
-        if (player.getInventory().getItemInMainHand() != null && player.getInventory().getItemInOffHand().getType().equals(type)) {
-            return true;
-        }
-        return false;
+        return player.getInventory().getItemInMainHand() != null && player.getInventory()
+            .getItemInOffHand().getType().equals(type);
     }
 
     public static void runCommand(final Player player, final String string) {

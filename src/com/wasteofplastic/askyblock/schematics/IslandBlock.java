@@ -62,9 +62,9 @@ public class IslandBlock {
     private PotBlock pot;
     private EntityType spawnerBlockType;
     // Chest contents
-    private HashMap<Byte,ItemStack> chestContents = new HashMap<Byte,ItemStack>();
-    public static final HashMap<String, Material> WEtoM = new HashMap<String, Material>();
-    public static final HashMap<String, EntityType> WEtoME = new HashMap<String, EntityType>();
+    private final Map<Byte,ItemStack> chestContents = new HashMap<>();
+    protected static final Map<String, Material> WEtoM = new HashMap<>();
+    protected static final Map<String, EntityType> WEtoME = new HashMap<>();
 
     static {
         // Establish the World Edit to Material look up
@@ -225,7 +225,6 @@ public class IslandBlock {
         skull = null;
         pot = null;
         spawnerBlockType = null;
-        chestContents = new HashMap<Byte,ItemStack>();
     }
     /**
      * @return the type

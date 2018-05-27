@@ -354,10 +354,7 @@ public class ASkyBlockAPI {
      * @return true if player is in a coop, otherwise false
      */
     public boolean isCoop(Player player) {
-        if (CoopPlay.getInstance().getCoopIslands(player).isEmpty()) {
-            return false;
-        }
-        return true;
+        return !CoopPlay.getInstance().getCoopIslands(player).isEmpty();
     }
 
     /**
@@ -536,10 +533,7 @@ public class ASkyBlockAPI {
      */
     public boolean isLeader(UUID playerUUID) {
         UUID leader = plugin.getPlayers().getTeamLeader(playerUUID);
-        if (leader != null && leader.equals(playerUUID)) {
-            return true;
-        }
-        return false;
-        
+        return leader != null && leader.equals(playerUUID);
+
     }
 }

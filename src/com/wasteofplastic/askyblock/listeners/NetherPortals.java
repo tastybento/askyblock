@@ -54,7 +54,7 @@ import com.wasteofplastic.askyblock.util.teleport.SafeTeleportBuilder;
 public class NetherPortals implements Listener {
     private final ASkyBlock plugin;
     private boolean DEBUG2;
-    private final static boolean DEBUG = false;
+    private static final boolean DEBUG = false;
 
     public NetherPortals(ASkyBlock plugin) {
         this.plugin = plugin;
@@ -67,7 +67,7 @@ public class NetherPortals implements Listener {
      * @param event
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-    public void onEntityPortal(EntityPortalEvent event) {
+    public void onEntityPortal(final EntityPortalEvent event) {
         if (DEBUG)
             plugin.getLogger().info("DEBUG: nether portal entity " + event.getFrom().getBlock().getType());
         // If the nether is disabled then quit immediately
@@ -81,7 +81,7 @@ public class NetherPortals implements Listener {
     } 
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void onPlayerPortal(PlayerPortalEvent event) {
+    public void onPlayerPortal(final PlayerPortalEvent event) {
         if (DEBUG)
             plugin.getLogger().info("Player portal event - reason =" + event.getCause());
         UUID playerUUID = event.getPlayer().getUniqueId();
@@ -272,11 +272,8 @@ public class NetherPortals implements Listener {
     private boolean awayFromSpawn(Player player) {
         Vector p = player.getLocation().toVector().multiply(new Vector(1, 0, 1));
         Vector spawn = player.getWorld().getSpawnLocation().toVector().multiply(new Vector(1, 0, 1));
-        if (spawn.distanceSquared(p) < (Settings.netherSpawnRadius * Settings.netherSpawnRadius)) {
-            return false;
-        } else {
-            return true;
-        }
+        return !(spawn.distanceSquared(p) < (Settings.netherSpawnRadius
+            * Settings.netherSpawnRadius));
     }
 
     /**

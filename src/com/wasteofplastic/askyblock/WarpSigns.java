@@ -19,6 +19,7 @@ package com.wasteofplastic.askyblock;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
@@ -53,7 +54,7 @@ import com.wasteofplastic.askyblock.util.VaultHelper;
 public class WarpSigns implements Listener {
     private final ASkyBlock plugin;
     // Map of all warps stored as player, warp sign Location
-    private HashMap<UUID, Location> warpList = new HashMap<UUID, Location>();
+    private final Map<UUID, Location> warpList = new HashMap<>();
     // Where warps are stored
     private YamlConfiguration welcomeWarps;
 
@@ -62,14 +63,13 @@ public class WarpSigns implements Listener {
      */
     public WarpSigns(ASkyBlock plugin) {
         this.plugin = plugin;
-        this.warpList = new HashMap<UUID, Location>();
     }
 
     /**
      * Checks to see if a sign has been broken
      * @param e - event
      */
-    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onSignBreak(BlockBreakEvent e) {
         Block b = e.getBlock();
         Player player = e.getPlayer();
@@ -112,7 +112,7 @@ public class WarpSigns implements Listener {
      * 
      * @param e - event
      */
-    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onSignWarpCreate(SignChangeEvent e) {
         //plugin.getLogger().info("DEBUG: SignChangeEvent called");
         String title = e.getLine(0);
@@ -136,7 +136,7 @@ public class WarpSigns implements Listener {
                         return;
                     }
                     // Check that the player is on their island
-                    if (!(plugin.getGrid().playerIsOnIsland(player, false))) {
+                    if (!(plugin.getGrid().playerIsOnIsland(player, Settings.coopsCanCreateWarps))) {
                         Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorNoPlace);
                         e.setLine(0, ChatColor.RED + plugin.myLocale().warpswelcomeLine);
                         return;
@@ -200,7 +200,7 @@ public class WarpSigns implements Listener {
      * Saves the warp lists to file
      */
     public void saveWarpList() {
-        if (warpList == null || welcomeWarps == null) {
+        if (welcomeWarps == null) {
             return;
         }
         //plugin.getLogger().info("Saving warps...");
@@ -242,12 +242,10 @@ public class WarpSigns implements Listener {
         HashMap<String, Object> temp = (HashMap<String, Object>) welcomeWarps.getConfigurationSection("warps").getValues(true);
         for (String s : temp.keySet()) {
             try {
-                UUID playerUUID = UUID.fromString(s);
-                if (playerUUID != null) {
-                    Location l = Util.getLocationString((String) temp.get(s));
-                    if (l != null) {
-                        warpList.put(playerUUID, l);
-                    }
+                final UUID playerUUID = UUID.fromString(s);
+                Location l = Util.getLocationString((String) temp.get(s));
+                if (l != null) {
+                    warpList.put(playerUUID, l);
                 }
             } catch (Exception e) {
                 plugin.getLogger().severe("Problem loading warp at location " + temp.get(s) + " - removing.");
@@ -271,20 +269,15 @@ public class WarpSigns implements Listener {
             return false;
         }
         // Remove the old warp if it existed
-        if (warpList.containsKey(playerUUID)) {
-            warpList.remove(playerUUID);
-        }
+        warpList.remove(playerUUID);
         warpList.put(playerUUID, loc);
         saveWarpList();
         // Update warp signs
         // Run one tick later because text gets updated at the end of tick
-        plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
-
-            @Override
-            public void run() {
-                plugin.getWarpPanel().addWarp(playerUUID);
-                Bukkit.getPluginManager().callEvent(new WarpCreateEvent(plugin, loc, playerUUID));
-            }});
+        plugin.getServer().getScheduler().runTask(plugin, () -> {
+            plugin.getWarpPanel().addWarp(playerUUID);
+            Bukkit.getPluginManager().callEvent(new WarpCreateEvent(plugin, loc, playerUUID));
+        });
         return true;
     }
 
@@ -356,14 +349,8 @@ public class WarpSigns implements Listener {
      */
     public Set<UUID> listWarps() {
         // Check if any of the warp locations are null
-        Iterator<Entry<UUID, Location>> it = warpList.entrySet().iterator();
-        while (it.hasNext()) {
-            Entry<UUID, Location> en = it.next();
-            // Check if the location of the warp still exists, if not, delete it
-            if (en.getValue() == null) {
-                it.remove();
-            }
-        }
+        // Check if the location of the warp still exists, if not, delete it
+        warpList.entrySet().removeIf(en -> en.getValue() == null);
         return warpList.keySet();
     }
 
@@ -372,7 +359,7 @@ public class WarpSigns implements Listener {
      */
     public Collection<UUID> listSortedWarps() {
         // Bigger value of time means a more recent login
-        TreeMap<Long, UUID> map = new TreeMap<Long, UUID>();
+        TreeMap<Long, UUID> map = new TreeMap<>();
         Iterator<Entry<UUID, Location>> it = warpList.entrySet().iterator();
         while (it.hasNext()) {
             Entry<UUID, Location> en = it.next();

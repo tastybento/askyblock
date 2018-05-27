@@ -18,6 +18,7 @@
 package com.wasteofplastic.askyblock;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.entity.Player;
@@ -30,14 +31,14 @@ import org.bukkit.entity.Player;
  */
 public class InventorySave {
     private static InventorySave instance = new InventorySave(ASkyBlock.getPlugin());
-    private HashMap<UUID, InventoryStore> inventories;
+    private final Map<UUID, InventoryStore> inventories;
 
     /**
      * Saves the inventory of a player
      * @param plugin - ASkyBlock plugin object - ASkyBlock plugin
      */
     public InventorySave(ASkyBlock plugin) {
-        inventories = new HashMap<UUID, InventoryStore>();
+        inventories = new HashMap<>();
     }
 
     /** Save player's inventory
@@ -71,7 +72,6 @@ public class InventorySave {
             player.getInventory().setContents(inv.getInventory());
             player.getInventory().setArmorContents(inv.getArmor());
             inventories.remove(player.getUniqueId());
-            return;
         }
     }
 

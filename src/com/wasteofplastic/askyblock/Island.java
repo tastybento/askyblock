@@ -80,15 +80,15 @@ public class Island {
     // Tile entities
     private Multiset<Material> tileEntityCount = HashMultiset.create();
     // Biome
-    Biome biome;
+    private Biome biome;
 
     // Island protection settings
-    private static List<String> islandSettingsKey = new ArrayList<String>();
+    private static final List<String> islandSettingsKey = new ArrayList<>();
     static {
         islandSettingsKey.clear();
         islandSettingsKey.add("");
     }
-    private HashMap<SettingsFlag, Boolean> igs = new HashMap<SettingsFlag, Boolean>();
+    private HashMap<SettingsFlag, Boolean> igs = new HashMap<>();
     private int levelHandicap;
     /**
      * Island Guard Setting flags
@@ -318,22 +318,14 @@ public class Island {
             if (split.length > 6) {
                 // Bukkit.getLogger().info("DEBUG: " + split[6]);
                 // Get locked status
-                if (split[6].equalsIgnoreCase("true")) {
-                    this.locked = true;
-                } else {
-                    this.locked = false;
-                }
+                this.locked = split[6].equalsIgnoreCase("true");
                 // Bukkit.getLogger().info("DEBUG: " + locked);
             } else {
                 this.locked = false;
             }
             // Check if deletable
             if (split.length > 7) {
-                if (split[7].equalsIgnoreCase("true")) {
-                    this.purgeProtected = true;
-                } else {
-                    this.purgeProtected = false;
-                }
+                this.purgeProtected = split[7].equalsIgnoreCase("true");
             } else {
                 this.purgeProtected = false;
             }
@@ -503,10 +495,10 @@ public class Island {
         if (world != null) {
             // If the new nether is being used, islands exist in the nether too
             if (target.getWorld().equals(world) || (Settings.createNether && Settings.newNether && ASkyBlock.getNetherWorld() != null && target.getWorld().equals(ASkyBlock.getNetherWorld()))) {
-                if (target.getBlockX() >= minProtectedX && target.getBlockX() < (minProtectedX + protectionRange)
-                        && target.getBlockZ() >= minProtectedZ && target.getBlockZ() < (minProtectedZ + protectionRange)) {
-                    return true;
-                }
+                return target.getBlockX() >= minProtectedX && target.getBlockX() < (minProtectedX
+                    + protectionRange)
+                    && target.getBlockZ() >= minProtectedZ && target.getBlockZ() < (minProtectedZ
+                    + protectionRange);
             }
         }
         return false;
@@ -520,20 +512,19 @@ public class Island {
      */
     public boolean inIslandSpace(Location target) {
         if (target.getWorld().equals(ASkyBlock.getIslandWorld()) || target.getWorld().equals(ASkyBlock.getNetherWorld())) {
-            if (target.getX() >= center.getBlockX() - islandDistance / 2 && target.getX() < center.getBlockX() + islandDistance / 2
-                    && target.getZ() >= center.getBlockZ() - islandDistance / 2 && target.getZ() < center.getBlockZ() + islandDistance / 2) {
-                return true;
-            }
+            return target.getX() >= center.getBlockX() - islandDistance / 2
+                && target.getX() < center.getBlockX() + islandDistance / 2
+                && target.getZ() >= center.getBlockZ() - islandDistance / 2
+                && target.getZ() < center.getBlockZ() + islandDistance / 2;
         }
         return false;
     }
 
     public boolean inIslandSpace(int x, int z) {
-        if (x >= center.getBlockX() - islandDistance / 2 && x < center.getBlockX() + islandDistance / 2 && z >= center.getBlockZ() - islandDistance / 2
-                && z < center.getBlockZ() + islandDistance / 2) {
-            return true;
-        }
-        return false;
+        return x >= center.getBlockX() - islandDistance / 2
+            && x < center.getBlockX() + islandDistance / 2
+            && z >= center.getBlockZ() - islandDistance / 2
+            && z < center.getBlockZ() + islandDistance / 2;
     }
 
     /**
@@ -947,7 +938,7 @@ public class Island {
      */
     public void toggleIgs(SettingsFlag flag) {
         if (igs.containsKey(flag)) {
-            igs.put(flag, igs.get(flag) ? false : true);
+            igs.put(flag, !igs.get(flag));
         }
 
     }
