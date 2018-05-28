@@ -343,8 +343,8 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                         newSchem.setUsePhysics(schemSection.getBoolean("schematics." + key + ".usephysics",Settings.usePhysics));	    
                         // Paste Entities or not
                         newSchem.setPasteEntities(schemSection.getBoolean("schematics." + key + ".pasteentities",false));
-                        // Paste air or not. Default is false - huge performance savings!
-                        //newSchem.setPasteAir(schemSection.getBoolean("schematics." + key + ".pasteair",false));	    
+                        // Paste air or not. 
+                        newSchem.setPasteAir(schemSection.getBoolean("schematics." + key + ".pasteair",true));
                         // Visible in GUI or not
                         newSchem.setVisible(schemSection.getBoolean("schematics." + key + ".show",true));
                         // Partner schematic
