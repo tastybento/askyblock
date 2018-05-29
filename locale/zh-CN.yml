@@ -48,7 +48,7 @@ adminHelp:
   setlanguage: "设定默认语言并应用于所有玩家."
   setspawn: "设置岛屿世界的重生点在你的附近."
   settingsreset: "重设所有岛屿到默认保护设定"
-  teamChatSpy: "偷听岛屿team聊天(开启/关闭)"
+  teamChatSpy: "偷听岛屿团队聊天(开启/关闭)"
   topTen: "手动更新前十列表"
   topbreeders: "列出目前载入的最活跃的岛屿"
   tp: "传送到玩家岛屿"
@@ -92,7 +92,7 @@ adminResetSign:
   noSign: "在执行此命令时你必须盯着传送牌杆看."
   rescued: "已拯救传送牌并指派给 [name]"
 adminReserve:
-  islandExists: "此地已有一岛屿! Register the player instead!"
+  islandExists: "此地已有一岛屿! 直接注册该玩家!"
 adminSetHome: 
   homeSet: "已设家于 [location]"
   noneFound: "未发现安全位置!"
@@ -116,9 +116,9 @@ adminSetSpawn:
   set: "设定岛屿出生点到你的位置."
   setting: "设定岛屿出生点到你的位置 [location]."
 adminSwitch:
-  op: "Ops can always bypass protection. Deop to use command."
-  adding: "Adding protection bypass..."
-  removing: "Removing protection bypass..."
+  op: "OP 已默认无视岛屿保护. 解除 OP 来使用该命令."
+  adding: "启用岛屿保护绕过..."
+  removing: "禁用岛屿保护绕过..."
 adminTeam: 
   addLeaderNoIsland: "团队领袖没有自己的岛屿所以不能拥有队员!"
   addLeaderToOwn: "无法让领袖再次加入同一团队."
@@ -156,7 +156,7 @@ ban:
 biome: 
   help: 打开生物群系界面.
   paneltitle: 选择一个生物群系
-  pleasewait: "Please wait, changing biome..."
+  pleasewait: "正在更改生物群系, 请稍待..."
   set: "岛屿生物群系设置为: [biome]!"
   unknown: 未知生物群系!
   youbought: "购买花费: [cost]!"
@@ -188,7 +188,7 @@ challenges:
   moneyReward: 经济奖励
   name: 挑战名称
   nameHasCompleted: "恭喜玩家 [name] 完成了 [challenge] 挑战!"
-  navigation: "Click to see [level] challenges!"
+  navigation: "点击查看等级 [level] 的挑战!"
   notRepeatable: 这个挑战不可重复!
   repeatRewards: 重复奖励
   rewards: 奖励
@@ -218,7 +218,7 @@ coop:
   removesuccess: "[name] 不再是一个囚禁玩家."
   success: "[name] 现在被你囚禁了,直到他们下线或者你驱逐他们."
   uncoop: "移除玩家对您岛屿的完全访问"
-  useexpel: "输入 /expel 移除."
+  useexpel: "输入 /expel 驱逐."
 deaths: 
   deaths: "死亡次数"
   died: "死了!"
@@ -244,7 +244,7 @@ error:
   unknownPlayer: 未知玩家.
   useInGame: "这个指令必须在游戏内使用."
   wrongWorld: "你无法在当前世界这样操作,请返回你的岛屿."
-  minishopDisabled: "Minishop is disabled."
+  minishopDisabled: "迷你商店已禁用."
 expel: 
   expelled: 你被驱逐出了岛屿!
   fail: "[name] 无法被驱逐!"
@@ -523,7 +523,7 @@ topTen:
   guiTitle: "前10岛屿"
   header: "排名前10的岛屿:"
 visitors:
-  protected: "Visitors protected"
+  protected: "访客保护"
 warps: 
   deactivate: 旧的传送点被替换!
   errorDoesNotExist: 传送点不存在!
