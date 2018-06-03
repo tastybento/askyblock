@@ -2467,7 +2467,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.create")) {
                                 // Only online players can be invited
                                 Player invitedPlayer = plugin.getServer().getPlayer(split[1]);
-                                if (invitedPlayer == null) {
+                                if (invitedPlayer == null || !player.canSee(invitedPlayer)) {
                                     Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorOfflinePlayer);
                                     return true;  
                                 }                                
@@ -2632,7 +2632,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                             }
                             // Only online players can be cooped
                             Player target = plugin.getServer().getPlayer(split[1]);
-                            if (target == null) {
+                            if (target == null || !player.canSee(target)) {
                                 Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorOfflinePlayer);
                                 return true;  
                             }                                
@@ -2709,6 +2709,10 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                             // Target cannot be op
                             Player target = plugin.getServer().getPlayer(targetPlayerUUID);
                             if (target != null) {
+                                if (!player.canSee(target)) {
+                                    Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorUnknownPlayer);
+                                    return true;  
+                                }
                                 if (target.isOp() || VaultHelper.checkPerm(target, Settings.PERMPREFIX + "mod.bypassprotect")
                                         || VaultHelper.checkPerm(target, Settings.PERMPREFIX + "mod.bypassexpel")) {
                                     Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).expelFail.replace("[name]", target.getName()));
@@ -2819,7 +2823,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                             // Get offline player
                             OfflinePlayer offlineTarget = plugin.getServer().getOfflinePlayer(targetPlayerUUID);
                             // Target cannot be op
-                            if (offlineTarget.isOp()) {
+                            if (offlineTarget.isOp() || (offlineTarget.isOnline() && !player.canSee(offlineTarget.getPlayer()))) {
                                 Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).banFail.replace("[name]", split[1]));
                                 return true;
                             }
