@@ -3455,7 +3455,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
             }
             return true;
         }
-        return false;
+        return true;
     }
 
     @Override
