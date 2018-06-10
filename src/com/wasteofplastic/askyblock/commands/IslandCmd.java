@@ -1079,57 +1079,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
             }
         case 1:
             if (split[0].equalsIgnoreCase("value")) {
-                // Explain command
-                if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.value")) {
-                    // Check they are on their island
-                    if (!plugin.getGrid().playerIsOnIsland(player)) {
-                        Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNotOnIsland);
-                        return true;
-                    }
-                    ItemStack item = player.getItemInHand();
-                    double multiplier = 1;
-                    if (item != null && item.getType().isBlock()) {
-                        // Get permission multiplier                
-                        for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
-                            if (perms.getPermission().startsWith(Settings.PERMPREFIX + "island.multiplier.")) {
-                                String[] spl = perms.getPermission().split(Settings.PERMPREFIX + "island.multiplier.");
-                                // Get the max value should there be more than one
-                                if (spl.length > 1) {
-                                    if (!NumberUtils.isDigits(spl[1])) {
-                                        plugin.getLogger().severe("Player " + player.getName() + " has permission: " + perms.getPermission() + " <-- the last part MUST be a number! Ignoring...");
-
-                                    } else {
-                                        multiplier = Math.max(multiplier, Integer.valueOf(spl[1]));
-                                    }
-                                }
-                            }
-                            // Do some sanity checking
-                            if (multiplier < 1) {
-                                multiplier = 1;
-                            }
-                        }
-                        // Player height
-                        if (player.getLocation().getBlockY() < Settings.seaHeight) {
-                            multiplier *= Settings.underWaterMultiplier;
-                        }
-                        // Get the value. Try the specific item
-                        int value = 0;
-                        if (Settings.blockValues.containsKey(item.getData())) {
-                            value = (int)((double)Settings.blockValues.get(item.getData()) * multiplier);
-                        } else if (Settings.blockValues.containsKey(new MaterialData(item.getType()))) {
-                            value = (int)((double)Settings.blockValues.get(new MaterialData(item.getType())) * multiplier);
-                        }
-                        if (value > 0) {
-                            // [name] placed here may be worth [value]
-                            Util.sendMessage(player, ChatColor.GREEN + (plugin.myLocale(player.getUniqueId()).islandblockValue.replace("[name]", Util.prettifyText(item.getType().name())).replace("[value]", String.valueOf(value))));
-                        } else {
-                            // [name] is worthless
-                            Util.sendMessage(player, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).islandblockWorthless.replace("[name]", Util.prettifyText(item.getType().name())));
-                        }
-                    } else {
-                        // That is not a block
-                        Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNotABlock);
-                    }
+                if(valueLookup(player, split)) {
                     return true;
                 }
             } else if (split[0].equalsIgnoreCase("name")) {
@@ -2109,6 +2059,10 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                     return true;
                 } else {
                     Util.sendMessage(player, plugin.myLocale(playerUUID).errorNoPermission);
+                    return true;
+                }
+            } else if (split[0].equalsIgnoreCase("value")) {
+                if(valueLookup(player, split)) {
                     return true;
                 }
             } else
@@ -3437,6 +3391,71 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
      */
     public void reserveLocation(UUID playerUUID, Location location) {
         islandSpot.put(playerUUID, location);
+    }
+
+    public boolean valueLookup(Player player, String[] split)
+    {
+        // Explain command
+        if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.value")) {
+            // Check they are on their island
+            if (!plugin.getGrid().playerIsOnIsland(player)) {
+                Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNotOnIsland);
+                return true;
+            }
+            ItemStack item = player.getItemInHand();
+            if(split.length >= 1) {
+                // Match Material for parsed input.
+                Material material = Material.matchMaterial(split[1]);
+                if(material != null) {
+                    item = new ItemStack(material);
+                }
+            }
+            double multiplier = 1;
+            if (item != null && item.getType().isBlock()) {
+                // Get permission multiplier
+                for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
+                    if (perms.getPermission().startsWith(Settings.PERMPREFIX + "island.multiplier.")) {
+                        String[] spl = perms.getPermission().split(Settings.PERMPREFIX + "island.multiplier.");
+                        // Get the max value should there be more than one
+                        if (spl.length > 1) {
+                            if (!NumberUtils.isDigits(spl[1])) {
+                                plugin.getLogger().severe("Player " + player.getName() + " has permission: " + perms.getPermission() + " <-- the last part MUST be a number! Ignoring...");
+
+                            } else {
+                                multiplier = Math.max(multiplier, Integer.valueOf(spl[1]));
+                            }
+                        }
+                    }
+                    // Do some sanity checking
+                    if (multiplier < 1) {
+                        multiplier = 1;
+                    }
+                }
+                // Player height
+                if (player.getLocation().getBlockY() < Settings.seaHeight) {
+                    multiplier *= Settings.underWaterMultiplier;
+                }
+                // Get the value. Try the specific item
+                int value = 0;
+                if (Settings.blockValues.containsKey(item.getData())) {
+                    value = (int)((double)Settings.blockValues.get(item.getData()) * multiplier);
+                } else if (Settings.blockValues.containsKey(new MaterialData(item.getType()))) {
+                    value = (int)((double)Settings.blockValues.get(new MaterialData(item.getType())) * multiplier);
+                }
+                if (value > 0) {
+                    // [name] placed here may be worth [value]
+                    Util.sendMessage(player, ChatColor.GREEN + (plugin.myLocale(player.getUniqueId()).islandblockValue.replace("[name]", Util.prettifyText(item.getType().name())).replace("[value]", String.valueOf(value))));
+                } else {
+                    // [name] is worthless
+                    Util.sendMessage(player, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).islandblockWorthless.replace("[name]", Util.prettifyText(item.getType().name())));
+                }
+            } else {
+                // That is not a block
+                Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNotABlock);
+            }
+            return true;
+        }
+        return true;
     }
 
     @Override
