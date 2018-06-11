@@ -3403,7 +3403,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                 return true;
             }
             ItemStack item = player.getItemInHand();
-            if(split.length >= 1) {
+            if(split.length > 1) {
                 // Match Material for parsed input.
                 Material material = Material.matchMaterial(split[1]);
                 if(material != null) {
