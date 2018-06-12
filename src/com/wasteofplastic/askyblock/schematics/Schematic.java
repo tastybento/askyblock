@@ -24,7 +24,6 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -584,9 +583,6 @@ public class Schematic {
             for (int y = 0; y < height; ++y) {
                 for (int z = 0; z < length; ++z) {
                     int index = y * width * length + z * width + x;
-                    // Bukkit.getLogger().info("DEBUG " + index +
-                    // " changing to ID:"+blocks[index] + " data = " +
-                    // blockData[index]);
                     if (blocks[index] == 7) {
                         // Last bedrock
                         if (bedrock == null || bedrock.getY() < y) {
@@ -1149,11 +1145,6 @@ public class Schematic {
         islandBlocks = new ArrayList<IslandBlock>();
         Map<BlockVector, Map<String, Tag>> tileEntitiesMap = this.getTileEntitiesMap();
         // Start with non-attached blocks
-        //plugin.getLogger().info("DEBUG: attachable size = " + attachable.size());
-        //plugin.getLogger().info("DEBUG: torch = " + Material.TORCH.getId());
-        //plugin.getLogger().info("DEBUG: non attachable");
-        //plugin.getLogger().info("DEBUG: bedrock y = " + bedrock.getBlockY());
-        //int count = 0;
         for (int x = 0; x < width; ++x) {
             for (int y = 0; y < height; ++y) {
                 for (int z = 0; z < length; ++z) {
@@ -1321,14 +1312,9 @@ public class Schematic {
      */
     public void setPasteAir(boolean pasteAir) {
         if (!pasteAir) {
-            Iterator<IslandBlock> it = islandBlocks.iterator();
-            while (it.hasNext()) {
-                if (it.next().getTypeId() == 0) {
-                    it.remove();
-                }
-            }
+            islandBlocks.removeIf(b -> b.getTypeId() == 0);
         }
-        //plugin.getLogger().info("DEBUG: islandBlocks after removing air blocks = " + islandBlocks.size());
+        
     }
 
     /**

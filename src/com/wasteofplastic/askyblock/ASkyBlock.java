@@ -1,5 +1,4 @@
 /*******************************************************************************
- * This file is part of ASkyBlock.
  *
  *     ASkyBlock is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,7 +20,6 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.Callable;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -238,10 +236,10 @@ public class ASkyBlock extends JavaPlugin {
             }
             // Save the warps and do not reload the panel
             if (warpSignsListener != null) {
-                warpSignsListener.saveWarpList();
+                warpSignsListener.saveWarpList(false);
             }
             if (messages != null) {
-                messages.saveMessages();
+                messages.saveMessages(false);
             }
             if (topTen != null) {
                 topTen.topTenSave();

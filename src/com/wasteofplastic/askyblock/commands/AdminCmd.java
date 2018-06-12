@@ -2499,8 +2499,8 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
         Util.sendMessage(sender, ChatColor.WHITE + "UUID: " + playerUUID.toString());
         // Completed challenges
         Util.sendMessage(sender, ChatColor.WHITE + plugin.myLocale().challengesguiTitle + ":");
-        HashMap<String, Boolean> challenges = plugin.getPlayers().getChallengeStatus(playerUUID);
-        HashMap<String, Integer> challengeTimes = plugin.getPlayers().getChallengeTimes(playerUUID);
+        Map<String, Boolean> challenges = plugin.getPlayers().getChallengeStatus(playerUUID);
+        Map<String, Integer> challengeTimes = plugin.getPlayers().getChallengeTimes(playerUUID);
         for (String c : challenges.keySet()) {
             if (challengeTimes.containsKey(c)) {
                 Util.sendMessage(sender, c + ": "

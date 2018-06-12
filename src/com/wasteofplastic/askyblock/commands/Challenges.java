@@ -2174,7 +2174,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
         // TODO: store this entry
         resettingChallenges.set(challenge + ".repeat", repeat);
         resettingChallenges.set(challenge + ".duration", entry);
-        Util.saveYamlFile(resettingChallenges, "resettimers.yml");
+        Util.saveYamlFile(resettingChallenges, "resettimers.yml", true);
     }
 
     /**
@@ -2204,7 +2204,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
                 timeToCheck -= repeat;
                  */
                 resettingChallenges.set(challenge + ".resettime", timeToCheck);
-                Util.saveYamlFile(resettingChallenges, "resettimers.yml");
+                Util.saveYamlFile(resettingChallenges, "resettimers.yml", true);
             }
             if (timeToCheck > timestamp) {
                 // Timestamp is older than reset time
@@ -2249,7 +2249,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
     public void clearChallengeReset(String challenge) {
         if (resettingChallenges.contains(challenge)) {
             resettingChallenges.set(challenge, null);
-            Util.saveYamlFile(resettingChallenges, "resettimers.yml");
+            Util.saveYamlFile(resettingChallenges, "resettimers.yml", true);
         }
     }
 

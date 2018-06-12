@@ -33,7 +33,6 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
 
-import com.wasteofplastic.askyblock.events.*;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
@@ -75,6 +74,11 @@ import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.Island.SettingsFlag;
 import com.wasteofplastic.askyblock.LevelCalcByChunk;
 import com.wasteofplastic.askyblock.Settings;
+import com.wasteofplastic.askyblock.events.IslandJoinEvent;
+import com.wasteofplastic.askyblock.events.IslandLeaveEvent;
+import com.wasteofplastic.askyblock.events.IslandNewEvent;
+import com.wasteofplastic.askyblock.events.IslandPreTeleportEvent;
+import com.wasteofplastic.askyblock.events.IslandResetEvent;
 import com.wasteofplastic.askyblock.listeners.PlayerEvents;
 import com.wasteofplastic.askyblock.panels.ControlPanel;
 import com.wasteofplastic.askyblock.schematics.Schematic;
@@ -339,8 +343,8 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                         newSchem.setUsePhysics(schemSection.getBoolean("schematics." + key + ".usephysics",Settings.usePhysics));	    
                         // Paste Entities or not
                         newSchem.setPasteEntities(schemSection.getBoolean("schematics." + key + ".pasteentities",false));
-                        // Paste air or not. Default is false - huge performance savings!
-                        //newSchem.setPasteAir(schemSection.getBoolean("schematics." + key + ".pasteair",false));	    
+                        // Paste air or not. 
+                        newSchem.setPasteAir(schemSection.getBoolean("schematics." + key + ".pasteair",true));
                         // Visible in GUI or not
                         newSchem.setVisible(schemSection.getBoolean("schematics." + key + ".show",true));
                         // Partner schematic
@@ -1800,7 +1804,6 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                 }
             } else if (split[0].equalsIgnoreCase("coopaccept")) {
                 // Accept an invite command
-                if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "coop")) {
                     if (coopInviteList.containsKey(playerUUID)) {
                         // Check if inviter is online
                         Player inviter = plugin.getServer().getPlayer(coopInviteList.get(playerUUID));
@@ -1822,10 +1825,6 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                     }
                     Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorCommandNotReady);
                     return true;
-                } else {
-                    Util.sendMessage(player, ChatColor.RED + plugin.myLocale(playerUUID).errorNoPermission);
-                    return true;
-                }
             } else if (split[0].equalsIgnoreCase("accept")) {
                 // Accept an invite command
                 if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.join")) {
@@ -2422,7 +2421,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "team.create")) {
                                 // Only online players can be invited
                                 Player invitedPlayer = plugin.getServer().getPlayer(split[1]);
-                                if (invitedPlayer == null) {
+                                if (invitedPlayer == null || !player.canSee(invitedPlayer)) {
                                     Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorOfflinePlayer);
                                     return true;  
                                 }                                
@@ -2587,7 +2586,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                             }
                             // Only online players can be cooped
                             Player target = plugin.getServer().getPlayer(split[1]);
-                            if (target == null) {
+                            if (target == null || !player.canSee(target)) {
                                 Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorOfflinePlayer);
                                 return true;  
                             }                                
@@ -2664,6 +2663,10 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                             // Target cannot be op
                             Player target = plugin.getServer().getPlayer(targetPlayerUUID);
                             if (target != null) {
+                                if (!player.canSee(target)) {
+                                    Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorUnknownPlayer);
+                                    return true;  
+                                }
                                 if (target.isOp() || VaultHelper.checkPerm(target, Settings.PERMPREFIX + "mod.bypassprotect")
                                         || VaultHelper.checkPerm(target, Settings.PERMPREFIX + "mod.bypassexpel")) {
                                     Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).expelFail.replace("[name]", target.getName()));
@@ -2774,7 +2777,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                             // Get offline player
                             OfflinePlayer offlineTarget = plugin.getServer().getOfflinePlayer(targetPlayerUUID);
                             // Target cannot be op
-                            if (offlineTarget.isOp()) {
+                            if (offlineTarget.isOp() || (offlineTarget.isOnline() && !player.canSee(offlineTarget.getPlayer()))) {
                                 Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).banFail.replace("[name]", split[1]));
                                 return true;
                             }

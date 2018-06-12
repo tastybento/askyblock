@@ -103,15 +103,25 @@ public final class Util {
      * 
      * @param yamlFile
      * @param fileLocation
+     * @param async 
      */
-    public static void saveYamlFile(YamlConfiguration yamlFile, String fileLocation) {
+    public static void saveYamlFile(YamlConfiguration yamlFile, String fileLocation, boolean async) {
         File dataFolder = plugin.getDataFolder();
         File file = new File(dataFolder, fileLocation);
-
-        try {
-            yamlFile.save(file);
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (async) {
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+                try {
+                    yamlFile.save(file);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+        } else {
+            try {
+                yamlFile.save(file);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -499,6 +509,7 @@ public final class Util {
      * @param type
      * @return true if they are holding an item of type type
      */
+    @SuppressWarnings("deprecation")
     public static boolean playerIsHolding(Player player, Material type) {
         if (plugin.getServer().getVersion().contains("(MC: 1.7")
                 || plugin.getServer().getVersion().contains("(MC: 1.8")) {
@@ -508,11 +519,14 @@ public final class Util {
             return true;
         }
         return player.getInventory().getItemInMainHand() != null && player.getInventory()
-            .getItemInOffHand().getType().equals(type);
+                .getItemInOffHand().getType().equals(type);
     }
 
     public static void runCommand(final Player player, final String string) {
-        plugin.getServer().getScheduler().runTask(plugin, () -> player.performCommand(string));
-
+        if (plugin.getServer().isPrimaryThread()) {
+            player.performCommand(string);  
+        } else {
+            plugin.getServer().getScheduler().runTask(plugin, () -> player.performCommand(string));
+        }
     }
 }
