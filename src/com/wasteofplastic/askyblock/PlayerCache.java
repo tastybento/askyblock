@@ -16,23 +16,15 @@
  *******************************************************************************/
 package com.wasteofplastic.askyblock;
 
-import java.io.File;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-
-import java.util.stream.Collectors;
+import com.google.common.collect.ImmutableMap;
+import com.wasteofplastic.askyblock.util.VaultHelper;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.wasteofplastic.askyblock.util.VaultHelper;
+import java.io.File;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Provides a memory cache of online player information
@@ -375,7 +367,7 @@ public class PlayerCache {
      */
     public HashMap<String, Boolean> getChallengeStatus(UUID playerUUID) {
         addPlayer(playerUUID);
-        return playerCache.get(playerUUID).getChallengeStatus();
+        return (HashMap<String, Boolean>) playerCache.get(playerUUID).getChallengeStatus();
     }
 
     /**
@@ -386,7 +378,7 @@ public class PlayerCache {
      */
     public HashMap<String, Integer> getChallengeTimes(UUID playerUUID) {
         addPlayer(playerUUID);
-        return playerCache.get(playerUUID).getChallengeCompleteTimes();
+        return (HashMap<String, Integer>) playerCache.get(playerUUID).getChallengeCompleteTimes();
     }
 
     public void resetChallenge(UUID playerUUID, String challenge) {
