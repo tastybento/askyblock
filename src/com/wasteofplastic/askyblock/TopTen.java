@@ -307,10 +307,10 @@ public class TopTen implements Listener, Requester {
                                 memberList.substring(0, memberList.length() - 2));
                         }
                         Util.sendMessage(player, ChatColor.AQUA + "#" + i + ": " + plugin.getGrid().getIslandName(playerUUID) + ChatColor.AQUA + " (" + memberList + ") - "
-                                + plugin.myLocale(player.getUniqueId()).levelislandLevel + " " + m.getValue());
+                                + plugin.myLocale().levelislandLevel + " " + m.getValue());
                     } else {
                         // Island name + Island level
-                        Util.sendMessage(player, ChatColor.AQUA + "#" + i + ": " + plugin.getGrid().getIslandName(playerUUID) + ChatColor.AQUA +  " - " + plugin.myLocale(player.getUniqueId()).levelislandLevel + " "
+                        Util.sendMessage(player, ChatColor.AQUA + "#" + i + ": " + plugin.getGrid().getIslandName(playerUUID) + ChatColor.AQUA +  " - " + plugin.myLocale().levelislandLevel + " "
                                 + m.getValue());
                     }
                     if (i++ == 10) {
@@ -390,7 +390,7 @@ public class TopTen implements Listener, Requester {
         if (!Bukkit.getServer().getVersion().contains("1.7") && !Bukkit.getServer().getVersion().contains("1.8")) {
             meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         }
-        meta.setDisplayName((plugin.myLocale(player).topTenGuiHeading.replace("[name]", plugin.getGrid().getIslandName(player))).replace("[rank]", String.valueOf(rank)));
+        meta.setDisplayName((plugin.myLocale().topTenGuiHeading.replace("[name]", plugin.getGrid().getIslandName(player))).replace("[rank]", String.valueOf(rank)));
         //meta.setDisplayName(ChatColor.YELLOW + "" + ChatColor.BOLD + "<!> " + ChatColor.YELLOW + "Island: " + ChatColor.GOLD + ChatColor.UNDERLINE + plugin.getGrid().getIslandName(player) + ChatColor.GRAY + " (#" + rank + ")");
         List<String> lore = new ArrayList<>();
         lore.add(ChatColor.YELLOW + plugin.myLocale(player).levelislandLevel + " " + long1);
@@ -422,7 +422,7 @@ public class TopTen implements Listener, Requester {
         }
         // The player that clicked the item
         Player player = (Player) event.getWhoClicked();
-        if (!inventory.getTitle().equals(plugin.myLocale(player.getUniqueId()).topTenGuiTitle)) {
+        if (!inventory.getTitle().equals(plugin.myLocale().topTenGuiTitle)) {
             return;
         }
         event.setCancelled(true);

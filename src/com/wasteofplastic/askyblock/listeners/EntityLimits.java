@@ -91,7 +91,7 @@ public class EntityLimits implements Listener {
                         + entity.getUniqueId().toString(), v.asString());            
             });
         });
-        Util.saveYamlFile(entities, "entitylimits.yml");
+        Util.saveYamlFile(entities, "entitylimits.yml", true);
     }
 
     public void disable() {
@@ -114,7 +114,7 @@ public class EntityLimits implements Listener {
                 });
             }); 
         }
-        Util.saveYamlFile(entities, "entitylimits.yml");
+        Util.saveYamlFile(entities, "entitylimits.yml", false);
     }
 
     /**
