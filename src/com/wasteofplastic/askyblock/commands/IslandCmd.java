@@ -1612,7 +1612,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                 }
                 if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.ban")) {
                     Util.sendMessage(player, plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " ban <player>: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpBan);
-                    Util.sendMessage(player, plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " banlist <player>: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpBanList);
+                    Util.sendMessage(player, plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " banlist: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpBanList);
                     Util.sendMessage(player, plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " unban <player>: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpUnban);
                 }
                 if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "coop")) {
