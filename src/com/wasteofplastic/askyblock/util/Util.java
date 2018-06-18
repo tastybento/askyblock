@@ -26,6 +26,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -108,20 +109,26 @@ public final class Util {
     public static void saveYamlFile(YamlConfiguration yamlFile, String fileLocation, boolean async) {
         File dataFolder = plugin.getDataFolder();
         File file = new File(dataFolder, fileLocation);
-        if (async) {
-            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+        Runnable saver = new Runnable() {
+
+            @Override
+            public void run() {
                 try {
-                    yamlFile.save(file);
+                    File tmpFile = File.createTempFile("yaml", null, dataFolder);
+                    yamlFile.save(tmpFile);
+                    if (tmpFile.exists()) {
+                        Files.move(tmpFile.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+                    }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    plugin.getLogger().severe(() -> "Could not save YAML file! " + e.getMessage());
                 }
-            });
+                
+            }};
+            
+        if (async) {
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, saver);
         } else {
-            try {
-                yamlFile.save(file);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            saver.run();
         }
     }
 
