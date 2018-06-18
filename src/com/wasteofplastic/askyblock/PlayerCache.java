@@ -24,14 +24,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-
 import java.util.stream.Collectors;
+
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
 /**
@@ -64,7 +63,7 @@ public class PlayerCache {
                             final Players leaderInf = new Players(plugin, playerInf.getTeamLeader());
                             playerInf.setTeamIslandLocation(leaderInf.getIslandLocation());
                         }
-                        playerInf.save();
+                        playerInf.save(true);
                     }
                     // Add this player to the online cache
                     //plugin.getLogger().info("DEBUG: added player " + p.getUniqueId());
@@ -112,7 +111,7 @@ public class PlayerCache {
      */
     public void removeOnlinePlayer(final UUID player) {
         if (playerCache.containsKey(player)) {
-            playerCache.get(player).save();
+            playerCache.get(player).save(true);
             playerCache.remove(player);
             // plugin.getLogger().info("Removing player from cache: " + player);
         }
@@ -123,7 +122,7 @@ public class PlayerCache {
      */
     public void removeAllPlayers() {
         Map<UUID, Players> map = ImmutableMap.copyOf(playerCache);
-        map.keySet().forEach(player -> map.get(player).save());
+        map.keySet().forEach(player -> map.get(player).save(false));
         playerCache.clear();
     }
 
@@ -228,7 +227,7 @@ public class PlayerCache {
                     // Just remove them from the team
                     addPlayer(leader);
                     playerCache.get(leader).removeMember(playerUUID);
-                    playerCache.get(leader).save();
+                    playerCache.get(leader).save(true);
                 }
             }
         }
@@ -237,7 +236,7 @@ public class PlayerCache {
         playerCache.get(playerUUID).clearHomeLocations();
         playerCache.get(playerUUID).setIslandLocation(null);
         playerCache.get(playerUUID).setIslandLevel(0);
-        playerCache.get(playerUUID).save(); // Needed?
+        playerCache.get(playerUUID).save(true); // Needed?
         plugin.getTopTen().topTenRemoveEntry(playerUUID);
     }
 
@@ -373,7 +372,7 @@ public class PlayerCache {
      * @param playerUUID - the player's UUID
      * @return Hashmap of challenges as key, boolean as state
      */
-    public HashMap<String, Boolean> getChallengeStatus(UUID playerUUID) {
+    public Map<String, Boolean> getChallengeStatus(UUID playerUUID) {
         addPlayer(playerUUID);
         return playerCache.get(playerUUID).getChallengeStatus();
     }
@@ -384,7 +383,7 @@ public class PlayerCache {
      * @param playerUUID - the player's UUID
      * @return map of completion times
      */
-    public HashMap<String, Integer> getChallengeTimes(UUID playerUUID) {
+    public Map<String, Integer> getChallengeTimes(UUID playerUUID) {
         addPlayer(playerUUID);
         return playerCache.get(playerUUID).getChallengeCompleteTimes();
     }
@@ -491,7 +490,7 @@ public class PlayerCache {
      * @param playerUUID - the player's UUID - player's UUID
      */
     public void save(UUID playerUUID) {
-        playerCache.get(playerUUID).save();
+        playerCache.get(playerUUID).save(true);
         // Save the name + UUID in the database if it ready
 
         if (plugin.getTinyDB() != null && plugin.getTinyDB().isDbReady()) {
@@ -720,7 +719,7 @@ public class PlayerCache {
             if (leader != null) {
                 addPlayer(leader);
                 playerCache.get(leader).addToBanList(targetUUID);
-                playerCache.get(leader).save();
+                playerCache.get(leader).save(true);
             }
         }
     }
@@ -742,7 +741,7 @@ public class PlayerCache {
             if (leader != null) {
                 addPlayer(leader);
                 playerCache.get(leader).unBan(targetUUID);
-                playerCache.get(leader).save();
+                playerCache.get(leader).save(true);
             }
         }
     }

@@ -18,7 +18,6 @@
 package com.wasteofplastic.askyblock;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -69,7 +68,7 @@ public class Messages {
         messages.remove(playerUUID);
     }
 
-    public void saveMessages() {
+    public void saveMessages(boolean async) {
         if (messageStore == null) {
             return;
         }
@@ -84,7 +83,7 @@ public class Messages {
             }
             // Convert to YAML
             messageStore.set("messages", offlineMessages);
-            Util.saveYamlFile(messageStore, "messages.yml");
+            Util.saveYamlFile(messageStore, "messages.yml", async);
         } catch (Exception e) {
             e.printStackTrace();
         }

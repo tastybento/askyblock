@@ -26,6 +26,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -103,15 +104,31 @@ public final class Util {
      * 
      * @param yamlFile
      * @param fileLocation
+     * @param async 
      */
-    public static void saveYamlFile(YamlConfiguration yamlFile, String fileLocation) {
+    public static void saveYamlFile(YamlConfiguration yamlFile, String fileLocation, boolean async) {
         File dataFolder = plugin.getDataFolder();
         File file = new File(dataFolder, fileLocation);
+        Runnable saver = new Runnable() {
 
-        try {
-            yamlFile.save(file);
-        } catch (Exception e) {
-            e.printStackTrace();
+            @Override
+            public void run() {
+                try {
+                    File tmpFile = File.createTempFile("yaml", null, dataFolder);
+                    yamlFile.save(tmpFile);
+                    if (tmpFile.exists()) {
+                        Files.move(tmpFile.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+                    }
+                } catch (Exception e) {
+                    plugin.getLogger().severe(() -> "Could not save YAML file! " + e.getMessage());
+                }
+                
+            }};
+            
+        if (async) {
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, saver);
+        } else {
+            saver.run();
         }
     }
 
@@ -499,6 +516,7 @@ public final class Util {
      * @param type
      * @return true if they are holding an item of type type
      */
+    @SuppressWarnings("deprecation")
     public static boolean playerIsHolding(Player player, Material type) {
         if (plugin.getServer().getVersion().contains("(MC: 1.7")
                 || plugin.getServer().getVersion().contains("(MC: 1.8")) {
@@ -508,11 +526,14 @@ public final class Util {
             return true;
         }
         return player.getInventory().getItemInMainHand() != null && player.getInventory()
-            .getItemInOffHand().getType().equals(type);
+                .getItemInOffHand().getType().equals(type);
     }
 
     public static void runCommand(final Player player, final String string) {
-        plugin.getServer().getScheduler().runTask(plugin, () -> player.performCommand(string));
-
+        if (plugin.getServer().isPrimaryThread()) {
+            player.performCommand(string);  
+        } else {
+            plugin.getServer().getScheduler().runTask(plugin, () -> player.performCommand(string));
+        }
     }
 }
