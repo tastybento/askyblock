@@ -223,17 +223,15 @@ public class CoopPlay {
         }
     }
 
+    /**
+     * Called when disabling the plugin
+     */
     public void saveCoops() {
-        File coopFile = new File(plugin.getDataFolder(), "coops.yml");
         YamlConfiguration coopConfig = new YamlConfiguration();
         for (UUID playerUUID : coopPlayers.keySet()) {
             coopConfig.set(playerUUID.toString(), getMyCoops(playerUUID));
         }
-        try {
-            coopConfig.save(coopFile);
-        } catch (IOException e) {
-            plugin.getLogger().severe("Could not save coop.yml file!");
-        }
+        Util.saveYamlFile(coopConfig, "coops.yml", false);
     }
 
     public void loadCoops() {

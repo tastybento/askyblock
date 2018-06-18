@@ -68,13 +68,9 @@ public class GridManager {
     private final ASkyBlock plugin;
     // 2D islandGrid of islands, x,z
     private TreeMap<Integer, TreeMap<Integer, Island>> islandGrid = new TreeMap<>();
-    // private TreeMap<Integer,TreeMap<Integer,PlayerIsland>> protectionGrid = new
-    // TreeMap<Integer,TreeMap<Integer,PlayerIsland>>();
     // Reverse lookup for owner, if they exists
     private final HashMap<UUID, Island> ownershipMap = new HashMap<>();
-    private File islandFile;
     private Island spawn;
-    private File islandNameFile;
     private final YamlConfiguration islandNames = new YamlConfiguration();
 
     /**
@@ -88,8 +84,7 @@ public class GridManager {
     private void loadGrid() {
         plugin.getLogger().info("Loading island grid...");
         islandGrid.clear();
-        // protectionGrid.clear();
-        islandNameFile = new File(plugin.getDataFolder(), ISLANDNAMES_FILENAME);
+        File islandNameFile = new File(plugin.getDataFolder(), ISLANDNAMES_FILENAME);
         if (!islandNameFile.exists()) {
             try {
                 islandNameFile.createNewFile();
@@ -103,7 +98,7 @@ public class GridManager {
             //e.printStackTrace();
             plugin.getLogger().severe("Could not load " + ISLANDNAMES_FILENAME);
         }
-        islandFile = new File(plugin.getDataFolder(), ISLANDS_FILENAME);
+        File islandFile = new File(plugin.getDataFolder(), ISLANDS_FILENAME);
         if (!islandFile.exists()) {
             // check if island folder exists
             plugin.getLogger().info(ISLANDS_FILENAME + " does not exist. Creating...");
@@ -452,7 +447,7 @@ public class GridManager {
      * @param async - true if saving should be done async
      */
     public void saveGrid(boolean async) {
-        final File islandFile = new File(plugin.getDataFolder(), ISLANDS_FILENAME);
+        //final File islandFile = new File(plugin.getDataFolder(), ISLANDS_FILENAME);
         final YamlConfiguration islandYaml = new YamlConfiguration();
         // Save the settings config key
         List<String> islandSettings = new ArrayList<String>();
@@ -479,32 +474,12 @@ public class GridManager {
                 }
             }
         }
-        islandYaml.set(Settings.worldName, islandList);
+        islandYaml.set(Settings.worldName, islandList);        
         // Save the file
-        if (async) {
-            Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
-                public void run() {
-                    try {
-                        islandYaml.save(islandFile);
-                    } catch (Exception e) {
-                        plugin.getLogger().severe("Could not save " + ISLANDS_FILENAME + "!");
-                        //e.printStackTrace();
-                    }}
-            });
-        } else {
-            try {
-                islandYaml.save(islandFile);
-            } catch (Exception e) {
-                plugin.getLogger().severe("Could not save " + ISLANDS_FILENAME + "! " + e.getMessage());
-            }
-        }
+        Util.saveYamlFile(islandYaml, ISLANDS_FILENAME, async);
         // Save any island names
         if (islandNames != null) {
-            try { 
-                islandNames.save(islandNameFile);
-            } catch (IOException e) {
-                plugin.getLogger().severe("Could not save islandnames.yml! " + e.getMessage());       
-            }
+            Util.saveYamlFile(islandNames, ISLANDNAMES_FILENAME, async);
         }
     }
 
@@ -1718,11 +1693,7 @@ public class GridManager {
      */
     public void setIslandName(UUID owner, String name) {
         islandNames.set(owner.toString(), name);
-        try {
-            islandNames.save(islandNameFile);
-        } catch (IOException e) {
-            plugin.getLogger().severe("Could not save islandnames.yml! " + e.getMessage());
-        }
+        Util.saveYamlFile(islandNames, ISLANDNAMES_FILENAME, true);
     }
 
 }
