@@ -415,7 +415,7 @@ level:
   islandLevel: "Insel-Level"
 lock: 
   enteringspawn: "Du betrittst den Spawn"
-  islandlocked: "Insel is für Besucher gesperrt"
+  islandlocked: "Insel ist für Besucher gesperrt"
   leavingspawn: "Du verlässt den Spawn"
   locking: "Insel für Besucher gesperrt"
   nowentering: "Du betrittst nun die Insel von: [name]"
