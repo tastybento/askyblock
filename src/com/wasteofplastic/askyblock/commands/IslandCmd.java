@@ -474,7 +474,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                         } else {
                             perm = "player with " + perm + " permission";
                         }
-                        plugin.getLogger().info("Loading schematic " + name + " (" + filename + ") for " + perm + ", order " + newSchem.getOrder());
+                        plugin.getLogger().info("Loading schematic " + ChatColor.stripColor(name) + " (" + filename + ") for " + perm + ", order " + newSchem.getOrder());
                     } else {
                         plugin.getLogger().warning("Could not find " + filename + " in the schematics folder! Skipping...");
                     }
