@@ -20,7 +20,10 @@ package com.wasteofplastic.askyblock.util;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -116,20 +119,35 @@ public final class Util {
                 try {
                     File tmpFile = File.createTempFile("yaml", null, dataFolder);
                     yamlFile.save(tmpFile);
+
                     if (tmpFile.exists()) {
-                        Files.move(tmpFile.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+                        try (FileChannel channel = new RandomAccessFile(file, "rw").getChannel()) {
+                            // Use the file channel to create a lock on the file.
+                            // This method blocks until it can retrieve the lock.
+                            FileLock lock = channel.lock();
+
+                            Files.move(tmpFile.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+                            // Release the lock
+                            if( lock != null ) {
+                                lock.release();
+                            }
+
+                            // Close the file
+                            channel.close();
+                        }
+
                     }
                 } catch (Exception e) {
                     plugin.getLogger().severe(() -> "Could not save YAML file! " + e.getMessage());
                 }
-                
+
             }};
-            
-        if (async) {
-            Bukkit.getScheduler().runTaskAsynchronously(plugin, saver);
-        } else {
-            saver.run();
-        }
+
+            if (async) {
+                Bukkit.getScheduler().runTaskAsynchronously(plugin, saver);
+            } else {
+                saver.run();
+            }
     }
 
     /**
