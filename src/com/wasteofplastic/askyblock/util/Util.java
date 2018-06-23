@@ -118,6 +118,7 @@ public final class Util {
             public void run() {
                 try {
                     File tmpFile = File.createTempFile("yaml", null, dataFolder);
+                    tmpFile.deleteOnExit();
                     yamlFile.save(tmpFile);
 
                     if (tmpFile.exists()) {
@@ -125,7 +126,7 @@ public final class Util {
                             // Use the file channel to create a lock on the file.
                             // This method blocks until it can retrieve the lock.
                             FileLock lock = channel.lock();
-
+                       
                             Files.move(tmpFile.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
                             // Release the lock
                             if( lock != null ) {
@@ -139,15 +140,26 @@ public final class Util {
                     }
                 } catch (Exception e) {
                     plugin.getLogger().severe(() -> "Could not save YAML file! " + e.getMessage());
+                    boolean isRegularFile = Files.isRegularFile(file.toPath());
+                    boolean isHidden = Files.isReadable(file.toPath());
+                    boolean isReadable = Files.isReadable(file.toPath());
+                    boolean isSymbolicLink = Files.isSymbolicLink(file.toPath());
+                    boolean isWritable = Files.isWritable(file.toPath());
+                    plugin.getLogger().severe("Regular file " + isRegularFile);
+                    plugin.getLogger().severe("Is hidden " + isHidden);
+                    plugin.getLogger().severe("Is readable " + isReadable);
+                    plugin.getLogger().severe("Is symbolic link " + isSymbolicLink);
+                    plugin.getLogger().severe("Is writable " + isWritable);
                 }
 
             }};
-
+            saver.run();
+            /*
             if (async) {
                 Bukkit.getScheduler().runTaskAsynchronously(plugin, saver);
             } else {
                 saver.run();
-            }
+            }*/
     }
 
     /**
