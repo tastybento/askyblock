@@ -20,10 +20,7 @@ package com.wasteofplastic.askyblock.util;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.lang.reflect.InvocationTargetException;
-import java.nio.channels.FileChannel;
-import java.nio.channels.FileLock;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -51,9 +48,9 @@ import com.wasteofplastic.askyblock.nms.NMSAbstraction;
 
 /**
  * A set of utility methods
- * 
+ *
  * @author tastybento
- * 
+ *
  */
 public final class Util {
 
@@ -64,7 +61,7 @@ public final class Util {
 
     /**
      * Loads a YAML file and if it does not exist it is looked for in the JAR
-     * 
+     *
      * @param file
      * @return
      */
@@ -104,68 +101,55 @@ public final class Util {
 
     /**
      * Saves a YAML file
-     * 
+     *
      * @param yamlFile
      * @param fileLocation
-     * @param async 
+     * @param async
      */
     public static void saveYamlFile(YamlConfiguration yamlFile, String fileLocation, boolean async) {
+        if (async) {
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> save(yamlFile, fileLocation));
+        } else {
+            save(yamlFile, fileLocation);
+        }
+    }
+
+    private static void save(YamlConfiguration yamlFile, String fileLocation) {
         File dataFolder = plugin.getDataFolder();
         File file = new File(dataFolder, fileLocation);
-        Runnable saver = new Runnable() {
-
-            @Override
-            public void run() {
-                try {
-                    File tmpFile = File.createTempFile("yaml", null, dataFolder);
-                    tmpFile.deleteOnExit();
-                    yamlFile.save(tmpFile);
-
-                    if (tmpFile.exists()) {
-                        try (FileChannel channel = new RandomAccessFile(file, "rw").getChannel()) {
-                            // Use the file channel to create a lock on the file.
-                            // This method blocks until it can retrieve the lock.
-                            FileLock lock = channel.lock();
-                       
-                            Files.move(tmpFile.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
-                            // Release the lock
-                            if( lock != null ) {
-                                lock.release();
-                            }
-
-                            // Close the file
-                            channel.close();
-                        }
-
-                    }
-                } catch (Exception e) {
-                    plugin.getLogger().severe(() -> "Could not save YAML file! " + e.getMessage());
-                    boolean isRegularFile = Files.isRegularFile(file.toPath());
-                    boolean isHidden = Files.isReadable(file.toPath());
-                    boolean isReadable = Files.isReadable(file.toPath());
-                    boolean isSymbolicLink = Files.isSymbolicLink(file.toPath());
-                    boolean isWritable = Files.isWritable(file.toPath());
-                    plugin.getLogger().severe("Regular file " + isRegularFile);
-                    plugin.getLogger().severe("Is hidden " + isHidden);
-                    plugin.getLogger().severe("Is readable " + isReadable);
-                    plugin.getLogger().severe("Is symbolic link " + isSymbolicLink);
-                    plugin.getLogger().severe("Is writable " + isWritable);
-                }
-
-            }};
-            saver.run();
-            /*
-            if (async) {
-                Bukkit.getScheduler().runTaskAsynchronously(plugin, saver);
-            } else {
-                saver.run();
-            }*/
+        try {
+            File tmpFile = File.createTempFile("yaml", null, dataFolder);
+            tmpFile.deleteOnExit();
+            yamlFile.save(tmpFile);
+            if (tmpFile.exists()) {
+                Files.copy(tmpFile.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                Files.delete(tmpFile.toPath());
+            }
+        } catch (Exception e) {
+            plugin.getLogger().severe(() -> "Could not save YAML file: " + e.getMessage());
+            boolean isRegularFile = Files.isRegularFile(file.toPath());
+            boolean isHidden;
+            try {
+                isHidden = Files.isHidden(file.toPath());
+                plugin.getLogger().severe(() -> "Is hidden " + isHidden);
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+            boolean isReadable = Files.isReadable(file.toPath());
+            boolean isSymbolicLink = Files.isSymbolicLink(file.toPath());
+            boolean isWritable = Files.isWritable(file.toPath());
+            plugin.getLogger().severe(() -> "Regular file " + isRegularFile);
+            plugin.getLogger().severe(() -> "Is readable " + isReadable);
+            plugin.getLogger().severe(() -> "Is symbolic link " + isSymbolicLink);
+            plugin.getLogger().severe(() -> "Is writable " + isWritable);
+            e.printStackTrace();
+        }
     }
 
     /**
      * Cuts up a string into multiple lines with the same color code at the
      * start of each line
-     * 
+     *
      * @param color
      * @param longLine
      * @param length
@@ -213,7 +197,7 @@ public final class Util {
     /**
      * Converts block face direction to radial degrees. Returns 0 if block face
      * is not radial.
-     * 
+     *
      * @param face
      * @return degrees
      */
@@ -258,11 +242,11 @@ public final class Util {
 
     /**
      * Converts a name like IRON_INGOT into Iron Ingot to improve readability
-     * 
+     *
      * @param ugly
      *            The string such as IRON_INGOT
      * @return A nicer version, such as Iron Ingot
-     * 
+     *
      *         Credits to mikenon on GitHub!
      */
     public static String prettifyText(String ugly) {
@@ -288,7 +272,7 @@ public final class Util {
     /**
      * Converts a serialized location to a Location. Returns null if string is
      * empty
-     * 
+     *
      * @param s
      *            - serialized location in format "world:x:y:z"
      * @return Location
@@ -325,7 +309,7 @@ public final class Util {
     /**
      * Converts a location to a simple string representation
      * If location is null, returns empty string
-     * 
+     *
      * @param location
      * @return String of location
      */
@@ -337,9 +321,9 @@ public final class Util {
     }
 
     /**
-     * Returns all of the items that begin with the given start, 
-     * ignoring case.  Intended for tabcompletion. 
-     * 
+     * Returns all of the items that begin with the given start,
+     * ignoring case.  Intended for tabcompletion.
+     *
      * @param list
      * @param start
      * @return List of items that start with the letters
@@ -359,7 +343,7 @@ public final class Util {
 
     /**
      * Gets a list of all players who are currently online.
-     * 
+     *
      * @return list of online players
      */
     public static List<String> getOnlinePlayerList() {
@@ -513,7 +497,7 @@ public final class Util {
         final List<String> returned = new ArrayList<String>();
         for (Player p : Bukkit.getServer().getOnlinePlayers()) {
             if (player == null || player.canSee(p)) {
-                returned.add(p.getName()); 
+                returned.add(p.getName());
             }
         }
         return returned;
@@ -561,7 +545,7 @@ public final class Util {
 
     public static void runCommand(final Player player, final String string) {
         if (plugin.getServer().isPrimaryThread()) {
-            player.performCommand(string);  
+            player.performCommand(string);
         } else {
             plugin.getServer().getScheduler().runTask(plugin, () -> player.performCommand(string));
         }
