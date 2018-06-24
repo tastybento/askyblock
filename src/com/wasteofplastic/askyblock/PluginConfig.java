@@ -316,7 +316,7 @@ public class PluginConfig {
                     plugin.getLogger().severe("+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
                     return false;
                 }
-            } catch (Exception e) {}        
+            } catch (Exception e) {}
         }
 
         // Get the default language
@@ -527,6 +527,7 @@ public class PluginConfig {
         Settings.entityLimits = new HashMap<EntityType, Integer>();
         Settings.saveEntities = plugin.getConfig().getBoolean("general.saveentitylimits");
         Settings.coopsCanCreateWarps = plugin.getConfig().getBoolean("general.coopscancreatewarps");
+        Settings.deleteProtectedOnly = plugin.getConfig().getBoolean("general.deleteprotectedonly", true);
         plugin.getLogger().info("Loading entity limits");
         ConfigurationSection entityLimits = plugin.getConfig().getConfigurationSection("general.entitylimits");
         if (entityLimits != null) {
@@ -676,7 +677,7 @@ public class PluginConfig {
             plugin.getLogger().warning("Switch off when superflat chunks are cleared");
             plugin.getLogger().warning("You should back up your world before running this");
             plugin.getLogger().warning("*********************************************************");
-        }     
+        }
 
         // Persistent coops
         Settings.persistantCoops = plugin.getConfig().getBoolean("general.persistentcoops");
@@ -708,7 +709,7 @@ public class PluginConfig {
                             levelLong = Long.MIN_VALUE;
                         } else {
                             levelLong = Long.parseLong(level);
-                        } 
+                        }
                         TreeMap<Double,Material> blockMapTree = new TreeMap<Double, Material>();
                         double chanceTotal = 0;
                         for(String block : plugin.getConfig().getConfigurationSection("general.magiccobblegenchances." + level).getKeys(false)){
@@ -751,13 +752,13 @@ public class PluginConfig {
         //plugin.getLogger().info("DEBUG: config ver length " + configVersion.split("\\.").length);
         // Ignore last digit if it is 4 digits long
         if (configVersion.split("\\.").length == 4) {
-            configVersion = configVersion.substring(0, configVersion.lastIndexOf('.')); 
+            configVersion = configVersion.substring(0, configVersion.lastIndexOf('.'));
         }
         // Save for plugin version
         String version = plugin.getDescription().getVersion();
         //plugin.getLogger().info("DEBUG: version length " + version.split("\\.").length);
         if (version.split("\\.").length == 4) {
-            version = version.substring(0, version.lastIndexOf('.')); 
+            version = version.substring(0, version.lastIndexOf('.'));
         }
         if (configVersion.isEmpty() || !configVersion.equalsIgnoreCase(version)) {
             // Check to see if this has already been shared
@@ -774,7 +775,7 @@ public class PluginConfig {
                     plugin.saveResource("config.yml", false);
                     oldConfig.renameTo(newConfig);
                     bakConfig.renameTo(oldConfig);
-                } 
+                }
             }
         }
 

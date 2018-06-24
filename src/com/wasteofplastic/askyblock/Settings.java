@@ -36,7 +36,7 @@ import com.wasteofplastic.askyblock.Island.SettingsFlag;
 
 /**
  * Where all the settings are
- * 
+ *
  * @author tastybento
  */
 public class Settings {
@@ -57,7 +57,7 @@ public class Settings {
     public static final String CHALLENGECOMMAND = "aic";
     // Admin command
     public static final String ADMINCOMMAND = "acid";
-    */
+     */
     public final static GameType GAMETYPE = GameType.ASKYBLOCK;
     // Permission prefix
     public final static String PERMPREFIX = "askyblock.";
@@ -102,7 +102,7 @@ public class Settings {
     public static final Map<SettingsFlag, Boolean> visitorSettings = new HashMap<>();
     // Flymode
     public static int flyTimeOutside;
-    
+
     // Temporary Permissions
     public static List<String> temporaryPermissions;
 
@@ -130,7 +130,7 @@ public class Settings {
     public static boolean damageOps;
     public static boolean endermanDeathDrop;
     public static boolean onlyLeaderCanCoop;
-    
+
     // Invincible visitor
     public static boolean invincibleVisitors;
     public static HashSet<DamageCause> visitorDamagePrevention;
@@ -162,7 +162,7 @@ public class Settings {
     public static List<String> resetCommands = new ArrayList<>();
     // Mob limits
     public static int breedingLimit;
-    
+
     // Console shows teamchat messages
     public static boolean logTeamChat;
 
@@ -179,7 +179,7 @@ public class Settings {
 
     // Use Economy
     public static boolean useEconomy;
-    
+
     // Use Minishop
     public static boolean useMinishop;
 
@@ -188,24 +188,24 @@ public class Settings {
 
     // Use physics when pasting schematic blocks
     public static boolean usePhysics;
-    
+
     // Use old display (chat instead of GUI) for Island top ten
     public static boolean displayIslandTopTenInChat;
 
     // Need a certain amount of island levels to create a warp sign
     public static int warpLevelsRestriction;
-    
+
     // Magic Cobble Generator
     public static boolean useMagicCobbleGen;
     public static boolean magicCobbleGenOnlyAtSpawn;
     public static TreeMap<Long,TreeMap<Double,Material>> magicCobbleGenChances;
-    
+
     // Disable offline redstone
     public static boolean disableOfflineRedstone;
-    
+
     // Fancy island level display
     public static boolean fancyIslandLevelDisplay;
-    
+
     // Falling blocked commands
     public static List<String> fallingCommandBlockList;
     public static List<String> leaveCommands;
@@ -286,4 +286,5 @@ public class Settings {
     public static boolean warpHeads;
     public static boolean saveEntities;
     public static boolean coopsCanCreateWarps;
+    public static boolean deleteProtectedOnly;
 }

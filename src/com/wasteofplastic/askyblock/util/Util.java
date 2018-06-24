@@ -30,6 +30,8 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -41,6 +43,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitTask;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Settings;
@@ -58,6 +61,9 @@ public final class Util {
 
     private static final ASkyBlock plugin = ASkyBlock.getPlugin();
     private static Long x = System.nanoTime();
+    private static Queue<PendingItem> saveQueue = new ConcurrentLinkedQueue<>();
+    private static boolean midSave = false;
+    private static BukkitTask queueSaver;
 
     /**
      * Loads a YAML file and if it does not exist it is looked for in the JAR
@@ -108,13 +114,33 @@ public final class Util {
      */
     public static void saveYamlFile(YamlConfiguration yamlFile, String fileLocation, boolean async) {
         if (async) {
-            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> save(yamlFile, fileLocation));
-        } else {
-            save(yamlFile, fileLocation);
+            if (queueSaver == null) {
+                queueSaver = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
+                    if (!plugin.isEnabled()) {
+                        // Stop task if plugin is disabled
+                        queueSaver.cancel();
+                    } else if (!midSave && !saveQueue.isEmpty()) {
+                        PendingItem item = saveQueue.poll();
+                        if (item != null) {
+                            // Set semaphore
+                            midSave = true;
+                            try {
+                                Files.copy(item.getSource(), item.getDest(), StandardCopyOption.REPLACE_EXISTING);
+                                Files.delete(item.getSource());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            // Clear semaphore
+                            midSave = false;
+                        }
+                    }
+                }, 0L, 1L);
+            }
         }
+        save(yamlFile, fileLocation, async);
     }
 
-    private static void save(YamlConfiguration yamlFile, String fileLocation) {
+    private static void save(YamlConfiguration yamlFile, String fileLocation, boolean async) {
         File dataFolder = plugin.getDataFolder();
         File file = new File(dataFolder, fileLocation);
         try {
@@ -122,29 +148,19 @@ public final class Util {
             tmpFile.deleteOnExit();
             yamlFile.save(tmpFile);
             if (tmpFile.exists()) {
-                Files.copy(tmpFile.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                Files.delete(tmpFile.toPath());
+                if (async) {
+                    saveQueue.add(new PendingItem(tmpFile.toPath(), file.toPath()));
+                } else {
+                    Files.copy(tmpFile.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                    Files.delete(tmpFile.toPath());
+                }
             }
         } catch (Exception e) {
             plugin.getLogger().severe(() -> "Could not save YAML file: " + e.getMessage());
-            boolean isRegularFile = Files.isRegularFile(file.toPath());
-            boolean isHidden;
-            try {
-                isHidden = Files.isHidden(file.toPath());
-                plugin.getLogger().severe(() -> "Is hidden " + isHidden);
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
-            boolean isReadable = Files.isReadable(file.toPath());
-            boolean isSymbolicLink = Files.isSymbolicLink(file.toPath());
-            boolean isWritable = Files.isWritable(file.toPath());
-            plugin.getLogger().severe(() -> "Regular file " + isRegularFile);
-            plugin.getLogger().severe(() -> "Is readable " + isReadable);
-            plugin.getLogger().severe(() -> "Is symbolic link " + isSymbolicLink);
-            plugin.getLogger().severe(() -> "Is writable " + isWritable);
             e.printStackTrace();
         }
     }
+
 
     /**
      * Cuts up a string into multiple lines with the same color code at the
