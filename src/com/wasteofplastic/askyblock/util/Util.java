@@ -60,10 +60,12 @@ public final class Util {
     private Util() { }
 
     private static final ASkyBlock plugin = ASkyBlock.getPlugin();
+    private static final long TIMEOUT = 3000; // 3 seconds
     private static Long x = System.nanoTime();
     private static Queue<PendingItem> saveQueue = new ConcurrentLinkedQueue<>();
     private static boolean midSave = false;
     private static BukkitTask queueSaver;
+    private static boolean midLoad = false;
 
     /**
      * Loads a YAML file and if it does not exist it is looked for in the JAR
@@ -77,12 +79,18 @@ public final class Util {
 
         YamlConfiguration config = null;
         if (yamlFile.exists()) {
+            // Set midLoad flag to pause any saving
+            midLoad = true;
+            // Block until saving is paused or until a timeout, just to prevent infinite loop
+            long watchdog = System.currentTimeMillis();
+            while(midSave && System.currentTimeMillis() < watchdog + TIMEOUT ) {};
             try {
                 config = new YamlConfiguration();
                 config.load(yamlFile);
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            midLoad = false;
         } else {
             // Create the missing file
             config = new YamlConfiguration();
@@ -119,7 +127,7 @@ public final class Util {
                     if (!plugin.isEnabled()) {
                         // Stop task if plugin is disabled
                         queueSaver.cancel();
-                    } else if (!midSave && !saveQueue.isEmpty()) {
+                    } else if (!midLoad && !midSave && !saveQueue.isEmpty()) {
                         PendingItem item = saveQueue.poll();
                         if (item != null) {
                             // Set semaphore
