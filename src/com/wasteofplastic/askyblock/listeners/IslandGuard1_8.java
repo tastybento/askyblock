@@ -77,7 +77,7 @@ public class IslandGuard1_8 implements Listener {
     /**
      * Handle interaction with armor stands V1.8
      * Note - some armor stand protection is done in IslandGuard.java, e.g. against projectiles.
-     * 
+     *
      * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
@@ -101,7 +101,7 @@ public class IslandGuard1_8 implements Listener {
      * Handle V1.8 blocks that need special treatment
      * Tilling of coarse dirt into dirt
      * Usually prevented because it could lead to an endless supply of dirt with gravel
-     * 
+     *
      * @param e - event
      */
     @SuppressWarnings("deprecation")
