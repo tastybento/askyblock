@@ -63,7 +63,7 @@ public class SafeSpotTeleport {
         this.homeNumber = homeNumber;
 
         // Put player into spectator mode
-        if (entity instanceof Player && ((Player)entity).getGameMode().equals(GameMode.SURVIVAL)) {
+        if (!plugin.getServer().getVersion().contains("1.7") && entity instanceof Player && ((Player)entity).getGameMode().equals(GameMode.SURVIVAL)) {
             ((Player)entity).setGameMode(GameMode.SPECTATOR);
         }
 
@@ -112,7 +112,7 @@ public class SafeSpotTeleport {
             // Failed, no safe spot
             entity.sendMessage(failureMessage);
         }
-        if (entity instanceof Player && ((Player)entity).getGameMode().equals(GameMode.SPECTATOR)) {
+        if (entity instanceof Player && (plugin.getServer().getVersion().contains("1.7") || ((Player)entity).getGameMode().equals(GameMode.SPECTATOR))) {
             ((Player)entity).setGameMode(GameMode.SURVIVAL);
         }
     }
@@ -129,7 +129,7 @@ public class SafeSpotTeleport {
         Island island = plugin.getGrid().getIslandAt(location);
         int maxRadius = island == null ? Settings.islandProtectionRange/2 : island.getProtectionSize()/2;
         maxRadius = maxRadius > MAX_RADIUS ? MAX_RADIUS : maxRadius;
-        
+
         int x = location.getBlockX();
         int z = location.getBlockZ();
         // Create ever increasing squares around the target location
@@ -161,7 +161,7 @@ public class SafeSpotTeleport {
     }
 
     /**
-     * Loops through the chunks and if a safe spot is found, fires off the teleportation 
+     * Loops through the chunks and if a safe spot is found, fires off the teleportation
      * @param chunkSnapshot
      */
     private void checkChunks(final List<ChunkSnapshot> chunkSnapshot) {
@@ -188,7 +188,7 @@ public class SafeSpotTeleport {
      * @param chunk
      * @return true if a safe spot was found
      */
-    private boolean scanChunk(ChunkSnapshot chunk) { 
+    private boolean scanChunk(ChunkSnapshot chunk) {
         // Max height
         int maxHeight = location.getWorld().getMaxHeight() - 20;
         // Run through the chunk
@@ -223,7 +223,9 @@ public class SafeSpotTeleport {
                 // Exit spectator mode if in it
                 if (entity instanceof Player) {
                     Player player = (Player)entity;
-                    if (player.getGameMode().equals(GameMode.SPECTATOR)) {
+                    if (plugin.getServer().getVersion().contains("1.7")) {
+                        player.setGameMode(GameMode.SURVIVAL);
+                    } else if (player.getGameMode().equals(GameMode.SPECTATOR)) {
                         player.setGameMode(GameMode.SURVIVAL);
                     }
                 } else {
