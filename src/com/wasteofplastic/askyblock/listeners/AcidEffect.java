@@ -51,12 +51,14 @@ import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.Island.SettingsFlag;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.Settings.GameType;
+import com.wasteofplastic.askyblock.events.AcidEvent;
+import com.wasteofplastic.askyblock.events.AcidRainEvent;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
 /**
  * Applies the acid effect to players
- * 
+ *
  * @author tastybento
  */
 public class AcidEffect implements Listener {
@@ -75,9 +77,9 @@ public class AcidEffect implements Listener {
         if (DEBUG)
             plugin.getLogger().info("DEBUG: " + e.getEventName());
 
-        burningPlayers.remove((Player) e.getEntity());
-        wetPlayers.remove((Player) e.getEntity());
-        PlayerEvents.unsetFalling(((Player) e.getEntity()).getUniqueId());
+        burningPlayers.remove(e.getEntity());
+        wetPlayers.remove(e.getEntity());
+        PlayerEvents.unsetFalling(e.getEntity().getUniqueId());
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
@@ -98,7 +100,7 @@ public class AcidEffect implements Listener {
         // Check that they are in the ASkyBlock world
         if (!player.getWorld().equals(ASkyBlock.getIslandWorld())) {
             return;
-        }        
+        }
         // Return if players are immune
         if (player.isOp()) {
             if (!Settings.damageOps) {
@@ -129,7 +131,7 @@ public class AcidEffect implements Listener {
         if (Settings.rainDamage > 0D && isRaining) {
             // Only check if they are in a non-dry biome
             Biome biome = playerLoc.getBlock().getBiome();
-            if (biome != Biome.DESERT && biome != Biome.DESERT_HILLS 
+            if (biome != Biome.DESERT && biome != Biome.DESERT_HILLS
                     && biome != Biome.SAVANNA && biome != Biome.MESA && biome != Biome.HELL) {
                 if (isSafeFromRain(player)) {
                     // plugin.getLogger().info("DEBUG: not hit by rain");
@@ -154,11 +156,17 @@ public class AcidEffect implements Listener {
                                     this.cancel();
                                     // Check they are still in this world
                                 } else {
-                                    player.damage((Settings.rainDamage - Settings.rainDamage * getDamageReduced(player)));
-                                    if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
-                                        player.getWorld().playSound(playerLoc, Sound.valueOf("FIZZ"), 3F, 3F);
-                                    } else {
-                                        player.getWorld().playSound(playerLoc, Sound.ENTITY_CREEPER_PRIMED, 3F, 3F);
+                                    double reduction = Settings.rainDamage * getDamageReduced(player);
+                                    double totalDamage = (Settings.rainDamage - reduction);
+                                    AcidRainEvent e = new AcidRainEvent(player, totalDamage, reduction);
+                                    plugin.getServer().getPluginManager().callEvent(e);
+                                    if (!e.isCancelled()) {
+                                        player.damage(e.getRainDamage());
+                                        if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
+                                            player.getWorld().playSound(playerLoc, Sound.valueOf("FIZZ"), 3F, 3F);
+                                        } else {
+                                            player.getWorld().playSound(playerLoc, Sound.ENTITY_CREEPER_PRIMED, 3F, 3F);
+                                        }
                                     }
                                 }
                             }
@@ -199,8 +207,10 @@ public class AcidEffect implements Listener {
                     burningPlayers.remove(player);
                     this.cancel();
                 } else {
-                    if (!Settings.acidDamageType.isEmpty()) {
-                        for (PotionEffectType t : Settings.acidDamageType) {
+                    AcidEvent acidEvent = new AcidEvent(player, (Settings.acidDamage - Settings.acidDamage * getDamageReduced(player)), Settings.acidDamage * getDamageReduced(player), Settings.acidDamageType);
+                    plugin.getServer().getPluginManager().callEvent(acidEvent);
+                    if (!acidEvent.isCancelled()) {
+                        for (PotionEffectType t : acidEvent.getPotionEffects()) {
                             if (t.equals(PotionEffectType.BLINDNESS) || t.equals(PotionEffectType.CONFUSION) || t.equals(PotionEffectType.HUNGER)
                                     || t.equals(PotionEffectType.SLOW) || t.equals(PotionEffectType.SLOW_DIGGING) || t.equals(PotionEffectType.WEAKNESS)) {
                                 player.addPotionEffect(new PotionEffect(t, 600, 1));
@@ -209,17 +219,17 @@ public class AcidEffect implements Listener {
                                 player.addPotionEffect(new PotionEffect(t, 200, 1));
                             }
                         }
-                    }
-                    // Apply damage if there is any
-                    if (Settings.acidDamage > 0D) {
-                        player.damage((Settings.acidDamage - Settings.acidDamage * getDamageReduced(player)));
-                        if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
-                            player.getWorld().playSound(playerLoc, Sound.valueOf("FIZZ"), 3F, 3F);
-                        } else {
-                            player.getWorld().playSound(playerLoc, Sound.ENTITY_CREEPER_PRIMED, 3F, 3F);
+
+                        // Apply damage if there is any
+                        if (acidEvent.getTotalDamage() > 0D) {
+                            player.damage(acidEvent.getTotalDamage());
+                            if (plugin.getServer().getVersion().contains("(MC: 1.8") || plugin.getServer().getVersion().contains("(MC: 1.7")) {
+                                player.getWorld().playSound(playerLoc, Sound.valueOf("FIZZ"), 3F, 3F);
+                            } else {
+                                player.getWorld().playSound(playerLoc, Sound.ENTITY_CREEPER_PRIMED, 3F, 3F);
+                            }
                         }
                     }
-
                 }
             }
         }.runTaskTimer(plugin, 0L, 20L);
@@ -239,7 +249,7 @@ public class AcidEffect implements Listener {
             return true;
         }
         // Check if player has a helmet on and helmet protection is true
-        if (Settings.helmetProtection && (player.getInventory().getHelmet() != null 
+        if (Settings.helmetProtection && (player.getInventory().getHelmet() != null
                 && player.getInventory().getHelmet().getType().name().contains("HELMET"))) {
             if (DEBUG)
                 plugin.getLogger().info("DEBUG: wearing helmet.");
@@ -284,10 +294,10 @@ public class AcidEffect implements Listener {
         // In liquid
         Material bodyMat = player.getLocation().getBlock().getType();
         Material headMat = player.getLocation().getBlock().getRelative(BlockFace.UP).getType();
-          if (bodyMat.equals(Material.STATIONARY_WATER))
-              bodyMat = Material.WATER;
-          if (headMat.equals(Material.STATIONARY_WATER))
-              headMat = Material.WATER;
+        if (bodyMat.equals(Material.STATIONARY_WATER))
+            bodyMat = Material.WATER;
+        if (headMat.equals(Material.STATIONARY_WATER))
+            headMat = Material.WATER;
         if (bodyMat != Material.WATER && headMat != Material.WATER) {
             if (DEBUG)
                 plugin.getLogger().info("DEBUG: not in water " + player.getLocation().getBlock().isLiquid() + " " + player.getLocation().getBlock().getRelative(BlockFace.UP).isLiquid());
@@ -350,7 +360,7 @@ public class AcidEffect implements Listener {
 
     /**
      * Enables changing of obsidian back into lava
-     * 
+     *
      * @param e - event
      */
     @EventHandler(priority = EventPriority.NORMAL)
@@ -473,7 +483,7 @@ public class AcidEffect implements Listener {
 
     /**
      * Tracks weather changes and acid rain
-     * 
+     *
      * @param e - event
      */
     @EventHandler(priority = EventPriority.NORMAL)
