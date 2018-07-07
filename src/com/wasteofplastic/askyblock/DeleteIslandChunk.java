@@ -69,7 +69,7 @@ public class DeleteIslandChunk {
         // Remove from grid
         plugin.getGrid().deleteIsland(island.getCenter());
         // Clear up any chunks
-        if (!chunksToClear.isEmpty()) {
+        if (!Settings.useOwnGenerator && !chunksToClear.isEmpty()) {
             try {
                 nms = Util.checkVersion();
             } catch (Exception ex) {
