@@ -36,8 +36,6 @@ import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.Island.SettingsFlag;
 import com.wasteofplastic.askyblock.Settings;
-import com.wasteofplastic.askyblock.events.AcidEvent;
-import com.wasteofplastic.askyblock.events.AcidRainEvent;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
@@ -54,21 +52,6 @@ public class IslandGuard1_8 implements Listener {
         this.plugin = plugin;
 
     }
-
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
-    public void test(AcidEvent event) {
-        plugin.getLogger().info(event.getEventName());
-        plugin.getLogger().info(event.getPlayer().getName());
-        plugin.getLogger().info("Damage = " + event.getTotalDamage());
-    }
-
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
-    public void test(AcidRainEvent event) {
-        plugin.getLogger().info(event.getEventName());
-        plugin.getLogger().info(event.getPlayer().getName());
-        plugin.getLogger().info("Damage = " + event.getRainDamage());
-    }
-
 
     /**
      * Checks if action is allowed for player in location for flag
