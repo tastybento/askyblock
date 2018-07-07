@@ -177,8 +177,8 @@ public class DeleteIslandChunk {
         Pair<Integer, Integer> maxWholeChunk = new Pair<>(nearest16(island.getMinProtectedX() + Settings.islandProtectionRange, false), nearest16(island.getMinProtectedZ() + Settings.islandProtectionRange, false));
         // Get the chunks of the whole island
         Pair<Integer, Integer> minChunk = new Pair<>((int) Math.floor((double)island.getMinProtectedX() / 16), (int) Math.floor((double)island.getMinProtectedZ() / 16));
-        Pair<Integer, Integer> maxChunk = new Pair<>((int) Math.floor((double)(island.getMinX() + Settings.islandProtectionRange) / 16),
-                (int) Math.floor((double)(island.getMinZ() + Settings.islandProtectionRange)  / 16));
+        Pair<Integer, Integer> maxChunk = new Pair<>((int) Math.floor((double)(island.getMinProtectedX() + Settings.islandProtectionRange) / 16),
+                (int) Math.floor((double)(island.getMinProtectedZ() + Settings.islandProtectionRange)  / 16));
         regenerate(island.getCenter().getWorld(), minWholeChunk, maxWholeChunk, minChunk, maxChunk);
 
     }
