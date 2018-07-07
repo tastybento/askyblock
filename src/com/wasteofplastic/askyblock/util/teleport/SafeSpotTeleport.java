@@ -115,6 +115,9 @@ public class SafeSpotTeleport {
         if (entity instanceof Player && (plugin.getServer().getVersion().contains("1.7") || ((Player)entity).getGameMode().equals(GameMode.SPECTATOR))) {
             ((Player)entity).setGameMode(GameMode.SURVIVAL);
         }
+        if (entity instanceof Player) {
+            plugin.getPlayers().setInTeleport(entity.getUniqueId(), false);
+        }
     }
 
     /**
