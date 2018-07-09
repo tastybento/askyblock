@@ -18,6 +18,7 @@
 package com.wasteofplastic.askyblock;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.entity.Player;
@@ -30,17 +31,18 @@ import org.bukkit.entity.Player;
  */
 public class InventorySave {
     private static InventorySave instance = new InventorySave(ASkyBlock.getPlugin());
-    private HashMap<UUID, InventoryStore> inventories;
+    private final Map<UUID, InventoryStore> inventories;
 
     /**
      * Saves the inventory of a player
+     * @param plugin - ASkyBlock plugin object - ASkyBlock plugin
      */
     public InventorySave(ASkyBlock plugin) {
-        inventories = new HashMap<UUID, InventoryStore>();
+        inventories = new HashMap<>();
     }
 
     /** Save player's inventory
-     * @param player
+     * @param player player object
      */
     public void savePlayerInventory(Player player) {
         //plugin.getLogger().info("DEBUG: Saving inventory");
@@ -50,7 +52,7 @@ public class InventorySave {
 
     /**
      * Clears any saved inventory
-     * @param player
+     * @param player player object
      */
     public void clearSavedInventory(Player player) {
         //plugin.getLogger().info("DEBUG: Clearing inventory");
@@ -59,7 +61,7 @@ public class InventorySave {
     /**
      * Load the player's inventory
      * 
-     * @param player
+     * @param player playe object
      */
     public void loadPlayerInventory(Player player) {
         //plugin.getLogger().info("DEBUG: Loading inventory");
@@ -70,7 +72,6 @@ public class InventorySave {
             player.getInventory().setContents(inv.getInventory());
             player.getInventory().setArmorContents(inv.getArmor());
             inventories.remove(player.getUniqueId());
-            return;
         }
     }
 

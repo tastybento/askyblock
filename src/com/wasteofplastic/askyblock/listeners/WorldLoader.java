@@ -26,13 +26,13 @@ import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Settings;
 
 public class WorldLoader implements Listener {
-    private ASkyBlock plugin;
+    private final ASkyBlock plugin;
     private boolean worldLoaded = false;
     private static final boolean DEBUG = false;
 
     /**
      * Class to force world loading before plugins.
-     * @param plugin
+     * @param plugin - ASkyBlock plugin object
      */
     public WorldLoader(ASkyBlock plugin) {
         this.plugin = plugin;

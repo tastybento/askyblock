@@ -24,8 +24,8 @@ import org.bukkit.event.entity.EntityPickupItemEvent;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Island;
-import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.Island.SettingsFlag;
+import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
 /**

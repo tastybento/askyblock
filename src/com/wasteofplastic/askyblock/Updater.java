@@ -189,7 +189,7 @@ public class Updater {
     /**
      * Initialize the updater.
      *
-     * @param plugin   The plugin that is checking for an update.
+     * @param plugin - ASkyBlock plugin object   The plugin that is checking for an update.
      * @param id       The dev.bukkit.org id of the project.
      * @param file     The file that the plugin is running from, get this by doing this.getFile() from within your main class.
      * @param type     Specify the type of update this will be. See {@link UpdateType}
@@ -202,7 +202,7 @@ public class Updater {
     /**
      * Initialize the updater with the provided callback.
      *
-     * @param plugin   The plugin that is checking for an update.
+     * @param plugin - ASkyBlock plugin object   The plugin that is checking for an update.
      * @param id       The dev.bukkit.org id of the project.
      * @param file     The file that the plugin is running from, get this by doing this.getFile() from within your main class.
      * @param type     Specify the type of update this will be. See {@link UpdateType}
@@ -215,7 +215,7 @@ public class Updater {
     /**
      * Initialize the updater with the provided callback.
      *
-     * @param plugin   The plugin that is checking for an update.
+     * @param plugin - ASkyBlock plugin object   The plugin that is checking for an update.
      * @param id       The dev.bukkit.org id of the project.
      * @param file     The file that the plugin is running from, get this by doing this.getFile() from within your main class.
      * @param type     Specify the type of update this will be. See {@link UpdateType}
@@ -361,6 +361,8 @@ public class Updater {
                 this.thread.join();
             } catch (final InterruptedException e) {
                 this.plugin.getLogger().log(Level.SEVERE, null, e);
+                // Restore interrupted state...
+                Thread.currentThread().interrupt();
             }
         }
     }
@@ -486,32 +488,32 @@ public class Updater {
         final File fSourceZip = new File(file);
         try {
             final String zipPath = file.substring(0, file.length() - 4);
-            ZipFile zipFile = new ZipFile(fSourceZip);
-            Enumeration<? extends ZipEntry> e = zipFile.entries();
-            while (e.hasMoreElements()) {
-                ZipEntry entry = e.nextElement();
-                File destinationFilePath = new File(zipPath, entry.getName());
-                this.fileIOOrError(destinationFilePath.getParentFile(), destinationFilePath.getParentFile().mkdirs(), true);
-                if (!entry.isDirectory()) {
-                    final BufferedInputStream bis = new BufferedInputStream(zipFile.getInputStream(entry));
-                    int b;
-                    final byte[] buffer = new byte[Updater.BYTE_SIZE];
-                    final FileOutputStream fos = new FileOutputStream(destinationFilePath);
-                    final BufferedOutputStream bos = new BufferedOutputStream(fos, Updater.BYTE_SIZE);
-                    while ((b = bis.read(buffer, 0, Updater.BYTE_SIZE)) != -1) {
-                        bos.write(buffer, 0, b);
-                    }
-                    bos.flush();
-                    bos.close();
-                    bis.close();
-                    final String name = destinationFilePath.getName();
-                    if (name.endsWith(".jar") && this.pluginExists(name)) {
-                        File output = new File(this.updateFolder, name);
-                        this.fileIOOrError(output, destinationFilePath.renameTo(output), true);
+            try (ZipFile zipFile = new ZipFile(fSourceZip)) {
+                Enumeration<? extends ZipEntry> e = zipFile.entries();
+                while (e.hasMoreElements()) {
+                    ZipEntry entry = e.nextElement();
+                    File destinationFilePath = new File(zipPath, entry.getName());
+                    this.fileIOOrError(destinationFilePath.getParentFile(), destinationFilePath.getParentFile().mkdirs(), true);
+                    if (!entry.isDirectory()) {
+                        final BufferedInputStream bis = new BufferedInputStream(zipFile.getInputStream(entry));
+                        int b;
+                        final byte[] buffer = new byte[Updater.BYTE_SIZE];
+                        try (final FileOutputStream fos = new FileOutputStream(destinationFilePath)) {
+                            try (final BufferedOutputStream bos = new BufferedOutputStream(fos, Updater.BYTE_SIZE)) {
+                                while ((b = bis.read(buffer, 0, Updater.BYTE_SIZE)) != -1) {
+                                    bos.write(buffer, 0, b);
+                                }
+                            }
+                        }
+                        bis.close();
+                        final String name = destinationFilePath.getName();
+                        if (name.endsWith(".jar") && this.pluginExists(name)) {
+                            File output = new File(this.updateFolder, name);
+                            this.fileIOOrError(output, destinationFilePath.renameTo(output), true);
+                        }
                     }
                 }
             }
-            zipFile.close();
 
             // Move any plugin data folders that were included to the right place, Bukkit won't do this for us.
             moveNewZipFiles(zipPath);

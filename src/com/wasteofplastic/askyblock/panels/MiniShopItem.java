@@ -56,6 +56,7 @@ public class MiniShopItem {
     /**
      * 
      */
+    @SuppressWarnings("deprecation")
     public MiniShopItem(Material material, String extra, int slot, String description, int quantity, Double price, Double sellPrice) {
         this.slot = slot;
         this.material = material;
@@ -505,6 +506,7 @@ public class MiniShopItem {
             case 3:
                 return "JUNGLE_LEAVES";
             } // Note Acacia and Dark Oak are LEAVES_2 for some reason...
+            return mat.toString();
         case COAL:
             switch (damage) {
             case 0:

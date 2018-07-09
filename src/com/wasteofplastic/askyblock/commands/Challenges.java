@@ -29,8 +29,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 
-import net.milkbowl.vault.economy.EconomyResponse;
-
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -52,6 +50,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.material.MaterialData;
 import org.bukkit.material.SpawnEgg;
 import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionData;
@@ -61,10 +60,13 @@ import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.events.ChallengeCompleteEvent;
 import com.wasteofplastic.askyblock.events.ChallengeLevelCompleteEvent;
+import com.wasteofplastic.askyblock.nms.NMSAbstraction;
 import com.wasteofplastic.askyblock.panels.CPItem;
 import com.wasteofplastic.askyblock.util.SpawnEgg1_9;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
+
+import net.milkbowl.vault.economy.EconomyResponse;
 
 /**
  * Handles challenge commands and related methods
@@ -266,6 +268,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
                 }
                 return true;
             }
+            return false;
         default:
             return false;
         }
@@ -1117,11 +1120,27 @@ public class Challenges implements CommandExecutor, TabCompleter {
                             reqItem = Material.getMaterial(part[0].toUpperCase());
                         }
                         reqAmount = Integer.parseInt(part[2]);
-                        int reqDurability = Integer.parseInt(part[1]);
-                        ItemStack item = new ItemStack(reqItem);
 
-                        // Item
-                        item.setDurability((short) reqDurability);
+                        ItemStack item = new ItemStack(reqItem);
+                        int reqDurability = 0;
+                        boolean entityIsString = false;
+                        if (StringUtils.isNumeric(part[1])) {
+                            reqDurability = Integer.parseInt(part[1]);
+                            item.setDurability((short) reqDurability);
+                        } else if (reqItem.equals(Material.MONSTER_EGG)){
+                            entityIsString = true;
+                            reqDurability = -1; // non existent
+                            try {
+                                // Check if this is a string
+                                EntityType entityType = EntityType.valueOf(part[1]);
+                                NMSAbstraction nms = null;
+                                nms = Util.checkVersion();
+                                item = nms.getSpawnEgg(entityType, reqAmount);
+                            } catch (Exception ex) {
+                                plugin.getLogger().severe("Unknown entity type '" + part[1] + "' for MONSTER_EGG in challenge " + challenge);
+                                return false;
+                            }
+                        }
                         // check amount
                         int amount = 0;
                         // Go through all the inventory and try to find
@@ -1129,13 +1148,10 @@ public class Challenges implements CommandExecutor, TabCompleter {
                         for (Entry<Integer, ? extends ItemStack> en : player.getInventory().all(reqItem).entrySet()) {
                             // Get the item
                             ItemStack i = en.getValue();
-                            if (i.hasItemMeta()) {
+                            if (i.hasItemMeta() && !i.getType().equals(Material.MONSTER_EGG)) {
                                 continue;
                             }
-                            if (i.getDurability() == reqDurability) {
-                                // Clear any naming, or lore etc.
-                                //i.setItemMeta(null);
-                                // player.getInventory().setItem(en.getKey(), i);
+                            if (i.getDurability() == reqDurability || (entityIsString && i.getItemMeta().equals(item.getItemMeta()))) {
                                 // #1 item stack qty + amount is less than
                                 // required items - take all i
                                 // #2 item stack qty + amount = required
@@ -1463,14 +1479,12 @@ public class Challenges implements CommandExecutor, TabCompleter {
             return true;
         }
         if (type.equalsIgnoreCase("island")) {
-            final HashMap<Material, Integer> neededItem = new HashMap<Material, Integer>();
+            final HashMap<MaterialData, Integer> neededItem = new HashMap<MaterialData, Integer>();
             final HashMap<EntityType, Integer> neededEntities = new HashMap<EntityType, Integer>();
             if (!reqList.isEmpty()) {
                 for (int i = 0; i < reqList.split(" ").length; i++) {
                     final String[] sPart = reqList.split(" ")[i].split(":");
-                    // Parse the qty required first
                     try {
-                        final int qty = Integer.parseInt(sPart[1]);
                         // Find out if the needed item is a Material or an Entity
                         boolean isEntity = false;
                         for (EntityType entityType : EntityType.values()) {
@@ -1480,14 +1494,11 @@ public class Challenges implements CommandExecutor, TabCompleter {
                             }
                         }
                         if (isEntity) {
-                            // plugin.getLogger().info("DEBUG: Item " +
-                            // sPart[0].toUpperCase() + " is an entity");
+                            // plugin.getLogger().info("DEBUG: Item " + sPart[0].toUpperCase() + " is an entity");
                             EntityType entityType = EntityType.valueOf(sPart[0].toUpperCase());
                             if (entityType != null) {
-                                neededEntities.put(entityType, qty);
-                                // plugin.getLogger().info("DEBUG: Needed entity is "
-                                // + Integer.parseInt(sPart[1]) + " x " +
-                                // EntityType.valueOf(sPart[0].toUpperCase()).toString());
+                                neededEntities.put(entityType, Integer.parseInt(sPart[1]));
+                                // plugin.getLogger().info("DEBUG: Needed entity is " + Integer.parseInt(sPart[1]) + " x " + EntityType.valueOf(sPart[0].toUpperCase()).toString());
                             }
                         } else {	
                             Material item;
@@ -1497,11 +1508,20 @@ public class Challenges implements CommandExecutor, TabCompleter {
                                 item = Material.getMaterial(sPart[0].toUpperCase());
                             }
                             if (item != null) {
-                                neededItem.put(item, qty);
-                                // plugin.getLogger().info("DEBUG: Needed item is "
-                                // + Integer.parseInt(sPart[1]) + " x " +
-                                // Material.getMaterial(sPart[0]).toString());
-
+                                // We have two cases : quantity only OR durability + quantity
+                                final int quantity;
+                                MaterialData md = new MaterialData(item);
+                                if (sPart.length == 2) {
+                                    // Only a quantity is specified
+                                    quantity = Integer.parseInt(sPart[1]);
+                                } else {
+                                    quantity = Integer.parseInt(sPart[2]);
+                                    md.setData(Byte.parseByte(sPart[1]));
+                                }
+                                neededItem.put(md, quantity);
+                                if (DEBUG) {
+                                    plugin.getLogger().info("DEBUG: Needed item is " + md.toString() + " x " + quantity);
+                                }
                             } else {
                                 plugin.getLogger().warning("Problem parsing required item for challenge " + challenge + " in challenges.yml!");
                                 return false;
@@ -1530,25 +1550,32 @@ public class Challenges implements CommandExecutor, TabCompleter {
             for (int x = -searchRadius; x <= searchRadius; x++) {
                 for (int y = -searchRadius; y <= searchRadius; y++) {
                     for (int z = -searchRadius; z <= searchRadius; z++) {
-                        final Material b = new Location(l.getWorld(), px + x, py + y, pz + z).getBlock().getType();
-                        if (neededItem.containsKey(b)) {
-                            if (neededItem.get(b) == 1) {
-                                neededItem.remove(b);
-                            } else {
-                                // Reduce the require amount by 1
-                                neededItem.put(b, neededItem.get(b) - 1);
-                            }
+                        final MaterialData b = new Location(l.getWorld(), px + x, py + y, pz + z).getBlock().getState().getData();
+                        if (!b.getItemType().equals(Material.AIR)) {
+                            neededItem.entrySet().stream().filter(e -> 
+                                (e.getKey().getItemType().equals(b.getItemType()) && (
+                                        e.getKey().getData() == 0 || e.getKey().getData() == b.getData())
+                                        || (e.getKey().getItemType().toString().endsWith("_DOOR") && b.getItemType().toString().endsWith("_DOOR"))
+                                        || (e.getKey().getItemType().toString().endsWith("_COMPARATOR") && b.getItemType().toString().endsWith("_COMPARATOR"))
+                                        || (e.getKey().getItemType().toString().contains("_LAMP") && b.getItemType().toString().contains("_LAMP"))
+                                        || (e.getKey().getItemType().toString().endsWith("FURNACE") && b.getItemType().toString().endsWith("FURNACE"))
+                                        || (e.getKey().getItemType().toString().contains("DAYLIGHT") && b.getItemType().toString().contains("DAYLIGHT"))
+                                        || (e.getKey().getItemType().toString().startsWith("BOAT") && b.getItemType().toString().startsWith("BOAT"))
+                                        )
+                                )
+                            .forEach(e -> e.setValue(e.getValue() - 1));
                         }
                     }
                 }
             }
-            // }
+            neededItem.values().removeIf(v -> v <= 0);
             // Check if all the needed items have been amassed
             if (!neededItem.isEmpty()) {
                 // plugin.getLogger().info("DEBUG: Insufficient items around");
-                for (Material missing : neededItem.keySet()) {
+                
+                for (MaterialData missing : neededItem.keySet()) {
                     Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).challengeserrorYouAreMissing + " " + neededItem.get(missing) + " x "
-                            + Util.prettifyText(missing.toString()));
+                            + Util.prettifyText(missing.getItemType().toString()) + ":" + missing.getData());
                 }
                 return false;
             } else {
@@ -2096,7 +2123,8 @@ public class Challenges implements CommandExecutor, TabCompleter {
         case 0: 
         case 1:
             options.add("complete");
-            //Fall through
+            options.addAll(getAvailableChallenges(player));
+            break;
         case 2:
             options.addAll(getAvailableChallenges(player));
             break;
@@ -2137,14 +2165,16 @@ public class Challenges implements CommandExecutor, TabCompleter {
 
     /**
      * Records the reseting challenge
-     * @param lowerCase
+     * @param challenge - name of challenge
+     * @param repeat - number of times it has been repeated
+     * @param entry - when it was done
      */
     public void resetChallengeForAll(String challenge, long repeat, String entry) {
         resettingChallenges.set(challenge + ".resettime", System.currentTimeMillis());
         // TODO: store this entry
         resettingChallenges.set(challenge + ".repeat", repeat);
         resettingChallenges.set(challenge + ".duration", entry);
-        Util.saveYamlFile(resettingChallenges, "resettimers.yml");
+        Util.saveYamlFile(resettingChallenges, "resettimers.yml", true);
     }
 
     /**
@@ -2174,7 +2204,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
                 timeToCheck -= repeat;
                  */
                 resettingChallenges.set(challenge + ".resettime", timeToCheck);
-                Util.saveYamlFile(resettingChallenges, "resettimers.yml");
+                Util.saveYamlFile(resettingChallenges, "resettimers.yml", true);
             }
             if (timeToCheck > timestamp) {
                 // Timestamp is older than reset time
@@ -2219,7 +2249,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
     public void clearChallengeReset(String challenge) {
         if (resettingChallenges.contains(challenge)) {
             resettingChallenges.set(challenge, null);
-            Util.saveYamlFile(resettingChallenges, "resettimers.yml");
+            Util.saveYamlFile(resettingChallenges, "resettimers.yml", true);
         }
     }
 

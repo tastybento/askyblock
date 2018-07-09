@@ -24,13 +24,10 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-
-import net.milkbowl.vault.economy.EconomyResponse;
 
 import org.bukkit.Art;
 import org.bukkit.Bukkit;
@@ -85,6 +82,8 @@ import com.wasteofplastic.org.jnbt.NBTInputStream;
 import com.wasteofplastic.org.jnbt.ShortTag;
 import com.wasteofplastic.org.jnbt.StringTag;
 import com.wasteofplastic.org.jnbt.Tag;
+
+import net.milkbowl.vault.economy.EconomyResponse;
 
 public class Schematic {
     private ASkyBlock plugin;
@@ -584,9 +583,6 @@ public class Schematic {
             for (int y = 0; y < height; ++y) {
                 for (int z = 0; z < length; ++z) {
                     int index = y * width * length + z * width + x;
-                    // Bukkit.getLogger().info("DEBUG " + index +
-                    // " changing to ID:"+blocks[index] + " data = " +
-                    // blockData[index]);
                     if (blocks[index] == 7) {
                         // Last bedrock
                         if (bedrock == null || bedrock.getY() < y) {
@@ -789,9 +785,10 @@ public class Schematic {
      */
     /**
      * This method pastes a schematic.
-     * @param loc
-     * @param player
-     * @param partner 
+     * @param loc - where to paste it
+     * @param player - who for
+     * @param teleport - should the player be teleported after pasting?
+     * @param reason - why this was pasted
      */
     public void pasteSchematic(final Location loc, final Player player, boolean teleport, final PasteReason reason) {
         // If this is not a file schematic, paste the default island
@@ -1058,7 +1055,7 @@ public class Schematic {
             //plugin.getLogger().info("DEBUG: view dist = " + plugin.getServer().getViewDistance());
             if (player.getWorld().equals(world)) {
                 //plugin.getLogger().info("DEBUG: same world");
-                int distSq = (int)((player.getLocation().distanceSquared(loc) - (Settings.islandDistance * Settings.islandDistance)/16));
+                int distSq = (int)((player.getLocation().distanceSquared(loc) - ((double)Settings.islandDistance * Settings.islandDistance)/16));
                 //plugin.getLogger().info("DEBUG:  distsq = " + distSq);
                 if (plugin.getServer().getViewDistance() * plugin.getServer().getViewDistance() < distSq) {
                     //plugin.getLogger().info("DEBUG: teleporting");
@@ -1148,11 +1145,6 @@ public class Schematic {
         islandBlocks = new ArrayList<IslandBlock>();
         Map<BlockVector, Map<String, Tag>> tileEntitiesMap = this.getTileEntitiesMap();
         // Start with non-attached blocks
-        //plugin.getLogger().info("DEBUG: attachable size = " + attachable.size());
-        //plugin.getLogger().info("DEBUG: torch = " + Material.TORCH.getId());
-        //plugin.getLogger().info("DEBUG: non attachable");
-        //plugin.getLogger().info("DEBUG: bedrock y = " + bedrock.getBlockY());
-        //int count = 0;
         for (int x = 0; x < width; ++x) {
             for (int y = 0; y < height; ++y) {
                 for (int z = 0; z < length; ++z) {
@@ -1320,14 +1312,9 @@ public class Schematic {
      */
     public void setPasteAir(boolean pasteAir) {
         if (!pasteAir) {
-            Iterator<IslandBlock> it = islandBlocks.iterator();
-            while (it.hasNext()) {
-                if (it.next().getTypeId() == 0) {
-                    it.remove();
-                }
-            }
+            islandBlocks.removeIf(b -> b.getTypeId() == 0);
         }
-        //plugin.getLogger().info("DEBUG: islandBlocks after removing air blocks = " + islandBlocks.size());
+        
     }
 
     /**

@@ -39,7 +39,7 @@ public class WarpListEvent extends Event {
     private Collection<UUID> warps;
 
     /**
-     * @param plugin
+     * @param plugin - ASkyBlock plugin object
      * @param warps
      */
     public WarpListEvent(ASkyBlock plugin, Collection<UUID> warps) {

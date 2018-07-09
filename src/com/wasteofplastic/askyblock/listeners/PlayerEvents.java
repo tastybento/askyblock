@@ -20,7 +20,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.ChatColor;
@@ -29,7 +31,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World.Environment;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
@@ -52,8 +53,8 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.InventorySave;
 import com.wasteofplastic.askyblock.Island;
-import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.Island.SettingsFlag;
+import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.events.IslandEnterEvent;
 import com.wasteofplastic.askyblock.events.IslandExitEvent;
 import com.wasteofplastic.askyblock.util.Util;
@@ -67,13 +68,13 @@ public class PlayerEvents implements Listener {
     private final ASkyBlock plugin;
     private static final boolean DEBUG = false;
     // A set of falling players
-    private static HashSet<UUID> fallingPlayers = new HashSet<UUID>();
-    private static HashMap<UUID, List<String>> temporaryPerms = new HashMap<UUID, List<String>>();
+    private static Set<UUID> fallingPlayers = new HashSet<>();
+    private static Map<UUID, List<String>> temporaryPerms = new HashMap<>();
     private List<UUID> respawn;
 
     public PlayerEvents(final ASkyBlock plugin) {
         this.plugin = plugin;
-        respawn = new ArrayList<UUID>();
+        respawn = new ArrayList<>();
     }
 
     /**
@@ -137,7 +138,7 @@ public class PlayerEvents implements Listener {
 
     /**
      * Prevents changing of hunger while having a special permission and being on your island
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onHungerChange(final FoodLevelChangeEvent e) {
@@ -159,10 +160,10 @@ public class PlayerEvents implements Listener {
     /**
      * Gives temporary perms
      * Gives flymode if player has a specific permission and is on his island
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-    public void onPlayerEnterOnIsland(IslandEnterEvent e){
+    public void onPlayerEnterOnIsland(final IslandEnterEvent e){
         Player player = plugin.getServer().getPlayer(e.getPlayer());
         if (player != null && !player.hasMetadata("NPC")) {
             if (DEBUG) {
@@ -190,14 +191,11 @@ public class PlayerEvents implements Listener {
             if(VaultHelper.checkPerm(player, Settings.PERMPREFIX + "islandfly", island.getCenter().getWorld())) {
                 if (DEBUG)
                     plugin.getLogger().info("DEBUG: player has fly");
-                plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
+                plugin.getServer().getScheduler().runTask(plugin, () -> {
+                    player.setAllowFlight(true);
+                    player.setFlying(true);
 
-                    @Override
-                    public void run() {
-                        player.setAllowFlight(true);
-                        player.setFlying(true);
-
-                    }});
+                });
 
             }
             if (DEBUG)
@@ -208,7 +206,7 @@ public class PlayerEvents implements Listener {
                     if (Settings.createNether && Settings.newNether && ASkyBlock.getNetherWorld() != null) {
                         VaultHelper.addPerm(player, perm, ASkyBlock.getNetherWorld());
                     }
-                    List<String> perms = new ArrayList<String>();
+                    List<String> perms = new ArrayList<>();
                     if(temporaryPerms.containsKey(player.getUniqueId())) perms = temporaryPerms.get(player.getUniqueId());
                     perms.add(perm);
                     temporaryPerms.put(player.getUniqueId(), perms);
@@ -240,10 +238,10 @@ public class PlayerEvents implements Listener {
     /**
      * Revoke temporary perms
      * Removes flymode with a delay if player leave his island.
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-    public void onPlayerLeaveIsland(IslandExitEvent e) {
+    public void onPlayerLeaveIsland(final IslandExitEvent e) {
         if (DEBUG)
             plugin.getLogger().info("DEBUG: island exit event");
         final Player player = plugin.getServer().getPlayer(e.getPlayer());
@@ -273,7 +271,7 @@ public class PlayerEvents implements Listener {
         // Check if the player has left the island completely
         if(VaultHelper.checkPerm(player, Settings.PERMPREFIX + "islandfly")) {
             // If the player has teleported to another world or island
-            if (toIsland != null && fromIsland.equals(toIsland)) {
+            if (fromIsland.equals(toIsland)) {
                 if (player.isFlying() && player.getGameMode().equals(GameMode.SURVIVAL)) {
                     if (DEBUG)
                         plugin.getLogger().info("DEBUG: player is flying timer is " + Settings.flyTimeOutside + "s");
@@ -298,7 +296,7 @@ public class PlayerEvents implements Listener {
                                 }
 
                             }
-                        }, 20*Settings.flyTimeOutside);
+                        }, 20L*Settings.flyTimeOutside);
                     }
                 }
             } else {
@@ -368,7 +366,7 @@ public class PlayerEvents implements Listener {
 
     /**
      * Places player back on their island if the setting is true
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerRespawn(final PlayerRespawnEvent e) {
@@ -397,7 +395,7 @@ public class PlayerEvents implements Listener {
     /**
      * Registers death of player.
      * Places the player on the island respawn list if set
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlayerDeath(final PlayerDeathEvent e) {
@@ -532,7 +530,7 @@ public class PlayerEvents implements Listener {
     /**
      * Prevents teleporting when falling based on setting by stopping commands
      * 
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerTeleport(final PlayerCommandPreprocessEvent e) {
@@ -558,7 +556,7 @@ public class PlayerEvents implements Listener {
     /**
      * Prevents teleporting when falling based on setting and teleporting to locked islands
      * 
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlayerTeleport(final PlayerTeleportEvent e) {
@@ -617,11 +615,7 @@ public class PlayerEvents implements Listener {
         if (DEBUG)
             plugin.getLogger().info("DEBUG: getting islands for to from");
         Island islandFrom = plugin.getGrid().getProtectedIslandAt(e.getFrom());
-        if (DEBUG && islandFrom != null)
-            plugin.getLogger().info("DEBUG: islandFrom is not null");
         Island islandTo = plugin.getGrid().getProtectedIslandAt(e.getTo());
-        if (DEBUG && islandTo != null)
-            plugin.getLogger().info("DEBUG: islandTo is not null");
 
         // Ender pearl and chorus fruit teleport checks
         if (e.getCause() != null) {
@@ -825,7 +819,7 @@ public class PlayerEvents implements Listener {
     /**
      * Used to prevent teleporting when falling
      * 
-     * @param uniqueId
+     * @param uniqueId - unique ID
      * @return true or false
      */
     public static boolean isFalling(UUID uniqueId) {
@@ -835,7 +829,7 @@ public class PlayerEvents implements Listener {
     /**
      * Used to prevent teleporting when falling
      * 
-     * @param uniqueId
+     * @param uniqueId - unique ID
      */
     public static void setFalling(UUID uniqueId) {
         fallingPlayers.add(uniqueId);
@@ -844,7 +838,7 @@ public class PlayerEvents implements Listener {
     /**
      * Unset the falling flag
      * 
-     * @param uniqueId
+     * @param uniqueId - unique ID
      */
     public static void unsetFalling(UUID uniqueId) {
         // getLogger().info("DEBUG: unset falling");
@@ -853,7 +847,7 @@ public class PlayerEvents implements Listener {
 
     /**
      * Prevents visitors from using commands on islands, like /spawner
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onVisitorCommand(final PlayerCommandPreprocessEvent e) {
@@ -878,7 +872,7 @@ public class PlayerEvents implements Listener {
 
     /**
      * Prevents visitors from getting damage if invinciblevisitors option is set to TRUE
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onVisitorGetDamage(EntityDamageByEntityEvent e){
@@ -927,7 +921,7 @@ public class PlayerEvents implements Listener {
     
     /**
      * Prevents visitors from getting damage if invinciblevisitors option is set to TRUE
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onVisitorGetDamage(EntityDamageEvent e){
@@ -936,14 +930,15 @@ public class PlayerEvents implements Listener {
         // Entity attacks are handled elsewhere
         if (e.getCause().equals(DamageCause.ENTITY_ATTACK)) return;
         Player p = (Player) e.getEntity();
-        if (!IslandGuard.inWorld(p) || plugin.getGrid().locationIsOnIsland(p, p.getLocation())) return;
+        if (!IslandGuard.inWorld(p) || plugin.getGrid().inIslandSpace(p)) return;
 
         if (Settings.visitorDamagePrevention.contains(e.getCause())) e.setCancelled(true);
 
-        else if(e.getCause().equals(DamageCause.VOID)) {
+        if(e.getCause().equals(DamageCause.VOID)) {
             if(plugin.getPlayers().hasIsland(p.getUniqueId())) {
                 Location safePlace = plugin.getGrid().getSafeHomeLocation(p.getUniqueId(), 1);
                 if (safePlace != null) {
+                    unsetFalling(p.getUniqueId());
                     p.teleport(safePlace);
                     // Set their fall distance to zero otherwise they crash onto their island and die
                     p.setFallDistance(0);
@@ -972,7 +967,7 @@ public class PlayerEvents implements Listener {
 
     /**
      * Protect players from damage when teleporting
-     * @param e
+     * @param e - event
      */
     public void onPlayerTeleportDamage(EntityDamageEvent e){
         if(!(e.getEntity() instanceof Player)) return;

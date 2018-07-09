@@ -1,6 +1,7 @@
 package com.wasteofplastic.askyblock.listeners;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -8,6 +9,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockState;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -25,6 +27,8 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.vehicle.VehicleCreateEvent;
+import org.bukkit.event.world.ChunkLoadEvent;
+import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -32,8 +36,8 @@ import org.bukkit.metadata.MetadataValue;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Island;
-import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.Island.SettingsFlag;
+import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
@@ -41,14 +45,76 @@ public class EntityLimits implements Listener {
     private static final boolean DEBUG = false;
     private static final boolean DEBUG2 = false;
     private static final boolean DEBUG3 = false;
-    private ASkyBlock plugin;
+    private final ASkyBlock plugin;
+    private YamlConfiguration entities;
 
     /**
      * Handles entity and natural limitations
-     * @param plugin
+     * @param plugin - ASkyBlock plugin object
      */
     public EntityLimits(ASkyBlock plugin) {
         this.plugin = plugin;
+        if (Settings.saveEntities) {
+            entities = Util.loadYamlFile("entitylimits.yml");
+        }
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onChunkLoad(ChunkLoadEvent event) {
+        if (!Settings.saveEntities || !IslandGuard.inWorld(event.getWorld())) {
+            return;
+        }
+        Arrays.asList(event.getChunk().getEntities()).forEach(entity -> {
+            String loc = entities.getString(event.getWorld().getName() + "." + event.getChunk().getX() + "." + event.getChunk().getZ() + "."
+                    + entity.getUniqueId().toString(), "");
+            if (!loc.isEmpty()) {
+                entity.setMetadata("spawnLoc", new FixedMetadataValue(plugin, loc ));             
+            }
+        });
+        // Delete the chunk data
+        entities.set(event.getWorld().getName() + "." + event.getChunk().getX() + "." + event.getChunk().getZ() , null);
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onChunkUnload(ChunkUnloadEvent event) {
+        if (!Settings.saveEntities || !IslandGuard.inWorld(event.getWorld())) {
+            return;
+        }
+        // Delete the chunk data
+        entities.set(event.getWorld().getName() + "." + event.getChunk().getX() + "." + event.getChunk().getZ() , null);
+        // Create new entry
+        Arrays.stream(event.getChunk().getEntities()).filter(x -> x.hasMetadata("spawnLoc")).forEach(entity -> {
+            // Get the meta data
+            entity.getMetadata("spawnLoc").stream().filter(y -> y.getOwningPlugin().equals(plugin)).forEach(v -> {
+                entities.set(event.getWorld().getName() + "." 
+                        + event.getChunk().getX() + "." + event.getChunk().getZ() + "." 
+                        + entity.getUniqueId().toString(), v.asString());            
+            });
+        });
+        Util.saveYamlFile(entities, "entitylimits.yml", true);
+    }
+
+    public void disable() {
+        if (!Settings.saveEntities) {
+            return;
+        }
+        ASkyBlock.getIslandWorld().getEntities().stream().filter(x -> x.hasMetadata("spawnLoc")).forEach(entity -> {
+            // Get the meta data
+            entity.getMetadata("spawnLoc").stream().filter(y -> y.getOwningPlugin().equals(plugin)).forEach(v -> {
+                entities.set(entity.getWorld().getName() + "." + entity.getLocation().getChunk().getX() + "." + entity.getLocation().getChunk().getZ() + "."
+            + entity.getUniqueId().toString(), v.asString());            
+            });
+        });
+        if (Settings.createNether && Settings.newNether && ASkyBlock.getNetherWorld() != null) {
+            ASkyBlock.getNetherWorld().getEntities().stream().filter(x -> x.hasMetadata("spawnLoc")).forEach(entity -> {
+                // Get the meta data
+                entity.getMetadata("spawnLoc").stream().filter(y -> y.getOwningPlugin().equals(plugin)).forEach(v -> {
+                    entities.set(entity.getWorld().getName() + "." + entity.getLocation().getChunk().getX() + "." + entity.getLocation().getChunk().getZ() + "."
+                + entity.getUniqueId().toString(), v.asString());            
+                });
+            }); 
+        }
+        Util.saveYamlFile(entities, "entitylimits.yml", false);
     }
 
     /**
@@ -62,10 +128,7 @@ public class EntityLimits implements Listener {
         if (island != null && island.getIgsFlag(flag)){
             return true;
         }
-        if (island == null && Settings.defaultWorldSettings.get(flag)) {
-            return true;
-        }
-        return false;
+        return island == null && Settings.defaultWorldSettings.get(flag);
     }
 
     /**
@@ -87,10 +150,7 @@ public class EntityLimits implements Listener {
         if (island != null && (island.getIgsFlag(flag) || island.getMembers().contains(player.getUniqueId()))){
             return true;
         }
-        if (island == null && Settings.defaultWorldSettings.get(flag)) {
-            return true;
-        }
-        return false;
+        return island == null && Settings.defaultWorldSettings.get(flag);
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
@@ -218,7 +278,7 @@ public class EntityLimits implements Listener {
     /**
      * Prevents mobs spawning naturally at spawn or in an island
      *
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onNaturalMobSpawn(final CreatureSpawnEvent e) {
@@ -231,7 +291,7 @@ public class EntityLimits implements Listener {
             return;
         }
         // Deal with natural spawning
-        if (e.getSpawnReason().equals(SpawnReason.NATURAL) || e.getSpawnReason().equals(SpawnReason.JOCKEY)
+        if (e.getSpawnReason().equals(SpawnReason.NATURAL)
                 || e.getSpawnReason().equals(SpawnReason.CHUNK_GEN)
                 || e.getSpawnReason().equals(SpawnReason.DEFAULT)
                 || e.getSpawnReason().equals(SpawnReason.MOUNT)
@@ -325,7 +385,7 @@ public class EntityLimits implements Listener {
     /**
      * Prevents placing of blocks
      *
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerBlockPlace(final BlockPlaceEvent e) {
@@ -426,7 +486,6 @@ public class EntityLimits implements Listener {
                             Util.sendMessage(e.getPlayer(), ChatColor.RED + (plugin.myLocale(e.getPlayer().getUniqueId()).entityLimitReached.replace("[entity]",
                                     Util.prettifyText(type))).replace("[number]", String.valueOf(Settings.limitedBlocks.get(type))));
                             e.setCancelled(true);
-                            return;
                         }
                     }
                 }
@@ -441,7 +500,7 @@ public class EntityLimits implements Listener {
     /**
      * Prevents trees from growing outside of the protected area.
      *
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onTreeGrow(final StructureGrowEvent e) {
@@ -531,7 +590,7 @@ public class EntityLimits implements Listener {
 
     /**
      * Handles minecart placing
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onMinecart(VehicleCreateEvent e) {
@@ -589,7 +648,6 @@ public class EntityLimits implements Listener {
                 }
             }
         }
-        return;
     }
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)

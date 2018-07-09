@@ -1,5 +1,4 @@
 /*******************************************************************************
- * This file is part of ASkyBlock.
  *
  *     ASkyBlock is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -16,9 +15,6 @@
  *******************************************************************************/
 package com.wasteofplastic.askyblock.listeners;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -40,13 +36,12 @@ import com.wasteofplastic.askyblock.LevelCalcByChunk;
 import com.wasteofplastic.askyblock.PlayerCache;
 import com.wasteofplastic.askyblock.Scoreboards;
 import com.wasteofplastic.askyblock.Settings;
-import com.wasteofplastic.askyblock.TopTen;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
 public class JoinLeaveEvents implements Listener {
-    private ASkyBlock plugin;
-    private PlayerCache players;
+    private final ASkyBlock plugin;
+    private final PlayerCache players;
     private final static boolean DEBUG = false;
 
     public JoinLeaveEvents(ASkyBlock aSkyBlock) {
@@ -70,23 +65,7 @@ public class JoinLeaveEvents implements Listener {
             return;
         }
         // Check language permission
-        if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.lang")) {
-            if (DEBUG)
-                plugin.getLogger().info("DEBUG: checking language");
-            // Get language
-            String language = getLanguage(player);
-            //plugin.getLogger().info("DEBUG: language = " + language);
-            // Check if we have this language
-            if (plugin.getResource("locale/" + language + ".yml") != null) {
-                if (DEBUG)
-                    plugin.getLogger().info("DEBUG:check if lang exists");
-                if (plugin.getPlayers().getLocale(playerUUID).isEmpty()) {
-                    if (DEBUG)
-                        plugin.getLogger().info("DEBUG: setting locale to " + language);
-                    plugin.getPlayers().setLocale(playerUUID, language);
-                }
-            }
-        } else {
+        if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.lang")) {
             // Default locale
             if (DEBUG)
                 plugin.getLogger().info("DEBUG: using default locale");
@@ -101,6 +80,7 @@ public class JoinLeaveEvents implements Listener {
 
         if (players == null) {
             plugin.getLogger().severe("players is NULL");
+            return;
         }
 
         // If this player is not an island player just skip all this
@@ -128,12 +108,14 @@ public class JoinLeaveEvents implements Listener {
         // Only happens when the team leader logs in
         if (players.inTeam(playerUUID) && players.getTeamLeader(playerUUID).equals(playerUUID)) {
             // Run through this team leader's players and check they are correct
-            Iterator<UUID> it = players.getMembers(playerUUID).iterator();
-            while (it.hasNext()) {
-                UUID member = it.next();
-                if (players.getTeamLeader(member) != null && !players.getTeamLeader(member).equals(playerUUID)) {
-                    plugin.getLogger().warning(plugin.getPlayers().getName(member) + " is on more than one team. Fixing...");
-                    plugin.getLogger().warning("Removing " + player.getName() + " as team leader, keeping " + plugin.getPlayers().getName(players.getTeamLeader(member)));
+            for (UUID member : players.getMembers(playerUUID)) {
+                if (players.getTeamLeader(member) != null && !players.getTeamLeader(member)
+                    .equals(playerUUID)) {
+                    plugin.getLogger().warning(plugin.getPlayers().getName(member)
+                        + " is on more than one team. Fixing...");
+                    plugin.getLogger().warning(
+                        "Removing " + player.getName() + " as team leader, keeping " + plugin
+                            .getPlayers().getName(players.getTeamLeader(member)));
                     players.removeMember(players.getTeamLeader(member), member);
                 }
             }
@@ -254,6 +236,9 @@ public class JoinLeaveEvents implements Listener {
                             // Only set the island range if the player has a perm to override the default
                             if (hasARangePerm) {
                                 // Do some sanity checking
+                                if (range > Settings.islandDistance) {
+                                    range = Settings.islandDistance;
+                                }
                                 if (range % 2 != 0) {
                                     range--;
                                     if (DEBUG)
@@ -279,7 +264,7 @@ public class JoinLeaveEvents implements Listener {
         if (Settings.loginLevel) {
             if (DEBUG)
                 plugin.getLogger().info("DEBUG: Run level calc");
-            new LevelCalcByChunk(plugin, playerUUID, player, false);
+            new LevelCalcByChunk(plugin, plugin.getGrid().getIsland(playerUUID), playerUUID, player, false);
         }
         // Reset resets if the admin changes it to or from unlimited
         if (Settings.resetLimit < players.getResetsLeft(playerUUID)  || (Settings.resetLimit >= 0 && players.getResetsLeft(playerUUID) < 0)) {
@@ -338,7 +323,7 @@ public class JoinLeaveEvents implements Listener {
         if (!player.hasPermission(Settings.PERMPREFIX + "intopten")) {
             if (DEBUG)
                 plugin.getLogger().info("DEBUG: Removing from top ten");
-            TopTen.topTenRemoveEntry(playerUUID);
+            plugin.getTopTen().topTenRemoveEntry(playerUUID);
         }
         // Load any messages for the player
         if (DEBUG)
@@ -347,17 +332,14 @@ public class JoinLeaveEvents implements Listener {
         if (messages != null) {
             if (DEBUG)
                 plugin.getLogger().info("DEBUG: Messages waiting!");
-            plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
-                @Override
-                public void run() {
-                    Util.sendMessage(player, ChatColor.AQUA + plugin.myLocale(playerUUID).newsHeadline);
-                    int i = 1;
-                    for (String message : messages) {
-                        Util.sendMessage(player, i++ + ": " + message);
-                    }
-                    // Clear the messages
-                    plugin.getMessages().clearMessages(playerUUID);
+            plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+                Util.sendMessage(player, ChatColor.AQUA + plugin.myLocale(playerUUID).newsHeadline);
+                int i = 1;
+                for (String message : messages) {
+                    Util.sendMessage(player, i++ + ": " + message);
                 }
+                // Clear the messages
+                plugin.getMessages().clearMessages(playerUUID);
             }, 40L);
         } // else {
         // plugin.getLogger().info("no messages");
@@ -370,7 +352,7 @@ public class JoinLeaveEvents implements Listener {
     public void onPlayerQuit(final PlayerQuitEvent event) {
         // Remove from TopTen if the player has the permission
         if (!event.getPlayer().hasPermission(Settings.PERMPREFIX + "intopten")) {
-            TopTen.topTenRemoveEntry(event.getPlayer().getUniqueId());
+            plugin.getTopTen().topTenRemoveEntry(event.getPlayer().getUniqueId());
         }
         // Remove from coop list
         if (!Settings.persistantCoops) {
@@ -382,34 +364,6 @@ public class JoinLeaveEvents implements Listener {
         // plugin.setMessage(event.getPlayer().getUniqueId(),
         // "Hello! This is a test. You logged out");
         players.removeOnlinePlayer(event.getPlayer().getUniqueId());
-    }
-
-    /**
-     * Attempts to get the player's language
-     * @param p
-     * @return language or empty string
-     */
-    public String getLanguage(Player p){
-        Object ep;
-        try {
-            ep = getMethod("getHandle", p.getClass()).invoke(p, (Object[]) null);
-            Field f = ep.getClass().getDeclaredField("locale");
-            f.setAccessible(true);
-            String language = (String) f.get(ep);
-            language.replace('_', '-');
-            return language;
-        } catch (Exception e) {
-            //nothing
-        }
-        return "en-US";
-    }
-
-    private Method getMethod(String name, Class<?> clazz) {
-        for (Method m : clazz.getDeclaredMethods()) {
-            if (m.getName().equals(name))
-                return m;
-        }
-        return null;
     }
 
 }

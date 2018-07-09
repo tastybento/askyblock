@@ -18,6 +18,7 @@ package com.wasteofplastic.askyblock;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -49,7 +50,7 @@ import org.bukkit.util.Vector;
  */
 public class SafeBoat implements Listener {
     // Flags to indicate if a player has exited a boat recently or not
-    private static HashMap<UUID, Entity> exitedBoat = new HashMap<UUID, Entity>();
+    private static Map<UUID, Entity> exitedBoat = new HashMap<>();
     // Stores players that should be ignored because they are being teleported away from 
     // a locked islands
     private static Set<UUID> ignoreList = new HashSet<UUID>();
@@ -58,7 +59,7 @@ public class SafeBoat implements Listener {
     }
 
     /**
-     * @param e
+     * @param e - event
      *            This event check throws the boat at a player when they hit it
      *            unless someone is in it
      */
@@ -102,7 +103,7 @@ public class SafeBoat implements Listener {
     }
 
     /**
-     * @param e
+     * @param e - event
      *            This function prevents boats from exploding when they hit
      *            something
      */
@@ -165,7 +166,7 @@ public class SafeBoat implements Listener {
     }
 
     /**
-     * @param e
+     * @param e - event
      *            This event aims to put the player in a safe place when they
      *            exit the boat
      */
@@ -177,7 +178,7 @@ public class SafeBoat implements Listener {
             return;
         }
         // LivingEntity entity = e.getExited();
-        final Entity entityObj = (Entity) e.getExited();
+        final Entity entityObj = e.getExited();
         if (!(entityObj instanceof Player)) {
             return;
         }

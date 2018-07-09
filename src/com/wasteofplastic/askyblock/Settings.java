@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -35,7 +36,7 @@ import com.wasteofplastic.askyblock.Island.SettingsFlag;
 
 /**
  * Where all the settings are
- * 
+ *
  * @author tastybento
  */
 public class Settings {
@@ -56,7 +57,7 @@ public class Settings {
     public static final String CHALLENGECOMMAND = "aic";
     // Admin command
     public static final String ADMINCOMMAND = "acid";
-    */
+     */
     public final static GameType GAMETYPE = GameType.ASKYBLOCK;
     // Permission prefix
     public final static String PERMPREFIX = "askyblock.";
@@ -85,23 +86,23 @@ public class Settings {
     /**
      * Default world protection settings
      */
-    public static HashMap<SettingsFlag, Boolean> defaultWorldSettings = new HashMap<SettingsFlag, Boolean>();
+    public static final Map<SettingsFlag, Boolean> defaultWorldSettings = new HashMap<>();
 
     /**
      * Default island protection settings
      */
-    public static HashMap<SettingsFlag, Boolean> defaultIslandSettings = new HashMap<SettingsFlag, Boolean>();
+    public static final Map<SettingsFlag, Boolean> defaultIslandSettings = new HashMap<>();
     /**
      * Default spawn protection settings
      */
-    public static HashMap<SettingsFlag, Boolean> defaultSpawnSettings = new HashMap<SettingsFlag, Boolean>();
+    public static final Map<SettingsFlag, Boolean> defaultSpawnSettings = new HashMap<>();
     /**
      * Visitors settings to show in the GUI
      */
-    public static HashMap<SettingsFlag, Boolean> visitorSettings = new HashMap<SettingsFlag, Boolean>();
+    public static final Map<SettingsFlag, Boolean> visitorSettings = new HashMap<>();
     // Flymode
     public static int flyTimeOutside;
-    
+
     // Temporary Permissions
     public static List<String> temporaryPermissions;
 
@@ -124,12 +125,12 @@ public class Settings {
     public static int abandonedIslandLevel;
     public static Double startingMoney;
     public static double netherSpawnRadius;
-    public static List<PotionEffectType> acidDamageType = new ArrayList<PotionEffectType>();
+    public static List<PotionEffectType> acidDamageType = new ArrayList<>();
     public static boolean resetMoney;
     public static boolean damageOps;
     public static boolean endermanDeathDrop;
     public static boolean onlyLeaderCanCoop;
-    
+
     // Invincible visitor
     public static boolean invincibleVisitors;
     public static HashSet<DamageCause> visitorDamagePrevention;
@@ -158,10 +159,10 @@ public class Settings {
     public static Biome defaultBiome;
 
     // Island reset commands
-    public static List<String> resetCommands = new ArrayList<String>();
+    public static List<String> resetCommands = new ArrayList<>();
     // Mob limits
     public static int breedingLimit;
-    
+
     // Console shows teamchat messages
     public static boolean logTeamChat;
 
@@ -178,7 +179,7 @@ public class Settings {
 
     // Use Economy
     public static boolean useEconomy;
-    
+
     // Use Minishop
     public static boolean useMinishop;
 
@@ -187,24 +188,24 @@ public class Settings {
 
     // Use physics when pasting schematic blocks
     public static boolean usePhysics;
-    
+
     // Use old display (chat instead of GUI) for Island top ten
     public static boolean displayIslandTopTenInChat;
 
     // Need a certain amount of island levels to create a warp sign
     public static int warpLevelsRestriction;
-    
+
     // Magic Cobble Generator
     public static boolean useMagicCobbleGen;
     public static boolean magicCobbleGenOnlyAtSpawn;
     public static TreeMap<Long,TreeMap<Double,Material>> magicCobbleGenChances;
-    
+
     // Disable offline redstone
     public static boolean disableOfflineRedstone;
-    
+
     // Fancy island level display
     public static boolean fancyIslandLevelDisplay;
-    
+
     // Falling blocked commands
     public static List<String> fallingCommandBlockList;
     public static List<String> leaveCommands;
@@ -282,4 +283,8 @@ public class Settings {
     public static boolean allowTNTPushing;
     public static boolean silenceCommandFeedback;
     public static long inviteTimeout;
+    public static boolean warpHeads;
+    public static boolean saveEntities;
+    public static boolean coopsCanCreateWarps;
+    public static boolean deleteProtectedOnly;
 }

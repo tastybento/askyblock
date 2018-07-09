@@ -667,11 +667,23 @@ public class ASLocale {
     public String visitorsProtected;
 
 
+    public String biomePleaseWait;
+
+
+    public String coopHasInvited;
+
+
+    public String adminHelpSwitch;
+    public String adminSwitchOp;
+    public String adminSwitchRemoving;
+    public String adminSwitchAdding;
+
+
     /**
      * Creates a locale object full of localized strings for a language
-     * @param plugin
+     * @param plugin - ASkyBlock plugin object - ASkyBlock plugin
      * @param localeName - name of the yml file that will be used
-     * @param index 
+     * @param index - index number of the locale
      */
     public ASLocale(ASkyBlock plugin, String localeName, int index) {
         this.plugin = plugin;
@@ -685,6 +697,7 @@ public class ASLocale {
     }
 
     /**
+     * @param localeName requested locale name
      * @return locale FileConfiguration object
      */
     public FileConfiguration getLocale(String localeName) {
@@ -696,6 +709,7 @@ public class ASLocale {
 
     /**
      * Reloads the locale file
+     * @param localeName - locale to reload
      */
     public void reloadLocale(String localeName) {
         //plugin.getLogger().info("DEBUG: loading local file " + localeName + ".yml");
@@ -1189,13 +1203,14 @@ public class ASLocale {
                 .translateAlternateColorCodes('&', locale.getString("adminHelp.add", "adds player to leader's team"));
         adminHelpcobbleStats = ChatColor
                 .translateAlternateColorCodes('&', locale.getString("adminHelp.cobblestats", "displays magic cobble generation stats"));
-
+        adminHelpSwitch = ChatColor
+                .translateAlternateColorCodes('&', locale.getString("adminHelp.switch", "toggles protection bypass"));
         settingsResetInProgress = ChatColor
                 .translateAlternateColorCodes('&', locale.getString("settingsReset.inprogress", "Protection settings being reset, please wait..."));
         settingsResetDone = ChatColor
                 .translateAlternateColorCodes('&', locale.getString("settingsReset.done", "Done."));
         adminHelpSettingsReset = ChatColor
-                .translateAlternateColorCodes('&', locale.getString("adminHelp.settingsreset", "Resets all islands to default protection settings"));
+                .translateAlternateColorCodes('&', locale.getString("adminHelp.settingsreset", "resets all islands to default protection settings"));
         adminHelplevel = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("adminHelp.level", "provide detailed island level report on player."));
         adminHelpinfoIsland = ChatColor.translateAlternateColorCodes('&',
@@ -1315,6 +1330,7 @@ public class ASLocale {
         if (biomePanelTitle.length() > 30) {
             biomePanelTitle = biomePanelTitle.substring(0, 29);
         }
+        biomePleaseWait = ChatColor.translateAlternateColorCodes('&', locale.getString("biome.pleasewait", "Please wait, changing biome..."));
         expelNotOnIsland = ChatColor.translateAlternateColorCodes('&',
                 locale.getString("expel.notonisland", "Player is not trespassing on your island!"));
         expelSuccess = ChatColor.translateAlternateColorCodes('&', locale.getString("expel.success", "You expelled [name]!"));
@@ -1347,6 +1363,7 @@ public class ASLocale {
         islandhelpUnCoop = ChatColor.translateAlternateColorCodes('&',locale.getString("coop.uncoop", "remove full island access from player"));
         islandhelpListCoops = ChatColor.translateAlternateColorCodes('&',locale.getString("coop.listcoops", "list coop players"));
         coopInvited = ChatColor.translateAlternateColorCodes('&', locale.getString("coop.invited", "[name] made [player] a coop player!"));
+        coopHasInvited = ChatColor.translateAlternateColorCodes('&', locale.getString("coop.nameHasInvitedYou", "[name] has invited you to coop on their island!"));
         coopUseExpel = ChatColor.translateAlternateColorCodes('&', locale.getString("coop.useexpel", "Use expel to remove."));
         cannotCoop = ChatColor.translateAlternateColorCodes('&', locale.getString("coop.cannotcoop", "Only island leader can coop a player."));
         lockIslandLocked = ChatColor.translateAlternateColorCodes('&', locale.getString("lock.islandlocked", "Island is locked to visitors"));
@@ -1449,6 +1466,12 @@ public class ASLocale {
         
         needRelog = ChatColor.translateAlternateColorCodes('&', locale.getString("needRelog", "You need to relog in order to see the changes."));
         visitorsProtected = ChatColor.translateAlternateColorCodes('&', locale.getString("visitors.protected", "Visitors protected"));
+        
+        adminSwitchOp = ChatColor.translateAlternateColorCodes('&', locale.getString("adminSwitch.op", "Ops can always bypass protection. Deop to use command."));
+        adminSwitchAdding = ChatColor.translateAlternateColorCodes('&', locale.getString("adminSwitch.adding", "Adding protection bypass..."));
+        adminSwitchRemoving = ChatColor.translateAlternateColorCodes('&', locale.getString("adminSwitch.removing", "Removing protection bypass..."));
+        
+
     }
 
     /**

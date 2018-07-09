@@ -1,15 +1,5 @@
 package com.wasteofplastic.askyblock;
 
-import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.RegisteredServiceProvider;
-import org.bukkit.plugin.ServicePriority;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-
-import javax.net.ssl.HttpsURLConnection;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -27,6 +17,17 @@ import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.zip.GZIPOutputStream;
+
+import javax.net.ssl.HttpsURLConnection;
+
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.RegisteredServiceProvider;
+import org.bukkit.plugin.ServicePriority;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 /**
  * bStats collects some data for plugin authors.
@@ -70,7 +71,7 @@ public class Metrics {
     /**
      * Class constructor.
      *
-     * @param plugin The plugin which stats should be submitted.
+     * @param plugin - ASkyBlock plugin object The plugin which stats should be submitted.
      */
     public Metrics(JavaPlugin plugin) {
         if (plugin == null) {
@@ -160,7 +161,7 @@ public class Metrics {
                     }
                 });
             }
-        }, 1000*60*5, 1000*60*30);
+        }, 1000*60*5L, 1000*60*30L);
         // Submit the data every 30 minutes, first time after 5 minutes to give other plugins enough time to start
         // WARNING: Changing the frequency has no effect but your plugin WILL be blocked/deleted!
         // WARNING: Just don't do it!
@@ -296,7 +297,7 @@ public class Metrics {
 
         // Compress the data to save bandwidth
         byte[] compressedData = compress(data.toString());
-
+        if (compressedData == null) { return; }
         // Add headers
         connection.setRequestMethod("POST");
         connection.addRequestProperty("Accept", "application/json");

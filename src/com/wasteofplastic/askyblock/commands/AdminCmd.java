@@ -22,6 +22,8 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,6 +51,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -65,25 +68,16 @@ import com.wasteofplastic.askyblock.DeleteIslandChunk;
 import com.wasteofplastic.askyblock.FileLister;
 import com.wasteofplastic.askyblock.GridManager;
 import com.wasteofplastic.askyblock.Island;
-import com.wasteofplastic.askyblock.PluginConfig;
-import com.wasteofplastic.askyblock.SafeSpotTeleport;
-import com.wasteofplastic.askyblock.Settings;
-import com.wasteofplastic.askyblock.TopTen;
 import com.wasteofplastic.askyblock.Island.SettingsFlag;
+import com.wasteofplastic.askyblock.PluginConfig;
+import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.Settings.GameType;
 import com.wasteofplastic.askyblock.listeners.LavaCheck;
 import com.wasteofplastic.askyblock.panels.ControlPanel;
+import com.wasteofplastic.askyblock.panels.SetBiome;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
-
-/*
- * New commands:
- *
- * teamkick <player> - removes a player from any team they are on. Does not throw stuff or teleport them.
- * teamadd <player> <leader> - adds the player to the leader's team. If leader does not have a team, one is made.
- * teamdelete <leader> - removes the leader's team completely
- *
- */
+import com.wasteofplastic.askyblock.util.teleport.SafeTeleportBuilder;
 
 /**
  * This class handles admin commands
@@ -244,6 +238,9 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
             if (Settings.teamChat && VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.spy") || player.isOp()) {
                 helpMessages.add(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " spy:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpTeamChatSpy);
             }
+            if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.switch") && !player.isOp()) {
+                helpMessages.add(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " switch:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpSwitch);
+            }
             if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.team") || player.isOp()) {
                 helpMessages.add(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " team kick <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpkick);
                 helpMessages.add(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " team add <player> <leader>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpadd);
@@ -354,6 +351,36 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
             help(sender, label);
             return true;
         case 1:
+            if (split[0].equalsIgnoreCase("switch")) {
+                if (!(sender instanceof Player)) {
+                    Util.sendMessage(sender, ChatColor.RED + plugin.myLocale().errorUseInGame);
+                    return true;
+                }
+                player = (Player) sender;
+                if (player.isOp()) {
+                    Util.sendMessage(sender, ChatColor.RED + plugin.myLocale(player.getUniqueId()).adminSwitchOp);
+                    return true;
+                }
+                if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.switch")) {
+                    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.bypassprotect")) {
+                        Util.sendMessage(sender, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).adminSwitchRemoving);
+                        //Util.sendMessage(sender, "Removing protection bypass");
+                        VaultHelper.addPerm(player, "-" + Settings.PERMPREFIX + "mod.bypassprotect");
+                        VaultHelper.removePerm(player, Settings.PERMPREFIX + "mod.bypassprotect");
+                        if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.bypassprotect")) {
+                            Util.sendMessage(sender, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).generalSuccess);
+                        }
+                    } else {
+                        Util.sendMessage(sender, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).adminSwitchAdding);
+                        VaultHelper.addPerm(player, Settings.PERMPREFIX + "mod.bypassprotect");
+                        VaultHelper.removePerm(player, "-" + Settings.PERMPREFIX + "mod.bypassprotect");
+                        if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.bypassprotect")) {
+                            Util.sendMessage(sender, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).generalSuccess);
+                        }
+                    }
+                }
+                return true;
+            }
             if (split[0].equalsIgnoreCase("setlanguage")) {
                 Util.sendMessage(sender, plugin.myLocale().helpColor + plugin.myLocale().adminHelpsetLanguage);                
                 return true;
@@ -742,7 +769,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 return true;
             } else if (split[0].equalsIgnoreCase("topten")) {
                 Util.sendMessage(sender, ChatColor.YELLOW + plugin.myLocale().adminTopTengenerating);
-                TopTen.topTenCreate(sender);
+                plugin.getTopTen().topTenCreate(sender);
                 return true;
             } else if (split[0].equalsIgnoreCase("purge")) {
                 if (purgeFlag) {
@@ -808,11 +835,11 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                                     }
                                     scanner.close();
                                     // Write file
-                                    FileWriter writer = new FileWriter(file);
-                                    for(String str: playerFileContents) {
-                                        writer.write(str + "\n");
+                                    try (FileWriter writer = new FileWriter(file)) {
+                                        for(String str: playerFileContents) {
+                                            writer.write(str + "\n");
+                                        }
                                     }
-                                    writer.close();
                                     if (done % 500 == 0) {
                                         final int update = done;
                                         plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
@@ -1080,21 +1107,21 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                         Util.sendMessage(sender, ChatColor.RED + plugin.myLocale(p.getUniqueId()).errorNoIsland);
                         return true;
                     }
-                        if (!island.inIslandSpace(sign.getLocation())) {
-                            Util.sendMessage(p, ChatColor.RED + plugin.myLocale(p.getUniqueId()).adminSetHomeNotOnPlayersIsland);
-                        } else {
-                            Util.sendMessage(sender, ChatColor.GREEN + plugin.myLocale(p.getUniqueId()).adminResetSignFound);
-                            // Find out if this player is allowed to have a sign on this island
-                            if (plugin.getWarpSignsListener().addWarp(playerUUID, lastBlock.getLocation())) {
-                                // Change sign color to green
-                                sign.setLine(0, ChatColor.GREEN + plugin.myLocale().warpswelcomeLine);
-                                sign.update();
-                                Util.sendMessage(p, ChatColor.GREEN + plugin.myLocale(p.getUniqueId()).adminResetSignRescued.replace("[name]", plugin.getPlayers().getName(playerUUID)));
-                                return true;
-                            }
-                            // Warp already exists
-                            Util.sendMessage(sender, ChatColor.RED + plugin.myLocale(p.getUniqueId()).adminResetSignErrorExists.replace("[name]", plugin.getWarpSignsListener().getWarpOwner(lastBlock.getLocation())));
+                    if (!island.inIslandSpace(sign.getLocation())) {
+                        Util.sendMessage(p, ChatColor.RED + plugin.myLocale(p.getUniqueId()).adminSetHomeNotOnPlayersIsland);
+                    } else {
+                        Util.sendMessage(sender, ChatColor.GREEN + plugin.myLocale(p.getUniqueId()).adminResetSignFound);
+                        // Find out if this player is allowed to have a sign on this island
+                        if (plugin.getWarpSignsListener().addWarp(playerUUID, lastBlock.getLocation())) {
+                            // Change sign color to green
+                            sign.setLine(0, ChatColor.GREEN + plugin.myLocale().warpswelcomeLine);
+                            sign.update();
+                            Util.sendMessage(p, ChatColor.GREEN + plugin.myLocale(p.getUniqueId()).adminResetSignRescued.replace("[name]", plugin.getPlayers().getName(playerUUID)));
+                            return true;
                         }
+                        // Warp already exists
+                        Util.sendMessage(sender, ChatColor.RED + plugin.myLocale(p.getUniqueId()).adminResetSignErrorExists.replace("[name]", plugin.getWarpSignsListener().getWarpOwner(lastBlock.getLocation())));
+                    }
                 }
                 return true;
             }
@@ -1361,6 +1388,11 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                     countUnowned(sender);
                     return true;
                 }
+
+                if (split[1].equalsIgnoreCase("players")) {
+                    purgePlayers(sender);
+                    return true;
+                }
                 // Set the flag
                 purgeFlag = true;
                 // See if this purge unowned
@@ -1383,11 +1415,8 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                         if (Bukkit.getOfflinePlayer(entry.getKey()).hasPlayedBefore()) {
                             long offlineTime = Bukkit.getOfflinePlayer(entry.getKey()).getLastPlayed();
                             offlineTime = (System.currentTimeMillis() - offlineTime) / 3600000L;
-                            if (offlineTime > time) {
-                                //if (plugin.getPlayers().getIslandLevel(entry.getKey()) < Settings.abandonedIslandLevel) {
-                                // Check level later
+                            if (offlineTime > time && plugin.getPlayers().getIslandLevel(entry.getKey()) < Settings.abandonedIslandLevel) {
                                 removeList.add(entry.getKey());
-                                //}
                             }
                         } else {
                             removeList.add(entry.getKey());
@@ -1400,7 +1429,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                     return true;
                 }
                 Util.sendMessage(sender, ChatColor.YELLOW + plugin.myLocale().purgethisWillRemove.replace("[number]", String.valueOf(removeList.size())).replace("[level]", String.valueOf(Settings.abandonedIslandLevel)));
-                long runtime = removeList.size() * 2;
+                long runtime = removeList.size() * 2L;
                 Util.sendMessage(sender, ChatColor.YELLOW + plugin.myLocale().purgeEstimatedRunTime.replace("[time]", String.format("%d h %02d m %02d s", runtime / 3600, (runtime % 3600) / 60, (runtime % 60))));
                 Util.sendMessage(sender, ChatColor.RED + plugin.myLocale().purgewarning);
                 Util.sendMessage(sender, ChatColor.RED + plugin.myLocale().purgetypeConfirm.replace("[label]", label));
@@ -1552,7 +1581,11 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                             return true;
                         }
                         // Other wise, go to a safe spot
-                        new SafeSpotTeleport(plugin, player, warpSpot, failureMessage);
+                        new SafeTeleportBuilder(plugin)
+                        .entity(player)
+                        .location(warpSpot)
+                        .failureMessage(failureMessage)
+                        .build();
                         return true;
                     }
                     Util.sendMessage(sender, plugin.myLocale().errorNoIslandOther);
@@ -1585,7 +1618,11 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                             player.teleport(home);
                             return true;
                         }
-                        new SafeSpotTeleport(plugin, player, warpSpot, failureMessage);
+                        new SafeTeleportBuilder(plugin)
+                        .entity(player)
+                        .location(warpSpot)
+                        .failureMessage(failureMessage)
+                        .build();
                         return true;
                     }
                     Util.sendMessage(sender, plugin.myLocale().errorNoIslandOther);
@@ -1720,7 +1757,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                     return true;
                 }
                 // Convert repeat to time in millis
-                split[2].trim();
+                split[2] = split[2].trim();
                 //plugin.getLogger().info("DEBUG: " + split[2]);
                 if (split[2].length() > 1 && (split[2].toLowerCase().endsWith("m") || split[2].toLowerCase().endsWith("h") || split[2].toLowerCase().endsWith("d"))) {
                     char unit = split[2].charAt(split[2].length()-1);
@@ -1731,13 +1768,13 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                         switch (unit) {
                         case 'm':
                             // Minutes
-                            repeat = 60000 * number;
+                            repeat = 60000L * number;
                             break;
                         case 'h':
-                            repeat = 60000 * 60 * number;
+                            repeat = 60000L * 60 * number;
                             break;
                         case 'd':
-                            repeat = 60000 * 60 * 24 * number;
+                            repeat = 60000L * 60 * 24 * number;
                             break;
                         }
                         // Reset all the players online
@@ -1921,7 +1958,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 }
                 // Okay clear to set biome
                 // Actually set the biome
-                plugin.getBiomes().setIslandBiome(island,biome);
+                new SetBiome(plugin, island, biome, sender);
                 Util.sendMessage(sender, ChatColor.GREEN + plugin.myLocale().biomeSet.replace("[biome]", biomeName));
                 Player targetPlayer = plugin.getServer().getPlayer(playerUUID);
                 if (targetPlayer != null) {
@@ -2126,6 +2163,53 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
         }
     }
 
+    private void purgePlayers(CommandSender sender) {
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            // This map is a list of owner and island level
+            YamlConfiguration player = new YamlConfiguration();
+            File oldPlayers = new File(plugin.getPlayersFolder(), "oldplayers");
+            if (!oldPlayers.exists()) {
+                oldPlayers.mkdirs();
+            }
+            Path targetPath = oldPlayers.toPath();
+            int index = 0;
+            for (final File f : plugin.getPlayersFolder().listFiles()) {
+                // Need to remove the .yml suffix
+                String fileName = f.getName();
+                if (fileName.endsWith(".yml")) {
+                    try {
+                        player.load(f);
+                        index++;
+                        if (index % 1000 == 0) {
+                            plugin.getLogger().info("Processed " + index + " players");
+                        }
+                        if (!player.getBoolean("hasIsland") && !player.getBoolean("hasTeam")) {
+                            Path fileToMovePath = f.toPath();
+                            Files.move(fileToMovePath, targetPath.resolve(fileToMovePath.getFileName()));
+                        }
+                    } catch (Exception e) {
+                        plugin.getLogger().severe("Error when moving player file. File is " + fileName);
+                        plugin.getLogger().severe("Look at the stack trace and edit the file - it probably has broken YAML in it for some reason.");
+                        e.printStackTrace();
+                    }
+                }
+            }
+            plugin.getLogger().info("Processed " + index + " players for top ten");
+
+            plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
+                @Override
+                public void run() {
+                    if (sender != null) {
+                        Util.sendMessage(sender, ChatColor.GREEN + plugin.myLocale().generalSuccess);
+                    } else {
+                        plugin.getLogger().warning("Completed player purge.");
+                    }
+
+                }});
+        });
+
+    }
+
     /**
      * Deletes the overworld and nether islands together
      * @param island
@@ -2134,7 +2218,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
     private void deleteIslands(Island island, CommandSender sender) {
         plugin.getGrid().removePlayersFromIsland(island,null);
         // Reset the biome
-        plugin.getBiomes().setIslandBiome(island, Settings.defaultBiome);
+        new SetBiome(plugin, island, Settings.defaultBiome, null);
         new DeleteIslandChunk(plugin, island);
         //new DeleteIslandByBlock(plugin, island);
         plugin.getGrid().saveGrid();
@@ -2301,7 +2385,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
     /**
      * Shows info on a player
      *
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @param sender
      */
     private void showInfo(UUID playerUUID, CommandSender sender) {
@@ -2407,7 +2491,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
     /**
      * Shows info on the challenge situation for player
      *
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @param sender
      */
     private void showInfoChallenges(UUID playerUUID, CommandSender sender) {
@@ -2415,8 +2499,8 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
         Util.sendMessage(sender, ChatColor.WHITE + "UUID: " + playerUUID.toString());
         // Completed challenges
         Util.sendMessage(sender, ChatColor.WHITE + plugin.myLocale().challengesguiTitle + ":");
-        HashMap<String, Boolean> challenges = plugin.getPlayers().getChallengeStatus(playerUUID);
-        HashMap<String, Integer> challengeTimes = plugin.getPlayers().getChallengeTimes(playerUUID);
+        Map<String, Boolean> challenges = plugin.getPlayers().getChallengeStatus(playerUUID);
+        Map<String, Integer> challengeTimes = plugin.getPlayers().getChallengeTimes(playerUUID);
         for (String c : challenges.keySet()) {
             if (challengeTimes.containsKey(c)) {
                 Util.sendMessage(sender, c + ": "
@@ -2725,6 +2809,9 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
                 }
                 if (Settings.teamChat && VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.spy") || player.isOp()) {
                     options.add("spy");
+                }
+                if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.switch")) {
+                    options.add("switch");
                 }
                 break;
             case 2:

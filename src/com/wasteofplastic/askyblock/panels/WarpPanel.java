@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -43,51 +44,73 @@ import org.bukkit.inventory.meta.SkullMeta;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Island;
-import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.Island.SettingsFlag;
+import com.wasteofplastic.askyblock.Settings;
+import com.wasteofplastic.askyblock.util.HeadGetter.HeadInfo;
+import com.wasteofplastic.askyblock.util.Requester;
 import com.wasteofplastic.askyblock.util.Util;
 
-public class WarpPanel implements Listener {
+public class WarpPanel implements Listener, Requester {
     private ASkyBlock plugin;
     private List<Inventory> warpPanel;
     private static final int PANELSIZE = 45; // Must be a multiple of 9
     // The list of all players who have warps and their corresponding inventory icon
     // A stack of zero amount will mean they are not active
-    private HashMap<UUID, ItemStack> cachedWarps;
+    private Map<UUID, ItemStack> cachedWarps;
     private final static boolean DEBUG = false;
-
     /**
-     * @param plugin
+     * @param plugin - ASkyBlock plugin object
      */
     public WarpPanel(ASkyBlock plugin) {
         this.plugin = plugin;
         warpPanel = new ArrayList<Inventory>();
         cachedWarps = new HashMap<UUID,ItemStack>();
-        //plugin.getLogger().info("DEBUG: loading the warp panel of size " + plugin.getWarpSignsListener().listSortedWarps().size());
         // Load the cache
         for (UUID playerUUID : plugin.getWarpSignsListener().listSortedWarps()) {
-            addWarp(playerUUID);
+            String playerName = plugin.getPlayers().getName(playerUUID);
+            if (playerName == null) {
+                if (DEBUG)
+                    plugin.getLogger().warning("Warp for Player: UUID " + playerUUID.toString() + " is unknown on this server, skipping...");
+            } else {
+                if (Settings.warpHeads) {
+                    ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
+                    SkullMeta meta = (SkullMeta) playerSkull.getItemMeta();
+                    meta.setDisplayName(playerName);
+                    playerSkull.setItemMeta(meta);
+                    cachedWarps.put(playerUUID, playerSkull);
+                    // Get the player head async
+                    addName(playerUUID, playerName);
+                } else {
+                    ItemStack playerSign = new ItemStack(Material.SIGN);
+                    ItemMeta meta = playerSign.getItemMeta();
+                    meta.setDisplayName(playerName);
+                    playerSign.setItemMeta(meta);
+                    updateText(playerSign, playerUUID);
+                    cachedWarps.put(playerUUID, playerSign);
+                }
+            }
         }
-        // Make the panels
         updatePanel();
     }
 
     /**
-     * Only change the text of the warp
+     * Adds a name to the list of player head requests
      * @param playerUUID
+     * @param name
+     */
+    public void addName(UUID playerUUID, String playerName) {
+        plugin.getHeadGetter().getHead(playerUUID, this);
+    }
+
+
+    /**
+     * Only change the text of the warp
+     * @param playerUUID - the player's UUID
      */
     public void updateWarp(UUID playerUUID) {
         if (DEBUG)
             plugin.getLogger().info("DEBUG: update Warp");
-
-        if (cachedWarps.containsKey(playerUUID)) {
-            // Get the item
-            ItemStack playerSkull = cachedWarps.get(playerUUID);
-            playerSkull = updateText(playerSkull, playerUUID);
-            updatePanel();
-        } else {
-            plugin.getLogger().warning("Warps: update requested, but player unknown " + playerUUID.toString()); 
-        }
+        plugin.getHeadGetter().getHead(playerUUID, this);
     }
 
     /**
@@ -97,15 +120,14 @@ public class WarpPanel implements Listener {
         if (DEBUG)
             plugin.getLogger().info("DEBUG: update all Warps");
         for (UUID playerUUID : cachedWarps.keySet()) {
-            // Get the item
-            ItemStack playerSkull = cachedWarps.get(playerUUID);
-            playerSkull = updateText(playerSkull, playerUUID);
+            plugin.getHeadGetter().getHead(playerUUID, this);
         }
         updatePanel();
     }
+
     /**
-     * Adds a new warp to the cache. Does NOT update the panels
-     * @param playerUUID
+     * Adds a new warp
+     * @param playerUUID - the player's UUID
      */
     public void addWarp(UUID playerUUID) {
         if (DEBUG)
@@ -117,59 +139,52 @@ public class WarpPanel implements Listener {
             // Get the item
             ItemStack playerSkull = cachedWarps.get(playerUUID);
             playerSkull = updateText(playerSkull, playerUUID);
+            updatePanel();
             return;
         }
         //plugin.getLogger().info("DEBUG: New skull");
-        // Get the item
-        ItemStack playerSkull = getSkull(playerUUID);
-        if (playerSkull == null) {
-            // Nothing found and not available on the server
-            return;
-        }
-        // Update the sign text
-        playerSkull = updateText(playerSkull, playerUUID);
-        cachedWarps.put(playerUUID, playerSkull);
-    }
-
-    /**
-     * Gets the skull for this player UUID
-     * @param playerUUID
-     * @return Player skull item
-     */
-    private ItemStack getSkull(UUID playerUUID) {
         String playerName = plugin.getPlayers().getName(playerUUID);
         if (DEBUG)
             plugin.getLogger().info("DEBUG: name of warp = " + playerName);
-        ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
-        if (playerName == null) {
-            if (DEBUG)
-                plugin.getLogger().warning("Warp for Player: UUID " + playerUUID.toString() + " is unknown on this server, skipping...");
-            return null;
-            //playerName = playerUUID.toString().substring(0, 10);
+        if (playerName == null || playerName.isEmpty()) {
+            return;
         }
-        SkullMeta meta = (SkullMeta) playerSkull.getItemMeta();
-        meta.setOwner(playerName);
-        meta.setDisplayName(ChatColor.WHITE + playerName);
-        playerSkull.setItemMeta(meta);
-        return playerSkull;
+        if (Settings.warpHeads) {
+            ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
+            SkullMeta meta = (SkullMeta) playerSkull.getItemMeta();
+            meta.setDisplayName(playerName);
+            playerSkull.setItemMeta(meta);
+            cachedWarps.put(playerUUID, playerSkull);
+            updatePanel();
+            // Get the player head async
+            addName(playerUUID, playerName);
+        } else {
+            ItemStack playerSign = new ItemStack(Material.SIGN);
+            ItemMeta meta = playerSign.getItemMeta();
+            meta.setDisplayName(playerName);
+            playerSign.setItemMeta(meta);
+            updateText(playerSign,playerUUID);
+            cachedWarps.put(playerUUID, playerSign);
+            updatePanel();
+        }
     }
 
     /**
-     * Updates the meta text on the skull by looking at the warp sign
+     * Updates the meta text on the warp sign icon by looking at the warp sign
      * This MUST be run 1 TICK AFTER the sign has been created otherwise the sign is blank
-     * @param playerSkull
-     * @param playerUUID
+     * @param playerSign
+     * @param playerUUID - the player's UUID
      * @return updated skull item stack
      */
-    private ItemStack updateText(ItemStack playerSkull, final UUID playerUUID) {
+    private ItemStack updateText(ItemStack playerSign, final UUID playerUUID) {
         if (DEBUG)
             plugin.getLogger().info("DEBUG: Updating text on item");
-        ItemMeta meta = playerSkull.getItemMeta();
+        ItemMeta meta = playerSign.getItemMeta();
         //get the sign info
         Location signLocation = plugin.getWarpSignsListener().getWarp(playerUUID);
         if (signLocation == null) {
             plugin.getWarpSignsListener().removeWarp(playerUUID);
-            return playerSkull;
+            return playerSign;
         }            
         //plugin.getLogger().info("DEBUG: block type = " + signLocation.getBlock().getType());
         // Get the sign info if it exists
@@ -189,17 +204,19 @@ public class WarpPanel implements Listener {
             meta.setLore(lines);
             if (DEBUG)
                 plugin.getLogger().info("DEBUG: lines = " + lines);
+        } else {
+            // No sign there - remove the warp
+            plugin.getWarpSignsListener().removeWarp(playerUUID);
         }
-        playerSkull.setItemMeta(meta);
-        return playerSkull;
+        playerSign.setItemMeta(meta);
+        return playerSign;
     }
 
     /**
      * Creates the inventory panels from the warp list and adds nav buttons
      */
     public void updatePanel() {
-        // Clear the inventory panels
-        warpPanel.clear();
+        List<Inventory> updated = new ArrayList<>();
         Collection<UUID> activeWarps = plugin.getWarpSignsListener().listSortedWarps();
         // Create the warp panels
         if (DEBUG)
@@ -215,15 +232,16 @@ public class WarpPanel implements Listener {
         for (i = 0; i < panelNumber; i++) {
             if (DEBUG)
                 plugin.getLogger().info("DEBUG: created panel " + (i+1));
-            warpPanel.add(Bukkit.createInventory(null, PANELSIZE, plugin.myLocale().warpsTitle + " #" + (i+1)));
+            updated.add(Bukkit.createInventory(null, PANELSIZE, plugin.myLocale().warpsTitle + " #" + (i+1)));
         }
         // Make the last panel
         if (DEBUG)
             plugin.getLogger().info("DEBUG: created panel " + (i+1));
-        warpPanel.add(Bukkit.createInventory(null, remainder, plugin.myLocale().warpsTitle + " #" + (i+1)));
+        updated.add(Bukkit.createInventory(null, remainder, plugin.myLocale().warpsTitle + " #" + (i+1)));
+        warpPanel = new ArrayList<>(updated);
         panelNumber = 0;
         int slot = 0;
-        // Run through all the warps and add them to the inventories with nav buttons
+        // Run through all the warps and add them to the inventories with anv buttons
         for (UUID playerUUID: activeWarps) {
             ItemStack icon = cachedWarps.get(playerUUID);
             if (icon != null) {
@@ -233,9 +251,9 @@ public class WarpPanel implements Listener {
                 if (slot == PANELSIZE-2) {
                     // Add navigation buttons
                     if (panelNumber > 0) {
-                        warpPanel.get(panelNumber).setItem(slot++, new CPItem(Material.SIGN,plugin.myLocale().warpsPrevious,"warps " + (panelNumber-1),"").getItem());
+                        warpPanel.get(panelNumber).setItem(slot++, new CPItem(Material.PAPER,plugin.myLocale().warpsPrevious,"warps " + (panelNumber-1),"").getItem());
                     }
-                    warpPanel.get(panelNumber).setItem(slot, new CPItem(Material.SIGN,plugin.myLocale().warpsNext,"warps " + (panelNumber+1),"").getItem());
+                    warpPanel.get(panelNumber).setItem(slot, new CPItem(Material.PAPER,plugin.myLocale().warpsNext,"warps " + (panelNumber+1),"").getItem());
                     // Move onto the next panel
                     panelNumber++;
                     slot = 0;
@@ -243,8 +261,10 @@ public class WarpPanel implements Listener {
             }
         }
         if (remainder != 0 && panelNumber > 0) {
-            warpPanel.get(panelNumber).setItem(slot++, new CPItem(Material.SIGN,plugin.myLocale().warpsPrevious,"warps " + (panelNumber-1),"").getItem());
+            warpPanel.get(panelNumber).setItem(slot++, new CPItem(Material.PAPER,plugin.myLocale().warpsPrevious,"warps " + (panelNumber-1),"").getItem());
         }
+
+
     }
 
     public Inventory getWarpPanel(int panelNumber) {
@@ -314,5 +334,24 @@ public class WarpPanel implements Listener {
                 }
             }
         }
+    }
+
+    @Override
+    public void setHead(HeadInfo headInfo) {
+        ItemStack head = headInfo.getHead();
+        head = updateText(head, headInfo.getUuid());
+        cachedWarps.put(headInfo.getUuid(), headInfo.getHead());
+        for (Inventory panel: warpPanel) {
+            for (int i = 0; i < panel.getSize(); i++) {
+                ItemStack it = panel.getItem(i);
+                if (it != null && it.getType().equals(Material.SKULL_ITEM)) {
+                    ItemMeta meta = it.getItemMeta();
+                    if (headInfo.getName().equals(meta.getDisplayName())) {
+                        panel.setItem(i, head);
+                        return;
+                    }
+                }
+            }
+        }   
     }
 }

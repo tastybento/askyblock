@@ -17,10 +17,13 @@
 
 package com.wasteofplastic.askyblock.listeners;
 
+import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -51,21 +54,21 @@ import com.wasteofplastic.askyblock.util.Util;
  */
 public class ChatListener implements Listener {
 
-    private ASkyBlock plugin;
-    private ConcurrentHashMap<UUID,Boolean> teamChatUsers;
-    private ConcurrentHashMap<UUID,String> playerLevels;
-    private ConcurrentHashMap<UUID,String> playerChallengeLevels;
+    private final ASkyBlock plugin;
+    private final Map<UUID,Boolean> teamChatUsers;
+    private final Map<UUID,String> playerLevels;
+    private final Map<UUID, String> playerChallengeLevels;
     // List of which admins are spying or not on team chat
-    private Set<UUID> spies;
+    private final Set<UUID> spies;
     private static final boolean DEBUG = false;
 
     /**
-     * @param plugin
+     * @param plugin - ASkyBlock plugin object
      */
     public ChatListener(ASkyBlock plugin) {
-        this.teamChatUsers = new ConcurrentHashMap<UUID,Boolean>();
-        this.playerLevels = new ConcurrentHashMap<UUID,String>();
-        this.playerChallengeLevels = new ConcurrentHashMap<UUID,String>();
+        this.teamChatUsers = new ConcurrentHashMap<>();
+        this.playerLevels = new ConcurrentHashMap<>();
+        this.playerChallengeLevels = new ConcurrentHashMap<>();
         this.plugin = plugin;
         // Add all online player Levels
         for (Player player : plugin.getServer().getOnlinePlayers()) {
@@ -73,10 +76,23 @@ public class ChatListener implements Listener {
             playerChallengeLevels.put(player.getUniqueId(), plugin.getChallenges().getChallengeLevel(player));
         }
         // Initialize spies
-        spies = new HashSet<UUID>();
+        spies = new HashSet<>();
     }
 
+    private static final BigInteger THOUSAND = BigInteger.valueOf(1000);
+    /**
+     * Provides an easy way to "fancy" the island level in chat
+     * @since 3.0.8.3
+     */
+    private static final TreeMap<BigInteger, String> LEVELS;
+    static {
+        LEVELS = new TreeMap<>();
 
+        LEVELS.put(THOUSAND, "k");
+        LEVELS.put(THOUSAND.pow(2), "M");
+        LEVELS.put(THOUSAND.pow(3), "G");
+        LEVELS.put(THOUSAND.pow(4), "T");
+    }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onChat(final AsyncPlayerChatEvent event) {
@@ -87,9 +103,16 @@ public class ChatListener implements Listener {
         if (playerLevels.containsKey(event.getPlayer().getUniqueId())) {
             level = playerLevels.get(event.getPlayer().getUniqueId());
             if(Settings.fancyIslandLevelDisplay) {
-                if (Integer.valueOf(level) > 1000){
-                    // 1052 -> 1.0k
-                    level = new DecimalFormat("#.#").format(Double.valueOf(level)/1000.0) + "k";
+                BigInteger levelValue = BigInteger.valueOf(Long.valueOf(level));
+
+                Map.Entry<BigInteger, String> stage = LEVELS.floorEntry(levelValue);
+
+                if (stage != null) { // level > 1000
+                    // 1 052 -> 1.0k
+                    // 1 527 314 -> 1.5M
+                    // 3 874 130 021 -> 3.8G
+                    // 4 002 317 889 -> 4.0T
+                    level = new DecimalFormat("#.#").format(levelValue.divide(stage.getKey().divide(THOUSAND)).doubleValue()/1000.0) + stage.getValue();
                 }
             }
         }
@@ -182,7 +205,7 @@ public class ChatListener implements Listener {
 
     /**
      * Adds player to team chat
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      */
     public void setPlayer(UUID playerUUID) {
         this.teamChatUsers.put(playerUUID,true);
@@ -190,7 +213,7 @@ public class ChatListener implements Listener {
 
     /**
      * Removes player from team chat
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      */
     public void unSetPlayer(UUID playerUUID) {
         this.teamChatUsers.remove(playerUUID);
@@ -198,7 +221,7 @@ public class ChatListener implements Listener {
 
     /**
      * Whether the player has team chat on or not
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @return true if team chat is on
      */
     public boolean isTeamChat(UUID playerUUID) {
@@ -207,7 +230,7 @@ public class ChatListener implements Listener {
 
     /**
      * Store the player's level for use in their chat tag
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @param l
      */
     public void setPlayerLevel(UUID playerUUID, long l) {
@@ -226,7 +249,7 @@ public class ChatListener implements Listener {
 
     /**
      * Return the player's level for use in chat - async safe
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @return Player's level as string
      */
     public String getPlayerLevel(UUID playerUUID) {
@@ -235,18 +258,18 @@ public class ChatListener implements Listener {
 
     /**
      * Return the player's challenge level for use in chat - async safe
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @return challenge level as string or empty string none
      */
     public String getPlayerChallengeLevel(UUID playerUUID) {
-        if (playerChallengeLevels.contains(playerUUID))
+        if (playerChallengeLevels.containsKey(playerUUID))
             return playerChallengeLevels.get(playerUUID);
         return "";
     }
 
     /**
      * Toggles team chat spy. Spy must also have the spy permission to see chats
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @return true if toggled on, false if toggled off
      */
     public boolean toggleSpy(UUID playerUUID) {

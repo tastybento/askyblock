@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
@@ -48,14 +49,14 @@ public class CoopPlay {
     private static CoopPlay instance = new CoopPlay(ASkyBlock.getPlugin());
     // Stores all the coop islands, the coop player, the location and the
     // inviter
-    private HashMap<UUID, HashMap<Location, UUID>> coopPlayers = new HashMap<UUID, HashMap<Location, UUID>>();
+    private final Map<UUID, HashMap<Location, UUID>> coopPlayers = new HashMap<>();
     // Defines whether a player is on a coop island or not
     // private HashMap<UUID, Location> onCoopIsland = new HashMap<UUID,
     // Location>();
     private ASkyBlock plugin;
 
     /**
-     * @param plugin
+     * @param plugin - ASkyBlock plugin object
      */
     private CoopPlay(ASkyBlock plugin) {
         this.plugin = plugin;
@@ -64,8 +65,8 @@ public class CoopPlay {
     /**
      * Adds a player to an island as a coop player.
      * 
-     * @param requester
-     * @param newPlayer
+     * @param requester - coop requester
+     * @param newPlayer - new player to add to the coop
      * @return true if successful, otherwise false
      */
     public boolean addCoopPlayer(Player requester, Player newPlayer) {
@@ -120,7 +121,7 @@ public class CoopPlay {
             coopPlayers.get(newPlayer.getUniqueId()).put(coopIsland.getCenter(), requester.getUniqueId());
         } else {
             // First time. Create the hashmap
-            HashMap<Location, UUID> loc = new HashMap<Location, UUID>();
+            HashMap<Location, UUID> loc = new HashMap<>();
             loc.put(coopIsland.getCenter(), requester.getUniqueId());
             coopPlayers.put(newPlayer.getUniqueId(), loc);
         }
@@ -130,8 +131,8 @@ public class CoopPlay {
     /**
      * Removes a coop player
      * 
-     * @param requester
-     * @param targetPlayer
+     * @param requester - requester
+     * @param targetPlayer - player to remove
      * @return true if the player was a coop player, and false if not
      */
     public boolean removeCoopPlayer(Player requester, Player targetPlayer) {
@@ -141,7 +142,7 @@ public class CoopPlay {
     /**
      * Returns the list of islands that this player is coop on or empty if none
      * 
-     * @param player
+     * @param player - player to query
      * @return Set of locations
      */
     public Set<Location> getCoopIslands(Player player) {
@@ -154,12 +155,12 @@ public class CoopPlay {
     /**
      * Gets a list of all the players that are currently coop on this island
      * 
-     * @param islandLoc
+     * @param islandLoc - island location to query
      * @return List of UUID's of players that have coop rights to the island
      */
     public List<UUID> getCoopPlayers(Location islandLoc) {
         Island coopIsland = plugin.getGrid().getIslandAt(islandLoc);
-        List<UUID> result = new ArrayList<UUID>();
+        List<UUID> result = new ArrayList<>();
         if (coopIsland != null) {
             for (UUID player : coopPlayers.keySet()) {
                 if (coopPlayers.get(player).containsKey(coopIsland.getCenter())) {
@@ -173,7 +174,7 @@ public class CoopPlay {
     /**
      * Removes all coop players from an island - used when doing an island reset
      * 
-     * @param player
+     * @param player - island player's UUID
      */
     public void clearAllIslandCoops(UUID player) {
         // Remove any and all islands related to requester
@@ -196,7 +197,7 @@ public class CoopPlay {
      * Deletes all coops from player.
      * Used when player logs out.
      * 
-     * @param player
+     * @param player - player object
      */
     public void clearMyCoops(Player player) {
         //plugin.getLogger().info("DEBUG: clear my coops - clearing coops memberships of " + player.getName());
@@ -222,17 +223,15 @@ public class CoopPlay {
         }
     }
 
+    /**
+     * Called when disabling the plugin
+     */
     public void saveCoops() {
-        File coopFile = new File(plugin.getDataFolder(), "coops.yml");
         YamlConfiguration coopConfig = new YamlConfiguration();
         for (UUID playerUUID : coopPlayers.keySet()) {
             coopConfig.set(playerUUID.toString(), getMyCoops(playerUUID));
         }
-        try {
-            coopConfig.save(coopFile);
-        } catch (IOException e) {
-            plugin.getLogger().severe("Could not save coop.yml file!");
-        }
+        Util.saveYamlFile(coopConfig, "coops.yml", false);
     }
 
     public void loadCoops() {
@@ -258,7 +257,7 @@ public class CoopPlay {
 
     /**
      * Gets a serialize list of all the coops for this player. Used when saving the player
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @return List of island location | uuid of invitee
      */
     private List<String> getMyCoops(UUID playerUUID) {
@@ -273,7 +272,7 @@ public class CoopPlay {
 
     /**
      * Sets a player's coops from string. Used when loading a player.
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @param coops
      */
     private void setMyCoops(UUID playerUUID, List<String> coops) {
@@ -300,7 +299,7 @@ public class CoopPlay {
      * clearer. Returns any inventory
      * Can be used when clearer logs out or when they are kicked or leave a team
      * 
-     * @param clearer
+     * @param clearer - player to clear
      */
     public void clearMyInvitedCoops(Player clearer) {
         //plugin.getLogger().info("DEBUG: clear my invited coops - clearing coops that were invited by " + clearer.getName());
@@ -377,7 +376,7 @@ public class CoopPlay {
                 final CoopLeaveEvent event = new CoopLeaveEvent(targetPlayerUUID, requester.getUniqueId(), coopIsland);
                 plugin.getServer().getPluginManager().callEvent(event);
                 if (!event.isCancelled()) {
-                    removed = coopPlayers.get(targetPlayerUUID).remove(coopIsland.getCenter()) != null ? true: false;
+                    removed = coopPlayers.get(targetPlayerUUID).remove(coopIsland.getCenter()) != null;
                 }
             }
         }

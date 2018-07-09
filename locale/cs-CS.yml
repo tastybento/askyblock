@@ -115,6 +115,10 @@ adminSetSpawn:
   range: "Protection range = [number]"
   set: "Set island spawn to your location."
   setting: "Setting island spawn to your location [location]"
+adminSwitch:
+  op: "Ops can always bypass protection. Deop to use command."
+  adding: "Adding protection bypass..."
+  removing: "Removing protection bypass..."
 adminTeam: 
   addLeaderNoIsland: "Team leader does not have their own island so cannot have a team!"
   addLeaderToOwn: "Cannot add a leader to their own team."
@@ -153,6 +157,7 @@ ban:
 biome: 
   help: "otevre ovladaci panel biomu."
   paneltitle: "Vyber biom"
+  pleasewait: "Please wait, changing biome..."
   set: "Biom ostrova nastaven na [biome]!"
   unknown: "Neznamy biom!"
   youbought: "Koupeno za [cost]!"

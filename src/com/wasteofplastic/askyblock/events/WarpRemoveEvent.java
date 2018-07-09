@@ -18,11 +18,11 @@ import com.wasteofplastic.askyblock.ASkyBlock;
 public class WarpRemoveEvent extends Event{
 	private static final HandlerList handlers = new HandlerList();
 	
-	private Location warpLoc;
-	private UUID remover;
+	private final Location warpLoc;
+	private final UUID remover;
 	
 	/**
-	 * @param plugin
+	 * @param plugin - ASkyBlock plugin object
 	 * @param warpLoc
 	 * @param remover
 	 */

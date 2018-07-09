@@ -21,13 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import net.minecraft.server.v1_9_R1.BlockPosition;
-import net.minecraft.server.v1_9_R1.IBlockData;
-import net.minecraft.server.v1_9_R1.NBTTagCompound;
-import net.minecraft.server.v1_9_R1.NBTTagList;
-import net.minecraft.server.v1_9_R1.NBTTagString;
-import net.minecraft.server.v1_9_R1.TileEntityFlowerPot;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -43,6 +36,13 @@ import com.wasteofplastic.org.jnbt.CompoundTag;
 import com.wasteofplastic.org.jnbt.ListTag;
 import com.wasteofplastic.org.jnbt.StringTag;
 import com.wasteofplastic.org.jnbt.Tag;
+
+import net.minecraft.server.v1_9_R1.BlockPosition;
+import net.minecraft.server.v1_9_R1.IBlockData;
+import net.minecraft.server.v1_9_R1.NBTTagCompound;
+import net.minecraft.server.v1_9_R1.NBTTagList;
+import net.minecraft.server.v1_9_R1.NBTTagString;
+import net.minecraft.server.v1_9_R1.TileEntityFlowerPot;
 
 public class NMSHandler implements NMSAbstraction {
 

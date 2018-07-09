@@ -35,7 +35,7 @@ public class IslandDeleteEvent extends Event {
 	private final Location location;
 
 	/**
-	 * @param playerUUID
+	 * @param playerUUID - the player's UUID
 	 * @param oldLocation
 	 */
 	public IslandDeleteEvent(UUID playerUUID, Location oldLocation) {

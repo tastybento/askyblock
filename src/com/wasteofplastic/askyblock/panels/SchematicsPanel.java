@@ -43,7 +43,7 @@ public class SchematicsPanel implements Listener {
     private HashMap<UUID, List<SPItem>> schematicItems = new HashMap<UUID, List<SPItem>>();
 
     /**
-     * @param plugin
+     * @param plugin - ASkyBlock plugin object
      */
     public SchematicsPanel(ASkyBlock plugin) {
         this.plugin = plugin;

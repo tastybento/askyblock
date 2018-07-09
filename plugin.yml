@@ -57,6 +57,9 @@ permissions:
           askyblock.island.controlpanel:
             description: Allows usage of the island GUI
             default: true
+          askyblock.island.controlpanelonoff:
+            description: Allows turning on/off of the island GUI
+            default: true
           askyblock.island.biomes:
             description: Allows biome changing
             default: true
@@ -352,6 +355,9 @@ permissions:
             default: false
           askyblock.mod.setdeaths:
             description: Sets how many deaths the player has
+            default: false
+          askyblock.mod.switch:
+            description: Allows mod to switch on/off bypass protection
             default: false
       askyblock.admin.*:
         children:

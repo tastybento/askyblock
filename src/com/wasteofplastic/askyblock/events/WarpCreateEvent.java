@@ -22,7 +22,7 @@ public class WarpCreateEvent extends Event{
 	private UUID creator;
 	
 	/**
-	 * @param plugin
+	 * @param plugin - ASkyBlock plugin object
 	 * @param warpLoc
 	 * @param creator
 	 */

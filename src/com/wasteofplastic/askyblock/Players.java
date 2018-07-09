@@ -22,8 +22,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -41,15 +43,15 @@ import com.wasteofplastic.askyblock.util.Util;
  * @author tastybento
  */
 public class Players {
-    private ASkyBlock plugin;
+    private final ASkyBlock plugin;
     private YamlConfiguration playerInfo;
-    private HashMap<String, Boolean> challengeList;
-    private HashMap<String, Integer> challengeListTimes;
-    private HashMap<String, Long> challengeListTimestamp;
+    private Map<String, Boolean> challengeList;
+    private Map<String, Integer> challengeListTimes;
+    private Map<String, Long> challengeListTimestamp;
     private boolean hasIsland;
     private boolean inTeam;
     //private String homeLocation;
-    private HashMap<Integer, Location> homeLocations;
+    private Map<Integer, Location> homeLocations;
     private long islandLevel;
     private String islandLocation;
     private List<UUID> members;
@@ -58,7 +60,7 @@ public class Players {
     private UUID uuid;
     private String playerName;
     private int resetsLeft;
-    private HashMap<Location, Date> kickedList;
+    private Map<Location, Date> kickedList;
     private List<UUID> banList;
     private String locale;
     private int startIslandRating;
@@ -66,9 +68,9 @@ public class Players {
     private int deaths;
 
     /**
-     * @param uuid
-     *            Constructor - initializes the state variables
-     * 
+     * @param aSkyBlock - plugin
+     * @param uuid - player's uuid
+     * @throws IOException - if uuid is null
      */
     public Players(final ASkyBlock aSkyBlock, final UUID uuid) throws IOException {
         this.plugin = aSkyBlock;
@@ -76,24 +78,24 @@ public class Players {
         if (uuid == null) {
             throw new IOException("UUID is null");
         }
-        this.members = new ArrayList<UUID>();
+        this.members = new ArrayList<>();
         this.hasIsland = false;
         this.islandLocation = null;
         //this.homeLocation = null;
-        this.homeLocations = new HashMap<Integer,Location>();
+        this.homeLocations = new HashMap<>();
         this.inTeam = false;
         this.teamLeader = null;
         this.teamIslandLocation = null;
-        this.challengeList = new HashMap<String, Boolean>();
-        this.challengeListTimes = new HashMap<String, Integer>();
-        this.challengeListTimestamp = new HashMap<String, Long>();
+        this.challengeList = new HashMap<>();
+        this.challengeListTimes = new HashMap<>();
+        this.challengeListTimestamp = new HashMap<>();
         this.islandLevel = 0;
         this.playerName = "";
         this.resetsLeft = Settings.resetLimit;
-        this.kickedList = new HashMap<Location, Date>();
+        this.kickedList = new HashMap<>();
         this.locale = "";
         this.startIslandRating = 50;
-        this.banList = new ArrayList<UUID>();
+        this.banList = new ArrayList<>();
         this.useControlPanel = Settings.useControlPanel;
         load(uuid);
     }
@@ -137,7 +139,7 @@ public class Players {
         for (String uuidString : banListString) {
             try {
                 banList.add(UUID.fromString(uuidString));
-            } catch (Exception e) {}
+            } catch (Exception ignored) {}
         }
         // plugin.getLogger().info("Loading player..." + playerName);
         this.hasIsland = playerInfo.getBoolean("hasIsland", false);
@@ -232,13 +234,13 @@ public class Players {
     /**
      * Saves the player info to the file system
      */
-    public void save() {
+    public void save(boolean async) {
         //plugin.getLogger().info("Saving player..." + playerName);
         // Save the variables
         playerInfo.set("playerName", playerName);
         playerInfo.set("hasIsland", hasIsland);
         if (hasIsland && !banList.isEmpty()) {
-            List<String> banListString = new ArrayList<String>();
+            List<String> banListString = new ArrayList<>();
             for (UUID bannedUUID : banList) {
                 banListString.add(bannedUUID.toString());
             }
@@ -322,13 +324,12 @@ public class Players {
         //playerInfo.set("coops", value);
 
         // Actually save the file
-        Util.saveYamlFile(playerInfo, "players/" + uuid.toString() + ".yml");
+        Util.saveYamlFile(playerInfo, "players/" + uuid.toString() + ".yml", async);
     }
 
     /**
      * @param member
      *            Adds a member to the the player's list
-     * @return 
      */
     public void addTeamMember(final UUID member) {
         members.add(member);
@@ -364,7 +365,7 @@ public class Players {
             // It has not been globally reset
             // plugin.getLogger().info("DEBUG: " + challenge + ":" +
             // challengeList.get(challenge.toLowerCase()).booleanValue() );
-            return challengeList.get(challenge.toLowerCase()).booleanValue();
+            return challengeList.get(challenge.toLowerCase());
         }
         return false;
     }
@@ -379,12 +380,12 @@ public class Players {
         if (challengeListTimes.containsKey(challenge.toLowerCase())) {
             // plugin.getLogger().info("DEBUG: check " + challenge + ":" +
             // challengeListTimes.get(challenge.toLowerCase()).intValue() );
-            return challengeListTimes.get(challenge.toLowerCase()).intValue();
+            return challengeListTimes.get(challenge.toLowerCase());
         }
         return 0;
     }
 
-    public HashMap<String, Boolean> getChallengeStatus() {
+    public Map<String, Boolean> getChallengeStatus() {
         return challengeList;
     }
 
@@ -450,7 +451,7 @@ public class Players {
             }
         }
         if (members == null) {
-            members = new ArrayList<UUID>();
+            members = new ArrayList<>();
         }
         return inTeam;
     }
@@ -469,11 +470,7 @@ public class Players {
      * @return Location of this home or null if not available
      */
     public Location getHomeLocation(int number) {
-        if (homeLocations.containsKey(number)) {
-            return homeLocations.get(number);
-        } else {
-            return null;
-        }
+        return homeLocations.getOrDefault(number, null);
     }
 
     /**
@@ -653,6 +650,7 @@ public class Players {
      * @param l
      *            - the Bukkit location of the team's island (converted to a
      *            String in this function)
+     * @return - true if successful
      */
     public boolean setJoinTeam(final UUID leader, final Location l) {
         if(inTeam) {
@@ -709,6 +707,7 @@ public class Players {
     /**
      * @param leader
      *            a String name of the team leader
+     * @return true if successful
      */
     public boolean setTeamLeader(final UUID leader) {
         if(inTeam) {
@@ -789,7 +788,7 @@ public class Players {
     /**
      * @return the challengeListTimes
      */
-    public HashMap<String, Integer> getChallengeCompleteTimes() {
+    public Map<String, Integer> getChallengeCompleteTimes() {
         return challengeListTimes;
     }
 
@@ -906,13 +905,8 @@ public class Players {
      * Used by the reset admin command
      */
     public List<String> getChallengesDone() {
-        List<String> result = new ArrayList<String>();
-        for (Entry<String, Boolean> en : challengeList.entrySet()) {
-            if (en.getValue()) {
-                result.add(en.getKey());
-            }
-        }
-        return result;
+        return challengeList.entrySet().stream().filter(Entry::getValue)
+            .map(Entry::getKey).collect(Collectors.toList());
     }
 
     /**
@@ -920,12 +914,7 @@ public class Players {
      * Used by the complete admin command
      */
     public List<String> getChallengesNotDone() {
-        List<String> result = new ArrayList<String>();
-        for (Entry<String, Boolean> en : challengeList.entrySet()) {
-            if (!en.getValue()) {
-                result.add(en.getKey());
-            }
-        }
-        return result;
+        return challengeList.entrySet().stream().filter(en -> !en.getValue())
+            .map(Entry::getKey).collect(Collectors.toList());
     }
 }

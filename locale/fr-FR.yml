@@ -115,6 +115,10 @@ adminSetSpawn:
   range: "Distance de protection = [number]"
   set: "Définit le spawn de l'île là où vous êtes."
   setting: "Spawn définit en [location]"
+adminSwitch:
+  op: "Ops can always bypass protection. Deop to use command."
+  adding: "Adding protection bypass..."
+  removing: "Removing protection bypass..."
 adminTeam: 
   addLeaderNoIsland: "Ce chef d'île n'a pas sa propre île et ne peut pas avoir d'équipe!"
   addLeaderToOwn: "Impossible d'ajouter le chef à sa propre île."
@@ -151,6 +155,7 @@ ban:
 biome: 
   help: "Ouvre le menu des biomes."
   paneltitle: "Choisissez un biome"
+  pleasewait: "Please wait, changing biome..."
   set: "Biome de l'île défini: [biome] !"
   unknown: "Biome inconnu !"
   youbought: "Biome acheté pour [cost] !"

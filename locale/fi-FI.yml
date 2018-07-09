@@ -115,6 +115,10 @@ adminSetSpawn:
   range: "Suojauksen etäisyys = [number]"
   set: "Asettaa saaren spawn-kohdan paikkaasi."
   setting: "Asettaa saaren spawn-kohdan saaren kohtaan [location]"
+adminSwitch:
+  op: "Ops can always bypass protection. Deop to use command."
+  adding: "Adding protection bypass..."
+  removing: "Removing protection bypass..."
 adminTeam: 
   addLeaderNoIsland: "Tiimin johtajalla ei ole omaa saarta, joten hän ei voi olla tiimin johtaja!"
   addLeaderToOwn: "Ei voi lisätä johtajaa hänen omaan timiinsä."
@@ -156,6 +160,7 @@ biome:
   unknown: "Tuntematon biome!"
   youbought: "Ostettu [cost]!"
   paneltitle: "Valitse biome - &8ilmainen"
+  pleasewait: "Please wait, changing biome..."
 boats: 
   warning: "On turvatonta poistua veneestä juuri nyt..."
 challenges: 

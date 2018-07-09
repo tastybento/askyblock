@@ -18,8 +18,7 @@ package com.wasteofplastic.askyblock.panels;
 
 import java.util.HashMap;
 import java.util.List;
-
-import net.milkbowl.vault.economy.EconomyResponse;
+import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -43,6 +42,8 @@ import com.wasteofplastic.askyblock.events.MiniShopEvent.TransactionType;
 import com.wasteofplastic.askyblock.util.Util;
 import com.wasteofplastic.askyblock.util.VaultHelper;
 
+import net.milkbowl.vault.economy.EconomyResponse;
+
 /**
  * @author tastybento
  *         Provides a handy control panel and minishop
@@ -55,10 +56,9 @@ public class ControlPanel implements Listener {
     private ASkyBlock plugin;
     private static boolean allowSelling;
     private static String defaultPanelName;
-    private static final boolean DEBUG = false;
 
     /**
-     * @param plugin
+     * @param plugin - ASkyBlock plugin object
      */
     public ControlPanel(ASkyBlock plugin) {
         this.plugin = plugin;
@@ -72,8 +72,6 @@ public class ControlPanel implements Listener {
      * Map of panel contents by name
      */
     private static HashMap<String, HashMap<Integer, CPItem>> panels = new HashMap<String, HashMap<Integer, CPItem>>();
-    // public static final Inventory challenges = Bukkit.createInventory(null,
-    // 9, ChatColor.YELLOW + "Challenges");
 
     /**
      * Map of CP inventories by name
@@ -100,8 +98,6 @@ public class ControlPanel implements Listener {
         allowSelling = miniShopFile.getBoolean("config.allowselling", false);
         ConfigurationSection items = miniShopFile.getConfigurationSection("items");
         ASkyBlock plugin = ASkyBlock.getPlugin();
-        if (DEBUG)
-            plugin.getLogger().info("DEBUG: loading the shop. items = " + items.toString());
         if (items != null) {
             // Create the store
             // Get how many the store should be
@@ -113,7 +109,6 @@ public class ControlPanel implements Listener {
             for (String item : items.getKeys(false)) {
                 try {
                     String m = items.getString(item + ".material");
-                    // plugin.getLogger().info("Material = " + m);
                     Material material = Material.matchMaterial(m);
                     int quantity = items.getInt(item + ".quantity", 0);
                     String extra = items.getString(item + ".extra", "");
@@ -163,9 +158,6 @@ public class ControlPanel implements Listener {
                 if (panel.equalsIgnoreCase("default")) {
                     defaultPanelName = panelName;
                 }
-                // plugin.getLogger().info("DEBUG: Panel section " + panelName);
-                // plugin.getLogger().info("DEBUG: putting panel " +
-                // newPanel.getName());
                 ConfigurationSection buttons = cpFile.getConfigurationSection(panel + ".buttons");
                 if (buttons != null) {
                     // Get how many buttons can be in the CP
@@ -180,7 +172,6 @@ public class ControlPanel implements Listener {
                             String m = buttons.getString(item + ".material", "BOOK");
                             // Split off damage
                             String[] icon = m.split(":");
-                            // plugin.getLogger().info("Material = " + m);
                             Material material = Material.matchMaterial(icon[0]);
                             if (material == null) {
                                 material = Material.PAPER;
@@ -213,15 +204,11 @@ public class ControlPanel implements Listener {
     @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled=true)
     public void onInventoryClick(InventoryClickEvent event) {
-        if (DEBUG)
-            plugin.getLogger().info("DEBUG:" + event.getEventName());
         Player player = (Player) event.getWhoClicked(); // The player that
         // clicked the item
         ItemStack clicked = event.getCurrentItem(); // The item that was clicked
         Inventory inventory = event.getInventory(); // The inventory that was clicked in
         if (inventory.getName() == null) {
-            if (DEBUG)
-                plugin.getLogger().info("DEBUG: inventory name is null");
             return;
         }
         // ASkyBlock plugin = ASkyBlock.getPlugin();
@@ -230,23 +217,18 @@ public class ControlPanel implements Listener {
         if (inventory.getName().equals(plugin.myLocale(player.getUniqueId()).challengesguiTitle)) {
             event.setCancelled(true);
             if (event.getClick().equals(ClickType.SHIFT_RIGHT)) {
-                if (DEBUG)
-                    plugin.getLogger().info("DEBUG: click type shift Right");
                 inventory.clear();
                 player.closeInventory();
                 player.updateInventory();
                 return;
             }
             if (event.getSlotType() == SlotType.OUTSIDE) {
-                if (DEBUG)
-                    plugin.getLogger().info("DEBUG: slot type outside");
                 inventory.clear();
                 player.closeInventory();
                 return;
             }
 
             // Get the list of items in this inventory
-            // plugin.getLogger().info("DEBUG: You clicked on slot " + slot);
             List<CPItem> challenges = plugin.getChallenges().getCP(player);
             if (challenges == null) {
                 plugin.getLogger().warning("Player was accessing Challenge Inventory, but it had lost state - was server restarted?");
@@ -255,45 +237,11 @@ public class ControlPanel implements Listener {
                 Util.runCommand(player, Settings.CHALLENGECOMMAND);
                 return;
             }
-            // plugin.getLogger().info("DEBUG: Challenges size = " +
-            // challenges.size());
             if (slot >= 0 && slot < challenges.size()) {
-                if (DEBUG)
-                    plugin.getLogger().info("DEBUG: slot within challenges");
                 CPItem item = challenges.get(slot);
-                // TEST
-                /*
-                ItemStack icon = new ItemStack(Material.POTION);
-                ItemMeta meta = icon.getItemMeta();
-                meta.setDisplayName("Name");
-                List<String> lore = new ArrayList<String>();
-                lore.add("Lore 1");
-                lore.add("Lore 2");
-                meta.setLore(lore);
-                icon.setItemMeta(meta);
-                ItemStack click = new ItemStack(Material.POTION);
-                plugin.getLogger().info("DEBUG: icon is " + icon.toString());
-                plugin.getLogger().info("DEBUG: click is " + click.toString());
-                if (click.equals(icon)) {
-                    plugin.getLogger().info("DEBUG same");
-                } else {
-                    plugin.getLogger().info("DEBUG not same");
-
-                }*/
-                // END TEST
-                if (DEBUG) {
-                    plugin.getLogger().info("DEBUG: CP Item is " + item.getItem().toString());
-                    plugin.getLogger().info("DEBUG: Clicked is " + clicked.toString());
-                }
                 // Check that it is the top items that are being clicked on
                 // These two should be identical because it is made before
                 if (clicked.equals(item.getItem())) {
-                    if (DEBUG)
-                        plugin.getLogger().info("DEBUG: You clicked on a challenge item");
-                    // plugin.getLogger().info("DEBUG: performing  /" +
-                    // item.getCommand());
-                    // plugin.getLogger().info("DEBUG: going to " +
-                    // item.getNextSection());
                     // Next section indicates the level of panel to open
                     if (item.getNextSection() != null) {
                         inventory.clear();
@@ -303,7 +251,7 @@ public class ControlPanel implements Listener {
                         Util.runCommand(player, item.getCommand());
                         inventory.clear();
                         player.closeInventory();
-                        player.openInventory(plugin.getChallenges().challengePanel(player));
+                        Bukkit.getScheduler().runTask(plugin, () -> player.openInventory(plugin.getChallenges().challengePanel(player)));
                     }
                 }
             }
@@ -312,14 +260,8 @@ public class ControlPanel implements Listener {
         /*
          * Minishop section
          */
-        if (miniShop != null && inventory.getName().equals(miniShop.getName())) { // The
-            // inventory
-            // is
-            // our
-            // custom
-            // Inventory
+        if (miniShop != null && inventory.getName().equals(miniShop.getName())) {
             String message = "";
-            // plugin.getLogger().info("You clicked on slot " + slot);
             event.setCancelled(true); // Don't let them pick it up
             if (!Settings.useEconomy || slot == -999) {
                 player.closeInventory();
@@ -340,26 +282,23 @@ public class ControlPanel implements Listener {
                         if (item.getPrice() > 0D) {
                             // Check they can afford it
                             if (!VaultHelper.econ.has(player, Settings.worldName, item.getPrice())) {
-                                // message = "You cannot afford that item!";
                                 message = (plugin.myLocale().minishopYouCannotAfford).replace("[description]", item.getDescription());
                             } else {
                                 EconomyResponse r = VaultHelper.econ.withdrawPlayer(player, Settings.worldName, item.getPrice());
                                 if (r.transactionSuccess()) {
-                                    // message = "You bought " +
-                                    // item.getQuantity() + " " +
-                                    // item.getDescription() + " for " +
-                                    // VaultHelper.econ.format(item.getPrice());
                                     message = plugin.myLocale().minishopYouBought.replace("[number]", Integer.toString(item.getQuantity()));
                                     message = message.replace("[description]", item.getDescription());
                                     message = message.replace("[price]", VaultHelper.econ.format(item.getPrice()));
-                                    player.getInventory().addItem(item.getItemClean());
+                                    Map<Integer, ItemStack> items = player.getInventory().addItem(item.getItemClean());
+                                    if (!items.isEmpty()) {
+                                        for (ItemStack i : items.values()) {
+                                            player.getWorld().dropItem(player.getLocation(), i);
+                                        }
+                                    }
                                     // Fire event
                                     MiniShopEvent shopEvent = new MiniShopEvent(player.getUniqueId(), item, TransactionType.BUY);
                                     plugin.getServer().getPluginManager().callEvent(shopEvent);
                                 } else {
-                                    // message =
-                                    // "There was a problem puchasing that item: "
-                                    // + r.errorMessage;
                                     message = (plugin.myLocale().minishopBuyProblem).replace("[description]", item.getDescription());
                                 }
                             }
@@ -369,9 +308,6 @@ public class ControlPanel implements Listener {
                         if (player.getInventory().containsAtLeast(item.getItemClean(), item.getQuantity())) {
                             player.getInventory().removeItem(item.getItemClean());
                             VaultHelper.econ.depositPlayer(player, Settings.worldName, item.getSellPrice());
-                            // message = "You sold " + item.getQuantity() + " "
-                            // + item.getDescription() + " for " +
-                            // VaultHelper.econ.format(item.getSellPrice());
                             message = plugin.myLocale().minishopYouSold.replace("[number]", Integer.toString(item.getQuantity()));
                             message = message.replace("[description]", item.getDescription());
                             message = message.replace("[price]", VaultHelper.econ.format(item.getSellPrice()));
@@ -379,13 +315,10 @@ public class ControlPanel implements Listener {
                             MiniShopEvent shopEvent = new MiniShopEvent(player.getUniqueId(), item, TransactionType.SELL);
                             plugin.getServer().getPluginManager().callEvent(shopEvent);
                         } else {
-                            // message =
-                            // "You do not have enough of that item to sell it.";
                             message = (plugin.myLocale().minishopSellProblem).replace("[description]", item.getDescription());
                             ;
                         }
                     }
-                    // player.closeInventory(); // Closes the inventory
                     if (!message.isEmpty()) {
                         Util.sendMessage(player, message);
                     }
@@ -397,9 +330,6 @@ public class ControlPanel implements Listener {
         for (String panelName : controlPanel.keySet()) {
             if (inventory.getName().equals(panelName)) {
                 event.setCancelled(true);
-                // plugin.getLogger().info("DEBUG: panels length " +
-                // panels.size());
-                // plugin.getLogger().info("DEBUG: panel name " + panelName);
                 if (slot == -999) {
                     player.closeInventory();
                     return;
@@ -411,25 +341,18 @@ public class ControlPanel implements Listener {
                 }
                 HashMap<Integer, CPItem> thisPanel = panels.get(panelName);
                 if (slot >= 0 && slot < thisPanel.size()) {
-                    // plugin.getLogger().info("DEBUG: slot is " + slot);
                     // Do something
                     String command = thisPanel.get(slot).getCommand();
                     String nextSection = ChatColor.translateAlternateColorCodes('&', thisPanel.get(slot).getNextSection());
                     if (!command.isEmpty()) {
                         player.closeInventory(); // Closes the inventory
                         event.setCancelled(true);
-                        // plugin.getLogger().info("DEBUG: performing command "
-                        // + command);
                         Util.runCommand(player, command);
                         return;
                     }
                     if (!nextSection.isEmpty()) {
                         player.closeInventory(); // Closes the inventory
                         Inventory next = controlPanel.get(nextSection);
-                        if (next == null) {
-                            // plugin.getLogger().info("DEBUG: next panel is null");
-                        }
-                        // plugin.getLogger().info("DEBUG: opening next cp "+nextSection);
                         player.openInventory(next);
                         event.setCancelled(true);
                         return;

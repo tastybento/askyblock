@@ -46,7 +46,7 @@ public class BiomesPanel implements Listener {
     private HashMap<UUID, List<BiomeItem>> biomeItems = new HashMap<UUID, List<BiomeItem>>();
 
     /**
-     * @param plugin
+     * @param plugin - ASkyBlock plugin object
      */
     public BiomesPanel(ASkyBlock plugin) {
         this.plugin = plugin;
@@ -198,27 +198,10 @@ public class BiomesPanel implements Listener {
             inventory.clear();
             player.closeInventory(); // Closes the inventory
             // Actually set the biome
-            setIslandBiome(island, biome);
-            Util.sendMessage(player, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).biomeSet.replace("[biome]", thisPanel.get(slot).getName()));
-            Util.sendMessage(player, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).needRelog);
+            Util.sendMessage(player, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).biomePleaseWait);
+            new SetBiome(plugin, island, biome, player);
         }
         return;
     }
 
-
-    /**
-     * Sets all blocks in an island to a specified biome type
-     * 
-     * @param island
-     * @param biomeType
-     */
-    public boolean setIslandBiome(final Island island, final Biome biomeType) {
-        //plugin.getLogger().info("DEBUG: Biome is " + biomeType);
-        if (island != null) {
-            new SetBiome(plugin, island, biomeType);
-            return true;
-        } else {
-            return false; 
-        }
-    }
 }
