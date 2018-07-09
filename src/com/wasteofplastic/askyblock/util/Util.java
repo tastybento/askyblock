@@ -505,7 +505,7 @@ public final class Util {
             sendMessage(player, message);
             return;
         }
-        ActionBar.sendActionBar(player, message);
+        ActionBar.sendActionBar(player, ChatColor.stripColor(message));
     }
 
     /**
