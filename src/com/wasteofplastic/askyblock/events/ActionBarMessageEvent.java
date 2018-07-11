@@ -37,12 +37,12 @@ public class ActionBarMessageEvent extends Event implements Cancellable {
 		this.message = message;
 	}
 
-    @Override
+	@Override
 	public boolean isCancelled() {
 		return cancelled;
 	}
 
-    @Override
+	@Override
 	public void setCancelled(boolean cancelled) {
 		this.cancelled = cancelled;
 	}
