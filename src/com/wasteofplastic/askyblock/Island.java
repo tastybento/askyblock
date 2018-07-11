@@ -40,9 +40,9 @@ import com.wasteofplastic.askyblock.util.Util;
 /**
  * Stores all the info about an island
  * Managed by GridManager
- * 
+ *
  * @author tastybento
- * 
+ *
  */
 public class Island {
     ASkyBlock plugin;
@@ -75,7 +75,7 @@ public class Island {
     private boolean isSpawn = false;
     // Protection against deletion or not
     private boolean purgeProtected;
-    // The spawn point 
+    // The spawn point
     private Location spawnPoint;
     // Tile entities
     private Multiset<Material> tileEntityCount = HashMultiset.create();
@@ -290,7 +290,7 @@ public class Island {
      * New island by loading islands.yml
      * @param plugin - ASkyBlock plugin object
      * @param serial
-     * @param settingsKey 
+     * @param settingsKey
      */
     public Island(ASkyBlock plugin, String serial, List<String> settingsKey) {
         this.plugin = plugin;
@@ -473,7 +473,7 @@ public class Island {
         this.minProtectedZ = Integer.valueOf(island.minProtectedZ);
         this.minX = Integer.valueOf(island.minX);
         this.minZ = Integer.valueOf(island.minZ);
-        this.owner = owner == null ? null : UUID.fromString(island.owner.toString());
+        this.owner = island.owner == null ? null : UUID.fromString(island.owner.toString());
         this.password = island.password;
         this.protectionRange = Integer.valueOf(island.protectionRange);
         this.purgeProtected = Boolean.valueOf(island.purgeProtected);
@@ -487,7 +487,7 @@ public class Island {
 
     /**
      * Checks if a location is within this island's protected area
-     * 
+     *
      * @param target location to query
      * @return true if it is, false if not
      */
@@ -496,9 +496,9 @@ public class Island {
             // If the new nether is being used, islands exist in the nether too
             if (target.getWorld().equals(world) || (Settings.createNether && Settings.newNether && ASkyBlock.getNetherWorld() != null && target.getWorld().equals(ASkyBlock.getNetherWorld()))) {
                 return target.getBlockX() >= minProtectedX && target.getBlockX() < (minProtectedX
-                    + protectionRange)
-                    && target.getBlockZ() >= minProtectedZ && target.getBlockZ() < (minProtectedZ
-                    + protectionRange);
+                        + protectionRange)
+                        && target.getBlockZ() >= minProtectedZ && target.getBlockZ() < (minProtectedZ
+                                + protectionRange);
             }
         }
         return false;
@@ -506,25 +506,25 @@ public class Island {
 
     /**
      * Checks if location is anywhere in the island space (island distance)
-     * 
+     *
      * @param target location to query
      * @return true if in the area
      */
     public boolean inIslandSpace(Location target) {
         if (target.getWorld().equals(ASkyBlock.getIslandWorld()) || target.getWorld().equals(ASkyBlock.getNetherWorld())) {
             return target.getX() >= center.getBlockX() - islandDistance / 2
-                && target.getX() < center.getBlockX() + islandDistance / 2
-                && target.getZ() >= center.getBlockZ() - islandDistance / 2
-                && target.getZ() < center.getBlockZ() + islandDistance / 2;
+                    && target.getX() < center.getBlockX() + islandDistance / 2
+                    && target.getZ() >= center.getBlockZ() - islandDistance / 2
+                    && target.getZ() < center.getBlockZ() + islandDistance / 2;
         }
         return false;
     }
 
     public boolean inIslandSpace(int x, int z) {
         return x >= center.getBlockX() - islandDistance / 2
-            && x < center.getBlockX() + islandDistance / 2
-            && z >= center.getBlockZ() - islandDistance / 2
-            && z < center.getBlockZ() + islandDistance / 2;
+                && x < center.getBlockX() + islandDistance / 2
+                && z >= center.getBlockZ() - islandDistance / 2
+                && z < center.getBlockZ() + islandDistance / 2;
     }
 
     /**
@@ -724,10 +724,10 @@ public class Island {
             // Bukkit.getLogger().info("DEBUG: island is spawn");
             ownerString = "spawn";
             if (spawnPoint != null) {
-                return center.getBlockX() + ":" + center.getBlockY() + ":" + center.getBlockZ() + ":" + protectionRange + ":" 
+                return center.getBlockX() + ":" + center.getBlockY() + ":" + center.getBlockZ() + ":" + protectionRange + ":"
                         + islandDistance + ":" + ownerString + ":" + locked + ":" + purgeProtected + ":SP:" + Util.getStringLocation(spawnPoint);
             }
-            return center.getBlockX() + ":" + center.getBlockY() + ":" + center.getBlockZ() + ":" + protectionRange + ":" 
+            return center.getBlockX() + ":" + center.getBlockY() + ":" + center.getBlockZ() + ":" + protectionRange + ":"
             + islandDistance + ":" + ownerString + ":" + locked + ":" + purgeProtected;
         }
         // Not spawn
@@ -735,7 +735,7 @@ public class Island {
             ownerString = owner.toString();
         }
 
-        return center.getBlockX() + ":" + center.getBlockY() + ":" + center.getBlockZ() + ":" + protectionRange + ":" 
+        return center.getBlockX() + ":" + center.getBlockY() + ":" + center.getBlockZ() + ":" + protectionRange + ":"
         + islandDistance + ":" + ownerString + ":" + locked + ":" + purgeProtected + ":" + getSettings() + ":" + getBiome().toString() + ":" + levelHandicap;
     }
 
@@ -789,7 +789,7 @@ public class Island {
     /**
      * Provides a list of all the players who are allowed on this island
      * including coop members
-     * 
+     *
      * @return a list of UUIDs that have legitimate access to the island
      */
     public List<UUID> getMembers() {
@@ -841,7 +841,7 @@ public class Island {
      * @return Provides count of villagers within the protected island boundaries
      */
     public int getPopulation() {
-        int result = 0;	
+        int result = 0;
         for (int x = getMinProtectedX() /16; x <= (getMinProtectedX() + getProtectionSize() - 1)/16; x++) {
             for (int z = getMinProtectedZ() /16; z <= (getMinProtectedZ() + getProtectionSize() - 1)/16; z++) {
                 for (Entity entity : world.getChunkAt(x, z).getEntities()) {
@@ -849,7 +849,7 @@ public class Island {
                         result++;
                     }
                 }
-            }  
+            }
         }
         return result;
     }
@@ -859,7 +859,7 @@ public class Island {
      */
     public int getHopperCount() {
         tileEntityCount.clear();
-        int result = 0;	
+        int result = 0;
         for (int x = getMinProtectedX() /16; x <= (getMinProtectedX() + getProtectionSize() - 1)/16; x++) {
             for (int z = getMinProtectedZ() /16; z <= (getMinProtectedZ() + getProtectionSize() - 1)/16; z++) {
                 for (BlockState holder : world.getChunkAt(x, z).getTileEntities()) {
@@ -867,7 +867,7 @@ public class Island {
                         result++;
                     }
                 }
-            }  
+            }
         }
         return result;
     }
@@ -879,7 +879,7 @@ public class Island {
      * a tile entity.
      */
     public int getTileEntityCount(Material material, World world) {
-        int result = 0;	
+        int result = 0;
         for (int x = getMinProtectedX() /16; x <= (getMinProtectedX() + getProtectionSize() - 1)/16; x++) {
             for (int z = getMinProtectedZ() /16; z <= (getMinProtectedZ() + getProtectionSize() - 1)/16; z++) {
                 for (BlockState holder : world.getChunkAt(x, z).getTileEntities()) {
@@ -912,7 +912,7 @@ public class Island {
                         result++;
                     }
                 }
-            }  
+            }
         }
         // Version 1.7.x counts differently to 1.8 (ugh)
         // In 1.7, the entity is present before it is cancelled and so gets counted.
