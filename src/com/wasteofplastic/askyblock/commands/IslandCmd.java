@@ -33,6 +33,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
 
+import com.wasteofplastic.askyblock.events.*;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
@@ -74,6 +75,8 @@ import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.Island.SettingsFlag;
 import com.wasteofplastic.askyblock.LevelCalcByChunk;
 import com.wasteofplastic.askyblock.Settings;
+import com.wasteofplastic.askyblock.TopTen;
+import com.wasteofplastic.askyblock.Island.SettingsFlag;
 import com.wasteofplastic.askyblock.events.IslandJoinEvent;
 import com.wasteofplastic.askyblock.events.IslandLeaveEvent;
 import com.wasteofplastic.askyblock.events.IslandNewEvent;
@@ -3238,6 +3241,7 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
         plugin.getWarpSignsListener().removeWarp(player.getUniqueId());
         // Delete the old island, if it exists
         if (oldIsland != null) {
+            plugin.getServer().getPluginManager().callEvent(new IslandPreDeleteEvent(player.getUniqueId(), oldIsland));
             // Remove any coops
             CoopPlay.getInstance().clearAllIslandCoops(oldIsland.getCenter());
             plugin.getGrid().removePlayersFromIsland(oldIsland, player.getUniqueId());
