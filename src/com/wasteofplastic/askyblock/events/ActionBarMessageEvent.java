@@ -1,49 +1,49 @@
-package hcom.wasteofplastic.askyblock.events;
+package com.wasteofplastic.askyblock.events;
 
-import org.bukkit.event.Cancellable;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 public class ActionBarMessageEvent extends Event implements Cancellable {
-	private static final HandlerList handlers = new HandlerList();
-	private final Player player;
-	private String message;
-	private boolean cancelled = false;
+    private static final HandlerList handlers = new HandlerList();
+    private final Player player;
+    private String message;
+    private boolean cancelled = false;
 
-	public ActionBarMessageEvent(Player player, String message) {
-		this.player = player;
-		this.message = message;
-	}
+    public ActionBarMessageEvent(Player player, String message) {
+        this.player = player;
+        this.message = message;
+    }
 
-	@Override
-	public HandlerList getHandlers() {
-		return handlers;
-	}
+    @Override
+    public HandlerList getHandlers() {
+        return handlers;
+    }
 
-	public static HandlerList getHandlerList() {
-		return handlers;
-	}
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
 
-	public Player getPlayer() {
-		return player;
-	}
+    public Player getPlayer() {
+        return player;
+    }
 
-	public String getMessage() {
-		return message;
-	}
+    public String getMessage() {
+        return message;
+    }
 
-	public void setMessage(String message) {
-		this.message = message;
-	}
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
-	@Override
-	public boolean isCancelled() {
-		return cancelled;
-	}
+    @Override
+    public boolean isCancelled() {
+        return cancelled;
+    }
 
-	@Override
-	public void setCancelled(boolean cancelled) {
-		this.cancelled = cancelled;
-	}
+    @Override
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
+    }
 }
