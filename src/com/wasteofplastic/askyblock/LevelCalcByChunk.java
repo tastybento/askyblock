@@ -122,8 +122,8 @@ public class LevelCalcByChunk {
 
     @SuppressWarnings("deprecation")
     private void scanChunk(ChunkSnapshot chunk) {
-        
-        for (int x = 0; x< 16; x++) { 
+
+        for (int x = 0; x< 16; x++) {
             // Check if the block coord is inside the protection zone and if not, don't count it
             if (chunk.getX() * 16 + x < island.getMinProtectedX() || chunk.getX() * 16 + x >= island.getMinProtectedX() + island.getProtectionSize()) {
                 continue;
@@ -151,14 +151,14 @@ public class LevelCalcByChunk {
         @SuppressWarnings("deprecation")
         MaterialData md = new MaterialData(type, (byte) blockData);
         int count = limitCount(md);
-        if (count > 0) {
+        if (count != 0) {
             if (belowSeaLevel) {
-                result.underWaterBlockCount += count;                                                    
+                result.underWaterBlockCount += count;
                 result.uwCount.add(md);
             } else {
                 result.rawBlockCount += count;
-                result.mdCount.add(md); 
-            } 
+                result.mdCount.add(md);
+            }
         }
     }
 
@@ -180,7 +180,7 @@ public class LevelCalcByChunk {
             }
         } else if (limitCount.containsKey(generic) && Settings.blockValues.containsKey(generic)) {
             int count = limitCount.get(generic);
-            if (count > 0) {  
+            if (count > 0) {
                 limitCount.put(generic, --count);
                 return Settings.blockValues.get(generic);
             } else {
@@ -217,7 +217,7 @@ public class LevelCalcByChunk {
         // Cancel
         task.cancel();
         // Finalize calculations
-        result.rawBlockCount += (long)((double)result.underWaterBlockCount * Settings.underWaterMultiplier);
+        result.rawBlockCount += (long)(result.underWaterBlockCount * Settings.underWaterMultiplier);
         // Set the death penalty
         result.deathHandicap = plugin.getPlayers().getDeaths(island.getOwner());
         // Set final score
@@ -227,7 +227,7 @@ public class LevelCalcByChunk {
         int levelMultiplier = 1;
         Player player = plugin.getServer().getPlayer(targetPlayer);
         if (player != null) {
-            // Get permission multiplier                
+            // Get permission multiplier
             for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
                 if (perms.getPermission().startsWith(Settings.PERMPREFIX + "island.multiplier.")) {
                     String spl[] = perms.getPermission().split(Settings.PERMPREFIX + "island.multiplier.");
@@ -266,7 +266,7 @@ public class LevelCalcByChunk {
             if (asker != null) {
                 // Check if console
                 if (!(asker instanceof Player)) {
-                    // Console  
+                    // Console
                     if (!report) {
                         Util.sendMessage(asker, ChatColor.GREEN + plugin.myLocale().islandislandLevelis.replace("[level]", String.valueOf(plugin.getPlayers().getIslandLevel(targetPlayer))));
                     } else {
@@ -386,7 +386,7 @@ public class LevelCalcByChunk {
         while (it.hasNext()) {
             Entry<MaterialData> type = it.next();
             reportLines.add(type.getElement().toString() + ": " + String.format("%,d",type.getCount()) + " blocks");
-        }                        
+        }
         reportLines.add("=================================");
 
         for (String line : reportLines) {
@@ -410,8 +410,8 @@ public class LevelCalcByChunk {
             }
             if (value > 0) {
                 result.add(type.toString() + ":"
-                    + String.format("%,d", en.getCount()) + " blocks x " + value + " = " + (value
-                    * en.getCount()));
+                        + String.format("%,d", en.getCount()) + " blocks x " + value + " = " + (value
+                                * en.getCount()));
                 total += (value * en.getCount());
             }
         }
