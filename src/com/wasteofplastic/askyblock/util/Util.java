@@ -45,7 +45,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 
-import com.wasteofplastic.askyblock.ActionBar;
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.Settings;
 import com.wasteofplastic.askyblock.nms.NMSAbstraction;
@@ -501,11 +500,16 @@ public final class Util {
      * @param message
      */
     public static void sendEnterExit(Player player, String message) {
-        if (!Settings.showInActionBar) {
+        if (!Settings.showInActionBar
+                || plugin.getServer().getVersion().contains("(MC: 1.7")
+                || plugin.getServer().getVersion().contains("(MC: 1.8")
+                || plugin.getServer().getVersion().contains("(MC: 1.9")
+                || plugin.getServer().getVersion().contains("(MC: 1.10")) {
             sendMessage(player, message);
             return;
         }
-        ActionBar.sendActionBar(player, ChatColor.stripColor(message));
+        plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(),
+                "minecraft:title " + player.getName() + " actionbar {\"text\":\"" + ChatColor.stripColor(message) + "\"}");
     }
 
     /**
