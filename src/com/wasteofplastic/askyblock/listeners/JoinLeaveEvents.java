@@ -110,11 +110,11 @@ public class JoinLeaveEvents implements Listener {
             // Run through this team leader's players and check they are correct
             for (UUID member : players.getMembers(playerUUID)) {
                 if (players.getTeamLeader(member) != null && !players.getTeamLeader(member)
-                    .equals(playerUUID)) {
+                        .equals(playerUUID)) {
                     plugin.getLogger().warning(plugin.getPlayers().getName(member)
-                        + " is on more than one team. Fixing...");
+                            + " is on more than one team. Fixing...");
                     plugin.getLogger().warning(
-                        "Removing " + player.getName() + " as team leader, keeping " + plugin
+                            "Removing " + player.getName() + " as team leader, keeping " + plugin
                             .getPlayers().getName(players.getTeamLeader(member)));
                     players.removeMember(players.getTeamLeader(member), member);
                 }
@@ -165,14 +165,24 @@ public class JoinLeaveEvents implements Listener {
                     // We have a mismatch - correct in favor of the player info
                     if (DEBUG)
                         plugin.getLogger().info("DEBUG: getIslandLoc is null but there is a player listing");
-                    plugin.getLogger().warning(player.getName() + " login: mismatch - player.yml and islands.yml are out of sync. Fixing...");
-                    // Cannot delete by location
-                    plugin.getGrid().deleteIslandOwner(playerUUID);
-                    if (plugin.getGrid().onGrid(loc)) {
-                        plugin.getGrid().addIsland(loc.getBlockX(), loc.getBlockZ(), leader);
+                    plugin.getLogger().severe(player.getName() + " login: mismatch - player.yml and islands.yml are out of sync!");
+                    // There is no island listed at this location. Maybe it was deleted and the player file not saved
+                    // If player is owner of the island
+                    if (playerUUID.equals(leader)) {
+                        // Cannot delete by location
+                        plugin.getGrid().deleteIslandOwner(playerUUID);
+                        if (plugin.getGrid().onGrid(loc)) {
+                            plugin.getGrid().addIsland(loc.getBlockX(), loc.getBlockZ(), playerUUID);
+                        } else {
+                            plugin.getLogger().severe(player.getName() + " joined and has an island at " + loc + " but those coords are NOT on the grid! Use admin register commands to correct!");
+                        }
                     } else {
-                        plugin.getLogger().severe(player.getName() + " joined and has an island at " + loc + " but those coords are NOT on the grid! Use admin register commands to correct!");
+                        plugin.getGrid().deleteIslandOwner(playerUUID);
+                        plugin.getLogger().severe(player.getName() + " login: mismatch - player file says they are in a team, but it's unlikely.");
+                        player.sendMessage(ChatColor.RED + "Your player file had an issue and had to be reset.");
+                        plugin.deletePlayerIsland(playerUUID, false);
                     }
+
                 }
             } else {
                 if (DEBUG)
