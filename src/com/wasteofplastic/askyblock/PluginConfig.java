@@ -683,6 +683,8 @@ public class PluginConfig {
         Settings.persistantCoops = plugin.getConfig().getBoolean("general.persistentcoops");
         // Only leader can coop
         Settings.onlyLeaderCanCoop = plugin.getConfig().getBoolean("general.onlyleadercancoop", false);
+        // Can coop requests be rejected
+        Settings.coopIsRequest = plugin.getConfig().getBoolean("general.coopisrequest", true);
 
         // Fake players
         Settings.allowedFakePlayers = plugin.getConfig().getStringList("general.fakeplayers");
