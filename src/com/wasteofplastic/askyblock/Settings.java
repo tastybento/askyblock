@@ -130,6 +130,7 @@ public class Settings {
     public static boolean damageOps;
     public static boolean endermanDeathDrop;
     public static boolean onlyLeaderCanCoop;
+    public static boolean coopIsRequest;
 
     // Invincible visitor
     public static boolean invincibleVisitors;
