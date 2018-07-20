@@ -445,7 +445,11 @@ public class ASkyBlockAPI {
      * @return copy of Island object
      */
     public Island getIslandOwnedBy(UUID playerUUID) {
-        return new Island(plugin.getGrid().getIsland(playerUUID));
+        Island island = plugin.getGrid().getIsland(playerUUID);
+        if (island != null) {
+            new Island(island);
+        }
+        return null;
     }
 
     /**
@@ -454,7 +458,11 @@ public class ASkyBlockAPI {
      * @return copy of Island object
      */
     public Island getIslandAt(Location location) {
-        return new Island(plugin.getGrid().getIslandAt(location));
+        Island island = plugin.getGrid().getIslandAt(location);
+        if (island != null) {
+            new Island(island);
+        }
+        return null;
     }
 
     /**

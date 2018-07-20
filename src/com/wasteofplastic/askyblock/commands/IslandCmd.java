@@ -2624,28 +2624,40 @@ public class IslandCmd implements CommandExecutor, TabCompleter {
                                 Util.sendMessage(player, ChatColor.RED + plugin.myLocale(player.getUniqueId()).inviteerrorCoolDown.replace("[time]", String.valueOf(time)));
                                 return true;
                             }
-                            // Send out coop invite
-                            Util.sendMessage(player, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).inviteinviteSentTo.replace("[name]", target.getName()));
-                            Util.sendMessage(target, ChatColor.GREEN + plugin.myLocale(targetPlayerUUID).coopHasInvited.replace("[name]", player.getName()));
-                            Util.sendMessage(target, ChatColor.WHITE + "/" + label + " [coopaccept/coopreject] " + ChatColor.YELLOW + plugin.myLocale(targetPlayerUUID).invitetoAcceptOrReject);
-                            coopInviteList.put(targetPlayerUUID, playerUUID);
-                            if (Settings.inviteTimeout > 0) {
-                                plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
 
-                                    @Override
-                                    public void run() {
+                            if (Settings.coopIsRequest) {
+                                // Send out coop invite
+                                Util.sendMessage(player, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).inviteinviteSentTo.replace("[name]", target.getName()));
+                                Util.sendMessage(target, ChatColor.GREEN + plugin.myLocale(targetPlayerUUID).coopHasInvited.replace("[name]", player.getName()));
+                                Util.sendMessage(target, ChatColor.WHITE + "/" + label + " [coopaccept/coopreject] " + ChatColor.YELLOW + plugin.myLocale(targetPlayerUUID).invitetoAcceptOrReject);
+                                coopInviteList.put(targetPlayerUUID, playerUUID);
+                                if (Settings.inviteTimeout > 0) {
+                                    plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
 
-                                        if (coopInviteList.containsKey(targetPlayerUUID) && coopInviteList.get(targetPlayerUUID).equals(playerUUID)) {
-                                            coopInviteList.remove(targetPlayerUUID);
-                                            if (plugin.getServer().getPlayer(playerUUID) != null) {
-                                                Util.sendMessage(plugin.getServer().getPlayer(playerUUID), ChatColor.YELLOW + plugin.myLocale(player.getUniqueId()).inviteremovingInvite);
+                                        @Override
+                                        public void run() {
+
+                                            if (coopInviteList.containsKey(targetPlayerUUID) && coopInviteList.get(targetPlayerUUID).equals(playerUUID)) {
+                                                coopInviteList.remove(targetPlayerUUID);
+                                                if (plugin.getServer().getPlayer(playerUUID) != null) {
+                                                    Util.sendMessage(plugin.getServer().getPlayer(playerUUID), ChatColor.YELLOW + plugin.myLocale(player.getUniqueId()).inviteremovingInvite);
+                                                }
+                                                if (plugin.getServer().getPlayer(targetPlayerUUID) != null) {
+                                                    Util.sendMessage(plugin.getServer().getPlayer(targetPlayerUUID), ChatColor.YELLOW + plugin.myLocale(player.getUniqueId()).inviteremovingInvite);
+                                                }
                                             }
-                                            if (plugin.getServer().getPlayer(targetPlayerUUID) != null) {
-                                                Util.sendMessage(plugin.getServer().getPlayer(targetPlayerUUID), ChatColor.YELLOW + plugin.myLocale(player.getUniqueId()).inviteremovingInvite);
-                                            }
+
                                         }
-
-                                    }}, Settings.inviteTimeout);
+                                    }, Settings.inviteTimeout);
+                                }
+                            } else {
+                                // Add target to coop list
+                                if (CoopPlay.getInstance().addCoopPlayer(player, target)) {
+                                    // Tell everyone what happened
+                                    Util.sendMessage(player, ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).coopSuccess.replace("[name]", target.getName()));
+                                    Util.sendMessage(target, ChatColor.GREEN + plugin.myLocale(targetPlayerUUID).coopMadeYouCoop.replace("[name]", player.getName()));
+                                    // TODO: Give perms if the player is on the coop island
+                                } // else fail silently
                             }
                             return true;
                         } else if (split[0].equalsIgnoreCase("expel")) {

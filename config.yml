@@ -605,6 +605,10 @@ general:
    # Island members wont be able to coop other players.
    onlyleadercancoop: false
 
+   # Set whether or not players can reject coop requests.
+   # If set to false players are just directly added as a coop player.
+   coopisrequest: true
+
    # Below you can list all account names that ASkyBlock will ignore for some protection.
    # Configure it at your own risk!!
    # This option is mainly for compatibility with mods.
