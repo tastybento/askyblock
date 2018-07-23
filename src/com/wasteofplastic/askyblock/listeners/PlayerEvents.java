@@ -969,7 +969,7 @@ public class PlayerEvents implements Listener {
      * Protect players from damage when teleporting
      * @param e - event
      */
-    @EventHandler
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerTeleportDamage(EntityDamageEvent e){
         if(!(e.getEntity() instanceof Player)) return;
 
