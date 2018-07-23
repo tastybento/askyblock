@@ -926,14 +926,13 @@ public class PlayerEvents implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onVisitorGetDamage(EntityDamageEvent e){
-        Player p = (Player) e.getEntity();
         if(!Settings.invincibleVisitors
                 || !(e.getEntity() instanceof Player)
-                || e.getCause().equals(DamageCause.ENTITY_ATTACK)
-                || !IslandGuard.inWorld(p)
-                || plugin.getGrid().playerIsOnIsland(p)) {
+                || !e.getCause().equals(DamageCause.ENTITY_ATTACK)) {
             return;
         }
+        Player p = (Player) e.getEntity();
+        if (!IslandGuard.inWorld(p) || plugin.getGrid().locationIsOnIsland(p, p.getLocation())) return;
 
         if (Settings.visitorDamagePrevention.contains(e.getCause())) e.setCancelled(true);
 
@@ -970,6 +969,7 @@ public class PlayerEvents implements Listener {
      * Protect players from damage when teleporting
      * @param e - event
      */
+    @EventHandler
     public void onPlayerTeleportDamage(EntityDamageEvent e){
         if(!(e.getEntity() instanceof Player)) return;
 
