@@ -926,12 +926,11 @@ public class PlayerEvents implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onVisitorGetDamage(EntityDamageEvent e){
-        if (!(e instanceof Player)) {
+        if (!(e.getEntity() instanceof Player)) {
             return;
         }
         Player p = (Player) e.getEntity();
         if(!Settings.invincibleVisitors
-                || !(e.getEntity() instanceof Player)
                 || e.getCause().equals(DamageCause.ENTITY_ATTACK)
                 || !IslandGuard.inWorld(p)
                 || plugin.getGrid().playerIsOnIsland(p)) {
