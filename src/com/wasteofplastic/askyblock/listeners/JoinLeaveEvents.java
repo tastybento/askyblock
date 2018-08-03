@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.lang.math.NumberUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -30,6 +31,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import com.wasteofplastic.askyblock.ASkyBlock;
+import com.wasteofplastic.askyblock.ASkyBlockAPI;
 import com.wasteofplastic.askyblock.CoopPlay;
 import com.wasteofplastic.askyblock.Island;
 import com.wasteofplastic.askyblock.LevelCalcByChunk;
@@ -54,6 +56,7 @@ public class JoinLeaveEvents implements Listener {
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerJoin(final PlayerJoinEvent event) {
+        Bukkit.getLogger().info("is leader = " + ASkyBlockAPI.getInstance().isLeader(event.getPlayer().getUniqueId()));
         if (DEBUG)
             plugin.getLogger().info("DEBUG: on PlayerJoin");
         final Player player = event.getPlayer();

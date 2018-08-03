@@ -121,6 +121,7 @@ public final class Util {
      * @param async
      */
     public static void saveYamlFile(YamlConfiguration yamlFile, String fileLocation, boolean async) {
+        async = false; // disable async for now. If you are programmer you can remove this in you own branch if you think it's okay.
         if (async) {
             if (queueSaver == null) {
                 queueSaver = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {

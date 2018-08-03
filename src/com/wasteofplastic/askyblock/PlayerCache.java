@@ -37,7 +37,7 @@ import com.wasteofplastic.askyblock.util.VaultHelper;
  * Provides a memory cache of online player information
  * This is the one-stop-shop of player info
  * If the player is not cached, then a request is made to Players to obtain it
- * 
+ *
  * @author tastybento
  */
 public class PlayerCache {
@@ -63,7 +63,7 @@ public class PlayerCache {
                             final Players leaderInf = new Players(plugin, playerInf.getTeamLeader());
                             playerInf.setTeamIslandLocation(leaderInf.getIslandLocation());
                         }
-                        playerInf.save(true);
+                        playerInf.save(false);
                     }
                     // Add this player to the online cache
                     //plugin.getLogger().info("DEBUG: added player " + p.getUniqueId());
@@ -80,8 +80,8 @@ public class PlayerCache {
      */
     public List<UUID> getOnlineCachedPlayers() {
         List<UUID> list = plugin.getServer().getOnlinePlayers().stream()
-            .filter(p -> playerCache.containsKey(p.getUniqueId())).map(Entity::getUniqueId)
-            .collect(Collectors.toList());
+                .filter(p -> playerCache.containsKey(p.getUniqueId())).map(Entity::getUniqueId)
+                .collect(Collectors.toList());
         return Collections.unmodifiableList(list);
     }
 
@@ -105,13 +105,13 @@ public class PlayerCache {
     /**
      * Stores the player's info to a file and removes the player from the list
      * of currently online players
-     * 
+     *
      * @param player
      *            - name of player
      */
     public void removeOnlinePlayer(final UUID player) {
         if (playerCache.containsKey(player)) {
-            playerCache.get(player).save(true);
+            playerCache.get(player).save(false);
             playerCache.remove(player);
             // plugin.getLogger().info("Removing player from cache: " + player);
         }
@@ -131,7 +131,7 @@ public class PlayerCache {
      */
     /**
      * Returns location of player's island from cache if available
-     * 
+     *
      * @param playerUUID - the player's UUID
      * @return Location of player's island
      */
@@ -146,7 +146,7 @@ public class PlayerCache {
      */
     /**
      * Checks if the player is known or not by looking through the filesystem
-     * 
+     *
      * @param uniqueID - unique ID
      * @return true if player is know, otherwise false
      */
@@ -169,7 +169,7 @@ public class PlayerCache {
 
     /**
      * Returns the player object for the named player
-     * 
+     *
      * @param playerUUID - the player's UUID
      *            - String name of player
      * @return - player object
@@ -181,7 +181,7 @@ public class PlayerCache {
 
     /**
      * Checks if player has island from cache if available
-     * 
+     *
      * @param playerUUID - the player's UUID
      *            - string name of player
      * @return true if player has island
@@ -195,7 +195,7 @@ public class PlayerCache {
 
     /**
      * Checks if player is in a Team from cache if available
-     * 
+     *
      * @param playerUUID - the player's UUID
      * @return true if player in a team
      */
@@ -207,7 +207,7 @@ public class PlayerCache {
     /**
      * Removes any island associated with this player and generally cleans up
      * the player
-     * 
+     *
      * @param playerUUID - the player's UUID
      */
     public void zeroPlayerData(UUID playerUUID) {
@@ -227,7 +227,7 @@ public class PlayerCache {
                     // Just remove them from the team
                     addPlayer(leader);
                     playerCache.get(leader).removeMember(playerUUID);
-                    playerCache.get(leader).save(true);
+                    playerCache.get(leader).save(false);
                 }
             }
         }
@@ -236,7 +236,7 @@ public class PlayerCache {
         playerCache.get(playerUUID).clearHomeLocations();
         playerCache.get(playerUUID).setIslandLocation(null);
         playerCache.get(playerUUID).setIslandLevel(0);
-        playerCache.get(playerUUID).save(true); // Needed?
+        playerCache.get(playerUUID).save(false); // Needed?
         plugin.getTopTen().topTenRemoveEntry(playerUUID);
     }
 
@@ -272,9 +272,9 @@ public class PlayerCache {
 
     /**
      * Returns the home location, or null if none
-     * 
+     *
      * @param playerUUID - the player's UUID
-     * @param number 
+     * @param number
      * @return Home location or null if none
      */
     public Location getHomeLocation(UUID playerUUID, int number) {
@@ -305,7 +305,7 @@ public class PlayerCache {
     /**
      * Returns the player's island location.
      * Returns an island location OR a team island location
-     * 
+     *
      * @param playerUUID - the player's UUID
      * @return Location of player's island
      */
@@ -344,7 +344,7 @@ public class PlayerCache {
 
     /**
      * Checks if a challenge has been completed or not
-     * 
+     *
      * @param playerUUID - the player's UUID
      * @param challenge
      * @return true if complete
@@ -356,7 +356,7 @@ public class PlayerCache {
 
     /**
      * Checks how often a challenge has been completed
-     * 
+     *
      * @param playerUUID - the player's UUID
      * @param challenge
      * @return number of times
@@ -368,7 +368,7 @@ public class PlayerCache {
 
     /**
      * Provides the status of all challenges for this player
-     * 
+     *
      * @param playerUUID - the player's UUID
      * @return Hashmap of challenges as key, boolean as state
      */
@@ -379,7 +379,7 @@ public class PlayerCache {
 
     /**
      * How many times a challenge has been completed
-     * 
+     *
      * @param playerUUID - the player's UUID
      * @return map of completion times
      */
@@ -441,7 +441,7 @@ public class PlayerCache {
     /**
      * Returns a list of team member UUID's. If the player is not the leader,
      * then the leader's list is used
-     * 
+     *
      * @param playerUUID - the player's UUID - player's UUID
      * @return List of team UUIDs
      */
@@ -486,11 +486,11 @@ public class PlayerCache {
 
     /**
      * Saves the player's info to the file system
-     * 
+     *
      * @param playerUUID - the player's UUID - player's UUID
      */
     public void save(UUID playerUUID) {
-        playerCache.get(playerUUID).save(true);
+        playerCache.get(playerUUID).save(false);
         // Save the name + UUID in the database if it ready
 
         if (plugin.getTinyDB() != null && plugin.getTinyDB().isDbReady()) {
@@ -560,7 +560,7 @@ public class PlayerCache {
         addPlayer(uniqueId);
         playerCache.get(uniqueId).setPlayerN(name);
         // Save the name in the name database. Note that the old name will still work until someone takes it
-        // This feature enables admins to locate 'fugitive' players even if they change their name        
+        // This feature enables admins to locate 'fugitive' players even if they change their name
         if (plugin.getTinyDB() != null && plugin.getTinyDB().isDbReady()) {
             plugin.getTinyDB().savePlayerName(name, uniqueId);
         }
@@ -569,7 +569,7 @@ public class PlayerCache {
     /**
      * Obtains the name of the player from their UUID
      * Player must have logged into the game before
-     * 
+     *
      * @param playerUUID - the player's UUID - player's UUID
      * @return String - playerName
      */
@@ -588,7 +588,7 @@ public class PlayerCache {
 
     /**
      * Reverse lookup - returns the owner of an island from the location
-     * 
+     *
      * @param loc - location to query
      * @return UUID of owner of island
      */
@@ -605,7 +605,7 @@ public class PlayerCache {
 
     /**
      * Gets how many island resets the player has left
-     * 
+     *
      * @param playerUUID - the player's UUID  - player's UUID
      * @return number of resets
      */
@@ -616,7 +616,7 @@ public class PlayerCache {
 
     /**
      * Sets how many resets the player has left
-     * 
+     *
      * @param playerUUID - the player's UUID - player's UUID
      * @param resets - value to set
      */
@@ -628,7 +628,7 @@ public class PlayerCache {
     /**
      * Returns how long the player must wait before they can be invited to an
      * island with the location
-     * 
+     *
      * @param playerUUID - the player's UUID  - player's UUID
      * @param location - location to query
      * @return time to wait in minutes/hours
@@ -642,7 +642,7 @@ public class PlayerCache {
      * Starts the timer for the player for this location before which they can
      * be invited
      * Called when they are kicked from an island or leave.
-     * 
+     *
      * @param playerUUID - the player's UUID  - player's UUID
      * @param location - location to set
      */
@@ -714,12 +714,12 @@ public class PlayerCache {
             // Player has island
             playerCache.get(playerUUID).addToBanList(targetUUID);
         } else if (playerCache.get(playerUUID).inTeam()) {
-            // Try to get the leader's 
+            // Try to get the leader's
             UUID leader = playerCache.get(playerUUID).getTeamLeader();
             if (leader != null) {
                 addPlayer(leader);
                 playerCache.get(leader).addToBanList(targetUUID);
-                playerCache.get(leader).save(true);
+                playerCache.get(leader).save(false);
             }
         }
     }
@@ -736,12 +736,12 @@ public class PlayerCache {
             // Player has island
             playerCache.get(playerUUID).unBan(targetUUID);
         } else if (playerCache.get(playerUUID).inTeam()) {
-            // Try to get the leader's 
+            // Try to get the leader's
             UUID leader = playerCache.get(playerUUID).getTeamLeader();
             if (leader != null) {
                 addPlayer(leader);
                 playerCache.get(leader).unBan(targetUUID);
-                playerCache.get(leader).save(true);
+                playerCache.get(leader).save(false);
             }
         }
     }
@@ -767,7 +767,7 @@ public class PlayerCache {
             // Player has island
             return playerCache.get(playerUUID).isBanned(targetUUID);
         } else if (playerCache.get(playerUUID).inTeam()) {
-            // Try to get the leader's 
+            // Try to get the leader's
             UUID leader = playerCache.get(playerUUID).getTeamLeader();
             if (leader != null) {
                 addPlayer(leader);
@@ -793,7 +793,7 @@ public class PlayerCache {
     public void clearResets(int resetLimit) {
         for (Players player : playerCache.values()) {
             player.setResetsLeft(resetLimit);
-        }	
+        }
     }
 
     /**
@@ -828,7 +828,7 @@ public class PlayerCache {
             inTeleport.add(uniqueId);
         } else {
             inTeleport.remove(uniqueId);
-        }	
+        }
     }
 
     /**
