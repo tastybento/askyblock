@@ -543,7 +543,6 @@ public class ASkyBlockAPI {
      */
     public boolean isLeader(UUID playerUUID) {
         UUID leader = plugin.getPlayers().getTeamLeader(playerUUID);
-        leader = null;
         return leader != null && leader.equals(playerUUID);
 
     }
