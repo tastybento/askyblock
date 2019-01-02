@@ -78,6 +78,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
     // Database of challenges
     private static LinkedHashMap<String, List<String>> challengeList = new LinkedHashMap<String, List<String>>();
     private HashMap<UUID, List<CPItem>> playerChallengeGUI = new HashMap<UUID, List<CPItem>>();
+    private HashMap<UUID, String> playerChallengeLevel = new HashMap<UUID, String>();
     private YamlConfiguration resettingChallenges;
     // Where challenges are stored
     private static FileConfiguration challengeFile = null;
@@ -1646,14 +1647,20 @@ public class Challenges implements CommandExecutor, TabCompleter {
      * @return inventory
      */
     public Inventory challengePanel(Player player) {
-        String maxLevel = "";
-        for (String level : Settings.challengeLevels) {
-            if (checkLevelCompletion(player, level) > 0) {
-                maxLevel = level;
-                break;
-            }
+    	if(playerChallengeLevel.containsKey(player.getUniqueId())) {	
+    		String level = playerChallengeLevel.get(player.getUniqueId());	  
+    		return challengePanel(player, level);
+        }else {
+        	String maxLevel = "";
+        	for (String level : Settings.challengeLevels) {
+	            if (checkLevelCompletion(player, level) > 0) {
+	                maxLevel = level;
+	                break;
+	            }
+	        }
+        	return challengePanel(player, maxLevel);
         }
-        return challengePanel(player, maxLevel);
+        
     }
 
     /**
@@ -1742,6 +1749,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
             Inventory newPanel = Bukkit.createInventory(null, size, plugin.myLocale(player.getUniqueId()).challengesguiTitle);
             // Store the panel details for retrieval later
             playerChallengeGUI.put(player.getUniqueId(), cp);
+            playerChallengeLevel.put(player.getUniqueId(), level);
             // Fill the inventory and return
             int index = 0;
             for (CPItem i : cp) {

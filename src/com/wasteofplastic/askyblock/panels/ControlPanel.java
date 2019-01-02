@@ -245,13 +245,42 @@ public class ControlPanel implements Listener {
                     // Next section indicates the level of panel to open
                     if (item.getNextSection() != null) {
                         inventory.clear();
+                        Inventory newInventory = plugin.getChallenges().challengePanel(player, item.getNextSection());
+                        // Update inventory
+                        if(player.getOpenInventory().getTopInventory() != null) {                        	
+                        	if(inventory.equals(player.getOpenInventory().getTopInventory())) {
+                        		if(inventory.getSize() == newInventory.getSize()) {
+                        			inventory.setContents(newInventory.getContents());
+                        			return;
+                        		}
+                        	}
+                        }
+                        // Open new Inventory if update is not possible
                         player.closeInventory();
-                        player.openInventory(plugin.getChallenges().challengePanel(player, item.getNextSection()));
+                        player.openInventory(newInventory);
+                        
+                        
                     } else if (item.getCommand() != null) {
                         Util.runCommand(player, item.getCommand());
-                        inventory.clear();
+                        inventory.clear();                        
+                        
+                        // Update inventory
+                        if(player.getOpenInventory().getTopInventory() != null) {
+                        	if(inventory.equals(player.getOpenInventory().getTopInventory())) {
+                        		Inventory newInventory = plugin.getChallenges().challengePanel(player);
+                        		if(inventory.getSize() == newInventory.getSize()) {
+                        			inventory.setContents(newInventory.getContents());
+                        			return;
+                        		}
+                        	}
+                        }
+                        
+                        // Open new Inventory if update is not possible
                         player.closeInventory();
                         Bukkit.getScheduler().runTask(plugin, () -> player.openInventory(plugin.getChallenges().challengePanel(player)));
+                        
+                        
+                        
                     }
                 }
             }
