@@ -928,7 +928,7 @@ public class PlayerEvents implements Listener {
     public void onVisitorGetDamage(EntityDamageEvent e){
         if(!Settings.invincibleVisitors
                 || !(e.getEntity() instanceof Player)
-                || !e.getCause().equals(DamageCause.ENTITY_ATTACK)) {
+                || e.getCause().equals(DamageCause.ENTITY_ATTACK)) {
             return;
         }
         Player p = (Player) e.getEntity();
