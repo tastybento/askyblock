@@ -41,7 +41,7 @@ public class CoopLeaveEvent extends ASkyBlockEvent implements Cancellable {
      * @param island
      */
     public CoopLeaveEvent(UUID expelledPlayer, UUID expellingPlayer, Island island) {
-        super(expellingPlayer, island);
+        super(expelledPlayer, island);
         this.expeller = expellingPlayer;
         //Bukkit.getLogger().info("DEBUG: Coop leave event " + Bukkit.getServer().getOfflinePlayer(expelledPlayer).getName() + " was expelled from " 
         //	+ Bukkit.getServer().getOfflinePlayer(expellingPlayer).getName() + "'s island.");
