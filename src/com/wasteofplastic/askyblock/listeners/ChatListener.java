@@ -96,8 +96,27 @@ public class ChatListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onChat(final AsyncPlayerChatEvent event) {
+        // Team chat
+        if (Settings.teamChat && teamChatUsers.containsKey(event.getPlayer().getUniqueId())) {
+            if (DEBUG)
+                plugin.getLogger().info("DEBUG: team chat");
+            // Cancel the event
+            event.setCancelled(true);
+            // Queue the sync task because you cannot use HashMaps asynchronously. Delaying to the next tick
+            // won't be a major issue for synch events either.
+            Bukkit.getScheduler().runTask(plugin, new Runnable() {
+                @Override
+                public void run() {
+                    teamChat(event,event.getMessage());
+                }});
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onChatHigh(final AsyncPlayerChatEvent event) {
         if (DEBUG)
             plugin.getLogger().info("DEBUG: " + event.getEventName());
+
         // Substitute variable - thread safe
         String level = "";
         if (playerLevels.containsKey(event.getPlayer().getUniqueId())) {
@@ -121,6 +140,7 @@ public class ChatListener implements Listener {
             plugin.getLogger().info("DEBUG: getFormat = " + event.getFormat());
             plugin.getLogger().info("DEBUG: getMessage = " + event.getMessage());
         }
+
         String format = event.getFormat();
         if (!Settings.chatLevelPrefix.isEmpty()) {
             format = format.replace(Settings.chatLevelPrefix, level);
@@ -134,25 +154,11 @@ public class ChatListener implements Listener {
             }
             format = format.replace(Settings.chatChallengeLevelPrefix, level);
             if (DEBUG)
-                plugin.getLogger().info("DEBUG: format (challenge level sub) = " + format);           
+                plugin.getLogger().info("DEBUG: format (challenge level sub) = " + format);
         }
         event.setFormat(format);
         if (DEBUG)
             plugin.getLogger().info("DEBUG: format set");
-        // Team chat
-        if (Settings.teamChat && teamChatUsers.containsKey(event.getPlayer().getUniqueId())) {
-            if (DEBUG)
-                plugin.getLogger().info("DEBUG: team chat");
-            // Cancel the event
-            event.setCancelled(true);
-            // Queue the sync task because you cannot use HashMaps asynchronously. Delaying to the next tick
-            // won't be a major issue for synch events either.
-            Bukkit.getScheduler().runTask(plugin, new Runnable() {
-                @Override
-                public void run() {
-                    teamChat(event,event.getMessage());
-                }});
-        }
     }
 
     private void teamChat(final AsyncPlayerChatEvent event, String message) {
